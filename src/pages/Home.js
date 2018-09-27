@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
+import Layout from '../components/Layout'
 
 
 const _ = require('lodash')
@@ -28,7 +29,9 @@ class Home extends React.Component {
     
     
     return (
+      <Layout selectedMenuItem="home">
         <div  >Home</div>
+        </Layout>
     );
   }
 }

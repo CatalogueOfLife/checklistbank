@@ -6,12 +6,9 @@ import axios from "axios";
 import { List } from 'antd'
 import { Switch } from 'antd';
 
-class DatasetHome extends React.Component {
+class MetaDataForm extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
-    this.setEditMode = this.setEditMode.bind(this);
-    this.state = { data: null, editMode: false}
   }
 
   componentWillMount() {
@@ -38,11 +35,8 @@ setEditMode(checked) {
 
   render() {
     
-    const {data, editMode} = this.state;
-    const listData = _.map(data, function(value, key) {
-      return { key: key, value: value };
-    });
-    console.log(listData)
+    const {data} = this.props;
+    
     return (
       <div>
       <Switch  onChange={this.setEditMode} checkedChildren="Cancel" unCheckedChildren="Edit"/>
@@ -65,4 +59,4 @@ setEditMode(checked) {
 
 
 
-export default DatasetHome;
+export default MetaDataForm;

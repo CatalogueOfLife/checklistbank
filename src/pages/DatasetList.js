@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
-import { Table, Divider, Tag } from 'antd';
+import { Table, Divider, Tag, Alert } from 'antd';
 import config from '../config';
 import qs from 'query-string';
+import Layout from '../components/Layout'
+import { Input } from 'antd';
+
+const Search = Input.Search;
+
 const _ = require('lodash')
 
 const columns = [{
@@ -14,6 +18,7 @@ const columns = [{
     dataIndex: 'title',
     key: 'title',
     render: (text, record) => <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true} >{text}</NavLink>,
+    width: 250,
 }, {
     title: 'Version',
     dataIndex: 'version',
@@ -23,6 +28,21 @@ const columns = [{
     title: 'Code',
     dataIndex: 'code',
     key: 'code',
+},
+{
+    title: 'Catalogue',
+    dataIndex: 'catalogue',
+    key: 'catalogue',
+},
+{
+    title: 'Size',
+    dataIndex: 'size',
+    key: 'size',
+},
+{
+    title: 'dataFormat',
+    dataIndex: 'dataFormat',
+    key: 'dataFormat',
 },
 {
     title: 'ImportFrequency',
@@ -121,10 +141,20 @@ class DatasetList extends React.Component {
 
     render() {
 
-        const { data, loading } = this.state;
-        return (
-            <Table columns={columns} dataSource={data} loading={loading} pagination={this.state.pagination} onChange={this.handleTableChange} />
-        );
+        const { data, loading, error } = this.state;
+
+        return <Layout selectedMenuItem="dataset">
+            <Search
+                placeholder="input search text"
+                onSearch={value => this.getData({q: value, limit: 100})}
+
+                enterButton
+            />
+            {error && <Alert message={error.message} type="error" />}
+            {!error && <Table columns={columns} dataSource={data} loading={loading} pagination={this.state.pagination} onChange={this.handleTableChange} />}
+        </Layout>
+
+
     }
 }
 
