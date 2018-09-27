@@ -17,7 +17,7 @@ const columns = [{
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    render: (text, record) => <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true} >{text}</NavLink>,
+render: (text, record) => {return <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true} >{text}</NavLink>},
     width: 250,
 }, {
     title: 'Version',
@@ -49,46 +49,9 @@ const columns = [{
     dataIndex: 'importFrequency',
     key: 'importFrequency',
 }
-  /*, {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: tags => (
-      <span>
-        {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-      </span>
-    ),
-  }, {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        <a href="javascript:;">Invite {record.name}</a>
-        <Divider type="vertical" />
-        <a href="javascript:;">Delete</a>
-      </span>
-    ),
-  } */];
+ ];
 
-/* const data = [{
-   key: '1',
-   name: 'John Brown',
-   age: 32,
-   address: 'New York No. 1 Lake Park',
-   tags: ['nice', 'developer'],
- }, {
-   key: '2',
-   name: 'Jim Green',
-   age: 42,
-   address: 'London No. 1 Lake Park',
-   tags: ['loser'],
- }, {
-   key: '3',
-   name: 'Joe Black',
-   age: 32,
-   address: 'Sidney No. 1 Lake Park',
-   tags: ['cool', 'teacher'],
- }]; */
+
 
 
 
@@ -96,6 +59,7 @@ class DatasetList extends React.Component {
     constructor(props) {
         super(props);
         this.getData = this.getData.bind(this);
+        this.updateQuery = this.updateQuery.bind(this);
         this.state = {
             data: [],
             pagination: {
@@ -103,17 +67,21 @@ class DatasetList extends React.Component {
                 current: 1
             },
             loading: false,
+
+            q: ''
         };
     }
 
 
     componentWillMount() {
-        this.getData({ limit: 100, offset: 0 })
+        this.getData()
     }
-
-    getData = (params = {}) => {
+ 
+    getData = (params = { limit: 100, offset: 0 }) => {
 
         this.setState({ loading: true });
+        const {q} = this.state;
+        params.q = q;
         axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
             .then((res) => {
                 const pagination = { ...this.state.pagination };
@@ -138,17 +106,32 @@ class DatasetList extends React.Component {
             ...filters,
         });
     }
-
+    updateQuery = (evt) => {
+        this.setState({ q: evt.target.value })
+    }
+    handleKeyDown = (event) => {
+        
+          if(event.keyCode === 8){
+            this.setState({ q: '', pagination: {
+                pageSize: 100,
+                current: 1
+            }  }, this.getData)
+          }
+        
+      }
     render() {
 
-        const { data, loading, error } = this.state;
+        const { data, loading, error, q } = this.state;
 
         return <Layout selectedMenuItem="dataset">
             <Search
                 placeholder="input search text"
-                onSearch={value => this.getData({q: value, limit: 100})}
-
+                onChange={this.updateQuery}
+                onKeyDown={this.handleKeyDown}
+                value={q} 
+                onSearch={value => this.getData({q: value, limit:100})}
                 enterButton
+                style={{marginBottom: '10px', width: '50%'}}
             />
             {error && <Alert message={error.message} type="error" />}
             {!error && <Table columns={columns} dataSource={data} loading={loading} pagination={this.state.pagination} onChange={this.handleTableChange} />}

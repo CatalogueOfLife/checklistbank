@@ -82,7 +82,7 @@ class TreeExplorer extends React.Component {
                 let treeData = _.map(res.data.result, (tx) => {
                     return { title: <ColTreeNode taxon={tx}></ColTreeNode>, key: tx.id, childOffset: 0 , childCount: tx.childCount}
                 })
-                that.setState({ treeData , rootLoading: false})
+                that.setState({ treeData , rootLoading: false, defaultExpandAll: true})
             })
     }
 
@@ -110,6 +110,7 @@ class TreeExplorer extends React.Component {
                 }
                 this.setState({
                     treeData: [...this.state.treeData],
+                    defaultExpandAll: false
                 });
             })
 
@@ -131,11 +132,11 @@ class TreeExplorer extends React.Component {
     }
 
     render() {
-        const {rootLoading} = this.state;
+        const {rootLoading, defaultExpandAll} = this.state;
         return (
             <div>
                 {rootLoading && <Spin />}
-           { !rootLoading && <Tree loadData={this.onLoadData} showLine={true}>
+           { !rootLoading && <Tree loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll}>
                 {this.renderTreeNodes(this.state.treeData)}
             </Tree>}
             </div>
