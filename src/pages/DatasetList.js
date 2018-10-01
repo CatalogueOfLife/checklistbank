@@ -17,7 +17,7 @@ const columns = [{
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-render: (text, record) => {return <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true} >{text}</NavLink>},
+render: (text, record) => {return <NavLink to={{ pathname: `/dataset/${record.key}/meta` }} exact={true} >{text}</NavLink>},
     width: 250,
 }, {
     title: 'Version',

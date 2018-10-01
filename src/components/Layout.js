@@ -24,7 +24,7 @@ class AppLayout extends Component {
     render() {
         const { children } = this.props;
         const { selectedMenuItem } = this.props;
-        const { selectedDataset } = this.props;
+        const { selectedDataset, selectedTaxon } = this.props;
         return (
             <Layout className="layout">
                 <Header>
@@ -96,10 +96,16 @@ class AppLayout extends Component {
                                     </NavLink>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    <NavLink to={{ pathname: '/dataset/' + selectedDataset.key }}>
+                                    <NavLink to={{ pathname: '/dataset/' + selectedDataset.key + '/meta' }}>
                                         {selectedDataset.title}
                                     </NavLink>
                                 </Breadcrumb.Item>
+
+                                {selectedTaxon && <Breadcrumb.Item>
+                                    <NavLink to={{ pathname: '/dataset/' + selectedDataset.key + '/taxon/' + selectedTaxon.id }}>
+                                        {selectedTaxon.name.scientificName}
+                                    </NavLink>
+                                </Breadcrumb.Item>}
                             </Breadcrumb>}
                         <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
                             {children}

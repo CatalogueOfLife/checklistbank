@@ -9,6 +9,7 @@ import { Tabs } from 'antd';
 import DatasetHome from './datasetPageTabs/DatasetHome'
 import TreeExplorer from './datasetPageTabs/TreeExplorer'
 import Layout from '../components/Layout'
+import history from '../history';
 
 
 
@@ -42,17 +43,24 @@ class DatasetPage extends React.Component {
         })
 }
 
+updatePath = (section) => {
+  const { match: { params: { key } } } = this.props;
+
+  history.push(`/dataset/${key}/${section}`)
+}
 
   render() {
-    const { match: { params: { key } } } = this.props;
+    const { match: { params: { key, section } } } = this.props;
+    const params = queryString.parse(this.props.location.search);
     const {loading, data} = this.state;
     return (
       <Layout selectedMenuItem="dataset" selectedDataset={data}>
-        <Tabs defaultActiveKey="1" >
-          <TabPane tab="View/Edit Meta Data" key="1">
-            <DatasetHome id={key}></DatasetHome></TabPane>
-          <TabPane tab="Explore Taxonomy" key="2"><TreeExplorer id={key}></TreeExplorer></TabPane>
-          <TabPane tab="Search names" key="3">Search names here</TabPane>
+        <Tabs defaultActiveKey="meta" onChange={this.updatePath} activeKey={section}>
+          <TabPane tab="View/Edit Meta Data" key="meta">
+            <DatasetHome id={key}></DatasetHome>
+            </TabPane>
+          <TabPane tab="Explore Taxonomy" key="classification"><TreeExplorer id={key} defaultExpandKey={params.taxonKey}></TreeExplorer></TabPane>
+          <TabPane tab="Search names" key="names">Search names here - awaiting ES api</TabPane>
         </Tabs>
       </Layout>
     );

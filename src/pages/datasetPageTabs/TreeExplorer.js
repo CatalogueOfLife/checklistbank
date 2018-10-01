@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { Tree, Popover, Spin, Tag } from 'antd';
+import { Tree, Popover, Spin, Tag, Alert } from 'antd';
 import axios from 'axios'
 import config from '../../config';
 import _ from 'lodash';
+import history from '../../history';
+
 
 const TreeNode = Tree.TreeNode;
-const CHILD_LOAD_LIMIT = 100;
 
 class ColTreeNode extends React.Component {
 
@@ -19,43 +20,24 @@ class ColTreeNode extends React.Component {
     }
 
     render = () => {
-        const { taxon } = this.props;
-        const nameIsItalic = taxon.name.rank === "species" || taxon.name.rank === "genus"
+        const { taxon, datasetKey } = this.props;
+        const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus"
         return (
-            <Popover placement="rightTop" title={taxon.name.scientificName} trigger="click">
-                <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.name.rank}: </span>
-                {!nameIsItalic && <span>{taxon.name.scientificName}</span>}
-                {nameIsItalic && <span><em>{taxon.name.scientificName}</em> {taxon.name.authorship}</span>}
-                {!taxon.name.available && <Tag color="red">Not available</Tag>}
-            </Popover>)
+            <div onClick={() => {
+                history.push(`/dataset/${datasetKey}/classification?taxonKey=${taxon.id}`)
+                history.push(`/dataset/${datasetKey}/taxon/${taxon.id}`)
+            }
+            }>
+                <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.rank}: </span>
+                {!nameIsItalic && <span>{taxon.name}</span>}
+                {nameIsItalic && <span><em>{taxon.name}</em> {taxon.authorship}</span>}
+                {taxon.status !== 'accepted' && <Tag color="red" style={{ marginLeft: '6px' }}>{taxon.status}</Tag>}
+            </div>)
+        
     }
 
 }
 
-class LoadMoreChildrenTreeNode extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onClick = this.onClick.bind(this);
-        this.state = { loading: false }
-    }
-
-    onClick = () => {
-        this.setState({ loading: true })
-        this.props.onClick();
-    }
-    render = () => {
-        const { loading } = this.state;
-        return (
-            <div>
-                {loading && <Spin />}
-                {!loading && <a onClick={this.onClick}>
-                    <strong>Load more...</strong>
-                </a>}
-            </div>
-
-        )
-    }
-}
 
 class TreeExplorer extends React.Component {
     constructor(props) {
@@ -75,14 +57,45 @@ class TreeExplorer extends React.Component {
     }
 
     loadRoot = () => {
-        const { id } = this.props;
+        const { id, defaultExpandKey } = this.props;
         const that = this;
-        axios(`${config.dataApi}dataset/${id}/taxon?root=true`)
-            .then((res) => {
-                let treeData = _.map(res.data.result, (tx) => {
-                    return { title: <ColTreeNode taxon={tx}></ColTreeNode>, key: tx.id, childOffset: 0 , childCount: tx.childCount}
+        var defaultExpandedNodes;
+        let p = (defaultExpandKey) ? axios(`${config.dataApi}dataset/${id}/tree/${defaultExpandKey}`) : Promise.resolve(false);
+
+        Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
+            .then((values) => {
+                let mainTreeData = values[0].data;
+                let defaultExpanded = (values[1]) ? values[1].data : null;
+                let treeData = _.map(mainTreeData, (tx) => {
+                    return { title: <ColTreeNode taxon={tx} datasetKey={id}></ColTreeNode>, key: tx.id, childOffset: 0, childCount: tx.childCount }
                 })
-                that.setState({ treeData , rootLoading: false, defaultExpandAll: true})
+                if (defaultExpanded) {
+                    defaultExpandedNodes = [];
+                    let root = _.find(treeData, ['key', defaultExpanded[defaultExpanded.length - 1].id]);
+                    for (let i = defaultExpanded.length - 2; i > -1; i--) {
+                        let tx = defaultExpanded[i];
+                        if(i > 0){
+                            defaultExpandedNodes.push(tx.id)
+                        }
+                        let node = { title: <ColTreeNode taxon={tx} datasetKey={id}></ColTreeNode>, key: tx.id, childOffset: 0, childCount: tx.childCount };
+                        root.children = [node];
+                        root = node;
+                    }
+
+                }
+                return treeData;
+            })
+
+            .then((treeData) => {
+                if (defaultExpandedNodes && defaultExpandKey) {
+                    that.setState({ treeData, rootLoading: false, defaultExpandAll: false, defaultExpandedKeys: defaultExpandedNodes })
+                } else {
+                    that.setState({ treeData, rootLoading: false, defaultExpandAll: true })
+                }
+
+            })
+            .catch((err) => {
+                that.setState({ error: err })
             })
     }
 
@@ -90,24 +103,12 @@ class TreeExplorer extends React.Component {
         console.log(treeNode)
         let that = this;
         const { id } = this.props;
-        return axios(`${config.dataApi}dataset/${id}/taxon/${treeNode.props.eventKey}/children?limit=${CHILD_LOAD_LIMIT}&offset=${treeNode.props.dataRef.childOffset}`)
-            .then((res) => {
-                if (!treeNode.props.dataRef.children) {
-                    treeNode.props.dataRef.children = [];
-                }
-                treeNode.props.dataRef.children = treeNode.props.dataRef.children.concat(_.map(res.data.result, (tx) => {
-                    return { title: <ColTreeNode taxon={tx}></ColTreeNode>, key: tx.id, childOffset: treeNode.props.dataRef.childOffset, childCount: tx.childCount }
-                }))
-                if (res.data.last !== true) {
-                    const loadMoreFn = () => {
-                        treeNode.props.dataRef.childOffset += CHILD_LOAD_LIMIT;
-                        if (treeNode.props.dataRef.children[treeNode.props.dataRef.children.length - 1].type === '__loadMoreBTN__') {
-                            treeNode.props.dataRef.children.pop();
-                        }
-                        that.onLoadData(treeNode)
-                    }
-                    treeNode.props.dataRef.children.push({ title: <LoadMoreChildrenTreeNode onClick={loadMoreFn} key="__loadMoreBTN__"></LoadMoreChildrenTreeNode>, type: '__loadMoreBTN__' })
-                }
+        return axios(`${config.dataApi}dataset/${id}/tree/${treeNode.props.eventKey}/children`)
+            .then((res) => {                
+                treeNode.props.dataRef.children = _.map(res.data, (tx) => {
+                    return { title: <ColTreeNode taxon={tx} datasetKey={id}></ColTreeNode>, key: tx.id, childOffset: treeNode.props.dataRef.childOffset, childCount: tx.childCount }
+                });
+
                 this.setState({
                     treeData: [...this.state.treeData],
                     defaultExpandAll: false
@@ -127,18 +128,23 @@ class TreeExplorer extends React.Component {
                     </TreeNode>
                 );
             }
-            return <TreeNode {...item} dataRef={item} isLeaf={item.childCount === 0}/>;
+            return <TreeNode {...item} dataRef={item} isLeaf={item.childCount === 0} />;
         });
     }
 
     render() {
-        const {rootLoading, defaultExpandAll} = this.state;
+        const { rootLoading, defaultExpandAll, defaultExpandedKeys, error } = this.state;
+        const { defaultExpandKey } = this.props;
+        const defaultSelectedKeys = (defaultExpandKey) ? [defaultExpandKey] : null
         return (
             <div>
-                {rootLoading && <Spin />}
-           { !rootLoading && <Tree loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll}>
-                {this.renderTreeNodes(this.state.treeData)}
-            </Tree>}
+
+                {error && <Alert message={error.message} type="error" />}
+
+                {!error && rootLoading && <Spin />}
+                {!error && !rootLoading && <Tree loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll} defaultExpandedKeys={defaultExpandedKeys} defaultSelectedKeys={defaultSelectedKeys}>
+                    {this.renderTreeNodes(this.state.treeData)}
+                </Tree>}
             </div>
 
         );
