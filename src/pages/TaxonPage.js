@@ -5,12 +5,14 @@ import config from '../config';
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
-import { Collapse } from 'antd';
+import { Collapse, Alert, Spin } from 'antd';
 import DatasetHome from './datasetPageTabs/DatasetHome'
 import SynonymTable from './taxon/Synonyms'
 import VernacularNames from './taxon/VernacularNames';
 import References from './taxon/References';
 import Distributions from './taxon/Distributions';
+import Classification from './taxon/Classification';
+import ErrorMsg from '../components/ErrorMsg';
 
 import Layout from '../components/Layout'
 import _ from 'lodash';
@@ -23,7 +25,7 @@ class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { dataset: null, taxon: null, synonyms: null, taxonLoading: true, datasetLoading: true, synonymsLoading: true, datasetError: null, taxonError: null, synonymsError: null }
+    this.state = { dataset: null, taxon: null, synonyms: null, info: null, taxonLoading: true, datasetLoading: true, synonymsLoading: true, infoLoading: true, infoError: null, datasetError: null, taxonError: null, synonymsError: null, classificationError: null }
   }
 
   componentWillMount() {
@@ -31,6 +33,7 @@ class TaxonPage extends React.Component {
     this.getTaxon()
     this.getSynonyms()
     this.getInfo();
+    this.getClassification();
   }
 
   getDataset = () => {
@@ -90,15 +93,34 @@ class TaxonPage extends React.Component {
 
   }
 
+  getClassification = () => {
+
+    const { match: { params: { key, taxonKey } } } = this.props;
+
+    axios(`${config.dataApi}dataset/${key}/taxon/${taxonKey}/classification`)
+      .then((res) => {
+
+        this.setState({ classificationLoading: false, classification: res.data, classificationError: null })
+      })
+      .catch((err) => {
+        this.setState({ classificationLoading: false, classificationError: err, classification: null })
+      })
+
+  }
+
   render() {
     const { match: { params: { key, taxonKey } } } = this.props;
-    const { datasetLoading, taxonLoading, dataset, taxon, synonyms, info } = this.state;
+    const { datasetLoading, taxonLoading, classificationLoading, synonymsLoading, infoLoading, dataset, taxon, synonyms, info, classification, datasetError, taxonError, synonymsError, classificationError, infoError } = this.state;
     return (
       <Layout selectedMenuItem="dataset" selectedDataset={dataset} selectedTaxon={taxon}>
         {taxon && <h1>Species details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
 
-        <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions']} >
-          {synonyms && <Panel header="Synonyms" key="synonyms">
+        <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions', 'classification']} >
+          <Panel header="Synonyms" key="synonyms">
+          {synonymsLoading && <Spin />}
+          {synonymsError && <Alert message={<ErrorMsg error={synonymsError}></ErrorMsg>} type="error" />}
+          {synonyms && _.isEmpty(synonyms) && <p>None</p>}
+          {synonyms && !_.isEmpty(synonyms) && <div>
             {synonyms.homotypic &&
               <div>
                 <p
@@ -141,19 +163,35 @@ class TaxonPage extends React.Component {
                 </p>
                 <SynonymTable data={synonyms.misapplied} style={{ marginBottom: 16 }}></SynonymTable>
               </div>}
-          </Panel>}
-          {info && info.vernacularNames &&
+              </div> }
+          </Panel>
+          
             <Panel header="Vernacular Names" key="vernacularNames">
-              <VernacularNames data={info.vernacularNames}></VernacularNames>
-            </Panel>}
-            {info && info.references &&
+            {infoLoading && <Spin />}
+            {infoError && <Alert message={<ErrorMsg error={infoError}></ErrorMsg>} type="error" />}
+            {info && !info.vernacularNames && <p>None</p>}
+            {info && info.vernacularNames && <VernacularNames data={info.vernacularNames}></VernacularNames>}
+            </Panel>
+            
             <Panel header="References" key="references">
-              <References data={info.references}></References>
-            </Panel>}
-            {info && info.distributions &&
+            {infoLoading && <Spin />}
+            {info && !info.references && <p>None</p>}
+            {infoError && <Alert message={<ErrorMsg error={infoError}></ErrorMsg>} type="error" />}
+              {info && info.references && <References data={info.references}></References> }
+            </Panel>
+            
             <Panel header="Distributions" key="distributions">
-              <Distributions data={info.distributions}></Distributions>
-            </Panel>}
+            {infoLoading && <Spin />}
+            {info && !info.distributions && <p>None</p>}
+            {infoError && <Alert message={<ErrorMsg error={infoError}></ErrorMsg>} type="error" />}
+            {info && info.distributions && <Distributions data={info.distributions}></Distributions> }
+            </Panel>
+            
+            <Panel header="Classification" key="classification">
+            {classificationLoading && <Spin />}
+            {classificationError && <Alert message={<ErrorMsg error={classificationError}></ErrorMsg>} type="error" />}
+            {classification  && <Classification data={classification} datasetKey={key}></Classification>}
+            </Panel>
 
         </Collapse>
 

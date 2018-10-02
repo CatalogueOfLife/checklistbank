@@ -5,7 +5,7 @@ import axios from 'axios'
 import config from '../../config';
 import _ from 'lodash';
 import history from '../../history';
-
+import ErrorMsg from '../../components/ErrorMsg';
 
 const TreeNode = Tree.TreeNode;
 
@@ -139,7 +139,7 @@ class TreeExplorer extends React.Component {
         return (
             <div>
 
-                {error && <Alert message={error.message} type="error" />}
+                {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
                 {!error && rootLoading && <Spin />}
                 {!error && !rootLoading && <Tree loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll} defaultExpandedKeys={defaultExpandedKeys} defaultSelectedKeys={defaultSelectedKeys}>

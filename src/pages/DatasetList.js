@@ -59,16 +59,13 @@ class DatasetList extends React.Component {
     constructor(props) {
         super(props);
         this.getData = this.getData.bind(this);
-        this.updateQuery = this.updateQuery.bind(this);
         this.state = {
             data: [],
             pagination: {
                 pageSize: 100,
                 current: 1
             },
-            loading: false,
-
-            q: ''
+            loading: false
         };
     }
 
@@ -80,8 +77,7 @@ class DatasetList extends React.Component {
     getData = (params = { limit: 100, offset: 0 }) => {
 
         this.setState({ loading: true });
-        const {q} = this.state;
-        params.q = q;
+       
         axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
             .then((res) => {
                 const pagination = { ...this.state.pagination };
@@ -106,19 +102,7 @@ class DatasetList extends React.Component {
             ...filters,
         });
     }
-    updateQuery = (evt) => {
-        this.setState({ q: evt.target.value })
-    }
-    handleKeyDown = (event) => {
-        
-          if(event.keyCode === 8){
-            this.setState({ q: '', pagination: {
-                pageSize: 100,
-                current: 1
-            }  }, this.getData)
-          }
-        
-      }
+
     render() {
 
         const { data, loading, error, q } = this.state;
@@ -126,10 +110,7 @@ class DatasetList extends React.Component {
         return <Layout selectedMenuItem="dataset">
             <Search
                 placeholder="input search text"
-                onChange={this.updateQuery}
-                onKeyDown={this.handleKeyDown}
-                value={q} 
-                onSearch={value => this.getData({q: value, limit:100})}
+                onSearch={value => this.getData({q: value, limit:100, offset:0})}
                 enterButton
                 style={{marginBottom: '10px', width: '50%'}}
             />
