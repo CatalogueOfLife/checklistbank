@@ -8,14 +8,22 @@ class ErrorMsg extends React.Component {
         const { error } = this.props;
         return (
             <div>
-                {error.message && <p>
+                {error.message && <h3>
                     {error.message}
-                </p>}
+                </h3>}
                 {_.get(error, 'response.data.message') && <p>
                     {_.get(error, 'response.data.message')}
                 </p>}
+                {_.get(error, 'config.method') && <p>
+                    HTTP method: <strong>{_.get(error, 'config.method').toUpperCase()}</strong>
+                </p>}
                 {_.get(error, 'response.request.responseURL') &&
-                    <a href={_.get(error, 'response.request.responseURL')} target="_blank">{_.get(error, 'response.request.responseURL')}</a>}
+                    <p><a href={_.get(error, 'response.request.responseURL')} target="_blank">{_.get(error, 'response.request.responseURL')}</a></p>}
+                 {_.get(error, 'config.data') && <div>
+                     <h4>Body:</h4>
+                     <p>
+                     {_.get(error, 'config.data')}
+                </p></div>}
             </div>
 
         );

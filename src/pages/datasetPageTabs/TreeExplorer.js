@@ -90,7 +90,7 @@ class TreeExplorer extends React.Component {
                 if (defaultExpandedNodes && defaultExpandKey) {
                     that.setState({ treeData, rootLoading: false, defaultExpandAll: false, defaultExpandedKeys: defaultExpandedNodes })
                 } else {
-                    that.setState({ treeData, rootLoading: false, defaultExpandAll: true })
+                    that.setState({ treeData, rootLoading: false, defaultExpandAll: treeData.length < 10 })
                 }
 
             })
