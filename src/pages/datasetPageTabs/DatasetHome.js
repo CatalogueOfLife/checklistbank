@@ -46,14 +46,14 @@ class DatasetHome extends React.Component {
         <Row>
           <Col span={4}></Col>
           <Col span={16}>
-            <Switch onChange={this.setEditMode} checkedChildren="Cancel" unCheckedChildren="Edit" />
+            <Switch checked={editMode} onChange={this.setEditMode} checkedChildren="Cancel" unCheckedChildren="Edit" />
 
           </Col>
           <Col span={4}></Col>
         </Row>
 
 
-        {editMode && <MetaDataForm data={data}></MetaDataForm>}
+        {editMode && <MetaDataForm data={data} onSaveSuccess={()=>{this.setEditMode(false)}}></MetaDataForm>}
         {!editMode &&
           <Row>
             <Col span={4}></Col>

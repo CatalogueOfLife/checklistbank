@@ -25,7 +25,7 @@ class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { dataset: null, taxon: null, synonyms: null, info: null, taxonLoading: true, datasetLoading: true, synonymsLoading: true, infoLoading: true, infoError: null, datasetError: null, taxonError: null, synonymsError: null, classificationError: null }
+    this.state = { dataset: null, taxon: null, synonyms: null, info: null, taxonLoading: true, datasetLoading: true, synonymsLoading: true, infoLoading: true, classificationLoading:true, infoError: null, datasetError: null, taxonError: null, synonymsError: null, classificationError: null }
   }
 
   componentWillMount() {
@@ -113,7 +113,7 @@ class TaxonPage extends React.Component {
     const { datasetLoading, taxonLoading, classificationLoading, synonymsLoading, infoLoading, dataset, taxon, synonyms, info, classification, datasetError, taxonError, synonymsError, classificationError, infoError } = this.state;
     return (
       <Layout selectedMenuItem="dataset" selectedDataset={dataset} selectedTaxon={taxon}>
-        {taxon && <h1>Species details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
+        {taxon && <h1>Taxon details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
 
         <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions', 'classification']} >
           <Panel header="Synonyms" key="synonyms">

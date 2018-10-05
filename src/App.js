@@ -6,7 +6,9 @@ import history from './history';
 import './App.css';
 import DatasetList from './pages/DatasetList'
 import DatasetPage from './pages/DatasetPage'
+import DatasetCreate from './pages/DatasetCreate'
 import TaxonPage from './pages/TaxonPage'
+
 
 import Home from './pages/Home'
 
@@ -19,6 +21,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" render={(props) => <Home />} />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={TaxonPage} />
+          <Route exact key="datasetCreate" path={`/dataset/create`} component={DatasetCreate} />
           <Route exact key="datasetKey" path={`/dataset/:key/:section?`} component={DatasetPage} />
           <Route exact key="dataset" path="/dataset" render={(props) => <DatasetList />} />
 

@@ -87,14 +87,22 @@ class RegistrationForm extends React.Component {
 
   submitData = (values)=> {
 
-    const { data: {key} } = this.props;
+    const key =  _.get(this.props, 'data.key');
+    const { onSaveSuccess } = this.props;
     let task = (key) ? axios.put(`${config.dataApi}dataset/${key}`, values) : axios.post(`${config.dataApi}dataset`, values);
 
     task
       .then((res) => {
         let title = (key) ? 'Meta data updated' : 'Dataset registered';
         let msg =  (key) ? `Meta data updated successfully updated for ${values.title}` : `${values.title} registered and ready for import`
-        this.setState({ submissionError: null }, openNotification(title, msg))
+        this.setState(
+          { submissionError: null }, 
+          ()=>{ 
+            if(onSaveSuccess && typeof onSaveSuccess == 'function'){
+              onSaveSuccess();
+            }
+            openNotification(title, msg)}
+        )
       
       })
       .catch((err) => {

@@ -20,9 +20,14 @@ const TabPane = Tabs.TabPane;
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
+    const { match: { params: { section } } } = this.props;
 
     this.getData = this.getData.bind(this);
-    this.state = { data: null, loading: true}
+    this.state = { 
+      data: null, 
+      loading: true,
+      section: section || 'meta'
+    }
   }
 
   componentWillMount() {
@@ -43,23 +48,26 @@ class DatasetPage extends React.Component {
         })
 }
 
-updatePath = (section) => {
+updateSection = (section) => {
   const { match: { params: { key } } } = this.props;
 
-  history.push(`/dataset/${key}/${section}`)
+  
+  this.setState({section: section}, ()=>{
+    history.push(`/dataset/${key}/${section}`)
+  } )
 }
 
   render() {
-    const { match: { params: { key, section } } } = this.props;
+    const { match: { params: { key } } } = this.props;
     const params = queryString.parse(this.props.location.search);
-    const {loading, data} = this.state;
+    const {loading, data, section} = this.state;
     return (
-      <Layout selectedMenuItem="dataset" selectedDataset={data}>
-        <Tabs defaultActiveKey="meta" onChange={this.updatePath} activeKey={section}>
+      <Layout selectedMenuItem="datasetKey" selectedDataset={data} section={section}>
+        <Tabs onChange={this.updateSection} activeKey={section}>
           <TabPane tab="View/Edit Meta Data" key="meta">
             <DatasetHome id={key}></DatasetHome>
             </TabPane>
-          <TabPane tab="Explore Taxonomy" key="classification"><TreeExplorer id={key} defaultExpandKey={params.taxonKey}></TreeExplorer></TabPane>
+          <TabPane tab="Classification" key="classification"><TreeExplorer id={key} defaultExpandKey={params.taxonKey}></TreeExplorer></TabPane>
           <TabPane tab="Search names" key="names">Search names here - awaiting ES api</TabPane>
         </Tabs>
       </Layout>
