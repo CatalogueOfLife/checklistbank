@@ -6,7 +6,6 @@ import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
 import { Collapse, Alert, Spin } from 'antd';
-import DatasetHome from './datasetPageTabs/DatasetHome'
 import SynonymTable from './taxon/Synonyms'
 import VernacularNames from './taxon/VernacularNames';
 import References from './taxon/References';

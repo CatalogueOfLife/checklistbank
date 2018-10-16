@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tree, Popover, Spin, Tag, Alert } from 'antd';
+import { Tree, Popover, Spin, Tag, Alert, Switch, notification } from 'antd';
 import axios from 'axios'
 import config from '../../config';
 import _ from 'lodash';
@@ -100,13 +100,11 @@ class TreeExplorer extends React.Component {
     }
 
     onLoadData = (treeNode) => {
-        console.log(treeNode)
-        let that = this;
         const { id } = this.props;
         return axios(`${config.dataApi}dataset/${id}/tree/${treeNode.props.eventKey}/children`)
             .then((res) => {                
                 treeNode.props.dataRef.children = _.map(res.data, (tx) => {
-                    return { title: <ColTreeNode taxon={tx} datasetKey={id}></ColTreeNode>, key: tx.id, childOffset: treeNode.props.dataRef.childOffset, childCount: tx.childCount }
+                    return { title: <ColTreeNode taxon={tx} datasetKey={id}></ColTreeNode>, key: tx.id, childOffset: treeNode.props.dataRef.childOffset, childCount: tx.childCount, parent: treeNode.props.dataRef, name: tx.name }
                 });
 
                 this.setState({
@@ -116,8 +114,6 @@ class TreeExplorer extends React.Component {
             })
 
     }
-
-
 
     renderTreeNodes = (data) => {
         return data.map((item) => {
@@ -142,7 +138,7 @@ class TreeExplorer extends React.Component {
                 {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
                 {!error && rootLoading && <Spin />}
-                {!error && !rootLoading && <Tree loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll} defaultExpandedKeys={defaultExpandedKeys} defaultSelectedKeys={defaultSelectedKeys}>
+                {!error && !rootLoading && <Tree  loadData={this.onLoadData} showLine={true} defaultExpandAll={defaultExpandAll} defaultExpandedKeys={defaultExpandedKeys} defaultSelectedKeys={defaultSelectedKeys}>
                     {this.renderTreeNodes(this.state.treeData)}
                 </Tree>}
             </div>

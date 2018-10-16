@@ -115,7 +115,7 @@ class DatasetList extends React.Component {
                 style={{marginBottom: '10px', width: '50%'}}
             />
             {error && <Alert message={error.message} type="error" />}
-            {!error && <Table columns={columns} dataSource={data} loading={loading} pagination={this.state.pagination} onChange={this.handleTableChange} />}
+            {!error && <Table columns={columns} dataSource={data}  loading={loading} pagination={this.state.pagination} onChange={this.handleTableChange} />}
         </Layout>
 
 

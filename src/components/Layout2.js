@@ -23,28 +23,13 @@ const classes = {
 class AppLayout extends Component {
     constructor(props) {
         super(props);
-        const { selectedMenuItem,section } = this.props;
-
-        var selectedKey = (section) ? [section] : [selectedMenuItem];
         
-        this.state={
-            selectedKeys: [selectedKey],
-            openKeys: [selectedMenuItem]
-        }
       }
-      componentWillUpdate(props, nextProps) {
-        
-        const { selectedMenuItem,section } = nextProps;
 
-        var selectedKey = (section) ? [section] : [selectedMenuItem];
-        this.settate.selectedKeys.push(selectedKey)
-        this.state.openKeys.push(selectedMenuItem)
-    }
     render() {
 
         const { children, selectedMenuItem, selectedDataset, selectedTaxon, section } = this.props;
-        console.log(section)
-       
+       const defaultSelected = (selectedDataset) ? [section] : [selectedMenuItem]
         return (
             <Layout className="layout">
                 <Header>
@@ -57,7 +42,8 @@ class AppLayout extends Component {
                     <Menu
                         theme="dark"
                         mode="horizontal"
-                        selectedKeys={this.state.selectedKeys}
+                        defaultOpenKeys={[selectedMenuItem]}
+                        selectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
                         <Menu.Item key="home" >
@@ -84,9 +70,8 @@ class AppLayout extends Component {
                     <Sider width={200} style={{ background: '#fff' }}>
                         <Menu
                             mode="inline"
-                            theme="dark"
-                            selectedKeys={this.state.selectedKeys}
-                            openKeys={this.state.openKeys}
+                            defaultOpenKeys={[selectedMenuItem]}
+                            defaultSelectedKeys={defaultSelected}
                             style={{ height: '100%', borderRight: 0 }}
                         >
                             <SubMenu key="dataset" title={<span><Icon type="user" />Dataset</span>}>
@@ -100,7 +85,7 @@ class AppLayout extends Component {
                             </SubMenu>
 
                             {selectedMenuItem === 'datasetKey' && this.props.selectedDataset &&
-                                <SubMenu key="datasetKey" title={<span><Icon type="laptop" />Dataset ID: {_.get(this.props, 'selectedDataset.key')}</span>}>
+                                <SubMenu  key="datasetKey" title={<span><Icon type="laptop" />Dataset ID: {_.get(this.props, 'selectedDataset.key')}</span>}>
                                     <Menu.Item key="meta">
                                         <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/meta` }}>
                                             Meta data

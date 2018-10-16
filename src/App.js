@@ -8,7 +8,7 @@ import DatasetList from './pages/DatasetList'
 import DatasetPage from './pages/DatasetPage'
 import DatasetCreate from './pages/DatasetCreate'
 import TaxonPage from './pages/TaxonPage'
-
+import ManagementClassification from './pages/ManagementClassification'
 
 import Home from './pages/Home'
 
@@ -20,9 +20,14 @@ class App extends Component {
       <Router history={history}>
         <Switch>
           <Route exact path="/" render={(props) => <Home />} />
+          <Route exact key="managementClassification" path={`/managementclassification`} component={ManagementClassification} />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={TaxonPage} />
           <Route exact key="datasetCreate" path={`/dataset/create`} component={DatasetCreate} />
-          <Route exact key="datasetKey" path={`/dataset/:key/:section?`} component={DatasetPage} />
+          <Route exact key="datasetKey" path={`/dataset/:key/:section?`} 
+            render={({match, location}) => (<DatasetPage section={match.params.section} datasetKey={match.params.key} location={location}/>)}
+             />
+
+
           <Route exact key="dataset" path="/dataset" render={(props) => <DatasetList />} />
 
           <Route component={NoMatch} />

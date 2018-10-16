@@ -5,7 +5,7 @@ import _ from 'lodash'
 import axios from "axios";
 import { Switch, List, Row, Col } from 'antd'
 import MetaDataForm from '../../components/MetaDataForm'
-class DatasetHome extends React.Component {
+class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
@@ -83,4 +83,4 @@ class DatasetHome extends React.Component {
 
 
 
-export default DatasetHome;
+export default DatasetMeta;

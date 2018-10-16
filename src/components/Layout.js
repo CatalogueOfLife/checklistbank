@@ -12,7 +12,7 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const classes = {
     logo: {
-        width: '120px',
+        width: '150px',
         height: '31px',
         margin: '0px 30px 0px 0',
         float: 'left'
@@ -48,6 +48,9 @@ class AppLayout extends Component {
                         defaultSelectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
+                    <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                                Management classification
+                                    </NavLink></Menu.Item>
                   
                         <Menu.Item key="dataset">
                             <NavLink to={{ pathname: '/dataset' }}>
@@ -65,14 +68,17 @@ class AppLayout extends Component {
 
                 </Header>
                 <Layout>
-                    <Sider width={200} style={{ background: '#fff' }}>
+                    <Sider width={230} style={{ background: '#fff' }}>
                         <Menu
                             mode="inline"
                             defaultOpenKeys={['dataset']}
                             defaultSelectedKeys={[selectedMenuItem]}
                             style={{ height: '100%', borderRight: 0 }}
-                        >
-                            <SubMenu key="dataset" title={<span><Icon type="user" />Dataset</span>}>
+                        >   
+                         <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                                Management classification
+                                    </NavLink></Menu.Item>
+                            <SubMenu key="dataset" title={<span><Icon type="file-text" />Dataset</span>}>
                                 <Menu.Item key="dataset"><NavLink to={{ pathname: '/dataset' }}>
                                 All datasets
                                     </NavLink></Menu.Item>
