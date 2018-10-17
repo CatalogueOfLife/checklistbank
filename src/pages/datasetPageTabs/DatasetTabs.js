@@ -11,10 +11,16 @@ class DatasetTabs extends React.Component {
             <Menu
                 selectedKeys={[this.props.selectedItem]}
                 mode="horizontal"
+                style={{marginBottom: "10px"}}
             >
                 <Menu.Item key="meta">
                     <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/meta` }}>
                         View/Edit Meta Data                                    </NavLink>
+                </Menu.Item>
+                <Menu.Item key="sources" >
+                    <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/sources` }}>
+                        Col Sources
+                                    </NavLink>
                 </Menu.Item>
                 <Menu.Item key="classification" >
                     <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/classification` }}>

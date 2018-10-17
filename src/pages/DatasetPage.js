@@ -7,6 +7,8 @@ import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
 import { Tabs } from 'antd';
 import DatasetMeta from './datasetPageTabs/DatasetMeta'
+import DatasetColSources from './datasetPageTabs/DatasetColSources'
+
 import TreeExplorer from './datasetPageTabs/TreeExplorer'
 import Layout from '../components/Layout2'
 import history from '../history';
@@ -63,6 +65,7 @@ class DatasetPage extends React.Component {
     return (
       <Layout selectedMenuItem="datasetKey" selectedDataset={data} section={section}>
         <DatasetTabs selectedItem={section} datasetKey={datasetKey}></DatasetTabs>
+        {section === 'sources' && <DatasetColSources datasetKey={datasetKey}></DatasetColSources>}
         {section === 'meta' && <DatasetMeta id={datasetKey}></DatasetMeta>}
         {section === 'classification' && <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey}></TreeExplorer>}
       </Layout>

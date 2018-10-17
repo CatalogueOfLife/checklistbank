@@ -91,6 +91,11 @@ class AppLayout extends Component {
                                             Meta data
                                     </NavLink>
                                     </Menu.Item>
+                                    <Menu.Item key="sources">
+                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/sources` }}>
+                                            Col Sources
+                                    </NavLink>
+                                    </Menu.Item>
                                     <Menu.Item key="classification">
                                         <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/classification` }}>
                                             Classification
@@ -98,7 +103,7 @@ class AppLayout extends Component {
                                     </Menu.Item>
                                     <Menu.Item key="names">
                                         <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/names` }}>
-                                            names
+                                            Names
                                     </NavLink>
                                     </Menu.Item>
                                 </SubMenu>}
