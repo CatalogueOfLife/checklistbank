@@ -166,7 +166,21 @@ class ManagementClassification extends React.Component {
                 console.log(colsources.data[0])
                 console.log(attachmentName.data)
                 console.log(rootName.data)
-                return axios.post(`${config.dataApi}sector`, {colSourceKey: colsources.data[0].key, root: rootName.data, attachment: attachmentName.data })
+                attachmentName.data.name = attachmentName.data.scientificName;
+                rootName.data.name = rootName.data.scientificName;
+                return axios.all([
+                    axios.post(`${config.dataApi}sector`, {colSourceKey: colsources.data[0].key, root: rootName.data, attachment: attachmentName.data }), 
+                    colsources.data[0],
+                    rootName.data.name,
+                    attachmentName.data.name
+                ])
+            }))
+            .then(axios.spread((res, colSource, rootName, attachmentName) => {
+                const msg = `${attachmentName} attached to ${rootName} using colSource ${colSource.title} (${colSource.alias})`;
+                notification.open({
+                    message: 'Sector created',
+                    description: msg
+                });
             }))
             .catch((err)=>{
                 this.setState({sectorMappingError: err})
@@ -246,8 +260,8 @@ class ManagementClassification extends React.Component {
             return <TreeNode {...item} datasetKey={item.datasetKey} dataRef={item} isLeaf={item.childCount === 0} />;
         });
     }
-    onSelectDataset = (val) => {
-        this.setState({ datasetKey: val, treeData: [] }, () => {
+    onSelectDataset = (val, obj) => {
+        this.setState({ datasetKey: val, datasetName: obj.props.children, treeData: [] }, () => {
             this.loadRoot('treeData')
         })
     }
@@ -258,7 +272,7 @@ class ManagementClassification extends React.Component {
        */
         this.saveSector(node, dragNode).then((res)=>{
             console.log(res)
-        })
+       
         node.props.dataRef.title = (<ColTreeNode
             taxon={node.props.title.props.taxon}
             datasetKey={MANAGEMENT_CLASSIFICATION_DATASET_KEY}
@@ -274,7 +288,7 @@ class ManagementClassification extends React.Component {
 
         // Saving is done immediatly after confirm, so the children should be updated     
         this.setState({ ...this.state.mcTreeData })
-
+    })
     }
 
     handleAttach = (e) => {
@@ -287,7 +301,7 @@ class ManagementClassification extends React.Component {
             message.error('You can only map taxa of equal rank');
             return;
         }
-        const msg = `Attach ${this.state.dragNode.props.title.props.taxon.name} from LDL: Neuropterida Species to ${e.node.props.title.props.taxon.name} in MC classification?`;
+        const msg = `Attach ${this.state.dragNode.props.title.props.taxon.name} from ${this.state.datasetName} to ${e.node.props.title.props.taxon.name} in MC classification?`;
         e.node.props.dataRef.title =
             (<ColTreeNode
                 taxon={e.node.props.title.props.taxon}
