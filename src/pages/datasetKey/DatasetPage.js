@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import config from '../config';
+import config from '../../config';
 
 import axios from "axios";
 import queryString from 'query-string';
@@ -10,8 +10,8 @@ import DatasetMeta from './datasetPageTabs/DatasetMeta'
 import DatasetColSources from './datasetPageTabs/DatasetColSources'
 
 import TreeExplorer from './datasetPageTabs/TreeExplorer'
-import Layout from '../components/Layout2'
-import history from '../history';
+import Layout from '../../components/Layout2'
+import history from '../../history';
 import DatasetTabs from './datasetPageTabs/DatasetTabs'
 
 

@@ -27,13 +27,7 @@ const columns = [{
 
 
 class VernacularNamesTable extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-
-
-
+  
 
     render() {
 

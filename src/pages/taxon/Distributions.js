@@ -14,10 +14,6 @@ const columns = [{
 
 
 class DistributionsTable extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     render() {
 

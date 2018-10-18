@@ -4,9 +4,9 @@ import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
 import { Table, Divider, Tag, Alert } from 'antd';
-import config from '../config';
+import config from '../../config';
 import qs from 'query-string';
-import Layout from '../components/Layout'
+import Layout from '../../components/Layout'
 import { Input } from 'antd';
 
 const Search = Input.Search;

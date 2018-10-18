@@ -18,10 +18,6 @@ const columns = [{
 
 
 class SynonymsTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-  }
 
   componentWillMount() {
     let synonyms = _.map(this.props.data, (s)=>{

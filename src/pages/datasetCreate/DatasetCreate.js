@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
-import Layout from '../components/Layout'
-import MetaDataForm from '../components/MetaDataForm'
-import history from '../history';
+import Layout from '../../components/Layout'
+import MetaDataForm from '../../components/MetaDataForm'
+import history from '../../history';
 
 
 const _ = require('lodash')

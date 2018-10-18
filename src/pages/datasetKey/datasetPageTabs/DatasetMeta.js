@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import config from '../../config';
+import config from '../../../config';
 import _ from 'lodash'
 import axios from "axios";
 import { Switch, List, Row, Col } from 'antd'
-import MetaDataForm from '../../components/MetaDataForm'
+import MetaDataForm from '../../../components/MetaDataForm'
 class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);

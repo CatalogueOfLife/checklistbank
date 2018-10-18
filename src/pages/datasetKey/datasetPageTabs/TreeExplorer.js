@@ -2,10 +2,10 @@
 import React from 'react';
 import { Tree, Popover, Spin, Tag, Alert, Switch, notification } from 'antd';
 import axios from 'axios'
-import config from '../../config';
+import config from '../../../config';
 import _ from 'lodash';
-import history from '../../history';
-import ErrorMsg from '../../components/ErrorMsg';
+import history from '../../../history';
+import ErrorMsg from '../../../components/ErrorMsg';
 
 const TreeNode = Tree.TreeNode;
 

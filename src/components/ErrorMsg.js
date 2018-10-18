@@ -14,6 +14,9 @@ class ErrorMsg extends React.Component {
                 {_.get(error, 'response.data.message') && <p>
                     {_.get(error, 'response.data.message')}
                 </p>}
+                {_.get(error, 'response.data.details') && <p>
+                    {_.get(error, 'response.data.details')}
+                </p>}
                 {_.get(error, 'config.method') && <p>
                     HTTP method: <strong>{_.get(error, 'config.method').toUpperCase()}</strong>
                 </p>}

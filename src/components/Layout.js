@@ -34,11 +34,11 @@ class AppLayout extends Component {
         console.log(section)
        
         return (
-            <Layout className="layout">
+            <Layout className="layout" style={{height:"100vh"}}>
                 <Header>
 
                     <div style={classes.logo} >
-                        <img src="/col-logo-trans.png" style={{ height: '60px' }}></img>
+                        <img src="/col-logo-trans.png" style={{ height: '60px' }} alt=""></img>
                     </div>
 
 

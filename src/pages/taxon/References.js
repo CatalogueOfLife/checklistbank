@@ -14,10 +14,6 @@ const columns = [{
 
 
 class ReferencesTable extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
 
 
     componentWillMount() {

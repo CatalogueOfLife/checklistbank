@@ -4,11 +4,11 @@ import { NavLink } from "react-router-dom";
 
 import history from './history';
 import './App.css';
-import DatasetList from './pages/DatasetList'
-import DatasetPage from './pages/DatasetPage'
-import DatasetCreate from './pages/DatasetCreate'
-import TaxonPage from './pages/TaxonPage'
-import ManagementClassification from './pages/ManagementClassification'
+import DatasetList from './pages/datasetList/DatasetList'
+import DatasetPage from './pages/datasetKey/DatasetPage'
+import DatasetCreate from './pages/datasetCreate/DatasetCreate'
+import TaxonPage from './pages/taxon/TaxonPage'
+import ManagementClassification from './pages/managementClassification/ManagementClassification'
 
 import Home from './pages/Home'
 

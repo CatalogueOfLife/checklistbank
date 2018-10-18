@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import config from '../config';
+import config from '../../config';
 
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
 import { Collapse, Alert, Spin } from 'antd';
-import SynonymTable from './taxon/Synonyms'
-import VernacularNames from './taxon/VernacularNames';
-import References from './taxon/References';
-import Distributions from './taxon/Distributions';
-import Classification from './taxon/Classification';
-import ErrorMsg from '../components/ErrorMsg';
+import SynonymTable from './Synonyms'
+import VernacularNames from './VernacularNames';
+import References from './References';
+import Distributions from './Distributions';
+import Classification from './Classification';
+import ErrorMsg from '../../components/ErrorMsg';
 
-import Layout from '../components/Layout'
+import Layout from '../../components/Layout'
 import _ from 'lodash';
 
 

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Tree, Row, Col, notification, message, Tag, Popconfirm, Icon, Input, Button, AutoComplete, Popover, Alert } from 'antd'
+import { Tree, Row, Col, notification, message, Tag, Popconfirm, Icon, Input, Button, AutoComplete, Popover, Alert, Modal, Select } from 'antd'
 import _ from 'lodash'
-import Layout from '../components/Layout'
+import Layout from '../../components/Layout'
 import axios from 'axios';
-import config from '../config'
+import config from '../../config'
 import debounce from 'lodash.debounce';
 import EventEmitter from 'events';
-import ErrorMsg from '../components/ErrorMsg';
+import ErrorMsg from '../../components/ErrorMsg';
 
 const TreeNode = Tree.TreeNode;
 const Search = Input.Search;
@@ -17,16 +17,12 @@ const MANAGEMENT_CLASSIFICATION_DATASET_KEY = 1000;
 class ModeActions extends EventEmitter {
 
     mode = 'attach'
-    maxListeners = 10
     changeMode = (mode) => {
         this.mode = mode;
         this.emit('modeChange', mode)
     }
     getMode = () => {
         return this.mode;
-    }
-    getMaxListeners = () => {
-        return this.maxListeners;
     }
     getListenerCount = () => {
         return this.listeners('modeChange').length
@@ -51,12 +47,12 @@ class ColTreeNode extends React.Component {
         this.setState({
             mode: modeActions.getMode()
         })
-        modeActions.setMaxListeners(modeActions.getListenerCount() + 1)
+        modeActions.setMaxListeners(Math.max(modeActions.getListenerCount() + 1, 10));
         modeActions.on('modeChange', this.setMode)
     }
     componentWillUnmount = () => {
         modeActions.removeListener('modeChange', this.setMode);
-        modeActions.setMaxListeners(modeActions.getListenerCount() - 1)
+        modeActions.setMaxListeners(Math.max(modeActions.getListenerCount() - 1, 10))
     }
 
     hidePopover = () => {
@@ -119,6 +115,7 @@ class ManagementClassification extends React.Component {
         this.handleModify = this.handleModify.bind(this);
         this.handleAttach = this.handleAttach.bind(this)
         this.getDatasets = debounce(this.getDatasets, 500);
+        this.saveSector = this.saveSector.bind(this)
         this.renderTreeNodes = this.renderTreeNodes.bind(this);
 
         this.state = {
@@ -154,12 +151,12 @@ class ManagementClassification extends React.Component {
                 this.setState({ datasets: [] })
             })
     }
-    saveSector = (root, attachment) => {
+    getSectorInfo = (root, attachment) => {
         // get the ColSources for the dataset  
-
+        const { datasetKey } = this.state;
         return axios.all([
-            axios(`${config.dataApi}colsource?datasetKey=${this.state.datasetKey}`),
-            axios(`${config.dataApi}dataset/${this.state.datasetKey}/name/${attachment.props.dataRef.key}`),
+            axios(`${config.dataApi}colsource?datasetKey=${datasetKey}`),
+            axios(`${config.dataApi}dataset/${datasetKey}/name/${attachment.props.dataRef.key}`),
             axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION_DATASET_KEY}/name/${root.props.dataRef.key}`),
         ])
             .then(axios.spread((colsources, attachmentName, rootName) => {
@@ -168,28 +165,41 @@ class ManagementClassification extends React.Component {
                 console.log(rootName.data)
                 attachmentName.data.name = attachmentName.data.scientificName;
                 rootName.data.name = rootName.data.scientificName;
-                return axios.all([
-                    axios.post(`${config.dataApi}sector`, {colSourceKey: colsources.data[0].key, root: rootName.data, attachment: attachmentName.data }), 
-                    colsources.data[0],
-                    rootName.data.name,
-                    attachmentName.data.name
-                ])
+                if (colsources.data.length > 1) {
+                    this.setState({ sectorModal: { options: colsources.data, root: rootName.data, attachment: attachmentName.data, title: 'Please select Col Source for sector' } })
+                    return
+                } else if (colsources.data.length === 0) {
+                    this.setState({ sectorModal: { datasetKey: datasetKey, title: 'No Col Sources for dataset' } })
+                    return
+                } else {
+                    return this.saveSector(colsources.data[0], rootName.data, attachmentName.data)
+                }
+
+
             }))
-            .then(axios.spread((res, colSource, rootName, attachmentName) => {
-                const msg = `${attachmentName} attached to ${rootName} using colSource ${colSource.title} (${colSource.alias})`;
+
+            .catch((err) => {
+                this.setState({ sectorMappingError: err })
+                console.log(err)
+            });
+
+    }
+
+    saveSector = (source, root, attachment) => {
+        
+        return axios.post(`${config.dataApi}sector`, { colSourceKey: source.key, root: root, attachment: attachment })
+            .then((res) => {
+                const msg = `${attachment.name} attached to ${root.name} using colSource ${source.title} (${source.alias})`;
                 notification.open({
                     message: 'Sector created',
                     description: msg
                 });
-            }))
-            .catch((err)=>{
-                this.setState({sectorMappingError: err})
+                this.setState({sectorModal: null})
+            })
+            .catch((err) => {
+                this.setState({ sectorMappingError: err , sectorModal: null})
                 console.log(err)
             });
-
-
-
-
     }
     loadRoot = (tree) => {
         let id = (tree === 'treeData') ? this.state.datasetKey : MANAGEMENT_CLASSIFICATION_DATASET_KEY;
@@ -270,25 +280,25 @@ class ManagementClassification extends React.Component {
         /*
        This is where sector mapping should be posted to the server
        */
-        this.saveSector(node, dragNode).then((res)=>{
+        this.getSectorInfo(node, dragNode).then((res) => {
             console.log(res)
-       
-        node.props.dataRef.title = (<ColTreeNode
-            taxon={node.props.title.props.taxon}
-            datasetKey={MANAGEMENT_CLASSIFICATION_DATASET_KEY}
-            isMapped={true}
-            confirmVisible={false}
-        ></ColTreeNode>)
 
-        dragNode.props.dataRef.title = (<ColTreeNode
-            taxon={dragNode.props.title.props.taxon}
-            datasetKey={dragNode.props.title.props.datasetKey}
-            isMapped={true}
-        ></ColTreeNode>)
+            node.props.dataRef.title = (<ColTreeNode
+                taxon={node.props.title.props.taxon}
+                datasetKey={MANAGEMENT_CLASSIFICATION_DATASET_KEY}
+                isMapped={true}
+                confirmVisible={false}
+            ></ColTreeNode>)
 
-        // Saving is done immediatly after confirm, so the children should be updated     
-        this.setState({ ...this.state.mcTreeData })
-    })
+            dragNode.props.dataRef.title = (<ColTreeNode
+                taxon={dragNode.props.title.props.taxon}
+                datasetKey={dragNode.props.title.props.datasetKey}
+                isMapped={true}
+            ></ColTreeNode>)
+
+            // Saving is done immediatly after confirm, so the children should be updated     
+            this.setState({ ...this.state.mcTreeData })
+        })
     }
 
     handleAttach = (e) => {
@@ -392,9 +402,12 @@ class ManagementClassification extends React.Component {
         this.setState({ mode: mode })
         modeActions.changeMode(mode)
     }
+    cancelSectorModal = () => {
+        this.setState({ sectorModal: null })
+    }
     render() {
 
-        const { showSaveButton, savingMappings, treeDataError, mcTreeDataError } = this.state;
+        const { treeDataError, mcTreeDataError } = this.state;
 
         return (
             <Layout selectedMenuItem="managementclassification">
@@ -456,6 +469,20 @@ class ManagementClassification extends React.Component {
                         </Tree>}
                     </Col>
                 </Row>
+
+                <Modal
+                    title={_.get(this.state, 'sectorModal.title')}
+                    visible={!_.isUndefined(this.state.sectorModal) && this.state.sectorModal !== null}
+                    onCancel={this.cancelSectorModal}
+                >
+                    {_.get(this.state, 'sectorModal.options') &&
+                        <Select style={{ width: 240 }} 
+                            onChange={(value) => this.saveSector(_.find(_.get(this.state, 'sectorModal.options'), (o)=>{ return o.key === value}), _.get(this.state, 'sectorModal.root'), _.get(this.state, 'sectorModal.attachment')) }>
+                            {this.state.sectorModal.options.map((o) => {
+                                return <Option key={o.key} value={o.key}>{o.alias} - {o.title}</Option>
+                            })}
+                        </Select>}
+                </Modal>
 
             </Layout>
         );

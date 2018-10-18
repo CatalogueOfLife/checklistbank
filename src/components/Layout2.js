@@ -31,11 +31,11 @@ class AppLayout extends Component {
         const { children, selectedMenuItem, selectedDataset, selectedTaxon, section } = this.props;
        const defaultSelected = (selectedDataset) ? [section] : [selectedMenuItem]
         return (
-            <Layout className="layout">
+            <Layout className="layout" style={{height:"100vh"}}>
                 <Header>
 
                     <div style={classes.logo} >
-                        <img src="/col-logo-trans.png" style={{ height: '60px' }}></img>
+                        <img src="/col-logo-trans.png" style={{ height: '60px' }} alt=""></img>
                     </div>
 
 
@@ -46,11 +46,9 @@ class AppLayout extends Component {
                         selectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
-                        <Menu.Item key="home" >
-                            <NavLink to={{ pathname: '/' }}>
-                                Home
-                </NavLink>
-                        </Menu.Item>
+                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                                Management classification
+                                    </NavLink></Menu.Item>
                         <Menu.Item key="dataset">
                             <NavLink to={{ pathname: '/dataset' }}>
                                 Dataset
@@ -67,14 +65,17 @@ class AppLayout extends Component {
 
                 </Header>
                 <Layout>
-                    <Sider width={200} style={{ background: '#fff' }}>
+                    <Sider width={230} style={{ background: '#fff' }}>
                         <Menu
                             mode="inline"
                             defaultOpenKeys={[selectedMenuItem]}
                             defaultSelectedKeys={defaultSelected}
                             style={{ height: '100%', borderRight: 0 }}
                         >
-                            <SubMenu key="dataset" title={<span><Icon type="user" />Dataset</span>}>
+                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                                Management classification
+                                    </NavLink></Menu.Item>
+                            <SubMenu key="dataset" title={<span><Icon type="file-text" />Dataset</span>}>
                                 <Menu.Item key="dataset"><NavLink to={{ pathname: '/dataset' }}>
                                     Show all
                                     </NavLink></Menu.Item>
@@ -107,12 +108,7 @@ class AppLayout extends Component {
                                     </NavLink>
                                     </Menu.Item>
                                 </SubMenu>}
-                            <SubMenu key="sub3" title={<span><Icon type="notification" />subnav 3</span>}>
-                                <Menu.Item key="9">option9</Menu.Item>
-                                <Menu.Item key="10">option10</Menu.Item>
-                                <Menu.Item key="11">option11</Menu.Item>
-                                <Menu.Item key="12">option12</Menu.Item>
-                            </SubMenu>
+                            
                         </Menu>
                     </Sider>
                     <Content style={{ padding: '0 50px' }}>

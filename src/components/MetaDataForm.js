@@ -98,7 +98,7 @@ class RegistrationForm extends React.Component {
         this.setState(
           { submissionError: null }, 
           ()=>{ 
-            if(onSaveSuccess && typeof onSaveSuccess == 'function'){
+            if(onSaveSuccess && typeof onSaveSuccess === 'function'){
               onSaveSuccess();
             }
             openNotification(title, msg)}
