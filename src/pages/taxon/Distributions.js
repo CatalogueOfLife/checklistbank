@@ -1,29 +1,29 @@
-import React from 'react';
-import { Table } from 'antd';
-import _ from 'lodash';
+import React from "react";
+import { Table } from "antd";
+import _ from "lodash";
 
-
-
-const columns = [{
-    title: 'area',
-    dataIndex: 'area',
-    key: 'area'
-}
+const columns = [
+  {
+    title: "area",
+    dataIndex: "area",
+    key: "area"
+  }
 ];
 
-
-
 class DistributionsTable extends React.Component {
-
-    render() {
-
-        const { data } = this.props;
-        return (
-            <Table columns={columns} dataSource={data} rowKey="verbatimKey" pagination={false} size="small"  showHeader={false}/>
-        );
-    }
+  render() {
+    const { data } = this.props;
+    return (
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey="verbatimKey"
+        pagination={false}
+        size="small"
+        showHeader={false}
+      />
+    );
+  }
 }
-
-
 
 export default DistributionsTable;
