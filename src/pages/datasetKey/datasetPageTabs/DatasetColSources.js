@@ -1,10 +1,15 @@
 import React from "react";
 import axios from "axios";
 
-import { Table, Alert, List, Switch, Button, Row, Col } from "antd";
+import { Table, Alert, List, Switch, Button, Row, Col, Tabs, notification } from "antd";
 import config from "../../../config";
 import ColSourceMetaDataForm from "../../../components/ColSourceMetaDataForm";
+import ColSourceSectorList from './ColSourceSectors'
+import ErrorMsg from '../../../components/ErrorMsg';
+
 import _ from "lodash";
+
+const TabPane = Tabs.TabPane;
 
 const columns = [
   {
@@ -86,13 +91,37 @@ class ColSourceList extends React.Component {
     }
   };
 
+  deleteSource = (source) => {
+
+  }
+
+  deleteSource = (source) =>  {
+    console.log(source)
+    axios.delete(`${config.dataApi}colsource/${source.key}`)
+        .then(()=>{
+            _.remove(this.state.data, {
+                key: source.key
+            });
+            this.setState({...this.state.data}, ()=>{
+                notification.open({
+                    message: 'Source deleted',
+                    description: `${source.title} (${source.alias}) was deleted`
+                });
+            });
+        })
+        .catch(err => {
+          this.setState({ error: err });
+        }); 
+}
+
   render() {
     const { data, dataset, editSource, loading, error } = this.state;
     const { datasetKey } = this.props;
 
     return (
       <div>
-        {error && <Alert message={error.message} type="error" />}
+        {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+
 
         {!editSource && (
           <Button
@@ -135,50 +164,55 @@ class ColSourceList extends React.Component {
         {!error && (
           <Table
             expandedRowRender={record => (
-              <div>
-                <Row>
-                  <Col span={18}>
-                    {" "}
-                    <Switch
-                      checked={
-                        _.get(this.state, "editSource.key") === record.key
-                      }
-                      onChange={checked => this.setEditSource(checked, record)}
-                      checkedChildren="Cancel"
-                      unCheckedChildren="Edit"
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <Button>Delete</Button>
-                  </Col>
-                </Row>
-
-                {_.get(this.state, "editSource.key") === record.key && (
-                  <ColSourceMetaDataForm data={record} />
-                )}
-                {_.get(this.state, "editSource.key") !== record.key && (
+              <Tabs defaultActiveKey="1" >
+                <TabPane tab="Meta Data" key="1">
                   <Row>
-                    <Col span={4} />
-                    <Col span={16}>
-                      <List
-                        itemLayout="horizontal"
-                        dataSource={_.map(record, function(value, key) {
-                          return { key: key, value: value };
-                        })}
-                        renderItem={item => (
-                          <List.Item>
-                            <List.Item.Meta
-                              title={item.key}
-                              description={item.value}
-                            />
-                          </List.Item>
-                        )}
+                    <Col span={4}></Col>
+                    <Col span={14}>
+                      <Switch
+                        checked={
+                          _.get(this.state, "editSource.key") === record.key
+                        }
+                        onChange={checked => this.setEditSource(checked, record)}
+                        checkedChildren="Cancel"
+                        unCheckedChildren="Edit"
                       />
                     </Col>
-                    <Col span={4} />
+                    <Col span={6}>
+                      <Button type="danger" onClick={()=>this.deleteSource(record)}>Delete</Button>
+                    </Col>
                   </Row>
-                )}
-              </div>
+
+                  {_.get(this.state, "editSource.key") === record.key && (
+                    <ColSourceMetaDataForm data={record} />
+                  )}
+                  {_.get(this.state, "editSource.key") !== record.key && (
+                    <Row>
+                      <Col span={4} />
+                      <Col span={16}>
+                        <List
+                          itemLayout="horizontal"
+                          dataSource={_.map(record, function (value, key) {
+                            return { key: key, value: value };
+                          })}
+                          renderItem={item => (
+                            <List.Item>
+                              <List.Item.Meta
+                                title={item.key}
+                                description={item.value}
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      </Col>
+                      <Col span={4} />
+                    </Row>
+                  )}
+                </TabPane>
+                <TabPane tab="Sectors" key="2">
+                  <ColSourceSectorList sourceKey={record.key} datasetKey={datasetKey}></ColSourceSectorList>
+                </TabPane>
+              </Tabs>
             )}
             columns={columns}
             dataSource={data}

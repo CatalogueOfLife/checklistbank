@@ -43,7 +43,7 @@ class ColTreeNode extends React.Component {
     }
 
     render = () => {
-        const { taxon, isMapped, hasPopOver } = this.props;
+        const { taxon, isMapped, hasPopOver, isUpdating } = this.props;
         const { mode } = this.state;
         const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus"
         const style = (this.props.isMapped) ? { color: 'green' } : {};
@@ -63,7 +63,9 @@ class ColTreeNode extends React.Component {
                         <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.rank}: </span>
                         {!nameIsItalic && <span style={style}>{taxon.name}</span>}
                         {nameIsItalic && <span style={style}><em>{taxon.name}</em> {taxon.authorship}</span>}
+                        {mode === 'modify' && !_.isUndefined(taxon.speciesCount) && <span> • {taxon.speciesCount} {!_.isUndefined(taxon.speciesEstimate) && <span> of {taxon.speciesEstimate} est. </span>}living species</span>}
                         {isMapped && <span> <Icon type="link"></Icon></span>}
+                        {isUpdating && <span> <Icon type="sync" spin /></span>}
                         {taxon.status !== 'accepted' && <Tag color="red" style={{ marginLeft: '6px' }}>{taxon.status}</Tag>}
                     </Popconfirm>
                 </Popover>}
@@ -72,7 +74,9 @@ class ColTreeNode extends React.Component {
                         <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.rank}: </span>
                         {!nameIsItalic && <span style={style}>{taxon.name}</span>}
                         {nameIsItalic && <span style={style}><em>{taxon.name}</em> {taxon.authorship}</span>}
+                        {mode === 'modify' && !_.isUndefined(taxon.speciesCount) && <span> • {taxon.speciesCount} {!_.isUndefined(taxon.speciesEstimate) && <span> of {taxon.speciesEstimate} est. </span>}living species</span>}
                         {isMapped && <span> <Icon type="link"></Icon></span>}
+                        {isUpdating && <span> <Icon type="sync" spin /></span>}
                         {taxon.status !== 'accepted' && <Tag color="red" style={{ marginLeft: '6px' }}>{taxon.status}</Tag>}
                     </Popconfirm>}
 
@@ -165,12 +169,20 @@ class ColTree extends React.Component {
         /*
        This is where sector mapping should be posted to the server
        */
+      node.props.dataRef.title = (<ColTreeNode
+        taxon={node.props.title.props.taxon}
+        datasetKey={this.props.dataset.key}
+        isUpdating={true}
+        confirmVisible={false}
+    ></ColTreeNode>)
+    this.setState({ ...this.state.treeData });
         this.props.attachFn(node, dragNode).then((res) => {
 
             node.props.dataRef.title = (<ColTreeNode
                 taxon={node.props.title.props.taxon}
                 datasetKey={this.props.dataset.key}
                 isMapped={true}
+                isUpdating={false}
                 confirmVisible={false}
             ></ColTreeNode>)
 
