@@ -1,13 +1,15 @@
 import React from "react";
-import { Tree, Popover, Spin, Tag, Alert, Switch, notification } from "antd";
+import { Tree, Spin, Tag, Alert, AutoComplete, Select } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
 import history from "../../../history";
 import ErrorMsg from "../../../components/ErrorMsg";
+import ChildLessRootsTable from './ChildLessRootsTable'
 
 const TreeNode = Tree.TreeNode;
-
+//const Option = AutoComplete.Option;
+const Option = Select.Option;
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
@@ -52,6 +54,7 @@ class TreeExplorer extends React.Component {
     this.loadRoot = this.loadRoot.bind(this);
     this.onLoadData = this.onLoadData.bind(this);
     this.renderTreeNodes = this.renderTreeNodes.bind(this);
+    this.handleRootChange = this.handleRootChange.bind(this)
     this.state = {
       rootLoading: true,
       treeData: []
@@ -64,7 +67,6 @@ class TreeExplorer extends React.Component {
 
   loadRoot = () => {
     const { id, defaultExpandKey } = this.props;
-    const that = this;
     var defaultExpandedNodes;
     let p = defaultExpandKey
       ? axios(`${config.dataApi}dataset/${id}/tree/${defaultExpandKey}`)
@@ -79,7 +81,8 @@ class TreeExplorer extends React.Component {
             title: <ColTreeNode taxon={tx} datasetKey={id} />,
             key: tx.id,
             childOffset: 0,
-            childCount: tx.childCount
+            childCount: tx.childCount,
+            taxon: tx
           };
         });
         if (defaultExpanded) {
@@ -96,8 +99,9 @@ class TreeExplorer extends React.Component {
             let node = {
               title: <ColTreeNode taxon={tx} datasetKey={id} />,
               key: tx.id,
-              childOffset: 0,
-              childCount: tx.childCount
+              childCount: tx.childCount,
+              taxon: tx
+
             };
             root.children = [node];
             root = node;
@@ -108,38 +112,42 @@ class TreeExplorer extends React.Component {
 
       .then(treeData => {
         if (defaultExpandedNodes && defaultExpandKey) {
-          that.setState({
-            treeData,
+          this.setState({
+            treeData: treeData.filter(r => r.childCount > 0),
+            childlessRoots: treeData.filter(r => r.childCount === 0).map(t => t.taxon),
             rootLoading: false,
             defaultExpandAll: false,
             defaultExpandedKeys: defaultExpandedNodes
           });
         } else {
-          that.setState({
-            treeData,
-            rootLoading: false,
-            defaultExpandAll: treeData.length < 10
-          });
+
+            this.setState({
+              treeData: treeData.filter(r => r.childCount > 0),
+              childlessRoots: treeData.filter(r => r.childCount === 0).map(t => t.taxon),
+              rootLoading: false,
+              defaultExpandAll: treeData.length < 10
+            });
+          
         }
       })
       .catch(err => {
-        that.setState({ error: err });
+        this.setState({ error: err });
       });
   };
 
   onLoadData = treeNode => {
     const { id } = this.props;
+    console.log(encodeURIComponent(treeNode.props.eventKey))
     return axios(
-      `${config.dataApi}dataset/${id}/tree/${treeNode.props.eventKey}/children`
+      `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(treeNode.props.eventKey)}/children`
     ).then(res => {
       treeNode.props.dataRef.children = _.map(res.data, tx => {
         return {
           title: <ColTreeNode taxon={tx} datasetKey={id} />,
           key: tx.id,
-          childOffset: treeNode.props.dataRef.childOffset,
           childCount: tx.childCount,
           parent: treeNode.props.dataRef,
-          name: tx.name
+          taxon: tx
         };
       });
 
@@ -169,19 +177,25 @@ class TreeExplorer extends React.Component {
       );
     });
   };
-
+  handleRootChange = (value, children) => {
+    this.setState({treeData: children.map((c)=> { return c.props.taxon})})
+  }
   render() {
     const {
       rootLoading,
       defaultExpandAll,
       defaultExpandedKeys,
+      childlessRoots,
       error
     } = this.state;
-    const { defaultExpandKey } = this.props;
+    const { defaultExpandKey, id } = this.props;
+
     const defaultSelectedKeys = defaultExpandKey ? [defaultExpandKey] : null;
     return (
       <div>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {childlessRoots && childlessRoots.length > 0 && <Alert style={{marginBottom: '10px'}} message={`There are ${childlessRoots.length} root taxa with no children in this dataset. They are listed below the tree`} type="warning" />}
+      
 
         {!error && rootLoading && <Spin />}
         {!error &&
@@ -196,6 +210,8 @@ class TreeExplorer extends React.Component {
               {this.renderTreeNodes(this.state.treeData)}
             </Tree>
           )}
+
+          {childlessRoots && childlessRoots.length > 0 && <ChildLessRootsTable datasetKey={id} data={childlessRoots}></ChildLessRootsTable>}
       </div>
     );
   }

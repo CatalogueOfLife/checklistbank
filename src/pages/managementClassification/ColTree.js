@@ -129,7 +129,7 @@ class ColTree extends React.Component {
     }
 
     loadRoot = () => {
-        const { dataset: { key } } = this.props;
+        const { treeType, dataset: { key } } = this.props;
         let id = key;
         axios(`${config.dataApi}dataset/${id}/tree`)
             .then((values) => {
@@ -137,8 +137,7 @@ class ColTree extends React.Component {
                 let treeData = _.map(mainTreeData, (tx) => {
                     return { title: <ColTreeNode taxon={tx} datasetKey={id} confirmVisible={false} hasPopOver={this.props.treeType === 'mc'}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount }
                 })
-
-                this.setState({ treeData: treeData, error: null })
+                this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: treeType !== 'mc' && treeData.length < 10, error: null })
             })
             .catch((err) => {
                 this.setState({ treeData: [], error: err });
@@ -150,7 +149,7 @@ class ColTree extends React.Component {
         const { dataset: { key } } = this.props;
         let id = key;
 
-        return axios(`${config.dataApi}dataset/${id}/tree/${treeNode.props.eventKey}/children`)
+        return axios(`${config.dataApi}dataset/${id}/tree/${encodeURIComponent(treeNode.props.eventKey)}/children`)
             .then((res) => {
                 treeNode.props.dataRef.children = _.map(res.data, (tx) => {
                     return { title: <ColTreeNode confirmVisible={false} taxon={tx} datasetKey={id} isMapped={treeNode.props.title.props.isMapped} hasPopOver={this.props.treeType === 'mc'}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount, parent: treeNode.props.dataRef, name: tx.name }
@@ -306,13 +305,13 @@ class ColTree extends React.Component {
 
     render() {
 
-        const { error, treeData } = this.state;
-        const { draggable, onDragStart, treeType } = this.props;
+        const { error, treeData, defaultExpandAll } = this.state;
+        const { draggable, onDragStart } = this.props;
         return (
 
             <div>  {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
-                {treeData.length > 0 && <Tree showLine={true} defaultExpandAll={treeType !== 'mc'} draggable={draggable} onDrop={this.handleDrop} onDragStart={onDragStart} loadData={this.onLoadData}>
+                {treeData.length > 0 && <Tree showLine={true} defaultExpandAll={defaultExpandAll} draggable={draggable} onDrop={this.handleDrop} onDragStart={onDragStart} loadData={this.onLoadData}>
                     {this.renderTreeNodes(treeData)}
                 </Tree>}
             </div>

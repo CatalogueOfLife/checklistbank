@@ -34,11 +34,6 @@ const columns = [
     title: "Coverage",
     dataIndex: "coverage",
     key: "coverage"
-  },
-  {
-    title: "Created",
-    dataIndex: "created",
-    key: "created"
   }
 ];
 

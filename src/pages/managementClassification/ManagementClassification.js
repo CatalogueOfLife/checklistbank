@@ -47,13 +47,13 @@ class ManagementClassification extends React.Component {
                 this.setState({ datasets: [] })
             })
     }
-    getSectorInfo = (root, attachment) => {
+    getSectorInfo = (attachment, root) => {
         // get the ColSources for the dataset  
         const { datasetKey } = this.state;
         return axios.all([
             axios(`${config.dataApi}colsource?datasetKey=${datasetKey}`),
-            axios(`${config.dataApi}dataset/${datasetKey}/name/${attachment.props.dataRef.key}`),
-            axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/name/${root.props.dataRef.key}`),
+            axios(`${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(attachment.props.dataRef.key)}`),
+            axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/name/${encodeURIComponent(root.props.dataRef.key)}`),
         ])
             .then(axios.spread((colsources, attachmentName, rootName) => {
                 console.log(colsources.data[0])
