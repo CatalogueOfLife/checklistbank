@@ -32,7 +32,7 @@ class ColSourceSectorList extends React.Component {
             .then(res => {
                 const promises = [];
                 _.each(res.data, (t) => {
-                    promises.push(axios(`${config.dataApi}dataset/${datasetKey}/tree/${t.attachment.id}`)
+                    promises.push(axios(`${config.dataApi}dataset/${datasetKey}/tree/${t.root.id}`)
                         .then((path) => {
                             t.path = path.data
                         }))
