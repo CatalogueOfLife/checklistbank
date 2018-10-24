@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import { Tabs } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetColSources from "./datasetPageTabs/DatasetColSources";
+import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
 
 import TreeExplorer from "./datasetPageTabs/TreeExplorer";
 import Layout from "../../components/Layout2";
@@ -68,6 +69,7 @@ class DatasetPage extends React.Component {
       >
         <DatasetTabs selectedItem={section} datasetKey={datasetKey} />
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
+        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
         {section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />

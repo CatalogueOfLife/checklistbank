@@ -20,7 +20,7 @@ const columns = [
     key: "title",
     render: (text, record) => {
       return (
-        <NavLink to={{ pathname: `/dataset/${record.key}/meta` }} exact={true}>
+        <NavLink to={{ pathname: `/dataset/${record.key}/metrics` }} exact={true}>
           {text}
         </NavLink>
       );
