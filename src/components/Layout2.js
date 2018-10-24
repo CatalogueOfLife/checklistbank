@@ -87,6 +87,11 @@ class AppLayout extends Component {
 
                             {selectedMenuItem === 'datasetKey' && this.props.selectedDataset &&
                                 <SubMenu  key="datasetKey" title={<span><Icon type="laptop" />Dataset ID: {_.get(this.props, 'selectedDataset.key')}</span>}>
+                                    <Menu.Item key="metrics">
+                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/metrics` }}>
+                                            Import metrics
+                                    </NavLink>
+                                    </Menu.Item>
                                     <Menu.Item key="meta">
                                         <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/meta` }}>
                                             Meta data
