@@ -111,7 +111,7 @@ class TaxonPage extends React.Component {
     const { match: { params: { key, taxonKey } } } = this.props;
     const { datasetLoading, taxonLoading, classificationLoading, synonymsLoading, infoLoading, dataset, taxon, synonyms, info, classification, datasetError, taxonError, synonymsError, classificationError, infoError } = this.state;
     return (
-      <Layout selectedMenuItem="dataset" selectedDataset={dataset} selectedTaxon={taxon}>
+      <Layout selectedMenuItem="datasetKey" selectedDataset={dataset} selectedTaxon={taxon} section="taxon">
         {taxon && <h1>Taxon details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
 
         <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions', 'classification']} >

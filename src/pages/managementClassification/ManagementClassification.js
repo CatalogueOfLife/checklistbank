@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, notification,Input, Button, AutoComplete, Alert } from 'antd'
+import { Row, Col, notification,Input, Button, AutoComplete, Alert, Card } from 'antd'
 import _ from 'lodash'
 import Layout from '../../components/Layout'
 import axios from 'axios';
@@ -121,48 +121,21 @@ class ManagementClassification extends React.Component {
 
         return (
             <Layout selectedMenuItem="managementclassification">
-                <Row>           <Alert style={{ marginBottom: '10px' }} message="This page is under development. Actions are not yet send to the backend. Some inconsistency may occur..." type="warning" /></Row>
-                <Row><Col span={3}>
+                <Row style={{paddingLeft: '16px'}}>
                     <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }}>Modify MC</Button>
-                </Col>
-                    <Col span={3}>
-                        <Button type={this.state.mode === 'attach' ? 'primary' : ''} onClick={() => this.toggleMode('attach')} size="large" style={{ marginBottom: '20px' }}>Attach sectors</Button>
-                    </Col>
-                    <Col span={18}>
-                    </Col>
+                    <Button style={{marginLeft: '10px', marginBottom: '20px'}} type={this.state.mode === 'attach' ? 'primary' : ''} onClick={() => this.toggleMode('attach')} size="large" >Attach sectors</Button>
 
                 </Row>
-                <Row>
-                    <Col span={6}>
-                        <h4>Management Classification</h4>
-                    </Col><Col span={6}>
-                        <Search
+                <Row style={{padding: '10px', height:'100%'}}>
+                    <Col span={12} style={{padding: '10px'}}>
+                    <Card >
+                    <h4>Management Classification</h4>  <Search
                             placeholder="Find taxon (not yet functional)"
                             onSearch={value => console.log(value)}
-                            style={{ width: 200 }}
+                            style={{  width: '100%' }}
                         />
-                    </Col><Col span={6}>
-                        <AutoComplete
-                            dataSource={this.state.datasets}
-                            style={{ width: 200 }}
-                            onSelect={this.onSelectDataset}
-                            onSearch={this.getDatasets}
-                            placeholder="Find dataset"
-                        >
-                            {this.state.datasets && this.state.datasets.map((o) => {
-                                return <Option key={o.key}>{o.title}</Option>
-                            })}
-                        </AutoComplete>
-                    </Col><Col span={6}>
-                        <Search
-                            placeholder="Find taxon (not yet functional)"
-                            onSearch={value => console.log(value)}
-                            style={{ width: 200 }}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12} style={{ overflowY: 'scroll', height: '800px' }}>
+
+                        <div style={{ overflowY: 'scroll', height: '800px' }}>
                         <ColTree 
                             dataset={MANAGEMENT_CLASSIFICATION}
                             treeType='mc'
@@ -172,10 +145,31 @@ class ManagementClassification extends React.Component {
                             draggable={true}
                             ></ColTree>
                        
+                    </div>
+                    </Card>
+                    
                     </Col>
-
-                    <Col span={12} style={{ overflowY: 'scroll', height: '800px' }}>
-                        {!this.state.selectedDataset && <h3>No dataset selected</h3>}
+                    <Col span={12} style={{padding: '10px'}}>
+                    <Card >
+                    <AutoComplete
+                            dataSource={this.state.datasets}
+                            style={{ width: '100%' }}
+                            onSelect={this.onSelectDataset}
+                            onSearch={this.getDatasets}
+                            placeholder="Find dataset"
+                        >
+                            {this.state.datasets && this.state.datasets.map((o) => {
+                                return <Option key={o.key}>{o.title}</Option>
+                            })}
+                        </AutoComplete>
+                        <br/>
+                        {this.state.selectedDataset &&  <Search
+                            placeholder="Find taxon (not yet functional)"
+                            onSearch={value => console.log(value)}
+                            style={{ width: '100%' }}
+                        />}
+                            <div style={{ overflowY: 'scroll', height: '800px' }}>
+                        
                        {this.state.selectedDataset && <ColTree 
                             dataset={this.state.selectedDataset}
                             treeType='gsd'
@@ -183,6 +177,8 @@ class ManagementClassification extends React.Component {
                             draggable={this.state.mode === 'attach'}
                             ></ColTree>}
 
+                    </div>
+                    </Card>
                     </Col>
                 </Row>
 

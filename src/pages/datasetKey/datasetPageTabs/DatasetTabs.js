@@ -12,19 +12,19 @@ class DatasetTabs extends React.Component {
       >
         <Menu.Item key="metrics">
           <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/metrics` }}>
-            Import metrics
+            Import Metrics
           </NavLink>
         </Menu.Item>
         <Menu.Item key="meta">
           <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/meta` }}>
-            View/Edit Meta Data
+            Meta Data
           </NavLink>
         </Menu.Item>
         <Menu.Item key="sources">
           <NavLink
             to={{ pathname: `/dataset/${this.props.datasetKey}/sources` }}
           >
-            Col Sources
+            CoL Sources
           </NavLink>
         </Menu.Item>
         <Menu.Item key="classification">
@@ -38,7 +38,7 @@ class DatasetTabs extends React.Component {
         </Menu.Item>
         <Menu.Item key="names">
           <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/names` }}>
-            Search names
+            Search Names
           </NavLink>
         </Menu.Item>
       </Menu>

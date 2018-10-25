@@ -12,9 +12,9 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const classes = {
     logo: {
-        width: '120px',
+        width: '150px',
         height: '31px',
-        margin: '0px 24px 0px 0',
+        margin: '0px 30px 0px 0',
         float: 'left'
     }
 }
@@ -23,13 +23,16 @@ const classes = {
 class AppLayout extends Component {
     constructor(props) {
         super(props);
-        
+       
+    
       }
 
     render() {
 
         const { children, selectedMenuItem, selectedDataset, selectedTaxon, section } = this.props;
-       const defaultSelected = (selectedDataset) ? [section] : [selectedMenuItem]
+      
+        console.log(section)
+       
         return (
             <Layout className="layout" style={{height:"100vh"}}>
                 <Header>
@@ -42,22 +45,22 @@ class AppLayout extends Component {
                     <Menu
                         theme="dark"
                         mode="horizontal"
-                        defaultOpenKeys={[selectedMenuItem]}
-                        selectedKeys={[selectedMenuItem]}
+                        defaultSelectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
-                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                    <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
                                 Management classification
                                     </NavLink></Menu.Item>
+                  
                         <Menu.Item key="dataset">
                             <NavLink to={{ pathname: '/dataset' }}>
-                                Dataset
+                                All datasets
                 </NavLink>
 
                         </Menu.Item>
                         <Menu.Item key="datasetCreate">
                             <NavLink to={{ pathname: '/dataset/create' }}>
-                                New dataset
+                            Register new dataset
                 </NavLink>
 
                         </Menu.Item>
@@ -68,52 +71,25 @@ class AppLayout extends Component {
                     <Sider width={230} style={{ background: '#fff' }}>
                         <Menu
                             mode="inline"
-                            defaultOpenKeys={[selectedMenuItem]}
-                            defaultSelectedKeys={defaultSelected}
+                            defaultOpenKeys={['dataset']}
+                            defaultSelectedKeys={[selectedMenuItem]}
                             style={{ height: '100%', borderRight: 0 }}
-                        >
-                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
+                        >   
+                         <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
                                 Management classification
                                     </NavLink></Menu.Item>
                             <SubMenu key="dataset" title={<span><Icon type="file-text" />Dataset</span>}>
                                 <Menu.Item key="dataset"><NavLink to={{ pathname: '/dataset' }}>
-                                    Show all
+                                All datasets
                                     </NavLink></Menu.Item>
                                 <Menu.Item key="datasetCreate"><NavLink to={{ pathname: '/dataset/create' }}>
-                                    Import new dataset
+                                    Register new dataset
                                     </NavLink></Menu.Item>
 
                             </SubMenu>
 
-                            {selectedMenuItem === 'datasetKey' && this.props.selectedDataset &&
-                                <SubMenu  key="datasetKey" title={<span><Icon type="laptop" />Dataset ID: {_.get(this.props, 'selectedDataset.key')}</span>}>
-                                    <Menu.Item key="metrics">
-                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/metrics` }}>
-                                            Import metrics
-                                    </NavLink>
-                                    </Menu.Item>
-                                    <Menu.Item key="meta">
-                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/meta` }}>
-                                            Meta data
-                                    </NavLink>
-                                    </Menu.Item>
-                                    <Menu.Item key="sources">
-                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/sources` }}>
-                                            Col Sources
-                                    </NavLink>
-                                    </Menu.Item>
-                                    <Menu.Item key="classification">
-                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/classification` }}>
-                                            Classification
-                                    </NavLink>
-                                    </Menu.Item>
-                                    <Menu.Item key="names">
-                                        <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/names` }}>
-                                            Names
-                                    </NavLink>
-                                    </Menu.Item>
-                                </SubMenu>}
-                            
+
+                     
                         </Menu>
                     </Sider>
                     <Content style={{ padding: '0 50px' }}>

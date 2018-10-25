@@ -11,7 +11,7 @@ import DatasetColSources from "./datasetPageTabs/DatasetColSources";
 import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
 
 import TreeExplorer from "./datasetPageTabs/TreeExplorer";
-import Layout from "../../components/Layout2";
+import Layout from "../../components/Layout";
 import history from "../../history";
 import DatasetTabs from "./datasetPageTabs/DatasetTabs";
 
