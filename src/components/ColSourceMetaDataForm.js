@@ -137,11 +137,21 @@ class ColSourceMetaDataForm extends React.Component {
 
         {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
 
-
         <FormItem
           {...formItemLayout}
-          label="Title"
-          help="Full name of the source. Defaults to dataset title."
+          label="Source ID"
+          help="A unique ID assigned to the dataset by the CoL software"
+        >
+          {getFieldDecorator('key', {
+            initialValue: (_.get(data, 'key')) ? _.get(data, 'key') : '',
+          })(
+            <Input disabled/>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Full Name"
+          help="Full title of Source Database, as it is supplied by the custodian"
         >
           {getFieldDecorator('title', {
             initialValue: (_.get(data, 'title')) ? _.get(data, 'title') : '',
@@ -154,8 +164,8 @@ class ColSourceMetaDataForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Alias"
-          help="Short alias for the source to show in trees etc."
+          label="Short Name"
+          help="Abbreviated or shortened memorable name of Source Database intended for easy use in day-to-day communications, as supplied by the custodian"
         >
           {getFieldDecorator('alias', {
             initialValue: (_.get(data, 'alias')) ? _.get(data, 'alias') : '',
@@ -168,8 +178,72 @@ class ColSourceMetaDataForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Description"
-          help="Free text describing the source supporting markdown formatting"
+          label="Version"
+          help="Number or code, plus date, where Month and Year are obligatory) provided by the custodian; style specified by the CoL editor and custodian of Source Database"
+        >
+          {getFieldDecorator('version', {
+            initialValue: (_.get(data, 'version')) ? _.get(data, 'version') : '',
+
+          })(
+            <Input />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Release Date"
+          help="Original date (Year-Month-Date) of issue of the version for the Catalogue of Life"
+        >
+          {getFieldDecorator('released', {
+            initialValue: (_.get(data, 'released')) ? moment(_.get(data, 'released')) : undefined,
+
+          })(
+            <DatePicker  />
+
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Authors/Editors"
+          help="Name(s) of Source Database editor or author; as specified by the custodian"
+        >
+          {getFieldDecorator('authorsAndEditors', {
+            initialValue: (_.get(data, 'authorsAndEditors[0]')) ? _.get(data, 'authorsAndEditors[0]') : '',
+
+          })(
+            <Input />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Coverage"
+          help="Global vs regional sources"
+        >
+          {getFieldDecorator('coverage', {
+            initialValue: (_.get(data, 'coverage')) ? _.get(data, 'coverage') : ''
+          })(
+            <Select style={{ width: 200 }}>
+              {datasettypeEnum.map((f) => {
+                return <Option key={f} value={f}>{f}</Option>
+              })}
+            </Select>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="English name of the group"
+          help="English name of the taxon covered by the Source Database"
+        >
+          {getFieldDecorator('group', {
+            initialValue: (_.get(data, 'group')) ? _.get(data, 'group') : '',
+
+          })(
+            <Input />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Abstract"
+          help="Standardised short database description (text of 80-90 words) for use in the Catalogue of Life and supporting materials, such as the booklet published with the Annual Checklis"
         >
           {getFieldDecorator('description', {
             initialValue: (_.get(data, 'description')) ? _.get(data, 'description') : ''
@@ -180,13 +254,25 @@ class ColSourceMetaDataForm extends React.Component {
         <FormItem
           {...formItemLayout}
           label="Organisation"
-          help="Organisation which has compiled or is owning the source"
+          help="Name of the Organisation that hosts the Source Database"
         >
           {getFieldDecorator('organisation', {
             initialValue: (_.get(data, 'organisation')) ? _.get(data, 'organisation') : '',
 
           })(
             <Input />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Home Page"
+          help="Internet address of the project/resource website"
+        >
+          {getFieldDecorator('homepage', {
+            initialValue: (_.get(data, 'homepage')) ? _.get(data, 'homepage') : '',
+
+          })(
+            <Input type="url" />
           )}
         </FormItem>
         <FormItem
@@ -203,93 +289,14 @@ class ColSourceMetaDataForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Authors and editors"
-          help="Optional author(s) and editor(s) of the source"
-        >
-          {getFieldDecorator('authorsAndEditors', {
-            initialValue: (_.get(data, 'authorsAndEditors[0]')) ? _.get(data, 'authorsAndEditors[0]') : '',
-
-          })(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Version"
-          help="Latest version number of the source used in the Catalogue of Life"
-        >
-          {getFieldDecorator('version', {
-            initialValue: (_.get(data, 'version')) ? _.get(data, 'version') : '',
-
-          })(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Released"
-          help="Latest release date of the source used in the Catalogue of Life"
-        >
-          {getFieldDecorator('released', {
-            initialValue: (_.get(data, 'released')) ? moment(_.get(data, 'released')) : undefined,
-
-          })(
-            <DatePicker  />
-
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Home page"
-          help="Homepage URL of the source"
-        >
-          {getFieldDecorator('homepage', {
-            initialValue: (_.get(data, 'homepage')) ? _.get(data, 'homepage') : '',
-
-          })(
-            <Input type="url" />
-          )}
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label="Group"
-          help="Taxonomic group in english language"
-        >
-          {getFieldDecorator('group', {
-            initialValue: (_.get(data, 'group')) ? _.get(data, 'group') : '',
-
-          })(
-            <Input />
-          )}
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label="Coverage"
-          help="Global vs regional sources"
-        >
-          {getFieldDecorator('coverage', {
-            initialValue: (_.get(data, 'coverage')) ? _.get(data, 'coverage') : ''
-          })(
-            <Select style={{ width: 200 }}>
-              {datasettypeEnum.map((f) => {
-                return <Option key={f} value={f}>{f}</Option>
-              })}
-            </Select>
-          )}
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label="Citation"
-          help="Full bibliographic citation to be used"
+          label="Bibliographic Citation"
+          help="Full bibliographic citation to be used, filled automatically by the software."
         >
           {getFieldDecorator('citation', {
             initialValue: (_.get(data, 'citation')) ? _.get(data, 'citation') : '',
 
           })(
-            <Input />
+            <Input disabled/>
           )}
         </FormItem>
 
