@@ -37,19 +37,19 @@ class DatasetMeta extends React.Component {
   render() {
     const { data, editMode } = this.state;
     const listData = _.map(data, function(value, key) {
-      return { key: key, value: value };
+      return { key: _.startCase(key), value: value };
     });
     return (
       <div>
         <Row>
           <Col span={4} />
           <Col span={16}>
-            <Switch
+          {data && data.origin !== 'external' &&  <Switch
               checked={editMode}
               onChange={this.setEditMode}
               checkedChildren="Cancel"
               unCheckedChildren="Edit"
-            />
+            /> }
           </Col>
           <Col span={4} />
         </Row>

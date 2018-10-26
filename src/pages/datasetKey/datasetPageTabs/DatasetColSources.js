@@ -193,7 +193,7 @@ class ColSourceList extends React.Component {
                           renderItem={item => (
                             <List.Item>
                               <List.Item.Meta
-                                title={item.key}
+                                title={_.startCase(item.key)}
                                 description={item.value}
                               />
                             </List.Item>

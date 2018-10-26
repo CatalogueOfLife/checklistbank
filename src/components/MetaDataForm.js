@@ -27,7 +27,8 @@ class RegistrationForm extends React.Component {
       autoCompleteResult: [],
       frequencyEnum: [],
       datasettypeEnum: [],
-      dataformatEnum: []
+      dataformatEnum: [],
+      datasetoriginEnum: []
     };
   }
 
@@ -35,10 +36,11 @@ class RegistrationForm extends React.Component {
     this.getFrequency();
     this.getDatasetType();
     this.getDataFormatType();
+    this.getDatasetOrigin();
   }
   getFrequency = () => {
 
-    axios(`${config.dataApi}/vocab/frequency`)
+    axios(`${config.dataApi}vocab/frequency`)
       .then((res) => {
 
         this.setState({ frequencyEnum: res.data, frequencyError: null })
@@ -51,7 +53,7 @@ class RegistrationForm extends React.Component {
 
   getDatasetType = () => {
 
-    axios(`${config.dataApi}/vocab/datasettype`)
+    axios(`${config.dataApi}vocab/datasettype`)
       .then((res) => {
 
         this.setState({ datasettypeEnum: res.data, datasettypeError: null })
@@ -64,13 +66,26 @@ class RegistrationForm extends React.Component {
 
   getDataFormatType = () => {
 
-    axios(`${config.dataApi}/vocab/dataformat`)
+    axios(`${config.dataApi}vocab/dataformat`)
       .then((res) => {
 
         this.setState({ dataformatEnum: res.data, dataformatError: null })
       })
       .catch((err) => {
         this.setState({ dataformatEnum: [], dataformatError: err })
+      })
+
+  }
+
+  getDatasetOrigin = () => {
+
+    axios(`${config.dataApi}vocab/datasetorigin`)
+      .then((res) => {
+
+        this.setState({ datasetoriginEnum: res.data, datasetoriginError: null })
+      })
+      .catch((err) => {
+        this.setState({ datasetoriginEnum: [], datasetoriginError: err })
       })
 
   }
@@ -118,7 +133,7 @@ class RegistrationForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { frequencyEnum , datasettypeEnum, dataformatEnum, submissionError} = this.state;
+    const { datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum, submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
 
     const formItemLayout = {
       labelCol: {
@@ -151,8 +166,9 @@ class RegistrationForm extends React.Component {
       <Form onSubmit={this.handleSubmit} style={{paddingTop: '12px'}}>
       
       {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
-
-
+      {frequencyError && <FormItem><Alert message={<ErrorMsg error={frequencyError}></ErrorMsg>} type="error" /></FormItem>}
+      {datasettypeError && <FormItem><Alert message={<ErrorMsg error={datasettypeError}></ErrorMsg>} type="error" /></FormItem>}
+      {dataformatError && <FormItem><Alert message={<ErrorMsg error={dataformatError}></ErrorMsg>} type="error" /></FormItem>}
         <FormItem
           {...formItemLayout}
           label="Title"
@@ -168,7 +184,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Data access"
+          label="Data Access"
         >
           {getFieldDecorator('dataAccess', {
             initialValue: (_.get(data, 'dataAccess')) ? _.get(data, 'dataAccess') : '',
@@ -181,7 +197,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Import frequency"
+          label="Import Frequency"
         >
           {getFieldDecorator('importFrequency', {
             initialValue: (_.get(data, 'importFrequency')) ? _.get(data, 'importFrequency') : '',
@@ -199,7 +215,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Dataset type"
+          label="Dataset Type"
         >
           {getFieldDecorator('type', {
             initialValue: (_.get(data, 'type')) ? _.get(data, 'type') : ''
@@ -213,13 +229,27 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Data format"
+          label="Data Format"
         >
           {getFieldDecorator('dataFormat', {
             initialValue: (_.get(data, 'dataFormat')) ? _.get(data, 'dataFormat') : ''
           })(
             <Select style={{ width: 200 }}>
               {dataformatEnum.map((f) => {
+                return <Option key={f} value={f}>{f}</Option>
+              })}
+            </Select>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Dataset Origin"
+        >
+          {getFieldDecorator('origin', {
+            initialValue: (_.get(data, 'origin')) ? _.get(data, 'origin') : ''
+          })(
+            <Select style={{ width: 200 }}>
+              {datasetoriginEnum.map((f) => {
                 return <Option key={f} value={f}>{f}</Option>
               })}
             </Select>
@@ -237,7 +267,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Home page"
+          label="Home Page"
         >
           {getFieldDecorator('homepage', {
             initialValue: (_.get(data, 'homepage')) ? _.get(data, 'homepage') : '',
@@ -248,7 +278,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Logo url"
+          label="Logo Url"
         >
           {getFieldDecorator('logoUrl', {
             initialValue: (_.get(data, 'logoUrl')) ? _.get(data, 'logoUrl') : '',

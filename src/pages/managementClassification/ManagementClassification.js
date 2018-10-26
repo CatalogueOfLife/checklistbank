@@ -15,7 +15,7 @@ const Search = Input.Search;
 const Option = AutoComplete.Option;
 
 
-const MANAGEMENT_CLASSIFICATION = {key: 1000, title: 'Management Classification'};
+const MANAGEMENT_CLASSIFICATION = {key: 3, title: 'Management Classification'};
 
 
 

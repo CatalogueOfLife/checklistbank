@@ -17,7 +17,7 @@ class DatasetTabs extends React.Component {
         </Menu.Item>
         <Menu.Item key="meta">
           <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/meta` }}>
-            Meta Data
+            Metadata
           </NavLink>
         </Menu.Item>
         <Menu.Item key="sources">

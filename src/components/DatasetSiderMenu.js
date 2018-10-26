@@ -24,12 +24,12 @@ class DatasetSiderMenu extends Component {
                     <MenuItemGroup key="datasetKey" title={`Dataset ID: ${selectedDataset.key}`}>
                         <Menu.Item key="metrics">
                             <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/metrics` }}>
-                                Import metrics
+                                Import Metrics
                                     </NavLink>
                         </Menu.Item>
                         <Menu.Item key="meta">
                             <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/meta` }}>
-                                Meta data
+                                Metadata
                                     </NavLink>
                         </Menu.Item>
                         <Menu.Item key="sources">
