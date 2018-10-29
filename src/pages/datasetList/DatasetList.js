@@ -6,16 +6,16 @@ import { Table, Alert, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/Layout";
-import { Input, Select } from "antd";
 import moment from 'moment'
+import history from '../../history'
 
-const Search = Input.Search;
-const Option = Select.Option;
+import SearchBox from './SearchBox';
+import ColumnFilter from './ColumnFilter';
+
 const FormItem = Form.Item;
 
 const _ = require("lodash");
 
-const SORT_ORDERS = { ascend: "ASC", descend: "DESC" }
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -119,11 +119,14 @@ class DatasetList extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
+
     const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
+
     this.state = {
       data: [],
       excludeColumns: excludeColumns,
       columns: _.filter(columns, (v) => !_.includes(excludeColumns, v.key)),
+      search: _.get(this.props, 'location.search.q') || '',
       pagination: {
         pageSize: 150,
         current: 1
@@ -131,14 +134,30 @@ class DatasetList extends React.Component {
       loading: false
     };
   }
+  
 
   componentWillMount() {
-    this.getData();
+    let query = qs.parse(_.get(this.props, 'location.search'));
+    if(_.isEmpty(query)){
+      query = {limit: 150, offset: 0}
+      history.push({
+        pathname: '/dataset',
+        search: `?limit=150&offset=0`
+      })
+    }
+    this.getData(query || {limit: 150, offset: 0});
   }
+ 
 
   getData = (params = { limit: 150, offset: 0 }) => {
-    this.setState({ loading: true });
-
+    this.setState({ loading: true, params });
+    if(!params.q){
+      delete params.q
+    }
+    history.push({
+      pathname: '/dataset',
+      search: `?${qs.stringify(params)}`
+    })
     axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
       .then(res => {
         const pagination = { ...this.state.pagination };
@@ -149,7 +168,8 @@ class DatasetList extends React.Component {
           data: res.data.result,
           err: null,
           pagination
-        });
+        }); 
+
       })
       .catch(err => {
         this.setState({ loading: false, error: err, data: [] });
@@ -162,11 +182,11 @@ class DatasetList extends React.Component {
     this.setState({
       pagination: pager
     });
-    let query = {
+    let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
-    }
+    })
 
     if(sorter) {
       query.sortBy = (sorter.field === 'authorsAndEditors') ? 'authors' : sorter.field
@@ -176,44 +196,37 @@ class DatasetList extends React.Component {
     }
     this.getData(query);
   }
-  handleHideColumnChange = (excludeColumns) => {
 
-    localStorage.setItem('colplus_datasetlist_hide_columns', JSON.stringify(excludeColumns))
-    this.setState({excludeColumns, columns: _.filter(columns, (v) => !_.includes(excludeColumns, v.key)) })
-  }
+  
   render() {
-    const { data, loading, error, columns, excludeColumns } = this.state;
+    const { data, loading, error } = this.state;
 
     return (
       <Layout selectedMenuItem="dataset">
-        <Search
-          placeholder="input search text"
-          onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
-          enterButton
-          style={{ marginBottom: "10px", width: "50%" }}
-        />
+        <SearchBox
+        defaultValue={_.get(this.state, 'params.q')}
+        onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
+        >
+        
+        </SearchBox>
+       
          <FormItem
           style={{float: 'right'}}
          {...formItemLayout}
           label="Omit columns"
         >
-        <Select 
-        style={{width: '250px'}}
-        mode="multiple"
-        placeholder="Please select"
-        defaultValue={excludeColumns}
-        onChange={this.handleHideColumnChange}
-        >
-              {columns.map((f) => {
-                return <Option key={f.key} value={f.key}>{f.title}</Option>
-              })}
-            </Select>
+        <ColumnFilter columns={columns} onChange={
+          (columns)=> {
+            this.setState({columns})
+          }
+          }></ColumnFilter>
+        
             </FormItem>
         {error && <Alert message={error.message} type="error" />}
         {!error && (
         <Table
             size="middle"
-            columns={columns}
+            columns={this.state.columns}
             dataSource={data}
             loading={loading}
             pagination={this.state.pagination}

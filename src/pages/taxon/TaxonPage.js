@@ -132,7 +132,7 @@ class TaxonPage extends React.Component {
                 >
                   Homotypic
                 </p>
-                <SynonymTable data={synonyms.homotypic} style={{ marginBottom: 16 }}></SynonymTable>
+                <SynonymTable data={synonyms.homotypic} style={{ marginBottom: 16 }} datasetKey={key}></SynonymTable>
               </div>}
             {synonyms.heterotypic &&
               <div>
@@ -146,7 +146,7 @@ class TaxonPage extends React.Component {
                 >
                   Heterotypic
                 </p>
-                <SynonymTable data={synonyms.heterotypic} style={{ marginBottom: 16 }}></SynonymTable>
+                <SynonymTable data={synonyms.heterotypic} style={{ marginBottom: 16 }} datasetKey={key}></SynonymTable>
               </div>}
             {synonyms.misapplied &&
               <div>
