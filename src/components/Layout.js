@@ -39,7 +39,7 @@ class AppLayout extends Component {
     }
     render() {
 
-        const { children, selectedMenuItem, selectedDataset, selectedTaxon, section } = this.props;
+        const { children, selectedMenuItem, selectedDataset, selectedTaxon, selectedName, section } = this.props;
         const { defaultSelected } = this.state;
         return (
             <Layout className="layout" style={{ height: "100vh" }}>
@@ -77,7 +77,7 @@ class AppLayout extends Component {
                 </Header>
                 <Layout>
                     {selectedMenuItem === 'datasetKey' && this.props.selectedDataset && (this.props.section || selectedTaxon) &&
-                    <DatasetSiderMenu defaultSelected={this.props.section} selectedDataset={this.props.selectedDataset} selectedTaxon={selectedTaxon}></DatasetSiderMenu>}
+                    <DatasetSiderMenu defaultSelected={this.props.section} selectedDataset={this.props.selectedDataset} selectedTaxon={selectedTaxon} selectedName={selectedName}></DatasetSiderMenu>}
                     <Content style={{ padding: '0 50px', overflowY: 'scroll' }}>
                         {selectedDataset &&
                             <Breadcrumb style={{ margin: '16px 0' }}>
@@ -99,7 +99,12 @@ class AppLayout extends Component {
 
                                 {selectedTaxon && <Breadcrumb.Item>
                                     <NavLink to={{ pathname: '/dataset/' + selectedDataset.key + '/taxon/' + selectedTaxon.id }}>
-                                        {selectedTaxon.name.scientificName}
+                                        Taxon: {selectedTaxon.name.scientificName}
+                                    </NavLink>
+                                </Breadcrumb.Item>}
+                                {selectedName && <Breadcrumb.Item>
+                                    <NavLink to={{ pathname: '/dataset/' + selectedDataset.key + '/name/' + selectedName.id }}>
+                                        Name: {selectedName.scientificName}
                                     </NavLink>
                                 </Breadcrumb.Item>}
                             </Breadcrumb>}

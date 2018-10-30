@@ -90,7 +90,7 @@ class NamePage extends React.Component {
         if(nameListData.length > 0){
             nameListData.unshift({
                 value: <div>
-                {['rank','code', 'origin', 'type'].map((i) => (!_.isUndefined(name[i])) ? <Tag key={i}>{i} : {name[i]}</Tag> : ''
+                {['rank','code', 'origin', 'type'].map((i) => (!_.isUndefined(name[i])) ? <Tag key={i} color="blue">{i} : {name[i]}</Tag> : ''
                 )}
                 {['candidatus', 'available', 'legitimate', 'parsed'].map((i) => 
                 (!_.isUndefined(name[i])) ? <Tag key={i} color={(name[i] === true)? 'green' : 'red'}>{i} : {name[i].toString()}</Tag> : ''

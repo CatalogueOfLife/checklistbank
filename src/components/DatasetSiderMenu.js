@@ -12,7 +12,7 @@ class DatasetSiderMenu extends Component {
 
     render() {
 
-        const { selectedDataset, selectedTaxon, defaultSelected } = this.props;
+        const { selectedDataset, selectedTaxon, defaultSelected, selectedName } = this.props;
         return (
 
             <Sider width={230} style={{ background: '#fff' }}>
@@ -49,6 +49,9 @@ class DatasetSiderMenu extends Component {
                         </Menu.Item>
                         {selectedTaxon && <Menu.Item key="taxon" >
                             Taxon ID: {selectedTaxon.id}
+                        </Menu.Item>}
+                        {selectedName && <Menu.Item key="name" >
+                            Name ID: {selectedName.id}
                         </Menu.Item>}
                     </MenuItemGroup>
                 </Menu>
