@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Router, Route, Switch } from "react-router-dom";
+import PrivateRoute from './components/Auth/PrivateRoute'
 import { NavLink } from "react-router-dom";
 
 import history from './history';
@@ -9,6 +10,7 @@ import DatasetPage from './pages/datasetKey/DatasetPage'
 import DatasetCreate from './pages/datasetCreate/DatasetCreate'
 import TaxonPage from './pages/taxon/TaxonPage'
 import NamePage from './pages/name/NamePage'
+import LoginPage from './pages/login/LoginPage'
 
 import ManagementClassification from './pages/managementClassification/ManagementClassification'
 
@@ -22,7 +24,7 @@ class App extends Component {
       <Router history={history}>
         <Switch>
           <Route exact path="/" render={(props) => <Home />} />
-          <Route exact key="managementClassification" path={`/assembly`} component={ManagementClassification} />
+          <PrivateRoute exact key="managementClassification" path={`/assembly`} component={ManagementClassification}></PrivateRoute> />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={TaxonPage} />
           <Route exact key="nameKey" path={`/dataset/:key/name/:nameKey`} component={NamePage} />
 
@@ -33,6 +35,7 @@ class App extends Component {
 
 
           <Route exact key="dataset" path="/dataset" render={(props) => <DatasetList location={props.location} />} />
+          <Route exact key="login" path="/user/login" render={(props) => <LoginPage location={props.location} />} />
 
           <Route component={NoMatch} />
         </Switch>

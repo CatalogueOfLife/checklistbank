@@ -5,8 +5,8 @@ import '../App.css';
 import DatasetSiderMenu from './DatasetSiderMenu'
 
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-const { SubMenu } = Menu;
-
+import Auth from './Auth/Auth';
+import history from '../history'
 const { Header, Content, Footer, Sider } = Layout;
 
 const classes = {
@@ -28,7 +28,7 @@ class AppLayout extends Component {
         const { selectedMenuItem, selectedDataset, section } = this.props;
         const defaultSelected = (selectedDataset) ? section : [selectedMenuItem]
 
-        this.setState({ defaultSelected })
+        this.setState({ defaultSelected, isAuthenticated: Auth.isAuthenticated })
     }
     componentWillReceiveProps = (nextProps) => {
         const { selectedMenuItem, selectedDataset, section } = nextProps;
@@ -40,7 +40,7 @@ class AppLayout extends Component {
     render() {
 
         const { children, selectedMenuItem, selectedDataset, selectedTaxon, selectedName, section } = this.props;
-        const { defaultSelected } = this.state;
+        const { isAuthenticated } = this.state;
         return (
             <Layout className="layout" style={{ height: "100vh" }}>
                 <Header>
@@ -72,6 +72,23 @@ class AppLayout extends Component {
                 </NavLink>
 
                         </Menu.Item>
+                  { !isAuthenticated &&  <Menu.Item key="login" style={{float: 'right'}}>
+                            <NavLink to={{ pathname: '/user/login' }}>
+                             <Icon type='login'></Icon> Login
+                </NavLink>
+
+                        </Menu.Item>}
+                        { isAuthenticated &&  <Menu.Item key="logout" style={{float: 'right'}} 
+    
+                            onClick={() => { 
+                                Auth.signout(()=> this.setState({isAuthenticated: false}))
+                                history.push('/')
+                            }
+                                
+                                }>
+                             <Icon type='logout'></Icon> Logout
+
+                        </Menu.Item>}
                     </Menu>
 
                 </Header>

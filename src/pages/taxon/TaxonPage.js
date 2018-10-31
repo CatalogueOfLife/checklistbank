@@ -52,7 +52,7 @@ class TaxonPage extends React.Component {
     const { match: { params: { key, taxonKey } } } = this.props;
 
     this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${key}/taxon/${taxonKey}`)
+    axios(`${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}`)
       .then((res) => {
 
         this.setState({ taxonLoading: false, taxon: res.data, taxonError: null })
@@ -66,7 +66,7 @@ class TaxonPage extends React.Component {
 
     const { match: { params: { key, taxonKey } } } = this.props;
 
-    axios(`${config.dataApi}dataset/${key}/taxon/${taxonKey}/synonyms`)
+    axios(`${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}/synonyms`)
       .then((res) => {
 
         this.setState({ synonymsLoading: false, synonyms: res.data, synonymsError: null })
@@ -81,7 +81,7 @@ class TaxonPage extends React.Component {
 
     const { match: { params: { key, taxonKey } } } = this.props;
 
-    axios(`${config.dataApi}dataset/${key}/taxon/${taxonKey}/info`)
+    axios(`${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}/info`)
       .then((res) => {
 
         this.setState({ infoLoading: false, info: res.data, infoError: null })
@@ -96,7 +96,7 @@ class TaxonPage extends React.Component {
 
     const { match: { params: { key, taxonKey } } } = this.props;
 
-    axios(`${config.dataApi}dataset/${key}/taxon/${taxonKey}/classification`)
+    axios(`${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}/classification`)
       .then((res) => {
 
         this.setState({ classificationLoading: false, classification: res.data, classificationError: null })

@@ -54,7 +54,7 @@ class NamePage extends React.Component {
         const { match: { params: { key, nameKey } } } = this.props;
 
         this.setState({ nameLoading: true });
-        axios(`${config.dataApi}dataset/${key}/name/${nameKey}`)
+        axios(`${config.dataApi}dataset/${key}/name/${encodeURIComponent(nameKey)}`)
             .then((res) => {
 
                 this.setState({ nameLoading: false, name: res.data, nameError: null }, () => this.getVerbatim(res.data.verbatimKey))
@@ -67,7 +67,7 @@ class NamePage extends React.Component {
         const { match: { params: { key } } } = this.props;
 
         this.setState({ verbatimLoading: true });
-        axios(`${config.dataApi}dataset/${key}/verbatim/${verbatimKey}`)
+        axios(`${config.dataApi}dataset/${key}/verbatim/${encodeURIComponent(verbatimKey)}`)
             .then((res) => {
 
                 this.setState({ verbatimLoading: false, verbatim: res.data, verbatimError: null })

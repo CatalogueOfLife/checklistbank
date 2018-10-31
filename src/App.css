@@ -27,3 +27,15 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.login-form-wrapper {
+  max-width: 300px;
+}
+.login-form {
+  max-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
