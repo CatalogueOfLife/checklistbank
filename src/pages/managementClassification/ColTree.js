@@ -63,16 +63,14 @@ class ColTree extends React.Component {
                     return { title: <ColTreeNode taxon={tx} datasetKey={id} confirmVisible={false} hasPopOver={this.props.treeType === 'mc'} showSourceTaxon={showSourceTaxon}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount }
                 })
                 if (defaultExpanded) {
-                    defaultExpandedNodes = [];
+                    defaultExpandedNodes = _.map(defaultExpanded, 'id');
                     let root = _.find(treeData, [
                       "key",
                       defaultExpanded[defaultExpanded.length - 1].id
                     ]);
                     for (let i = defaultExpanded.length - 2; i > -1; i--) {
                       let tx = defaultExpanded[i];
-                      if (i > 0) {
-                        defaultExpandedNodes.push(tx.id);
-                      }
+                      
                       let node = {
                         title: <ColTreeNode taxon={tx} datasetKey={id} />,
                         key: tx.id,
@@ -85,7 +83,7 @@ class ColTree extends React.Component {
                     }
                   }
                   if (defaultExpandedNodes && defaultExpandKey) {
-                    this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: treeType !== 'mc' && treeData.length < 10, error: null, defaultExpandedKeys: defaultExpandedNodes })
+                    this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: !defaultExpanded && treeType !== 'mc' && treeData.length < 10, error: null, defaultExpandedKeys: defaultExpandedNodes })
                     
                   } else {
           
