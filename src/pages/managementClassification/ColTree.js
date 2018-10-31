@@ -1,90 +1,13 @@
 
 import React from 'react';
-import { Tree, Row, Col, notification, message, Tag, Popconfirm, Icon, Button, Popover, Alert } from 'antd'
+import { Tree, notification, message, Alert } from 'antd'
 import _ from 'lodash'
 import axios from 'axios';
 import config from '../../config'
 import colTreeActions from './ColTreeActions';
+import ColTreeNode from './ColTreeNode';
 import ErrorMsg from '../../components/ErrorMsg';
 const TreeNode = Tree.TreeNode;
-
-class ColTreeNode extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.setMode = this.setMode.bind(this)
-        this.state = {
-            style: {},
-            popOverVisible: false
-        }
-    }
-    setMode = (mode) => {
-        this.setState({ mode })
-    }
-    componentDidMount = () => {
-        this.setState({
-            mode: colTreeActions.getMode()
-        })
-        colTreeActions.setMaxListeners(Math.max(colTreeActions.getListenerCount('modeChange') + 1, 10));
-        colTreeActions.on('modeChange', this.setMode)
-    }
-    componentWillUnmount = () => {
-        colTreeActions.removeListener('modeChange', this.setMode);
-        colTreeActions.setMaxListeners(Math.max(colTreeActions.getListenerCount('modeChange') - 1, 10))
-    }
-
-    hidePopover = () => {
-        this.setState({
-            popOverVisible: false,
-        });
-    }
-    handleVisibleChange = (popOverVisible) => {
-        this.setState({ popOverVisible });
-    }
-
-    render = () => {
-        const { taxon, isMapped, hasPopOver, isUpdating } = this.props;
-        const { mode } = this.state;
-        const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus"
-        const style = (this.props.isMapped) ? { color: 'green' } : {};
-        return (
-
-            <div>
-                {mode === 'modify' && hasPopOver && <Popover
-                    content={<Row><Col span={12}><Button type="danger">Delete taxon</Button></Col><Col span={12}> <Button style={{ marginLeft: '12px' }} type="primary">Add child</Button></Col></Row>}
-                    title="Options"
-                    visible={this.state.popOverVisible}
-                    onVisibleChange={this.handleVisibleChange}
-                    trigger="click"
-                    placement="rightTop"
-
-                >
-                    <Popconfirm visible={this.props.confirmVisible} title={this.props.confirmTitle} onConfirm={this.props.onConfirm} onCancel={this.props.onCancel}>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.rank}: </span>
-                        {!nameIsItalic && <span style={style}>{taxon.name}</span>}
-                        {nameIsItalic && <span style={style}><em>{taxon.name}</em> {taxon.authorship}</span>}
-                        {mode === 'modify' && !_.isUndefined(taxon.speciesCount) && <span> • {taxon.speciesCount} {!_.isUndefined(taxon.speciesEstimate) && <span> of {taxon.speciesEstimate} est. </span>}living species</span>}
-                        {isMapped && <span> <Icon type="link"></Icon></span>}
-                        {isUpdating && <span> <Icon type="sync" spin /></span>}
-                        {taxon.status !== 'accepted' && <Tag color="red" style={{ marginLeft: '6px' }}>{taxon.status}</Tag>}
-                    </Popconfirm>
-                </Popover>}
-                {(mode !== 'modify' || !hasPopOver) &&
-                    <Popconfirm visible={this.props.confirmVisible} title={this.props.confirmTitle} onConfirm={this.props.onConfirm} onCancel={this.props.onCancel}>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{taxon.rank}: </span>
-                        {!nameIsItalic && <span style={style}>{taxon.name}</span>}
-                        {nameIsItalic && <span style={style}><em>{taxon.name}</em> {taxon.authorship}</span>}
-                        {mode === 'modify' && !_.isUndefined(taxon.speciesCount) && <span> • {taxon.speciesCount} {!_.isUndefined(taxon.speciesEstimate) && <span> of {taxon.speciesEstimate} est. </span>}living species</span>}
-                        {isMapped && <span> <Icon type="link"></Icon></span>}
-                        {isUpdating && <span> <Icon type="sync" spin /></span>}
-                        {taxon.status !== 'accepted' && <Tag color="red" style={{ marginLeft: '6px' }}>{taxon.status}</Tag>}
-                    </Popconfirm>}
-
-            </div>)
-
-    }
-
-}
 
 class ColTree extends React.Component {
     constructor(props) {
@@ -114,7 +37,6 @@ class ColTree extends React.Component {
                         dragNode.props.dataRef.title = (<ColTreeNode
                             taxon={dragNode.props.title.props.taxon}
                             datasetKey={dragNode.props.title.props.datasetKey}
-                            isMapped={true}
                         ></ColTreeNode>)
                         this.setState({ ...this.state.treeData })
                     }
@@ -129,30 +51,67 @@ class ColTree extends React.Component {
     }
 
     loadRoot = () => {
-        const { treeType, dataset: { key } } = this.props;
+        const { treeType, dataset: { key }, showSourceTaxon, defaultExpandKey  } = this.props;
         let id = key;
-        axios(`${config.dataApi}dataset/${id}/tree`)
-            .then((values) => {
-                let mainTreeData = values.data;
+        let p = defaultExpandKey ? axios(`${config.dataApi}dataset/${id}/tree/${defaultExpandKey}`)  : Promise.resolve(false);
+        var defaultExpandedNodes;
+    Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
+      .then(values => {
+        let mainTreeData = values[0].data;
+        let defaultExpanded = values[1] ? values[1].data : null;
                 let treeData = _.map(mainTreeData, (tx) => {
-                    return { title: <ColTreeNode taxon={tx} datasetKey={id} confirmVisible={false} hasPopOver={this.props.treeType === 'mc'}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount }
+                    return { title: <ColTreeNode taxon={tx} datasetKey={id} confirmVisible={false} hasPopOver={this.props.treeType === 'mc'} showSourceTaxon={showSourceTaxon}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount }
                 })
-                this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: treeType !== 'mc' && treeData.length < 10, error: null })
+                if (defaultExpanded) {
+                    defaultExpandedNodes = [];
+                    let root = _.find(treeData, [
+                      "key",
+                      defaultExpanded[defaultExpanded.length - 1].id
+                    ]);
+                    for (let i = defaultExpanded.length - 2; i > -1; i--) {
+                      let tx = defaultExpanded[i];
+                      if (i > 0) {
+                        defaultExpandedNodes.push(tx.id);
+                      }
+                      let node = {
+                        title: <ColTreeNode taxon={tx} datasetKey={id} />,
+                        key: tx.id,
+                        childCount: tx.childCount,
+                        taxon: tx
+          
+                      };
+                      root.children = [node];
+                      root = node;
+                    }
+                  }
+                  if (defaultExpandedNodes && defaultExpandKey) {
+                    this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: treeType !== 'mc' && treeData.length < 10, error: null, defaultExpandedKeys: defaultExpandedNodes })
+                    
+                  } else {
+          
+                    this.setState({ treeData: treeData.filter(r => r.childCount > 0), defaultExpandAll: treeType !== 'mc' && treeData.length < 10, error: null })
+
+                    
+                  }
+
+                  
             })
             .catch((err) => {
-                this.setState({ treeData: [], error: err });
+                this.setState({ treeData: [], defaultExpandedKeys: null, error: err });
 
             })
     }
 
     onLoadData = (treeNode) => {
-        const { dataset: { key } } = this.props;
+        const { dataset: { key }, showSourceTaxon } = this.props;
         let id = key;
 
         return axios(`${config.dataApi}dataset/${id}/tree/${encodeURIComponent(treeNode.props.eventKey)}/children`)
             .then((res) => {
                 treeNode.props.dataRef.children = _.map(res.data, (tx) => {
-                    return { title: <ColTreeNode confirmVisible={false} taxon={tx} datasetKey={id} isMapped={treeNode.props.title.props.isMapped} hasPopOver={this.props.treeType === 'mc'}></ColTreeNode>, key: tx.id, datasetKey: id, childCount: tx.childCount, parent: treeNode.props.dataRef, name: tx.name }
+                    return { 
+                        title: <ColTreeNode confirmVisible={false} taxon={tx} datasetKey={id}  hasPopOver={this.props.treeType === 'mc' } reloadSelfAndSiblings={()=>{this.onLoadData(treeNode)}} showSourceTaxon={showSourceTaxon}></ColTreeNode>, 
+                        key: tx.id, datasetKey: id, childCount: tx.childCount, parent: treeNode.props.dataRef, name: tx.name }
                 });
                 const { treeData } = this.state;
                 this.setState({ treeData: treeData, error: null })
@@ -168,27 +127,18 @@ class ColTree extends React.Component {
         /*
        This is where sector mapping should be posted to the server
        */
-      node.props.dataRef.title = (<ColTreeNode
-        taxon={node.props.title.props.taxon}
-        datasetKey={this.props.dataset.key}
-        isUpdating={true}
-        confirmVisible={false}
-    ></ColTreeNode>)
-    this.setState({ ...this.state.treeData });
+        node.props.dataRef.title = (<ColTreeNode
+            taxon={node.props.title.props.taxon}
+            datasetKey={this.props.dataset.key}
+            isUpdating={true}
+            confirmVisible={false}
+            reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
+        ></ColTreeNode>)
+        this.setState({ ...this.state.treeData });
         this.props.attachFn(node, dragNode).then((res) => {
 
-            node.props.dataRef.title = (<ColTreeNode
-                taxon={node.props.title.props.taxon}
-                datasetKey={this.props.dataset.key}
-                isMapped={true}
-                isUpdating={false}
-                confirmVisible={false}
-            ></ColTreeNode>)
-
-
-            colTreeActions.attachmentSuccess(dragNode);
-
-            // Saving is done immediatly after confirm, so the children should be updated     
+            node.props.dataRef.title.props.reloadSelfAndSiblings()
+    
             this.setState({ ...this.state.treeData })
         })
     }
@@ -210,6 +160,7 @@ class ColTree extends React.Component {
                 datasetKey={this.props.dataset.key}
                 confirmVisible={true}
                 confirmTitle={msg}
+                reloadSelfAndSiblings={e.node.props.title.props.reloadSelfAndSiblings}
                 onConfirm={() => {
                     this.confirmAttach(e.node, this.props.dragNode)
                 }}
@@ -217,8 +168,8 @@ class ColTree extends React.Component {
                     e.node.props.dataRef.title = <ColTreeNode
                         taxon={e.node.props.title.props.taxon}
                         datasetKey={this.props.dataset.key}
-                        isMapped={e.node.props.title.props.isMapped}
                         confirmVisible={false}
+                        reloadSelfAndSiblings={e.node.props.title.props.reloadSelfAndSiblings}
                     ></ColTreeNode>;
                     this.setState({ ...this.state.treeData });
                 }}
@@ -238,7 +189,6 @@ class ColTree extends React.Component {
         e.node.props.dataRef.title = (<ColTreeNode
             taxon={e.node.props.title.props.taxon}
             datasetKey={this.props.dataset.key}
-            isMapped={e.node.props.title.props.isMapped}
             confirmVisible={false}
         ></ColTreeNode>)
         let msg = `You moved ${e.dragNode.props.dataRef.name} from parent ${e.dragNode.props.dataRef.parent.title.props.taxon.name} to parent ${e.node.props.dataRef.title.props.taxon.name}`;
@@ -268,7 +218,6 @@ class ColTree extends React.Component {
                     e.node.props.dataRef.title = <ColTreeNode
                         taxon={e.node.props.title.props.taxon}
                         datasetKey={this.props.dataset.key}
-                        isMapped={e.node.props.title.props.isMapped}
                         confirmVisible={false}
                     ></ColTreeNode>;
                     this.setState({ ...this.state.treeData });
@@ -305,13 +254,14 @@ class ColTree extends React.Component {
 
     render() {
 
-        const { error, treeData, defaultExpandAll } = this.state;
+        const { error, treeData, defaultExpandAll, defaultExpandedKeys } = this.state;
         const { draggable, onDragStart } = this.props;
         return (
 
             <div>  {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
-                {treeData.length > 0 && <Tree showLine={true} defaultExpandAll={defaultExpandAll} draggable={draggable} onDrop={this.handleDrop} onDragStart={onDragStart} loadData={this.onLoadData}>
+                {treeData.length > 0 && 
+                <Tree showLine={true} defaultExpandAll={defaultExpandAll} defaultExpandedKeys={defaultExpandedKeys} draggable={draggable} onDrop={this.handleDrop} onDragStart={onDragStart} loadData={this.onLoadData}>
                     {this.renderTreeNodes(treeData)}
                 </Tree>}
             </div>

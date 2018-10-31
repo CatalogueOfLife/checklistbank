@@ -26,7 +26,7 @@ class SectorModal extends React.Component {
         {!this.props.options &&
           this.props.datasetKey && (
             <NavLink
-              to={{ pathname: `/dataset${this.props.datasetKey}/sources` }}
+              to={{ pathname: `/dataset/${this.props.datasetKey}/sources` }}
             >
               Dataset
             </NavLink>

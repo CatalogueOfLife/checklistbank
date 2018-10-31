@@ -1,18 +1,18 @@
 import React from 'react';
-import { Row, Col, notification,Input, Button, AutoComplete, Alert, Card } from 'antd'
+import { Row, Col, notification,Input, Button, Alert, Card } from 'antd'
 import _ from 'lodash'
 import Layout from '../../components/Layout'
 import axios from 'axios';
 import config from '../../config'
-import debounce from 'lodash.debounce';
 import colTreeActions from './ColTreeActions';
 import ErrorMsg from '../../components/ErrorMsg';
 import ColTree from './ColTree'
+import DatasetAutocomplete from './DatasetAutocomplete'
+
 
 import SectorModal from './SectorModal'
 
 const Search = Input.Search;
-const Option = AutoComplete.Option;
 
 
 const MANAGEMENT_CLASSIFICATION = {key: 3, title: 'Management Classification'};
@@ -23,8 +23,8 @@ class ManagementClassification extends React.Component {
     constructor(props) {
         super(props);
         
-        this.getDatasets = debounce(this.getDatasets, 500);
         this.saveSector = this.saveSector.bind(this)
+        this.showSourceTaxon = this.showSourceTaxon.bind(this)
 
         this.state = {
             datasets: [],
@@ -32,21 +32,7 @@ class ManagementClassification extends React.Component {
         }
     }
 
-   
-    componentWillUnmount() {
-        this.getDatasets.cancel();
-    }
 
-    getDatasets = (q) => {
-
-        axios(`${config.dataApi}dataset?q=${q}&limit=30`)
-            .then((res) => {
-                this.setState({ datasets: res.data.result })
-            })
-            .catch((err) => {
-                this.setState({ datasets: [] })
-            })
-    }
     getSectorInfo = (attachment, root) => {
         // get the ColSources for the dataset  
         const { datasetKey } = this.state;
@@ -98,8 +84,21 @@ class ManagementClassification extends React.Component {
             });
     }
     
-    onSelectDataset = (val, obj) => {
-        this.setState({ datasetKey: val, datasetName: obj.props.children, selectedDataset: {key: val, title: obj.props.children}})
+    showSourceTaxon = (sector, source) =>{
+        axios(`${config.dataApi}dataset/${source.datasetKey}`)
+            .then((res)=>{
+                this.setState({ defaultExpandKey: sector.root.id, datasetKey: source.datasetKey, datasetName: res.data.title, selectedDataset: {key: res.data.key, title: res.data.title}})
+ 
+            })
+            .catch((err) => {
+                console.log(err)
+            });
+
+
+    }
+
+    onSelectDataset = (dataset) => {
+        this.setState({ datasetKey: dataset.key, datasetName: dataset.title, selectedDataset: dataset, defaultExpandKey: null})
     }
 
     
@@ -122,7 +121,7 @@ class ManagementClassification extends React.Component {
         return (
             <Layout selectedMenuItem="managementclassification">
                 <Row style={{paddingLeft: '16px'}}>
-                    <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }}>Modify MC</Button>
+                    <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }} disabled>Modify MC</Button>
                     <Button style={{marginLeft: '10px', marginBottom: '20px'}} type={this.state.mode === 'attach' ? 'primary' : ''} onClick={() => this.toggleMode('attach')} size="large" >Attach sectors</Button>
 
                 </Row>
@@ -143,6 +142,7 @@ class ManagementClassification extends React.Component {
                             onDragStart={(e)=>this.onDragStart(e, MANAGEMENT_CLASSIFICATION)}
                             dragNode={this.state.dragNode}
                             draggable={true}
+                            showSourceTaxon={this.showSourceTaxon}
                             ></ColTree>
                        
                     </div>
@@ -151,17 +151,9 @@ class ManagementClassification extends React.Component {
                     </Col>
                     <Col span={12} style={{padding: '10px'}}>
                     <Card >
-                    <AutoComplete
-                            dataSource={this.state.datasets}
-                            style={{ width: '100%' }}
-                            onSelect={this.onSelectDataset}
-                            onSearch={this.getDatasets}
-                            placeholder="Find dataset"
-                        >
-                            {this.state.datasets && this.state.datasets.map((o) => {
-                                return <Option key={o.key}>{o.title}</Option>
-                            })}
-                        </AutoComplete>
+                    <h4>{this.state.selectedDataset ? this.state.selectedDataset.title : 'No dataset selected'}</h4>
+                        <DatasetAutocomplete onSelectDataset={this.onSelectDataset} ></DatasetAutocomplete>
+             
                         <br/>
                         {this.state.selectedDataset &&  <Search
                             placeholder="Find taxon (not yet functional)"
@@ -175,6 +167,7 @@ class ManagementClassification extends React.Component {
                             treeType='gsd'
                             onDragStart={(e)=>this.onDragStart(e, this.state.selectedDataset)}
                             draggable={this.state.mode === 'attach'}
+                            defaultExpandKey={this.state.defaultExpandKey}
                             ></ColTree>}
 
                     </div>
