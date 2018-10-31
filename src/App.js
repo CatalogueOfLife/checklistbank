@@ -22,7 +22,7 @@ class App extends Component {
       <Router history={history}>
         <Switch>
           <Route exact path="/" render={(props) => <Home />} />
-          <Route exact key="managementClassification" path={`/managementclassification`} component={ManagementClassification} />
+          <Route exact key="managementClassification" path={`/assembly`} component={ManagementClassification} />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={TaxonPage} />
           <Route exact key="nameKey" path={`/dataset/:key/name/:nameKey`} component={NamePage} />
 

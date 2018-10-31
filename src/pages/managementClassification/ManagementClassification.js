@@ -121,14 +121,14 @@ class ManagementClassification extends React.Component {
         return (
             <Layout selectedMenuItem="managementclassification">
                 <Row style={{paddingLeft: '16px'}}>
-                    <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }} disabled>Modify MC</Button>
+                    <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }} disabled>Modify Tree</Button>
                     <Button style={{marginLeft: '10px', marginBottom: '20px'}} type={this.state.mode === 'attach' ? 'primary' : ''} onClick={() => this.toggleMode('attach')} size="large" >Attach sectors</Button>
 
                 </Row>
                 <Row style={{padding: '10px', height:'100%'}}>
                     <Col span={12} style={{padding: '10px'}}>
                     <Card >
-                    <h4>Management Classification</h4>  <Search
+                    <h4>CoL Draft</h4>  <Search
                             placeholder="Find taxon (not yet functional)"
                             onSearch={value => console.log(value)}
                             style={{  width: '100%' }}

@@ -57,8 +57,8 @@ class AppLayout extends Component {
                         selectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
-                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/managementclassification' }}>
-                            Management Classification
+                        <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/assembly' }}>
+                        CoL Assembly
                                     </NavLink></Menu.Item>
                         <Menu.Item key="dataset">
                             <NavLink to={{ pathname: '/dataset' }}>
@@ -88,7 +88,7 @@ class AppLayout extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     <NavLink to={{ pathname: '/dataset' }}>
-                                        dataset
+                                        Dataset
                                     </NavLink>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
