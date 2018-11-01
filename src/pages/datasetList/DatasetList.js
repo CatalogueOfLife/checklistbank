@@ -193,6 +193,8 @@ class DatasetList extends React.Component {
     }
     if(sorter && sorter.order === 'descend'){
       query.reverse = true
+    } else {
+      query.reverse = false
     }
     this.getData(query);
   }
