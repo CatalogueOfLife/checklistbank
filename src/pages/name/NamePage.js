@@ -50,14 +50,32 @@ class NamePage extends React.Component {
                 this.setState({ datasetLoading: false, datasetError: err, dataset: null })
             })
     }
+    getReference = (referenceKey) => {
+        const { match: { params: { key } } } = this.props;
+
+        axios(`${config.dataApi}dataset/${key}/reference/${encodeURIComponent(referenceKey)}`)
+            .then((res) => {
+                
+                this.setState({ referenceLoading: false, reference: res.data, referenceError: null })
+            })
+            .catch((err) => {
+                this.setState({ referenceLoading: false, referenceErrorError: err, name: null })
+            })
+    }    
     getName = () => {
         const { match: { params: { key, nameKey } } } = this.props;
 
         this.setState({ nameLoading: true });
         axios(`${config.dataApi}dataset/${key}/name/${encodeURIComponent(nameKey)}`)
             .then((res) => {
-
-                this.setState({ nameLoading: false, name: res.data, nameError: null }, () => this.getVerbatim(res.data.verbatimKey))
+                
+                this.setState({ nameLoading: false, name: res.data, nameError: null }, 
+                    () => {
+                        this.getVerbatim(res.data.verbatimKey)
+                        if(res.data.publishedInId){
+                            this.getReference(res.data.publishedInId)
+                        }
+                    })
             })
             .catch((err) => {
                 this.setState({ nameLoading: false, nameError: err, name: null })
@@ -79,31 +97,39 @@ class NamePage extends React.Component {
 
 
     render() {
-        const { datasetLoading, nameLoading, verbatimLoading, dataset, name, verbatim, nameError, datasetError, verbatimError } = this.state;
-        const verbatimData = (!verbatim) ? [] : _.map(verbatim.terms, function(value, key) {
+        const { datasetLoading, nameLoading, verbatimLoading, dataset, name, reference, verbatim, nameError, datasetError, verbatimError } = this.state;
+        const verbatimData = (!verbatim) ? [] : _.map(verbatim.terms, function (value, key) {
             return { key: _.startCase(key), value: value };
-          });
+        });
 
-        const nameListData   = (!name) ? [] : _.map(_.pick(name, ['id','homotypicNameId','scientificName','genus','specificEpithet', 'authorship' ]), function(value, key) {
+        const nameListData = (!name) ? [] : _.map(_.pick(name, ['id', 'homotypicNameId', 'scientificName', 'genus', 'specificEpithet', 'authorship']), function (value, key) {
             return { key: _.startCase(key), value: value };
-          });
-        if(nameListData.length > 0){
+        });
+        if (nameListData.length > 0) {
             nameListData.unshift({
                 value: <div>
-                {['rank','code', 'origin', 'type'].map((i) => (!_.isUndefined(name[i])) ? <Tag key={i} color="blue">{i} : {name[i]}</Tag> : ''
-                )}
-                {['candidatus', 'available', 'legitimate', 'parsed'].map((i) => 
-                (!_.isUndefined(name[i])) ? <Tag key={i} color={(name[i] === true)? 'green' : 'red'}>{i} : {name[i].toString()}</Tag> : ''
-                )}
-            </div>
+                    {['rank', 'code', 'origin', 'type'].map((i) => (!_.isUndefined(name[i])) ? <Tag key={i} color="blue">{i} : {name[i]}</Tag> : ''
+                    )}
+                    {['candidatus', 'available', 'legitimate', 'parsed'].map((i) =>
+                        (!_.isUndefined(name[i])) ? <Tag key={i} color={(name[i] === true) ? 'green' : 'red'}>{i} : {name[i].toString()}</Tag> : ''
+                    )}
+                </div>
             })
-        }  
-        
+        }
+
         return (
             <Layout selectedMenuItem="datasetKey" selectedDataset={dataset} selectedName={name} section="name">
                 {name && <h1>Name details: {name.scientificName} {name.authorship}</h1>}
 
-                <Collapse defaultActiveKey={['issues', 'name', 'verbatim']} >
+                <Collapse defaultActiveKey={['reference', 'issues', 'name', 'verbatim']} >
+
+                 {reference && reference.citation && <Panel header="Reference" key="reference">
+                        
+                            <div>
+                                {reference.citation}
+                            </div>
+                        
+                    </Panel>}
                     <Panel header="Issues" key="issues">
                         {verbatimLoading && <Spin />}
                         {verbatimError && <Alert message={<ErrorMsg error={verbatimError}></ErrorMsg>} type="error" />}
@@ -118,34 +144,34 @@ class NamePage extends React.Component {
                     <Panel header="Name" key="name">
                         {nameLoading && <Spin />}
                         {nameError && <Alert message={<ErrorMsg error={nameError}></ErrorMsg>} type="error" />}
-                        {nameListData && nameListData.length >1 && <List
+                        {nameListData && nameListData.length > 1 && <List
                             itemLayout="horizontal"
                             dataSource={nameListData}
                             renderItem={item => (
-                              <List.Item>
-                                <List.Item.Meta title={item.key} description={item.value} />
-                              </List.Item>
+                                <List.Item>
+                                    <List.Item.Meta title={item.key} description={item.value} />
+                                </List.Item>
                             )}
-                          />}
+                        />}
 
-                       
-                            
+
+
 
                     </Panel>
 
                     <Panel header="Verbatim" key="verbatim">
                         {verbatimLoading && <Spin />}
                         {verbatimError && <Alert message={<ErrorMsg error={verbatimError}></ErrorMsg>} type="error" />}
-                        {verbatim && verbatim.terms && !_.isEmpty(verbatim.terms) && 
+                        {verbatim && verbatim.terms && !_.isEmpty(verbatim.terms) &&
                             <List
-                            itemLayout="horizontal"
-                            dataSource={verbatimData}
-                            renderItem={item => (
-                              <List.Item>
-                                <List.Item.Meta title={item.key} description={item.value} />
-                              </List.Item>
-                            )}
-                          />
+                                itemLayout="horizontal"
+                                dataSource={verbatimData}
+                                renderItem={item => (
+                                    <List.Item>
+                                        <List.Item.Meta title={item.key} description={item.value} />
+                                    </List.Item>
+                                )}
+                            />
                         }
                     </Panel>
 

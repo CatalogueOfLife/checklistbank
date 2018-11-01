@@ -6,7 +6,7 @@ import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
 import moment from 'moment'
-import { Switch, List, Row, Col, Alert } from "antd";
+import { Switch, Tag, Row, Col, Alert } from "antd";
 import ImportChart from '../../../components/ImportChart'
 
 class DatasetImportMetrics extends React.Component {
@@ -40,6 +40,11 @@ class DatasetImportMetrics extends React.Component {
     return (
       <div>
         {!this.state.loading && this.state.data.length === 0 && <Alert type="warning" message="No finished imports yet"></Alert>}
+        <Row style={{padding: '10px'}}>
+          {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount' ], (c)=>{
+            return (_.get(this.state, `data[0].${c}`))? <Tag key={c} color="blue">{_.startCase(c)}: {_.get(this.state, `data[0].${c}`)}</Tag> : '';
+          })}
+        </Row>
         <Row>
           <Col span={12} style={{ padding: '10px' }}>
             {_.get(this.state, 'data[0].issuesCount') && <ImportChart nameSearchParam="issue" defaultType="column" datasetKey={datasetKey} data={_.get(this.state, 'data[0].issuesCount')} title="Names with issues" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}

@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+// Configure JWT Auth:
+import axios from 'axios';
+
+
 import { Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from './components/Auth/PrivateRoute'
 import { NavLink } from "react-router-dom";
@@ -16,7 +20,12 @@ import ManagementClassification from './pages/managementClassification/Managemen
 
 import Home from './pages/Home'
 
-
+/* (function() {
+  const token = localStorage.getItem('col_plus_auth_token')
+  if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } 
+})(); */
 
 class App extends Component {
   render() {
