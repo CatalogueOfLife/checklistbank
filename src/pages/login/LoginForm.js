@@ -3,16 +3,17 @@ import {
     Redirect,
     withRouter
   } from 'react-router-dom'
-import { Form, Icon, Input, Button, Card } from 'antd';
+import { Form, Icon, Input, Button, Card, Alert } from 'antd';
 import Auth from '../../components/Auth/Auth'
 import _ from 'lodash'
-
+import ErrorMsg from '../../components/ErrorMsg'
 
 const FormItem = Form.Item;
 
 class LoginForm extends React.Component {
     state = {
-        redirectToReferrer: false
+        redirectToReferrer: false,
+        error: null
     }
     
     handleSubmit = (e) => {
@@ -22,17 +23,21 @@ class LoginForm extends React.Component {
                 console.log('Received values of form: ', values);
                 Auth.authenticate(values, () => {
                     this.setState({
-                        redirectToReferrer: true
+                        redirectToReferrer: true,
+                        error: null
                     })
                 })
-            }
+                .catch(err =>{
+                    this.setState({error: err})
+                })
+            } 
         });
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const { from } = _.get(this.props, 'location.state') || { from: { pathname: '/' } }
-        const { redirectToReferrer } = this.state
+        const { redirectToReferrer, error } = this.state
 
         if (redirectToReferrer === true) {
             return <Redirect to={from} />
@@ -64,6 +69,9 @@ class LoginForm extends React.Component {
                     Or <a href="https://www.gbif.org/user/profile">register now!</a>
                 </FormItem>
             </Form>
+            {error && (
+              <Alert message={<ErrorMsg error={error} />} type="error" />
+            )}
             </Card>
             </div>
         );

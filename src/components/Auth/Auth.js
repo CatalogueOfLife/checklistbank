@@ -2,6 +2,7 @@
 import config from '../../config';
 import axios from 'axios';
 import history from '../../history'
+
 const Auth = {
   isAuthenticated: false,
   user: null,
@@ -23,8 +24,7 @@ const Auth = {
         localStorage.setItem('col_plus_auth_token', res.data)
         this.isAuthenticated = true
       })
-      .catch((err) => {
-      })
+      
 
   },
   signout() {
