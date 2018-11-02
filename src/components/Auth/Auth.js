@@ -8,7 +8,7 @@ const Auth = {
   user: null,
   init() {
     const token = localStorage.getItem('col_plus_auth_token')
-   return (!token) ? new Promise.resolve() : axios(`${config.dataApi}user/me`)
+   return (!token) ? Promise.resolve() : axios(`${config.dataApi}user/me`)
       .then((res) => {
         this.user = res.data
         this.isAuthenticated = true
@@ -23,15 +23,21 @@ const Auth = {
       .then((res) => {
         localStorage.setItem('col_plus_auth_token', res.data)
         this.isAuthenticated = true
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
+        return axios(`${config.dataApi}user/me`)
+      })
+      .then((res) => {
+        this.user = res.data
       })
       
 
   },
   signout() {
     localStorage.removeItem('col_plus_auth_token')
+    delete axios.defaults.headers.common['Authorization']
     this.isAuthenticated = false
     this.user = null
-    return new Promise.resolve();
+    return Promise.resolve();
   },
   getUser() {
     return this.user;
