@@ -57,6 +57,9 @@ class AppLayout extends Component {
                         selectedKeys={[selectedMenuItem]}
                         style={{ lineHeight: '64px' }}
                     >
+                        <Menu.Item key="home"><NavLink to={{ pathname: '/imports/running' }}>
+                        Home
+                                    </NavLink></Menu.Item>
                         <Menu.Item key="managementclassification"><NavLink to={{ pathname: '/assembly' }}>
                         CoL Assembly
                                     </NavLink></Menu.Item>

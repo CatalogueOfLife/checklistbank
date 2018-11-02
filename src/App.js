@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 
-import { Router, Route, Switch } from "react-router-dom";
+import { Router, Route, Switch, Redirect } from "react-router-dom";
 import PrivateRoute from './components/Auth/PrivateRoute'
-import { NavLink } from "react-router-dom";
 
 import history from './history';
 import './App.css';
@@ -18,7 +17,7 @@ import LoginPage from './pages/login/LoginPage'
 
 import ManagementClassification from './pages/managementClassification/ManagementClassification'
 
-import Home from './pages/Home'
+import Home from './pages/home/Home'
 
 /* (function() {
   const token = localStorage.getItem('col_plus_auth_token')
@@ -32,7 +31,10 @@ class App extends Component {
     return (
       <Router history={history}>
         <Switch>
-          <Route exact path="/" render={(props) => <Home />} />
+          <Route exact path="/" render={(props) => <Redirect to={{
+            pathname: '/imports/running'
+          }} />} />
+          <Route exact path="/imports/:section?" render={({match}) => <Home section={match.params.section}/>} />
           <PrivateRoute exact key="managementClassification" path={`/assembly`} component={ManagementClassification}></PrivateRoute> />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={TaxonPage} />
           <Route exact key="nameKey" path={`/dataset/:key/name/:nameKey`} component={NamePage} />
