@@ -22,12 +22,16 @@ const Auth = {
   return  axios(`${config.dataApi}user/login`, { auth })
       .then((res) => {
         localStorage.setItem('col_plus_auth_token', res.data)
-        this.isAuthenticated = true
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
         return axios(`${config.dataApi}user/me`)
       })
       .then((res) => {
         this.user = res.data
+        this.isAuthenticated = true
+      })
+      .catch((err) => {
+        this.user = null
+        this.isAuthenticated = false
       })
       
 

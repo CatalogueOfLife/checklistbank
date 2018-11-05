@@ -19,12 +19,12 @@ import ManagementClassification from './pages/managementClassification/Managemen
 
 import Home from './pages/home/Home'
 
- (function() {
+
   const token = localStorage.getItem('col_plus_auth_token')
   if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } 
-})(); 
+ 
 
 class App extends Component {
   render() {
