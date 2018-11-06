@@ -75,7 +75,7 @@ const columns = [
     key: "started",
     width: 150,
     render: date => {
-      return moment(date).format("MMMM Do YYYY, h:mm:ss a");
+      return (date) ? moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
     }
   },
   {
@@ -84,7 +84,7 @@ const columns = [
     key: "finished",
     width: 150,
     render: date => {
-      return moment(date).format("MMMM Do YYYY, h:mm:ss a");
+      return (date) ?  moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
     }
   },
   {
@@ -93,7 +93,7 @@ const columns = [
     key: "x",
     width: 150,
     render: record => (
-      record.status !== 'in queue' ? <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton> : ''
+      <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
     )
   }
 ];
