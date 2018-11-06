@@ -29,6 +29,12 @@ class AppLayout extends Component {
         const defaultSelected = (selectedDataset) ? section : [selectedMenuItem]
 
         this.setState({ defaultSelected, isAuthenticated: Auth.isAuthenticated })
+        Auth.on('login', ()=>{
+            this.setState({isAuthenticated: Auth.isAuthenticated})
+        })
+        Auth.on('logout', ()=>{
+            this.setState({isAuthenticated: Auth.isAuthenticated})
+        })
     }
     componentWillReceiveProps = (nextProps) => {
         const { selectedMenuItem, selectedDataset, section } = nextProps;
@@ -84,7 +90,7 @@ class AppLayout extends Component {
                         { isAuthenticated &&  <Menu.Item key="logout" style={{float: 'right'}} 
     
                             onClick={() => { 
-                                Auth.signout(()=> this.setState({isAuthenticated: false}))
+                                Auth.signout()
                                 history.push('/')
                             }
                                 

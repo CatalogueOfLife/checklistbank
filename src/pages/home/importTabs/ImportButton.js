@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Icon, Popover } from "antd";
+import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import history from "../../../history";
@@ -21,11 +21,13 @@ class ImportButton extends React.Component {
     this.setState({ importTriggered: true });
     axios
       .post(
-        `${config.dataApi}importer/?datasetKey=${record.datasetKey}&force=false`
+        `${config.dataApi}importer/?key=${record.datasetKey}&force=true`
       )
       .then(res => {
         this.setState({ importTriggered: false });
-        history.push(`/imports/running`);
+        if(this.props.onStartImportSuccess && typeof this.props.onStartImportSuccess === 'function'){
+          this.props.onStartImportSuccess();
+        }
       })
       .catch(err => {
         this.setState({ importTriggered: false, error: err });
@@ -39,7 +41,15 @@ class ImportButton extends React.Component {
       .delete(`${config.dataApi}importer/${record.datasetKey}`)
       .then(res => {
         this.setState({ importTriggered: false });
-        this.props.onDeleteSuccess();
+        
+        notification.open({
+          title: 'Import stopped',
+          description: `Import of ${record.title} was stopped`
+        })
+        if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
+          this.props.onDeleteSuccess();
+        }
+        
       })
       .catch(err => {
         this.setState({ importTriggered: false, error: err });
@@ -50,7 +60,9 @@ class ImportButton extends React.Component {
     const { error } = this.state;
     const { record } = this.props;
     const isStopButton = ['processing', 'inserting', 'downloading'].indexOf(record.state) > -1;
-
+    if(record.state === 'in queue'){
+      return ''
+    }
     return (
       <div>
         <Button
@@ -58,7 +70,7 @@ class ImportButton extends React.Component {
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopImport : this.startImport}
         >
-          Import
+          {isStopButton ? 'Stop import' : 'Import'}
         </Button>
         {error && (
           <Popover

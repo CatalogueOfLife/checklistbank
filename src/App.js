@@ -18,13 +18,8 @@ import LoginPage from './pages/login/LoginPage'
 import ManagementClassification from './pages/managementClassification/ManagementClassification'
 
 import Home from './pages/home/Home'
-
-
-  const token = localStorage.getItem('col_plus_auth_token')
-  if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } 
- 
+import Auth from './components/Auth/Auth'
+Auth.init();
 
 class App extends Component {
   render() {

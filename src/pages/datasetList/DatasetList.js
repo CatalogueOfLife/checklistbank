@@ -12,6 +12,8 @@ import history from '../../history'
 import SearchBox from './SearchBox';
 import ColumnFilter from './ColumnFilter';
 
+import Auth from '../../components/Auth/Auth'
+import ImportButton from '../../pages/home/importTabs/ImportButton'
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -113,13 +115,34 @@ const columns = [
   }
 ];
 
+Auth.on('login', ()=>{
+  _.remove(columns, (e)=>{
+    return e.key === "__actions__"
+});
+    columns.push({
+      title: "Action",
+      dataIndex: "",
+      key: "__actions__",
+      width: 150,
+      render: record => (
+        <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton>
+      )
+    })
+  
+})
+
+Auth.on('logout', ()=>{
+  _.remove(columns, (e)=>{
+      return e.key === "__actions__"
+  });
+})
 
 
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-
+    this.handleColumns = this.handleColumns.bind(this);
     const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
@@ -146,6 +169,10 @@ class DatasetList extends React.Component {
       })
     }
     this.getData(query || {limit: 150, offset: 0});
+  }
+
+  componentDidMount() {
+    this.handleColumns(columns)
   }
  
 
@@ -199,6 +226,10 @@ class DatasetList extends React.Component {
     this.getData(query);
   }
 
+  handleColumns = (columns)=> {
+   
+    this.setState({columns})
+  }
   
   render() {
     const { data, loading, error } = this.state;
@@ -217,11 +248,7 @@ class DatasetList extends React.Component {
          {...formItemLayout}
           label="Omit columns"
         >
-        <ColumnFilter columns={columns} onChange={
-          (columns)=> {
-            this.setState({columns})
-          }
-          }></ColumnFilter>
+        <ColumnFilter columns={columns} onChange={this.handleColumns}></ColumnFilter>
         
             </FormItem>
         {error && <Alert message={error.message} type="error" />}

@@ -24,10 +24,11 @@ const formItemLayout = {
   }
 };
 const tagColors = {
-  processing: 'purple',
-  downloading: 'cyan',
-  inserting: 'blue',
-  failed: 'red'
+  'processing': 'purple',
+  'downloading': 'cyan',
+  'inserting': 'blue',
+  'failed': 'red',
+  'in queue': 'orange'
 }
 const columns = [
   {
@@ -92,7 +93,7 @@ const columns = [
     key: "x",
     width: 150,
     render: record => (
-      <ImportButton key={record.datasetKey} record={record}></ImportButton>
+      record.status !== 'in queue' ? <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton> : ''
     )
   }
 ];
@@ -101,7 +102,7 @@ class ImportTable extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-
+    this.addDataFromImportQueue = this.addDataFromImportQueue.bind(this)
     this.state = {
       data: [],
       columns: columns,
@@ -121,6 +122,18 @@ class ImportTable extends React.Component {
       query = { limit: 25, offset: 0, state: importState };
     }
     this.getData(query);
+
+    if(this.props.section === 'running'){
+     this.timer = setInterval(()=>{
+        this.getData(query)
+      }, 3000)
+    }
+
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.timer);
+
   }
 
   getData = params => {
@@ -147,6 +160,17 @@ class ImportTable extends React.Component {
         return Promise.all(promises).then(() => res);
       })
       .then(res => {
+       if(this.props.section === 'running'){
+          return this.addDataFromImportQueue(res).then((queued)=>{
+            res.data.result = res.data.result.concat(queued.data)
+            return res
+          })
+        } else {
+          return res
+        } 
+
+      }) 
+      .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
 
@@ -161,6 +185,31 @@ class ImportTable extends React.Component {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
+
+  addDataFromImportQueue = (mainRes) => {
+
+  return  axios(`${config.dataApi}importer/queue`)
+    .then(res => {
+      let promises = [];
+
+      _.each(res.data, imp => {
+        promises.push(
+          axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
+            dataset => {
+              imp.dataset = dataset.data;
+              imp.state = 'in queue'
+            }
+          )
+        );
+      });
+
+      return Promise.all(promises).then(() => res);
+    })
+    .catch(err => {
+      console.log(err)
+    });
+  }
+
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
@@ -192,11 +241,11 @@ class ImportTable extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            expandedRowRender={record =>
-              section === "failed" ? (
+            expandedRowRender={section === "failed" ? record =>
+               (
                 <Alert message={record.error} type="error" />
               ) : null
-            }
+            } 
           />
         )}
       </div>
