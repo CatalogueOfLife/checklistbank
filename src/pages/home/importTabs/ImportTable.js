@@ -241,6 +241,7 @@ class ImportTable extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
+            rowKey="datasetKey"
             expandedRowRender={section === "failed" ? record =>
                (
                 <Alert message={record.error} type="error" />

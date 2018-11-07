@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Input, Select, Button, Alert, notification, DatePicker } from 'antd';
+import { Form, Input, Select, Button, Alert, notification, DatePicker, Rate } from 'antd';
 import _ from 'lodash';
 import axios from 'axios';
 import config from '../config';
@@ -243,7 +243,7 @@ class ColSourceMetaDataForm extends React.Component {
         <FormItem
           {...formItemLayout}
           label="Abstract"
-          help="Standardised short database description (text of 80-90 words) for use in the Catalogue of Life and supporting materials, such as the booklet published with the Annual Checklis"
+          help="Standardised short database description (text of 80-90 words) for use in the Catalogue of Life and supporting materials, such as the booklet published with the Annual Checklist"
         >
           {getFieldDecorator('description', {
             initialValue: (_.get(data, 'description')) ? _.get(data, 'description') : ''
@@ -299,11 +299,42 @@ class ColSourceMetaDataForm extends React.Component {
             <Input disabled/>
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Completeness"
+          help="Percentage of completeness of species list of the taxon provided by the Source Database"
+        >
+          {getFieldDecorator('completeness', {
+            initialValue: (_.get(data, 'completeness')) ? _.get(data, 'completeness') : 0,
 
+          })(
+            <Input type="number" min="0" max="100"/>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Checklist Confidence"
+          help={<span>Quality of taxonomic checklist with values 1 to 5; quality is stated by the custodian in agreement with CoL editor. Confidence indicators are described at <a href="http://www.catalogueoflife.org/col/info/databases" target="_blank">http://www.catalogueoflife.org/col/info/databases</a></span>}
+        >
+          {getFieldDecorator('confidence', {
+            initialValue: (_.get(data, 'confidence')) ? _.get(data, 'confidence') : 0,
 
-
-
-
+          })(
+            <Rate />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Editor’s comments"
+          help=""
+        >
+          {getFieldDecorator('notes', {
+            initialValue: (_.get(data, 'notes')) ? _.get(data, 'notes') : ''
+          })(
+            <TextArea rows={6} />
+          )}
+        </FormItem>
+        
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">Save</Button>
         </FormItem>

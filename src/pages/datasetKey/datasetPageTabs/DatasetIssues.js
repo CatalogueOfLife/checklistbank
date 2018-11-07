@@ -24,7 +24,7 @@ const columns = [
     key: "count",
     render: (text, record) => {
        return (
-            <NavLink
+            <NavLink 
               to={{ pathname: `/dataset/${record.datasetKey}/names?issue=${record.title.split(' ').join('_')}` }}
               exact={true}
             >
@@ -85,7 +85,7 @@ class DatasetIssues extends React.Component {
             dataSource={data}
             loading={loading}
             pagination={false}
-            
+            rowKey="title"
           />
         )}
       </div>

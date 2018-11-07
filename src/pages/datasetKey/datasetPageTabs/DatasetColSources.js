@@ -4,6 +4,7 @@ import axios from "axios";
 import { Table, Alert, List, Switch, Button, Row, Col, Tabs, notification } from "antd";
 import config from "../../../config";
 import ColSourceMetaDataForm from "../../../components/ColSourceMetaDataForm";
+import ColSourceMetaDataList from "../../../components/ColSourceMetaDataList";
 import ColSourceSectorList from './ColSourceSectors'
 import ErrorMsg from '../../../components/ErrorMsg';
 
@@ -182,26 +183,13 @@ class ColSourceList extends React.Component {
                     <Row>
                       <Col span={4} />
                       <Col span={16}>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={_.map(record, function (value, key) {
-                            return { key: key, value: value };
-                          })}
-                          renderItem={item => (
-                            <List.Item>
-                              <List.Item.Meta
-                                title={_.startCase(item.key)}
-                                description={item.value}
-                              />
-                            </List.Item>
-                          )}
-                        />
+                        <ColSourceMetaDataList colSource={record}/>
                       </Col>
                       <Col span={4} />
                     </Row>
                   )}
                 </TabPane>
-                <TabPane tab="Sectors" key="2">
+                <TabPane tab="Taxonomic Coverage" key="2">
                   <ColSourceSectorList sourceKey={record.key} datasetKey={datasetKey}></ColSourceSectorList>
                 </TabPane>
               </Tabs>
