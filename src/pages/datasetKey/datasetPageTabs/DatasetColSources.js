@@ -86,9 +86,6 @@ class ColSourceList extends React.Component {
     }
   };
 
-  deleteSource = (source) => {
-
-  }
 
   deleteSource = (source) =>  {
     console.log(source)
@@ -134,7 +131,7 @@ class ColSourceList extends React.Component {
             New Col Source
           </Button>
         )}
-        {editSource && (
+        {editSource && typeof editSource.key === 'undefined'  && (
           <Button
             type="primary"
             size="large"
