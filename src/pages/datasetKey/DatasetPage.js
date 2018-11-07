@@ -14,7 +14,7 @@ import TreeExplorer from "./datasetPageTabs/TreeExplorer";
 import Layout from "../../components/Layout";
 import history from "../../history";
 import DatasetTabs from "./datasetPageTabs/DatasetTabs";
-
+import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 const TabPane = Tabs.TabPane;
 
 class DatasetPage extends React.Component {
@@ -69,6 +69,7 @@ class DatasetPage extends React.Component {
       >
         <DatasetTabs selectedItem={section} datasetKey={datasetKey} />
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
+        {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
         {section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (

@@ -38,7 +38,7 @@ const columns = [
     render: (text, record) => {
       return (
         <NavLink
-          to={{ pathname: `/dataset/${record.key}/metrics` }}
+          to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
           exact={true}
         >
           {text}

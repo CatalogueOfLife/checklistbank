@@ -10,6 +10,11 @@ class DatasetTabs extends React.Component {
         mode="horizontal"
         style={{ marginBottom: "10px" }}
       >
+        <Menu.Item key="issues">
+          <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/issues` }}>
+            Issues
+          </NavLink>
+        </Menu.Item>
         <Menu.Item key="metrics">
           <NavLink to={{ pathname: `/dataset/${this.props.datasetKey}/metrics` }}>
             Import Metrics
