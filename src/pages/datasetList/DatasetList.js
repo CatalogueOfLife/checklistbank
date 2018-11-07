@@ -29,11 +29,6 @@ const formItemLayout = {
   },
 };
 
-const catalogueMap = {
-  scrutinized: 'sCat',
-  provisional: 'pCAt'
-}
-
 const columns = [
   {
     title: "Title",
@@ -70,17 +65,16 @@ const columns = [
 
   },
   {
-    title: "Catalogue",
-    dataIndex: "catalogue",
-    key: "catalogue",
+    title: "Contributes To",
+    dataIndex: "contributesTo",
+    key: "contributesTo",
     width: 150,
-    render: (text) => { return catalogueMap[text]},
     filters: [{
-      text: 'sCat',
-      value: 'scrutinized',
+      text: 'CoL',
+      value: 'CoL',
     }, {
       text: 'pCat',
-      value: 'provisional',
+      value: 'pCat',
     }]
 
   },
@@ -156,7 +150,7 @@ class DatasetList extends React.Component {
     super(props);
     this.getData = this.getData.bind(this);
     this.handleColumns = this.handleColumns.bind(this);
-    this.updateCatalogue = this.updateCatalogue.bind(this);
+    this.updateContributesTo = this.updateContributesTo.bind(this);
     const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
@@ -182,8 +176,8 @@ class DatasetList extends React.Component {
         search: `?limit=150&offset=0`
       })
     }
-    if(query.catalogue){
-     this.updateCatalogue(query)
+    if(query.contributesTo){
+     this.updateContributesTo(query)
     }
     this.getData(query || {limit: 150, offset: 0});
   }
@@ -192,12 +186,12 @@ class DatasetList extends React.Component {
     this.handleColumns(columns)
   }
 
-  updateCatalogue(query){
+  updateContributesTo(query){
 
     let catColumn = _.find(columns, (c)=>{
-      return c.key === 'catalogue'
+      return c.key === 'contributesTo'
     });
-    let filter = (typeof query.catalogue === 'string') ? [query.catalogue] : query.catalogue;
+    let filter = (typeof query.contributesTo === 'string') ? [query.contributesTo] : query.contributesTo;
     catColumn.filteredValue = filter
   }
  
@@ -240,9 +234,9 @@ class DatasetList extends React.Component {
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
     })
-    if(filters.catalogue){
-      query.catalogue = filters.catalogue
-      this.updateCatalogue(query)
+    if(filters.contributesTo){
+      query.contributesTo = filters.contributesTo
+      this.updateContributesTo(query)
     }
     if(sorter) {
       query.sortBy = (sorter.field === 'authorsAndEditors') ? 'authors' : sorter.field
