@@ -29,6 +29,11 @@ const formItemLayout = {
   },
 };
 
+const catalogueMap = {
+  scrutinized: 'sCat',
+  provisional: 'pCAt'
+}
+
 const columns = [
   {
     title: "Title",
@@ -69,6 +74,14 @@ const columns = [
     dataIndex: "catalogue",
     key: "catalogue",
     width: 150,
+    render: (text) => { return catalogueMap[text]},
+    filters: [{
+      text: 'sCat',
+      value: 'scrutinized',
+    }, {
+      text: 'pCat',
+      value: 'provisional',
+    }]
 
   },
   {
@@ -143,6 +156,7 @@ class DatasetList extends React.Component {
     super(props);
     this.getData = this.getData.bind(this);
     this.handleColumns = this.handleColumns.bind(this);
+    this.updateCatalogue = this.updateCatalogue.bind(this);
     const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
@@ -168,11 +182,23 @@ class DatasetList extends React.Component {
         search: `?limit=150&offset=0`
       })
     }
+    if(query.catalogue){
+     this.updateCatalogue(query)
+    }
     this.getData(query || {limit: 150, offset: 0});
   }
 
   componentDidMount() {
     this.handleColumns(columns)
+  }
+
+  updateCatalogue(query){
+
+    let catColumn = _.find(columns, (c)=>{
+      return c.key === 'catalogue'
+    });
+    let filter = (typeof query.catalogue === 'string') ? [query.catalogue] : query.catalogue;
+    catColumn.filteredValue = filter
   }
  
 
@@ -214,7 +240,10 @@ class DatasetList extends React.Component {
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
     })
-
+    if(filters.catalogue){
+      query.catalogue = filters.catalogue
+      this.updateCatalogue(query)
+    }
     if(sorter) {
       query.sortBy = (sorter.field === 'authorsAndEditors') ? 'authors' : sorter.field
     }
@@ -236,6 +265,7 @@ class DatasetList extends React.Component {
 
     return (
       <Layout selectedMenuItem="dataset">
+      <div>
         <SearchBox
         defaultValue={_.get(this.state, 'params.q')}
         onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
@@ -252,6 +282,7 @@ class DatasetList extends React.Component {
         
             </FormItem>
         {error && <Alert message={error.message} type="error" />}
+        </div>
         {!error && (
         <Table
             size="middle"
