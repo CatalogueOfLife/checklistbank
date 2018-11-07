@@ -21,7 +21,7 @@ class ImportButton extends React.Component {
     this.setState({ importTriggered: true });
     axios
       .post(
-        `${config.dataApi}importer/?key=${record.datasetKey}&force=true`
+        `${config.dataApi}importer/${record.datasetKey}?force=true`
       )
       .then(res => {
         this.setState({ importTriggered: false });

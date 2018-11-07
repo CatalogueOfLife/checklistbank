@@ -137,9 +137,9 @@ Auth.on('login', ()=>{
       dataIndex: "",
       key: "__actions__",
       width: 150,
-      render: record => (
-        <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton>
-      )
+      render: record => 
+       record.origin === 'external' ? <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton> : ''
+      
     })
   
 })
