@@ -189,7 +189,7 @@ class RegistrationForm extends React.Component {
           {getFieldDecorator('dataAccess', {
             initialValue: (_.get(data, 'dataAccess')) ? _.get(data, 'dataAccess') : '',
             rules: [{
-              required: true, message: 'Please input the url to access data from',
+              required: false, message: 'Please input the url to access data from',
             }],
           })(
             <Input type="url" />

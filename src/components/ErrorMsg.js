@@ -22,7 +22,7 @@ class ErrorMsg extends React.Component {
                 </p>}
                 {_.get(error, 'response.request.responseURL') &&
                     <p><a href={_.get(error, 'response.request.responseURL')} target="_blank">{_.get(error, 'response.request.responseURL')}</a></p>}
-                 {_.get(error, 'config.data') && <div>
+                 {_.get(error, 'config.data') && typeof _.get(error, 'config.data') === 'string' && <div>
                      <h4>Body:</h4>
                      <p>
                      {_.get(error, 'config.data')}
