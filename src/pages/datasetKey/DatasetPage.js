@@ -15,8 +15,7 @@ import Layout from "../../components/Layout";
 import history from "../../history";
 import DatasetTabs from "./datasetPageTabs/DatasetTabs";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
-const TabPane = Tabs.TabPane;
-
+import NameSearchPage from "../nameSearch/NameSearchPage"
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -74,6 +73,9 @@ class DatasetPage extends React.Component {
         {section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
+        )}
+        {section === "names" && (
+          <NameSearchPage datasetKey={datasetKey}  />
         )}
       </Layout>
     );
