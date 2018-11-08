@@ -57,7 +57,7 @@ class ArchiveUpload extends React.Component {
           onChange={this.onChange}
         >
           <Button>
-            <Icon type="upload" /> Click to Upload
+            <Icon type="upload" /> Upload Data Archive
           </Button>
         </Upload>
       </div>

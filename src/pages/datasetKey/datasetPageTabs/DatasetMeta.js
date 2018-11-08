@@ -3,20 +3,25 @@ import PropTypes from "prop-types";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { Switch, List, Row, Col } from "antd";
+import { Switch, List, Row, Col, Select } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
-import LogoUpload from "../../../components/LogoUpload"
-import ArchiveUpload from "../../../components/ArchiveUpload"
+import LogoUpload from "../../../components/LogoUpload";
+import ArchiveUpload from "../../../components/ArchiveUpload";
+
+const Option = Select.Option;
+
 class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
     this.setEditMode = this.setEditMode.bind(this);
-    this.state = { data: null, editMode: false };
+    this.onDatasetOriginChange = this.onDatasetOriginChange.bind(this)
+    this.state = { data: null, editMode: false, datasetoriginEnum: [] };
   }
 
   componentWillMount() {
     this.getData();
+    this.getDatasetOrigin();
   }
 
   getData = () => {
@@ -31,13 +36,45 @@ class DatasetMeta extends React.Component {
         this.setState({ loading: false, error: err, data: {} });
       });
   };
-
+  getDatasetOrigin = () => {
+    axios(`${config.dataApi}vocab/datasetorigin`)
+      .then(res => {
+        this.setState({
+          datasetoriginEnum: res.data,
+          datasetoriginError: null
+        });
+      })
+      .catch(err => {
+        this.setState({ datasetoriginEnum: [], datasetoriginError: err });
+      });
+  };
   setEditMode(checked) {
     this.setState({ editMode: checked });
   }
 
+
+  onDatasetOriginChange = (value)=> {
+    this.state.data.origin = value;
+    const {data} = this.state;
+    
+
+    axios.put(`${config.dataApi}dataset/${data.key}`, data)
+      .then((res) => {
+        this.setState(
+          {data}
+        )
+      
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+
   render() {
-    const { data, editMode } = this.state;
+
+    const { data, editMode, datasetoriginEnum } = this.state;
+
     const listData = _.map(data, function(value, key) {
       return { key: _.startCase(key), value: value };
     });
@@ -45,19 +82,36 @@ class DatasetMeta extends React.Component {
       <div>
         <Row>
           <Col span={4} />
-          <Col span={8}><LogoUpload datasetKey={this.props.id}></LogoUpload></Col>
-          <Col span={8}><ArchiveUpload datasetKey={this.props.id}></ArchiveUpload></Col>
+          <Col span={12} />
+          <Col span={4}>
+            <LogoUpload datasetKey={this.props.id} />
+          </Col>
           <Col span={4} />
-          </Row>
+        </Row>
         <Row>
           <Col span={4} />
-          <Col span={16}>
-          {data && data.origin !== 'external' &&  <Switch
-              checked={editMode}
-              onChange={this.setEditMode}
-              checkedChildren="Cancel"
-              unCheckedChildren="Edit"
-            /> }
+          <Col span={8}>
+            {data && data.origin !== "external" && (
+              <Switch
+                checked={editMode}
+                onChange={this.setEditMode}
+                checkedChildren="Cancel"
+                unCheckedChildren="Edit"
+              />
+            )}
+          </Col>
+          <Col span={8} >
+         
+        { data &&    <Select style={{ width: 200, float: 'right' }} onChange={this.onDatasetOriginChange} defaultValue={_.get(data, 'origin')}>
+              {datasetoriginEnum.map((f) => {
+                return <Option key={f} value={f}>Origin: {f}</Option>
+              })}
+            </Select>}
+          
+         
+            {_.get(data, 'origin') === "uploaded" && (
+              <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
+            )}
           </Col>
           <Col span={4} />
         </Row>
