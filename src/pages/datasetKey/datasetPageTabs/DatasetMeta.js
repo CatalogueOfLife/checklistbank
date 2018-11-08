@@ -5,6 +5,7 @@ import _ from "lodash";
 import axios from "axios";
 import { Switch, List, Row, Col } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
+import LogoUpload from "../../../components/Upload"
 class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);
@@ -41,6 +42,11 @@ class DatasetMeta extends React.Component {
     });
     return (
       <div>
+        <Row>
+          <Col span={4} />
+          <Col span={16}><LogoUpload datasetKey={this.props.id}></LogoUpload></Col>
+          <Col span={4} />
+          </Row>
         <Row>
           <Col span={4} />
           <Col span={16}>
