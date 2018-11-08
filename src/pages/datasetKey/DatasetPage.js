@@ -58,6 +58,7 @@ class DatasetPage extends React.Component {
 
   render() {
     const { datasetKey, section } = this.props;
+    const sect = section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
     const { loading, data } = this.state;
     return (
@@ -74,8 +75,8 @@ class DatasetPage extends React.Component {
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
         )}
-        {section === "names" && (
-          <NameSearchPage datasetKey={datasetKey}  />
+        {sect === "names" && (
+          <NameSearchPage datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );

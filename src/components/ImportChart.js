@@ -81,8 +81,7 @@ class ImportChart extends React.Component {
         point: {
           events: {
             click: (e) => {
-              console.log(e.point.name)
-              history.push(`/dataset/${datasetKey}/names?${nameSearchParam}=${e.point.name.split(' ').join('_')}`)
+              history.push(`/dataset/${datasetKey}/names?${nameSearchParam}=${e.point.name}`)
             }
           }
         },

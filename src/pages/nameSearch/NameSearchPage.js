@@ -85,7 +85,7 @@ const columns = [
     render: (text, record) => {
         return (
           _.map(record.issues, (i)=>{
-              return <Tag color="red">{i}</Tag>
+              return <Tag key={i} color="red">{i}</Tag>
           })
         );
       },
@@ -119,6 +119,7 @@ class NameSearchPage extends React.Component {
   componentWillMount() {
     const {datasetKey} = this.props; 
     let query = qs.parse(_.get(this.props, 'location.search'));
+    console.log(this.props)
     if(_.isEmpty(query)){
       query = {limit: 150, offset: 0}
       history.push({

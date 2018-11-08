@@ -25,7 +25,7 @@ const columns = [
     render: (text, record) => {
        return (
             <NavLink 
-              to={{ pathname: `/dataset/${record.datasetKey}/names?issue=${record.title.split(' ').join('_')}` }}
+              to={{ pathname: `/dataset/${record.datasetKey}/names`, search: `?issue=${record.title}` }}
               exact={true}
             >
               {text}
