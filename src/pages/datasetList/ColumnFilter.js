@@ -36,7 +36,7 @@ class ColumnFilter extends React.Component {
     const { columns } = this.props;
     return (
       <Select
-        style={{ width: "250px" }}
+        style={{ width: "100%" }}
         mode="multiple"
         placeholder="Please select"
         defaultValue={excludeColumns}

@@ -39,7 +39,7 @@ class SearchBox extends React.Component {
         onChange={event => this.setState({ search: event.target.value })}
         enterButton
         suffix={suffix}
-        style={{ marginBottom: "10px", width: "50%" }}
+        
       />
     );
   };

@@ -2,30 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form , Tag} from "antd";
+import { Table, Alert , Tag, Row, Col, Button} from "antd";
 import config from "../../config";
 import qs from "query-string";
-import Layout from "../../components/Layout";
-import moment from 'moment'
 import history from '../../history'
 
 import SearchBox from '../datasetList/SearchBox';
-//import ColumnFilter from './ColumnFilter';
+import MultiValueFilter from './MultiValueFilter';
+
+import _ from 'lodash'
 
 
 
-const _ = require("lodash");
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
 
 const columns = [
   {
@@ -46,29 +34,12 @@ const columns = [
     title: "Authorship",
     dataIndex: "usage.name.authorship",
     key: "authorship",
-    width: 150,
-    sorter: true
+    width: 150
   },
   {
     title: "Status",
     dataIndex: "usage.status",
     key: "status",
-    filters: [{
-        text: 'accepted',
-        value: 'accepted',
-      }, {
-        text: 'doubtful',
-        value: 'doubtful',
-      }, {
-        text: 'synonym',
-        value: 'synonym',
-      }, {
-        text: 'ambiguous synonym',
-        value: 'ambiguous synonym',
-      }, {
-        text: 'misapplied',
-        value: 'misapplied',
-      }],
     width: 60,
   },
   {
@@ -76,6 +47,7 @@ const columns = [
     dataIndex: "usage.name.rank",
     key: "rank",
     width: 60,
+    sorter: true
   },
   {
     title: "Issues",
@@ -101,14 +73,13 @@ class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-    this.handleColumns = this.handleColumns.bind(this);
 
     this.state = {
       data: [],
       columns: columns,
-      search: _.get(this.props, 'location.search.q') || '',
+      params: {},
       pagination: {
-        pageSize: 150,
+        pageSize: 50,
         current: 1
       },
       loading: false
@@ -118,33 +89,29 @@ class NameSearchPage extends React.Component {
 
   componentWillMount() {
     const {datasetKey} = this.props; 
-    let query = qs.parse(_.get(this.props, 'location.search'));
+    let params = qs.parse(_.get(this.props, 'location.search'));
     console.log(this.props)
-    if(_.isEmpty(query)){
-      query = {limit: 150, offset: 0}
+    if(_.isEmpty(params)){
+        params = {limit: 50, offset: 0}
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
-        search: `?limit=150&offset=0`
+        search: `?limit=50&offset=0`
       })
     }
 
-    this.getData(query || {limit: 150, offset: 0});
-  }
-
-  componentDidMount() {
-    this.handleColumns(columns)
+    this.setState({params}, this.getData)
   }
 
 
-
-  getData = (params = { limit: 150, offset: 0 }) => {
-    this.setState({ loading: true, params });
+  getData = () => {
+     const {params} = this.state; 
+    this.setState({ loading: true });
     const {datasetKey} = this.props; 
     if(!params.q){
       delete params.q
     }
     history.push({
-        pathname: `/dataset/${datasetKey}/names`,
+    pathname: `/dataset/${datasetKey}/names`,
       search: `?${qs.stringify(params)}`
     })
     axios(`${config.dataApi}dataset/${datasetKey}/name/search?${qs.stringify(params)}`)
@@ -177,37 +144,59 @@ class NameSearchPage extends React.Component {
       ...filters
     })
 
-    if(sorter) {
-      query.sortBy =  sorter.field
+    if(sorter && sorter.field) {
+      let split =   sorter.field.split('.');
+      query.sortBy =  (split[split.length-1] === 'scientificName') ? 'name' : split[split.length-1]
     }
     if(sorter && sorter.order === 'descend'){
       query.reverse = true
     } else {
       query.reverse = false
     }
-    this.getData(query);
+    this.setState({params: query}, this.getData);
   }
 
-  handleColumns = (columns)=> {
-   
-    this.setState({columns})
+  updateSearch = (params) => {
+    _.forEach(params, (v, k) => {
+        this.state.params[k] = v
+    })
+    this.setState({...this.state.params}, this.getData)
   }
-  
+
+  resetSearch = () => {
+    this.setState({params: {limit: 50, offset: 0}}, this.getData)
+  }
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, error, params } = this.state;
 
     return (
       <div>
-      <div>
+      <Row >
+          <Col span={12} style={{  display: 'flex',   flexFlow: 'column', height: '165px'}}>
         <SearchBox
-        defaultValue={_.get(this.state, 'params.q')}
-        onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
+        defaultValue={_.get(params, 'q')}
+        onSearch={value => this.updateSearch({ q: value})}
+        style={{ marginBottom: "10px", width: "100%" }}
         >
-        
         </SearchBox>
-
-        {error && <Alert message={error.message} type="error" />}
+        <div style={{flex: 1, overflow: 'auto'}}></div>
+        <div>
+        <Button type="danger" onClick={this.resetSearch}>Reset all</Button>
         </div>
+        
+       
+        
+        </Col>
+        <Col span={12}>
+        <MultiValueFilter defaultValue={_.get(params, 'issue')} onChange={value => this.updateSearch({ issue: value})} vocab="issue" label="Issues"></MultiValueFilter>
+
+        <MultiValueFilter defaultValue={_.get(params, 'rank')} onChange={value => this.updateSearch({ rank: value})} vocab="rank" label="Ranks"></MultiValueFilter>
+        <MultiValueFilter defaultValue={_.get(params, 'status')} onChange={value => this.updateSearch({ status: value})} vocab="taxonomicstatus" label="Status"></MultiValueFilter>
+
+        
+        </Col>
+        {error && <Alert message={error.message} type="error" />}
+        </Row>
         {!error && (
         <Table
             size="middle"
@@ -216,6 +205,7 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
+            rowKey="usage.name.id"
           />
          
         )}

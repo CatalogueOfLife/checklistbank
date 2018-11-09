@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form } from "antd";
+import { Table, Alert, Form, Row, Col } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/Layout";
@@ -260,21 +260,26 @@ class DatasetList extends React.Component {
     return (
       <Layout selectedMenuItem="dataset">
       <div>
+      <Row >
+          <Col span={12}>
         <SearchBox
         defaultValue={_.get(this.state, 'params.q')}
+        style={{ marginBottom: "10px", width: "50%" }}
         onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
         >
         
         </SearchBox>
-       
+        </Col>
+        <Col span={12}>
          <FormItem
-          style={{float: 'right'}}
+          style={{width: '100%'}}
          {...formItemLayout}
           label="Omit columns"
         >
         <ColumnFilter columns={columns} onChange={this.handleColumns}></ColumnFilter>
         
             </FormItem>
+            </Col></Row>
         {error && <Alert message={error.message} type="error" />}
         </div>
         {!error && (
