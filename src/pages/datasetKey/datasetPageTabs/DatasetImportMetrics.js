@@ -47,7 +47,7 @@ class DatasetImportMetrics extends React.Component {
         </Row>
         <Row>
           <Col span={12} style={{ padding: '10px' }}>
-            {_.get(this.state, 'data[0].issuesCount') && <ImportChart nameSearchParam="issue" defaultType="column" datasetKey={datasetKey} data={_.get(this.state, 'data[0].issuesCount')} title="Names with issues" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
+            {_.get(this.state, 'data[0].taxaByRankCount') && <ImportChart nameSearchParam="rank" defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data[0].taxaByRankCount')} title="Accepted Names by Rank" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
           </Col>
           <Col span={12} style={{ padding: '10px' }}>
           {_.get(this.state, 'data[0].usagesByStatusCount') && <ImportChart nameSearchParam="status" defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data[0].usagesByStatusCount')} title="Usages by status" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
