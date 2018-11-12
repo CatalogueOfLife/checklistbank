@@ -56,9 +56,7 @@ const columns = [
     width: 400,
     render: (text, record) => {
         return (
-          _.map(record.issues, (i)=>{
-              return <Tag key={i} color="red">{i}</Tag>
-          })
+          record.issues.map(i => <Tag key={i} color="red">{i}</Tag>)
         );
       },
 

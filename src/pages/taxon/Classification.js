@@ -31,7 +31,7 @@ const columns = [
 class ClassificationTable extends React.Component {
   componentWillMount() {
     const { datasetKey } = this.props;
-    let classification = _.map(_.reverse(this.props.data), t => {
+    let classification = _.reverse(this.props.data).map( t => {
       return {
         scientificName: t.name.scientificName,
         rank: t.name.rank,

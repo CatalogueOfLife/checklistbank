@@ -62,9 +62,9 @@ class ColTree extends React.Component {
     var defaultExpandedNodes;
     Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
       .then(values => {
-        let mainTreeData = values[0].data;
-        let defaultExpanded = values[1] ? values[1].data : null;
-        let treeData = _.map(mainTreeData, tx => {
+        const mainTreeData = values[0].data;
+        const defaultExpanded = values[1] ? values[1].data : null;
+        const treeData = mainTreeData.map( tx => {
           return {
             title: (
               <ColTreeNode
@@ -133,7 +133,7 @@ class ColTree extends React.Component {
       )}/children`
     )
       .then(res => {
-        treeNode.props.dataRef.children = _.map(res.data, tx => {
+        treeNode.props.dataRef.children = res.data.map( tx => {
           return {
             title: (
               <ColTreeNode

@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 class SynonymsTable extends React.Component {
   componentWillMount() {
-    let synonyms = _.map(this.props.data, s => {
+    let synonyms = this.props.data.map( s => {
       return s[0] ? s[0] : s.name;
     });
     const { datasetKey } = this.props;

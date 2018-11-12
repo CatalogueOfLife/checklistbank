@@ -145,17 +145,16 @@ class ImportTable extends React.Component {
     });
     axios(`${config.dataApi}importer?${qs.stringify(params)}`)
       .then(res => {
-        let promises = [];
 
-        _.each(res.data.result, imp => {
-          promises.push(
+        const promises =  res.data.result.map( imp => 
+         
             axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
               dataset => {
                 imp.dataset = dataset.data;
               }
             )
-          );
-        });
+          
+        )
 
         return Promise.all(promises).then(() => res);
       })
