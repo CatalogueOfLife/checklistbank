@@ -19,15 +19,10 @@ class SynonymsTable extends React.Component {
         render: (text, record) => {
           return (
             <NavLink to={{ pathname: `/dataset/${datasetKey}/name/${record.id}` }} exact={true}>
-              {text}
+              {text} {record.authorship}
             </NavLink>
           );
         },
-      },
-      {
-        title: "authorship",
-        dataIndex: "authorship",
-        key: "authorship"
       }
     ]});
   }

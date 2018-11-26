@@ -9,6 +9,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 
 import Layout from "../../components/Layout";
 import _ from "lodash";
+import KeyValueList from '../taxon/KeyValueList'
 
 const { Panel } = Collapse;
 
@@ -172,34 +173,26 @@ class NamePage extends React.Component {
             return { key: _.startCase(key), value: value };
           }
         );
-    if (nameListData.length > 0) {
-      nameListData.unshift({
-        value: (
-          <div>
-            {["rank", "code", "origin", "type"].map(
+
+        const tags = (name) ? <div>
+                      {["rank", "code", "origin", "type"].filter(i => !_.isUndefined(name[i]) ).map(
               i =>
-                !_.isUndefined(name[i]) ? (
-                  <Tag key={i} color="blue">
+                  <Tag key={i} style={{margin: '4px 4px 4px 0px'}} color="blue">
                     {i} : {name[i]}
                   </Tag>
-                ) : (
-                  ""
-                )
+                
             )}
-            {["candidatus", "available", "legitimate", "parsed"].map(
+            {["candidatus", "available", "legitimate", "parsed"].filter(i => !_.isUndefined(name[i]) ).map(
               i =>
-                !_.isUndefined(name[i]) ? (
-                  <Tag key={i} color={name[i] === true ? "green" : "red"}>
+                
+                  <Tag key={i} style={{margin: '4px 4px 4px 0px'}} color={name[i] === true ? "green" : "red"}>
                     {i} : {name[i].toString()}
                   </Tag>
-                ) : (
-                  ""
-                )
+               
             )}
-          </div>
-        )
-      });
-    }
+        </div> : ''
+        nameListData.push({value: tags})
+
 
     return (
       <Layout
@@ -249,21 +242,15 @@ class NamePage extends React.Component {
             {nameError && (
               <Alert message={<ErrorMsg error={nameError} />} type="error" />
             )}
-            {nameListData &&
-              nameListData.length > 1 && (
-                <List
-                  itemLayout="horizontal"
-                  dataSource={nameListData}
-                  renderItem={item => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={item.key}
-                        description={item.value}
-                      />
-                    </List.Item>
-                  )}
-                />
-              )}
+        
+              {nameListData &&
+              nameListData.length > 1 &&
+              <React.Fragment>
+
+            <KeyValueList style={{marginBottom: '10px'}} data={nameListData}></KeyValueList>
+
+              </React.Fragment>
+              }
           </Panel>
 
           <Panel header="Verbatim" key="verbatim">
@@ -276,20 +263,7 @@ class NamePage extends React.Component {
             )}
             {verbatim &&
               verbatim.terms &&
-              !_.isEmpty(verbatim.terms) && (
-                <List
-                  itemLayout="horizontal"
-                  dataSource={verbatimData}
-                  renderItem={item => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={item.key}
-                        description={item.value}
-                      />
-                    </List.Item>
-                  )}
-                />
-              )}
+              !_.isEmpty(verbatim.terms) && <KeyValueList data={verbatimData}></KeyValueList>}
           </Panel>
         </Collapse>
       </Layout>
