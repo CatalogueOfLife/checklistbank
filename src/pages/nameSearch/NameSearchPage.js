@@ -56,7 +56,7 @@ const columns = [
     width: 400,
     render: (text, record) => {
         return (
-          record.issues.map(i => <Tag key={i} color="red">{i}</Tag>)
+          record.issues ? record.issues.map(i => <Tag key={i} color="red">{i}</Tag>) : ''
         );
       },
 
@@ -144,7 +144,16 @@ class NameSearchPage extends React.Component {
 
     if(sorter && sorter.field) {
       let split =   sorter.field.split('.');
-      query.sortBy =  (split[split.length-1] === 'scientificName') ? 'name' : split[split.length-1]
+
+      if(split[split.length-1] === 'scientificName'){
+        query.sortBy = 'name'
+      } else if(split[split.length-1] === 'rank'){
+        query.sortBy = 'taxonomic'
+      } else {
+        query.sortBy = split[split.length-1]
+      }
+
+
     }
     if(sorter && sorter.order === 'descend'){
       query.reverse = true

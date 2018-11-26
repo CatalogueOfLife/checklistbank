@@ -1,60 +1,25 @@
 import React from "react";
-import { Table } from "antd";
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
+import KeyValueList from './KeyValueList'
 
-const columns = [
-  {
-    title: "rank",
-    dataIndex: "rank",
-    key: "rank"
-  },
-  {
-    title: "scientificName",
-    dataIndex: "scientificName",
-    key: "scientificName",
-    render: (text, record) => {
-      return (
-        <NavLink
+
+const ClassificationTable = ({ datasetKey, data }) => {
+  let classification = _.reverse(data).map( t => {
+    return {
+      key: t.name.rank,
+      value: <NavLink
           to={{
-            pathname: `/dataset/${record.datasetKey}/classification`,
-            search: `?taxonKey=${record.taxonKey}`
+            pathname: `/dataset/${datasetKey}/classification`,
+            search: `?taxonKey=${t.id}`
           }}
         >
-          {text}
+          {t.name.scientificName}
         </NavLink>
-      );
-    }
-  }
-];
-
-class ClassificationTable extends React.Component {
-  componentWillMount() {
-    const { datasetKey } = this.props;
-    let classification = _.reverse(this.props.data).map( t => {
-      return {
-        scientificName: t.name.scientificName,
-        rank: t.name.rank,
-        taxonKey: t.id,
-        datasetKey: datasetKey
-      };
-    });
-
-    this.setState({ classification });
-  }
-  render() {
-    const { classification } = this.state;
-    return (
-      <Table
-        columns={columns}
-        dataSource={classification}
-        rowKey="taxonKey"
-        pagination={false}
-        size="small"
-        showHeader={false}
-      />
-    );
-  }
+      
+    };
+  });
+  return <KeyValueList data={classification}></KeyValueList>
 }
 
 export default ClassificationTable;
