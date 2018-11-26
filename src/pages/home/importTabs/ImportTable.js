@@ -146,7 +146,7 @@ class ImportTable extends React.Component {
     axios(`${config.dataApi}importer?${qs.stringify(params)}`)
       .then(res => {
 
-        const promises =  res.data.result.map( imp => 
+        const promises = (res.data.result && _.isArray(res.data.result)) ? res.data.result.map( imp => 
          
             axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
               dataset => {
@@ -154,13 +154,16 @@ class ImportTable extends React.Component {
               }
             )
           
-        )
+        ) : []
 
         return Promise.all(promises).then(() => res);
       })
       .then(res => {
        if(this.props.section === 'running'){
           return this.addDataFromImportQueue(res).then((queued)=>{
+            if(!res.data.result){
+              res.data.result = []
+            }
             res.data.result = res.data.result.concat(queued.data)
             return res
           })
