@@ -6,6 +6,7 @@ import _ from "lodash";
 import history from "../../../history";
 import ErrorMsg from "../../../components/ErrorMsg";
 import ChildLessRootsTable from './ChildLessRootsTable'
+import PageContent from '../../../components/PageContent'
 
 const TreeNode = Tree.TreeNode;
 //const Option = AutoComplete.Option;
@@ -192,7 +193,7 @@ class TreeExplorer extends React.Component {
 
     const defaultSelectedKeys = defaultExpandKey ? [defaultExpandKey] : null;
     return (
-      <div>
+      <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
         {childlessRoots && childlessRoots.length > 0 && <Alert style={{marginBottom: '10px'}} message={`There are ${childlessRoots.length} root taxa with no children in this dataset. They are listed below the tree`} type="warning" />}
       
@@ -212,7 +213,7 @@ class TreeExplorer extends React.Component {
           )}
 
           {childlessRoots && childlessRoots.length > 0 && <ChildLessRootsTable datasetKey={id} data={childlessRoots}></ChildLessRootsTable>}
-      </div>
+      </PageContent>
     );
   }
 }

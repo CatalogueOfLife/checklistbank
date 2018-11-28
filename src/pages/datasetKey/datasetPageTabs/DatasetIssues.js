@@ -3,6 +3,7 @@ import { Table, Alert } from "antd";
 import axios from "axios"
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
+import PageContent from '../../../components/PageContent'
 
 
 const _ = require("lodash");
@@ -75,7 +76,7 @@ class DatasetIssues extends React.Component {
     const { error, data, loading } = this.state;
 
     return (
-      <div>
+      <PageContent>
         {error && <Alert message={error.message} type="error" />}
 
         {!error && (
@@ -88,7 +89,7 @@ class DatasetIssues extends React.Component {
             rowKey="title"
           />
         )}
-      </div>
+      </PageContent>
     );
   }
 }

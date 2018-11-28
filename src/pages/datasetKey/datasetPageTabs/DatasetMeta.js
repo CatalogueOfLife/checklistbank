@@ -7,7 +7,7 @@ import { Switch, List, Row, Col, Select } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
-
+import PageContent from '../../../components/PageContent'
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -79,7 +79,7 @@ class DatasetMeta extends React.Component {
       return { key: _.startCase(key), value: value };
     });
     return (
-      <div>
+      <PageContent>
         <Row>
           <Col span={4} />
           <Col span={12} />
@@ -141,7 +141,7 @@ class DatasetMeta extends React.Component {
             <Col span={4} />
           </Row>
         )}
-      </div>
+      </PageContent>
     );
   }
 }

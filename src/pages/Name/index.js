@@ -7,9 +7,9 @@ import { NavLink } from "react-router-dom";
 import { Collapse, Alert, Spin, Tag, List } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
-import Layout from "../../components/Layout";
+import Layout from "../../components/LayoutNew";
 import _ from "lodash";
-import KeyValueList from '../taxon/KeyValueList'
+import KeyValueList from '../Taxon/KeyValueList'
 
 const { Panel } = Collapse;
 
@@ -199,8 +199,10 @@ class NamePage extends React.Component {
         selectedMenuItem="datasetKey"
         selectedDataset={dataset}
         selectedName={name}
-        section="name"
+        openKeys={['dataset', 'datasetKey']}
+        selectedKeys={["name"]}
       >
+      <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
         {name && (
           <h1>
             Name details: {name.scientificName} {name.authorship}
@@ -266,6 +268,7 @@ class NamePage extends React.Component {
               !_.isEmpty(verbatim.terms) && <KeyValueList data={verbatimData}></KeyValueList>}
           </Panel>
         </Collapse>
+        </div>
       </Layout>
     );
   }

@@ -11,11 +11,10 @@ import DatasetColSources from "./datasetPageTabs/DatasetColSources";
 import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
 
 import TreeExplorer from "./datasetPageTabs/TreeExplorer";
-import Layout from "../../components/Layout";
+import Layout from "../../components/LayoutNew";
 import history from "../../history";
-import DatasetTabs from "./datasetPageTabs/DatasetTabs";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
-import NameSearchPage from "../nameSearch/NameSearchPage"
+import NameSearch from "../NameSearch"
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -61,13 +60,16 @@ class DatasetPage extends React.Component {
     const sect = section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
     const { loading, data } = this.state;
+    const openKeys = ['dataset', 'datasetKey']
+    const selectedKeys = [section]
     return (
       <Layout
         selectedMenuItem="datasetKey"
         selectedDataset={data}
         section={section}
+        openKeys={openKeys}
+        selectedKeys={selectedKeys}
       >
-        <DatasetTabs selectedItem={section} datasetKey={datasetKey} />
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
@@ -76,7 +78,7 @@ class DatasetPage extends React.Component {
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
         )}
         {sect === "names" && (
-          <NameSearchPage datasetKey={datasetKey} location={this.props.location} />
+          <NameSearch datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );

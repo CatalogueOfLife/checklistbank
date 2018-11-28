@@ -7,10 +7,11 @@ import config from "../../config";
 
 import axios from "axios";
 
-import Layout from "../../components/Layout";
+import Layout from "../../components/LayoutNew";
 import Auth from '../../components/Auth/Auth'
 import LoginForm from './LoginForm'
 import _ from 'lodash'
+import PageContent from '../../components/PageContent'
 
 class Login extends React.Component {
     state = {
@@ -66,9 +67,12 @@ class LoginPage extends React.Component {
     return (
       <Layout     
       >
+      <PageContent>
        {Auth.isAuthenticated && <AuthButton ></AuthButton>}
        {!Auth.isAuthenticated && <LoginForm {...this.props}></LoginForm>}
+       </PageContent>
       </Layout>
+      
     );
   }
 }

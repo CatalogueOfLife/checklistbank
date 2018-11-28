@@ -7,6 +7,7 @@ import ColSourceMetaDataForm from "../../../components/ColSourceMetaDataForm";
 import ColSourceMetaDataList from "../../../components/ColSourceMetaDataList";
 import ColSourceSectorList from './ColSourceSectors'
 import ErrorMsg from '../../../components/ErrorMsg';
+import PageContent from '../../../components/PageContent'
 
 import _ from "lodash";
 
@@ -112,7 +113,7 @@ class ColSourceList extends React.Component {
     const { datasetKey } = this.props;
 
     return (
-      <div>
+      <PageContent>
         {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
 
@@ -200,7 +201,7 @@ class ColSourceList extends React.Component {
             pagination={false}
           />
         )}
-      </div>
+      </PageContent>
     );
   }
 }

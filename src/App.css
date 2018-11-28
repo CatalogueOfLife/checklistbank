@@ -1,32 +1,5 @@
 @import '~antd/dist/antd.css';
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 .login-form-wrapper {
   max-width: 300px;
 }
@@ -58,4 +31,53 @@
 .logo-uploader > .ant-upload {
   width: 200px;
   height: 200px;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+.headerLogo {
+  height: 64px;
+  position: relative;
+  line-height: 64px;
+  padding-left: 24px;
+  display: inline-block;
+}
+.headerLogo svg {
+  vertical-align: middle;
+  height: 64px;
+  padding: 14px 0;
+}
+.logo {
+  height: 64px;
+  position: relative;
+  line-height: 64px;
+  margin-left: -20px;
+  transition: all .3s;
+  background: #002140;
+  overflow: hidden;
+}
+.logo svg {
+  vertical-align: middle;
+  height: 64px;
+  fill: #5ba734;
+  padding: 14px 0;
+}
+.logo h1 {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 20px;
+  margin: 0 0 0 12px;
+  font-family: Myriad Pro,Helvetica Neue,Arial,Helvetica,sans-serif;
+  font-weight: 600;
+  color: white;
+}
+
+.menu-trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color .3s;
 }

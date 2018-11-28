@@ -7,7 +7,7 @@ import config from "../../config";
 import qs from "query-string";
 import history from '../../history'
 
-import SearchBox from '../datasetList/SearchBox';
+import SearchBox from '../DatasetList/SearchBox';
 import MultiValueFilter from './MultiValueFilter';
 
 import _ from 'lodash'
@@ -177,7 +177,7 @@ class NameSearchPage extends React.Component {
     const { data, loading, error, params } = this.state;
 
     return (
-      <div>
+      <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
       <Row >
           <Col span={12} style={{  display: 'flex',   flexFlow: 'column', height: '165px'}}>
         <SearchBox

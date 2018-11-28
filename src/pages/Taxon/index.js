@@ -13,7 +13,7 @@ import Distributions from './Distributions';
 import Classification from './Classification';
 import ErrorMsg from '../../components/ErrorMsg';
 
-import Layout from '../../components/Layout'
+import Layout from '../../components/LayoutNew'
 import _ from 'lodash';
 
 
@@ -111,7 +111,15 @@ class TaxonPage extends React.Component {
     const { match: { params: { key, taxonKey } } } = this.props;
     const { datasetLoading, taxonLoading, classificationLoading, synonymsLoading, infoLoading, dataset, taxon, synonyms, info, classification, datasetError, taxonError, synonymsError, classificationError, infoError } = this.state;
     return (
-      <Layout selectedMenuItem="datasetKey" selectedDataset={dataset} selectedTaxon={taxon} section="taxon">
+      <Layout 
+        selectedDataset={dataset} 
+        selectedTaxon={taxon}
+        openKeys={['dataset', 'datasetKey']}
+        selectedKeys={["taxon"]}
+        
+        >
+              <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
+
         {taxon && <h1>Taxon details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
 
         <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions', 'classification']} >
@@ -193,7 +201,7 @@ class TaxonPage extends React.Component {
             </Panel>
 
         </Collapse>
-
+  </div>
       </Layout>
     );
   }

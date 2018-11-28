@@ -9,6 +9,8 @@ import Layout from "../../../components/Layout";
 import moment from "moment";
 import history from "../../../history";
 import ImportButton from './ImportButton'
+import PageContent from '../../../components/PageContent'
+
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -233,7 +235,7 @@ class ImportTable extends React.Component {
     const { section } = this.props;
 
     return (
-      <div>
+      <PageContent>
         {error && <Alert message={error.message} type="error" />}
         {!error && (
           <Table
@@ -251,7 +253,7 @@ class ImportTable extends React.Component {
             } 
           />
         )}
-      </div>
+      </PageContent>
     );
   }
 }

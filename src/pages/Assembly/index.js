@@ -1,13 +1,14 @@
 import React from 'react';
 import { Row, Col, notification,Input, Button, Alert, Card } from 'antd'
 import _ from 'lodash'
-import Layout from '../../components/Layout'
+import Layout from '../../components/LayoutNew'
 import axios from 'axios';
 import config from '../../config'
 import colTreeActions from './ColTreeActions';
 import ErrorMsg from '../../components/ErrorMsg';
 import ColTree from './ColTree'
 import DatasetAutocomplete from './DatasetAutocomplete'
+import PageContent from '../../components/PageContent'
 
 
 import SectorModal from './SectorModal'
@@ -119,7 +120,11 @@ class ManagementClassification extends React.Component {
 
 
         return (
-            <Layout selectedMenuItem="managementclassification">
+            <Layout 
+            openKeys={[]}
+            selectedKeys={["assembly"]}
+            >
+            <PageContent>
                 <Row style={{paddingLeft: '16px'}}>
                     <Button type={this.state.mode === 'modify' ? 'primary' : ''} onClick={() => this.toggleMode('modify')} size="large" style={{ marginBottom: '20px' }} disabled>Modify Tree</Button>
                     <Button style={{marginLeft: '10px', marginBottom: '20px'}} type={this.state.mode === 'attach' ? 'primary' : ''} onClick={() => this.toggleMode('attach')} size="large" >Attach sectors</Button>
@@ -184,7 +189,7 @@ class ManagementClassification extends React.Component {
                     options={_.get(this.state, 'sectorModal.options')}
                     datasetKey={_.get(this.state, 'sectorModal.datasetKey')} />}
 
-
+</PageContent>
             </Layout>
         );
     }

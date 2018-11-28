@@ -8,6 +8,7 @@ import axios from "axios";
 import moment from 'moment'
 import { Switch, Tag, Row, Col, Alert } from "antd";
 import ImportChart from '../../../components/ImportChart'
+import PageContent from '../../../components/PageContent'
 
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class DatasetImportMetrics extends React.Component {
     const { datasetKey } = this.props;
 
     return (
-      <div>
+      <PageContent>
         {!this.state.loading && this.state.data.length === 0 && <Alert type="warning" message="No finished imports yet"></Alert>}
         <Row style={{padding: '10px'}}>
           {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount' ], (c)=>{
@@ -84,10 +85,7 @@ class DatasetImportMetrics extends React.Component {
           
         </Row>
 
-        
-
-
-      </div>
+      </PageContent>
     );
   }
 }
