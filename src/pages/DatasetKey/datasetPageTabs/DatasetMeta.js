@@ -8,6 +8,8 @@ import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
 import PageContent from '../../../components/PageContent'
+import { FormattedMessage } from 'react-intl'
+import PresentationItem from '../../../components/PresentationItem'
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -81,16 +83,31 @@ class DatasetMeta extends React.Component {
     return (
       <PageContent>
         <Row>
-          <Col span={4} />
-          <Col span={12} />
-          <Col span={4}>
+          
+          <Col lg={4} md={24}>
             <LogoUpload datasetKey={this.props.id} />
           </Col>
-          <Col span={4} />
+          <Col lg={8} md={24}>
+            
+          </Col>
+          <Col lg={8} md={24} >
+         
+         { data &&    <Select style={{ width: 200, float: 'right' }} onChange={this.onDatasetOriginChange} defaultValue={_.get(data, 'origin')}>
+               {datasetoriginEnum.map((f) => {
+                 return <Option key={f} value={f}>Origin: {f}</Option>
+               })}
+             </Select>}
+           
+          
+             {_.get(data, 'origin') === "uploaded" && (
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
+             )}
+           </Col>
+
         </Row>
         <Row>
-          <Col span={4} />
-          <Col span={8}>
+        <Col lg={4} md={24}/>
+        <Col lg={8} md={24}>
             {data && data.origin !== "external" && (
               <Switch
                 checked={editMode}
@@ -100,20 +117,7 @@ class DatasetMeta extends React.Component {
               />
             )}
           </Col>
-          <Col span={8} >
-         
-        { data &&    <Select style={{ width: 200, float: 'right' }} onChange={this.onDatasetOriginChange} defaultValue={_.get(data, 'origin')}>
-              {datasetoriginEnum.map((f) => {
-                return <Option key={f} value={f}>Origin: {f}</Option>
-              })}
-            </Select>}
           
-         
-            {_.get(data, 'origin') === "uploaded" && (
-              <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
-            )}
-          </Col>
-          <Col span={4} />
         </Row>
 
         {editMode && (
@@ -125,21 +129,12 @@ class DatasetMeta extends React.Component {
           />
         )}
         {!editMode && (
-          <Row>
-            <Col span={4} />
-            <Col span={16}>
-              <List
-                itemLayout="horizontal"
-                dataSource={listData}
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta title={item.key} description={item.value} />
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <Col span={4} />
-          </Row>
+          <dl>
+            {listData.map((obj)=> <PresentationItem label={<FormattedMessage id={obj.key} defaultMessage={obj.key} />} >
+            {obj.value}
+          </PresentationItem>)}
+          
+          </dl>
         )}
       </PageContent>
     );

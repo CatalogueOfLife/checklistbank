@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import withWidth, { MEDIUM, EXTRA_LARGE } from 'react-width'
-import { Layout, Icon, Drawer, Breadcrumb } from 'antd';
+import { Layout, Icon, Drawer } from 'antd';
 import BasicMenu from './BasicMenu'
 import SelectLang from './SelectLang'
 import UserMenu from './UserMenu'
@@ -90,7 +90,9 @@ class SiteLayout extends Component {
               type={collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.toggle}
             />
-            <div style={{ flex: '1 1 auto' }}></div>
+            <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
+            {selectedDataset && <h1>{selectedDataset.title}</h1>}
+            </div>
             <div className="header__secondary" style={{ flex: '0 0 auto' }}>
               <UserMenu />
     { /* <SelectLang /> */}

@@ -5,7 +5,7 @@ import config from '../../config';
 import axios from "axios";
 import queryString from 'query-string';
 import { NavLink } from "react-router-dom";
-import { Collapse, Alert, Spin } from 'antd';
+import { Collapse, Alert, Spin, Breadcrumb } from 'antd';
 import SynonymTable from './Synonyms'
 import VernacularNames from './VernacularNames';
 import References from './References';
@@ -112,12 +112,37 @@ class TaxonPage extends React.Component {
     const { datasetLoading, taxonLoading, classificationLoading, synonymsLoading, infoLoading, dataset, taxon, synonyms, info, classification, datasetError, taxonError, synonymsError, classificationError, infoError } = this.state;
     return (
       <Layout 
-        selectedDataset={dataset} 
-        selectedTaxon={taxon}
-        openKeys={['dataset', 'datasetKey']}
-        selectedKeys={["taxon"]}
-        
-        >
+      selectedDataset={dataset} 
+      selectedTaxon={taxon}
+      openKeys={['dataset', 'datasetKey']}
+      selectedKeys={["taxon"]}
+      >
+      <React.Fragment>
+      {dataset && taxon &&  <Breadcrumb>
+         <Breadcrumb.Item>
+         <NavLink to={{ pathname: `/dataset` }}>
+                                                 Dataset
+                                                     </NavLink>
+         </Breadcrumb.Item>
+         <Breadcrumb.Item>
+         <NavLink to={{ pathname: `/dataset/${dataset.key}/metrics` }}>
+         {dataset.title}
+                                                     </NavLink>
+          
+         </Breadcrumb.Item>
+         <Breadcrumb.Item>
+         <NavLink to={{ pathname: `/dataset/${dataset.key}/classification` }}>
+         Classification
+                                                     </NavLink>
+          
+         </Breadcrumb.Item>
+         <Breadcrumb.Item>
+         {taxon.name.scientificName}
+          
+         </Breadcrumb.Item>
+   
+       </Breadcrumb>}
+
               <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
 
         {taxon && <h1>Taxon details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
@@ -202,7 +227,9 @@ class TaxonPage extends React.Component {
 
         </Collapse>
   </div>
+  </React.Fragment>
       </Layout>
+     
     );
   }
 }

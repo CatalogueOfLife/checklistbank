@@ -182,11 +182,9 @@ class ColSourceList extends React.Component {
                   )}
                   {_.get(this.state, "editSource.key") !== record.key && (
                     <Row>
-                      <Col span={4} />
-                      <Col span={16}>
+                      
                         <ColSourceMetaDataList colSource={record}/>
-                      </Col>
-                      <Col span={4} />
+                      
                     </Row>
                   )}
                 </TabPane>

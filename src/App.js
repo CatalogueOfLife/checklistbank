@@ -14,6 +14,7 @@ import DatasetCreate from './pages/DatasetCreate'
 import Taxon from './pages/Taxon'
 import Name from './pages/Name'
 import Login from './pages/Login'
+import { ThemeProvider } from 'react-jss'
 
 import Assembly from './pages/Assembly'
 
@@ -21,10 +22,15 @@ import Imports from './pages/Imports'
 import Auth from './components/Auth/Auth'
 Auth.init();
 
+const theme = {
+  colorPrimary: 'deepskyblue'
+}
+
 class App extends Component {
   render() {
     return (
       <Router history={history}>
+        <ThemeProvider theme={theme}>
         <Switch>
           <Route exact path="/" render={(props) => <Redirect to={{
             pathname: '/imports/running'
@@ -45,6 +51,7 @@ class App extends Component {
 
           <Route component={NoMatch} />
         </Switch>
+        </ThemeProvider>
       </Router>
     );
   }

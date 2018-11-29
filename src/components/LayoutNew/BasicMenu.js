@@ -28,12 +28,14 @@ class BasicMenu extends Component {
   }
 
   componentWillReceiveProps = (nextProps) =>{
-    const {selectedKeys, openKeys} = nextProps;
     let state = {};
+
     if(JSON.stringify(nextProps.selectedKeys) !== JSON.stringify(this.props.selectedKeys)){
       state.selectedKeys = nextProps.selectedKeys
     }
-    if(JSON.stringify(nextProps.openKeys) !== JSON.stringify(this.props.openKeys)){
+    if(nextProps.collapsed){
+      state.openKeys = []
+    } else if(JSON.stringify(nextProps.openKeys) !== JSON.stringify(this.props.openKeys)){
       state.openKeys = nextProps.openKeys
     }
     if(!_.isEmpty(state)){
@@ -48,7 +50,7 @@ class BasicMenu extends Component {
     this.setState({selectedKeys})
   }
   render() {
-    const {location, selectedDataset, selectedTaxon, selectedName} = this.props;
+    const {location, selectedDataset, selectedTaxon, selectedName, collapsed} = this.props;
     const {selectedKeys, openKeys} = this.state;
     return (
       <React.Fragment>
@@ -75,12 +77,13 @@ class BasicMenu extends Component {
                                     </NavLink></Menu.Item>
         </SubMenu>
               
-                        <Menu.Item key="assembly"><NavLink to={{ pathname: '/assembly' }}>
-                        CoL Assembly
+                        <Menu.Item key="assembly" >
+                        <NavLink to={{ pathname: '/assembly' }}>
+                        <Icon type="copy" /> <span>CoL Assembly</span>
                                     </NavLink></Menu.Item>
                         
                         
-          <SubMenu key="dataset" title={<span><Icon type="mail" /><span>Dataset</span></span>}>
+          <SubMenu key="dataset" title={<span><Icon type="bars" /><span>Dataset</span></span>}>
             <Menu.Item key="/dataset">
             <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>
