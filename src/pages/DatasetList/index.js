@@ -9,7 +9,7 @@ import Layout from "../../components/LayoutNew";
 import moment from 'moment'
 import history from '../../history'
 
-import SearchBox from './SearchBox';
+import SearchBox from '../DatasetLst/SearchBox';
 import ColumnFilter from './ColumnFilter';
 
 import Auth from '../../components/Auth/Auth'
