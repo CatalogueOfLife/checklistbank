@@ -9,8 +9,8 @@ import Layout from "../../components/LayoutNew";
 import moment from 'moment'
 import history from '../../history'
 
-import SearchBox from '../DatasetLst/SearchBox';
-import ColumnFilter from '../DatasetLst/ColumnFilter';
+import SearchBox from './SearchBox';
+import ColumnFilter from './ColumnFilter';
 
 import Auth from '../../components/Auth/Auth'
 import ImportButton from '../../pages/Imports/importTabs/ImportButton'
