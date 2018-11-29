@@ -29,8 +29,17 @@ class BasicMenu extends Component {
 
   componentWillReceiveProps = (nextProps) =>{
     const {selectedKeys, openKeys} = nextProps;
-
-    this.setState({selectedKeys, openKeys})
+    let state = {};
+    if(JSON.stringify(nextProps.selectedKeys) !== JSON.stringify(this.props.selectedKeys)){
+      state.selectedKeys = nextProps.selectedKeys
+    }
+    if(JSON.stringify(nextProps.openKeys) !== JSON.stringify(this.props.openKeys)){
+      state.openKeys = nextProps.openKeys
+    }
+    if(!_.isEmpty(state)){
+      this.setState(state)
+    }
+    
   }
   onOpenChange = (openKeys) =>{
     this.setState({openKeys})

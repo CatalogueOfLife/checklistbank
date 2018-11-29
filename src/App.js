@@ -13,7 +13,7 @@ import DatasetPage from './pages/DatasetKey'
 import DatasetCreate from './pages/DatasetCreate'
 import Taxon from './pages/Taxon'
 import Name from './pages/Name'
-import LoginPage from './pages/login/LoginPage'
+import Login from './pages/Login'
 
 import Assembly from './pages/Assembly'
 
@@ -41,7 +41,7 @@ class App extends Component {
 
 
           <Route exact key="dataset" path="/dataset" render={(props) => <DatasetList location={props.location} />} />
-          <Route exact key="login" path="/user/login" render={(props) => <LoginPage location={props.location} />} />
+          <Route exact key="login" path="/user/login" render={(props) => <Login location={props.location} />} />
 
           <Route component={NoMatch} />
         </Switch>
