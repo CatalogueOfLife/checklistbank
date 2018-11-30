@@ -34,13 +34,13 @@ class ManagementClassification extends React.Component {
     }
 
 
-    getSectorInfo = (attachment, root) => {
+    getSectorInfo = (attachment, root, mode) => {
         // get the ColSources for the dataset  
         const { datasetKey } = this.state;
         return axios.all([
             axios(`${config.dataApi}colsource?datasetKey=${datasetKey}`),
-            axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/name/${encodeURIComponent(attachment.props.dataRef.key)}`),
-            axios(`${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(root.props.dataRef.key)}`),
+            axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/taxon/${encodeURIComponent(attachment.props.dataRef.key)}`),
+            axios(`${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(root.props.dataRef.key)}`),
         ])
             .then(axios.spread((colsources, attachmentName, rootName) => {
                 console.log(colsources.data[0])
@@ -55,7 +55,7 @@ class ManagementClassification extends React.Component {
                     this.setState({ sectorModal: { datasetKey: datasetKey, title: 'No Col Sources for dataset' } })
                     return
                 } else {
-                    return this.saveSector(colsources.data[0], rootName.data, attachmentName.data)
+                    return this.saveSector(colsources.data[0], rootName.data, attachmentName.data, mode)
                 }
 
 
@@ -68,11 +68,11 @@ class ManagementClassification extends React.Component {
 
     }
 
-    saveSector = (source, root, attachment) => {
+    saveSector = (source, subject, target, mode) => {
         
-        return axios.post(`${config.dataApi}sector`, { colSourceKey: source.key, root: root, attachment: attachment })
+        return axios.post(`${config.dataApi}sector`, { colSourceKey: source.key, subject: subject, target: target, mode: mode })
             .then((res) => {
-                const msg = `${attachment.name} attached to ${root.name} using colSource ${source.title} (${source.alias})`;
+                const msg = `${target.name || target.id} attached to ${subject.name || subject.id} using colSource ${source.title} (${source.alias})`;
                 notification.open({
                     message: 'Sector created',
                     description: msg

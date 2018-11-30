@@ -73,6 +73,9 @@ class ColTree extends React.Component {
                 confirmVisible={false}
                 hasPopOver={this.props.treeType === "mc"}
                 showSourceTaxon={showSourceTaxon}
+                reloadSelfAndSiblings={() => {
+                  this.loadRoot()
+                }}
               />
             ),
             key: tx.id,
@@ -101,7 +104,7 @@ class ColTree extends React.Component {
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
-            treeData: treeData.filter(r => r.childCount > 0),
+            treeData: (treeType === "mc") ? treeData : treeData.filter(r => r.childCount > 0),
             defaultExpandAll:
               !defaultExpanded && treeType !== "mc" && treeData.length < 10,
             error: null,
@@ -109,7 +112,7 @@ class ColTree extends React.Component {
           });
         } else {
           this.setState({
-            treeData: treeData.filter(r => r.childCount > 0),
+            treeData: (treeType === "mc") ? treeData : treeData.filter(r => r.childCount > 0),
             defaultExpandAll: treeType !== "mc" && treeData.length < 10,
             error: null
           });
@@ -163,7 +166,7 @@ class ColTree extends React.Component {
       });
   };
 
-  confirmAttach = (node, dragNode) => {
+  confirmAttach = (node, dragNode, mode) => {
     /*
        This is where sector mapping should be posted to the server
        */
@@ -177,7 +180,7 @@ class ColTree extends React.Component {
       />
     );
     this.setState({ ...this.state.treeData });
-    this.props.attachFn(node, dragNode).then(res => {
+    this.props.attachFn(node, dragNode, mode).then(res => {
       node.props.dataRef.title.props.reloadSelfAndSiblings();
 
       this.setState({ ...this.state.treeData });
@@ -191,18 +194,22 @@ class ColTree extends React.Component {
       );
       return; // we are in modify mode and should not react to the event
     }
+    // default to attach mode
+    let mode = "ATTACH";
     if (
-      this.props.dragNode.props.title.props.taxon.rank !==
+      this.props.dragNode.props.title.props.taxon.rank ===
       e.node.props.title.props.taxon.rank
     ) {
-      message.error("You can only map taxa of equal rank");
-      return;
+      mode = 'MERGE'      
     }
-    const msg = `Attach ${
+    const msg = (mode === 'ATTACH') ? `Attach ${
       this.props.dragNode.props.title.props.taxon.name
-    } from ${this.props.dragNode.dataset.title} to ${
+    } from ${this.props.dragNode.dataset.title} under ${
       e.node.props.title.props.taxon.name
-    } in ${this.props.dataset.title}?`;
+    } in ${this.props.dataset.title}?` : 
+    `Ranks are equal, this will merge children of ${this.props.dragNode.props.title.props.taxon.name} in ${this.props.dragNode.dataset.title} into children if ${e.node.props.title.props.taxon.name} in ${this.props.dataset.title}`
+
+
     e.node.props.dataRef.title = (
       <ColTreeNode
         taxon={e.node.props.title.props.taxon}
@@ -211,7 +218,7 @@ class ColTree extends React.Component {
         confirmTitle={msg}
         reloadSelfAndSiblings={e.node.props.title.props.reloadSelfAndSiblings}
         onConfirm={() => {
-          this.confirmAttach(e.node, this.props.dragNode);
+          this.confirmAttach(e.node, this.props.dragNode, mode);
         }}
         onCancel={() => {
           e.node.props.dataRef.title = (

@@ -82,10 +82,10 @@ class SiteLayout extends Component {
         {sideMenu}
         <Layout style={{ marginLeft: contentMargin + 'px' }}>
 
-          <Header style={{ background: '#fff', padding: 0, display: 'flex' }}>
+          <Header style={{ background: '#fff',  display: 'flex' }}>
             {isMobile && <div className="headerLogo"><Logo style={{ height: '100px', flex: '0 0 auto' }} /></div>}
             <Icon
-              style={{ flex: '0 0 auto' }}
+              style={{ flex: '0 0 auto' , marginTop: '20px', marginLeft: '-58px'}}
               className="menu-trigger"
               type={collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.toggle}
