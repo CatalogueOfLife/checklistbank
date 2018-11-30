@@ -12,7 +12,7 @@ const styles = {
 class UserMenu extends PureComponent {
   state = { visible: false, user: null }
   componentWillMount = () => {
-    this.setState(Auth.getUser())
+    this.setState({user: Auth.getUser()})
     Auth.on('login', ()=>{
       this.setState({user: Auth.getUser()})
   })
