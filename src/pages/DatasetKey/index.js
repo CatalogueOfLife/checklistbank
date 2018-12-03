@@ -4,8 +4,7 @@ import config from "../../config";
 
 import axios from "axios";
 import queryString from "query-string";
-import { NavLink } from "react-router-dom";
-import { Tabs } from "antd";
+import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetColSources from "./datasetPageTabs/DatasetColSources";
 import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
@@ -15,6 +14,8 @@ import Layout from "../../components/LayoutNew";
 import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import NameSearch from "../NameSearch"
+import _ from 'lodash'
+
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -22,7 +23,8 @@ class DatasetPage extends React.Component {
     this.getData = this.getData.bind(this);
     this.state = {
       data: null,
-      loading: true
+      loading: true,
+      importState: null
     };
   }
 
@@ -40,6 +42,15 @@ class DatasetPage extends React.Component {
       })
       .catch(err => {
         this.setState({ loading: false, error: err, data: {} });
+      });
+
+      axios(`${config.dataApi}dataset/${datasetKey}/import`)
+      .then(res => {
+        const importState = _.get(res, 'data[0].state')
+        this.setState({ importState });
+      })
+      .catch(err => {
+        this.setState({ importState: null });
       });
   };
 
@@ -59,7 +70,7 @@ class DatasetPage extends React.Component {
     const { datasetKey, section } = this.props;
     const sect = section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
-    const { loading, data } = this.state;
+    const { loading, data, importState } = this.state;
     const openKeys = ['dataset', 'datasetKey']
     const selectedKeys = [section]
     return (
@@ -70,6 +81,8 @@ class DatasetPage extends React.Component {
         openKeys={openKeys}
         selectedKeys={selectedKeys}
       >
+      { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
+      { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
