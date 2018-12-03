@@ -32,7 +32,7 @@ class ColSourceSectorList extends React.Component {
             .then(res => {
                 const promises = [];
                 _.each(res.data, (t) => {
-                    promises.push(axios(`${config.dataApi}dataset/${datasetKey}/tree/${t.root.id}`)
+                    promises.push(axios(`${config.dataApi}dataset/${datasetKey}/tree/${_.get(t, 'subject.id')}`)
                         .then((path) => {
                             t.path = path.data
                         }))
@@ -61,7 +61,7 @@ class ColSourceSectorList extends React.Component {
                 this.setState({ ...this.state.data }, () => {
                     notification.open({
                         message: 'Sector deleted',
-                        description: `${sector.attachment.name} was deleted from the Management classification`
+                        description: `${_.get(sector, 'attachment.name')} was deleted from the Management classification`
                     });
                 });
             })

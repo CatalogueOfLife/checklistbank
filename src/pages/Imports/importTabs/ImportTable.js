@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 import { Table, Alert, Form, Tag } from "antd";
 import config from "../../../config";
 import qs from "query-string";
-import Layout from "../../../components/Layout";
 import moment from "moment";
 import history from "../../../history";
 import ImportButton from './ImportButton'

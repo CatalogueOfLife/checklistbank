@@ -6,6 +6,7 @@
     "ajv": "^6.5.3",
     "antd": "^3.9.2",
     "axios": "^0.18.0",
+    "base-64": "^0.1.0",
     "highcharts": "^6.2.0",
     "highcharts-react-official": "^1.4.0",
     "history": "^4.7.2",

@@ -68,7 +68,7 @@ class BasicMenu extends Component {
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
         >
-        <SubMenu key="imports" title={<span><Icon type="mail" /><span>Imports</span></span>}>
+        <SubMenu key="imports" title={<span><Icon type="api" /><span>Imports</span></span>}>
         <Menu.Item key="running"><NavLink to={{ pathname: '/imports/running' }}>
                         Running
                                     </NavLink></Menu.Item>
@@ -83,7 +83,7 @@ class BasicMenu extends Component {
                                     </NavLink></Menu.Item>
                         
                         
-          <SubMenu key="dataset" title={<span><Icon type="bars" /><span>Dataset</span></span>}>
+          <SubMenu key="dataset" title={<span><Icon type="table" /><span>Dataset</span></span>}>
             <Menu.Item key="/dataset">
             <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>

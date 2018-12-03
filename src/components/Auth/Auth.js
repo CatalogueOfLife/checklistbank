@@ -3,6 +3,7 @@ import config from '../../config';
 import axios from 'axios';
 import history from '../../history'
 import EventEmitter from 'events';
+import base64 from 'base-64'
 
 class Auth extends EventEmitter {
 
@@ -27,7 +28,11 @@ class Auth extends EventEmitter {
       })
   }
   authenticate(auth) {
-  return  axios(`${config.dataApi}user/login`, { auth })
+  return  axios(`${config.dataApi}user/login`, {
+    headers: {
+      'Authorization': `Basic ${base64.encode(auth.username + ":" + auth.password)}`
+    }
+  })
       .then((res) => {
         localStorage.setItem('col_plus_auth_token', res.data)
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
