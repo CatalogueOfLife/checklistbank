@@ -13,33 +13,6 @@ import LoginForm from './LoginForm'
 import _ from 'lodash'
 import PageContent from '../../components/PageContent'
 
-class Login extends React.Component {
-    state = {
-      redirectToReferrer: false
-    }
-    login = () => {
-        Auth.authenticate(() => {
-        this.setState({
-          redirectToReferrer: true
-        })
-      })
-    }
-    render() {
-      const { from } = _.get(this.props, 'location.state') || { from: { pathname: '/' } }
-      const { redirectToReferrer } = this.state
-  
-      if (redirectToReferrer === true) {
-        return <Redirect to={from} />
-      }
-  
-      return (
-        <div>
-          <p>You must log in to view the page</p>
-          <button onClick={this.login}>Log in</button>
-        </div>
-      )
-    }
-  }
 
 const AuthButton = withRouter(({ history }) => (
     (
@@ -77,4 +50,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default Login;
+export default LoginPage;
