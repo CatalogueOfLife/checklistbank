@@ -10,6 +10,7 @@ import ArchiveUpload from "../../../components/ArchiveUpload";
 import PageContent from '../../../components/PageContent'
 import { FormattedMessage } from 'react-intl'
 import PresentationItem from '../../../components/PresentationItem'
+import DeleteDatasetButton from './DeleteDatasetButton'
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -107,7 +108,7 @@ class DatasetMeta extends React.Component {
         </Row>
         <Row>
         <Col lg={4} md={24}/>
-        <Col lg={8} md={24}>
+        <Col lg={14} md={24}>
             {data && data.origin !== "external" && (
               <Switch
                 checked={editMode}
@@ -116,6 +117,10 @@ class DatasetMeta extends React.Component {
                 unCheckedChildren="Edit"
               />
             )}
+          </Col>
+          <Col lg={4} md={24}>
+         { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
+
           </Col>
           
         </Row>

@@ -61,7 +61,7 @@ class ImportButton extends React.Component {
     const { record } = this.props;
     const isStopButton = ['processing', 'inserting', 'downloading'].indexOf(record.state) > -1;
     if(record.state === 'in queue'){
-      return ''
+      return record.state
     }
     return (
       <div>
