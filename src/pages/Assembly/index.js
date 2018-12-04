@@ -8,6 +8,7 @@ import colTreeActions from './ColTreeActions';
 import ErrorMsg from '../../components/ErrorMsg';
 import ColTree from './ColTree'
 import DatasetAutocomplete from './DatasetAutocomplete'
+import NameAutocomplete from './NameAutocomplete'
 import PageContent from '../../components/PageContent'
 
 
@@ -160,11 +161,7 @@ class ManagementClassification extends React.Component {
                         <DatasetAutocomplete onSelectDataset={this.onSelectDataset} ></DatasetAutocomplete>
              
                         <br/>
-                        {this.state.selectedDataset &&  <Search
-                            placeholder="Find taxon (not yet functional)"
-                            onSearch={value => console.log(value)}
-                            style={{ width: '100%' }}
-                        />}
+                        {this.state.selectedDataset &&  <NameAutocomplete datasetKey={this.state.selectedDataset.key} onSelectName={name => this.setState({defaultExpandKey: name.key})} onResetSearch={() => this.setState({defaultExpandKey: null})}></NameAutocomplete>}
                             <div style={{ overflowY: 'scroll', height: '800px' }}>
                         
                        {this.state.selectedDataset && <ColTree 

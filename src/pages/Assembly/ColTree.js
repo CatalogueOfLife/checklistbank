@@ -46,6 +46,9 @@ class ColTree extends React.Component {
     if (nextProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
+    if (nextProps.defaultExpandKey !== this.props.defaultExpandKey) {
+      this.setState({ treeData: [] }, this.loadRoot);
+    }
   }
 
   loadRoot = () => {
@@ -57,7 +60,7 @@ class ColTree extends React.Component {
     } = this.props;
     let id = key;
     let p = defaultExpandKey
-      ? axios(`${config.dataApi}dataset/${id}/tree/${defaultExpandKey}`)
+      ? axios(`${config.dataApi}dataset/${id}/tree/${encodeURIComponent(defaultExpandKey)}`)
       : Promise.resolve(false);
     var defaultExpandedNodes;
     Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])

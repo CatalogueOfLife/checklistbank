@@ -13,7 +13,6 @@ class DatasetAutocomplete extends React.Component {
         super(props);
 
         this.getDatasets = debounce(this.getDatasets, 500);
-        this.onSelectDataset = this.onSelectDataset.bind(this)
 
         this.state = {
             datasets: []
