@@ -6,7 +6,6 @@ const Search = Input.Search;
 class SearchBox extends React.Component {
   constructor(props) {
     super(props);
-    this.resetSearch = this.resetSearch.bind(this);
     this.state = {
       search: ""
     };
@@ -16,7 +15,7 @@ class SearchBox extends React.Component {
       this.setState({ search: this.props.defaultValue });
     }
   };
-  resetSearch() {
+  resetSearch = () => {
     this.setState({ search: "" }, () => {
       this.props.onSearch(this.state.search);
     });

@@ -33,7 +33,7 @@ class ColTree extends React.Component {
               datasetKey={dragNode.props.title.props.datasetKey}
             />
           );
-          this.setState({ ...this.state.treeData });
+          this.setState({ treeData: [...this.state.treeData] });
         }
       });
     }
@@ -182,11 +182,25 @@ class ColTree extends React.Component {
         reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
       />
     );
-    this.setState({ ...this.state.treeData });
+    this.setState({ treeData: [...this.state.treeData] });
     this.props.attachFn(node, dragNode, mode).then(res => {
-      node.props.dataRef.title.props.reloadSelfAndSiblings();
+      node.props.dataRef.title = (
+        <ColTreeNode
+          taxon={node.props.title.props.taxon}
+          datasetKey={this.props.dataset.key}
+          isUpdating={false}
+          confirmVisible={false}
+          reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
+        />
+      );
+      if(mode === "ATTACH"){
+        node.props.dataRef.title.props.reloadSelfAndSiblings();
+      } else if (mode === "MERGE") {
+        this.onLoadData(node)
+      }
+      
 
-      this.setState({ ...this.state.treeData });
+      
     });
   };
 
@@ -241,7 +255,7 @@ class ColTree extends React.Component {
               }
             />
           );
-          this.setState({ ...this.state.treeData });
+          this.setState({ treeData: [...this.state.treeData] });
         }}
       />
     );
@@ -250,7 +264,7 @@ class ColTree extends React.Component {
         " --> " +
         e.node.props.dataRef.title.props.taxon.name
     );
-    this.setState({ ...this.state.treeData });
+    this.setState({ treeData: [...this.state.treeData] });
   };
   confirmModify = e => {
     if (e.node.props.dataRef.children) {
@@ -305,11 +319,11 @@ class ColTree extends React.Component {
               confirmVisible={false}
             />
           );
-          this.setState({ ...this.state.treeData });
+          this.setState({ treeData: [...this.state.treeData] });
         }}
       />
     );
-    this.setState({ ...this.state.treeData });
+    this.setState({ treeData: [...this.state.treeData] });
   };
 
   handleDrop = e => {

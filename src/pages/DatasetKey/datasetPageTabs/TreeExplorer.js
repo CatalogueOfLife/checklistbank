@@ -1,6 +1,5 @@
 import React from "react";
-import { Tree, Spin, Tag, Alert, AutoComplete, Select, Popover, Row, Col, Button } from "antd";
-import {Link } from "react-router-dom"
+import { Tree, Spin, Tag, Alert, Select, Popover, Row, Col, Button } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";

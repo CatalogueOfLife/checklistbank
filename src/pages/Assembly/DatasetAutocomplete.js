@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import config from '../../config'
-import {  AutoComplete } from 'antd'
+import {  AutoComplete, Input, Button, Icon } from 'antd'
 import _ from 'lodash'
 import debounce from 'lodash.debounce';
 
@@ -40,14 +40,21 @@ class DatasetAutocomplete extends React.Component {
     render = () => {
         return <AutoComplete
             dataSource={this.state.datasets}
-            style={{ width: '100%' }}
             onSelect={this.onSelectDataset}
             onSearch={this.getDatasets}
+            dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: o.title})) : []}
             placeholder="Find dataset"
+            style={{ width: '100%' }}
+
         >
-            {this.state.datasets && this.state.datasets.map((o) => {
-                return <Option key={o.key}>{o.title}</Option>
-            })}
+            <Input
+
+            suffix={(
+              
+                <Icon type="search" />
+             
+            )}
+          />
         </AutoComplete>
     }
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { Row, Col, notification, Input, Button, Alert, Card } from "antd";
+import { Row, Col, notification, Input, Button, Icon, Card } from "antd";
+import {NavLink} from 'react-router-dom'
 import _ from "lodash";
 import Layout from "../../components/LayoutNew";
 import axios from "axios";
@@ -254,10 +255,13 @@ class ManagementClassification extends React.Component {
               <Card>
                 <h4>
                   {this.state.selectedDataset
-                    ? this.state.selectedDataset.title
+                    ? <React.Fragment> {this.state.selectedDataset.title} 
+                        <NavLink to={`/dataset/${this.state.selectedDataset.key}/sources`}>
+                       {" "} <Icon type="eye"></Icon> source
+                        </NavLink></React.Fragment>
                     : "No dataset selected"}
                 </h4>
-                <DatasetAutocomplete onSelectDataset={this.onSelectDataset} />
+                <DatasetAutocomplete onSelectDataset={this.onSelectDataset} /> 
 
                 <br />
                 {this.state.selectedDataset && (
