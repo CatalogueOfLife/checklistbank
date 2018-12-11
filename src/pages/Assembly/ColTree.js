@@ -48,7 +48,7 @@ class ColTree extends React.Component {
   }
   loadRanks = () => {
     axios(`${config.dataApi}vocab/rank`).then((res)=>{
-      this.setState({ranks: res.data})
+      this.setState({ranks: res.data.map(e => e.name )})
     })
   }
   loadRoot = () => {
@@ -193,7 +193,7 @@ class ColTree extends React.Component {
   handleAttach = e => {
     if (this.props.dragNode.props.datasetKey === e.node.props.datasetKey) {
       message.warn(
-        "You cant modify the management classification in attachment mode"
+        "You cant modify the CoL draft in attachment mode"
       );
       return; // we are in modify mode and should not react to the event
     }

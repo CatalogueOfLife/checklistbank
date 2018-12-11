@@ -43,7 +43,7 @@ class RegistrationForm extends React.Component {
     axios(`${config.dataApi}vocab/frequency`)
       .then((res) => {
 
-        this.setState({ frequencyEnum: res.data, frequencyError: null })
+        this.setState({ frequencyEnum: res.data.map(e => e.name ), frequencyError: null })
       })
       .catch((err) => {
         this.setState({ frequencyEnum: [], frequencyError: err })
@@ -56,7 +56,7 @@ class RegistrationForm extends React.Component {
     axios(`${config.dataApi}vocab/datasettype`)
       .then((res) => {
 
-        this.setState({ datasettypeEnum: res.data, datasettypeError: null })
+        this.setState({ datasettypeEnum: res.data.map(e => e.name ), datasettypeError: null })
       })
       .catch((err) => {
         this.setState({ datasettypeEnum: [], datasettypeError: err })
@@ -69,7 +69,7 @@ class RegistrationForm extends React.Component {
     axios(`${config.dataApi}vocab/dataformat`)
       .then((res) => {
 
-        this.setState({ dataformatEnum: res.data, dataformatError: null })
+        this.setState({ dataformatEnum: res.data.map(e => e.name ), dataformatError: null })
       })
       .catch((err) => {
         this.setState({ dataformatEnum: [], dataformatError: err })
@@ -82,7 +82,7 @@ class RegistrationForm extends React.Component {
     axios(`${config.dataApi}vocab/datasetorigin`)
       .then((res) => {
 
-        this.setState({ datasetoriginEnum: res.data, datasetoriginError: null })
+        this.setState({ datasetoriginEnum: res.data.map(e => e.name ), datasetoriginError: null })
       })
       .catch((err) => {
         this.setState({ datasetoriginEnum: [], datasetoriginError: err })

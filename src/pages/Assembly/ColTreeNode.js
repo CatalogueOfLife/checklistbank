@@ -75,7 +75,7 @@ class ColTreeNode extends React.Component {
           message: "Sector deleted",
           description: `${
             sector.attachment.name
-          } was deleted from the Management classification`
+          } was deleted from the CoL draft`
         });
       })
       .catch(err => {

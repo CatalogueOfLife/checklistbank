@@ -17,7 +17,7 @@ const Search = Input.Search;
 
 const MANAGEMENT_CLASSIFICATION = {
   key: 3,
-  title: "Management Classification"
+  title: "CoL draft"
 };
 
 class ManagementClassification extends React.Component {
@@ -28,7 +28,6 @@ class ManagementClassification extends React.Component {
     this.showSourceTaxon = this.showSourceTaxon.bind(this);
 
     this.state = {
-      datasets: [],
       mode: "attach"
     };
   }

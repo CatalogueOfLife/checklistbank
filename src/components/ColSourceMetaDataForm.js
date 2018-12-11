@@ -39,7 +39,7 @@ class ColSourceMetaDataForm extends React.Component {
 
     axios(`${config.dataApi}/vocab/datasettype`)
       .then((res) => {
-        this.setState({ datasettypeEnum: res.data, datasettypeError: null })
+        this.setState({ datasettypeEnum: res.data.map(e => e.name ), datasettypeError: null })
       })
       .catch((err) => {
         this.setState({ datasettypeEnum: [], datasettypeError: err })

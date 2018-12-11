@@ -1,5 +1,5 @@
 import React from "react";
-import { Tree, Spin, Tag, Alert, AutoComplete, Select } from "antd";
+import { Tree, Spin, Tag, Alert, AutoComplete, Select, Popover, Row, Col, Button } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
@@ -24,6 +24,22 @@ class ColTreeNode extends React.Component {
     const { taxon, datasetKey } = this.props;
     const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus";
     return (
+      <Popover
+      content={
+        <Row>
+          <Col span={12}>
+            {" "}
+            <Button style={{ marginLeft: "12px" }} type="primary">
+              Open on new tab
+            </Button>
+          </Col>
+        </Row>
+      }
+      title="Options"
+      visible={this.state.popOverVisible}
+      onVisibleChange={this.handleVisibleChange}
+      placement="rightTop"
+    >
       <div
         onClick={() => {
           history.push(
@@ -45,6 +61,7 @@ class ColTreeNode extends React.Component {
           </Tag>
         )}
       </div>
+      </Popover>
     );
   };
 }
@@ -79,7 +96,7 @@ class TreeExplorer extends React.Component {
         const defaultExpanded = values[1] ? values[1].data : null;
         const treeData = mainTreeData.map( tx => {
           return {
-            title: <ColTreeNode taxon={tx} datasetKey={id} />,
+            title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
             key: tx.id,
             childOffset: 0,
             childCount: tx.childCount,
@@ -98,7 +115,7 @@ class TreeExplorer extends React.Component {
               defaultExpandedNodes.push(tx.id);
             }
             let node = {
-              title: <ColTreeNode taxon={tx} datasetKey={id} />,
+              title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
               key: tx.id,
               childCount: tx.childCount,
               taxon: tx

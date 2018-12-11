@@ -39,7 +39,7 @@ class MultiValueFilter extends React.Component {
     axios(`${config.dataApi}vocab/${vocab}`)
       .then((res) => {
 
-        this.setState({ enumeration: res.data, error: null })
+        this.setState({ enumeration: res.data.map(e => e.name ), error: null })
       })
       .catch((err) => {
         this.setState({ enumeration: [], error: err })
