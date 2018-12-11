@@ -11,23 +11,19 @@ const TreeNode = Tree.TreeNode;
 class ColTree extends React.Component {
   constructor(props) {
     super(props);
-    this.loadRoot = this.loadRoot.bind(this);
-    this.onLoadData = this.onLoadData.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-    this.handleModify = this.handleModify.bind(this);
-    this.handleAttach = this.handleAttach.bind(this);
-    this.renderTreeNodes = this.renderTreeNodes.bind(this);
 
     this.state = {
       rootLoading: true,
       treeData: [],
       error: null,
-      mode: "attach"
+      mode: "attach",
+      ranks: []
     };
   }
 
   componentWillMount() {
     this.loadRoot();
+    this.loadRanks();
     if (this.props.treeType === "gsd") {
       colTreeActions.on("attachmentSuccess", dragNode => {
         if (dragNode.dataset === this.props.dataset) {
@@ -50,7 +46,11 @@ class ColTree extends React.Component {
       this.setState({ treeData: [] }, this.loadRoot);
     }
   }
-
+  loadRanks = () => {
+    axios(`${config.dataApi}vocab/rank`).then((res)=>{
+      this.setState({ranks: res.data})
+    })
+  }
   loadRoot = () => {
     const {
       treeType,
@@ -196,6 +196,13 @@ class ColTree extends React.Component {
         "You cant modify the management classification in attachment mode"
       );
       return; // we are in modify mode and should not react to the event
+    }
+    const { ranks } = this.state;
+    if(ranks.indexOf(this.props.dragNode.props.title.props.taxon.rank) < ranks.indexOf(e.node.props.title.props.taxon.rank)){
+      message.warn(
+        "Subject rank is higher than target rank"
+      );
+      return;
     }
     // default to attach mode
     let mode = "ATTACH";
