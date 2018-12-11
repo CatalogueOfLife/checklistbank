@@ -1,5 +1,6 @@
 import React from "react";
 import { Tree, Spin, Tag, Alert, AutoComplete, Select, Popover, Row, Col, Button } from "antd";
+import {Link } from "react-router-dom"
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
@@ -11,13 +12,17 @@ import PageContent from '../../../components/PageContent'
 const TreeNode = Tree.TreeNode;
 //const Option = AutoComplete.Option;
 const Option = Select.Option;
+
+function openInNewTab(url) {
+  var win = window.open(url, '_blank');
+  win.focus();
+}
+
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      childOffset: this.props.childOffset || 0
-    };
+    
   }
 
   render = () => {
@@ -28,16 +33,19 @@ class ColTreeNode extends React.Component {
       content={
         <Row>
           <Col span={12}>
-            {" "}
-            <Button style={{ marginLeft: "12px" }} type="primary">
-              Open on new tab
+            
+            <Button style={{ marginLeft: "12px" }} type="primary" onClick={()=>{
+              const win = window.open(`/dataset/${datasetKey}/taxon/${taxon.id}`, '_blank');
+              win.focus();
+              
+            }}>
+              Open in new tab
             </Button>
           </Col>
         </Row>
       }
       title="Options"
-      visible={this.state.popOverVisible}
-      onVisibleChange={this.handleVisibleChange}
+      trigger="hover"
       placement="rightTop"
     >
       <div
@@ -98,7 +106,6 @@ class TreeExplorer extends React.Component {
           return {
             title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
             key: tx.id,
-            childOffset: 0,
             childCount: tx.childCount,
             taxon: tx
           };
@@ -161,7 +168,7 @@ class TreeExplorer extends React.Component {
     ).then(res => {
       treeNode.props.dataRef.children = res.data.map( tx => {
         return {
-          title: <ColTreeNode taxon={tx} datasetKey={id} />,
+          title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
           key: tx.id,
           childCount: tx.childCount,
           parent: treeNode.props.dataRef,
@@ -197,6 +204,12 @@ class TreeExplorer extends React.Component {
   };
   handleRootChange = (value, children) => {
     this.setState({treeData: children.map((c)=> { return c.props.taxon})})
+
+  }
+
+  onRightClick = ({event, node}) => {
+    node.props.dataRef.title = <ColTreeNode taxon={node.props.dataRef.title.props.taxon} datasetKey={node.props.dataRef.title.props.datasetKey} popOverVisible={true}/>
+    this.setState({ ...this.state.treeData });
   }
   render() {
     const {
@@ -224,6 +237,7 @@ class TreeExplorer extends React.Component {
               defaultExpandAll={defaultExpandAll}
               defaultExpandedKeys={defaultExpandedKeys}
               defaultSelectedKeys={defaultSelectedKeys}
+              onRightClick={this.onRightClick}
             >
               {this.renderTreeNodes(this.state.treeData)}
             </Tree>
