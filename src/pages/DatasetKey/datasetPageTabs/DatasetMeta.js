@@ -43,7 +43,7 @@ class DatasetMeta extends React.Component {
     axios(`${config.dataApi}vocab/datasetorigin`)
       .then(res => {
         this.setState({
-          datasetoriginEnum: res.data,
+          datasetoriginEnum: res.data.map(e => e.name),
           datasetoriginError: null
         });
       })
