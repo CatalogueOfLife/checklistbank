@@ -213,7 +213,7 @@ class ManagementClassification extends React.Component {
               onClick={() => this.toggleMode("modify")}
               size="large"
               style={{ marginBottom: "20px" }}
-              disabled
+              
             >
               Modify Tree
             </Button>

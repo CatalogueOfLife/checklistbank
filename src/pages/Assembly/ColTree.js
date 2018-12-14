@@ -63,7 +63,7 @@ class ColTree extends React.Component {
       ? axios(`${config.dataApi}dataset/${id}/tree/${encodeURIComponent(defaultExpandKey)}`)
       : Promise.resolve(false);
     var defaultExpandedNodes;
-    Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
+    return Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
       .then(values => {
         const mainTreeData = values[0].data;
         const defaultExpanded = values[1] ? values[1].data : null;
@@ -76,9 +76,9 @@ class ColTree extends React.Component {
                 confirmVisible={false}
                 hasPopOver={this.props.treeType === "mc"}
                 showSourceTaxon={showSourceTaxon}
-                reloadSelfAndSiblings={() => {
+                reloadSelfAndSiblings={() => 
                   this.loadRoot()
-                }}
+                }
               />
             ),
             key: tx.id,
@@ -107,7 +107,7 @@ class ColTree extends React.Component {
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
-            treeData: (treeType === "mc") ? treeData : treeData.filter(r => r.childCount > 0),
+            treeData: (treeType === "mc") ? [...treeData] : treeData.filter(r => r.childCount > 0),
             defaultExpandAll:
               !defaultExpanded && treeType !== "mc" && treeData.length < 10,
             error: null,
@@ -115,7 +115,7 @@ class ColTree extends React.Component {
           });
         } else {
           this.setState({
-            treeData: (treeType === "mc") ? treeData : treeData.filter(r => r.childCount > 0),
+            treeData: (treeType === "mc") ? [...treeData] : treeData.filter(r => r.childCount > 0),
             defaultExpandAll: treeType !== "mc" && treeData.length < 10,
             error: null
           });
@@ -147,9 +147,9 @@ class ColTree extends React.Component {
                 taxon={tx}
                 datasetKey={id}
                 hasPopOver={this.props.treeType === "mc"}
-                reloadSelfAndSiblings={() => {
-                  this.onLoadData(treeNode);
-                }}
+                reloadSelfAndSiblings={() => 
+                  this.onLoadData(treeNode)
+                }
                 showSourceTaxon={showSourceTaxon}
               />
             ),
@@ -161,7 +161,7 @@ class ColTree extends React.Component {
           };
         });
         const { treeData } = this.state;
-        this.setState({ treeData: treeData, error: null });
+        this.setState({ treeData: [...treeData], error: null });
       })
       .catch(err => {
         this.setState({ treeData: [], error: err });
@@ -193,11 +193,12 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
-      if(mode === "ATTACH"){
+      node.props.dataRef.title.props.reloadSelfAndSiblings().then(()=> this.onLoadData(node))
+     /* if(mode === "ATTACH"){
         node.props.dataRef.title.props.reloadSelfAndSiblings();
       } else if (mode === "MERGE") {
         this.onLoadData(node)
-      }
+      } */
       
 
       
@@ -386,6 +387,7 @@ class ColTree extends React.Component {
             onDrop={this.handleDrop}
             onDragStart={onDragStart}
             loadData={this.onLoadData}
+            onExpand={(expandedKeys, obj) => {console.log(obj)}}
           >
             {this.renderTreeNodes(treeData)}
           </Tree>

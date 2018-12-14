@@ -83,6 +83,25 @@ class ColTreeNode extends React.Component {
       });
   };
 
+  deleteTaxon = taxon => {
+
+   // alert(JSON.stringify(taxon))
+   axios
+      .delete(`${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`)
+      .then(() => {
+        this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Taxon deleted",
+          description: `${
+            taxon.name
+          } was deleted from the CoL draft`
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  };
+
   render = () => {
     const {
       taxon,
@@ -100,14 +119,14 @@ class ColTreeNode extends React.Component {
               content={
                 <Row>
                   <Col span={12}>
-                    <Button type="danger">Delete taxon</Button>
+                    <Button type="danger" onClick={() => this.deleteTaxon(taxon)}>Delete taxon</Button>
                   </Col>
-                  <Col span={12}>
+                 { /* <Col span={12}>
                     {" "}
                     <Button style={{ marginLeft: "12px" }} type="primary">
                       Add child
                     </Button>
-                  </Col>
+              </Col> */}
                 </Row>
               }
               title="Options"
@@ -214,7 +233,7 @@ class ColTreeNode extends React.Component {
                             Delete mapping
                           </Button>
                           <br />
-                          <Button
+                          { /*   <Button
                             style={{ marginTop: "8px", width: "100%" }}
                             type="primary"
                             onClick={() =>
@@ -223,7 +242,7 @@ class ColTreeNode extends React.Component {
                           >
                             Show in source tree
                           </Button>
-                          <br />
+                          <br /> */}
                           <Button
                             style={{ marginTop: "8px", width: "100%" }}
                             type="primary"
