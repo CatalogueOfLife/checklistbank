@@ -148,9 +148,8 @@ class ManagementClassification extends React.Component {
     return axios
       .post(`${config.dataApi}sector`, {
         colSourceKey: source.key,
-        subject: subject,
-        target: { id: target.id, status: target },
-        mode: mode
+        subject: { id: subject.id, status: subject.status },
+        target: { id: target.id, status: target.status }
       })
       .then(res => {
         const msg = `${_.get(target, "name.scientificName") ||
