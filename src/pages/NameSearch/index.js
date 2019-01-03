@@ -6,7 +6,7 @@ import { Table, Alert , Tag, Row, Col, Button} from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from '../../history'
-
+import Classification from "./Classification"
 import SearchBox from '../DatasetList/SearchBox';
 import MultiValueFilter from './MultiValueFilter';
 
@@ -51,10 +51,21 @@ const columns = [
     sorter: true
   },
   {
+    title: "Classification",
+    dataIndex: "usage.classification",
+    key: "classification",
+    width: 180,
+    render: (text, record) => {
+      return (
+        !_.get(record, 'classification') ? "" : <Classification classification={_.initial(record.classification)} datasetKey={_.get(record, 'usage.name.datasetKey')}></Classification> 
+      );
+    },
+  },
+  {
     title: "Issues",
     dataIndex: "issues",
     key: "issues",
-    width: 400,
+    width: 320,
     render: (text, record) => {
         return (
           record.issues ? record.issues.map(i => <Tag key={i} color="red">{i}</Tag>) : ''
