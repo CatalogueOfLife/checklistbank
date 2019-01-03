@@ -186,7 +186,7 @@ class NameSearchPage extends React.Component {
     this.setState({params: {limit: 50, offset: 0}}, this.getData)
   }
   render() {
-    const { data, loading, error, params } = this.state;
+    const { data, loading, error, params, pagination } = this.state;
 
     return (
       <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
@@ -212,7 +212,7 @@ class NameSearchPage extends React.Component {
         <MultiValueFilter defaultValue={_.get(params, 'rank')} onChange={value => this.updateSearch({ rank: value})} vocab="rank" label="Ranks"></MultiValueFilter>
         <MultiValueFilter defaultValue={_.get(params, 'status')} onChange={value => this.updateSearch({ status: value})} vocab="taxonomicstatus" label="Status"></MultiValueFilter>
 
-        
+    { pagination && !isNaN(pagination.total) && <div style={{textAlign: "right", marginBottom: "8px"}}> results: {pagination.total} </div>    }    
         </Col>
         {error && <Alert message={error.message} type="error" />}
         </Row>
