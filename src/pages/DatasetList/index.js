@@ -126,7 +126,7 @@ Auth.on('login', ()=>{
   _.remove(columns, (e)=>{
     return e.key === "__actions__"
 });
-    columns.push({
+    columns.unshift({
       title: "Action",
       dataIndex: "",
       key: "__actions__",
