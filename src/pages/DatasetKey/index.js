@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import config from "../../config";
-
+import { Redirect } from 'react-router-dom'
 import axios from "axios";
 import queryString from "query-string";
 import { Alert } from "antd";
@@ -68,7 +68,10 @@ class DatasetPage extends React.Component {
 
   render() {
     const { datasetKey, section } = this.props;
-    const sect = section.split('?')[0];
+    if (!section) return <Redirect to={{
+      pathname: `/dataset/${datasetKey}/meta`
+    }} />
+    const sect = (!section) ? "meta" : section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
     const { loading, data, importState } = this.state;
     const openKeys = ['dataset', 'datasetKey']
@@ -86,7 +89,7 @@ class DatasetPage extends React.Component {
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
-        {section === "meta" && <DatasetMeta id={datasetKey} />}
+        {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
         )}
