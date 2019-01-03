@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
-import history from "../../../history";
 import ErrorMsg from "../../../components/ErrorMsg";
 
 class ImportButton extends React.Component {

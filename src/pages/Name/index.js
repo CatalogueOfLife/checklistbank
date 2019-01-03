@@ -164,10 +164,12 @@ class NamePage extends React.Component {
           _.pick(name, [
             "id",
             "homotypicNameId",
+            "rank",
             "scientificName",
             "genus",
             "specificEpithet",
-            "authorship"
+            "authorship",
+            "publishedInId"
           ]),
           function(value, key) {
             return { key: _.startCase(key), value: value };
@@ -175,7 +177,7 @@ class NamePage extends React.Component {
         );
 
         const tags = (name) ? <div>
-                      {["rank", "code", "origin", "type"].filter(i => !_.isUndefined(name[i]) ).map(
+                      {[ "code", "origin", "type"].filter(i => !_.isUndefined(name[i]) ).map(
               i =>
                   <Tag key={i} style={{margin: '4px 4px 4px 0px'}} color="blue">
                     {i} : {name[i]}
