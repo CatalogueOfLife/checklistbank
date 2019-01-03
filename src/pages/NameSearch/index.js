@@ -22,7 +22,8 @@ const columns = [
     key: "scientificName",
     render: (text, record) => {
       return (
-        <NavLink to={{ pathname: `/dataset/${_.get(record, 'usage.name.datasetKey')}/name/${encodeURIComponent(_.get(record, 'usage.name.id'))}` }} exact={true}>
+        <NavLink to={
+          { pathname: `/dataset/${_.get(record, 'usage.name.datasetKey')}/${_.get(record, 'classification') ? "taxon" : "name"}/${encodeURIComponent((_.get(record, 'classification') ? _.last(record.classification).id : _.get(record, 'usage.name.id') ))}` }} exact={true}>
           {text}
         </NavLink>
       );
