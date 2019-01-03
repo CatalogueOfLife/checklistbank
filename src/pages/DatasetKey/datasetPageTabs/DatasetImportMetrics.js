@@ -9,6 +9,7 @@ import moment from 'moment'
 import { Switch, Tag, Row, Col, Alert } from "antd";
 import ImportChart from '../../../components/ImportChart'
 import PageContent from '../../../components/PageContent'
+import ImportButton from '../../Imports/importTabs/ImportButton'
 
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
@@ -42,9 +43,14 @@ class DatasetImportMetrics extends React.Component {
       <PageContent>
         {!this.state.loading && this.state.data.length === 0 && <Alert type="warning" message="No finished imports yet"></Alert>}
         <Row style={{padding: '10px'}}>
+        <Col span={20}>
           {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount' ], (c)=>{
             return (_.get(this.state, `data[0].${c}`))? <Tag key={c} color="blue">{_.startCase(c)}: {_.get(this.state, `data[0].${c}`)}</Tag> : '';
           })}
+          </Col>
+          <Col span={4} style={{textAlign: 'right'}}>
+          <ImportButton  record={{datasetKey: datasetKey}}></ImportButton>
+          </Col>
         </Row>
         <Row>
           <Col span={12} style={{ padding: '10px' }}>
