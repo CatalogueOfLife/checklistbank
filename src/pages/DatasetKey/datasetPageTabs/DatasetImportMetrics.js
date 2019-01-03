@@ -72,7 +72,7 @@ class DatasetImportMetrics extends React.Component {
           {_.get(this.state, 'data[0].namesByOriginCount') && <ImportChart nameSearchParam="origin" defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data[0].namesByOriginCount')} title="Names by origin" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
           </Col>
           <Col span={12} style={{ padding: '10px' }}>
-          {_.get(this.state, 'data[0].verbatimByTypeCount') && <ImportChart nameSearchParam="verbatimNameType" defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data[0].verbatimByTypeCount')} title="Verbatim names by type" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
+          {_.get(this.state, 'data[0].verbatimByTypeCount') && <ImportChart nameSearchParam="verbatimNameType" defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data[0].verbatimByTypeCount')} title="Verbatim records by type" subtitle={`Imported ${moment(this.state.data[0].finished).format('MMMM Do YYYY, h:mm a')}`} />}
 
           </Col>
           
