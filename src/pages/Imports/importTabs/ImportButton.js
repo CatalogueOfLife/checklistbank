@@ -49,7 +49,7 @@ class ImportButton extends React.Component {
         
         notification.open({
           title: 'Import stopped',
-          description: `Import of ${record.title} was stopped`
+          description: `Import of ${record.dataset.title} was stopped`
         })
         if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
           this.props.onDeleteSuccess();

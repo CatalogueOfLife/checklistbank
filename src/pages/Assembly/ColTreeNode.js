@@ -12,14 +12,12 @@ import {
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import colTreeActions from "./ColTreeActions";
+import {ColTreeContext} from "./ColTreeContext"
 import history from "../../history";
 
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
-    this.setMode = this.setMode.bind(this);
-    this.deleteSector = this.deleteSector.bind(this);
     this.state = {
       style: {},
       popOverVisible: false
@@ -41,21 +39,7 @@ class ColTreeNode extends React.Component {
         });
     }
   };
-  componentDidMount = () => {
-    this.setState({
-      mode: colTreeActions.getMode()
-    });
-    colTreeActions.setMaxListeners(
-      Math.max(colTreeActions.getListenerCount("modeChange") + 1, 10)
-    );
-    colTreeActions.on("modeChange", this.setMode);
-  };
-  componentWillUnmount = () => {
-    colTreeActions.removeListener("modeChange", this.setMode);
-    colTreeActions.setMaxListeners(
-      Math.max(colTreeActions.getListenerCount("modeChange") - 1, 10)
-    );
-  };
+
 
   hidePopover = () => {
     this.setState({
@@ -84,8 +68,6 @@ class ColTreeNode extends React.Component {
   };
 
   deleteTaxon = taxon => {
-
-   // alert(JSON.stringify(taxon))
    axios
       .delete(`${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`)
       .then(() => {
@@ -109,11 +91,12 @@ class ColTreeNode extends React.Component {
       hasPopOver,
       isUpdating
     } = this.props;
-    const { mode, sectorSource } = this.state;
+    const { sectorSource } = this.state;
     const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus";
     return (
       <div>
-        {mode === "modify" &&
+        <ColTreeContext.Consumer>
+        { ({mode} )=> (mode === "modify" &&
           hasPopOver && (
             <Popover
               content={
@@ -174,8 +157,11 @@ class ColTreeNode extends React.Component {
                 )}
               </Popconfirm>
             </Popover>
-          )}
-        {(mode !== "modify" || !hasPopOver) && (
+          ) )}
+          </ColTreeContext.Consumer>
+          <ColTreeContext.Consumer>
+
+          { ({mode} ) => ((mode !== "modify" || !hasPopOver) && (
           <Popconfirm
             visible={this.props.confirmVisible}
             title={this.props.confirmTitle}
@@ -270,10 +256,12 @@ class ColTreeNode extends React.Component {
                 )}
             </div>
           </Popconfirm>
-        )}
+        ))}
+      </ColTreeContext.Consumer>
       </div>
     );
   };
 }
+
 
 export default ColTreeNode;

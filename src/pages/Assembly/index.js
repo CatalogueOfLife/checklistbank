@@ -5,7 +5,7 @@ import _ from "lodash";
 import Layout from "../../components/LayoutNew";
 import axios from "axios";
 import config from "../../config";
-import colTreeActions from "./ColTreeActions";
+import {ColTreeContext} from "./ColTreeContext"
 import ErrorMsg from "../../components/ErrorMsg";
 import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
@@ -198,7 +198,6 @@ class ManagementClassification extends React.Component {
 
   toggleMode = mode => {
     this.setState({ mode: mode });
-    colTreeActions.changeMode(mode);
   };
   cancelSectorModal = () => {
     this.setState({ sectorModal: null });
@@ -207,24 +206,33 @@ class ManagementClassification extends React.Component {
     return (
       <Layout openKeys={[]} selectedKeys={["assembly"]}>
         <PageContent>
+        <ColTreeContext.Provider value={{mode: this.state.mode, toggleMode: this.toggleMode}}>
+
           <Row style={{ paddingLeft: "16px" }}>
-            <Button
-              type={this.state.mode === "modify" ? "primary" : ""}
-              onClick={() => this.toggleMode("modify")}
-              size="large"
-              style={{ marginBottom: "20px" }}
-              
-            >
-              Modify Tree
-            </Button>
-            <Button
-              style={{ marginLeft: "10px", marginBottom: "20px" }}
-              type={this.state.mode === "attach" ? "primary" : ""}
-              onClick={() => this.toggleMode("attach")}
-              size="large"
-            >
-              Attach sectors
-            </Button>
+           <ColTreeContext.Consumer>
+           {({mode, toggleMode}) => (
+             <React.Fragment>
+             <Button
+             type={mode === "modify" ? "primary" : ""}
+             onClick={() => toggleMode("modify")}
+             size="large"
+             style={{ marginBottom: "20px" }}
+             
+           >
+             Modify Tree
+           </Button>
+           <Button
+             style={{ marginLeft: "10px", marginBottom: "20px" }}
+             type={mode === "attach" ? "primary" : ""}
+             onClick={() => toggleMode("attach")}
+             size="large"
+           >
+             Attach sectors
+           </Button>
+           </React.Fragment>
+           )}
+           </ColTreeContext.Consumer>
+            
           </Row>
           <Row style={{ padding: "10px", height: "100%" }}>
             <Col span={12} style={{ padding: "10px" }}>
@@ -309,6 +317,8 @@ class ManagementClassification extends React.Component {
               datasetKey={_.get(this.state, "sectorModal.datasetKey")}
             />
           )}
+                      </ColTreeContext.Provider>
+
         </PageContent>
       </Layout>
     );
