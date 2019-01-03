@@ -147,9 +147,6 @@ Auth.on('logout', ()=>{
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
-    this.handleColumns = this.handleColumns.bind(this);
-    this.updateContributesTo = this.updateContributesTo.bind(this);
     const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
@@ -181,11 +178,8 @@ class DatasetList extends React.Component {
     this.getData(query || {limit: 150, offset: 0});
   }
 
-  componentDidMount() {
-    this.handleColumns(columns)
-  }
 
-  updateContributesTo(query){
+  updateContributesTo = (query) => {
 
     let catColumn = _.find(columns, (c)=>{
       return c.key === 'contributesTo'
