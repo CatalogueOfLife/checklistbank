@@ -241,7 +241,6 @@ class ImportTable extends React.Component {
             size="middle"
             columns={this.state.columns}
             dataSource={data}
-            loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey="datasetKey"
