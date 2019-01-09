@@ -6,7 +6,8 @@ import injectSheet from 'react-jss';
 import { Menu, Icon } from 'antd';
 import Logo from './Logo'
 import _ from 'lodash'
-
+import Auth from '../Auth'
+import withContext from '../hoc/withContext'
 const SubMenu = Menu.SubMenu;
 const styles = {
   
@@ -49,8 +50,9 @@ class BasicMenu extends Component {
   onSelect = ({ item, key, selectedKeys }) =>{
     this.setState({selectedKeys})
   }
+
   render() {
-    const {location, selectedDataset, selectedTaxon, selectedName, collapsed} = this.props;
+    const {location, selectedDataset, selectedTaxon, selectedName, user} = this.props;
     const {selectedKeys, openKeys} = this.state;
     return (
       <React.Fragment>
@@ -76,23 +78,22 @@ class BasicMenu extends Component {
                         Failed
                                     </NavLink></Menu.Item>
         </SubMenu>
-              
-                        <Menu.Item key="assembly" >
+                  { Auth.isAuthorised(user, ['editor'])   &&  <Menu.Item key="assembly" >
                         <NavLink to={{ pathname: '/assembly' }}>
                         <Icon type="copy" /> <span>CoL Assembly</span>
-                                    </NavLink></Menu.Item>
-                        
+                        </NavLink></Menu.Item>}
                         
           <SubMenu key="dataset" title={<span><Icon type="table" /><span>Dataset</span></span>}>
             <Menu.Item key="/dataset">
             <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>
-            <Menu.Item key="datasetCreate">
+       { Auth.isAuthorised(user, ['editor', 'admin'])   &&     <Menu.Item key="datasetCreate">
                             <NavLink to={{ pathname: '/dataset/create' }}>
                                 New Dataset
                 </NavLink>
 
                         </Menu.Item>
+       }
             {selectedDataset && 
                                   <SubMenu key="datasetKey" title={`Dataset ID: ${selectedDataset.key}`} >
                                   <Menu.Item key="issues">
@@ -110,11 +111,11 @@ class BasicMenu extends Component {
                                               Metadata
                                                   </NavLink>
                                       </Menu.Item>
-                                      <Menu.Item key="sources">
+                                      { Auth.isAuthorised(user, ['editor', 'admin'])   &&       <Menu.Item key="sources">
                                           <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/sources` }}>
                                               CoL Sources
                                                   </NavLink>
-                                      </Menu.Item>
+                                      </Menu.Item>}
                                       <Menu.Item key="classification">
                                           <NavLink to={{ pathname: `/dataset/${_.get(this.props, 'selectedDataset.key')}/classification` }}>
                                               Classification
@@ -144,4 +145,6 @@ class BasicMenu extends Component {
   }
 }
 
-export default withRouter(injectSheet(styles)(BasicMenu));
+const mapContextToProps = ({ user }) => ({ user });
+
+export default withRouter(injectSheet(styles)(withContext(mapContextToProps)(BasicMenu)));

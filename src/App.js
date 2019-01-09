@@ -19,8 +19,8 @@ import { ThemeProvider } from 'react-jss'
 import Assembly from './pages/Assembly'
 
 import Imports from './pages/Imports'
-import Auth from './components/Auth/Auth'
-Auth.init();
+import ContextProvider from './components/hoc/ContextProvider';
+
 
 const theme = {
   colorPrimary: 'deepskyblue'
@@ -29,6 +29,8 @@ const theme = {
 class App extends Component {
   render() {
     return (
+      <ContextProvider>
+
       <Router history={history}>
         <ThemeProvider theme={theme}>
         <Switch>
@@ -36,11 +38,12 @@ class App extends Component {
             pathname: '/imports/running'
           }} />} />
           <Route exact path="/imports/:section?" render={({match}) => <Imports section={match.params.section}/>} />
-          <PrivateRoute exact key="Assembly" path={`/assembly`} component={Assembly}></PrivateRoute> />
+          <PrivateRoute exact key="Assembly" path={`/assembly`} roles={['editor']} component={Assembly}></PrivateRoute> />
           <Route exact key="taxonKey" path={`/dataset/:key/taxon/:taxonKey`} component={Taxon} />
           <Route exact key="nameKey" path={`/dataset/:key/name/:nameKey`} component={Name} />
 
-          <Route exact key="datasetCreate" path={`/dataset/create`} component={DatasetCreate} />
+          <PrivateRoute exact key="datasetCreate" path={`/dataset/create`}  roles={['editor', 'admin']} component={DatasetCreate}></PrivateRoute> />
+
           <Route exact key="datasetKey" path={`/dataset/:key/:section?`} 
             render={({match, location}) => (<DatasetPage section={match.params.section} datasetKey={match.params.key} location={location}/>)}
              />
@@ -53,6 +56,8 @@ class App extends Component {
         </Switch>
         </ThemeProvider>
       </Router>
+      </ContextProvider>
+
     );
   }
 }

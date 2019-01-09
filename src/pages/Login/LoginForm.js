@@ -4,33 +4,23 @@ import {
     withRouter
   } from 'react-router-dom'
 import { Form, Icon, Input, Button, Card, Alert } from 'antd';
-import Auth from '../../components/Auth/Auth'
 import _ from 'lodash'
 import ErrorMsg from '../../components/ErrorMsg'
 
 const FormItem = Form.Item;
 
 class LoginForm extends React.Component {
-    state = {
-        redirectToReferrer: false,
-        error: null
-    }
-    
+
+
     handleSubmit = (e) => {
         e.preventDefault();
+        const {logUserIn} = this.props;
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                Auth.authenticate(values)
-                .then(() => {
-                    this.setState({
-                        redirectToReferrer: true,
-                        error: null
-                    })
-                })
-                .catch(err =>{
-                    this.setState({error: err})
-                })
+               // Auth.authenticate(values)
+               logUserIn(values)
+                
             } 
         });
     }
@@ -38,11 +28,12 @@ class LoginForm extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const { from } = _.get(this.props, 'location.state') || { from: { pathname: '/' } }
-        const { redirectToReferrer, error } = this.state
+        const { redirectToReferrer, error, user } = this.props
 
         if (redirectToReferrer === true) {
             return <Redirect to={from} />
         }
+        
         return (
             <div align="center">
             <Card style={{maxWidth: '360px'}}>
@@ -78,6 +69,8 @@ class LoginForm extends React.Component {
         );
     }
 }
+
+
 
 const WrappedLoginForm = Form.create()(LoginForm);
 

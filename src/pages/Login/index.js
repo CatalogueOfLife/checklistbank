@@ -1,48 +1,43 @@
 import React from "react";
-import {
-    Redirect,
-    withRouter
-  } from 'react-router-dom'
-import config from "../../config";
 
-import axios from "axios";
 
 import Layout from "../../components/LayoutNew";
-import Auth from '../../components/Auth/Auth'
 import LoginForm from './LoginForm'
 import _ from 'lodash'
 import PageContent from '../../components/PageContent'
+import withContext from '../../components/hoc/withContext';
 
-
-const AuthButton = withRouter(({ history }) => (
-    (
-      <p>
-        Welcome! <button onClick={() => {
-          Auth.signout(() => history.push('/'))
-        }}>Sign out</button>
-      </p>
-    ) 
-  ))
 
 class LoginPage extends React.Component {
-  constructor(props) {
-    super(props);
+  state = {
+    redirectToReferrer: false,
+    error: null
+}
+handleSubmit = (values) => {
+  const {login} = this.props;
 
-
-  }
-
-  componentWillMount() {
-  }
-
-
-
+         login(values)
+          .then(() => {
+              this.setState({
+                  redirectToReferrer: true,
+                  error: null
+              }) 
+          })
+          .catch(err =>{
+              this.setState({error: err})
+          })
+       
+  
+}
+ 
   render() {
+    const {redirectToReferrer} = this.state
     return (
       <Layout     
       >
       <PageContent>
-       {Auth.isAuthenticated && <AuthButton ></AuthButton>}
-       {!Auth.isAuthenticated && <LoginForm {...this.props}></LoginForm>}
+       
+       <LoginForm {...this.props} redirectToReferrer={redirectToReferrer} logUserIn={this.handleSubmit}></LoginForm>
        </PageContent>
       </Layout>
       
@@ -50,4 +45,6 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+const mapContextToProps = ({ user, login }) => ({ user, login });
+
+export default withContext(mapContextToProps)(LoginPage);

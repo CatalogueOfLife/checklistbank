@@ -9,7 +9,8 @@ import moment from "moment";
 import history from "../../../history";
 import ImportButton from './ImportButton'
 import PageContent from '../../../components/PageContent'
-
+import withContext from '../../../components/hoc/withContext'
+import Auth from '../../../components/Auth'
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -31,7 +32,7 @@ const tagColors = {
   'failed': 'red',
   'in queue': 'orange'
 }
-const columns = [
+const defaultColumns = [
   {
     title: "Title",
     dataIndex: "dataset.title",
@@ -87,26 +88,15 @@ const columns = [
     render: date => {
       return (date) ?  moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
     }
-  },
-  {
-    title: "Action",
-    dataIndex: "",
-    key: "x",
-    width: 150,
-    render: record => (
-      <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
-    )
   }
+  
 ];
 
 class ImportTable extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
-    this.addDataFromImportQueue = this.addDataFromImportQueue.bind(this)
     this.state = {
       data: [],
-      columns: columns,
       params: {},
       pagination: {
         pageSize: 25,
@@ -231,15 +221,23 @@ class ImportTable extends React.Component {
 
   render() {
     const { data, loading, error } = this.state;
-    const { section } = this.props;
-
+    const { section, user } = this.props;
+    const columns = (Auth.isAuthorised(user, ['editor', 'admin'])) ? [ ...defaultColumns, {
+      title: "Action",
+      dataIndex: "",
+      key: "x",
+      width: 150,
+      render: record => (
+        <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
+      )
+    }] : defaultColumns;
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
         {!error && (
           <Table
             size="middle"
-            columns={this.state.columns}
+            columns={columns}
             dataSource={data}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
@@ -256,4 +254,6 @@ class ImportTable extends React.Component {
   }
 }
 
-export default ImportTable;
+const mapContextToProps = ({ user }) => ({ user });
+
+export default withContext(mapContextToProps)(ImportTable);

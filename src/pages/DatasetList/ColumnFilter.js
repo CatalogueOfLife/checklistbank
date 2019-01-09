@@ -26,7 +26,7 @@ class ColumnFilter extends React.Component {
     );
     this.setState({ excludeColumns }, () => {
       this.props.onChange(
-        _.filter(columns, v => !_.includes(excludeColumns, v.key))
+        excludeColumns
       );
     });
   };

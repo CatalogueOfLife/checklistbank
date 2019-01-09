@@ -2,18 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert , Tag, Row, Col, Button} from "antd";
+import { Table, Alert, Tag, Row, Col, Button } from "antd";
 import config from "../../config";
 import qs from "query-string";
-import history from '../../history'
-import Classification from "./Classification"
-import SearchBox from '../DatasetList/SearchBox';
-import MultiValueFilter from './MultiValueFilter';
+import history from "../../history";
+import Classification from "./Classification";
+import SearchBox from "../DatasetList/SearchBox";
+import MultiValueFilter from "./MultiValueFilter";
 
-import _ from 'lodash'
-
-
-
+import _ from "lodash";
 
 const columns = [
   {
@@ -22,8 +19,18 @@ const columns = [
     key: "scientificName",
     render: (text, record) => {
       return (
-        <NavLink to={
-          { pathname: `/dataset/${_.get(record, 'usage.name.datasetKey')}/${_.get(record, 'classification') ? "taxon" : "name"}/${encodeURIComponent((_.get(record, 'classification') ? _.last(record.classification).id : _.get(record, 'usage.name.id') ))}` }} exact={true}>
+        <NavLink
+          to={{
+            pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
+              _.get(record, "classification") ? "taxon" : "name"
+            }/${encodeURIComponent(
+              _.get(record, "classification")
+                ? _.last(record.classification).id
+                : _.get(record, "usage.name.id")
+            )}`
+          }}
+          exact={true}
+        >
           {text}
         </NavLink>
       );
@@ -41,7 +48,7 @@ const columns = [
     title: "Status",
     dataIndex: "usage.status",
     key: "status",
-    width: 60,
+    width: 60
   },
   {
     title: "Rank",
@@ -56,10 +63,15 @@ const columns = [
     key: "classification",
     width: 180,
     render: (text, record) => {
-      return (
-        !_.get(record, 'classification') ? "" : <Classification classification={_.initial(record.classification)} datasetKey={_.get(record, 'usage.name.datasetKey')}></Classification> 
+      return !_.get(record, "classification") ? (
+        ""
+      ) : (
+        <Classification
+          classification={_.initial(record.classification)}
+          datasetKey={_.get(record, "usage.name.datasetKey")}
+        />
       );
-    },
+    }
   },
   {
     title: "Issues",
@@ -67,17 +79,16 @@ const columns = [
     key: "issues",
     width: 320,
     render: (text, record) => {
-        return (
-          record.issues ? record.issues.map(i => <Tag key={i} color="red">{i}</Tag>) : ''
-        );
-      },
-
+      return record.issues
+        ? record.issues.map(i => (
+            <Tag key={i} color="red">
+              {i}
+            </Tag>
+          ))
+        : "";
+    }
   }
-
 ];
-
-
-
 
 class NameSearchPage extends React.Component {
   constructor(props) {
@@ -95,36 +106,38 @@ class NameSearchPage extends React.Component {
       loading: false
     };
   }
-  
 
   componentWillMount() {
-    const {datasetKey} = this.props; 
-    let params = qs.parse(_.get(this.props, 'location.search'));
-    console.log(this.props)
-    if(_.isEmpty(params)){
-        params = {limit: 50, offset: 0}
+    const { datasetKey } = this.props;
+    let params = qs.parse(_.get(this.props, "location.search"));
+    console.log(this.props);
+    if (_.isEmpty(params)) {
+      params = { limit: 50, offset: 0 };
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
         search: `?limit=50&offset=0`
-      })
+      });
     }
 
-    this.setState({params}, this.getData)
+    this.setState({ params }, this.getData);
   }
 
-
   getData = () => {
-     const {params} = this.state; 
+    const { params } = this.state;
     this.setState({ loading: true });
-    const {datasetKey} = this.props; 
-    if(!params.q){
-      delete params.q
+    const { datasetKey } = this.props;
+    if (!params.q) {
+      delete params.q;
     }
     history.push({
-    pathname: `/dataset/${datasetKey}/names`,
+      pathname: `/dataset/${datasetKey}/names`,
       search: `?${qs.stringify(params)}`
-    })
-    axios(`${config.dataApi}dataset/${datasetKey}/name/search?${qs.stringify(params)}`)
+    });
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/name/search?${qs.stringify(
+        params
+      )}`
+    )
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
@@ -134,8 +147,7 @@ class NameSearchPage extends React.Component {
           data: res.data.result,
           err: null,
           pagination
-        }); 
-
+        });
       })
       .catch(err => {
         this.setState({ loading: false, error: err, data: [] });
@@ -144,7 +156,7 @@ class NameSearchPage extends React.Component {
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
-    
+
     this.setState({
       pagination: pager
     });
@@ -152,72 +164,98 @@ class NameSearchPage extends React.Component {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
-    })
+    });
 
-    if(sorter && sorter.field) {
-      let split =   sorter.field.split('.');
+    if (sorter && sorter.field) {
+      let split = sorter.field.split(".");
 
-      if(split[split.length-1] === 'scientificName'){
-        query.sortBy = 'name'
-      } else if(split[split.length-1] === 'rank'){
-        query.sortBy = 'taxonomic'
+      if (split[split.length - 1] === "scientificName") {
+        query.sortBy = "name";
+      } else if (split[split.length - 1] === "rank") {
+        query.sortBy = "taxonomic";
       } else {
-        query.sortBy = split[split.length-1]
+        query.sortBy = split[split.length - 1];
       }
-
-
     }
-    if(sorter && sorter.order === 'descend'){
-      query.reverse = true
+    if (sorter && sorter.order === "descend") {
+      query.reverse = true;
     } else {
-      query.reverse = false
+      query.reverse = false;
     }
-    this.setState({params: query}, this.getData);
-  }
+    this.setState({ params: query }, this.getData);
+  };
 
-  updateSearch = (params) => {
+  updateSearch = params => {
     _.forEach(params, (v, k) => {
-        this.state.params[k] = v
-    })
-    this.setState({...this.state.params}, this.getData)
-  }
+      this.state.params[k] = v;
+    });
+    this.setState({ ...this.state.params }, this.getData);
+  };
 
   resetSearch = () => {
-    this.setState({params: {limit: 50, offset: 0}}, this.getData)
-  }
+    this.setState({ params: { limit: 50, offset: 0 } }, this.getData);
+  };
   render() {
     const { data, loading, error, params, pagination } = this.state;
 
     return (
-      <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
-      <Row >
-          <Col span={12} style={{  display: 'flex',   flexFlow: 'column', height: '165px'}}>
-        <SearchBox
-        defaultValue={_.get(params, 'q')}
-        onSearch={value => this.updateSearch({ q: value})}
-        style={{ marginBottom: "10px", width: "100%" }}
-        >
-        </SearchBox>
-        <div style={{flex: 1, overflow: 'auto'}}></div>
-        <div>
-        <Button type="danger" onClick={this.resetSearch}>Reset all</Button>
-        </div>
-        
-       
-        
-        </Col>
-        <Col span={12}>
-        <MultiValueFilter defaultValue={_.get(params, 'issue')} onChange={value => this.updateSearch({ issue: value})} vocab="issue" label="Issues"></MultiValueFilter>
+      <div
+        style={{
+          background: "#fff",
+          padding: 24,
+          minHeight: 280,
+          margin: "16px 0"
+        }}
+      >
+        <Row>
+          <Col
+            span={12}
+            style={{ display: "flex", flexFlow: "column", height: "165px" }}
+          >
+            <SearchBox
+              defaultValue={_.get(params, "q")}
+              onSearch={value => this.updateSearch({ q: value })}
+              style={{ marginBottom: "10px", width: "100%" }}
+            />
+            <div style={{ flex: 1, overflow: "auto" }} />
+            <div>
+              <Button type="danger" onClick={this.resetSearch}>
+                Reset all
+              </Button>
+            </div>
+          </Col>
+          <Col span={12}>
+            <MultiValueFilter
+              defaultValue={_.get(params, "issue")}
+              onChange={value => this.updateSearch({ issue: value })}
+              vocab="issue"
+              label="Issues"
+            />
 
-        <MultiValueFilter defaultValue={_.get(params, 'rank')} onChange={value => this.updateSearch({ rank: value})} vocab="rank" label="Ranks"></MultiValueFilter>
-        <MultiValueFilter defaultValue={_.get(params, 'status')} onChange={value => this.updateSearch({ status: value})} vocab="taxonomicstatus" label="Status"></MultiValueFilter>
+            <MultiValueFilter
+              defaultValue={_.get(params, "rank")}
+              onChange={value => this.updateSearch({ rank: value })}
+              vocab="rank"
+              label="Ranks"
+            />
+            <MultiValueFilter
+              defaultValue={_.get(params, "status")}
+              onChange={value => this.updateSearch({ status: value })}
+              vocab="taxonomicstatus"
+              label="Status"
+            />
 
-    { pagination && !isNaN(pagination.total) && <div style={{textAlign: "right", marginBottom: "8px"}}> results: {pagination.total} </div>    }    
-        </Col>
-        {error && <Alert message={error.message} type="error" />}
+            {pagination && !isNaN(pagination.total) && (
+              <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                {" "}
+                results: {pagination.total}{" "}
+              </div>
+            )}
+          </Col>
+          {error && <Alert message={error.message} type="error" />}
         </Row>
         {!error && (
-        <Table
+          <Table
             size="middle"
             columns={this.state.columns}
             dataSource={data}
@@ -226,7 +264,6 @@ class NameSearchPage extends React.Component {
             onChange={this.handleTableChange}
             rowKey="usage.name.id"
           />
-         
         )}
       </div>
     );

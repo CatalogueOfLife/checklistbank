@@ -6,6 +6,7 @@ import axios from 'axios';
 import config from '../config';
 import TextArea from 'antd/lib/input/TextArea';
 import ErrorMsg from '../components/ErrorMsg';
+import withContext from './hoc/withContext';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -20,86 +21,14 @@ class RegistrationForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.submitData = this.submitData.bind(this);
 
     this.state = {
       confirmDirty: false,
-      autoCompleteResult: [],
-      frequencyEnum: [],
-      datasettypeEnum: [],
-      dataformatEnum: [],
-      datasetoriginEnum: []
+      autoCompleteResult: []
     };
   }
 
-  componentWillMount() {
-    this.getFrequency();
-    this.getDatasetType();
-    this.getDataFormatType();
-    this.getDatasetOrigin();
-  }
-  getFrequency = () => {
-
-    axios(`${config.dataApi}vocab/frequency`)
-      .then((res) => {
-
-        this.setState({ frequencyEnum: res.data.map(e => e.name ), frequencyError: null })
-      })
-      .catch((err) => {
-        this.setState({ frequencyEnum: [], frequencyError: err })
-      })
-
-  }
-
-  getDatasetType = () => {
-
-    axios(`${config.dataApi}vocab/datasettype`)
-      .then((res) => {
-
-        this.setState({ datasettypeEnum: res.data.map(e => e.name ), datasettypeError: null })
-      })
-      .catch((err) => {
-        this.setState({ datasettypeEnum: [], datasettypeError: err })
-      })
-
-  }
-
-  getDataFormatType = () => {
-
-    axios(`${config.dataApi}vocab/dataformat`)
-      .then((res) => {
-
-        this.setState({ dataformatEnum: res.data.map(e => e.name ), dataformatError: null })
-      })
-      .catch((err) => {
-        this.setState({ dataformatEnum: [], dataformatError: err })
-      })
-
-  }
-
-  getDatasetOrigin = () => {
-
-    axios(`${config.dataApi}vocab/datasetorigin`)
-      .then((res) => {
-
-        this.setState({ datasetoriginEnum: res.data.map(e => e.name ), datasetoriginError: null })
-      })
-      .catch((err) => {
-        this.setState({ datasetoriginEnum: [], datasetoriginError: err })
-      })
-
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.submitData(values);
-      }
-    });
-  }
-
+ 
   submitData = (values)=> {
 
     const key =  _.get(this.props, 'data.key');
@@ -133,7 +62,8 @@ class RegistrationForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum, submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
+   // const { submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
+    const { datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum } = this.props;
 
     const formItemLayout = {
       labelCol: {
@@ -164,11 +94,13 @@ class RegistrationForm extends React.Component {
 
       
       <Form onSubmit={this.handleSubmit} style={{paddingTop: '12px'}}>
-      
+     { /*
       {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
       {frequencyError && <FormItem><Alert message={<ErrorMsg error={frequencyError}></ErrorMsg>} type="error" /></FormItem>}
       {datasettypeError && <FormItem><Alert message={<ErrorMsg error={datasettypeError}></ErrorMsg>} type="error" /></FormItem>}
       {dataformatError && <FormItem><Alert message={<ErrorMsg error={dataformatError}></ErrorMsg>} type="error" /></FormItem>}
+      */
+     }
         <FormItem
           {...formItemLayout}
           label="Title"
@@ -295,6 +227,20 @@ class RegistrationForm extends React.Component {
   }
 }
 
-const WrappedRegistrationForm = Form.create()(RegistrationForm);
+
+const mapContextToProps = ({ addError, addInfo, frequency: frequencyEnum,
+  datasetType: datasettypeEnum,
+  dataFormatType: dataformatEnum,
+  datasetOrigin: datasetoriginEnum }) => ({
+  addError,
+  addInfo,
+  frequencyEnum,
+  datasettypeEnum,
+  dataformatEnum,
+  datasetoriginEnum
+});
+
+const WrappedRegistrationForm = Form.create()(withContext(mapContextToProps)(RegistrationForm));
+
 
 export default WrappedRegistrationForm

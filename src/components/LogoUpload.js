@@ -7,8 +7,6 @@ import { Upload, Icon, Modal } from "antd";
 class LogoUpload extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
-    this.customRequest = this.customRequest.bind(this)
     this.state = {
       previewVisible: false,
       previewImage: "",

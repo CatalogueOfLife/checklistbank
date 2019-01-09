@@ -12,8 +12,9 @@ import history from '../../history'
 import SearchBox from './SearchBox';
 import ColumnFilter from './ColumnFilter';
 
-import Auth from '../../components/Auth/Auth'
 import ImportButton from '../../pages/Imports/importTabs/ImportButton'
+import withContext from '../../components/hoc/withContext'
+
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -29,7 +30,7 @@ const formItemLayout = {
   },
 };
 
-const columns = [
+const defaultColumns = [
   {
     title: "Title",
     dataIndex: "title",
@@ -122,37 +123,18 @@ const columns = [
   }
 ];
 
-Auth.on('login', ()=>{
-  _.remove(columns, (e)=>{
-    return e.key === "__actions__"
-});
-    columns.unshift({
-      title: "Action",
-      dataIndex: "",
-      key: "__actions__",
-      width: 150,
-      render: record => record.origin === 'external' ? <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton> : ''
-      
-    })
-  
-})
-
-Auth.on('logout', ()=>{
-  _.remove(columns, (e)=>{
-      return e.key === "__actions__"
-  });
-})
-
 
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
-    const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
+   // const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
+    
+    
 
     this.state = {
       data: [],
-      excludeColumns: excludeColumns,
-      columns: _.filter(columns, (v) => !_.includes(excludeColumns, v.key)),
+      excludeColumns: JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [],
+      columns: [],
       search: _.get(this.props, 'location.search.q') || '',
       pagination: {
         pageSize: 150,
@@ -164,6 +146,7 @@ class DatasetList extends React.Component {
   
 
   componentWillMount() {
+   
     let query = qs.parse(_.get(this.props, 'location.search'));
     if(_.isEmpty(query)){
       query = {limit: 150, offset: 0}
@@ -181,7 +164,7 @@ class DatasetList extends React.Component {
 
   updateContributesTo = (query) => {
 
-    let catColumn = _.find(columns, (c)=>{
+    let catColumn = _.find(defaultColumns, (c)=>{
       return c.key === 'contributesTo'
     });
     let filter = (typeof query.contributesTo === 'string') ? [query.contributesTo] : query.contributesTo;
@@ -242,13 +225,24 @@ class DatasetList extends React.Component {
     this.getData(query);
   }
 
-  handleColumns = (columns)=> {
+  handleColumns = (excludeColumns)=> {
    
-    this.setState({columns})
+    this.setState({excludeColumns})
   }
   
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, error , excludeColumns} = this.state;
+
+    const filteredColumns = (this.props.user && _.includes(this.props.user.roles, 'admin')) ? [{
+      title: "Action",
+      dataIndex: "",
+      key: "__actions__",
+      width: 150,
+      render: record => record.origin === 'external' ? <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton> : ''
+      
+    }, ...defaultColumns ] : defaultColumns;
+
+    const columns = _.filter(filteredColumns, (v) => !_.includes(excludeColumns, v.key))
 
     return (
       <Layout openKeys={["dataset"]} selectedKeys={["/dataset"]} >
@@ -279,7 +273,7 @@ class DatasetList extends React.Component {
         {!error && (
         <Table
             size="middle"
-            columns={this.state.columns}
+            columns={columns}
             dataSource={data}
             loading={loading}
             pagination={this.state.pagination}
@@ -293,4 +287,6 @@ class DatasetList extends React.Component {
   }
 }
 
-export default DatasetList;
+const mapContextToProps = ({ user }) => ({ user });
+
+export default withContext(mapContextToProps)(DatasetList);

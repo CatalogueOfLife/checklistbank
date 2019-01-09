@@ -11,20 +11,18 @@ import PageContent from '../../../components/PageContent'
 import { FormattedMessage } from 'react-intl'
 import PresentationItem from '../../../components/PresentationItem'
 import DeleteDatasetButton from './DeleteDatasetButton'
+import withContext from '../../../components/hoc/withContext'
+import Auth from '../../../components/Auth'
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
-    this.setEditMode = this.setEditMode.bind(this);
-    this.onDatasetOriginChange = this.onDatasetOriginChange.bind(this)
-    this.state = { data: null, editMode: false, datasetoriginEnum: [] };
+    this.state = { data: null, editMode: false };
   }
 
   componentWillMount() {
     this.getData();
-    this.getDatasetOrigin();
   }
 
   getData = () => {
@@ -39,19 +37,8 @@ class DatasetMeta extends React.Component {
         this.setState({ loading: false, error: err, data: {} });
       });
   };
-  getDatasetOrigin = () => {
-    axios(`${config.dataApi}vocab/datasetorigin`)
-      .then(res => {
-        this.setState({
-          datasetoriginEnum: res.data.map(e => e.name),
-          datasetoriginError: null
-        });
-      })
-      .catch(err => {
-        this.setState({ datasetoriginEnum: [], datasetoriginError: err });
-      });
-  };
-  setEditMode(checked) {
+
+  setEditMode = (checked) => {
     this.setState({ editMode: checked });
   }
 
@@ -76,14 +63,16 @@ class DatasetMeta extends React.Component {
 
   render() {
 
-    const { data, editMode, datasetoriginEnum } = this.state;
-
+    const { data, editMode } = this.state;
+    const { datasetoriginEnum, user } = this.props;
     const listData = _.map(data, function(value, key) {
       return { key: _.startCase(key), value: value };
     });
     return (
       <PageContent>
-        <Row>
+      { Auth.isAuthorised(user, ['editor', 'admin']) && 
+      <React.Fragment>
+      <Row>
           
           <Col lg={4} md={24}>
             <LogoUpload datasetKey={this.props.id} />
@@ -105,7 +94,7 @@ class DatasetMeta extends React.Component {
              )}
            </Col>
 
-        </Row>
+        </Row> 
         <Row>
         <Col lg={4} md={24}/>
         <Col lg={14} md={24}>
@@ -123,7 +112,7 @@ class DatasetMeta extends React.Component {
 
           </Col>
           
-        </Row>
+        </Row> </React.Fragment>}
 
         {editMode && (
           <MetaDataForm
@@ -146,4 +135,6 @@ class DatasetMeta extends React.Component {
   }
 }
 
-export default DatasetMeta;
+const mapContextToProps = ({ user, datasetOrigin : datasetoriginEnum }) => ({ user, datasetoriginEnum });
+
+export default withContext(mapContextToProps)(DatasetMeta);
