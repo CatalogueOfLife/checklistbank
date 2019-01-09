@@ -74,8 +74,9 @@ class BasicMenu extends Component {
         <Menu.Item key="running"><NavLink to={{ pathname: '/imports/running' }}>
                         Running
                                     </NavLink></Menu.Item>
-                                    <Menu.Item key="failed"><NavLink to={{ pathname: '/imports/failed' }}>
-                        Failed
+                                    
+                                    <Menu.Item key="finished"><NavLink to={{ pathname: '/imports/finished' }}>
+                                    Finished
                                     </NavLink></Menu.Item>
         </SubMenu>
                   { Auth.isAuthorised(user, ['editor'])   &&  <Menu.Item key="assembly" >

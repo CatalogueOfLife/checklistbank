@@ -11,6 +11,7 @@ import ImportButton from './ImportButton'
 import PageContent from '../../../components/PageContent'
 import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
+import ImportMetrics from '../../../components/ImportMetrics'
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -29,6 +30,7 @@ const tagColors = {
   'processing': 'purple',
   'downloading': 'cyan',
   'inserting': 'blue',
+  'finished': 'green',
   'failed': 'red',
   'in queue': 'orange'
 }
@@ -50,9 +52,9 @@ const defaultColumns = [
     width: 250
   },
   {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
+    title: "State",
+    dataIndex: "state",
+    key: "state",
     render: (text, record) => {
 
       return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
@@ -112,6 +114,9 @@ class ImportTable extends React.Component {
     if (_.isEmpty(query)) {
       query = { limit: 25, offset: 0, state: importState };
     }
+    if(query.state){
+      this.updateStatusQuery(query)
+     }
     this.getData(query);
 
     if(this.props.section === 'running'){
@@ -123,7 +128,7 @@ class ImportTable extends React.Component {
   }
 
   componentWillUnmount(){
-    clearInterval(this.timer);
+    if(this.props.section === 'running'){ clearInterval(this.timer)};
 
   }
 
@@ -142,6 +147,7 @@ class ImportTable extends React.Component {
             axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
               dataset => {
                 imp.dataset = dataset.data;
+                imp._id = `${imp.datasetKey}_${imp.attempt}`
               }
             )
           
@@ -203,6 +209,15 @@ class ImportTable extends React.Component {
     });
   }
 
+  updateStatusQuery = (query) => {
+
+    let catColumn = _.find(defaultColumns, (c)=>{
+      return c.key === 'state'
+    });
+    let filter = (typeof query.state === 'string') ? [query.state] : query.state;
+    catColumn.filteredValue = filter
+  }
+
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
@@ -210,11 +225,19 @@ class ImportTable extends React.Component {
     this.setState({
       pagination: pager
     });
+    
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
     });
+    if(filters.state && _.get(filters, 'state.length')){
+      query.state = filters.state
+      
+    } else {
+      query.state = this.props.importState
+    }
+    this.updateStatusQuery(query)
 
     this.getData(query);
   };
@@ -231,6 +254,23 @@ class ImportTable extends React.Component {
         <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
       )
     }] : defaultColumns;
+
+    if(section === 'finished'){
+      columns[1].filters = [{
+        text: 'Finished',
+        value: 'finished',
+      }, {
+        text: 'Failed',
+        value: 'failed',
+      }, {
+        text: 'Canceled',
+        value: 'canceled',
+      }, {
+        text: 'Unchanged',
+        value: 'unchanged',
+      }]
+    }
+
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
@@ -241,11 +281,15 @@ class ImportTable extends React.Component {
             dataSource={data}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey="datasetKey"
-            expandedRowRender={section === "failed" ? record =>
-               (
-                <Alert message={record.error} type="error" />
-              ) : null
+            rowKey="_id"
+            expandedRowRender={section === "finished" ? record => {
+              if(record.state ==='failed'){
+                return <Alert message={record.error} type="error" />
+              } else if(record.state ==='finished'){
+                return <ImportMetrics data={record}></ImportMetrics>
+              }
+              return null
+            } :null     
             } 
           />
         )}
