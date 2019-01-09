@@ -10,6 +10,8 @@ import { Switch, Tag, Row, Col, Alert } from "antd";
 import ImportChart from '../../../components/ImportChart'
 import PageContent from '../../../components/PageContent'
 import ImportButton from '../../Imports/importTabs/ImportButton'
+import withContext from '../../../components/hoc/withContext'
+import Auth from '../../../components/Auth'
 
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
@@ -37,7 +39,7 @@ class DatasetImportMetrics extends React.Component {
 
 
   render() {
-    const { datasetKey } = this.props;
+    const { datasetKey, user, origin } = this.props;
 
     return (
       <PageContent>
@@ -49,7 +51,7 @@ class DatasetImportMetrics extends React.Component {
           })}
           </Col>
           <Col span={4} style={{textAlign: 'right'}}>
-          <ImportButton  record={{datasetKey: datasetKey}}></ImportButton>
+         { Auth.isAuthorised(user, ['editor', 'admin']) && origin !== 'uploaded' && <ImportButton  record={{datasetKey: datasetKey}}></ImportButton>}
           </Col>
         </Row>
         <Row>
@@ -95,5 +97,6 @@ class DatasetImportMetrics extends React.Component {
     );
   }
 }
+const mapContextToProps = ({ user }) => ({ user });
 
-export default DatasetImportMetrics;
+export default withContext(mapContextToProps)(DatasetImportMetrics);

@@ -88,7 +88,7 @@ class DatasetPage extends React.Component {
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} />}
+        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(this.state, 'data.origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
