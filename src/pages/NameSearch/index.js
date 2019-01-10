@@ -9,7 +9,7 @@ import history from "../../history";
 import Classification from "./Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
-
+import RowDetail from './RowDetail'
 import _ from "lodash";
 
 const columns = [
@@ -31,7 +31,7 @@ const columns = [
           }}
           exact={true}
         >
-          {text}
+          {`${text} ${_.get(record, 'usage.name.authorship') || ''}`}
         </NavLink>
       );
     },
@@ -39,16 +39,23 @@ const columns = [
     sorter: true
   },
   {
-    title: "Authorship",
-    dataIndex: "usage.name.authorship",
-    key: "authorship",
-    width: 150
-  },
-  {
     title: "Status",
     dataIndex: "usage.status",
     key: "status",
-    width: 60
+    width: 200,
+    render: (text, record) => {
+      return !['synonym', 'ambiguous synonym', 'misapplied'].includes(text) ? text :
+      <React.Fragment>
+       {text} {text === 'misapplied' ? 'to': 'of'}  <NavLink
+          to={{
+            pathname: `/dataset/${_.get(record, "usage.accepted.name.datasetKey")}/taxon/${encodeURIComponent(_.get(record, "usage.accepted.id"))}`
+          }}
+          exact={true}
+        >
+          {`${_.get(record, "usage.accepted.name.scientificName")} ${_.get(record, 'usage.accepted.name.authorship') || ''}`}
+        </NavLink>
+      </React.Fragment>
+    }
   },
   {
     title: "Rank",
@@ -58,9 +65,9 @@ const columns = [
     sorter: true
   },
   {
-    title: "Classification",
+    title: "Parents",
     dataIndex: "usage.classification",
-    key: "classification",
+    key: "parents",
     width: 180,
     render: (text, record) => {
       return !_.get(record, "classification") ? (
@@ -68,24 +75,10 @@ const columns = [
       ) : (
         <Classification
           classification={_.initial(record.classification)}
+          maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
         />
       );
-    }
-  },
-  {
-    title: "Issues",
-    dataIndex: "issues",
-    key: "issues",
-    width: 320,
-    render: (text, record) => {
-      return record.issues
-        ? record.issues.map(i => (
-            <Tag key={i} color="red">
-              {i}
-            </Tag>
-          ))
-        : "";
     }
   }
 ];
@@ -263,6 +256,7 @@ class NameSearchPage extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey="usage.name.id"
+            expandedRowRender={record => <RowDetail {...record}></RowDetail>}
           />
         )}
       </div>

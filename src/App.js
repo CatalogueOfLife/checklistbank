@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-// Configure JWT Auth:
-import axios from 'axios';
-
-
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 import PrivateRoute from './components/Auth/PrivateRoute'
 
