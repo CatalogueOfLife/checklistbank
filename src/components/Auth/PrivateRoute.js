@@ -6,9 +6,9 @@ import {
   Redirect,
   withRouter
 } from 'react-router-dom'
-
+import Exception403 from '../../components/exception/403'
 import withContext from '../hoc/withContext';
-
+import Layout from '../LayoutNew'
 
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -48,10 +48,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
      return  <Route {...rest} render={(props) => (
       this.isAuthorized(user, roles)
       ? <Component {...props} />
-      : <Redirect to={{
-          pathname: '/user/login',
-          state: { from: props.location }
-        }} />
+      : <Layout> <Exception403></Exception403></Layout>
   )} />;
    }
  }

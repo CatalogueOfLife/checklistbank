@@ -116,6 +116,7 @@ class ContextProvider extends React.Component {
     return logUserIn(username, password, remember)
       .then(user => {
         const jwt = user.token;
+        console.log("Contextprovider "+jwt)
         sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
         if (remember) {
           localStorage.setItem(JWT_STORAGE_NAME, jwt);

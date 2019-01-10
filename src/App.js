@@ -13,14 +13,13 @@ import DatasetPage from './pages/DatasetKey'
 import DatasetCreate from './pages/DatasetCreate'
 import Taxon from './pages/Taxon'
 import Name from './pages/Name'
-import Login from './pages/Login'
 import { ThemeProvider } from 'react-jss'
 
 import Assembly from './pages/Assembly'
 
 import Imports from './pages/Imports'
 import ContextProvider from './components/hoc/ContextProvider';
-
+import Exception404 from './components/exception/404'
 
 const theme = {
   colorPrimary: 'deepskyblue'
@@ -50,9 +49,8 @@ class App extends Component {
 
 
           <Route exact key="dataset" path="/dataset" render={(props) => <DatasetList location={props.location} />} />
-          <Route exact key="login" path="/user/login" render={(props) => <Login location={props.location} />} />
 
-          <Route component={NoMatch} />
+          <Route component={Exception404}/>
         </Switch>
         </ThemeProvider>
       </Router>
@@ -62,12 +60,5 @@ class App extends Component {
   }
 }
 
-const NoMatch = ({ location }) => (
-  <div>
-    <h3>
-      404 - No match for <code>{location.pathname}</code>
-    </h3>
-  </div>
-);
 
 export default App;

@@ -40,7 +40,9 @@ class NormalLoginForm extends React.Component {
           <Button type="primary" htmlType="submit" style={{width: '100%'}}>
             Log in
           </Button>
+          Or <a href="https://www.gbif.org/user/profile">register now!</a>
         </FormItem>
+        <FormItem><a className="login-form-forgot" href="https://www.gbif.org/user/profile">Forgot password?</a></FormItem>
       </Form>
     );
   }

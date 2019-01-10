@@ -12,7 +12,7 @@ export const authenticate = async (username, password) => {
     }
   })
       .then((res) => {
-        localStorage.setItem('col_plus_auth_token', res.data)
+      //  localStorage.setItem('col_plus_auth_token', res.data)
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data}`;
         return axios.all([axios(`${config.dataApi}user/me`), res.data])
       })
@@ -53,7 +53,14 @@ export const getTokenUser = () => {
 
 // use sessionstorage for the session, but save in local storage if user choose to be remembered
 const jwt = localStorage.getItem(JWT_STORAGE_NAME);
+console.log("st name "+JWT_STORAGE_NAME)
 if (jwt) {
+  console.log("User "+jwt)
+
   sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
+  //const jwt = sessionStorage.getItem(JWT_STORAGE_NAME);
+
+  axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+
   getTokenUser();// will log the user out if the token has expired
 }
