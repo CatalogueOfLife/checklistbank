@@ -32,3 +32,27 @@ export const getDatasetOrigin = () => {
 
 
 }
+
+export const getRank = () => {
+
+  return axios(`${config.dataApi}vocab/rank`)
+  .then((res) => res.data.map(e => e.name ))
+
+
+}
+
+export const getTaxonomicStatus = () => {
+
+  return axios(`${config.dataApi}vocab/taxonomicstatus`)
+  .then((res) => res.data.map(e => e.name ))
+
+
+}
+
+export const getIssue = () => {
+
+  return axios(`${config.dataApi}vocab/issue`)
+  .then((res) => res.data.map(e => e.name ))
+
+
+}

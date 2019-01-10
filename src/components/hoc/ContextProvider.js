@@ -4,7 +4,7 @@ import getDeep from 'lodash/get';
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
-import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin } from '../../api/enumeration';
+import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue } from '../../api/enumeration';
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -33,6 +33,9 @@ class ContextProvider extends React.Component {
     datasetType: [],
     dataFormatType: [],
     datasetOrigin: [],
+    issue: [],
+    rank: [],
+    taxonomicstatus: [],
     user: null,
     notifications: [],
    // locale: { loading: true },
@@ -81,13 +84,19 @@ class ContextProvider extends React.Component {
       getFrequency(),
       getDatasetType(),
       getDataFormatType(),
-      getDatasetOrigin()
+      getDatasetOrigin(),
+      getRank(),
+      getTaxonomicStatus(),
+      getIssue()
     ]).then(responses => {
       this.setState({
         frequency: responses[0],
         datasetType: responses[1],
         dataFormatType: responses[2],
-        datasetOrigin: responses[3]
+        datasetOrigin: responses[3],
+        rank: responses[4],
+        taxonomicstatus: responses[5],
+        issue: responses[6]
       });
     });
   }
@@ -116,7 +125,6 @@ class ContextProvider extends React.Component {
     return logUserIn(username, password, remember)
       .then(user => {
         const jwt = user.token;
-        console.log("Contextprovider "+jwt)
         sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
         if (remember) {
           localStorage.setItem(JWT_STORAGE_NAME, jwt);

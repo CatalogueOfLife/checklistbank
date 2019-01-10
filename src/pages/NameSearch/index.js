@@ -11,7 +11,7 @@ import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
 import RowDetail from './RowDetail'
 import _ from "lodash";
-
+import withContext from '../../components/hoc/withContext'
 const columns = [
   {
     title: "Scientific Name",
@@ -103,7 +103,6 @@ class NameSearchPage extends React.Component {
   componentWillMount() {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
-    console.log(this.props);
     if (_.isEmpty(params)) {
       params = { limit: 50, offset: 0 };
       history.push({
@@ -190,7 +189,7 @@ class NameSearchPage extends React.Component {
   };
   render() {
     const { data, loading, error, params, pagination } = this.state;
-
+    const { rank, taxonomicstatus, issue } = this.props
     return (
       <div
         style={{
@@ -221,20 +220,20 @@ class NameSearchPage extends React.Component {
             <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
-              vocab="issue"
+              vocab={issue}
               label="Issues"
             />
 
             <MultiValueFilter
               defaultValue={_.get(params, "rank")}
               onChange={value => this.updateSearch({ rank: value })}
-              vocab="rank"
+              vocab={rank}
               label="Ranks"
             />
             <MultiValueFilter
               defaultValue={_.get(params, "status")}
               onChange={value => this.updateSearch({ status: value })}
-              vocab="taxonomicstatus"
+              vocab={taxonomicstatus}
               label="Status"
             />
 
@@ -264,4 +263,7 @@ class NameSearchPage extends React.Component {
   }
 }
 
-export default NameSearchPage;
+const mapContextToProps = ({ rank, taxonomicstatus, issue }) => ({ rank, taxonomicstatus, issue });
+
+
+export default withContext(mapContextToProps)(NameSearchPage);
