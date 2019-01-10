@@ -150,7 +150,10 @@ class RegistrationForm extends React.Component {
           label="Dataset Type"
         >
           {getFieldDecorator('type', {
-            initialValue: (_.get(data, 'type')) ? _.get(data, 'type') : ''
+            initialValue: (_.get(data, 'type')) ? _.get(data, 'type') : '',
+            rules: [{
+              required: true, message: 'Please select a dataset type',
+            }],
           })(
             <Select style={{ width: 200 }}>
               {datasettypeEnum.map((f) => {
