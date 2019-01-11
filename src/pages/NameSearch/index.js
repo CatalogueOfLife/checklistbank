@@ -46,14 +46,7 @@ const columns = [
     render: (text, record) => {
       return !['synonym', 'ambiguous synonym', 'misapplied'].includes(text) ? text :
       <React.Fragment>
-       {text} {text === 'misapplied' ? 'to': 'of'}  <NavLink
-          to={{
-            pathname: `/dataset/${_.get(record, "usage.accepted.name.datasetKey")}/taxon/${encodeURIComponent(_.get(record, "usage.accepted.id"))}`
-          }}
-          exact={true}
-        >
-          {`${_.get(record, "usage.accepted.name.scientificName")} ${_.get(record, 'usage.accepted.name.authorship') || ''}`}
-        </NavLink>
+       {text} {text === 'misapplied' ? 'to ': 'of '}<span dangerouslySetInnerHTML={{__html: _.get(record, "usage.accepted.name.formattedName")}}></span>
       </React.Fragment>
     }
   },

@@ -11,7 +11,7 @@ import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../components/PageContent";
-
+import Helmet from 'react-helmet'
 import SectorModal from "./SectorModal";
 
 const Search = Input.Search;
@@ -205,6 +205,11 @@ class ManagementClassification extends React.Component {
   render() {
     return (
       <Layout openKeys={[]} selectedKeys={["assembly"]}>
+          <Helmet>
+          <meta charSet="utf-8" />
+          <title>CoL+ Assembly</title>
+          <link rel="canonical" href="http://test.col.plus" />
+        </Helmet>
         <PageContent>
         <ColTreeContext.Provider value={{mode: this.state.mode, toggleMode: this.toggleMode}}>
 
