@@ -28,7 +28,16 @@ class RegistrationForm extends React.Component {
     };
   }
 
- 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.submitData(values);
+      }
+    });
+  }
+
   submitData = (values)=> {
 
     const key =  _.get(this.props, 'data.key');
@@ -63,6 +72,7 @@ class RegistrationForm extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
    // const { submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
+   const { submissionError } = this.state;
     const { datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum } = this.props;
 
     const formItemLayout = {
@@ -94,8 +104,9 @@ class RegistrationForm extends React.Component {
 
       
       <Form onSubmit={this.handleSubmit} style={{paddingTop: '12px'}}>
-     { /*
       {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
+     { /*
+      
       {frequencyError && <FormItem><Alert message={<ErrorMsg error={frequencyError}></ErrorMsg>} type="error" /></FormItem>}
       {datasettypeError && <FormItem><Alert message={<ErrorMsg error={datasettypeError}></ErrorMsg>} type="error" /></FormItem>}
       {dataformatError && <FormItem><Alert message={<ErrorMsg error={dataformatError}></ErrorMsg>} type="error" /></FormItem>}
@@ -246,4 +257,4 @@ const mapContextToProps = ({ addError, addInfo, frequency: frequencyEnum,
 const WrappedRegistrationForm = Form.create()(withContext(mapContextToProps)(RegistrationForm));
 
 
-export default WrappedRegistrationForm
+export default WrappedRegistrationForm;
