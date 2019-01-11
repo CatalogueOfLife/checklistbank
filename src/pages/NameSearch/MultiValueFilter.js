@@ -41,6 +41,7 @@ class MultiValueFilter extends React.Component {
         <FormItem
        {...formItemLayout}
         label={label}
+        style={{marginBottom: '8px'}}
       >
       <Select
         style={{ width: "100%" }}

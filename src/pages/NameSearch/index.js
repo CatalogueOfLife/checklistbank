@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Tag, Row, Col, Button } from "antd";
+import { Table, Alert, Switch, Row, Col, Button } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -90,6 +90,7 @@ class NameSearchPage extends React.Component {
 
     this.state = {
       data: [],
+      advancedFilters: false,
       columns: columns,
       params: {},
       pagination: {
@@ -187,9 +188,14 @@ class NameSearchPage extends React.Component {
   resetSearch = () => {
     this.setState({ params: { limit: 50, offset: 0 } }, this.getData);
   };
+
+  toggleAdvancedFilters = () => {
+    this.setState({advancedFilters: !this.state.advancedFilters})
+  };
+
   render() {
-    const { data, loading, error, params, pagination } = this.state;
-    const { rank, taxonomicstatus, issue } = this.props
+    const { data, loading, error, params, pagination, advancedFilters } = this.state;
+    const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props
     return (
       <div
         style={{
@@ -209,12 +215,7 @@ class NameSearchPage extends React.Component {
               onSearch={value => this.updateSearch({ q: value })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
-            <div style={{ flex: 1, overflow: "auto" }} />
-            <div>
-              <Button type="danger" onClick={this.resetSearch}>
-                Reset all
-              </Button>
-            </div>
+           
           </Col>
           <Col span={12}>
             <MultiValueFilter
@@ -236,16 +237,37 @@ class NameSearchPage extends React.Component {
               vocab={taxonomicstatus}
               label="Status"
             />
-
-            {pagination && !isNaN(pagination.total) && (
-              <div style={{ textAlign: "right", marginBottom: "8px" }}>
-                {" "}
-                results: {pagination.total}{" "}
-              </div>
-            )}
+           <div style={{ textAlign: "right", marginBottom: "8px" }}> <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /></div>
+         { advancedFilters && <React.Fragment>
+             <MultiValueFilter
+              defaultValue={_.get(params, "nomstatus")}
+              onChange={value => this.updateSearch({ nomstatus: value })}
+              vocab={nomstatus}
+              label="Nomenclatural status"
+            />
+            <MultiValueFilter
+              defaultValue={_.get(params, "type")}
+              onChange={value => this.updateSearch({ type: value })}
+              vocab={nametype}
+              label="Name type"
+            />
+            <MultiValueFilter
+              defaultValue={_.get(params, "field")}
+              onChange={value => this.updateSearch({ field: value })}
+              vocab={namefield}
+              label="Name field"
+      />
+        </React.Fragment>}
+            
           </Col>
           {error && <Alert message={error.message} type="error" />}
         </Row>
+        <Row><Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+              <Button type="danger" onClick={this.resetSearch}>
+                Reset all
+              </Button>
+            </Col><Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
+          { pagination && !isNaN(pagination.total) && `results: ${pagination.total}` }</Col></Row>
         {!error && (
           <Table
             size="middle"
@@ -263,7 +285,7 @@ class NameSearchPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ rank, taxonomicstatus, issue }) => ({ rank, taxonomicstatus, issue });
+const mapContextToProps = ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield }) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
 
 
 export default withContext(mapContextToProps)(NameSearchPage);

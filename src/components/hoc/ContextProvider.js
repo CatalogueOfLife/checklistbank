@@ -4,7 +4,7 @@ import getDeep from 'lodash/get';
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
-import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue } from '../../api/enumeration';
+import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField } from '../../api/enumeration';
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -36,6 +36,9 @@ class ContextProvider extends React.Component {
     issue: [],
     rank: [],
     taxonomicstatus: [],
+    nomstatus: [],
+    nametype: [],
+    namefield: [],
     user: null,
     notifications: [],
    // locale: { loading: true },
@@ -87,7 +90,10 @@ class ContextProvider extends React.Component {
       getDatasetOrigin(),
       getRank(),
       getTaxonomicStatus(),
-      getIssue()
+      getIssue(),
+      getNomStatus(), 
+      getNameType(), 
+      getNameField()
     ]).then(responses => {
       this.setState({
         frequency: responses[0],
@@ -96,7 +102,10 @@ class ContextProvider extends React.Component {
         datasetOrigin: responses[3],
         rank: responses[4],
         taxonomicstatus: responses[5],
-        issue: responses[6]
+        issue: responses[6],
+        nomstatus: responses[7],
+        nametype: responses[8],
+        namefield: responses[9]
       });
     });
   }
