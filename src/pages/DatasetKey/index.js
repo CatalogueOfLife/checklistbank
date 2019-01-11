@@ -15,6 +15,7 @@ import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import NameSearch from "../NameSearch"
 import _ from 'lodash'
+import Helmet from 'react-helmet'
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -84,6 +85,11 @@ class DatasetPage extends React.Component {
         openKeys={openKeys}
         selectedKeys={selectedKeys}
       >
+      <Helmet>
+          <meta charSet="utf-8" />
+          <title>{_.get(data, 'title') ? `${_.get(data, 'title')}`: ''} in CoL+</title>
+          <link rel="canonical" href="http://test.col.plus" />
+        </Helmet>
       { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
