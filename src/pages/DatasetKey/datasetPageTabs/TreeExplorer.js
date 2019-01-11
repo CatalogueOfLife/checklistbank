@@ -26,7 +26,6 @@ class ColTreeNode extends React.Component {
 
   render = () => {
     const { taxon, datasetKey } = this.props;
-    const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus";
     return (
       <Popover
       content={
@@ -56,12 +55,8 @@ class ColTreeNode extends React.Component {
         }}
       >
         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>{taxon.rank}: </span>
-        {!nameIsItalic && <span>{taxon.name}</span>}
-        {nameIsItalic && (
-          <span>
-            <em>{taxon.name}</em> {taxon.authorship}
-          </span>
-        )}
+        <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>
+        
         {taxon.status !== "accepted" && (
           <Tag color="red" style={{ marginLeft: "6px" }}>
             {taxon.status}

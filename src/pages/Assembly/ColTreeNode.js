@@ -92,7 +92,6 @@ class ColTreeNode extends React.Component {
       isUpdating
     } = this.props;
     const { sectorSource } = this.state;
-    const nameIsItalic = taxon.rank === "species" || taxon.rank === "genus";
     return (
       <div>
         <ColTreeContext.Consumer>
@@ -127,12 +126,7 @@ class ColTreeNode extends React.Component {
                 <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                   {taxon.rank}:{" "}
                 </span>
-                {!nameIsItalic && <span>{taxon.name}</span>}
-                {nameIsItalic && (
-                  <span>
-                    <em>{taxon.name}</em> {taxon.authorship}
-                  </span>
-                )}
+                <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>
                 {mode === "modify" &&
                   !_.isUndefined(taxon.speciesCount) && (
                     <span>
@@ -172,12 +166,7 @@ class ColTreeNode extends React.Component {
               <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {taxon.rank}:{" "}
               </span>
-              {!nameIsItalic && <span>{taxon.name}</span>}
-              {nameIsItalic && (
-                <span>
-                  <em>{taxon.name}</em> {taxon.authorship}
-                </span>
-              )}
+              <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>
               {mode === "modify" &&
                 !_.isUndefined(taxon.speciesCount) && (
                   <span>
