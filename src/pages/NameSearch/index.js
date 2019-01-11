@@ -105,7 +105,7 @@ class NameSearchPage extends React.Component {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0 };
+      params = { limit: 50, offset: 0, facet: ['rank', 'issue', 'status'] };
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
         search: `?limit=50&offset=0`
@@ -137,7 +137,7 @@ class NameSearchPage extends React.Component {
 
         this.setState({
           loading: false,
-          data: res.data.result,
+          data: res.data,
           err: null,
           pagination
         });
@@ -194,8 +194,11 @@ class NameSearchPage extends React.Component {
   };
 
   render() {
-    const { data, loading, error, params, pagination, advancedFilters } = this.state;
-    const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props
+    const { data : {result, facets}, loading, error, params, pagination, advancedFilters } = this.state;
+    const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props;
+    const facetRanks = (facets) ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
+    const facetIssues = (facets) ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
+    const facetTaxonomicStatus = (facets) ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
     return (
       <div
         style={{
@@ -221,20 +224,20 @@ class NameSearchPage extends React.Component {
             <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
-              vocab={issue}
+              vocab={facetIssues || issue}
               label="Issues"
             />
 
             <MultiValueFilter
-              defaultValue={_.get(params, "rank")}
+              defaultValue={ _.get(params, "rank")}
               onChange={value => this.updateSearch({ rank: value })}
-              vocab={rank}
+              vocab={facetRanks || rank}
               label="Ranks"
             />
             <MultiValueFilter
               defaultValue={_.get(params, "status")}
               onChange={value => this.updateSearch({ status: value })}
-              vocab={taxonomicstatus}
+              vocab={facetTaxonomicStatus || taxonomicstatus}
               label="Status"
             />
            <div style={{ textAlign: "right", marginBottom: "8px" }}> <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /></div>
@@ -272,7 +275,7 @@ class NameSearchPage extends React.Component {
           <Table
             size="middle"
             columns={this.state.columns}
-            dataSource={data}
+            dataSource={result}
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
