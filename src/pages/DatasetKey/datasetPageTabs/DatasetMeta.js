@@ -30,8 +30,18 @@ class DatasetMeta extends React.Component {
 
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${id}`)
+    .then(res => {
+      const {createdBy, modifiedBy} = res.data;
+      return Promise.all([
+        res.data,
+        axios(`${config.dataApi}user/${createdBy}`),
+        axios(`${config.dataApi}user/${modifiedBy}`)
+      ])
+    })
       .then(res => {
-        this.setState({ loading: false, data: res.data, err: null });
+        res[0].createdByUser = _.get(res[1], 'data.username'),
+        res[0].modifiedByUser = _.get(res[2], 'data.username'),
+        this.setState({ loading: false, data: res[0], err: null });
       })
       .catch(err => {
         this.setState({ loading: false, error: err, data: {} });
@@ -66,7 +76,7 @@ class DatasetMeta extends React.Component {
     const { data, editMode } = this.state;
     const { datasetoriginEnum, user } = this.props;
     const listData = _.map(data, function(value, key) {
-      return { key: _.startCase(key), value: value };
+      return { key, value };
     });
     return (
       <PageContent>
@@ -124,7 +134,7 @@ class DatasetMeta extends React.Component {
         )}
         {!editMode && (
           <dl>
-            {listData.map((obj)=> <PresentationItem label={<FormattedMessage id={obj.key} defaultMessage={obj.key} />} >
+            {listData.filter((o)=> !['createdBy', 'modifiedBy'].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
             {obj.value}
           </PresentationItem>)}
           
