@@ -12,7 +12,7 @@ function isValidURL(string) {
   };
 
 const KeyValueList = ({data}) => <div>
-    {data.map(d => <Row ><Col span={6} style={{textAlign: 'right', paddingRight: '16px', fontWeight: 'bold'}}>{d.key}</Col><Col  span={18}>{isValidURL(d.value) ? <a href={d.value} target="_blank">{d.value}</a> : d.value }</Col></Row>)}
+    {data.map(d => <Row key={d.key}><Col span={6} style={{textAlign: 'right', paddingRight: '16px', fontWeight: 'bold'}}>{d.key}</Col><Col  span={18}>{isValidURL(d.value) ? <a href={d.value} target="_blank">{d.value}</a> : d.value }</Col></Row>)}
 </div>
 
 export default KeyValueList;

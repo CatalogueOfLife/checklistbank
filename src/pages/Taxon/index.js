@@ -118,7 +118,7 @@ class TaxonPage extends React.Component {
       selectedKeys={["taxon"]}
       >
       <React.Fragment>
-      {dataset && taxon &&  <Breadcrumb>
+      {dataset && taxon &&  <Breadcrumb style={{marginTop: '10px'}}>
          <Breadcrumb.Item>
          <NavLink to={{ pathname: `/dataset` }}>
                                                  Dataset
@@ -136,16 +136,15 @@ class TaxonPage extends React.Component {
                                                      </NavLink>
           
          </Breadcrumb.Item>
-         <Breadcrumb.Item>
-         {taxon.name.scientificName}
-          
+         <Breadcrumb.Item >
+          <span dangerouslySetInnerHTML={{__html: taxon.name.formattedName}}></span>
          </Breadcrumb.Item>
    
        </Breadcrumb>}
 
               <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
 
-        {taxon && <h1>Taxon details: {taxon.name.scientificName} {taxon.name.authorship}</h1>}
+        {taxon && <h1 dangerouslySetInnerHTML={{__html: taxon.name.formattedName}}></h1>}
 
         <Collapse defaultActiveKey={['synonyms', 'vernacularNames', 'references', 'distributions', 'classification']} >
           <Panel header="Synonyms" key="synonyms">

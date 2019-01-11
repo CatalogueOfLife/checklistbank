@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Tag } from "antd";
+import { Table, Alert, Form, Tag, Icon } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -12,6 +12,7 @@ import PageContent from '../../../components/PageContent'
 import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import ImportMetrics from '../../../components/ImportMetrics'
+import kibanaQuery from './kibanaQuery'
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -41,12 +42,14 @@ const defaultColumns = [
     key: "title",
     render: (text, record) => {
       return (
+
         <NavLink
           to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
           exact={true}
         >
           {text}
-        </NavLink>
+        </NavLink> 
+
       );
     },
     width: 250
@@ -90,6 +93,12 @@ const defaultColumns = [
     render: date => {
       return (date) ?  moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
     }
+  },
+  {
+    title: "Logs",
+    key: "logs",
+    render: (text, record) => <a href={kibanaQuery(record.datasetKey)}><Icon type="code" /></a>,
+    width: 50
   }
   
 ];

@@ -15,7 +15,7 @@ import withContext from '../../components/hoc/withContext'
 const columns = [
   {
     title: "Scientific Name",
-    dataIndex: "usage.name.scientificName",
+    dataIndex: "usage.name.formattedName",
     key: "scientificName",
     render: (text, record) => {
       return (
@@ -25,13 +25,13 @@ const columns = [
               _.get(record, "classification") ? "taxon" : "name"
             }/${encodeURIComponent(
               _.get(record, "classification")
-                ? _.last(record.classification).id
+                ? _.get(record, "usage.id")
                 : _.get(record, "usage.name.id")
             )}`
           }}
           exact={true}
         >
-          {`${text} ${_.get(record, 'usage.name.authorship') || ''}`}
+          <span dangerouslySetInnerHTML={{__html: text}}></span>
         </NavLink>
       );
     },
