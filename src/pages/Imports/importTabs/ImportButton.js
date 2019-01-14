@@ -24,7 +24,7 @@ class ImportButton extends React.Component {
         {
           'datasetKey': record.datasetKey,
           'priority': true,
-          'force': false,
+          'force': true,
         }
       )
       .then(res => {
