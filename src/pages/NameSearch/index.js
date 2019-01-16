@@ -24,9 +24,7 @@ const columns = [
             pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
               _.get(record, "classification") ? "taxon" : "name"
             }/${encodeURIComponent(
-              _.get(record, "classification")
-                ? _.get(record, "usage.id")
-                : _.get(record, "usage.name.id")
+               _.get(record, "usage.accepted.name.id") ? _.get(record, "usage.accepted.name.id") : _.get(record, "usage.id")
             )}`
           }}
           exact={true}
@@ -233,7 +231,6 @@ class NameSearchPage extends React.Component {
               vocab={facetTaxonomicStatus || taxonomicstatus}
               label="Status"
             />
-           <div style={{ textAlign: "right", marginBottom: "8px" }}> <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /></div>
          { advancedFilters && <React.Fragment>
              <MultiValueFilter
               defaultValue={_.get(params, "nomstatus")}
@@ -254,6 +251,8 @@ class NameSearchPage extends React.Component {
               label="Name field"
       />
         </React.Fragment>}
+        <div style={{ textAlign: "right", marginBottom: "8px" }}> <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /></div>
+
             
           </Col>
           {error && <Alert message={error.message} type="error" />}
