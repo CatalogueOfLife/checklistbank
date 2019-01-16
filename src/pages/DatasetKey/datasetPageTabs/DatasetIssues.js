@@ -4,8 +4,8 @@ import axios from "axios"
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
 import PageContent from '../../../components/PageContent'
-
-
+import withContext from '../../../components/hoc/withContext'
+import MultiValueFilter from '../../NameSearch/MultiValueFilter'
 const _ = require("lodash");
 
 const columns = [
@@ -45,12 +45,12 @@ const columns = [
 class DatasetIssues extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
     this.state = { data: null };
   }
 
   componentWillMount() {
     this.getData();
+    
   }
 
   getData = () => {
@@ -72,18 +72,40 @@ class DatasetIssues extends React.Component {
         this.setState({ loading: false, error: err, data: {} });
       });
   };
+
+  updateSelectedGroups = (groups) => {
+    if(groups && groups.length > 0){
+      localStorage.setItem('col_plus_selected_issue_groups', JSON.stringify(groups))
+    } else if(groups && groups.length === 0){
+      localStorage.removeItem('col_plus_selected_issue_groups')
+    }
+    this.setState({ selectedGroups: groups })
+  }
+
   render() {
     const { error, data, loading } = this.state;
-
+    const {issue} = this.props;
+    const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
+    const selectedGroups = localStorage.getItem('col_plus_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_selected_issue_groups')) : [...groups];
+    let groupMap =  {} ;
+    if(issue){
+      issue.forEach((i)=> { groupMap[i.name] = i.group})
+    }
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
+        <MultiValueFilter
+              defaultValue={selectedGroups && selectedGroups.length > 0 ? selectedGroups : groups}
+              onChange={this.updateSelectedGroups}
+              vocab={groups}
+              label="Issue groups"
+            />
 
         {!error && (
           <Table
             size="middle"
             columns={columns}
-            dataSource={data}
+            dataSource={selectedGroups && data ? data.filter((d)=> selectedGroups.includes(groupMap[d.title])) : data}
             loading={loading}
             pagination={false}
             rowKey="title"
@@ -94,4 +116,6 @@ class DatasetIssues extends React.Component {
   }
 }
 
-export default DatasetIssues;
+const mapContextToProps = ({ user, issue }) => ({ user, issue });
+
+export default withContext(mapContextToProps)(DatasetIssues);

@@ -24,7 +24,7 @@ class ChildLessRootsTable extends React.Component {
                     render: (text, record) => {
                         return (
                             <NavLink to={{ pathname: `/dataset/${datasetKey}/taxon/${record.id}` }} exact={true}>
-                                {text}
+                                <span dangerouslySetInnerHTML={{__html: text}}></span>
                             </NavLink>
                         );
                     },

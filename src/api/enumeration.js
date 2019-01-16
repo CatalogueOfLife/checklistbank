@@ -40,7 +40,7 @@ export const getTaxonomicStatus = () => {
 
 export const getIssue = () => {
   return axios(`${config.dataApi}vocab/issue`).then(res =>
-    res.data.map(e => e.name)
+    res.data
   );
 };
 
