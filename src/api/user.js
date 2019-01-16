@@ -1,7 +1,7 @@
 import base64 from 'base-64';
 
 import axios from 'axios'
-import config from './util/config'
+import config from "../config";
 export const JWT_STORAGE_NAME = 'col_plus_auth_token';
 
 

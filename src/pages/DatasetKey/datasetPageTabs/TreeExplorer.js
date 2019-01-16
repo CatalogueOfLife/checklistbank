@@ -94,7 +94,7 @@ class TreeExplorer extends React.Component {
 
     Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
       .then(values => {
-        const mainTreeData = values[0].data;
+        const mainTreeData = values[0].data.result;
         const defaultExpanded = values[1] ? values[1].data : null;
         const treeData = mainTreeData.map( tx => {
           return {
@@ -160,7 +160,7 @@ class TreeExplorer extends React.Component {
     return axios(
       `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(treeNode.props.eventKey)}/children`
     ).then(res => {
-      treeNode.props.dataRef.children = res.data.map( tx => {
+      treeNode.props.dataRef.children = res.data.result.map( tx => {
         return {
           title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
           key: tx.id,
