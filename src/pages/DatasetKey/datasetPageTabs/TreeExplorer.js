@@ -8,14 +8,10 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import ChildLessRootsTable from './ChildLessRootsTable'
 import PageContent from '../../../components/PageContent'
 
-const TreeNode = Tree.TreeNode;
-//const Option = AutoComplete.Option;
-const Option = Select.Option;
+const CHILD_PAGE_SIZE = 10
 
-function openInNewTab(url) {
-  var win = window.open(url, '_blank');
-  win.focus();
-}
+const TreeNode = Tree.TreeNode;
+
 
 class ColTreeNode extends React.Component {
   constructor(props) {

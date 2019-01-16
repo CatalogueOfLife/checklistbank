@@ -45,11 +45,18 @@ class ImportButton extends React.Component {
       .delete(`${config.dataApi}importer/${record.datasetKey}`)
       .then(res => {
         this.setState({ importTriggered: false });
+        if(record.state !== 'in queue'){
+          notification.open({
+            title: 'Import stopped',
+            description: `Import of ${record.dataset.title} was stopped`
+          })
+        } else {
+          notification.open({
+            title: 'Import canceled',
+            description: `${record.dataset.title} was removed from the queue`
+          })
+        }
         
-        notification.open({
-          title: 'Import stopped',
-          description: `Import of ${record.dataset.title} was stopped`
-        })
         if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
           this.props.onDeleteSuccess();
         }
@@ -63,10 +70,8 @@ class ImportButton extends React.Component {
   render = () => {
     const { error } = this.state;
     const { record } = this.props;
-    const isStopButton = ['processing', 'inserting', 'downloading'].indexOf(record.state) > -1;
-    if(record.state === 'in queue'){
-      return record.state
-    }
+    const isStopButton = ['processing', 'inserting', 'downloading', 'in queue'].indexOf(record.state) > -1;
+    
     return (
       <div>
         <Button
@@ -74,7 +79,9 @@ class ImportButton extends React.Component {
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopImport : this.startImport}
         >
-          {isStopButton ? 'Stop import' : 'Import'}
+          {!isStopButton && 'Import'}
+          {isStopButton && record.state !== 'in queue' &&  'Stop import'}
+          {isStopButton && record.state === 'in queue' &&  'Remove'}
         </Button>
         {error && (
           <Popover
