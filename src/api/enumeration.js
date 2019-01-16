@@ -1,6 +1,6 @@
 // import axiosInstance from './util/axiosInstance';
 import axios from "axios";
-import config from "./util/config";
+import config from "../config";
 
 export const getFrequency = () => {
   return axios(`${config.dataApi}vocab/frequency`).then(res =>
