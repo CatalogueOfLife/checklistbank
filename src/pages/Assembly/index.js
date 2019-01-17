@@ -99,7 +99,7 @@ class ManagementClassification extends React.Component {
                 )}/children`
               ).then(res => {
                 return Promise.all(
-                  res.data.map(e => {
+                  res.data.result.map(e => {
                     return this.saveChild(e, attachmentName.data)
                       .then(n => {
                         return this.saveSector(
@@ -148,6 +148,7 @@ class ManagementClassification extends React.Component {
     return axios
       .post(`${config.dataApi}sector`, {
         colSourceKey: source.key,
+        datasetKey: subject.datasetKey,
         subject: { id: subject.id, status: subject.status },
         target: { id: target.id, status: target.status }
       })

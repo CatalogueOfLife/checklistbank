@@ -1,5 +1,5 @@
 import React from "react";
-import { Tree, notification, message, Alert } from "antd";
+import { Tree, notification, message, Alert, Spin } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -7,6 +7,31 @@ import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
 const TreeNode = Tree.TreeNode;
+const CHILD_PAGE_SIZE = 500 // How many children vil we load at a time
+
+class LoadMoreChildrenTreeNode extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state = { loading: false }
+  }
+
+  onClick = () => {
+      this.setState({ loading: true })
+      this.props.onClick();
+  }
+  render = () => {
+      const { loading } = this.state;
+      return (
+          <div>
+              {loading && <Spin />}
+              {!loading && <a onClick={this.onClick}>
+                  <strong>Load more...</strong>
+              </a>}
+          </div>
+
+      )
+  }
+}
 
 class ColTree extends React.Component {
   constructor(props) {
@@ -83,7 +108,8 @@ class ColTree extends React.Component {
             ),
             key: tx.id,
             datasetKey: id,
-            childCount: tx.childCount
+            childCount: tx.childCount,
+            childOffset: 0
           };
         });
         if (defaultExpanded) {
@@ -99,6 +125,7 @@ class ColTree extends React.Component {
               title: <ColTreeNode taxon={tx} datasetKey={id} />,
               key: tx.id,
               childCount: tx.childCount,
+              childOffset: 0,
               taxon: tx
             };
             root.children = [node];
@@ -125,15 +152,66 @@ class ColTree extends React.Component {
         this.setState({ treeData: [], defaultExpandedKeys: null, error: err });
       });
   };
+  fetchCildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
+    const {showSourceTaxon} = this.props;
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(taxonKey)}/children?limit=${limit}&offset=${offset}`
+    ).then(res => (res.data.result ? res.data.result.map( tx => {
+      return {
+        title: (
+          <ColTreeNode
+            confirmVisible={false}
+            taxon={tx}
+            datasetKey={datasetKey}
+            hasPopOver={this.props.treeType === "mc"}
+            reloadSelfAndSiblings={() => 
+              this.onLoadData(treeNode, true)
+            }
+            showSourceTaxon={showSourceTaxon}
+          />
+        ),
+        key: tx.id,
+        datasetKey: datasetKey,
+        childCount: tx.childCount,
+        childOffset: 0,
+        parent: treeNode.props.dataRef,
+        name: tx.name
+      };
+    }): [])) 
+  }
 
-  onLoadData = treeNode => {
+  onLoadData = (treeNode, reloadAll = false) => {
     const {
-      dataset: { key },
-      showSourceTaxon
+      dataset: { key }
     } = this.props;
     let id = key;
+    const childcount = _.get(treeNode, 'props.dataRef.childCount')
+    const offset = _.get(treeNode, 'props.dataRef.childOffset');
+    return this.fetchCildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
+            .then(data => {
+              // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
+              treeNode.props.dataRef.children = treeNode.props.dataRef.children && !reloadAll ? [...treeNode.props.dataRef.children, ...data] : data;
 
-    return axios(
+              if ((offset + CHILD_PAGE_SIZE) < childcount) {
+                const loadMoreFn = () => {
+                    treeNode.props.dataRef.childOffset += CHILD_PAGE_SIZE;
+                    if (treeNode.props.dataRef.children[treeNode.props.dataRef.children.length - 1].key === '__loadMoreBTN__') {
+                        treeNode.props.dataRef.children = treeNode.props.dataRef.children.slice(0, -1)
+                    }
+                    this.setState({
+                      treeData: [...this.state.treeData],
+                      defaultExpandAll: false
+                    }, ()=>{this.onLoadData(treeNode)});
+                    
+                }
+                treeNode.props.dataRef.children = [...treeNode.props.dataRef.children, { title: <LoadMoreChildrenTreeNode onClick={loadMoreFn} key="__loadMoreBTN__"></LoadMoreChildrenTreeNode>, key: '__loadMoreBTN__', childCount:0 }]
+            }
+              this.setState({
+                treeData: [...this.state.treeData],
+                defaultExpandAll: false
+              });
+            })
+  /*  return axios(
       `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
         treeNode.props.eventKey
       )}/children`
@@ -156,6 +234,7 @@ class ColTree extends React.Component {
             key: tx.id,
             datasetKey: id,
             childCount: tx.childCount,
+            childOffset: 0,
             parent: treeNode.props.dataRef,
             name: tx.name
           };
@@ -166,7 +245,7 @@ class ColTree extends React.Component {
       .catch(err => {
         this.setState({ treeData: [], error: err });
         console.log(err);
-      });
+      }); */
   };
 
   confirmAttach = (node, dragNode, mode) => {

@@ -29,7 +29,7 @@ class ColTreeNode extends React.Component {
   componentWillMount = () => {
     if (this.props.taxon.sector) {
       axios(
-        `${config.dataApi}colsource/${this.props.taxon.sector.colSourceKey}`
+        `${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`
       )
         .then(res => {
           this.setState({ sectorSource: res.data });

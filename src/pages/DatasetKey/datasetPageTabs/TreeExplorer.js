@@ -8,7 +8,8 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import ChildLessRootsTable from './ChildLessRootsTable'
 import PageContent from '../../../components/PageContent'
 
-const CHILD_PAGE_SIZE = 10
+const CHILD_PAGE_SIZE = 500 // How many children vil we load at a time
+
 
 const TreeNode = Tree.TreeNode;
 
@@ -64,6 +65,31 @@ class ColTreeNode extends React.Component {
   };
 }
 
+class LoadMoreChildrenTreeNode extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state = { loading: false }
+  }
+
+  onClick = () => {
+      this.setState({ loading: true })
+      this.props.onClick();
+  }
+  render = () => {
+      const { loading } = this.state;
+      return (
+          <div>
+              {loading && <Spin />}
+              {!loading && <a onClick={this.onClick}>
+                  <strong>Load more...</strong>
+              </a>}
+          </div>
+
+      )
+  }
+}
+
+
 class TreeExplorer extends React.Component {
   constructor(props) {
     super(props);
@@ -97,6 +123,7 @@ class TreeExplorer extends React.Component {
             title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
             key: tx.id,
             childCount: tx.childCount,
+            childOffset: 0,
             taxon: tx
           };
         });
@@ -115,6 +142,7 @@ class TreeExplorer extends React.Component {
               title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
               key: tx.id,
               childCount: tx.childCount,
+              childOffset: 0,
               taxon: tx
 
             };
@@ -149,28 +177,49 @@ class TreeExplorer extends React.Component {
         this.setState({ error: err });
       });
   };
-
-  onLoadData = treeNode => {
-    const { id } = this.props;
-    console.log(encodeURIComponent(treeNode.props.eventKey))
+  fetchCildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
     return axios(
-      `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(treeNode.props.eventKey)}/children`
-    ).then(res => {
-      treeNode.props.dataRef.children = res.data.result.map( tx => {
-        return {
-          title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
-          key: tx.id,
-          childCount: tx.childCount,
-          parent: treeNode.props.dataRef,
-          taxon: tx
-        };
-      });
+      `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(taxonKey)}/children?limit=${limit}&offset=${offset}`
+    ).then(res => res.data.result.map( tx => 
+       ({
+        title: <ColTreeNode taxon={tx} datasetKey={datasetKey} popOverVisible={false}/>,
+        key: tx.id,
+        childCount: tx.childCount,
+        childOffset: 0,
+        parent: treeNode.props.dataRef,
+        taxon: tx
+      })
+    ))
+  }
+  onLoadData = treeNode => {
 
-      this.setState({
-        treeData: [...this.state.treeData],
-        defaultExpandAll: false
-      });
-    });
+    const { id } = this.props;
+    const childcount = _.get(treeNode, 'props.dataRef.childCount')
+    const offset = _.get(treeNode, 'props.dataRef.childOffset');
+    return this.fetchCildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
+            .then(data => {
+              treeNode.props.dataRef.children = treeNode.props.dataRef.children ? [...treeNode.props.dataRef.children, ...data] : data;
+
+              if ((offset + CHILD_PAGE_SIZE) < childcount) {
+                const loadMoreFn = () => {
+                    treeNode.props.dataRef.childOffset += CHILD_PAGE_SIZE;
+                    if (treeNode.props.dataRef.children[treeNode.props.dataRef.children.length - 1].key === '__loadMoreBTN__') {
+                        treeNode.props.dataRef.children = treeNode.props.dataRef.children.slice(0, -1)
+                    }
+                    this.setState({
+                      treeData: [...this.state.treeData],
+                      defaultExpandAll: false
+                    }, ()=>{this.onLoadData(treeNode)});
+                    
+                }
+                treeNode.props.dataRef.children = [...treeNode.props.dataRef.children, { title: <LoadMoreChildrenTreeNode onClick={loadMoreFn} key="__loadMoreBTN__"></LoadMoreChildrenTreeNode>, key: '__loadMoreBTN__', childCount:0 }]
+            }
+              this.setState({
+                treeData: [...this.state.treeData],
+                defaultExpandAll: false
+              });
+            })
+
   };
 
   renderTreeNodes = data => {
