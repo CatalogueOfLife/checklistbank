@@ -101,6 +101,8 @@ class NameSearchPage extends React.Component {
         pathname: `/dataset/${datasetKey}/names`,
         search: `?limit=50&offset=0`
       });
+    } else if(!params.facet) {
+      params.facet = ['rank', 'issue', 'status']
     }
 
     this.setState({ params }, this.getData);
