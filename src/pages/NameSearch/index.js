@@ -155,7 +155,7 @@ class NameSearchPage extends React.Component {
     if (sorter && sorter.field) {
       let split = sorter.field.split(".");
 
-      if (split[split.length - 1] === "scientificName") {
+      if (split[split.length - 1] === "formattedName") {
         query.sortBy = "name";
       } else if (split[split.length - 1] === "rank") {
         query.sortBy = "taxonomic";
