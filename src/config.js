@@ -1,9 +1,8 @@
 const environments = {
     dev: {
-      url: 'http://dev.col.plus',
-      // dataApi: '//api.gbif-dev.org/v1',
-      // dataApi: '//api-demo.gbif-dev.org/v1',
-      dataApi: 'http://api-dev.col.plus/',
+      url: 'https://dev.col.plus',
+
+      dataApi: 'https://api-dev.col.plus/',
       env: 'dev',
       MANAGEMENT_CLASSIFICATION: {
         key: 3,
@@ -11,10 +10,8 @@ const environments = {
       }
     },
     prod: {
-        url: 'http://wwww.col.plus',
-        // dataApi: '//api.gbif-dev.org/v1',
-        // dataApi: '//api-demo.gbif-dev.org/v1',
-        dataApi: 'http://api.col.plus/',
+        url: 'https://wwww.col.plus',
+        dataApi: 'https://api.col.plus/',
         env: 'prod',
         MANAGEMENT_CLASSIFICATION: {
             key: 3,
