@@ -1,5 +1,5 @@
 const config = {
-    dataApi: 'http://api.col.plus/'
+    dataApi: 'https://api.col.plus/'
 }
 
 export default config;

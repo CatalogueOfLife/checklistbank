@@ -3,7 +3,7 @@ const environments = {
     url: 'http://test.col.plus',
     // dataApi: '//api.gbif-dev.org/v1',
     // dataApi: '//api-demo.gbif-dev.org/v1',
-    dataApi: 'http://api.col.plus/',
+    dataApi: 'https://api.col.plus/',
     env: 'dev'
   }
 };
