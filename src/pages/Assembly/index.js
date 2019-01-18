@@ -67,20 +67,12 @@ class ManagementClassification extends React.Component {
               }
             });
             return;
-          } else if (colsources.data.length === 0) {
-            this.setState({
-              sectorModal: {
-                datasetKey: datasetKey,
-                title: "No Col Sources for dataset"
-              }
-            });
-            return;
           } else {
             if (mode === "ATTACH") {
               return this.saveChild(rootName.data, attachmentName.data)
                 .then(res => {
                   return this.saveSector(
-                    colsources.data[0],
+                    _.get(colsources, 'data[0]'),
                     rootName.data,
                     res.data,
                     mode
@@ -103,7 +95,7 @@ class ManagementClassification extends React.Component {
                     return this.saveChild(e, attachmentName.data)
                       .then(n => {
                         return this.saveSector(
-                          colsources.data[0],
+                          _.get(colsources, 'data[0]'),
                           e,
                           n.data,
                           mode
@@ -145,17 +137,23 @@ class ManagementClassification extends React.Component {
   };
 
   saveSector = (source, subject, target, mode) => {
+    const sector = source ? {
+      colSourceKey: source.key,
+      datasetKey: subject.datasetKey,
+      subject: { id: subject.id, status: subject.status },
+      target: { id: target.id, status: target.status }
+    } : {
+      datasetKey: subject.datasetKey,
+      subject: { id: subject.id, status: subject.status },
+      target: { id: target.id, status: target.status }
+    };
+
     return axios
-      .post(`${config.dataApi}sector`, {
-        colSourceKey: source.key,
-        datasetKey: subject.datasetKey,
-        subject: { id: subject.id, status: subject.status },
-        target: { id: target.id, status: target.status }
-      })
+      .post(`${config.dataApi}sector`, sector)
       .then(res => {
         const msg = `${_.get(target, "name.scientificName") ||
           target.id} attached to ${subject.name ||
-          subject.id} using colSource ${source.title} (${source.alias})`;
+          subject.id} `;
         notification.open({
           message: "Sector created",
           description: msg

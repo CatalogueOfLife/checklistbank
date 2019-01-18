@@ -7,7 +7,7 @@ import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
 const TreeNode = Tree.TreeNode;
-const CHILD_PAGE_SIZE = 500 // How many children vil we load at a time
+const CHILD_PAGE_SIZE = 100 // How many children will we load at a time
 
 class LoadMoreChildrenTreeNode extends React.Component {
   constructor(props) {
@@ -40,6 +40,8 @@ class ColTree extends React.Component {
     this.state = {
       rootLoading: true,
       treeData: [],
+      expandedKeys: [],
+      loadedKeys: [],
       error: null,
       mode: "attach",
       ranks: []
@@ -152,7 +154,7 @@ class ColTree extends React.Component {
         this.setState({ treeData: [], defaultExpandedKeys: null, error: err });
       });
   };
-  fetchCildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
+  fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
     const {showSourceTaxon} = this.props;
     return axios(
       `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(taxonKey)}/children?limit=${limit}&offset=${offset}`
@@ -185,12 +187,15 @@ class ColTree extends React.Component {
       dataset: { key }
     } = this.props;
     let id = key;
+    if(reloadAll){
+      treeNode.props.dataRef.childOffset = 0;
+    }
     const childcount = _.get(treeNode, 'props.dataRef.childCount')
     const offset = _.get(treeNode, 'props.dataRef.childOffset');
-    return this.fetchCildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
+    return this.fetchChildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
             .then(data => {
               // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
-              treeNode.props.dataRef.children = treeNode.props.dataRef.children && !reloadAll ? [...treeNode.props.dataRef.children, ...data] : data;
+              treeNode.props.dataRef.children = treeNode.props.dataRef.children && offset !== 0 && !reloadAll ? [...treeNode.props.dataRef.children, ...data] : data;
 
               if ((offset + CHILD_PAGE_SIZE) < childcount) {
                 const loadMoreFn = () => {
@@ -211,41 +216,7 @@ class ColTree extends React.Component {
                 defaultExpandAll: false
               });
             })
-  /*  return axios(
-      `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
-        treeNode.props.eventKey
-      )}/children`
-    )
-      .then(res => {
-        treeNode.props.dataRef.children = res.data.result.map( tx => {
-          return {
-            title: (
-              <ColTreeNode
-                confirmVisible={false}
-                taxon={tx}
-                datasetKey={id}
-                hasPopOver={this.props.treeType === "mc"}
-                reloadSelfAndSiblings={() => 
-                  this.onLoadData(treeNode)
-                }
-                showSourceTaxon={showSourceTaxon}
-              />
-            ),
-            key: tx.id,
-            datasetKey: id,
-            childCount: tx.childCount,
-            childOffset: 0,
-            parent: treeNode.props.dataRef,
-            name: tx.name
-          };
-        });
-        const { treeData } = this.state;
-        this.setState({ treeData: [...treeData], error: null });
-      })
-      .catch(err => {
-        this.setState({ treeData: [], error: err });
-        console.log(err);
-      }); */
+
   };
 
   confirmAttach = (node, dragNode, mode) => {
@@ -272,15 +243,8 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
-      node.props.dataRef.title.props.reloadSelfAndSiblings().then(()=> this.onLoadData(node))
-     /* if(mode === "ATTACH"){
-        node.props.dataRef.title.props.reloadSelfAndSiblings();
-      } else if (mode === "MERGE") {
-        this.onLoadData(node)
-      } */
-      
+      node.props.dataRef.title.props.reloadSelfAndSiblings().then(()=> this.onLoadData(node, true))
 
-      
     });
   };
 
@@ -306,13 +270,10 @@ class ColTree extends React.Component {
     ) {
       mode = 'MERGE'      
     }
-    const msg = (mode === 'ATTACH') ? `Attach ${
-      this.props.dragNode.props.title.props.taxon.name
-    } from ${this.props.dragNode.dataset.title} under ${
-      e.node.props.title.props.taxon.name
-    } in ${this.props.dataset.title}?` : 
-    `Ranks are equal, this will merge children of ${this.props.dragNode.props.title.props.taxon.name} in ${this.props.dragNode.dataset.title} into children if ${e.node.props.title.props.taxon.name} in ${this.props.dataset.title}`
-
+    const msg = (mode === 'ATTACH') ? 
+    <span>Attach <span dangerouslySetInnerHTML={{__html: this.props.dragNode.props.title.props.taxon.name}} /> from {this.props.dragNode.dataset.title} under <span dangerouslySetInnerHTML={{__html: e.node.props.title.props.taxon.name}} /> in {this.props.dataset.title}?</span> : 
+    <span>Ranks are equal, this will merge children of <span dangerouslySetInnerHTML={{__html: this.props.dragNode.props.title.props.taxon.name}} /> in {this.props.dragNode.dataset.title} into children of <span dangerouslySetInnerHTML={{__html: e.node.props.title.props.taxon.name}} /> in {this.props.dataset.title}
+    </span>
 
     e.node.props.dataRef.title = (
       <ColTreeNode
@@ -450,7 +411,8 @@ class ColTree extends React.Component {
       error,
       treeData,
       defaultExpandAll,
-      defaultExpandedKeys
+      defaultExpandedKeys,
+      loadedKeys
     } = this.state;
     const { draggable, onDragStart } = this.props;
     return (
@@ -465,8 +427,17 @@ class ColTree extends React.Component {
             draggable={draggable}
             onDrop={this.handleDrop}
             onDragStart={onDragStart}
+            loadedKeys={loadedKeys}
             loadData={this.onLoadData}
-            onExpand={(expandedKeys, obj) => {console.log(obj)}}
+            onLoad={(loadedKeys, obj) => this.setState({loadedKeys})}
+            onExpand={(expandedKeys, obj) => {
+              if(!obj.expanded){
+                // Remove children when a node is collapsed to improve performance on large trees
+               delete obj.node.props.dataRef.children;
+               obj.node.props.dataRef.childOffset = 0;
+               this.setState({treeData: [...this.state.treeData], loadedKeys: this.state.loadedKeys.filter(k => k !== obj.node.props.dataRef.key )})
+              }
+            }}
           >
             {this.renderTreeNodes(treeData)}
           </Tree>

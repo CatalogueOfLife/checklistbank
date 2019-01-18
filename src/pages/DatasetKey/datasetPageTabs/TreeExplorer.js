@@ -8,7 +8,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import ChildLessRootsTable from './ChildLessRootsTable'
 import PageContent from '../../../components/PageContent'
 
-const CHILD_PAGE_SIZE = 500 // How many children vil we load at a time
+const CHILD_PAGE_SIZE = 500 // How many children will we load at a time
 
 
 const TreeNode = Tree.TreeNode;
@@ -16,9 +16,7 @@ const TreeNode = Tree.TreeNode;
 
 class ColTreeNode extends React.Component {
   constructor(props) {
-    super(props);
-
-    
+    super(props); 
   }
 
   render = () => {
@@ -99,7 +97,8 @@ class TreeExplorer extends React.Component {
     this.handleRootChange = this.handleRootChange.bind(this)
     this.state = {
       rootLoading: true,
-      treeData: []
+      treeData: [],
+      loadedKeys: []
     };
   }
 
@@ -255,6 +254,7 @@ class TreeExplorer extends React.Component {
       rootLoading,
       defaultExpandAll,
       defaultExpandedKeys,
+      loadedKeys,
       childlessRoots,
       error
     } = this.state;
@@ -276,7 +276,16 @@ class TreeExplorer extends React.Component {
               defaultExpandAll={defaultExpandAll}
               defaultExpandedKeys={defaultExpandedKeys}
               defaultSelectedKeys={defaultSelectedKeys}
+              loadedKeys={loadedKeys}
               onRightClick={this.onRightClick}
+              onExpand={(expandedKeys, obj) => {
+                if(!obj.expanded){
+                  // Remove children when a node is collapsed to improve performance on large trees
+                 delete obj.node.props.dataRef.children;
+                 obj.node.props.dataRef.childOffset = 0;
+                 this.setState({treeData: [...this.state.treeData], loadedKeys: this.state.loadedKeys.filter(k => k !== obj.node.props.dataRef.key )})
+                }
+              }}
             >
               {this.renderTreeNodes(this.state.treeData)}
             </Tree>

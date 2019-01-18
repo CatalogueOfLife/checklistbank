@@ -15,6 +15,10 @@ import config from "../../config";
 import {ColTreeContext} from "./ColTreeContext"
 import history from "../../history";
 
+const MANAGEMENT_CLASSIFICATION = {
+  key: 3,
+  title: "CoL draft"
+};
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
@@ -48,6 +52,23 @@ class ColTreeNode extends React.Component {
   };
   handleVisibleChange = popOverVisible => {
     this.setState({ popOverVisible });
+  };
+
+  syncSector = sector => {
+    axios
+      .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/sector/${sector.key}`)
+      .then(() => {
+        this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Sync started",
+          description: `Copying taxa from ${
+            sector.attachment.name
+          } `
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
   };
 
   deleteSector = sector => {
@@ -205,7 +226,17 @@ class ColTreeNode extends React.Component {
                               this.deleteSector(sector);
                             }}
                           >
-                            Delete mapping
+                            Delete sector
+                          </Button>
+                          <br />
+                          <Button
+                            style={{ marginTop: "8px", width: "100%" }}
+                            type="primary"
+                            onClick={() => {
+                              this.syncSector(sector);
+                            }}
+                          >
+                            Sync sector
                           </Button>
                           <br />
                           { /*   <Button
@@ -237,7 +268,7 @@ class ColTreeNode extends React.Component {
                       trigger="click"
                       placement="top"
                     >
-                      <Tag color="blue">{`Source: ${sectorSource.alias} ${
+                      <Tag color="blue">{`Source:  ${
                         sectorSource.title
                       }`}</Tag>
                     </Popover>
