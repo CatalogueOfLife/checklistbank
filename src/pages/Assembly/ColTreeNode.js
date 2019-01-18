@@ -15,10 +15,8 @@ import config from "../../config";
 import {ColTreeContext} from "./ColTreeContext"
 import history from "../../history";
 
-const MANAGEMENT_CLASSIFICATION = {
-  key: 3,
-  title: "CoL draft"
-};
+const {MANAGEMENT_CLASSIFICATION} = config
+
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
@@ -36,10 +34,10 @@ class ColTreeNode extends React.Component {
         `${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`
       )
         .then(res => {
-          this.setState({ sectorSource: res.data });
+          this.setState({ sectorSourceDataset: res.data });
         })
         .catch(err => {
-          this.setState({ sectorSourceError: err });
+          this.setState({ sectorSourceDatasetError: err });
         });
     }
   };
@@ -112,7 +110,7 @@ class ColTreeNode extends React.Component {
       hasPopOver,
       isUpdating
     } = this.props;
-    const { sectorSource } = this.state;
+    const { sectorSourceDataset } = this.state;
     return (
       <div>
         <ColTreeContext.Consumer>
@@ -176,7 +174,7 @@ class ColTreeNode extends React.Component {
           </ColTreeContext.Consumer>
           <ColTreeContext.Consumer>
 
-          { ({mode} ) => ((mode !== "modify" || !hasPopOver) && (
+          { ({mode, selectedSourceDatasetKey} ) => ((mode !== "modify" || !hasPopOver) && (
           <Popconfirm
             visible={this.props.confirmVisible}
             title={this.props.confirmTitle}
@@ -211,7 +209,7 @@ class ColTreeNode extends React.Component {
                 </Tag>
               )}
 
-              {sectorSource &&
+              {sectorSourceDataset &&
                 sector &&
                 this.props.showSourceTaxon && (
                   <span>
@@ -243,7 +241,7 @@ class ColTreeNode extends React.Component {
                             style={{ marginTop: "8px", width: "100%" }}
                             type="primary"
                             onClick={() =>
-                              this.props.showSourceTaxon(sector, sectorSource)
+                              this.props.showSourceTaxon(sector, sectorSourceDataset)
                             }
                           >
                             Show in source tree
@@ -254,11 +252,11 @@ class ColTreeNode extends React.Component {
                             type="primary"
                             onClick={() => {
                               history.push(
-                                `dataset/${sectorSource.datasetKey}/sources`
+                                `dataset/${sectorSourceDataset.key}/meta`
                               );
                             }}
                           >
-                            Source Metadata
+                            Source Dataset Metadata
                           </Button>
                         </div>
                       }
@@ -268,8 +266,8 @@ class ColTreeNode extends React.Component {
                       trigger="click"
                       placement="top"
                     >
-                      <Tag color="blue">{`Source:  ${
-                        sectorSource.title
+                      <Tag color={Number(selectedSourceDatasetKey) === Number(sectorSourceDataset.key) ? 'green' : 'blue'}>{`Source:  ${
+                        sectorSourceDataset.title
                       }`}</Tag>
                     </Popover>
                   </span>

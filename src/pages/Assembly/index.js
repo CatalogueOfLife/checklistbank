@@ -16,10 +16,7 @@ import SectorModal from "./SectorModal";
 
 const Search = Input.Search;
 
-const MANAGEMENT_CLASSIFICATION = {
-  key: 3,
-  title: "CoL draft"
-};
+const {MANAGEMENT_CLASSIFICATION} = config
 
 class ManagementClassification extends React.Component {
   constructor(props) {
@@ -210,7 +207,7 @@ class ManagementClassification extends React.Component {
           <link rel="canonical" href="http://test.col.plus" />
         </Helmet>
         <PageContent>
-        <ColTreeContext.Provider value={{mode: this.state.mode, toggleMode: this.toggleMode}}>
+        <ColTreeContext.Provider value={{mode: this.state.mode, toggleMode: this.toggleMode, selectedSourceDatasetKey: _.get(this.state, 'selectedDataset.key')}}>
 
           <Row style={{ paddingLeft: "16px" }}>
            <ColTreeContext.Consumer>
