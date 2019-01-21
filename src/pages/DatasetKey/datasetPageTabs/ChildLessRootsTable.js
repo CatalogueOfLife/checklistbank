@@ -46,7 +46,10 @@ class ChildLessRootsTable extends React.Component {
         const { columns } = this.state;
         return (<div style={{ marginTop: '10px' }}>
             <h3>Childless taxa</h3>
-            <Table columns={columns}
+            <Table 
+            scroll={{x: 2000}}
+            size="small"
+            columns={columns}
             rowKey="id"
                 dataSource={data}></Table>
         </div>)

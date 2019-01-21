@@ -52,7 +52,7 @@ const defaultColumns = [
 
       );
     },
-    width: 250
+    width: 150
   },
   {
     title: "State",
@@ -80,18 +80,18 @@ const defaultColumns = [
     title: "Import Started",
     dataIndex: "started",
     key: "started",
-    width: 150,
+    width: 50,
     render: date => {
-      return (date) ? moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
+      return (date) ? moment(date).format("lll") : '';
     }
   },
   {
     title: "Import Finished",
     dataIndex: "finished",
     key: "finished",
-    width: 150,
+    width: 50,
     render: date => {
-      return (date) ?  moment(date).format("MMMM Do YYYY, h:mm:ss a") : '';
+      return (date) ?  moment(date).format("lll") : '';
     }
   },
   {
@@ -258,7 +258,7 @@ class ImportTable extends React.Component {
       title: "Action",
       dataIndex: "",
       key: "x",
-      width: 150,
+      width: 50,
       render: record => (
         <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
       )
@@ -285,7 +285,8 @@ class ImportTable extends React.Component {
         {error && <Alert message={error.message} type="error" />}
         {!error && (
           <Table
-            size="middle"
+            scroll={{x: 1000}}
+            size="small"
             columns={columns}
             dataSource={data}
             pagination={this.state.pagination}

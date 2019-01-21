@@ -49,27 +49,27 @@ const defaultColumns = [
     title: "Authors and Editors",
     dataIndex: "authorsAndEditors",
     key: "authorsAndEditors",
-    width: 250,
+    width: 100,
     sorter: true
   },
   {
     title: "Version",
     dataIndex: "version",
     key: "version",
-    width: 150,
+    width: 50,
   },
   {
     title: "Code",
     dataIndex: "code",
     key: "code",
-    width: 150,
+    width: 50,
 
   },
   {
     title: "Contributes To",
     dataIndex: "contributesTo",
     key: "contributesTo",
-    width: 150,
+    width: 50,
     filters: [{
       text: 'CoL',
       value: 'CoL',
@@ -83,28 +83,28 @@ const defaultColumns = [
     title: "Size",
     dataIndex: "size",
     key: "size",
-    width: 150,
+    width: 50,
     sorter: true
   },
   {
     title: "Data Format",
     dataIndex: "dataFormat",
     key: "dataFormat",
-    width: 150,
+    width: 25,
 
   },
   {
     title: "Import Frequency",
     dataIndex: "importFrequency",
     key: "importFrequency",
-    width: 150,
+    width: 25,
 
   },
   {
     title: "Created",
     dataIndex: "created",
     key: "created",
-    width: 150,
+    width: 50,
     sorter: true,
     render: (date) => {
       return moment(date).format("MMM Do YYYY");
@@ -114,7 +114,7 @@ const defaultColumns = [
     title: "Modified",
     dataIndex: "modified",
     key: "modified",
-    width: 150,
+    width: 50,
     sorter: true,
     render: (date) => {
       return moment(date).format("MMM Do YYYY");
@@ -237,7 +237,7 @@ class DatasetList extends React.Component {
       title: "Action",
       dataIndex: "",
       key: "__actions__",
-      width: 150,
+      width: 50,
       render: record => record.origin === 'external' ? <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton> : ''
       
     }, ...defaultColumns ] : defaultColumns;
@@ -272,7 +272,8 @@ class DatasetList extends React.Component {
         </div>
         {!error && (
         <Table
-            size="middle"
+            scroll={{x: 1200}}
+            size="small"
             columns={columns}
             dataSource={data}
             loading={loading}

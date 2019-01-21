@@ -20,6 +20,7 @@ const columns = [
     render: (text, record) => {
       return (
         <NavLink
+          key={_.get(record, "usage.id")}
           to={{
             pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
               _.get(record, "classification") ? "taxon" : "name"
@@ -43,7 +44,7 @@ const columns = [
     width: 200,
     render: (text, record) => {
       return !['synonym', 'ambiguous synonym', 'misapplied'].includes(text) ? text :
-      <React.Fragment>
+      <React.Fragment key={_.get(record, "usage.id")}>
        {text} {text === 'misapplied' ? 'to ': 'of '}<span dangerouslySetInnerHTML={{__html: _.get(record, "usage.accepted.name.formattedName")}}></span>
       </React.Fragment>
     }
@@ -267,7 +268,8 @@ class NameSearchPage extends React.Component {
           { pagination && !isNaN(pagination.total) && `results: ${pagination.total}` }</Col></Row>
         {!error && (
           <Table
-            size="middle"
+            scroll={{x: 800}}
+            size="small"
             columns={this.state.columns}
             dataSource={result}
             loading={loading}
