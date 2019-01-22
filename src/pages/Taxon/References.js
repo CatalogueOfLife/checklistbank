@@ -1,34 +1,19 @@
 import React from "react";
-import { Table } from "antd";
 import _ from "lodash";
+import { NavLink } from "react-router-dom";
 
-const columns = [
-  {
-    title: "citation",
-    dataIndex: "citation",
-    key: "citation"
-  }
-];
-
-class ReferencesTable extends React.Component {
-  componentWillMount() {
-    let references = _.values(this.props.data);
-    this.setState({ references });
-  }
-
-  render() {
-    const { references } = this.state;
-    return (
-      <Table
-        columns={columns}
-        dataSource={references}
-        rowKey="verbatimKey"
-        pagination={false}
-        size="small"
-        showHeader={false}
-      />
-    );
-  }
-}
+const ReferencesTable = ({ data }) => {
+  return (
+    <ul style={{ listStyleType: "none", marginLeft: "-40px" }}>
+      {_.values(data)
+        
+        .map(s => (
+          <li key={s.id}>
+            {s.citation}
+          </li>
+        ))}
+    </ul>
+  );
+};
 
 export default ReferencesTable;

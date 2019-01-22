@@ -1,29 +1,19 @@
 import React from "react";
-import { Table } from "antd";
 import _ from "lodash";
+import { NavLink } from "react-router-dom";
 
-const columns = [
-  {
-    title: "area",
-    dataIndex: "area",
-    key: "area"
-  }
-];
+const DistributionsTable = ({ datasetKey, data }) => {
+  return (
+    <ul style={{ listStyleType: "none", marginLeft: "-40px" }}>
+      {
+        data.map(s => (
+          <li key={s.id}>
+            {s.area}
+          </li>
+        ))}
+    </ul>
+  );
+};
 
-class DistributionsTable extends React.Component {
-  render() {
-    const { data } = this.props;
-    return (
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey="verbatimKey"
-        pagination={false}
-        size="small"
-        showHeader={false}
-      />
-    );
-  }
-}
 
 export default DistributionsTable;

@@ -34,7 +34,7 @@ class VernacularNamesTable extends React.Component {
         dataSource={data}
         rowKey="verbatimKey"
         pagination={false}
-        size="small"
+        size="middle"
       />
     );
   }
