@@ -7,7 +7,7 @@ const DistributionsTable = ({ datasetKey, data }) => {
     <React.Fragment>
       {
         data.map(s => (
-          <BorderedListItem key={s.id}>
+          <BorderedListItem key={s.id} >
             {s.area}
           </BorderedListItem>
         ))}

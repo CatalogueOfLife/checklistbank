@@ -18,7 +18,7 @@ import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import moment from 'moment'
-const { Panel } = Collapse;
+import BorderedListItem from "./BorderedListItem"
 
 class TaxonPage extends React.Component {
   constructor(props) {
@@ -359,7 +359,8 @@ class TaxonPage extends React.Component {
             )}
             {_.get(taxon, "lifezones") && (
               <PresentationItem label="Lifezones">
-                {_.get(taxon, "lifezones").join(', ')}
+              {_.get(taxon, "lifezones").join(', ')}
+                
               </PresentationItem>
             )}
             
@@ -382,7 +383,7 @@ class TaxonPage extends React.Component {
             )}
             {_.get(taxon, "remarks") && (
               <PresentationItem label="Remarks">
-                <Distributions data={taxon.remarks} />
+                {taxon.remarks}
               </PresentationItem>
             )}
             

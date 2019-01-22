@@ -15,10 +15,6 @@ const styles = () => ({
     borderBottom: '1px solid #eee',
     '&:last-of-type': {
       border: 'none'
-    },
-    '&>div': {
-      paddingLeft: 10,
-      paddingRight: 10
     }
   },
   label: {
@@ -59,15 +55,15 @@ const styles = () => ({
 const BorderedListItem = ({ classes, children,  size }) => {
   const getValue = () => {
     let value = (
-      <dd className={classes.noContent}>
+      <span className={classes.noContent}>
         <FormattedMessage id="noInformation" defaultMessage="No information"/>
-      </dd>
+      </span>
     );
 
     if (Array.isArray(children) && children.length > 0) {
-      value = children.map((item, i) => (<dd className={classes.content} key={i}>{item}</dd>));
+      value = children.map((item, i) => (<span className={classes.content} key={i}>{item}</span>));
     } else if (!Array.isArray(children) && typeof children !== 'undefined') {
-      value = <dd className={classes.content}>{children}</dd>;
+      value = <span className={classes.content}>{children}</span>;
     }
 
     return value;

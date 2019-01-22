@@ -1,14 +1,14 @@
 import React from "react";
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
-
+import PresentationItem from "../../components/PresentationItem";
 const NameRelations = ({ data }) => {
   return (
-    <ul style={{ listStyleType: "none", marginLeft: "-40px" }}>
+    <React.Fragment>
       {data
         .map(r => (
-          <li key={r.key}>
-           {r.type}: <NavLink
+          <PresentationItem key={r.key} label={_.startCase(r.type)}>
+           <NavLink
               to={{
                 pathname: `/dataset/${r.datasetKey}/name/${encodeURIComponent(
                   r.relatedName.id
@@ -18,9 +18,9 @@ const NameRelations = ({ data }) => {
             >
             <span dangerouslySetInnerHTML={{__html: r.relatedName.formattedName}}></span>
             </NavLink>
-          </li>
+          </PresentationItem>
         ))}
-    </ul>
+    </React.Fragment>
   );
 };
 

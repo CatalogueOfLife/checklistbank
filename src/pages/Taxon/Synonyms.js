@@ -20,8 +20,8 @@ const SynonymsTable = ({ datasetKey, data }) => {
               }}
               exact={true}
             >
-              <span dangerouslySetInnerHTML={{ __html: s.formattedName }} />
-            </NavLink>
+              <span dangerouslySetInnerHTML={{ __html: s.formattedName }} /> 
+            </NavLink> 
           </BorderedListItem>
         ))}
     </React.Fragment>
