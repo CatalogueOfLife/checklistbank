@@ -380,6 +380,12 @@ class TaxonPage extends React.Component {
                 <Distributions data={info.distributions} />
               </PresentationItem>
             )}
+            {_.get(taxon, "remarks") && (
+              <PresentationItem label="Remarks">
+                <Distributions data={taxon.remarks} />
+              </PresentationItem>
+            )}
+            
             {classificationError && (
               <Alert
                 message={<ErrorMsg error={classificationError} />}

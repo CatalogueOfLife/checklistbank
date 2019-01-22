@@ -1,18 +1,18 @@
 import React from "react";
 import _ from "lodash";
-import { NavLink } from "react-router-dom";
+import BorderedListItem from "./BorderedListItem"
 
 const ReferencesTable = ({ data }) => {
   return (
-    <ul style={{ listStyleType: "none", marginLeft: "-40px" }}>
+    <React.Fragment>
       {_.values(data)
         
         .map(s => (
-          <li key={s.id}>
+          <BorderedListItem key={s.id}>
             {s.citation}
-          </li>
+          </BorderedListItem>
         ))}
-    </ul>
+    </React.Fragment>
   );
 };
 

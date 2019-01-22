@@ -1,16 +1,17 @@
 import React from "react";
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
+import BorderedListItem from "./BorderedListItem"
 
 const SynonymsTable = ({ datasetKey, data }) => {
   return (
-    <ul style={{ listStyleType: "none", marginLeft: "-40px" }}>
+    <React.Fragment>
       {data
         .map(s => {
           return s[0] ? s[0] : s;
         })
         .map(s => (
-          <li key={s.id}>
+          <BorderedListItem key={s.id}>
             <NavLink
               to={{
                 pathname: `/dataset/${datasetKey}/name/${encodeURIComponent(
@@ -21,9 +22,9 @@ const SynonymsTable = ({ datasetKey, data }) => {
             >
               <span dangerouslySetInnerHTML={{ __html: s.formattedName }} />
             </NavLink>
-          </li>
+          </BorderedListItem>
         ))}
-    </ul>
+    </React.Fragment>
   );
 };
 

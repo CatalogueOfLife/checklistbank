@@ -121,7 +121,6 @@ class ManagementClassification extends React.Component {
       .post(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree`, {
         datasetKey: subject.datasetKey,
         id: subject.id,
-        status: subject.status,
         parentId: target.id
       })
       .then(res => {

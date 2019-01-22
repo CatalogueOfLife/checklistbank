@@ -8,3 +8,8 @@ body {
 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
   line-height: 14px !important;
 }
+
+.colplus-taxon-page-list tbody tr:last-child > td
+{
+   border-bottom: none !important
+}

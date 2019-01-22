@@ -30,6 +30,7 @@ class VernacularNamesTable extends React.Component {
     const { data } = this.props;
     return (
       <Table
+        className="colplus-taxon-page-list"
         columns={columns}
         dataSource={data}
         rowKey="verbatimKey"
