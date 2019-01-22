@@ -118,10 +118,9 @@ class ManagementClassification extends React.Component {
 
   saveChild = (subject, target) => {
     return axios
-      .post(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree`, {
+      .post(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${target.id}/copy`, {
         datasetKey: subject.datasetKey,
-        id: subject.id,
-        parentId: target.id
+        id: subject.id
       })
       .then(res => {
         return axios(

@@ -22,7 +22,7 @@ const environments = {
   
   const domain = window.location.hostname;
 
-let env = environments.prod;
+let env = environments.dev;
 if (domain.endsWith('www.col.plus')) {
   env = environments.prod;
 } else if (domain.endsWith('dev.col.plus')) {
