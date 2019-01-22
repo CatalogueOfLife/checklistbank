@@ -19,7 +19,7 @@ const SynonymsTable = ({ datasetKey, data }) => {
               }}
               exact={true}
             >
-              {s.scientificName} {s.authorship}
+              <span dangerouslySetInnerHTML={{ __html: s.formattedName }} />
             </NavLink>
           </li>
         ))}

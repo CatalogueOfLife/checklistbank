@@ -6,14 +6,14 @@ import PresentationItem from "../../components/PresentationItem";
 
 const ClassificationTable = ({ datasetKey, data }) => {
   return _.reverse(data).map(t => (
-    <PresentationItem label={t.name.rank}>
+    <PresentationItem label={_.startCase(t.name.rank)}>
       <NavLink
         to={{
           pathname: `/dataset/${datasetKey}/classification`,
           search: `?taxonKey=${t.id}`
         }}
       >
-        {t.name.scientificName}
+        <span dangerouslySetInnerHTML={{ __html: t.name.formattedName }} />
       </NavLink>
     </PresentationItem>
   ));

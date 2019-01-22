@@ -309,7 +309,7 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
-            {_.get(taxon, "name.relations") && 
+            {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && 
                 <PresentationItem label="Relations">
                     <NameRelations data={taxon.name.relations}></NameRelations>
                 </PresentationItem>
