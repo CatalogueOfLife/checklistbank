@@ -19,6 +19,8 @@ const FormItem = Form.Item;
 
 const _ = require("lodash");
 
+const PAGE_SIZE = 20;
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -34,7 +36,9 @@ const defaultColumns = [
   {
     title: "Title",
     dataIndex: "title",
+    width: 250,
     key: "title",
+    fixed: 'left',
     render: (text, record) => {
       return (
         <NavLink to={{ pathname: `/dataset/${record.key}/metrics` }} exact={true}>
@@ -42,34 +46,32 @@ const defaultColumns = [
         </NavLink>
       );
     },
-    width: 250,
     sorter: true
   },
   {
     title: "Authors and Editors",
     dataIndex: "authorsAndEditors",
     key: "authorsAndEditors",
-    width: 100,
     sorter: true
   },
   {
     title: "Version",
     dataIndex: "version",
     key: "version",
-    width: 50,
+
   },
   {
     title: "Code",
     dataIndex: "code",
     key: "code",
-    width: 50,
 
+    
   },
   {
     title: "Contributes To",
     dataIndex: "contributesTo",
     key: "contributesTo",
-    width: 50,
+
     filters: [{
       text: 'CoL',
       value: 'CoL',
@@ -83,28 +85,27 @@ const defaultColumns = [
     title: "Size",
     dataIndex: "size",
     key: "size",
-    width: 50,
-    sorter: true
+    sorter: true,
+
   },
   {
     title: "Data Format",
     dataIndex: "dataFormat",
     key: "dataFormat",
-    width: 25,
+
 
   },
   {
     title: "Import Frequency",
     dataIndex: "importFrequency",
     key: "importFrequency",
-    width: 25,
+
 
   },
   {
     title: "Created",
     dataIndex: "created",
     key: "created",
-    width: 50,
     sorter: true,
     render: (date) => {
       return moment(date).format("MMM Do YYYY");
@@ -114,7 +115,6 @@ const defaultColumns = [
     title: "Modified",
     dataIndex: "modified",
     key: "modified",
-    width: 50,
     sorter: true,
     render: (date) => {
       return moment(date).format("MMM Do YYYY");
@@ -137,7 +137,7 @@ class DatasetList extends React.Component {
       columns: [],
       search: _.get(this.props, 'location.search.q') || '',
       pagination: {
-        pageSize: 150,
+        pageSize: PAGE_SIZE,
         current: 1
       },
       loading: false
@@ -149,16 +149,16 @@ class DatasetList extends React.Component {
    
     let query = qs.parse(_.get(this.props, 'location.search'));
     if(_.isEmpty(query)){
-      query = {limit: 150, offset: 0}
+      query = {limit: PAGE_SIZE, offset: 0}
       history.push({
         pathname: '/dataset',
-        search: `?limit=150&offset=0`
+        search: `?limit=${PAGE_SIZE}&offset=0`
       })
     }
     if(query.contributesTo){
      this.updateContributesTo(query)
     }
-    this.getData(query || {limit: 150, offset: 0});
+    this.getData(query || {limit: PAGE_SIZE, offset: 0});
   }
 
 
@@ -172,7 +172,7 @@ class DatasetList extends React.Component {
   }
  
 
-  getData = (params = { limit: 150, offset: 0 }) => {
+  getData = (params = { limit: PAGE_SIZE, offset: 0 }) => {
     this.setState({ loading: true, params });
     if(!params.q){
       delete params.q
@@ -233,14 +233,15 @@ class DatasetList extends React.Component {
   render() {
     const { data, loading, error , excludeColumns} = this.state;
 
-    const filteredColumns = (this.props.user && _.includes(this.props.user.roles, 'admin')) ? [{
+    const filteredColumns = (this.props.user && _.includes(this.props.user.roles, 'admin')) ? [...defaultColumns, {
       title: "Action",
       dataIndex: "",
+      width: 60,
+      fixed: "right",
       key: "__actions__",
-      width: 50,
       render: record => record.origin === 'external' ? <ImportButton key={record.key} record={{datasetKey: record.key}}></ImportButton> : ''
       
-    }, ...defaultColumns ] : defaultColumns;
+    } ] : defaultColumns;
 
     const columns = _.filter(filteredColumns, (v) => !_.includes(excludeColumns, v.key))
 
@@ -253,7 +254,7 @@ class DatasetList extends React.Component {
         <SearchBox
         defaultValue={_.get(this.state, 'params.q')}
         style={{ marginBottom: "10px", width: "50%" }}
-        onSearch={value => this.getData({ q: value, limit: 150, offset: 0 })}
+        onSearch={value => this.getData({ q: value, limit: PAGE_SIZE, offset: 0 })}
         >
         
         </SearchBox>
@@ -272,8 +273,8 @@ class DatasetList extends React.Component {
         </div>
         {!error && (
         <Table
-            scroll={{x: 1200}}
-            size="small"
+            scroll={{x: 2400}}
+            size="middle"
             columns={columns}
             dataSource={data}
             loading={loading}

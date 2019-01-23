@@ -268,7 +268,7 @@ class NameSearchPage extends React.Component {
           { pagination && !isNaN(pagination.total) && `results: ${pagination.total}` }</Col></Row>
         {!error && (
           <Table
-            scroll={{x: 800}}
+            scroll={{x: 800, y:600}}
             size="small"
             columns={this.state.columns}
             dataSource={result}
