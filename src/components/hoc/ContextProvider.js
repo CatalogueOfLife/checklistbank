@@ -26,7 +26,7 @@ export const AppContext = React.createContext({});
  * - syncInstallationTypes: list of types of installation for which user can invoke Synchronization
  */
 
-
+const ISSUE_COLOR = {warning: 'orange', error: 'red', info: 'green'}
 class ContextProvider extends React.Component {
   state = {
     frequency: [],
@@ -95,6 +95,11 @@ class ContextProvider extends React.Component {
       getNameType(), 
       getNameField()
     ]).then(responses => {
+      const issueMap = {};
+      responses[6].forEach(i => {
+        issueMap[i.name] = {group: i.group, level: i.level, color: ISSUE_COLOR[i.level]}
+      })
+
       this.setState({
         frequency: responses[0],
         datasetType: responses[1],
@@ -103,6 +108,7 @@ class ContextProvider extends React.Component {
         rank: responses[4],
         taxonomicstatus: responses[5],
         issue: responses[6],
+        issueMap: issueMap,
         nomstatus: responses[7],
         nametype: responses[8],
         namefield: responses[9]

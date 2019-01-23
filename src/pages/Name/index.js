@@ -3,15 +3,48 @@ import PropTypes from "prop-types";
 import config from "../../config";
 
 import axios from "axios";
-import { NavLink } from "react-router-dom";
-import { Collapse, Alert, Spin, Tag, List } from "antd";
+import { Alert, Spin, Tag} from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
-import KeyValueList from '../Taxon/KeyValueList'
+import PresentationItem from "../../components/PresentationItem";
+import PresentationGroupHeader from "../../components/PresentationGroupHeader";
+import withContext from "../../components/hoc/withContext"
 
-const { Panel } = Collapse;
+const nameAttrs = [
+  "id",
+  "datasetKey",
+  "homotypicNameId",
+  "indexNameId",
+  "rank",
+  "scientificName",
+  "uninomial",
+  "genus",
+  "infragenericEpithet",
+  "specificEpithet",
+  "infraspecificEpithet",
+  "cultivarEpithet",
+  "strain",
+  "candidatus",
+  "notho",
+  "authorship",
+  "code",
+  "nomStatus",
+  "publishedInId",
+  "publishedInPage",
+  "origin",
+  "type",
+  "sourceUrl",
+  "fossil",
+  "remarks"
+];
+
+const authorAttrs = [
+  "combinationAuthorship",
+  "basionymAuthorship",
+  "sanctioningAuthor",
+]
 
 class NamePage extends React.Component {
   constructor(props) {
@@ -152,128 +185,86 @@ class NamePage extends React.Component {
       datasetError,
       verbatimError
     } = this.state;
-    const verbatimData = !verbatim
-      ? []
-      : _.map(verbatim.terms, function(value, key) {
-          return { key: _.startCase(key), value: value };
-        });
-
-    const nameListData = !name
-      ? []
-      : _.map(
-          _.pick(name, [
-            "id",
-            "homotypicNameId",
-            "rank",
-            "scientificName",
-            "genus",
-            "specificEpithet",
-            "authorship",
-            "publishedInId"
-          ]),
-          function(value, key) {
-            return { key: _.startCase(key), value: value };
-          }
-        );
-
-        const tags = (name) ? <div>
-                      {[ "code", "origin", "type"].filter(i => !_.isUndefined(name[i]) ).map(
-              i =>
-                  <Tag key={i} style={{margin: '4px 4px 4px 0px'}} color="blue">
-                    {i} : {name[i]}
-                  </Tag>
-                
-            )}
-            {["candidatus", "available", "legitimate", "parsed"].filter(i => !_.isUndefined(name[i]) ).map(
-              i =>
-                
-                  <Tag key={i} style={{margin: '4px 4px 4px 0px'}} color={name[i] === true ? "green" : "red"}>
-                    {i} : {name[i].toString()}
-                  </Tag>
-               
-            )}
-        </div> : ''
-        nameListData.push({value: tags})
-
-
+    
+    const {issueMap} = this.props
     return (
       <Layout
         selectedMenuItem="datasetKey"
         selectedDataset={dataset}
         selectedName={name}
-        openKeys={['dataset', 'datasetKey']}
+        openKeys={["dataset", "datasetKey"]}
         selectedKeys={["name"]}
       >
-      <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
-        {name && (
-          <h1>
-            Name details: {name.scientificName} {name.authorship}
-          </h1>
-        )}
-
-        <Collapse
-          defaultActiveKey={["reference", "issues", "name", "verbatim"]}
+        <div
+          style={{
+            background: "#fff",
+            padding: 24,
+            minHeight: 280,
+            margin: "16px 0"
+          }}
         >
-          {reference &&
-            reference.citation && (
-              <Panel header="Reference" key="reference">
-                <div>{reference.citation}</div>
-              </Panel>
-            )}
-          <Panel header="Issues" key="issues">
-            {verbatimLoading && <Spin />}
-            {verbatimError && (
-              <Alert
-                message={<ErrorMsg error={verbatimError} />}
-                type="error"
-              />
-            )}
-            {verbatim &&
-              verbatim.issues &&
-              verbatim.issues.length > 0 && (
-                <div>
-                  {verbatim.issues.map(i => (
-                    <Tag key={i} color="red">
-                      {i}
-                    </Tag>
-                  ))}
-                </div>
-              )}
-          </Panel>
+          {name && (
+            <h1>
+              Name details: {name.scientificName} {name.authorship}
+            </h1>
+          )}
 
-          <Panel header="Name" key="name">
-            {nameLoading && <Spin />}
-            {nameError && (
-              <Alert message={<ErrorMsg error={nameError} />} type="error" />
-            )}
-        
-              {nameListData &&
-              nameListData.length > 1 &&
+          {nameLoading && <Spin />}
+          {nameError && (
+            <Alert message={<ErrorMsg error={nameError} />} type="error" />
+          )}
+          {
+            name && (
               <React.Fragment>
-
-            <KeyValueList style={{marginBottom: '10px'}} data={nameListData}></KeyValueList>
-
+                {authorAttrs.map(a => { return name[a] ? 
+                 <PresentationItem key={a} label={a}>
+                    {`${name[a].authors.join(", ")} ${name[a].year}`}
+                  </PresentationItem> : 
+                  <PresentationItem key={a} label={a}/>
+                })}
               </React.Fragment>
-              }
-          </Panel>
-
-          <Panel header="Verbatim" key="verbatim">
-            {verbatimLoading && <Spin />}
-            {verbatimError && (
-              <Alert
-                message={<ErrorMsg error={verbatimError} />}
-                type="error"
-              />
-            )}
-            {verbatim &&
-              verbatim.terms &&
-              !_.isEmpty(verbatim.terms) && <KeyValueList data={verbatimData}></KeyValueList>}
-          </Panel>
-        </Collapse>
+            )
+            
+          }
+          {name && (
+            <React.Fragment>
+              {nameAttrs.map(a => (
+                <PresentationItem key={a} label={a}>
+                  {name[a]}
+                </PresentationItem>
+              ))}
+            </React.Fragment>
+          )}
+          {reference && (
+            <PresentationItem key="reference" label="reference">
+              {reference.citation}
+            </PresentationItem>
+          )}
+          <PresentationGroupHeader title="verbatim" />
+          {verbatimLoading && <Spin />}
+          {verbatimError && (
+            <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
+          )}
+          {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
+            <PresentationItem label="Issues and flags">
+             <div>{verbatim.issues.map(i => (
+                <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                  {i}
+                </Tag>
+              ))}</div> 
+            </PresentationItem>
+          )}
+          {_.get(verbatim, "terms") &&
+            Object.keys(verbatim.terms).map(t => (
+              <PresentationItem key={t} label={t}>
+                {verbatim.terms[t]}
+              </PresentationItem>
+            ))}
         </div>
       </Layout>
     );
   }
 }
+const mapContextToProps = ({ issueMap }) => ({ issueMap });
 
-export default NamePage;
+export default withContext(mapContextToProps)(NamePage);

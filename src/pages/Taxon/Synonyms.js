@@ -20,7 +20,7 @@ const SynonymsTable = ({ datasetKey, data }) => {
               }}
               exact={true}
             >
-              <span dangerouslySetInnerHTML={{ __html: s.formattedName }} /> 
+              <span dangerouslySetInnerHTML={{ __html: s.formattedName }} /> {s.nomStatus && `(${s.nomStatus})`}
             </NavLink> 
           </BorderedListItem>
         ))}

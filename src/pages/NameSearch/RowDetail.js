@@ -2,7 +2,9 @@ import React from "react";
 import {Row, Col, Tag} from 'antd'
 import Classification from './Classification'
 import _ from 'lodash'
-export default   ({issues, usage, classification}) => (
+import withContext from "../../components/hoc/withContext"
+
+const RowDetail =  ({issues, usage, classification, issueMap}) => (
     <React.Fragment>
         {_.get(usage, 'id') &&   <Row style={{marginBottom: '10px'}}>
             <Col span={3} style={{textAlign: 'right', paddingRight: '16px', fontWeight: 'bold'}}>ID:</Col>
@@ -18,7 +20,7 @@ export default   ({issues, usage, classification}) => (
      {issues &&   <Row >
             <Col span={3} style={{textAlign: 'right', paddingRight: '16px', fontWeight: 'bold'}}>Issues:</Col>
         <Col  span={18}>{issues.map(i => (
-            <Tag key={i} color="red">
+            <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
               {i}
             </Tag>
           ))
@@ -26,3 +28,6 @@ export default   ({issues, usage, classification}) => (
         </Row> }
     </React.Fragment>
 )
+
+const mapContextToProps = ({ issueMap }) => ({ issueMap });
+export default withContext(mapContextToProps)(RowDetail)

@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 import config from "../../config";
 
 import axios from "axios";
-import queryString from "query-string";
 import { NavLink } from "react-router-dom";
-import { Collapse, Alert, Tag, Breadcrumb, Row, Col } from "antd";
+import { Alert, Tag, Breadcrumb, Row, Col } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
@@ -13,12 +12,10 @@ import Distributions from "./Distributions";
 import Classification from "./Classification";
 import NameRelations from "./NameRelations"
 import ErrorMsg from "../../components/ErrorMsg";
-import KeyValueList from "./KeyValueList";
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import moment from 'moment'
-import BorderedListItem from "./BorderedListItem"
 
 class TaxonPage extends React.Component {
   constructor(props) {
@@ -345,7 +342,7 @@ class TaxonPage extends React.Component {
             {_.get(synonyms, "misapplied") && (
               <PresentationItem label="Misapplied names">
                 <SynonymTable
-                  data={synonyms.misapplied}
+                  data={synonyms.misapplied.map((n) => n.name)}
                   style={{ marginBottom: 16 }}
                   datasetKey={key}
                 />
