@@ -107,7 +107,7 @@ class BasicMenu extends Component {
             title={
               <span>
                 <Icon type="table" />
-                <span>Dataset</span>
+                <span>Datasets</span>
               </span>
             }
           >
