@@ -17,6 +17,7 @@ import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import moment from 'moment'
 import history from '../../history'
+import BooleanValue from "../../components/BooleanValue";
 
 class TaxonPage extends React.Component {
   constructor(props) {
@@ -298,12 +299,7 @@ class TaxonPage extends React.Component {
             )}
             {_.get(taxon, "accordingTo") && (
               <PresentationItem label="According to">
-                {_.get(taxon, "accordingTo")}
-              </PresentationItem>
-            )}
-            {_.get(taxon, "accordingToDate") && (
-              <PresentationItem label="According to date">
-                {moment(_.get(taxon, "accordingToDate")).format("LL")}
+                {`${_.get(taxon, "accordingTo")}${_.get(taxon, "accordingToDate") && `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}`} 
               </PresentationItem>
             )}
             {_.get(taxon, "status") && (
@@ -311,6 +307,19 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
+            {_.get(taxon, "origin") && (
+              <PresentationItem label="Origin">
+                {_.get(taxon, "origin")}
+              </PresentationItem>
+            )}
+            
+              <PresentationItem label="Fossil">
+                <BooleanValue value={_.get(taxon, "fossil")}/>
+              </PresentationItem>
+              <PresentationItem label="Recent">
+                <BooleanValue value={_.get(taxon, "recent")}/>
+              </PresentationItem>
+          
             {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && 
                 <PresentationItem label="Relations" helpText={<a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">Name relations are explained here</a>}>
                     <NameRelations data={taxon.name.relations}></NameRelations>
