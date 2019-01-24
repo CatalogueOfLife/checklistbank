@@ -75,7 +75,7 @@ class DatasetPage extends React.Component {
     const sect = (!section) ? "meta" : section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
     const { loading, data, importState } = this.state;
-    const openKeys = ['dataset', 'datasetKey']
+    const openKeys = ['datasetKey']
     const selectedKeys = [section]
     return (
       <Layout

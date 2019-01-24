@@ -3,14 +3,15 @@ import PropTypes from "prop-types";
 import config from "../../config";
 
 import axios from "axios";
-import { Alert, Spin, Tag} from "antd";
+import { Alert, Spin, Tag, Tooltip } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import PresentationGroupHeader from "../../components/PresentationGroupHeader";
-import withContext from "../../components/hoc/withContext"
+import BooleanValue from "../../components/BooleanValue";
+import withContext from "../../components/hoc/withContext";
 
 const nameAttrs = [
   "id",
@@ -43,8 +44,8 @@ const nameAttrs = [
 const authorAttrs = [
   "combinationAuthorship",
   "basionymAuthorship",
-  "sanctioningAuthor",
-]
+  "sanctioningAuthor"
+];
 
 class NamePage extends React.Component {
   constructor(props) {
@@ -185,8 +186,8 @@ class NamePage extends React.Component {
       datasetError,
       verbatimError
     } = this.state;
-    
-    const {issueMap} = this.props
+
+    const { issueMap } = this.props;
     return (
       <Layout
         selectedMenuItem="datasetKey"
@@ -213,24 +214,32 @@ class NamePage extends React.Component {
           {nameError && (
             <Alert message={<ErrorMsg error={nameError} />} type="error" />
           )}
-          {
-            name && (
-              <React.Fragment>
-                {authorAttrs.map(a => { return name[a] ? 
-                 <PresentationItem key={a} label={a}>
-                    {`${name[a].authors.join(", ")} ${name[a].year}`}
-                  </PresentationItem> : 
-                  <PresentationItem key={a} label={a}/>
-                })}
-              </React.Fragment>
-            )
-            
-          }
+          {name && (
+            <React.Fragment>
+              {authorAttrs.map(a => {
+                return name[a] ? (
+                  <PresentationItem key={a} label={a}>
+                    {`${name[a].authors.join(", ")} ${
+                      name[a].exAuthors
+                        ? `ex ${name[a].exAuthors.join(", ")}`
+                        : ""
+                    } ${name[a].year ? name[a].year : ""}`}
+                  </PresentationItem>
+                ) : (
+                  <PresentationItem key={a} label={a} />
+                );
+              })}
+            </React.Fragment>
+          )}
           {name && (
             <React.Fragment>
               {nameAttrs.map(a => (
                 <PresentationItem key={a} label={a}>
-                  {name[a]}
+                  {typeof name[a] === "boolean" ? (
+                    <BooleanValue value={name[a]} />
+                  ) : (
+                    name[a]
+                  )}
                 </PresentationItem>
               ))}
             </React.Fragment>
@@ -247,11 +256,18 @@ class NamePage extends React.Component {
           )}
           {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
             <PresentationItem label="Issues and flags">
-             <div>{verbatim.issues.map(i => (
-                <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                  {i}
-                </Tag>
-              ))}</div> 
+              <div>
+                {verbatim.issues.map(i => (
+                  <Tooltip
+                    key={i}
+                    title={_.get(issueMap, `[${i}].description`)}
+                  >
+                    <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                      {i}
+                    </Tag>
+                  </Tooltip>
+                ))}
+              </div>
             </PresentationItem>
           )}
           {_.get(verbatim, "terms") &&

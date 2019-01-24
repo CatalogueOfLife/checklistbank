@@ -121,10 +121,15 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
-            {selectedDataset && (
+
+            {/* <Menu.Item key="7">Duplicates</Menu.Item>
+            <Menu.Item key="8">Constituents</Menu.Item>
+            <Menu.Item key="9">Without endpoint</Menu.Item> */}
+          </SubMenu>
+          {selectedDataset && (
               <SubMenu
                 key="datasetKey"
-                title={`Dataset ID: ${selectedDataset.key}`}
+                title={<span><Icon type="bars" /><span>{`Dataset ID: ${selectedDataset.key}`}</span></span>}
               >
                 <Menu.Item key="issues">
                   <NavLink
@@ -210,10 +215,6 @@ class BasicMenu extends Component {
                 )}
               </SubMenu>
             )}
-            {/* <Menu.Item key="7">Duplicates</Menu.Item>
-            <Menu.Item key="8">Constituents</Menu.Item>
-            <Menu.Item key="9">Without endpoint</Menu.Item> */}
-          </SubMenu>
         </Menu>
       </React.Fragment>
     );

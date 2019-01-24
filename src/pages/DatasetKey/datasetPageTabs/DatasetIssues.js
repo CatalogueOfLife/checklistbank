@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Alert } from "antd";
+import { Table, Alert, Tag, Tooltip } from "antd";
 import axios from "axios"
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
@@ -8,13 +8,21 @@ import withContext from '../../../components/hoc/withContext'
 import MultiValueFilter from '../../NameSearch/MultiValueFilter'
 const _ = require("lodash");
 
-const columns = [
+
+const getColumns = ({issueMap}) => {
+return [
   {
     title: "Title",
     dataIndex: "title",
     key: "title",
     render: (text, record) => {
-      return _.startCase(text);
+      return <Tooltip key={text} placement="right" title={_.get(issueMap, `[${text}].description`)}>
+              {" "}
+              <Tag key={text} color={_.get(issueMap, `[${text}].color`)}>
+                {_.startCase(text)}
+              </Tag>
+            </Tooltip>
+       
     },
     width: 250,
     sorter: (a, b) => a.title.localeCompare(b.title)
@@ -37,8 +45,9 @@ const columns = [
     defaultSortOrder: 'descend',
     sorter: (a, b) => a.count - b.count
   }
-];
+]
 
+}
 
 
 
@@ -54,7 +63,7 @@ class DatasetIssues extends React.Component {
   }
 
   getData = () => {
-    const { datasetKey } = this.props;
+    const { datasetKey, issueMap } = this.props;
 
     this.setState({ loading: true });
     axios(
@@ -84,13 +93,15 @@ class DatasetIssues extends React.Component {
 
   render() {
     const { error, data, loading } = this.state;
-    const {issue} = this.props;
+    const {issue, issueMap} = this.props;
     const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
     const selectedGroups = localStorage.getItem('col_plus_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_selected_issue_groups')) : [...groups];
     let groupMap =  {} ;
     if(issue){
       issue.forEach((i)=> { groupMap[i.name] = i.group})
     }
+    const columns = issueMap ? getColumns(this.props) : [];
+
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
@@ -116,6 +127,6 @@ class DatasetIssues extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue }) => ({ user, issue });
+const mapContextToProps = ({ user, issue, issueMap }) => ({ user, issue, issueMap });
 
 export default withContext(mapContextToProps)(DatasetIssues);

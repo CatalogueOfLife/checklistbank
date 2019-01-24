@@ -6,7 +6,7 @@ import PresentationItem from "../../components/PresentationItem";
 
 const ClassificationTable = ({ datasetKey, data }) => {
   return _.reverse(data).map(t => (
-    <PresentationItem label={_.startCase(t.name.rank)}>
+    <PresentationItem label={_.startCase(t.name.rank)} key={t.name.rank}>
       <NavLink
         to={{
           pathname: `/dataset/${datasetKey}/classification`,

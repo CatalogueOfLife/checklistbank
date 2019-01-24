@@ -4,7 +4,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Alert, Tag, Breadcrumb, Row, Col } from "antd";
+import { Alert, Tag, Breadcrumb, Row, Col, Button } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
@@ -16,6 +16,7 @@ import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import moment from 'moment'
+import history from '../../history'
 
 class TaxonPage extends React.Component {
   constructor(props) {
@@ -285,9 +286,13 @@ class TaxonPage extends React.Component {
                       __html: taxon.name.formattedName
                     }}
                   />{" "}
+                  
                 </Col>
                 <Col span={4}>
                   {taxon.provisional && <Tag color="red">Provisional</Tag>}
+                  <Button onClick={()=>{
+                      history.push(`/dataset/${taxon.datasetKey}/name/${taxon.name.id}`)
+                  }}>Name details</Button>
                 </Col>
               </Row>
             )}
@@ -307,7 +312,7 @@ class TaxonPage extends React.Component {
               </PresentationItem>
             )}
             {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && 
-                <PresentationItem label="Relations">
+                <PresentationItem label="Relations" helpText={<a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">Name relations are explained here</a>}>
                     <NameRelations data={taxon.name.relations}></NameRelations>
                 </PresentationItem>
                 

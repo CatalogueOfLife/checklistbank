@@ -97,7 +97,7 @@ class ContextProvider extends React.Component {
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
-        issueMap[i.name] = {group: i.group, level: i.level, color: ISSUE_COLOR[i.level]}
+        issueMap[i.name] = {group: i.group, level: i.level, color: ISSUE_COLOR[i.level], description: i.description}
       })
 
       this.setState({
