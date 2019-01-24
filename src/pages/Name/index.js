@@ -270,6 +270,10 @@ class NamePage extends React.Component {
               </div>
             </PresentationItem>
           )}
+          {verbatim && ['key', 'file', 'line', 'type'].map((t)=> (<PresentationItem key={t} label={t}>
+                {verbatim[t]}
+              </PresentationItem>) )}
+
           {_.get(verbatim, "terms") &&
             Object.keys(verbatim.terms).map(t => (
               <PresentationItem key={t} label={t}>
