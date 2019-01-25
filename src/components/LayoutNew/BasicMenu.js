@@ -58,6 +58,7 @@ class BasicMenu extends Component {
       selectedDataset,
       selectedTaxon,
       selectedName,
+      selectedVerbatimKey,
       user
     } = this.props;
     const { selectedKeys, openKeys } = this.state;
@@ -212,6 +213,9 @@ class BasicMenu extends Component {
                 )}
                 {selectedName && (
                   <Menu.Item key="name">Name ID: {selectedName.id}</Menu.Item>
+                )}
+                {selectedVerbatimKey && (
+                  <Menu.Item key="verbatim">Verbatim: {selectedVerbatimKey}</Menu.Item>
                 )}
               </SubMenu>
             )}

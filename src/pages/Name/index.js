@@ -10,6 +10,7 @@ import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import PresentationGroupHeader from "../../components/PresentationGroupHeader";
+import VerbatimPresentation from "../../components/VerbatimPresentation"
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 
@@ -41,6 +42,7 @@ const nameAttrs = [
   "remarks"
 ];
 
+// author attributes are objects
 const authorAttrs = [
   "combinationAuthorship",
   "basionymAuthorship",
@@ -133,7 +135,6 @@ class NamePage extends React.Component {
         this.setState(
           { nameLoading: false, name: res.data, nameError: null },
           () => {
-            this.getVerbatim(res.data.verbatimKey);
             if (res.data.publishedInId) {
               this.getReference(res.data.publishedInId);
             }
@@ -144,34 +145,7 @@ class NamePage extends React.Component {
         this.setState({ nameLoading: false, nameError: err, name: null });
       });
   };
-  getVerbatim = verbatimKey => {
-    const {
-      match: {
-        params: { key }
-      }
-    } = this.props;
 
-    this.setState({ verbatimLoading: true });
-    axios(
-      `${config.dataApi}dataset/${key}/verbatim/${encodeURIComponent(
-        verbatimKey
-      )}`
-    )
-      .then(res => {
-        this.setState({
-          verbatimLoading: false,
-          verbatim: res.data,
-          verbatimError: null
-        });
-      })
-      .catch(err => {
-        this.setState({
-          verbatimLoading: false,
-          verbatimError: err,
-          verbatim: null
-        });
-      });
-  };
 
   render() {
     const {
@@ -249,37 +223,8 @@ class NamePage extends React.Component {
               {reference.citation}
             </PresentationItem>
           )}
-          <PresentationGroupHeader title="verbatim" />
-          {verbatimLoading && <Spin />}
-          {verbatimError && (
-            <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
-          )}
-          {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
-            <PresentationItem label="Issues and flags">
-              <div>
-                {verbatim.issues.map(i => (
-                  <Tooltip
-                    key={i}
-                    title={_.get(issueMap, `[${i}].description`)}
-                  >
-                    <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                      {i}
-                    </Tag>
-                  </Tooltip>
-                ))}
-              </div>
-            </PresentationItem>
-          )}
-          {verbatim && ['key', 'file', 'line', 'type'].map((t)=> (<PresentationItem key={t} label={t}>
-                {verbatim[t]}
-              </PresentationItem>) )}
+            {_.get(name, 'verbatimKey') && <VerbatimPresentation verbatimKey={name.verbatimKey} datasetKey={name.datasetKey}></VerbatimPresentation>}
 
-          {_.get(verbatim, "terms") &&
-            Object.keys(verbatim.terms).map(t => (
-              <PresentationItem key={t} label={t}>
-                {verbatim.terms[t]}
-              </PresentationItem>
-            ))}
         </div>
       </Layout>
     );

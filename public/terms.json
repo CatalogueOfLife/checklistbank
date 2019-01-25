@@ -1,0 +1,8 @@
+{
+    
+        "acef:AcceptedTaxonID" : true,
+        "acef:ParentSpeciesID" : true,
+        "acef:ReferenceID": true,
+        "acef:ID": true
+    
+}

@@ -4,20 +4,23 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Alert, Tag, Breadcrumb, Row, Col, Button } from "antd";
+import { Alert, Tag, Breadcrumb, Row, Col, Button, Spin, Tooltip } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
 import Distributions from "./Distributions";
 import Classification from "./Classification";
-import NameRelations from "./NameRelations"
+import NameRelations from "./NameRelations";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
-import moment from 'moment'
-import history from '../../history'
+import PresentationGroupHeader from "../../components/PresentationGroupHeader"
+import VerbatimPresentation from "../../components/VerbatimPresentation"
+import moment from "moment";
+import history from "../../history";
 import BooleanValue from "../../components/BooleanValue";
+import withContext from "../../components/hoc/withContext";
 
 class TaxonPage extends React.Component {
   constructor(props) {
@@ -37,7 +40,10 @@ class TaxonPage extends React.Component {
       datasetError: null,
       taxonError: null,
       synonymsError: null,
-      classificationError: null
+      classificationError: null,
+      verbatimLoading: true,
+      verbatimError: null,
+      verbatim: null
     };
   }
 
@@ -84,44 +90,43 @@ class TaxonPage extends React.Component {
       `${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}`
     )
       .then(res => {
-
         let promises = [res];
-        if(_.get(res, "data.name.publishedInId")){
-            promises.push(axios(
-                `${config.dataApi}dataset/${key}/reference/${encodeURIComponent(
-                  _.get(res, "data.name.publishedInId")
-                )}`
-              ).then(publishedIn => {
-                res.data.name.publishedIn = publishedIn.data;
-                return res;
-              }))
+        if (_.get(res, "data.name.publishedInId")) {
+          promises.push(
+            axios(
+              `${config.dataApi}dataset/${key}/reference/${encodeURIComponent(
+                _.get(res, "data.name.publishedInId")
+              )}`
+            ).then(publishedIn => {
+              res.data.name.publishedIn = publishedIn.data;
+              return res;
+            })
+          );
         }
 
-        if(_.get(res, "data.name")){
-            promises.push(
-                axios(
+        if (_.get(res, "data.name")) {
+          promises.push(
+            axios(
+              `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+                _.get(res, "data.name.id")
+              )}/relations`
+            ).then(relations => {
+              res.data.name.relations = relations.data;
+              return Promise.all(
+                relations.data.map(r => {
+                  return axios(
                     `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
-                        _.get(res, "data.name.id")
-                    )}/relations`
-                  )
-                  .then(relations => {
-                    res.data.name.relations = relations.data;
-                    return Promise.all(relations.data.map((r)=> {
-                       return axios(
-                        `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
-                            r.relatedNameId
-                        )}`
-                      ).then(
-                          (n)=> {r.relatedName = n.data}
-                          )
-                        
-                        }
-                  ))
-                
+                      r.relatedNameId
+                    )}`
+                  ).then(n => {
+                    r.relatedName = n.data;
+                  });
                 })
-            )}
-
-        return Promise.all(promises)
+              );
+            })
+          );
+        }
+        return Promise.all(promises);
       })
       .then(res => {
         this.setState({
@@ -215,7 +220,8 @@ class TaxonPage extends React.Component {
     const {
       match: {
         params: { key, taxonKey }
-      }
+      },
+      issueMap
     } = this.props;
     const {
       datasetLoading,
@@ -232,7 +238,10 @@ class TaxonPage extends React.Component {
       taxonError,
       synonymsError,
       classificationError,
-      infoError
+      infoError,
+      verbatimLoading,
+      verbatimError,
+      verbatim
     } = this.state;
 
     return (
@@ -276,7 +285,7 @@ class TaxonPage extends React.Component {
               margin: "16px 0"
             }}
           >
-           {taxonError && (
+            {taxonError && (
               <Alert message={<ErrorMsg error={taxonError} />} type="error" />
             )}
             {taxon && (
@@ -287,19 +296,28 @@ class TaxonPage extends React.Component {
                       __html: taxon.name.formattedName
                     }}
                   />{" "}
-                  
                 </Col>
                 <Col span={4}>
                   {taxon.provisional && <Tag color="red">Provisional</Tag>}
-                  <Button onClick={()=>{
-                      history.push(`/dataset/${taxon.datasetKey}/name/${taxon.name.id}`)
-                  }}>Name details</Button>
+                  <Button
+                    onClick={() => {
+                      history.push(
+                        `/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
+                      );
+                    }}
+                  >
+                    Name details
+                  </Button>
                 </Col>
               </Row>
             )}
             {_.get(taxon, "accordingTo") && (
               <PresentationItem label="According to">
-                {`${_.get(taxon, "accordingTo")}${_.get(taxon, "accordingToDate") && `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}`} 
+                {`${_.get(taxon, "accordingTo")}${_.get(
+                  taxon,
+                  "accordingToDate"
+                ) &&
+                  `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}`}
               </PresentationItem>
             )}
             {_.get(taxon, "status") && (
@@ -312,20 +330,26 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "origin")}
               </PresentationItem>
             )}
-            
-              <PresentationItem label="Fossil">
-                <BooleanValue value={_.get(taxon, "fossil")}/>
+
+            <PresentationItem label="Fossil">
+              <BooleanValue value={_.get(taxon, "fossil")} />
+            </PresentationItem>
+            <PresentationItem label="Recent">
+              <BooleanValue value={_.get(taxon, "recent")} />
+            </PresentationItem>
+
+            {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
+              <PresentationItem
+                label="Relations"
+                helpText={
+                  <a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">
+                    Name relations are explained here
+                  </a>
+                }
+              >
+                <NameRelations data={taxon.name.relations} />
               </PresentationItem>
-              <PresentationItem label="Recent">
-                <BooleanValue value={_.get(taxon, "recent")}/>
-              </PresentationItem>
-          
-            {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && 
-                <PresentationItem label="Relations" helpText={<a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">Name relations are explained here</a>}>
-                    <NameRelations data={taxon.name.relations}></NameRelations>
-                </PresentationItem>
-                
-            }
+            )}
             {_.get(taxon, "name.publishedIn.citation") && (
               <PresentationItem label="Published in">
                 {_.get(taxon, "name.publishedIn.citation")}
@@ -356,7 +380,7 @@ class TaxonPage extends React.Component {
             {_.get(synonyms, "misapplied") && (
               <PresentationItem label="Misapplied names">
                 <SynonymTable
-                  data={synonyms.misapplied.map((n) => n.name)}
+                  data={synonyms.misapplied.map(n => n.name)}
                   style={{ marginBottom: 16 }}
                   datasetKey={key}
                 />
@@ -370,11 +394,10 @@ class TaxonPage extends React.Component {
             )}
             {_.get(taxon, "lifezones") && (
               <PresentationItem label="Lifezones">
-              {_.get(taxon, "lifezones").join(', ')}
-                
+                {_.get(taxon, "lifezones").join(", ")}
               </PresentationItem>
             )}
-            
+
             {_.get(info, "vernacularNames") && (
               <PresentationItem label="Vernacular names">
                 <VernacularNames data={info.vernacularNames} />
@@ -397,7 +420,7 @@ class TaxonPage extends React.Component {
                 {taxon.remarks}
               </PresentationItem>
             )}
-            
+
             {classificationError && (
               <Alert
                 message={<ErrorMsg error={classificationError} />}
@@ -409,6 +432,7 @@ class TaxonPage extends React.Component {
                 <Classification data={classification} datasetKey={key} />
               </PresentationItem>
             )}
+            {_.get(taxon, 'verbatimKey') && <VerbatimPresentation verbatimKey={taxon.verbatimKey} datasetKey={taxon.datasetKey}></VerbatimPresentation>}
           </div>
         </React.Fragment>
       </Layout>
@@ -416,4 +440,6 @@ class TaxonPage extends React.Component {
   }
 }
 
-export default TaxonPage;
+const mapContextToProps = ({ issueMap }) => ({ issueMap });
+
+export default withContext(mapContextToProps)(TaxonPage);

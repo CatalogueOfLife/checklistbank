@@ -9,6 +9,7 @@ import DatasetPage from "./pages/DatasetKey";
 import DatasetCreate from "./pages/DatasetCreate";
 import Taxon from "./pages/Taxon";
 import Name from "./pages/Name";
+import VerbatimRecord from "./pages/VerbatimRecord"
 import { ThemeProvider } from "react-jss";
 
 import Assembly from "./pages/Assembly";
@@ -70,6 +71,12 @@ class App extends Component {
                 key="nameKey"
                 path={`/dataset/:key/name/:nameKey`}
                 component={Name}
+              />
+              <Route
+                exact
+                key="verbatimKey"
+                path={`/dataset/:key/verbatim/:verbatimKey`}
+                component={VerbatimRecord}
               />
               <PrivateRoute
                 exact
