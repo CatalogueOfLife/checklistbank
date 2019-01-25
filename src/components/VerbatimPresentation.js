@@ -10,16 +10,7 @@ import {NavLink} from "react-router-dom"
 
 import withContext from "./hoc/withContext";
 
-const termMap = {
-    
-    "acef:AcceptedTaxonID" : true,
-    "acef:ParentSpeciesID" : true,
-    "acef:ReferenceID": true,
-    "acef:ID": true,
-    "col:publishedInID" : true,
-    "col:ID": true
 
-}
 
 class VerbatimPresentation extends React.Component {
   constructor(props) {
@@ -57,7 +48,7 @@ class VerbatimPresentation extends React.Component {
 
   render = () => {
     const { verbatimLoading, verbatimError, verbatim } = this.state;
-    const {issueMap, datasetKey} = this.props;
+    const {issueMap, datasetKey, termsMap} = this.props;
     return (
       <React.Fragment>
         <PresentationGroupHeader title="Verbatim" />
@@ -88,9 +79,9 @@ class VerbatimPresentation extends React.Component {
         {_.get(verbatim, "terms") &&
           Object.keys(verbatim.terms).map(t => (
             <PresentationItem key={t} label={t}>
-                {termMap[t] ? <NavLink key={t}
+                {termsMap[t] ? <NavLink key={t}
           to={{
-            pathname: `/dataset/${datasetKey}/verbatim/${encodeURIComponent(
+            pathname: `/dataset/${datasetKey}/${termsMap[t]}/${encodeURIComponent(
                 verbatim.terms[t]
             )}`
           }}>{verbatim.terms[t]}</NavLink> : verbatim.terms[t]}
@@ -101,6 +92,6 @@ class VerbatimPresentation extends React.Component {
   };
 }
 
-const mapContextToProps = ({ issueMap }) => ({ issueMap });
+const mapContextToProps = ({ issueMap, termsMap }) => ({ issueMap, termsMap });
 
 export default withContext(mapContextToProps)(VerbatimPresentation)

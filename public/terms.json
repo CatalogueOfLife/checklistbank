@@ -1,8 +1,17 @@
-{
-    
-        "acef:AcceptedTaxonID" : true,
-        "acef:ParentSpeciesID" : true,
-        "acef:ReferenceID": true,
-        "acef:ID": true
-    
+{  
+    "acef:AcceptedTaxonID" : "taxon",
+    "acef:ParentSpeciesID" : "taxon",
+    "acef:ReferenceID": "reference",
+    "acef:ID": "name",
+    "col:nameID" : "name",
+    "col:parentID": "taxon",
+    "col:referenceID": "reference",
+    "col:taxonID": "taxon",
+    "col:publishedInID": "reference",
+    "col:relatedNameID": "name",
+    "dwc:parentNameUsageID": "taxon",
+    "dwc:acceptedNameUsageID": "taxon",
+    "dwc:originalNameUsageID": "taxon",
+    "dwc:id": "taxon",
+    "dwc:relatedNameUsageID": "taxon"
 }

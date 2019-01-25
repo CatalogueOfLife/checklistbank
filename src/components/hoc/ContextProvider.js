@@ -5,6 +5,7 @@ import getDeep from 'lodash/get';
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
 import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField } from '../../api/enumeration';
+import {getTerms} from '../../api/terms';
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -41,6 +42,7 @@ class ContextProvider extends React.Component {
     namefield: [],
     user: null,
     notifications: [],
+    termsMap: {},
    // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
     addError: ({ status = 500, statusText = 'An error occurred' } = {}) => {
@@ -93,7 +95,8 @@ class ContextProvider extends React.Component {
       getIssue(),
       getNomStatus(), 
       getNameType(), 
-      getNameField()
+      getNameField(),
+      getTerms()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
@@ -111,7 +114,8 @@ class ContextProvider extends React.Component {
         issueMap: issueMap,
         nomstatus: responses[7],
         nametype: responses[8],
-        namefield: responses[9]
+        namefield: responses[9],
+        termsMap: responses[10]
       });
     });
   }

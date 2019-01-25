@@ -47,7 +47,7 @@ class TaxonPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentWillMount = () => {
     this.getDataset();
     this.getTaxon();
     this.getSynonyms();
