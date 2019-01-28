@@ -61,7 +61,7 @@ class SiteLayout extends Component {
         onCollapse={(collapsed, type) => { console.log(collapsed, type); }}
         collapsed={collapsed}
       >
-        <BasicMenu collapsed={collapsed} selectedDataset={selectedDataset} selectedVerbatimKey={selectedVerbatimKey} selectedTaxon={selectedTaxon} selectedName={selectedName} openKeys={openKeys} selectedKeys={selectedKeys}/>
+        <BasicMenu collapsed={collapsed} selectedDataset={selectedDataset} selectedTaxon={selectedTaxon} selectedName={selectedName} openKeys={openKeys} selectedKeys={selectedKeys}/>
       </Sider>
       }
 

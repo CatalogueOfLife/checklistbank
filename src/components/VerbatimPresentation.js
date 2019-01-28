@@ -45,10 +45,26 @@ class VerbatimPresentation extends React.Component {
       });
   }
  
+  renderTerm = (key, value, type) => {
+      const {termsMap, datasetKey} = this.props;
 
+      if(_.get(termsMap, `${type}.${key}`)){
+
+        const primaryKeys = _.get(termsMap, `${type}.${key}`);
+
+          return <NavLink key={key}
+          to={{
+            pathname: `/dataset/${datasetKey}/verbatim`,
+            search: `?type=${primaryKeys[0].split('.')[0]}&term=${primaryKeys[0].split('.')[1]}:${value}`
+          }}>{value}</NavLink>
+      } else {
+        return value
+      }
+
+  }
   render = () => {
     const { verbatimLoading, verbatimError, verbatim } = this.state;
-    const {issueMap, datasetKey, termsMap} = this.props;
+    const {issueMap} = this.props;
     const title = _.get(verbatim, 'type') && _.get(verbatim, 'key') ? `Verbatim ${_.get(verbatim, 'type')} - ${_.get(verbatim, 'key')}` : 'Verbatim'
     return (
       <React.Fragment>
@@ -80,13 +96,8 @@ class VerbatimPresentation extends React.Component {
 
         {_.get(verbatim, "terms") &&
           Object.keys(verbatim.terms).map(t => (
-            <PresentationItem key={t} label={t}>
-                {termsMap[t] ? <NavLink key={t}
-          to={{
-            pathname: `/dataset/${datasetKey}/${termsMap[t]}/${encodeURIComponent(
-                verbatim.terms[t]
-            )}`
-          }}>{verbatim.terms[t]}</NavLink> : verbatim.terms[t]}
+            <PresentationItem label={t} key={t}>
+            {this.renderTerm(t, verbatim.terms[t], _.get(verbatim, 'type')  )}
             </PresentationItem>
           ))}
       </React.Fragment>

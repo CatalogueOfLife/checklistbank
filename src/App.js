@@ -75,7 +75,7 @@ class App extends Component {
               <Route
                 exact
                 key="verbatimKey"
-                path={`/dataset/:key/verbatim/:verbatimKey`}
+                path={`/dataset/:key/verbatim`}
                 component={VerbatimRecord}
               />
               <PrivateRoute

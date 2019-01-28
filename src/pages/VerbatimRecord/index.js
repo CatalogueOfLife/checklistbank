@@ -4,6 +4,8 @@ import Layout from "../../components/LayoutNew";
 import config from "../../config";
 import axios from "axios"
 import VerbatimPresentation from "../../components/VerbatimPresentation"
+import qs from "query-string";
+import _ from "lodash"
 
 
 class VerbatimRecord extends React.Component {
@@ -11,12 +13,36 @@ class VerbatimRecord extends React.Component {
         super(props)
 
         this.state = {
-            dataset: null
+            dataset: null,
+            verbatim: []
         }
     }
 
     componentDidMount = () => {
+        
+        let params = qs.parse(_.get(this.props, "location.search"));
+        this.getVerbatimData(params)   
         this.getDataset()
+    }
+    getVerbatimData = (params) => {
+
+        const {
+            match: {
+              params: { key }
+            }
+          } = this.props;
+        axios(`${config.dataApi}dataset/${key}/verbatim?${qs.stringify(params)}`)
+        .then(res => {
+          this.setState({
+            verbatim: res.data.result,
+          });
+        })
+        .catch(err => {
+          this.setState({
+            datasetError: err,
+            dataset: null
+          });
+        });
     }
     getDataset = () => {
         const {
@@ -44,11 +70,10 @@ class VerbatimRecord extends React.Component {
               params: { key, verbatimKey }
             }
           } = this.props; 
-          const {dataset} = this.state;
+          const {dataset, verbatim} = this.state;
     return    <Layout
             selectedMenuItem="datasetKey"
             selectedDataset={dataset}
-            selectedVerbatimKey={verbatimKey}
             openKeys={[ "datasetKey"]}
             selectedKeys={["verbatim"]}
           >
@@ -60,7 +85,7 @@ class VerbatimRecord extends React.Component {
             margin: "16px 0"
           }}
         >
-          <VerbatimPresentation datasetKey={key} verbatimKey={verbatimKey} />
+         {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation datasetKey={v.datasetKey} verbatimKey={v.key} />)}
           </div>
           </Layout>
     }
