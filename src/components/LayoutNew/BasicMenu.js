@@ -208,11 +208,11 @@ class BasicMenu extends Component {
                 </Menu.Item>
                 {selectedTaxon && (
                   <Menu.Item key="taxon">
-                    Taxon ID: {selectedTaxon.id}
+                    Taxon: {selectedTaxon.id}
                   </Menu.Item>
                 )}
                 {selectedName && (
-                  <Menu.Item key="name">Name ID: {selectedName.id}</Menu.Item>
+                  <Menu.Item key="name">Name: {selectedName.id}</Menu.Item>
                 )}
                 {selectedVerbatimKey && (
                   <Menu.Item key="verbatim">Verbatim: {selectedVerbatimKey}</Menu.Item>
