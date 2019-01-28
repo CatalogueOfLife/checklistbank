@@ -49,13 +49,20 @@ class VerbatimPresentation extends React.Component {
   render = () => {
     const { verbatimLoading, verbatimError, verbatim } = this.state;
     const {issueMap, datasetKey, termsMap} = this.props;
+    const title = _.get(verbatim, 'type') && _.get(verbatim, 'key') ? `Verbatim ${_.get(verbatim, 'type')} - ${_.get(verbatim, 'key')}` : 'Verbatim'
     return (
       <React.Fragment>
-        <PresentationGroupHeader title="Verbatim" />
+        <PresentationGroupHeader title={title} />
         {verbatimLoading && <Spin />}
         {verbatimError && (
           <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
         )}
+        {_.get(verbatim, 'file') &&
+          
+            <PresentationItem key="file" label="File">
+              {`${_.get(verbatim, 'file') }${_.get(verbatim, 'line') ? `, line ${_.get(verbatim, 'line')}`: ''}`}
+            </PresentationItem>
+          }
         {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
           <PresentationItem label="Issues and flags">
             <div>
@@ -69,12 +76,7 @@ class VerbatimPresentation extends React.Component {
             </div>
           </PresentationItem>
         )}
-        {verbatim &&
-          ["type", "key", "file", "line"].map(t => (
-            <PresentationItem key={t} label={t}>
-              {verbatim[t]}
-            </PresentationItem>
-          ))}
+        
 
         {_.get(verbatim, "terms") &&
           Object.keys(verbatim.terms).map(t => (

@@ -192,7 +192,7 @@ class NamePage extends React.Component {
             <React.Fragment>
               {authorAttrs.map(a => {
                 return name[a] ? (
-                  <PresentationItem key={a} label={a}>
+                  <PresentationItem key={a} label={_.startCase(a)}>
                     {`${name[a].authors.join(", ")} ${
                       name[a].exAuthors
                         ? `ex ${name[a].exAuthors.join(", ")}`
@@ -205,10 +205,15 @@ class NamePage extends React.Component {
               })}
             </React.Fragment>
           )}
+           {reference && (
+            <PresentationItem key="publishedIn" label="Published In">
+              {reference.citation}
+            </PresentationItem>
+          )}
           {name && (
             <React.Fragment>
               {nameAttrs.map(a => (
-                <PresentationItem key={a} label={a}>
+                <PresentationItem key={a} label={_.startCase(a)}>
                   {typeof name[a] === "boolean" ? (
                     <BooleanValue value={name[a]} />
                   ) : (
@@ -218,11 +223,7 @@ class NamePage extends React.Component {
               ))}
             </React.Fragment>
           )}
-          {reference && (
-            <PresentationItem key="reference" label="reference">
-              {reference.citation}
-            </PresentationItem>
-          )}
+         
             {_.get(name, 'verbatimKey') && <VerbatimPresentation verbatimKey={name.verbatimKey} datasetKey={name.datasetKey}></VerbatimPresentation>}
 
         </div>
