@@ -46,7 +46,7 @@ class VerbatimPresentation extends React.Component {
   }
  
   renderTerm = (key, value, type) => {
-      const {termsMap, datasetKey} = this.props;
+      const {termsMap,termsMapReversed, datasetKey} = this.props;
 
       if(_.get(termsMap, `${type}.${key}`)){
 
@@ -55,7 +55,16 @@ class VerbatimPresentation extends React.Component {
           return <NavLink key={key}
           to={{
             pathname: `/dataset/${datasetKey}/verbatim`,
-            search: `?type=${primaryKeys[0].split('.')[0]}&term=${primaryKeys[0].split('.')[1]}:${value}`
+            search: `?type=${primaryKeys[0].split('.')[0]}&${primaryKeys[0].split('.')[1]}=${value}`
+          }}>{value}</NavLink>
+      } else if(_.get(termsMapReversed, `${type}.${key}`)){
+
+        const foreignKeys = _.get(termsMapReversed, `${type}.${key}`);
+
+          return <NavLink key={key}
+          to={{
+            pathname: `/dataset/${datasetKey}/verbatim`,
+            search: `?type=${foreignKeys[0].split('.')[0]}&${foreignKeys[0].split('.')[1]}=${value}`
           }}>{value}</NavLink>
       } else {
         return value
@@ -105,6 +114,6 @@ class VerbatimPresentation extends React.Component {
   };
 }
 
-const mapContextToProps = ({ issueMap, termsMap }) => ({ issueMap, termsMap });
+const mapContextToProps = ({ issueMap, termsMap, termsMapReversed }) => ({ issueMap, termsMap, termsMapReversed });
 
 export default withContext(mapContextToProps)(VerbatimPresentation)

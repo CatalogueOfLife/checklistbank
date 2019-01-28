@@ -102,6 +102,18 @@ class ContextProvider extends React.Component {
       responses[6].forEach(i => {
         issueMap[i.name] = {group: i.group, level: i.level, color: ISSUE_COLOR[i.level], description: i.description}
       })
+      const termsMapReversed = {};
+      const termsMap = responses[10];
+      Object.keys(termsMap).forEach(t => {
+        termsMap[t].forEach(j => {
+          if(!termsMapReversed[j]){
+            termsMapReversed[j] = [t]
+          } else {
+            termsMapReversed[j] = [...termsMapReversed[j], t]
+          }
+        })
+        
+      })
 
       this.setState({
         frequency: responses[0],
@@ -115,7 +127,8 @@ class ContextProvider extends React.Component {
         nomstatus: responses[7],
         nametype: responses[8],
         namefield: responses[9],
-        termsMap: responses[10]
+        termsMap: termsMap,
+        termsMapReversed: termsMapReversed
       });
     });
   }

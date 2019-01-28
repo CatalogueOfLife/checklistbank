@@ -24,6 +24,15 @@ class VerbatimRecord extends React.Component {
         this.getVerbatimData(params)   
         this.getDataset()
     }
+
+    componentWillReceiveProps(nextProps) {
+        if(_.get(this.props, "location.search") !== _.get(nextProps, "location.search")){
+           
+            let params = qs.parse(_.get(nextProps, "location.search"));
+            this.getVerbatimData(params) 
+        }
+    }
+
     getVerbatimData = (params) => {
 
         const {
