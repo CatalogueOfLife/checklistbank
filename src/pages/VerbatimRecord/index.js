@@ -94,7 +94,7 @@ class VerbatimRecord extends React.Component {
             margin: "16px 0"
           }}
         >
-         {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation datasetKey={v.datasetKey} verbatimKey={v.key} />)}
+         {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation key={v.key} datasetKey={v.datasetKey} verbatimKey={v.key} />)}
           </div>
           </Layout>
     }
