@@ -52,7 +52,7 @@ class VerbatimPresentation extends React.Component {
 
         const primaryKeys = _.get(termsMap, `${type}.${key}`);
 
-        const types = primaryKeys.map(p => `type=${p.split('.')[0]}`)
+        const types = [...new Set(primaryKeys.map(p => `type=${p.split('.')[0]}`))]
         const terms = primaryKeys.map(p => `${p.split('.')[1]}=${value}`)
           return <NavLink key={key}
           to={{
@@ -62,7 +62,7 @@ class VerbatimPresentation extends React.Component {
       } else if(_.get(termsMapReversed, `${type}.${key}`)){
 
         const foreignKeys = _.get(termsMapReversed, `${type}.${key}`);
-        const types = foreignKeys.map(p => `type=${p.split('.')[0]}`)
+        const types = [...new Set(foreignKeys.map(p => `type=${p.split('.')[0]}`))]
         const terms = foreignKeys.map(p => `${p.split('.')[1]}=${value}`)
           return <NavLink key={key}
           to={{
