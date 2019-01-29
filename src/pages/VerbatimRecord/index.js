@@ -6,6 +6,8 @@ import axios from "axios"
 import VerbatimPresentation from "../../components/VerbatimPresentation"
 import qs from "query-string";
 import _ from "lodash"
+import {Alert} from "antd"
+import ErrorMsg from "../../components/ErrorMsg";
 
 
 class VerbatimRecord extends React.Component {
@@ -14,7 +16,8 @@ class VerbatimRecord extends React.Component {
 
         this.state = {
             dataset: null,
-            verbatim: []
+            verbatim: [],
+            verbatimError: null
         }
     }
 
@@ -48,8 +51,8 @@ class VerbatimRecord extends React.Component {
         })
         .catch(err => {
           this.setState({
-            datasetError: err,
-            dataset: null
+            verbatimError: err,
+            verbatim: []
           });
         });
     }
@@ -79,7 +82,7 @@ class VerbatimRecord extends React.Component {
               params: { key, verbatimKey }
             }
           } = this.props; 
-          const {dataset, verbatim} = this.state;
+          const {dataset, verbatim, verbatimError} = this.state;
     return    <Layout
             selectedMenuItem="datasetKey"
             selectedDataset={dataset}
@@ -94,6 +97,9 @@ class VerbatimRecord extends React.Component {
             margin: "16px 0"
           }}
         >
+        {verbatimError && (
+              <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
+            )}
          {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation key={v.key} datasetKey={v.datasetKey} verbatimKey={v.key} />)}
           </div>
           </Layout>
