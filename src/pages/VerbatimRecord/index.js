@@ -47,6 +47,7 @@ class VerbatimRecord extends React.Component {
         .then(res => {
           this.setState({
             verbatim: res.data.result,
+            verbatimError: null
           });
         })
         .catch(err => {
