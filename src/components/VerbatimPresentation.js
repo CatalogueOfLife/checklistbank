@@ -2,7 +2,7 @@ import React from "react";
 import config from "../config";
 import _ from "lodash"
 import axios from "axios";
-import { Alert, Tag, Spin, Tooltip } from "antd";
+import { Alert, Tag, Spin, Tooltip, Icon } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
 import PresentationGroupHeader from "./PresentationGroupHeader";
@@ -10,7 +10,15 @@ import {NavLink} from "react-router-dom"
 
 import withContext from "./hoc/withContext";
 
-
+const parentRelations = ["dwc:Taxon.dwc:parentNameUsageID", "col:Taxon.col:parentID"]
+const isValidURL = (string) => {
+    if (typeof string !== 'string') return false;
+    var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if (res == null)
+      return false;
+    else
+      return true;
+  };
 
 class VerbatimPresentation extends React.Component {
   constructor(props) {
@@ -61,23 +69,24 @@ class VerbatimPresentation extends React.Component {
           }}>{value}</NavLink>
       } else if(_.get(termsMapReversed, `${type}.${key}`)){
 
-        const foreignKeys = _.get(termsMapReversed, `${type}.${key}`);
+        const foreignKeys = _.get(termsMapReversed, `${type}.${key}`).filter(k => !parentRelations.includes(k));
+
         const types = [...new Set(foreignKeys.map(p => `type=${p.split('.')[0]}`))]
         const terms = foreignKeys.map(p => `${p.split('.')[1]}=${value}`)
-          return <NavLink key={key}
+          return <React.Fragment>{value} <NavLink key={key}
           to={{
             pathname: `/dataset/${datasetKey}/verbatim`,
             search: `?${types.join('&')}&${terms.join('&')}&termOp=OR`
-          }}>{value}</NavLink>
+          }}> <Icon type="link"></Icon></NavLink></React.Fragment>
       } else {
-        return value
+        return   isValidURL(value) ? <a href={value} target="_blank">{value}</a> : value 
       }
 
   }
   render = () => {
     const { verbatimLoading, verbatimError, verbatim } = this.state;
-    const {issueMap} = this.props;
-    const title = _.get(verbatim, 'type') && _.get(verbatim, 'key') ? `Verbatim ${_.get(verbatim, 'type')} - ${_.get(verbatim, 'key')}` : 'Verbatim'
+    const {issueMap, basicHeader} = this.props;
+    const title = _.get(verbatim, 'type') && _.get(verbatim, 'key') ? `${basicHeader ? '': 'Verbatim'} ${_.get(verbatim, 'type')} - ${_.get(verbatim, 'key')}` : 'Verbatim'
     return (
       <React.Fragment>
         <PresentationGroupHeader title={title} />

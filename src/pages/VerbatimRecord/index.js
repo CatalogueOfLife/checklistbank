@@ -101,7 +101,7 @@ class VerbatimRecord extends React.Component {
         {verbatimError && (
               <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
             )}
-         {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation key={v.key} datasetKey={v.datasetKey} verbatimKey={v.key} />)}
+         {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation key={v.key} datasetKey={v.datasetKey} verbatimKey={v.key} basicHeader={true}/>)}
           </div>
           </Layout>
     }

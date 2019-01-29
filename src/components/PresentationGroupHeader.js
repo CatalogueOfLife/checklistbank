@@ -31,7 +31,7 @@ const PresentationGroupHeader = ({ title, helpText, classes }) => {
 };
 
 PresentationGroupHeader.propTypes = {
-  title: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
   helpText: PropTypes.object,
 };
 
