@@ -14,6 +14,8 @@ import Layout from "../../components/LayoutNew";
 import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import NameSearch from "../NameSearch"
+import WorkBench from "../WorkBench"
+
 import _ from 'lodash'
 import Helmet from 'react-helmet'
 
@@ -101,6 +103,9 @@ class DatasetPage extends React.Component {
         )}
         {sect === "names" && (
           <NameSearch datasetKey={datasetKey} location={this.props.location} />
+        )}
+        {sect === "workbench" && (
+          <WorkBench datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );
