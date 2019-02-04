@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Switch, Row, Col, Button, Select, notification } from "antd";
+import { Table, Alert, Switch, Row, Col, Button, Select, Tag, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -16,92 +16,7 @@ import withContext from "../../components/hoc/withContext";
 const { Option, OptGroup } = Select;
 
 const columnFilters = ["status", "rank"];
-const defaultColumns = [
-  {
-    title: "IndexNameId",
-    dataIndex: "usage.name.indexNameId",
-    key: "indexNameId",
-    width: 100
-  },
-  {
-    title: "NameID",
-    dataIndex: "usage.name.id",
-    key: "nameId",
-    width: 220
-  },
-  {
-    title: "Status",
-    dataIndex: "usage.status",
-    key: "status",
-    width: 100
-  },
-  {
-    title: "Genus",
-    dataIndex: "usage.name.genus",
-    key: "genus",
-    width: 100
-  },
-  {
-    title: "specificEpithet",
-    dataIndex: "usage.name.specificEpithet",
-    key: "specificEpithet",
-    width: 180
-  },
-  {
-    title: "infraspecificEpithet",
-    dataIndex: "usage.name.infraspecificEpithet",
-    key: "infraspecificEpithet",
-    width: 180
-  },
-  {
-    title: "Authorship",
-    dataIndex: "usage.name.authorship",
-    key: "authorship",
-    width: 360
-  },
 
-  {
-    title: "Rank",
-    dataIndex: "usage.name.rank",
-    key: "rank",
-    width: 100,
-    sorter: true
-  },
-  {
-    title: "acceptedScientificName",
-    dataIndex: "usage.accepted.name.formattedName",
-    render: (text, record) => {
-      return !["synonym", "ambiguous synonym", "misapplied"].includes(
-        _.get(record, "usage.status")
-      ) ? (
-        ""
-      ) : (
-        <span
-          dangerouslySetInnerHTML={{
-            __html: _.get(record, "usage.accepted.name.formattedName")
-          }}
-        />
-      );
-    },
-    width: 260
-  },
-  {
-    title: "Classification",
-    dataIndex: "usage.classification",
-    key: "classification",
-    width: 600,
-    render: (text, record) => {
-      return !_.get(record, "classification") ? (
-        ""
-      ) : (
-        <Classification
-          classification={_.initial(record.classification)}
-          datasetKey={_.get(record, "usage.name.datasetKey")}
-        />
-      );
-    }
-  }
-];
 
 class WorkBench extends React.Component {
   constructor(props) {
@@ -111,7 +26,7 @@ class WorkBench extends React.Component {
     this.state = {
       data: [],
       decision: null,
-      columns: defaultColumns,
+      columns: this.defaultColumns,
       params: {},
       pagination: {
         pageSize: 50,
@@ -122,6 +37,124 @@ class WorkBench extends React.Component {
       filteredInfo: null
     };
   }
+  defaultColumns  = [
+    {
+      title: "IndexNameId",
+      dataIndex: "usage.name.indexNameId",
+      key: "indexNameId",
+      width: 100
+    },
+    {
+      title: "Descision",
+      dataIndex: "decisions",
+      key: "decisions",
+      width: 200,
+      render: (text, record) => {
+        if(!_.get(record, 'decisions[0].mode')) {
+          return "";
+        } else if(['block', 'chresonym'].includes(_.get(record, 'decisions[0].mode'))){
+          return   <Tag closable onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))}>{_.get(record, 'decisions[0].mode')}</Tag>
+        } else {
+          return <Tag closable onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))}>{_.get(record, 'decisions[0].status')}</Tag>
+        }
+        
+      }
+    },
+    {
+      title: "NameID",
+      dataIndex: "usage.name.id",
+      key: "nameId",
+      width: 220
+    },
+    {
+      title: "Status",
+      dataIndex: "usage.status",
+      key: "status",
+      width: 100
+    },
+    {
+      title: "ScientificName",
+      dataIndex: "usage.name.formattedName",
+      render: (text, record) => <span
+      dangerouslySetInnerHTML={{
+        __html: _.get(record, "usage.name.formattedName")
+      }}
+    />,
+      width: 300
+    },
+    {
+      title: "Uninomial",
+      dataIndex: "usage.name.uninomial",
+      key: "uninomial",
+      width: 100
+    },
+    {
+      title: "Genus",
+      dataIndex: "usage.name.genus",
+      key: "genus",
+      width: 100
+    },
+    {
+      title: "specificEpithet",
+      dataIndex: "usage.name.specificEpithet",
+      key: "specificEpithet",
+      width: 180
+    },
+    {
+      title: "infraspecificEpithet",
+      dataIndex: "usage.name.infraspecificEpithet",
+      key: "infraspecificEpithet",
+      width: 180
+    },
+    {
+      title: "Authorship",
+      dataIndex: "usage.name.authorship",
+      key: "authorship",
+      width: 360
+    },
+  
+    {
+      title: "Rank",
+      dataIndex: "usage.name.rank",
+      key: "rank",
+      width: 100,
+      sorter: true
+    },
+    {
+      title: "acceptedScientificName",
+      dataIndex: "usage.accepted.name.formattedName",
+      render: (text, record) => {
+        return !["synonym", "ambiguous synonym", "misapplied"].includes(
+          _.get(record, "usage.status")
+        ) ? (
+          ""
+        ) : (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(record, "usage.accepted.name.formattedName")
+            }}
+          />
+        );
+      },
+      width: 260
+    },
+    {
+      title: "Classification",
+      dataIndex: "usage.classification",
+      key: "classification",
+      width: 600,
+      render: (text, record) => {
+        return !_.get(record, "classification") ? (
+          ""
+        ) : (
+          <Classification
+            classification={_.initial(record.classification)}
+            datasetKey={_.get(record, "usage.name.datasetKey")}
+          />
+        );
+      }
+    }
+  ]; 
 
   componentWillMount() {
     const { datasetKey } = this.props;
@@ -156,6 +189,7 @@ class WorkBench extends React.Component {
         params
       )}`
     )
+    .then(res => this.getDecisions(res))
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
@@ -171,6 +205,20 @@ class WorkBench extends React.Component {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
+
+  getDecisions = (res) => {
+    const promises = _.get(res, 'data.result') ? res.data.result.map(d => {
+      return axios(
+        `${config.dataApi}/decision?id=${_.get(d, 'usage.name.id')}`
+      ).then(decisions => {
+        if(decisions.data && decisions.data.length > 0){
+          d.decisions = decisions.data
+
+        }
+      })
+    }) : []
+    return Promise.all(promises).then(() => res)
+  }
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
@@ -249,14 +297,21 @@ class WorkBench extends React.Component {
   onDecisionChange = decision => {
     this.setState({ decision });
   };
-
+  deleteDecision = (id) => {
+    return axios.delete( `${config.dataApi}decision/${id}`)
+      .then(res => {
+        notification.open({
+          message: "Decision deleted"
+        });
+      })
+  }
   applyDecision = () => {
     const {selectedRowKeys, data: {result}, decision} = this.state;
     const { datasetKey } = this.props;
-    result
+   const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, 'usage.name.id')))
-      .forEach(d => {
-        axios.post(
+      .map(d => {
+       return axios.post(
           `${config.dataApi}decision`, {
             datasetKey: datasetKey,
             subject: {
@@ -271,6 +326,7 @@ class WorkBench extends React.Component {
 
           }
         )
+        
           .then(res => {
             const statusMsg = `Status changed to ${decision} for ${_.get(d, 'usage.name.scientificName')}`
             const decisionMsg = `${_.get(d, 'usage.name.scientificName')} was ${decision === 'block' ? 'blocked from the assembly' : ''}${decision === 'chresonym' ? 'marked as chresonym': ''}`
@@ -279,16 +335,25 @@ class WorkBench extends React.Component {
               message: "Decision applied",
               description: ['block','chresonym'].includes(decision) ? decisionMsg : statusMsg
             });
-            this.setState({
-              selectedRowKeys: null,
-              decision: null,
-              decisionError: null
-            });
+            
           })
-          .catch(err => {
-            this.setState({  decisionError: err });
-          });
+          
       })
+
+      return Promise.all(promises).then(res => {
+        return this.getDecisions(this.state)
+      })
+      .then(res => {
+        this.setState({
+          data: this.state.data,
+          selectedRowKeys: null,
+          decision: null,
+          decisionError: null
+        });
+      })
+      .catch(err => {
+        this.setState({  decisionError: err });
+      });
 
   }
 
@@ -312,32 +377,32 @@ class WorkBench extends React.Component {
       nametype,
       namefield
     } = this.props;
-    const facetRanks = _.get(facets, "rank")
-      ? facets.rank.map(r => ({
+    const facetRanks = _.get(facets, "RANK")
+      ? facets.RANK.map(r => ({
           value: r.value,
           text: `${_.startCase(r.value)} (${r.count})`
         }))
       : null;
-    const facetIssues = _.get(facets, "issue")
-      ? facets.issue.map(i => ({
+    const facetIssues = _.get(facets, "ISSUE")
+      ? facets.ISSUE.map(i => ({
           value: i.value,
           label: `${_.startCase(i.value)} (${i.count})`
         }))
       : null;
-    const facetTaxonomicStatus = _.get(facets, "status")
-      ? facets.status.map(s => ({
+    const facetTaxonomicStatus = _.get(facets, "STATUS")
+      ? facets.STATUS.map(s => ({
           value: s.value,
           text: `${_.startCase(s.value)} (${s.count})`
         }))
       : null;
 
-    columns[2].filters =
+    columns[3].filters =
       facetTaxonomicStatus ||
       taxonomicstatus.map(s => ({ value: s, text: _.startCase(s) }));
-    columns[2].filteredValue = _.get(filteredInfo, "status") || null;
-    columns[7].filters =
+    columns[3].filteredValue = _.get(filteredInfo, "status") || null;
+    columns[10].filters =
       facetRanks || rank.map(s => ({ value: s, text: _.startCase(s) }));
-    columns[7].filteredValue = _.get(filteredInfo, "rank") || null;
+    columns[10].filteredValue = _.get(filteredInfo, "rank") || null;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -415,7 +480,7 @@ class WorkBench extends React.Component {
         </Row>
         {!error && (
           <Table
-            scroll={{ x: 2400, y: 600 }}
+            scroll={{ x: 2800, y: 600 }}
             size="small"
             components={this.components}
             bordered
