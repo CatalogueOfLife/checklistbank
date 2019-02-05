@@ -66,6 +66,7 @@ const columns = [
         ""
       ) : (
         <Classification
+          key={_.get(record, "usage.id")}
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
@@ -180,7 +181,7 @@ class NameSearchPage extends React.Component {
   };
 
   resetSearch = () => {
-    this.setState({ params: { limit: 50, offset: 0 } }, this.getData);
+    this.setState({ params: { limit: 50, offset: 0, facet: ['rank', 'issue', 'status'] } }, this.getData);
   };
 
   toggleAdvancedFilters = () => {
@@ -190,9 +191,9 @@ class NameSearchPage extends React.Component {
   render() {
     const { data : {result, facets}, loading, error, params, pagination, advancedFilters } = this.state;
     const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props;
-    const facetRanks = _.get(facets, 'rank') ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
-    const facetIssues =  _.get(facets, 'issue') ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
-    const facetTaxonomicStatus = _.get(facets, 'status') ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetRanks = _.get(facets, 'RANK') ? facets.RANK.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
+    const facetIssues =  _.get(facets, 'ISSUE') ? facets.ISSUE.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
+    const facetTaxonomicStatus = _.get(facets, 'STATUS') ? facets.STATUS.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
     return (
       <div
         style={{

@@ -8,7 +8,7 @@ import ColSourceMetaDataList from "../../../components/ColSourceMetaDataList";
 import ColSourceSectorList from './ColSourceSectors'
 import ErrorMsg from '../../../components/ErrorMsg';
 import PageContent from '../../../components/PageContent'
-
+import withContext from "../../../components/hoc/withContext"
 import _ from "lodash";
 
 const TabPane = Tabs.TabPane;
@@ -42,10 +42,8 @@ const columns = [
 class ColSourceList extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
     this.state = {
       data: [],
-      dataset: null,
       loading: false,
       editSource: null
     };
@@ -53,7 +51,6 @@ class ColSourceList extends React.Component {
 
   componentWillMount() {
     this.getData();
-    this.getDataset();
   }
 
   getData = () => {
@@ -68,17 +65,7 @@ class ColSourceList extends React.Component {
       });
   };
 
-  getDataset = () => {
-    const { datasetKey } = this.props;
 
-    axios(`${config.dataApi}dataset/${datasetKey}`)
-      .then(res => {
-        this.setState({ dataset: res.data, err: null });
-      })
-      .catch(err => {
-        this.setState({ error: err, dataset: null });
-      });
-  };
 
   setEditSource = (checked, source) => {
     if (checked) {
@@ -109,8 +96,8 @@ class ColSourceList extends React.Component {
 }
 
   render() {
-    const { data, dataset, editSource, loading, error } = this.state;
-    const { datasetKey } = this.props;
+    const { data, editSource, loading, error } = this.state;
+    const { datasetKey, dataset } = this.props;
 
     return (
       <PageContent>
@@ -204,4 +191,6 @@ class ColSourceList extends React.Component {
   }
 }
 
-export default ColSourceList;
+const mapContextToProps = ({dataset}) => ({dataset});
+
+export default withContext(mapContextToProps)(ColSourceList);

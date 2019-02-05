@@ -4,7 +4,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Alert, Tag, Breadcrumb, Row, Col, Button, Spin, Tooltip } from "antd";
+import { Alert, Tag, Breadcrumb, Row, Col, Button } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
@@ -15,7 +15,6 @@ import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
-import PresentationGroupHeader from "../../components/PresentationGroupHeader"
 import VerbatimPresentation from "../../components/VerbatimPresentation"
 import moment from "moment";
 import history from "../../history";
@@ -27,7 +26,6 @@ class TaxonPage extends React.Component {
     super(props);
 
     this.state = {
-      dataset: null,
       taxon: null,
       synonyms: null,
       info: null,
@@ -37,7 +35,6 @@ class TaxonPage extends React.Component {
       infoLoading: true,
       classificationLoading: true,
       infoError: null,
-      datasetError: null,
       taxonError: null,
       synonymsError: null,
       classificationError: null,
@@ -48,37 +45,13 @@ class TaxonPage extends React.Component {
   }
 
   componentWillMount = () => {
-    this.getDataset();
     this.getTaxon();
     this.getSynonyms();
     this.getInfo();
     this.getClassification();
   }
 
-  getDataset = () => {
-    const {
-      match: {
-        params: { key }
-      }
-    } = this.props;
 
-    this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${key}`)
-      .then(res => {
-        this.setState({
-          datasetLoading: false,
-          dataset: res.data,
-          datasetError: null
-        });
-      })
-      .catch(err => {
-        this.setState({
-          datasetLoading: false,
-          datasetError: err,
-          dataset: null
-        });
-      });
-  };
   getTaxon = () => {
     const {
       match: {
@@ -219,29 +192,19 @@ class TaxonPage extends React.Component {
   render() {
     const {
       match: {
-        params: { key, taxonKey }
+        params: { key }
       },
-      issueMap
+      dataset
     } = this.props;
     const {
-      datasetLoading,
-      taxonLoading,
-      classificationLoading,
-      synonymsLoading,
-      infoLoading,
-      dataset,
       taxon,
       synonyms,
       info,
       classification,
-      datasetError,
       taxonError,
       synonymsError,
       classificationError,
-      infoError,
-      verbatimLoading,
-      verbatimError,
-      verbatim
+      infoError
     } = this.state;
 
     return (
@@ -440,6 +403,6 @@ class TaxonPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ issueMap }) => ({ issueMap });
+const mapContextToProps = ({ issueMap, dataset }) => ({ issueMap, dataset });
 
 export default withContext(mapContextToProps)(TaxonPage);

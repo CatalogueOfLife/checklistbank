@@ -43,6 +43,10 @@ class ContextProvider extends React.Component {
     user: null,
     notifications: [],
     termsMap: {},
+    dataset: null,
+    setDataset: dataset => {
+      this.setState({dataset})
+    },
    // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
     addError: ({ status = 500, statusText = 'An error occurred' } = {}) => {
@@ -152,7 +156,7 @@ class ContextProvider extends React.Component {
     }
   };
   */
-
+  
   login = ({ username, password, remember }) => {
     return logUserIn(username, password, remember)
       .then(user => {

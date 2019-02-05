@@ -91,10 +91,6 @@ class LoadMoreChildrenTreeNode extends React.Component {
 class TreeExplorer extends React.Component {
   constructor(props) {
     super(props);
-    this.loadRoot = this.loadRoot.bind(this);
-    this.onLoadData = this.onLoadData.bind(this);
-    this.renderTreeNodes = this.renderTreeNodes.bind(this);
-    this.handleRootChange = this.handleRootChange.bind(this)
     this.state = {
       rootLoading: true,
       treeData: [],
@@ -176,7 +172,18 @@ class TreeExplorer extends React.Component {
         this.setState({ error: err });
       });
   };
-  fetchCildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
+
+  expandSingleChildNodes = (treeData) => {
+
+    let currentNode = treeData;
+
+    while(currentNode.length === 1 && currentNode.childCount === 1){
+      
+    }
+
+  }
+
+  fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
     return axios(
       `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(taxonKey)}/children?limit=${limit}&offset=${offset}`
     ).then(res => res.data.result.map( tx => 
@@ -195,7 +202,7 @@ class TreeExplorer extends React.Component {
     const { id } = this.props;
     const childcount = _.get(treeNode, 'props.dataRef.childCount')
     const offset = _.get(treeNode, 'props.dataRef.childOffset');
-    return this.fetchCildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
+    return this.fetchChildPage(treeNode, id, treeNode.props.eventKey, offset, CHILD_PAGE_SIZE)
             .then(data => {
               treeNode.props.dataRef.children = treeNode.props.dataRef.children ? [...treeNode.props.dataRef.children, ...data] : data;
 

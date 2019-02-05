@@ -15,7 +15,7 @@ import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import NameSearch from "../NameSearch"
 import WorkBench from "../WorkBench"
-
+import withContext from "../../components/hoc/withContext"
 import _ from 'lodash'
 import Helmet from 'react-helmet'
 
@@ -23,7 +23,6 @@ class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.getData = this.getData.bind(this);
     this.state = {
       data: null,
       loading: true,
@@ -37,15 +36,6 @@ class DatasetPage extends React.Component {
 
   getData = () => {
     const { datasetKey } = this.props;
-
-    this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${datasetKey}`)
-      .then(res => {
-        this.setState({ loading: false, data: res.data, err: null });
-      })
-      .catch(err => {
-        this.setState({ loading: false, error: err, data: {} });
-      });
 
       axios(`${config.dataApi}dataset/${datasetKey}/import`)
       .then(res => {
@@ -70,33 +60,33 @@ class DatasetPage extends React.Component {
   };
 
   render() {
-    const { datasetKey, section } = this.props;
+    const { datasetKey, section, dataset } = this.props;
     if (!section) return <Redirect to={{
       pathname: `/dataset/${datasetKey}/meta`
     }} />
     const sect = (!section) ? "meta" : section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
-    const { loading, data, importState } = this.state;
+    const { importState } = this.state;
     const openKeys = ['datasetKey']
     const selectedKeys = [section]
     return (
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={data}
+        selectedDataset={dataset}
         section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
       >
-      <Helmet>
+     {_.get(dataset, 'title') && <Helmet>
           <meta charSet="utf-8" />
-          <title>{_.get(data, 'title') ? `${_.get(data, 'title')}`: ''} in CoL+</title>
+          <title>{_.get(dataset, 'title')} in CoL+</title>
           <link rel="canonical" href="http://www.col.plus" />
-        </Helmet>
+        </Helmet>}
       { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(this.state, 'data.origin')} />}
+        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
@@ -112,4 +102,5 @@ class DatasetPage extends React.Component {
   }
 }
 
-export default DatasetPage;
+const mapContextToProps = ({dataset}) => ({dataset})
+export default withContext(mapContextToProps)(DatasetPage);

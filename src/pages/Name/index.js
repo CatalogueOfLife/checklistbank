@@ -67,34 +67,10 @@ class NamePage extends React.Component {
   }
 
   componentWillMount() {
-    this.getDataset();
     this.getName();
   }
 
-  getDataset = () => {
-    const {
-      match: {
-        params: { key }
-      }
-    } = this.props;
 
-    this.setState({ datasetLoading: true });
-    axios(`${config.dataApi}dataset/${key}`)
-      .then(res => {
-        this.setState({
-          datasetLoading: false,
-          dataset: res.data,
-          datasetError: null
-        });
-      })
-      .catch(err => {
-        this.setState({
-          datasetLoading: false,
-          datasetError: err,
-          dataset: null
-        });
-      });
-  };
   getReference = referenceKey => {
     const {
       match: {
@@ -149,19 +125,16 @@ class NamePage extends React.Component {
 
   render() {
     const {
-      datasetLoading,
       nameLoading,
       verbatimLoading,
-      dataset,
       name,
       reference,
       verbatim,
       nameError,
-      datasetError,
       verbatimError
     } = this.state;
 
-    const { issueMap } = this.props;
+    const { issueMap, dataset } = this.props;
     return (
       <Layout
         selectedMenuItem="datasetKey"
@@ -231,6 +204,6 @@ class NamePage extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ issueMap }) => ({ issueMap });
+const mapContextToProps = ({ issueMap, dataset }) => ({ issueMap, dataset });
 
 export default withContext(mapContextToProps)(NamePage);

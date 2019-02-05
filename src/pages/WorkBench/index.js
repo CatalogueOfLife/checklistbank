@@ -64,7 +64,7 @@ class WorkBench extends React.Component {
       title: "NameID",
       dataIndex: "usage.name.id",
       key: "nameId",
-      width: 220
+      width: 250
     },
     {
       title: "Status",
@@ -80,7 +80,8 @@ class WorkBench extends React.Component {
         __html: _.get(record, "usage.name.formattedName")
       }}
     />,
-      width: 300
+      width: 300,
+      sorter: true
     },
     {
       title: "Uninomial",
@@ -148,6 +149,7 @@ class WorkBench extends React.Component {
           ""
         ) : (
           <Classification
+            key={_.get(record, 'usage.id')}
             classification={_.initial(record.classification)}
             datasetKey={_.get(record, "usage.name.datasetKey")}
           />
@@ -352,7 +354,12 @@ class WorkBench extends React.Component {
         });
       })
       .catch(err => {
-        this.setState({  decisionError: err });
+        this.setState({
+          data: this.state.data,
+          selectedRowKeys: null,
+          decision: null,
+          decisionError: err
+        });
       });
 
   }
@@ -480,7 +487,7 @@ class WorkBench extends React.Component {
         </Row>
         {!error && (
           <Table
-            scroll={{ x: 2800, y: 600 }}
+            scroll={{ x: 3000, y: 600 }}
             size="small"
             components={this.components}
             bordered

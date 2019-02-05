@@ -11,7 +11,7 @@ import Taxon from "./pages/Taxon";
 import Name from "./pages/Name";
 import VerbatimRecord from "./pages/VerbatimRecord"
 import { ThemeProvider } from "react-jss";
-
+import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/Assembly";
 
 import Imports from "./pages/Imports";
@@ -32,6 +32,7 @@ class App extends Component {
           <link rel="canonical" href="http://test.col.plus" />
         </Helmet>
         <Router history={history}>
+        <React.Fragment>
           <ThemeProvider theme={theme}>
             <Switch>
               <Route
@@ -106,7 +107,14 @@ class App extends Component {
               />
               <Route component={Exception404} />
             </Switch>
+            
           </ThemeProvider>
+          <Route            
+                key="datasetProvider"
+                path={`/dataset/:key`}
+                component={DatasetProvider}
+              />
+              </React.Fragment>
         </Router>
       </ContextProvider>
     );

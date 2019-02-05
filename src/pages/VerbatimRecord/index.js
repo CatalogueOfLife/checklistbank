@@ -8,14 +8,13 @@ import qs from "query-string";
 import _ from "lodash"
 import {Alert} from "antd"
 import ErrorMsg from "../../components/ErrorMsg";
-
+import withContext from "../../components/hoc/withContext"
 
 class VerbatimRecord extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            dataset: null,
             verbatim: [],
             verbatimError: null
         }
@@ -25,7 +24,6 @@ class VerbatimRecord extends React.Component {
         
         let params = qs.parse(_.get(this.props, "location.search"));
         this.getVerbatimData(params)   
-        this.getDataset()
     }
 
     componentWillReceiveProps(nextProps) {
@@ -57,33 +55,12 @@ class VerbatimRecord extends React.Component {
           });
         });
     }
-    getDataset = () => {
-        const {
-          match: {
-            params: { key }
-          }
-        } = this.props;
-    
-        axios(`${config.dataApi}dataset/${key}`)
-          .then(res => {
-            this.setState({
-              dataset: res.data,
-            });
-          })
-          .catch(err => {
-            this.setState({
-              datasetError: err,
-              dataset: null
-            });
-          });
-      };
+
     render = () => {      
         const {
-            match: {
-              params: { key, verbatimKey }
-            }
+            dataset
           } = this.props; 
-          const {dataset, verbatim, verbatimError} = this.state;
+          const {verbatim, verbatimError} = this.state;
     return    <Layout
             selectedMenuItem="datasetKey"
             selectedDataset={dataset}
@@ -108,5 +85,5 @@ class VerbatimRecord extends React.Component {
 }
 
 
-
-export default VerbatimRecord
+const mapContextToProps = ({dataset}) => ({dataset})
+export default withContext(mapContextToProps)(VerbatimRecord)
