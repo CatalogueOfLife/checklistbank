@@ -179,7 +179,7 @@ class TreeExplorer extends React.Component {
 
     let currentNode = treeData;
     let expandedKeys = []
-    while(currentNode.length === 1 && currentNode[0].childCount === 1){
+    while(currentNode[0].childCount === 1){
      const res = await axios(
         `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(currentNode[0].key)}/children?limit=${CHILD_PAGE_SIZE}&offset=${0}`
       ) 

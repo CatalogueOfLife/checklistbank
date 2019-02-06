@@ -2,14 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Switch, Row, Col, Button, Select, Tag, notification } from "antd";
+import { Table, Alert, Tooltip, Row, Col, Button, Select, Tag, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
 import Classification from "../NameSearch/Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
-import RowDetail from "../NameSearch/RowDetail";
+import DecisionTag from "./DecisionTag";
+import CopyableColumnText from "./CopyableColumnText"
 import _ from "lodash";
 import ResizeableTitle from "./ResizeableTitle";
 import withContext from "../../components/hoc/withContext";
@@ -39,38 +40,34 @@ class WorkBench extends React.Component {
   }
   defaultColumns  = [
     {
-      title: "IndexNameId",
+      title: "Index Name Id",
       dataIndex: "usage.name.indexNameId",
       key: "indexNameId",
-      width: 100
+      width: 60,
+      render: (text, record) => <CopyableColumnText text={text} width="40px" />
+
     },
     {
       title: "Descision",
       dataIndex: "decisions",
       key: "decisions",
-      width: 200,
-      render: (text, record) => {
-        if(!_.get(record, 'decisions[0].mode')) {
-          return "";
-        } else if(['block', 'chresonym'].includes(_.get(record, 'decisions[0].mode'))){
-          return   <Tag closable onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))}>{_.get(record, 'decisions[0].mode')}</Tag>
-        } else {
-          return <Tag closable onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))}>{_.get(record, 'decisions[0].status')}</Tag>
-        }
-        
-      }
+      width: 80,
+      render: (text, record) => <DecisionTag onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))} record={record}/>
     },
     {
-      title: "NameID",
+      title: "Name ID",
       dataIndex: "usage.name.id",
       key: "nameId",
-      width: 250
+      width: 60,
+      render: (text, record) => <CopyableColumnText text={text} width="40px" />
     },
     {
       title: "Status",
       dataIndex: "usage.status",
       key: "status",
-      width: 100
+      width: 80,
+      render: (text, record) => <CopyableColumnText text={text} width="40px" />
+
     },
     {
       title: "ScientificName",
