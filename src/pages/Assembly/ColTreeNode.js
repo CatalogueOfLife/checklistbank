@@ -29,9 +29,9 @@ class ColTreeNode extends React.Component {
     this.setState({ mode });
   };
   componentWillMount = () => {
-    if (this.props.taxon.sector) {
+    if (this.props.taxon.sectors && this.props.taxon.sectors.length > 0) {
       axios(
-        `${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`
+        `${config.dataApi}dataset/${this.props.taxon.sectors[0].datasetKey}`
       )
         .then(res => {
           this.setState({ sectorSourceDataset: res.data });
@@ -106,10 +106,11 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sector },
+      taxon: { sectors },
       hasPopOver,
       isUpdating
     } = this.props;
+    const sector = _.get(sectors, '[0]') || null
     const { sectorSourceDataset } = this.state;
     return (
       <div>
