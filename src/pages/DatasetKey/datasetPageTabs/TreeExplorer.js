@@ -94,7 +94,8 @@ class TreeExplorer extends React.Component {
     this.state = {
       rootLoading: true,
       treeData: [],
-      loadedKeys: []
+      loadedKeys: [],
+      expandedKeys: []
     };
   }
 
@@ -147,7 +148,7 @@ class TreeExplorer extends React.Component {
         }
         return treeData;
       })
-
+      .then(this.expandSingleChildNodes)
       .then(treeData => {
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
@@ -173,13 +174,37 @@ class TreeExplorer extends React.Component {
       });
   };
 
-  expandSingleChildNodes = (treeData) => {
+  expandSingleChildNodes = async (treeData) => {
+    const { id } = this.props;
 
     let currentNode = treeData;
+    let expandedKeys = []
+    while(currentNode.length === 1 && currentNode[0].childCount === 1){
+     const res = await axios(
+        `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(currentNode[0].key)}/children?limit=${CHILD_PAGE_SIZE}&offset=${0}`
+      ) 
+      expandedKeys.push(res.data.result[0].id)
 
-    while(currentNode.length === 1 && currentNode.childCount === 1){
-      
+        const nextNode = res.data.result.map( tx => 
+         ({
+          title: <ColTreeNode taxon={tx} datasetKey={id} popOverVisible={false}/>,
+          key: tx.id,
+          childCount: tx.childCount,
+          childOffset: 0,
+          parent: currentNode[0].dataRef,
+          taxon: tx
+        })
+      )
+      currentNode[0].children = nextNode;
+      currentNode = nextNode;
+
+    
     }
+
+   
+      this.setState({expandedKeys})
+      return treeData
+    
 
   }
 
@@ -262,6 +287,7 @@ class TreeExplorer extends React.Component {
       defaultExpandAll,
       defaultExpandedKeys,
       loadedKeys,
+      expandedKeys,
       childlessRoots,
       error
     } = this.state;
@@ -284,8 +310,10 @@ class TreeExplorer extends React.Component {
               defaultExpandedKeys={defaultExpandedKeys}
               defaultSelectedKeys={defaultSelectedKeys}
               loadedKeys={loadedKeys}
+              expandedKeys={expandedKeys}
               onRightClick={this.onRightClick}
               onExpand={(expandedKeys, obj) => {
+                this.setState({expandedKeys});
                 if(!obj.expanded){
                   // Remove children when a node is collapsed to improve performance on large trees
                  delete obj.node.props.dataRef.children;
