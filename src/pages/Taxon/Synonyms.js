@@ -3,9 +3,9 @@ import _ from "lodash";
 import { NavLink } from "react-router-dom";
 import BorderedListItem from "./BorderedListItem"
 
-const SynonymsTable = ({ datasetKey, data }) => {
+const SynonymsTable = ({ datasetKey, data, style }) => {
   return (
-    <React.Fragment>
+    <div style={style}>
       {data
         .map(s => {
           return s[0] ? s[0] : s;
@@ -24,7 +24,7 @@ const SynonymsTable = ({ datasetKey, data }) => {
             </NavLink> 
           </BorderedListItem>
         ))}
-    </React.Fragment>
+    </div>
   );
 };
 

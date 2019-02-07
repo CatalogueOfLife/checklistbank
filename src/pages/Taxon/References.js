@@ -2,9 +2,9 @@ import React from "react";
 import _ from "lodash";
 import BorderedListItem from "./BorderedListItem"
 
-const ReferencesTable = ({ data }) => {
+const ReferencesTable = ({ data, style }) => {
   return (
-    <React.Fragment>
+    <div style={style}>
       {_.values(data)
         
         .map(s => (
@@ -12,7 +12,7 @@ const ReferencesTable = ({ data }) => {
             {s.citation}
           </BorderedListItem>
         ))}
-    </React.Fragment>
+    </div>
   );
 };
 

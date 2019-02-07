@@ -21,6 +21,8 @@ import history from "../../history";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 
+const md = 5;
+
 class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
@@ -275,7 +277,7 @@ class TaxonPage extends React.Component {
               </Row>
             )}
             {_.get(taxon, "accordingTo") && (
-              <PresentationItem label="According to">
+              <PresentationItem md={md} label="According to">
                 {`${_.get(taxon, "accordingTo")}${_.get(
                   taxon,
                   "accordingToDate"
@@ -284,25 +286,26 @@ class TaxonPage extends React.Component {
               </PresentationItem>
             )}
             {_.get(taxon, "status") && (
-              <PresentationItem label="Status">
+              <PresentationItem md={md} label="Status">
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
             {_.get(taxon, "origin") && (
-              <PresentationItem label="Origin">
+              <PresentationItem  md={md} label="Origin">
                 {_.get(taxon, "origin")}
               </PresentationItem>
             )}
 
-            <PresentationItem label="Fossil">
+            <PresentationItem md={md} label="Fossil">
               <BooleanValue value={_.get(taxon, "fossil")} />
             </PresentationItem>
-            <PresentationItem label="Recent">
+            <PresentationItem md={md} label="Recent">
               <BooleanValue value={_.get(taxon, "recent")} />
             </PresentationItem>
 
             {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
               <PresentationItem
+              md={md}
                 label="Relations"
                 helpText={
                   <a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">
@@ -310,11 +313,11 @@ class TaxonPage extends React.Component {
                   </a>
                 }
               >
-                <NameRelations data={taxon.name.relations} />
+                <NameRelations style={{marginTop: '-10px'}} data={taxon.name.relations} />
               </PresentationItem>
             )}
             {_.get(taxon, "name.publishedIn.citation") && (
-              <PresentationItem label="Published in">
+              <PresentationItem md={md} label="Published in">
                 {_.get(taxon, "name.publishedIn.citation")}
               </PresentationItem>
             )}
@@ -323,28 +326,28 @@ class TaxonPage extends React.Component {
             )}
 
             {_.get(synonyms, "homotypic") && (
-              <PresentationItem label="Homotypic synonyms">
+              <PresentationItem md={md} label="Homotypic synonyms">
                 <SynonymTable
                   data={synonyms.homotypic}
-                  style={{ marginBottom: 16 }}
+                  style={{ marginBottom: 16, marginTop: '-10px' }}
                   datasetKey={key}
                 />
               </PresentationItem>
             )}
             {_.get(synonyms, "heterotypic") && (
-              <PresentationItem label="Heterotypic synonyms">
+              <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
                   data={synonyms.heterotypic}
-                  style={{ marginBottom: 16 }}
+                  style={{ marginBottom: 16, marginTop: '-10px' }}
                   datasetKey={key}
                 />
               </PresentationItem>
             )}
             {_.get(synonyms, "misapplied") && (
-              <PresentationItem label="Misapplied names">
+              <PresentationItem md={md} label="Misapplied names">
                 <SynonymTable
                   data={synonyms.misapplied.map(n => n.name)}
-                  style={{ marginBottom: 16 }}
+                  style={{ marginBottom: 16, marginTop: '-10px'  }}
                   datasetKey={key}
                 />
               </PresentationItem>
@@ -356,30 +359,30 @@ class TaxonPage extends React.Component {
               />
             )}
             {_.get(taxon, "lifezones") && (
-              <PresentationItem label="Lifezones">
+              <PresentationItem md={md} label="Lifezones">
                 {_.get(taxon, "lifezones").join(", ")}
               </PresentationItem>
             )}
 
             {_.get(info, "vernacularNames") && (
-              <PresentationItem label="Vernacular names">
-                <VernacularNames data={info.vernacularNames} />
+              <PresentationItem md={md} label="Vernacular names">
+                <VernacularNames style={{ marginTop: '-10px',  marginLeft: '-10px'  }} data={info.vernacularNames} />
               </PresentationItem>
             )}
 
             {_.get(info, "references") && (
-              <PresentationItem label="References">
-                <References data={info.references} />
+              <PresentationItem md={md} label="References">
+                <References style={{marginTop: '-10px'}} data={info.references} />
               </PresentationItem>
             )}
 
             {_.get(info, "distributions") && (
-              <PresentationItem label="Distributions">
-                <Distributions data={info.distributions} />
+              <PresentationItem md={md} label="Distributions">
+                <Distributions style={{marginTop: '-10px'}} data={info.distributions} />
               </PresentationItem>
             )}
             {_.get(taxon, "remarks") && (
-              <PresentationItem label="Remarks">
+              <PresentationItem md={md} label="Remarks">
                 {taxon.remarks}
               </PresentationItem>
             )}
@@ -391,8 +394,8 @@ class TaxonPage extends React.Component {
               />
             )}
             {classification && (
-              <PresentationItem label="Classification">
-                <Classification data={classification} datasetKey={key} />
+              <PresentationItem md={md} label="Classification">
+                <Classification style={{marginTop: '-10px', marginLeft: '-10px' }} data={classification} datasetKey={key} />
               </PresentationItem>
             )}
             {_.get(taxon, 'verbatimKey') && <VerbatimPresentation verbatimKey={taxon.verbatimKey} datasetKey={taxon.datasetKey}></VerbatimPresentation>}

@@ -27,9 +27,10 @@ const columns = [
 
 class VernacularNamesTable extends React.Component {
   render() {
-    const { data } = this.props;
+    const { data, style } = this.props;
     return (
       <Table
+        style={style}
         className="colplus-taxon-page-list"
         columns={columns}
         dataSource={data}

@@ -10,6 +10,8 @@ import {NavLink} from "react-router-dom"
 
 import withContext from "./hoc/withContext";
 
+const md = 5
+
 const parentRelations = ["dwc:Taxon.dwc:parentNameUsageID", "col:Taxon.col:parentID"]
 const isValidURL = (string) => {
     if (typeof string !== 'string') return false;
@@ -96,12 +98,12 @@ class VerbatimPresentation extends React.Component {
         )}
         {_.get(verbatim, 'file') &&
           
-            <PresentationItem key="file" label="File">
+            <PresentationItem md={md} key="file" label="File">
               {`${_.get(verbatim, 'file') }${_.get(verbatim, 'line') ? `, line ${_.get(verbatim, 'line')}`: ''}`}
             </PresentationItem>
           }
         {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
-          <PresentationItem label="Issues and flags">
+          <PresentationItem md={md} label="Issues and flags">
             <div>
               {verbatim.issues.map(i => (
                 <Tooltip key={i} title={_.get(issueMap, `[${i}].description`)}>
@@ -117,7 +119,7 @@ class VerbatimPresentation extends React.Component {
 
         {_.get(verbatim, "terms") &&
           Object.keys(verbatim.terms).map(t => (
-            <PresentationItem label={t} key={t}>
+            <PresentationItem md={md} label={t} key={t}>
             {this.renderTerm(t, verbatim.terms[t], _.get(verbatim, 'type')  )}
             </PresentationItem>
           ))}

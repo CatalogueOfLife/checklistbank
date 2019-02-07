@@ -13,6 +13,7 @@ import PresentationGroupHeader from "../../components/PresentationGroupHeader";
 import VerbatimPresentation from "../../components/VerbatimPresentation"
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
+const md = 5;
 
 const nameAttrs = [
   "id",
@@ -165,7 +166,7 @@ class NamePage extends React.Component {
             <React.Fragment>
               {authorAttrs.map(a => {
                 return name[a] ? (
-                  <PresentationItem key={a} label={_.startCase(a)}>
+                  <PresentationItem md={md} key={a} label={_.startCase(a)}>
                     {`${name[a].authors.join(", ")} ${
                       name[a].exAuthors
                         ? `ex ${name[a].exAuthors.join(", ")}`
@@ -173,20 +174,20 @@ class NamePage extends React.Component {
                     } ${name[a].year ? name[a].year : ""}`}
                   </PresentationItem>
                 ) : (
-                  <PresentationItem key={a} label={a} />
+                  <PresentationItem md={md} key={a} label={a} />
                 );
               })}
             </React.Fragment>
           )}
            {reference && (
-            <PresentationItem key="publishedIn" label="Published In">
+            <PresentationItem md={md} key="publishedIn" label="Published In">
               {reference.citation}
             </PresentationItem>
           )}
           {name && (
             <React.Fragment>
               {nameAttrs.map(a => (
-                <PresentationItem key={a} label={_.startCase(a)}>
+                <PresentationItem md={md} key={a} label={_.startCase(a)}>
                   {typeof name[a] === "boolean" ? (
                     <BooleanValue value={name[a]} />
                   ) : (

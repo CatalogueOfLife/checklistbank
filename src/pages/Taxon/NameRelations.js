@@ -11,9 +11,9 @@ const typeMap = {
     "superfluous": "name for"
 }
 
-const NameRelations = ({ data }) => {
+const NameRelations = ({ data, style }) => {
   return (
-    <React.Fragment>
+    <div style={style}>
       {data
         .map(r => (
           <PresentationItem key={r.key} label={`${_.capitalize(r.type)} ${typeMap[r.type] ? typeMap[r.type]: ""}` } helpText={r.note}>
@@ -29,7 +29,7 @@ const NameRelations = ({ data }) => {
             </NavLink>
           </PresentationItem>
         ))}
-    </React.Fragment>
+    </div>
   );
 };
 
