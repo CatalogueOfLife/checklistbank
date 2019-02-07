@@ -9,7 +9,8 @@ import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetColSources from "./datasetPageTabs/DatasetColSources";
 import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
 
-import TreeExplorer from "./datasetPageTabs/TreeExplorer";
+import DatasetClassification from "./datasetPageTabs/DatasetClassification";
+import DatasetSectors from "./datasetPageTabs/DatasetSectors"
 import Layout from "../../components/LayoutNew";
 import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
@@ -77,11 +78,9 @@ class DatasetPage extends React.Component {
         openKeys={openKeys}
         selectedKeys={selectedKeys}
       >
-     {_.get(dataset, 'title') && <Helmet>
-          <meta charSet="utf-8" />
-          <title>{_.get(dataset, 'title')} in CoL+</title>
-          <link rel="canonical" href="http://www.col.plus" />
-        </Helmet>}
+     {_.get(dataset, 'title') && <Helmet 
+      title={`${_.get(dataset, 'title')} in CoL+`}
+     />}
       { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
@@ -89,8 +88,12 @@ class DatasetPage extends React.Component {
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
-          <TreeExplorer id={datasetKey} defaultExpandKey={params.taxonKey} />
+          <DatasetClassification id={datasetKey} defaultExpandKey={params.taxonKey} />
         )}
+        {section === "sectors" && (
+          <DatasetSectors datasetKey={datasetKey} />
+        )}
+        
         {sect === "names" && (
           <NameSearch datasetKey={datasetKey} location={this.props.location} />
         )}

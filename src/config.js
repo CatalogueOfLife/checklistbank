@@ -4,6 +4,7 @@ const environments = {
 
       dataApi: 'https://api-dev.col.plus/',
       env: 'dev',
+      kibanaEnv: 'col-dev',
       MANAGEMENT_CLASSIFICATION: {
         key: 3,
         title: "CoL draft"
@@ -13,6 +14,7 @@ const environments = {
         url: 'https://wwww.col.plus',
         dataApi: 'https://api.col.plus/',
         env: 'prod',
+        kibanaEnv: 'col-prod',
         MANAGEMENT_CLASSIFICATION: {
             key: 3,
             title: "CoL draft"

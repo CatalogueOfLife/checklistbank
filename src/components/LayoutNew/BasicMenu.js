@@ -169,6 +169,18 @@ class BasicMenu extends Component {
                     Classification
                   </NavLink>
                 </Menu.Item>
+                <Menu.Item key="sectors">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/sectors`
+                    }}
+                  >
+                    Sectors
+                  </NavLink>
+                </Menu.Item>
                 <Menu.Item key="names">
                   <NavLink
                     to={{

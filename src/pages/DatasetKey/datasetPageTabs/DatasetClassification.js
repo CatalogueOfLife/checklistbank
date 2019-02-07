@@ -88,7 +88,7 @@ class LoadMoreChildrenTreeNode extends React.Component {
 }
 
 
-class TreeExplorer extends React.Component {
+class DatasetClassification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -332,4 +332,4 @@ class TreeExplorer extends React.Component {
   }
 }
 
-export default TreeExplorer;
+export default DatasetClassification;
