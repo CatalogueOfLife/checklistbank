@@ -131,31 +131,7 @@ class BasicMenu extends Component {
                 key="datasetKey"
                 title={<span><Icon type="bars" /><span>{`Dataset: ${selectedDataset.key}`}</span></span>}
               >
-                <Menu.Item key="issues">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/issues`
-                    }}
-                  >
-                    Issues
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="metrics">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/metrics`
-                    }}
-                  >
-                    Import Metrics
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="meta">
+                              <Menu.Item key="meta">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
@@ -181,7 +157,7 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-                <Menu.Item key="classification">
+                                <Menu.Item key="classification">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
@@ -205,6 +181,32 @@ class BasicMenu extends Component {
                     Names
                   </NavLink>
                 </Menu.Item>
+                <Menu.Item key="issues">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/issues`
+                    }}
+                  >
+                    Issues
+                  </NavLink>
+                </Menu.Item>
+                <Menu.Item key="metrics">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/metrics`
+                    }}
+                  >
+                    Import Metrics
+                  </NavLink>
+                </Menu.Item>
+
+
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
