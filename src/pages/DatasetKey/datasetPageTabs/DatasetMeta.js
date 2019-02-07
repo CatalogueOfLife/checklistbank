@@ -108,7 +108,7 @@ class DatasetMeta extends React.Component {
         <Row>
         <Col lg={4} md={24}/>
         <Col lg={14} md={24}>
-            {data && data.origin !== "external" && (
+            {data &&  (
               <Switch
                 checked={editMode}
                 onChange={this.setEditMode}
