@@ -53,28 +53,11 @@ class DatasetMeta extends React.Component {
   }
 
 
-  onDatasetOriginChange = (value)=> {
-    this.state.data.origin = value;
-    const {data} = this.state;
-    
-
-    axios.put(`${config.dataApi}dataset/${data.key}`, data)
-      .then((res) => {
-        this.setState(
-          {data}
-        )
-      
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-
 
   render() {
 
     const { data, editMode } = this.state;
-    const { datasetoriginEnum, user } = this.props;
+    const {  user } = this.props;
     const listData = _.map(data, function(value, key) {
       return { key, value };
     });
@@ -84,30 +67,16 @@ class DatasetMeta extends React.Component {
       <React.Fragment>
       <Row>
           
-          <Col lg={4} md={24}>
+          <Col span={4}>
             <LogoUpload datasetKey={this.props.id} />
           </Col>
-          <Col lg={8} md={24}>
-            
+          <Col span={2} offset={18}>
+          { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
           </Col>
-          <Col lg={8} md={24} >
-         
-         { data &&    <Select style={{ width: 200, float: 'right' }} onChange={this.onDatasetOriginChange} defaultValue={_.get(data, 'origin')}>
-               {datasetoriginEnum.map((f) => {
-                 return <Option key={f} value={f}>Origin: {f}</Option>
-               })}
-             </Select>}
-           
-          
-             {_.get(data, 'origin') === "uploaded" && (
-               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
-             )}
-           </Col>
-
         </Row> 
         <Row>
-        <Col lg={4} md={24}/>
-        <Col lg={14} md={24}>
+        
+        <Col span={2} offset={22}>
             {data &&  (
               <Switch
                 checked={editMode}
@@ -116,12 +85,9 @@ class DatasetMeta extends React.Component {
                 unCheckedChildren="Edit"
               />
             )}
-          </Col>
-          <Col lg={4} md={24}>
-         { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
 
           </Col>
-          
+       
         </Row> </React.Fragment>}
 
         {editMode && (

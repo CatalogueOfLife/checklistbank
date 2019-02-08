@@ -116,7 +116,7 @@ class BasicMenu extends Component {
             </Menu.Item>
             {Auth.isAuthorised(user, ["editor", "admin"]) && (
               <Menu.Item key="datasetCreate">
-                <NavLink to={{ pathname: "/dataset/create" }}>
+                <NavLink to={{ pathname: "/newdataset" }}>
                   New Dataset
                 </NavLink>
               </Menu.Item>

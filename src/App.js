@@ -82,7 +82,7 @@ class App extends Component {
               <PrivateRoute
                 exact
                 key="datasetCreate"
-                path={`/dataset/create`}
+                path={`/newdataset`}
                 roles={["editor", "admin"]}
                 component={DatasetCreate}
               />

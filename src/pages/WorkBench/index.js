@@ -48,7 +48,7 @@ class WorkBench extends React.Component {
 
     },
     {
-      title: "Descision",
+      title: "Decision",
       dataIndex: "decisions",
       key: "decisions",
       width: 80,

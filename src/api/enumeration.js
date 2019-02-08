@@ -61,3 +61,17 @@ export const getNomStatus = () => {
     res.data.map(e => e.name)
   );
 };
+
+export const getLicense = () => {
+  return axios(`${config.dataApi}vocab/license`).then(res =>
+    res.data.map(e => e.name)
+  );
+};
+
+export const getNomCode = () => {
+  return axios(`${config.dataApi}vocab/nomcode`).then(res =>
+    res.data
+  );
+};
+
+

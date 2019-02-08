@@ -1,11 +1,13 @@
 import React from 'react';
 
-import { Form, Input,  Select,  Button, Alert, notification } from 'antd';
+import { Form, Input,  Select,  Button, Alert, Checkbox, notification } from 'antd';
 import _ from 'lodash';
 import axios from 'axios';
 import config from '../config';
 import TextArea from 'antd/lib/input/TextArea';
 import ErrorMsg from '../components/ErrorMsg';
+import TagControl from "./TagControl"
+import ArchiveUpload from "./ArchiveUpload"
 import withContext from './hoc/withContext';
 
 const FormItem = Form.Item;
@@ -13,8 +15,7 @@ const Option = Select.Option;
 const openNotification = (title, description) => {
   notification.open({
     message: title,
-    description: description,
-  });
+    description: description  });
 };
 
 class RegistrationForm extends React.Component {
@@ -24,9 +25,14 @@ class RegistrationForm extends React.Component {
 
     this.state = {
       confirmDirty: false,
-      autoCompleteResult: []
+      autoCompleteResult: [],
+      origin: null
+
     };
   }
+componentDidMount = () =>{
+  this.setState({origin: _.get(this.props, 'data.origin')})
+}
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -70,10 +76,9 @@ class RegistrationForm extends React.Component {
 
 
   render() {
-    const { getFieldDecorator } = this.props.form;
    // const { submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
-   const { submissionError } = this.state;
-    const { datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum } = this.props;
+   const { submissionError, origin } = this.state;
+    const { data, datasetoriginEnum, frequencyEnum , datasettypeEnum, dataformatEnum, licenseEnum, nomCodeEnum, form: {getFieldDecorator} } = this.props;
 
     const formItemLayout = {
       labelCol: {
@@ -98,7 +103,6 @@ class RegistrationForm extends React.Component {
       },
     };
 
-    const { data } = this.props;
 
     return (
 
@@ -127,30 +131,16 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Data Access"
+          label="License"
         >
-          {getFieldDecorator('dataAccess', {
-            initialValue: (_.get(data, 'dataAccess')) ? _.get(data, 'dataAccess') : '',
+          {getFieldDecorator('license', {
+            initialValue: (_.get(data, 'license')) ? _.get(data, 'license') : '',
             rules: [{
-              required: false, message: 'Please input the url to access data from',
-            }],
-          })(
-            <Input type="url" />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Import Frequency"
-        >
-          {getFieldDecorator('importFrequency', {
-            initialValue: (_.get(data, 'importFrequency')) ? _.get(data, 'importFrequency') : '',
-
-            rules: [{
-              required: true, message: 'Please select import frequency',
+              required: true, message: 'Please select a license',
             }],
           })(
             <Select style={{ width: 200 }}>
-              {frequencyEnum.map((f) => {
+              {licenseEnum.map((f) => {
                 return <Option key={f} value={f}>{f}</Option>
               })}
             </Select>
@@ -175,6 +165,32 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
+          label="Dataset Origin"
+        >
+          {getFieldDecorator('origin', {
+            initialValue: (_.get(data, 'origin')) ? _.get(data, 'origin') : '',
+            rules: [{
+              required: true, message: 'Please select the dataset origin',
+            }],
+          })(
+            <Select style={{ width: 200 }} onChange={(value)=> this.setState({origin: value})}>
+              {datasetoriginEnum.map((f) => {
+                return <Option key={f} value={f}>{f}</Option>
+              })}
+            </Select>
+          )}
+        </FormItem>
+        {data && origin === "uploaded" &&
+        <FormItem {...formItemLayout}
+        label="Data upload" >
+         
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
+             
+        </FormItem>}
+        
+
+       {(origin === 'external' || origin === 'uploaded') && <FormItem
+          {...formItemLayout}
           label="Data Format"
         >
           {getFieldDecorator('dataFormat', {
@@ -186,19 +202,94 @@ class RegistrationForm extends React.Component {
               })}
             </Select>
           )}
-        </FormItem>
-        <FormItem
+        </FormItem>}
+        {origin === 'external' &&  <FormItem
           {...formItemLayout}
-          label="Dataset Origin"
+          label="Data Access"
         >
-          {getFieldDecorator('origin', {
-            initialValue: (_.get(data, 'origin')) ? _.get(data, 'origin') : ''
+          {getFieldDecorator('dataAccess', {
+            initialValue: (_.get(data, 'dataAccess')) ? _.get(data, 'dataAccess') : '',
+            rules: [{
+              required: false, message: 'Please input the url to access data from',
+            }],
+          })(
+            <Input type="url" />
+          )}
+        </FormItem>}
+        {origin === 'external' &&  <FormItem
+          {...formItemLayout}
+          label="Import Frequency"
+        >
+          {getFieldDecorator('importFrequency', {
+            initialValue: (_.get(data, 'importFrequency')) ? _.get(data, 'importFrequency') : '',
+
+            rules: [{
+              required: true, message: 'Please select import frequency',
+            }],
           })(
             <Select style={{ width: 200 }}>
-              {datasetoriginEnum.map((f) => {
+              {frequencyEnum.map((f) => {
                 return <Option key={f} value={f}>{f}</Option>
               })}
             </Select>
+          )}
+        </FormItem>}
+
+       {/* Only to be shown on existing datasets */}
+        {data &&<React.Fragment>
+          <FormItem
+          {...formItemLayout}
+          label="Website"
+        >
+          {getFieldDecorator('Website', {
+            initialValue: (_.get(data, 'website')) ? _.get(data, 'website') : '',
+          
+          })(
+            <Input type="url" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Version"
+        >
+          {getFieldDecorator('version', {
+            initialValue: (_.get(data, 'version')) ? _.get(data, 'version') : '',
+          
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Contact"
+        >
+          {getFieldDecorator('contact', {
+            initialValue: (_.get(data, 'contact')) ? _.get(data, 'contact') : '',
+          
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Organisations"
+        >
+          {getFieldDecorator('organisations', { initialValue: (_.get(data, 'organisations')) ? _.get(data, 'organisations') : [] })(
+            <TagControl
+              label="New organisation"
+              removeAll={true}
+            />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Authors and Editors"
+        >
+          {getFieldDecorator('authorsAndEditors', { initialValue: (_.get(data, 'authorsAndEditors')) ? _.get(data, 'authorsAndEditors') : [] })(
+            <TagControl
+              label="New person"
+              removeAll={true}
+            />
           )}
         </FormItem>
         <FormItem
@@ -211,17 +302,7 @@ class RegistrationForm extends React.Component {
             <TextArea rows={6} />
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Home Page"
-        >
-          {getFieldDecorator('homepage', {
-            initialValue: (_.get(data, 'homepage')) ? _.get(data, 'homepage') : '',
-          
-          })(
-            <Input type="url" />
-          )}
-        </FormItem>
+
         <FormItem
           {...formItemLayout}
           label="Logo Url"
@@ -233,6 +314,59 @@ class RegistrationForm extends React.Component {
             <Input type="url" />
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Nomenclatural code"
+        >
+          {getFieldDecorator('code', {
+            initialValue: (_.get(data, 'code')) ? _.get(data, 'code') : '',
+          
+          })(
+            <Select style={{ width: 200 }}>
+              {nomCodeEnum.map((c) => {
+                return <Option key={c.name} value={c.name}>{`${c.name} (${c.acronym})`}</Option>
+              })}
+            </Select>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Contributes to"
+        >
+          {getFieldDecorator('contributesTo', {
+            initialValue: (_.get(data, 'contributesTo')) ? _.get(data, 'contributesTo') : '',
+          
+          })(
+            <Select style={{ width: 200 }}>
+            <Option key="col" value="col">col</Option>
+            <Option key="pcat" value="pcat">pcat</Option>
+            </Select>
+          )}
+        </FormItem>
+        
+        <FormItem
+          {...formItemLayout}
+          label="Cluster"
+        >
+        {getFieldDecorator('cluster', {
+              valuePropName: 'checked',
+              initialValue: _.get(data, 'contributesTo') || false,
+            })(
+              <Checkbox/>
+            )}
+            </FormItem>
+            <FormItem
+          {...formItemLayout}
+          label="Notes"
+        >
+          {getFieldDecorator('notes', {
+            initialValue: (_.get(data, 'notes')) ? _.get(data, 'notes') : ''
+          })(
+            <TextArea rows={3} />
+          )}
+        </FormItem>
+        </React.Fragment>}
+
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">Save</Button>
         </FormItem>
@@ -245,13 +379,17 @@ class RegistrationForm extends React.Component {
 const mapContextToProps = ({ addError, addInfo, frequency: frequencyEnum,
   datasetType: datasettypeEnum,
   dataFormatType: dataformatEnum,
-  datasetOrigin: datasetoriginEnum }) => ({
+  datasetOrigin: datasetoriginEnum,
+  license: licenseEnum,
+  nomCode: nomCodeEnum }) => ({
   addError,
   addInfo,
   frequencyEnum,
   datasettypeEnum,
   dataformatEnum,
-  datasetoriginEnum
+  datasetoriginEnum,
+  licenseEnum,
+  nomCodeEnum
 });
 
 const WrappedRegistrationForm = Form.create()(withContext(mapContextToProps)(RegistrationForm));
