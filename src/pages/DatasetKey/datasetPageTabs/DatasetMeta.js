@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { Switch, List, Row, Col, Select } from "antd";
+import { Switch, Rate, Row, Col, Select } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -13,6 +13,7 @@ import PresentationItem from '../../../components/PresentationItem'
 import DeleteDatasetButton from './DeleteDatasetButton'
 import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
+import moment from 'moment'
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -98,12 +99,17 @@ class DatasetMeta extends React.Component {
             }}
           />
         )}
-        {!editMode && (
+        {!editMode && data && (
           <dl>
-            {listData.filter((o)=> !['createdBy', 'modifiedBy'].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
+            {listData.filter((o)=> ['created', 'modified', 'imported' ].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
+            {moment(obj.value).format('MMMM Do YYYY, h:mm:ss a')}
+          </PresentationItem>)}
+            {listData.filter((o)=> !['createdBy', 'modifiedBy', 'created', 'modified', 'imported', 'confidence' ].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
             {obj.value}
           </PresentationItem>)}
-          
+          <PresentationItem label={<FormattedMessage id="Checklist Confidence" defaultMessage="Checklist Confidence" />} >
+          {<Rate value={data.confidence} disabled></Rate>}
+          </PresentationItem>
           </dl>
         )}
       </PageContent>

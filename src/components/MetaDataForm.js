@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Input,  Select,  Button, Alert, Checkbox, notification } from 'antd';
+import { Form, Input,  Select,  Button, Alert, Checkbox, Rate, notification } from 'antd';
 import _ from 'lodash';
 import axios from 'axios';
 import config from '../config';
@@ -129,6 +129,30 @@ componentDidMount = () =>{
             <Input />
           )}
         </FormItem>
+        {data &&   <FormItem
+          {...formItemLayout}
+          label="Short Name"
+          help="Abbreviated or shortened memorable name of Source Database intended for easy use in day-to-day communications, as supplied by the custodian"
+        >
+          {getFieldDecorator('alias', {
+            initialValue: (_.get(data, 'alias')) ? _.get(data, 'alias') : ''
+          })(
+            <Input />
+          )}
+        </FormItem> }
+        {data &&    <FormItem
+          {...formItemLayout}
+          label="English name of the group"
+          help="English name of the taxon covered by the Source Database"
+        >
+          {getFieldDecorator('group', {
+            initialValue: (_.get(data, 'group')) ? _.get(data, 'group') : '',
+
+          })(
+            <Input />
+          )}
+        </FormItem>}
+
         <FormItem
           {...formItemLayout}
           label="License"
@@ -355,6 +379,30 @@ componentDidMount = () =>{
               <Checkbox/>
             )}
             </FormItem>
+            <FormItem
+          {...formItemLayout}
+          label="Completeness"
+          help="Percentage of completeness of species list of the taxon provided by the Source Database"
+        >
+          {getFieldDecorator('completeness', {
+            initialValue: (_.get(data, 'completeness')) ? _.get(data, 'completeness') : 0,
+
+          })(
+            <Input type="number" min="0" max="100"/>
+          )}
+        </FormItem>
+            <FormItem
+          {...formItemLayout}
+          label="Checklist Confidence"
+          help={<span>Quality of taxonomic checklist with values 1 to 5; quality is stated by the custodian in agreement with CoL editor. Confidence indicators are described at <a href="http://www.catalogueoflife.org/col/info/databases" target="_blank">http://www.catalogueoflife.org/col/info/databases</a></span>}
+        >
+          {getFieldDecorator('confidence', {
+            initialValue: (_.get(data, 'confidence')) ? _.get(data, 'confidence') : 0,
+
+          })(
+            <Rate />
+          )}
+        </FormItem>
             <FormItem
           {...formItemLayout}
           label="Notes"
