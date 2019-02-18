@@ -251,11 +251,11 @@ class ManagementClassification extends React.Component {
   };
 
   showSourceTaxon = (sector, source) => {
-    axios(`${config.dataApi}dataset/${source.datasetKey}`)
+    axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
         this.setState({
-          defaultExpandKey: sector.root.id,
-          datasetKey: source.datasetKey,
+          defaultExpandKey: sector.subject.id,
+          datasetKey: source.key,
           datasetName: res.data.title,
           selectedDataset: { key: res.data.key, title: res.data.title }
         });
@@ -413,7 +413,7 @@ class ManagementClassification extends React.Component {
                         <NavLink
                           to={`/dataset/${
                             this.state.selectedDataset.key
-                          }/sources`}
+                          }/meta`}
                         >
                           {" "}
                           <Icon type="eye" /> source
