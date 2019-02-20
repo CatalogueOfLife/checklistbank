@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, notification, Input, Button, Icon, Card, Tag } from "antd";
+import { Row, Col, notification, Input, Button, Icon, Card, Tag, Statistic } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../components/LayoutNew";
@@ -12,9 +12,8 @@ import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../components/PageContent";
 import Helmet from "react-helmet";
-import SectorModal from "./SectorModal";
-import PresentationItem from "../../components/PresentationItem";
 import moment from "moment"
+
 const Search = Input.Search;
 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -22,9 +21,6 @@ const { MANAGEMENT_CLASSIFICATION } = config;
 class ManagementClassification extends React.Component {
   constructor(props) {
     super(props);
-
-    this.saveSector = this.saveSector.bind(this);
-    this.showSourceTaxon = this.showSourceTaxon.bind(this);
 
     this.state = {
       mode: "attach",
@@ -71,40 +67,18 @@ class ManagementClassification extends React.Component {
           console.log(rootName.data);
           attachmentName.data.name = attachmentName.data.scientificName;
           rootName.data.name = rootName.data.scientificName;
-          if (mode === "ATTACH") {
-            return this.saveChild(rootName.data, attachmentName.data)
-              .then(res => {
-                return this.saveSector(
-                  null, // No colsources anymore ??
-                  rootName.data,
-                  res.data,
-                  mode
-                );
-              })
+         
+            return this.saveSector(
+             // null, // No colsources anymore ??
+              rootName.data,
+              attachmentName.data,
+              mode
+            )
               .catch(err => {
                 // TODO handle error
                 alert(err);
               });
-          } else if (mode === "MERGE") {
-            return axios(
-              `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(
-                root.props.dataRef.key
-              )}/children`
-            ).then(res => {
-              return Promise.all(
-                res.data.result.map(e => {
-                  return this.saveChild(e, attachmentName.data)
-                    .then(n => {
-                      return this.saveSector(null, e, n.data, mode);
-                    })
-                    .catch(err => {
-                      // TODO handle error
-                      alert(err);
-                    });
-                })
-              );
-            });
-          }
+          
         })
       )
 
@@ -113,91 +87,7 @@ class ManagementClassification extends React.Component {
         console.log(err);
       });
   };
-  getSectorInfo_WITH_COLSOURCE = (attachment, root, mode) => {
-    // get the ColSources for the dataset
-    const { datasetKey } = this.state;
-    return axios
-      .all([
-        axios(`${config.dataApi}colsource?datasetKey=${datasetKey}`),
-        axios(
-          `${config.dataApi}dataset/${
-            MANAGEMENT_CLASSIFICATION.key
-          }/taxon/${encodeURIComponent(attachment.props.dataRef.key)}`
-        ),
-        axios(
-          `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
-            root.props.dataRef.key
-          )}`
-        )
-      ])
-      .then(
-        axios.spread((colsources, attachmentName, rootName) => {
-          console.log(colsources.data[0]);
-          console.log(attachmentName.data);
-          console.log(rootName.data);
-          attachmentName.data.name = attachmentName.data.scientificName;
-          rootName.data.name = rootName.data.scientificName;
-          if (colsources.data.length > 1) {
-            this.setState({
-              sectorModal: {
-                options: colsources.data,
-                root: rootName.data,
-                attachment: attachmentName.data,
-                title: "Please select Col Source for sector"
-              }
-            });
-            return;
-          } else {
-            if (mode === "ATTACH") {
-              return this.saveChild(rootName.data, attachmentName.data)
-                .then(res => {
-                  return this.saveSector(
-                    _.get(colsources, "data[0]"),
-                    rootName.data,
-                    res.data,
-                    mode
-                  );
-                })
-                .catch(err => {
-                  // TODO handle error
-                  alert(err);
-                });
-            } else if (mode === "MERGE") {
-              return axios(
-                `${
-                  config.dataApi
-                }dataset/${datasetKey}/tree/${encodeURIComponent(
-                  root.props.dataRef.key
-                )}/children`
-              ).then(res => {
-                return Promise.all(
-                  res.data.result.map(e => {
-                    return this.saveChild(e, attachmentName.data)
-                      .then(n => {
-                        return this.saveSector(
-                          _.get(colsources, "data[0]"),
-                          e,
-                          n.data,
-                          mode
-                        );
-                      })
-                      .catch(err => {
-                        // TODO handle error
-                        alert(err);
-                      });
-                  })
-                );
-              });
-            }
-          }
-        })
-      )
 
-      .catch(err => {
-        this.setState({ sectorMappingError: err });
-        console.log(err);
-      });
-  };
 
   saveChild = (subject, target) => {
     return axios
@@ -219,16 +109,10 @@ class ManagementClassification extends React.Component {
       });
   };
 
-  saveSector = (source, subject, target, mode) => {
-    const sector = source
-      ? {
-          colSourceKey: source.key,
+  saveSector = ( subject, target, mode) => {
+    const sector = {
           datasetKey: subject.datasetKey,
-          subject: { id: subject.id, status: subject.status },
-          target: { id: target.id, status: target.status }
-        }
-      : {
-          datasetKey: subject.datasetKey,
+          mode: mode,
           subject: { id: subject.id, status: subject.status },
           target: { id: target.id, status: target.status }
         };
@@ -242,10 +126,9 @@ class ManagementClassification extends React.Component {
           message: "Sector created",
           description: msg
         });
-        this.setState({ sectorModal: null });
       })
       .catch(err => {
-        this.setState({ sectorMappingError: err, sectorModal: null });
+        this.setState({ sectorMappingError: err });
         console.log(err);
       });
   };
@@ -282,9 +165,7 @@ class ManagementClassification extends React.Component {
   toggleMode = mode => {
     this.setState({ mode: mode });
   };
-  cancelSectorModal = () => {
-    this.setState({ sectorModal: null });
-  };
+ 
   render() {
     return (
       <Layout openKeys={[]} selectedKeys={["assembly"]}>
@@ -298,6 +179,7 @@ class ManagementClassification extends React.Component {
             value={{
               mode: this.state.mode,
               toggleMode: this.toggleMode,
+              getSyncState: this.getSyncState,
               selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
             }}
           >
@@ -328,54 +210,73 @@ class ManagementClassification extends React.Component {
               </Col>
               <Col span={3}>
                 {!isNaN(_.get(this.state, "syncState.syncsCompleted")) && (
-                  <PresentationItem md={20} label="Syncs completed">
-                    {_.get(this.state, "syncState.syncsCompleted")}
-                  </PresentationItem>
+                  <Statistic title="Syncs completed" value={_.get(this.state, "syncState.syncsCompleted")} />
                 )}
               </Col>
-              <Col span={3} offset={1}>
+              <Col span={3} >
                 {!isNaN(_.get(this.state, "syncState.syncsFailed")) && (
-                  <PresentationItem md={20} label="Syncs failed">
-                    {_.get(this.state, "syncState.syncsFailed")}
-                  </PresentationItem>
+                  <Statistic title="Syncs failed" value={_.get(this.state, "syncState.syncsFailed")} />
                 )}
               </Col>
-              <Col span={3} offset={1}>
+              <Col span={3} >
+              {_.get(this.state, "syncState.syncsRunning") &&
+                  <Statistic title="Syncs in queue" value={this.state.syncState.syncsRunning.filter(s => !s.status).length} />}
+                
+              </Col>
+              
+              <Col span={3} >
                 {"boolean" === typeof _.get(this.state, "syncState.idle") && (
-                  <PresentationItem md={18} label="Status">
-                    <Tag
-                      color={
-                        _.get(this.state, "syncState.idle") === false
-                          ? "green"
-                          : null
-                      }
-                    >
-                      {_.get(this.state, "syncState.idle") === true
-                        ? "Idle"
-                        : "Running"}
-                    </Tag>
-                  </PresentationItem>
+                  <div className="ant-statistic">
+                    <div className="ant-statistic-title">
+                    Status
+                  </div>
+                  <div className="ant-statistic-content">
+                  <div className="ant-statistic-content-prefix">
+                  <Tag
+                    color={
+                      _.get(this.state, "syncState.idle") === false
+                        ? "green"
+                        : null
+                    }
+                  >
+                    {_.get(this.state, "syncState.idle") === true
+                      ? "Idle"
+                      : "Running"}
+                  </Tag>
+                  </div>
+                  </div>
+                  </div>
+                  
                 )}
               </Col>
             </Row>
             {_.get(this.state, "syncState.syncsRunning") &&
               _.get(this.state, "syncState.syncsRunning.length") > 0 &&
-              _.get(this.state, "syncState.syncsRunning").map(s => (
+              _.get(this.state, "syncState.syncsRunning").filter(s => !!s.status).map(s => (
                 <Row style={{ paddingLeft: "16px" }}>
                   <Col span={3} offset={12}>
-                    <PresentationItem md={14} label="Status">
-                      {s.status}
-                    </PresentationItem>
+                  <div className="ant-statistic">
+                    <div className="ant-statistic-title">
+                    Status
+                  </div>
+                  <div className="ant-statistic-content">
+                  <div className="ant-statistic-content-prefix">
+                  <Tag
+                    color="green"
+                  >
+                    {s.status}
+                  </Tag>
+                  </div>
+                  </div>
+                  </div>
+                    
                   </Col>
-                  <Col span={3} offset={1}>
-                    <PresentationItem md={14} label="Taxa created">
-                      {s.taxaCreated}
-                    </PresentationItem>
+                  <Col span={3} >
+                  <Statistic title="Taxa created" value={s.taxaCreated} />
+                    
                   </Col>
-                  <Col span={3} offset={1}>
-                    <PresentationItem md={14} label="Sync started">
-                      {moment(s.started).fromNow()}
-                    </PresentationItem>
+                  <Col span={4} >
+                  <Statistic title="Sync started" value={moment(s.started).fromNow()} />
                   </Col>
                 </Row>
               ))}
@@ -454,24 +355,7 @@ class ManagementClassification extends React.Component {
               </Col>
             </Row>
 
-            {this.state.sectorModal && (
-              <SectorModal
-                title={_.get(this.state, "sectorModal.title")}
-                options={_.get(this.state, "sectorModal.options")}
-                onCancel={() => this.setState({ sectorModal: null })}
-                onChange={value =>
-                  this.saveSector(
-                    _.find(_.get(this.state, "sectorModal.options"), o => {
-                      return o.key === value;
-                    }),
-                    _.get(this.state, "sectorModal.root"),
-                    _.get(this.state, "sectorModal.attachment")
-                  )
-                }
-                options={_.get(this.state, "sectorModal.options")}
-                datasetKey={_.get(this.state, "sectorModal.datasetKey")}
-              />
-            )}
+
           </ColTreeContext.Provider>
         </PageContent>
       </Layout>

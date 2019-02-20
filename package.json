@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "ajv": "^6.5.3",
-    "antd": "^3.9.2",
+    "antd": "^3.13.4",
     "axios": "^0.18.0",
     "base-64": "^0.1.0",
     "highcharts": "^6.2.0",

@@ -14,6 +14,8 @@ import CopyableColumnText from "./CopyableColumnText"
 import _ from "lodash";
 import ResizeableTitle from "./ResizeableTitle";
 import withContext from "../../components/hoc/withContext";
+import {stringToColour} from "../../components/util"
+
 const { Option, OptGroup } = Select;
 
 const columnFilters = ["status", "rank"];
@@ -44,7 +46,9 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.indexNameId",
       key: "indexNameId",
       width: 60,
-      render: (text, record) => <CopyableColumnText text={text} width="40px" />
+      render: (text, record) => <CopyableColumnText text={<Tag color={stringToColour(text)}>{
+        text
+         }</Tag>} width="40px" />
 
     },
     {

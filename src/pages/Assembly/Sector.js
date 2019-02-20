@@ -10,7 +10,8 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import history from "../../history";
-import {stringToColour, titleToAbbrev} from "../../components/util"
+import {stringToColour} from "../../components/util"
+
 
 const {MANAGEMENT_CLASSIFICATION} = config
 
@@ -50,6 +51,7 @@ class Sector extends React.Component {
       .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/sector/${sector.key}`)
       .then(() => {
         this.props.reloadSelfAndSiblings();
+        this.props.getSyncState()
         notification.open({
           message: "Sync started",
           description: `Copying taxa from ${
@@ -134,11 +136,11 @@ class Sector extends React.Component {
         visible={this.state.popOverVisible}
         onVisibleChange={this.handleVisibleChange}
         trigger="click"
-        placement="top"
+        placement="rightTop"
       >
       <Tooltip title={sectorSourceDataset.title} placement="bottom">
          <Tag color={stringToColour(sectorSourceDataset.title)}>{
-                        titleToAbbrev(sectorSourceDataset.title)
+                     sectorSourceDataset.alias || sectorSourceDataset.key
                       }</Tag>
                       </Tooltip>
       </Popover> : ""

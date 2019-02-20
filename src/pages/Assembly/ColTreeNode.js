@@ -119,7 +119,7 @@ class ColTreeNode extends React.Component {
           </ColTreeContext.Consumer>
           <ColTreeContext.Consumer>
 
-          { ({mode, selectedSourceDatasetKey} ) => ((mode !== "modify" || !hasPopOver) && (
+          { ({mode, selectedSourceDatasetKey, getSyncState} ) => ((mode !== "modify" || !hasPopOver) && (
           <Popconfirm
             visible={this.props.confirmVisible}
             title={this.props.confirmTitle}
@@ -159,7 +159,7 @@ class ColTreeNode extends React.Component {
                 this.props.showSourceTaxon && (
                   <span>
                     <span> • </span>
-                  <Sector {...this.props} selectedSourceDatasetKey={selectedSourceDatasetKey}/>
+                  <Sector {...this.props} selectedSourceDatasetKey={selectedSourceDatasetKey} getSyncState={getSyncState}/>
                   </span>
                 )}
             </div>
