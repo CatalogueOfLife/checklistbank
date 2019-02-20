@@ -50,11 +50,10 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sectors },
+      taxon: { sector },
       hasPopOver,
       isUpdating
     } = this.props;
-    const sector = _.get(sectors, '[0]') || null
     const { sectorSourceDataset } = this.state;
     return (
       <div>

@@ -25,9 +25,9 @@ class Sector extends React.Component {
   }
 
   componentWillMount = () => {
-    if (this.props.taxon.sectors && this.props.taxon.sectors.length > 0) {
+    if ( this.props.taxon.sector) {
       axios(
-        `${config.dataApi}dataset/${this.props.taxon.sectors[0].datasetKey}`
+        `${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`
       )
         .then(res => {
           this.setState({ sectorSourceDataset: res.data });
@@ -82,10 +82,9 @@ class Sector extends React.Component {
   };
   render = () => {
     const {
-        taxon: { sectors },
+        taxon: { sector },
         selectedSourceDatasetKey
       } = this.props;
-      const sector = _.get(sectors, '[0]') || null
       const { sectorSourceDataset } = this.state;
     return (
     sectorSourceDataset ?  <Popover

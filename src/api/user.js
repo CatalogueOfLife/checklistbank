@@ -53,9 +53,7 @@ export const getTokenUser = () => {
 
 // use sessionstorage for the session, but save in local storage if user choose to be remembered
 const jwt = localStorage.getItem(JWT_STORAGE_NAME);
-console.log("st name "+JWT_STORAGE_NAME)
-if (jwt) {
-  console.log("User "+jwt)
+ if (jwt) {
 
   sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
   //const jwt = sessionStorage.getItem(JWT_STORAGE_NAME);

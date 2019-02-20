@@ -6,10 +6,10 @@ import { List, Breadcrumb, Button, Alert, notification } from "antd";
 import ErrorMsg from '../../../components/ErrorMsg';
 import { NavLink } from "react-router-dom";
 import PageContent from '../../../components/PageContent'
-
+import chai from 'chai'
 import config from "../../../config";
 
-
+const {expect} = chai;
 
 class DatasetSectors extends React.Component {
     constructor(props) {
@@ -32,6 +32,7 @@ class DatasetSectors extends React.Component {
             .then(res => {
                 const promises = [];
                 _.each(res.data, (t) => {
+                    expect(t, 'Sector subject must have an id').to.have.nested.property('subject.id')
                     promises.push(axios(`${config.dataApi}dataset/${datasetKey}/tree/${_.get(t, 'subject.id')}`)
                         .then((path) => {
                             t.path = path.data

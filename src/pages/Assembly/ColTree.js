@@ -158,7 +158,18 @@ class ColTree extends React.Component {
     const {showSourceTaxon} = this.props;
     return axios(
       `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(taxonKey)}/children?limit=${limit}&offset=${offset}`
-    ).then(res => (res.data.result ? res.data.result.map( tx => {
+    )
+    .then(res => {
+      if(!res.data.result) return res
+      return Promise.all(
+        res.data.result
+          .filter(tx => !!tx.sectorKey)
+          .map(tx => axios(`${config.dataApi}sector/${tx.sectorKey}`)
+          .then( r => tx.sector = r.data))
+      ).then(()=> res)
+      
+    })
+    .then(res => (res.data.result ? res.data.result.map( tx => {
       return {
         title: (
           <ColTreeNode
