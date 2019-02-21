@@ -21,6 +21,7 @@ import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../components/PageContent";
+import SyncState from './SyncState';
 import Helmet from "react-helmet";
 import moment from "moment";
 
@@ -174,6 +175,8 @@ class ManagementClassification extends React.Component {
   };
 
   render() {
+    const {syncState} = this.state;
+    
     return (
       <Layout openKeys={[]} selectedKeys={["assembly"]}>
         <Helmet>
@@ -215,80 +218,15 @@ class ManagementClassification extends React.Component {
                   )}
                 </ColTreeContext.Consumer>
               </Col>
-              <Col span={3}>
-                {!isNaN(_.get(this.state, "syncState.syncsCompleted")) && (
-                  <Statistic
-                    title="Syncs completed"
-                    value={_.get(this.state, "syncState.syncsCompleted")}
-                  />
-                )}
-              </Col>
-              <Col span={3}>
-                {!isNaN(_.get(this.state, "syncState.syncsFailed")) && (
-                  <Statistic
-                    title="Syncs failed"
-                    value={_.get(this.state, "syncState.syncsFailed")}
-                  />
-                )}
-              </Col>
-              <Col span={3}>
-                {_.get(this.state, "syncState.syncsRunning") && (
-                  <Statistic
-                    title="Syncs in queue"
-                    value={
-                      this.state.syncState.syncsRunning.filter(s => !s.status)
-                        .length
-                    }
-                  />
-                )}
-              </Col>
 
-              <Col span={3}>
-                {"boolean" === typeof _.get(this.state, "syncState.idle") && (
-                  <div className="ant-statistic">
-                    <div className="ant-statistic-title">Status</div>
-                    <div className="ant-statistic-content">
-                      <div className="ant-statistic-content-prefix">
-                        {_.get(this.state, "syncState.idle") === false &&
-                          _.find(
-                            _.get(this.state, "syncState.syncsRunning"),
-                            s => !!s.status
-                          ) && (
-                            <Tag color="green">
-                              {
-                                _.find(
-                                  this.state.syncState.syncsRunning,
-                                  s => !!s.status
-                                ).status
-                              }
-                            </Tag>
-                          )}
-                        {_.get(this.state, "syncState.idle") === true && (
-                          <Tag>idle</Tag>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
+
+              <Col span={12}>
+
+                    {syncState && <SyncState syncState={syncState}></SyncState>}
+
               </Col>
             </Row>
-            {_.get(this.state, "syncState.syncsRunning") &&
-              _.get(this.state, "syncState.syncsRunning.length") > 0 &&
-              _.get(this.state, "syncState.syncsRunning")
-                .filter(s => !!s.status)
-                .map(s => (
-                  <Row style={{ paddingLeft: "16px" }}>
-                    <Col span={3} offset={12}>
-                      <Statistic title="Taxa created" value={s.taxaCreated} />
-                    </Col>
-                    <Col span={4}>
-                      <Statistic
-                        title="Sync started"
-                        value={moment(s.started).fromNow()}
-                      />
-                    </Col>
-                  </Row>
-                ))}
+
             <Row style={{ padding: "10px", height: "100%" }}>
               <Col span={12} style={{ padding: "10px" }}>
                 <Card>
