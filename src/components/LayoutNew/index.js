@@ -83,7 +83,6 @@ class SiteLayout extends Component {
         <Layout style={{ marginLeft: contentMargin + 'px' }}>
 
           <Header style={{ background: '#fff',  display: 'flex' }}>
-            {isMobile && <div className="headerLogo"><Logo style={{ height: '100px', flex: '0 0 auto' }} /></div>}
             <Icon
               style={{ flex: '0 0 auto' , marginTop: '20px', marginLeft: '-58px'}}
               className="menu-trigger"

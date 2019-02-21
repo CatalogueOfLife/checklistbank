@@ -250,7 +250,7 @@ class DatasetList extends React.Component {
       <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
       <div>
       <Row >
-          <Col span={12}>
+          <Col md={12} sm={24}>
         <SearchBox
         defaultValue={_.get(this.state, 'params.q')}
         style={{ marginBottom: "10px", width: "50%" }}
@@ -259,7 +259,7 @@ class DatasetList extends React.Component {
         
         </SearchBox>
         </Col>
-        <Col span={12}>
+        <Col md={12} sm={24}>
          <FormItem
           style={{width: '100%'}}
          {...formItemLayout}
