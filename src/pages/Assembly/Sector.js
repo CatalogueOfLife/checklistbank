@@ -137,7 +137,7 @@ class Sector extends React.Component {
         trigger="click"
         placement="rightTop"
       >
-      <Tooltip title={sectorSourceDataset.title} placement="bottom">
+      <Tooltip title={sectorSourceDataset.title} placement="top">
          <Tag color={stringToColour(sectorSourceDataset.title)}>{
                      sectorSourceDataset.alias || sectorSourceDataset.key
                       }</Tag>

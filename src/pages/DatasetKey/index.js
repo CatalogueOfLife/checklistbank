@@ -83,7 +83,7 @@ class DatasetPage extends React.Component {
      />}
       { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
-        {section === "sources" && <DatasetColSources datasetKey={datasetKey} />}
+        {/*section === "sources" && <DatasetColSources datasetKey={datasetKey} /> */}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}

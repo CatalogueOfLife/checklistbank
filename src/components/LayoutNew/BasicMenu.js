@@ -143,7 +143,7 @@ class BasicMenu extends Component {
                     Metadata
                   </NavLink>
                 </Menu.Item>
-                {Auth.isAuthorised(user, ["editor", "admin"]) && (
+                {/*Auth.isAuthorised(user, ["editor", "admin"]) && (
                   <Menu.Item key="sources">
                     <NavLink
                       to={{
@@ -156,7 +156,7 @@ class BasicMenu extends Component {
                       CoL Sources
                     </NavLink>
                   </Menu.Item>
-                )}
+                    )*/}
                                 <Menu.Item key="classification">
                   <NavLink
                     to={{
