@@ -61,11 +61,14 @@ const defaultColumns = [
 
   },
   {
+    title: "Origin",
+    dataIndex: "origin",
+    key: "origin"
+    },
+  {
     title: "Code",
     dataIndex: "code",
     key: "code",
-
-    
   },
   {
     title: "Contributes To",

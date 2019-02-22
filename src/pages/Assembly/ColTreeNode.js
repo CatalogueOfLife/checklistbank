@@ -54,7 +54,6 @@ class ColTreeNode extends React.Component {
       hasPopOver,
       isUpdating
     } = this.props;
-    const { sectorSourceDataset } = this.state;
     return (
       <div>
         <ColTreeContext.Consumer>
