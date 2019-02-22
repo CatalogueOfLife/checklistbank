@@ -70,6 +70,12 @@ class DatasetMeta extends React.Component {
           
           <Col span={4}>
             <LogoUpload datasetKey={this.props.id} />
+            {data && _.get(data, 'origin') === "uploaded" &&
+        
+         
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.props, 'data.key')} />
+             
+        }
           </Col>
           <Col span={2} offset={18}>
           { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}

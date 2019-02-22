@@ -204,13 +204,13 @@ componentDidMount = () =>{
             </Select>
           )}
         </FormItem>
-        {data && origin === "uploaded" &&
+        {/* data && origin === "uploaded" &&
         <FormItem {...formItemLayout}
         label="Data upload" >
          
                <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.props, 'data.key')} />
              
-        </FormItem>}
+            </FormItem> */}
         
 
        {(origin === 'external' || origin === 'uploaded') && <FormItem
