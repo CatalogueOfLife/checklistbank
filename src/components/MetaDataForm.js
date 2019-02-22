@@ -397,7 +397,7 @@ componentDidMount = () =>{
           help={<span>Quality of taxonomic checklist with values 1 to 5; quality is stated by the custodian in agreement with CoL editor. Confidence indicators are described at <a href="http://www.catalogueoflife.org/col/info/databases" target="_blank">http://www.catalogueoflife.org/col/info/databases</a></span>}
         >
           {getFieldDecorator('confidence', {
-            initialValue: (_.get(data, 'confidence')) ? _.get(data, 'confidence') : 0,
+            initialValue: (_.get(data, 'confidence')) ? _.get(data, 'confidence') : null,
 
           })(
             <Rate />
