@@ -2,6 +2,7 @@ import React from "react";
 import {
   notification,
   Tag,
+  Icon,
   Button,
   Tooltip,
   Popover
@@ -82,10 +83,12 @@ class Sector extends React.Component {
   };
   render = () => {
     const {
-        taxon: { sector },
+        taxon,
         selectedSourceDatasetKey
       } = this.props;
+      const  { sector } = taxon;
       const { sectorSourceDataset } = this.state;
+      const isRootSector =  _.get(taxon, 'parentId') && _.get(sector, 'target.id') && sector.target && taxon.parentId === sector.target.id
     return (
     sectorSourceDataset ?  <Popover
         content={
@@ -100,7 +103,7 @@ class Sector extends React.Component {
               Delete sector
             </Button>
             <br />
-            <Button
+          { isRootSector &&  <React.Fragment> <Button
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
               onClick={() => {
@@ -108,8 +111,8 @@ class Sector extends React.Component {
               }}
             >
               Sync sector
-            </Button>
-            <br />
+            </Button> <br /></React.Fragment>}
+            
               <Button
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
@@ -117,7 +120,7 @@ class Sector extends React.Component {
                 this.props.showSourceTaxon(sector, sectorSourceDataset)
               }
             >
-              Show in source tree
+              Show sector in source
             </Button>
             <br /> 
             <Button
@@ -138,7 +141,9 @@ class Sector extends React.Component {
         placement="rightTop"
       >
       <Tooltip title={sectorSourceDataset.title} placement="top">
-         <Tag color={stringToColour(sectorSourceDataset.title)}>{
+         <Tag color={stringToColour(sectorSourceDataset.title)}>
+            {isRootSector && <Icon type="caret-right"  /> }
+         {
                      sectorSourceDataset.alias || sectorSourceDataset.key
                       }</Tag>
                       </Tooltip>

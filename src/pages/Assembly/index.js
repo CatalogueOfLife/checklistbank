@@ -176,7 +176,6 @@ class ManagementClassification extends React.Component {
 
   render() {
     const {syncState} = this.state;
-    
     return (
       <Layout openKeys={[]} selectedKeys={["assembly"]}>
         <Helmet>
