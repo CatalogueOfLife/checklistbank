@@ -331,8 +331,8 @@ componentDidMount = () =>{
           {...formItemLayout}
           label="Logo Url"
         >
-          {getFieldDecorator('logoUrl', {
-            initialValue: (_.get(data, 'logoUrl')) ? _.get(data, 'logoUrl') : '',
+          {getFieldDecorator('logo', {
+            initialValue: (_.get(data, 'logo')) ? _.get(data, 'logo') : '',
           
           })(
             <Input type="url" />

@@ -1,20 +1,12 @@
 import React from "react";
-import {
-  notification,
-  Tag,
-  Icon,
-  Button,
-  Tooltip,
-  Popover
-} from "antd";
+import { notification, Tag, Icon, Button, Tooltip, Popover } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import history from "../../history";
-import {stringToColour} from "../../components/util"
+import { stringToColour } from "../../components/util";
 
-
-const {MANAGEMENT_CLASSIFICATION} = config
+const { MANAGEMENT_CLASSIFICATION } = config;
 
 class Sector extends React.Component {
   constructor(props) {
@@ -26,10 +18,8 @@ class Sector extends React.Component {
   }
 
   componentWillMount = () => {
-    if ( this.props.taxon.sector) {
-      axios(
-        `${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`
-      )
+    if (this.props.taxon.sector) {
+      axios(`${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`)
         .then(res => {
           this.setState({ sectorSourceDataset: res.data });
         })
@@ -49,15 +39,17 @@ class Sector extends React.Component {
 
   syncSector = sector => {
     axios
-      .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/sector/${sector.key}`)
+      .post(
+        `${config.dataApi}assembly/${
+          MANAGEMENT_CLASSIFICATION.key
+        }/sync/sector/${sector.key}`
+      )
       .then(() => {
         this.props.reloadSelfAndSiblings();
-        this.props.getSyncState()
+        this.props.getSyncState();
         notification.open({
           message: "Sync started",
-          description: `Copying taxa from ${
-            sector.attachment.name
-          } `
+          description: `Copying taxa from ${sector.key} `
         });
       })
       .catch(err => {
@@ -72,9 +64,7 @@ class Sector extends React.Component {
         this.props.reloadSelfAndSiblings();
         notification.open({
           message: "Sector deleted",
-          description: `${
-            sector.attachment.name
-          } was deleted from the CoL draft`
+          description: `${sector.key} was deleted from the CoL draft`
         });
       })
       .catch(err => {
@@ -82,15 +72,16 @@ class Sector extends React.Component {
       });
   };
   render = () => {
-    const {
-        taxon,
-        selectedSourceDatasetKey
-      } = this.props;
-      const  { sector } = taxon;
-      const { sectorSourceDataset } = this.state;
-      const isRootSector =  _.get(taxon, 'parentId') && _.get(sector, 'target.id') && sector.target && taxon.parentId === sector.target.id
-    return (
-    sectorSourceDataset ?  <Popover
+    const { taxon } = this.props;
+    const { sector } = taxon;
+    const { sectorSourceDataset } = this.state;
+    const isRootSector =
+      _.get(taxon, "parentId") &&
+      _.get(sector, "target.id") &&
+      sector.target &&
+      taxon.parentId === sector.target.id;
+    return sectorSourceDataset ? (
+      <Popover
         content={
           <div>
             <Button
@@ -103,17 +94,23 @@ class Sector extends React.Component {
               Delete sector
             </Button>
             <br />
-          { isRootSector &&  <React.Fragment> <Button
-              style={{ marginTop: "8px", width: "100%" }}
-              type="primary"
-              onClick={() => {
-                this.syncSector(sector);
-              }}
-            >
-              Sync sector
-            </Button> <br /></React.Fragment>}
-            
-              <Button
+            {isRootSector && (
+              <React.Fragment>
+                {" "}
+                <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  onClick={() => {
+                    this.syncSector(sector);
+                  }}
+                >
+                  Sync sector
+                </Button>{" "}
+                <br />
+              </React.Fragment>
+            )}
+
+            <Button
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
               onClick={() =>
@@ -122,7 +119,7 @@ class Sector extends React.Component {
             >
               Show sector in source
             </Button>
-            <br /> 
+            <br />
             <Button
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
@@ -140,14 +137,15 @@ class Sector extends React.Component {
         trigger="click"
         placement="rightTop"
       >
-      <Tooltip title={sectorSourceDataset.title} placement="top">
-         <Tag color={stringToColour(sectorSourceDataset.title)}>
-            {isRootSector && <Icon type="caret-right"  /> }
-         {
-                     sectorSourceDataset.alias || sectorSourceDataset.key
-                      }</Tag>
-                      </Tooltip>
-      </Popover> : ""
+        <Tooltip title={sectorSourceDataset.title} placement="top">
+          <Tag color={stringToColour(sectorSourceDataset.title)}>
+            {isRootSector && <Icon type="caret-right" />}
+            {sectorSourceDataset.alias || sectorSourceDataset.key}
+          </Tag>
+        </Tooltip>
+      </Popover>
+    ) : (
+      ""
     );
   };
 }
