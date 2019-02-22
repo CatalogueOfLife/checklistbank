@@ -208,7 +208,7 @@ componentDidMount = () =>{
         <FormItem {...formItemLayout}
         label="Data upload" >
          
-               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={this.props.id} />
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.props, 'data.key')} />
              
         </FormItem>}
         
