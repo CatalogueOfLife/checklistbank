@@ -84,10 +84,7 @@ class ManagementClassification extends React.Component {
             rootName.data,
             attachmentName.data,
             mode
-          ).catch(err => {
-            // TODO handle error
-            alert(err);
-          });
+          )
         })
       )
 
@@ -235,6 +232,7 @@ class ManagementClassification extends React.Component {
                     onSearch={value => console.log(value)}
                     style={{ width: "100%" }}
                   />
+                 {sectorMappingError && <ErrorMsg error={sectorMappingError} />}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       dataset={MANAGEMENT_CLASSIFICATION}
