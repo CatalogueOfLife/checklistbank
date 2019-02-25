@@ -84,6 +84,8 @@ class Sector extends React.Component {
       <Popover
         content={
           <div>
+              {isRootSector && (
+              <React.Fragment>
             <Button
               style={{ width: "100%" }}
               type="danger"
@@ -94,8 +96,7 @@ class Sector extends React.Component {
               Delete sector
             </Button>
             <br />
-            {isRootSector && (
-              <React.Fragment>
+            
                 {" "}
                 <Button
                   style={{ marginTop: "8px", width: "100%" }}
