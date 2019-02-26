@@ -52,7 +52,7 @@ class ManagementClassification extends React.Component {
   }
 
   getSyncState = () => {
-    axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`)
+    axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}`)
       .then(res => this.setState({ syncState: res.data }))
       .catch(err => this.setState({ syncError: err }));
   };

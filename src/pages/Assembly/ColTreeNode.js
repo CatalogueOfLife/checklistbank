@@ -14,6 +14,7 @@ import axios from "axios";
 import config from "../../config";
 import {ColTreeContext} from "./ColTreeContext"
 import Sector from "./Sector"
+import DecisionTag from "../WorkBench/DecisionTag"
 
 
 class ColTreeNode extends React.Component {
@@ -50,7 +51,7 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sector },
+      taxon: { sector, decision },
       hasPopOver,
       isUpdating
     } = this.props;
@@ -154,10 +155,18 @@ class ColTreeNode extends React.Component {
 
               {
                 sector &&
-                this.props.showSourceTaxon && (
+                 (
                   <span>
                     <span> • </span>
                   <Sector {...this.props} selectedSourceDatasetKey={selectedSourceDatasetKey} getSyncState={getSyncState}/>
+                  </span>
+                )}
+                 {
+                decision &&
+                (
+                  <span>
+                    <span> • </span>
+                  <DecisionTag {...this.props} decision={decision} deleteCallback={() => this.props.reloadSelfAndSiblings()}/>
                   </span>
                 )}
             </div>

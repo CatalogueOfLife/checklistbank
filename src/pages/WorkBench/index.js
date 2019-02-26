@@ -56,9 +56,9 @@ class WorkBench extends React.Component {
       title: "Decision",
       dataIndex: "decisions",
       key: "decisions",
-      width: 80,
+      width: 60,
       className: "workbench-td",
-      render: (text, record) => <DecisionTag onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))} record={record}/>
+      render: (text, record) => <DecisionTag decision={_.get(record, 'decisions[0]')}/>
     },
     {
       title: "Name ID",
@@ -313,14 +313,7 @@ class WorkBench extends React.Component {
   onDecisionChange = decision => {
     this.setState({ decision });
   };
-  deleteDecision = (id) => {
-    return axios.delete( `${config.dataApi}decision/${id}`)
-      .then(res => {
-        notification.open({
-          message: "Decision deleted"
-        });
-      })
-  }
+
   applyDecision = () => {
     const {selectedRowKeys, data: {result}, decision} = this.state;
     const { datasetKey } = this.props;

@@ -106,11 +106,10 @@ tbody td.workbench-td {
   padding: 0 0 0 4px !important
 }
 thead th.workbench-td {
-  padding: 0 0 0 0 !important
+  padding: 0 0 0 4px !important
 }
 thead th.workbench-td > div {
-  margin: 0 -4px 0 4px !important;
-  overflow: hidden;
+  margin: 0 -5px 0 0 !important;
 }
 
 .decision-tag {

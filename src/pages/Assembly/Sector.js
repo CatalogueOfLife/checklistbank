@@ -42,7 +42,7 @@ class Sector extends React.Component {
       .post(
         `${config.dataApi}assembly/${
           MANAGEMENT_CLASSIFICATION.key
-        }/sync/sector/${sector.key}`
+        }/sync`, {sectorKey: sector.key}
       )
       .then(() => {
         this.props.reloadSelfAndSiblings();
@@ -80,7 +80,12 @@ class Sector extends React.Component {
       _.get(sector, "target.id") &&
       sector.target &&
       taxon.parentId === sector.target.id;
-    return sectorSourceDataset ? (
+    const isSourceTree = _.get(MANAGEMENT_CLASSIFICATION, 'key') !== _.get(taxon, 'datasetKey')
+
+    if(!sectorSourceDataset){
+        return ""
+    }
+    return  !isSourceTree ? (
       <Popover
         content={
           <div>
@@ -146,7 +151,10 @@ class Sector extends React.Component {
         </Tooltip>
       </Popover>
     ) : (
-      ""
+        <Tag color={stringToColour(sectorSourceDataset.title)}>
+        {isRootSector && <Icon type="caret-right" />}
+        {sectorSourceDataset.alias || sectorSourceDataset.key}
+      </Tag>
     );
   };
 }
