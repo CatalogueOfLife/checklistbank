@@ -46,9 +46,9 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.indexNameId",
       key: "indexNameId",
       width: 60,
-      render: (text, record) => <CopyableColumnText text={<Tag color={stringToColour(text)}>{
+      render: (text, record) => text ? <CopyableColumnText text={<Tag color={stringToColour(text)}>{
         text
-         }</Tag>} width="40px" />
+         }</Tag>} width="40px" /> : ""
 
     },
     {
