@@ -11,7 +11,7 @@ import history from '../../history'
 
 import SearchBox from './SearchBox';
 import ColumnFilter from './ColumnFilter';
-
+import DatasetLogo from './DatasetLogo'
 import ImportButton from '../../pages/Imports/importTabs/ImportButton'
 import withContext from '../../components/hoc/withContext'
 
@@ -33,6 +33,7 @@ const formItemLayout = {
 };
 
 const defaultColumns = [
+
   {
     title: "Title",
     dataIndex: "title",
@@ -47,6 +48,14 @@ const defaultColumns = [
       );
     },
     sorter: true
+  },
+  {
+    title: "Logo",
+    dataIndex: "key",
+    width: 100,
+    key: "logo",
+    render: (text, record) => <DatasetLogo datasetKey={record.key}/>
+    
   },
   {
     title: "Authors and Editors",
