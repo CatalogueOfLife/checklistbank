@@ -42,13 +42,14 @@ class WorkBench extends React.Component {
   }
   defaultColumns  = [
     {
-      title: "Index Name Id",
-      dataIndex: "usage.name.indexNameId",
-      key: "indexNameId",
+      title: "Index Id",
+      dataIndex: "usage.name.nameIndexId",
+      key: "nameIndexId",
       width: 60,
-      render: (text, record) => text ? <CopyableColumnText text={<Tag color={stringToColour(text)}>{
-        text
-         }</Tag>} width="40px" /> : ""
+      className: "workbench-td",
+      render: (text, record) => text ? <Tag color={stringToColour(text)} style={{width:"40px"}}>{
+        <CopyableColumnText text={text} width="30px"/>
+         }</Tag> : ""
 
     },
     {
@@ -56,75 +57,87 @@ class WorkBench extends React.Component {
       dataIndex: "decisions",
       key: "decisions",
       width: 80,
+      className: "workbench-td",
       render: (text, record) => <DecisionTag onClose={()=> this.deleteDecision(_.get(record, 'decisions[0].key'))} record={record}/>
     },
     {
       title: "Name ID",
       dataIndex: "usage.name.id",
       key: "nameId",
-      width: 60,
+      width: 50,
+      className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="40px" />
     },
     {
       title: "Status",
       dataIndex: "usage.status",
       key: "status",
-      width: 80,
-      render: (text, record) => <CopyableColumnText text={text} width="40px" />
+      width: 90,
+      className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="60px" />
 
     },
     {
       title: "ScientificName",
       dataIndex: "usage.name.formattedName",
+      width: 240,
+      className: "workbench-td",
       render: (text, record) => <span
       dangerouslySetInnerHTML={{
         __html: _.get(record, "usage.name.formattedName")
       }}
     />,
-      width: 300,
       sorter: true
     },
     {
       title: "Uninomial",
+      width: 160,
       dataIndex: "usage.name.uninomial",
       key: "uninomial",
-      width: 100
+      className: "workbench-td",
     },
     {
       title: "Genus",
+      width: 160,
       dataIndex: "usage.name.genus",
       key: "genus",
-      width: 100
+      className: "workbench-td",
     },
     {
       title: "specificEpithet",
+      width: 160,
       dataIndex: "usage.name.specificEpithet",
       key: "specificEpithet",
-      width: 180
+      className: "workbench-td",
     },
     {
       title: "infraspecificEpithet",
+      width: 160,
       dataIndex: "usage.name.infraspecificEpithet",
       key: "infraspecificEpithet",
-      width: 180
+      className: "workbench-td",
     },
     {
       title: "Authorship",
+      width: 240,
       dataIndex: "usage.name.authorship",
       key: "authorship",
-      width: 360
+      className: "workbench-td",
     },
   
     {
       title: "Rank",
+      width: 100,
       dataIndex: "usage.name.rank",
       key: "rank",
-      width: 100,
-      sorter: true
+      sorter: true,
+      className: "workbench-td",
     },
     {
       title: "acceptedScientificName",
+      width: 240,
       dataIndex: "usage.accepted.name.formattedName",
+      className: "workbench-td",
       render: (text, record) => {
         return !["synonym", "ambiguous synonym", "misapplied"].includes(
           _.get(record, "usage.status")
@@ -138,13 +151,13 @@ class WorkBench extends React.Component {
           />
         );
       },
-      width: 260
     },
     {
       title: "Classification",
       dataIndex: "usage.classification",
       key: "classification",
-      width: 600,
+      width: 400,
+      className: "workbench-td",
       render: (text, record) => {
         return !_.get(record, "classification") ? (
           ""
@@ -414,7 +427,7 @@ class WorkBench extends React.Component {
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
-      columnWidth: "25px"
+      columnWidth: "30px"
     };
     const hasSelected =  selectedRowKeys && selectedRowKeys.length > 0 && decision;
     return (

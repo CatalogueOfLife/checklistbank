@@ -101,3 +101,18 @@ html, body, #root {
   text-overflow: ellipsis;
   cursor: pointer;
 }
+
+tbody td.workbench-td {
+  padding: 0 0 0 4px !important
+}
+thead th.workbench-td {
+  padding: 0 0 0 0 !important
+}
+thead th.workbench-td > div {
+  margin: 0 -4px 0 4px !important;
+  overflow: hidden;
+}
+
+.decision-tag {
+  margin: 0 0 0 0 !important
+}
