@@ -209,6 +209,9 @@ class TaxonPage extends React.Component {
       infoError
     } = this.state;
 
+    const homotypic = _.get(synonyms, 'homotypic') ? _.get(synonyms, 'homotypic')  : []
+    const heterotypic = _.get(synonyms, 'heterotypic') ? _.get(synonyms, 'heterotypic')  : []
+
     return (
       <Layout
         selectedDataset={dataset}
@@ -325,19 +328,10 @@ class TaxonPage extends React.Component {
               <Alert message={<ErrorMsg error={infoError} />} type="error" />
             )}
 
-            {_.get(synonyms, "homotypic") && (
-              <PresentationItem md={md} label="Homotypic synonyms">
-                <SynonymTable
-                  data={synonyms.homotypic}
-                  style={{ marginBottom: 16, marginTop: '-10px' }}
-                  datasetKey={key}
-                />
-              </PresentationItem>
-            )}
-            {_.get(synonyms, "heterotypic") && (
+            {(heterotypic.length > 0 || homotypic.length) > 0 && (
               <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
-                  data={synonyms.heterotypic}
+                  data={[...homotypic.map(s => ({...s, homotypic: true})), ...heterotypic]}
                   style={{ marginBottom: 16, marginTop: '-10px' }}
                   datasetKey={key}
                 />
