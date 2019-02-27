@@ -77,8 +77,9 @@ class DatasetSectors extends React.Component {
             <List
                 bordered
                 dataSource={data}
-                renderItem={item => (<List.Item actions={[<Button type="danger" onClick={() => this.deleteSector(item)}>Delete</Button>]}><Breadcrumb separator=">">
-                    {item.path && item.path.reverse().map((taxon) => {
+                renderItem={item => (<List.Item actions={[<Button type="danger" onClick={() => this.deleteSector(item)}>Delete</Button>]}>
+                {item.path && <Breadcrumb separator=">">
+                    { item.path.reverse().map((taxon) => {
                         return (<Breadcrumb.Item key={taxon.id} >
                             <NavLink
                                 to={{
@@ -90,6 +91,7 @@ class DatasetSectors extends React.Component {
                             </NavLink>
                         </Breadcrumb.Item>)
                     })}
+                    </Breadcrumb>}
                     {!item.path && <React.Fragment>
                         <Tooltip title="This sector is not linked to a taxon id">
                         <Icon type="warning" theme="twoTone" twoToneColor="#FF6347"/> 
@@ -97,7 +99,7 @@ class DatasetSectors extends React.Component {
                         {" "}<span dangerouslySetInnerHTML={{__html: item.subject.name}}></span>
                         </React.Fragment>  }
 
-                </Breadcrumb>
+                
                 </List.Item>)}
             />
 

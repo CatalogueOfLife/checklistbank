@@ -13,7 +13,7 @@ import VerbatimRecord from "./pages/VerbatimRecord"
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/Assembly";
-
+import SectorSync from "./pages/SectorSync"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
@@ -48,6 +48,7 @@ class App extends Component {
               />
               <Route
                 exact
+                key="imports"
                 path="/imports/:section?"
                 render={({ match }) => (
                   <Imports section={match.params.section} />
@@ -60,6 +61,12 @@ class App extends Component {
                 roles={["editor"]}
                 component={Assembly}
               />
+              <Route
+                exact
+                key="sectorSync"
+                path="/sector/sync"
+                component={SectorSync}
+                
               />
               <Route
                 exact

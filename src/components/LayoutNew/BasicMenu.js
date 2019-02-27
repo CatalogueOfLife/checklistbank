@@ -101,6 +101,9 @@ class BasicMenu extends Component {
               </NavLink>
             </Menu.Item>
           )}
+          <Menu.Item key="sectorSync">
+              <NavLink to={{ pathname: "/sector/sync" }}><Icon type="sync" /> <span>Sector sync</span></NavLink>
+            </Menu.Item>
 
           <SubMenu
             key="dataset"

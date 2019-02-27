@@ -1,34 +1,38 @@
 import React from "react";
 import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
-import config from "../../../config";
-import ErrorMsg from "../../../components/ErrorMsg";
+import config from "../../config";
+import ErrorMsg from "../../components/ErrorMsg";
 
-class ImportButton extends React.Component {
+const {MANAGEMENT_CLASSIFICATION} = config
+
+class SyncButton extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       importTriggered: false,
       error: null
     };
   }
 
-  startImport = () => {
+  startSync = () => {
     const {record} = this.props;  
     this.setState({ importTriggered: true });
     axios
       .post(
-        `${config.dataApi}importer/queue`,
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`,
         {
-          'datasetKey': record.datasetKey,
-          'priority': true,
-          'force': true,
+          'sectorKey': record.sectorKey
         }
       )
       .then(res => {
         this.setState({ importTriggered: false });
-        if(this.props.onStartImportSuccess && typeof this.props.onStartImportSuccess === 'function'){
-          this.props.onStartImportSuccess();
+        notification.open({
+          title: 'Sync started'
+        })
+        if(this.props.onStartSyncSuccess && typeof this.props.onStartSyncSuccess === 'function'){
+          this.props.onStartSyncSuccess();
         }
       })
       .catch(err => {
@@ -36,24 +40,16 @@ class ImportButton extends React.Component {
       });
   };
 
-  stopImport = () => {
+  stopSync = () => {
     const {record} = this.props;  
     this.setState({ importTriggered: true });
     axios
-      .delete(`${config.dataApi}importer/${record.datasetKey}`)
+      .delete(`${config.dataApi}/assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${record.sectorKey}`)
       .then(res => {
         this.setState({ importTriggered: false });
-        if(record.state !== 'in queue'){
-          notification.open({
-            title: 'Import stopped',
-            description: `Import of ${record.dataset.title} was stopped`
-          })
-        } else {
-          notification.open({
-            title: 'Import canceled',
-            description: `${record.dataset.title} was removed from the queue`
-          })
-        }
+        notification.open({
+          title: 'Sync canceled'
+        })
         
         if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
           this.props.onDeleteSuccess();
@@ -68,17 +64,17 @@ class ImportButton extends React.Component {
   render = () => {
     const { error } = this.state;
     const { record } = this.props;
-    const isStopButton = ['processing', 'inserting', 'downloading', 'in queue'].indexOf(record.state) > -1;
+    const isStopButton = ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
     
     return (
       <div>
         <Button
           type={isStopButton ? 'danger' : 'primary'}
           loading={this.state.importTriggered}
-          onClick={isStopButton ? this.stopImport : this.startImport}
+          onClick={isStopButton ? this.stopSync : this.startSync}
         >
-          {!isStopButton && 'Import'}
-          {isStopButton && record.state !== 'in queue' &&  'Stop import'}
+          {!isStopButton && 'Sync'}
+          {isStopButton && record.state !== 'in queue' &&  'Stop sync'}
           {isStopButton && record.state === 'in queue' &&  'Remove'}
         </Button>
         {error && (
@@ -99,4 +95,4 @@ class ImportButton extends React.Component {
   };
 }
 
-export default ImportButton;
+export default SyncButton;
