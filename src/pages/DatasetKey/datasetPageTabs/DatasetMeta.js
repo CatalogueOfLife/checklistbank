@@ -27,12 +27,13 @@ class DatasetMeta extends React.Component {
   }
 
   getData = () => {
-    const { id } = this.props;
+    const { id, setDataset } = this.props;
 
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${id}`)
     .then(res => {
       const {createdBy, modifiedBy} = res.data;
+      setDataset(res.data)
       return Promise.all([
         res.data,
         axios(`${config.dataApi}user/${createdBy}`),
@@ -102,6 +103,7 @@ class DatasetMeta extends React.Component {
             data={data}
             onSaveSuccess={() => {
               this.setEditMode(false);
+              this.getData();
             }}
           />
         )}
@@ -123,6 +125,6 @@ class DatasetMeta extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, datasetOrigin : datasetoriginEnum }) => ({ user, datasetoriginEnum });
+const mapContextToProps = ({ user, datasetOrigin : datasetoriginEnum, setDataset }) => ({ user, datasetoriginEnum, setDataset });
 
 export default withContext(mapContextToProps)(DatasetMeta);
