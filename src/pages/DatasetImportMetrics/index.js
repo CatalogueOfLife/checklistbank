@@ -190,6 +190,8 @@ class DatasetImportMetrics extends React.Component {
                       <ImportButton
                         style={{ display: "inline" }}
                         record={this.state.data}
+                        onStartImportSuccess={() => this.getData(attempt)}
+                        onDeleteSuccess={() => this.getData(attempt)}
                       />
                     )}
                   {importHistory && (

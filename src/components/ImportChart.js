@@ -150,7 +150,6 @@ class ImportChart extends React.Component {
 
   render = () => {
     const { options, logarithmic, chartType } = this.state;
-    console.log(options.series[0].dataLabels)
     return <Card>
       <ButtonGroup size='small'>
         <Button type={!logarithmic ? 'primary' : ''} onClick={() => { this.setLogarithmic(false) }}>Linear</Button>
