@@ -7,7 +7,7 @@ import queryString from "query-string";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetColSources from "./datasetPageTabs/DatasetColSources";
-import DatasetImportMetrics from "./datasetPageTabs/DatasetImportMetrics";
+import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetSectors from "./datasetPageTabs/DatasetSectors"
@@ -85,7 +85,7 @@ class DatasetPage extends React.Component {
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {/*section === "sources" && <DatasetColSources datasetKey={datasetKey} /> */}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
+        {section === "metrics_" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <DatasetClassification id={datasetKey} defaultExpandKey={params.taxonKey} />

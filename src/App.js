@@ -18,6 +18,7 @@ import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
+import DatasetImportMetrics from "./pages/DatasetImportMetrics";
 const theme = {
   colorPrimary: "deepskyblue"
 };
@@ -79,6 +80,12 @@ class App extends Component {
                 key="nameKey"
                 path={`/dataset/:key/name/:nameKey`}
                 component={Name}
+              />
+              <Route
+                exact
+                key="datasetImportsKey"
+                path={`/dataset/:datasetKey/metrics/:attempt?`}
+                component={DatasetImportMetrics}
               />
               <Route
                 exact

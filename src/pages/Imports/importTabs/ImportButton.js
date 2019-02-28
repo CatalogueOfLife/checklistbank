@@ -67,12 +67,13 @@ class ImportButton extends React.Component {
 
   render = () => {
     const { error } = this.state;
-    const { record } = this.props;
+    const { record, style } = this.props;
     const isStopButton = ['processing', 'inserting', 'downloading', 'in queue'].indexOf(record.state) > -1;
     
     return (
-      <div>
+      <React.Fragment>
         <Button
+          style={style}
           type={isStopButton ? 'danger' : 'primary'}
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopImport : this.startImport}
@@ -94,7 +95,7 @@ class ImportButton extends React.Component {
             />
           </Popover>
         )}
-      </div>
+      </React.Fragment>
     );
   };
 }
