@@ -12,10 +12,10 @@ const tagColors = {
   failed: "red",
   "in queue": "orange"
 };
-const ImportHistory = ({ importHistory }) => (
+const ImportHistory = ({ importHistory, attempt }) => (
   <Timeline>
     {importHistory.map(h => (
-      <Timeline.Item color={tagColors[h.state]}>
+      <Timeline.Item color={tagColors[h.state]} dot={attempt && attempt===h.attempt.toString() ? <Icon type="arrow-right" /> : null}>
         {h.state === "finished" && (
           <React.Fragment>
             <NavLink
@@ -32,8 +32,15 @@ const ImportHistory = ({ importHistory }) => (
         )}
         {h.state === "failed" && (
           <React.Fragment>
-            <strong>{`${h.state} `}
-            <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey)}><Icon type="code" /></a></Tooltip></strong>
+             <NavLink
+          to={{
+            pathname: `/dataset/${h.datasetKey}/metrics/${h.attempt}`
+          }}
+          exact={true}
+        >
+          <strong>{`${h.state}`}</strong>
+        </NavLink>
+          {" "}  <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey)}><Icon type="code" /></a></Tooltip>
             <p>{`${moment(h.started).format("lll")}`}</p>
             <p>{h.error}</p>
           </React.Fragment>

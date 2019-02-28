@@ -92,12 +92,12 @@ class DatasetImportMetrics extends React.Component {
           onClose={this.hideHistoryDrawer}
           visible={this.state.historyVisible}
         >
-          <ImportHistory importHistory={importHistory}/>
+          <ImportHistory importHistory={importHistory} attempt={attempt}/>
         </Drawer> 
       }
     { this.state.data && this.state.data.state === 'failed' && <Row style={{padding: '10px'}}><Alert type="error" message={this.state.data.error} /></Row>}
     
-    { this.state.data && this.state.data.state === 'finished' && <React.Fragment>
+    { this.state.data  && <React.Fragment>
         <Row style={{padding: '10px'}}>
         <Col span={20}>
           {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount' ], (c)=>{
