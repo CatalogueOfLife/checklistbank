@@ -367,18 +367,7 @@ componentDidMount = () =>{
             </Select>
           )}
         </FormItem>
-        
-        <FormItem
-          {...formItemLayout}
-          label="Cluster"
-        >
-        {getFieldDecorator('cluster', {
-              valuePropName: 'checked',
-              initialValue: _.get(data, 'contributesTo') || false,
-            })(
-              <Checkbox/>
-            )}
-            </FormItem>
+
             <FormItem
           {...formItemLayout}
           label="Completeness"
