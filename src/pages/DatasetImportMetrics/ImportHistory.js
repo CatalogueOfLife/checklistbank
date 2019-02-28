@@ -12,10 +12,21 @@ const tagColors = {
   failed: "red",
   "in queue": "orange"
 };
+
+const getDot = (h, attempt)=>{
+  if(['processing', 'downloading', 'inserting'].includes(h.state)){
+    return <Icon type="loading" />
+  } else {
+    return attempt && attempt===h.attempt.toString() ? <Icon type="arrow-right" /> : null
+  }
+  
+}
+
 const ImportHistory = ({ importHistory, attempt }) => (
   <Timeline>
     {importHistory.map(h => (
-      <Timeline.Item color={tagColors[h.state]} dot={attempt && attempt===h.attempt.toString() ? <Icon type="arrow-right" /> : null}>
+      <Timeline.Item color={tagColors[h.state]} dot={getDot(h, attempt)}>
+        {['finished', 'failed'].indexOf(h.state) === -1 && <strong>{h.state}</strong>}
         {h.state === "finished" && (
           <React.Fragment>
             <NavLink
