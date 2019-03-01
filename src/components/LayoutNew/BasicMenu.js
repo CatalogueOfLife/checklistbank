@@ -94,16 +94,28 @@ class BasicMenu extends Component {
               <NavLink to={{ pathname: "/imports/finished" }}>Finished</NavLink>
             </Menu.Item>
           </SubMenu>
-          {Auth.isAuthorised(user, ["editor"]) && (
-            <Menu.Item key="assembly">
+          {Auth.isAuthorised(user, ["editor"]) && (  <SubMenu
+            key="assembly"
+            title={
+              <span>
+                <Icon type="copy" /> <span>Catalogue</span>
+              </span>
+            }
+          >
+          <Menu.Item key="colAssembly">
               <NavLink to={{ pathname: "/assembly" }}>
-                <Icon type="copy" /> <span>CoL Assembly</span>
+                 <span>Assembly</span>
               </NavLink>
             </Menu.Item>
-          )}
-          <Menu.Item key="sectorSync">
-              <NavLink to={{ pathname: "/sector/sync" }}><Icon type="sync" /> <span>Sector sync</span></NavLink>
+            <Menu.Item key="sectorSync">
+              <NavLink to={{ pathname: "/sector/sync" }}><span>Sector sync</span></NavLink>
             </Menu.Item>
+          
+          </SubMenu>  )}
+          
+            
+        
+          
 
           <SubMenu
             key="dataset"

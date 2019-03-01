@@ -16,7 +16,7 @@ class Home extends React.Component {
   render() {
 
     return (
-      <Layout selectedKeys={["sectorSync"]} >
+      <Layout selectedKeys={["sectorSync"]} openKeys={["assembly"]}>
         <SyncTable  />
       </Layout>
     );

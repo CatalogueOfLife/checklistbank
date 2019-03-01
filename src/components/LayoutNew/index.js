@@ -37,7 +37,7 @@ class SiteLayout extends Component {
   }
 
   render() {
-    const { width, classes, selectedVerbatimKey, selectedDataset, selectedTaxon, selectedName, section, openKeys, selectedKeys } = this.props;
+    const { width, classes, selectedDataset, selectedTaxon, selectedName, openKeys, selectedKeys, title } = this.props;
     const collapsed = typeof this.state.collapsed === 'boolean'
       ? this.state.collapsed
       : width < EXTRA_LARGE;
@@ -91,6 +91,7 @@ class SiteLayout extends Component {
             />
             <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
             {selectedDataset && <h1>{selectedDataset.title}</h1>}
+            {!selectedDataset && title && <h1>{title}</h1>}
             </div>
             <div className="header__secondary" style={{ flex: '0 0 auto' }}>
               <UserMenu />
