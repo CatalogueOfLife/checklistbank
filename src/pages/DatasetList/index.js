@@ -258,7 +258,7 @@ class DatasetList extends React.Component {
     const columns = _.filter(filteredColumns, (v) => !_.includes(excludeColumns, v.key))
 
     return (
-      <Layout openKeys={["dataset"]} selectedKeys={["/dataset"]} >
+      <Layout openKeys={["dataset"]} selectedKeys={["/dataset"]} title="Datasets">
       <div style={{ background: '#fff', padding: 24, minHeight: 280, margin: '16px 0' }}>
       <div>
       <Row >

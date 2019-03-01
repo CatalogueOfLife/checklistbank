@@ -14,7 +14,7 @@ class DatasetCreate extends React.Component {
     return (
       <Layout 
         openKeys={["dataset"]}
-        selectedKeys={["datasetCreate"]}>
+        selectedKeys={["datasetCreate"]} title="New Dataset">
         
         <PageContent>
           
