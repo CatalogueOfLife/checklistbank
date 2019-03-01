@@ -74,7 +74,7 @@ class DatasetMeta extends React.Component {
             {data && _.get(data, 'origin') === "uploaded" &&
         
          
-               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.props, 'data.key')} />
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.state, 'data.key')} />
              
         }
           </Col>

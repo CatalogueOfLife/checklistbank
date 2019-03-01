@@ -18,16 +18,9 @@ class SectorDiff extends React.Component {
 
   render() {
 
-    const diff = `---
- docs/text-tree.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/docs/text-tree.txt b/docs/text-tree.txt
-index 603b57c..00f1422 100644
---- a/docs/text-tree.txt
-+++ b/docs/text-tree.txt
-@@ -1,7 +1,7 @@
-+
+    const diff = `--- sector1 attempt0
++++ sector1 attempt1
+@@ -1,7 +1,6 @@
  Plantae [kingdom]
    *Viridae [kingdom]
    Asteraceae [family]
@@ -35,7 +28,7 @@ index 603b57c..00f1422 100644
      Cichorioideae [subfamily]
        Cichorieae [tribe]
          Crepis L. [genus]
-@@ -12,12 +12,12 @@ Plantae [kingdom]
+@@ -12,12 +11,12 @@
            Crepis occidentalis Nutt. [species]
          Leontodon [genus]
            Leontodon anomalus [species]
