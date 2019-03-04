@@ -117,6 +117,9 @@ class DatasetMeta extends React.Component {
             <PresentationItem label={<FormattedMessage id="alias" defaultMessage="Alias" />}>
             {data.alias}
           </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="group" defaultMessage="Taxonomic Group" />}>
+            {data.group}
+          </PresentationItem>
           <PresentationItem label={<FormattedMessage id="description" defaultMessage="Description" />}>
             {data.description}
           </PresentationItem>
