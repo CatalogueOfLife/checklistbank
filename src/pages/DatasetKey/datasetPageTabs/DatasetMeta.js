@@ -34,15 +34,20 @@ class DatasetMeta extends React.Component {
     .then(res => {
       const {createdBy, modifiedBy} = res.data;
       setDataset(res.data)
+      if(!res.data.contributesTo){
+        res.data.contributesTo = []
+      }
       return Promise.all([
         res.data,
         axios(`${config.dataApi}user/${createdBy}`),
-        axios(`${config.dataApi}user/${modifiedBy}`)
+        axios(`${config.dataApi}user/${modifiedBy}`),
+        Promise.all(res.data.contributesTo.map(c => axios(`${config.dataApi}dataset/${c}`)))
       ])
     })
       .then(res => {
         res[0].createdByUser = _.get(res[1], 'data.username'),
         res[0].modifiedByUser = _.get(res[2], 'data.username'),
+        res[0].contributesToDatasets = res[3].map(d => _.get(d, "data.title"))
         this.setState({ loading: false, data: res[0], err: null });
       })
       .catch(err => {
@@ -108,18 +113,73 @@ class DatasetMeta extends React.Component {
           />
         )}
         {!editMode && data && (
-          <dl>
-            {listData.filter((o)=> ['created', 'modified', 'imported' ].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
-            {moment(obj.value).format('MMMM Do YYYY, h:mm:ss a')}
-          </PresentationItem>)}
-            {listData.filter((o)=> !['createdBy', 'modifiedBy', 'created', 'modified', 'imported', 'confidence' ].includes(o.key)).map((obj)=> <PresentationItem key={obj.key} label={<FormattedMessage id={obj.key} defaultMessage={_.startCase(obj.key)} />} >
-            {obj.value}
-          </PresentationItem>)}
+          <React.Fragment>
+            <PresentationItem label={<FormattedMessage id="alias" defaultMessage="Alias" />}>
+            {data.alias}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="description" defaultMessage="Description" />}>
+            {data.description}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="citation" defaultMessage="Citation" />}>
+            {data.citation}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="type" defaultMessage="Type" />}>
+            {data.type}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
+            {data.contact}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="authors" defaultMessage="Authors" />}>
+            {data.authors}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="organisations" defaultMessage="Organisations" />}>
+            {data.organisations}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
+            {data.released}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="version" defaultMessage="Version" />}>
+            {data.version}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="license" defaultMessage="License" />}>
+            {data.license}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="website" defaultMessage="Website" />}>
+            {data.website && <a href={data.website} target="_blank" >{data.website}</a>}
+
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="origin" defaultMessage="Origin" />}>
+            {data.origin === 'external' && `${data.dataFormat}: ${data.dataAccess}`}
+            {data.origin !== 'external' && data.origin}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="code" defaultMessage="Code" />}>
+            {data.code}
+          </PresentationItem>
           <PresentationItem label={<FormattedMessage id="Checklist Confidence" defaultMessage="Checklist Confidence" />} >
           {<Rate value={data.confidence} disabled></Rate>}
           </PresentationItem>
-          </dl>
-        )}
+          <PresentationItem label={<FormattedMessage id="completeness" defaultMessage="Completeness" />}>
+            {data.completeness}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="contributesTo" defaultMessage="Contributes To" />}>
+            {data.contributesToDatasets}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="gbifKey" defaultMessage="GBIF Key" />}>
+            {data.gbifKey && <a href={`https://www.gbif.org/dataset/${data.gbifKey}`} target="_blank" >{data.gbifKey}</a>}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="importFrequency" defaultMessage="Import Frequency" />}>
+            {data.importFrequency}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="created" defaultMessage="Created" />}>
+          {`${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')} by ${data.createdByUser}`}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="modified" defaultMessage="Modified" />}>
+          {`${moment(data.modified).format('MMMM Do YYYY, h:mm:ss a')} by ${data.modifiedByUser}`}
+          </PresentationItem>
+          
+          </React.Fragment> )}
+        
+        
       </PageContent>
     );
   }

@@ -131,7 +131,7 @@ componentDidMount = () =>{
         </FormItem>
         {data &&   <FormItem
           {...formItemLayout}
-          label="Short Name"
+          label="Alias"
           help="Abbreviated or shortened memorable name of Source Database intended for easy use in day-to-day communications, as supplied by the custodian"
         >
           {getFieldDecorator('alias', {
