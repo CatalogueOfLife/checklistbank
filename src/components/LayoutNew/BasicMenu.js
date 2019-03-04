@@ -58,6 +58,7 @@ class BasicMenu extends Component {
       selectedDataset,
       selectedTaxon,
       selectedName,
+      selectedSector,
       user
     } = this.props;
     const { selectedKeys, openKeys } = this.state;
@@ -110,6 +111,12 @@ class BasicMenu extends Component {
             <Menu.Item key="sectorSync">
               <NavLink to={{ pathname: "/sector/sync" }}><span>Sector sync</span></NavLink>
             </Menu.Item>
+            {selectedSector && (
+                  <Menu.Item key="sectorDiff">
+                    Sector diff: {selectedSector}
+                  </Menu.Item>
+                )}
+            
           
           </SubMenu>  )}
           

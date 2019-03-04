@@ -73,7 +73,7 @@ class App extends Component {
               <Route
                 exact
                 key="sectorDiff"
-                path="/sector/sync/:sectorKey/diff"
+                path="/assembly/:catalogueKey/sync/:sectorKey/diff"
                 component={SectorDiff}
                 
               />

@@ -7,52 +7,59 @@ import config from "../../config";
 import qs from "query-string";
 import moment from "moment";
 import history from "../../history";
-import SyncButton from './SyncButton'
-import PageContent from '../../components/PageContent'
-import withContext from '../../components/hoc/withContext'
-import Auth from '../../components/Auth'
-import ImportMetrics from '../../components/ImportMetrics'
-import kibanaQuery from './kibanaQuery'
+import SyncButton from "./SyncButton";
+import PageContent from "../../components/PageContent";
+import withContext from "../../components/hoc/withContext";
+import Auth from "../../components/Auth";
+import ImportMetrics from "../../components/ImportMetrics";
+import kibanaQuery from "./kibanaQuery";
 const { MANAGEMENT_CLASSIFICATION } = config;
-
 
 const _ = require("lodash");
 
-
 const tagColors = {
-  'processing': 'purple',
-  'downloading': 'cyan',
-  'inserting': 'blue',
-  'finished': 'green',
-  'failed': 'red',
-  'in queue': 'orange'
-}
+  processing: "purple",
+  downloading: "cyan",
+  inserting: "blue",
+  finished: "green",
+  failed: "red",
+  "in queue": "orange"
+};
 const defaultColumns = [
   {
     title: "Sector",
     dataIndex: "sector.path",
     key: "sector",
     render: (text, record) => {
-      return record.sector.path ? <Breadcrumb separator=">">
-      { record.sector.path.reverse().map((taxon) => {
-          return (<Breadcrumb.Item key={taxon.id} >
-              <NavLink
+      return record.sector.path ? (
+        <Breadcrumb separator=">">
+          {record.sector.path.reverse().map(taxon => {
+            return (
+              <Breadcrumb.Item key={taxon.id}>
+                <NavLink
                   to={{
-                      pathname: `/dataset/${record.sector.datasetKey}/classification`,
-                      search: `?taxonKey=${taxon.id}`
+                    pathname: `/dataset/${
+                      record.sector.datasetKey
+                    }/classification`,
+                    search: `?taxonKey=${taxon.id}`
                   }}
-              >
-                <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>  
-              </NavLink>
-          </Breadcrumb.Item>)
-      })}
-      </Breadcrumb>
-      : <React.Fragment>
+                >
+                  <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
+                </NavLink>
+              </Breadcrumb.Item>
+            );
+          })}
+        </Breadcrumb>
+      ) : (
+        <React.Fragment>
           <Tooltip title="This sector is not linked to a taxon id">
-          <Icon type="warning" theme="twoTone" twoToneColor="#FF6347"/> 
-          </Tooltip>
-          {" "}<span dangerouslySetInnerHTML={{__html: record.sector.subject.name}}></span>
-          </React.Fragment>  
+            <Icon type="warning" theme="twoTone" twoToneColor="#FF6347" />
+          </Tooltip>{" "}
+          <span
+            dangerouslySetInnerHTML={{ __html: record.sector.subject.name }}
+          />
+        </React.Fragment>
+      );
     },
     width: 150
   },
@@ -61,41 +68,51 @@ const defaultColumns = [
     dataIndex: "state",
     key: "state",
     render: (text, record) => {
-
       return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
     },
     width: 50,
-    filters : [{
-      text: 'Finished',
-      value: 'finished',
-    }, {
-      text: 'Failed',
-      value: 'failed',
-    }, {
-      text: 'Canceled',
-      value: 'canceled',
-    }, {
-      text: 'Unchanged',
-      value: 'unchanged',
-    }, {
-      text: 'Waiting',
-      value: 'waiting',
-    }, {
-      text: 'Preparing',
-      value: 'preparing',
-    }, {
-      text: 'Copying',
-      value: 'copying',
-    }, {
-      text: 'Deliting',
-      value: 'deleting',
-    }, {
-      text: 'Relinking',
-      value: 'relinking',
-    }, {
-      text: 'Indexing',
-      value: 'indexing',
-    }]
+    filters: [
+      {
+        text: "Finished",
+        value: "finished"
+      },
+      {
+        text: "Failed",
+        value: "failed"
+      },
+      {
+        text: "Canceled",
+        value: "canceled"
+      },
+      {
+        text: "Unchanged",
+        value: "unchanged"
+      },
+      {
+        text: "Waiting",
+        value: "waiting"
+      },
+      {
+        text: "Preparing",
+        value: "preparing"
+      },
+      {
+        text: "Copying",
+        value: "copying"
+      },
+      {
+        text: "Deliting",
+        value: "deleting"
+      },
+      {
+        text: "Relinking",
+        value: "relinking"
+      },
+      {
+        text: "Indexing",
+        value: "indexing"
+      }
+    ]
   },
 
   {
@@ -110,7 +127,7 @@ const defaultColumns = [
     key: "started",
     width: 50,
     render: date => {
-      return (date) ? moment(date).format("lll") : '';
+      return date ? moment(date).format("lll") : "";
     }
   },
   {
@@ -119,16 +136,43 @@ const defaultColumns = [
     key: "finished",
     width: 50,
     render: date => {
-      return (date) ?  moment(date).format("lll") : '';
+      return date ? moment(date).format("lll") : "";
     }
+  },
+  {
+    title: "Diff",
+    key: "diff",
+    render: (text, record) => (
+      <NavLink
+        to={{
+          pathname: `/assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${
+            record.sectorKey
+          }/diff`,
+          search:
+            record.attempt > 0
+              ? `?attempts=${record.attempt - 1}..${record.attempt}`
+              : ""
+        }}
+      >
+        <Tooltip title="Tree diff">
+          <Icon type="diff" style={{fontSize: '20px'}}/>
+        </Tooltip>
+      </NavLink>
+    ),
+    width: 50
   },
   {
     title: "Logs",
     key: "logs",
-    render: (text, record) => <a href={kibanaQuery(record.sectorKey, record.attempt)}><Icon type="code" /></a>,
+    render: (text, record) => (
+      <Tooltip title="Kibana logs">
+        <a href={kibanaQuery(record.sectorKey, record.attempt)}>
+          <Icon type="code" style={{fontSize: '20px'}} />
+        </a>
+      </Tooltip>
+    ),
     width: 50
   }
-  
 ];
 
 class SyncTable extends React.Component {
@@ -151,22 +195,22 @@ class SyncTable extends React.Component {
     if (_.isEmpty(query)) {
       query = { limit: 25, offset: 0, state: importState };
     }
-    if(query.state){
-      this.updateStatusQuery(query)
-     }
+    if (query.state) {
+      this.updateStatusQuery(query);
+    }
     this.getData(query);
 
-    if(this.props.section === 'running'){
-     this.timer = setInterval(()=>{
-        this.getData(query)
-      }, 3000)
+    if (this.props.section === "running") {
+      this.timer = setInterval(() => {
+        this.getData(query);
+      }, 3000);
     }
-
   }
 
-  componentWillUnmount(){
-    if(this.props.section === 'running'){ clearInterval(this.timer)};
-
+  componentWillUnmount() {
+    if (this.props.section === "running") {
+      clearInterval(this.timer);
+    }
   }
 
   getData = params => {
@@ -176,24 +220,30 @@ class SyncTable extends React.Component {
       pathname: `/sector/sync`,
       search: `?${qs.stringify(params)}`
     });
-    axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync?${qs.stringify(params)}`)
+    axios(
+      `${config.dataApi}assembly/${
+        MANAGEMENT_CLASSIFICATION.key
+      }/sync?${qs.stringify(params)}`
+    )
       .then(res => {
-
-        const promises = (res.data.result && _.isArray(res.data.result)) ? res.data.result.map( sync => 
-         
-            axios(`${config.dataApi}sector/${sync.sectorKey}`)
-            .then(
-              sector => {
-                sync.sector = sector.data;
-                sync._id = `${sync.sectorKey}_${sync.attempt}`
-              }
-            ).then(()=> 
-            axios(`${config.dataApi}dataset/${sync.sector.datasetKey}/tree/${sync.sector.subject.id}`)
-            ).then((tx) => 
-                 sync.sector.path = tx.data 
-            )
-          
-        ) : []
+        const promises =
+          res.data.result && _.isArray(res.data.result)
+            ? res.data.result.map(sync =>
+                axios(`${config.dataApi}sector/${sync.sectorKey}`)
+                  .then(sector => {
+                    sync.sector = sector.data;
+                    sync._id = `${sync.sectorKey}_${sync.attempt}`;
+                  })
+                  .then(() =>
+                    axios(
+                      `${config.dataApi}dataset/${
+                        sync.sector.datasetKey
+                      }/tree/${sync.sector.subject.id}`
+                    )
+                  )
+                  .then(tx => (sync.sector.path = tx.data))
+              )
+            : [];
 
         return Promise.all(promises).then(() => res);
       })
@@ -213,16 +263,13 @@ class SyncTable extends React.Component {
       });
   };
 
-
-
-  updateStatusQuery = (query) => {
-
-    let catColumn = _.find(defaultColumns, (c)=>{
-      return c.key === 'state'
+  updateStatusQuery = query => {
+    let catColumn = _.find(defaultColumns, c => {
+      return c.key === "state";
     });
-    let filter = (typeof query.state === 'string') ? [query.state] : query.state;
-    catColumn.filteredValue = filter
-  }
+    let filter = typeof query.state === "string" ? [query.state] : query.state;
+    catColumn.filteredValue = filter;
+  };
 
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
@@ -231,19 +278,18 @@ class SyncTable extends React.Component {
     this.setState({
       pagination: pager
     });
-    
+
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
     });
-    if(filters.state && _.get(filters, 'state.length')){
-      query.state = filters.state
-      
+    if (filters.state && _.get(filters, "state.length")) {
+      query.state = filters.state;
     } else {
-      query.state = this.props.importState
+      query.state = this.props.importState;
     }
-    this.updateStatusQuery(query)
+    this.updateStatusQuery(query);
 
     this.getData(query);
   };
@@ -251,24 +297,33 @@ class SyncTable extends React.Component {
   render() {
     const { data, loading, error } = this.state;
     const { section, user } = this.props;
-    const columns = (Auth.isAuthorised(user, ['editor', 'admin'])) ? [ ...defaultColumns, {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      width: 50,
-      render: record => (
-        <SyncButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></SyncButton>
-      )
-    }] : defaultColumns;
-
-    
+    const columns = Auth.isAuthorised(user, ["editor", "admin"])
+      ? [
+          ...defaultColumns,
+          {
+            title: "Action",
+            dataIndex: "",
+            key: "x",
+            width: 50,
+            render: record => (
+              <SyncButton
+                key={record.datasetKey}
+                record={record}
+                onStartImportSuccess={() => {
+                  history.push("/imports/running");
+                }}
+              />
+            )
+          }
+        ]
+      : defaultColumns;
 
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
         {!error && (
           <Table
-            scroll={{x: 1000}}
+            scroll={{ x: 1000 }}
             size="small"
             columns={columns}
             dataSource={data}
@@ -276,21 +331,32 @@ class SyncTable extends React.Component {
             onChange={this.handleTableChange}
             rowKey="_id"
             expandedRowRender={record => {
-              if(record.state ==='failed'){
-                return <Alert message={record.error} type="error" />
-              } else if(record.state ==='finished'){
-                return <React.Fragment>{
-                  ['taxonCount', 'nameCount', 'referenceCount', 'distributionCount', 'descriptionCount', 'vernacularCount', 'mediaCount' ]
-                    .map(
-                    (c)=>
-                  (!isNaN(_.get(record, `${c}`))) ? <Tag key={c} color="blue">{_.startCase(c)}: {_.get(record, `${c}`)}</Tag> : ''
-                
-              )}
-              </React.Fragment> 
-              } else
-              return null
-            }     
-            } 
+              if (record.state === "failed") {
+                return <Alert message={record.error} type="error" />;
+              } else if (record.state === "finished") {
+                return (
+                  <React.Fragment>
+                    {[
+                      "taxonCount",
+                      "nameCount",
+                      "referenceCount",
+                      "distributionCount",
+                      "descriptionCount",
+                      "vernacularCount",
+                      "mediaCount"
+                    ].map(c =>
+                      !isNaN(_.get(record, `${c}`)) ? (
+                        <Tag key={c} color="blue">
+                          {_.startCase(c)}: {_.get(record, `${c}`)}
+                        </Tag>
+                      ) : (
+                        ""
+                      )
+                    )}
+                  </React.Fragment>
+                );
+              } else return null;
+            }}
           />
         )}
       </PageContent>
