@@ -12,22 +12,11 @@ class Sector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      popOverVisible: false,
-      sectorSourceDataset: null
+      popOverVisible: false
     };
   }
 
-  componentWillMount = () => {
-    if (this.props.taxon.sector) {
-      axios(`${config.dataApi}dataset/${this.props.taxon.sector.datasetKey}`)
-        .then(res => {
-          this.setState({ sectorSourceDataset: res.data });
-        })
-        .catch(err => {
-          this.setState({ sectorSourceDatasetError: err });
-        });
-    }
-  };
+  
   hidePopover = () => {
     this.setState({
       popOverVisible: false
@@ -74,7 +63,7 @@ class Sector extends React.Component {
   render = () => {
     const { taxon } = this.props;
     const { sector } = taxon;
-    const { sectorSourceDataset } = this.state;
+    const { dataset: sectorSourceDataset } = sector;
     const isRootSector =
       _.get(taxon, "parentId") &&
       _.get(sector, "target.id") &&

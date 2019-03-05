@@ -6,6 +6,9 @@ import config from "../../config";
 import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
+import {getSectorsBatch} from "../../api/sector"
+import { getDatasetsBatch } from "../../api/dataset";
+import DataLoader from "dataloader"
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
 
@@ -172,12 +175,21 @@ class ColTree extends React.Component {
     )
       .then(res => {
         if (!res.data.result) return res;
+        const sectorLoader = new DataLoader(ids =>
+          getSectorsBatch(ids)
+        );
+        const datasetLoader = new DataLoader(ids =>
+          getDatasetsBatch(ids)
+        );
         return Promise.all(
           res.data.result
             .filter(tx => !!tx.sectorKey)
             .map(tx =>
-              axios(`${config.dataApi}sector/${tx.sectorKey}`).then(
-                r => (tx.sector = r.data)
+              sectorLoader.load(tx.sectorKey).then(
+                r => {tx.sector = r
+                return datasetLoader.load(r.datasetKey)
+                .then(dataset => (tx.sector.dataset = dataset))
+              }
               )
             )
         ).then(() => res);
