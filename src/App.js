@@ -14,6 +14,7 @@ import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/Assembly";
 import SectorSync from "./pages/SectorSync"
+import SectorBroken from "./pages/BrokenSectors"
 import SectorDiff from "./pages/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -68,6 +69,13 @@ class App extends Component {
                 key="sectorSync"
                 path="/sector/sync"
                 component={SectorSync}
+                
+              />
+              <Route
+                exact
+                key="sectorBroken"
+                path="/sector/broken"
+                component={SectorBroken}
                 
               />
               <Route

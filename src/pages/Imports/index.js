@@ -18,7 +18,7 @@ class Home extends React.Component {
 
     return (
       <Layout openKeys={["imports"]} selectedKeys={[section]} title={`${_.startCase(section)} imports`}>
-        {section === "running" && <ImportTable importState={['processing', 'downloading', 'inserting']} section={section} />}
+        {section === "running" && <ImportTable importState={['processing', 'downloading', 'inserting', 'building metrics']} section={section} />}
         {section === "finished" && <ImportTable importState={['unchanged', 'failed', 'canceled', 'finished']} section={section} />}
       </Layout>
     );

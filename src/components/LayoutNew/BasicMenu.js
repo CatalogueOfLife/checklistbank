@@ -111,6 +111,10 @@ class BasicMenu extends Component {
             <Menu.Item key="sectorSync">
               <NavLink to={{ pathname: "/sector/sync" }}><span>Sector sync</span></NavLink>
             </Menu.Item>
+            <Menu.Item key="sectorBroken">
+              <NavLink to={{ pathname: "/sector/broken" }}><span>Broken sectors</span></NavLink>
+            </Menu.Item>
+            
             {selectedSector && (
                   <Menu.Item key="sectorDiff">
                     Sector diff: {selectedSector}

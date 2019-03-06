@@ -62,7 +62,7 @@ class DatasetImportMetrics extends React.Component {
     axios(uri)
       .then(res => {
         const data = attempt ? res.data : res.data[0];
-        if (["processing", "downloading", "inserting"].includes(data.state)) {
+        if (["processing", "downloading", "inserting", "building metrics"].includes(data.state)) {
           if (!this.timer) {
             this.timer = setInterval(() => {
               this.getData(attempt);
@@ -186,10 +186,10 @@ class DatasetImportMetrics extends React.Component {
                 </Col>
                 <Col span={4} style={{ textAlign: "right" }}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    origin !== "uploaded" && (
+                    origin !== "uploaded" && dataset && (
                       <ImportButton
                         style={{ display: "inline" }}
-                        record={this.state.data}
+                        record={{datasetKey: dataset.key}}
                         onStartImportSuccess={() => this.getData(attempt)}
                         onDeleteSuccess={() => this.getData(attempt)}
                       />

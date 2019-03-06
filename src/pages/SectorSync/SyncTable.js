@@ -39,7 +39,7 @@ const defaultColumns = [
                 <NavLink
                   to={{
                     pathname: `/dataset/${
-                      record.sector.datasetKey
+                      MANAGEMENT_CLASSIFICATION.key
                     }/classification`,
                     search: `?taxonKey=${taxon.id}`
                   }}
@@ -55,9 +55,9 @@ const defaultColumns = [
           <Tooltip title="This sector is not linked to a taxon id">
             <Icon type="warning" theme="twoTone" twoToneColor="#FF6347" />
           </Tooltip>{" "}
-          <span
+        { _.get(record, 'sector.subject.name') && <span
             dangerouslySetInnerHTML={{ __html: record.sector.subject.name }}
-          />
+          />}
         </React.Fragment>
       );
     },
@@ -235,11 +235,11 @@ class SyncTable extends React.Component {
                     sync._id = `${sync.sectorKey}_${sync.attempt}`;
                   })
                   .then(() =>
-                    axios(
+                   { return _.get(sync, 'sector.target.id') ? axios(
                       `${config.dataApi}dataset/${
-                        sync.sector.datasetKey
-                      }/tree/${sync.sector.subject.id}`
-                    )
+                        MANAGEMENT_CLASSIFICATION.key
+                      }/tree/${sync.sector.target.id}`
+                    ) : Promise.resolve({data:null}) }
                   )
                   .then(tx => (sync.sector.path = tx.data))
               )

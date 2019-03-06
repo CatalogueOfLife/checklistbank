@@ -14,7 +14,7 @@ const tagColors = {
 };
 
 const getDot = (h, attempt)=>{
-  if(['processing', 'downloading', 'inserting'].includes(h.state)){
+  if(['processing', 'downloading', 'inserting', 'building metrics'].includes(h.state)){
     return <Icon type="loading" />
   } else {
     return attempt && attempt===h.attempt.toString() ? <Icon type="arrow-right" /> : null
