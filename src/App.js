@@ -15,6 +15,8 @@ import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/Assembly";
 import SectorSync from "./pages/SectorSync"
 import SectorBroken from "./pages/BrokenSectors"
+import DecisionBroken from "./pages/BrokenDecisions"
+
 import SectorDiff from "./pages/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -78,6 +80,14 @@ class App extends Component {
                 component={SectorBroken}
                 
               />
+              <Route
+                exact
+                key="decisionBroken"
+                path="/decision/broken"
+                component={DecisionBroken}
+                
+              />
+              
               <Route
                 exact
                 key="sectorDiff"

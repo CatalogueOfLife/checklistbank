@@ -9,6 +9,12 @@ import ErrorMsg from "../../components/ErrorMsg";
 import {getSectorsBatch} from "../../api/sector"
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader"
+const sectorLoader = new DataLoader(ids =>
+  getSectorsBatch(ids)
+);
+const datasetLoader = new DataLoader(ids =>
+  getDatasetsBatch(ids)
+);
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
 
@@ -167,7 +173,7 @@ class ColTree extends React.Component {
       });
   };
   fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
-    const { showSourceTaxon } = this.props;
+    const { showSourceTaxon, dataset, treeType } = this.props;
     return axios(
       `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(
         taxonKey
@@ -175,24 +181,27 @@ class ColTree extends React.Component {
     )
       .then(res => {
         if (!res.data.result) return res;
-        const sectorLoader = new DataLoader(ids =>
-          getSectorsBatch(ids)
-        );
-        const datasetLoader = new DataLoader(ids =>
-          getDatasetsBatch(ids)
-        );
-        return Promise.all(
-          res.data.result
-            .filter(tx => !!tx.sectorKey)
-            .map(tx =>
-              sectorLoader.load(tx.sectorKey).then(
-                r => {tx.sector = r
-                return datasetLoader.load(r.datasetKey)
-                .then(dataset => (tx.sector.dataset = dataset))
-              }
+        if(treeType !== 'mc' && dataset){
+          return Promise.all( res.data.result
+          .filter(tx => !!tx.sector)
+          .map(tx => datasetLoader.load(tx.sector.datasetKey)
+          .then(dataset => (tx.sector.dataset = dataset)))
+          ).then(() => res);
+        } else {
+          return Promise.all(
+            res.data.result
+              .filter(tx => !!tx.sectorKey)
+              .map(tx =>
+                sectorLoader.load(tx.sectorKey).then(
+                  r => {tx.sector = r
+                  return datasetLoader.load(r.datasetKey)
+                  .then(dataset => (tx.sector.dataset = dataset))
+                }
+                )
               )
-            )
-        ).then(() => res);
+          ).then(() => res);
+        }
+        
       })
       .then(res =>
         res.data.result
