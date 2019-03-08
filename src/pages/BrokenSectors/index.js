@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Tooltip, Input, Button } from "antd";
+import { Table, Alert, Icon, Tooltip, Input, Button, Row, Col, notification } from "antd";
 import config from "../../config";
 import moment from "moment";
 import Layout from "../../components/LayoutNew";
@@ -10,13 +10,15 @@ import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
-import _ from "lodash"
+import _ from "lodash";
 
+const { MANAGEMENT_CLASSIFICATION } = config;
 class SyncTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      currentDataSourceLength: 0,
       searchText: "",
       loading: false
     };
@@ -54,7 +56,7 @@ class SyncTable extends React.Component {
     )
       .then(arrays => {
         const mergedArrays = arrays.reduce((a, b) => [...a, ...b]);
-        this.setState({ loading: false, error: null, data: mergedArrays });
+        this.setState({ loading: false, error: null, data: mergedArrays, currentDataSourceLength: mergedArrays.length });
       })
 
       .catch(err => {
@@ -74,7 +76,7 @@ class SyncTable extends React.Component {
           ref={node => {
             this.searchInput = node;
           }}
-          placeholder={`Search ${dataIndex.split('.')[0]}`}
+          placeholder={`Search ${dataIndex.split(".")[0]}`}
           value={selectedKeys[0]}
           onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -123,8 +125,12 @@ class SyncTable extends React.Component {
     clearFilters();
     this.setState({ searchText: "" });
   };
+  onChange = (pagination, filters, sorter, extra) =>{
+    
+    this.setState({currentDataSourceLength: extra.currentDataSource.length})
+  }
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, currentDataSourceLength, error } = this.state;
     const columns = [
       {
         title: "Dataset",
@@ -150,6 +156,21 @@ class SyncTable extends React.Component {
         ...this.getColumnSearchProps("dataset.title")
       },
       {
+        title: "Mode",
+        dataIndex: "mode",
+        key: "mode",
+        width: 50,  
+        filters : [{
+            text: 'Attach',
+            value: 'attach',
+          }, {
+            text: 'Merge',
+            value: 'merge',
+          }],
+          onFilter: (value, record) => record.mode === value,
+
+      },
+      {
         title: "Subject",
         dataIndex: "subject.name",
         key: "subject",
@@ -162,12 +183,26 @@ class SyncTable extends React.Component {
               <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.subject.rank}:{" "}
               </span>
-              <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                searchWords={[this.state.searchText]}
-                autoEscape
-                textToHighlight={record.subject.name.toString()}
-              />
+              <NavLink
+                to={{
+                  pathname: `/dataset/${record.datasetKey}/names`,
+                  search: `?q=${record.subject.name}`
+                }}
+                exact={true}
+              >
+                <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[this.state.searchText]}
+                  autoEscape
+                  textToHighlight={record.subject.name.toString()}
+                />
+              </NavLink>
+              {!record.subject.id && (
+                <Icon
+                  type="warning"
+                  style={{ color: "red", marginLeft: "10px" }}
+                />
+              )}
             </React.Fragment>
           );
         }
@@ -187,12 +222,26 @@ class SyncTable extends React.Component {
               <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.target.rank}:{" "}
               </span>
-              <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                searchWords={[this.state.searchText]}
-                autoEscape
-                textToHighlight={record.target.name.toString()}
-              />
+              <NavLink
+                to={{
+                  pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`,
+                  search: `?q=${record.subject.name}`
+                }}
+                exact={true}
+              >
+                <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[this.state.searchText]}
+                  autoEscape
+                  textToHighlight={record.target.name.toString()}
+                />{" "}
+                {!record.target.id && (
+                  <Icon
+                    type="warning"
+                    style={{ color: "red", marginLeft: "10px" }}
+                  />
+                )}
+              </NavLink>
             </React.Fragment>
           );
         }
@@ -229,6 +278,42 @@ class SyncTable extends React.Component {
           </Tooltip>
         ),
         width: 50
+      },
+      {
+        title: "Action",
+        key: "action",
+        width: 50,
+        render: (text, record) => (
+          <Button
+            type={"primary"}
+            onClick={() => {
+                axios.post(`${config.dataApi}sector/${record.key}/rematch`)
+                .then(sector => {
+                    const success = _.get(sector, 'data.target.id') && _.get(sector, 'data.subject.id');
+
+                   if(success){
+                    notification.success({
+                        message: "Rematch done with success"
+                      })
+                      this.setState({data: data.filter(d => d.key !== sector.data.key), currentDataSourceLength: currentDataSourceLength-1})
+                   } else {
+                    notification.error({
+                        message: "Rematch failed",
+                        description: `Missing ID: ${['target', 'subject'].filter(t => !_.get(sector, `data.${t}.id`)).join(' and ')}`
+                      })
+                   }
+                })
+                .catch(err => {
+                    notification.error({
+                        message: `Server error ${_.get(err, 'response.status')}`,
+                        description: _.get(err, 'response.data.message')
+                      })
+                })
+            }}
+          >
+            Rematch
+          </Button>
+        )
       }
     ];
 
@@ -240,9 +325,11 @@ class SyncTable extends React.Component {
       >
         <PageContent>
           {error && <Alert message={error.message} type="error" />}
+          {!error && data && <Row><Col style={{textAlign: "right"}}>Results: {currentDataSourceLength}</Col></Row>}
           {!error && (
             <Table
               size="small"
+              onChange={this.onChange}
               columns={columns}
               dataSource={data}
               loading={loading}
