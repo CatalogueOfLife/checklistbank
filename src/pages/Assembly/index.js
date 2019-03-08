@@ -186,6 +186,7 @@ class ManagementClassification extends React.Component {
               mode: this.state.mode,
               toggleMode: this.toggleMode,
               getSyncState: this.getSyncState,
+              syncState: this.state.syncState,
               selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
             }}
           >

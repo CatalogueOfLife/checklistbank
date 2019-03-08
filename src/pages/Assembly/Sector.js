@@ -5,6 +5,7 @@ import axios from "axios";
 import config from "../../config";
 import history from "../../history";
 import { stringToColour } from "../../components/util";
+import {ColTreeContext} from "./ColTreeContext"
 
 const { MANAGEMENT_CLASSIFICATION } = config;
 
@@ -75,6 +76,8 @@ class Sector extends React.Component {
         return ""
     }
     return  !isSourceTree ? (
+        <ColTreeContext.Consumer>
+        { ({syncState} )=> (
       <Popover
         content={
           <div>
@@ -91,8 +94,8 @@ class Sector extends React.Component {
             </Button>
             <br />
             
-                {" "}
-                <Button
+            {_.get(syncState, 'running.sectorKey') !== sector.key && <React.Fragment>
+            <Button
                   style={{ marginTop: "8px", width: "100%" }}
                   type="primary"
                   onClick={() => {
@@ -102,6 +105,9 @@ class Sector extends React.Component {
                   Sync sector
                 </Button>{" "}
                 <br />
+
+            </React.Fragment>}
+               
               </React.Fragment>
             )}
 
@@ -133,17 +139,31 @@ class Sector extends React.Component {
         placement="rightTop"
       >
         <Tooltip title={sectorSourceDataset.title} placement="top">
-          <Tag color={stringToColour(sectorSourceDataset.title)}>
+       
+        
+            <Tag color={stringToColour(sectorSourceDataset.title)}>
             {isRootSector && <Icon type="caret-right" />}
             {sectorSourceDataset.alias || sectorSourceDataset.key}
+            {_.get(syncState, 'running.sectorKey') === sector.key && <Icon type="sync" style={{marginLeft: '5px'}} spin />}
           </Tag>
+
+        
+        
+          
         </Tooltip>
       </Popover>
+      )} 
+      </ColTreeContext.Consumer>
     ) : (
+        <ColTreeContext.Consumer>
+        { ({syncState} )=> (
         <Tag color={stringToColour(sectorSourceDataset.title)}>
         {isRootSector && <Icon type="caret-right" />}
         {sectorSourceDataset.alias || sectorSourceDataset.key}
+        {_.get(syncState, 'running.sectorKey') === sector.key && <Icon type="sync" style={{marginLeft: '5px'}} spin />}
       </Tag>
+      )}
+      </ColTreeContext.Consumer>
     );
   };
 }
