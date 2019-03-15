@@ -37,6 +37,7 @@ class SearchBox extends React.Component {
         onSearch={value => this.props.onSearch(this.state.search)}
         onChange={event => this.setState({ search: event.target.value })}
         enterButton
+        autoFocus={true}
         suffix={suffix}
         
       />
