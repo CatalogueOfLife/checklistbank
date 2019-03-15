@@ -10,6 +10,7 @@ import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
+import SectorTable from "./SectorTable"
 import _ from "lodash";
 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -129,193 +130,14 @@ class SyncTable extends React.Component {
     
     this.setState({currentDataSourceLength: extra.currentDataSource.length})
   }
+
+  deleteSectorFromTable = (sector) => {
+    this.setState({data: this.state.data.filter(d => d.key !== sector.data.key)})
+  }
+
   render() {
-    const { data, loading, currentDataSourceLength, error } = this.state;
-    const columns = [
-      {
-        title: "Dataset",
-        dataIndex: "dataset.title",
-        key: "title",
-        render: (text, record) => {
-          return (
-            <NavLink
-              to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
-              exact={true}
-            >
-              <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                searchWords={[this.state.searchText]}
-                autoEscape
-                textToHighlight={text.toString()}
-              />
-            </NavLink>
-          );
-        },
-        sorter: (a, b) => a.dataset.title < b.dataset.title,
-        width: 250,
-        ...this.getColumnSearchProps("dataset.title")
-      },
-      {
-        title: "Mode",
-        dataIndex: "mode",
-        key: "mode",
-        width: 50,  
-        filters : [{
-            text: 'Attach',
-            value: 'attach',
-          }, {
-            text: 'Merge',
-            value: 'merge',
-          }],
-          onFilter: (value, record) => record.mode === value,
+    const { data, loading, error } = this.state;
 
-      },
-      {
-        title: "Subject",
-        dataIndex: "subject.name",
-        key: "subject",
-        width: 150,
-        sorter: (a, b) => a.subject.name < b.subject.name,
-        ...this.getColumnSearchProps("subject.name"),
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {record.subject.rank}:{" "}
-              </span>
-              <NavLink
-                to={{
-                  pathname: `/dataset/${record.datasetKey}/names`,
-                  search: `?q=${record.subject.name}`
-                }}
-                exact={true}
-              >
-                <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={record.subject.name.toString()}
-                />
-              </NavLink>
-              {!record.subject.id && (
-                <Icon
-                  type="warning"
-                  style={{ color: "red", marginLeft: "10px" }}
-                />
-              )}
-            </React.Fragment>
-          );
-        }
-      },
-      {
-        title: "Target",
-        dataIndex: "target.name",
-        key: "target",
-        width: 150,
-        ...this.getColumnSearchProps("target.name"),
-
-        sorter: (a, b) => a.target.name < b.target.name,
-
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {record.target.rank}:{" "}
-              </span>
-              <NavLink
-                to={{
-                  pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`,
-                  search: `?q=${record.subject.name}`
-                }}
-                exact={true}
-              >
-                <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={record.target.name.toString()}
-                />{" "}
-                {!record.target.id && (
-                  <Icon
-                    type="warning"
-                    style={{ color: "red", marginLeft: "10px" }}
-                  />
-                )}
-              </NavLink>
-            </React.Fragment>
-          );
-        }
-      },
-
-      {
-        title: "Created",
-        dataIndex: "created",
-        key: "created",
-        width: 50,
-        sorter: (a, b) => a.created < b.created,
-        render: date => {
-          return date ? moment(date).format("lll") : "";
-        }
-      },
-      {
-        title: "Modified",
-        dataIndex: "modified",
-        key: "modified",
-        width: 50,
-        sorter: (a, b) => a.modified < b.modified,
-        render: date => {
-          return date ? moment(date).format("lll") : "";
-        }
-      },
-      {
-        title: "Logs",
-        key: "logs",
-        render: (text, record) => (
-          <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.key)}>
-              <Icon type="code" style={{ fontSize: "20px" }} />
-            </a>
-          </Tooltip>
-        ),
-        width: 50
-      },
-      {
-        title: "Action",
-        key: "action",
-        width: 50,
-        render: (text, record) => (
-          <Button
-            type={"primary"}
-            onClick={() => {
-                axios.post(`${config.dataApi}sector/${record.key}/rematch`)
-                .then(sector => {
-                    const success = _.get(sector, 'data.target.id') && _.get(sector, 'data.subject.id');
-
-                   if(success){
-                    notification.success({
-                        message: "Rematch done with success"
-                      })
-                      this.setState({data: data.filter(d => d.key !== sector.data.key), currentDataSourceLength: currentDataSourceLength-1})
-                   } else {
-                    notification.error({
-                        message: "Rematch failed",
-                        description: `Missing ID: ${['target', 'subject'].filter(t => !_.get(sector, `data.${t}.id`)).join(' and ')}`
-                      })
-                   }
-                })
-                .catch(err => {
-                    notification.error({
-                        message: `Server error ${_.get(err, 'response.status')}`,
-                        description: _.get(err, 'response.data.message')
-                      })
-                })
-            }}
-          >
-            Rematch
-          </Button>
-        )
-      }
-    ];
 
     return (
       <Layout
@@ -324,19 +146,10 @@ class SyncTable extends React.Component {
         title="Broken sectors"
       >
         <PageContent>
-          {error && <Alert message={error.message} type="error" />}
-          {!error && data && <Row><Col style={{textAlign: "right"}}>Results: {currentDataSourceLength}</Col></Row>}
-          {!error && (
-            <Table
-              size="small"
-              onChange={this.onChange}
-              columns={columns}
-              dataSource={data}
-              loading={loading}
-              pagination={{ pageSize: 100 }}
-              rowKey="key"
-            />
-          )}
+        {error && <Alert message={error.message} type="error" />}
+          {!error && 
+        <SectorTable data={data} loading={loading} onSectorRematch={this.deleteSectorFromTable}></SectorTable>}
+
         </PageContent>
       </Layout>
     );

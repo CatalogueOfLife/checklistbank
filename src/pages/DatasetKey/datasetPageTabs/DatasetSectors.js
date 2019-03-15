@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import PageContent from '../../../components/PageContent'
 import chai from 'chai'
 import config from "../../../config";
+import SectorTable from "../../BrokenSectors/SectorTable";
 
 const {expect} = chai;
 
@@ -20,29 +21,25 @@ class DatasetSectors extends React.Component {
             loading: false,
         };
     }
-
-    componentWillMount() {
-        this.getData();
+    componentWillMount = () => {
+        const {data} = this.state;
+        if (this.props.dataset && data.length === 0){
+            this.getData(this.props.dataset)
+        }
     }
-
-    getData = () => {
+    
+    componentWillReceiveProps = (nextProps) => {
+        const {data} = this.state;
+        if (nextProps.dataset && data.length === 0){
+            this.getData(nextProps.dataset)
+        }
+    }
+    getData = (dataset) => {
         this.setState({ loading: true });
-        const { datasetKey } = this.props;
-        axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
+        axios(`${config.dataApi}sector?datasetKey=${dataset.key}`)
+            
             .then(res => {
-
-                return Promise.all(
-                    res.data.filter(s => !!s.subject.id).map((t) => axios(`${config.dataApi}dataset/${datasetKey}/tree/${_.get(t, 'subject.id')}`)
-                    .then((path) => {
-                        t.path = path.data
-                    }))
-                ).then(() => {
-                    return res
-                })
-            })
-            .then(res => {
-                console.log(res[0])
-                this.setState({ loading: false, data: res.data, err: null });
+                this.setState({ loading: false, data: res.data.map(d => ({...d, dataset: dataset})), err: null });
             })
             .catch(err => {
                 this.setState({ loading: false, error: err, data: [] });
@@ -68,40 +65,15 @@ class DatasetSectors extends React.Component {
 
     }
 
+
     render = () => {
-        const { data, error } = this.state;
-        const { datasetKey } = this.props
+        const { data, error, loading } = this.state;
         return (<PageContent>
                     {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
 
-            <List
-                bordered
-                dataSource={data}
-                renderItem={item => (<List.Item actions={[<Button type="danger" onClick={() => this.deleteSector(item)}>Delete</Button>]}>
-                {item.path && <Breadcrumb separator=">">
-                    { item.path.reverse().map((taxon) => {
-                        return (<Breadcrumb.Item key={taxon.id} >
-                            <NavLink
-                                to={{
-                                    pathname: `/dataset/${datasetKey}/classification`,
-                                    search: `?taxonKey=${taxon.id}`
-                                }}
-                            >
-                              <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>  
-                            </NavLink>
-                        </Breadcrumb.Item>)
-                    })}
-                    </Breadcrumb>}
-                    {!item.path && <React.Fragment>
-                        <Tooltip title="This sector is not linked to a taxon id">
-                        <Icon type="warning" theme="twoTone" twoToneColor="#FF6347"/> 
-                        </Tooltip>
-                        {" "}<span dangerouslySetInnerHTML={{__html: item.subject.name}}></span>
-                        </React.Fragment>  }
-
-                
-                </List.Item>)}
-            />
+                    {error && <Alert message={error.message} type="error" />}
+          {!error && 
+        <SectorTable data={data} loading={loading} deleteSectorFromTable={()=> true}></SectorTable>}
 
         </PageContent>)
     }

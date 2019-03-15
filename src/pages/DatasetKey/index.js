@@ -91,7 +91,7 @@ class DatasetPage extends React.Component {
           <DatasetClassification id={datasetKey} defaultExpandKey={params.taxonKey} />
         )}
         {section === "sectors" && (
-          <DatasetSectors datasetKey={datasetKey} />
+          <DatasetSectors dataset={dataset} />
         )}
         
         {sect === "names" && (
