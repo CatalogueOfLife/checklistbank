@@ -4,7 +4,7 @@ import getDeep from 'lodash/get';
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
-import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode } from '../../api/enumeration';
+import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode, getImportState } from '../../api/enumeration';
 import {getTerms} from '../../api/terms';
 // Helpers
 // import { getUserItems } from '../helpers';
@@ -42,6 +42,7 @@ class ContextProvider extends React.Component {
     namefield: [],
     license: [],
     nomCode: [],
+    importState: [],
     user: null,
     notifications: [],
     termsMap: {},
@@ -104,7 +105,8 @@ class ContextProvider extends React.Component {
       getNameField(),
       getTerms(),
       getLicense(),
-      getNomCode()
+      getNomCode(),
+      getImportState()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
@@ -137,6 +139,7 @@ class ContextProvider extends React.Component {
         namefield: responses[9],
         license: responses[11],
         nomCode: responses[12],
+        importState: responses[13],
         termsMap: termsMap,
         termsMapReversed: termsMapReversed
       });

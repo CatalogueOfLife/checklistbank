@@ -3,6 +3,7 @@ import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from '../../../components/hoc/withContext'
 
 class ImportButton extends React.Component {
   constructor(props) {
@@ -67,8 +68,8 @@ class ImportButton extends React.Component {
 
   render = () => {
     const { error } = this.state;
-    const { record, style } = this.props;
-    const isStopButton = ['processing', 'inserting', 'downloading', 'in queue'].indexOf(record.state) > -1;
+    const { record, style, importState } = this.props;
+    const isStopButton = ['in queue', ...importState.filter(i => i.running === "true").map(i => i.name)].indexOf(record.state) > -1;
     
     return (
       <React.Fragment>
@@ -100,4 +101,6 @@ class ImportButton extends React.Component {
   };
 }
 
-export default ImportButton;
+const mapContextToProps = ({ importState }) => ({ importState });
+export default withContext(mapContextToProps)(ImportButton);
+

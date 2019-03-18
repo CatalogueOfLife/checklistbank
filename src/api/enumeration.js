@@ -74,4 +74,12 @@ export const getNomCode = () => {
   );
 };
 
+export const getImportState = () => {
+  return axios(`${config.dataApi}vocab/importstate`).then(res =>
+    res.data
+  );
+};
+
+
+
 

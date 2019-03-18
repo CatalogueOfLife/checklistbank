@@ -254,7 +254,7 @@ class ImportTable extends React.Component {
 
   render() {
     const { data, loading, error } = this.state;
-    const { section, user } = this.props;
+    const { section, importState, user } = this.props;
     const columns = (Auth.isAuthorised(user, ['editor', 'admin'])) ? [ ...defaultColumns, {
       title: "Action",
       dataIndex: "",
@@ -266,20 +266,9 @@ class ImportTable extends React.Component {
     }] : defaultColumns;
 
     if(section === 'finished'){
-      columns[1].filters = [{
-        text: 'Finished',
-        value: 'finished',
-      }, {
-        text: 'Failed',
-        value: 'failed',
-      }, {
-        text: 'Canceled',
-        value: 'canceled',
-      }, {
-        text: 'Unchanged',
-        value: 'unchanged',
-      }]
+      columns[1].filters = importState.map(i => ({text: _.startCase(i), value: i}))
     }
+
 
     return (
       <PageContent>

@@ -6,6 +6,8 @@ import queryString from "query-string";
 import { NavLink } from "react-router-dom";
 import Layout from "../../components/LayoutNew";
 import ImportTable from "./importTabs/ImportTable"
+import withContext from '../../components/hoc/withContext'
+
 const _ = require("lodash");
 
 class Home extends React.Component {
@@ -14,15 +16,19 @@ class Home extends React.Component {
   }
 
   render() {
-    const { section } = this.props;
+    const { section, importState } = this.props;
+    console.log(importState.filter(i => i.running === "true").map(i => i.name))
+    console.log(importState.filter(i => i.running === "false").map(i => i.name))
 
     return (
       <Layout openKeys={["imports"]} selectedKeys={[section]} title={`${_.startCase(section)} imports`}>
-        {section === "running" && <ImportTable importState={['processing', 'downloading', 'inserting', 'building metrics']} section={section} />}
-        {section === "finished" && <ImportTable importState={['unchanged', 'failed', 'canceled', 'finished']} section={section} />}
+        {section === "running" && <ImportTable importState={importState.filter(i => i.running === "true").map(i => i.name)} section={section} />}
+        {section === "finished" && <ImportTable importState={importState.filter(i => i.running === "false").map(i => i.name)} section={section} />}
       </Layout>
     );
   }
 }
 
-export default Home;
+const mapContextToProps = ({ user, importState }) => ({ user, importState });
+export default withContext(mapContextToProps)(Home);
+
