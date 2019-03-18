@@ -81,7 +81,7 @@ class DatasetPage extends React.Component {
      {_.get(dataset, 'title') && <Helmet 
       title={`${_.get(dataset, 'title')} in CoL+`}
      />}
-      { importState && importState !== 'finished' && importState !== 'failed' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
+      { importState && importState !== 'finished' && importState !== 'failed'  && importState !== 'unchanged' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {/*section === "sources" && <DatasetColSources datasetKey={datasetKey} /> */}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}

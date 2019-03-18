@@ -391,9 +391,24 @@ class WorkBench extends React.Component {
       nametype,
       namefield
     } = this.props;
-    const facetRanks = _.get(facets, 'rank') ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
-    const facetIssues =  _.get(facets, 'issue') ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
-    const facetTaxonomicStatus = _.get(facets, 'status') ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetRanks = _.get(facets, "rank")
+      ? facets.rank.map(r => ({
+          value: r.value,
+          text: `${_.startCase(r.value)} (${r.count})`
+        }))
+      : null;
+    const facetIssues = _.get(facets, "issue")
+      ? facets.issue.map(i => ({
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count})`
+        }))
+      : null;
+    const facetTaxonomicStatus = _.get(facets, "status")
+      ? facets.status.map(s => ({
+          value: s.value,
+          text: `${_.startCase(s.value)} (${s.count})`
+        }))
+      : null;
 
     columns[3].filters =
       facetTaxonomicStatus ||
