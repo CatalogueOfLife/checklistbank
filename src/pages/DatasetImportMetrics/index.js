@@ -5,6 +5,7 @@ import config from "../../config";
 import _ from "lodash";
 import axios from "axios";
 import moment from "moment";
+import history from "../../history"
 import Layout from "../../components/LayoutNew";
 import { Drawer, Tag, Row, Col, Alert, Button, Spin } from "antd";
 import ImportChart from "../../components/ImportChart";
@@ -92,6 +93,10 @@ class DatasetImportMetrics extends React.Component {
 
     axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then(res => {
+        const lastFinished = res.data.find(e => e.state === 'finished')
+        if(!_.get(this.props, "match.params.attempt") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
+          history.push(`/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
+        }
         this.setState({ importHistory: res.data, err: null });
       })
       .catch(err => {
@@ -158,6 +163,11 @@ class DatasetImportMetrics extends React.Component {
           {this.state.data && this.state.data.state === "failed" && (
             <Row style={{ padding: "10px" }}>
               <Alert type="error" message={this.state.data.error} />
+            </Row>
+          )}
+          {this.state.data && this.state.data.state === "unchanged" && (
+            <Row style={{ padding: "10px" }}>
+              <Alert type="info" message={`Import on ${moment(this.state.data.started).format("lll")} unchanged from last import`} />
             </Row>
           )}
 

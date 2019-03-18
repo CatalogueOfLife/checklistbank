@@ -25,9 +25,9 @@ const getDot = (h, attempt)=>{
 const ImportHistory = ({ importHistory, attempt }) => (
   <Timeline>
     {importHistory.map(h => (
-      <Timeline.Item color={tagColors[h.state]} dot={getDot(h, attempt)}>
-        {['finished', 'failed'].indexOf(h.state) === -1 && <strong>{h.state}</strong>}
-        {h.state === "finished" && (
+      <Timeline.Item key={h.attempt} color={tagColors[h.state]} dot={getDot(h, attempt)}>
+        {['finished', 'failed', 'unchanged'].indexOf(h.state) === -1 && <strong>{h.state}</strong>}
+        {(h.state === "finished" || h.state === "unchanged") && (
           <React.Fragment>
             <NavLink
           to={{
