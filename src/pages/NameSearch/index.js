@@ -191,9 +191,9 @@ class NameSearchPage extends React.Component {
   render() {
     const { data : {result, facets}, loading, error, params, pagination, advancedFilters } = this.state;
     const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props;
-    const facetRanks = _.get(facets, 'RANK') ? facets.RANK.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
-    const facetIssues =  _.get(facets, 'ISSUE') ? facets.ISSUE.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
-    const facetTaxonomicStatus = _.get(facets, 'STATUS') ? facets.STATUS.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetRanks = _.get(facets, 'rank') ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
+    const facetIssues =  _.get(facets, 'issue') ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
+    const facetTaxonomicStatus = _.get(facets, 'status') ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
     return (
       <div
         style={{
