@@ -32,7 +32,7 @@ class Sector extends React.Component {
       .post(
         `${config.dataApi}assembly/${
           MANAGEMENT_CLASSIFICATION.key
-        }/sync`, {sectorKey: sector.key}
+        }/sync`, {sectorKey: sector.key, key: sector.key, target: sector.target, subject: sector.subject}
       )
       .then(() => {
         this.props.reloadSelfAndSiblings();
