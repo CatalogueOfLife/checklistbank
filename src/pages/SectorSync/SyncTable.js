@@ -27,7 +27,22 @@ const tagColors = {
 };
 const defaultColumns = [
   {
-    title: "Sector",
+    title: "Source",
+    dataIndex: "sector.dataset.alias",
+    key: "alias",
+    width: 150,
+    render: (text, record) => <NavLink
+    to={{
+      pathname: `/dataset/${
+        record.sector.dataset.key
+      }/meta`
+    }}
+  >
+    {text}
+  </NavLink>
+  },
+  {
+    title: "Sector target",
     dataIndex: "sector.path",
     key: "sector",
     render: (text, record) => {
@@ -61,7 +76,7 @@ const defaultColumns = [
         </React.Fragment>
       );
     },
-    width: 150
+    width: 100
   },
   {
     title: "State",
@@ -233,6 +248,12 @@ class SyncTable extends React.Component {
                   .then(sector => {
                     sync.sector = sector.data;
                     sync._id = `${sync.sectorKey}_${sync.attempt}`;
+                  })
+                  .then(() => 
+                    axios(`${config.dataApi}dataset/${sync.sector.datasetKey}`)
+                  )
+                  .then((res) => {
+                    sync.sector.dataset=res.data
                   })
                   .then(() =>
                    { return _.get(sync, 'sector.target.id') ? axios(
