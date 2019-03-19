@@ -101,7 +101,8 @@ class ColTree extends React.Component {
           `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
             defaultExpandKey
           )}`
-        )
+        ).then(res => this.decorateWithSectorsAndDataset({data: {result: res.data}}).then(()=> res))
+
       : Promise.resolve(false);
     var defaultExpandedNodes;
     return Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
@@ -155,7 +156,8 @@ class ColTree extends React.Component {
             defaultExpandAll:
               !defaultExpanded && treeType !== "mc" && treeData.length < 10,
             error: null,
-            defaultExpandedKeys: defaultExpandedNodes
+            defaultExpandedKeys: defaultExpandedNodes,
+            expandedKeys: defaultExpandedNodes
           });
         } else {
           this.setState({
@@ -169,7 +171,7 @@ class ColTree extends React.Component {
         }
       })
       .catch(err => {
-        this.setState({ treeData: [], defaultExpandedKeys: null, error: err });
+        this.setState({ treeData: [], defaultExpandedKeys: null, expandedKeys: [], error: err });
       });
   };
   fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
@@ -179,30 +181,7 @@ class ColTree extends React.Component {
         taxonKey
       )}/children?limit=${limit}&offset=${offset}`
     )
-      .then(res => {
-        if (!res.data.result) return res;
-        if(treeType !== 'mc' && dataset){
-          return Promise.all( res.data.result
-          .filter(tx => !!tx.sector)
-          .map(tx => datasetLoader.load(tx.sector.datasetKey)
-          .then(dataset => (tx.sector.dataset = dataset)))
-          ).then(() => res);
-        } else {
-          return Promise.all(
-            res.data.result
-              .filter(tx => !!tx.sectorKey)
-              .map(tx =>
-                sectorLoader.load(tx.sectorKey).then(
-                  r => {tx.sector = r
-                  return datasetLoader.load(r.datasetKey)
-                  .then(dataset => (tx.sector.dataset = dataset))
-                }
-                )
-              )
-          ).then(() => res);
-        }
-        
-      })
+      .then(this.decorateWithSectorsAndDataset)
       .then(res =>
         res.data.result
           ? res.data.result.map(tx => {
@@ -232,6 +211,33 @@ class ColTree extends React.Component {
           : []
       );
   };
+
+  decorateWithSectorsAndDataset = res => {
+    const { showSourceTaxon, dataset, treeType } = this.props;
+
+    if (!res.data.result) return res;
+    if(treeType !== 'mc' && dataset){
+      return Promise.all( res.data.result
+      .filter(tx => !!tx.sector)
+      .map(tx => datasetLoader.load(tx.sector.datasetKey)
+      .then(dataset => (tx.sector.dataset = dataset)))
+      ).then(() => res);
+    } else {
+      return Promise.all(
+        res.data.result
+          .filter(tx => !!tx.sectorKey)
+          .map(tx =>
+            sectorLoader.load(tx.sectorKey).then(
+              r => {tx.sector = r
+              return datasetLoader.load(r.datasetKey)
+              .then(dataset => (tx.sector.dataset = dataset))
+            }
+            )
+          )
+      ).then(() => res);
+    }
+    
+  }
 
   onLoadData = (treeNode, reloadAll = false) => {
     const {

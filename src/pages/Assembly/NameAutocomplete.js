@@ -63,9 +63,12 @@ class DatasetAutocomplete extends React.Component {
             placeholder="Find taxon" 
             dataSource={options}
             onChange={(value) => this.setState({value})}
-            value={value}      
+            value={value}
+            autoFocus={true}
+      
         >
-        <Input suffix={suffix}/>
+        <Input 
+        />
             
         </AutoComplete>
     }

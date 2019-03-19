@@ -45,7 +45,6 @@ class DatasetAutocomplete extends React.Component {
             dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: o.title})) : []}
             placeholder="Find dataset"
             style={{ width: '100%' }}
-
         >
             <Input
 
