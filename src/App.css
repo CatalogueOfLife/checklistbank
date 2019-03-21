@@ -211,6 +211,7 @@ div.admonition {
   vertical-align: top;
   right: 0.3em;
   top: 0px;
+  white-space: nowrap;
 }
 
 .citeme {
