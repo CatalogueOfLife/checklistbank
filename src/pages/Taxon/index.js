@@ -8,6 +8,7 @@ import { Alert, Tag, Breadcrumb, Row, Col, Button } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
+import CslReferences from "./CslReferences"
 import Distributions from "./Distributions";
 import Classification from "./Classification";
 import NameRelations from "./NameRelations";
@@ -366,7 +367,9 @@ class TaxonPage extends React.Component {
 
             {_.get(info, "references") && (
               <PresentationItem md={md} label="References">
-                <References style={{marginTop: '-10px'}} data={info.references} />
+               <CslReferences references={info.references}></CslReferences>
+
+                { /* <References style={{marginTop: '-10px'}} data={info.references} /> */ }
               </PresentationItem>
             )}
 
