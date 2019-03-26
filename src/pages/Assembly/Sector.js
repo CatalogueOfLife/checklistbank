@@ -49,12 +49,12 @@ class Sector extends React.Component {
 
   deleteSector = sector => {
     axios
-      .delete(`${config.dataApi}sector/${sector.key}`)
+      .delete(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${sector.key}`)  // /assembly/3/sync/
       .then(() => {
         this.props.reloadSelfAndSiblings();
         notification.open({
-          message: "Sector deleted",
-          description: `${sector.key} was deleted from the CoL draft`
+          message: "Deletion triggered",
+          description: `Delete job for ${sector.key} placed on the sync queue`
         });
       })
       .catch(err => {
