@@ -148,7 +148,7 @@ class DatasetClassification extends React.Component {
         }
         return treeData;
       })
-      .then(this.expandSingleChildNodes)
+      .then((treeData) => (defaultExpandedNodes && defaultExpandKey) ? Promise.resolve(treeData) : this.expandSingleChildNodes(treeData))
       .then(treeData => {
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
@@ -156,7 +156,8 @@ class DatasetClassification extends React.Component {
             childlessRoots: treeData.filter(r => r.childCount === 0).map(t => t.taxon),
             rootLoading: false,
             defaultExpandAll: false,
-            defaultExpandedKeys: defaultExpandedNodes
+            defaultExpandedKeys: defaultExpandedNodes,
+            expandedKeys: defaultExpandedNodes
           });
         } else {
 
