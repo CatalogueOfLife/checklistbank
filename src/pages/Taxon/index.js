@@ -294,6 +294,11 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
+            {_.get(taxon, "rank") && (
+              <PresentationItem md={md} label="Rank">
+                {_.get(taxon, "rank")}
+              </PresentationItem>
+            )}
             {_.get(taxon, "origin") && (
               <PresentationItem  md={md} label="Origin">
                 {_.get(taxon, "origin")}
