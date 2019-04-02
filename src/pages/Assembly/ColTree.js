@@ -105,7 +105,7 @@ class ColTree extends React.Component {
 
       : Promise.resolve(false);
     var defaultExpandedNodes;
-    return Promise.all([axios(`${config.dataApi}dataset/${id}/tree`), p])
+    return Promise.all([axios(`${config.dataApi}dataset/${id}/tree`).then(this.decorateWithSectorsAndDataset), p])
       .then(values => {
         const mainTreeData = values[0].data.result;
         const defaultExpanded = values[1] ? values[1].data : null;

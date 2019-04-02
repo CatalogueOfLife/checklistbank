@@ -66,7 +66,7 @@ class Sector extends React.Component {
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
     const isRootSector =
-      _.get(taxon, "parentId") &&
+      !_.get(taxon, "parentId") ||
       _.get(sector, "target.id") &&
       sector.target &&
       taxon.parentId === sector.target.id;
