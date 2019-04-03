@@ -157,11 +157,33 @@ class Sector extends React.Component {
     ) : (
         <ColTreeContext.Consumer>
         { ({syncState} )=> (
+                <Popover
+                content={
+                  <div>
+                      
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="primary"
+                      onClick={() => {
+                        alert('Ready to block')
+                      }}
+                    >
+                      Block taxon
+                    </Button>
+                  </div>
+                }
+                title="Sector Options"
+                visible={this.state.popOverVisible}
+                onVisibleChange={this.handleVisibleChange}
+                trigger="click"
+                placement="rightTop"
+              >
         <Tag color={stringToColour(sectorSourceDataset.title)}>
         {isRootSector && <Icon type="caret-right" />}
         {sectorSourceDataset.alias || sectorSourceDataset.key}
         {_.get(syncState, 'running.sectorKey') === sector.key && <Icon type="sync" style={{marginLeft: '5px'}} spin />}
       </Tag>
+      </Popover>
       )}
       </ColTreeContext.Consumer>
     );

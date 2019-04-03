@@ -216,13 +216,7 @@ class ColTree extends React.Component {
     const { showSourceTaxon, dataset, treeType } = this.props;
 
     if (!res.data.result) return res;
-    if(treeType !== 'mc' && dataset){
-      return Promise.all( res.data.result
-      .filter(tx => !!tx.sector)
-      .map(tx => datasetLoader.load(tx.sector.datasetKey)
-      .then(dataset => (tx.sector.dataset = dataset)))
-      ).then(() => res);
-    } else {
+  
       return Promise.all(
         res.data.result
           .filter(tx => !!tx.sectorKey)
@@ -235,7 +229,7 @@ class ColTree extends React.Component {
             )
           )
       ).then(() => res);
-    }
+    
     
   }
 

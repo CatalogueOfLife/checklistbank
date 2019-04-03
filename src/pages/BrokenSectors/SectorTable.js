@@ -195,7 +195,7 @@ class SyncTable extends React.Component {
                   highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
-                  textToHighlight={record.target.name.toString()}
+                  textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
                 />{" "}
                 {!record.target.id && (
                   <Icon
