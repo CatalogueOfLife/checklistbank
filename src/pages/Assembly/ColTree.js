@@ -9,6 +9,9 @@ import ErrorMsg from "../../components/ErrorMsg";
 import {getSectorsBatch} from "../../api/sector"
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader"
+import { ColTreeContext } from "./ColTreeContext";
+
+
 const sectorLoader = new DataLoader(ids =>
   getSectorsBatch(ids)
 );
@@ -425,41 +428,53 @@ class ColTree extends React.Component {
     this.setState({ treeData: [...this.state.treeData] });
   };
   confirmModify = e => {
-    if (e.node.props.dataRef.children) {
-      e.node.props.dataRef.children.push(e.dragNode.props.dataRef);
-    } else {
-      e.node.props.dataRef.children = [e.dragNode.props.dataRef];
-    }
-    _.remove(e.dragNode.props.dataRef.parent.children, function(n) {
-      return n.key === e.dragNode.props.dataRef.key;
-    });
-    e.node.props.dataRef.title = (
-      <ColTreeNode
-        taxon={e.node.props.title.props.taxon}
-        datasetKey={this.props.dataset.key}
-        confirmVisible={false}
-      />
-    );
-    let msg = `You moved ${e.dragNode.props.dataRef.name} from parent ${
-      e.dragNode.props.dataRef.parent.title.props.taxon.name
-    } to parent ${e.node.props.dataRef.title.props.taxon.name}`;
-    this.setState(
-      {
-        treeData: [...this.state.treeData],
-        defaultExpandAll: false
-      },
-      () => {
-        notification.open({
-          message: "Taxon moved",
-          description: msg
-        });
+    const parent = e.node.props.dataRef.title.props.taxon;
+    const draggedTaxon = e.dragNode.props.dataRef.title.props.taxon
+    axios(`${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`)
+    .then((res)=> res.data)
+    .then((draggedTaxon)=> axios.put(`${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`, 
+    {...draggedTaxon, parentId: parent.id})
+    ).then(res => {
+   
+      if (e.node.props.dataRef.children) {
+        e.node.props.dataRef.children.push(e.dragNode.props.dataRef);
+      } else {
+        e.node.props.dataRef.children = [e.dragNode.props.dataRef];
       }
-    );
+      _.remove(e.dragNode.props.dataRef.parent.children, function(n) {
+        return n.key === e.dragNode.props.dataRef.key;
+      });
+      e.node.props.dataRef.title = (
+        <ColTreeNode
+          taxon={e.node.props.title.props.taxon}
+          datasetKey={this.props.dataset.key}
+          confirmVisible={false}
+        />
+      );
+      let msg = <span>You moved <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> from parent{" "} 
+      <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>
+      to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/></span>;
+      this.setState(
+        {
+          treeData: [...this.state.treeData],
+          defaultExpandAll: false
+        },
+        () => {
+          notification.open({
+            message: "Taxon moved",
+            description: msg
+          });
+        }
+      );
+    }).catch((err)=>{
+      alert(err)
+    });
+
   };
   handleModify = e => {
-    const msg = `Move ${e.dragNode.props.dataRef.name} from parent ${
-      e.dragNode.props.dataRef.parent.title.props.taxon.name
-    } to parent ${e.node.props.dataRef.title.props.taxon.name}?`;
+    const msg = <span>Move <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> from parent{" "} 
+    <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>
+    to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/>?</span>;
     e.node.props.dataRef.title = (
       <ColTreeNode
         taxon={e.node.props.title.props.taxon}
@@ -483,8 +498,7 @@ class ColTree extends React.Component {
     );
     this.setState({ treeData: [...this.state.treeData] });
   };
-  handleDrop = e => {
-    const { mode } = this.state;
+  handleDrop = (e, mode) => {
     const { treeType } = this.props;
     if (treeType !== "mc") {
       return;
@@ -539,13 +553,15 @@ class ColTree extends React.Component {
         {" "}
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
         {treeData.length > 0 && (
+                  <ColTreeContext.Consumer>
+                  {({ mode}) =>
           <Tree
             showLine={true}
             defaultExpandAll={defaultExpandAll}
             defaultExpandedKeys={defaultExpandedKeys}
             expandedKeys={expandedKeys}
             draggable={draggable}
-            onDrop={this.handleDrop}
+            onDrop={(e) =>this.handleDrop(e, mode)}
             onDragStart={onDragStart}
             loadedKeys={loadedKeys}
             loadData={this.onLoadData}
@@ -568,7 +584,9 @@ class ColTree extends React.Component {
             }}
           >
             {this.renderTreeNodes(treeData)}
-          </Tree>
+          </Tree>}
+          </ColTreeContext.Consumer>
+
         )}
       </div>
     );

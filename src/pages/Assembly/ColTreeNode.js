@@ -12,35 +12,47 @@ import {
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import {ColTreeContext} from "./ColTreeContext"
-import Sector from "./Sector"
-import DecisionTag from "../WorkBench/DecisionTag"
-
+import { ColTreeContext } from "./ColTreeContext";
+import Sector from "./Sector";
+import DecisionTag from "../WorkBench/DecisionTag";
+import AddChildModal from "./AddChildModal";
 
 class ColTreeNode extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       style: {},
-      popOverVisible: false
+      popOverVisible: false,
+      childModalVisible: false
     };
   }
   setMode = mode => {
     this.setState({ mode });
   };
 
-
-
   deleteTaxon = taxon => {
-   axios
+    axios
+      .delete(`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}`)
+      .then(() => {
+        this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Taxon deleted",
+          description: `${taxon.name} was deleted from the CoL draft`
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  };
+
+  deleteTaxonRecursive = taxon => {
+    axios
       .delete(`${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`)
       .then(() => {
         this.props.reloadSelfAndSiblings();
         notification.open({
           message: "Taxon deleted",
-          description: `${
-            taxon.name
-          } was deleted from the CoL draft`
+          description: `${taxon.name} was deleted from the CoL draft`
         });
       })
       .catch(err => {
@@ -55,43 +67,76 @@ class ColTreeNode extends React.Component {
       hasPopOver,
       isUpdating
     } = this.props;
+    const { childModalVisible } = this.state;
+    const cancelChildModal = () => {
+      this.setState({ childModalVisible: false });
+    };
     return (
       <div>
         <ColTreeContext.Consumer>
-        { ({mode} )=> (mode === "modify" &&
-          hasPopOver && (
-            <Popover
-              content={
-                <Row>
-                  <Col span={12}>
-                    <Button type="danger" onClick={() => this.deleteTaxon(taxon)}>Delete taxon</Button>
-                  </Col>
-                 { /* <Col span={12}>
-                    {" "}
-                    <Button style={{ marginLeft: "12px" }} type="primary">
+          {({ mode }) =>
+            mode === "modify" &&
+            hasPopOver && (
+              <Popover
+                content={
+                  <React.Fragment>
+                    <Button
+                      type="danger"
+                      style={{ width: "100%" }}
+                      onClick={() => this.deleteTaxon(taxon)}
+                    >
+                      Delete taxon
+                    </Button>
+                    <br />
+                    <Button
+                      type="danger"
+                      style={{ marginTop: "8px", width: "100%" }}
+                      onClick={() => this.deleteTaxonRecursive(taxon)}
+                    >
+                      Delete subtree
+                    </Button>
+
+                    <br />
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="primary"
+                      onClick={() =>
+                        this.setState({
+                          childModalVisible: true,
+                          popOverVisible: false
+                        })
+                      }
+                    >
                       Add child
                     </Button>
-              </Col> */}
-                </Row>
-              }
-              title="Options"
-              visible={this.state.popOverVisible}
-              onVisibleChange={this.handleVisibleChange}
-              trigger="click"
-              placement="rightTop"
-            >
-              <Popconfirm
-                visible={this.props.confirmVisible}
-                title={this.props.confirmTitle}
-                onConfirm={this.props.onConfirm}
-                onCancel={this.props.onCancel}
+                    {childModalVisible && (
+                      <AddChildModal
+                        onCancel={cancelChildModal}
+                        onSuccess={cancelChildModal}
+                        parent={taxon}
+                      />
+                    )}
+                  </React.Fragment>
+                }
+                title="Options"
+                visible={this.state.popOverVisible}
+                onVisibleChange={() =>
+                  this.setState({ popOverVisible: !this.state.popOverVisible })
+                }
+                trigger="click"
+                placement="rightTop"
               >
-                <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                  {taxon.rank}:{" "}
-                </span>
-                <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>
-                {mode === "modify" &&
-                  !_.isUndefined(taxon.speciesCount) && (
+                <Popconfirm
+                  visible={this.props.confirmVisible}
+                  title={this.props.confirmTitle}
+                  onConfirm={this.props.onConfirm}
+                  onCancel={this.props.onCancel}
+                >
+                  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                    {taxon.rank}:{" "}
+                  </span>
+                  <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
+                  {mode === "modify" && !_.isUndefined(taxon.speciesCount) && (
                     <span>
                       {" "}
                       • {taxon.speciesCount}{" "}
@@ -101,82 +146,88 @@ class ColTreeNode extends React.Component {
                       living species
                     </span>
                   )}
-                {isUpdating && (
-                  <span>
-                    {" "}
-                    <Icon type="sync" spin />
+                  {isUpdating && (
+                    <span>
+                      {" "}
+                      <Icon type="sync" spin />
+                    </span>
+                  )}
+                  {taxon.status !== "accepted" && (
+                    <Tag color="red" style={{ marginLeft: "6px" }}>
+                      {taxon.status}
+                    </Tag>
+                  )}
+                </Popconfirm>
+              </Popover>
+            )
+          }
+        </ColTreeContext.Consumer>
+        <ColTreeContext.Consumer>
+          {({ mode, selectedSourceDatasetKey, getSyncState }) =>
+            (mode !== "modify" || !hasPopOver) && (
+              <Popconfirm
+                visible={this.props.confirmVisible}
+                title={this.props.confirmTitle}
+                onConfirm={this.props.onConfirm}
+                onCancel={this.props.onCancel}
+              >
+                <div>
+                  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                    {taxon.rank}:{" "}
                   </span>
-                )}
-                {taxon.status !== "accepted" && (
-                  <Tag color="red" style={{ marginLeft: "6px" }}>
-                    {taxon.status}
-                  </Tag>
-                )}
+                  <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
+                  {mode === "modify" && !_.isUndefined(taxon.speciesCount) && (
+                    <span>
+                      {" "}
+                      • {taxon.speciesCount}{" "}
+                      {!_.isUndefined(taxon.speciesEstimate) && (
+                        <span> of {taxon.speciesEstimate} est. </span>
+                      )}
+                      living species
+                    </span>
+                  )}
+                  {isUpdating && (
+                    <span>
+                      {" "}
+                      <Icon type="sync" spin />
+                    </span>
+                  )}
+                  {taxon.status !== "accepted" && (
+                    <Tag color="red" style={{ marginLeft: "6px" }}>
+                      {taxon.status}
+                    </Tag>
+                  )}
+
+                  {sector && (
+                    <span>
+                      <span> • </span>
+                      <Sector
+                        {...this.props}
+                        selectedSourceDatasetKey={selectedSourceDatasetKey}
+                        getSyncState={getSyncState}
+                      />
+                    </span>
+                  )}
+                  {decision && (
+                    <span>
+                      <span> • </span>
+                      <DecisionTag
+                        {...this.props}
+                        decision={decision}
+                        deleteCallback={() =>
+                          this.props.reloadSelfAndSiblings()
+                        }
+                      />
+                    </span>
+                  )}
+                </div>
               </Popconfirm>
-            </Popover>
-          ) )}
-          </ColTreeContext.Consumer>
-          <ColTreeContext.Consumer>
-
-          { ({mode, selectedSourceDatasetKey, getSyncState} ) => ((mode !== "modify" || !hasPopOver) && (
-          <Popconfirm
-            visible={this.props.confirmVisible}
-            title={this.props.confirmTitle}
-            onConfirm={this.props.onConfirm}
-            onCancel={this.props.onCancel}
-          >
-            <div>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {taxon.rank}:{" "}
-              </span>
-              <span dangerouslySetInnerHTML={{__html: taxon.name}}></span>
-              {mode === "modify" &&
-                !_.isUndefined(taxon.speciesCount) && (
-                  <span>
-                    {" "}
-                    • {taxon.speciesCount}{" "}
-                    {!_.isUndefined(taxon.speciesEstimate) && (
-                      <span> of {taxon.speciesEstimate} est. </span>
-                    )}
-                    living species
-                  </span>
-                )}
-              {isUpdating && (
-                <span>
-                  {" "}
-                  <Icon type="sync" spin />
-                </span>
-              )}
-              {taxon.status !== "accepted" && (
-                <Tag color="red" style={{ marginLeft: "6px" }}>
-                  {taxon.status}
-                </Tag>
-              )}
-
-              {
-                sector &&
-                 (
-                  <span>
-                    <span> • </span>
-                  <Sector {...this.props} selectedSourceDatasetKey={selectedSourceDatasetKey} getSyncState={getSyncState}/>
-                  </span>
-                )}
-                 {
-                decision &&
-                (
-                  <span>
-                    <span> • </span>
-                  <DecisionTag {...this.props} decision={decision} deleteCallback={() => this.props.reloadSelfAndSiblings()}/>
-                  </span>
-                )}
-            </div>
-          </Popconfirm>
-        ))}
-      </ColTreeContext.Consumer>
+            )
+          }
+        </ColTreeContext.Consumer>
       </div>
     );
   };
 }
-
 
 export default ColTreeNode;
