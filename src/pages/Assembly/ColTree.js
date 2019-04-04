@@ -451,8 +451,8 @@ class ColTree extends React.Component {
           confirmVisible={false}
         />
       );
-      let msg = <span>You moved <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> from parent{" "} 
-      <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>
+      let msg = <span>You moved <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> {" "}from parent{" "} 
+      <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>{" "}
       to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/></span>;
       this.setState(
         {
@@ -473,7 +473,7 @@ class ColTree extends React.Component {
   };
   handleModify = e => {
     const msg = <span>Move <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> from parent{" "} 
-    <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>
+    <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>{" "}
     to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/>?</span>;
     e.node.props.dataRef.title = (
       <ColTreeNode

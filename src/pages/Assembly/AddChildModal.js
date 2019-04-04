@@ -129,11 +129,11 @@ class AddChildModal extends React.Component {
         <FormItem {...formItemLayout} label="Nom. status">
           {getFieldDecorator("nomstatus", {
             
-              initialValue: "acceptable",
             
             
           })(
             <Select style={{ width: 200 }} defaultValue="acceptable">
+          
               {nomstatus.map(r => (
                 <Option key={r} value={r}>
                   {r}
