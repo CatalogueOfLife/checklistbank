@@ -198,7 +198,7 @@ class ColTreeNode extends React.Component {
                     </Tag>
                   )}
 
-                  {sector && (
+                  {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>
                       <Sector
