@@ -117,7 +117,10 @@ class AddChildModal extends React.Component {
               }
             ]
           })(
-            <Select style={{ width: 200 }}>
+            <Select 
+            style={{ width: 200 }}
+            showSearch
+            >
               {rank.map(r => (
                 <Option key={r} value={r}>
                   {r}
@@ -132,7 +135,7 @@ class AddChildModal extends React.Component {
             
             
           })(
-            <Select style={{ width: 200 }} defaultValue="acceptable">
+            <Select style={{ width: 200 }} defaultValue="acceptable" showSearch>
           
               {nomstatus.map(r => (
                 <Option key={r} value={r}>

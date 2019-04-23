@@ -44,6 +44,7 @@ class MultiValueFilter extends React.Component {
         style={{marginBottom: '8px'}}
       >
       <Select
+        showSearch
         style={{ width: "100%" }}
         mode="multiple"
         placeholder="Please select"

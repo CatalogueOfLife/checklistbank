@@ -219,7 +219,7 @@ class NameSearchPage extends React.Component {
             <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
-              vocab={facetIssues || issue}
+              vocab={facetIssues || issue.map(i => i.name)}
               label="Issues"
             />
 
