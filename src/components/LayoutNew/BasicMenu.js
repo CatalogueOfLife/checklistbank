@@ -257,6 +257,18 @@ class BasicMenu extends Component {
                     Workbench
                   </NavLink>
                 </Menu.Item>
+                <Menu.Item key="duplicates">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/duplicates`
+                    }}
+                  >
+                    Duplicates
+                  </NavLink>
+                </Menu.Item>
                 {selectedTaxon && (
                   <Menu.Item key="taxon">
                     Taxon: {selectedTaxon.id}

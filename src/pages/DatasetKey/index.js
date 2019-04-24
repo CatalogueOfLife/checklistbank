@@ -19,6 +19,7 @@ import WorkBench from "../WorkBench"
 import withContext from "../../components/hoc/withContext"
 import _ from 'lodash'
 import Helmet from 'react-helmet'
+import Duplicates from "../Duplicates";
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -99,6 +100,9 @@ class DatasetPage extends React.Component {
         )}
         {sect === "workbench" && (
           <WorkBench datasetKey={datasetKey} location={this.props.location} />
+        )}
+        {sect === "duplicates" && (
+          <Duplicates datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );
