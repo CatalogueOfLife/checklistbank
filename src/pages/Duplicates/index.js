@@ -270,7 +270,7 @@ class DuplicateSearchPage extends React.Component {
 
             <Select 
             placeholder="Status"
-            value={`${params.status1}-${params.status2}`}
+            value={ (params.status1 && params.status2) ? `${params.status1}-${params.status2}` : undefined}
             style={{ width: 200, marginRight: 10  }}
             showSearch
             onChange={(value) => {
@@ -348,6 +348,9 @@ class DuplicateSearchPage extends React.Component {
       
         </Row>
         <Row><Col  style={{ textAlign: "right", marginBottom: "8px" }}>
+        <Button style={{ marginRight: 10  }} onClick={() => this.setState({expandedRowKeys: this.state.data.map(record => `${record.usage1.id} ${record.usage2.id}`)})}>
+                Expand all rows
+              </Button>
         <Button style={{ marginRight: 10  }} onClick={() => this.setState({expandedRowKeys: []})}>
                 Collapse all rows
               </Button>
