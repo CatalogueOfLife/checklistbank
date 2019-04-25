@@ -21,6 +21,7 @@ const columns = [
   {
     title: "Status",
     key: "statusDifferent",
+    filters: [{text: "accepted - accepted", value: "accepted - accepted"},{text: "accepted - synonym", value: "accepted - synonym"}],
     render: (text, record) => {
       return `${record.usage1.status} - ${record.usage2.status}`
       
@@ -87,9 +88,7 @@ class DuplicateSearchPage extends React.Component {
     const { params } = this.state;
     this.setState({ loading: true });
     const { datasetKey } = this.props;
-    if (!params.q) {
-      delete params.q;
-    }
+  
     history.push({
       pathname: `/dataset/${datasetKey}/duplicates`,
       search: `?${qs.stringify(params)}`
@@ -113,7 +112,7 @@ class DuplicateSearchPage extends React.Component {
       });
   };
   handleTableChange = (pagination, filters, sorter) => {
-   
+    
     let query = _.merge(this.state.params, {
       ...filters
     });
@@ -270,43 +269,33 @@ class DuplicateSearchPage extends React.Component {
             </Select>
 
             <Select 
-            placeholder="Status 1"
-            value={params.status1}
+            placeholder="Status"
+            value={`${params.status1}-${params.status2}`}
             style={{ width: 200, marginRight: 10  }}
             showSearch
-            onChange={(value) => this.updateSearch({status1: value})}
+            onChange={(value) => {
+              const statuses = value.split('-');
+              this.updateSearch({status1: statuses[0], status2: statuses[1]})}
+            }
             >
               
-                <Option  value="accepted">
-                accepted
+                <Option  value="accepted-accepted">
+                accepted - accepted
                 </Option>
-                <Option  value="synonym">
-                synonym
+                <Option  value="accepted-synonym">
+                accepted - synonym
+                </Option>
+                <Option  value="synonym-synonym">
+                synonym - synonym
                 </Option>
               
             </Select>
 
-            <Select 
-            placeholder="Status 2"
-            value={params.status2}
-            style={{ width: 200, marginRight: 10  }}
-            showSearch
-            onChange={(value) => this.updateSearch({status2: value})}
-            >
-              
-                <Option  value="accepted">
-                accepted
-                </Option>
-                <Option  value="synonym">
-                synonym
-                </Option>
-              
-            </Select>
             <FormItem label="Parent different">
-            <Switch checked={Boolean(params.parentDifferent)} onChange={(value) => this.updateSearch({parentDifferent: value})}>parentDifferent</Switch>
+            <Switch checked={Boolean(params.parentDifferent)} onChange={(value) => this.updateSearch({parentDifferent: value})}/>
             </FormItem>
             <FormItem  label="With decision">
-            <Switch checked={Boolean(params.withDecision)} onChange={(value) => this.updateSearch({withDecision: value})}>withDecision</Switch>
+            <Switch checked={Boolean(params.withDecision)} onChange={(value) => this.updateSearch({withDecision: value})} />
             </FormItem>
             <FormItem>
             <Button type="danger" onClick={this.resetSearch}>
