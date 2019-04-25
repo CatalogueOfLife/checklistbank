@@ -12,50 +12,43 @@ import MultiValueFilter from "../NameSearch/MultiValueFilter";
 import RowDetail from './RowDetail'
 import _ from "lodash";
 import withContext from '../../components/hoc/withContext'
+import BooleanValue from '../../components/BooleanValue'
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
 const columns = [
   {
-    title: "Scientific Name",
-    dataIndex: "usage1.name.formattedName",
-    key: "scientificName",
+    title: "Status",
+    key: "statusDifferent",
     render: (text, record) => {
-      return (
-        <NavLink
-          key={_.get(record, "usage1.id")}
-          to={{
-            pathname: `/dataset/${_.get(record, "usage1.name.datasetKey")}/${
-              _.get(record, "usage1.bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-               _.get(record, "usage1.accepted.name.id") ? _.get(record, "usage1.accepted.name.id") : _.get(record, "usage1.name.id")
-            )}`
-          }}
-          exact={true}
-        >
-          <span dangerouslySetInnerHTML={{__html: text}}></span>
-        </NavLink>
-      );
-    },
-    width: 200
+      return `${record.usage1.status} - ${record.usage2.status}`
+      
+    }
   },
   {
-    title: "Status",
-    dataIndex: "usage1.status",
-    key: "status",
-    width: 200,
+    title: "Authors different",
+    key: "authorsDifferent",
     render: (text, record) => {
-      return !['synonym', 'ambiguous synonym', 'misapplied'].includes(text) ? text :
-      <React.Fragment key={_.get(record, "usage1.id")}>
-       {text} {text === 'misapplied' ? 'to ': 'of '}<span dangerouslySetInnerHTML={{__html: _.get(record, "usage1.accepted.name.formattedName")}}></span>
-      </React.Fragment>
+      return <BooleanValue value={record.usage1.name.authorship !== record.usage2.name.authorship}/>
+      
+    }
+  },
+  {
+    title: "Parent different",
+    key: "parentDifferent",
+    render: (text, record) => {
+      return <BooleanValue value={record.usage1.parentId !== record.usage2.parentId}/>
+      
     }
   },
   {
     title: "Rank",
-    dataIndex: "usage1.name.rank",
     key: "rank",
-    width: 60
+
+    render: (text, record) => {
+      return `${record.usage1.name.rank} - ${record.usage2.name.rank}`
+      
+    }
   }
 ];
 
@@ -122,22 +115,7 @@ class DuplicateSearchPage extends React.Component {
       ...filters
     });
 
-    if (sorter && sorter.field) {
-      let split = sorter.field.split(".");
 
-      if (split[split.length - 1] === "formattedName") {
-        query.sortBy = "name";
-      } else if (split[split.length - 1] === "rank") {
-        query.sortBy = "taxonomic";
-      } else {
-        query.sortBy = split[split.length - 1];
-      }
-    }
-    if (sorter && sorter.order === "descend") {
-      query.reverse = true;
-    } else {
-      query.reverse = false;
-    }
     this.setState({ params: query }, this.getData);
   };
 
@@ -314,10 +292,10 @@ class DuplicateSearchPage extends React.Component {
               
             </Select>
             <FormItem label="Parent different">
-            <Switch checked={params.parentDifferent} onChange={(value) => this.updateSearch({parentDifferent: value})}>parentDifferent</Switch>
+            <Switch checked={Boolean(params.parentDifferent)} onChange={(value) => this.updateSearch({parentDifferent: value})}>parentDifferent</Switch>
             </FormItem>
             <FormItem  label="With decision">
-            <Switch checked={params.withDecision} onChange={(value) => this.updateSearch({withDecision: value})}>withDecision</Switch>
+            <Switch checked={Boolean(params.withDecision)} onChange={(value) => this.updateSearch({withDecision: value})}>withDecision</Switch>
             </FormItem>
             <FormItem>
             <Button type="danger" onClick={this.resetSearch}>
@@ -374,6 +352,7 @@ class DuplicateSearchPage extends React.Component {
         {!error && (
           <Table
             size="small"
+            defaultExpandAllRows={true}
             columns={this.state.columns}
             dataSource={data}
             loading={loading}
