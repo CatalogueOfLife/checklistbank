@@ -17,6 +17,7 @@ const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
 const columns = [
+
   {
     title: "Status",
     key: "statusDifferent",
@@ -64,7 +65,8 @@ class DuplicateSearchPage extends React.Component {
       params: {},
       loading: false,
       postingDecisions: false,
-      decision: null
+      decision: null,
+      expandedRowKeys: []
     };
   }
 
@@ -102,6 +104,7 @@ class DuplicateSearchPage extends React.Component {
         this.setState({
           loading: false,
           data: res.data,
+          expandedRowKeys: res.data.map(record => `${record.usage1.id} ${record.usage2.id}`),
           error: null
         });
       })
@@ -204,6 +207,14 @@ class DuplicateSearchPage extends React.Component {
         });
       });
 
+  }
+  onExpand = (expanded, record) => {
+    if(expanded){
+      this.setState({expandedRowKeys: [...this.state.expandedRowKeys, `${record.usage1.id} ${record.usage2.id}`]})
+    } else {
+      this.setState({expandedRowKeys: this.state.expandedRowKeys.filter(k => k !== `${record.usage1.id} ${record.usage2.id}`)})
+
+    }
   }
   render() {
     const { data , loading, error, params, selectedKeysForDecision, selectedRowKeys, decision, postingDecisions } = this.state;
@@ -348,16 +359,20 @@ class DuplicateSearchPage extends React.Component {
       
         </Row>
         <Row><Col  style={{ textAlign: "right", marginBottom: "8px" }}>
+        <Button style={{ marginRight: 10  }} onClick={() => this.setState({expandedRowKeys: []})}>
+                Collapse all rows
+              </Button>
           { data && data.length > 0 && `results: ${data.length}` }</Col></Row>
         {!error && (
           <Table
             size="small"
-            defaultExpandAllRows={true}
+            onExpand={this.onExpand}
+            expandedRowKeys={this.state.expandedRowKeys}
             columns={this.state.columns}
             dataSource={data}
             loading={loading}
             onChange={this.handleTableChange}
-            rowKey={(record) => `${record.usage1.id} ${record.usage2.id}`}
+            rowKey={record => `${record.usage1.id} ${record.usage2.id}`}
             expandedRowRender={record => <RowDetail data={record} selectedRowKeys={selectedRowKeys[`${record.usage1.id} ${record.usage2.id}`] || []} onSelectChange={this.onSelectChange} index={`${record.usage1.id} ${record.usage2.id}`}></RowDetail>}
           />
         )}

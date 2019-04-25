@@ -269,14 +269,13 @@ class NameSearchPage extends React.Component {
           { pagination && !isNaN(pagination.total) && `results: ${pagination.total}` }</Col></Row>
         {!error && (
           <Table
-            scroll={{x: 800, y:600}}
             size="small"
             columns={this.state.columns}
             dataSource={result}
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey="usage.name.id"
+            rowKey={record => record.usage.id}
             expandedRowRender={record => <RowDetail {...record}></RowDetail>}
           />
         )}
