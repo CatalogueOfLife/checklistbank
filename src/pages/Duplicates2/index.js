@@ -154,8 +154,8 @@ class DuplicateSearchPage extends React.Component {
         search: `?limit=50&offset=0`
       });
     } */
-
-    this.setState({ params: {...params, withDecision: params.withDecision === 'true', parentDifferent: params.parentDifferent === 'true'} }, this.getData);
+    
+    this.setState({ params: {...params, withDecision: params.withDecision === 'true', parentDifferent: params.parentDifferent === 'true', authorshipDifferent: params.authorshipDifferent === 'true'} }, this.getData);
   }
 
   getData = () => {
@@ -348,8 +348,11 @@ class DuplicateSearchPage extends React.Component {
           <Option value="CANONICAL">CANONICAL</Option>
           <Option value="NAMES_INDEX">NAMES_INDEX</Option>
           </Select>
+          <Select placeholder="Min size" value={params.minSize} style={{ width: 200, marginRight: 10 }} onChange={(value) => this.updateSearch({minSize: value})}>
+          {[2,3,4,5,6,7,8,9,10].map(i => <Option value={i}>{i}</Option>)}
+          </Select>
 
-
+          
             <Select 
             placeholder="Rank"
             value={params.rank}
@@ -390,6 +393,10 @@ class DuplicateSearchPage extends React.Component {
             <FormItem label="Parent different">
             <Switch checked={params.parentDifferent === true} onChange={(value) => this.updateSearch({parentDifferent: value})}/>
             </FormItem>
+            <FormItem label="Authorship different">
+            <Switch checked={params.authorshipDifferent === true} onChange={(value) => this.updateSearch({authorshipDifferent: value})}/>
+            </FormItem>
+            
             <FormItem  label="With decision">
             <Switch checked={params.withDecision === true} onChange={(value) => this.updateSearch({withDecision: value})} />
             </FormItem>
