@@ -19,7 +19,7 @@ import WorkBench from "../WorkBench"
 import withContext from "../../components/hoc/withContext"
 import _ from 'lodash'
 import Helmet from 'react-helmet'
-import Duplicates from "../Duplicates";
+import Duplicates from "../Duplicates2";
 
 class DatasetPage extends React.Component {
   constructor(props) {

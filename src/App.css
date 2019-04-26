@@ -116,6 +116,10 @@ thead th.workbench-td > div {
   margin: 0 0 0 0 !important
 }
 
+.duplicate-alternate-row {
+  background: #bfbfbf !important
+}
+
 div.admonition {
   border-left: 1px solid #aaaaaa;
   border-right: 1px solid #aaaaaa;
