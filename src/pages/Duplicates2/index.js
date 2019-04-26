@@ -14,6 +14,7 @@ import _ from "lodash";
 import withContext from '../../components/hoc/withContext'
 import { Resizable } from 'react-resizable';
 import DecisionTag from '../WorkBench/DecisionTag'
+import ErrorMsg from '../../components/ErrorMsg'
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
@@ -337,7 +338,7 @@ class DuplicateSearchPage extends React.Component {
         <Row>
           
 
-          {error && <Alert message={error.message} type="error" />}
+          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
         </Row>
         <Row gutter={16}>
         <Col span={18} >
