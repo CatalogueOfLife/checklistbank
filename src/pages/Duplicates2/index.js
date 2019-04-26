@@ -13,6 +13,7 @@ import RowDetail from './RowDetail'
 import _ from "lodash";
 import withContext from '../../components/hoc/withContext'
 import { Resizable } from 'react-resizable';
+import DecisionTag from '../WorkBench/DecisionTag'
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
@@ -30,84 +31,7 @@ const ResizeableTitle = (props) => {
   );
 };
 
-const columns = [
-  {
-    title: "ID",
-    dataIndex: "name.id",
-    width: 60,
-    className: "workbench-td",
-    render: (text, record) => {
-      return (
-        <NavLink
-              key={_.get(record, "id")}
-              to={{
-                pathname: `/dataset/${_.get(record, "name.datasetKey")}/${
-                  _.get(record, "bareName") ? "name" : "taxon"
-                }/${encodeURIComponent(
-                   _.get(record, "name.id")
-                )}`
-              }}
-              exact={true}
-            >
-          {text}
-        </NavLink>
-      );
-    },
-  
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-    width: 90,
-    className: "workbench-td",
 
-  },
-  /*
-  {
-    title: "Uninomial",
-    width: 160,
-    dataIndex: "name.uninomial",
-    key: "uninomial",
-    className: "workbench-td",
-  }, */
-  {
-    title: "Genus",
-    width: 160,
-    dataIndex: "name.genus",
-    key: "genus",
-    className: "workbench-td",
-  },
-  {
-    title: "specificEpithet",
-    width: 160,
-    dataIndex: "name.specificEpithet",
-    key: "specificEpithet",
-    className: "workbench-td",
-  },
-  {
-    title: "infraspecificEpithet",
-    width: 160,
-    dataIndex: "name.infraspecificEpithet",
-    key: "infraspecificEpithet",
-    className: "workbench-td",
-  },
-  {
-    title: "Authorship",
-    width: 240,
-    dataIndex: "name.authorship",
-    key: "authorship",
-    className: "workbench-td",
-  },
-
-  {
-    title: "Rank",
-    width: 100,
-    dataIndex: "name.rank",
-    key: "rank",
-    className: "workbench-td",
-  }
-];
 
 class DuplicateSearchPage extends React.Component {
   constructor(props) {
@@ -116,8 +40,103 @@ class DuplicateSearchPage extends React.Component {
 
     this.state = {
       data: [],
+      rawData: [],
       selectedRowKeys: [],
-      columns: columns,
+      columns: [
+        /* {
+           title: "Actions",
+           key: "actions",
+           width: 50,
+           className: "workbench-td",
+           render: (text, record) => record.isFirstInGroup ? "Yes" : ""
+         }, */
+         {
+           title: "ID",
+           dataIndex: "name.id",
+           width: 60,
+           className: "workbench-td",
+           render: (text, record) => {
+             return (
+               <NavLink
+                     key={_.get(record, "id")}
+                     to={{
+                       pathname: `/dataset/${_.get(record, "name.datasetKey")}/${
+                         _.get(record, "bareName") ? "name" : "taxon"
+                       }/${encodeURIComponent(
+                          _.get(record, "name.id")
+                       )}`
+                     }}
+                     exact={true}
+                   >
+                 {text}
+               </NavLink>
+             );
+           },
+         
+         },
+         {
+           title: "Decision",
+           dataIndex: "decisions",
+           key: "decisions",
+           width: 60,
+           className: "workbench-td",
+           render: (text, record) => {
+             console.log(_.get(record, 'decision'))
+           return <DecisionTag decision={_.get(record, 'decision')} deleteCallback={this.getData}/>}
+         },
+         {
+           title: "Status",
+           dataIndex: "status",
+           key: "status",
+           width: 90,
+           className: "workbench-td",
+       
+         },
+         /*
+         {
+           title: "Uninomial",
+           width: 160,
+           dataIndex: "name.uninomial",
+           key: "uninomial",
+           className: "workbench-td",
+         }, */
+         {
+           title: "Genus",
+           width: 160,
+           dataIndex: "name.genus",
+           key: "genus",
+           className: "workbench-td",
+         },
+         {
+           title: "specificEpithet",
+           width: 160,
+           dataIndex: "name.specificEpithet",
+           key: "specificEpithet",
+           className: "workbench-td",
+         },
+         {
+           title: "infraspecificEpithet",
+           width: 160,
+           dataIndex: "name.infraspecificEpithet",
+           key: "infraspecificEpithet",
+           className: "workbench-td",
+         },
+         {
+           title: "Authorship",
+           width: 240,
+           dataIndex: "name.authorship",
+           key: "authorship",
+           className: "workbench-td",
+         },
+       
+         {
+           title: "Rank",
+           width: 100,
+           dataIndex: "name.rank",
+           key: "rank",
+           className: "workbench-td",
+         }
+       ],
       params: {},
       loading: false,
       postingDecisions: false,
@@ -153,12 +172,14 @@ class DuplicateSearchPage extends React.Component {
         params
       )}`
     )
-      .then(res => {
+    .then(res => Promise.all(res.data.map(e => this.getDecisions(e))))
+      .then(data => {
         
         this.setState({
           loading: false,
-          data: res.data.map((e, i) => e.usages.map(u => ({...u.usage, dupID: i, dubKey: e.key}))).flat(), // create a falt array of all duplicate sets, use index in the original response as dupID for hold dupes together
-          duplicateCount: res.data.length,
+          data: data.map((e, i) => e.usages.map((u, id) => ({...u.usage, dupID: i, dubKey: e.key, isFirstInGroup: id === 0}))).flat(), // create a falt array of all duplicate sets, use index in the original response as dupID for hold dupes together
+          rawData: data,
+          duplicateCount: data.length,
           error: null
         });
       })
@@ -167,6 +188,19 @@ class DuplicateSearchPage extends React.Component {
         });
       });
   };
+
+  getDecisions = (data) => {
+    const promises = data.usages.map(d => 
+      d.decision ? axios(
+        `${config.dataApi}/decision/${_.get(d, 'decision.key')}`
+      ).then(decision => {
+        d.usage.decision = decision.data
+      }) : Promise.resolve()
+    ) 
+    return Promise.all(promises).then(() => data)
+  }
+
+
   handleTableChange = (pagination, filters, sorter) => {
     
     let query = _.merge(this.state.params, {
@@ -196,11 +230,11 @@ class DuplicateSearchPage extends React.Component {
     this.setState({ decision });
   };
   applyDecision = () => {
-    const {selectedKeysForDecision, data, decision} = this.state;
+    const {selectedRowKeys, data, decision} = this.state;
     const { datasetKey } = this.props;
     this.setState({postingDecisions: true})
-   const promises = data.map(d => [d.usage1, d.usage2]).flat()
-      .filter(d => selectedKeysForDecision.includes(_.get(d, 'id')))
+   const promises = data
+      .filter(d => selectedRowKeys.includes(_.get(d, 'id')))
       .map(d => {
        return axios.post(
           `${config.dataApi}decision`, {
@@ -241,7 +275,7 @@ class DuplicateSearchPage extends React.Component {
       .then(res => {
         this.setState({
           data: this.state.data,
-          selectedRowKeys: {},
+          selectedRowKeys: [],
           decision: null,
           postingDecisions: false,
           decisionError: null
@@ -250,7 +284,7 @@ class DuplicateSearchPage extends React.Component {
       .catch(err => {
         this.setState({
           data: this.state.data,
-          selectedRowKeys: {},
+          selectedRowKeys: [],
           decision: null,
           postingDecisions: false,
           decisionError: err
@@ -406,7 +440,7 @@ class DuplicateSearchPage extends React.Component {
            </Col>
           </Row>
           <Row>
- 
+
       
         </Row>
         <Row><Col  style={{ textAlign: "right", marginBottom: "8px" }}>
