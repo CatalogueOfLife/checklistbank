@@ -15,6 +15,7 @@ import withContext from '../../components/hoc/withContext'
 import { Resizable } from 'react-resizable';
 import DecisionTag from '../WorkBench/DecisionTag'
 import ErrorMsg from '../../components/ErrorMsg'
+
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
@@ -368,26 +369,26 @@ class DuplicateSearchPage extends React.Component {
               ))}
             </Select>
 
+    
+
             <Select 
             placeholder="Status"
-            value={ (params.status1 && params.status2) ? `${params.status1}-${params.status2}` : undefined}
+            value={ params.status}
             style={{ width: 200, marginRight: 10  }}
+            mode="multiple"
             showSearch
-            onChange={(value) => {
-              const statuses = value.split('-');
-              this.updateSearch({status1: statuses[0], status2: statuses[1]})}
-            }
+            onChange={(value) => this.updateSearch({status: value})}
+
+            
             >
               
-                <Option  value="accepted-accepted">
-                accepted - accepted
+                <Option  value="accepted">
+                accepted
                 </Option>
-                <Option  value="accepted-synonym">
-                accepted - synonym
+                <Option  value="synonym">
+                synonym
                 </Option>
-                <Option  value="synonym-synonym">
-                synonym - synonym
-                </Option>
+                
               
             </Select>
 
