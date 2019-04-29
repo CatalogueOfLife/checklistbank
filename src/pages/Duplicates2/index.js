@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Form, Table, Alert, Select, Row, Col, Button, Switch, Card, notification } from "antd";
+import { Form, Table, Alert, Select, Row, Col, Button, Switch, Card, AutoComplete, Input, Icon,  notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -44,6 +44,8 @@ class DuplicateSearchPage extends React.Component {
       data: [],
       rawData: [],
       selectedRowKeys: [],
+      sectors: [],
+      filteredSectors: [],
       columns: [
         /* {
            title: "Actions",
@@ -156,7 +158,8 @@ class DuplicateSearchPage extends React.Component {
         search: `?limit=50&offset=0`
       });
     } */
-    
+    this.getSectors()
+
     this.setState({ params: {...params, withDecision: params.withDecision === 'true', parentDifferent: params.parentDifferent === 'true', authorshipDifferent: params.authorshipDifferent === 'true'} }, this.getData);
   }
 
@@ -190,7 +193,17 @@ class DuplicateSearchPage extends React.Component {
         });
       });
   };
-
+  getSectors = () => {
+    const { datasetKey } = this.props;
+    axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
+        
+        .then(res => {
+            this.setState({ sectors: res.data, filteredSectors: res.data.map((o) => ({value: o.key, text: _.get(o, 'subject.name')}))});
+        })
+        .catch(err => {
+            this.setState({  sectors: [] });
+        });
+};
   getDecisions = (data) => {
     const promises = data.usages.map(d => 
       d.decision ? axios(
@@ -223,8 +236,17 @@ class DuplicateSearchPage extends React.Component {
   resetSearch = () => {
     this.setState({ params: {} }, this.getData);
   };
-
-
+ onSectorSearch = val => {
+  const {sectors} = this.state;
+  this.setState(
+    {filteredSectors: sectors
+      .filter(s => s.subject.name.toLowerCase().startsWith(val))
+      .map((o) => ({value: o.key, text: _.get(o, 'subject.name')}))
+      
+    })
+ }
+              
+              
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
   };
@@ -351,7 +373,7 @@ class DuplicateSearchPage extends React.Component {
           <Option value="NAMES_INDEX">NAMES_INDEX</Option>
           </Select>
           <Select placeholder="Min size" value={params.minSize} style={{ width: 200, marginRight: 10 }} onChange={(value) => this.updateSearch({minSize: value})}>
-          {[2,3,4,5,6,7,8,9,10].map(i => <Option value={i}>{i}</Option>)}
+          {[2,3,4,5,6,7,8,9,10].map(i => <Option key={i} value={i}>{i}</Option>)}
           </Select>
 
           
@@ -391,6 +413,24 @@ class DuplicateSearchPage extends React.Component {
                 
               
             </Select>
+
+            <AutoComplete
+            dataSource={this.state.sectors}
+            onSelect={(value) => this.updateSearch({sectorKey: value})}
+            dataSource={this.state.filteredSectors }
+            onSearch={this.onSectorSearch}
+            placeholder="Find sector"
+            style={{ width: 200, marginRight: 10  }}
+        >
+            <Input
+
+            suffix={(
+              
+                <Icon type="search" />
+             
+            )}
+          />
+        </AutoComplete>
 
             <FormItem label="Parent different">
             <Switch checked={params.parentDifferent === true} onChange={(value) => this.updateSearch({parentDifferent: value})}/>
