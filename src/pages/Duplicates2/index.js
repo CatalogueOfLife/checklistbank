@@ -419,7 +419,8 @@ class DuplicateSearchPage extends React.Component {
             onSelect={(value) => this.updateSearch({sectorKey: value})}
             dataSource={this.state.filteredSectors }
             onSearch={this.onSectorSearch}
-            placeholder="Find sector"
+            placeholder={this.state.sectors.length ===0 ? "No sectors":"Find sector"}
+            disabled={this.state.sectors.length ===0}
             style={{ width: 200, marginRight: 10  }}
         >
             <Input

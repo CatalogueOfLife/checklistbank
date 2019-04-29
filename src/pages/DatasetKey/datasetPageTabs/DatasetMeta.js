@@ -14,6 +14,7 @@ import DeleteDatasetButton from './DeleteDatasetButton'
 import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import moment from 'moment'
+import BooleanValue from "../../../components/BooleanValue";
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -173,6 +174,10 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="importFrequency" defaultMessage="Import Frequency" />}>
             {data.importFrequency}
           </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="namesIndexContributor" defaultMessage="Names index contributor" />}>
+            <BooleanValue value={data.namesIndexContributor} />
+          </PresentationItem>
+          
           <PresentationItem label={<FormattedMessage id="created" defaultMessage="Created" />}>
           {`${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')} by ${data.createdByUser}`}
           </PresentationItem>

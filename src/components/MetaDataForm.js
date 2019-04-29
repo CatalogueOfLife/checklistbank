@@ -259,6 +259,21 @@ componentDidMount = () =>{
           )}
         </FormItem>}
 
+        {<FormItem
+          {...formItemLayout}
+          label="Names index contributor"
+        >
+          {getFieldDecorator('namesIndexContributor', {
+            initialValue: _.get(data, 'namesIndexContributor'),
+            valuePropName: 'checked'
+            
+          })(
+            <Checkbox />
+
+              
+          )}
+        </FormItem>}
+
        {/* Only to be shown on existing datasets */}
         {data &&<React.Fragment>
           <FormItem

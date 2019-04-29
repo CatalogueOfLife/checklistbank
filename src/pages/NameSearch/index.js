@@ -11,6 +11,8 @@ import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
 import RowDetail from './RowDetail'
 import _ from "lodash";
+import ErrorMsg from '../../components/ErrorMsg'
+
 import withContext from '../../components/hoc/withContext'
 const columns = [
   {
@@ -203,6 +205,11 @@ class NameSearchPage extends React.Component {
           margin: "16px 0"
         }}
       >
+      <Row>
+          
+
+          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+        </Row>
         <Row>
           <Col
             span={12}
@@ -259,7 +266,7 @@ class NameSearchPage extends React.Component {
 
             
           </Col>
-          {error && <Alert message={error.message} type="error" />}
+         
         </Row>
         <Row><Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Button type="danger" onClick={this.resetSearch}>

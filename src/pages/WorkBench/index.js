@@ -15,6 +15,7 @@ import _ from "lodash";
 import ResizeableTitle from "./ResizeableTitle";
 import withContext from "../../components/hoc/withContext";
 import {stringToColour} from "../../components/util"
+import ErrorMsg from '../../components/ErrorMsg'
 
 const { Option, OptGroup } = Select;
 
@@ -431,6 +432,11 @@ class WorkBench extends React.Component {
           margin: "16px 0"
         }}
       >
+      <Row>
+          
+
+          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+        </Row>
         <Row>
           <Col span={2}>
             {" "}
@@ -453,7 +459,6 @@ class WorkBench extends React.Component {
               label="Issues"
             />
           </Col>
-          {error && <Alert message={error.message} type="error" />}
         </Row>
         <Row>
           <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
