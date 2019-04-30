@@ -176,7 +176,6 @@ class DuplicateSearchPage extends React.Component {
 
   getData = () => {
     const { params } = this.state;
-    console.log(JSON.stringify(params))
 
     this.setState({ loading: true });
     const { datasetKey } = this.props;
@@ -243,7 +242,7 @@ class DuplicateSearchPage extends React.Component {
     _.forEach(params, (v, k) => {
       this.state.params[k] = v;
     });
-    this.setState({ ...this.state.params }, this.getData);
+    this.setState({ ...this.state.params, selectedPreset: undefined }, this.getData);
   };
 
   resetSearch = () => {
@@ -385,28 +384,24 @@ class DuplicateSearchPage extends React.Component {
 
           {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
         </Row>
-        <Row gutter={16} style={{marginBottom: '10px'}}>
-        <Col span={24} >
+
+        <Row gutter={16}>
+        <Col span={18} >
+        <Card  >
+        <div style={{marginBottom: '10px'}}>
         <Select placeholder="CoL Check" value={this.state.selectedPreset} style={{ width: 500, marginRight: 10 }} onChange={this.onPresetSelect}>
           {queryPresets.map(p => <Option key={p.id} value={p.id} params={p.params}>{p.text}</Option>)}
           </Select>
           <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggleAdvanced}>
               Advanced <Icon type={this.state.advancedMode ? 'up' : 'down'} />
             </a>
-            </Col>
-        </Row>
-        <Row gutter={16}>
-        <Col span={18} >
-        {advancedMode &&  <Card  >
+            </div>
+        {advancedMode &&  
         <Form layout="inline" >
         
 
-          <Select placeholder="Mode" value={params.mode} style={{ width: 200, marginRight: 10 }} onChange={(value) => this.updateSearch({mode: value})}>
-          <Option value="CANONICAL_WITH_AUTHORS">CANONICAL_WITH_AUTHORS</Option>
-          <Option value="CANONICAL">CANONICAL</Option>
-          <Option value="NAMES_INDEX">NAMES_INDEX</Option>
-          </Select>
-          <Select placeholder="Min size" value={params.minSize} style={{ width: 200, marginRight: 10 }} onChange={(value) => this.updateSearch({minSize: value})}>
+          
+          <Select placeholder="Min size" value={params.minSize} style={{ width: 200, marginRight: 10, marginBottom: '10px' }} onChange={(value) => this.updateSearch({minSize: value})}>
           {[2,3,4,5,6,7,8,9,10].map(i => <Option key={i} value={i}>{i}</Option>)}
           </Select>
 
@@ -414,7 +409,7 @@ class DuplicateSearchPage extends React.Component {
             <Select 
             placeholder="Rank"
             value={params.rank}
-            style={{ width: 200, marginRight: 10  }}
+            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
             showSearch
             onChange={(value) => this.updateSearch({rank: value})}
             >
@@ -425,12 +420,17 @@ class DuplicateSearchPage extends React.Component {
               ))}
             </Select>
 
+            <Select placeholder="Name category" value={params.category} style={{ width: 200, marginRight: 10, marginBottom: '10px' }} onChange={(value) => this.updateSearch({category: value})}>
+          <Option value="binomial">binomial</Option>
+          <Option value="trinomial">trinomial</Option>
+          <Option value="uninomial">uninomial</Option>
+          </Select>
     
 
             <Select 
             placeholder="Status"
             value={ params.status}
-            style={{ width: 200, marginRight: 10  }}
+            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
             mode="multiple"
             showSearch
             onChange={(value) => this.updateSearch({status: value})}
@@ -438,12 +438,11 @@ class DuplicateSearchPage extends React.Component {
             
             >
               
-                <Option  value="accepted">
-                accepted
-                </Option>
-                <Option  value="synonym">
-                synonym
-                </Option>
+              {taxonomicstatus.map(s => (
+                  <Option value={s} key={s}>
+                    {_.startCase(s)}
+                  </Option>
+                ))}
                 
               
             </Select>
@@ -455,7 +454,7 @@ class DuplicateSearchPage extends React.Component {
             onSearch={this.onSectorSearch}
             placeholder={this.state.sectors.length ===0 ? "No sectors":"Find sector"}
             disabled={this.state.sectors.length ===0}
-            style={{ width: 200, marginRight: 10  }}
+            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
         >
             <Input
 
@@ -477,6 +476,9 @@ class DuplicateSearchPage extends React.Component {
             <FormItem  label="With decision">
             <Switch checked={params.withDecision === true} onChange={(value) => this.updateSearch({withDecision: value})} />
             </FormItem>
+            <FormItem  label="Fuzzy matching">
+            <Switch checked={params.mode === 'FUZZY'} onChange={(value) => this.updateSearch({mode: value ? "FUZZY" : "STRICT"})} />
+            </FormItem>
             <FormItem>
             <Button type="danger" onClick={this.resetSearch}>
                 Reset all
@@ -484,12 +486,12 @@ class DuplicateSearchPage extends React.Component {
             </FormItem>
             </Form>
             
-        </Card> }
+       } </Card> 
           </Col>
           <Col span={6} >
           <Card >
        
-            <Select style={{ width: 140, marginRight: 10  }} onChange={this.onDecisionChange} placeholder="Pick decision">
+            <Select style={{ width: 140, marginRight: 10,marginBottom: "10px"  }} onChange={this.onDecisionChange} placeholder="Pick decision">
             
               <OptGroup label="Status">
                 {taxonomicstatus.map(s => (
@@ -508,7 +510,7 @@ class DuplicateSearchPage extends React.Component {
               type="primary"
               onClick={this.applyDecision}
               disabled={!hasSelected}
-              style={{ width: 140, marginRight: 10  }}
+              style={{ width: 140 }}
               loading={postingDecisions}
             >
               Apply decision
