@@ -15,6 +15,7 @@ import withContext from '../../components/hoc/withContext'
 import { Resizable } from 'react-resizable';
 import DecisionTag from '../WorkBench/DecisionTag'
 import ErrorMsg from '../../components/ErrorMsg'
+import queryPresets from './queryPresets'
 
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
@@ -46,6 +47,7 @@ class DuplicateSearchPage extends React.Component {
       selectedRowKeys: [],
       sectors: [],
       filteredSectors: [],
+      advancedMode: false,
       columns: [
         /* {
            title: "Actions",
@@ -159,12 +161,23 @@ class DuplicateSearchPage extends React.Component {
       });
     } */
     this.getSectors()
+    let booleans = {};
+    ['withDecision', 'parentDifferent', 'authorshipDifferent'].forEach(n => {
+      if(params[n] === 'true'){
+        booleans[n] = true
+      }
+      if(params[n] === 'false'){
+        booleans[n] = false
+      }
+    })
 
-    this.setState({ params: {...params, withDecision: params.withDecision === 'true', parentDifferent: params.parentDifferent === 'true', authorshipDifferent: params.authorshipDifferent === 'true'} }, this.getData);
+    this.setState({ params: {...params, ...booleans} }, this.getData);
   }
 
   getData = () => {
     const { params } = this.state;
+    console.log(JSON.stringify(params))
+
     this.setState({ loading: true });
     const { datasetKey } = this.props;
   
@@ -235,6 +248,11 @@ class DuplicateSearchPage extends React.Component {
 
   resetSearch = () => {
     this.setState({ params: {} }, this.getData);
+  };
+
+  onPresetSelect = (value, option) => {
+    const {props: {params}} = option;
+    this.setState({ params, selectedPreset: value }, this.getData);
   };
  onSectorSearch = val => {
   const {sectors} = this.state;
@@ -316,6 +334,10 @@ class DuplicateSearchPage extends React.Component {
       });
 
   }
+  toggleAdvanced = () => {
+    const { advancedMode } = this.state;
+    this.setState({ advancedMode: !advancedMode });
+  }
 
   components = {
     header: {
@@ -334,7 +356,7 @@ class DuplicateSearchPage extends React.Component {
     });
   };
   render() {
-    const { data , loading, error, params,  selectedRowKeys, decision, postingDecisions, duplicateCount } = this.state;
+    const { data , loading, error, params,  selectedRowKeys, decision, postingDecisions, duplicateCount, advancedMode } = this.state;
     const { rank, taxonomicstatus } = this.props;
     const hasSelected = selectedRowKeys && selectedRowKeys.length > 0 && decision;
     const resizableColumns = this.state.columns.map((col, index) => ({
@@ -363,10 +385,22 @@ class DuplicateSearchPage extends React.Component {
 
           {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
         </Row>
+        <Row gutter={16} style={{marginBottom: '10px'}}>
+        <Col span={24} >
+        <Select placeholder="CoL Check" value={this.state.selectedPreset} style={{ width: 500, marginRight: 10 }} onChange={this.onPresetSelect}>
+          {queryPresets.map(p => <Option key={p.id} value={p.id} params={p.params}>{p.text}</Option>)}
+          </Select>
+          <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggleAdvanced}>
+              Advanced <Icon type={this.state.advancedMode ? 'up' : 'down'} />
+            </a>
+            </Col>
+        </Row>
         <Row gutter={16}>
         <Col span={18} >
-        <Card  >
+        {advancedMode &&  <Card  >
         <Form layout="inline" >
+        
+
           <Select placeholder="Mode" value={params.mode} style={{ width: 200, marginRight: 10 }} onChange={(value) => this.updateSearch({mode: value})}>
           <Option value="CANONICAL_WITH_AUTHORS">CANONICAL_WITH_AUTHORS</Option>
           <Option value="CANONICAL">CANONICAL</Option>
@@ -449,7 +483,8 @@ class DuplicateSearchPage extends React.Component {
               </Button>
             </FormItem>
             </Form>
-            </Card>
+            
+        </Card> }
           </Col>
           <Col span={6} >
           <Card >

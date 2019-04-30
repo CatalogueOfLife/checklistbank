@@ -189,7 +189,7 @@ class DatasetList extends React.Component {
           getDatasetsBatch(ids)
         );
         return Promise.all(
-          res.data.result.map(r => {
+         !res.data.result ? [] : res.data.result.map(r => {
             if (r.contributesTo) {
               const promise = Promise.all(
                 r.contributesTo.map(i => contributesToLoader.load(i))
