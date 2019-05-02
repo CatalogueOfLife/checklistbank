@@ -2,25 +2,43 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Form, Table, Alert, Select, Row, Col, Button, Switch, Card, AutoComplete, Input, Icon,  notification } from "antd";
+import {
+  Form,
+  Table,
+  Alert,
+  Select,
+  Row,
+  Col,
+  Button,
+  Switch,
+  Card,
+  AutoComplete,
+  Input,
+  Icon,
+  Radio,
+  Pagination,
+  notification
+} from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
 import Classification from "../NameSearch/Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
-import RowDetail from './RowDetail'
+import RowDetail from "./RowDetail";
 import _ from "lodash";
-import withContext from '../../components/hoc/withContext'
-import { Resizable } from 'react-resizable';
-import DecisionTag from '../WorkBench/DecisionTag'
-import ErrorMsg from '../../components/ErrorMsg'
-import queryPresets from './queryPresets'
+import withContext from "../../components/hoc/withContext";
+import { Resizable } from "react-resizable";
+import DecisionTag from "../WorkBench/DecisionTag";
+import ErrorMsg from "../../components/ErrorMsg";
+import queryPresets from "./queryPresets";
+import columnDefaults from "./columnDefaults";
 
+const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
-const ResizeableTitle = (props) => {
+const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 
   if (!width) {
@@ -34,8 +52,6 @@ const ResizeableTitle = (props) => {
   );
 };
 
-
-
 class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
@@ -48,102 +64,9 @@ class DuplicateSearchPage extends React.Component {
       sectors: [],
       filteredSectors: [],
       advancedMode: false,
-      columns: [
-        /* {
-           title: "Actions",
-           key: "actions",
-           width: 50,
-           className: "workbench-td",
-           render: (text, record) => record.isFirstInGroup ? "Yes" : ""
-         }, */
-         {
-           title: "ID",
-           dataIndex: "name.id",
-           width: 60,
-           className: "workbench-td",
-           render: (text, record) => {
-             return (
-               <NavLink
-                     key={_.get(record, "id")}
-                     to={{
-                       pathname: `/dataset/${_.get(record, "name.datasetKey")}/${
-                         _.get(record, "bareName") ? "name" : "taxon"
-                       }/${encodeURIComponent(
-                          _.get(record, "name.id")
-                       )}`
-                     }}
-                     exact={true}
-                   >
-                 {text}
-               </NavLink>
-             );
-           },
-         
-         },
-         {
-           title: "Decision",
-           dataIndex: "decisions",
-           key: "decisions",
-           width: 60,
-           className: "workbench-td",
-           render: (text, record) => {
-             console.log(_.get(record, 'decision'))
-           return <DecisionTag decision={_.get(record, 'decision')} deleteCallback={this.getData}/>}
-         },
-         {
-           title: "Status",
-           dataIndex: "status",
-           key: "status",
-           width: 90,
-           className: "workbench-td",
-       
-         },
-         /*
-         {
-           title: "Uninomial",
-           width: 160,
-           dataIndex: "name.uninomial",
-           key: "uninomial",
-           className: "workbench-td",
-         }, */
-         {
-           title: "Genus",
-           width: 160,
-           dataIndex: "name.genus",
-           key: "genus",
-           className: "workbench-td",
-         },
-         {
-           title: "specificEpithet",
-           width: 160,
-           dataIndex: "name.specificEpithet",
-           key: "specificEpithet",
-           className: "workbench-td",
-         },
-         {
-           title: "infraspecificEpithet",
-           width: 160,
-           dataIndex: "name.infraspecificEpithet",
-           key: "infraspecificEpithet",
-           className: "workbench-td",
-         },
-         {
-           title: "Authorship",
-           width: 240,
-           dataIndex: "name.authorship",
-           key: "authorship",
-           className: "workbench-td",
-         },
-       
-         {
-           title: "Rank",
-           width: 100,
-           dataIndex: "name.rank",
-           key: "rank",
-           className: "workbench-td",
-         }
-       ],
-      params: {},
+      columns: columnDefaults.binomial,
+      params: { limit: 50, offset: 0 },
+      totalFaked: 0,
       loading: false,
       postingDecisions: false,
       decision: null,
@@ -154,24 +77,28 @@ class DuplicateSearchPage extends React.Component {
   componentWillMount() {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
-   /* if (_.isEmpty(params)) {
+    /*  if (_.isEmpty(params)) {
       history.push({
         pathname: `/dataset/${datasetKey}/duplicates`,
         search: `?limit=50&offset=0`
       });
-    } */
-    this.getSectors()
+   } */
+    this.getSectors();
     let booleans = {};
-    ['withDecision', 'parentDifferent', 'authorshipDifferent'].forEach(n => {
-      if(params[n] === 'true'){
-        booleans[n] = true
+    ["withDecision", "parentDifferent", "authorshipDifferent"].forEach(n => {
+      if (params[n] === "true") {
+        booleans[n] = true;
       }
-      if(params[n] === 'false'){
-        booleans[n] = false
+      if (params[n] === "false") {
+        booleans[n] = false;
       }
-    })
+    });
 
-    this.setState({ params: {...params, ...booleans} }, this.getData);
+
+    this.setState(
+      { params: { ...this.state.params, ...params, ...booleans } },
+      this.getData
+    );
   }
 
   getData = () => {
@@ -179,91 +106,119 @@ class DuplicateSearchPage extends React.Component {
 
     this.setState({ loading: true });
     const { datasetKey } = this.props;
-  
+
     history.push({
       pathname: `/dataset/${datasetKey}/duplicates`,
-      search: `?${qs.stringify(params)}`
+      search: `?${qs.stringify({ ...params, limit: Number(params.limit) })}`
     });
     axios(
-      `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify(
-        params
-      )}`
+      `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
+        ...params,
+        limit: Number(params.limit) + 1
+      })}`
     )
-    .then(res => Promise.all(res.data.map(e => this.getDecisions(e))))
+      .then(res => Promise.all(res.data.map(e => this.getDecisions(e))))
       .then(data => {
-        
+        const dataArr =
+          data.length > Number(params.limit) ? data.slice(0, -1) : data;
+        const {totalFaked} = this.state;
         this.setState({
           loading: false,
-          data: data.map((e, i) => e.usages.map((u, id) => ({...u.usage, dupID: i, dubKey: e.key, isFirstInGroup: id === 0}))).flat(), // create a falt array of all duplicate sets, use index in the original response as dupID for hold dupes together
-          rawData: data,
-          duplicateCount: data.length,
+          data: dataArr
+            .map((e, i) =>
+              e.usages.map((u, id) => ({
+                ...u.usage,
+                dupID: i,
+                dubKey: e.key,
+                isFirstInGroup: id === 0 // not used ... keep?
+              }))
+            )
+            .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for hold dupes together
+          rawData: dataArr,
+          columns: params.category
+            ? columnDefaults[params.category]
+            : columnDefaults.binomial,
+          duplicateCount: dataArr.length,
+          totalFaked: totalFaked > (data.length + Number(params.offset)) ? totalFaked : (data.length + Number(params.offset)),
           error: null
         });
       })
       .catch(err => {
-        this.setState({ loading: false, error: err, data: [], duplicateCount: 0,
+        this.setState({
+          loading: false,
+          error: err,
+          data: [],
+          duplicateCount: 0
         });
       });
   };
   getSectors = () => {
     const { datasetKey } = this.props;
     axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
-        
-        .then(res => {
-            this.setState({ sectors: res.data, filteredSectors: res.data.map((o) => ({value: o.key, text: _.get(o, 'subject.name')}))});
-        })
-        .catch(err => {
-            this.setState({  sectors: [] });
+      .then(res => {
+        this.setState({
+          sectors: res.data,
+          filteredSectors: res.data.map(o => ({
+            value: o.key,
+            text: _.get(o, "subject.name")
+          }))
         });
-};
-  getDecisions = (data) => {
-    const promises = data.usages.map(d => 
-      d.decision ? axios(
-        `${config.dataApi}/decision/${_.get(d, 'decision.key')}`
-      ).then(decision => {
-        d.usage.decision = decision.data
-      }) : Promise.resolve()
-    ) 
-    return Promise.all(promises).then(() => data)
-  }
-
+      })
+      .catch(err => {
+        this.setState({ sectors: [] });
+      });
+  };
+  getDecisions = data => {
+    const promises = data.usages.map(d =>
+      d.decision
+        ? axios(`${config.dataApi}/decision/${_.get(d, "decision.key")}`).then(
+            decision => {
+              d.usage.decision = decision.data;
+            }
+          )
+        : Promise.resolve()
+    );
+    return Promise.all(promises).then(() => data);
+  };
 
   handleTableChange = (pagination, filters, sorter) => {
-    
     let query = _.merge(this.state.params, {
       ...filters
     });
-
 
     this.setState({ params: query }, this.getData);
   };
 
   updateSearch = params => {
-    _.forEach(params, (v, k) => {
-      this.state.params[k] = v;
-    });
-    this.setState({ ...this.state.params, selectedPreset: undefined }, this.getData);
+    this.setState(
+      {
+        params: { ...this.state.params, ...params, offset:0 },
+        totalFaked:0,
+        selectedPreset: undefined
+      },
+      this.getData
+    );
   };
 
   resetSearch = () => {
-    this.setState({ params: {} }, this.getData);
+    this.setState({ params: {limit: this.state.params.limit, offset: 0}, selectedPreset: undefined , totalFaked:0}, this.getData);
   };
 
   onPresetSelect = (value, option) => {
-    const {props: {params}} = option;
-    this.setState({ params, selectedPreset: value }, this.getData);
+    const {
+      props: { params }
+    } = option;
+    this.setState({ params: {...params, offset: 0, limit: this.state.params.limit}, selectedPreset: value, totalFaked:0 }, this.getData);
   };
- onSectorSearch = val => {
-  const {sectors} = this.state;
-  this.setState(
-    {filteredSectors: sectors
-      .filter(s => s.subject.name.toLowerCase().startsWith(val))
-      .map((o) => ({value: o.key, text: _.get(o, 'subject.name')}))
-      
-    })
- }
-              
-              
+  onSectorSearch = val => {
+    const { sectors } = this.state;
+    this.setState({
+      filteredSectors: sectors
+        .filter(s => s.subject.name.toLowerCase().startsWith(val))
+        .map(o => ({ value: o.key, text: _.get(o, "subject.name") }))
+    });
+  };
+
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
   };
@@ -271,37 +226,45 @@ class DuplicateSearchPage extends React.Component {
     this.setState({ decision });
   };
   applyDecision = () => {
-    const {selectedRowKeys, data, decision} = this.state;
+    const { selectedRowKeys, data, decision } = this.state;
     const { datasetKey } = this.props;
-    this.setState({postingDecisions: true})
-   const promises = data
-      .filter(d => selectedRowKeys.includes(_.get(d, 'id')))
+    this.setState({ postingDecisions: true });
+    const promises = data
+      .filter(d => selectedRowKeys.includes(_.get(d, "id")))
       .map(d => {
-       return axios.post(
-          `${config.dataApi}decision`, {
+        return axios
+          .post(`${config.dataApi}decision`, {
             datasetKey: datasetKey,
             subject: {
-              id: _.get(d, 'name.id'),
-              
-              name: _.get(d, 'name.scientificName'),
-              authorship: _.get(d, 'name.authorship'),
-              rank: _.get(d, 'name.rank')
-            },
-            mode: ['block','chresonym'].includes(decision) ? decision : 'update',
-            status: ['block','chresonym'].includes(decision) ? _.get(d, 'status') : decision
+              id: _.get(d, "name.id"),
 
-          }
-        )
-        
+              name: _.get(d, "name.scientificName"),
+              authorship: _.get(d, "name.authorship"),
+              rank: _.get(d, "name.rank")
+            },
+            mode: ["block", "chresonym"].includes(decision)
+              ? decision
+              : "update",
+            status: ["block", "chresonym"].includes(decision)
+              ? _.get(d, "status")
+              : decision
+          })
+
           .then(res => {
-            const statusMsg = `Status changed to ${decision} for ${_.get(d, 'name.scientificName')}`
-            const decisionMsg = `${_.get(d, 'name.scientificName')} was ${decision === 'block' ? 'blocked from the assembly' : ''}${decision === 'chresonym' ? 'marked as chresonym': ''}`
+            const statusMsg = `Status changed to ${decision} for ${_.get(
+              d,
+              "name.scientificName"
+            )}`;
+            const decisionMsg = `${_.get(d, "name.scientificName")} was ${
+              decision === "block" ? "blocked from the assembly" : ""
+            }${decision === "chresonym" ? "marked as chresonym" : ""}`;
 
             notification.open({
               message: "Decision applied",
-              description: ['block','chresonym'].includes(decision) ? decisionMsg : statusMsg
+              description: ["block", "chresonym"].includes(decision)
+                ? decisionMsg
+                : statusMsg
             });
-            
           })
           .catch(err => {
             notification.error({
@@ -309,10 +272,9 @@ class DuplicateSearchPage extends React.Component {
               description: err.message
             });
           });
-          
-      })
+      });
 
-      return Promise.all(promises)
+    return Promise.all(promises)
       .then(res => {
         this.setState({
           data: this.state.data,
@@ -331,17 +293,16 @@ class DuplicateSearchPage extends React.Component {
           decisionError: err
         });
       });
-
-  }
+  };
   toggleAdvanced = () => {
     const { advancedMode } = this.state;
     this.setState({ advancedMode: !advancedMode });
-  }
+  };
 
   components = {
     header: {
-      cell: ResizeableTitle,
-    },
+      cell: ResizeableTitle
+    }
   };
 
   handleResize = index => (e, { size }) => {
@@ -349,27 +310,54 @@ class DuplicateSearchPage extends React.Component {
       const nextColumns = [...columns];
       nextColumns[index] = {
         ...nextColumns[index],
-        width: size.width,
+        width: size.width
       };
       return { columns: nextColumns };
     });
   };
+
+  columnFilter = (c) => {
+    const {params} = this.state;
+    
+    if(params.status && params.status.indexOf("synonym") === -1){
+      return c.key !== "accepted"
+    } else {
+      return true
+    }
+  }
   render() {
-    const { data , loading, error, params,  selectedRowKeys, decision, postingDecisions, duplicateCount, advancedMode } = this.state;
+    const {
+      data,
+      loading,
+      error,
+      params,
+      selectedRowKeys,
+      decision,
+      postingDecisions,
+      duplicateCount,
+      advancedMode,
+      totalFaked
+    } = this.state;
     const { rank, taxonomicstatus } = this.props;
-    const hasSelected = selectedRowKeys && selectedRowKeys.length > 0 && decision;
-    const resizableColumns = this.state.columns.map((col, index) => ({
-      ...col,
-      onHeaderCell: column => ({
-        width: column.width,
-        onResize: this.handleResize(index),
-      }),
-    }));
+    const hasSelected =
+      selectedRowKeys && selectedRowKeys.length > 0 && decision;
+    const resizableColumns = !this.state.columns
+      ? []
+      : this.state.columns.map((col, index) => ({
+          ...col,
+          onHeaderCell: column => ({
+            width: column.width,
+            onResize: this.handleResize(index)
+          })
+        })).filter(this.columnFilter);
+
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
       columnWidth: "30px"
     };
+
+
     return (
       <div
         style={{
@@ -380,181 +368,310 @@ class DuplicateSearchPage extends React.Component {
         }}
       >
         <Row>
-          
-
-          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+          {error && (
+            <Alert
+              style={{ marginBottom: "10px" }}
+              message={<ErrorMsg error={error} />}
+              type="error"
+            />
+          )}
         </Row>
 
         <Row gutter={16}>
-        <Col span={18} >
-        <Card  >
-        <div style={{marginBottom: '10px'}}>
-        <Select placeholder="CoL Check" value={this.state.selectedPreset} style={{ width: 500, marginRight: 10 }} onChange={this.onPresetSelect}>
-          {queryPresets.map(p => <Option key={p.id} value={p.id} params={p.params}>{p.text}</Option>)}
-          </Select>
-          <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggleAdvanced}>
-              Advanced <Icon type={this.state.advancedMode ? 'up' : 'down'} />
-            </a>
-            </div>
-        {advancedMode &&  
-        <Form layout="inline" >
-        
+          <Col span={18}>
+            <Card>
+              <div style={{ marginBottom: "10px" }}>
+                <Select
+                  placeholder="CoL Check"
+                  value={this.state.selectedPreset}
+                  style={{ width: 500, marginRight: 10 }}
+                  onChange={this.onPresetSelect}
+                >
+                  {queryPresets.map(p => (
+                    <Option key={p.id} value={p.id} params={p.params}>
+                      {p.text}
+                    </Option>
+                  ))}
+                </Select>
+                <a
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={this.toggleAdvanced}
+                >
+                  Advanced{" "}
+                  <Icon type={this.state.advancedMode ? "up" : "down"} />
+                </a>
+              </div>
+              {advancedMode && (
+                <Form layout="inline">
+                  <Select
+                    placeholder="Min size"
+                    value={params.minSize}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    onChange={value => this.updateSearch({ minSize: value })}
+                  >
+                    {[2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
+                      <Option key={i} value={i}>
+                        {i}
+                      </Option>
+                    ))}
+                  </Select>
 
-          
-          <Select placeholder="Min size" value={params.minSize} style={{ width: 200, marginRight: 10, marginBottom: '10px' }} onChange={(value) => this.updateSearch({minSize: value})}>
-          {[2,3,4,5,6,7,8,9,10].map(i => <Option key={i} value={i}>{i}</Option>)}
-          </Select>
+                  <Select
+                    placeholder="Rank"
+                    value={params.rank}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    showSearch
+                    onChange={value => this.updateSearch({ rank: value })}
+                  >
+                    {rank.map(r => (
+                      <Option key={r} value={r}>
+                        {r}
+                      </Option>
+                    ))}
+                  </Select>
 
-          
-            <Select 
-            placeholder="Rank"
-            value={params.rank}
-            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
-            showSearch
-            onChange={(value) => this.updateSearch({rank: value})}
-            >
-              {rank.map(r => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+                  <Select
+                    placeholder="Name category"
+                    value={params.category}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    onChange={value => this.updateSearch({ category: value })}
+                  >
+                    <Option value="binomial">binomial</Option>
+                    <Option value="trinomial">trinomial</Option>
+                    <Option value="uninomial">uninomial</Option>
+                  </Select>
 
-            <Select placeholder="Name category" value={params.category} style={{ width: 200, marginRight: 10, marginBottom: '10px' }} onChange={(value) => this.updateSearch({category: value})}>
-          <Option value="binomial">binomial</Option>
-          <Option value="trinomial">trinomial</Option>
-          <Option value="uninomial">uninomial</Option>
-          </Select>
-    
+                  <Select
+                    placeholder="Status"
+                    value={params.status}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    mode="multiple"
+                    showSearch
+                    onChange={value => this.updateSearch({ status: value })}
+                  >
+                    {taxonomicstatus.map(s => (
+                      <Option value={s} key={s}>
+                        {_.startCase(s)}
+                      </Option>
+                    ))}
+                  </Select>
 
-            <Select 
-            placeholder="Status"
-            value={ params.status}
-            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
-            mode="multiple"
-            showSearch
-            onChange={(value) => this.updateSearch({status: value})}
+                  <AutoComplete
+                    dataSource={this.state.sectors}
+                    onSelect={value => this.updateSearch({ sectorKey: value })}
+                    dataSource={this.state.filteredSectors}
+                    onSearch={this.onSectorSearch}
+                    placeholder={
+                      this.state.sectors.length === 0
+                        ? "No sectors"
+                        : "Find sector"
+                    }
+                    disabled={this.state.sectors.length === 0}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                  >
+                    <Input suffix={<Icon type="search" />} />
+                  </AutoComplete>
 
-            
-            >
-              
-              {taxonomicstatus.map(s => (
-                  <Option value={s} key={s}>
-                    {_.startCase(s)}
-                  </Option>
-                ))}
-                
-              
-            </Select>
+                  <FormItem label="Parent different">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "parentDifferent"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({
+                            parentDifferent: evt.target.value
+                          });
+                        }
+                      }}
+                      value={params.parentDifferent}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
+                  <FormItem label="Authorship different">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "authorshipDifferent"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({
+                            authorshipDifferent: evt.target.value
+                          });
+                        }
+                      }}
+                      value={params.authorshipDifferent}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
 
-            <AutoComplete
-            dataSource={this.state.sectors}
-            onSelect={(value) => this.updateSearch({sectorKey: value})}
-            dataSource={this.state.filteredSectors }
-            onSearch={this.onSectorSearch}
-            placeholder={this.state.sectors.length ===0 ? "No sectors":"Find sector"}
-            disabled={this.state.sectors.length ===0}
-            style={{ width: 200, marginRight: 10, marginBottom: '10px'  }}
-        >
-            <Input
-
-            suffix={(
-              
-                <Icon type="search" />
-             
-            )}
-          />
-        </AutoComplete>
-
-            <FormItem label="Parent different">
-            <Switch checked={params.parentDifferent === true} onChange={(value) => this.updateSearch({parentDifferent: value})}/>
-            </FormItem>
-            <FormItem label="Authorship different">
-            <Switch checked={params.authorshipDifferent === true} onChange={(value) => this.updateSearch({authorshipDifferent: value})}/>
-            </FormItem>
-            
-            <FormItem  label="With decision">
-            <Switch checked={params.withDecision === true} onChange={(value) => this.updateSearch({withDecision: value})} />
-            </FormItem>
-            <FormItem  label="Fuzzy matching">
-            <Switch checked={params.mode === 'FUZZY'} onChange={(value) => this.updateSearch({mode: value ? "FUZZY" : "STRICT"})} />
-            </FormItem>
-            <FormItem>
-            <Button type="danger" onClick={this.resetSearch}>
-                Reset all
-              </Button>
-            </FormItem>
-            </Form>
-            
-       } </Card> 
-          </Col>
-          <Col span={6} >
-          <Card >
-       
-            <Select style={{ width: 140, marginRight: 10,marginBottom: "10px"  }} onChange={this.onDecisionChange} placeholder="Pick decision">
-            
-              <OptGroup label="Status">
-                {taxonomicstatus.map(s => (
-                  <Option value={s} key={s}>
-                    {_.startCase(s)}
-                  </Option>
-                ))}
-              </OptGroup>
-              <OptGroup label="Other">
-                <Option value="block">Block</Option>
-                <Option value="chresonym">Chresonym</Option>
-              </OptGroup>
-            </Select>
-            
-            <Button
-              type="primary"
-              onClick={this.applyDecision}
-              disabled={!hasSelected}
-              style={{ width: 140 }}
-              loading={postingDecisions}
-            >
-              Apply decision
-            </Button>
-            {selectedRowKeys && selectedRowKeys.length > 0
-                && 
-            
-               `Selected ${selectedRowKeys.length} ${
-                selectedRowKeys.length > 1 ? "taxa" : "taxon"
-                  }`
-               
-            }
+                  <FormItem label="With decision">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "withDecision"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ withDecision: evt.target.value });
+                        }
+                      }}
+                      value={params.withDecision}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
+                  <FormItem label="Fuzzy matching">
+                    <Switch
+                      checked={params.mode === "FUZZY"}
+                      onChange={value =>
+                        this.updateSearch({ mode: value ? "FUZZY" : "STRICT" })
+                      }
+                    />
+                  </FormItem>
+                  <FormItem>
+                    <Button type="danger" onClick={this.resetSearch}>
+                      Reset all
+                    </Button>
+                  </FormItem>
+                </Form>
+              )}{" "}
             </Card>
-           </Col>
-          </Row>
-          <Row>
+          </Col>
+          <Col span={6}>
+            <Card>
+              <Select
+                style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
+                onChange={this.onDecisionChange}
+                placeholder="Pick decision"
+              >
+                <OptGroup label="Status">
+                  {taxonomicstatus.map(s => (
+                    <Option value={s} key={s}>
+                      {_.startCase(s)}
+                    </Option>
+                  ))}
+                </OptGroup>
+                <OptGroup label="Other">
+                  <Option value="block">Block</Option>
+                  <Option value="chresonym">Chresonym</Option>
+                </OptGroup>
+              </Select>
 
-      
+              <Button
+                type="primary"
+                onClick={this.applyDecision}
+                disabled={!hasSelected}
+                style={{ width: 140 }}
+                loading={postingDecisions}
+              >
+                Apply decision
+              </Button>
+              {selectedRowKeys &&
+                selectedRowKeys.length > 0 &&
+                `Selected ${selectedRowKeys.length} ${
+                  selectedRowKeys.length > 1 ? "taxa" : "taxon"
+                }`}
+            </Card>
+          </Col>
         </Row>
-        <Row><Col  style={{ textAlign: "right", marginBottom: "8px" }}>
-        
-          { data && duplicateCount > 0 && `Duplicates: ${duplicateCount}` }</Col></Row>
-        {!error && (
-          <Table
-            size="small"
-            components={this.components}
-            columns={resizableColumns}
-            dataSource={data}
-            loading={loading}
-            onChange={this.handleTableChange}
-            rowKey="id"
-            rowClassName={record => record.dupID % 2 ? 'duplicate-alternate-row' : ''}
-            pagination={false}
-            rowSelection={rowSelection}
+        <Row />
+        <Row>
+          <Col style={{ textAlign: "right", marginBottom: "8px", marginTop: "8px" }}>
+            {!error && (
+              <Pagination
+              showSizeChanger
+              pageSizeOptions={[50,100,250, 500]}
+              onShowSizeChange={(current, size)=> {
+                this.setState({params: {...this.state.params, limit: size}}, this.getData)
+              }}
+                onChange={(page, pageSize) => {
 
-          />
+                  this.setState({params: {...this.state.params, offset: (page - 1) * this.state.params.limit}}, this.getData)
+                  
+                }}
+                pageSize={this.state.params.limit}
+                size="small"
+                total={totalFaked}
+              />
+            )}
+          </Col>
+        </Row>
+        {!error && (
+          <React.Fragment>
+            <Table
+              size="small"
+              components={this.components}
+              columns={resizableColumns}
+              dataSource={data}
+              loading={loading}
+              onChange={this.handleTableChange}
+              rowKey="id"
+              rowClassName={record =>
+                record.dupID % 2 ? "duplicate-alternate-row" : ""
+              }
+              pagination={false}
+              rowSelection={rowSelection}
+            />
+          </React.Fragment>
         )}
       </div>
     );
   }
 }
 
-const mapContextToProps = ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield }) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
+const mapContextToProps = ({
+  rank,
+  taxonomicstatus,
+  issue,
+  nomstatus,
+  nametype,
+  namefield
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
 
-
-
-export default withContext(mapContextToProps)(DuplicateSearchPage)
+export default withContext(mapContextToProps)(DuplicateSearchPage);
