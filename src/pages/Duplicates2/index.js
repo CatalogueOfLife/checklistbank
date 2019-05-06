@@ -201,7 +201,7 @@ class DuplicateSearchPage extends React.Component {
   };
 
   resetSearch = () => {
-    this.setState({ params: {limit: this.state.params.limit, offset: 0}, selectedPreset: undefined , totalFaked:0}, this.getData);
+    this.setState({ params: {limit: this.state.params.limit, offset: 0}, selectedPreset: undefined , totalFaked:0, selectedRowKeys:[]}, this.getData);
   };
 
   onPresetSelect = (value, option) => {
@@ -232,8 +232,9 @@ class DuplicateSearchPage extends React.Component {
     const promises = data
       .filter(d => selectedRowKeys.includes(_.get(d, "id")))
       .map(d => {
-        return axios
-          .post(`${config.dataApi}decision`, {
+        const method = (d.decision) ? 'put' : 'post';
+        return axios[method](`${config.dataApi}decision${method === 'put' ? `/${d.decision.key}`: ''}`, 
+        {
             datasetKey: datasetKey,
             subject: {
               id: _.get(d, "name.id"),
@@ -251,6 +252,7 @@ class DuplicateSearchPage extends React.Component {
           })
 
           .then(res => {
+            d.decision = decision;
             const statusMsg = `Status changed to ${decision} for ${_.get(
               d,
               "name.scientificName"
@@ -260,7 +262,7 @@ class DuplicateSearchPage extends React.Component {
             }${decision === "chresonym" ? "marked as chresonym" : ""}`;
 
             notification.open({
-              message: "Decision applied",
+              message: `Decision ${method === 'post' ? 'apllied': 'changed'}`,
               description: ["block", "chresonym"].includes(decision)
                 ? decisionMsg
                 : statusMsg
@@ -277,7 +279,7 @@ class DuplicateSearchPage extends React.Component {
     return Promise.all(promises)
       .then(res => {
         this.setState({
-          data: this.state.data,
+          data: [...this.state.data],
           selectedRowKeys: [],
           decision: null,
           postingDecisions: false,
@@ -324,6 +326,26 @@ class DuplicateSearchPage extends React.Component {
     } else {
       return true
     }
+  }
+
+  selectAllInGroupExceptOldest = () => {
+    const {rawData} = this.state;
+    let selectedRowKeys = [];
+    rawData.forEach(group => {
+      const min = Math.min(...group.usages.map(r => r.usage.name.publishedInYear))
+      selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => Number(r.usage.name.publishedInYear) > min ).map(i => i.usage.id)]
+    })
+    this.setState({selectedRowKeys})
+  }
+
+
+  selectAllSynonymsInGroup = () => {
+    const {rawData} = this.state;
+    let selectedRowKeys = [];
+    rawData.forEach(group => {
+      selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => r.usage.status === 'synonym' ).map(i => i.usage.id)]
+    })
+    this.setState({selectedRowKeys})
   }
   render() {
     const {
@@ -613,29 +635,46 @@ class DuplicateSearchPage extends React.Component {
                 Apply decision
               </Button>
               {selectedRowKeys &&
-                selectedRowKeys.length > 0 &&
-                `Selected ${selectedRowKeys.length} ${
+                selectedRowKeys.length > 0 && <div>
+                Selected {selectedRowKeys.length} {
                   selectedRowKeys.length > 1 ? "taxa" : "taxon"
-                }`}
+                }</div>}
             </Card>
           </Col>
         </Row>
         <Row />
-        <Row>
-          <Col style={{ textAlign: "right", marginBottom: "8px", marginTop: "8px" }}>
+        <Row style={{marginBottom: "8px", marginTop: "8px" }}>
+          <Col span={18} >
+          <Button
+                type="primary"
+                onClick={this.selectAllInGroupExceptOldest}
+                style={{ width: 140, marginRight: '10px' }}
+              >
+                All except oldest
+              </Button>
+              <Button
+                type="primary"
+                onClick={this.selectAllSynonymsInGroup}
+                style={{ width: 140 }}
+              >
+                All synonyms
+              </Button>
+              
+          </Col>
+          <Col span={6} style={{ textAlign: "right"}}>
             {!error && (
               <Pagination
               showSizeChanger
-              pageSizeOptions={[50,100,250, 500]}
+              pageSizeOptions={['50','100','250', '500']}
               onShowSizeChange={(current, size)=> {
                 this.setState({params: {...this.state.params, limit: size}}, this.getData)
               }}
                 onChange={(page, pageSize) => {
 
-                  this.setState({params: {...this.state.params, offset: (page - 1) * this.state.params.limit}}, this.getData)
+                  this.setState({params: {...this.state.params, offset: (page - 1) * Number(this.state.params.limit)}}, this.getData)
                   
                 }}
-                pageSize={this.state.params.limit}
+                pageSize={Number(this.state.params.limit)}
                 size="small"
                 total={totalFaked}
               />
