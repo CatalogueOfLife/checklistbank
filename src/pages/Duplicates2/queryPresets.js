@@ -229,5 +229,49 @@ export default [
       status: ["synonym"],
       withDecision: false
     }
+  },
+  {
+    id: "b1",
+    text: "Identical order",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "order"
+    }
+  },
+  {
+    id: "b2",
+    text: "Identical superfamily",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "superfamily"
+    }
+  },
+  {
+    id: "b3",
+    text: "Identical family",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "family"
+    }
+  },
+  {
+    id: "b4",
+    text: "Identical genus",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "genus"
+    }
   }
 ];

@@ -1,7 +1,7 @@
 import React from "react";
 import DecisionTag from '../WorkBench/DecisionTag'
 import _ from "lodash";
-
+import Classification from './Classification'
 import { NavLink } from "react-router-dom";
 
 export default {
@@ -238,6 +238,14 @@ export default {
            key: "uninomial",
            className: "workbench-td",
          }, 
+         {
+          title: "Classification",
+          width: 160,
+          dataIndex: "classification",
+          className: "workbench-td",
+          render: (text, record) => {
+            return _.get(record, 'classification') ? <Classification path={_.get(record, 'classification')}></Classification> : ''}
+        }, 
         {
           title: "Authorship",
           width: 240,

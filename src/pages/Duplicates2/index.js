@@ -38,6 +38,7 @@ const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 
+
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 
