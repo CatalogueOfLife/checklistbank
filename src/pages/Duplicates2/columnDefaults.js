@@ -3,7 +3,7 @@ import DecisionTag from '../WorkBench/DecisionTag'
 import _ from "lodash";
 import Classification from './Classification'
 import { NavLink } from "react-router-dom";
-
+import CopyableColumnText from '../WorkBench/CopyableColumnText'
 export default {
     binomial: [
         
@@ -25,7 +25,7 @@ export default {
                      }}
                      exact={true}
                    >
-                 {text}
+                 <CopyableColumnText text={text} width="50px"/>
                </NavLink>
              );
            },
@@ -44,8 +44,9 @@ export default {
            title: "Status",
            dataIndex: "status",
            key: "status",
-           width: 90,
+           width: 60,
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="50px"/>
        
          },
          {
@@ -64,6 +65,8 @@ export default {
            dataIndex: "name.genus",
            key: "genus",
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="150px"/>
+
          },
          {
            title: "specificEpithet",
@@ -71,6 +74,8 @@ export default {
            dataIndex: "name.specificEpithet",
            key: "specificEpithet",
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="150px"/>
+
          },
          {
            title: "Authorship",
@@ -78,14 +83,18 @@ export default {
            dataIndex: "name.authorship",
            key: "authorship",
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="230px"/>
+
          },
        
          {
            title: "Rank",
-           width: 100,
+           width: 60,
            dataIndex: "name.rank",
            key: "rank",
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="50px"/>
+
          }
        ],
        trinomial: [
@@ -108,7 +117,7 @@ export default {
                     }}
                     exact={true}
                   >
-                {text}
+                 <CopyableColumnText text={text} width="50px"/>
               </NavLink>
             );
           },
@@ -128,9 +137,10 @@ export default {
           title: "Status",
           dataIndex: "status",
           key: "status",
-          width: 90,
+          width: 60,
           className: "workbench-td",
-      
+          render: (text, record) => <CopyableColumnText text={text} width="50px"/>
+
         },
         {
             title: "Accepted",
@@ -147,6 +157,8 @@ export default {
           dataIndex: "name.genus",
           key: "genus",
           className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="150px"/>
+
         },
         {
           title: "specificEpithet",
@@ -154,6 +166,8 @@ export default {
           dataIndex: "name.specificEpithet",
           key: "specificEpithet",
           className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="150px"/>
+
         },
         {
           title: "infraspecificEpithet",
@@ -161,6 +175,8 @@ export default {
           dataIndex: "name.infraspecificEpithet",
           key: "infraspecificEpithet",
           className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="150px"/>
+
         },
         {
           title: "Authorship",
@@ -168,14 +184,18 @@ export default {
           dataIndex: "name.authorship",
           key: "authorship",
           className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="230px"/>
+
         },
       
         {
           title: "Rank",
-          width: 100,
+          width: 60,
           dataIndex: "name.rank",
           key: "rank",
           className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="50px"/>
+
         }
       ],
       uninomial: [
@@ -198,7 +218,7 @@ export default {
                     }}
                     exact={true}
                   >
-                {text}
+                <CopyableColumnText text={text} width="50px"/>
               </NavLink>
             );
           },
@@ -218,11 +238,12 @@ export default {
           title: "Status",
           dataIndex: "status",
           key: "status",
-          width: 90,
+          width: 60,
           className: "workbench-td",
-      
+          render: (text, record) => <CopyableColumnText text={text} width="50px"/>
+
         },
-        {
+     /*   {
             title: "Accepted",
             dataIndex: "accepted.name.formattedName",
             key: "accepted",
@@ -230,36 +251,41 @@ export default {
             className: "workbench-td",
             render: (text, record) => {
             return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.name.formattedName")}}></span>}
-          },
+        }, */
          {
            title: "Uninomial",
            width: 160,
            dataIndex: "name.uninomial",
            key: "uninomial",
            className: "workbench-td",
+           render: (text, record) => <CopyableColumnText text={text} width="140px"/>
+
          }, 
-         {
+         
+     /*   {
+          title: "Authorship",
+          width: 240,
+          dataIndex: "name.authorship",
+          key: "authorship",
+          className: "workbench-td",
+        }, */
+      
+        {
+          title: "Rank",
+          width: 60,
+          dataIndex: "name.rank",
+          key: "rank",
+          className: "workbench-td",
+          render: (text, record) => <CopyableColumnText text={text} width="50px"/>
+
+        },
+        {
           title: "Classification",
           width: 160,
           dataIndex: "classification",
           className: "workbench-td",
           render: (text, record) => {
             return _.get(record, 'classification') ? <Classification path={_.get(record, 'classification')}></Classification> : ''}
-        }, 
-        {
-          title: "Authorship",
-          width: 240,
-          dataIndex: "name.authorship",
-          key: "authorship",
-          className: "workbench-td",
-        },
-      
-        {
-          title: "Rank",
-          width: 100,
-          dataIndex: "name.rank",
-          key: "rank",
-          className: "workbench-td",
         }
       ]
 }

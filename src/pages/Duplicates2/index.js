@@ -360,20 +360,12 @@ class DuplicateSearchPage extends React.Component {
       postingDecisions,
       duplicateCount,
       advancedMode,
-      totalFaked
+      totalFaked,
+      columns
     } = this.state;
     const { rank, taxonomicstatus } = this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
-    const resizableColumns = !this.state.columns
-      ? []
-      : this.state.columns.map((col, index) => ({
-          ...col,
-          onHeaderCell: column => ({
-            width: column.width,
-            onResize: this.handleResize(index)
-          })
-        })).filter(this.columnFilter);
 
     const rowSelection = {
       selectedRowKeys,
@@ -686,9 +678,10 @@ class DuplicateSearchPage extends React.Component {
         {!error && (
           <React.Fragment>
             <Table
+              scroll={{ x: 2400 }}
               size="small"
               components={this.components}
-              columns={resizableColumns}
+              columns={columns.filter(this.columnFilter)}
               dataSource={data}
               loading={loading}
               onChange={this.handleTableChange}
