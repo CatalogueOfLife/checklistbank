@@ -228,11 +228,16 @@ class ManagementClassification extends React.Component {
               <Col span={12} style={{ padding: "10px" }}>
                 <Card>
                   <h4>CoL Draft</h4>{" "}
-                  <Search
-                    placeholder="Find taxon (not yet functional)"
-                    onSearch={value => console.log(value)}
-                    style={{ width: "100%" }}
-                  />
+                  <NameAutocomplete
+                      datasetKey={MANAGEMENT_CLASSIFICATION.key}
+                      onSelectName={name =>
+                        this.setState({ defaultAssemblyExpandKey: name.key })
+                      }
+                      onResetSearch={() =>
+                        this.setState({ defaultAssemblyExpandKey: null })
+                      }
+                    />
+                 
                  {sectorMappingError && <ErrorMsg error={sectorMappingError} />}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
@@ -245,6 +250,8 @@ class ManagementClassification extends React.Component {
                       dragNode={this.state.dragNode}
                       draggable={true}
                       showSourceTaxon={this.showSourceTaxon}
+                      defaultExpandKey={this.state.defaultAssemblyExpandKey}
+
                     />
                   </div>
                 </Card>
