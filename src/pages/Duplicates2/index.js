@@ -131,6 +131,7 @@ class DuplicateSearchPage extends React.Component {
                 ...u.usage,
                 dupID: i,
                 dubKey: e.key,
+                classification: u.classification,
                 isFirstInGroup: id === 0 // not used ... keep?
               }))
             )
