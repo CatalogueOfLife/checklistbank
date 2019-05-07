@@ -15,6 +15,8 @@ import { ColTreeContext } from "./ColTreeContext";
 import Sector from "./Sector";
 import DecisionTag from "../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
+import history from "../../history";
+
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class ColTreeNode extends React.Component {
@@ -81,8 +83,19 @@ class ColTreeNode extends React.Component {
                 content={
                   <React.Fragment>
                     <Button
-                      type="danger"
                       style={{ width: "100%" }}
+                      type="primary"
+                      onClick={() => {
+                        history.push(`/dataset/${taxon.datasetKey}/taxon/${taxon.id}`);
+
+                      }}
+                    >
+                      Show taxon
+                    </Button>
+
+                    <Button
+                      type="danger"
+                      style={{ marginTop: "8px", width: "100%" }}
                       onClick={() => this.deleteTaxon(taxon)}
                     >
                       Delete taxon
