@@ -551,7 +551,7 @@ class ColTree extends React.Component {
     return (
       <div>
         {" "}
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert style={{marginTop: '8px'}} message={<ErrorMsg error={error} />} type="error" />}
         {treeData.length > 0 && (
                   <ColTreeContext.Consumer>
                   {({ mode}) =>

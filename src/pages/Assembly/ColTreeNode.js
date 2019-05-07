@@ -1,13 +1,12 @@
 import React from "react";
 import {
-  Row,
-  Col,
   notification,
   Tag,
   Popconfirm,
   Icon,
   Button,
-  Popover
+  Popover,
+  Tooltip
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -16,6 +15,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import Sector from "./Sector";
 import DecisionTag from "../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
+const { MANAGEMENT_CLASSIFICATION } = config;
 
 class ColTreeNode extends React.Component {
   constructor(props) {
@@ -63,7 +63,7 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sector, decision },
+      taxon: { sector, decision, datasetSectors },
       hasPopOver,
       isUpdating
     } = this.props;
@@ -197,7 +197,11 @@ class ColTreeNode extends React.Component {
                       {taxon.status}
                     </Tag>
                   )}
-
+                  {taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key && !datasetSectors && !sector && 
+                  <Tooltip title="No sectors">
+                  <Icon style={{marginLeft: "6px"}} type="disconnect"/>
+                  </Tooltip>
+                  }
                   {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>
