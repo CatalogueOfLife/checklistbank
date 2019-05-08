@@ -108,6 +108,13 @@ class BasicMenu extends Component {
                  <span>Assembly</span>
               </NavLink>
             </Menu.Item>
+            <Menu.Item key="assemblyDuplicates">
+              <NavLink to={{ pathname: "/assembly/duplicates" }}>
+                 <span>Duplicates</span>
+              </NavLink>
+            </Menu.Item>
+
+            
             <Menu.Item key="sectorSync">
               <NavLink to={{ pathname: "/sector/sync" }}><span>Sector sync</span></NavLink>
             </Menu.Item>

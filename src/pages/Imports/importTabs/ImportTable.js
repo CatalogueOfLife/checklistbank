@@ -44,7 +44,7 @@ const defaultColumns = [
       return (
 
         <NavLink
-          to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
+          to={{ pathname: `/dataset/${record.datasetKey}/names` }}
           exact={true}
         >
           {text}

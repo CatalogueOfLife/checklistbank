@@ -13,6 +13,7 @@ import VerbatimRecord from "./pages/VerbatimRecord"
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/Assembly";
+import AssemblyDuplicates from "./pages/AssemblyDuplicates";
 import SectorSync from "./pages/SectorSync"
 import SectorBroken from "./pages/BrokenSectors"
 import DecisionBroken from "./pages/BrokenDecisions"
@@ -23,6 +24,8 @@ import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
 import DatasetImportMetrics from "./pages/DatasetImportMetrics";
+
+
 const theme = {
   colorPrimary: "deepskyblue"
 };
@@ -65,6 +68,13 @@ class App extends Component {
                 path={`/assembly`}
                 roles={["editor"]}
                 component={Assembly}
+              />
+              <PrivateRoute
+                exact
+                key="AssemblyDuplicates"
+                path={`/assembly/duplicates`}
+                roles={["editor"]}
+                component={AssemblyDuplicates}
               />
               <Route
                 exact
