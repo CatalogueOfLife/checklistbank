@@ -222,6 +222,7 @@ class ColTreeNode extends React.Component {
                         {...this.props}
                         selectedSourceDatasetKey={selectedSourceDatasetKey}
                         getSyncState={getSyncState}
+                        decisionCallback={this.props.reloadSelfAndSiblings}
                       />
                     </span>
                   )}
@@ -231,9 +232,7 @@ class ColTreeNode extends React.Component {
                       <DecisionTag
                         {...this.props}
                         decision={decision}
-                        deleteCallback={() =>
-                          this.props.reloadSelfAndSiblings()
-                        }
+                        deleteCallback={this.props.reloadSelfAndSiblings}
                       />
                     </span>
                   )}

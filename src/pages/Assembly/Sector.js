@@ -61,6 +61,47 @@ class Sector extends React.Component {
         this.setState({ error: err });
       });
   };
+
+  applyDecision = () => {
+    const { taxon, decisionCallback } = this.props;
+    const { sector } = taxon;
+
+    const { datasetKey } = taxon;
+    this.setState({ postingDecisions: true });
+    
+        return axios.post(`${config.dataApi}decision`, 
+        {
+            datasetKey: datasetKey,
+            subject: {
+              id: _.get(taxon, "id"),
+
+              name: _.get(taxon, "name")
+            },
+            mode: "block"
+              
+          })
+          .then(decisionId => axios(`${config.dataApi}decision/${decisionId.data}`))
+          .then(res => {
+            taxon.decision = res;
+            
+
+            notification.open({
+              message: `Decision apllied`,
+              description: `${_.get(taxon, "name.scientificName")} was blocked from the assembly`
+            });
+            if (typeof decisionCallback === 'function'){
+              decisionCallback()
+            }
+          })
+          .catch(err => {
+            notification.error({
+              message: "Error",
+              description: err.message
+            });
+          });
+     
+  };
+  
   render = () => {
     const { taxon } = this.props;
     const { sector } = taxon;
@@ -70,6 +111,7 @@ class Sector extends React.Component {
       _.get(sector, "target.id") &&
       sector.target &&
       taxon.parentId === sector.target.id;
+    const isRootSectorInSourceTree =   taxon.id  === sector.subject.id
     const isSourceTree = _.get(MANAGEMENT_CLASSIFICATION, 'key') !== _.get(taxon, 'datasetKey')
 
     if(!sectorSourceDataset){
@@ -130,6 +172,21 @@ class Sector extends React.Component {
             >
               Source Dataset Metadata
             </Button>
+            {/* !isRootSector && (
+            <React.Fragment>
+              <br />
+              <Button
+              style={{ marginTop: "8px", width: "100%" }}
+              type="danger"
+              onClick={() => {
+                alert("block")
+              }}
+            >
+              Block taxon
+            </Button>
+            </React.Fragment>
+            ) */}
+
           </div>
         }
         title="Sector Options"
@@ -160,16 +217,26 @@ class Sector extends React.Component {
                 <Popover
                 content={
                   <div>
-                      
-                    <Button
+                {isRootSectorInSourceTree && _.get(syncState, 'running.sectorKey') !== sector.key && <React.Fragment>
+            <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  onClick={() => {
+                    this.syncSector(sector);
+                  }}
+                >
+                  Sync sector
+                </Button>{" "}
+                <br />
+
+            </React.Fragment>}
+                 {!isRootSectorInSourceTree &&   <Button
                       style={{ marginTop: "8px", width: "100%" }}
-                      type="primary"
-                      onClick={() => {
-                        alert('Ready to block')
-                      }}
+                      type="danger"
+                      onClick={this.applyDecision}
                     >
                       Block taxon
-                    </Button>
+                    </Button>} 
                   </div>
                 }
                 title="Sector Options"
@@ -179,7 +246,7 @@ class Sector extends React.Component {
                 placement="rightTop"
               >
         <Tag color={stringToColour(sectorSourceDataset.title)}>
-        {isRootSector && <Icon type="caret-right" />}
+        {isRootSectorInSourceTree && <Icon type="caret-right" />}
         {sectorSourceDataset.alias || sectorSourceDataset.key}
         {_.get(syncState, 'running.sectorKey') === sector.key && <Icon type="sync" style={{marginLeft: '5px'}} spin />}
       </Tag>

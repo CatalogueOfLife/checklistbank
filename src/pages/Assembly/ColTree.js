@@ -140,11 +140,18 @@ class ColTree extends React.Component {
             let tx = defaultExpanded[i];
             // if MC should have default selected remember to insert function attrs here
             let node = {
-              title: <ColTreeNode taxon={tx} datasetKey={id} />,
+              title: <ColTreeNode 
+              taxon={tx} 
+              datasetKey={id}     
+              showSourceTaxon={showSourceTaxon}
+              reloadSelfAndSiblings={() => this.onLoadData(root, true)}
+              />,
               key: tx.id,
               childCount: tx.childCount,
               childOffset: 0,
               taxon: tx
+
+              
             };
             root.children = [node];
             root = node;
@@ -179,11 +186,19 @@ class ColTree extends React.Component {
   };
   fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
     const { showSourceTaxon, dataset, treeType } = this.props;
+
     return axios(
       `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(
         taxonKey
       )}/children?limit=${limit}&offset=${offset}`
-    )
+    ).then(res => {
+      if(treeType === "gsd" && _.get(treeNode, 'props.title.props.taxon.sectorKey')){
+        // If it is a GSD and the parent has a sectorKey, copy it to children
+      return  {...res, data: { ...res.data, result: res.data.result.map(r => ({...r, sectorKey: _.get(treeNode, 'props.title.props.taxon.sectorKey')}))}}
+      } else {
+        return res;
+      }
+    })
       .then(this.decorateWithSectorsAndDataset)
       .then(res =>
         res.data.result
@@ -216,7 +231,6 @@ class ColTree extends React.Component {
   };
 
   decorateWithSectorsAndDataset = res => {
-    const { showSourceTaxon, dataset, treeType } = this.props;
 
     if (!res.data.result) return res;
   
