@@ -272,9 +272,9 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
-            {_.get(taxon, "rank") && (
+            {_.get(taxon, "name.rank") && (
               <PresentationItem md={md} label="Rank">
-                {_.get(taxon, "rank")}
+                {_.get(taxon, "name.rank")}
               </PresentationItem>
             )}
             {_.get(taxon, "origin") && (
@@ -282,6 +282,12 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "origin")}
               </PresentationItem>
             )}
+            {_.get(taxon, "name.nomStatus") && (
+              <PresentationItem md={md} label="Nomenclatural Status">
+                {_.get(taxon, "name.nomStatus")}
+              </PresentationItem>
+            )}
+
 
             <PresentationItem md={md} label="Fossil">
               <BooleanValue value={_.get(taxon, "fossil")} />
