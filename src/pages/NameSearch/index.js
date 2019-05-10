@@ -90,7 +90,8 @@ class NameSearchPage extends React.Component {
       params: {},
       pagination: {
         pageSize: 50,
-        current: 1
+        current: 1,
+        showQuickJumper: true
       },
       loading: false
     };

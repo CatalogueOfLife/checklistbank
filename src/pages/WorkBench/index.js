@@ -34,7 +34,8 @@ class WorkBench extends React.Component {
       params: {},
       pagination: {
         pageSize: 50,
-        current: 1
+        current: 1,
+        showQuickJumper: true
       },
       loading: false,
       selectedRowKeys: [],
@@ -403,7 +404,7 @@ class WorkBench extends React.Component {
           value: i.value,
           label: `${_.startCase(i.value)} (${i.count})`
         }))
-      : null;
+      : [];
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map(s => ({
           value: s.value,
@@ -452,12 +453,36 @@ class WorkBench extends React.Component {
             />
           </Col>
           <Col span={10}>
-            <MultiValueFilter
+
+
+
+
+          <Select
+                    placeholder="Issue"
+                    value={params.issue}
+                    style={{
+                      width: 200,
+                      marginLeft: "10px",
+                      marginBottom: "10px"
+                    }}
+                    showSearch
+                    onChange={value => this.updateSearch({ issue: value })}
+                  >
+                    {facetIssues.map(r => (
+                      <Option key={r.value} value={r.value}>
+                        {r.label}
+                      </Option>
+                    ))}
+                  </Select>
+
+
+
+         { /*  <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
               vocab={facetIssues || issue}
               label="Issues"
-            />
+         /> */}
           </Col>
         </Row>
         <Row>
