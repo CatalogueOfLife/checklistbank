@@ -87,7 +87,7 @@ class VerbatimPresentation extends React.Component {
   }
   render = () => {
     const { verbatimLoading, verbatimError, verbatim } = this.state;
-    const {issueMap, basicHeader} = this.props;
+    const {issueMap, basicHeader, terms} = this.props;
     const title = _.get(verbatim, 'type') && _.get(verbatim, 'key') ? `${basicHeader ? '': 'Verbatim'} ${_.get(verbatim, 'type')} - ${_.get(verbatim, 'key')}` : 'Verbatim'
     return (
       <React.Fragment>
@@ -118,16 +118,16 @@ class VerbatimPresentation extends React.Component {
         
 
         {_.get(verbatim, "terms") &&
-          Object.keys(verbatim.terms).map(t => (
-            <PresentationItem md={md} label={t} key={t}>
+          terms.map(t => verbatim.terms[t] ?  <PresentationItem md={md} label={t} key={t}>
             {this.renderTerm(t, verbatim.terms[t], _.get(verbatim, 'type')  )}
-            </PresentationItem>
-          ))}
+            </PresentationItem> : ''
+
+          )}
       </React.Fragment>
     );
   };
 }
 
-const mapContextToProps = ({ issueMap, termsMap, termsMapReversed }) => ({ issueMap, termsMap, termsMapReversed });
+const mapContextToProps = ({ issueMap, termsMap, termsMapReversed, terms }) => ({ issueMap, termsMap, termsMapReversed, terms });
 
 export default withContext(mapContextToProps)(VerbatimPresentation)

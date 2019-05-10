@@ -5,7 +5,7 @@ import getDeep from 'lodash/get';
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
 import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode, getImportState } from '../../api/enumeration';
-import {getTerms} from '../../api/terms';
+import {getTerms, getTermsOrder} from '../../api/terms';
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -45,6 +45,7 @@ class ContextProvider extends React.Component {
     importState: [],
     user: null,
     notifications: [],
+    terms: [],
     termsMap: {},
     dataset: null,
     setDataset: dataset => {
@@ -106,7 +107,8 @@ class ContextProvider extends React.Component {
       getTerms(),
       getLicense(),
       getNomCode(),
-      getImportState()
+      getImportState(),
+      getTermsOrder()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
@@ -140,6 +142,7 @@ class ContextProvider extends React.Component {
         license: responses[11],
         nomCode: responses[12],
         importState: responses[13],
+        terms: responses[14],
         termsMap: termsMap,
         termsMapReversed: termsMapReversed
       });
