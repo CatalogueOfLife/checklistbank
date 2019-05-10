@@ -40,8 +40,8 @@ const styles = () => ({
     wordBreak: 'break-word'
   },
   smallMargin: {
-    marginBottom: 5,
-    marginTop: 5
+    marginBottom: 3,
+    marginTop: 3
   },
   mediumMargin: {
     marginBottom: 10,
@@ -80,7 +80,7 @@ const PresentationItem = ({ label, helpText, classes, children, width, md, size 
 
   const medium = md || 8;
   const mediumCol2 = medium < 24 ? 24 - medium : 24;
-  const marginSize = size === 'small' ? classes.smallMargin : classes.mediumMargin;
+  const marginSize = size === 'medium' ? classes.mediumMargin : classes.smallMargin;
   return (
     <Row className={classes.formItem}>
       <Col sm={24} md={medium} style={width < MEDIUM ? { marginBottom: 0 } : {}} className={marginSize}>

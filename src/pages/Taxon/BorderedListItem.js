@@ -70,7 +70,7 @@ const BorderedListItem = ({ classes, children,  size }) => {
   };
 
 
-  const marginSize = size === 'small' ? classes.smallMargin : classes.mediumMargin;
+  const marginSize = size === 'medium' ? classes.mediumMargin : classes.smallMargin;
   return (
     <Row className={classes.formItem}>
   

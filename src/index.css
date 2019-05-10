@@ -13,3 +13,10 @@ body {
 {
    border-bottom: none !important
 }
+
+.colplus-taxon-page-list  th, .colplus-taxon-page-list  td {
+  padding: 5px 3px !important;
+  font-size: 12px
+
+}
+
