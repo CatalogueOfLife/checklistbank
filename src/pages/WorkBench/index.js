@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Tooltip, Row, Col, Button, Select, Tag, notification } from "antd";
+import { Table, Alert, Icon, Row, Col, Button, Select, Tag, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -49,9 +49,28 @@ class WorkBench extends React.Component {
       key: "nameIndexId",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => text ? <Tag color={stringToColour(text)} style={{width:"40px"}}>{
+      render: (text, record) => 
+      <React.Fragment>
+        {text && <Tag color={stringToColour(text)} style={{width:"40px", verticalAlign: 'middle'}}>{
         <CopyableColumnText text={text} width="30px"/>
-         }</Tag> : ""
+         }</Tag>}
+
+<NavLink
+          key={_.get(record, "usage.id")}
+          to={{
+            pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
+              _.get(record, "usage.bareName") ? "name" : "taxon"
+            }/${encodeURIComponent(
+              _.get(record, "usage.id")// _.get(record, "usage.accepted.name.id") ? _.get(record, "usage.accepted.name.id") : _.get(record, "usage.name.id")
+            )}`
+          }}
+          exact={true}
+        >
+        <Icon  type="link"/> 
+        </NavLink>
+
+      </React.Fragment>
+      
 
     },
     {
@@ -84,7 +103,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.formattedName",
       width: 240,
       className: "workbench-td",
-      render: (text, record) => <span
+      render: (text, record) => 
+       <span
       dangerouslySetInnerHTML={{
         __html: _.get(record, "usage.name.formattedName")
       }}
@@ -97,6 +117,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.uninomial",
       key: "uninomial",
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+
     },
     {
       title: "Genus",
@@ -104,6 +126,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.genus",
       key: "genus",
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+
     },
     {
       title: "specificEpithet",
@@ -111,6 +135,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.specificEpithet",
       key: "specificEpithet",
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+
     },
     {
       title: "infraspecificEpithet",
@@ -118,6 +144,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.infraspecificEpithet",
       key: "infraspecificEpithet",
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+
     },
     {
       title: "Authorship",
@@ -125,6 +153,8 @@ class WorkBench extends React.Component {
       dataIndex: "usage.name.authorship",
       key: "authorship",
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="230px" />
+
     },
   
     {
@@ -134,6 +164,8 @@ class WorkBench extends React.Component {
       key: "rank",
       sorter: true,
       className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="90px" />
+
     },
     {
       title: "acceptedScientificName",

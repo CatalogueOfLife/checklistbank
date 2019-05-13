@@ -116,7 +116,7 @@ class CslReferences extends React.Component {
       lineHeight: '30px',
     };
     return (
-      <Row style={{marginLeft: '-50px', marginTop: '-8px'}}>
+      <Row style={{marginLeft: '-48px', marginTop: '-8px'}}>
         <Col span={22}>
           <div dangerouslySetInnerHTML={{ __html: csl }} />
         </Col>
