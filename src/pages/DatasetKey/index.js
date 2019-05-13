@@ -17,6 +17,8 @@ import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import NameSearch from "../NameSearch"
 import WorkBench from "../WorkBench"
 import withContext from "../../components/hoc/withContext"
+import Exception404 from "../../components/exception/404";
+
 import _ from 'lodash'
 import Helmet from 'react-helmet'
 import Duplicates from "../Duplicates";
@@ -49,22 +51,13 @@ class DatasetPage extends React.Component {
       });
   };
 
-  updateSection = section => {
-    const {
-      match: {
-        params: { key }
-      }
-    } = this.props;
 
-    this.setState({ section: section }, () => {
-      history.push(`/dataset/${key}/${section}`);
-    });
-  };
 
   render() {
     const { datasetKey, section, dataset } = this.props;
+    if(!dataset)
     if (!section) return <Redirect to={{
-      pathname: `/dataset/${datasetKey}/meta`
+      pathname: `/dataset/${datasetKey}/names`
     }} />
     const sect = (!section) ? "meta" : section.split('?')[0];
     const params = queryString.parse(this.props.location.search);
@@ -72,6 +65,7 @@ class DatasetPage extends React.Component {
     const openKeys = ['datasetKey']
     const selectedKeys = [section]
     return (
+      !dataset ? <Exception404 /> :
       <Layout
         selectedMenuItem="datasetKey"
         selectedDataset={dataset}
