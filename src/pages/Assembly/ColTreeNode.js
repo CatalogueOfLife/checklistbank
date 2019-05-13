@@ -15,6 +15,8 @@ import { ColTreeContext } from "./ColTreeContext";
 import Sector from "./Sector";
 import DecisionTag from "../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
+import EditTaxonModal from "./EditTaxonModal";
+
 import history from "../../history";
 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -25,7 +27,8 @@ class ColTreeNode extends React.Component {
     this.state = {
       style: {},
       popOverVisible: false,
-      childModalVisible: false
+      childModalVisible: false,
+      editTaxonModalVisible: false
     };
   }
   setMode = mode => {
@@ -62,19 +65,42 @@ class ColTreeNode extends React.Component {
       });
   };
 
+  cancelEditTaxonModal = () => {
+    const {reloadSelfAndSiblings } = this.props;
+    this.setState({ editTaxonModalVisible: false }, reloadSelfAndSiblings);
+  };
+  cancelChildModal = () => {
+    const {reloadSelfAndSiblings } = this.props;
+
+    this.setState({ childModalVisible: false }, reloadSelfAndSiblings);
+  };
   render = () => {
     const {
       taxon,
       taxon: { sector, decision, datasetSectors },
       hasPopOver,
       isUpdating
+      
     } = this.props;
-    const { childModalVisible } = this.state;
-    const cancelChildModal = () => {
-      this.setState({ childModalVisible: false });
-    };
+    const { childModalVisible, editTaxonModalVisible } = this.state;
+
     return (
       <div>
+        {childModalVisible && (
+                      <AddChildModal
+                        onCancel={this.cancelChildModal}
+                        onSuccess={this.cancelChildModal}
+                        parent={taxon}
+                      />
+                    )}
+                    {editTaxonModalVisible && (
+                      <EditTaxonModal
+                        onCancel={this.cancelEditTaxonModal}
+                        onSuccess={this.cancelEditTaxonModal}
+                        taxon={taxon}
+                        
+                      />
+                    )}
         <ColTreeContext.Consumer>
           {({ mode }) =>
             mode === "modify" &&
@@ -116,19 +142,28 @@ class ColTreeNode extends React.Component {
                       onClick={() =>
                         this.setState({
                           childModalVisible: true,
-                          popOverVisible: false
+                          popOverVisible: false,
+
                         })
                       }
                     >
                       Add child
                     </Button>
-                    {childModalVisible && (
-                      <AddChildModal
-                        onCancel={cancelChildModal}
-                        onSuccess={cancelChildModal}
-                        parent={taxon}
-                      />
-                    )}
+                    <br />
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="primary"
+                      onClick={() =>
+                        this.setState({
+                          editTaxonModalVisible: true,
+                          popOverVisible: false,
+                        })
+                      }
+                    >
+                      Edit taxon
+                    </Button>
+                    
+                    
                   </React.Fragment>
                 }
                 title="Options"

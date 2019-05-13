@@ -18,7 +18,7 @@ export default {
             key={_.get(record, "id")}
             to={{
               pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
+                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
               }/${encodeURIComponent(_.get(record, "id"))}`
             }}
             exact={true}
@@ -115,14 +115,14 @@ export default {
       render: (text, record) => {
         return (
           <NavLink
-            key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "id"))}`
-            }}
-            exact={true}
-          >
+          key={_.get(record, "id")}
+          to={{
+            pathname: `/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
+            }/${encodeURIComponent(_.get(record, "id"))}`
+          }}
+          exact={true}
+        >
             <Tooltip title={text}>
               <div style={{ width: "50px" }} className="truncate">
                 {text}
@@ -226,7 +226,7 @@ export default {
             key={_.get(record, "id")}
             to={{
               pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
+                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
               }/${encodeURIComponent(_.get(record, "id"))}`
             }}
             exact={true}

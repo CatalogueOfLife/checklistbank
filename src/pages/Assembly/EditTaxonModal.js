@@ -8,27 +8,28 @@ import config from "../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
-class AddChildModal extends React.Component {
+class EditTaxonModal extends React.Component {
   state = {
     visible: true,
-    confirmLoading: false
+    confirmLoading: false,
+    taxon: null
   };
+
+  componentDidMount = () => {
+      this.getTaxon()
+  }
 
   isGenusOrAbove = (rank) =>{
     return this.props.rank.indexOf(rank) <= this.props.rank.indexOf('genus')
   }
 
   handleSubmit = e => {
+    
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
         const taxon = {
-          parentId: this.props.parent.id,
-          name: this.isGenusOrAbove(values.rank) ? {
-            uninomial: values.name,
-            rank: values.rank,
-            nomstatus: values.nomstatus
-          } : {
+          name:  {
             scientificName: values.name,
             rank: values.rank,
             nomstatus: values.nomstatus
@@ -43,16 +44,16 @@ class AddChildModal extends React.Component {
   };
 
   submitData = values => {
-    const { parent } = this.props;
+    const { taxon: {name} } = this.state;
     axios
-      .post(`${config.dataApi}dataset/${parent.datasetKey}/taxon`, values)
+      .put(`${config.dataApi}dataset/${name.datasetKey}/name/${name.id}`, values)
       .then(res => {
 
         this.setState({ submissionError: null, confirmLoading: false }, () => {
-          notification.open({
-            message: "Child inserted",
-            description: `${values.name} was inserted as child of ${parent.name}`
-          });
+            notification.open({
+                message: "Name updated",
+                description: `${name.scientificName} was updated`
+              });
           if(this.props.onSuccess && typeof this.props.onSuccess === 'function'){
             this.props.onSuccess()
           }
@@ -62,6 +63,16 @@ class AddChildModal extends React.Component {
         this.setState({ submissionError: err, confirmLoading: false });
       });
   };
+  getTaxon = () => {
+    const {
+      taxon
+    } = this.props;
+    axios(
+      `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(taxon.id)}`
+    ).then((tx) => {
+        this.setState({taxon: tx.data})
+    })
+  }
 
   handleConfirmBlur = e => {
     const value = e.target.value;
@@ -69,8 +80,8 @@ class AddChildModal extends React.Component {
   };
 
   render() {
-    const { parent, rank, nomstatus, onCancel, form: {getFieldDecorator}  } = this.props;
-    const { visible, submissionError } = this.state;
+    const {  rank, nomstatus, onCancel, form: {getFieldDecorator}  } = this.props;
+    const { visible, submissionError, taxon } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -86,8 +97,8 @@ class AddChildModal extends React.Component {
       style={{width:"650px"}}
         title={
           <span>
-            Add child to{" "}
-            <span dangerouslySetInnerHTML={{ __html: parent.name }} />
+            Edit{" "}
+            <span dangerouslySetInnerHTML={{ __html: _.get(taxon, 'name.scientificName') }} />
           </span>
         }
         visible={visible}
@@ -104,6 +115,8 @@ class AddChildModal extends React.Component {
       <Form >
         <FormItem {...formItemLayout} label="Taxon name">
           {getFieldDecorator("name", {
+        initialValue: (_.get(taxon, 'name.scientificName')) ? _.get(taxon, 'name.scientificName') : '',
+
             rules: [
               {
                 required: true,
@@ -114,6 +127,8 @@ class AddChildModal extends React.Component {
         </FormItem>
         <FormItem {...formItemLayout} label="Rank">
           {getFieldDecorator("rank", {
+                      initialValue: (_.get(taxon, 'name.rank')) ? _.get(taxon, 'name.rank') : '',
+
             rules: [
               {
                 required: true,
@@ -136,7 +151,8 @@ class AddChildModal extends React.Component {
         <FormItem {...formItemLayout} label="Nom. status">
           {getFieldDecorator("nomstatus", {
             
-            initialValue: "acceptable"
+            initialValue: (_.get(taxon, 'name.nomStatus')) ? _.get(taxon, 'name.nomStatus') : '',
+
             
           })(
             <Select style={{ width: 200 }}  showSearch>
@@ -156,8 +172,8 @@ class AddChildModal extends React.Component {
   }
 }
 const mapContextToProps = ({ rank, nomstatus }) => ({ rank, nomstatus });
-const WrappedAddChildModal = Form.create()(
-  withContext(mapContextToProps)(AddChildModal)
+const WrappedAddTaxonModal = Form.create()(
+  withContext(mapContextToProps)(EditTaxonModal)
 );
 
-export default WrappedAddChildModal;
+export default WrappedAddTaxonModal;

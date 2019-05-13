@@ -61,7 +61,7 @@ class WorkBench extends React.Component {
             pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
               _.get(record, "usage.bareName") ? "name" : "taxon"
             }/${encodeURIComponent(
-              _.get(record, "usage.id")// _.get(record, "usage.accepted.name.id") ? _.get(record, "usage.accepted.name.id") : _.get(record, "usage.name.id")
+              _.get(record, "usage.accepted.id") ? _.get(record, "usage.accepted.id") : _.get(record, "usage.id")
             )}`
           }}
           exact={true}
