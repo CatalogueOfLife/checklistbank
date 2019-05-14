@@ -4,7 +4,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Alert, Tag, Breadcrumb, Row, Col, Button } from "antd";
+import { Alert, Tag, Icon, Row, Col, Button } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
@@ -272,16 +272,17 @@ class TaxonPage extends React.Component {
                 {_.get(taxon, "status")}
               </PresentationItem>
             )}
+            {_.get(taxon, "webpage") && (
+              <PresentationItem md={md} label="External webpage">
+                <a href={_.get(taxon, "webpage")}><Icon type="link"></Icon></a>
+              </PresentationItem>
+            )}
             {_.get(taxon, "name.rank") && (
               <PresentationItem md={md} label="Rank">
                 {_.get(taxon, "name.rank")}
               </PresentationItem>
             )}
-            {_.get(taxon, "origin") && (
-              <PresentationItem  md={md} label="Origin">
-                {_.get(taxon, "origin")}
-              </PresentationItem>
-            )}
+           
             {_.get(taxon, "name.nomStatus") && (
               <PresentationItem md={md} label="Nomenclatural Status">
                 {_.get(taxon, "name.nomStatus")}
@@ -384,7 +385,14 @@ class TaxonPage extends React.Component {
                 <Classification style={{marginTop: '-3px', marginLeft: '-3px' }} data={classification} datasetKey={key} />
               </PresentationItem>
             )}
+            {_.get(taxon, "origin") && (
+              <PresentationItem  md={md} label="Origin">
+                {_.get(taxon, "origin")}
+              </PresentationItem>
+            )}
+
             {_.get(taxon, 'verbatimKey') && <VerbatimPresentation verbatimKey={taxon.verbatimKey} datasetKey={taxon.datasetKey}></VerbatimPresentation>}
+            
           </div>
         </React.Fragment>
       </Layout>
