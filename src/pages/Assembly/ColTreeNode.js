@@ -6,7 +6,8 @@ import {
   Icon,
   Button,
   Popover,
-  Tooltip
+  Tooltip,
+  Checkbox
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -26,9 +27,9 @@ class ColTreeNode extends React.Component {
     super(props);
     this.state = {
       style: {},
+      provisional: this.props.taxon.status === 'provisionally accepted',
       popOverVisible: false,
-      childModalVisible: false,
-      editTaxonModalVisible: false
+      childModalVisible: false
     };
   }
   setMode = mode => {
@@ -64,13 +65,25 @@ class ColTreeNode extends React.Component {
         this.setState({ error: err });
       });
   };
-
-  cancelEditTaxonModal = () => {
-    const {reloadSelfAndSiblings } = this.props;
-    this.setState({ editTaxonModalVisible: false }, reloadSelfAndSiblings);
+  setProvisional = (provisional, taxon) => {
+    const { reloadSelfAndSiblings } = this.props;
+    this.setState({provisional})
+    axios(`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}`)
+    .then((res)=> res.data)
+    .then((tx)=> axios.put(`${config.dataApi}dataset/${tx.datasetKey}/taxon/${tx.id}`, 
+    {...tx, status: provisional ? 'provisionally accepted':'accepted'})
+    )
+    .then(res => {
+      reloadSelfAndSiblings()
+    })
+    .catch(err => {
+      this.setState({ error: err });
+    });
+  
   };
+
   cancelChildModal = () => {
-    const {reloadSelfAndSiblings } = this.props;
+    const { reloadSelfAndSiblings } = this.props;
 
     this.setState({ childModalVisible: false }, reloadSelfAndSiblings);
   };
@@ -80,27 +93,19 @@ class ColTreeNode extends React.Component {
       taxon: { sector, decision, datasetSectors },
       hasPopOver,
       isUpdating
-      
     } = this.props;
     const { childModalVisible, editTaxonModalVisible } = this.state;
 
     return (
       <div>
         {childModalVisible && (
-                      <AddChildModal
-                        onCancel={this.cancelChildModal}
-                        onSuccess={this.cancelChildModal}
-                        parent={taxon}
-                      />
-                    )}
-                    {editTaxonModalVisible && (
-                      <EditTaxonModal
-                        onCancel={this.cancelEditTaxonModal}
-                        onSuccess={this.cancelEditTaxonModal}
-                        taxon={taxon}
-                        
-                      />
-                    )}
+          <AddChildModal
+            onCancel={this.cancelChildModal}
+            onSuccess={this.cancelChildModal}
+            parent={taxon}
+          />
+        )}
+
         <ColTreeContext.Consumer>
           {({ mode }) =>
             mode === "modify" &&
@@ -112,8 +117,9 @@ class ColTreeNode extends React.Component {
                       style={{ width: "100%" }}
                       type="primary"
                       onClick={() => {
-                        history.push(`/dataset/${taxon.datasetKey}/taxon/${taxon.id}`);
-
+                        history.push(
+                          `/dataset/${taxon.datasetKey}/taxon/${taxon.id}`
+                        );
                       }}
                     >
                       Show taxon
@@ -142,28 +148,23 @@ class ColTreeNode extends React.Component {
                       onClick={() =>
                         this.setState({
                           childModalVisible: true,
-                          popOverVisible: false,
-
+                          popOverVisible: false
                         })
                       }
                     >
                       Add child
                     </Button>
                     <br />
-                    <Button
+                    <Checkbox
                       style={{ marginTop: "8px", width: "100%" }}
-                      type="primary"
-                      onClick={() =>
-                        this.setState({
-                          editTaxonModalVisible: true,
-                          popOverVisible: false,
-                        })
+                      checked={this.state.provisional}
+                      onChange={e =>
+                        this.setProvisional(e.target.checked, taxon)
                       }
                     >
-                      Edit taxon
-                    </Button>
-                    
-                    
+                      {" "}
+                      Provisional{" "}
+                    </Checkbox>
                   </React.Fragment>
                 }
                 title="Options"
@@ -245,11 +246,13 @@ class ColTreeNode extends React.Component {
                       {taxon.status}
                     </Tag>
                   )}
-                  {taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key && !datasetSectors && !sector && 
-                  <Tooltip title="No sectors">
-                  <Icon style={{marginLeft: "6px"}} type="disconnect"/>
-                  </Tooltip>
-                  }
+                  {taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key &&
+                    !datasetSectors &&
+                    !sector && (
+                      <Tooltip title="No sectors">
+                        <Icon style={{ marginLeft: "6px" }} type="disconnect" />
+                      </Tooltip>
+                    )}
                   {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>
