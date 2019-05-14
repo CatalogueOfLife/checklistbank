@@ -15,7 +15,8 @@ class DatasetAutocomplete extends React.Component {
         this.getDatasets = debounce(this.getDatasets, 500);
 
         this.state = {
-            datasets: []
+            datasets: [],
+            value: ''
         }
     }
 
@@ -34,10 +35,27 @@ class DatasetAutocomplete extends React.Component {
             })
     }
     onSelectDataset = (val, obj) => {
+        this.setState({value: val})
+
         this.props.onSelectDataset({key: val, title: obj.props.children})
        // this.setState({ datasetKey: val, datasetName: obj.props.children, selectedDataset: {key: val, title: obj.props.children}})
     }
+    onReset = () => {
+        this.setState({value: '', datasets: []})
+       // this.props.onResetSearch()
+    }
     render = () => {
+        const {value} = this.state;
+
+        const suffix = (value) ?
+            <Icon
+              type="close-circle"
+              key="suffix"
+              onClick={this.onReset}
+              style={{ marginRight: "6px" }}
+
+            /> : ''
+          ;
         return <AutoComplete
             dataSource={this.state.datasets}
             onSelect={this.onSelectDataset}
@@ -45,14 +63,12 @@ class DatasetAutocomplete extends React.Component {
             dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: o.title})) : []}
             placeholder="Find dataset"
             style={{ width: '100%' }}
+            onChange={(value) => this.setState({value})}
+            value={value}
         >
-            <Input
+            <Input.Search
 
-            suffix={(
-              
-                <Icon type="search" />
-             
-            )}
+            suffix={suffix}
           />
         </AutoComplete>
     }

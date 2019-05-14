@@ -53,6 +53,8 @@ class DatasetAutocomplete extends React.Component {
               type="close-circle"
               key="suffix"
               onClick={this.onReset}
+              style={{ marginRight: "6px" }}
+
             /> : ''
           ;
         return <AutoComplete
@@ -67,10 +69,16 @@ class DatasetAutocomplete extends React.Component {
             autoFocus={true}
       
         >
-        <Input 
+        <Input.Search 
+                    suffix={suffix}
+
         />
             
         </AutoComplete>
+
+
+
+
     }
 
 }

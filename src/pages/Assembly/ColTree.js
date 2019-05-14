@@ -579,6 +579,7 @@ class ColTree extends React.Component {
             onDragStart={onDragStart}
             loadedKeys={loadedKeys}
             loadData={this.onLoadData}
+            filterTreeNode={node => node.props.dataRef.key === this.props.defaultExpandKey }
             onLoad={(loadedKeys, obj) => this.setState({ loadedKeys })}
             onExpand={(expandedKeys, obj) => {
               if (!obj.expanded) {
