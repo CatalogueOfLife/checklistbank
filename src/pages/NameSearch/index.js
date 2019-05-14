@@ -101,13 +101,13 @@ class NameSearchPage extends React.Component {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0, facet: ['rank', 'issue', 'status'] };
+      params = { limit: 50, offset: 0, facet: ['rank', 'issue', 'status', 'nomstatus', 'type', 'field'] };
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
         search: `?limit=50&offset=0`
       });
     } else if(!params.facet) {
-      params.facet = ['rank', 'issue', 'status']
+      params.facet = ['rank', 'issue', 'status', 'nomstatus', 'type', 'field']
     }
 
     this.setState({ params }, this.getData);
@@ -197,6 +197,10 @@ class NameSearchPage extends React.Component {
     const facetRanks = _.get(facets, 'rank') ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
     const facetIssues =  _.get(facets, 'issue') ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
     const facetTaxonomicStatus = _.get(facets, 'status') ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetNomStatus = _.get(facets, 'nomstatus') ? facets.nomstatus.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetNomType = _.get(facets, 'type') ? facets.type.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const facetNomField = _.get(facets, 'field') ? facets.field.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+
     return (
       <div
         style={{
@@ -247,19 +251,19 @@ class NameSearchPage extends React.Component {
              <MultiValueFilter
               defaultValue={_.get(params, "nomstatus")}
               onChange={value => this.updateSearch({ nomstatus: value })}
-              vocab={nomstatus}
+              vocab={facetNomStatus || nomstatus}
               label="Nomenclatural status"
             />
             <MultiValueFilter
               defaultValue={_.get(params, "type")}
               onChange={value => this.updateSearch({ type: value })}
-              vocab={nametype}
+              vocab={facetNomType || nametype}
               label="Name type"
             />
             <MultiValueFilter
               defaultValue={_.get(params, "field")}
               onChange={value => this.updateSearch({ field: value })}
-              vocab={namefield}
+              vocab={facetNomField || namefield}
               label="Name field"
       />
         </React.Fragment>}
