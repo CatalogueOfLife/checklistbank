@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Switch, Row, Col, Button } from "antd";
+import { Table, Alert, Switch, Row, Col, Button, Icon } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -184,7 +184,7 @@ class NameSearchPage extends React.Component {
   };
 
   resetSearch = () => {
-    this.setState({ params: { limit: 50, offset: 0, facet: ['rank', 'issue', 'status'] } }, this.getData);
+    this.setState({ params: { limit: 50, offset: 0, facet: ['rank', 'issue', 'status', 'nomstatus', 'type', 'field'] } }, this.getData);
   };
 
   toggleAdvancedFilters = () => {
@@ -267,7 +267,18 @@ class NameSearchPage extends React.Component {
               label="Name field"
       />
         </React.Fragment>}
-        <div style={{ textAlign: "right", marginBottom: "8px" }}> <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /></div>
+        <div style={{ textAlign: "right", marginBottom: "8px" }}>
+        <a
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={this.toggleAdvancedFilters}
+                >
+                  Advanced{" "}
+                  <Icon type={this.state.advancedFilters ? "up" : "down"} />
+                </a>
+
+       { /* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
+         
+         </div>
 
             
           </Col>
