@@ -429,6 +429,21 @@ class DuplicateSearchPage extends React.Component {
               </div>
               {advancedMode && (
                 <Form layout="inline">
+                 <Select
+                    placeholder="Name category"
+                    value={params.category}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    onChange={value => this.updateSearch({ category: value })}
+                  >
+                    <Option value="binomial">binomial</Option>
+                    <Option value="trinomial">trinomial</Option>
+                    <Option value="uninomial">uninomial</Option>
+                  </Select>
+
                   <Select
                     placeholder="Min size"
                     value={params.minSize}
@@ -446,40 +461,14 @@ class DuplicateSearchPage extends React.Component {
                     ))}
                   </Select>
 
-                  <Select
-                    placeholder="Rank"
-                    value={params.rank}
-                    style={{
-                      width: 200,
-                      marginRight: 10,
-                      marginBottom: "10px"
-                    }}
-                    mode="multiple"
-                    showSearch
-                    onChange={value => this.updateSearch({ rank: value })}
-                  >
-                    {rank.map(r => (
-                      <Option key={r} value={r}>
-                        {r}
-                      </Option>
-                    ))}
-                  </Select>
-
-                  <Select
-                    placeholder="Name category"
-                    value={params.category}
-                    style={{
-                      width: 200,
-                      marginRight: 10,
-                      marginBottom: "10px"
-                    }}
-                    onChange={value => this.updateSearch({ category: value })}
-                  >
-                    <Option value="binomial">binomial</Option>
-                    <Option value="trinomial">trinomial</Option>
-                    <Option value="uninomial">uninomial</Option>
-                  </Select>
-
+                  <FormItem label="Fuzzy matching">
+                    <Switch
+                      checked={params.mode === "FUZZY"}
+                      onChange={value =>
+                        this.updateSearch({ mode: value ? "FUZZY" : "STRICT" })
+                      }
+                    />
+                  </FormItem>
                   <Select
                     placeholder="Status"
                     value={params.status}
@@ -498,6 +487,24 @@ class DuplicateSearchPage extends React.Component {
                       </Option>
                     ))}
                   </Select>
+                  <Select
+                    placeholder="Rank"
+                    value={params.rank}
+                    style={{
+                      width: 200,
+                      marginRight: 10,
+                      marginBottom: "10px"
+                    }}
+                    mode="multiple"
+                    showSearch
+                    onChange={value => this.updateSearch({ rank: value })}
+                  >
+                    {rank.map(r => (
+                      <Option key={r} value={r}>
+                        {r}
+                      </Option>
+                    ))}
+                  </Select>   
 
                   <AutoComplete
                     dataSource={this.state.sectors}
@@ -518,7 +525,32 @@ class DuplicateSearchPage extends React.Component {
                   >
                     <Input suffix={<Icon type="search" />} />
                   </AutoComplete>
-
+                    <br />
+                    <FormItem label="Authorship different">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "authorshipDifferent"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({
+                            authorshipDifferent: evt.target.value
+                          });
+                        }
+                      }}
+                      value={params.authorshipDifferent}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
                   <FormItem label="Parent different">
                     <RadioGroup
                       onChange={evt => {
@@ -544,31 +576,7 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
-                  <FormItem label="Authorship different">
-                    <RadioGroup
-                      onChange={evt => {
-                        if (typeof evt.target.value === "undefined") {
-                          this.setState(
-                            {
-                              params: _.omit(this.state.params, [
-                                "authorshipDifferent"
-                              ])
-                            },
-                            this.getData
-                          );
-                        } else {
-                          this.updateSearch({
-                            authorshipDifferent: evt.target.value
-                          });
-                        }
-                      }}
-                      value={params.authorshipDifferent}
-                    >
-                      <Radio value={true}>Yes</Radio>
-                      <Radio value={false}>No</Radio>
-                      <Radio value={undefined}>Ignore</Radio>
-                    </RadioGroup>
-                  </FormItem>
+                  
 
                   <FormItem label="With decision">
                     <RadioGroup
@@ -593,14 +601,7 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
-                  <FormItem label="Fuzzy matching">
-                    <Switch
-                      checked={params.mode === "FUZZY"}
-                      onChange={value =>
-                        this.updateSearch({ mode: value ? "FUZZY" : "STRICT" })
-                      }
-                    />
-                  </FormItem>
+                 
                   <FormItem>
                     <Button type="danger" onClick={this.resetSearch}>
                       Reset all
