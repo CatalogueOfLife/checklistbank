@@ -83,8 +83,8 @@ const defaultColumns = [
   },
   {
     title: "Contributes To",
-    dataIndex: "contributesToDatasets",
-    key: "contributesToDatasets",
+    dataIndex: "contributesTo",
+    key: "contributesTo",
     render: (text, record) => {
       return record.contributesToDatasets
         ? record.contributesToDatasets.map(d => d.alias).join(", ")
@@ -99,8 +99,9 @@ const defaultColumns = [
   },
   {
     title: "Data Format",
-    dataIndex: "dataFormat",
-    key: "dataFormat"
+    dataIndex: "format",
+    key: "format",
+    render: (text, record) => record.dataFormat
   },
   {
     title: "Import Frequency",
@@ -156,21 +157,25 @@ class DatasetList extends React.Component {
         search: `?limit=${PAGE_SIZE}&offset=0`
       });
     }
-    if (query.contributesTo) {
-      this.updateContributesTo(query);
-    }
+   
+    this.updateFiltersFromParams(query)
     this.getData(query || { limit: PAGE_SIZE, offset: 0 });
   }
 
-  updateContributesTo = query => {
-    let catColumn = _.find(defaultColumns, c => {
-      return c.key === "contributesTo";
-    });
-    let filter =
-      typeof query.contributesTo === "string"
-        ? [query.contributesTo]
-        : query.contributesTo;
-    catColumn.filteredValue = filter;
+  updateFiltersFromParams = query => {
+
+    ['code', 'contributesTo', 'format'].forEach(param => {
+      let column = _.find(defaultColumns, c => {
+        return c.key === param;
+      });
+      let filter =
+        typeof query[param] === "string"
+          ? [query[param]]
+          : query[param];
+          column.filteredValue = filter;
+
+    })
+
   };
 
   getData = (params = { limit: PAGE_SIZE, offset: 0 }) => {
@@ -225,15 +230,20 @@ class DatasetList extends React.Component {
     this.setState({
       pagination: pager
     });
+    let query = {
+      ...this.state.params,
+      limit: pager.pageSize,
+      offset: (pager.current - 1) * pager.pageSize,
+      ...filters
+    };
+    /*
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters
-    });
-    if (filters.contributesTo) {
-      query.contributesTo = filters.contributesTo;
-      this.updateContributesTo(query);
-    }
+    }); */
+    this.updateFiltersFromParams(query)
+    
     if (sorter) {
       query.sortBy =
         sorter.field === "authorsAndEditors" ? "authors" : sorter.field;
@@ -251,7 +261,11 @@ class DatasetList extends React.Component {
   };
 
   render() {
-    const { data, loading, error, excludeColumns } = this.state;
+    const { data, loading, error, excludeColumns} = this.state;
+    const { dataFormatType, nomCode } = this.props
+
+    defaultColumns[5].filters = nomCode.map(i => ({text: _.startCase(i.name), value: i.name}))
+    defaultColumns[8].filters = dataFormatType.map(i => ({text: _.startCase(i), value: i}))
 
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
@@ -338,6 +352,6 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, dataFormatType, nomCode }) => ({ user, dataFormatType, nomCode });
 
 export default withContext(mapContextToProps)(DatasetList);
