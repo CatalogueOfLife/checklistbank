@@ -365,12 +365,12 @@ class WorkBench extends React.Component {
       data: { result },
       decision
     } = this.state;
-    const { datasetKey } = this.props;
+    const { datasetKey, taxonomicstatus } = this.props;
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.name.id")))
       .map(d => {
-        return axios
-          .post(`${config.dataApi}decision`, {
+        let decisionObject = {
+          
             datasetKey: datasetKey,
             subject: {
               id: _.get(d, "usage.name.id"),
@@ -381,11 +381,18 @@ class WorkBench extends React.Component {
             },
             mode: ["block", "chresonym"].includes(decision)
               ? decision
-              : "update",
-            status: ["block", "chresonym"].includes(decision)
-              ? _.get(d, "usage.status")
-              : decision
-          })
+              : "update"
+          
+        }
+        if(["informal", "no name", "hybrid formula", "placeholder"].includes(decision)){
+          decisionObject.name = {type: decision}
+        }
+        if(taxonomicstatus.includes(decision)){
+          decisionObject.status = decision
+        }
+         
+        return axios
+          .post(`${config.dataApi}decision`, decisionObject)
 
           .then(res => {
             const statusMsg = `Status changed to ${decision} for ${_.get(
@@ -466,13 +473,13 @@ class WorkBench extends React.Component {
         }))
       : null;
 
-    columns[3].filters =
+    columns[2].filters =
       facetTaxonomicStatus ||
       taxonomicstatus.map(s => ({ value: s, text: _.startCase(s) }));
-    columns[3].filteredValue = _.get(filteredInfo, "status") || null;
-    columns[10].filters =
+    columns[2].filteredValue = _.get(filteredInfo, "status") || null;
+    columns[9].filters =
       facetRanks || rank.map(s => ({ value: s, text: _.startCase(s) }));
-    columns[10].filteredValue = _.get(filteredInfo, "rank") || null;
+    columns[9].filteredValue = _.get(filteredInfo, "rank") || null;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -544,16 +551,22 @@ class WorkBench extends React.Component {
               style={{ width: 200, marginRight: 10 }}
               onChange={this.onDecisionChange}
             >
+              <OptGroup label="General">
+                <Option value="block">Block</Option>
+                <Option value="chresonym">Chresonym</Option>
+              </OptGroup>
+              <OptGroup label="Name type">
+                <Option value="no name">No name</Option>
+                <Option value="placeholder">Placeholder</Option>
+                <Option value="hybrid formula">Hybrid formula</Option>
+                <Option value="informal">Informal</Option>
+              </OptGroup>
               <OptGroup label="Status">
                 {taxonomicstatus.map(s => (
                   <Option value={s} key={s}>
                     {_.startCase(s)}
                   </Option>
                 ))}
-              </OptGroup>
-              <OptGroup label="Other">
-                <Option value="block">Block</Option>
-                <Option value="chresonym">Chresonym</Option>
               </OptGroup>
             </Select>
             <Button
@@ -591,6 +604,8 @@ class WorkBench extends React.Component {
             onChange={this.handleTableChange}
             rowKey={record => _.get(record, "usage.name.id")}
             rowSelection={rowSelection}
+            expandedRowRender={record => _.get(record, "decisions[0]") ? <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> : ""}
+
           />
         )}
       </div>

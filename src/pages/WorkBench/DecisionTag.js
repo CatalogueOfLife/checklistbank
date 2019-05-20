@@ -24,10 +24,17 @@ const DecisionTag = ({decision, deleteCallback}) => {
         return  <Tooltip title={_.get(decision, 'mode')}> <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag" >
         {_.get(decision, 'mode').substring(0, 2)}...
         </Tag></Tooltip>
-      } else {
+      } else if(_.get(decision, 'status')) {
         return <Tooltip title={_.get(decision, 'status')}>
         <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag"  >
-        {_.get(decision, 'status').substring(0, 2)}...</Tag>
+        {_.get(decision, 'status') ? `${decision.status.substring(0, 2)}...` : ''}
+        </Tag>
+        </Tooltip>
+      } else {
+        return <Tooltip title="Update">
+        <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag"  >
+        up...
+        </Tag>
         </Tooltip>
       }
 }
