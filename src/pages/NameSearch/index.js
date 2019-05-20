@@ -20,15 +20,19 @@ const columns = [
     dataIndex: "usage.name.formattedName",
     key: "scientificName",
     render: (text, record) => {
+      const uri = (!_.get(record, 'usage.id') || record.usage.bareName || !_.get(record, 'usage.status')) ?
+      `/dataset/${_.get(record, "usage.name.datasetKey")}/name/${encodeURIComponent(
+        _.get(record, "usage.name.id")
+      )}` :
+      `/dataset/${_.get(record, "usage.name.datasetKey")}/taxon/${encodeURIComponent(
+        _.get(record, "usage.accepted.id") ? _.get(record, "usage.accepted.id") : _.get(record, "usage.id")
+      )}`
+
       return (
         <NavLink
           key={_.get(record, "usage.id")}
           to={{
-            pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
-              _.get(record, "usage.bareName")  ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "usage.accepted.id") ? _.get(record, "usage.accepted.id") : _.get(record, "usage.id")
-            )}`
+            pathname: uri
           }}
           exact={true}
         >

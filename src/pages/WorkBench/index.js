@@ -2,7 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Row, Col, Button, Select, Tag, notification } from "antd";
+import {
+  Table,
+  Alert,
+  Icon,
+  Row,
+  Col,
+  Button,
+  Select,
+  Tag,
+  notification
+} from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -10,17 +20,16 @@ import Classification from "../NameSearch/Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
 import DecisionTag from "./DecisionTag";
-import CopyableColumnText from "./CopyableColumnText"
+import CopyableColumnText from "./CopyableColumnText";
 import _ from "lodash";
 import ResizeableTitle from "./ResizeableTitle";
 import withContext from "../../components/hoc/withContext";
-import {stringToColour} from "../../components/util"
-import ErrorMsg from '../../components/ErrorMsg'
+import { stringToColour } from "../../components/util";
+import ErrorMsg from "../../components/ErrorMsg";
 
 const { Option, OptGroup } = Select;
 
 const columnFilters = ["status", "rank"];
-
 
 class WorkBench extends React.Component {
   constructor(props) {
@@ -42,52 +51,59 @@ class WorkBench extends React.Component {
       filteredInfo: null
     };
   }
-  defaultColumns  = [
-    {
-      title: "Index Id",
-      dataIndex: "usage.name.nameIndexId",
-      key: "nameIndexId",
-      width: 60,
-      className: "workbench-td",
-      render: (text, record) => 
-      <React.Fragment>
-        {text && <Tag color={stringToColour(text)} style={{width:"40px", verticalAlign: 'middle'}}>{
-        <CopyableColumnText text={text} width="30px"/>
-         }</Tag>}
-
-<NavLink
-          key={_.get(record, "usage.id")}
-          to={{
-            pathname: `/dataset/${_.get(record, "usage.name.datasetKey")}/${
-              _.get(record, "usage.bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "usage.accepted.id") ? _.get(record, "usage.accepted.id") : _.get(record, "usage.id")
-            )}`
-          }}
-          exact={true}
-        >
-        <Icon  type="link"/> 
-        </NavLink>
-
-      </React.Fragment>
-      
-
-    },
+  defaultColumns = [
     {
       title: "Decision",
       dataIndex: "decisions",
       key: "decisions",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => <DecisionTag decision={_.get(record, 'decisions[0]')}/>
+      render: (text, record) => (
+        <DecisionTag decision={_.get(record, "decisions[0]")} />
+      )
     },
     {
-      title: "Name ID",
-      dataIndex: "usage.name.id",
+      title: "ID",
+      dataIndex: "usage.id",
       key: "nameId",
       width: 50,
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="40px" />
+      render: (text, record) => {
+        const uri =
+          !_.get(record, "usage.id") ||
+          record.usage.bareName ||
+          !_.get(record, "usage.status")
+            ? `/dataset/${_.get(
+                record,
+                "usage.name.datasetKey"
+              )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+            : `/dataset/${_.get(
+                record,
+                "usage.name.datasetKey"
+              )}/taxon/${encodeURIComponent(
+                _.get(record, "usage.accepted.id")
+                  ? _.get(record, "usage.accepted.id")
+                  : _.get(record, "usage.id")
+              )}`;
+        return (
+          <React.Fragment>
+            <div style={{ float: "left" }}>
+              <CopyableColumnText text={text} width="40px" />
+            </div>
+            <div>
+              <NavLink
+                key={_.get(record, "usage.id")}
+                to={{
+                  pathname: uri
+                }}
+                exact={true}
+              >
+                <Icon type="link" />
+              </NavLink>
+            </div>
+          </React.Fragment>
+        );
+      }
     },
     {
       title: "Status",
@@ -96,19 +112,19 @@ class WorkBench extends React.Component {
       width: 90,
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="60px" />
-
     },
     {
       title: "ScientificName",
       dataIndex: "usage.name.formattedName",
       width: 240,
       className: "workbench-td",
-      render: (text, record) => 
-       <span
-      dangerouslySetInnerHTML={{
-        __html: _.get(record, "usage.name.formattedName")
-      }}
-    />,
+      render: (text, record) => (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: _.get(record, "usage.name.formattedName")
+          }}
+        />
+      ),
       sorter: true
     },
     {
@@ -118,7 +134,6 @@ class WorkBench extends React.Component {
       key: "uninomial",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
-
     },
     {
       title: "Genus",
@@ -127,7 +142,6 @@ class WorkBench extends React.Component {
       key: "genus",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
-
     },
     {
       title: "specificEpithet",
@@ -136,7 +150,6 @@ class WorkBench extends React.Component {
       key: "specificEpithet",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
-
     },
     {
       title: "infraspecificEpithet",
@@ -145,7 +158,6 @@ class WorkBench extends React.Component {
       key: "infraspecificEpithet",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
-
     },
     {
       title: "Authorship",
@@ -154,9 +166,8 @@ class WorkBench extends React.Component {
       key: "authorship",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="230px" />
-
     },
-  
+
     {
       title: "Rank",
       width: 100,
@@ -165,7 +176,6 @@ class WorkBench extends React.Component {
       sorter: true,
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="90px" />
-
     },
     {
       title: "acceptedScientificName",
@@ -184,7 +194,7 @@ class WorkBench extends React.Component {
             }}
           />
         );
-      },
+      }
     },
     {
       title: "Classification",
@@ -197,14 +207,14 @@ class WorkBench extends React.Component {
           ""
         ) : (
           <Classification
-            key={_.get(record, 'usage.id')}
+            key={_.get(record, "usage.id")}
             classification={_.initial(record.classification)}
             datasetKey={_.get(record, "usage.name.datasetKey")}
           />
         );
       }
     }
-  ]; 
+  ];
 
   componentWillMount() {
     const { datasetKey } = this.props;
@@ -239,7 +249,7 @@ class WorkBench extends React.Component {
         params
       )}`
     )
-    .then(res => this.getDecisions(res))
+      .then(res => this.getDecisions(res))
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
@@ -256,19 +266,20 @@ class WorkBench extends React.Component {
       });
   };
 
-  getDecisions = (res) => {
-    const promises = _.get(res, 'data.result') ? res.data.result.map(d => {
-      return axios(
-        `${config.dataApi}/decision?id=${_.get(d, 'usage.name.id')}`
-      ).then(decisions => {
-        if(decisions.data && decisions.data.length > 0){
-          d.decisions = decisions.data
-
-        }
-      })
-    }) : []
-    return Promise.all(promises).then(() => res)
-  }
+  getDecisions = res => {
+    const promises = _.get(res, "data.result")
+      ? res.data.result.map(d => {
+          return axios(
+            `${config.dataApi}/decision?id=${_.get(d, "usage.name.id")}`
+          ).then(decisions => {
+            if (decisions.data && decisions.data.length > 0) {
+              d.decisions = decisions.data;
+            }
+          });
+        })
+      : [];
+    return Promise.all(promises).then(() => res);
+  };
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
@@ -349,42 +360,54 @@ class WorkBench extends React.Component {
   };
 
   applyDecision = () => {
-    const {selectedRowKeys, data: {result}, decision} = this.state;
+    const {
+      selectedRowKeys,
+      data: { result },
+      decision
+    } = this.state;
     const { datasetKey } = this.props;
-   const promises = result
-      .filter(d => selectedRowKeys.includes(_.get(d, 'usage.name.id')))
+    const promises = result
+      .filter(d => selectedRowKeys.includes(_.get(d, "usage.name.id")))
       .map(d => {
-       return axios.post(
-          `${config.dataApi}decision`, {
+        return axios
+          .post(`${config.dataApi}decision`, {
             datasetKey: datasetKey,
             subject: {
-              id: _.get(d, 'usage.name.id'),
-              
-              name: _.get(d, 'usage.name.scientificName'),
-              authorship: _.get(d, 'usage.name.authorship'),
-              rank: _.get(d, 'usage.name.rank')
-            },
-            mode: ['block','chresonym'].includes(decision) ? decision : 'update',
-            status: ['block','chresonym'].includes(decision) ? _.get(d, 'usage.status') : decision
+              id: _.get(d, "usage.name.id"),
 
-          }
-        )
-        
+              name: _.get(d, "usage.name.scientificName"),
+              authorship: _.get(d, "usage.name.authorship"),
+              rank: _.get(d, "usage.name.rank")
+            },
+            mode: ["block", "chresonym"].includes(decision)
+              ? decision
+              : "update",
+            status: ["block", "chresonym"].includes(decision)
+              ? _.get(d, "usage.status")
+              : decision
+          })
+
           .then(res => {
-            const statusMsg = `Status changed to ${decision} for ${_.get(d, 'usage.name.scientificName')}`
-            const decisionMsg = `${_.get(d, 'usage.name.scientificName')} was ${decision === 'block' ? 'blocked from the assembly' : ''}${decision === 'chresonym' ? 'marked as chresonym': ''}`
+            const statusMsg = `Status changed to ${decision} for ${_.get(
+              d,
+              "usage.name.scientificName"
+            )}`;
+            const decisionMsg = `${_.get(d, "usage.name.scientificName")} was ${
+              decision === "block" ? "blocked from the assembly" : ""
+            }${decision === "chresonym" ? "marked as chresonym" : ""}`;
 
             notification.open({
               message: "Decision applied",
-              description: ['block','chresonym'].includes(decision) ? decisionMsg : statusMsg
+              description: ["block", "chresonym"].includes(decision)
+                ? decisionMsg
+                : statusMsg
             });
-            
-          })
-          
-      })
+          });
+      });
 
-      return Promise.all(promises).then(res => {
-        return this.getDecisions(this.state)
+    return Promise.all(promises)
+      .then(res => {
+        return this.getDecisions(this.state);
       })
       .then(res => {
         this.setState({
@@ -402,8 +425,7 @@ class WorkBench extends React.Component {
           decisionError: err
         });
       });
-
-  }
+  };
 
   render() {
     const {
@@ -456,7 +478,8 @@ class WorkBench extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px"
     };
-    const hasSelected =  selectedRowKeys && selectedRowKeys.length > 0 && decision;
+    const hasSelected =
+      selectedRowKeys && selectedRowKeys.length > 0 && decision;
     return (
       <div
         style={{
@@ -465,10 +488,14 @@ class WorkBench extends React.Component {
           margin: "16px 0"
         }}
       >
-      <Row>
-          
-
-          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+        <Row>
+          {error && (
+            <Alert
+              style={{ marginBottom: "10px" }}
+              message={<ErrorMsg error={error} />}
+              type="error"
+            />
+          )}
         </Row>
         <Row>
           <Col span={2}>
@@ -485,31 +512,25 @@ class WorkBench extends React.Component {
             />
           </Col>
           <Col span={10}>
+            <Select
+              placeholder="Issue"
+              value={params.issue}
+              style={{
+                width: 200,
+                marginLeft: "10px",
+                marginBottom: "10px"
+              }}
+              showSearch
+              onChange={value => this.updateSearch({ issue: value })}
+            >
+              {facetIssues.map(r => (
+                <Option key={r.value} value={r.value}>
+                  {r.label}
+                </Option>
+              ))}
+            </Select>
 
-
-
-
-          <Select
-                    placeholder="Issue"
-                    value={params.issue}
-                    style={{
-                      width: 200,
-                      marginLeft: "10px",
-                      marginBottom: "10px"
-                    }}
-                    showSearch
-                    onChange={value => this.updateSearch({ issue: value })}
-                  >
-                    {facetIssues.map(r => (
-                      <Option key={r.value} value={r.value}>
-                        {r.label}
-                      </Option>
-                    ))}
-                  </Select>
-
-
-
-         { /*  <MultiValueFilter
+            {/*  <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
               vocab={facetIssues || issue}
@@ -519,7 +540,10 @@ class WorkBench extends React.Component {
         </Row>
         <Row>
           <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Select style={{ width: 200, marginRight: 10 }} onChange={this.onDecisionChange}>
+            <Select
+              style={{ width: 200, marginRight: 10 }}
+              onChange={this.onDecisionChange}
+            >
               <OptGroup label="Status">
                 {taxonomicstatus.map(s => (
                   <Option value={s} key={s}>
@@ -565,7 +589,7 @@ class WorkBench extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => _.get(record, 'usage.name.id')}
+            rowKey={record => _.get(record, "usage.name.id")}
             rowSelection={rowSelection}
           />
         )}
