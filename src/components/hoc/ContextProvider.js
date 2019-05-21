@@ -4,7 +4,7 @@ import getDeep from 'lodash/get';
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
-import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode, getImportState } from '../../api/enumeration';
+import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode, getImportState, getLifezones } from '../../api/enumeration';
 import {getTerms, getTermsOrder} from '../../api/terms';
 // Helpers
 // import { getUserItems } from '../helpers';
@@ -46,6 +46,7 @@ class ContextProvider extends React.Component {
     user: null,
     notifications: [],
     terms: [],
+    lifezone: [],
     termsMap: {},
     dataset: null,
     setDataset: dataset => {
@@ -108,7 +109,8 @@ class ContextProvider extends React.Component {
       getLicense(),
       getNomCode(),
       getImportState(),
-      getTermsOrder()
+      getTermsOrder(),
+      getLifezones()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
@@ -143,6 +145,7 @@ class ContextProvider extends React.Component {
         nomCode: responses[12],
         importState: responses[13],
         terms: responses[14],
+        lifezone: responses[15],
         termsMap: termsMap,
         termsMapReversed: termsMapReversed
       });

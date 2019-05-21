@@ -49,7 +49,7 @@ class Sector extends React.Component {
 
   deleteSector = sector => {
     axios
-      .delete(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${sector.key}`)  // /assembly/3/sync/
+      .delete(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sector/${sector.key}`)  // /assembly/3/sync/
       .then(() => {
         this.props.reloadSelfAndSiblings();
         notification.open({

@@ -22,10 +22,9 @@ import MultiValueFilter from "../NameSearch/MultiValueFilter";
 import DecisionTag from "./DecisionTag";
 import CopyableColumnText from "./CopyableColumnText";
 import _ from "lodash";
-import ResizeableTitle from "./ResizeableTitle";
 import withContext from "../../components/hoc/withContext";
-import { stringToColour } from "../../components/util";
 import ErrorMsg from "../../components/ErrorMsg";
+import DecisionForm from "./DecisionForm";
 
 const { Option, OptGroup } = Select;
 
@@ -40,6 +39,7 @@ class WorkBench extends React.Component {
       data: [],
       decision: null,
       columns: this.defaultColumns,
+      decisionFormVisible: false,
       params: {},
       pagination: {
         pageSize: 50,
@@ -358,8 +358,10 @@ class WorkBench extends React.Component {
   onDecisionChange = decision => {
     this.setState({ decision });
   };
-
-  applyDecision = () => {
+  cancelDecisionForm = () => {
+    this.setState({decisionFormVisible: false})
+  }
+  applyDecision = (decisionObject) => {
     const {
       selectedRowKeys,
       data: { result },
@@ -369,7 +371,8 @@ class WorkBench extends React.Component {
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.name.id")))
       .map(d => {
-        let decisionObject = {
+        if(!decisionObject){
+          decisionObject = {
           
             datasetKey: datasetKey,
             subject: {
@@ -390,6 +393,18 @@ class WorkBench extends React.Component {
         if(taxonomicstatus.includes(decision)){
           decisionObject.status = decision
         }
+        } else {
+          decisionObject.mode = 'update';
+          decisionObject.datasetKey = datasetKey,
+          decisionObject.subject = {
+            id: _.get(d, "usage.name.id"),
+
+            name: _.get(d, "usage.name.scientificName"),
+            authorship: _.get(d, "usage.name.authorship"),
+            rank: _.get(d, "usage.name.rank")
+          }
+        }
+        
          
         return axios
           .post(`${config.dataApi}decision`, decisionObject)
@@ -419,7 +434,8 @@ class WorkBench extends React.Component {
       .then(res => {
         this.setState({
           data: this.state.data,
-          selectedRowKeys: null,
+          selectedRowKeys: [],
+          decisionFormVisible: false,
           decision: null,
           decisionError: null
         });
@@ -427,7 +443,8 @@ class WorkBench extends React.Component {
       .catch(err => {
         this.setState({
           data: this.state.data,
-          selectedRowKeys: null,
+          selectedRowKeys: [],
+          decisionFormVisible: false,
           decision: null,
           decisionError: err
         });
@@ -444,7 +461,8 @@ class WorkBench extends React.Component {
       selectedRowKeys,
       filteredInfo,
       columns,
-      decision
+      decision,
+      decisionFormVisible
     } = this.state;
     const {
       rank,
@@ -485,8 +503,8 @@ class WorkBench extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px"
     };
-    const hasSelected =
-      selectedRowKeys && selectedRowKeys.length > 0 && decision;
+    const hasSelected = selectedRowKeys.length > 0;
+
     return (
       <div
         style={{
@@ -495,6 +513,12 @@ class WorkBench extends React.Component {
           margin: "16px 0"
         }}
       >
+       {decisionFormVisible && (
+          <DecisionForm
+            onCancel={this.cancelDecisionForm}
+            onSuccess={dec => this.applyDecision(dec)}
+          />
+        )}
         <Row>
           {error && (
             <Alert
@@ -550,16 +574,11 @@ class WorkBench extends React.Component {
             <Select
               style={{ width: 200, marginRight: 10 }}
               onChange={this.onDecisionChange}
+              allowClear
             >
               <OptGroup label="General">
                 <Option value="block">Block</Option>
                 <Option value="chresonym">Chresonym</Option>
-              </OptGroup>
-              <OptGroup label="Name type">
-                <Option value="no name">No name</Option>
-                <Option value="placeholder">Placeholder</Option>
-                <Option value="hybrid formula">Hybrid formula</Option>
-                <Option value="informal">Informal</Option>
               </OptGroup>
               <OptGroup label="Status">
                 {taxonomicstatus.map(s => (
@@ -568,21 +587,27 @@ class WorkBench extends React.Component {
                   </Option>
                 ))}
               </OptGroup>
+              <OptGroup label="Name type">
+                <Option value="no name">No name</Option>
+                <Option value="placeholder">Placeholder</Option>
+                <Option value="hybrid formula">Hybrid formula</Option>
+                <Option value="informal">Informal</Option>
+              </OptGroup>
             </Select>
             <Button
               type="primary"
-              onClick={this.applyDecision}
+              onClick={() => decision ? this.applyDecision() : this.setState({decisionFormVisible: true})}
               disabled={!hasSelected}
               loading={loading}
             >
               Apply decision
             </Button>
             <span style={{ marginLeft: 8 }}>
-              {hasSelected
-                ? `Selected ${selectedRowKeys.length} ${
+              {selectedRowKeys.length > 1
+                && `Selected ${selectedRowKeys.length} ${
                     selectedRowKeys.length > 1 ? "taxa" : "taxon"
                   }`
-                : ""}
+                }
             </span>
           </Col>
           <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>

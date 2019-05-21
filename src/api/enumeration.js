@@ -80,6 +80,14 @@ export const getImportState = () => {
   );
 };
 
+export const getLifezones = () => {
+  return axios(`${config.dataApi}vocab/lifezone`).then(res =>
+    res.data
+  );
+};
+
+
+
 
 
 
