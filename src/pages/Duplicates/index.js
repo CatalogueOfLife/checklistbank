@@ -601,6 +601,30 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
+
+                  <FormItem label="Entity">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "entity"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ entity: evt.target.value });
+                        }
+                      }}
+                      value={params.entity}
+                    >
+                      <Radio value="NAME">Name</Radio>
+                      <Radio value={undefined}>Taxon</Radio>
+                    </RadioGroup>
+                  </FormItem>
+
                  
                   <FormItem>
                     <Button type="danger" onClick={this.resetSearch}>
