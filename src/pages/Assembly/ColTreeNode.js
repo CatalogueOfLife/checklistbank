@@ -29,7 +29,8 @@ class ColTreeNode extends React.Component {
       style: {},
       provisional: this.props.taxon.status === 'provisionally accepted',
       popOverVisible: false,
-      childModalVisible: false
+      childModalVisible: false,
+      editTaxonModalVisible: false
     };
   }
   setMode = mode => {
@@ -87,6 +88,12 @@ class ColTreeNode extends React.Component {
 
     this.setState({ childModalVisible: false }, reloadSelfAndSiblings);
   };
+
+  cancelEditTaxonModal = () => {
+    const { reloadSelfAndSiblings } = this.props;
+
+    this.setState({ editTaxonModalVisible: false }, reloadSelfAndSiblings);
+  };
   render = () => {
     const {
       taxon,
@@ -103,6 +110,13 @@ class ColTreeNode extends React.Component {
             onCancel={this.cancelChildModal}
             onSuccess={this.cancelChildModal}
             parent={taxon}
+          />
+        )}
+         {editTaxonModalVisible && (
+          <EditTaxonModal
+            onCancel={this.cancelEditTaxonModal}
+            onSuccess={this.cancelEditTaxonModal}
+            taxon={taxon}
           />
         )}
 
@@ -125,6 +139,33 @@ class ColTreeNode extends React.Component {
                       Show taxon
                     </Button>
 
+                    <br />
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="primary"
+                      onClick={() =>
+                        this.setState({
+                          childModalVisible: true,
+                          popOverVisible: false
+                        })
+                      }
+                    >
+                      Add child
+                    </Button>
+                    <br />
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="danger"
+                      onClick={() =>
+                        this.setState({
+                          editTaxonModalVisible: true,
+                          popOverVisible: false
+                        })
+                      }
+                    >
+                      Edit taxon
+                    </Button>
+                    <br />
                     <Button
                       type="danger"
                       style={{ marginTop: "8px", width: "100%" }}
@@ -140,22 +181,7 @@ class ColTreeNode extends React.Component {
                     >
                       Delete subtree
                     </Button>
-
-                    <br />
-                    <Button
-                      style={{ marginTop: "8px", width: "100%" }}
-                      type="primary"
-                      onClick={() =>
-                        this.setState({
-                          childModalVisible: true,
-                          popOverVisible: false
-                        })
-                      }
-                    >
-                      Add child
-                    </Button>
-                    <br />
-                    <Checkbox
+                 { /*  <Checkbox
                       style={{ marginTop: "8px", width: "100%" }}
                       checked={this.state.provisional}
                       onChange={e =>
@@ -164,7 +190,7 @@ class ColTreeNode extends React.Component {
                     >
                       {" "}
                       Provisional{" "}
-                    </Checkbox>
+                    </Checkbox> */}
                   </React.Fragment>
                 }
                 title="Options"
