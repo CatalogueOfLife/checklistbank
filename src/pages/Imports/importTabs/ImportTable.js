@@ -122,7 +122,7 @@ class ImportTable extends React.Component {
     const { importState } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 25, offset: 0, state: importState };
+      query = { limit: 25, offset: 0, state: importState.length > 0 ? importState: ["downloading", "processing", "inserting", "indexing", "building metrics"] };
     }
     if(query.state){
       this.updateStatusQuery(query)
