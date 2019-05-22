@@ -119,7 +119,7 @@ class DatasetImportMetrics extends React.Component {
       }
     } = this.props;
 
-    const { dataset, user, origin } = this.props;
+    const { dataset, user, origin, importState } = this.props;
     const { importHistory } = this.state;
 
     return (
@@ -149,7 +149,7 @@ class DatasetImportMetrics extends React.Component {
             </Drawer>
           )}
           {this.state.data &&
-            ["processing", "downloading", "inserting"].includes(
+            importState.filter(i => i.running === "true").map(i => i.name).includes(
               this.state.data.state
             ) && (
               <Spin>
@@ -335,6 +335,6 @@ class DatasetImportMetrics extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ user, dataset }) => ({ user, dataset });
+const mapContextToProps = ({ user, dataset, importState }) => ({ user, dataset, importState });
 
 export default withContext(mapContextToProps)(DatasetImportMetrics);

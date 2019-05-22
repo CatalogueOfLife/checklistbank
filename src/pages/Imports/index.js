@@ -17,8 +17,6 @@ class Home extends React.Component {
 
   render() {
     const { section, importState } = this.props;
-    console.log(importState.filter(i => i.running === "true").map(i => i.name))
-    console.log(importState.filter(i => i.running === "false").map(i => i.name))
     
     return (
       <Layout openKeys={["imports"]} selectedKeys={[section]} title={`${_.startCase(section)} imports`}>
