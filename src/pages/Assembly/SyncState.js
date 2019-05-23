@@ -58,7 +58,7 @@ const SyncState = ({ syncState }) => (
       <Col span={12}>
         <Statistic
           title="Sync started"
-          value={moment(syncState.running.started).fromNow()}
+          value={moment.utc(syncState.running.started).fromNow()}
         />
       </Col>
     </Row>}
