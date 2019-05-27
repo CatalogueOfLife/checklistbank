@@ -24,6 +24,7 @@ import PageContent from "../../components/PageContent";
 import SyncState from './SyncState';
 import Helmet from "react-helmet";
 import moment from "moment";
+import qs from "query-string";
 
 const Search = Input.Search;
 
@@ -32,14 +33,17 @@ const { MANAGEMENT_CLASSIFICATION } = config;
 class ManagementClassification extends React.Component {
   constructor(props) {
     super(props);
+    const params = qs.parse(_.get(this.props, "location.search"));
 
     this.state = {
       mode: "attach",
-      syncState: {}
+      syncState: {},
+      defaultAssemblyExpandKey: params.assemblyTaxonKey || null
     };
   }
 
   componentWillMount() {
+    
     this.getSyncState();
 
     this.timer = setInterval(() => {

@@ -53,10 +53,8 @@ const defaultColumns = [
               <Breadcrumb.Item key={taxon.id}>
                 <NavLink
                   to={{
-                    pathname: `/dataset/${
-                      MANAGEMENT_CLASSIFICATION.key
-                    }/classification`,
-                    search: `?taxonKey=${taxon.id}`
+                    pathname: `/assembly`,
+                    search: `?assemblyTaxonKey=${taxon.id}`
                   }}
                 >
                   <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
