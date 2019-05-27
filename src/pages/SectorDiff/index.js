@@ -61,11 +61,10 @@ class SectorDiff extends React.Component {
         params: { sectorKey, catalogueKey }
       }
     } = this.props;
-
     axios(
       `${
         config.dataApi
-      }assembly/${catalogueKey}/sync/${sectorKey}/treediff${query}`
+      }sector/${sectorKey}/treediff${query}`
     )
       .then(res => {
         this.setState({

@@ -82,7 +82,7 @@ const defaultColumns = [
     key: "started",
     width: 50,
     render: date => {
-      return (date) ? moment(date).format("lll") : '';
+      return (date) ? moment(date).format('MMMM Do, h:mm a') : '';
     }
   },
   {
@@ -91,7 +91,7 @@ const defaultColumns = [
     key: "finished",
     width: 50,
     render: date => {
-      return (date) ?  moment(date).format("lll") : '';
+      return (date) ?  moment(date).format('MMMM Do, h:mm a') : '';
     }
   },
   {

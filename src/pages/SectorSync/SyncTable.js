@@ -38,7 +38,7 @@ const defaultColumns = [
       }/meta`
     }}
   >
-    {text}
+    {_.get(record, "sector.dataset.alias")  || _.get(record, "sector.dataset.title")}
   </NavLink>
   },
   {
@@ -131,7 +131,7 @@ const defaultColumns = [
   },
 
   {
-    title: "Attempt No",
+    title: "Attempt",
     dataIndex: "attempt",
     key: "attempt",
     width: 50
@@ -142,7 +142,7 @@ const defaultColumns = [
     key: "started",
     width: 50,
     render: date => {
-      return date ? moment(date).format("lll") : "";
+      return date ? moment(date).format('MMMM Do, h:mm a') : "";
     }
   },
   {
@@ -151,7 +151,7 @@ const defaultColumns = [
     key: "finished",
     width: 50,
     render: date => {
-      return date ? moment(date).format("lll") : "";
+      return date ? moment(date).format('MMMM Do, h:mm a') : "";
     }
   },
   {
