@@ -40,7 +40,6 @@ const defaultColumns = [
     dataIndex: "title",
     width: 250,
     key: "title",
-    fixed: "left",
     render: (text, record) => {
       return (
         <NavLink
@@ -275,7 +274,6 @@ class DatasetList extends React.Component {
               title: "Action",
               dataIndex: "",
               width: 60,
-              fixed: "right",
               key: "__actions__",
               render: record =>
                 record.origin === "external" ? (
@@ -337,7 +335,6 @@ class DatasetList extends React.Component {
           </div>
           {!error && (
             <Table
-              scroll={{ x: 2400 }}
               size="middle"
               columns={columns}
               dataSource={data}
