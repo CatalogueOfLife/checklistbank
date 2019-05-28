@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Modal, Select, Alert, notification } from "antd";
+import { Form, Input, Modal, Select, Alert, Checkbox, notification } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
@@ -24,14 +24,13 @@ class AddChildModal extends React.Component {
         console.log("Received values of form: ", values);
         const taxon = {
           parentId: this.props.parent.id,
+          status: values.provisional ? "provisionally accepted" : "accepted",
           name: this.isGenusOrAbove(values.rank) ? {
             uninomial: values.name,
-            rank: values.rank,
-            nomstatus: values.nomstatus
+            rank: values.rank
           } : {
             scientificName: values.name,
-            rank: values.rank,
-            nomstatus: values.nomstatus
+            rank: values.rank
 
           }
         }
@@ -133,22 +132,20 @@ class AddChildModal extends React.Component {
             </Select>
           )}
         </FormItem>
-        <FormItem {...formItemLayout} label="Nom. status">
-          {getFieldDecorator("nomstatus", {
-            
-            initialValue: "acceptable"
-            
+        {<FormItem
+          {...formItemLayout}
+          label="Provisional"
+        >
+          {getFieldDecorator('provisional', {
+            initialValue: false,
+            valuePropName: 'checked'
+             
           })(
-            <Select style={{ width: 200 }}  showSearch>
-          
-              {nomstatus.map(r => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+            <Checkbox />
+
+              
           )}
-        </FormItem>
+        </FormItem>}
         {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
         </Form>
       </Modal>
