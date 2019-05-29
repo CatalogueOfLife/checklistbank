@@ -10,7 +10,7 @@ import {getSectorsBatch} from "../../api/sector"
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader"
 import { ColTreeContext } from "./ColTreeContext";
-
+import history from "../../history"
 
 const sectorLoader = new DataLoader(ids =>
   getSectorsBatch(ids)
@@ -592,10 +592,11 @@ class ColTree extends React.Component {
                   loadedKeys: this.state.loadedKeys.filter(
                     k => k !== obj.node.props.dataRef.key
                   )
-                });
+                }, () => { history.push('/assembly')});
               } else {
-                this.setState({ expandedKeys });
+                this.setState({ expandedKeys }, () => { history.push('/assembly')});
               }
+
             }}
           >
             {this.renderTreeNodes(treeData)}

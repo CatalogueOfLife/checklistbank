@@ -148,7 +148,8 @@ class SyncTable extends React.Component {
               <NavLink
                 to={{
                   pathname: `/dataset/${record.datasetKey}/names`,
-                  search: `?q=${record.subject.name}`
+                  search: `?TAXON_ID=${record.subject.id}`
+                  
                 }}
                 exact={true}
               >
@@ -186,8 +187,8 @@ class SyncTable extends React.Component {
               </span>
               <NavLink
                 to={{
-                  pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`,
-                  search: `?q=${record.subject.name}`
+                  pathname: `/assembly`,
+                  search: `?assemblyTaxonKey=${record.target.id}`
                 }}
                 exact={true}
               >

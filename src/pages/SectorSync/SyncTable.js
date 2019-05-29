@@ -83,49 +83,7 @@ const defaultColumns = [
     render: (text, record) => {
       return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
     },
-    width: 50,
-    filters: [
-      {
-        text: "Finished",
-        value: "finished"
-      },
-      {
-        text: "Failed",
-        value: "failed"
-      },
-      {
-        text: "Canceled",
-        value: "canceled"
-      },
-      {
-        text: "Unchanged",
-        value: "unchanged"
-      },
-      {
-        text: "Waiting",
-        value: "waiting"
-      },
-      {
-        text: "Preparing",
-        value: "preparing"
-      },
-      {
-        text: "Copying",
-        value: "copying"
-      },
-      {
-        text: "Deliting",
-        value: "deleting"
-      },
-      {
-        text: "Relinking",
-        value: "relinking"
-      },
-      {
-        text: "Indexing",
-        value: "indexing"
-      }
-    ]
+    width: 50
   },
 
   {
@@ -315,7 +273,7 @@ class SyncTable extends React.Component {
 
   render() {
     const { data, loading, error } = this.state;
-    const { section, user } = this.props;
+    const { section, user, sectorImportState } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
           ...defaultColumns,
@@ -336,6 +294,9 @@ class SyncTable extends React.Component {
           }
         ]
       : defaultColumns;
+
+      columns[2].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
+
 
     return (
       <PageContent>
@@ -383,6 +344,6 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, sectorImportState }) => ({ user, sectorImportState });
 
 export default withContext(mapContextToProps)(SyncTable);

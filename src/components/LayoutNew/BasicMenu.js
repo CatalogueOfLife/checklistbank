@@ -77,7 +77,13 @@ class BasicMenu extends Component {
           inlineCollapsed={this.props.collapsed}
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
-        >
+        > 
+         <Menu.Item 
+         key="admin"
+         >
+              <NavLink to={{ pathname: "/admin" }}><Icon type="setting" />
+            <span>Admin</span></NavLink>
+            </Menu.Item>
           <SubMenu
             key="imports"
             title={

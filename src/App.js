@@ -17,7 +17,7 @@ import AssemblyDuplicates from "./pages/AssemblyDuplicates";
 import SectorSync from "./pages/SectorSync"
 import SectorBroken from "./pages/BrokenSectors"
 import DecisionBroken from "./pages/BrokenDecisions"
-
+import Admin from "./pages/Admin"
 import SectorDiff from "./pages/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -53,6 +53,13 @@ class App extends Component {
                     }}
                   />
                 )}
+              />
+              <PrivateRoute
+                exact
+                key="Admin"
+                path={`/admin`}
+                roles={["editor"]}
+                component={Admin}
               />
               <Route
                 exact
