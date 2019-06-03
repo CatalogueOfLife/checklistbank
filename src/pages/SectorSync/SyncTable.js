@@ -81,6 +81,15 @@ const defaultColumns = [
     width: 100
   },
   {
+    title: "Type",
+    dataIndex: "type",
+    key: "type",
+    render: (text, record) => {
+      return record.type;
+    },
+    width: 50
+  },
+  {
     title: "State",
     dataIndex: "state",
     key: "state",

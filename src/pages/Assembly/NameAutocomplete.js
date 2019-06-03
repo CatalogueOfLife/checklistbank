@@ -25,7 +25,7 @@ class DatasetAutocomplete extends React.Component {
 
     getNames = (q) => {
         const {sortBy} = this.props
-        axios(`${config.dataApi}dataset/${this.props.datasetKey}/name/search?&reverse=true&sortBy=${sortBy || "TAXONOMIC"}&status=accepted&limit=25&offset=0&q=${q}`)
+        axios(`${config.dataApi}dataset/${this.props.datasetKey}/name/search?&sortBy=${sortBy || "TAXONOMIC"}&status=accepted&limit=25&offset=0&q=${q}`)
             .then((res) => {
                 this.setState(
                     { names: res.data.result.map(name => ({key: name.usage.id || name.usage.name.id, title: name.usage.name.scientificName}))}

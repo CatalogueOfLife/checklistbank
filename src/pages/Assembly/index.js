@@ -7,7 +7,7 @@ import {
   Button,
   Icon,
   Card,
-  Tag,
+  Alert,
   Statistic
 } from "antd";
 import { NavLink } from "react-router-dom";
@@ -256,7 +256,7 @@ class ManagementClassification extends React.Component {
                       }
                     />
                  
-                 {sectorMappingError && <ErrorMsg error={sectorMappingError} />}
+                 {sectorMappingError && <Alert message={<ErrorMsg error={sectorMappingError} />} type="error" />}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       dataset={MANAGEMENT_CLASSIFICATION}
