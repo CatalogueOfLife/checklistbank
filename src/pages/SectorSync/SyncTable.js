@@ -13,6 +13,10 @@ import withContext from "../../components/hoc/withContext";
 import Auth from "../../components/Auth";
 import ImportMetrics from "../../components/ImportMetrics";
 import kibanaQuery from "./kibanaQuery";
+
+import SyncAllSectorsButton from "../Admin/SyncAllSectorsButton"
+import ErrorMsg from "../../components/ErrorMsg";
+
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 const _ = require("lodash");
@@ -150,6 +154,7 @@ class SyncTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      syncAllError: null,
       data: [],
       params: {},
       pagination: {
@@ -272,7 +277,7 @@ class SyncTable extends React.Component {
   };
 
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, error, syncAllError } = this.state;
     const { section, user, sectorImportState } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
@@ -301,6 +306,12 @@ class SyncTable extends React.Component {
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
+        {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
+
+        <SyncAllSectorsButton 
+          onError={err => this.setState({syncAllError: err})}
+          onSuccess={() => this.setState({syncAllError: null})}
+        />
         {!error && (
           <Table
             scroll={{ x: 1000 }}
