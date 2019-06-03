@@ -9,24 +9,33 @@ import history from "../../history";
 import Classification from "./Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
-import RowDetail from './RowDetail'
+import RowDetail from "./RowDetail";
 import _ from "lodash";
-import ErrorMsg from '../../components/ErrorMsg'
-
-import withContext from '../../components/hoc/withContext'
+import ErrorMsg from "../../components/ErrorMsg";
+import NameAutocomplete from "../Assembly/NameAutocomplete";
+import withContext from "../../components/hoc/withContext";
 const columns = [
   {
     title: "Scientific Name",
     dataIndex: "usage.name.formattedName",
     key: "scientificName",
     render: (text, record) => {
-      const uri = (!_.get(record, 'usage.id') || record.usage.bareName || !_.get(record, 'usage.status')) ?
-      `/dataset/${_.get(record, "usage.name.datasetKey")}/name/${encodeURIComponent(
-        _.get(record, "usage.name.id")
-      )}` :
-      `/dataset/${_.get(record, "usage.name.datasetKey")}/taxon/${encodeURIComponent(
-        _.get(record, "usage.accepted.id") ? _.get(record, "usage.accepted.id") : _.get(record, "usage.id")
-      )}`
+      const uri =
+        !_.get(record, "usage.id") ||
+        record.usage.bareName ||
+        !_.get(record, "usage.status")
+          ? `/dataset/${_.get(
+              record,
+              "usage.name.datasetKey"
+            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : `/dataset/${_.get(
+              record,
+              "usage.name.datasetKey"
+            )}/taxon/${encodeURIComponent(
+              _.get(record, "usage.accepted.id")
+                ? _.get(record, "usage.accepted.id")
+                : _.get(record, "usage.id")
+            )}`;
 
       return (
         <NavLink
@@ -36,7 +45,7 @@ const columns = [
           }}
           exact={true}
         >
-          <span dangerouslySetInnerHTML={{__html: text}}></span>
+          <span dangerouslySetInnerHTML={{ __html: text }} />
         </NavLink>
       );
     },
@@ -49,10 +58,18 @@ const columns = [
     key: "status",
     width: 200,
     render: (text, record) => {
-      return !['synonym', 'ambiguous synonym', 'misapplied'].includes(text) ? text :
-      <React.Fragment key={_.get(record, "usage.id")}>
-       {text} {text === 'misapplied' ? 'to ': 'of '}<span dangerouslySetInnerHTML={{__html: _.get(record, "usage.accepted.name.formattedName")}}></span>
-      </React.Fragment>
+      return !["synonym", "ambiguous synonym", "misapplied"].includes(text) ? (
+        text
+      ) : (
+        <React.Fragment key={_.get(record, "usage.id")}>
+          {text} {text === "misapplied" ? "to " : "of "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(record, "usage.accepted.name.formattedName")
+            }}
+          />
+        </React.Fragment>
+      );
     }
   },
   {
@@ -105,13 +122,17 @@ class NameSearchPage extends React.Component {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0, facet: ['rank', 'issue', 'status', 'nomstatus', 'type', 'field'] };
+      params = {
+        limit: 50,
+        offset: 0,
+        facet: ["rank", "issue", "status", "nomstatus", "type", "field"]
+      };
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
         search: `?limit=50&offset=0`
       });
-    } else if(!params.facet) {
-      params.facet = ['rank', 'issue', 'status', 'nomstatus', 'type', 'field']
+    } else if (!params.facet) {
+      params.facet = ["rank", "issue", "status", "nomstatus", "type", "field"];
     }
 
     this.setState({ params }, this.getData);
@@ -188,22 +209,76 @@ class NameSearchPage extends React.Component {
   };
 
   resetSearch = () => {
-    this.setState({ params: { limit: 50, offset: 0, facet: ['rank', 'issue', 'status', 'nomstatus', 'type', 'field'] } }, this.getData);
+    this.setState(
+      {
+        params: {
+          limit: 50,
+          offset: 0,
+          facet: ["rank", "issue", "status", "nomstatus", "type", "field"]
+        }
+      },
+      this.getData
+    );
   };
 
   toggleAdvancedFilters = () => {
-    this.setState({advancedFilters: !this.state.advancedFilters})
+    this.setState({ advancedFilters: !this.state.advancedFilters });
   };
 
   render() {
-    const { data : {result, facets}, loading, error, params, pagination, advancedFilters } = this.state;
-    const { rank, taxonomicstatus, issue, nomstatus, nametype, namefield } = this.props;
-    const facetRanks = _.get(facets, 'rank') ? facets.rank.map((r)=> ({ value: r.value, label: `${_.startCase(r.value)} (${r.count})`})) : null;
-    const facetIssues =  _.get(facets, 'issue') ? facets.issue.map((i)=> ({ value: i.value, label: `${_.startCase(i.value)} (${i.count})`})) : null;
-    const facetTaxonomicStatus = _.get(facets, 'status') ? facets.status.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
-    const facetNomStatus = _.get(facets, 'nomstatus') ? facets.nomstatus.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
-    const facetNomType = _.get(facets, 'type') ? facets.type.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
-    const facetNomField = _.get(facets, 'field') ? facets.field.map((s)=> ({ value: s.value, label: `${_.startCase(s.value)} (${s.count})`})) : null;
+    const {
+      data: { result, facets },
+      loading,
+      error,
+      params,
+      pagination,
+      advancedFilters
+    } = this.state;
+    const {
+      rank,
+      taxonomicstatus,
+      issue,
+      nomstatus,
+      nametype,
+      namefield,
+      datasetKey
+    } = this.props;
+    const facetRanks = _.get(facets, "rank")
+      ? facets.rank.map(r => ({
+          value: r.value,
+          label: `${_.startCase(r.value)} (${r.count})`
+        }))
+      : null;
+    const facetIssues = _.get(facets, "issue")
+      ? facets.issue.map(i => ({
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count})`
+        }))
+      : null;
+    const facetTaxonomicStatus = _.get(facets, "status")
+      ? facets.status.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count})`
+        }))
+      : null;
+    const facetNomStatus = _.get(facets, "nomstatus")
+      ? facets.nomstatus.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count})`
+        }))
+      : null;
+    const facetNomType = _.get(facets, "type")
+      ? facets.type.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count})`
+        }))
+      : null;
+    const facetNomField = _.get(facets, "field")
+      ? facets.field.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count})`
+        }))
+      : null;
 
     return (
       <div
@@ -214,10 +289,14 @@ class NameSearchPage extends React.Component {
           margin: "16px 0"
         }}
       >
-      <Row>
-          
-
-          {error && <Alert style={{marginBottom: '10px'}} message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+        <Row>
+          {error && (
+            <Alert
+              style={{ marginBottom: "10px" }}
+              message={<ErrorMsg error={error} />}
+              type="error"
+            />
+          )}
         </Row>
         <Row>
           <Col
@@ -229,7 +308,18 @@ class NameSearchPage extends React.Component {
               onSearch={value => this.updateSearch({ q: value })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
-           
+            <div style={{ marginTop: "10px" }}>
+              {" "}
+              <NameAutocomplete
+                datasetKey={datasetKey}
+                onSelectName={value => {
+                  this.updateSearch({ TAXON_ID: value.key });
+                }}
+                onResetSearch={this.resetSearch}
+                placeHolder="Search by higher taxon"
+                sortBy="TAXONOMIC"
+              />{" "}
+            </div>
           </Col>
           <Col span={12}>
             <MultiValueFilter
@@ -240,7 +330,7 @@ class NameSearchPage extends React.Component {
             />
 
             <MultiValueFilter
-              defaultValue={ _.get(params, "rank")}
+              defaultValue={_.get(params, "rank")}
               onChange={value => this.updateSearch({ rank: value })}
               vocab={facetRanks || rank}
               label="Ranks"
@@ -251,49 +341,53 @@ class NameSearchPage extends React.Component {
               vocab={facetTaxonomicStatus || taxonomicstatus}
               label="Status"
             />
-         { advancedFilters && <React.Fragment>
-             <MultiValueFilter
-              defaultValue={_.get(params, "nomstatus")}
-              onChange={value => this.updateSearch({ nomstatus: value })}
-              vocab={facetNomStatus || nomstatus}
-              label="Nomenclatural status"
-            />
-            <MultiValueFilter
-              defaultValue={_.get(params, "type")}
-              onChange={value => this.updateSearch({ type: value })}
-              vocab={facetNomType || nametype}
-              label="Name type"
-            />
-            <MultiValueFilter
-              defaultValue={_.get(params, "field")}
-              onChange={value => this.updateSearch({ field: value })}
-              vocab={facetNomField || namefield}
-              label="Name field"
-      />
-        </React.Fragment>}
-        <div style={{ textAlign: "right", marginBottom: "8px" }}>
-        <a
-                  style={{ marginLeft: 8, fontSize: 12 }}
-                  onClick={this.toggleAdvancedFilters}
-                >
-                  Advanced{" "}
-                  <Icon type={this.state.advancedFilters ? "up" : "down"} />
-                </a>
+            {advancedFilters && (
+              <React.Fragment>
+                <MultiValueFilter
+                  defaultValue={_.get(params, "nomstatus")}
+                  onChange={value => this.updateSearch({ nomstatus: value })}
+                  vocab={facetNomStatus || nomstatus}
+                  label="Nomenclatural status"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "type")}
+                  onChange={value => this.updateSearch({ type: value })}
+                  vocab={facetNomType || nametype}
+                  label="Name type"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "field")}
+                  onChange={value => this.updateSearch({ field: value })}
+                  vocab={facetNomField || namefield}
+                  label="Name field"
+                />
+              </React.Fragment>
+            )}
+            <div style={{ textAlign: "right", marginBottom: "8px" }}>
+              <a
+                style={{ marginLeft: 8, fontSize: 12 }}
+                onClick={this.toggleAdvancedFilters}
+              >
+                Advanced{" "}
+                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+              </a>
 
-       { /* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
-         
-         </div>
-
-            
+              {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
+            </div>
           </Col>
-         
         </Row>
-        <Row><Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-              <Button type="danger" onClick={this.resetSearch}>
-                Reset all
-              </Button>
-            </Col><Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
-          { pagination && !isNaN(pagination.total) && `results: ${pagination.total}` }</Col></Row>
+        <Row>
+          <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+            <Button type="danger" onClick={this.resetSearch}>
+              Reset all
+            </Button>
+          </Col>
+          <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
+            {pagination &&
+              !isNaN(pagination.total) &&
+              `results: ${pagination.total}`}
+          </Col>
+        </Row>
         {!error && (
           <Table
             size="small"
@@ -303,7 +397,7 @@ class NameSearchPage extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey={record => record.usage.id}
-            expandedRowRender={record => <RowDetail {...record}></RowDetail>}
+            expandedRowRender={record => <RowDetail {...record} />}
           />
         )}
       </div>
@@ -311,7 +405,13 @@ class NameSearchPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield }) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
-
+const mapContextToProps = ({
+  rank,
+  taxonomicstatus,
+  issue,
+  nomstatus,
+  nametype,
+  namefield
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
 
 export default withContext(mapContextToProps)(NameSearchPage);

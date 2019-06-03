@@ -24,8 +24,8 @@ class DatasetAutocomplete extends React.Component {
     }
 
     getNames = (q) => {
-        
-        axios(`${config.dataApi}dataset/${this.props.datasetKey}/name/search?&reverse=true&sortBy=taxonomic&status=accepted&limit=25&offset=0&q=${q}`)
+        const {sortBy} = this.props
+        axios(`${config.dataApi}dataset/${this.props.datasetKey}/name/search?&reverse=true&sortBy=${sortBy || "TAXONOMIC"}&status=accepted&limit=25&offset=0&q=${q}`)
             .then((res) => {
                 this.setState(
                     { names: res.data.result.map(name => ({key: name.usage.id || name.usage.name.id, title: name.usage.name.scientificName}))}
@@ -44,6 +44,7 @@ class DatasetAutocomplete extends React.Component {
         this.props.onResetSearch()
     }
     render = () => {
+        const {placeHolder} = this.props;
         const {value} = this.state;
         const options= this.state.names.map((o) => {
             return <Option key={o.key}>{o.title}</Option>
@@ -62,7 +63,7 @@ class DatasetAutocomplete extends React.Component {
             style={{ width: '100%' }}
             onSelect={this.onSelectName}
             onSearch={this.getNames}
-            placeholder="Find taxon" 
+            placeholder={placeHolder || "Find taxon" }
             dataSource={options}
             onChange={(value) => this.setState({value})}
             value={value}
