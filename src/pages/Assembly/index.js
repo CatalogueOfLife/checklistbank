@@ -38,6 +38,8 @@ class ManagementClassification extends React.Component {
     this.state = {
       mode: "attach",
       syncState: {},
+      syncingDataset: null,
+      syncingSector: null,
       defaultAssemblyExpandKey: params.assemblyTaxonKey || null
     };
   }
@@ -57,7 +59,19 @@ class ManagementClassification extends React.Component {
 
   getSyncState = () => {
     axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}`)
-      .then(res => this.setState({ syncState: res.data }))
+      .then(res => {
+        if(_.get(res, 'data.running') && _.get(res, 'data.running.sectorKey') !==  _.get(this.state, 'syncState.running.sectorKey')){
+          
+         return Promise.all([axios(`${config.dataApi}dataset/${_.get(res, 'data.running.datasetKey')}`), axios(`${config.dataApi}sector/${_.get(res, 'data.running.sectorKey')}`)])
+          .then(resp => {
+            this.setState({syncingDataset: resp[0].data, syncingSector: resp[1].data, syncState: res.data})
+          })
+        } else if(!_.get(res, 'data.running')){
+          this.setState({syncingDataset: null, syncingSector: null, syncState: res.data })
+        } else {
+          this.setState({syncState: res.data })
+        }
+      })
       .catch(err => this.setState({ syncError: err }));
   };
 
@@ -176,7 +190,7 @@ class ManagementClassification extends React.Component {
   };
 
   render() {
-    const {syncState, sectorMappingError} = this.state;
+    const {syncState,syncingDataset,syncingSector, sectorMappingError} = this.state;
     return (
       <Layout openKeys={["assembly"]} selectedKeys={["colAssembly"]} title={MANAGEMENT_CLASSIFICATION.title}>
         <Helmet>
@@ -223,7 +237,7 @@ class ManagementClassification extends React.Component {
 
               <Col span={12}>
 
-                    {syncState && <SyncState syncState={syncState}></SyncState>}
+                    {syncState && <SyncState syncState={syncState} dataset={syncingDataset} sector={syncingSector}></SyncState>}
 
               </Col>
             </Row>
