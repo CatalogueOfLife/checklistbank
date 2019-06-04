@@ -8,6 +8,7 @@ import config from "../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
+const {TextArea} = Input;
 
 const removeEmptyValues = (myObj) => {
     
@@ -40,7 +41,8 @@ class DecisionForm extends React.Component {
           lifezones: values.lifezones,
           status: values.status,
           fossil: values.fossil,
-          recent: values.recent
+          recent: values.recent,
+          note: values.note
 
         };
         removeEmptyValues(decision.name)
@@ -186,6 +188,9 @@ class DecisionForm extends React.Component {
               
           )}
         </FormItem>
+        <FormItem {...formItemLayout} label="Note">
+            {getFieldDecorator("note", {})(<TextArea />)}
+          </FormItem>
           {submissionError && (
             <FormItem>
               <Alert
