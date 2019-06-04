@@ -1,5 +1,5 @@
 import React from "react";
-import { notification,Form, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col } from "antd";
+import { notification,Input, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -7,10 +7,10 @@ import history from "../../history";
 import { stringToColour } from "../../components/util";
 import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../components/ErrorMsg";
+import SectorNote from "./SectorNote"
 import withContext from "../../components/hoc/withContext"
 
 const {Option} = Select; 
-const Formitem = Form.Item;
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class Sector extends React.Component {
@@ -80,6 +80,23 @@ class Sector extends React.Component {
         notification.open({
           message: "Nom. code for sector updated",
           description: `New code is ${code}`
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  }
+
+  updateSectorNote = note => {
+    const { taxon : {sector}} = this.props;
+    axios
+      .put(
+        `${config.dataApi}sector/${sector.key}`, {...sector, note: note}
+      ) 
+      .then(() => {
+        notification.open({
+          message: "Sector note updated:",
+          description: note
         });
       })
       .catch(err => {
@@ -202,7 +219,8 @@ class Sector extends React.Component {
                 </Button>
 
 
-                
+                {isRootSector && (  
+                <React.Fragment>
                 <Row style={{ marginTop: "8px" }}>
                   <Col span={9}>
                     Nom. code
@@ -215,7 +233,11 @@ class Sector extends React.Component {
               })}
             </Select>
             </Col>
-            </Row>
+                </Row> 
+                <Row style={{ marginTop: "8px" }}>
+                <SectorNote note={sector.note} onSave={this.updateSectorNote}></SectorNote>
+                </Row></React.Fragment>
+                )}
                 {/* !isRootSector && (
             <React.Fragment>
               <br />
