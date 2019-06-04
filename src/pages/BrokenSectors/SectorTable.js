@@ -148,7 +148,7 @@ class SyncTable extends React.Component {
               <NavLink
                 to={{
                   pathname: `/dataset/${record.datasetKey}/names`,
-                  search: `?TAXON_ID=${record.subject.id}`
+                  search: _.get(record, 'subject.id') ? `?TAXON_ID=${record.subject.id}` : `?q=${record.subject.name}`
                   
                 }}
                 exact={true}
