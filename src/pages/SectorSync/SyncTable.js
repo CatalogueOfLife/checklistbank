@@ -297,13 +297,13 @@ class SyncTable extends React.Component {
             key: "x",
             width: 50,
             render: record => (
-              <SyncButton
+              record.type === "SectorSync" ?  <SyncButton
                 key={record.datasetKey}
                 record={record}
                 onStartImportSuccess={() => {
                   history.push("/imports/running");
                 }}
-              />
+              /> : ""
             )
           }
         ]
