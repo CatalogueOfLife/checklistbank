@@ -65,8 +65,8 @@ class App extends Component {
                 exact
                 key="imports"
                 path="/imports/:section?"
-                render={({ match }) => (
-                  <Imports section={match.params.section} />
+                render={({ match, location }) => (
+                  <Imports section={match.params.section} location={location} />
                 )}
               />
               <PrivateRoute
