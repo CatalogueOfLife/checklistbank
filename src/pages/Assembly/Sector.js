@@ -1,5 +1,5 @@
 import React from "react";
-import { notification, Tag, Icon, Button, Tooltip, Popover, Alert } from "antd";
+import { notification,Form, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -7,7 +7,10 @@ import history from "../../history";
 import { stringToColour } from "../../components/util";
 import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../components/ErrorMsg";
+import withContext from "../../components/hoc/withContext"
 
+const {Option} = Select; 
+const Formitem = Form.Item;
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class Sector extends React.Component {
@@ -67,6 +70,22 @@ class Sector extends React.Component {
         this.setState({ error: err });
       });
   };
+  updateSectorCode = code => {
+    const { taxon : {sector}} = this.props;
+    axios
+      .put(
+        `${config.dataApi}sector/${sector.key}`, {...sector, code: code}
+      ) 
+      .then(() => {
+        notification.open({
+          message: "Nom. code for sector updated",
+          description: `New code is ${code}`
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  }
 
   applyDecision = () => {
     const { taxon, decisionCallback } = this.props;
@@ -109,7 +128,7 @@ class Sector extends React.Component {
   };
 
   render = () => {
-    const { taxon } = this.props;
+    const { taxon, nomCode } = this.props;
 
     const { error } = this.state;
     const { sector } = taxon;
@@ -181,6 +200,22 @@ class Sector extends React.Component {
                 >
                   Source Dataset Metadata
                 </Button>
+
+
+                
+                <Row style={{ marginTop: "8px" }}>
+                  <Col span={9}>
+                    Nom. code
+                  </Col>
+                  <Col span={15} style={{paddingLeft: '8px'}}>
+                <Select style={{ width: '100%' }} defaultValue={sector.code} onChange={value => this.updateSectorCode(value)}>
+
+              {nomCode.map((f) => {
+                return <Option key={f.name} value={f.name}>{f.name}</Option>
+              })}
+            </Select>
+            </Col>
+            </Row>
                 {/* !isRootSector && (
             <React.Fragment>
               <br />
@@ -275,4 +310,8 @@ class Sector extends React.Component {
   };
 }
 
-export default Sector;
+const mapContextToProps = ({ nomCode }) => ({ nomCode });
+export default withContext(mapContextToProps)(Sector)
+
+
+
