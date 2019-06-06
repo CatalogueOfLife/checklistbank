@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Alert, Tag, Tooltip } from "antd";
+import { Table, Alert, Tag, Tooltip, Icon } from "antd";
 import axios from "axios"
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
@@ -7,7 +7,6 @@ import PageContent from '../../../components/PageContent'
 import withContext from '../../../components/hoc/withContext'
 import MultiValueFilter from '../../NameSearch/MultiValueFilter'
 const _ = require("lodash");
-
 
 const getColumns = ({issueMap}) => {
 return [
@@ -17,10 +16,15 @@ return [
     key: "title",
     render: (text, record) => {
       return <Tooltip key={text} placement="right" title={_.get(issueMap, `[${text}].description`)}>
-              {" "}
+              
               <Tag key={text} color={_.get(issueMap, `[${text}].color`)}>
                 {_.startCase(text)}
               </Tag>
+              <NavLink 
+              to={{ pathname: `/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
+              exact={true}
+            > verbatim <Icon type="link" />
+              </NavLink>
             </Tooltip>
        
     },
