@@ -20,17 +20,12 @@ class SyncAllSectorsButton extends React.Component {
     this.setState({ allSectorSyncloading: true });
     const {onError} = this.props
     const {dataset} = this.props;
-    const req = dataset ? 
+    const body = dataset ? {datasetKey: dataset.key} : {all: true}
+    
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {datasetKey: dataset.key}
-      ) :
-    axios
-      .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/all`
-      );
-      
-      req
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, body
+      )
       .then(res => {
         this.setState({ allSectorSyncloading: false}, () => {
           notification.open({
