@@ -9,7 +9,7 @@ import PageContent from '../../../components/PageContent'
 import chai from 'chai'
 import config from "../../../config";
 import SectorTable from "../../BrokenSectors/SectorTable";
-
+import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
 const {expect} = chai;
 
 class DatasetSectors extends React.Component {
@@ -19,6 +19,7 @@ class DatasetSectors extends React.Component {
         this.state = {
             data: [],
             loading: false,
+            syncAllError: null
         };
     }
     componentWillMount = () => {
@@ -67,11 +68,17 @@ class DatasetSectors extends React.Component {
 
 
     render = () => {
-        const { data, error, loading } = this.state;
+        const { data, error, syncAllError, loading } = this.state;
         return (<PageContent>
                     {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
+                    {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
 
-                    {error && <Alert message={error.message} type="error" />}
+<SyncAllSectorsButton 
+  onError={err => this.setState({syncAllError: err})}
+  onSuccess={() => this.setState({syncAllError: null})}
+  dataset={this.props.dataset}
+  text="Sync all sectors in this dataset"
+/>
           {!error && 
         <SectorTable data={data} loading={loading} deleteSectorFromTable={()=> true}></SectorTable>}
 

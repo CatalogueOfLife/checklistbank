@@ -19,16 +19,23 @@ class SyncAllSectorsButton extends React.Component {
   syncAllSectors = () => {
     this.setState({ allSectorSyncloading: true });
     const {onError} = this.props
-
+    const {dataset} = this.props;
+    const req = dataset ? 
+    axios
+      .post(
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {datasetKey: dataset.key}
+      ) :
     axios
       .post(
         `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/all`
-      )
+      );
+      
+      req
       .then(res => {
         this.setState({ allSectorSyncloading: false}, () => {
           notification.open({
             message: "Action triggered",
-            description: "All sectors syncing"
+            description: `All sectors syncing${dataset ? ' for dataset: '+dataset.title : ''}`
           });
         });
       })
@@ -43,7 +50,7 @@ class SyncAllSectorsButton extends React.Component {
 
   render = () => {
     const { allSectorSyncloading } = this.state;
-
+    const {text} = this.props
     return (
       <React.Fragment>
         <Popconfirm
@@ -58,7 +65,7 @@ class SyncAllSectorsButton extends React.Component {
             loading={allSectorSyncloading}
             style={{ marginRight: "10px", marginBottom: "10px" }}
           >
-            Sync all sectors
+           { text || 'Sync all sectors'}
           </Button>
         </Popconfirm>
       </React.Fragment>
