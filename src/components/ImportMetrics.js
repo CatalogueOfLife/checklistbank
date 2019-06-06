@@ -42,7 +42,7 @@ const ImportMetrics = ({data}) => {
           {_.get(data, 'namesByOriginCount') && <ImportChart nameSearchParam="origin" defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'namesByOriginCount')} title="Names by origin" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
           </Col>
           <Col span={12} style={{ padding: '10px' }}>
-          {_.get(data, 'verbatimByTypeCount') && <ImportChart nameSearchParam="verbatimNameType" defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'verbatimByTypeCount')} title="Verbatim records by type" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+          {_.get(data, 'verbatimByTypeCount') && <ImportChart nameSearchParam="type" verbatim={true} defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'verbatimByTypeCount')} title="Verbatim records by type" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
 
           </Col>
           

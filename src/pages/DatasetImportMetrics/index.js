@@ -297,7 +297,8 @@ class DatasetImportMetrics extends React.Component {
                 <Col span={12} style={{ padding: "10px" }}>
                   {_.get(this.state, "data.verbatimByTypeCount") && (
                     <ImportChart
-                      nameSearchParam="verbatimNameType"
+                      nameSearchParam="type" 
+                      verbatim={true}
                       defaultType="pie"
                       datasetKey={datasetKey}
                       data={_.get(this.state, "data.verbatimByTypeCount")}

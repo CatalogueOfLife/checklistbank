@@ -17,7 +17,7 @@ class ImportChart extends React.Component {
   }
 
   componentWillMount = () => {
-    const { datasetKey, data, title, subtitle, defaultType, nameSearchParam } = this.props;
+    const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = this.props;
     var chartData = [];
     var logChartData = [];
     var max;
@@ -81,7 +81,7 @@ class ImportChart extends React.Component {
         point: {
           events: {
             click: (e) => {
-              history.push(`/dataset/${datasetKey}/names?${nameSearchParam}=${e.point.name}`)
+              history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
             }
           }
         },
