@@ -181,7 +181,8 @@ class DatasetImportMetrics extends React.Component {
                       "nameCount",
                       "verbatimCount",
                       "referenceCount",
-                      "distributionCount"
+                      "distributionCount",
+                      "vernacularCount"
                     ],
                     c => {
                       return _.get(this.state, `data.${c}`) ? (
