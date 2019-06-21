@@ -139,46 +139,36 @@ class DatasetList extends React.Component {
         [],
       columns: [],
       search: _.get(this.props, "location.search.q") || "",
+      params: {},
       pagination: {
         pageSize: PAGE_SIZE,
-        current: 1
+        current: 1,
+        showQuickJumper: true
       },
+     
       loading: false
     };
   }
 
   componentWillMount() {
-    let query = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(query)) {
-      query = { limit: PAGE_SIZE, offset: 0 };
+    let params = qs.parse(_.get(this.props, "location.search"));
+    if (_.isEmpty(params)) {
+      params = { limit: PAGE_SIZE, offset: 0 };
       history.push({
         pathname: "/dataset",
         search: `?limit=${PAGE_SIZE}&offset=0`
       });
     }
    
-    this.updateFiltersFromParams(query)
-    this.getData(query || { limit: PAGE_SIZE, offset: 0 });
+    this.setState({ params }, this.getData);
+
   }
 
-  updateFiltersFromParams = query => {
 
-    ['code', 'contributesTo', 'format'].forEach(param => {
-      let column = _.find(defaultColumns, c => {
-        return c.key === param;
-      });
-      let filter =
-        typeof query[param] === "string"
-          ? [query[param]]
-          : query[param];
-          column.filteredValue = filter;
+  getData = () => {
+    const { params } = this.state;
 
-    })
-
-  };
-
-  getData = (params = { limit: PAGE_SIZE, offset: 0 }) => {
-    this.setState({ loading: true, params });
+    this.setState({ loading: true });
     if (!params.q) {
       delete params.q;
     }
@@ -222,6 +212,17 @@ class DatasetList extends React.Component {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
+
+  updateSearch = params => {
+    _.forEach(params, (v, k) => {
+      this.state.params[k] = v;
+    });
+    this.setState({ ...this.state.params }, this.getData);
+  };
+
+
+
+  
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
@@ -229,20 +230,14 @@ class DatasetList extends React.Component {
     this.setState({
       pagination: pager
     });
-    let query = {
-      ...this.state.params,
+    let query = {... this.state.params, 
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
-      ...filters
+      ...filters,
+      code: filters.code,
+      format: filters.format,
     };
-    /*
-    let query = _.merge(this.state.params, {
-      limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize,
-      ...filters
-    }); */
-    this.updateFiltersFromParams(query)
-    
+
     if (sorter) {
       query.sortBy =
         sorter.field === "authorsAndEditors" ? "authors" : sorter.field;
@@ -252,7 +247,7 @@ class DatasetList extends React.Component {
     } else {
       query.reverse = false;
     }
-    this.getData(query);
+    this.setState({ params: query }, this.getData);
   };
 
   handleColumns = excludeColumns => {
@@ -314,7 +309,7 @@ class DatasetList extends React.Component {
                   defaultValue={_.get(this.state, "params.q")}
                   style={{ marginBottom: "10px", width: "50%" }}
                   onSearch={value =>
-                    this.getData({ q: value, limit: PAGE_SIZE, offset: 0 })
+                    this.updateSearch({ q: value })
                   }
                 />
               </Col>
