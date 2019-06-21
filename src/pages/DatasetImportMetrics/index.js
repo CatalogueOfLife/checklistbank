@@ -136,8 +136,8 @@ class DatasetImportMetrics extends React.Component {
               <Alert type="warning" message="No finished imports yet" />
             </Row>
           )}
-
-          {importHistory && (
+          {importHistory && importHistory.length === 0 && <Alert style={{marginTop: '16px'}} message="This dataset has never been imported. Press the import button to import it" type="warning" />}
+          {importHistory && importHistory.length > 0 && (
             <Drawer
               title="Import history"
               placement="right"

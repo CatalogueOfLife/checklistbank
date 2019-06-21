@@ -77,13 +77,13 @@ class BasicMenu extends Component {
           inlineCollapsed={this.props.collapsed}
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
-        > 
-         <Menu.Item 
-         key="admin"
-         >
-              <NavLink to={{ pathname: "/admin" }}><Icon type="setting" />
-            <span>Admin</span></NavLink>
-            </Menu.Item>
+        >
+          <Menu.Item key="admin">
+            <NavLink to={{ pathname: "/admin" }}>
+              <Icon type="setting" />
+              <span>Admin</span>
+            </NavLink>
+          </Menu.Item>
           <SubMenu
             key="imports"
             title={
@@ -101,45 +101,44 @@ class BasicMenu extends Component {
               <NavLink to={{ pathname: "/imports/finished" }}>Finished</NavLink>
             </Menu.Item>
           </SubMenu>
-          {Auth.isAuthorised(user, ["editor"]) && (  <SubMenu
-            key="assembly"
-            title={
-              <span>
-                <Icon type="copy" /> <span>Catalogue</span>
-              </span>
-            }
-          >
-          <Menu.Item key="colAssembly">
-              <NavLink to={{ pathname: "/assembly" }}>
-                 <span>Assembly</span>
-              </NavLink>
-            </Menu.Item>
-            <Menu.Item key="assemblyDuplicates">
-              <NavLink to={{ pathname: "/assembly/duplicates" }}>
-                 <span>Duplicates</span>
-              </NavLink>
-            </Menu.Item>
+          {Auth.isAuthorised(user, ["editor"]) && (
+            <SubMenu
+              key="assembly"
+              title={
+                <span>
+                  <Icon type="copy" /> <span>Catalogue</span>
+                </span>
+              }
+            >
+              <Menu.Item key="colAssembly">
+                <NavLink to={{ pathname: "/assembly" }}>
+                  <span>Assembly</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="assemblyDuplicates">
+                <NavLink to={{ pathname: "/assembly/duplicates" }}>
+                  <span>Duplicates</span>
+                </NavLink>
+              </Menu.Item>
 
-            
-            <Menu.Item key="sectorSync">
-              <NavLink to={{ pathname: "/sector/sync" }}><span>Sector sync</span></NavLink>
-            </Menu.Item>
-            <Menu.Item key="sectorBroken">
-              <NavLink to={{ pathname: "/sector/broken" }}><span>Broken sectors</span></NavLink>
-            </Menu.Item>
-            
-            {selectedSector && (
-                  <Menu.Item key="sectorDiff">
-                    Sector diff: {selectedSector}
-                  </Menu.Item>
-                )}
-            
-          
-          </SubMenu>  )}
-          
-            
-        
-          
+              <Menu.Item key="sectorSync">
+                <NavLink to={{ pathname: "/sector/sync" }}>
+                  <span>Sector sync</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="sectorBroken">
+                <NavLink to={{ pathname: "/sector/broken" }}>
+                  <span>Broken sectors</span>
+                </NavLink>
+              </Menu.Item>
+
+              {selectedSector && (
+                <Menu.Item key="sectorDiff">
+                  Sector diff: {selectedSector}
+                </Menu.Item>
+              )}
+            </SubMenu>
+          )}
 
           <SubMenu
             key="dataset"
@@ -155,9 +154,7 @@ class BasicMenu extends Component {
             </Menu.Item>
             {Auth.isAuthorised(user, ["editor", "admin"]) && (
               <Menu.Item key="datasetCreate">
-                <NavLink to={{ pathname: "/newdataset" }}>
-                  New Dataset
-                </NavLink>
+                <NavLink to={{ pathname: "/newdataset" }}>New Dataset</NavLink>
               </Menu.Item>
             )}
 
@@ -166,22 +163,28 @@ class BasicMenu extends Component {
             <Menu.Item key="9">Without endpoint</Menu.Item> */}
           </SubMenu>
           {selectedDataset && (
-              <SubMenu
-                key="datasetKey"
-                title={<span><Icon type="bars" /><span>{`Dataset: ${selectedDataset.key}`}</span></span>}
-              >
-                              <Menu.Item key="meta">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/meta`
-                    }}
-                  >
-                    Metadata
-                  </NavLink>
-                </Menu.Item>
+            <SubMenu
+              key="datasetKey"
+              title={
+                <span>
+                  <Icon type="bars" />
+                  <span>{`Dataset: ${selectedDataset.key}`}</span>
+                </span>
+              }
+            >
+              <Menu.Item key="meta">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      this.props,
+                      "selectedDataset.key"
+                    )}/meta`
+                  }}
+                >
+                  Metadata
+                </NavLink>
+              </Menu.Item>
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="reference">
                   <NavLink
                     to={{
@@ -194,8 +197,10 @@ class BasicMenu extends Component {
                     References
                   </NavLink>
                 </Menu.Item>
-              
-                                <Menu.Item key="classification">
+              )}
+
+              {selectedDataset && selectedDataset.importState && (
+                <Menu.Item key="classification">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
@@ -207,6 +212,8 @@ class BasicMenu extends Component {
                     Classification
                   </NavLink>
                 </Menu.Item>
+              )}
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="sectors">
                   <NavLink
                     to={{
@@ -219,6 +226,8 @@ class BasicMenu extends Component {
                     Sectors
                   </NavLink>
                 </Menu.Item>
+              )}
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="names">
                   <NavLink
                     to={{
@@ -231,6 +240,8 @@ class BasicMenu extends Component {
                     Names
                   </NavLink>
                 </Menu.Item>
+              )}
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
@@ -243,20 +254,21 @@ class BasicMenu extends Component {
                     Issues
                   </NavLink>
                 </Menu.Item>
-                <Menu.Item key="metrics">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/metrics`
-                    }}
-                  >
-                    Import Metrics
-                  </NavLink>
-                </Menu.Item>
+              )}
+              <Menu.Item key="metrics">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      this.props,
+                      "selectedDataset.key"
+                    )}/metrics`
+                  }}
+                >
+                  Import Metrics
+                </NavLink>
+              </Menu.Item>
 
-
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
@@ -269,6 +281,8 @@ class BasicMenu extends Component {
                     Workbench
                   </NavLink>
                 </Menu.Item>
+              )}
+              {selectedDataset && selectedDataset.importState && (
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{
@@ -281,19 +295,19 @@ class BasicMenu extends Component {
                     Duplicates
                   </NavLink>
                 </Menu.Item>
-                {selectedTaxon && (
-                  <Menu.Item key="taxon">
-                    Taxon: {selectedTaxon.id}
-                  </Menu.Item>
-                )}
-                {selectedName && (
-                  <Menu.Item key="name">Name: {selectedName.id}</Menu.Item>
-                )}
-                
-                {selectedKeys.includes('verbatim') &&  <Menu.Item key="verbatim">Verbatim</Menu.Item>}
-                
-              </SubMenu>
-            )}
+              )}
+              {selectedTaxon && (
+                <Menu.Item key="taxon">Taxon: {selectedTaxon.id}</Menu.Item>
+              )}
+              {selectedName && (
+                <Menu.Item key="name">Name: {selectedName.id}</Menu.Item>
+              )}
+
+              {selectedKeys.includes("verbatim") && (
+                <Menu.Item key="verbatim">Verbatim</Menu.Item>
+              )}
+            </SubMenu>
+          )}
         </Menu>
       </React.Fragment>
     );

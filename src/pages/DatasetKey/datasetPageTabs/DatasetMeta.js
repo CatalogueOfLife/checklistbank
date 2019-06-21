@@ -14,7 +14,8 @@ import DeleteDatasetButton from './DeleteDatasetButton'
 import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import moment from 'moment'
-import BooleanValue from "../../../components/BooleanValue";
+import ImportButton from "../../Imports/importTabs/ImportButton";
+
 const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
@@ -86,6 +87,11 @@ class DatasetMeta extends React.Component {
           </Col>
           <Col span={2} offset={18}>
           { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
+          { data && <ImportButton
+                        style={{ marginTop: "8px" }}
+                        record={{datasetKey: data.key}}
+                       
+          /> }
           </Col>
         </Row> 
         <Row>

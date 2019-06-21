@@ -56,7 +56,6 @@ class DatasetPage extends React.Component {
 
   render() {
     const { datasetKey, section, dataset } = this.props;
-    if(!dataset)
     if (!section) return <Redirect to={{
       pathname: `/dataset/${datasetKey}/names`
     }} />
@@ -69,7 +68,7 @@ class DatasetPage extends React.Component {
       !dataset ? <Exception404 /> :
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={dataset}
+        selectedDataset={{...dataset, importState: importState}}
         section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
@@ -77,6 +76,7 @@ class DatasetPage extends React.Component {
      {_.get(dataset, 'title') && <Helmet 
       title={`${_.get(dataset, 'title')} in CoL+`}
      />}
+      
       { importState && importState !== 'finished' && importState !== 'failed'  && importState !== 'unchanged' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {/*section === "sources" && <DatasetColSources datasetKey={datasetKey} /> */}
