@@ -125,7 +125,8 @@ class NameSearchPage extends React.Component {
       params = {
         limit: 50,
         offset: 0,
-        facet: ["rank", "issue", "status", "nomstatus", "type", "field"]
+        facet: ["rank", "issue", "status", "nomstatus", "type", "field"],
+        sortBy: "taxonomic"
       };
       history.push({
         pathname: `/dataset/${datasetKey}/names`,
