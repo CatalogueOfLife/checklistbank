@@ -24,7 +24,7 @@ import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
 import DatasetImportMetrics from "./pages/DatasetImportMetrics";
-
+import Reference from "./pages/Reference"
 
 const theme = {
   colorPrimary: "deepskyblue"
@@ -60,6 +60,14 @@ class App extends Component {
                 path={`/admin`}
                 roles={["editor"]}
                 component={Admin}
+              />
+              <Route
+                exact
+                key="reference"
+                path="/reference/:key?"
+                render={({ match, location }) => (
+                  <Reference section={match.params.section} location={location} />
+                )}
               />
               <Route
                 exact

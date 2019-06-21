@@ -8,6 +8,7 @@
     "axios": "^0.18.0",
     "base-64": "^0.1.0",
     "chai": "^4.2.0",
+    "citation-js": "^0.4.5",
     "citeproc": "^2.1.222",
     "dataloader": "^1.4.0",
     "diff2html": "^2.7.0",

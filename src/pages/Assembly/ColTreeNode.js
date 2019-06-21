@@ -17,6 +17,8 @@ import Sector from "./Sector";
 import DecisionTag from "../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
+import SpeciesEstimateModal from "./SpeciesEstimateModal";
+
 
 import history from "../../history";
 
@@ -30,7 +32,8 @@ class ColTreeNode extends React.Component {
       provisional: this.props.taxon.status === 'provisionally accepted',
       popOverVisible: false,
       childModalVisible: false,
-      editTaxonModalVisible: false
+      editTaxonModalVisible: false,
+      estimateModalVisible: false
     };
   }
   setMode = mode => {
@@ -94,6 +97,12 @@ class ColTreeNode extends React.Component {
 
     this.setState({ editTaxonModalVisible: false }, reloadSelfAndSiblings);
   };
+
+  cancelEstimateModal = () => {
+    const { reloadSelfAndSiblings } = this.props;
+
+    this.setState({ estimateModalVisible: false }, reloadSelfAndSiblings);
+  }
   render = () => {
     const {
       taxon,
@@ -101,7 +110,7 @@ class ColTreeNode extends React.Component {
       hasPopOver,
       isUpdating
     } = this.props;
-    const { childModalVisible, editTaxonModalVisible } = this.state;
+    const { childModalVisible, editTaxonModalVisible, estimateModalVisible } = this.state;
 
     return (
       <div>
@@ -116,6 +125,13 @@ class ColTreeNode extends React.Component {
           <EditTaxonModal
             onCancel={this.cancelEditTaxonModal}
             onSuccess={this.cancelEditTaxonModal}
+            taxon={taxon}
+          />
+        )}
+        {estimateModalVisible && (
+          <SpeciesEstimateModal
+            onCancel={this.cancelEstimateModal}
+            onSuccess={this.cancelEstimateModal}
             taxon={taxon}
           />
         )}
@@ -181,6 +197,19 @@ class ColTreeNode extends React.Component {
                     >
                       Delete subtree
                     </Button>
+                    <br />
+                    <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="primary"
+                      onClick={() =>
+                        this.setState({
+                          estimateModalVisible: true,
+                          popOverVisible: false
+                        })
+                      }
+                    >
+                      Estimates
+                    </Button>
                  { /*  <Checkbox
                       style={{ marginTop: "8px", width: "100%" }}
                       checked={this.state.provisional}
@@ -211,14 +240,12 @@ class ColTreeNode extends React.Component {
                     {taxon.rank}:{" "}
                   </span>
                   <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
-                  {mode === "modify" && !_.isUndefined(taxon.speciesCount) && (
+                  {mode === "modify" && taxon.estimate && (
                     <span>
+                     {" "}
+                      • 
                       {" "}
-                      • {taxon.speciesCount}{" "}
-                      {!_.isUndefined(taxon.speciesEstimate) && (
-                        <span> of {taxon.speciesEstimate} est. </span>
-                      )}
-                      living species
+                      {taxon.estimate.toLocaleString('en-GB')} est. described species {taxon.estimates.length ? `(${taxon.estimates.length.toLocaleString('en-GB')} ${taxon.estimates.length > 1 ? "estimates": "estimate"})`: ""}
                     </span>
                   )}
                   {isUpdating && (

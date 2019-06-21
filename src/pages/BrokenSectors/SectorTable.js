@@ -250,7 +250,7 @@ class SyncTable extends React.Component {
           <Button
             type={"primary"}
             onClick={() => {
-                axios.post(`${config.dataApi}sector/${record.key}/rematch`)
+                axios.post(`${config.dataApi}admin/rematch`, {sectorKey: record.key})
                 .then(sector => {
                     const success = _.get(sector, 'data.target.id') && _.get(sector, 'data.subject.id');
 

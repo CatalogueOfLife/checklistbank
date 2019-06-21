@@ -182,20 +182,19 @@ class BasicMenu extends Component {
                     Metadata
                   </NavLink>
                 </Menu.Item>
-                {/*Auth.isAuthorised(user, ["editor", "admin"]) && (
-                  <Menu.Item key="sources">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          this.props,
-                          "selectedDataset.key"
-                        )}/sources`
-                      }}
-                    >
-                      CoL Sources
-                    </NavLink>
-                  </Menu.Item>
-                    )*/}
+                <Menu.Item key="reference">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/reference`
+                    }}
+                  >
+                    References
+                  </NavLink>
+                </Menu.Item>
+              
                                 <Menu.Item key="classification">
                   <NavLink
                     to={{

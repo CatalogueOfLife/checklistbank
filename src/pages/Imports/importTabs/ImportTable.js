@@ -252,6 +252,7 @@ class ImportTable extends React.Component {
     this.getData(query);
   };
 
+
   render() {
     const { data, loading, error } = this.state;
     const { section, importState, user } = this.props;

@@ -102,7 +102,7 @@ class AdminPage extends React.Component {
   rematchSectorsAndDecisions = () => {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
-      .post(`${config.dataApi}/sector/broken/rematch`)
+      .post(`${config.dataApi}/admin/rematch`, {all: true})
       .then(res => {
         this.setState(
           { rematchSectorsAndDecisionsLoading: false, error: null, exportResonse: null },

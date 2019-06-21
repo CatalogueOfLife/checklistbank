@@ -11,6 +11,7 @@ import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetSectors from "./datasetPageTabs/DatasetSectors"
+import DatasetReferences from "./datasetPageTabs/DatasetReferences"
 import Layout from "../../components/LayoutNew";
 import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
@@ -97,6 +98,9 @@ class DatasetPage extends React.Component {
         )}
         {sect === "duplicates" && (
           <Duplicates datasetKey={datasetKey} location={this.props.location} />
+        )}
+        {sect === "reference" && (
+          <DatasetReferences datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );

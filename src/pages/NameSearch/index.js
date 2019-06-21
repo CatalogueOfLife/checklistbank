@@ -246,37 +246,37 @@ class NameSearchPage extends React.Component {
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
           value: r.value,
-          label: `${_.startCase(r.value)} (${r.count})`
+          label: `${_.startCase(r.value)} (${r.count.toLocaleString('en-GB')})`
         }))
       : null;
     const facetIssues = _.get(facets, "issue")
       ? facets.issue.map(i => ({
           value: i.value,
-          label: `${_.startCase(i.value)} (${i.count})`
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString('en-GB')})`
         }))
       : null;
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map(s => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : null;
     const facetNomStatus = _.get(facets, "nomstatus")
       ? facets.nomstatus.map(s => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : null;
     const facetNomType = _.get(facets, "type")
       ? facets.type.map(s => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : null;
     const facetNomField = _.get(facets, "field")
       ? facets.field.map(s => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : null;
 

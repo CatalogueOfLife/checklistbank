@@ -1,14 +1,7 @@
 import React from "react";
 import {
-  notification,
   Input,
-  Tag,
   Icon,
-  Button,
-  Tooltip,
-  Popover,
-  Alert,
-  Select,
   Row,
   Col
 } from "antd";
