@@ -55,7 +55,7 @@ class Sector extends React.Component {
   deleteSector = sector => {
     axios
       .delete(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sector/${
+        `${config.dataApi}sector/${
           sector.key
         }`
       ) // /assembly/3/sync/
