@@ -185,7 +185,7 @@ class SyncTable extends React.Component {
               <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.target.rank}:{" "}
               </span>
-              <NavLink
+           { _.get(record, 'target.id') &&  <NavLink
                 to={{
                   pathname: `/assembly`,
                   search: `?assemblyTaxonKey=${record.target.id}`
@@ -197,14 +197,20 @@ class SyncTable extends React.Component {
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                />{" "}
-                {!record.target.id && (
-                  <Icon
+                />
+               
+              </NavLink> }
+              { !_.get(record, 'target.id') && <React.Fragment> 
+              <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[this.state.searchText]}
+                  autoEscape
+                  textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
+                />
+                <Icon
                     type="warning"
                     style={{ color: "red", marginLeft: "10px" }}
-                  />
-                )}
-              </NavLink>
+                  /></React.Fragment>}
             </React.Fragment>
           );
         }
