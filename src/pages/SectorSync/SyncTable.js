@@ -46,39 +46,68 @@ const defaultColumns = [
   </NavLink>
   },
   {
-    title: "Sector target",
-    dataIndex: "sector.path",
-    key: "sector",
+    title: "Subject",
+    dataIndex: "sector.subject.name",
+    key: "subject",
+    width: 100,
+  
     render: (text, record) => {
-      return record.sector.path ? (
-        <Breadcrumb separator=">">
-          {record.sector.path.reverse().map(taxon => {
-            return (
-              <Breadcrumb.Item key={taxon.id}>
-                <NavLink
-                  to={{
-                    pathname: `/assembly`,
-                    search: `?assemblyTaxonKey=${taxon.id}`
-                  }}
-                >
-                  <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
-                </NavLink>
-              </Breadcrumb.Item>
-            );
-          })}
-        </Breadcrumb>
-      ) : (
+      return (
         <React.Fragment>
-          <Tooltip title="This sector is not linked to a taxon id">
-            <Icon type="warning" theme="twoTone" twoToneColor="#FF6347" />
-          </Tooltip>{" "}
-        { _.get(record, 'sector.subject.name') && <span
-            dangerouslySetInnerHTML={{ __html: record.sector.subject.name }}
-          />}
+          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+            {_.get(record, 'sector.subject.rank')}:{" "}
+          </span>
+          <NavLink
+            to={{
+              pathname: `/dataset/${record.datasetKey}/names`,
+              search: _.get(record, 'subject.id') ? `?TAXON_ID=${_.get(record, 'sector.subject.id')}` : `?q=${_.get(record, 'sector.subject.name')}`
+              
+            }}
+            exact={true}
+          >
+            {_.get(record, 'sector.subject.name')}
+          </NavLink>
+          {!_.get(record, 'sector.subject.id') && (
+            <Icon
+              type="warning"
+              style={{ color: "red", marginLeft: "10px" }}
+            />
+          )}
         </React.Fragment>
       );
-    },
-    width: 100
+    }
+  },
+  {
+    title: "Target",
+    dataIndex: "sector.target.name",
+    key: "target",
+    width: 100,
+
+    render: (text, record) => {
+      return (
+        <React.Fragment>
+          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+            {_.get(record, 'sector.target.rank')}:{" "}
+          </span>
+       { _.get(record, 'sector.target.id') &&  <NavLink
+            to={{
+              pathname: `/assembly`,
+              search: `?assemblyTaxonKey=${ _.get(record, 'sector.target.id')}`
+            }}
+            exact={true}
+          >
+            {_.get(record, "sector.target.name")}
+           
+          </NavLink> }
+          { !_.get(record, 'sector.target.id') && <React.Fragment> 
+          {_.get(record, "sector.target.name")}
+            <Icon
+                type="warning"
+                style={{ color: "red", marginLeft: "10px" }}
+              /></React.Fragment>}
+        </React.Fragment>
+      );
+    }
   },
   {
     title: "Type",
@@ -309,7 +338,7 @@ class SyncTable extends React.Component {
         ]
       : defaultColumns;
 
-      columns[2].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
+      columns[3].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
 
 
     return (
