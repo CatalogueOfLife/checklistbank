@@ -1,16 +1,22 @@
 import React from "react";
 import axios from "axios";
 import config from "../../config";
-import { Table, Input, InputNumber, Popconfirm, Form } from "antd";
+import { Table, Input, Select, InputNumber, Popconfirm, Form } from "antd";
 import _ from "lodash";
+const Option = Select.Option
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 const EditableContext = React.createContext();
 
 class EditableCell extends React.Component {
   getInput = () => {
-    if (this.props.inputType === "number") {
+    const {record} = this.props;
+    if (this.props.dataIndex === "estimate") {
       return <InputNumber />;
+    } else if(this.props.dataIndex === "type"){
+        return <Select>
+            {['described species living', 'described species fossil', 'estimated species'].map(o => <Option key={o} value={o}>{o}</Option>)}
+        </Select>
     }
     return <Input />;
   };
@@ -33,7 +39,7 @@ class EditableCell extends React.Component {
             {getFieldDecorator(dataIndex, {
               rules: [
                 {
-                  required: true,
+                  required: ['estimate', 'type'].indexOf(dataIndex) > -1,
                   message: `Please Input ${title}!`
                 }
               ],
@@ -64,12 +70,24 @@ class EditableTable extends React.Component {
         dataIndex: "estimate",
         width: "25%",
         editable: true,
-        render: (text, record) => text.toLocaleString('en-GB')
+        render: (text, record) => text ? text.toLocaleString('en-GB') : ""
       },
 
       {
         title: "reference",
         dataIndex: "reference",
+        width: "50%",
+        editable: false
+      },
+      {
+        title: "type",
+        dataIndex: "type",
+        width: "50%",
+        editable: true
+      },
+      {
+        title: "note",
+        dataIndex: "note",
         width: "50%",
         editable: true
       },
@@ -128,16 +146,26 @@ class EditableTable extends React.Component {
     
   };
 
+  componentWillReceiveProps = (nextProps) => {
+    const { data } = nextProps;
+
+    this.decorateEstimatesWithReference(data);
+    
+  };
+
+
   decorateEstimatesWithReference = (data) => {
     if (_.isArray(data)) {
         Promise.all(
-          data.map(d =>
+          data.filter(a => !_.isUndefined(a.referenceId)).map(d =>
             axios(
               `${config.dataApi}dataset/${
                 MANAGEMENT_CLASSIFICATION.key
               }/reference/${d.referenceId}`
             ).then(res => {
                 d.reference = res.data.citation
+            }).catch(err => {
+                // 
             })
           )
         ).then(() => {
@@ -152,25 +180,57 @@ class EditableTable extends React.Component {
   cancel = () => {
     this.setState({ editingKey: "" });
   };
+  delete = (key) => {
 
+    const newData = [...this.state.data];
+    const index = newData.findIndex(item => key === item.key);
+      const item = newData[index];
+      newData.splice(index, 1);
+  
+
+
+  axios.delete(`${config.dataApi}estimate/${key}`)
+  .then(res => {
+    this.setState({ data: newData, editingKey: "" });
+    if(typeof this.props.onDataUpdate === 'function'){
+        this.props.onDataUpdate(newData)
+    }
+  })
+  .catch(err => {
+    this.setState({ editingKey: "" });
+      alert(err)
+  })
+
+  }
   save = (form, key) => {
     form.validateFields((error, row) => {
       if (error) {
         return;
       }
       const newData = [...this.state.data];
-      const index = newData.findIndex(item => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row
-        });
+        const index = newData.findIndex(item => key === item.key);
+          const item = newData[index];
+          newData.splice(index, 1, {
+            ...item,
+            ...row
+          });
+      
+
+
+      axios.put(`${config.dataApi}estimate/${key}`, {...item, ...row})
+      .then(res => {
         this.setState({ data: newData, editingKey: "" });
-      } else {
-        newData.push(row);
-        this.setState({ data: newData, editingKey: "" });
-      }
+        if(typeof this.props.onDataUpdate === 'function'){
+            this.props.onDataUpdate(newData)
+        }
+      })
+      .catch(err => {
+        this.setState({ editingKey: "" });
+          alert(err)
+      })
+
+
+
     });
   };
 
