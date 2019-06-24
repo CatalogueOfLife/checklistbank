@@ -165,7 +165,7 @@ class ImportTable extends React.Component {
 
         return Promise.all(promises).then(() => res);
       })
-      .then(res => {
+  /*    .then(res => {
        if(this.props.section === 'running'){
           return this.addDataFromImportQueue(res).then((queued)=>{
             if(!res.data.result){
@@ -178,7 +178,7 @@ class ImportTable extends React.Component {
           return res
         } 
 
-      }) 
+      })  */
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;

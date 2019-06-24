@@ -10,7 +10,8 @@ import {
   Col,
   Button,
   Select,
-  Tag,
+  Form,
+  Radio,
   notification
 } from "antd";
 import config from "../../config";
@@ -27,6 +28,8 @@ import ErrorMsg from "../../components/ErrorMsg";
 import DecisionForm from "./DecisionForm";
 
 const { Option, OptGroup } = Select;
+const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 
 const columnFilters = ["status", "rank"];
 
@@ -560,13 +563,33 @@ class WorkBench extends React.Component {
                 </Option>
               ))}
             </Select>
-
-            {/*  <MultiValueFilter
-              defaultValue={_.get(params, "issue")}
-              onChange={value => this.updateSearch({ issue: value })}
-              vocab={facetIssues || issue}
-              label="Issues"
-         /> */}
+                <FormItem style={{
+                      marginLeft: "10px",
+                      marginBottom: "10px"
+                    }}>
+                    <RadioGroup
+                    
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "decisionKey"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ decisionKey: evt.target.value });
+                        }
+                      }}
+                      value={params.decisionKey}
+                    >
+                      <Radio value="_NOT_NULL">With decision</Radio>
+                      <Radio value="_NULL">Without decision</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                    </FormItem>
           </Col>
         </Row>
         <Row>
