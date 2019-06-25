@@ -26,7 +26,9 @@ const columns = [
   {
     title: "country",
     dataIndex: "country",
-    key: "country"
+    key: "country",
+    render: (text, record) => record.countryTitle ?  record.countryTitle : text
+
   }
 ];
 
