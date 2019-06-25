@@ -1,6 +1,8 @@
 import React from "react";
 import { Table } from "antd";
 import _ from "lodash";
+import axios from "axios";
+import config from "../../config";
 
 const columns = [
   {
@@ -16,7 +18,9 @@ const columns = [
   {
     title: "language",
     dataIndex: "language",
-    key: "language"
+    key: "language",
+    render: (text, record) => record.languageName ?  record.languageName : text
+    
   },
   {
     title: "country",
@@ -26,8 +30,35 @@ const columns = [
 ];
 
 class VernacularNamesTable extends React.Component {
+  
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: this.props.data ? [...this.props.data] : []
+    };
+  }
+  componentWillMount = () => {
+    const {data} = this.props;
+
+    Promise.all(
+      data.map(n => this.decorateWithLanguageByCode)
+      )
+      .then(() => this.setState({data: [...this.state.data]}))
+
+  }
+  decorateWithLanguageByCode = (name) => {
+    axios(
+      `${config.dataApi}/vocab/language/${name.language}`
+    )
+      .then(res => {
+        name.languageName = res.data
+      })
+  }
   render() {
     const { data, style } = this.props;
+
+    
     return (
       <Table
         style={style}
