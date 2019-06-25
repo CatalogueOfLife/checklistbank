@@ -48,7 +48,7 @@ class VernacularNamesTable extends React.Component {
 
   }
   decorateWithLanguageByCode = (name) => {
-    axios(
+  return axios(
       `${config.dataApi}/vocab/language/${name.language}`
     )
       .then(res => {

@@ -202,11 +202,14 @@ class NameSearchPage extends React.Component {
   };
 
   updateSearch = params => {
+
+    let newParams = {...this.state.params, offset: 0, limit: 50};
     _.forEach(params, (v, k) => {
-      this.state.params[k] = v;
+      newParams[k] = v;
     });
-    this.setState({ ...this.state.params }, this.getData);
+    this.setState({ params: newParams}, this.getData);
   };
+  
 
   resetSearch = () => {
     this.setState(
