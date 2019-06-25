@@ -47,7 +47,7 @@ class VernacularNamesTable extends React.Component {
     const newData = data.map(this.decorateWithCountryByCode)
     this.setState({data: newData})
     Promise.all(
-      data.map(this.decorateWithLanguageByCode)
+      newData.map(this.decorateWithLanguageByCode)
       )
       .then(() => this.setState({data: [...this.state.data]}))
 
@@ -75,7 +75,8 @@ class VernacularNamesTable extends React.Component {
       .catch(error => console.log(error))
   }
   render() {
-    const { data, style } = this.props;
+    const {style } = this.props;
+    const {data} = this.state;
 
     
     return (
