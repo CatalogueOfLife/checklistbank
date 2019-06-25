@@ -319,12 +319,16 @@ class WorkBench extends React.Component {
     this.setState({ params: query, filteredInfo: filters }, this.getData);
   };
 
+ 
   updateSearch = params => {
+
+    let newParams = {...this.state.params, offset: 0, limit: 50};
     _.forEach(params, (v, k) => {
-      this.state.params[k] = v;
+      newParams[k] = v;
     });
-    this.setState({ ...this.state.params }, this.getData);
+    this.setState({ params: newParams}, this.getData);
   };
+  
   updateFilter = (query, filters, param) => {
     const { columns } = this.state;
     if (filters[param] && _.get(filters, `${param}.length`)) {

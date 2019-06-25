@@ -3,6 +3,7 @@ import { Table } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
+import withContext from "../../components/hoc/withContext";
 
 const columns = [
   {
@@ -41,19 +42,35 @@ class VernacularNamesTable extends React.Component {
   componentWillMount = () => {
     const {data} = this.props;
 
+    const newData = data.map(this.decorateWithCountryByCode)
+    this.setState({data: newData})
     Promise.all(
       data.map(this.decorateWithLanguageByCode)
       )
       .then(() => this.setState({data: [...this.state.data]}))
 
   }
+
+  decorateWithCountryByCode = (name) => {
+    const { countryAlpha3, countryAlpha2 } = this.props;
+
+    if(name.country && name.country.length === 2){
+      return {...name, countryTitle: countryAlpha2[name.country].title}
+    } else if(name.country && name.country.length === 3){
+      return {...name, countryTitle: countryAlpha3[name.country].title}
+    } else {
+      return name;
+    }
+  }
+
   decorateWithLanguageByCode = (name) => {
-  return axios(
+  return !name.language ? Promise.resolve() : axios(
       `${config.dataApi}/vocab/language/${name.language}`
     )
       .then(res => {
         name.languageName = res.data
       })
+      .catch(error => console.log(err))
   }
   render() {
     const { data, style } = this.props;
@@ -73,4 +90,7 @@ class VernacularNamesTable extends React.Component {
   }
 }
 
-export default VernacularNamesTable;
+const mapContextToProps = ({ countryAlpha3, countryAlpha2 }) => ({ countryAlpha3, countryAlpha2 });
+
+export default withContext(mapContextToProps)(VernacularNamesTable);
+

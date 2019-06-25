@@ -1,11 +1,33 @@
-import React from 'react';
-import getDeep from 'lodash/get';
+import React from "react";
+import getDeep from "lodash/get";
 
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
-import { whoAmI, authenticate as logUserIn, logout as logUserOut, JWT_STORAGE_NAME } from '../../api/user';
-import { getFrequency, getDatasetType, getDataFormatType, getDatasetOrigin, getRank, getTaxonomicStatus, getIssue, getNomStatus, getNameType, getNameField, getLicense, getNomCode, getImportState, getLifezones, getSectorImportState } from '../../api/enumeration';
-import {getTerms, getTermsOrder} from '../../api/terms';
+import {
+  whoAmI,
+  authenticate as logUserIn,
+  logout as logUserOut,
+  JWT_STORAGE_NAME
+} from "../../api/user";
+import {
+  getFrequency,
+  getDatasetType,
+  getDataFormatType,
+  getDatasetOrigin,
+  getRank,
+  getTaxonomicStatus,
+  getIssue,
+  getNomStatus,
+  getNameType,
+  getNameField,
+  getLicense,
+  getNomCode,
+  getImportState,
+  getLifezones,
+  getSectorImportState,
+  getCountries
+} from "../../api/enumeration";
+import { getTerms, getTermsOrder } from "../../api/terms";
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -27,7 +49,7 @@ export const AppContext = React.createContext({});
  * - syncInstallationTypes: list of types of installation for which user can invoke Synchronization
  */
 
-const ISSUE_COLOR = {warning: 'orange', error: 'red', info: 'green'}
+const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
 class ContextProvider extends React.Component {
   state = {
     frequency: [],
@@ -48,33 +70,45 @@ class ContextProvider extends React.Component {
     terms: [],
     lifezone: [],
     sectorImportState: [],
+    country: [],
+    countryAlpha3: {},
+    countryAlpha2: {},
     termsMap: {},
     dataset: null,
     setDataset: dataset => {
-      this.setState({dataset})
+      this.setState({ dataset });
     },
-   // locale: { loading: true },
+    // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
-    addError: ({ status = 500, statusText = 'An error occurred' } = {}) => {
+    addError: ({ status = 500, statusText = "An error occurred" } = {}) => {
       this.setState(state => {
         return {
-          notifications: [...state.notifications, { type: 'error', status, statusText }]
+          notifications: [
+            ...state.notifications,
+            { type: "error", status, statusText }
+          ]
         };
       });
     },
     // Adding success messages to the list to provide them later for displaying
-    addSuccess: ({ status = 200, statusText = 'Response successful' } = {}) => {
+    addSuccess: ({ status = 200, statusText = "Response successful" } = {}) => {
       this.setState(state => {
         return {
-          notifications: [...state.notifications, { type: 'success', status, statusText }]
+          notifications: [
+            ...state.notifications,
+            { type: "success", status, statusText }
+          ]
         };
       });
     },
     // Adding info messages to the list to provide them later for displaying
-    addInfo: ({ status = 200, statusText = 'Response successful' } = {}) => {
+    addInfo: ({ status = 200, statusText = "Response successful" } = {}) => {
       this.setState(state => {
         return {
-          notifications: [...state.notifications, { type: 'info', status, statusText }]
+          notifications: [
+            ...state.notifications,
+            { type: "info", status, statusText }
+          ]
         };
       });
     },
@@ -103,8 +137,8 @@ class ContextProvider extends React.Component {
       getRank(),
       getTaxonomicStatus(),
       getIssue(),
-      getNomStatus(), 
-      getNameType(), 
+      getNomStatus(),
+      getNameType(),
       getNameField(),
       getTerms(),
       getLicense(),
@@ -112,25 +146,35 @@ class ContextProvider extends React.Component {
       getImportState(),
       getTermsOrder(),
       getLifezones(),
-      getSectorImportState()
+      getSectorImportState(),
+      getCountries()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
-        issueMap[i.name] = {group: i.group, level: i.level, color: ISSUE_COLOR[i.level], description: i.description}
-      })
+        issueMap[i.name] = {
+          group: i.group,
+          level: i.level,
+          color: ISSUE_COLOR[i.level],
+          description: i.description
+        };
+      });
       const termsMapReversed = {};
       const termsMap = responses[10];
       Object.keys(termsMap).forEach(t => {
         termsMap[t].forEach(j => {
-          if(!termsMapReversed[j]){
-            termsMapReversed[j] = [t]
+          if (!termsMapReversed[j]) {
+            termsMapReversed[j] = [t];
           } else {
-            termsMapReversed[j] = [...termsMapReversed[j], t]
+            termsMapReversed[j] = [...termsMapReversed[j], t];
           }
-        })
-        
-      })
-
+        });
+      });
+      const countryAlpha3 = {};
+      const countryAlpha2 = {};
+      responses[17].forEach(c => {
+        countryAlpha3[c.alpha3] = c;
+        countryAlpha2[c.alpha2] = c;
+      });
       this.setState({
         frequency: responses[0],
         datasetType: responses[1],
@@ -149,12 +193,15 @@ class ContextProvider extends React.Component {
         terms: responses[14],
         lifezone: responses[15],
         sectorImportState: responses[16],
+        country: responses[17],
+        countryAlpha3: countryAlpha3,
+        countryAlpha2: countryAlpha2,
         termsMap: termsMap,
         termsMapReversed: termsMapReversed
       });
     });
   }
-/*
+  /*
   changeLocale = locale => {
     if (locale) {
       this.setState(state => {
@@ -174,18 +221,17 @@ class ContextProvider extends React.Component {
     }
   };
   */
-  
+
   login = ({ username, password, remember }) => {
-    return logUserIn(username, password, remember)
-      .then(user => {
-        const jwt = user.token;
-        sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
-        if (remember) {
-          localStorage.setItem(JWT_STORAGE_NAME, jwt);
-        }
-        this.setState({ user: { ...user, editorRoleScopeItems: [] } });
-       // this.getUserItems(user);
-      });
+    return logUserIn(username, password, remember).then(user => {
+      const jwt = user.token;
+      sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
+      if (remember) {
+        localStorage.setItem(JWT_STORAGE_NAME, jwt);
+      }
+      this.setState({ user: { ...user, editorRoleScopeItems: [] } });
+      // this.getUserItems(user);
+    });
   };
 
   logout = () => {
@@ -199,12 +245,13 @@ class ContextProvider extends React.Component {
   loadTokenUser = () => {
     const jwt = sessionStorage.getItem(JWT_STORAGE_NAME);
     if (jwt) {
-      whoAmI().then(res => {
-        this.setState({ user: { ...res.data, editorRoleScopeItems: [] } });
-       // this.getUserItems(res.data);
-      })
+      whoAmI()
+        .then(res => {
+          this.setState({ user: { ...res.data, editorRoleScopeItems: [] } });
+          // this.getUserItems(res.data);
+        })
         .catch(err => {
-          const statusCode = getDeep(err, 'response.status', 500);
+          const statusCode = getDeep(err, "response.status", 500);
           if (statusCode < 500) {
             logUserOut();
             this.setState({ user: null });

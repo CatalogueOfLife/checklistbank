@@ -92,6 +92,12 @@ export const getSectorImportState = () => {
   );
 };
 
+export const getCountries = () => {
+  return axios(`${config.dataApi}vocab/country`).then(res =>
+    res.data
+  );
+};
+
 
 
 
