@@ -42,7 +42,7 @@ class VernacularNamesTable extends React.Component {
     const {data} = this.props;
 
     Promise.all(
-      data.map(n => this.decorateWithLanguageByCode)
+      data.map(this.decorateWithLanguageByCode)
       )
       .then(() => this.setState({data: [...this.state.data]}))
 
