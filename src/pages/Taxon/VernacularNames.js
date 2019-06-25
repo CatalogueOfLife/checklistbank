@@ -70,7 +70,7 @@ class VernacularNamesTable extends React.Component {
       .then(res => {
         name.languageName = res.data
       })
-      .catch(error => console.log(err))
+      .catch(error => console.log(error))
   }
   render() {
     const { data, style } = this.props;
