@@ -19,17 +19,20 @@ class VernacularNamesTable extends React.Component {
         {
           title: "name",
           dataIndex: "name",
-          key: "name"
+          key: "name",
+          width: 150
         },
         {
           title: "latin",
           dataIndex: "latin",
-          key: "latin"
+          key: "latin",
+          width: 150
         },
         {
           title: "language",
           dataIndex: "language",
           key: "language",
+          width: 150,
           render: (text, record) => record.languageName ?  record.languageName : text
           
         },
@@ -37,6 +40,7 @@ class VernacularNamesTable extends React.Component {
           title: "country",
           dataIndex: "country",
           key: "country",
+          width: 150,
           render: (text, record) => record.countryTitle ?  record.countryTitle : text
       
         },
@@ -44,8 +48,9 @@ class VernacularNamesTable extends React.Component {
           title: "",
           dataIndex: "referenceId",
           key: "referenceId",
+          
           render: (text, record) => {
-            return record.countryTitle ?  <ReferencePopover referenceId={text} datasetKey={this.props.datasetKey}></ReferencePopover> : text
+            return text ?  <ReferencePopover referenceId={text} datasetKey={this.props.datasetKey} placement="left"></ReferencePopover> : ""
           }
           
         }

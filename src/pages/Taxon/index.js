@@ -319,7 +319,17 @@ class TaxonPage extends React.Component {
               <Alert message={<ErrorMsg error={infoError} />} type="error" />
             )}
 
-            {(heterotypic.length > 0 || homotypic.length) > 0 && (
+            {_.get(info, "synonyms") && info.synonyms.length > 0 && (
+              <PresentationItem md={md} label="Synonyms">
+                <SynonymTable
+                  data={_.get(info, "synonyms")}
+                  style={{  marginTop: '-3px' }}
+                  datasetKey={key}
+                />
+              </PresentationItem>
+            ) } 
+
+            {/*(heterotypic.length > 0 || homotypic.length) > 0 && (
               <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
                   data={[...homotypic.map(s => ({...s, homotypic: true})), ...heterotypic]}
@@ -327,7 +337,7 @@ class TaxonPage extends React.Component {
                   datasetKey={key}
                 />
               </PresentationItem>
-            )}
+            ) */} 
             {_.get(synonyms, "misapplied") && (
               <PresentationItem md={md} label="Misapplied names">
                 <SynonymTable
@@ -349,7 +359,7 @@ class TaxonPage extends React.Component {
               </PresentationItem>
             )}
 
-            {_.get(info, "vernacularNames") && (
+            {_.get(info, "vernacularNames") && taxon && (
               <PresentationItem md={md} label="Vernacular names">
                 <VernacularNames style={{ marginTop: '-3px',  marginLeft: '-3px'  }} data={info.vernacularNames} datasetKey={taxon.datasetKey} />
               </PresentationItem>

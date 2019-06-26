@@ -1,46 +1,73 @@
 import React from "react";
-import { Icon, Popover } from "antd";
+import { Icon, Popover, Spin } from "antd";
 import axios from "axios";
 import config from "../../config";
-
+import _ from "lodash";
 
 class ReferencePopover extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      reference: null,
+      reference: [],
+      loading: false,
       error: null
     };
   }
-  componentWillMount = () => {
-      this.getData()
-  }
-  getData = () => {
-      const {referenceId, datasetKey} = this.props;
 
-      axios(`${config.dataApi}dataset/${datasetKey}/reference/${referenceId}`)
-      .then(res => this.setState({reference: res.data}))
+  getData = () => {
+    const { referenceId, datasetKey } = this.props;
+    if(referenceId) {
+    const refIds =  !_.isArray(referenceId) ? [referenceId] : referenceId;
+    const reference = [];
+    this.setState({loading: true})
+    Promise.all(
+      refIds.map(id =>
+        axios(`${config.dataApi}dataset/${datasetKey}/reference/${id}`).then(
+          res => reference.push(res.data)
+        )
+      )
+    ).then(() => this.setState({ reference, loading: false }));
+        }
+  };
+
+  getContent = () => {
+    const { error, reference, loading } = this.state;
+        if(loading){
+            return <Spin />
+        } else if(reference.length === 1) {
+            return reference[0].citation
+        } else {
+            return <ul>
+            {reference.map(r => (
+              <li>{r.citation}</li>
+            ))}
+          </ul>
+        }
+        
   }
 
   render = () => {
-    const { error, reference } = this.state;
-   
-    
-    return reference ? 
-          <Popover
-            placement="left"
-            title="Reference"
-            content={reference.citation}
-            trigger="click"
-          >
-            <Icon
-              type="book"
-              style={{ cursor: "pointer" }}
-            />
-          </Popover>
+    const { error, reference, loading } = this.state;
+    const { referenceId } = this.props;
+
+    return referenceId ? (
+      <Popover
+        placement={this.props.placement || "left"}
+        title="Reference"
+        onVisibleChange={visible => visible && this.getData()}
         
-    : "";
+        content={
+            <div style={{ maxWidth: "500px" }}>{this.getContent()}</div>
+          
+        }
+        trigger="click"
+      >
+        <Icon type="book" style={{ cursor: "pointer" }} />
+      </Popover>
+    ) : (
+      ""
+    );
   };
 }
 
