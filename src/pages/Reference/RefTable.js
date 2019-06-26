@@ -11,7 +11,7 @@ import config from "../../config";
 import moment from "moment";
 import qs from "query-string";
 import history from "../../history";
-
+import SearchBox from "../DatasetList/SearchBox"
 
 import _ from "lodash";
 
@@ -84,7 +84,7 @@ class RefTable extends React.Component {
         offset: 0
       };
       history.push({
-        pathname: `/dataset/${datasetKey}/reference`,
+        pathname: _.get(this.props, "location.pathname"), // 
         search: `?limit=50&offset=0`
       });
     } 
@@ -100,7 +100,7 @@ class RefTable extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: `/dataset/${datasetKey}/reference`,
+      pathname: _.get(this.props, "location.pathname"),
       search: `?${qs.stringify(params)}`
     });
     axios(
@@ -148,14 +148,23 @@ class RefTable extends React.Component {
     });
     this.setState({ params: newParams}, this.getData);
   };
-  
+
   render() {
     const { data, columns,loading, pagination, error } = this.state;
 
     return (
       <React.Fragment>
-        <Row>
-          <Col style={{ textAlign: "right" }}>
+        <Row style={{ marginBottom: "10px" }}>
+              <Col md={12} sm={24}>
+                <SearchBox
+                  defaultValue={_.get(this.state, "params.q")}
+                  style={{ width: "50%" }}
+                  onSearch={value =>
+                    this.updateSearch({ q: value })
+                  }
+                />
+              </Col>
+          <Col md={12} sm={24} style={{ textAlign: "right" }}>
 
           {pagination &&
               !isNaN(pagination.total) &&

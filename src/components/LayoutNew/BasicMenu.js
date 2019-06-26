@@ -137,6 +137,13 @@ class BasicMenu extends Component {
                   Sector diff: {selectedSector}
                 </Menu.Item>
               )}
+
+<Menu.Item key="assemblyReferences">
+                <NavLink to={{ pathname: "/assembly/reference" }}>
+                  <span>References</span>
+                </NavLink>
+              </Menu.Item>
+
             </SubMenu>
           )}
 

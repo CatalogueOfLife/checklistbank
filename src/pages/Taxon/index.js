@@ -351,7 +351,7 @@ class TaxonPage extends React.Component {
 
             {_.get(info, "vernacularNames") && (
               <PresentationItem md={md} label="Vernacular names">
-                <VernacularNames style={{ marginTop: '-3px',  marginLeft: '-3px'  }} data={info.vernacularNames} />
+                <VernacularNames style={{ marginTop: '-3px',  marginLeft: '-3px'  }} data={info.vernacularNames} datasetKey={taxon.datasetKey} />
               </PresentationItem>
             )}
 

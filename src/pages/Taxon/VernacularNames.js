@@ -4,33 +4,9 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
+import ReferencePopover from "../Reference/ReferencePopover"
 
-const columns = [
-  {
-    title: "name",
-    dataIndex: "name",
-    key: "name"
-  },
-  {
-    title: "latin",
-    dataIndex: "latin",
-    key: "latin"
-  },
-  {
-    title: "language",
-    dataIndex: "language",
-    key: "language",
-    render: (text, record) => record.languageName ?  record.languageName : text
-    
-  },
-  {
-    title: "country",
-    dataIndex: "country",
-    key: "country",
-    render: (text, record) => record.countryTitle ?  record.countryTitle : text
 
-  }
-];
 
 class VernacularNamesTable extends React.Component {
   
@@ -38,7 +14,42 @@ class VernacularNamesTable extends React.Component {
     super(props);
 
     this.state = {
-      data: this.props.data ? [...this.props.data] : []
+      data: this.props.data ? [...this.props.data] : [],
+      columns : [
+        {
+          title: "name",
+          dataIndex: "name",
+          key: "name"
+        },
+        {
+          title: "latin",
+          dataIndex: "latin",
+          key: "latin"
+        },
+        {
+          title: "language",
+          dataIndex: "language",
+          key: "language",
+          render: (text, record) => record.languageName ?  record.languageName : text
+          
+        },
+        {
+          title: "country",
+          dataIndex: "country",
+          key: "country",
+          render: (text, record) => record.countryTitle ?  record.countryTitle : text
+      
+        },
+        {
+          title: "",
+          dataIndex: "referenceId",
+          key: "referenceId",
+          render: (text, record) => {
+            return record.countryTitle ?  <ReferencePopover referenceId={text} datasetKey={this.props.datasetKey}></ReferencePopover> : text
+          }
+          
+        }
+      ]
     };
   }
   componentWillMount = () => {
@@ -56,10 +67,10 @@ class VernacularNamesTable extends React.Component {
   decorateWithCountryByCode = (name) => {
     const { countryAlpha3, countryAlpha2 } = this.props;
 
-    if(name.country && name.country.length === 2){
-      return {...name, countryTitle: countryAlpha2[name.country].title}
-    } else if(name.country && name.country.length === 3){
-      return {...name, countryTitle: countryAlpha3[name.country].title}
+    if(countryAlpha2 && name.country && name.country.length === 2){
+      return {...name, countryTitle: _.get(countryAlpha2, `[${name.country}].title`) || ""}
+    } else if(countryAlpha3 && name.country && name.country.length === 3){
+      return {...name, countryTitle: _.get(countryAlpha3, `[${name.country}].title`) || ""}
     } else {
       return name;
     }
@@ -76,7 +87,7 @@ class VernacularNamesTable extends React.Component {
   }
   render() {
     const {style } = this.props;
-    const {data} = this.state;
+    const {data, columns} = this.state;
 
     
     return (

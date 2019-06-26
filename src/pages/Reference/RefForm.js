@@ -70,7 +70,6 @@ const getCslDate = (value) => {
     } : "";
 }
 
- // ['book', 'incollection', 'paper-conference', 'article-journal', 'article-magazine',  'article-newspaper', 'webpage', 'personal_communication' ]
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -121,7 +120,12 @@ componentDidMount = () =>{
     const {datasetKey} = this.props; 
     const id =  _.get(this.props, 'data.id');
     const { onSaveSuccess } = this.props;
-    let task = (id) ? axios.put(`${config.dataApi}dataset/${datasetKey}/reference/${id}`, values) : axios.post(`${config.dataApi}dataset/${datasetKey}/reference`, values);
+    const conf = {
+        headers: {
+            'Content-Type': 'application/vnd.citationstyles.csl+json',
+        }
+    }
+    let task = (id) ? axios.put(`${config.dataApi}dataset/${datasetKey}/reference/${id}`, values /* , conf */) : axios.post(`${config.dataApi}dataset/${datasetKey}/reference`, values/* , conf */);
 
     task
       .then((res) => {
@@ -182,13 +186,7 @@ componentDidMount = () =>{
       
       <Form onSubmit={this.handleSubmit} style={{paddingTop: '12px'}}>
       {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
-     { /*
-      
-      {frequencyError && <FormItem><Alert message={<ErrorMsg error={frequencyError}></ErrorMsg>} type="error" /></FormItem>}
-      {datasettypeError && <FormItem><Alert message={<ErrorMsg error={datasettypeError}></ErrorMsg>} type="error" /></FormItem>}
-      {dataformatError && <FormItem><Alert message={<ErrorMsg error={dataformatError}></ErrorMsg>} type="error" /></FormItem>}
-      */
-     }
+  
          <FormItem
           {...formItemLayout}
           label="Type"

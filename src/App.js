@@ -63,8 +63,8 @@ class App extends Component {
               />
               <Route
                 exact
-                key="reference"
-                path="/reference/:key?"
+                key="Reference"
+                path="/assembly/reference/:key?"
                 render={({ match, location }) => (
                   <Reference section={match.params.section} location={location} />
                 )}

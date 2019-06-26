@@ -1,18 +1,14 @@
 import React from "react";
 
 import Layout from "../../components/LayoutNew";
-
+import {Button, Modal, Row, Col} from "antd"
 import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
 import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
-import { Button, Alert, Popconfirm, notification } from "antd";
-
-import axios from "axios";
-import ErrorMsg from "../../components/ErrorMsg";
+import RefTable from "./RefTable";
 import RefForm from "./RefForm"
-import RefTable from "./RefTable"
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class Reference extends React.Component {
@@ -21,7 +17,8 @@ class Reference extends React.Component {
 
     this.state = {
       ref: null,
-      error: null
+      error: null,
+      showAddNewModal: false
     };
   }
 
@@ -30,17 +27,45 @@ class Reference extends React.Component {
   render() {
     const {
       ref,
-      error
+      error,
+      showAddNewModal
     } = this.state;
 
     return (
-      <Layout title="CoL+ ref">
+      <Layout 
+      title="CoL references"
+      selectedKeys={["assemblyReferences"]}
+        openKeys={["assembly"]}>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+ Reference</title>
+          <title>CoL References</title>
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
+        {showAddNewModal && (
+          <Modal
+          width={1000}
+          title="New reference"
+          visible={showAddNewModal}
+          onOk={() => {
+            this.setState({ showAddNewModal: false });
+          }}
+          onCancel={() => {
+            this.setState({ showAddNewModal: false });
+          }}
+          destroyOnClose={true}
+        > 
+        <RefForm datasetKey={MANAGEMENT_CLASSIFICATION.key} />
+        </Modal>
+        )}
+        <Row>
+            <Col style={{textAlign: "right", marginBottom: "10px"}}>
+            <Button onClick={() => this.setState({showAddNewModal: true})}>
+                Add new
+            </Button></Col>
+
+        </Row>
+            
            <RefTable datasetKey={MANAGEMENT_CLASSIFICATION.key}></RefTable> 
         { /* <RefForm datasetKey={MANAGEMENT_CLASSIFICATION.key}/> */}
         </PageContent>
