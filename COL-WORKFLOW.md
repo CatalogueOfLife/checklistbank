@@ -31,7 +31,7 @@ Change fossil/recent flags
 tbd.
 
 
-## Sector
+## Taxonomic Sectors
 ### The CoL hierarchy
 Comes from the existing CoL down to genera.
 Use `Catalogue/Assembly/ModifyTree` to modify the tree
@@ -44,15 +44,14 @@ Use `Catalogue/Assembly/AttachSectors` to create/change sectors
 
 Note: Blocking decisions can also be applied in the assembly tree view on the right side. All other decisions need to be placed in the workbench
 
-
-## Species estimates
-Use `Catalogue/Assembly/ModifyTree` to modify estimates
-
-
 ### Assembly Sync
 Either sync a single sector in the `Catalogue/Assembly/AttachSectors` view or sync all sectors of a given dataset in the `Dataset/Sectors` page
 Follow the sync progress in the `Catalogue/Assembly/AttachSectors`assembly page.
 If sync errors exist please see the `Secotr Sync` view and its links to Kibana logs
+
+
+## Species Estimates
+Use `Catalogue/Assembly/ModifyTree` to modify estimates
 
 
 ## Export to AC
