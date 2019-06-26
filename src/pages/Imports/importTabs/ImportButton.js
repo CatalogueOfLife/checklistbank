@@ -19,7 +19,7 @@ class ImportButton extends React.Component {
     this.setState({ importTriggered: true });
     axios
       .post(
-        `${config.dataApi}importer/queue`,
+        `${config.dataApi}importer`,
         {
           'datasetKey': record.datasetKey,
           'priority': true,
