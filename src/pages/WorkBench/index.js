@@ -328,7 +328,7 @@ class WorkBench extends React.Component {
     });
     this.setState({ params: newParams}, this.getData);
   };
-  
+
   updateFilter = (query, filters, param) => {
     const { columns } = this.state;
     if (filters[param] && _.get(filters, `${param}.length`)) {
@@ -368,7 +368,7 @@ class WorkBench extends React.Component {
   cancelDecisionForm = () => {
     this.setState({decisionFormVisible: false})
   }
-  applyDecision = (decisionObject) => {
+  applyDecision = (decisionObjectFromForm) => {
     const {
       selectedRowKeys,
       data: { result },
@@ -378,7 +378,8 @@ class WorkBench extends React.Component {
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.name.id")))
       .map(d => {
-        if(!decisionObject){
+        let decisionObject;
+        if(!decisionObjectFromForm){
           decisionObject = {
           
             datasetKey: datasetKey,
@@ -401,6 +402,7 @@ class WorkBench extends React.Component {
           decisionObject.status = decision
         }
         } else {
+          decisionObject = {...decisionObjectFromForm}
           decisionObject.mode = 'update';
           decisionObject.datasetKey = datasetKey,
           decisionObject.subject = {
