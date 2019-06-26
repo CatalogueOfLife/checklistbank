@@ -365,13 +365,12 @@ class TaxonPage extends React.Component {
               </PresentationItem>
             )}
 
-            {_.get(info, "references") && (
+            {/*_.get(info, "references") && (
               <PresentationItem md={md} label="References">
                <CslReferences references={info.references}></CslReferences>
 
-                { /* <References style={{marginTop: '-3px'}} data={info.references} /> */ }
               </PresentationItem>
-            )}
+            ) */}
 
             {_.get(info, "distributions") && (
               <PresentationItem md={md} label="Distributions">
