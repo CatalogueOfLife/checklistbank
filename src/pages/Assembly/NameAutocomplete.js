@@ -44,7 +44,7 @@ class DatasetAutocomplete extends React.Component {
         this.props.onResetSearch()
     }
     render = () => {
-        const {placeHolder} = this.props;
+        const {placeHolder, autoFocus} = this.props;
         const {value} = this.state;
         const options= this.state.names.map((o) => {
             return <Option key={o.key}>{o.title}</Option>
@@ -67,7 +67,7 @@ class DatasetAutocomplete extends React.Component {
             dataSource={options}
             onChange={(value) => this.setState({value})}
             value={value}
-            autoFocus={true}
+            autoFocus={autoFocus === false ? false : true}
       
         >
         <Input.Search 

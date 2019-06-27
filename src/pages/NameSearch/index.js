@@ -321,6 +321,7 @@ class NameSearchPage extends React.Component {
                 onResetSearch={this.resetSearch}
                 placeHolder="Search by higher taxon"
                 sortBy="TAXONOMIC"
+                autoFocus={false}
               />{" "}
             </div>
           </Col>
