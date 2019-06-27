@@ -19,7 +19,7 @@ class DatasetProvider extends React.Component {
       dataset
     } = this.props;
     if (Number(key) !== _.get(dataset, "key")) {
-      this.fetchDataset()
+      this.fetchDataset(key)
   };
   }
   componentWillReceiveProps = nextProps => {
@@ -31,15 +31,12 @@ class DatasetProvider extends React.Component {
       } = this.props;
 
       if(!this.state.loading && Number(key) !== Number(nextKey)){
-          this.fetchDataset()
+          this.fetchDataset(nextKey)
       }
   };
 
-  fetchDataset = () => {
+  fetchDataset = (key) => {
     const {
-      match: {
-        params: { key }
-      },
       setDataset,
       setRecentDatasets,
       addError
@@ -55,7 +52,7 @@ class DatasetProvider extends React.Component {
       recentDatasets = _.uniqBy(recentDatasets, 'key').slice(0, 5);  
       localStorage.setItem('colplus_recent_datasets', JSON.stringify(recentDatasets))
       setRecentDatasets(recentDatasets);
-        setDataset(res.data);
+      setDataset(res.data);
 
       })
       .catch(err => {

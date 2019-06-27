@@ -181,7 +181,7 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-              {recentDatasets.map(d => <Menu.Item key="meta">
+              {recentDatasets.map(d => <Menu.Item key={`recent_${d.key}`}>
                 <NavLink
                   to={{
                     pathname: `/dataset/${d.key}`
