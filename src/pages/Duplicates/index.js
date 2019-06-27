@@ -577,7 +577,58 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
+
+                  <FormItem label="Rank different">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "rankDifferent"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({
+                            rankDifferent: evt.target.value
+                          });
+                        }
+                      }}
+                      value={params.rankDifferent}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
                   
+                  <FormItem label="Code different">
+                    <RadioGroup
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "codeDifferent"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({
+                            codeDifferent: evt.target.value
+                          });
+                        }
+                      }}
+                      value={params.codeDifferent}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
 
                   <FormItem label="With decision">
                     <RadioGroup
