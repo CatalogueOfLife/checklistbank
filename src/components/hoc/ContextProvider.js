@@ -51,6 +51,7 @@ export const AppContext = React.createContext({});
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
 class ContextProvider extends React.Component {
+  
   state = {
     frequency: [],
     datasetType: [],
@@ -75,8 +76,12 @@ class ContextProvider extends React.Component {
     countryAlpha2: {},
     termsMap: {},
     dataset: null,
+    recentDatasets: [],
     setDataset: dataset => {
       this.setState({ dataset });
+    },
+    setRecentDatasets: recentDatasets => {
+      this.setState({ recentDatasets });
     },
     // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
@@ -175,6 +180,10 @@ class ContextProvider extends React.Component {
         countryAlpha3[c.alpha3] = c;
         countryAlpha2[c.alpha2] = c;
       });
+
+      const recentDatasetsAsText = localStorage.getItem('colplus_recent_datasets');
+      const recentDatasets = recentDatasetsAsText ? JSON.parse(recentDatasetsAsText) : [];
+
       this.setState({
         frequency: responses[0],
         datasetType: responses[1],
@@ -197,7 +206,8 @@ class ContextProvider extends React.Component {
         countryAlpha3: countryAlpha3,
         countryAlpha2: countryAlpha2,
         termsMap: termsMap,
-        termsMapReversed: termsMapReversed
+        termsMapReversed: termsMapReversed,
+        recentDatasets
       });
     });
   }

@@ -59,7 +59,8 @@ class BasicMenu extends Component {
       selectedTaxon,
       selectedName,
       selectedSector,
-      user
+      user,
+      recentDatasets
     } = this.props;
     const { selectedKeys, openKeys } = this.state;
     return (
@@ -159,6 +160,8 @@ class BasicMenu extends Component {
             <Menu.Item key="/dataset">
               <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>
+            
+
             {Auth.isAuthorised(user, ["editor", "admin"]) && (
               <Menu.Item key="datasetCreate">
                 <NavLink to={{ pathname: "/newdataset" }}>New Dataset</NavLink>
@@ -169,6 +172,26 @@ class BasicMenu extends Component {
             <Menu.Item key="8">Constituents</Menu.Item>
             <Menu.Item key="9">Without endpoint</Menu.Item> */}
           </SubMenu>
+         {recentDatasets && recentDatasets.length > 1 && <SubMenu
+              key="recentDatasets"
+              title={
+                <span>
+                  <Icon type="star" />
+                  <span>Recently visited datasets</span>
+                </span>
+              }
+            >
+              {recentDatasets.map(d => <Menu.Item key="meta">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${d.key}`
+                  }}
+                >
+                  {d.alias}
+                </NavLink>
+              </Menu.Item>)}
+
+            </SubMenu> }
           {selectedDataset && (
             <SubMenu
               key="datasetKey"
@@ -321,7 +344,7 @@ class BasicMenu extends Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, recentDatasets }) => ({ user, recentDatasets });
 
 export default withRouter(
   injectSheet(styles)(withContext(mapContextToProps)(BasicMenu))

@@ -41,6 +41,7 @@ class DatasetProvider extends React.Component {
         params: { key }
       },
       setDataset,
+      setRecentDatasets,
       addError
     } = this.props;
     this.setState({ loading: true });
@@ -48,7 +49,14 @@ class DatasetProvider extends React.Component {
       .then(res => {
         this.setState({ loading: false });
 
+      const recentDatasetsAsText = localStorage.getItem('colplus_recent_datasets');
+      let recentDatasets = recentDatasetsAsText ? JSON.parse(recentDatasetsAsText) : [];
+      recentDatasets.unshift(res.data)
+      recentDatasets = _.uniqBy(recentDatasets, 'key').slice(0, 5);  
+      localStorage.setItem('colplus_recent_datasets', JSON.stringify(recentDatasets))
+      setRecentDatasets(recentDatasets);
         setDataset(res.data);
+
       })
       .catch(err => {
         this.setState({ loading: false });
@@ -61,10 +69,11 @@ class DatasetProvider extends React.Component {
   };
 };
 
-const mapContextToProps = ({ dataset, setDataset, addError }) => ({
+const mapContextToProps = ({ dataset, setDataset, setRecentDatasets, addError }) => ({
   dataset,
   setDataset,
-  addError
+  addError,
+  setRecentDatasets
 });
 
 export default withContext(mapContextToProps)(DatasetProvider);

@@ -17,6 +17,8 @@ import withContext from "../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 
+
+
 const FormItem = Form.Item;
 
 const _ = require("lodash");
@@ -256,6 +258,10 @@ class DatasetList extends React.Component {
   handleColumns = excludeColumns => {
     this.setState({ excludeColumns });
   };
+
+  setRecentlyVistied = () => {
+
+  }
 
   render() {
     const { data, loading, error, excludeColumns} = this.state;

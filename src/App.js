@@ -178,7 +178,7 @@ class App extends Component {
                 key="datasetProvider"
                 path={`/dataset/:key`}
                 component={DatasetProvider}
-              />
+              /> 
               </React.Fragment>
         </Router>
       </ContextProvider>
