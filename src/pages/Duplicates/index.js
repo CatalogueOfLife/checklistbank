@@ -33,6 +33,7 @@ import DecisionTag from "../WorkBench/DecisionTag";
 import ErrorMsg from "../../components/ErrorMsg";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
+import Auth from "../../components/Auth"
 
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
@@ -373,7 +374,7 @@ class DuplicateSearchPage extends React.Component {
       totalFaked,
       columns
     } = this.state;
-    const { rank, taxonomicstatus } = this.props;
+    const { rank, taxonomicstatus, user } = this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -635,7 +636,7 @@ class DuplicateSearchPage extends React.Component {
               )}{" "}
             </Card>
           </Col>
-          <Col span={6}>
+         { Auth.isAuthorised(user, ["editor"]) && <Col span={6}>
             <Card>
               <Select
                 style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
@@ -670,11 +671,11 @@ class DuplicateSearchPage extends React.Component {
                   selectedRowKeys.length > 1 ? "taxa" : "taxon"
                 }</div>}
             </Card>
-          </Col>
+          </Col> }
         </Row>
         <Row />
         <Row style={{marginBottom: "8px", marginTop: "8px" }}>
-          <Col span={18} >
+        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={18} >
           <Button
                 type="primary"
                 onClick={this.selectNewestInGroup}
@@ -697,8 +698,8 @@ class DuplicateSearchPage extends React.Component {
                 All synonyms
               </Button>
               
-          </Col>
-          <Col span={6} style={{ textAlign: "right"}}>
+          </Col> }
+          <Col span={Auth.isAuthorised(user, ["editor"]) ? 6 : 24} style={{ textAlign: "right"}}>
             {!error && (
               <Pagination
               showSizeChanger
@@ -732,7 +733,7 @@ class DuplicateSearchPage extends React.Component {
                 record.dupID % 2 ? "duplicate-alternate-row" : ""
               }
               pagination={false}
-              rowSelection={rowSelection}
+              rowSelection={!Auth.isAuthorised(user, ["editor"]) ? null : rowSelection}
             />
           </React.Fragment>
         )}
@@ -747,7 +748,8 @@ const mapContextToProps = ({
   issue,
   nomstatus,
   nametype,
-  namefield
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
+  namefield,
+  user
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user });
 
 export default withContext(mapContextToProps)(DuplicateSearchPage);

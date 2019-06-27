@@ -26,6 +26,7 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import DecisionForm from "./DecisionForm";
+import Auth from "../../components/Auth"
 
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
@@ -33,11 +34,22 @@ const RadioGroup = Radio.Group;
 
 const columnFilters = ["status", "rank"];
 
+const getDecisionText = (decision) => {
+  if(!_.get(decision, 'mode')) {
+    return "";
+  } else if(['block', 'chresonym'].includes(_.get(decision, 'mode'))){
+    return  _.get(decision, 'mode')
+  } else if(_.get(decision, 'status')) {
+    return _.get(decision, 'status')
+  } else {
+    return "update"
+  }
+}
+
 class WorkBench extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-
     this.state = {
       data: [],
       decision: null,
@@ -62,7 +74,7 @@ class WorkBench extends React.Component {
       width: 60,
       className: "workbench-td",
       render: (text, record) => (
-        <DecisionTag decision={_.get(record, "decisions[0]")} />
+        !Auth.isAuthorised(this.props.user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
       )
     },
     {
@@ -479,7 +491,8 @@ class WorkBench extends React.Component {
       issue,
       nomstatus,
       nametype,
-      namefield
+      namefield,
+      user
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -599,7 +612,7 @@ class WorkBench extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+        {Auth.isAuthorised(this.props.user, ["editor"]) &&  <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
             <Select
               style={{ width: 200, marginRight: 10 }}
               onChange={this.onDecisionChange}
@@ -638,8 +651,8 @@ class WorkBench extends React.Component {
                   }`
                 }
             </span>
-          </Col>
-          <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
+          </Col> }
+          <Col span={!Auth.isAuthorised(this.props.user, ["editor"]) ? 24 : 12} style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
               `results: ${pagination.total}`}
@@ -657,8 +670,8 @@ class WorkBench extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey={record => _.get(record, "usage.name.id")}
-            rowSelection={rowSelection}
-            expandedRowRender={record => _.get(record, "decisions[0]") ? <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> : ""}
+            rowSelection={ !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection}
+            expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => _.get(record, "decisions[0]") ? <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> : ""}
 
           />
         )}
@@ -673,7 +686,8 @@ const mapContextToProps = ({
   issue,
   nomstatus,
   nametype,
-  namefield
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
+  namefield,
+  user
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user });
 
 export default withContext(mapContextToProps)(WorkBench);

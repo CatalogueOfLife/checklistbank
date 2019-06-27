@@ -103,10 +103,10 @@ html, body, #root {
 }
 
 tbody td.workbench-td {
-  padding: 0 0 0 4px !important
+  padding: 4px !important
 }
 thead th.workbench-td {
-  padding: 0 0 0 4px !important
+  padding: 4px !important
 }
 thead th.workbench-td > div {
   margin: 0 -5px 0 0 !important;
