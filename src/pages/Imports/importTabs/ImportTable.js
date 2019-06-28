@@ -7,6 +7,7 @@ import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
 import history from "../../../history";
+import ErrorMsg from "../../../components/ErrorMsg"
 import ImportButton from './ImportButton'
 import PageContent from '../../../components/PageContent'
 import withContext from '../../../components/hoc/withContext'
@@ -33,7 +34,7 @@ const tagColors = {
   'inserting': 'blue',
   'finished': 'green',
   'failed': 'red',
-  'in queue': 'orange'
+  'waiting': 'orange'
 }
 const defaultColumns = [
   {
@@ -165,20 +166,7 @@ class ImportTable extends React.Component {
 
         return Promise.all(promises).then(() => res);
       })
-  /*    .then(res => {
-       if(this.props.section === 'running'){
-          return this.addDataFromImportQueue(res).then((queued)=>{
-            if(!res.data.result){
-              res.data.result = []
-            }
-            res.data.result = res.data.result.concat(queued.data)
-            return res
-          })
-        } else {
-          return res
-        } 
 
-      })  */
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
@@ -195,29 +183,7 @@ class ImportTable extends React.Component {
       });
   };
 
-  addDataFromImportQueue = (mainRes) => {
 
-  return  axios(`${config.dataApi}importer/queue`)
-    .then(res => {
-      let promises = [];
-
-      _.each(res.data, imp => {
-        promises.push(
-          axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
-            dataset => {
-              imp.dataset = dataset.data;
-              imp.state = 'in queue'
-            }
-          )
-        );
-      });
-
-      return Promise.all(promises).then(() => res);
-    })
-    .catch(err => {
-      console.log(err)
-    });
-  }
 
   updateStatusQuery = (query) => {
 
@@ -273,7 +239,7 @@ class ImportTable extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={error.message} type="error" />}
+        {error && <Alert message={<ErrorMsg error={error}/>} type="error" />}
         {!error && (
           <Table
             scroll={{x: 1000}}

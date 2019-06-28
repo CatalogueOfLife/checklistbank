@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 
 const Option = AutoComplete.Option;
 
-class DatasetAutocomplete extends React.Component {
+class NameSearchAutocomplete extends React.Component {
 
     constructor(props) {
         super(props);
@@ -84,4 +84,4 @@ class DatasetAutocomplete extends React.Component {
 
 }
 
-export default DatasetAutocomplete;
+export default NameSearchAutocomplete;
