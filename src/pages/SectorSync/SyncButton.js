@@ -29,7 +29,8 @@ class SyncButton extends React.Component {
       .then(res => {
         this.setState({ importTriggered: false });
         notification.open({
-          title: 'Sync started'
+          title: "Sync started",
+          message: `Now syncyning sector ${record.sectorKey}`
         })
         if(this.props.onStartSyncSuccess && typeof this.props.onStartSyncSuccess === 'function'){
           this.props.onStartSyncSuccess();

@@ -6,11 +6,11 @@ import { List, Breadcrumb, Button, Alert, Icon, Tooltip, notification } from "an
 import ErrorMsg from '../../../components/ErrorMsg';
 import { NavLink } from "react-router-dom";
 import PageContent from '../../../components/PageContent'
-import chai from 'chai'
 import config from "../../../config";
 import SectorTable from "../../BrokenSectors/SectorTable";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
-const {expect} = chai;
+
+
 
 class DatasetSectors extends React.Component {
     constructor(props) {
@@ -46,6 +46,7 @@ class DatasetSectors extends React.Component {
                 this.setState({ loading: false, error: err, data: [] });
             });
     };
+
 
     deleteSector = (sector) => {
         axios.delete(`${config.dataApi}sector/${sector.key}`)

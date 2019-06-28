@@ -237,6 +237,24 @@ class SyncTable extends React.Component {
         }
       },
       {
+        title: "History",
+        key: "history",
+        render: (text, record) => (
+          <Tooltip title="Synchronization history">
+            <NavLink
+                to={{
+                  pathname: `/sector/sync`,
+                  search: `?sectorKey=${record.key}`
+                }}
+                exact={true}
+              >
+              <Icon type="history" style={{ fontSize: "20px" }} />
+            </NavLink>
+          </Tooltip>
+        ),
+        width: 50
+      },
+      {
         title: "Logs",
         key: "logs",
         render: (text, record) => (

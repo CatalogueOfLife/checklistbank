@@ -95,7 +95,9 @@ class App extends Component {
                 exact
                 key="sectorSync"
                 path="/sector/sync"
-                component={SectorSync}
+                render={({ match, location }) => (
+                  <SectorSync section={match.params.section} location={location} />
+                )}
                 
               />
               <Route

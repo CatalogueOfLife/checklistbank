@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Tag, Icon, Tooltip, Breadcrumb } from "antd";
+import { Table, Alert, Form, Tag, Icon, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -204,31 +204,17 @@ class SyncTable extends React.Component {
   }
 
   componentWillMount() {
-    const { importState } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 25, offset: 0, state: importState };
+      query = { limit: 25, offset: 0 };
     }
-    if (query.state) {
-      this.updateStatusQuery(query);
-    }
+   
     this.getData(query);
 
-    if (this.props.section === "running") {
-      this.timer = setInterval(() => {
-        this.getData(query);
-      }, 3000);
-    }
   }
 
-  componentWillUnmount() {
-    if (this.props.section === "running") {
-      clearInterval(this.timer);
-    }
-  }
 
   getData = params => {
-    const { section } = this.props;
     this.setState({ loading: true, params });
     history.push({
       pathname: `/sector/sync`,
@@ -283,13 +269,6 @@ class SyncTable extends React.Component {
       });
   };
 
-  updateStatusQuery = query => {
-    let catColumn = _.find(defaultColumns, c => {
-      return c.key === "state";
-    });
-    let filter = typeof query.state === "string" ? [query.state] : query.state;
-    catColumn.filteredValue = filter;
-  };
 
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
@@ -309,14 +288,13 @@ class SyncTable extends React.Component {
     } else {
       query.state = this.props.importState;
     }
-    this.updateStatusQuery(query);
 
     this.getData(query);
   };
 
   render() {
-    const { data, loading, error, syncAllError } = this.state;
-    const { section, user, sectorImportState } = this.props;
+    const { data, loading, error, syncAllError, params: {sectorKey} } = this.state;
+    const { user, sectorImportState } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
           ...defaultColumns,
@@ -329,9 +307,6 @@ class SyncTable extends React.Component {
               record.type === "SectorSync" ?  <SyncButton
                 key={record.datasetKey}
                 record={record}
-                onStartImportSuccess={() => {
-                  history.push("/imports/running");
-                }}
               /> : ""
             )
           }
@@ -346,10 +321,14 @@ class SyncTable extends React.Component {
         {error && <Alert message={error.message} type="error" />}
         {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
 
-        <SyncAllSectorsButton 
+      {!sectorKey &&  <SyncAllSectorsButton 
           onError={err => this.setState({syncAllError: err})}
           onSuccess={() => this.setState({syncAllError: null})}
-        />
+        />}
+        {sectorKey && <Row>
+          <Col><h1>Imports for sector {sectorKey}</h1> <a onClick={() => this.getData({ limit: 25, offset: 0 })}> Show imports for all sectors</a></Col>
+          <Col></Col>
+        </Row>}
         {!error && (
           <Table
             scroll={{ x: 1000 }}
