@@ -297,6 +297,20 @@ class BasicMenu extends Component {
                   Import Metrics
                 </NavLink>
               </Menu.Item>
+              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+                <Menu.Item key="tasks">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/tasks`
+                    }}
+                  >
+                    Tasks
+                  </NavLink>
+                </Menu.Item>
+              )}
 
               {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="workbench">

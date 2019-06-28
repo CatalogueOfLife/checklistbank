@@ -87,7 +87,7 @@ class DuplicateSearchPage extends React.Component {
    } */
     this.getSectors();
     let booleans = {};
-    ["withDecision", "parentDifferent", "authorshipDifferent"].forEach(n => {
+    ["withDecision", "parentDifferent", "authorshipDifferent", "rankDifferent", "codeDifferent"].forEach(n => {
       if (params[n] === "true") {
         booleans[n] = true;
       }
@@ -96,11 +96,15 @@ class DuplicateSearchPage extends React.Component {
       }
     });
 
-
-    this.setState(
-      { params: { ...this.state.params, ...params, ...booleans } },
-      this.getData
-    );
+    if(params._colCheck){
+      let option = { props: {params: queryPresets.filter(qp => qp.id === params._colCheck)[0].params}}
+      this.onPresetSelect(params._colCheck, option)
+    } else {
+      this.setState(
+        { params: { ...this.state.params, ...params, ...booleans } },
+        this.getData
+      );
+    }
   }
 
   getData = () => {

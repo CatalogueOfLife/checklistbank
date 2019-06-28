@@ -126,6 +126,15 @@ class ContextProvider extends React.Component {
     },
     logout: () => {
       this.logout();
+    },
+    getDuplicateWarningColor: count => {
+      if(Number(count) === 0){
+        return ISSUE_COLOR.info
+      } else if(Number(count) < 51) {
+        return ISSUE_COLOR.warning
+      } else if(Number(count) > 50) {
+        return ISSUE_COLOR.error
+      }
     }
   };
 

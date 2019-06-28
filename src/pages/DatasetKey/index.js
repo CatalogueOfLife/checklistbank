@@ -15,6 +15,7 @@ import DatasetReferences from "./datasetPageTabs/DatasetReferences"
 import Layout from "../../components/LayoutNew";
 import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
+import DatasetTasks from "./datasetPageTabs/DatasetTasks"
 import NameSearch from "../NameSearch"
 import WorkBench from "../WorkBench"
 import withContext from "../../components/hoc/withContext"
@@ -101,6 +102,9 @@ class DatasetPage extends React.Component {
         )}
         {sect === "reference" && (
           <DatasetReferences datasetKey={datasetKey} location={this.props.location} />
+        )}
+        {sect === "tasks" && (
+          <DatasetTasks datasetKey={datasetKey} location={this.props.location} />
         )}
       </Layout>
     );
