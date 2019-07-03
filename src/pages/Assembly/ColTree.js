@@ -108,7 +108,9 @@ class ColTree extends React.Component {
 
       : Promise.resolve(false);
     var defaultExpandedNodes;
-    return Promise.all([axios(`${config.dataApi}dataset/${id}/tree`).then(this.decorateWithSectorsAndDataset), p])
+    return Promise.all([
+      axios(`${config.dataApi}dataset/${id}/tree`).then(this.decorateWithSectorsAndDataset), 
+      p])
       .then(values => {
         const mainTreeData = values[0].data.result;
         const defaultExpanded = values[1] ? values[1].data : null;
@@ -121,9 +123,10 @@ class ColTree extends React.Component {
                 confirmVisible={false}
                 hasPopOver={this.props.treeType === "mc"}
                 showSourceTaxon={showSourceTaxon}
-                reloadSelfAndSiblings={() => this.loadRoot()}
+                reloadSelfAndSiblings={this.loadRoot}
               />
             ),
+            taxon: tx,
             key: tx.id,
             datasetKey: id,
             childCount: tx.childCount,
@@ -132,30 +135,28 @@ class ColTree extends React.Component {
         });
         if (defaultExpanded) {
           defaultExpandedNodes = _.map(defaultExpanded, "id");
-          let root = _.find(treeData, [
+          let root_ = _.find(treeData, [
             "key",
             defaultExpanded[defaultExpanded.length - 1].id
           ]);
-          for (let i = defaultExpanded.length - 2; i > -1; i--) {
-            let tx = defaultExpanded[i];
-            // if MC should have default selected remember to insert function attrs here
-            let node = {
+          const nodes = defaultExpanded.slice(0, defaultExpanded.length-1).reverse();
+          nodes.reduce((root, tx) => {
+            const node = {
               title: <ColTreeNode 
               taxon={tx} 
               datasetKey={id}     
               showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={() => this.onLoadData(root, true)}
+              reloadSelfAndSiblings={() => this.fetchChildPage(root, true) }
               />,
+              taxon: tx,
               key: tx.id,
               childCount: tx.childCount,
-              childOffset: 0,
-              taxon: tx
-
-              
+              childOffset: 0
             };
             root.children = [node];
-            root = node;
-          }
+            return node;
+          }, root_)
+
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
@@ -184,17 +185,25 @@ class ColTree extends React.Component {
         this.setState({ treeData: [], defaultExpandedKeys: null, expandedKeys: [], error: err });
       });
   };
-  fetchChildPage = (treeNode, datasetKey, taxonKey, offset, limit) => {
-    const { showSourceTaxon, dataset, treeType } = this.props;
 
+  fetchChildPage = (dataRef, reloadAll) => {
+    const { showSourceTaxon, dataset, treeType } = this.props;
+    const { expandedKeys, loadedKeys } = this.state;
+    const childcount = _.get(dataRef, "childCount");
+    const limit = CHILD_PAGE_SIZE;
+    const offset = _.get(dataRef, "childOffset");
+    const childKeys =
+      _.get(dataRef, 'children') && dataRef.children.length > 0
+        ? dataRef.children.map(c => c.key)
+        : [];
     return axios(
-      `${config.dataApi}dataset/${datasetKey}/tree/${encodeURIComponent(
-        taxonKey
+      `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
+        dataRef.taxon.id//taxonKey
       )}/children?limit=${limit}&offset=${offset}`
     ).then(res => {
-      if(treeType === "gsd" && _.get(treeNode, 'props.title.props.taxon.sectorKey')){
+      if(treeType === "gsd" && _.get(dataRef, 'taxon.sectorKey')){
         // If it is a GSD and the parent has a sectorKey, copy it to children
-      return  {...res, data: { ...res.data, result: res.data.result.map(r => ({...r, sectorKey: _.get(treeNode, 'props.title.props.taxon.sectorKey')}))}}
+      return  {...res, data: { ...res.data, result: res.data.result.map(r => ({...r, sectorKey: _.get(dataRef, 'taxon.sectorKey')}))}}
       } else {
         return res;
       }
@@ -203,33 +212,83 @@ class ColTree extends React.Component {
       .then(res =>
         res.data.result
           ? res.data.result.map(tx => {
-              let dataRef = {
+              let childDataRef = {
+                taxon: tx,
                 key: tx.id,
-                datasetKey: datasetKey,
+                datasetKey: dataset.key,
                 childCount: tx.childCount,
                 childOffset: 0,
-                parent: treeNode.props.dataRef,
+                parent: dataRef,
                 name: tx.name
               };
 
-              dataRef.title = (
+              childDataRef.title = (
                 <ColTreeNode
                   confirmVisible={false}
                   taxon={tx}
-                  datasetKey={datasetKey}
+                  datasetKey={dataset.key}
                   hasPopOver={this.props.treeType === "mc"}
-                  reloadSelfAndSiblings={() => this.onLoadData(treeNode, true)}
+                  reloadSelfAndSiblings={() => this.fetchChildPage(dataRef, true)}
                   // reloadChildren={() => this.onLoadData({props: {dataRef: dataRef}}, true)}
                   showSourceTaxon={showSourceTaxon}
                 />
               );
 
-              return dataRef;
+              return childDataRef;
             })
           : []
-      );
+      )
+      .then(data => {
+        // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
+        dataRef.children =
+          dataRef.children && offset !== 0 && !reloadAll
+            ? [...dataRef.children, ...data]
+            : data;
+  
+        if (offset + CHILD_PAGE_SIZE < childcount) {
+          const loadMoreFn = () => {
+            dataRef.childOffset += CHILD_PAGE_SIZE;
+            if (
+              dataRef.children[dataRef.children.length - 1].key ===
+              "__loadMoreBTN__"
+            ) {
+              dataRef.children = dataRef.children.slice(0, -1);
+            }
+            this.setState(
+              {
+                treeData: [...this.state.treeData],
+                defaultExpandAll: false
+              }
+              /*,
+              () => {
+                this.onLoadData(treeNode);
+              } */
+            );
+          };
+          dataRef.children = [
+            ...dataRef.children,
+            {
+              title: (
+                <LoadMoreChildrenTreeNode
+                  onClick={loadMoreFn}
+                  key="__loadMoreBTN__"
+                />
+              ),
+              key: "__loadMoreBTN__",
+              childCount: 0
+            }
+          ];
+        }
+        this.setState({
+          treeData: [...this.state.treeData],
+          defaultExpandAll: false,
+          expandedKeys: [...new Set([...expandedKeys.filter(k => !childKeys.includes(k)), dataRef.key ])],
+          loadedKeys: loadedKeys.filter(k => !childKeys.includes(k))
+        });
+      });;
   };
 
+ 
   decorateWithSectorsAndDataset = res => {
 
     if (!res.data.result) return res;
@@ -246,81 +305,23 @@ class ColTree extends React.Component {
             )
           )
       ).then(() => res);
-    
-    
+       
   }
 
   onLoadData = (treeNode, reloadAll = false) => {
-    const {
-      dataset: { key }
-    } = this.props;
-    const { expandedKeys, loadedKeys } = this.state;
+  
     const {
       props: { dataRef }
     } = treeNode;
     if (reloadAll) {
       dataRef.childOffset = 0;
     }
-    const childcount = _.get(dataRef, "childCount");
-    const offset = _.get(dataRef, "childOffset");
-    const childKeys =
-      dataRef.children && dataRef.children.length > 0
-        ? dataRef.children.map(c => c.key)
-        : [];
+    
 
     return this.fetchChildPage(
-      treeNode,
-      key,
-      dataRef.key,
-      offset,
-      CHILD_PAGE_SIZE
-    ).then(data => {
-      // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
-      dataRef.children =
-        dataRef.children && offset !== 0 && !reloadAll
-          ? [...dataRef.children, ...data]
-          : data;
-
-      if (offset + CHILD_PAGE_SIZE < childcount) {
-        const loadMoreFn = () => {
-          dataRef.childOffset += CHILD_PAGE_SIZE;
-          if (
-            dataRef.children[dataRef.children.length - 1].key ===
-            "__loadMoreBTN__"
-          ) {
-            dataRef.children = dataRef.children.slice(0, -1);
-          }
-          this.setState(
-            {
-              treeData: [...this.state.treeData],
-              defaultExpandAll: false
-            },
-            () => {
-              this.onLoadData(treeNode);
-            }
-          );
-        };
-        dataRef.children = [
-          ...dataRef.children,
-          {
-            title: (
-              <LoadMoreChildrenTreeNode
-                onClick={loadMoreFn}
-                key="__loadMoreBTN__"
-              />
-            ),
-            key: "__loadMoreBTN__",
-            childCount: 0
-          }
-        ];
-      }
-      this.setState({
-        treeData: [...this.state.treeData],
-        defaultExpandAll: false,
-        expandedKeys: expandedKeys.filter(k => !childKeys.includes(k)),
-        loadedKeys: loadedKeys.filter(k => !childKeys.includes(k))
-      });
-    });
+      dataRef,
+      reloadAll
+    )
   };
 
   confirmAttach = (node, dragNode, mode) => {
@@ -347,20 +348,25 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
-      node.props.dataRef.title.props
+    const nodeId = node.props.dataRef.taxon.id
+     node.props.dataRef.title.props
         .reloadSelfAndSiblings()
-        .then(() => this.onLoadData(node, true));
+        .then(() => {        
+          this.onLoadData(node, true)
+        })
+      //  .catch((err)=> alert(err));
     });
   };
 
   handleAttach = e => {
-    if (this.props.dragNode.props.datasetKey === e.node.props.datasetKey) {
+    const {dragNode} = this.props;
+    if (dragNode.props.datasetKey === e.node.props.datasetKey) {
       message.warn("You cant modify the CoL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
     const { ranks } = this.state;
     if (
-      ranks.indexOf(this.props.dragNode.props.title.props.taxon.rank) <
+      ranks.indexOf(dragNode.props.title.props.taxon.rank) <
       ranks.indexOf(e.node.props.title.props.taxon.rank)
     ) {
       message.warn("Subject rank is higher than target rank");
@@ -369,7 +375,7 @@ class ColTree extends React.Component {
     // default to attach mode
     let mode = "ATTACH";
     if (
-      this.props.dragNode.props.title.props.taxon.rank ===
+      dragNode.props.title.props.taxon.rank ===
       e.node.props.title.props.taxon.rank
     ) {
       mode = "MERGE";
@@ -380,10 +386,10 @@ class ColTree extends React.Component {
           Attach{" "}
           <span
             dangerouslySetInnerHTML={{
-              __html: this.props.dragNode.props.title.props.taxon.name
+              __html: dragNode.props.title.props.taxon.name
             }}
           />{" "}
-          from {this.props.dragNode.dataset.title} under{" "}
+          from {dragNode.dataset.title} under{" "}
           <span
             dangerouslySetInnerHTML={{
               __html: e.node.props.title.props.taxon.name
@@ -396,10 +402,10 @@ class ColTree extends React.Component {
           Ranks are equal, this will merge children of{" "}
           <span
             dangerouslySetInnerHTML={{
-              __html: this.props.dragNode.props.title.props.taxon.name
+              __html: dragNode.props.title.props.taxon.name
             }}
           />{" "}
-          in {this.props.dragNode.dataset.title} into children of{" "}
+          in {dragNode.dataset.title} into children of{" "}
           <span
             dangerouslySetInnerHTML={{
               __html: e.node.props.title.props.taxon.name
@@ -417,7 +423,7 @@ class ColTree extends React.Component {
         confirmTitle={msg}
         reloadSelfAndSiblings={e.node.props.title.props.reloadSelfAndSiblings}
         onConfirm={() => {
-          this.confirmAttach(e.node, this.props.dragNode, mode);
+          this.confirmAttach(e.node, dragNode, mode);
         }}
         onCancel={() => {
           e.node.props.dataRef.title = (
@@ -425,9 +431,7 @@ class ColTree extends React.Component {
               taxon={e.node.props.title.props.taxon}
               datasetKey={this.props.dataset.key}
               confirmVisible={false}
-              reloadSelfAndSiblings={
-                e.node.props.title.props.reloadSelfAndSiblings
-              }
+              reloadSelfAndSiblings={ e.node.props.title.props.reloadSelfAndSiblings}
             />
           );
           this.setState({ treeData: [...this.state.treeData] });
@@ -435,7 +439,7 @@ class ColTree extends React.Component {
       />
     );
     console.log(
-      this.props.dragNode.props.dataRef.title.props.taxon.name +
+      dragNode.props.dataRef.title.props.taxon.name +
         " --> " +
         e.node.props.dataRef.title.props.taxon.name
     );

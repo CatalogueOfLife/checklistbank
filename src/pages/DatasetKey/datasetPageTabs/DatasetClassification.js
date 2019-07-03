@@ -129,6 +129,7 @@ class DatasetClassification extends React.Component {
             "key",
             defaultExpanded[defaultExpanded.length - 1].id
           ]);
+          
           for (let i = defaultExpanded.length - 2; i > -1; i--) {
             let tx = defaultExpanded[i];
             if (i > 0) {
