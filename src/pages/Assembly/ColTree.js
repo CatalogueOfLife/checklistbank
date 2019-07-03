@@ -348,7 +348,6 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
-    const nodeId = node.props.dataRef.taxon.id
      node.props.dataRef.title.props
         .reloadSelfAndSiblings()
         .then(() => {        
@@ -596,9 +595,17 @@ class ColTree extends React.Component {
                   loadedKeys: this.state.loadedKeys.filter(
                     k => k !== obj.node.props.dataRef.key
                   )
-                }, () => { history.push('/assembly')});
+                }, () => {     
+                  history.push({
+                    pathname: `/assembly`})
+                  });
               } else {
-                this.setState({ expandedKeys }, () => { history.push('/assembly')});
+                this.setState({ expandedKeys }, () => { 
+                  history.push({
+                    pathname: `/assembly`,
+                    search: `?assemblyTaxonKey=${obj.node.props.dataRef.key}`
+                  })
+                });
               }
 
             }}

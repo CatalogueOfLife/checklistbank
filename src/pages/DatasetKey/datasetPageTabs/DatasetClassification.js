@@ -293,7 +293,7 @@ class DatasetClassification extends React.Component {
       childlessRoots,
       error
     } = this.state;
-    const { defaultExpandKey, id } = this.props;
+    const { datasetKey, defaultExpandKey, id } = this.props;
 
     const defaultSelectedKeys = defaultExpandKey ? [defaultExpandKey] : null;
     return (
@@ -320,7 +320,14 @@ class DatasetClassification extends React.Component {
                   // Remove children when a node is collapsed to improve performance on large trees
                  delete obj.node.props.dataRef.children;
                  obj.node.props.dataRef.childOffset = 0;
-                 this.setState({treeData: [...this.state.treeData], loadedKeys: this.state.loadedKeys.filter(k => k !== obj.node.props.dataRef.key )})
+                 this.setState({treeData: [...this.state.treeData], loadedKeys: this.state.loadedKeys.filter(k => k !== obj.node.props.dataRef.key )}, ()=> {history.push(
+                  `/dataset/${id}/classification`
+                )})
+                } else {
+                  history.push({
+                    pathname: `/dataset/${id}/classification`,
+                    search: `?taxonKey=${obj.node.props.dataRef.key}`
+                  })
                 }
               }}
             >
