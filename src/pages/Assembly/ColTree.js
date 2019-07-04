@@ -359,7 +359,7 @@ class ColTree extends React.Component {
 
   handleAttach = e => {
     const {dragNode} = this.props;
-    if (dragNode.props.datasetKey === e.node.props.datasetKey) {
+    if (dragNode.props.dataRef.taxon.datasetKey === e.node.props.dataRef.taxon.datasetKey) {
       message.warn("You cant modify the CoL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
