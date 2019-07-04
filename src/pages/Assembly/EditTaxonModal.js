@@ -50,17 +50,20 @@ class EditTaxonModal extends React.Component {
     visible: true,
     confirmLoading: false,
     taxon: null,
-    current: 0
+    current: 0,
+    selectedRank: null
   };
 
   componentDidMount = () => {
     this.getTaxon();
   };
 
-  isGenusOrAbove = rank => {
-    return this.props.rank.indexOf(rank) <= this.props.rank.indexOf("genus");
+  isAboveSpeciesAggregate = rank => {
+    return this.props.rank.indexOf(rank) < this.props.rank.indexOf("species aggregate");
   };
-
+  isInfraSpecific = rank => {
+    return this.props.rank.indexOf(rank) > this.props.rank.indexOf("species");
+  }
   handleSubmit = e => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -125,7 +128,7 @@ class EditTaxonModal extends React.Component {
     const { suggestedNameValue } = this.state;
     axios(`${config.dataApi}/parser/name?name=${suggestedNameValue}`).then(
       res => {
-        this.setState({ parsedName: _.get(res, 'data[0].name') });
+        this.setState({ parsedName: _.get(res, 'data[0].name'), selectedRank: _.get(res, 'data[0].name.rank') });
       }
     );
   };
@@ -156,7 +159,8 @@ class EditTaxonModal extends React.Component {
       taxon,
       current,
       suggestedNameValue,
-      parsedName
+      parsedName,
+      selectedRank
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -246,34 +250,34 @@ class EditTaxonModal extends React.Component {
                 ]
               })(<Input />)}
             </FormItem>
-            <FormItem {...formItemLayout} label="Uninomial">
+          { this.isAboveSpeciesAggregate(selectedRank) &&  <FormItem {...formItemLayout} label="Uninomial">
               {getFieldDecorator("uninomial", {
                 initialValue: _.get(parsedName, "uninomial")
                   ? _.get(parsedName, "uninomial")
                   : ""
               })(<Input />)}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Genus">
+            </FormItem> }
+            { !this.isAboveSpeciesAggregate(selectedRank)  &&    <FormItem {...formItemLayout} label="Genus">
               {getFieldDecorator("genus", {
                 initialValue: _.get(parsedName, "genus")
                   ? _.get(parsedName, "genus")
                   : ""
               })(<Input />)}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Specific Epithet">
+            </FormItem>}
+            { !this.isAboveSpeciesAggregate(selectedRank)  &&  <FormItem {...formItemLayout} label="Specific Epithet">
               {getFieldDecorator("specificEpithet", {
                 initialValue: _.get(parsedName, "specificEpithet")
                   ? _.get(parsedName, "specificEpithet")
                   : ""
               })(<Input />)}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Infrasp. Epithet">
+            </FormItem>}
+            { this.isInfraSpecific(selectedRank)  &&  <FormItem {...formItemLayout} label="Infrasp. Epithet">
               {getFieldDecorator("infraspecificEpithet", {
                 initialValue: _.get(parsedName, "infraspecificEpithet")
                   ? _.get(parsedName, "infraspecificEpithet")
                   : ""
               })(<Input />)}
-            </FormItem>
+            </FormItem>}
             <FormItem {...formItemLayout} label="Authorship">
               {getFieldDecorator("authorship", {
                 initialValue: _.get(parsedName, "authorship")
@@ -294,7 +298,10 @@ class EditTaxonModal extends React.Component {
                   }
                 ]
               })(
-                <Select style={{ width: 200 }} showSearch>
+                <Select style={{ width: 200 }} 
+                  onChange={
+                    (value) => this.setState({selectedRank: value}, () => this.props.form.setFieldsValue({rank: value}))
+                  } showSearch>
                   {rank.map(r => (
                     <Option key={r} value={r}>
                       {r}
