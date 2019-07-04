@@ -6,7 +6,6 @@ import axios from "axios";
 import queryString from "query-string";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
-import DatasetColSources from "./datasetPageTabs/DatasetColSources";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
@@ -80,7 +79,6 @@ class DatasetPage extends React.Component {
       
       { importState && importState !== 'finished' && importState !== 'failed'  && importState !== 'unchanged' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
-        {/*section === "sources" && <DatasetColSources datasetKey={datasetKey} /> */}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics_" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}

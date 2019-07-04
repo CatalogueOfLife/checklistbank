@@ -321,6 +321,8 @@ class EditTaxonModal extends React.Component {
             {submissionError && (
               <FormItem>
                 <Alert
+                closable
+                onClose={() => this.setState({ submissionError: null })}
                   message={<ErrorMsg error={submissionError} />}
                   type="error"
                 />

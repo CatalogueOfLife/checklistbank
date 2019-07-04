@@ -6,18 +6,14 @@ import config from "../../config";
 import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
-import {getSectorsBatch} from "../../api/sector"
+import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
-import DataLoader from "dataloader"
+import DataLoader from "dataloader";
 import { ColTreeContext } from "./ColTreeContext";
-import history from "../../history"
+import history from "../../history";
 
-const sectorLoader = new DataLoader(ids =>
-  getSectorsBatch(ids)
-);
-const datasetLoader = new DataLoader(ids =>
-  getDatasetsBatch(ids)
-);
+const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
+const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
 
@@ -104,13 +100,19 @@ class ColTree extends React.Component {
           `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
             defaultExpandKey
           )}`
-        ).then(res => this.decorateWithSectorsAndDataset({data: {result: res.data}}).then(()=> res))
-
+        ).then(res =>
+          this.decorateWithSectorsAndDataset({
+            data: { result: res.data }
+          }).then(() => res)
+        )
       : Promise.resolve(false);
     var defaultExpandedNodes;
     return Promise.all([
-      axios(`${config.dataApi}dataset/${id}/tree`).then(this.decorateWithSectorsAndDataset), 
-      p])
+      axios(`${config.dataApi}dataset/${id}/tree`).then(
+        this.decorateWithSectorsAndDataset
+      ),
+      p
+    ])
       .then(values => {
         const mainTreeData = values[0].data.result;
         const defaultExpanded = values[1] ? values[1].data : null;
@@ -139,15 +141,19 @@ class ColTree extends React.Component {
             "key",
             defaultExpanded[defaultExpanded.length - 1].id
           ]);
-          const nodes = defaultExpanded.slice(0, defaultExpanded.length-1).reverse();
+          const nodes = defaultExpanded
+            .slice(0, defaultExpanded.length - 1)
+            .reverse();
           nodes.reduce((root, tx) => {
             const node = {
-              title: <ColTreeNode 
-              taxon={tx} 
-              datasetKey={id}     
-              showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={() => this.fetchChildPage(root, true) }
-              />,
+              title: (
+                <ColTreeNode
+                  taxon={tx}
+                  datasetKey={id}
+                  showSourceTaxon={showSourceTaxon}
+                  reloadSelfAndSiblings={() => this.fetchChildPage(root, true)}
+                />
+              ),
               taxon: tx,
               key: tx.id,
               childCount: tx.childCount,
@@ -155,8 +161,7 @@ class ColTree extends React.Component {
             };
             root.children = [node];
             return node;
-          }, root_)
-
+          }, root_);
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
@@ -182,7 +187,12 @@ class ColTree extends React.Component {
         }
       })
       .catch(err => {
-        this.setState({ treeData: [], defaultExpandedKeys: null, expandedKeys: [], error: err });
+        this.setState({
+          treeData: [],
+          defaultExpandedKeys: null,
+          expandedKeys: [],
+          error: err
+        });
       });
   };
 
@@ -193,21 +203,31 @@ class ColTree extends React.Component {
     const limit = CHILD_PAGE_SIZE;
     const offset = _.get(dataRef, "childOffset");
     const childKeys =
-      _.get(dataRef, 'children') && dataRef.children.length > 0
+      _.get(dataRef, "children") && dataRef.children.length > 0
         ? dataRef.children.map(c => c.key)
         : [];
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
-        dataRef.taxon.id//taxonKey
+        dataRef.taxon.id //taxonKey
       )}/children?limit=${limit}&offset=${offset}`
-    ).then(res => {
-      if(treeType === "gsd" && _.get(dataRef, 'taxon.sectorKey')){
-        // If it is a GSD and the parent has a sectorKey, copy it to children
-      return  {...res, data: { ...res.data, result: res.data.result.map(r => ({...r, sectorKey: _.get(dataRef, 'taxon.sectorKey')}))}}
-      } else {
-        return res;
-      }
-    })
+    )
+      .then(res => {
+        if (treeType === "gsd" && _.get(dataRef, "taxon.sectorKey")) {
+          // If it is a GSD and the parent has a sectorKey, copy it to children
+          return {
+            ...res,
+            data: {
+              ...res.data,
+              result: res.data.result.map(r => ({
+                ...r,
+                sectorKey: _.get(dataRef, "taxon.sectorKey")
+              }))
+            }
+          };
+        } else {
+          return res;
+        }
+      })
       .then(this.decorateWithSectorsAndDataset)
       .then(res =>
         res.data.result
@@ -228,7 +248,9 @@ class ColTree extends React.Component {
                   taxon={tx}
                   datasetKey={dataset.key}
                   hasPopOver={this.props.treeType === "mc"}
-                  reloadSelfAndSiblings={() => this.fetchChildPage(dataRef, true)}
+                  reloadSelfAndSiblings={() =>
+                    this.fetchChildPage(dataRef, true)
+                  }
                   // reloadChildren={() => this.onLoadData({props: {dataRef: dataRef}}, true)}
                   showSourceTaxon={showSourceTaxon}
                 />
@@ -244,7 +266,7 @@ class ColTree extends React.Component {
           dataRef.children && offset !== 0 && !reloadAll
             ? [...dataRef.children, ...data]
             : data;
-  
+
         if (offset + CHILD_PAGE_SIZE < childcount) {
           const loadMoreFn = () => {
             dataRef.childOffset += CHILD_PAGE_SIZE;
@@ -282,46 +304,43 @@ class ColTree extends React.Component {
         this.setState({
           treeData: [...this.state.treeData],
           defaultExpandAll: false,
-          expandedKeys: [...new Set([...expandedKeys.filter(k => !childKeys.includes(k)), dataRef.key ])],
+          expandedKeys: [
+            ...new Set([
+              ...expandedKeys.filter(k => !childKeys.includes(k)),
+              dataRef.key
+            ])
+          ],
           loadedKeys: loadedKeys.filter(k => !childKeys.includes(k))
         });
-      });;
+      });
   };
 
- 
   decorateWithSectorsAndDataset = res => {
-
     if (!res.data.result) return res;
-  
-      return Promise.all(
-        res.data.result
-          .filter(tx => !!tx.sectorKey)
-          .map(tx =>
-            sectorLoader.load(tx.sectorKey).then(
-              r => {tx.sector = r
-              return datasetLoader.load(r.datasetKey)
-              .then(dataset => (tx.sector.dataset = dataset))
-            }
-            )
-          )
-      ).then(() => res);
-       
-  }
+
+    return Promise.all(
+      res.data.result
+        .filter(tx => !!tx.sectorKey)
+        .map(tx =>
+          sectorLoader.load(tx.sectorKey).then(r => {
+            tx.sector = r;
+            return datasetLoader
+              .load(r.datasetKey)
+              .then(dataset => (tx.sector.dataset = dataset));
+          })
+        )
+    ).then(() => res);
+  };
 
   onLoadData = (treeNode, reloadAll = false) => {
-  
     const {
       props: { dataRef }
     } = treeNode;
     if (reloadAll) {
       dataRef.childOffset = 0;
     }
-    
 
-    return this.fetchChildPage(
-      dataRef,
-      reloadAll
-    )
+    return this.fetchChildPage(dataRef, reloadAll);
   };
 
   confirmAttach = (node, dragNode, mode) => {
@@ -348,18 +367,19 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
-     node.props.dataRef.title.props
-        .reloadSelfAndSiblings()
-        .then(() => {        
-          this.onLoadData(node, true)
-        })
+      node.props.dataRef.title.props.reloadSelfAndSiblings().then(() => {
+        this.onLoadData(node, true);
+      });
       //  .catch((err)=> alert(err));
     });
   };
 
   handleAttach = e => {
-    const {dragNode} = this.props;
-    if (dragNode.props.dataRef.taxon.datasetKey === e.node.props.dataRef.taxon.datasetKey) {
+    const { dragNode } = this.props;
+    if (
+      dragNode.props.dataRef.taxon.datasetKey ===
+      e.node.props.dataRef.taxon.datasetKey
+    ) {
       message.warn("You cant modify the CoL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
@@ -430,7 +450,9 @@ class ColTree extends React.Component {
               taxon={e.node.props.title.props.taxon}
               datasetKey={this.props.dataset.key}
               confirmVisible={false}
-              reloadSelfAndSiblings={ e.node.props.title.props.reloadSelfAndSiblings}
+              reloadSelfAndSiblings={
+                e.node.props.title.props.reloadSelfAndSiblings
+              }
             />
           );
           this.setState({ treeData: [...this.state.treeData] });
@@ -446,52 +468,98 @@ class ColTree extends React.Component {
   };
   confirmModify = e => {
     const parent = e.node.props.dataRef.title.props.taxon;
-    const draggedTaxon = e.dragNode.props.dataRef.title.props.taxon
-    axios(`${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`)
-    .then((res)=> res.data)
-    .then((draggedTaxon)=> axios.put(`${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`, 
-    {...draggedTaxon, parentId: parent.id})
-    ).then(res => {
-   
-      if (e.node.props.dataRef.children) {
-        e.node.props.dataRef.children.push(e.dragNode.props.dataRef);
-      } else {
-        e.node.props.dataRef.children = [e.dragNode.props.dataRef];
-      }
-      _.remove(e.dragNode.props.dataRef.parent.children, function(n) {
-        return n.key === e.dragNode.props.dataRef.key;
-      });
-      e.node.props.dataRef.title = (
-        <ColTreeNode
-          taxon={e.node.props.title.props.taxon}
-          datasetKey={this.props.dataset.key}
-          confirmVisible={false}
-        />
-      );
-      let msg = <span>You moved <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> {" "}from parent{" "} 
-      <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>{" "}
-      to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/></span>;
-      this.setState(
-        {
-          treeData: [...this.state.treeData],
-          defaultExpandAll: false
-        },
-        () => {
-          notification.open({
-            message: "Taxon moved",
-            description: msg
-          });
+    const draggedTaxon = e.dragNode.props.dataRef.title.props.taxon;
+    axios(
+      `${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${
+        draggedTaxon.id
+      }`
+    )
+      .then(res => res.data)
+      .then(draggedTaxon =>
+        axios.put(
+          `${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${
+            draggedTaxon.id
+          }`,
+          { ...draggedTaxon, parentId: parent.id }
+        )
+      )
+      .then(res => {
+        if (e.node.props.dataRef.children) {
+          e.node.props.dataRef.children.push(e.dragNode.props.dataRef);
+        } else {
+          e.node.props.dataRef.children = [e.dragNode.props.dataRef];
         }
-      );
-    }).catch((err)=>{
-      alert(err)
-    });
-
+        _.remove(e.dragNode.props.dataRef.parent.children, function(n) {
+          return n.key === e.dragNode.props.dataRef.key;
+        });
+        e.node.props.dataRef.title = (
+          <ColTreeNode
+            taxon={e.node.props.title.props.taxon}
+            datasetKey={this.props.dataset.key}
+            confirmVisible={false}
+          />
+        );
+        let msg = (
+          <span>
+            You moved{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: e.dragNode.props.dataRef.name
+              }}
+            />{" "}
+            from parent{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: e.dragNode.props.dataRef.parent.title.props.taxon.name
+              }}
+            />{" "}
+            to parent{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: e.node.props.dataRef.title.props.taxon.name
+              }}
+            />
+          </span>
+        );
+        this.setState(
+          {
+            treeData: [...this.state.treeData],
+            defaultExpandAll: false
+          },
+          () => {
+            notification.open({
+              message: "Taxon moved",
+              description: msg
+            });
+          }
+        );
+      })
+      .catch(err => {
+        alert(err);
+      });
   };
   handleModify = e => {
-    const msg = <span>Move <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.name}}/> from parent{" "} 
-    <span dangerouslySetInnerHTML={{__html: e.dragNode.props.dataRef.parent.title.props.taxon.name}}/>{" "}
-    to parent{" "}  <span dangerouslySetInnerHTML={{__html: e.node.props.dataRef.title.props.taxon.name}}/>?</span>;
+    const msg = (
+      <span>
+        Move{" "}
+        <span
+          dangerouslySetInnerHTML={{ __html: e.dragNode.props.dataRef.name }}
+        />{" "}
+        from parent{" "}
+        <span
+          dangerouslySetInnerHTML={{
+            __html: e.dragNode.props.dataRef.parent.title.props.taxon.name
+          }}
+        />{" "}
+        to parent{" "}
+        <span
+          dangerouslySetInnerHTML={{
+            __html: e.node.props.dataRef.title.props.taxon.name
+          }}
+        />
+        ?
+      </span>
+    );
     e.node.props.dataRef.title = (
       <ColTreeNode
         taxon={e.node.props.title.props.taxon}
@@ -568,52 +636,67 @@ class ColTree extends React.Component {
     return (
       <div>
         {" "}
-        {error && <Alert style={{marginTop: '8px'}} message={<ErrorMsg error={error} />} type="error" />}
+        {error && (
+          <Alert
+            closable
+            onClose={() => this.setState({ error: null })}
+            style={{ marginTop: "8px" }}
+            message={<ErrorMsg error={error} />}
+            type="error"
+          />
+        )}
         {treeData.length > 0 && (
-                  <ColTreeContext.Consumer>
-                  {({ mode}) =>
-          <Tree
-            showLine={true}
-            defaultExpandAll={defaultExpandAll}
-            defaultExpandedKeys={defaultExpandedKeys}
-            expandedKeys={expandedKeys}
-            draggable={draggable}
-            onDrop={(e) =>this.handleDrop(e, mode)}
-            onDragStart={onDragStart}
-            loadedKeys={loadedKeys}
-            loadData={this.onLoadData}
-            filterTreeNode={node => node.props.dataRef.key === this.props.defaultExpandKey }
-            onLoad={(loadedKeys, obj) => this.setState({ loadedKeys })}
-            onExpand={(expandedKeys, obj) => {
-              if (!obj.expanded) {
-                // Remove children when a node is collapsed to improve performance on large trees
-                delete obj.node.props.dataRef.children;
-                obj.node.props.dataRef.childOffset = 0;
-                this.setState({
-                  expandedKeys: expandedKeys,
-                  treeData: [...this.state.treeData],
-                  loadedKeys: this.state.loadedKeys.filter(
-                    k => k !== obj.node.props.dataRef.key
-                  )
-                }, () => {     
-                  history.push({
-                    pathname: `/assembly`})
-                  });
-              } else {
-                this.setState({ expandedKeys }, () => { 
-                  history.push({
-                    pathname: `/assembly`,
-                    search: `?assemblyTaxonKey=${obj.node.props.dataRef.key}`
-                  })
-                });
-              }
-
-            }}
-          >
-            {this.renderTreeNodes(treeData)}
-          </Tree>}
+          <ColTreeContext.Consumer>
+            {({ mode }) => (
+              <Tree
+                showLine={true}
+                defaultExpandAll={defaultExpandAll}
+                defaultExpandedKeys={defaultExpandedKeys}
+                expandedKeys={expandedKeys}
+                draggable={draggable}
+                onDrop={e => this.handleDrop(e, mode)}
+                onDragStart={onDragStart}
+                loadedKeys={loadedKeys}
+                loadData={this.onLoadData}
+                filterTreeNode={node =>
+                  node.props.dataRef.key === this.props.defaultExpandKey
+                }
+                onLoad={(loadedKeys, obj) => this.setState({ loadedKeys })}
+                onExpand={(expandedKeys, obj) => {
+                  if (!obj.expanded) {
+                    // Remove children when a node is collapsed to improve performance on large trees
+                    delete obj.node.props.dataRef.children;
+                    obj.node.props.dataRef.childOffset = 0;
+                    this.setState(
+                      {
+                        expandedKeys: expandedKeys,
+                        treeData: [...this.state.treeData],
+                        loadedKeys: this.state.loadedKeys.filter(
+                          k => k !== obj.node.props.dataRef.key
+                        )
+                      },
+                      () => {
+                        history.push({
+                          pathname: `/assembly`
+                        });
+                      }
+                    );
+                  } else {
+                    this.setState({ expandedKeys }, () => {
+                      history.push({
+                        pathname: `/assembly`,
+                        search: `?assemblyTaxonKey=${
+                          obj.node.props.dataRef.key
+                        }`
+                      });
+                    });
+                  }
+                }}
+              >
+                {this.renderTreeNodes(treeData)}
+              </Tree>
+            )}
           </ColTreeContext.Consumer>
-
         )}
       </div>
     );

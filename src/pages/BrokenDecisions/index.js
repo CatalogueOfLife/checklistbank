@@ -240,7 +240,10 @@ class SyncTable extends React.Component {
         title="Broken sectors"
       >
         <PageContent>
-          {error && <Alert message={error.message} type="error" />}
+          {error && <Alert 
+          closable
+          onClose={() => this.setState({ error: null })}
+          message={error.message} type="error" />}
           {!error && (
             <Table
               size="small"

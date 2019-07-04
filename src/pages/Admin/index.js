@@ -138,7 +138,10 @@ class AdminPage extends React.Component {
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
-          {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+          {error && <Alert 
+          closable
+          onClose={() => this.setState({ error: null })}
+          message={<ErrorMsg error={error} />} type="error" />}
           <Popconfirm
             placement="rightTop"
             title="Really? sync all sectors?"

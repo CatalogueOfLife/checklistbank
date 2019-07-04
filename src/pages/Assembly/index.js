@@ -256,7 +256,12 @@ class ManagementClassification extends React.Component {
                       }
                     />
                  
-                 {sectorMappingError && <Alert message={<ErrorMsg error={sectorMappingError} />} type="error" />}
+                 {sectorMappingError && 
+                 <Alert 
+                  closable
+                  onClose={() => this.setState({ sectorMappingError: null })}
+                  message={<ErrorMsg error={sectorMappingError} />} type="error" />
+                 }
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       dataset={MANAGEMENT_CLASSIFICATION}

@@ -146,7 +146,10 @@ class AddChildModal extends React.Component {
               
           )}
         </FormItem>}
-        {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
+        {submissionError && <FormItem><Alert 
+        closable
+        onClose={() => this.setState({ submissionError: null })}
+        message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
         </Form>
       </Modal>
     );
