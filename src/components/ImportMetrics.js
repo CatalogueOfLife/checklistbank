@@ -11,7 +11,7 @@ const ImportMetrics = ({data}) => {
       <React.Fragment>
         <Row style={{padding: '10px'}}>
         <Col span={24}>
-          {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount' ], (c)=>{
+          {_.map(['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount', 'mediaCount', 'descriptionCount'  ], (c)=>{
             return (_.get(data, `${c}`))? <Tag key={c} color="blue">{_.startCase(c)}: {_.get(data, `${c}`)}</Tag> : '';
           })}
           </Col>
@@ -54,6 +54,17 @@ const ImportMetrics = ({data}) => {
           </Col>
           
         </Row>
+        <Row>
+          <Col span={12} style={{ padding: '10px' }}>
+          {_.get(data, 'nameRelationsByTypeCount') && <ImportChart defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'nameRelationsByTypeCount')} title="Relations by type" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+          </Col>
+          <Col span={12} style={{ padding: '10px' }}>
+          {_.get(data, 'distributionsByGazetteerCount') && <ImportChart  verbatim={true} defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'distributionsByGazetteerCount')} title="Distribution by Gazetteer" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+
+          </Col>
+          
+        </Row>
+        
         </React.Fragment>
     );
   }

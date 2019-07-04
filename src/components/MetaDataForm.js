@@ -108,7 +108,12 @@ componentDidMount = () =>{
 
       
       <Form onSubmit={this.handleSubmit} style={{paddingTop: '12px'}}>
-      {submissionError && <FormItem><Alert message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
+      {submissionError && <FormItem>
+        <Alert
+          closable
+          onClose={() => this.setState({ submissionError: null })}
+          message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" />
+          </FormItem>}
      { /*
       
       {frequencyError && <FormItem><Alert message={<ErrorMsg error={frequencyError}></ErrorMsg>} type="error" /></FormItem>}

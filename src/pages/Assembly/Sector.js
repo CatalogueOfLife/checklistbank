@@ -255,7 +255,7 @@ class Sector extends React.Component {
                 {error && (
                   <Alert
                   closable
-            onClose={() => this.setState({ error: null })}
+                   onClose={() => this.setState({ error: null })}
                     message={
                       <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                     }

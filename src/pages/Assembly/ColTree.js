@@ -175,6 +175,12 @@ class ColTree extends React.Component {
             defaultExpandedKeys: defaultExpandedNodes,
             expandedKeys: defaultExpandedNodes
           });
+          history.push({
+            pathname: `/assembly`,
+            search: `?assemblyTaxonKey=${
+              defaultExpandKey
+            }`
+          });
         } else {
           this.setState({
             treeData:

@@ -176,14 +176,7 @@ class DatasetImportMetrics extends React.Component {
               <Row style={{ padding: "10px" }}>
                 <Col span={20}>
                   {_.map(
-                    [
-                      "taxonCount",
-                      "nameCount",
-                      "verbatimCount",
-                      "referenceCount",
-                      "distributionCount",
-                      "vernacularCount"
-                    ],
+                    ['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount', 'mediaCount', 'descriptionCount'  ],
                     c => {
                       return _.get(this.state, `data.${c}`) ? (
                         <Tag key={c} color="blue">
@@ -330,6 +323,28 @@ class DatasetImportMetrics extends React.Component {
                   )}
                 </Col>
               </Row>
+           { (_.get(this.state, 'data.nameRelationsByTypeCount') || _.get(this.state, 'data.distributionsByGazetteerCount')) &&  <Row>
+          <Col span={_.get(this.state, 'data.distributionsByGazetteerCount') ? 12 : 24} style={{ padding: '10px' }}>
+          {_.get(this.state, 'data.nameRelationsByTypeCount') && <ImportChart defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data.nameRelationsByTypeCount')} title="Relations by type" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+          </Col>
+          <Col span={_.get(this.state, 'data.nameRelationsByTypeCount') ? 12 : 24} style={{ padding: '10px' }}>
+          {_.get(this.state, 'data.distributionsByGazetteerCount') && <ImportChart  verbatim={true} defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data.distributionsByGazetteerCount')} title="Distribution by Gazetteer" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+
+          </Col>
+          
+        </Row>}
+
+{ (_.get(this.state, 'data.mediaByTypeCount') || _.get(this.state, 'data.namesByStatusCount')) &&  <Row>
+<Col span={_.get(this.state, 'data.namesByStatusCount') ? 12 : 24} style={{ padding: '10px' }}>
+{_.get(this.state, 'data.mediaByTypeCount') && <ImportChart defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data.mediaByTypeCount')} title="Media by type" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+</Col>
+<Col span={_.get(this.state, 'data.mediaByTypeCount') ? 12 : 24} style={{ padding: '10px' }}>
+{_.get(this.state, 'data.namesByStatusCount') && <ImportChart  verbatim={true} defaultType="pie" datasetKey={datasetKey} data={_.get(this.state, 'data.namesByStatusCount')} title="Names by Status" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+
+</Col>
+
+</Row>}
+
             </React.Fragment>
           )}
         </PageContent>
