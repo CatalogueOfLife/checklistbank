@@ -55,6 +55,7 @@ class WorkBench extends React.Component {
       decision: null,
       columns: this.defaultColumns,
       decisionFormVisible: false,
+      decisionForEdit: null,
       params: {},
       pagination: {
         pageSize: 50,
@@ -380,7 +381,7 @@ class WorkBench extends React.Component {
   cancelDecisionForm = () => {
     this.setState({decisionFormVisible: false})
   }
-  applyDecision = (decisionObjectFromForm) => {
+  applyDecision = (decisionObjectFromForm, decisionKey) => {
     const {
       selectedRowKeys,
       data: { result },
@@ -472,6 +473,40 @@ class WorkBench extends React.Component {
       });
   };
 
+  updateDecision = (newDecision, oldDecision) => {
+    const {data: {result}} = this.state
+    const decision = {...newDecision, mode: oldDecision.mode, datasetKey: oldDecision.datasetKey, subject: oldDecision.subject}
+    return axios
+          .put(`${config.dataApi}decision/${oldDecision.key}`, decision)
+
+          .then(res => {
+            
+            const row = _.find(result, e => {
+             return _.get(e, 'decisions[0].key') === oldDecision.key 
+              
+            })
+            if(row){
+              row.decisions = [{...row.decisions[0], ...decision}]
+            }
+            notification.open({
+              message: "Decision updated",
+              description: ""
+            });
+            this.setState({
+              data: {...this.state.data},
+              decisionFormVisible: false,
+              decisionError: null
+            });
+          })
+      .catch(err => {
+        this.setState({
+    
+          decisionFormVisible: false,
+          decisionError: err
+        });
+      });; 
+  }
+
   render() {
     const {
       data: { result, facets },
@@ -483,15 +518,12 @@ class WorkBench extends React.Component {
       filteredInfo,
       columns,
       decision,
-      decisionFormVisible
+      decisionFormVisible,
+      decisionForEdit
     } = this.state;
     const {
       rank,
       taxonomicstatus,
-      issue,
-      nomstatus,
-      nametype,
-      namefield,
       user
     } = this.props;
     const facetRanks = _.get(facets, "rank")
@@ -537,8 +569,11 @@ class WorkBench extends React.Component {
       >
        {decisionFormVisible && (
           <DecisionForm
+            data={decisionForEdit}
             onCancel={this.cancelDecisionForm}
-            onSuccess={dec => this.applyDecision(dec)}
+            onSuccess={(newDecision, oldDecision) => {
+              oldDecision ? this.updateDecision(newDecision, oldDecision) : this.applyDecision(newDecision)
+            }}
           />
         )}
         <Row>
@@ -671,7 +706,14 @@ class WorkBench extends React.Component {
             onChange={this.handleTableChange}
             rowKey={record => _.get(record, "usage.name.id")}
             rowSelection={ !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection}
-            expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => _.get(record, "decisions[0]") ? <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> : ""}
+            expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => _.get(record, "decisions[0]") ? 
+           <React.Fragment> 
+            {record.decisions[0].mode === 'update' && <a onClick={() => {
+               this.setState({decisionForEdit: _.get(record, "decisions[0]"), decisionFormVisible:true})
+             }}>Edit <Icon type="edit" /></a>}
+             <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> 
+             </React.Fragment>
+            : ""}
 
           />
         )}

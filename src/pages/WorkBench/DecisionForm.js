@@ -52,7 +52,7 @@ class DecisionForm extends React.Component {
           this.props.onSuccess &&
           typeof this.props.onSuccess === "function"
         ) {
-          this.props.onSuccess(decision);
+          this.props.onSuccess(decision, _.get(this.props, 'data'), );
         }
       } else {
       }
@@ -72,7 +72,8 @@ class DecisionForm extends React.Component {
       nametype,
       lifezone,
       onCancel,
-      form: { getFieldDecorator }
+      form: { getFieldDecorator },
+      data
     } = this.props;
     const { visible, submissionError } = this.state;
     const formItemLayout = {
@@ -102,13 +103,17 @@ class DecisionForm extends React.Component {
       >
         <Form>
         <FormItem {...formItemLayout} label="Scientific name">
-            {getFieldDecorator("scientificName", {})(<Input />)}
+            {getFieldDecorator("scientificName", {
+                          initialValue: (_.get(data, 'name.scientificName')) ? _.get(data, 'name.scientificName') : ''
+
+            })(<Input />)}
           </FormItem>
           <FormItem {...formItemLayout} label="Authorship">
-            {getFieldDecorator("authorship", {})(<Input />)}
+            {getFieldDecorator("authorship", { initialValue: (_.get(data, 'name.authorship')) ? _.get(data, 'name.authorship') : ''
+})(<Input />)}
           </FormItem>
           <FormItem {...formItemLayout} label="Rank">
-            {getFieldDecorator("rank", {})(
+            {getFieldDecorator("rank", {initialValue: (_.get(data, 'name.rank')) ? _.get(data, 'name.rank') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 {rank.map(r => (
                   <Option key={r} value={r}>
@@ -119,7 +124,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Name type">
-            {getFieldDecorator("nametype", {})(
+            {getFieldDecorator("nametype", {initialValue: (_.get(data, 'name.nametype')) ? _.get(data, 'name.nametype') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 {nametype.map(r => (
                   <Option key={r} value={r}>
@@ -130,7 +135,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Nom. status">
-            {getFieldDecorator("nomstatus", {})(
+            {getFieldDecorator("nomstatus", {initialValue: (_.get(data, 'name.nomstatus')) ? _.get(data, 'name.nomstatus') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 {nomstatus.map(r => (
                   <Option key={r} value={r}>
@@ -141,7 +146,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Nom. code">
-            {getFieldDecorator("nomCode", {})(
+            {getFieldDecorator("nomCode", {initialValue: (_.get(data, 'name.nomCode')) ? _.get(data, 'name.nomCode') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 {nomCode.map(r => (
                   <Option key={r.name} value={r.name}>
@@ -152,7 +157,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Lifezones">
-            {getFieldDecorator("lifezones", {})(
+            {getFieldDecorator("lifezones", {initialValue: (_.get(data, 'lifezones')) ? _.get(data, 'lifezones') : []})(
               <Select style={{ width: 200 }} showSearch mode="multiple">
                 {lifezone.map(r => (
                   <Option key={r.name} value={r.name}>
@@ -167,7 +172,8 @@ class DecisionForm extends React.Component {
           label="Fossil"
         >
           {getFieldDecorator('fossil', {
-            valuePropName: 'checked'
+            valuePropName: 'checked',
+            initialValue: (_.get(data, 'fossil')) === true ? true : false
             
           })(
             <Checkbox />
@@ -180,7 +186,8 @@ class DecisionForm extends React.Component {
           label="Recent"
         >
           {getFieldDecorator('recent', {
-            valuePropName: 'checked'
+            valuePropName: 'checked',
+            initialValue: (_.get(data, 'recent')) === true ? true : false
             
           })(
             <Checkbox />
@@ -189,7 +196,7 @@ class DecisionForm extends React.Component {
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="Note">
-            {getFieldDecorator("note", {})(<TextArea />)}
+            {getFieldDecorator("note", {initialValue: (_.get(data, 'note')) ? _.get(data, 'note') : ''})(<TextArea />)}
           </FormItem>
           {submissionError && (
             <FormItem>
