@@ -128,7 +128,7 @@ class NameSearchPage extends React.Component {
         sortBy: "taxonomic"
       };
       history.push({
-        pathname: `/dataset/${datasetKey}/names`,
+        pathname: datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
@@ -146,11 +146,12 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: `/dataset/${datasetKey}/names`,
+      pathname: datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
       search: `?${qs.stringify(params)}`
     });
+    const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/name/search` : `${config.dataApi}name/search`
     axios(
-      `${config.dataApi}dataset/${datasetKey}/name/search?${qs.stringify(
+      `${url}?${qs.stringify(
         params
       )}`
     )
@@ -389,7 +390,7 @@ class NameSearchPage extends React.Component {
           <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
-              `results: ${pagination.total}`}
+              `results: ${pagination.total.toLocaleString('en-GB')}`}
           </Col>
         </Row>
         {!error && (
@@ -400,7 +401,7 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => record.usage.id}
+            rowKey={record => record.usage.nameIndexId}
             expandedRowRender={record => <RowDetail {...record} />}
           />
         )}

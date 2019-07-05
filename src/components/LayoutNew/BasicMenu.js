@@ -66,9 +66,14 @@ class BasicMenu extends Component {
     return (
       <React.Fragment>
         <div className="logo">
-          <a href="/">
+        <NavLink
+                  to={{
+                    pathname: `/`
+                  }}
+                  exact={true}
+                >
             <Logo />
-          </a>
+            </NavLink>
         </div>
         <Menu
           selectedKeys={selectedKeys}
@@ -79,12 +84,18 @@ class BasicMenu extends Component {
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
         >
-          <Menu.Item key="admin">
+        {Auth.isAuthorised(user, ["editor", "admin"]) &&  <Menu.Item key="admin">
             <NavLink to={{ pathname: "/admin" }}>
               <Icon type="setting" />
               <span>Admin</span>
             </NavLink>
-          </Menu.Item>
+    </Menu.Item> }
+    <Menu.Item key="nameIndex">
+    <NavLink to={{ pathname: "/names" }}>
+              <Icon type="tags" />
+              <span>Name index</span>
+            </NavLink>
+    </Menu.Item>
           <SubMenu
             key="imports"
             title={
@@ -187,7 +198,7 @@ class BasicMenu extends Component {
                     pathname: `/dataset/${d.key}`
                   }}
                 >
-                  {d.alias}
+                  {d.alias ? d.alias : d.key}
                 </NavLink>
               </Menu.Item>)}
 

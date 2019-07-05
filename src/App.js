@@ -24,7 +24,9 @@ import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
 import DatasetImportMetrics from "./pages/DatasetImportMetrics";
-import Reference from "./pages/Reference"
+import Reference from "./pages/Reference";
+import HomePage from "./pages/HomePage"
+import NameIndex from "./pages/NameIndex"
 
 const theme = {
   colorPrimary: "deepskyblue"
@@ -45,13 +47,16 @@ class App extends Component {
             <Switch>
               <Route
                 exact
+                key="HomePage"
                 path="/"
-                render={props => (
-                  <Redirect
-                    to={{
-                      pathname: "/imports/running"
-                    }}
-                  />
+                component={HomePage}
+              />
+              <Route
+                exact
+                key="NameIndex"
+                path="/names"
+                render={({ match, location }) => (
+                  <NameIndex section={match.params.section} location={location} />
                 )}
               />
               <PrivateRoute
