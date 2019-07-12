@@ -21,7 +21,7 @@ import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../components/PageContent";
-import SyncState from './SyncState';
+import SyncState from "./SyncState";
 import Helmet from "react-helmet";
 import moment from "moment";
 import qs from "query-string";
@@ -45,7 +45,6 @@ class ManagementClassification extends React.Component {
   }
 
   componentWillMount() {
-    
     this.getSyncState();
 
     this.timer = setInterval(() => {
@@ -60,16 +59,36 @@ class ManagementClassification extends React.Component {
   getSyncState = () => {
     axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}`)
       .then(res => {
-        if(_.get(res, 'data.running') && _.get(res, 'data.running.sectorKey') !==  _.get(this.state, 'syncState.running.sectorKey')){
-          
-         return Promise.all([axios(`${config.dataApi}dataset/${_.get(res, 'data.running.datasetKey')}`), axios(`${config.dataApi}sector/${_.get(res, 'data.running.sectorKey')}`)])
-          .then(resp => {
-            this.setState({syncingDataset: resp[0].data, syncingSector: resp[1].data, syncState: res.data})
-          })
-        } else if(!_.get(res, 'data.running')){
-          this.setState({syncingDataset: null, syncingSector: null, syncState: res.data })
+        if (
+          _.get(res, "data.running") &&
+          _.get(res, "data.running.sectorKey") !==
+            _.get(this.state, "syncState.running.sectorKey")
+        ) {
+          return Promise.all([
+            axios(
+              `${config.dataApi}dataset/${_.get(
+                res,
+                "data.running.datasetKey"
+              )}`
+            ),
+            axios(
+              `${config.dataApi}sector/${_.get(res, "data.running.sectorKey")}`
+            )
+          ]).then(resp => {
+            this.setState({
+              syncingDataset: resp[0].data,
+              syncingSector: resp[1].data,
+              syncState: res.data
+            });
+          });
+        } else if (!_.get(res, "data.running")) {
+          this.setState({
+            syncingDataset: null,
+            syncingSector: null,
+            syncState: res.data
+          });
         } else {
-          this.setState({syncState: res.data })
+          this.setState({ syncState: res.data });
         }
       })
       .catch(err => this.setState({ syncError: err }));
@@ -97,12 +116,19 @@ class ManagementClassification extends React.Component {
           attachmentName.data.name = attachmentName.data.scientificName;
           rootName.data.name = rootName.data.scientificName;
 
-          return this.saveSector(
-            // null, // No colsources anymore ??
-            rootName.data,
-            attachmentName.data,
-            mode
-          )
+          return mode === "REPLACE"
+            ? this.replace(
+                // null, // No colsources anymore ??
+                rootName.data,
+                attachmentName.data,
+                mode
+              )
+            : this.saveSector(
+                // null, // No colsources anymore ??
+                rootName.data,
+                attachmentName.data,
+                mode
+              );
         })
       )
 
@@ -129,6 +155,30 @@ class ManagementClassification extends React.Component {
             MANAGEMENT_CLASSIFICATION.key
           }/taxon/${encodeURIComponent(res.data)}`
         );
+      });
+  };
+  replace = (subject, target, mode) => {
+    const { parentId } = target;
+    return axios(
+      `${config.dataApi}dataset/${
+        MANAGEMENT_CLASSIFICATION.key
+      }/taxon/${encodeURIComponent(parentId)}`
+    )
+      .then(res => {
+        const parent = res.data;
+        // delete recursive
+        return axios
+          .delete(
+            `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${target.id}`
+          )
+          .then(() => parent);
+      })
+      .then(parent => {
+        notification.open({
+          message: "Removed existing taxon",
+          description: `Old ${target.name} was removed from the CoL draft, removing children.`
+        });
+        this.saveSector = (subject, parent, "ATTACH");
       });
   };
 
@@ -190,9 +240,18 @@ class ManagementClassification extends React.Component {
   };
 
   render() {
-    const {syncState,syncingDataset,syncingSector, sectorMappingError} = this.state;
+    const {
+      syncState,
+      syncingDataset,
+      syncingSector,
+      sectorMappingError
+    } = this.state;
     return (
-      <Layout openKeys={["assembly"]} selectedKeys={["colAssembly"]} title={MANAGEMENT_CLASSIFICATION.title}>
+      <Layout
+        openKeys={["assembly"]}
+        selectedKeys={["colAssembly"]}
+        title={MANAGEMENT_CLASSIFICATION.title}
+      >
         <Helmet>
           <meta charSet="utf-8" />
           <title>CoL+ Assembly</title>
@@ -234,11 +293,14 @@ class ManagementClassification extends React.Component {
                 </ColTreeContext.Consumer>
               </Col>
 
-
               <Col span={12}>
-
-                    {syncState && <SyncState syncState={syncState} dataset={syncingDataset} sector={syncingSector}></SyncState>}
-
+                {syncState && (
+                  <SyncState
+                    syncState={syncState}
+                    dataset={syncingDataset}
+                    sector={syncingSector}
+                  />
+                )}
               </Col>
             </Row>
 
@@ -247,21 +309,24 @@ class ManagementClassification extends React.Component {
                 <Card>
                   <h4>CoL Draft</h4>{" "}
                   <NameAutocomplete
-                      datasetKey={MANAGEMENT_CLASSIFICATION.key}
-                      onSelectName={name =>
-                        this.setState({ defaultAssemblyExpandKey: name.key })
+                    datasetKey={MANAGEMENT_CLASSIFICATION.key}
+                    onSelectName={name =>
+                      this.setState({ defaultAssemblyExpandKey: name.key })
+                    }
+                    onResetSearch={() =>
+                      this.setState({ defaultAssemblyExpandKey: null })
+                    }
+                  />
+                  {sectorMappingError && (
+                    <Alert
+                      closable
+                      onClose={() =>
+                        this.setState({ sectorMappingError: null })
                       }
-                      onResetSearch={() =>
-                        this.setState({ defaultAssemblyExpandKey: null })
-                      }
+                      message={<ErrorMsg error={sectorMappingError} />}
+                      type="error"
                     />
-                 
-                 {sectorMappingError && 
-                 <Alert 
-                  closable
-                  onClose={() => this.setState({ sectorMappingError: null })}
-                  message={<ErrorMsg error={sectorMappingError} />} type="error" />
-                 }
+                  )}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       dataset={MANAGEMENT_CLASSIFICATION}
@@ -274,7 +339,6 @@ class ManagementClassification extends React.Component {
                       draggable={true}
                       showSourceTaxon={this.showSourceTaxon}
                       defaultExpandKey={this.state.defaultAssemblyExpandKey}
-
                     />
                   </div>
                 </Card>

@@ -447,9 +447,19 @@ class ColTree extends React.Component {
         confirmVisible={true}
         confirmTitle={msg}
         reloadSelfAndSiblings={e.node.props.title.props.reloadSelfAndSiblings}
-        onConfirm={() => {
-          this.confirmAttach(e.node, dragNode, mode);
-        }}
+        
+        actions={
+          mode === 'ATTACH' ? [{
+            text: 'Ok',
+            action: () => this.confirmAttach(e.node, dragNode, mode)
+          }] : [{
+            text: 'Merge',
+            action: () => this.confirmAttach(e.node, dragNode, 'MERGE')
+          }, {
+            text: 'Replace',
+            action: () => this.confirmAttach(e.node, dragNode, 'REPLACE')
+          }]
+        }
         onCancel={() => {
           e.node.props.dataRef.title = (
             <ColTreeNode

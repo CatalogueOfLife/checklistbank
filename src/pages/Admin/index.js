@@ -8,7 +8,7 @@ import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import { Button, Alert, Popconfirm, notification } from "antd";
-
+import PopconfirmMultiOption from "../../components/PopconfirmMultiOption"
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -217,7 +217,18 @@ class AdminPage extends React.Component {
               Rematch all broken sectors and decisions
             </Button>
           </Popconfirm>
-
+          <PopconfirmMultiOption
+            placement="rightTop"
+            title="Easy now! Do you really want to rematch all broken sectors and decisions?"
+            actions={[
+                {text: '#1', action: ()=> alert("#1")},
+                {text: '#2', action: ()=> alert("#2")},
+                {text: '#3', action: ()=> alert("#3")}
+            ]}
+            cancelText="No"
+          >
+          <Button>Test</Button>
+            </PopconfirmMultiOption>
           {exportResonse && <pre>{exportResonse}</pre>}
         </PageContent>
       </Layout>

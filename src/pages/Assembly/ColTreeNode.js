@@ -9,6 +9,7 @@ import {
   Tooltip,
   Checkbox
 } from "antd";
+import PopconfirmMultiOption from "../../components/PopconfirmMultiOption"
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -267,10 +268,11 @@ class ColTreeNode extends React.Component {
         <ColTreeContext.Consumer>
           {({ mode, selectedSourceDatasetKey, getSyncState }) =>
             (mode !== "modify" || !hasPopOver) && (
-              <Popconfirm
+              <PopconfirmMultiOption
                 visible={this.props.confirmVisible}
                 title={this.props.confirmTitle}
                 onConfirm={this.props.onConfirm}
+                actions={this.props.actions}
                 onCancel={this.props.onCancel}
               >
                 <div>
@@ -328,7 +330,7 @@ class ColTreeNode extends React.Component {
                     </span>
                   )}
                 </div>
-              </Popconfirm>
+              </PopconfirmMultiOption>
             )
           }
         </ColTreeContext.Consumer>

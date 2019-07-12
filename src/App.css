@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.css';
+@import "~antd/dist/antd.css";
 
 .login-form-wrapper {
   max-width: 300px;
@@ -33,7 +33,9 @@
   height: 200px;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   min-height: 100%;
 }
 
@@ -54,7 +56,7 @@ html, body, #root {
   position: relative;
   line-height: 64px;
   margin-left: -20px;
-  transition: all .3s;
+  transition: all 0.3s;
   background: #002140;
   overflow: hidden;
 }
@@ -69,7 +71,7 @@ html, body, #root {
   vertical-align: middle;
   font-size: 20px;
   margin: 0 0 0 12px;
-  font-family: Myriad Pro,Helvetica Neue,Arial,Helvetica,sans-serif;
+  font-family: Myriad Pro, Helvetica Neue, Arial, Helvetica, sans-serif;
   font-weight: 600;
   color: white;
 }
@@ -79,7 +81,7 @@ html, body, #root {
   line-height: 64px;
   padding: 0 24px;
   cursor: pointer;
-  transition: color .3s;
+  transition: color 0.3s;
 }
 
 .react-resizable {
@@ -103,21 +105,21 @@ html, body, #root {
 }
 
 tbody td.workbench-td {
-  padding: 4px !important
+  padding: 4px !important;
 }
 thead th.workbench-td {
-  padding: 4px !important
+  padding: 4px !important;
 }
 thead th.workbench-td > div {
   margin: 0 -5px 0 0 !important;
 }
 
 .decision-tag {
-  margin: 0 0 0 0 !important
+  margin: 0 0 0 0 !important;
 }
 
 .duplicate-alternate-row {
-  background: #bfbfbf !important
+  background: #bfbfbf !important;
 }
 
 div.admonition {
@@ -135,10 +137,10 @@ div.admonition {
   border-radius: 0.5em;
 }
 .footnote-mark::before {
-  content: '[';
+  content: "[";
 }
 .footnote-mark::after {
-  content: ']';
+  content: "]";
 }
 #cite-menu .menu {
   line-height: 0.5em;
@@ -156,10 +158,10 @@ div.admonition {
   margin-right: 0.2em;
 }
 .footnote-number::before {
-  content: '[';
+  content: "[";
 }
 .footnote-number::after {
-  content: ']';
+  content: "]";
 }
 .citation {
   background: #dddddd;
@@ -177,7 +179,7 @@ div.admonition {
   left: 2em;
 }
 #csl-content-block {
-  background:white;
+  background: white;
   border: solid black 1px;
   overflow-y: scroll;
   padding: 0.5em;
@@ -206,7 +208,7 @@ div.admonition {
   -moz-transition: all 0.75s ease;
   -ms-transition: all 0.75s ease;
   -o-transition: all 0.75s ease;
-  transition: all 0.75s ease;      
+  transition: all 0.75s ease;
 }
 .csl-entry {
   margin-bottom: 0.5em;
@@ -228,19 +230,18 @@ div.admonition {
   padding: 0px 2px 0px 2px;
 }
 
-
 div.csl-left-margin {
-  width:2em;
-  float:left;
-  text-indent:1em;
-  padding:0.4em 0px 0.4em 0em;
+  width: 2em;
+  float: left;
+  text-indent: 1em;
+  padding: 0.4em 0px 0.4em 0em;
 }
 
 div.dateindent div.csl-left-margin {
-  width:3em;
-  float:left;
-  text-indent:1em;
-  padding:0.4em 0px 0.4em 0em;
+  width: 3em;
+  float: left;
+  text-indent: 1em;
+  padding: 0.4em 0px 0.4em 0em;
 }
 
 div.dateindent div.csl-block {
@@ -248,13 +249,13 @@ div.dateindent div.csl-block {
 }
 
 div.csl-right-inline {
-  margin-left:2em;
-  padding:0.4em 0.4em 0.4em 1em;
+  margin-left: 2em;
+  padding: 0.4em 0.4em 0.4em 1em;
 }
 
 div.dateindent div.csl-right-inline {
-  margin-left:3em;
-  padding:0.4em 0.4em 0.4em 1em;
+  margin-left: 3em;
+  padding: 0.4em 0.4em 0.4em 1em;
 }
 
 div.csl-indent {
@@ -290,8 +291,8 @@ div.csl-entry {
   color: #777;
   background: #fff;
   border-radius: 2px 2px 0 0;
-  -webkit-transition: background-color .4s;
-  transition: background-color .4s;
+  -webkit-transition: background-color 0.4s;
+  transition: background-color 0.4s;
 }
 
 .code-box {
@@ -301,8 +302,8 @@ div.csl-entry {
   margin: 0 0 16px;
   border: 1px solid #ebedf0;
   border-radius: 2px;
-  -webkit-transition: all .2s;
-  transition: all .2s;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
 }
 
 .editable-row .ant-form-explain {
@@ -311,4 +312,10 @@ div.csl-entry {
   margin-top: -4px;
 }
 
+.popover-multi > .ant-tooltip-content > .ant-tooltip-inner {
+  background-color: #fff !important;
+}
 
+.popover-multi > .ant-tooltip-content > .ant-tooltip-arrow {
+  border-right-color: #fff !important;
+}
