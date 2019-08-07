@@ -175,12 +175,15 @@ class ColTree extends React.Component {
             defaultExpandedKeys: defaultExpandedNodes,
             expandedKeys: defaultExpandedNodes
           });
-          history.push({
-            pathname: `/assembly`,
-            search: `?assemblyTaxonKey=${
-              defaultExpandKey
-            }`
-          });
+          if(treeType === "mc"){
+            history.push({
+              pathname: `/assembly`,
+              search: `?assemblyTaxonKey=${
+                defaultExpandKey
+              }`
+            });
+          }
+          
         } else {
           this.setState({
             treeData:
@@ -287,10 +290,10 @@ class ColTree extends React.Component {
                 treeData: [...this.state.treeData],
                 defaultExpandAll: false
               }
-              /*,
+              ,
               () => {
-                this.onLoadData(treeNode);
-              } */
+                this.fetchChildPage(dataRef, false);
+              } 
             );
           };
           dataRef.children = [
