@@ -397,7 +397,7 @@ class WorkBench extends React.Component {
           
             datasetKey: datasetKey,
             subject: {
-              id: _.get(d, "usage.name.id"),
+              id: _.get(d, "usage.id"),
 
               name: _.get(d, "usage.name.scientificName"),
               authorship: _.get(d, "usage.name.authorship"),
@@ -419,7 +419,7 @@ class WorkBench extends React.Component {
           decisionObject.mode = 'update';
           decisionObject.datasetKey = datasetKey,
           decisionObject.subject = {
-            id: _.get(d, "usage.name.id"),
+            id: _.get(d, "usage.id"),
 
             name: _.get(d, "usage.name.scientificName"),
             authorship: _.get(d, "usage.name.authorship"),
