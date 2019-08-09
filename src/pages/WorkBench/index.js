@@ -286,7 +286,7 @@ class WorkBench extends React.Component {
     const promises = _.get(res, "data.result")
       ? res.data.result.map(d => {
           return axios(
-            `${config.dataApi}/decision?id=${_.get(d, "usage.name.id")}`
+            `${config.dataApi}/decision?id=${_.get(d, "usage.id")}`
           ).then(decisions => {
             if (decisions.data && decisions.data.length > 0) {
               d.decisions = decisions.data;
@@ -389,7 +389,7 @@ class WorkBench extends React.Component {
     } = this.state;
     const { datasetKey, taxonomicstatus } = this.props;
     const promises = result
-      .filter(d => selectedRowKeys.includes(_.get(d, "usage.name.id")))
+      .filter(d => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map(d => {
         let decisionObject;
         if(!decisionObjectFromForm){
@@ -704,7 +704,7 @@ class WorkBench extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => _.get(record, "usage.name.id")}
+            rowKey={record => _.get(record, "usage.id")}
             rowSelection={ !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection}
             expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => _.get(record, "decisions[0]") ? 
            <React.Fragment> 
