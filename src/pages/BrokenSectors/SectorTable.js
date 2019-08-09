@@ -9,6 +9,8 @@ import withContext from "../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
+import SyncButton from "../SectorSync/SyncButton";
+
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class SyncTable extends React.Component {
@@ -271,6 +273,8 @@ class SyncTable extends React.Component {
         key: "action",
         width: 50,
         render: (text, record) => (
+          <React.Fragment>
+            { /* _.get(record, 'target.id') && _.get(record, 'target.id') && <SyncButton record={record}/> */} 
           <Button
             type={"primary"}
             onClick={() => {
@@ -303,6 +307,7 @@ class SyncTable extends React.Component {
           >
             Rematch
           </Button>
+          </React.Fragment>
         )
       }
     ];

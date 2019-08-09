@@ -9,6 +9,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import SectorNote from "./SectorNote"
 import withContext from "../../components/hoc/withContext"
+import debounce from 'lodash.debounce';
 
 const {Option} = Select; 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -31,7 +32,8 @@ class Sector extends React.Component {
     this.setState({ popOverVisible, error: null });
   };
 
-  syncSector = sector => {
+  syncSector = (sector, syncState, syncingSector) => {
+    const {idle} = syncState;
     axios
       .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {
         sectorKey: sector.key,
@@ -40,11 +42,13 @@ class Sector extends React.Component {
         subject: sector.subject
       })
       .then(() => {
-        this.props.reloadSelfAndSiblings();
+        // If there is no sync jobs running, try to give the backend a chance to insert the root node again
+        debounce(this.props.reloadSelfAndSiblings, 500)();
+       // this.props.reloadSelfAndSiblings();
         this.props.getSyncState();
         notification.open({
-          message: "Sync started",
-          description: `Copying taxa from ${sector.key} `
+          message: idle ? "Sync started" : "Sync queued",
+          description: !syncingSector && idle ? `Copying taxa from ${sector.key}` : `Awaiting sector ${_.get(syncingSector, 'key')} (${_.get(syncingSector, 'subject.name')})`
         });
       })
       .catch(err => {
@@ -164,7 +168,7 @@ class Sector extends React.Component {
     }
     return !isSourceTree ? (
       <ColTreeContext.Consumer>
-        {({ syncState }) => (
+        {({ syncState, syncingSector }) => (
           <Popover
             content={
               <div>
@@ -187,7 +191,7 @@ class Sector extends React.Component {
                           style={{ marginTop: "8px", width: "100%" }}
                           type="primary"
                           onClick={() => {
-                            this.syncSector(sector);
+                            this.syncSector(sector, syncState, syncingSector);
                           }}
                         >
                           Sync sector
@@ -277,6 +281,7 @@ class Sector extends React.Component {
                 {_.get(syncState, "running.sectorKey") === sector.key && (
                   <Icon type="sync" style={{ marginLeft: "5px" }} spin />
                 )}
+                {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.key ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
               </Tag>
             </Tooltip>
           </Popover>
@@ -284,7 +289,7 @@ class Sector extends React.Component {
       </ColTreeContext.Consumer>
     ) : (
       <ColTreeContext.Consumer>
-        {({ syncState }) => (
+        {({ syncState, syncingSector }) => (
           <Popover
             content={
               <div>
@@ -295,7 +300,7 @@ class Sector extends React.Component {
                         style={{ marginTop: "8px", width: "100%" }}
                         type="primary"
                         onClick={() => {
-                          this.syncSector(sector);
+                          this.syncSector(sector, syncState, syncingSector);
                         }}
                       >
                         Sync sector
@@ -326,6 +331,7 @@ class Sector extends React.Component {
               {_.get(syncState, "running.sectorKey") === sector.key && (
                 <Icon type="sync" style={{ marginLeft: "5px" }} spin />
               )}
+              {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.key ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
             </Tag>
           </Popover>
         )}

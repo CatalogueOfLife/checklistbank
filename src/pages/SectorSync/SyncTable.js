@@ -240,14 +240,7 @@ class SyncTable extends React.Component {
                   .then((res) => {
                     sync.sector.dataset=res.data
                   })
-                  .then(() =>
-                   { return _.get(sync, 'sector.target.id') ? axios(
-                      `${config.dataApi}dataset/${
-                        MANAGEMENT_CLASSIFICATION.key
-                      }/tree/${sync.sector.target.id}`
-                    ) : Promise.resolve({data:null}) }
-                  )
-                  .then(tx => (sync.sector.path = tx.data))
+            
               )
             : [];
 

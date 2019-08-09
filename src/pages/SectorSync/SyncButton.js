@@ -65,7 +65,7 @@ class SyncButton extends React.Component {
   render = () => {
     const { error } = this.state;
     const { record } = this.props;
-    const isStopButton = ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
+    const isStopButton = record.state && ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
     
     return (
       <div>
