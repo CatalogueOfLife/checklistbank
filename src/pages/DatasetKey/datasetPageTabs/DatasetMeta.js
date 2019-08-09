@@ -139,8 +139,8 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
             {data.contact}
           </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="authors" defaultMessage="Authors" />}>
-            {data.authors}
+          <PresentationItem label={<FormattedMessage id="authorsAndEditors" defaultMessage="Authors and Editors" />}>
+            {data.authorsAndEditors}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="organisations" defaultMessage="Organisations" />}>
             {data.organisations}
