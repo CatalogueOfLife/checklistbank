@@ -10,6 +10,8 @@ import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
 import NameSearch from "../NameSearch"
 
+const { NAME_INDEX } = config;
+
 class NameIndex extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +35,7 @@ class NameIndex extends React.Component {
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
-            <NameSearch location={this.props.location} />
+            <NameSearch location={this.props.location} datasetKey={NAME_INDEX.key}/>
         </PageContent>
       </Layout>
     );

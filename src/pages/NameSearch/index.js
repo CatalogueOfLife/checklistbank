@@ -128,7 +128,7 @@ class NameSearchPage extends React.Component {
         sortBy: "taxonomic"
       };
       history.push({
-        pathname: datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+        pathname: _.get(this.props, "location.path"), // datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
@@ -146,7 +146,7 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+      pathname: _.get(this.props, "location.path"), //datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
       search: `?${qs.stringify(params)}`
     });
     const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/name/search` : `${config.dataApi}name/search`

@@ -8,6 +8,10 @@ const environments = {
       MANAGEMENT_CLASSIFICATION: {
         key: 3,
         title: "CoL draft"
+      },
+      NAME_INDEX: {
+        key: 2,
+        title: "Name Index"
       }
     },
     prod: {
@@ -18,6 +22,10 @@ const environments = {
         MANAGEMENT_CLASSIFICATION: {
             key: 3,
             title: "CoL draft"
+          },
+          NAME_INDEX: {
+            key: 2,
+            title: "Name Index"
           }
       }
   };

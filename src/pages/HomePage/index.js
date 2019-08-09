@@ -16,6 +16,8 @@ import {
 
 import axios from "axios";
 const { MANAGEMENT_CLASSIFICATION } = config;
+const { NAME_INDEX } = config;
+
 const { Meta } = Card;
 
 class HomePage extends React.Component {
@@ -42,7 +44,7 @@ class HomePage extends React.Component {
     axios(
       `${
         config.dataApi
-      }/name/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=type&facet=field&limit=0`
+      }/dataset/${NAME_INDEX.key}/name/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=type&facet=field&limit=0`
     )
       .then(res => {
         this.setState({
