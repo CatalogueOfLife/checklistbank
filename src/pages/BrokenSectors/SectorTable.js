@@ -10,7 +10,7 @@ import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
-
+import Auth from "../../components/Auth"
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class SyncTable extends React.Component {
@@ -93,7 +93,7 @@ class SyncTable extends React.Component {
     this.setState({currentDataSourceLength: extra.currentDataSource.length})
   }
   render() {
-    const {data, loading} = this.props;  
+    const {data, loading, user} = this.props;  
     const { currentDataSourceLength, error } = this.state;
     const columns = [
       {
@@ -267,15 +267,18 @@ class SyncTable extends React.Component {
           </Tooltip>
         ),
         width: 50
-      },
-      {
+      }
+    ];
+
+    if(Auth.isAuthorised(user, ['admin'])){
+      columns.push({
         title: "Action",
         key: "action",
         width: 50,
         render: (text, record) => (
           <React.Fragment>
             { /* _.get(record, 'target.id') && _.get(record, 'target.id') && <SyncButton record={record}/> */} 
-          <Button
+             <Button
             type={"primary"}
             onClick={() => {
                 axios.post(`${config.dataApi}admin/rematch`, {sectorKey: record.key})
@@ -309,9 +312,8 @@ class SyncTable extends React.Component {
           </Button>
           </React.Fragment>
         )
-      }
-    ];
-
+      })
+    }
     return (
       <React.Fragment>
          
