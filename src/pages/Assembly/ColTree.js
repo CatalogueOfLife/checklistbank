@@ -427,7 +427,7 @@ class ColTree extends React.Component {
         </span>
       ) : (
         <span>
-          Ranks are equal, this will merge children of{" "}
+          Ranks are equal. Do you want to replace or merge children of{" "}
           <span
             dangerouslySetInnerHTML={{
               __html: dragNode.props.title.props.taxon.name
@@ -438,8 +438,7 @@ class ColTree extends React.Component {
             dangerouslySetInnerHTML={{
               __html: e.node.props.title.props.taxon.name
             }}
-          />{" "}
-          in {this.props.dataset.title}
+          />{" "} 
         </span>
       );
 

@@ -316,6 +316,6 @@ div.csl-entry {
   background-color: #fff !important;
 }
 
-.popover-multi > .ant-tooltip-content > .ant-tooltip-arrow {
-  border-right-color: #fff !important;
+.popover-multi.ant-tooltip-placement-top > .ant-tooltip-content > .ant-tooltip-arrow {
+  border-top-color: #fff !important;
 }
