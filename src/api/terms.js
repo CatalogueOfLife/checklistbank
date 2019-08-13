@@ -6,7 +6,7 @@ export const getTerms = () => {
 };
 
 export const getTermsOrder = () => {
-  return axios(`${config.dataApi}/vocab/terms`).then(res =>
+  return axios(`${config.dataApi}vocab/terms`).then(res =>
     res.data
   );
 };
