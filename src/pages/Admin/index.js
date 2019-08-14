@@ -67,7 +67,7 @@ class AdminPage extends React.Component {
   updateAllLogos = () => {
     this.setState({ updateAllLogosloading: true });
     axios
-      .post(`${config.dataApi}/admin/logo-update`)
+      .post(`${config.dataApi}admin/logo-update`)
       .then(res => {
         this.setState({ updateAllLogosloading: false, error: null, exportResonse: null }, () => {
           notification.open({
@@ -83,7 +83,7 @@ class AdminPage extends React.Component {
   recalculateSectorCounts = () => {
     this.setState({ recalculateSectorCountsLoading: true });
     axios
-      .post(`${config.dataApi}/admin/sector-count-update`)
+      .post(`${config.dataApi}admin/sector-count-update`)
       .then(res => {
         this.setState(
           { recalculateSectorCountsLoading: false, error: null, exportResonse: null },
@@ -102,7 +102,7 @@ class AdminPage extends React.Component {
   rematchSectorsAndDecisions = () => {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
-      .post(`${config.dataApi}/admin/rematch`, {all: true})
+      .post(`${config.dataApi}admin/rematch`, {all: true})
       .then(res => {
         this.setState(
           { rematchSectorsAndDecisionsLoading: false, error: null, exportResonse: null },
