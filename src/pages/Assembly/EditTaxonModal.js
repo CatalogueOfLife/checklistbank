@@ -126,7 +126,7 @@ class EditTaxonModal extends React.Component {
 
   parseName = () => {
     const { suggestedNameValue } = this.state;
-    axios(`${config.dataApi}/parser/name?name=${suggestedNameValue}`).then(
+    axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
       res => {
         this.setState({ parsedName: _.get(res, 'data[0].name'), selectedRank: _.get(res, 'data[0].name.rank') });
       }

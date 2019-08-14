@@ -45,7 +45,7 @@ class SyncButton extends React.Component {
     const {record} = this.props;  
     this.setState({ importTriggered: true });
     axios
-      .delete(`${config.dataApi}/assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${record.sectorKey}`)
+      .delete(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${record.sectorKey}`)
       .then(res => {
         this.setState({ importTriggered: false });
         notification.open({

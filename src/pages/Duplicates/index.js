@@ -178,7 +178,7 @@ class DuplicateSearchPage extends React.Component {
   getDecisions = data => {
     const promises = data.usages.map(d =>
       d.decision
-        ? axios(`${config.dataApi}/decision/${_.get(d, "decision.key")}`).then(
+        ? axios(`${config.dataApi}decision/${_.get(d, "decision.key")}`).then(
             decision => {
               d.usage.decision = decision.data;
             }

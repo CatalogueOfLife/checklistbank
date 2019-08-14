@@ -51,8 +51,8 @@ if (domain.endsWith('www.col.plus')) {
   env = environments.prod;
 } else if (domain.endsWith('dev.col.plus')) {
   env = environments.dev;
-} else if (domain.endsWith('localhost')) {
+} /* else if (domain.endsWith('localhost')) {
   env = environments.docker;
-}
+} */
 
   export default env;
