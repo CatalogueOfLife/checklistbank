@@ -90,12 +90,7 @@ class BasicMenu extends Component {
               <span>Admin</span>
             </NavLink>
     </Menu.Item> }
-    <Menu.Item key="nameIndex">
-    <NavLink to={{ pathname: "/names" }}>
-              <Icon type="tags" />
-              <span>Name index</span>
-            </NavLink>
-    </Menu.Item>
+
           <SubMenu
             key="imports"
             title={
@@ -168,6 +163,11 @@ class BasicMenu extends Component {
               </span>
             }
           >
+                <Menu.Item key="nameIndex">
+    <NavLink to={{ pathname: "/names" }}>
+              <span>Name index</span>
+            </NavLink>
+    </Menu.Item>
             <Menu.Item key="/dataset">
               <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>

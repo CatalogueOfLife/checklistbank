@@ -28,7 +28,7 @@ class NameIndex extends React.Component {
     } = this.state;
 
     return (
-      <Layout openKeys={[]} selectedKeys={['nameIndex']} title="Catalogue of Life + Name Index">
+      <Layout openKeys={["dataset"]} selectedKeys={['nameIndex']} title="Catalogue of Life + Name Index">
         <Helmet>
           <meta charSet="utf-8" />
           <title>Catalogue of Life + Name Index</title>
