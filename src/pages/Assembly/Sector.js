@@ -293,6 +293,15 @@ class Sector extends React.Component {
           <Popover
             content={
               <div>
+                <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  onClick={() =>
+                    this.props.showSourceTaxon(sector)
+                  }
+                >
+                  Show sector in assembly
+                </Button>
                 {isRootSectorInSourceTree &&
                   _.get(syncState, "running.sectorKey") !== sector.key && (
                     <React.Fragment>

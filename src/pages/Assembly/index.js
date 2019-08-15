@@ -386,6 +386,8 @@ class ManagementClassification extends React.Component {
                         }
                         draggable={this.state.mode === "attach"}
                         defaultExpandKey={this.state.defaultExpandKey}
+                        showSourceTaxon={(sector) => this.setState({defaultAssemblyExpandKey: _.get(sector, 'target.id')})}
+
                       />
                     )}
                   </div>
