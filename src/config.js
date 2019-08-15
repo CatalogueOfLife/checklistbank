@@ -4,7 +4,7 @@ const environments = {
 
       dataApi: 'https://api-dev.col.plus/',
       env: 'dev',
-      kibanaEnv: 'col-dev',
+      kibanaEnv: 'col-dev-ws',
       MANAGEMENT_CLASSIFICATION: {
         key: 3,
         title: "CoL draft"
@@ -18,7 +18,7 @@ const environments = {
         url: 'https://wwww.col.plus',
         dataApi: 'https://api.col.plus/',
         env: 'prod',
-        kibanaEnv: 'col-prod',
+        kibanaEnv: 'col-prod-ws',
         MANAGEMENT_CLASSIFICATION: {
             key: 3,
             title: "CoL draft"
@@ -46,7 +46,7 @@ const environments = {
   
   const domain = window.location.hostname;
 
-let env = environments.prod;
+let env = environments.dev;
 if (domain.endsWith('www.col.plus')) {
   env = environments.prod;
 } else if (domain.endsWith('dev.col.plus')) {
