@@ -273,14 +273,5 @@ export default [
       withDecision: false,
       rank: "genus"
     }
-  },
-  {
-    id: "xx",
-    text: "Any uninomial",
-    params: {
-      minSize: "2",
-      mode: "STRICT",
-      category: "uninomial"
-    }
   }
 ];

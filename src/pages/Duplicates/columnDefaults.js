@@ -282,13 +282,13 @@ export default {
       render: (text, record) => <CopyableColumnText text={text} width="140px" />
     },
 
-    /*   {
+       {
           title: "Authorship",
           width: 240,
           dataIndex: "name.authorship",
           key: "authorship",
           className: "workbench-td",
-        }, */
+        }, 
 
     {
       title: "Rank",

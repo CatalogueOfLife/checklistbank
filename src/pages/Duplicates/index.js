@@ -215,7 +215,7 @@ class DuplicateSearchPage extends React.Component {
     const {
       props: { params }
     } = option;
-    this.setState({ params: {...params, offset: 0, limit: this.state.params.limit}, selectedPreset: value, totalFaked:0 }, this.getData);
+    this.setState({ params: {...params, offset: 0, limit: this.state.params.limit}, selectedPreset: value, totalFaked:0, decision: null, selectedRowKeys: [] }, this.getData);
   };
   onSectorSearch = val => {
     const { sectors } = this.state;
@@ -696,6 +696,7 @@ class DuplicateSearchPage extends React.Component {
               <Select
                 style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
                 onChange={this.onDecisionChange}
+                value={decision ? decision : undefined}
                 placeholder="Pick decision"
               >
                 <OptGroup label="Status">
@@ -730,7 +731,7 @@ class DuplicateSearchPage extends React.Component {
         </Row>
         <Row />
         <Row style={{marginBottom: "8px", marginTop: "8px" }}>
-        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={18} >
+        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={16} >
           <Button
                 type="primary"
                 onClick={this.selectNewestInGroup}
@@ -754,9 +755,11 @@ class DuplicateSearchPage extends React.Component {
               </Button>
               
           </Col> }
-          <Col span={Auth.isAuthorised(user, ["editor"]) ? 6 : 24} style={{ textAlign: "right"}}>
+          <Col span={Auth.isAuthorised(user, ["editor"]) ? 8 : 24} style={{ textAlign: "right"}}>
+          {data.length+ " names on this page"}
             {!error && (
               <Pagination
+              style={{display: 'inline'}}
               showSizeChanger
               pageSizeOptions={['50','100','250', '500']}
               onShowSizeChange={(current, size)=> {
@@ -770,6 +773,7 @@ class DuplicateSearchPage extends React.Component {
                 pageSize={Number(this.state.params.limit)}
                 size="small"
                 total={totalFaked}
+                locale={{ items_per_page: ' duplicates / page' }}
               />
             )}
           </Col>
