@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import config from "../../config";
 import { Redirect } from 'react-router-dom'
 import axios from "axios";
@@ -7,12 +6,10 @@ import queryString from "query-string";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetImportMetrics from "../DatasetImportMetrics";
-
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetSectors from "./datasetPageTabs/DatasetSectors"
 import DatasetReferences from "./datasetPageTabs/DatasetReferences"
 import Layout from "../../components/LayoutNew";
-import history from "../../history";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import DatasetTasks from "./datasetPageTabs/DatasetTasks"
 import NameSearch from "../NameSearch"
@@ -23,6 +20,8 @@ import Exception404 from "../../components/exception/404";
 import _ from 'lodash'
 import Helmet from 'react-helmet'
 import Duplicates from "../Duplicates";
+
+
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -80,7 +79,7 @@ class DatasetPage extends React.Component {
       { importState && importState !== 'finished' && importState !== 'failed'  && importState !== 'unchanged' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "metrics_" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
+        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
           <DatasetClassification id={datasetKey} defaultExpandKey={params.taxonKey} />
@@ -104,6 +103,9 @@ class DatasetPage extends React.Component {
         {sect === "tasks" && (
           <DatasetTasks datasetKey={datasetKey} location={this.props.location} />
         )}
+
+        
+
       </Layout>
     );
   }

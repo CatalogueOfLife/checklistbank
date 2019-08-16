@@ -125,7 +125,7 @@ class DatasetImportMetrics extends React.Component {
     return (
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={dataset}
+        selectedDataset={{...dataset, importState: importState}}
         section="metrics"
         openKeys={["datasetKey"]}
         selectedKeys={["metrics"]}

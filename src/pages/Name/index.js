@@ -10,12 +10,10 @@ import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import PresentationGroupHeader from "../../components/PresentationGroupHeader";
-import VerbatimPresentation from "../../components/VerbatimPresentation"
+import VerbatimPresentation from "../../components/VerbatimPresentation";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 const md = 5;
-
-
 
 class NamePage extends React.Component {
   constructor(props) {
@@ -30,14 +28,14 @@ class NamePage extends React.Component {
       verbatimLoading: true,
       nameError: null,
       datasetError: null,
-      verbatimError: null
+      verbatimError: null,
+      importState: null
     };
   }
 
   componentWillMount() {
     this.getName();
   }
-
 
   getReference = referenceKey => {
     const {
@@ -88,8 +86,15 @@ class NamePage extends React.Component {
       .catch(err => {
         this.setState({ nameLoading: false, nameError: err, name: null });
       });
+    axios(`${config.dataApi}dataset/${key}/import`)
+      .then(res => {
+        const importState = _.get(res, "data[0].state");
+        this.setState({ importState });
+      })
+      .catch(err => {
+        this.setState({ importState: null });
+      });
   };
-
 
   render() {
     const {
@@ -99,14 +104,15 @@ class NamePage extends React.Component {
       reference,
       verbatim,
       nameError,
-      verbatimError
+      verbatimError,
+      importState
     } = this.state;
 
     const { issueMap, dataset } = this.props;
     return (
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={dataset}
+        selectedDataset={{ ...dataset, importState: importState }}
         selectedName={name}
         openKeys={["dataset", "datasetKey"]}
         selectedKeys={["name"]}
@@ -129,115 +135,137 @@ class NamePage extends React.Component {
           {nameError && (
             <Alert message={<ErrorMsg error={nameError} />} type="error" />
           )}
-          {name && <React.Fragment>
-            <PresentationItem md={md}  label="Scientific Name">
-                  {name.scientificName}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Rank">
-                  {name.rank}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Uninomial">
-                  {name.uninomial}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Genus">
-                  {name.genus}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Infrageneric Epithet">
-                  {name.infragenericEpithet}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Specific Epithet">
-                  {name.specificEpithet}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Infraspecific Epithet">
-                  {name.infraspecificEpithet}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Cultivar Epithet">
-                  {name.cultivarEpithet}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Strain">
-                  {name.strain}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Authorship">
-                  {name.authorship}
-            </PresentationItem>
-          {name.combinationAuthorship &&  <PresentationItem md={md}  label="Combination Authorship">
-            {`${name.combinationAuthorship.authors.join(", ")} ${
-                      name.combinationAuthorship.exAuthors
-                        ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
-                        : ""
-                    } ${name.combinationAuthorship.year ? name.combinationAuthorship.year : ""}`}
-            </PresentationItem>}
-            {name.basionymAuthorship &&  <PresentationItem md={md}  label="Basionym Authorship">
-            {`${name.basionymAuthorship.authors.join(", ")} ${
-                      name.basionymAuthorship.exAuthors
-                        ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                        : ""
-                    } ${name.basionymAuthorship.year ? name.basionymAuthorship.year : ""}`}
-            </PresentationItem>}
-            {name.sanctioningAuthor &&  <PresentationItem md={md}  label="Sanctioning Author">
-            {`${name.sanctioningAuthor.authors.join(", ")} ${
-                      name.sanctioningAuthor.exAuthors
-                        ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                        : ""
-                    } ${name.sanctioningAuthor.year ? name.sanctioningAuthor.year : ""}`}
-            </PresentationItem>}
-            <PresentationItem md={md}  label="ID">
-                  {name.id}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Homotypic Name Id">
-                  {name.homotypicNameId}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Name Index Id">
-                  {name.nameIndexId}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Candidatus">
-                 <BooleanValue value={name.candidatus}></BooleanValue> 
-            </PresentationItem>
-            <PresentationItem md={md}  label="Notho">
-                  {name.notho}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Code">
-                  {name.code}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Nomenclatural Status">
-                  {name.nomStatus}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Origin">
-                  {name.origin}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Type">
-                  {name.type}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Fossil">
-            <BooleanValue value={name.fossil}></BooleanValue> 
-
-            </PresentationItem>
-            <PresentationItem md={md}  label="Source Url">
-                  {name.sourceUrl && <a href={name.sourceUrl} target="_blank">{name.sourceUrl}</a>}
-            </PresentationItem>
-            <PresentationItem md={md}  label="Remarks">
-                  {name.remarks}
-            </PresentationItem>
-            {reference && (
-            <PresentationItem md={md}  label="Reference">
-              {reference.citation}
-            </PresentationItem>
-            
+          {name && (
+            <React.Fragment>
+              <PresentationItem md={md} label="Scientific Name">
+                {name.scientificName}
+              </PresentationItem>
+              <PresentationItem md={md} label="Rank">
+                {name.rank}
+              </PresentationItem>
+              <PresentationItem md={md} label="Uninomial">
+                {name.uninomial}
+              </PresentationItem>
+              <PresentationItem md={md} label="Genus">
+                {name.genus}
+              </PresentationItem>
+              <PresentationItem md={md} label="Infrageneric Epithet">
+                {name.infragenericEpithet}
+              </PresentationItem>
+              <PresentationItem md={md} label="Specific Epithet">
+                {name.specificEpithet}
+              </PresentationItem>
+              <PresentationItem md={md} label="Infraspecific Epithet">
+                {name.infraspecificEpithet}
+              </PresentationItem>
+              <PresentationItem md={md} label="Cultivar Epithet">
+                {name.cultivarEpithet}
+              </PresentationItem>
+              <PresentationItem md={md} label="Strain">
+                {name.strain}
+              </PresentationItem>
+              <PresentationItem md={md} label="Authorship">
+                {name.authorship}
+              </PresentationItem>
+              {name.combinationAuthorship && (
+                <PresentationItem md={md} label="Combination Authorship">
+                  {`${name.combinationAuthorship.authors.join(", ")} ${
+                    name.combinationAuthorship.exAuthors
+                      ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
+                      : ""
+                  } ${
+                    name.combinationAuthorship.year
+                      ? name.combinationAuthorship.year
+                      : ""
+                  }`}
+                </PresentationItem>
+              )}
+              {name.basionymAuthorship && (
+                <PresentationItem md={md} label="Basionym Authorship">
+                  {`${name.basionymAuthorship.authors.join(", ")} ${
+                    name.basionymAuthorship.exAuthors
+                      ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
+                      : ""
+                  } ${
+                    name.basionymAuthorship.year
+                      ? name.basionymAuthorship.year
+                      : ""
+                  }`}
+                </PresentationItem>
+              )}
+              {name.sanctioningAuthor && (
+                <PresentationItem md={md} label="Sanctioning Author">
+                  {`${name.sanctioningAuthor.authors.join(", ")} ${
+                    name.sanctioningAuthor.exAuthors
+                      ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
+                      : ""
+                  } ${
+                    name.sanctioningAuthor.year
+                      ? name.sanctioningAuthor.year
+                      : ""
+                  }`}
+                </PresentationItem>
+              )}
+              <PresentationItem md={md} label="ID">
+                {name.id}
+              </PresentationItem>
+              <PresentationItem md={md} label="Homotypic Name Id">
+                {name.homotypicNameId}
+              </PresentationItem>
+              <PresentationItem md={md} label="Name Index Id">
+                {name.nameIndexId}
+              </PresentationItem>
+              <PresentationItem md={md} label="Candidatus">
+                <BooleanValue value={name.candidatus} />
+              </PresentationItem>
+              <PresentationItem md={md} label="Notho">
+                {name.notho}
+              </PresentationItem>
+              <PresentationItem md={md} label="Code">
+                {name.code}
+              </PresentationItem>
+              <PresentationItem md={md} label="Nomenclatural Status">
+                {name.nomStatus}
+              </PresentationItem>
+              <PresentationItem md={md} label="Origin">
+                {name.origin}
+              </PresentationItem>
+              <PresentationItem md={md} label="Type">
+                {name.type}
+              </PresentationItem>
+              <PresentationItem md={md} label="Fossil">
+                <BooleanValue value={name.fossil} />
+              </PresentationItem>
+              <PresentationItem md={md} label="Source Url">
+                {name.sourceUrl && (
+                  <a href={name.sourceUrl} target="_blank">
+                    {name.sourceUrl}
+                  </a>
+                )}
+              </PresentationItem>
+              <PresentationItem md={md} label="Remarks">
+                {name.remarks}
+              </PresentationItem>
+              {reference && (
+                <PresentationItem md={md} label="Reference">
+                  {reference.citation}
+                </PresentationItem>
+              )}
+              <PresentationItem md={md} label="Published In">
+                {name.publishedInId}
+              </PresentationItem>
+              <PresentationItem md={md} label="Published In Page">
+                {name.publishedInPage}
+              </PresentationItem>
+            </React.Fragment>
           )}
-          <PresentationItem md={md}  label="Published In">
-            {name.publishedInId}
-          </PresentationItem>
-          <PresentationItem md={md}  label="Published In Page">
-            {name.publishedInPage}
-          </PresentationItem>
-          </React.Fragment>}
 
-
-
-
-         
-            {_.get(name, 'verbatimKey') && <VerbatimPresentation verbatimKey={name.verbatimKey} datasetKey={name.datasetKey}></VerbatimPresentation>}
-
+          {_.get(name, "verbatimKey") && (
+            <VerbatimPresentation
+              verbatimKey={name.verbatimKey}
+              datasetKey={name.datasetKey}
+            />
+          )}
         </div>
       </Layout>
     );

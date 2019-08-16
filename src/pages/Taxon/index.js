@@ -47,7 +47,8 @@ class TaxonPage extends React.Component {
       verbatimError: null,
       verbatim: null,
       logoUrl: null,
-      sourceDataset: null
+      sourceDataset: null,
+      importState: null
     };
   }
 
@@ -135,6 +136,14 @@ class TaxonPage extends React.Component {
             }
           );
         }
+        axios(`${config.dataApi}dataset/${key}/import`)
+          .then(res => {
+            const importState = _.get(res, "data[0].state");
+            this.setState({ importState });
+          })
+          .catch(err => {
+            this.setState({ importState: null });
+          });
         return Promise.all(promises);
       })
       .then(res => {
@@ -241,12 +250,13 @@ class TaxonPage extends React.Component {
       taxonError,
       synonymsError,
       classificationError,
-      infoError
+      infoError,
+      importState
     } = this.state;
 
     return (
       <Layout
-        selectedDataset={dataset}
+        selectedDataset={{ ...dataset, importState: importState }}
         selectedTaxon={taxon}
         openKeys={["dataset", "datasetKey"]}
         selectedKeys={["taxon"]}
