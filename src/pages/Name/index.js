@@ -28,8 +28,7 @@ class NamePage extends React.Component {
       verbatimLoading: true,
       nameError: null,
       datasetError: null,
-      verbatimError: null,
-      importState: null
+      verbatimError: null
     };
   }
 
@@ -67,7 +66,7 @@ class NamePage extends React.Component {
   getName = () => {
     const {
       match: {
-        params: { key, nameKey }
+        params: { key, taxonOrNameKey: nameKey }
       }
     } = this.props;
 
@@ -86,14 +85,6 @@ class NamePage extends React.Component {
       .catch(err => {
         this.setState({ nameLoading: false, nameError: err, name: null });
       });
-    axios(`${config.dataApi}dataset/${key}/import`)
-      .then(res => {
-        const importState = _.get(res, "data[0].state");
-        this.setState({ importState });
-      })
-      .catch(err => {
-        this.setState({ importState: null });
-      });
   };
 
   render() {
@@ -104,19 +95,12 @@ class NamePage extends React.Component {
       reference,
       verbatim,
       nameError,
-      verbatimError,
-      importState
-    } = this.state;
+      verbatimError
+        } = this.state;
 
     const { issueMap, dataset } = this.props;
     return (
-      <Layout
-        selectedMenuItem="datasetKey"
-        selectedDataset={{ ...dataset, importState: importState }}
-        selectedName={name}
-        openKeys={["dataset", "datasetKey"]}
-        selectedKeys={["name"]}
-      >
+     
         <div
           style={{
             background: "#fff",
@@ -267,7 +251,6 @@ class NamePage extends React.Component {
             />
           )}
         </div>
-      </Layout>
     );
   }
 }

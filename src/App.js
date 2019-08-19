@@ -127,7 +127,7 @@ class App extends Component {
                 component={SectorDiff}
                 
               />
-              <Route
+          {/*    <Route
                 exact
                 key="taxonKey"
                 path={`/dataset/:key/taxon/:taxonKey`}
@@ -138,7 +138,7 @@ class App extends Component {
                 key="nameKey"
                 path={`/dataset/:key/name/:nameKey`}
                 component={Name}
-              />
+          /> 
               <Route
                 exact
                 key="datasetImportsKey"
@@ -150,7 +150,7 @@ class App extends Component {
                 key="verbatimKey"
                 path={`/dataset/:key/verbatim`}
                 component={VerbatimRecord}
-              />
+              /> */}
               <PrivateRoute
                 exact
                 key="datasetCreate"
@@ -162,14 +162,16 @@ class App extends Component {
               <Route
                 exact
                 key="datasetKey"
-                path={`/dataset/:key/:section?`}
-                render={({ match, location }) => (
+                path={`/dataset/:key/:section?/:taxonOrNameKey?`}
+                component={DatasetPage}
+                /* render={({ match, location }) => (
                   <DatasetPage
                     section={match.params.section}
                     datasetKey={match.params.key}
                     location={location}
                   />
-                )}
+                )} */
+              
               />
               <Route
                 exact

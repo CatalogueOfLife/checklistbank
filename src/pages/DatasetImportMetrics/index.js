@@ -24,7 +24,7 @@ class DatasetImportMetrics extends React.Component {
   componentWillMount() {
     const {
       match: {
-        params: { attempt }
+        params: { taxonOrNameKey:attempt }
       }
     } = this.props;
     this.getData(attempt);
@@ -37,22 +37,22 @@ class DatasetImportMetrics extends React.Component {
   }
   componentWillReceiveProps = nextProps => {
     if (
-      _.get(nextProps, "match.params.attempt") !==
-      _.get(this.props, "match.params.attempt")
+      _.get(nextProps, "match.params.taxonOrNameKey") !==
+      _.get(this.props, "match.params.taxonOrNameKey")
     ) {
       if (this.timer) {
         clearInterval(this.timer);
         delete this.timer;
       }
 
-      this.getData(_.get(nextProps, "match.params.attempt"));
+      this.getData(_.get(nextProps, "match.params.taxonOrNameKey"));
     }
   };
 
   getData = attempt => {
     const {
       match: {
-        params: { datasetKey }
+        params: { key: datasetKey }
       }
     } = this.props;
 
@@ -87,14 +87,14 @@ class DatasetImportMetrics extends React.Component {
   getHistory = () => {
     const {
       match: {
-        params: { datasetKey, attempt }
+        params: { key: datasetKey }
       }
     } = this.props;
 
     axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then(res => {
         const lastFinished = res.data.find(e => e.state === 'finished')
-        if(!_.get(this.props, "match.params.attempt") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
+        if(!_.get(this.props, "match.params.taxonOrNameKey") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
           history.push(`/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
         }
         this.setState({ importHistory: res.data, err: null });
@@ -115,7 +115,7 @@ class DatasetImportMetrics extends React.Component {
   render() {
     const {
       match: {
-        params: { datasetKey, attempt }
+        params: { datasetKey, taxonOrNameKey: attempt }
       }
     } = this.props;
 
@@ -123,13 +123,7 @@ class DatasetImportMetrics extends React.Component {
     const { importHistory } = this.state;
 
     return (
-      <Layout
-        selectedMenuItem="datasetKey"
-        selectedDataset={{...dataset, importState: importState}}
-        section="metrics"
-        openKeys={["datasetKey"]}
-        selectedKeys={["metrics"]}
-      >
+      
         <PageContent>
           {!this.state.loading && !this.state.data && (
             <Row style={{ padding: "10px" }}>
@@ -174,7 +168,7 @@ class DatasetImportMetrics extends React.Component {
           {this.state.data && (
             <React.Fragment>
               <Row style={{ padding: "10px" }}>
-                <Col span={20}>
+                <Col span={19}>
                   {_.map(
                     ['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount', 'mediaCount', 'descriptionCount'  ],
                     c => {
@@ -188,7 +182,7 @@ class DatasetImportMetrics extends React.Component {
                     }
                   )}
                 </Col>
-                <Col span={4} style={{ textAlign: "right" }}>
+                <Col span={5} style={{ textAlign: "right" }}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
                     origin !== "uploaded" && dataset && (
                       <ImportButton
@@ -348,7 +342,6 @@ class DatasetImportMetrics extends React.Component {
             </React.Fragment>
           )}
         </PageContent>
-      </Layout>
     );
   }
 }

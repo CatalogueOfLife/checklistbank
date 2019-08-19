@@ -731,7 +731,7 @@ class DuplicateSearchPage extends React.Component {
         </Row>
         <Row />
         <Row style={{marginBottom: "8px", marginTop: "8px" }}>
-        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={16} >
+        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={12} >
           <Button
                 type="primary"
                 onClick={this.selectNewestInGroup}
@@ -755,7 +755,7 @@ class DuplicateSearchPage extends React.Component {
               </Button>
               
           </Col> }
-          <Col span={Auth.isAuthorised(user, ["editor"]) ? 8 : 24} style={{ textAlign: "right"}}>
+          <Col span={Auth.isAuthorised(user, ["editor"]) ? 12 : 24} style={{ textAlign: "right"}}>
           {data.length+ " names on this page"}
             {!error && (
               <Pagination

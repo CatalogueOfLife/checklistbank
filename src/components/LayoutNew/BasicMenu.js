@@ -60,7 +60,8 @@ class BasicMenu extends Component {
       selectedName,
       selectedSector,
       user,
-      recentDatasets
+      recentDatasets,
+      taxonOrNameKey
     } = this.props;
     const { selectedKeys, openKeys } = this.state;
     return (
@@ -268,7 +269,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset  && (
                 <Menu.Item key="names">
                   <NavLink
                     to={{
@@ -351,11 +352,11 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedTaxon && (
-                <Menu.Item key="taxon">Taxon: {selectedTaxon.id}</Menu.Item>
+              {selectedKeys.includes("taxon") && taxonOrNameKey && (
+                <Menu.Item key="taxon">Taxon: {taxonOrNameKey}</Menu.Item>
               )}
-              {selectedName && (
-                <Menu.Item key="name">Name: {selectedName.id}</Menu.Item>
+              {selectedKeys.includes("name") && taxonOrNameKey && (
+                <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
               )}
 
               {selectedKeys.includes("verbatim") && (

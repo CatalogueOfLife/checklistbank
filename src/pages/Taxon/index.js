@@ -47,8 +47,7 @@ class TaxonPage extends React.Component {
       verbatimError: null,
       verbatim: null,
       logoUrl: null,
-      sourceDataset: null,
-      importState: null
+      sourceDataset: null
     };
   }
 
@@ -62,7 +61,7 @@ class TaxonPage extends React.Component {
   getTaxon = () => {
     const {
       match: {
-        params: { key, taxonKey }
+        params: { key, taxonOrNameKey: taxonKey }
       }
     } = this.props;
     this.setState({ loading: true });
@@ -136,14 +135,7 @@ class TaxonPage extends React.Component {
             }
           );
         }
-        axios(`${config.dataApi}dataset/${key}/import`)
-          .then(res => {
-            const importState = _.get(res, "data[0].state");
-            this.setState({ importState });
-          })
-          .catch(err => {
-            this.setState({ importState: null });
-          });
+       
         return Promise.all(promises);
       })
       .then(res => {
@@ -161,7 +153,7 @@ class TaxonPage extends React.Component {
   getSynonyms = () => {
     const {
       match: {
-        params: { key, taxonKey }
+        params: { key, taxonOrNameKey: taxonKey }
       }
     } = this.props;
 
@@ -189,7 +181,7 @@ class TaxonPage extends React.Component {
   getInfo = () => {
     const {
       match: {
-        params: { key, taxonKey }
+        params: { key, taxonOrNameKey: taxonKey }
       }
     } = this.props;
 
@@ -209,7 +201,7 @@ class TaxonPage extends React.Component {
   getClassification = () => {
     const {
       match: {
-        params: { key, taxonKey }
+        params: { key, taxonOrNameKey: taxonKey }
       }
     } = this.props;
 
@@ -250,17 +242,11 @@ class TaxonPage extends React.Component {
       taxonError,
       synonymsError,
       classificationError,
-      infoError,
-      importState
+      infoError    
     } = this.state;
 
     return (
-      <Layout
-        selectedDataset={{ ...dataset, importState: importState }}
-        selectedTaxon={taxon}
-        openKeys={["dataset", "datasetKey"]}
-        selectedKeys={["taxon"]}
-      >
+    
         <React.Fragment>
           <div
             style={{
@@ -494,7 +480,6 @@ class TaxonPage extends React.Component {
             )}
           </div>
         </React.Fragment>
-      </Layout>
     );
   }
 }

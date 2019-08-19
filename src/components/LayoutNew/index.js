@@ -37,7 +37,7 @@ class SiteLayout extends Component {
   }
 
   render() {
-    const { width, classes, selectedDataset, selectedTaxon, selectedName, selectedSector, openKeys, selectedKeys, title } = this.props;
+    const { width, classes, selectedDataset, selectedTaxon, selectedName, selectedSector, openKeys, selectedKeys, title , taxonOrNameKey} = this.props;
     const collapsed = typeof this.state.collapsed === 'boolean'
       ? this.state.collapsed
       : width < EXTRA_LARGE;
@@ -61,7 +61,7 @@ class SiteLayout extends Component {
         onCollapse={(collapsed, type) => { console.log(collapsed, type); }}
         collapsed={collapsed}
       >
-        <BasicMenu collapsed={collapsed} selectedDataset={selectedDataset} selectedTaxon={selectedTaxon} selectedName={selectedName} openKeys={openKeys} selectedKeys={selectedKeys} selectedSector={selectedSector}/>
+        <BasicMenu collapsed={collapsed} selectedDataset={selectedDataset} selectedTaxon={selectedTaxon} selectedName={selectedName} taxonOrNameKey={taxonOrNameKey} openKeys={openKeys} selectedKeys={selectedKeys} selectedSector={selectedSector}/>
       </Sider>
       }
 
