@@ -73,7 +73,8 @@ class DatasetSectors extends React.Component {
         return (<PageContent>
                     {error && <Alert message={<ErrorMsg error={error}></ErrorMsg>} type="error" />}
                     {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
-
+   {data.length === 0 ?  <h4>No sectors configured</h4> :
+<React.Fragment>
 <SyncAllSectorsButton 
   onError={err => this.setState({syncAllError: err})}
   onSuccess={() => this.setState({syncAllError: null})}
@@ -82,6 +83,7 @@ class DatasetSectors extends React.Component {
 />
           {!error && 
         <SectorTable data={data} loading={loading} deleteSectorFromTable={()=> true}></SectorTable>}
+        </React.Fragment>}
 
         </PageContent>)
     }
