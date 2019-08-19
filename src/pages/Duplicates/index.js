@@ -58,7 +58,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-
+    const limit = localStorage.getItem('col_plus_duplicates_limit');
     this.state = {
       data: [],
       rawData: [],
@@ -67,7 +67,7 @@ class DuplicateSearchPage extends React.Component {
       filteredSectors: [],
       advancedMode: false,
       columns: columnDefaults.binomial,
-      params: { limit: 50, offset: 0 },
+      params: { limit: limit ? Number(limit) : 50, offset: 0 },
       totalFaked: 0,
       loading: false,
       postingDecisions: false,
@@ -763,6 +763,7 @@ class DuplicateSearchPage extends React.Component {
               showSizeChanger
               pageSizeOptions={['50','100','250', '500']}
               onShowSizeChange={(current, size)=> {
+                localStorage.setItem('col_plus_duplicates_limit', size);
                 this.setState({params: {...this.state.params, limit: size}}, this.getData)
               }}
                 onChange={(page, pageSize) => {
