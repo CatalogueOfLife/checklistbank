@@ -53,7 +53,8 @@ class ColTree extends React.Component {
       loadedKeys: [],
       error: null,
       mode: "attach",
-      ranks: []
+      ranks: [],
+      nodeNotFoundErr: null
     };
   }
 
@@ -135,7 +136,11 @@ class ColTree extends React.Component {
             childOffset: 0
           };
         });
-        if (defaultExpanded) {
+        if(defaultExpanded && defaultExpanded.length == 0){
+          this.setState({nodeNotFoundErr: <span>Cannot find taxon {defaultExpandKey} in tree &#128549;</span>});
+        }
+        if (defaultExpanded && defaultExpanded.length > 0) {
+          
           defaultExpandedNodes = _.map(defaultExpanded, "id");
           let root_ = _.find(treeData, [
             "key",
@@ -648,7 +653,8 @@ class ColTree extends React.Component {
       defaultExpandAll,
       defaultExpandedKeys,
       expandedKeys,
-      loadedKeys
+      loadedKeys,
+      nodeNotFoundErr
     } = this.state;
     const { draggable, onDragStart } = this.props;
     return (
@@ -661,6 +667,15 @@ class ColTree extends React.Component {
             style={{ marginTop: "8px" }}
             message={<ErrorMsg error={error} />}
             type="error"
+          />
+        )}
+        {nodeNotFoundErr && (
+          <Alert
+            closable
+            onClose={() => this.setState({ ernodeNotFoundErrror: null })}
+            style={{ marginTop: "8px" }}
+            message={nodeNotFoundErr}
+            type="warning"
           />
         )}
         {treeData.length > 0 && (
