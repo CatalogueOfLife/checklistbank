@@ -3,12 +3,11 @@ import {
   Row,
   Col,
   notification,
-  Input,
   Button,
   Icon,
   Card,
-  Alert,
-  Statistic
+  Alert
+  
 } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
@@ -23,10 +22,8 @@ import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../components/PageContent";
 import SyncState from "./SyncState";
 import Helmet from "react-helmet";
-import moment from "moment";
 import qs from "query-string";
 
-const Search = Input.Search;
 
 const { MANAGEMENT_CLASSIFICATION } = config;
 
@@ -45,11 +42,15 @@ class ManagementClassification extends React.Component {
   }
 
   componentWillMount() {
+    const params = qs.parse(_.get(this.props, "location.search"));
+    if(params.sourceTaxonKey && params.datasetKey){
+      this.showSourceTaxon({ subject: {id: params.sourceTaxonKey}}, {key: params.datasetKey})
+    }
     this.getSyncState();
-
     this.timer = setInterval(() => {
       this.getSyncState();
     }, 3000);
+
   }
 
   componentWillUnmount() {

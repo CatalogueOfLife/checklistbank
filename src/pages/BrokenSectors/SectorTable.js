@@ -147,10 +147,10 @@ class SyncTable extends React.Component {
               <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.subject.rank}:{" "}
               </span>
-              <NavLink
+              {!record.subject.id  && <NavLink
                 to={{
                   pathname: `/dataset/${record.datasetKey}/names`,
-                  search: _.get(record, 'subject.id') ? `?TAXON_ID=${record.subject.id}` : `?q=${record.subject.name}`
+                  search: `?q=${record.subject.name}`
                   
                 }}
                 exact={true}
@@ -161,7 +161,22 @@ class SyncTable extends React.Component {
                   autoEscape
                   textToHighlight={record.subject.name.toString()}
                 />
-              </NavLink>
+              </NavLink> }
+              {record.subject.id && <NavLink
+                to={{
+                  pathname: `/assembly`,
+                  search: `?sourceTaxonKey=${record.subject.id}&datasetKey=${record.datasetKey}`
+                }}
+                exact={true}
+              >
+                <Highlighter
+                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  searchWords={[this.state.searchText]}
+                  autoEscape
+                  textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
+                />
+               
+              </NavLink> }
               {!record.subject.id && (
                 <Icon
                   type="warning"
