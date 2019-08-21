@@ -2,14 +2,17 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import withWidth, { MEDIUM, EXTRA_LARGE } from 'react-width'
-import { Layout, Icon, Drawer } from 'antd';
+import { Layout, Icon, Drawer, Row, Tag } from 'antd';
 import BasicMenu from './BasicMenu'
 import SelectLang from './SelectLang'
 import UserMenu from './UserMenu'
 import Logo from './Logo'
-
+import { getGitVersion, getBackendGitVersion } from '../../api/gitVersion'
 import './menu.css';
+import config from "../../config";
+import moment from "moment";
 
+const { gitBackend, gitFrontend} = config;
 // Currently no support for rtl in Ant https://github.com/ant-design/ant-design/issues/4051
 const styles = {
   sider: {
@@ -27,9 +30,13 @@ const menuCollapsedWidth = 80;
 class SiteLayout extends Component {
   constructor(props) {
     super(props)
-    this.state = { false: true };
+    this.state = { false: true, gitVersion: null , gitBackendVersion: null};
   }
 
+  componentDidMount = () => {
+    getGitVersion().then(gitVersion => this.setState({gitVersion}))
+    getBackendGitVersion().then(gitBackendVersion => this.setState({gitBackendVersion}))
+  }
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
@@ -42,7 +49,7 @@ class SiteLayout extends Component {
       ? this.state.collapsed
       : width < EXTRA_LARGE;
     const isMobile = width < MEDIUM;
-
+    const {gitVersion, gitBackendVersion} = this.state;
     let contentMargin = collapsed ? menuCollapsedWidth : menuWidth;
     if (isMobile) {
       contentMargin = 0;
@@ -103,8 +110,19 @@ class SiteLayout extends Component {
           <Content style={{ overflow: 'initial', margin: '0 16px 24px 16px', minHeight: 280 }}>
             {this.props.children}
           </Content>
-          <Footer style={{ textAlign: 'center' }}>
-            Catalogue of Life+
+          <Footer >
+            <Row style={{ textAlign: 'center' }}>Catalogue of Life+</Row>
+            <Row style={{ textAlign: 'center', marginTop: '8px' }}>
+            {gitVersion && <Tag>
+      <a href={`${gitFrontend}${gitVersion.short}`}>Frontend version: <strong>{gitVersion.short}</strong> {moment(gitVersion.created).format('LLL')}</a>
+    </Tag>}
+            {gitBackendVersion && <Tag>
+      <a href={`${gitBackend}${gitBackendVersion.short}`}>Backend version: <strong>{gitBackendVersion.short}</strong> {moment(gitBackendVersion.created).format('LLL')}</a>
+    </Tag>}
+
+            </Row>
+            
+            
           </Footer>
         </Layout>
       </Layout>

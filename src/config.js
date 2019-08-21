@@ -12,7 +12,9 @@ const environments = {
       NAME_INDEX: {
         key: 2,
         title: "Name Index"
-      }
+      },
+      gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
+      gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
     },
     prod: {
         url: 'https://wwww.col.plus',
@@ -26,7 +28,9 @@ const environments = {
           NAME_INDEX: {
             key: 2,
             title: "Name Index"
-          }
+          },
+          gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
+          gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
     },
     docker: {
         url: 'http://localhost:3000',
@@ -40,7 +44,9 @@ const environments = {
           NAME_INDEX: {
             key: 2,
             title: "Name Index"
-          }
+          },
+          gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
+          gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
       }
   };
   
