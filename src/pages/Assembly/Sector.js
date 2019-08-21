@@ -268,7 +268,7 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title="Sector Options"
+            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <Icon type="caret-right" /> : <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"
@@ -276,7 +276,8 @@ class Sector extends React.Component {
           >
             <Tooltip title={sectorSourceDataset.title} placement="top">
               <Tag color={stringToColour(sectorSourceDataset.title)}>
-                {isRootSector && <Icon type="caret-right" />}
+                {isRootSector && sector.mode === 'attach' && <Icon type="caret-right" />}
+                {isRootSector && sector.mode === 'merge' && <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" /> }
                 {sectorSourceDataset.alias || sectorSourceDataset.key}
                 {_.get(syncState, "running.sectorKey") === sector.key && (
                   <Icon type="sync" style={{ marginLeft: "5px" }} spin />
@@ -328,14 +329,15 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title="Sector Options"
+            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <Icon type="caret-right" /> : <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"
             placement="rightTop"
           >
             <Tag color={stringToColour(sectorSourceDataset.title)}>
-              {isRootSectorInSourceTree && <Icon type="caret-right" />}
+              {isRootSectorInSourceTree && sector.mode === 'attach' && <Icon type="caret-right" />}
+                {isRootSectorInSourceTree && sector.mode === 'merge' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
               {sectorSourceDataset.alias || sectorSourceDataset.key}
               {_.get(syncState, "running.sectorKey") === sector.key && (
                 <Icon type="sync" style={{ marginLeft: "5px" }} spin />
