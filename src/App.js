@@ -63,7 +63,7 @@ class App extends Component {
                 exact
                 key="Admin"
                 path={`/admin`}
-                roles={["editor"]}
+                roles={["editor", "admin"]}
                 component={Admin}
               />
               <Route
