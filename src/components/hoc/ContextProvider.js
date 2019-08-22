@@ -50,6 +50,8 @@ export const AppContext = React.createContext({});
  */
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
+const ISSUE_ORDER = {  error: 1, warning: 2, info: 3 };
+
 class ContextProvider extends React.Component {
   
   state = {
@@ -200,7 +202,7 @@ class ContextProvider extends React.Component {
         datasetOrigin: responses[3],
         rank: responses[4],
         taxonomicstatus: responses[5],
-        issue: responses[6],
+        issue: responses[6].sort((a, b) => (ISSUE_ORDER[a.level] - ISSUE_ORDER[b.level])), // Order by severity
         issueMap: issueMap,
         nomstatus: responses[7],
         nametype: responses[8],

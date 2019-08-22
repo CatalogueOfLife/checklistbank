@@ -27,7 +27,7 @@ import DatasetImportMetrics from "./pages/DatasetImportMetrics";
 import Reference from "./pages/Reference";
 import HomePage from "./pages/HomePage"
 import NameIndex from "./pages/NameIndex"
-
+import GSDIssuesMatrix from "./pages/GSDIssueMatrix"
 const theme = {
   colorPrimary: "deepskyblue"
 };
@@ -58,6 +58,12 @@ class App extends Component {
                 render={({ match, location }) => (
                   <NameIndex section={match.params.section} location={location} />
                 )}
+              />
+              <Route
+                exact
+                key="GSDIssues"
+                path="/issues"
+                component={GSDIssuesMatrix}
               />
               <PrivateRoute
                 exact

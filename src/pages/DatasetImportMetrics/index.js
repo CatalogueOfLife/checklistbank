@@ -76,8 +76,8 @@ class DatasetImportMetrics extends React.Component {
             clearInterval(this.timer);
           }
           delete this.timer;
-          this.getHistory();
-          updateImportState();
+          this.getHistory().then(updateImportState);
+          
         }
         this.setState({ loading: false, data: data, err: null });
       })
@@ -93,7 +93,7 @@ class DatasetImportMetrics extends React.Component {
       }
     } = this.props;
 
-    axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
+   return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then(res => {
         const lastFinished = res.data.find(e => e.state === 'finished')
         if(!_.get(this.props, "match.params.taxonOrNameKey") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){

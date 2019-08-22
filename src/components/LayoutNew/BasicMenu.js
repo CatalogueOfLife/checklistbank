@@ -179,7 +179,9 @@ class BasicMenu extends Component {
                 <NavLink to={{ pathname: "/newdataset" }}>New Dataset</NavLink>
               </Menu.Item>
             )}
-
+<Menu.Item key="/issues">
+              <NavLink to="/issues">GSD issues</NavLink>
+            </Menu.Item>
             {/* <Menu.Item key="7">Duplicates</Menu.Item>
             <Menu.Item key="8">Constituents</Menu.Item>
             <Menu.Item key="9">Without endpoint</Menu.Item> */}
