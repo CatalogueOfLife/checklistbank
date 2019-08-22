@@ -397,6 +397,13 @@ class ColTree extends React.Component {
       message.warn("You cant modify the CoL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
+    if (
+      _.get(dragNode, 'props.dataRef.taxon.sector') && (_.get(dragNode, 'props.dataRef.taxon.id') === _.get(dragNode, 'props.dataRef.taxon.sector.subject.id'))
+      
+    ) {
+      message.warn(`Only one sector can be configured for each taxon. ${_.get(dragNode, 'props.dataRef.taxon.sector.subject.name')} -> ${_.get(dragNode, 'props.dataRef.taxon.sector.target.name')} is already defined as a sector `, 6);
+      return; // we are in modify mode and should not react to the event
+    }
     const { ranks } = this.state;
     if (
       ranks.indexOf(dragNode.props.title.props.taxon.rank) <

@@ -53,7 +53,8 @@ class DatasetImportMetrics extends React.Component {
     const {
       match: {
         params: { key: datasetKey }
-      }
+      },
+      updateImportState
     } = this.props;
 
     this.setState({ loading: true });
@@ -76,6 +77,7 @@ class DatasetImportMetrics extends React.Component {
           }
           delete this.timer;
           this.getHistory();
+          updateImportState();
         }
         this.setState({ loading: false, data: data, err: null });
       })
