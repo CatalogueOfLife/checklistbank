@@ -11,11 +11,14 @@ import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 import { ColTreeContext } from "./ColTreeContext";
 import history from "../../history";
-
+import withContext from "../../components/hoc/withContext";
+import qs from "query-string"
 const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
+
+
 
 class LoadMoreChildrenTreeNode extends React.Component {
   constructor(props) {
@@ -79,7 +82,7 @@ class ColTree extends React.Component {
     if (nextProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
-    if (nextProps.defaultExpandKey !== this.props.defaultExpandKey) {
+    if (nextProps.defaultExpandKey && (nextProps.defaultExpandKey !== this.props.defaultExpandKey)) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
   }
@@ -93,7 +96,8 @@ class ColTree extends React.Component {
       treeType,
       dataset: { key },
       showSourceTaxon,
-      defaultExpandKey
+      defaultExpandKey,
+      location
     } = this.props;
     let id = key;
     let p = defaultExpandKey
@@ -101,7 +105,28 @@ class ColTree extends React.Component {
           `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
             defaultExpandKey
           )}`
-        ).then(res =>
+        )
+        .then(res =>{
+          // Load the siblings of the default expanded taxon
+          return _.get(res, 'data[1]')  ? 
+          axios(
+            `${config.dataApi}dataset/${key}/tree/${encodeURIComponent(
+              _.get(res, 'data[1].id') //taxonKey
+            )}/children?limit=${CHILD_PAGE_SIZE}&offset=0`
+          )
+          .then(this.decorateWithSectorsAndDataset)
+          .then(children => {
+            // Remove the teh default expanded taxon as it will be loaded
+            if(children.data.result && children.data.result.length > 0){
+              res.data[1].children = children.data.result.filter(i => i.id !== defaultExpandKey);
+            }
+            return res;
+          })
+          : res
+        }
+           
+        )
+        .then(res =>
           this.decorateWithSectorsAndDataset({
             data: { result: res.data }
           }).then(() => res)
@@ -164,7 +189,27 @@ class ColTree extends React.Component {
               childCount: tx.childCount,
               childOffset: 0
             };
-            root.children = [node];
+            root.children = _.get(root, 'taxon.children') ? [...root.taxon.children.map(c => ({
+              title: (
+                <ColTreeNode
+                  taxon={c}
+                  datasetKey={id}
+                  showSourceTaxon={showSourceTaxon}
+                  reloadSelfAndSiblings={() => this.fetchChildPage(root, true)}
+                />
+              ),
+              taxon: c,
+              key: c.id,
+              childCount: c.childCount,
+              childOffset: 0
+            })), node].sort((a,b) => {
+              
+              if(a.taxon.rank === b.taxon.rank){
+                return a.taxon.name < b.taxon.name ? -1 : a.taxon.name > b.taxon.name ? 1 : 0;
+              } else {
+                return this.props.rank.indexOf(a.taxon.rank) - this.props.rank.indexOf(b.taxon.rank)
+              }
+            }) : [node];
             return node;
           }, root_);
         }
@@ -175,17 +220,18 @@ class ColTree extends React.Component {
                 ? [...treeData]
                 : treeData.filter(r => r.childCount > 0),
             defaultExpandAll:
-              !defaultExpanded && treeType !== "mc" && treeData.length < 10,
+              !defaultExpanded  && treeData.length < 10,
             error: null,
             defaultExpandedKeys: defaultExpandedNodes,
             expandedKeys: defaultExpandedNodes
           });
           if(treeType === "mc"){
+            
+            const params = qs.parse(_.get(location, "search"));
+            const newParams =  { ...params, assemblyTaxonKey: defaultExpandKey } 
             history.push({
               pathname: `/assembly`,
-              search: `?assemblyTaxonKey=${
-                defaultExpandKey
-              }`
+              search: `?${qs.stringify(newParams)}`
             });
           }
           
@@ -195,9 +241,12 @@ class ColTree extends React.Component {
               treeType === "mc"
                 ? [...treeData]
                 : treeData.filter(r => r.childCount > 0),
-            defaultExpandAll: treeType !== "mc" && treeData.length < 10,
+            defaultExpandAll:  treeData.length < 10,
             error: null
           });
+          if(treeData.length === 1){
+            this.fetchChildPage(treeData[treeData.length-1])
+          }
         }
       })
       .catch(err => {
@@ -663,7 +712,7 @@ class ColTree extends React.Component {
       loadedKeys,
       nodeNotFoundErr
     } = this.state;
-    const { draggable, onDragStart } = this.props;
+    const { draggable, onDragStart, location } = this.props;
     return (
       <div>
         {" "}
@@ -687,7 +736,7 @@ class ColTree extends React.Component {
         )}
         {treeData.length > 0 && (
           <ColTreeContext.Consumer>
-            {({ mode }) => (
+            {({ mode, setTaxonExpandKey }) => (
               <Tree
                 showLine={true}
                 defaultExpandAll={defaultExpandAll}
@@ -705,14 +754,15 @@ class ColTree extends React.Component {
                 onExpand={(expandedKeys, obj) => {
                   if (!obj.expanded) {
                     // Remove children when a node is collapsed to improve performance on large trees
+                    const childKeys = obj.node.props.dataRef.children ? obj.node.props.dataRef.children.map(c => c.taxon.id) : []
                     delete obj.node.props.dataRef.children;
                     obj.node.props.dataRef.childOffset = 0;
+                    // TODO not only filter out the key, but also all descendants if any
                     this.setState(
                       {
                         expandedKeys: expandedKeys,
                         treeData: [...this.state.treeData],
-                        loadedKeys: this.state.loadedKeys.filter(
-                          k => k !== obj.node.props.dataRef.key
+                        loadedKeys: this.state.loadedKeys.filter( k => k !== obj.node.props.dataRef.key && !childKeys.includes(k)
                         )
                       },
                       () => {
@@ -723,11 +773,11 @@ class ColTree extends React.Component {
                     );
                   } else {
                     this.setState({ expandedKeys }, () => {
+                      const params = qs.parse(_.get(location, "search"));
+                      const newParams = this.props.treeType === "mc" ? { ...params, assemblyTaxonKey: obj.node.props.dataRef.key } : { ...params, sourceTaxonKey: obj.node.props.dataRef.key }
                       history.push({
                         pathname: `/assembly`,
-                        search: `?assemblyTaxonKey=${
-                          obj.node.props.dataRef.key
-                        }`
+                        search: `?${qs.stringify(newParams)}`
                       });
                     });
                   }
@@ -743,4 +793,7 @@ class ColTree extends React.Component {
   }
 }
 
-export default ColTree;
+
+const mapContextToProps = ({ rank }) => ({ rank });
+
+export default  withContext(mapContextToProps)(ColTree);

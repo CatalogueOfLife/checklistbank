@@ -23,6 +23,7 @@ import PageContent from "../../components/PageContent";
 import SyncState from "./SyncState";
 import Helmet from "react-helmet";
 import qs from "query-string";
+import history from "../../history";
 
 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -37,7 +38,8 @@ class ManagementClassification extends React.Component {
       syncState: {},
       syncingDataset: null,
       syncingSector: null,
-      defaultAssemblyExpandKey: params.assemblyTaxonKey || null
+      defaultAssemblyExpandKey: params.assemblyTaxonKey || null,
+      defaultExpandKey: null
     };
   }
 
@@ -53,6 +55,12 @@ class ManagementClassification extends React.Component {
 
   }
 
+  componentWillReceiveProps = nextProps => {
+
+    let params = qs.parse(_.get(nextProps, "location.search"));
+    this.setState({defaultAssemblyExpandKey: _.get(params, "assemblyTaxonKey") || null ,defaultExpandKey : _.get(params, "sourceTaxonKey") || null});
+
+  }
   componentWillUnmount() {
     clearInterval(this.timer);
   }
@@ -215,6 +223,13 @@ class ManagementClassification extends React.Component {
           datasetKey: source.key,
           datasetName: res.data.title,
           selectedDataset: { key: res.data.key, title: res.data.title }
+        }, ()=> {
+          const params = qs.parse(_.get(this.props,  "location.search"));
+          const newParams =  { ...params, sourceTaxonKey: sector.subject.id, datasetKey: source.key};
+          history.push({
+            pathname: `/assembly`,
+            search: `?${qs.stringify(newParams)}`
+          });
         });
       })
       .catch(err => {
@@ -245,8 +260,10 @@ class ManagementClassification extends React.Component {
       syncState,
       syncingDataset,
       syncingSector,
-      sectorMappingError
+      sectorMappingError,
+      defaultAssemblyExpandKey
     } = this.state;
+    const {match, location} = this.props;
     return (
       <Layout
         openKeys={["assembly"]}
@@ -266,7 +283,8 @@ class ManagementClassification extends React.Component {
               getSyncState: this.getSyncState,
               syncState: this.state.syncState,
               syncingSector: this.state.syncingSector,
-              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
+              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key"),
+              setTaxonExpandKey: this.setTaxonExpandKey
             }}
           >
             <Row style={{ paddingLeft: "16px" }}>
@@ -331,6 +349,7 @@ class ManagementClassification extends React.Component {
                   )}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
+                    location={location}
                       dataset={MANAGEMENT_CLASSIFICATION}
                       treeType="mc"
                       attachFn={this.getSectorInfo}
@@ -340,7 +359,7 @@ class ManagementClassification extends React.Component {
                       dragNode={this.state.dragNode}
                       draggable={true}
                       showSourceTaxon={this.showSourceTaxon}
-                      defaultExpandKey={this.state.defaultAssemblyExpandKey}
+                      defaultExpandKey={defaultAssemblyExpandKey}
                     />
                   </div>
                 </Card>
@@ -380,6 +399,7 @@ class ManagementClassification extends React.Component {
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     {this.state.selectedDataset && (
                       <ColTree
+                      location={location}
                         dataset={this.state.selectedDataset}
                         treeType="gsd"
                         onDragStart={e =>
