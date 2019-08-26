@@ -16,8 +16,7 @@ class VerbatimRecord extends React.Component {
 
         this.state = {
             verbatim: [],
-            verbatimError: null,
-            importState: null
+            verbatimError: null
         }
     }
 
@@ -56,28 +55,15 @@ class VerbatimRecord extends React.Component {
           });
         });
 
-        axios(`${config.dataApi}dataset/${key}/import`)
-        .then(res => {
-          const importState = _.get(res, "data[0].state");
-          this.setState({ importState });
-        })
-        .catch(err => {
-          this.setState({ importState: null });
-        });
+     
     }
 
     render = () => {      
         const {
             dataset
           } = this.props; 
-          const {verbatim, verbatimError, importState} = this.state;
-    return    <Layout
-            selectedMenuItem="datasetKey"
-            selectedDataset={{...dataset, importState: importState}}
-            openKeys={[ "datasetKey"]}
-            selectedKeys={["verbatim"]}
-          >
-          <div
+          const {verbatim, verbatimError} = this.state;
+    return  <div
           style={{
             background: "#fff",
             padding: 24,
@@ -90,7 +76,6 @@ class VerbatimRecord extends React.Component {
             )}
          {verbatim && verbatim.length > 0 && verbatim.map((v)=><VerbatimPresentation key={v.key} datasetKey={v.datasetKey} verbatimKey={v.key} basicHeader={true}/>)}
           </div>
-          </Layout>
     }
 }
 

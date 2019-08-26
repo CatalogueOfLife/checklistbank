@@ -22,7 +22,7 @@ const removeEmptyValues = (myObj) => {
 class DecisionForm extends React.Component {
   state = {
     visible: true,
-    confirmLoading: false 
+    confirmLoading: false
   };
 
   handleSubmit = e => {

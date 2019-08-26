@@ -14,6 +14,7 @@ import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import DatasetTasks from "./datasetPageTabs/DatasetTasks"
 import NameSearch from "../NameSearch"
 import WorkBench from "../WorkBench"
+
 import withContext from "../../components/hoc/withContext"
 import Exception404 from "../../components/exception/404";
 
@@ -22,6 +23,7 @@ import Helmet from 'react-helmet'
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon"
 import Name from "../Name"
+import VerbatimRecord from "../VerbatimRecord"
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -129,6 +131,9 @@ class DatasetPage extends React.Component {
         )}
         {sect === "name" && (
           <Name datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
+        )}
+        {sect === "verbatim" && (
+          <VerbatimRecord datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
         )}
         
 
