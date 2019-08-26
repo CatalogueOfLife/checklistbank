@@ -113,8 +113,11 @@ class DecisionForm extends React.Component {
 })(<Input />)}
           </FormItem>
           <FormItem {...formItemLayout} label="Rank">
-            {getFieldDecorator("rank", {initialValue: (_.get(data, 'name.rank')) ? _.get(data, 'name.rank') : ''})(
+            {getFieldDecorator("rank", {initialValue: (_.get(data, 'name.rank')) ? _.get(data, 'name.rank') : ""})(
               <Select style={{ width: 200 }} showSearch>
+                <Option key="_null" value={""}>
+                    -
+                  </Option>
                 {rank.map(r => (
                   <Option key={r} value={r}>
                     {r}
@@ -126,6 +129,9 @@ class DecisionForm extends React.Component {
           <FormItem {...formItemLayout} label="Name type">
             {getFieldDecorator("nametype", {initialValue: (_.get(data, 'name.nametype')) ? _.get(data, 'name.nametype') : ''})(
               <Select style={{ width: 200 }} showSearch>
+                <Option key="_null" value={""}>
+                    -
+                  </Option>
                 {nametype.map(r => (
                   <Option key={r} value={r}>
                     {r}
@@ -137,6 +143,9 @@ class DecisionForm extends React.Component {
           <FormItem {...formItemLayout} label="Nom. status">
             {getFieldDecorator("nomstatus", {initialValue: (_.get(data, 'name.nomstatus')) ? _.get(data, 'name.nomstatus') : ''})(
               <Select style={{ width: 200 }} showSearch>
+                <Option key="_null" value={""}>
+                    -
+                  </Option>
                 {nomstatus.map(r => (
                   <Option key={r} value={r}>
                     {r}
@@ -148,6 +157,9 @@ class DecisionForm extends React.Component {
           <FormItem {...formItemLayout} label="Nom. code">
             {getFieldDecorator("nomCode", {initialValue: (_.get(data, 'name.nomCode')) ? _.get(data, 'name.nomCode') : ''})(
               <Select style={{ width: 200 }} showSearch>
+                <Option key="_null" value={""}>
+                    -
+                  </Option>
                 {nomCode.map(r => (
                   <Option key={r.name} value={r.name}>
                     {r.name}
