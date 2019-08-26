@@ -20,7 +20,7 @@ const SynonymsTable = ({ datasetKey, data, style }) => {
               }}
               exact={true}
             >
-            {(_.get(s, 'name.homotypicNameId') && _.get(s, 'accepted.name.homotypicNameId') && _.get(s, 'accepted.name.homotypicNameId') === _.get(s, 'name.homotypicNameId') ) ? '≡ ' : '= '}  <span dangerouslySetInnerHTML={{ __html: _.get(s, 'name.formattedName') }} /> {_.get(s, 'name.nomStatus') && `(${_.get(s, 'name.nomStatus')})`}
+            {(_.get(s, 'name.homotypicNameId') && _.get(s, 'accepted.name.homotypicNameId') && _.get(s, 'accepted.name.homotypicNameId') === _.get(s, 'name.homotypicNameId') ) ? '≡ ' : '= '}  <span dangerouslySetInnerHTML={{ __html: _.get(s, 'name.formattedName') }} /> {_.get(s, 'name.nomStatus') && `(${_.get(s, 'name.nomStatus')})`} {_.get(s, 'status') === 'misapplied' && _.get(s, 'accordingTo') ?  _.get(s, 'accordingTo') :''}
             </NavLink> 
             {" "}
               <ReferencePopover datasetKey={datasetKey} referenceId={s.referenceIds} placement="bottom"/>

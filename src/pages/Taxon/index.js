@@ -32,16 +32,13 @@ class TaxonPage extends React.Component {
 
     this.state = {
       taxon: null,
-      synonyms: null,
       info: null,
       taxonLoading: true,
       datasetLoading: true,
-      synonymsLoading: true,
       infoLoading: true,
       classificationLoading: true,
       infoError: null,
       taxonError: null,
-      synonymsError: null,
       classificationError: null,
       verbatimLoading: true,
       verbatimError: null,
@@ -53,7 +50,6 @@ class TaxonPage extends React.Component {
 
   componentWillMount = () => {
     this.getTaxon();
-    this.getSynonyms();
     this.getInfo();
     this.getClassification();
   };
@@ -150,34 +146,6 @@ class TaxonPage extends React.Component {
       });
   };
 
-  getSynonyms = () => {
-    const {
-      match: {
-        params: { key, taxonOrNameKey: taxonKey }
-      }
-    } = this.props;
-
-    axios(
-      `${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(
-        taxonKey
-      )}/synonyms`
-    )
-      .then(res => {
-        this.setState({
-          synonymsLoading: false,
-          synonyms: res.data,
-          synonymsError: null
-        });
-      })
-      .catch(err => {
-        this.setState({
-          synonymsLoading: false,
-          synonymsError: err,
-          synonyms: null
-        });
-      });
-  };
-
   getInfo = () => {
     const {
       match: {
@@ -235,7 +203,7 @@ class TaxonPage extends React.Component {
     } = this.props;
     const {
       taxon,
-      synonyms,
+   //   synonyms,
       info,
       classification,
       sourceDataset,
@@ -244,6 +212,9 @@ class TaxonPage extends React.Component {
       classificationError,
       infoError    
     } = this.state;
+
+    const synonyms = info && info.synonyms && info.synonyms.length > 0 ? info.synonyms.filter(s => s.status !== 'misapplied') : [];
+    const misapplied = info && info.synonyms && info.synonyms.length > 0 ? info.synonyms.filter(s => s.status === 'misapplied') : [];
 
     return (
     
@@ -354,29 +325,20 @@ class TaxonPage extends React.Component {
               <Alert message={<ErrorMsg error={infoError} />} type="error" />
             )}
 
-            {_.get(info, "synonyms") && info.synonyms.length > 0 && (
+            {synonyms && synonyms.length > 0 && (
               <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
-                  data={_.get(info, "synonyms")}
+                  data={synonyms}
                   style={{ marginTop: "-3px" }}
                   datasetKey={key}
                 />
               </PresentationItem>
             )}
 
-            {/*(heterotypic.length > 0 || homotypic.length) > 0 && (
-              <PresentationItem md={md} label="Synonyms">
-                <SynonymTable
-                  data={[...homotypic.map(s => ({...s, homotypic: true})), ...heterotypic]}
-                  style={{  marginTop: '-3px' }}
-                  datasetKey={key}
-                />
-              </PresentationItem>
-            ) */}
-            {_.get(synonyms, "misapplied") && (
+            {misapplied && misapplied.length > 0 && (
               <PresentationItem md={md} label="Misapplied names">
                 <SynonymTable
-                  data={synonyms.misapplied.map(n => n.name)}
+                  data={misapplied}
                   style={{ marginBottom: 16, marginTop: "-3px" }}
                   datasetKey={key}
                 />
