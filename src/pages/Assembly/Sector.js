@@ -64,7 +64,7 @@ class Sector extends React.Component {
         }`
       ) // /assembly/3/sync/
       .then(() => {
-        this.props.reloadSelfAndSiblings();
+        debounce(this.props.reloadSelfAndSiblings, 500)();
         notification.open({
           message: "Deletion triggered",
           description: `Delete job for ${sector.key} placed on the sync queue`
@@ -294,6 +294,16 @@ class Sector extends React.Component {
           <Popover
             content={
               <div>
+              {isRootSectorInSourceTree && 
+                    <Button
+                      style={{ width: "100%" }}
+                      type="danger"
+                      onClick={() => {
+                        this.deleteSector(sector);
+                      }}
+                    >
+                      Delete sector
+                    </Button>}
                 <Button
                   style={{ marginTop: "8px", width: "100%" }}
                   type="primary"

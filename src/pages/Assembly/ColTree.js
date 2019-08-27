@@ -3,7 +3,7 @@ import { Tree, notification, message, Alert, Spin } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import colTreeActions from "./ColTreeActions";
+// import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
 import { getSectorsBatch } from "../../api/sector";
@@ -61,11 +61,11 @@ class ColTree extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentWillMount = () => {
     this.loadRoot();
     this.loadRanks();
-    if (this.props.treeType === "gsd") {
-      colTreeActions.on("attachmentSuccess", dragNode => {
+    /* if (this.props.treeType === "gsd") {
+    this.attachmentSuccessSubscription = colTreeActions.on("attachmentSuccess", dragNode => {
         if (dragNode.dataset === this.props.dataset) {
           dragNode.props.dataRef.title = (
             <ColTreeNode
@@ -76,9 +76,14 @@ class ColTree extends React.Component {
           this.setState({ treeData: [...this.state.treeData] });
         }
       });
-    }
+    } */
   }
-  componentWillReceiveProps(nextProps) {
+ /*  componentWillUnmount = () => {
+    if(this.attachmentSuccessSubscription){
+      this.attachmentSuccessSubscription.remove()
+    }
+  } */
+  componentWillReceiveProps = (nextProps) => {
     if (nextProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
@@ -430,6 +435,7 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
         />
       );
+      dragNode.props.dataRef.title.props.reloadSelfAndSiblings();
       node.props.dataRef.title.props.reloadSelfAndSiblings().then(() => {
         this.onLoadData(node, true);
       });
