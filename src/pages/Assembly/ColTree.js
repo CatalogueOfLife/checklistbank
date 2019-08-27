@@ -18,7 +18,7 @@ const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
 
-
+const IRREGULAR_RANKS = ["unranked", "other", "infraspecific name", "infrageneric name", "infrasubspecific name", "suprageneric name"]
 
 class LoadMoreChildrenTreeNode extends React.Component {
   constructor(props) {
@@ -454,13 +454,10 @@ class ColTree extends React.Component {
       return; // we are in modify mode and should not react to the event
     }
     const { ranks } = this.state;
-    if (
-      ranks.indexOf(dragNode.props.title.props.taxon.rank) <
-      ranks.indexOf(e.node.props.title.props.taxon.rank)
-    ) {
-      message.warn("Subject rank is higher than target rank");
-      return;
-    }
+
+    const showRankWarning = !IRREGULAR_RANKS.includes(e.node.props.title.props.taxon.rank) && !IRREGULAR_RANKS.includes(dragNode.props.title.props.taxon.rank) && (ranks.indexOf(dragNode.props.title.props.taxon.rank) < ranks.indexOf(e.node.props.title.props.taxon.rank));
+    
+    
     // default to attach mode
     let mode = "ATTACH";
     if (
@@ -472,6 +469,8 @@ class ColTree extends React.Component {
     const msg =
       mode === "ATTACH" ? (
         <span>
+            { showRankWarning &&  <Alert message="Subject rank is higher than target rank" type="warning" />}
+
           Attach{" "}
           <span
             dangerouslySetInnerHTML={{
@@ -488,6 +487,7 @@ class ColTree extends React.Component {
         </span>
       ) : (
         <span>
+          { showRankWarning &&  <Alert message="Subject rank is higher than target rank" type="warning" />}
           Ranks are equal. Do you want to replace or merge children of{" "}
           <span
             dangerouslySetInnerHTML={{
