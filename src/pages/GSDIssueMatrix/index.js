@@ -49,6 +49,7 @@ class GSDIssuesMatrix extends React.Component {
   }
 
   getData = () => {
+      this.setState({loading: true})
     axios(
       `${config.dataApi}dataset?limit=500&contributesTo=${
         MANAGEMENT_CLASSIFICATION.key
@@ -174,6 +175,7 @@ class GSDIssuesMatrix extends React.Component {
               dataSource={data.filter(d => d.issues)}
               loading={loading}
               scroll={{x: "2000px"}}
+              pagination={{pageSize:100}}
             />
           )}
         </div>
