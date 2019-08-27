@@ -4,7 +4,11 @@ const environments = {
 
       dataApi: 'https://api-dev.col.plus/',
       env: 'dev',
-      kibanaEnv: 'col-dev-ws',
+      kibanaEnv: { 
+        name: 'col-dev-ws',
+        index: 'AWyLa2lBHCKcR6PFXu26'
+    
+    },
       MANAGEMENT_CLASSIFICATION: {
         key: 3,
         title: "CoL draft"
@@ -36,7 +40,8 @@ const environments = {
         url: 'http://localhost:3000',
         dataApi: 'http://localhost:8090/',
         env: 'docker',
-        kibanaEnv: 'col-docker',
+        kibanaEnv: {name: 'col-docker',
+      index: 'AWyLa4mQHCKcR6PFXu4X'},
         MANAGEMENT_CLASSIFICATION: {
             key: 3,
             title: "CoL draft"
