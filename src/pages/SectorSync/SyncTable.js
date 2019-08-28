@@ -306,7 +306,7 @@ class SyncTable extends React.Component {
         ]
       : defaultColumns;
 
-      columns[3].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
+      columns[4].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
 
 
     return (
