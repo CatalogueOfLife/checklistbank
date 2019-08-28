@@ -187,7 +187,7 @@ class ManagementClassification extends React.Component {
           message: "Removed existing taxon",
           description: `Old ${target.name} was removed from the CoL draft, removing children.`
         });
-        this.saveSector = (subject, parent, "ATTACH");
+        return this.saveSector(subject, parent, "ATTACH");
       });
   };
 

@@ -337,6 +337,16 @@ class Sector extends React.Component {
                     Block taxon
                   </Button>
                 )}
+                {error && (
+                  <Alert
+                  closable
+                   onClose={() => this.setState({ error: null })}
+                    message={
+                      <ErrorMsg error={error} style={{ marginTop: "8px" }} />
+                    }
+                    type="error"
+                  />
+                )}
               </div>
             }
             title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <Icon type="caret-right" /> : <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" />} {sector.mode}</React.Fragment>}
