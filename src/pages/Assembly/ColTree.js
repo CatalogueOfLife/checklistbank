@@ -185,6 +185,7 @@ class ColTree extends React.Component {
                 <ColTreeNode
                   taxon={tx}
                   datasetKey={id}
+                  hasPopOver={this.props.treeType === "mc"}
                   showSourceTaxon={showSourceTaxon}
                   reloadSelfAndSiblings={() => this.fetchChildPage(root, true)}
                 />
