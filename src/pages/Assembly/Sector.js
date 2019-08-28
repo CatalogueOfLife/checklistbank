@@ -163,6 +163,7 @@ class Sector extends React.Component {
     const isSourceTree =
       _.get(MANAGEMENT_CLASSIFICATION, "key") !== _.get(taxon, "datasetKey");
 
+      
     if (!sectorSourceDataset) {
       return "";
     }
@@ -290,10 +291,11 @@ class Sector extends React.Component {
       </ColTreeContext.Consumer>
     ) : (
       <ColTreeContext.Consumer>
-        {({ syncState, syncingSector }) => (
+        {({ syncState, syncingSector, missingTargetKeys }) => (
           <Popover
             content={
               <div>
+              {missingTargetKeys[_.get(sector, 'target.id')] === true && <Alert type="warning" style={{ marginBottom: '8px'}} message={<p>{`${_.get(sector, 'target.name')} with id: ${_.get(sector, 'target.id')} is missing from the assembly.`}<br/>{`You can delete this sector and reattach ${_.get(sector, 'subject.name')} under ${_.get(sector, 'target.name')} if present with another id`}</p>}></Alert>}
               {isRootSectorInSourceTree && 
                     <Button
                       style={{ width: "100%" }}
@@ -304,7 +306,7 @@ class Sector extends React.Component {
                     >
                       Delete sector
                     </Button>}
-                <Button
+              {missingTargetKeys[_.get(sector, 'target.id')] !== true &&  <Button
                   style={{ marginTop: "8px", width: "100%" }}
                   type="primary"
                   onClick={() =>
@@ -312,8 +314,8 @@ class Sector extends React.Component {
                   }
                 >
                   Show sector in assembly
-                </Button>
-                {isRootSectorInSourceTree &&
+                </Button>}
+                {isRootSectorInSourceTree && missingTargetKeys[_.get(sector, 'target.id')] !== true &&
                   _.get(syncState, "running.sectorKey") !== sector.key && (
                     <React.Fragment>
                       <Button
@@ -339,6 +341,7 @@ class Sector extends React.Component {
                 )}
                 {error && (
                   <Alert
+                  style={{marginTop: '8px'}}
                   closable
                    onClose={() => this.setState({ error: null })}
                     message={
@@ -356,6 +359,7 @@ class Sector extends React.Component {
             placement="rightTop"
           >
             <Tag color={stringToColour(sectorSourceDataset.title)}>
+              {missingTargetKeys[_.get(sector, 'target.id')] === true && <Icon type="exclamation-circle" />}
               {isRootSectorInSourceTree && sector.mode === 'attach' && <Icon type="caret-right" />}
                 {isRootSectorInSourceTree && sector.mode === 'merge' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
               {sectorSourceDataset.alias || sectorSourceDataset.key}

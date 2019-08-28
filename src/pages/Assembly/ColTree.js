@@ -167,7 +167,11 @@ class ColTree extends React.Component {
           };
         });
         if(defaultExpanded && defaultExpanded.length == 0){
-          this.setState({nodeNotFoundErr: <span>Cannot find taxon {defaultExpandKey} in tree &#128549;</span>});
+          this.setState({nodeNotFoundErr: <span>Cannot find taxon {defaultExpandKey} in tree &#128549;</span>}, () => {
+            if(this.props.treeType === 'mc' && typeof this.props.addMissingTargetKey === 'function'){
+              this.props.addMissingTargetKey(defaultExpandKey)
+            }
+          });
         }
         if (defaultExpanded && defaultExpanded.length > 0) {
           
@@ -271,10 +275,7 @@ class ColTree extends React.Component {
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
     const offset = _.get(dataRef, "childOffset");
-    const childKeys =
-      _.get(dataRef, "children") && dataRef.children.length > 0
-        ? dataRef.children.map(c => c.key)
-        : [];
+   
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
         dataRef.taxon.id //taxonKey

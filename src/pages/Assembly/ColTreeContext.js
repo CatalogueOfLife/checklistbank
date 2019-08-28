@@ -8,8 +8,7 @@ export const ColTreeContext = React.createContext({
     assemblyTaxonKey: null,
     sourceTaxonKey: null,
     toggleMode: () => {},
-    getSyncState: () => {},
-    setTaxonExpandKey: () => {}
+    getSyncState: () => {}
   });
 
 

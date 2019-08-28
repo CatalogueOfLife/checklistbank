@@ -39,7 +39,8 @@ class ManagementClassification extends React.Component {
       syncingDataset: null,
       syncingSector: null,
       defaultAssemblyExpandKey: params.assemblyTaxonKey || null,
-      defaultExpandKey: null
+      defaultExpandKey: null,
+      missingTargetKeys: {} // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
     };
   }
 
@@ -237,6 +238,10 @@ class ManagementClassification extends React.Component {
       });
   };
 
+  addMissingTargetKey = key => {
+    this.setState({missingTargetKeys: {...this.state.missingTargetKeys, [key] : true}})
+  }
+
   onSelectDataset = dataset => {
     this.setState({
       datasetKey: dataset.key,
@@ -283,8 +288,9 @@ class ManagementClassification extends React.Component {
               getSyncState: this.getSyncState,
               syncState: this.state.syncState,
               syncingSector: this.state.syncingSector,
-              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key"),
-              setTaxonExpandKey: this.setTaxonExpandKey
+              missingTargetKeys: this.state.missingTargetKeys,
+              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
+              
             }}
           >
             <Row style={{ paddingLeft: "16px" }}>
@@ -349,7 +355,7 @@ class ManagementClassification extends React.Component {
                   )}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
-                    location={location}
+                      location={location}
                       dataset={MANAGEMENT_CLASSIFICATION}
                       treeType="mc"
                       attachFn={this.getSectorInfo}
@@ -360,6 +366,7 @@ class ManagementClassification extends React.Component {
                       draggable={true}
                       showSourceTaxon={this.showSourceTaxon}
                       defaultExpandKey={defaultAssemblyExpandKey}
+                      addMissingTargetKey={this.addMissingTargetKey}
                     />
                   </div>
                 </Card>
