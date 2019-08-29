@@ -17,6 +17,7 @@ import {
   Icon,
   Radio,
   Pagination,
+  Tooltip,
   notification
 } from "antd";
 import config from "../../config";
@@ -72,7 +73,10 @@ class DuplicateSearchPage extends React.Component {
       loading: false,
       postingDecisions: false,
       decision: null,
-      expandedRowKeys: []
+      expandedRowKeys: [],
+      allButOldestInGroupLoading: false,
+         synonymsSelectLoading: false,
+         newestInGroupLoading: false,
     };
   }
 
@@ -336,33 +340,37 @@ class DuplicateSearchPage extends React.Component {
   }
 
   selectNewestInGroup = () => {
+    
+         this.setState({newestInGroupLoading: true})
     const {rawData} = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
       const max = Math.max(...group.usages.map(r => r.usage.name.publishedInYear))
       selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => Number(r.usage.name.publishedInYear) === max ).map(i => i.usage.id)]
     })
-    this.setState({selectedRowKeys})
+    this.setState({selectedRowKeys, newestInGroupLoading: false})
   }
 
   selectAllInGroupExceptOldest = () => {
+         this.setState({allButOldestInGroupLoading: true}) 
     const {rawData} = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
       const min = Math.min(...group.usages.map(r => r.usage.name.publishedInYear))
       selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => Number(r.usage.name.publishedInYear) > min ).map(i => i.usage.id)]
     })
-    this.setState({selectedRowKeys})
+    this.setState({selectedRowKeys, allButOldestInGroupLoading: false})
   }
 
 
   selectAllSynonymsInGroup = () => {
+    this.setState({synonymsSelectLoading: true}) 
     const {rawData} = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
       selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => r.usage.status === 'synonym' ).map(i => i.usage.id)]
     })
-    this.setState({selectedRowKeys})
+    this.setState({selectedRowKeys, synonymsSelectLoading: false})
   }
   render() {
     const {
@@ -376,7 +384,10 @@ class DuplicateSearchPage extends React.Component {
       duplicateCount,
       advancedMode,
       totalFaked,
-      columns
+      columns,
+      allButOldestInGroupLoading,
+         synonymsSelectLoading,
+         newestInGroupLoading
     } = this.state;
     const { rank, taxonomicstatus, user } = this.props;
     const hasSelected =
@@ -732,23 +743,32 @@ class DuplicateSearchPage extends React.Component {
         <Row />
         <Row style={{marginBottom: "8px", marginTop: "8px" }}>
         {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={12} >
+         <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
+         
           <Button
                 type="primary"
                 onClick={this.selectNewestInGroup}
                 style={{ width: 140, marginRight: '10px' }}
+                loading={newestInGroupLoading}
               >
                 Most recent name
               </Button>
+              </Tooltip>
+              <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
+
           <Button
                 type="primary"
                 onClick={this.selectAllInGroupExceptOldest}
+                loading={allButOldestInGroupLoading}
                 style={{ width: 140, marginRight: '10px' }}
               >
                 All except oldest
               </Button>
+              </Tooltip>
               <Button
                 type="primary"
                 onClick={this.selectAllSynonymsInGroup}
+                loading={synonymsSelectLoading}
                 style={{ width: 140 }}
               >
                 All synonyms
