@@ -135,6 +135,26 @@ class SyncTable extends React.Component {
     this.setState({data: this.state.data.filter(d => d.key !== sector.data.key)})
   }
 
+  onDeleteSector = sector => {
+    axios
+      .delete(
+        `${config.dataApi}sector/${
+          sector.key
+        }`
+      ) 
+      .then(() => {
+
+        notification.open({
+          message: "Deletion triggered",
+          description: `Delete job for ${sector.key} placed on the sync queue`
+        });
+        this.setState({ data: this.state.data.filter(d => d.key !== sector.key) });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  };
+
   render() {
     const { data, loading, error } = this.state;
 
@@ -151,7 +171,7 @@ class SyncTable extends React.Component {
         onClose={() => this.setState({ error: null })}
         message={error.message} type="error" />}
           {!error && 
-        <SectorTable data={data} loading={loading} onSectorRematch={this.deleteSectorFromTable}></SectorTable>}
+        <SectorTable data={data} loading={loading} onSectorRematch={this.deleteSectorFromTable} onDeleteSector={this.onDeleteSector}></SectorTable>}
 
         </PageContent>
       </Layout>

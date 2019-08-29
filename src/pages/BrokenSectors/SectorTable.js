@@ -92,8 +92,9 @@ class SyncTable extends React.Component {
     
     this.setState({currentDataSourceLength: extra.currentDataSource.length})
   }
+ 
   render() {
-    const {data, loading, user} = this.props;  
+    const {data, loading, user, onDeleteSector} = this.props;  
     const { currentDataSourceLength, error } = this.state;
     const columns = [
       {
@@ -285,15 +286,16 @@ class SyncTable extends React.Component {
       }
     ];
 
-    if(Auth.isAuthorised(user, ['admin'])){
+    if(Auth.isAuthorised(user, ['admin', 'editor'])){
       columns.push({
         title: "Action",
         key: "action",
-        width: 50,
+        width: 150,
         render: (text, record) => (
           <React.Fragment>
-            { /* _.get(record, 'target.id') && _.get(record, 'target.id') && <SyncButton record={record}/> */} 
-             <Button
+            { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sectorKey: record.key}}/> } 
+           { (!_.get(record, 'target.id') || !_.get(record, 'subject.id')) &&  <Button
+           style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {
                 axios.post(`${config.dataApi}admin/rematch`, {sectorKey: record.key})
@@ -324,8 +326,11 @@ class SyncTable extends React.Component {
             }}
           >
             Rematch
-          </Button>
+          </Button>}
+          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}> Delete</Button>}
+          
           </React.Fragment>
+          
         )
       })
     }

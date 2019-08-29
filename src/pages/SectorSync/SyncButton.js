@@ -68,7 +68,7 @@ class SyncButton extends React.Component {
     const isStopButton = record.state && ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
     
     return (
-      <div>
+      <div style={this.props.style || {}}>
         <Button
           type={isStopButton ? 'danger' : 'primary'}
           loading={this.state.importTriggered}
