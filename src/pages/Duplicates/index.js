@@ -75,8 +75,9 @@ class DuplicateSearchPage extends React.Component {
       decision: null,
       expandedRowKeys: [],
       allButOldestInGroupLoading: false,
-         synonymsSelectLoading: false,
-         newestInGroupLoading: false,
+      synonymsSelectLoading: false,
+      newestInGroupLoading: false,
+      showAtomizedNames: true
     };
   }
 
@@ -112,7 +113,7 @@ class DuplicateSearchPage extends React.Component {
   }
 
   getData = () => {
-    const { params } = this.state;
+    const { params, showAtomizedNames } = this.state;
     const {location: {pathname}} = this.props;
     this.setState({ loading: true });
     const { datasetKey } = this.props;
@@ -382,12 +383,13 @@ class DuplicateSearchPage extends React.Component {
       decision,
       postingDecisions,
       duplicateCount,
+      showAtomizedNames,
       advancedMode,
       totalFaked,
       columns,
       allButOldestInGroupLoading,
-         synonymsSelectLoading,
-         newestInGroupLoading
+      synonymsSelectLoading,
+      newestInGroupLoading
     } = this.state;
     const { rank, taxonomicstatus, user } = this.props;
     const hasSelected =
@@ -692,6 +694,19 @@ class DuplicateSearchPage extends React.Component {
                     </RadioGroup>
                   </FormItem>
 
+                  <FormItem label="Show atomized names">
+                    <RadioGroup
+                      onChange={evt => {
+                        this.setState({showAtomizedNames: evt.target.value})
+                        
+                        }}
+                      value={showAtomizedNames}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                    </RadioGroup>
+                  </FormItem>
+
                  
                   <FormItem>
                     <Button type="danger" onClick={this.resetSearch}>
@@ -804,7 +819,7 @@ class DuplicateSearchPage extends React.Component {
             <Table
               size="small"
               components={this.components}
-              columns={columns.filter(this.columnFilter)}
+              columns={showAtomizedNames === true ? columns.filter(this.columnFilter) : columnDefaults.fullScientificName}
               dataSource={data}
               loading={loading}
               onChange={this.handleTableChange}

@@ -311,5 +311,101 @@ export default {
         );
       }
     }
+  ],
+  fullScientificName: [
+    {
+      title: "ID",
+      dataIndex: "name.id",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => {
+        return (
+          <NavLink
+            key={_.get(record, "id")}
+            to={{
+              pathname: `/dataset/${_.get(record, "datasetKey")}/${
+                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
+              }/${encodeURIComponent(_.get(record, "id"))}`
+            }}
+            exact={true}
+          >
+            <Tooltip title={text}>
+              <div style={{ width: "50px" }} className="truncate">
+                {text}
+              </div>
+            </Tooltip>
+          </NavLink>
+        );
+      }
+    },
+    {
+      title: "Decision",
+      dataIndex: "decisions",
+      key: "decisions",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => {
+        console.log(_.get(record, "decision"));
+        return (
+          <DecisionTag
+            decision={_.get(record, "decision")}
+            deleteCallback={this.getData}
+          />
+        );
+      }
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+    },
+      {
+            title: "Accepted",
+            dataIndex: "accepted.name.formattedName",
+            key: "accepted",
+            width: 340,
+            className: "workbench-td",
+            render: (text, record) => {
+            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.name.formattedName")}}></span>}
+        }, 
+    {
+      title: "scientificName",
+      width: 340,
+      dataIndex: "name.scientificName",
+      key: "scientificName",
+      className: "workbench-td"
+    },
+
+       {
+          title: "Authorship",
+          width: 240,
+          dataIndex: "name.authorship",
+          key: "authorship",
+          className: "workbench-td",
+        }, 
+
+    {
+      title: "Rank",
+      width: 60,
+      dataIndex: "name.rank",
+      key: "rank",
+      className: "workbench-td",
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+    },
+    {
+      title: "Classification",
+      dataIndex: "classification",
+      className: "workbench-td",
+      render: (text, record) => {
+        return _.get(record, "classification") ? (
+          <Classification path={_.get(record, "classification")} maxLength={3} />
+        ) : (
+          ""
+        );
+      }
+    }
   ]
 };
