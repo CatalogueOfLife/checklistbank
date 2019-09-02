@@ -64,12 +64,13 @@ class ColTree extends React.Component {
     this.loadRanks();
 
     const refreshEvent = this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
-    this.refreshSubscription = colTreeActions.on(refreshEvent, () => this.setState({ treeData: [] }, this.loadRoot))
+    colTreeActions.on(refreshEvent, this.reloadRoot)
 
   }
   componentWillUnmount = () => {
-    this.refreshSubscription.remove();
-  }
+    const refreshEvent = this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
+    colTreeActions.removeListener(refreshEvent, this.reloadRoot)
+  } 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
@@ -82,6 +83,9 @@ class ColTree extends React.Component {
       this.setState({ ranks: res.data.map(e => e.name) });
     });
   };
+
+  reloadRoot = () => this.setState({ treeData: [] }, this.loadRoot)
+
   loadRoot = () => {
     const {
       treeType,

@@ -47,9 +47,9 @@ class DatasetMeta extends React.Component {
       ])
     })
       .then(res => {
-        res[0].createdByUser = _.get(res[1], 'data.username'),
-        res[0].modifiedByUser = _.get(res[2], 'data.username'),
-        res[0].contributesToDatasets = res[3].map(d => _.get(d, "data.title"))
+        res[0].createdByUser = _.get(res[1], 'data.username');
+        res[0].modifiedByUser = _.get(res[2], 'data.username');
+        res[0].contributesToDatasets = res[3].map(d => _.get(d, "data.title"));
         this.setState({ loading: false, data: res[0], err: null });
       })
       .catch(err => {

@@ -15,7 +15,7 @@
     "highcharts": "^6.2.0",
     "highcharts-react-official": "^1.4.0",
     "history": "^4.7.2",
-    "lodash": "^4.17.11",
+    "lodash": ">=4.6.2",
     "moment": "^2.22.2",
     "query-string": "~5.1.1",
     "react": "^16.5.1",
@@ -27,7 +27,7 @@
     "react-jss": "^8.6.1",
     "react-resizable": "^1.7.5",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.5",
+    "react-scripts": "2.0.3",
     "react-width": "^0.1.8"
   },
   "scripts": {
@@ -35,5 +35,11 @@
     "build": "node gitTag.js; react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

@@ -220,7 +220,7 @@ class ManagementClassification extends React.Component {
       .then(res => {
         this.setState(
           {
-            //  defaultExpandKey: sector.subject.id,
+            sourceTaxonKey: sector.subject.id,
             datasetKey: source.key,
             datasetName: res.data.title,
             selectedDataset: { key: res.data.key, title: res.data.title }
