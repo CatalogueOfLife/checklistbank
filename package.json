@@ -27,7 +27,7 @@
     "react-jss": "^8.6.1",
     "react-resizable": "^1.7.5",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.0.3",
+    "react-scripts": "1.1.5",
     "react-width": "^0.1.8"
   },
   "scripts": {
@@ -35,11 +35,5 @@
     "build": "node gitTag.js; react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  }
 }
