@@ -3,7 +3,7 @@ import { Tree, notification, message, Alert, Spin } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-// import colTreeActions from "./ColTreeActions";
+import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../components/ErrorMsg";
 import { getSectorsBatch } from "../../api/sector";
@@ -52,8 +52,6 @@ class ColTree extends React.Component {
     this.state = {
       rootLoading: true,
       treeData: [],
-     // expandedKeys: [],
-     // loadedKeys: [],
       error: null,
       mode: "attach",
       ranks: [],
@@ -64,33 +62,21 @@ class ColTree extends React.Component {
   componentWillMount = () => {
     this.loadRoot();
     this.loadRanks();
-    /* if (this.props.treeType === "gsd") {
-    this.attachmentSuccessSubscription = colTreeActions.on("attachmentSuccess", dragNode => {
-        if (dragNode.dataset === this.props.dataset) {
-          dragNode.props.dataRef.title = (
-            <ColTreeNode
-              taxon={dragNode.props.title.props.taxon}
-              datasetKey={dragNode.props.title.props.datasetKey}
-            />
-          );
-          this.setState({ treeData: [...this.state.treeData] });
-        }
-      });
-    } */
+
+    const refreshEvent = this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
+    this.refreshSubscription = colTreeActions.on(refreshEvent, () => this.setState({ treeData: [] }, this.loadRoot))
+
   }
- /*  componentWillUnmount = () => {
-    if(this.attachmentSuccessSubscription){
-      this.attachmentSuccessSubscription.remove()
-    }
-  } */
+  componentWillUnmount = () => {
+    this.refreshSubscription.remove();
+  }
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
-    if (nextProps.defaultExpandKey && (nextProps.defaultExpandKey !== this.props.defaultExpandKey)) {
-      this.setState({ treeData: [] }, this.loadRoot);
-    }
+   
   }
+
   loadRanks = () => {
     axios(`${config.dataApi}vocab/rank`).then(res => {
       this.setState({ ranks: res.data.map(e => e.name) });
@@ -232,8 +218,7 @@ class ColTree extends React.Component {
             defaultExpandAll:
               !defaultExpanded  && treeData.length < 10,
             error: null,
-            defaultExpandedKeys: defaultExpandedNodes,
-         //   expandedKeys: defaultExpandedNodes
+            defaultExpandedKeys: defaultExpandedNodes
           });
           if(treeType === "mc"){
             
@@ -263,7 +248,6 @@ class ColTree extends React.Component {
         this.setState({
           treeData: [],
           defaultExpandedKeys: null,
-     //     expandedKeys: [],
           error: err
         });
       });
@@ -321,7 +305,6 @@ class ColTree extends React.Component {
                   reloadSelfAndSiblings={() =>
                     this.fetchChildPage(dataRef, true)
                   }
-                  // reloadChildren={() => this.onLoadData({props: {dataRef: dataRef}}, true)}
                   showSourceTaxon={showSourceTaxon}
                 />
               );
@@ -373,14 +356,8 @@ class ColTree extends React.Component {
         }
         this.setState({
           treeData: [...this.state.treeData],
-          defaultExpandAll: false,
-/*           expandedKeys: [
-            ...new Set([
-              ...expandedKeys.filter(k => !childKeys.includes(k)),
-              dataRef.key
-            ])
-          ],
-          loadedKeys: loadedKeys.filter(k => !childKeys.includes(k)) */
+          defaultExpandAll: false
+
         });
       });
   };
@@ -716,8 +693,6 @@ class ColTree extends React.Component {
       treeData,
       defaultExpandAll,
       defaultExpandedKeys,
-   //   expandedKeys,
-  //    loadedKeys,
       nodeNotFoundErr
     } = this.state;
     const { draggable, onDragStart, location } = this.props;
@@ -749,19 +724,15 @@ class ColTree extends React.Component {
                 showLine={true}
                 defaultExpandAll={defaultExpandAll}
                 defaultExpandedKeys={defaultExpandedKeys}
-            //    expandedKeys={expandedKeys}
                 draggable={draggable}
                 onDrop={e => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
-              //  loadedKeys={loadedKeys}
                 loadData={this.onLoadData}
                 filterTreeNode={node =>
                   node.props.dataRef.key === this.props.defaultExpandKey
                 }
-             //   onLoad={(loadedKeys, obj) => this.setState({ loadedKeys })}
                 onExpand={(expandedKeys, obj) => {
                   if(obj.expanded){
-                    this.onLoadData(obj.node)
 
                     const params = qs.parse(_.get(location, "search"));
                       const newParams = this.props.treeType === "mc" ? { ...params, assemblyTaxonKey: obj.node.props.dataRef.key } : { ...params, sourceTaxonKey: obj.node.props.dataRef.key }
@@ -779,37 +750,7 @@ class ColTree extends React.Component {
                     });
 
                   }
-                 /* if (!obj.expanded) {
-                    // Remove children when a node is collapsed to improve performance on large trees
-                    console.log(getLoadeKeys(obj.node.props.dataRef).flat())
-                    const childKeys =   obj.node.props.dataRef.children ? obj.node.props.dataRef.children.map(c => c.taxon.id) : []
-                    delete obj.node.props.dataRef.children;
-                    obj.node.props.dataRef.childOffset = 0;
-                    // TODO not only filter out the key, but also all descendants if any
-                    this.setState(
-                      {
-                        expandedKeys: expandedKeys,
-                        treeData: [...this.state.treeData],
-                       // loadedKeys: this.state.loadedKeys.filter( k => expandedKeys.includes(k))
-                      },
-                      () => {
-                        const key = this.props.treeType === "mc" ? 'assemblyTaxonKey' : 'sourceTaxonKey'
-                        history.push({
-                          pathname: `/assembly`,
-                          search: `?${qs.stringify(_.omit(qs.parse(_.get(location, "search")), [key]))}`
-                        });
-                      }
-                    );
-                  } else {
-                    this.setState({ expandedKeys }, () => {
-                      const params = qs.parse(_.get(location, "search"));
-                      const newParams = this.props.treeType === "mc" ? { ...params, assemblyTaxonKey: obj.node.props.dataRef.key } : { ...params, sourceTaxonKey: obj.node.props.dataRef.key }
-                      history.push({
-                        pathname: `/assembly`,
-                        search: `?${qs.stringify(newParams)}`
-                      });
-                    });
-                  } */
+
                 }}
               >
                 {this.renderTreeNodes(treeData)}
