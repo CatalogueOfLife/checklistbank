@@ -53,6 +53,22 @@ const environments = {
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
     gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
+  },
+  local: {
+    url: "http://localhost:3000",
+    dataApi: "http://localhost:8080/",
+    env: "local",
+    kibanaEnv: { name: "col-local", index: "AWyLa4mQHCKcR6PFXu4X" },
+    MANAGEMENT_CLASSIFICATION: {
+      key: 3,
+      title: "CoL draft"
+    },
+    NAME_INDEX: {
+      key: 2,
+      title: "Name Index"
+    },
+    gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
+    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
   }
 };
 
@@ -63,8 +79,8 @@ if (domain.endsWith("www.col.plus")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.col.plus")) {
   env = environments.dev;
-} /* else if (domain.endsWith('localhost')) {
-  env = environments.docker;
-} */
+} else if (domain.endsWith('localhost')) {
+  env = environments.local;
+}
 
 export default env;
