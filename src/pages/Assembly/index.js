@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Row,
-  Col,
-  notification,
-  Button,
-  Icon,
-  Card,
-  Alert
-  
-} from "antd";
+import { Row, Col, notification, Button, Icon, Card, Alert } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../components/LayoutNew";
@@ -24,7 +15,7 @@ import SyncState from "./SyncState";
 import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../history";
-
+import colTreeActions from "./ColTreeActions";
 
 const { MANAGEMENT_CLASSIFICATION } = config;
 
@@ -38,30 +29,34 @@ class ManagementClassification extends React.Component {
       syncState: {},
       syncingDataset: null,
       syncingSector: null,
-      defaultAssemblyExpandKey: params.assemblyTaxonKey || null,
-      defaultExpandKey: null,
+      assemblyTaxonKey: params.assemblyTaxonKey || null,
+      sourceTaxonKey: null,
       missingTargetKeys: {} // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
     };
   }
 
   componentWillMount() {
     const params = qs.parse(_.get(this.props, "location.search"));
-    if(params.sourceTaxonKey && params.datasetKey){
-      this.showSourceTaxon({ subject: {id: params.sourceTaxonKey}}, {key: params.datasetKey})
+    if (params.sourceTaxonKey && params.datasetKey) {
+      this.showSourceTaxon(
+        { subject: { id: params.sourceTaxonKey } },
+        { key: params.datasetKey }
+      );
     }
     this.getSyncState();
     this.timer = setInterval(() => {
       this.getSyncState();
     }, 3000);
-
   }
 
   componentWillReceiveProps = nextProps => {
-
     let params = qs.parse(_.get(nextProps, "location.search"));
-    this.setState({defaultAssemblyExpandKey: _.get(params, "assemblyTaxonKey") || null ,defaultExpandKey : _.get(params, "sourceTaxonKey") || null});
-
-  }
+    // this.setState({defaultAssemblyExpandKey: _.get(params, "assemblyTaxonKey") || null ,defaultExpandKey : _.get(params, "sourceTaxonKey") || null});
+    this.setState({
+      assemblyTaxonKey: _.get(params, "assemblyTaxonKey") || null,
+      sourceTaxonKey: _.get(params, "sourceTaxonKey") || null
+    });
+  };
   componentWillUnmount() {
     clearInterval(this.timer);
   }
@@ -179,14 +174,18 @@ class ManagementClassification extends React.Component {
         // delete recursive
         return axios
           .delete(
-            `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${target.id}`
+            `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${
+              target.id
+            }`
           )
           .then(() => parent);
       })
       .then(parent => {
         notification.open({
           message: "Removed existing taxon",
-          description: `Old ${target.name} was removed from the CoL draft, removing children.`
+          description: `Old ${
+            target.name
+          } was removed from the CoL draft, removing children.`
         });
         return this.saveSector(subject, parent, "ATTACH");
       });
@@ -217,21 +216,32 @@ class ManagementClassification extends React.Component {
   };
 
   showSourceTaxon = (sector, source) => {
+    
+    const oldDatasetKey = this.state.datasetKey;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
-        this.setState({
-          defaultExpandKey: sector.subject.id,
-          datasetKey: source.key,
-          datasetName: res.data.title,
-          selectedDataset: { key: res.data.key, title: res.data.title }
-        }, ()=> {
-          const params = qs.parse(_.get(this.props,  "location.search"));
-          const newParams =  { ...params, sourceTaxonKey: sector.subject.id, datasetKey: source.key};
-          history.push({
-            pathname: `/assembly`,
-            search: `?${qs.stringify(newParams)}`
-          });
-        });
+        const params = qs.parse(_.get(this.props, "location.search"));
+            const newParams = {
+              ...params,
+              sourceTaxonKey: sector.subject.id,
+              datasetKey: source.key
+            };
+            history.push({
+              pathname: `/assembly`,
+              search: `?${qs.stringify(newParams)}`
+            });
+        this.setState(
+          {
+            sourceTaxonKey: sector.subject.id,
+            datasetKey: source.key,
+            datasetName: res.data.title,
+            selectedDataset: { key: res.data.key, title: res.data.title }
+          },
+          () => {
+            // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentWillRecive props
+           if(oldDatasetKey === source.key) {colTreeActions.refreshSource()};
+          }
+        );
       })
       .catch(err => {
         console.log(err);
@@ -239,15 +249,28 @@ class ManagementClassification extends React.Component {
   };
 
   addMissingTargetKey = key => {
-    this.setState({missingTargetKeys: {...this.state.missingTargetKeys, [key] : true}})
-  }
+    this.setState({
+      missingTargetKeys: { ...this.state.missingTargetKeys, [key]: true }
+    });
+  };
 
   onSelectDataset = dataset => {
+    const {location} = this.props
     this.setState({
       datasetKey: dataset.key,
       datasetName: dataset.title,
       selectedDataset: dataset,
-      defaultExpandKey: null
+      sourceTaxonKey: null
+    });
+    const params = qs.parse(_.get(location, "search"));
+
+    const newParams = {
+      ...params,
+      datasetKey: _.get(dataset, "key")
+    };
+    history.push({
+      pathname: `/assembly`,
+      search: `?${qs.stringify(_.omit(newParams, ["sourceTaxonKey"]))}`
     });
   };
 
@@ -266,9 +289,11 @@ class ManagementClassification extends React.Component {
       syncingDataset,
       syncingSector,
       sectorMappingError,
+      assemblyTaxonKey,
       defaultAssemblyExpandKey
     } = this.state;
-    const {match, location} = this.props;
+    const { match, location } = this.props;
+    //  const {assemblyTaxonKey, sourceTaxonKey} = location
     return (
       <Layout
         openKeys={["assembly"]}
@@ -290,7 +315,6 @@ class ManagementClassification extends React.Component {
               syncingSector: this.state.syncingSector,
               missingTargetKeys: this.state.missingTargetKeys,
               selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
-              
             }}
           >
             <Row style={{ paddingLeft: "16px" }}>
@@ -336,12 +360,33 @@ class ManagementClassification extends React.Component {
                   <h4>CoL Draft</h4>{" "}
                   <NameAutocomplete
                     datasetKey={MANAGEMENT_CLASSIFICATION.key}
-                    onSelectName={name =>
-                      this.setState({ defaultAssemblyExpandKey: name.key })
-                    }
-                    onResetSearch={() =>
-                      this.setState({ defaultAssemblyExpandKey: null })
-                    }
+                    onSelectName={name => {
+                      const params = qs.parse(_.get(location, "search"));
+
+                      const newParams = {
+                        ...params,
+                        assemblyTaxonKey: _.get(name, "key")
+                      };
+                      history.push({
+                        pathname: `/assembly`,
+                        search: `?${qs.stringify(newParams)}`
+                      });
+                      this.setState({ assemblyTaxonKey: name.key }, () =>
+                        colTreeActions.refreshAssembly()
+                      );
+                    }}
+                    onResetSearch={() => {
+                      const params = qs.parse(_.get(location, "search"));
+
+                      const newParams = { ...params, assemblyTaxonKey: null };
+                      history.push({
+                        pathname: `/assembly`,
+                        search: `?${qs.stringify(
+                          _.omit(newParams, ["assemblyTaxonKey"])
+                        )}`
+                      });
+                      this.setState({ assemblyTaxonKey: null });
+                    }}
                   />
                   {sectorMappingError && (
                     <Alert
@@ -365,7 +410,7 @@ class ManagementClassification extends React.Component {
                       dragNode={this.state.dragNode}
                       draggable={true}
                       showSourceTaxon={this.showSourceTaxon}
-                      defaultExpandKey={defaultAssemblyExpandKey}
+                      defaultExpandKey={assemblyTaxonKey}
                       addMissingTargetKey={this.addMissingTargetKey}
                     />
                   </div>
@@ -395,27 +440,59 @@ class ManagementClassification extends React.Component {
                   {this.state.selectedDataset && (
                     <NameAutocomplete
                       datasetKey={this.state.selectedDataset.key}
-                      onSelectName={name =>
-                        this.setState({ defaultExpandKey: name.key })
-                      }
-                      onResetSearch={() =>
-                        this.setState({ defaultExpandKey: null })
-                      }
+                      onSelectName={name => {
+                        const params = qs.parse(_.get(location, "search"));
+
+                        const newParams = {
+                          ...params,
+                          sourceTaxonKey: _.get(name, "key")
+                        };
+                        history.push({
+                          pathname: `/assembly`,
+                          search: `?${qs.stringify(newParams)}`
+                        });
+                        this.setState({ sourceTaxonKey: name.key }, () =>
+                          colTreeActions.refreshSource()
+                        );
+                      }}
+                      onResetSearch={() => {
+                        const params = qs.parse(_.get(location, "search"));
+
+                        const newParams = { ...params, sourceTaxonKey: null };
+                        history.push({
+                          pathname: `/assembly`,
+                          search: `?${qs.stringify(
+                            _.omit(newParams, ["sourceTaxonKey"])
+                          )}`
+                        });
+                        this.setState({ sourceTaxonKey: null });
+                      }}
                     />
                   )}
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     {this.state.selectedDataset && (
                       <ColTree
-                      location={location}
+                        location={location}
                         dataset={this.state.selectedDataset}
                         treeType="gsd"
                         onDragStart={e =>
                           this.onDragStart(e, this.state.selectedDataset)
                         }
                         draggable={this.state.mode === "attach"}
-                        defaultExpandKey={this.state.defaultExpandKey}
-                        showSourceTaxon={(sector) => this.setState({defaultAssemblyExpandKey: _.get(sector, 'target.id')})}
-
+                        defaultExpandKey={this.state.sourceTaxonKey}
+                        // showSourceTaxon={(sector) => this.setState({defaultAssemblyExpandKey: _.get(sector, 'target.id')})}
+                        showSourceTaxon={sector => {
+                          const params = qs.parse(_.get(location, "search"));
+                          const newParams = {
+                            ...params,
+                            assemblyTaxonKey: _.get(sector, "target.id")
+                          };
+                          history.push({
+                            pathname: `/assembly`,
+                            search: `?${qs.stringify(newParams)}`
+                          });
+                          colTreeActions.refreshAssembly();
+                        }}
                       />
                     )}
                   </div>

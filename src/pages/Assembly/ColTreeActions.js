@@ -2,8 +2,12 @@ import EventEmitter from 'events';
 
 class ColTreeActions extends EventEmitter {
 
-    attachmentSuccess = (attachmentNode)  =>{
-        this.emit('attachmentSuccess', attachmentNode)
+    refreshAssembly = ()  => {
+        this.emit('refreshAssembly')
+    }
+
+    refreshSource = ()  => {
+        this.emit('refreshSource')
     }
 
     getListenerCount = (action) => {

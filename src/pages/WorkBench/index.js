@@ -417,7 +417,7 @@ class WorkBench extends React.Component {
         } else {
           decisionObject = {...decisionObjectFromForm}
           decisionObject.mode = 'update';
-          decisionObject.datasetKey = datasetKey,
+          decisionObject.datasetKey = datasetKey;
           decisionObject.subject = {
             id: _.get(d, "usage.id"),
 
