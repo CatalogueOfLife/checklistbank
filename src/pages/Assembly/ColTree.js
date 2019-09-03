@@ -173,6 +173,11 @@ class ColTree extends React.Component {
           const nodes = defaultExpanded
             .slice(0, defaultExpanded.length - 1)
             .reverse();
+
+        /*    if(_.get(nodes, `[${nodes.length -1}].children[0]`)){
+            nodes.push(_.get(nodes, `[${nodes.length -1}].children[0]`))
+          } */ 
+
           nodes.reduce((root, tx) => {
             const node = {
               title: (
@@ -212,6 +217,8 @@ class ColTree extends React.Component {
             }) : [node];
             return node;
           }, root_);
+
+
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
@@ -224,7 +231,7 @@ class ColTree extends React.Component {
             error: null,
             defaultExpandedKeys: defaultExpandedNodes
           });
-          if(treeType === "mc"){
+         /*  if(treeType === "mc"){
             
             const params = qs.parse(_.get(location, "search"));
             const newParams =  { ...params, assemblyTaxonKey: defaultExpandKey } 
@@ -232,7 +239,7 @@ class ColTree extends React.Component {
               pathname: `/assembly`,
               search: `?${qs.stringify(newParams)}`
             });
-          }
+          } */
           
         } else {
           this.setState({

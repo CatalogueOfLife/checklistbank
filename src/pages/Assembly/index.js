@@ -216,17 +216,11 @@ class ManagementClassification extends React.Component {
   };
 
   showSourceTaxon = (sector, source) => {
+    
+    const oldDatasetKey = this.state.datasetKey;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
-        this.setState(
-          {
-            sourceTaxonKey: sector.subject.id,
-            datasetKey: source.key,
-            datasetName: res.data.title,
-            selectedDataset: { key: res.data.key, title: res.data.title }
-          },
-          () => {
-            const params = qs.parse(_.get(this.props, "location.search"));
+        const params = qs.parse(_.get(this.props, "location.search"));
             const newParams = {
               ...params,
               sourceTaxonKey: sector.subject.id,
@@ -236,7 +230,16 @@ class ManagementClassification extends React.Component {
               pathname: `/assembly`,
               search: `?${qs.stringify(newParams)}`
             });
-            colTreeActions.refreshSource();
+        this.setState(
+          {
+            sourceTaxonKey: sector.subject.id,
+            datasetKey: source.key,
+            datasetName: res.data.title,
+            selectedDataset: { key: res.data.key, title: res.data.title }
+          },
+          () => {
+            // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentWillRecive props
+           if(oldDatasetKey === source.key) {colTreeActions.refreshSource()};
           }
         );
       })
