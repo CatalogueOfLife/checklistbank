@@ -107,7 +107,7 @@ class ColTree extends React.Component {
           axios(
             `${config.dataApi}dataset/${key}/tree/${encodeURIComponent(
               _.get(res, 'data[1].id') //taxonKey
-            )}/children?limit=${CHILD_PAGE_SIZE}&offset=0`
+            )}/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true`
           )
           .then(this.decorateWithSectorsAndDataset)
           .then(children => {
@@ -174,9 +174,6 @@ class ColTree extends React.Component {
             .slice(0, defaultExpanded.length - 1)
             .reverse();
 
-        /*    if(_.get(nodes, `[${nodes.length -1}].children[0]`)){
-            nodes.push(_.get(nodes, `[${nodes.length -1}].children[0]`))
-          } */ 
 
           nodes.reduce((root, tx) => {
             const node = {
@@ -231,15 +228,6 @@ class ColTree extends React.Component {
             error: null,
             defaultExpandedKeys: defaultExpandedNodes
           });
-         /*  if(treeType === "mc"){
-            
-            const params = qs.parse(_.get(location, "search"));
-            const newParams =  { ...params, assemblyTaxonKey: defaultExpandKey } 
-            history.push({
-              pathname: `/assembly`,
-              search: `?${qs.stringify(newParams)}`
-            });
-          } */
           
         } else {
           this.setState({
@@ -266,7 +254,6 @@ class ColTree extends React.Component {
 
   fetchChildPage = (dataRef, reloadAll) => {
     const { showSourceTaxon, dataset, treeType } = this.props;
- //   const { expandedKeys, loadedKeys } = this.state;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
     const offset = _.get(dataRef, "childOffset");
@@ -274,7 +261,7 @@ class ColTree extends React.Component {
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
         dataRef.taxon.id //taxonKey
-      )}/children?limit=${limit}&offset=${offset}`
+      )}/children?limit=${limit}&offset=${offset}&insertPlaceholder=true`
     )
       .then(res => {
         if (treeType === "gsd" && _.get(dataRef, "taxon.sectorKey")) {
