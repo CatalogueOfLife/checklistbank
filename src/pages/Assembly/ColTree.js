@@ -735,7 +735,7 @@ class ColTree extends React.Component {
                     const params = qs.parse(_.get(location, "search"));
                       const newParams = this.props.treeType === "mc" ? { ...params, assemblyTaxonKey: obj.node.props.dataRef.key } : { ...params, sourceTaxonKey: obj.node.props.dataRef.key }
                       history.push({
-                        pathname: `/assembly`,
+                        pathname: location.path,
                         search: `?${qs.stringify(newParams)}`
                       });
 
@@ -743,7 +743,7 @@ class ColTree extends React.Component {
                   } else {
                     const key = this.props.treeType === "mc" ? 'assemblyTaxonKey' : 'sourceTaxonKey'
                     history.push({
-                      pathname: `/assembly`,
+                      pathname: location.path,
                       search: `?${qs.stringify(_.omit(qs.parse(_.get(location, "search")), [key]))}`
                     });
 

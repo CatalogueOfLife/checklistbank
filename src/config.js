@@ -80,7 +80,7 @@ if (domain.endsWith("www.col.plus")) {
 } else if (domain.endsWith("dev.col.plus")) {
   env = environments.dev;
 } else if (domain.endsWith('localhost')) {
-  env = environments.local;
+  // env = environments.local;
 }
 
 export default env;

@@ -15,7 +15,7 @@ const BooleanValue = ({ value }) => (
     text={
       value ? <FormattedMessage id="yes" defaultMessage="Yes"/> : <FormattedMessage id="no" defaultMessage="No"/>
     }
-  /> : value
+  /> : null
 );
 
 

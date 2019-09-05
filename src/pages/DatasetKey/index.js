@@ -73,6 +73,7 @@ class DatasetPage extends React.Component {
       match: {
         params: { key: datasetKey, section, taxonOrNameKey }
       },
+      location,
       dataset
     } = this.props;
     if (!section ) {
@@ -82,7 +83,6 @@ class DatasetPage extends React.Component {
     }
    
     const sect = (!section) ? "meta" : section.split('?')[0];
-    const params = queryString.parse(this.props.location.search);
     const openKeys = ['datasetKey']
     const selectedKeys = [section]
     return (
@@ -105,7 +105,7 @@ class DatasetPage extends React.Component {
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} match={this.props.match} updateImportState={() => this.getData(datasetKey)} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
-          <DatasetClassification id={datasetKey} defaultExpandKey={params.taxonKey} />
+          <DatasetClassification dataset={dataset}  location={location} />
         )}
         {section === "sectors" && (
           <DatasetSectors dataset={dataset} />

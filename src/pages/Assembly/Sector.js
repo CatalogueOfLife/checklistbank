@@ -10,7 +10,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import SectorNote from "./SectorNote"
 import withContext from "../../components/hoc/withContext"
 import debounce from 'lodash.debounce';
-
+import Auth from '../../components/Auth'
 const {Option} = Select; 
 const { MANAGEMENT_CLASSIFICATION } = config;
 
@@ -149,7 +149,7 @@ class Sector extends React.Component {
   };
 
   render = () => {
-    const { taxon, nomCode } = this.props;
+    const { taxon, nomCode, user } = this.props;
 
     const { error } = this.state;
     const { sector } = taxon;
@@ -296,7 +296,7 @@ class Sector extends React.Component {
             content={
               <div>
               {missingTargetKeys[_.get(sector, 'target.id')] === true && <Alert type="warning" style={{ marginBottom: '8px'}} message={<p>{`${_.get(sector, 'target.name')} with id: ${_.get(sector, 'target.id')} is missing from the assembly.`}<br/>{`You can delete this sector and reattach ${_.get(sector, 'subject.name')} under ${_.get(sector, 'target.name')} if present with another id`}</p>}></Alert>}
-              {isRootSectorInSourceTree && 
+              {Auth.isAuthorised(user, ["editor", "admin"]) && isRootSectorInSourceTree && 
                     <Button
                       style={{ width: "100%" }}
                       type="danger"
@@ -315,7 +315,7 @@ class Sector extends React.Component {
                 >
                   Show sector in assembly
                 </Button>}
-                {isRootSectorInSourceTree && missingTargetKeys[_.get(sector, 'target.id')] !== true &&
+                {Auth.isAuthorised(user, ["editor", "admin"]) && isRootSectorInSourceTree && missingTargetKeys[_.get(sector, 'target.id')] !== true &&
                   _.get(syncState, "running.sectorKey") !== sector.key && (
                     <React.Fragment>
                       <Button
@@ -330,7 +330,7 @@ class Sector extends React.Component {
                       <br />
                     </React.Fragment>
                   )}
-                {!isRootSectorInSourceTree && (
+                {Auth.isAuthorised(user, ["editor", "admin"]) && !isRootSectorInSourceTree && (
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
                     type="danger"
@@ -375,7 +375,7 @@ class Sector extends React.Component {
   };
 }
 
-const mapContextToProps = ({ nomCode }) => ({ nomCode });
+const mapContextToProps = ({ nomCode, user }) => ({ nomCode, user });
 export default withContext(mapContextToProps)(Sector)
 
 

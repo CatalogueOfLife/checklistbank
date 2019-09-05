@@ -290,7 +290,6 @@ class ManagementClassification extends React.Component {
       syncingSector,
       sectorMappingError,
       assemblyTaxonKey,
-      defaultAssemblyExpandKey
     } = this.state;
     const { match, location } = this.props;
     //  const {assemblyTaxonKey, sourceTaxonKey} = location
