@@ -10,16 +10,13 @@ import PropTypes from 'prop-types';
  * @constructor
  */
 const BooleanValue = ({ value }) => (
-  <Badge
+  (value === false || value === true) ? <Badge
     status={value ? 'success' : 'error'}
     text={
       value ? <FormattedMessage id="yes" defaultMessage="Yes"/> : <FormattedMessage id="no" defaultMessage="No"/>
     }
-  />
+  /> : value
 );
 
-BooleanValue.propTypes = {
-  value: PropTypes.bool
-};
 
 export default BooleanValue;

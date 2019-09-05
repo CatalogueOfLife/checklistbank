@@ -228,7 +228,7 @@ class ImportTable extends React.Component {
       key: "x",
       width: 50,
       render: record => (
-        <ImportButton key={record.datasetKey} record={record} onStartImportSuccess={()=> {history.push('/imports/running')}}></ImportButton>
+        <ImportButton key={record.datasetKey} record={record} ></ImportButton>
       )
     }] : defaultColumns;
 

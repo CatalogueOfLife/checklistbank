@@ -92,7 +92,7 @@ class DuplicateSearchPage extends React.Component {
    } */
     this.getSectors();
     let booleans = {};
-    ["withDecision", "parentDifferent", "authorshipDifferent", "rankDifferent", "codeDifferent"].forEach(n => {
+    ["withDecision", "acceptedDifferent", "authorshipDifferent", "rankDifferent", "codeDifferent"].forEach(n => {
       if (params[n] === "true") {
         booleans[n] = true;
       }
@@ -569,25 +569,25 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
-                  <FormItem label="Parent different">
+                  <FormItem label="Accepted different">
                     <RadioGroup
                       onChange={evt => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "parentDifferent"
+                                "acceptedDifferent"
                               ])
                             },
                             this.getData
                           );
                         } else {
                           this.updateSearch({
-                            parentDifferent: evt.target.value
+                            acceptedDifferent: evt.target.value
                           });
                         }
                       }}
-                      value={params.parentDifferent}
+                      value={params.acceptedDifferent}
                     >
                       <Radio value={true}>Yes</Radio>
                       <Radio value={false}>No</Radio>

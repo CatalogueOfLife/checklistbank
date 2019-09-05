@@ -49,12 +49,12 @@ export default [
   },
   {
     id: "c5",
-    text: "ACC-SYN species (different parent, different authors)",
+    text: "ACC-SYN species (different accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "binomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -62,12 +62,12 @@ export default [
   },
   {
     id: "c6",
-    text: "ACC-SYN species (different parent, same authors)",
+    text: "ACC-SYN species (different accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "binomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -75,12 +75,12 @@ export default [
   },
   {
     id: "c7",
-    text: "ACC-SYN species (same parent, same authors)",
+    text: "ACC-SYN species (same accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "binomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -89,12 +89,12 @@ export default [
 
   {
     id: "c8",
-    text: "ACC-SYN infraspecies (different parent, different authors)",
+    text: "ACC-SYN infraspecies (different accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "trinomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -102,12 +102,12 @@ export default [
   },
   {
     id: "c9",
-    text: "ACC-SYN infraspecies (different parent, same authors)",
+    text: "ACC-SYN infraspecies (different accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "trinomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -115,12 +115,12 @@ export default [
   },
   {
     id: "c10",
-    text: "ACC-SYN infraspecies (same parent, same authors)",
+    text: "ACC-SYN infraspecies (same accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "trinomial",
       status: ["accepted", "synonym"],
       withDecision: false
@@ -128,12 +128,12 @@ export default [
   },
   {
     id: "c11",
-    text: "SYN-SYN species (different parent, different authors)",
+    text: "SYN-SYN species (different accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "binomial",
       status: ["synonym"],
       withDecision: false
@@ -141,12 +141,12 @@ export default [
   },
   {
     id: "c12",
-    text: "SYN-SYN species (different parent, same authors)",
+    text: "SYN-SYN species (different accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "binomial",
       status: ["synonym"],
       withDecision: false
@@ -154,12 +154,12 @@ export default [
   },
   {
     id: "c13",
-    text: "SYN-SYN species (same parent, different authors)",
+    text: "SYN-SYN species (same accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "binomial",
       status: ["synonym"],
       withDecision: false
@@ -167,12 +167,12 @@ export default [
   },
   {
     id: "c14",
-    text: "SYN-SYN species (same parent, same authors)",
+    text: "SYN-SYN species (same accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "binomial",
       status: ["synonym"],
       withDecision: false
@@ -180,12 +180,12 @@ export default [
   },
   {
     id: "c15",
-    text: "SYN-SYN infraspecies (different parent, different authors)",
+    text: "SYN-SYN infraspecies (different accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "trinomial",
       status: ["synonym"],
       withDecision: false
@@ -193,12 +193,12 @@ export default [
   },
   {
     id: "c16",
-    text: "SYN-SYN infraspecies (different parent, same authors)",
+    text: "SYN-SYN infraspecies (different accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: true,
+      acceptedDifferent: true,
       category: "trinomial",
       status: ["synonym"],
       withDecision: false
@@ -206,12 +206,12 @@ export default [
   },
   {
     id: "c17",
-    text: "SYN-SYN infraspecies (same parent, different authors)",
+    text: "SYN-SYN infraspecies (same accepted, different authors)",
     params: {
       authorshipDifferent: true,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "trinomial",
       status: ["synonym"],
       withDecision: false
@@ -219,12 +219,12 @@ export default [
   },
   {
     id: "c18",
-    text: "SYN-SYN infraspecies (same parent, same authors)",
+    text: "SYN-SYN infraspecies (same accepted, same authors)",
     params: {
       authorshipDifferent: false,
       minSize: "2",
       mode: "STRICT",
-      parentDifferent: false,
+      acceptedDifferent: false,
       category: "trinomial",
       status: ["synonym"],
       withDecision: false
