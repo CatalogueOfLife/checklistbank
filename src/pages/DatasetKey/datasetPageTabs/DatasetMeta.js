@@ -177,7 +177,7 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="gbifKey" defaultMessage="GBIF Key" />}>
             {data.gbifKey && <a href={`https://www.gbif.org/dataset/${data.gbifKey}`} target="_blank" >{data.gbifKey}</a>}
           </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="importFrequency" defaultMessage="Import Frequency" />}>
+          <PresentationItem label={<FormattedMessage id="importFrequency" defaultMessage="Automated Import Frequency" />}>
             {data.importFrequency}
           </PresentationItem>
 

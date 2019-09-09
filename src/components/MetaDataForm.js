@@ -247,7 +247,7 @@ componentDidMount = () =>{
         </FormItem>}
         {origin === 'external' &&  <FormItem
           {...formItemLayout}
-          label="Import Frequency"
+          label="Automated Import Frequency"
         >
           {getFieldDecorator('importFrequency', {
             initialValue: (_.get(data, 'importFrequency')) ? _.get(data, 'importFrequency') : '',
