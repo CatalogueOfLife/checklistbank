@@ -135,7 +135,11 @@ class NameSearchPage extends React.Component {
       params.facet = ["rank", "issue", "status", "nomstatus", "type", "field"];
     }
 
-    this.setState({ params }, this.getData);
+    this.setState({ params, pagination: {
+      pageSize: params.limit,
+      current: (Number(params.offset) / Number(params.limit)) +1
+      
+    } }, this.getData);
   }
 
   getData = () => {

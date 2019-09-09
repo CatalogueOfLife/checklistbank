@@ -246,7 +246,11 @@ class WorkBench extends React.Component {
     }
     columnFilters.forEach(param => this.updateFilter(params, {}, param));
 
-    this.setState({ params }, this.getData);
+    this.setState({ params, pagination: {
+      pageSize: params.limit,
+      current: (Number(params.offset) / Number(params.limit)) +1
+      
+    } }, this.getData);
   }
 
   getData = () => {

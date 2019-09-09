@@ -112,7 +112,7 @@ class ImportTable extends React.Component {
       data: [],
       params: {},
       pagination: {
-        pageSize: 25,
+        pageSize: 10,
         current: 1
       },
       loading: false
@@ -123,16 +123,22 @@ class ImportTable extends React.Component {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 25, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
     }
     if(query.state){
       this.updateStatusQuery(query)
      }
-    this.getData(query);
+
+     this.setState({ params: query, pagination: {
+      pageSize: query.limit,
+      current: (Number(query.offset) / Number(query.limit)) +1
+      
+    } }, this.getData);
 
     if(this.props.section === 'running'){
      this.timer = setInterval(()=>{
-        this.getData(query)
+
+        this.getData()
       }, 3000)
     }
 
@@ -143,13 +149,29 @@ class ImportTable extends React.Component {
 
   }
 
-  getData = params => {
+  refresh = () => {
+    const { importState, section } = this.props;
+    let query = qs.parse(_.get(this.props, "location.search"));
+    if (_.isEmpty(query)) {
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+    }
+    if(query.state){
+      this.updateStatusQuery(query)
+     }
+
+     this.setState({ params: query, pagination: {
+      pageSize: query.limit,
+      current: (Number(query.offset) / Number(query.limit)) +1
+      
+    } }, this.getData);
+   // this.getData(query);
+  }
+
+  getData = () => {
     const { section } = this.props;
-    this.setState({ loading: true, params });
-    history.push({
-      pathname: `/imports/${section}`,
-      search: `?${qs.stringify(params)}`
-    });
+    const { params } = this.state;
+    this.setState({ loading: true });
+    
     axios(`${config.dataApi}importer?${qs.stringify(params)}`)
       .then(res => {
 
@@ -173,9 +195,14 @@ class ImportTable extends React.Component {
 
         this.setState({
           loading: false,
-          data: res.data.result,
+          data: res.data.result.slice(0, Number(pagination.pageSize)), // Ant table act quite odd if more records than pageSize is in data, to be fixed properly in https://github.com/Sp2000/colplus-backend/issues/462
           err: null,
           pagination
+        }, () => {
+          history.push({
+      pathname: `/imports/${section}`,
+      search: `?${qs.stringify(params)}`
+    });
         });
       })
       .catch(err => {
@@ -214,8 +241,8 @@ class ImportTable extends React.Component {
       query.state = this.props.importState
     }
     this.updateStatusQuery(query)
-
-    this.getData(query);
+    this.setState({pagination: pager, params: query}, this.getData)
+   // this.getData(query);
   };
 
 
