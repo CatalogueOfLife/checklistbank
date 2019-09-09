@@ -271,7 +271,7 @@ componentDidMount = () =>{
           {...formItemLayout}
           label="Website"
         >
-          {getFieldDecorator('Website', {
+          {getFieldDecorator('website', {
             initialValue: (_.get(data, 'website')) ? _.get(data, 'website') : '',
           
           })(
