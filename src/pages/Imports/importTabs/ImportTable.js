@@ -195,7 +195,7 @@ class ImportTable extends React.Component {
 
         this.setState({
           loading: false,
-          data: res.data.result.slice(0, Number(pagination.pageSize)), // Ant table act quite odd if more records than pageSize is in data, to be fixed properly in https://github.com/Sp2000/colplus-backend/issues/462
+          data: res.data.result ? res.data.result.slice(0, Number(pagination.pageSize)) : [], // Ant table act quite odd if more records than pageSize is in data, to be fixed properly in https://github.com/Sp2000/colplus-backend/issues/462
           err: null,
           pagination
         }, () => {
