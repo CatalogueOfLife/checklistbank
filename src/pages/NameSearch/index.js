@@ -14,6 +14,8 @@ import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../Assembly/NameAutocomplete";
 import withContext from "../../components/hoc/withContext";
+
+const PAGE_SIZE = 50;
 const columns = [
   {
     title: "Scientific Name",
@@ -109,7 +111,7 @@ class NameSearchPage extends React.Component {
       columns: columns,
       params: {},
       pagination: {
-        pageSize: 50,
+        pageSize: PAGE_SIZE,
         current: 1,
         showQuickJumper: true
       },
@@ -136,8 +138,8 @@ class NameSearchPage extends React.Component {
     }
 
     this.setState({ params, pagination: {
-      pageSize: params.limit,
-      current: (Number(params.offset) / Number(params.limit)) +1
+      pageSize: params.limit || PAGE_SIZE,
+      current: (Number(params.offset || 0) / Number(params.limit || PAGE_SIZE)) +1
       
     } }, this.getData);
   }
