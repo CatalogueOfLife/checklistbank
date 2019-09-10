@@ -276,9 +276,9 @@ class ColTreeNode extends React.Component {
                 onCancel={this.props.onCancel}
               >
                 <div >
-                  <span onClick={() => { history.push(`/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
+                  <span onClick={() => { history.push(`/dataset/${taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key ? MANAGEMENT_CLASSIFICATION.key : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
                   onContextMenu={()=> {
-                    const win = window.open(`/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
+                    const win = window.open(`/dataset/${taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key ? MANAGEMENT_CLASSIFICATION.key : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
                     win.focus();
                   }}>
                   <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>

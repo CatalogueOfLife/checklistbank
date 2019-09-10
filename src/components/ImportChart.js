@@ -16,8 +16,8 @@ class ImportChart extends React.Component {
     this.state = { options: {} };
   }
 
-  componentWillMount = () => {
-    const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = this.props;
+  componentWillReceiveProps = (nextProps) => {
+    const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = nextProps;
     var chartData = [];
     var logChartData = [];
     var max;
@@ -92,6 +92,8 @@ class ImportChart extends React.Component {
     this.setState({ options, chartData, logChartData, chartType: defaultType || 'column' })
 
   }
+
+ 
 
   getDataLabelOptions = (type) => {
     if (type === 'pie') {
