@@ -19,7 +19,7 @@ import DecisionTag from "../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
-// import ColTreeActions from "./ColTreeActions"
+import TaxonSources from "./TaxonSources"
 
 import history from "../../history";
 
@@ -211,16 +211,7 @@ class ColTreeNode extends React.Component {
                     >
                       Estimates
                     </Button>
-                 { /*  <Checkbox
-                      style={{ marginTop: "8px", width: "100%" }}
-                      checked={this.state.provisional}
-                      onChange={e =>
-                        this.setProvisional(e.target.checked, taxon)
-                      }
-                    >
-                      {" "}
-                      Provisional{" "}
-                    </Checkbox> */}
+                 
                   </React.Fragment>
                 }
                 title="Options"
@@ -313,9 +304,10 @@ class ColTreeNode extends React.Component {
                     !datasetSectors &&
                     !sector && (
                       <Tooltip title="No sectors">
-                        <Icon style={{ marginLeft: "6px" }} type="disconnect" />
+                        <Icon theme="filled" style={{ marginLeft: "6px", color: 'wheat' }} type="warning" />
                       </Tooltip>
                     )}
+                   {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} />} 
                   {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>
