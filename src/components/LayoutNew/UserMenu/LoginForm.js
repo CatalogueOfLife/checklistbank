@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 const FormItem = Form.Item;
 
 class NormalLoginForm extends React.Component {
@@ -13,7 +13,7 @@ class NormalLoginForm extends React.Component {
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { form: {getFieldDecorator}, invalid } = this.props;
     return (
       <Form onSubmit={this.handleSubmit} >
         <FormItem>
@@ -42,6 +42,8 @@ class NormalLoginForm extends React.Component {
           </Button>
           Or <a href="https://www.gbif.org/user/profile">register now!</a>
         </FormItem>
+        {invalid && <FormItem style={{width: '100%'}}><Alert message={invalid} type="error" /></FormItem>}
+
         <FormItem><a className="login-form-forgot" href="https://www.gbif.org/user/profile">Forgot password?</a></FormItem>
       </Form>
     );
