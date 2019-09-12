@@ -32,7 +32,8 @@ class DatasetPage extends React.Component {
     this.state = {
       data: null,
       loading: true,
-      importState: null
+      importState: null,
+      hasData: false
     };
   }
 
@@ -53,10 +54,12 @@ class DatasetPage extends React.Component {
   getData = datasetKey => {
     
 
-      axios(`${config.dataApi}dataset/${datasetKey}/import`)
+    Promise.all([axios(`${config.dataApi}dataset/${datasetKey}/import`), axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)])
+      
       .then(res => {
-        const importState = _.get(res, 'data[0].state') || null
-        this.setState({ importState });
+        const importState = _.get(res[0], 'data[0].state') || null;
+        const hasData = res[1].data.length > 0;
+        this.setState({ importState, hasData });
       })
       .catch(err => {
         this.setState({ importState: null });
@@ -67,7 +70,7 @@ class DatasetPage extends React.Component {
 
   render() {
   //  const { datasetKey, section, dataset } = this.props;
-  const { importState } = this.state;
+  const { importState, hasData } = this.state;
 
     const {
       match: {
@@ -89,7 +92,7 @@ class DatasetPage extends React.Component {
       !dataset ? <Exception404 /> :
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={{...dataset, importState: importState}}
+        selectedDataset={{...dataset, importState: importState, hasData: hasData}}
         section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}

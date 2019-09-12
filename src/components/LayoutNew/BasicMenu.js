@@ -228,7 +228,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="reference">
                   <NavLink
                     to={{
@@ -243,7 +243,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="classification">
                   <NavLink
                     to={{
@@ -257,7 +257,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="sectors">
                   <NavLink
                     to={{
@@ -285,7 +285,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
@@ -311,7 +311,7 @@ class BasicMenu extends Component {
                   Import Metrics
                 </NavLink>
               </Menu.Item>
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="tasks">
                   <NavLink
                     to={{
@@ -326,7 +326,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
@@ -340,7 +340,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{
