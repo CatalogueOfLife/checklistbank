@@ -7,11 +7,11 @@ import PageContent from "../../components/PageContent";
 import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
-import { Button, Alert, Popconfirm, notification } from "antd";
+import {Row, Col, Form, Switch, Button, Alert, Popconfirm, notification } from "antd";
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 const { MANAGEMENT_CLASSIFICATION } = config;
-
+const FormItem = Form.Item;
 class AdminPage extends React.Component {
   constructor(props) {
     super(props);
@@ -23,8 +23,37 @@ class AdminPage extends React.Component {
       updateAllLogosloading: false,
       recalculateSectorCountsLoading: false,
       rematchSectorsAndDecisionsLoading: false,
-      exportResponse: null
+      exportResponse: null,
+      background: {},
+      backgroundError: null
     };
+  }
+
+  componentDidMount = () => {
+    this.getBackground()
+  }
+  getBackground = () => {
+    axios
+      .get(
+        `${config.dataApi}admin/background`
+      )
+      .then(res => {
+        this.setState({ background: res.data, backgroundError: null});
+      })
+      .catch(err => this.setState({ backgroundError: err}));
+  }
+
+  updateBackground = (param, checked) => {
+    const {background} = this.state
+    axios
+      .put(
+        `${config.dataApi}admin/background`, {...background, [param]: checked}
+      )
+      .then(() => {
+        this.setState({ background: {...background, [param]: checked}, backgroundError: null});
+      })
+      .catch(err => this.setState({ backgroundError: err}));
+
   }
 
   syncAllSectors = () => {
@@ -126,7 +155,8 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       rematchSectorsAndDecisionsLoading,
       exportResponse,
-      error
+      error,
+      background
     } = this.state;
 
     return (
@@ -137,10 +167,27 @@ class AdminPage extends React.Component {
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
-          {error && <Alert 
+
+          {error && <Row><Alert 
           closable
           onClose={() => this.setState({ error: null })}
-          message={<ErrorMsg error={error} />} type="error" />}
+          message={<ErrorMsg error={error} />} type="error" /></Row>}
+          <Row>
+          <Form layout="inline">
+          <FormItem label="Background GBIF Sync">
+          <Switch onChange={(checked) => {
+            this.updateBackground('gbifSync', checked)
+          }} checked={background.gbifSync} />
+          </FormItem>
+          <FormItem label="Background importer">
+
+          <Switch onChange={(checked) => {
+            this.updateBackground('importer', checked)
+          }} checked={background.importer} />
+                    </FormItem>
+                    </Form>
+          </Row>
+
           <Popconfirm
             placement="rightTop"
             title="Sync all sectors?"
@@ -216,12 +263,18 @@ class AdminPage extends React.Component {
               Rematch all broken sectors and decisions
             </Button>
           </Popconfirm>
+          <Row>
           <a href={`${config.dataApi}download/`}>Downloads</a>
+
+
+          </Row>
+          <Row>
           {exportResponse && 
           <div>
             The export is available <a href={`${config.dataApi}download/`}>here</a>
             <pre>{exportResponse}</pre>
             </div>}
+            </Row>
         </PageContent>
       </Layout>
     );

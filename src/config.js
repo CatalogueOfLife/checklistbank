@@ -5,7 +5,7 @@ const environments = {
     dataApi: "https://api-dev.col.plus/",
     env: "dev",
     kibanaEnv: {
-      name: "col-dev-ws",
+      name: "col-dev",
       index: "AWyLa2lBHCKcR6PFXu26"
     },
     MANAGEMENT_CLASSIFICATION: {
@@ -24,7 +24,7 @@ const environments = {
     dataApi: "https://api.col.plus/",
     env: "prod",
     kibanaEnv: {
-      name: "col-prod-ws",
+      name: "col-prod",
       index: "AWyLa4mQHCKcR6PFXu4X"
     },
     MANAGEMENT_CLASSIFICATION: {
