@@ -121,7 +121,7 @@ class Sector extends React.Component {
         subject: {
           id: _.get(taxon, "id"),
 
-          name: _.get(taxon, "name")
+          name: _.get(taxon, "name").replace(/(<([^>]+)>)/ig , "")
         },
         mode: "block"
       })
@@ -131,10 +131,7 @@ class Sector extends React.Component {
 
         notification.open({
           message: `Decision apllied`,
-          description: `${_.get(
-            taxon,
-            "name.scientificName"
-          )} was blocked from the assembly`
+          description: `${_.get(taxon, "name").replace(/(<([^>]+)>)/ig , "")} was blocked from the assembly`
         });
         if (typeof decisionCallback === "function") {
           decisionCallback();
