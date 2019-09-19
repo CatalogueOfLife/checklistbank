@@ -38,6 +38,23 @@ const formItemLayout = {
 
 const defaultColumns = [
   {
+    title: "Short name",
+    dataIndex: "alias",
+    width: 150,
+    key: "alias",
+    render: (text, record) => {
+      return (
+        <NavLink
+          to={{ pathname: `/dataset/${record.key}/names` }}
+          exact={true}
+        >
+          {text}
+        </NavLink>
+      );
+    },
+   // sorter: true
+  },
+  {
     title: "Title",
     dataIndex: "title",
     width: 250,

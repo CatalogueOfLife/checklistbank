@@ -235,7 +235,7 @@ class ManagementClassification extends React.Component {
             sourceTaxonKey: sector.subject.id,
             datasetKey: source.key,
             datasetName: res.data.title,
-            selectedDataset: { key: res.data.key, title: res.data.title }
+            selectedDataset: { key: res.data.key, title: res.data.alias || res.data.title }
           },
           () => {
             // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentWillRecive props
@@ -421,7 +421,7 @@ class ManagementClassification extends React.Component {
                     {this.state.selectedDataset ? (
                       <React.Fragment>
                         {" "}
-                        {this.state.selectedDataset.title}
+                        {this.state.selectedDataset.alias || this.state.selectedDataset.title}
                         <NavLink
                           to={`/dataset/${this.state.selectedDataset.key}/meta`}
                         >

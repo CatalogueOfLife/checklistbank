@@ -99,6 +99,29 @@ class SyncTable extends React.Component {
     const columns = [
       {
         title: "Dataset",
+        dataIndex: "dataset.alias",
+        key: "alias",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
+              exact={true}
+            >
+              <Highlighter
+                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                searchWords={[this.state.searchText]}
+                autoEscape
+                textToHighlight={text.toString()}
+              />
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => a.dataset.alias < b.dataset.alias,
+        width: 250,
+        ...this.getColumnSearchProps("dataset.alias")
+      },
+      /* {
+        title: "Dataset",
         dataIndex: "dataset.title",
         key: "title",
         render: (text, record) => {
@@ -119,7 +142,7 @@ class SyncTable extends React.Component {
         sorter: (a, b) => a.dataset.title < b.dataset.title,
         width: 250,
         ...this.getColumnSearchProps("dataset.title")
-      },
+      }, */
       {
         title: "Mode",
         dataIndex: "mode",

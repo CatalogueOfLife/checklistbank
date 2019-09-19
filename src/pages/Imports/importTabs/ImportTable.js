@@ -48,7 +48,7 @@ const defaultColumns = [
           to={{ pathname: `/dataset/${record.datasetKey}/names` }}
           exact={true}
         >
-          {text}
+          {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}
         </NavLink> 
 
       );
