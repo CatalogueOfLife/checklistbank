@@ -95,6 +95,11 @@ const defaultColumns = [
     key: "origin"
   },
   {
+    title: "Type",
+    dataIndex: "type",
+    key: "type"
+  },
+  {
     title: "Code",
     dataIndex: "code",
     key: "code"
@@ -286,10 +291,10 @@ class DatasetList extends React.Component {
 
   render() {
     const { data, loading, error, excludeColumns} = this.state;
-    const { dataFormatType, nomCode } = this.props
-
-    defaultColumns[5].filters = nomCode.map(i => ({text: _.startCase(i.name), value: i.name}))
-    defaultColumns[8].filters = dataFormatType.map(i => ({text: _.startCase(i), value: i}))
+    const { dataFormatType, nomCode, datasetType } = this.props
+    defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
+    defaultColumns[7].filters = nomCode.map(i => ({text: _.startCase(i.name), value: i.name}))
+    defaultColumns[10].filters = dataFormatType.map(i => ({text: _.startCase(i), value: i}))
 
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
@@ -374,6 +379,6 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, dataFormatType, nomCode }) => ({ user, dataFormatType, nomCode });
+const mapContextToProps = ({ user, dataFormatType, nomCode, datasetType }) => ({ user, dataFormatType, nomCode, datasetType });
 
 export default withContext(mapContextToProps)(DatasetList);
