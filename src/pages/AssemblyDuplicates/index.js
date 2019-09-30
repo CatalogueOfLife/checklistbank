@@ -23,7 +23,7 @@ const AssemblyDuplicates = ({location}) => {
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
-      <Duplicates datasetKey={MANAGEMENT_CLASSIFICATION.key} location={location} />
+      <Duplicates datasetKey={MANAGEMENT_CLASSIFICATION.key} location={location} assembly={true} />
       </PageContent>
     </Layout>
   );

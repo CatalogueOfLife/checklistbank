@@ -34,12 +34,15 @@ import DecisionTag from "../WorkBench/DecisionTag";
 import ErrorMsg from "../../components/ErrorMsg";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
-import Auth from "../../components/Auth"
-
+import Auth from "../../components/Auth";
+import { getSectorsBatch } from "../../api/sector";
+import { getDatasetsBatch } from "../../api/dataset";
+import DataLoader from "dataloader";
+const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
+const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
-
 
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
@@ -59,7 +62,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.getData = this.getData.bind(this);
-    const limit = localStorage.getItem('col_plus_duplicates_limit');
+    const limit = localStorage.getItem("col_plus_duplicates_limit");
     this.state = {
       data: [],
       rawData: [],
@@ -92,7 +95,13 @@ class DuplicateSearchPage extends React.Component {
    } */
     this.getSectors();
     let booleans = {};
-    ["withDecision", "acceptedDifferent", "authorshipDifferent", "rankDifferent", "codeDifferent"].forEach(n => {
+    [
+      "withDecision",
+      "acceptedDifferent",
+      "authorshipDifferent",
+      "rankDifferent",
+      "codeDifferent"
+    ].forEach(n => {
       if (params[n] === "true") {
         booleans[n] = true;
       }
@@ -101,9 +110,14 @@ class DuplicateSearchPage extends React.Component {
       }
     });
 
-    if(params._colCheck){
-      let option = { props: {params: queryPresets.filter(qp => qp.id === params._colCheck)[0].params}}
-      this.onPresetSelect(params._colCheck, option)
+    if (params._colCheck) {
+      let option = {
+        props: {
+          params: queryPresets.filter(qp => qp.id === params._colCheck)[0]
+            .params
+        }
+      };
+      this.onPresetSelect(params._colCheck, option);
     } else {
       this.setState(
         { params: { ...this.state.params, ...params, ...booleans } },
@@ -111,12 +125,30 @@ class DuplicateSearchPage extends React.Component {
       );
     }
   }
+  decorateWithSectorsAndDataset = res => {
+    if (!res.usages) return res;
 
+    return Promise.all(
+      res.usages
+        .filter(tx => _.get(tx, "usage.sectorKey"))
+        .map(tx =>
+          sectorLoader.load(_.get(tx, "usage.sectorKey")).then(r => {
+            tx.sector = r;
+            return datasetLoader
+              .load(r.subjectDatasetKey)
+              .then(dataset => (tx.sector.dataset = dataset));
+          })
+        )
+    ).then(() => res);
+  };
+  
   getData = () => {
-    const { params, showAtomizedNames } = this.state;
-    const {location: {pathname}} = this.props;
+    const { params } = this.state;
+    const {
+      location: { pathname }
+    } = this.props;
     this.setState({ loading: true });
-    const { datasetKey } = this.props;
+    const { datasetKey, assembly } = this.props;
 
     history.push({
       pathname: pathname,
@@ -129,16 +161,26 @@ class DuplicateSearchPage extends React.Component {
       })}`
     )
       .then(res => Promise.all(res.data.map(e => this.getDecisions(e))))
+      .then(res => {
+        return assembly
+          ? Promise.all(res.map(e => this.decorateWithSectorsAndDataset(e)))
+          : res;
+      })
       .then(data => {
         const dataArr =
           data.length > Number(params.limit) ? data.slice(0, -1) : data;
-        const {totalFaked} = this.state;
+        const { totalFaked } = this.state;
+        const clms = params.category
+          ? columnDefaults[params.category]
+          : columnDefaults.binomial;
+
         this.setState({
           loading: false,
           data: dataArr
             .map((e, i) =>
               e.usages.map((u, id) => ({
                 ...u.usage,
+                sector: u.sector,
                 dupID: i,
                 dubKey: e.key,
                 classification: u.classification,
@@ -147,11 +189,12 @@ class DuplicateSearchPage extends React.Component {
             )
             .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for hold dupes together
           rawData: dataArr,
-          columns: params.category
-            ? columnDefaults[params.category]
-            : columnDefaults.binomial,
+          columns: assembly ? [this.getGsdColumn(), ...clms] : clms,
           duplicateCount: dataArr.length,
-          totalFaked: totalFaked > (data.length + Number(params.offset)) ? totalFaked : (data.length + Number(params.offset)),
+          totalFaked:
+            totalFaked > data.length + Number(params.offset)
+              ? totalFaked
+              : data.length + Number(params.offset),
           error: null
         });
       })
@@ -164,6 +207,29 @@ class DuplicateSearchPage extends React.Component {
         });
       });
   };
+
+  getGsdColumn = () => {
+    return {
+      title: "gsd",
+      dataIndex: "sector.dataset.alias",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => {
+        return (
+          <NavLink
+            key={_.get(record, "id")}
+            to={{
+              pathname: `/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
+            }}
+            exact={true}
+          >
+            {_.get(record, "sector.dataset.alias")}
+          </NavLink>
+        );
+      }
+    };
+  };
+
   getSectors = () => {
     const { datasetKey } = this.props;
     axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
@@ -204,8 +270,8 @@ class DuplicateSearchPage extends React.Component {
   updateSearch = params => {
     this.setState(
       {
-        params: { ...this.state.params, ...params, offset:0 },
-        totalFaked:0,
+        params: { ...this.state.params, ...params, offset: 0 },
+        totalFaked: 0,
         selectedPreset: undefined
       },
       this.getData
@@ -213,14 +279,31 @@ class DuplicateSearchPage extends React.Component {
   };
 
   resetSearch = () => {
-    this.setState({ params: {limit: this.state.params.limit, offset: 0}, selectedPreset: undefined , totalFaked:0, selectedRowKeys:[]}, this.getData);
+    this.setState(
+      {
+        params: { limit: this.state.params.limit, offset: 0 },
+        selectedPreset: undefined,
+        totalFaked: 0,
+        selectedRowKeys: []
+      },
+      this.getData
+    );
   };
 
   onPresetSelect = (value, option) => {
     const {
       props: { params }
     } = option;
-    this.setState({ params: {...params, offset: 0, limit: this.state.params.limit}, selectedPreset: value, totalFaked:0, decision: null, selectedRowKeys: [] }, this.getData);
+    this.setState(
+      {
+        params: { ...params, offset: 0, limit: this.state.params.limit },
+        selectedPreset: value,
+        totalFaked: 0,
+        decision: null,
+        selectedRowKeys: []
+      },
+      this.getData
+    );
   };
   onSectorSearch = val => {
     const { sectors } = this.state;
@@ -244,9 +327,12 @@ class DuplicateSearchPage extends React.Component {
     const promises = data
       .filter(d => selectedRowKeys.includes(_.get(d, "id")))
       .map(d => {
-        const method = (d.decision) ? 'put' : 'post';
-        return axios[method](`${config.dataApi}decision${method === 'put' ? `/${d.decision.key}`: ''}`, 
-        {
+        const method = d.decision ? "put" : "post";
+        return axios[method](
+          `${config.dataApi}decision${
+            method === "put" ? `/${d.decision.key}` : ""
+          }`,
+          {
             datasetKey: datasetKey,
             subject: {
               id: _.get(d, "name.id"),
@@ -261,8 +347,15 @@ class DuplicateSearchPage extends React.Component {
             status: ["block", "chresonym"].includes(decision)
               ? _.get(d, "status")
               : decision
-          })
-          .then(decisionId => axios(`${config.dataApi}decision/${method === 'post' ? decisionId.data : d.decision.key}`))
+          }
+        )
+          .then(decisionId =>
+            axios(
+              `${config.dataApi}decision/${
+                method === "post" ? decisionId.data : d.decision.key
+              }`
+            )
+          )
           .then(res => {
             d.decision = res.data;
             const statusMsg = `Status changed to ${decision} for ${_.get(
@@ -274,7 +367,7 @@ class DuplicateSearchPage extends React.Component {
             }${decision === "chresonym" ? "marked as chresonym" : ""}`;
 
             notification.open({
-              message: `Decision ${method === 'post' ? 'apllied': 'changed'}`,
+              message: `Decision ${method === "post" ? "apllied" : "changed"}`,
               description: ["block", "chresonym"].includes(decision)
                 ? decisionMsg
                 : statusMsg
@@ -330,49 +423,66 @@ class DuplicateSearchPage extends React.Component {
     });
   };
 
-  columnFilter = (c) => {
-    const {params} = this.state;
-    
-    if(params.status && params.status.indexOf("synonym") === -1){
-      return c.key !== "accepted"
+  columnFilter = c => {
+    const { params } = this.state;
+
+    if (params.status && params.status.indexOf("synonym") === -1) {
+      return c.key !== "accepted";
     } else {
-      return true
+      return true;
     }
-  }
+  };
 
   selectNewestInGroup = () => {
-    
-         this.setState({newestInGroupLoading: true})
-    const {rawData} = this.state;
+    this.setState({ newestInGroupLoading: true });
+    const { rawData } = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
-      const max = Math.max(...group.usages.map(r => r.usage.name.publishedInYear))
-      selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => Number(r.usage.name.publishedInYear) === max ).map(i => i.usage.id)]
-    })
-    this.setState({selectedRowKeys, newestInGroupLoading: false})
-  }
+      const max = Math.max(
+        ...group.usages.map(r => r.usage.name.publishedInYear)
+      );
+      selectedRowKeys = [
+        ...selectedRowKeys,
+        ...group.usages
+          .filter(r => Number(r.usage.name.publishedInYear) === max)
+          .map(i => i.usage.id)
+      ];
+    });
+    this.setState({ selectedRowKeys, newestInGroupLoading: false });
+  };
 
   selectAllInGroupExceptOldest = () => {
-         this.setState({allButOldestInGroupLoading: true}) 
-    const {rawData} = this.state;
+    this.setState({ allButOldestInGroupLoading: true });
+    const { rawData } = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
-      const min = Math.min(...group.usages.map(r => r.usage.name.publishedInYear))
-      selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => Number(r.usage.name.publishedInYear) > min ).map(i => i.usage.id)]
-    })
-    this.setState({selectedRowKeys, allButOldestInGroupLoading: false})
-  }
-
+      const min = Math.min(
+        ...group.usages.map(r => r.usage.name.publishedInYear)
+      );
+      selectedRowKeys = [
+        ...selectedRowKeys,
+        ...group.usages
+          .filter(r => Number(r.usage.name.publishedInYear) > min)
+          .map(i => i.usage.id)
+      ];
+    });
+    this.setState({ selectedRowKeys, allButOldestInGroupLoading: false });
+  };
 
   selectAllSynonymsInGroup = () => {
-    this.setState({synonymsSelectLoading: true}) 
-    const {rawData} = this.state;
+    this.setState({ synonymsSelectLoading: true });
+    const { rawData } = this.state;
     let selectedRowKeys = [];
     rawData.forEach(group => {
-      selectedRowKeys = [...selectedRowKeys, ...group.usages.filter(r => r.usage.status === 'synonym' ).map(i => i.usage.id)]
-    })
-    this.setState({selectedRowKeys, synonymsSelectLoading: false})
-  }
+      selectedRowKeys = [
+        ...selectedRowKeys,
+        ...group.usages
+          .filter(r => r.usage.status === "synonym")
+          .map(i => i.usage.id)
+      ];
+    });
+    this.setState({ selectedRowKeys, synonymsSelectLoading: false });
+  };
   render() {
     const {
       data,
@@ -400,7 +510,6 @@ class DuplicateSearchPage extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px"
     };
-
 
     return (
       <div
@@ -447,7 +556,7 @@ class DuplicateSearchPage extends React.Component {
               </div>
               {advancedMode && (
                 <Form layout="inline">
-                 <Select
+                  <Select
                     placeholder="Name category"
                     value={params.category}
                     style={{
@@ -522,7 +631,7 @@ class DuplicateSearchPage extends React.Component {
                         {r}
                       </Option>
                     ))}
-                  </Select>   
+                  </Select>
 
                   <AutoComplete
                     dataSource={this.state.sectors}
@@ -543,8 +652,8 @@ class DuplicateSearchPage extends React.Component {
                   >
                     <Input suffix={<Icon type="search" />} />
                   </AutoComplete>
-                    <br />
-                    <FormItem label="Authorship different">
+                  <br />
+                  <FormItem label="Authorship different">
                     <RadioGroup
                       onChange={evt => {
                         if (typeof evt.target.value === "undefined") {
@@ -620,7 +729,7 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
                   </FormItem>
-                  
+
                   <FormItem label="Code different">
                     <RadioGroup
                       onChange={evt => {
@@ -677,9 +786,7 @@ class DuplicateSearchPage extends React.Component {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
-                              params: _.omit(this.state.params, [
-                                "entity"
-                              ])
+                              params: _.omit(this.state.params, ["entity"])
                             },
                             this.getData
                           );
@@ -697,9 +804,8 @@ class DuplicateSearchPage extends React.Component {
                   <FormItem label="Show atomized names">
                     <RadioGroup
                       onChange={evt => {
-                        this.setState({showAtomizedNames: evt.target.value})
-                        
-                        }}
+                        this.setState({ showAtomizedNames: evt.target.value });
+                      }}
                       value={showAtomizedNames}
                     >
                       <Radio value={true}>Yes</Radio>
@@ -707,7 +813,6 @@ class DuplicateSearchPage extends React.Component {
                     </RadioGroup>
                   </FormItem>
 
-                 
                   <FormItem>
                     <Button type="danger" onClick={this.resetSearch}>
                       Reset all
@@ -717,68 +822,70 @@ class DuplicateSearchPage extends React.Component {
               )}{" "}
             </Card>
           </Col>
-         { Auth.isAuthorised(user, ["editor"]) && <Col span={6}>
-            <Card>
-              <Select
-                style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
-                onChange={this.onDecisionChange}
-                value={decision ? decision : undefined}
-                placeholder="Pick decision"
-              >
-                <OptGroup label="Status">
-                  {taxonomicstatus.map(s => (
-                    <Option value={s} key={s}>
-                      {_.startCase(s)}
-                    </Option>
-                  ))}
-                </OptGroup>
-                <OptGroup label="Other">
-                  <Option value="block">Block</Option>
-                  <Option value="chresonym">Chresonym</Option>
-                </OptGroup>
-              </Select>
+          {Auth.isAuthorised(user, ["editor"]) && (
+            <Col span={6}>
+              <Card>
+                <Select
+                  style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
+                  onChange={this.onDecisionChange}
+                  value={decision ? decision : undefined}
+                  placeholder="Pick decision"
+                >
+                  <OptGroup label="Status">
+                    {taxonomicstatus.map(s => (
+                      <Option value={s} key={s}>
+                        {_.startCase(s)}
+                      </Option>
+                    ))}
+                  </OptGroup>
+                  <OptGroup label="Other">
+                    <Option value="block">Block</Option>
+                    <Option value="chresonym">Chresonym</Option>
+                  </OptGroup>
+                </Select>
 
-              <Button
-                type="primary"
-                onClick={this.applyDecision}
-                disabled={!hasSelected}
-                style={{ width: 140 }}
-                loading={postingDecisions}
-              >
-                Apply decision
-              </Button>
-              {selectedRowKeys &&
-                selectedRowKeys.length > 0 && <div>
-                Selected {selectedRowKeys.length} {
-                  selectedRowKeys.length > 1 ? "taxa" : "taxon"
-                }</div>}
-            </Card>
-          </Col> }
+                <Button
+                  type="primary"
+                  onClick={this.applyDecision}
+                  disabled={!hasSelected}
+                  style={{ width: 140 }}
+                  loading={postingDecisions}
+                >
+                  Apply decision
+                </Button>
+                {selectedRowKeys && selectedRowKeys.length > 0 && (
+                  <div>
+                    Selected {selectedRowKeys.length}{" "}
+                    {selectedRowKeys.length > 1 ? "taxa" : "taxon"}
+                  </div>
+                )}
+              </Card>
+            </Col>
+          )}
         </Row>
         <Row />
-        <Row style={{marginBottom: "8px", marginTop: "8px" }}>
-        {  Auth.isAuthorised(user, ["editor"]) &&  <Col span={12} >
-         <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
-         
-          <Button
-                type="primary"
-                onClick={this.selectNewestInGroup}
-                style={{ width: 140, marginRight: '10px' }}
-                loading={newestInGroupLoading}
-              >
-                Most recent name
-              </Button>
+        <Row style={{ marginBottom: "8px", marginTop: "8px" }}>
+          {Auth.isAuthorised(user, ["editor"]) && (
+            <Col span={12}>
+              <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
+                <Button
+                  type="primary"
+                  onClick={this.selectNewestInGroup}
+                  style={{ width: 140, marginRight: "10px" }}
+                  loading={newestInGroupLoading}
+                >
+                  Most recent name
+                </Button>
               </Tooltip>
               <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
-
-          <Button
-                type="primary"
-                onClick={this.selectAllInGroupExceptOldest}
-                loading={allButOldestInGroupLoading}
-                style={{ width: 140, marginRight: '10px' }}
-              >
-                All except oldest
-              </Button>
+                <Button
+                  type="primary"
+                  onClick={this.selectAllInGroupExceptOldest}
+                  loading={allButOldestInGroupLoading}
+                  style={{ width: 140, marginRight: "10px" }}
+                >
+                  All except oldest
+                </Button>
               </Tooltip>
               <Button
                 type="primary"
@@ -788,28 +895,40 @@ class DuplicateSearchPage extends React.Component {
               >
                 All synonyms
               </Button>
-              
-          </Col> }
-          <Col span={Auth.isAuthorised(user, ["editor"]) ? 12 : 24} style={{ textAlign: "right"}}>
-          {data.length+ " names on this page"}
+            </Col>
+          )}
+          <Col
+            span={Auth.isAuthorised(user, ["editor"]) ? 12 : 24}
+            style={{ textAlign: "right" }}
+          >
+            {data.length + " names on this page"}
             {!error && (
               <Pagination
-              style={{display: 'inline'}}
-              showSizeChanger
-              pageSizeOptions={['50','100','250', '500']}
-              onShowSizeChange={(current, size)=> {
-                localStorage.setItem('col_plus_duplicates_limit', size);
-                this.setState({params: {...this.state.params, limit: size}}, this.getData)
-              }}
+                style={{ display: "inline" }}
+                showSizeChanger
+                pageSizeOptions={["50", "100", "250", "500"]}
+                onShowSizeChange={(current, size) => {
+                  localStorage.setItem("col_plus_duplicates_limit", size);
+                  this.setState(
+                    { params: { ...this.state.params, limit: size } },
+                    this.getData
+                  );
+                }}
                 onChange={(page, pageSize) => {
-
-                  this.setState({params: {...this.state.params, offset: (page - 1) * Number(this.state.params.limit)}}, this.getData)
-                  
+                  this.setState(
+                    {
+                      params: {
+                        ...this.state.params,
+                        offset: (page - 1) * Number(this.state.params.limit)
+                      }
+                    },
+                    this.getData
+                  );
                 }}
                 pageSize={Number(this.state.params.limit)}
                 size="small"
                 total={totalFaked}
-                locale={{ items_per_page: ' duplicates / page' }}
+                locale={{ items_per_page: " duplicates / page" }}
               />
             )}
           </Col>
@@ -819,7 +938,11 @@ class DuplicateSearchPage extends React.Component {
             <Table
               size="small"
               components={this.components}
-              columns={showAtomizedNames === true ? columns.filter(this.columnFilter) : columnDefaults.fullScientificName}
+              columns={
+                showAtomizedNames === true
+                  ? columns.filter(this.columnFilter)
+                  : columnDefaults.fullScientificName
+              }
               dataSource={data}
               loading={loading}
               onChange={this.handleTableChange}
@@ -828,7 +951,9 @@ class DuplicateSearchPage extends React.Component {
                 record.dupID % 2 ? "duplicate-alternate-row" : ""
               }
               pagination={false}
-              rowSelection={!Auth.isAuthorised(user, ["editor"]) ? null : rowSelection}
+              rowSelection={
+                !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection
+              }
             />
           </React.Fragment>
         )}

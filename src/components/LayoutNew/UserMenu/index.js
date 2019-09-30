@@ -50,7 +50,6 @@ class UserMenu extends PureComponent {
         });
       })
       .catch((err) => {
-        console.log(err)
         this.setState({ invalid: err.message });
       });
   };
