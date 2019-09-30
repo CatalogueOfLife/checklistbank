@@ -147,6 +147,26 @@ class AdminPage extends React.Component {
       );
   };
 
+  resetEsReadOnly = ()=> {
+    this.setState({ elasticSearchResetLoading: true });
+    axios
+      .put(`${config.dataApi}es/*/_settings`, {"index.blocks.read_only_allow_delete": null})
+      .then(res => {
+        this.setState(
+          { elasticSearchResetLoading: false, error: null, exportResponse: null },
+          () => {
+            notification.open({
+              message: "ElasticSearch",
+              description: "read_only_allow_delete reset successfully"
+            });
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({ error: err, elasticSearchResetLoading: false , exportResponse: null})
+      );
+  }
+
   render() {
     const {
       allSectorSyncloading,
@@ -154,6 +174,7 @@ class AdminPage extends React.Component {
       updateAllLogosloading,
       recalculateSectorCountsLoading,
       rematchSectorsAndDecisionsLoading,
+      elasticSearchResetLoading,
       exportResponse,
       error,
       background
@@ -261,6 +282,21 @@ class AdminPage extends React.Component {
               style={{ marginRight: "10px", marginBottom: "10px" }}
             >
               Rematch all broken sectors and decisions
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to reset ElasticSearch read_only_allow_delete?"
+            onConfirm={this.resetEsReadOnly}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={elasticSearchResetLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Exit ElasticSearch read_only_allow_delete mode
             </Button>
           </Popconfirm>
           <Row>
