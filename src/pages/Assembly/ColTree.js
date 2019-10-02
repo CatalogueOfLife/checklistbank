@@ -370,7 +370,7 @@ class ColTree extends React.Component {
           sectorLoader.load(tx.sectorKey).then(r => {
             tx.sector = r;
             return datasetLoader
-              .load(r.datasetKey)
+              .load(r.subjectDatasetKey)
               .then(dataset => (tx.sector.dataset = dataset));
           })
         )

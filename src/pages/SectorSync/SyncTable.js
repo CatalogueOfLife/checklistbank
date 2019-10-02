@@ -235,7 +235,7 @@ class SyncTable extends React.Component {
                     sync._id = `${sync.sectorKey}_${sync.attempt}`;
                   })
                   .then(() => 
-                    axios(`${config.dataApi}dataset/${sync.sector.datasetKey}`)
+                    axios(`${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`)
                   )
                   .then((res) => {
                     sync.sector.dataset=res.data

@@ -57,6 +57,7 @@ class VerbatimPresentation extends React.Component {
  
   renderTerm = (key, value, type) => {
       const {termsMap,termsMapReversed, datasetKey} = this.props;
+      const isTaxonId  = key === 'acef:AcceptedTaxonID' || (key === 'col:ID' && type === 'col:Taxon')
 
       if(_.get(termsMap, `${type}.${key}`)){
 
@@ -64,13 +65,15 @@ class VerbatimPresentation extends React.Component {
 
         const types = [...new Set(primaryKeys.map(p => `type=${p.split('.')[0]}`))]
         const terms = primaryKeys.map(p => `${p.split('.')[1]}=${value}`)
-          return <NavLink key={key}
+          return <React.Fragment><NavLink key={key}
           to={{
             pathname: `/dataset/${datasetKey}/verbatim`,
             search: `?${types.join('&')}&${terms.join('&')}&termOp=OR`
-          }}>{value}</NavLink>
+          }}>{value}</NavLink> {" "} {isTaxonId && <NavLink key={key}
+          to={{
+            pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(value)}`
+          }}>taxon page</NavLink>}</React.Fragment>
       } else if(_.get(termsMapReversed, `${type}.${key}`)){
-
         const foreignKeys = _.get(termsMapReversed, `${type}.${key}`).filter(k => !parentRelations.includes(k));
 
         const types = [...new Set(foreignKeys.map(p => `type=${p.split('.')[0]}`))]
@@ -79,7 +82,12 @@ class VerbatimPresentation extends React.Component {
           to={{
             pathname: `/dataset/${datasetKey}/verbatim`,
             search: `?${types.join('&')}&${terms.join('&')}&termOp=OR`
-          }}> <Icon type="link"></Icon></NavLink></React.Fragment>
+          }}> <Icon type="link"></Icon></NavLink> {" "}
+          {isTaxonId && <NavLink key={key}
+          to={{
+            pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(value)}`
+          }}>taxon page</NavLink>}
+          </React.Fragment>
       } else {
         return   isValidURL(value) ? <a href={value} target="_blank">{value}</a> : value 
       }

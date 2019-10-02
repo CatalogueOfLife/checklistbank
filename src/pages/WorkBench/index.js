@@ -287,10 +287,11 @@ class WorkBench extends React.Component {
   };
 
   getDecisions = res => {
+    const { datasetKey } = this.props;
     const promises = _.get(res, "data.result")
       ? res.data.result.map(d => {
           return axios(
-            `${config.dataApi}decision?id=${_.get(d, "usage.id")}`
+            `${config.dataApi}decision?id=${_.get(d, "usage.id")}&datasetKey=${datasetKey}`
           ).then(decisions => {
             if (decisions.data && decisions.data.length > 0) {
               d.decisions = decisions.data;

@@ -23,7 +23,8 @@ class SyncButton extends React.Component {
       .post(
         `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`,
         {
-          'sectorKey': record.sectorKey
+          'sectorKey': record.sectorKey,
+          'datasetKey': MANAGEMENT_CLASSIFICATION.key
         }
       )
       .then(res => {
