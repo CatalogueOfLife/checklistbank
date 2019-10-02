@@ -69,7 +69,7 @@ class VerbatimPresentation extends React.Component {
           to={{
             pathname: `/dataset/${datasetKey}/verbatim`,
             search: `?${types.join('&')}&${terms.join('&')}&termOp=OR`
-          }}>{value}</NavLink> {" "} {isTaxonId && <NavLink key={key}
+          }}>{value}</NavLink> {" "} {isTaxonId && <NavLink key={`taxonLink:${key}`}
           to={{
             pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(value)}`
           }}>taxon page</NavLink>}</React.Fragment>
@@ -83,7 +83,7 @@ class VerbatimPresentation extends React.Component {
             pathname: `/dataset/${datasetKey}/verbatim`,
             search: `?${types.join('&')}&${terms.join('&')}&termOp=OR`
           }}> <Icon type="link"></Icon></NavLink> {" "}
-          {isTaxonId && <NavLink key={key}
+          {isTaxonId && <NavLink key={`taxonLink:${key}`}
           to={{
             pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(value)}`
           }}>taxon page</NavLink>}
