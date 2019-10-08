@@ -92,6 +92,7 @@ class ColTree extends React.Component {
       dataset: { key },
       showSourceTaxon,
       defaultExpandKey,
+      catalogueKey,
       location
     } = this.props;
     let id = key;
@@ -99,7 +100,7 @@ class ColTree extends React.Component {
       ? axios(
           `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
             defaultExpandKey
-          )}`
+          )}?catalogueKey=${treeType === 'gsd' ? catalogueKey : key}`
         )
         .then(res =>{
           // Load the siblings of the default expanded taxon
@@ -107,7 +108,7 @@ class ColTree extends React.Component {
           axios(
             `${config.dataApi}dataset/${key}/tree/${encodeURIComponent(
               _.get(res, 'data[1].id') //taxonKey
-            )}/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true`
+            )}/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true&catalogueKey=${treeType === 'gsd' ? catalogueKey : key}`
           )
           .then(this.decorateWithSectorsAndDataset)
           .then(children => {
@@ -129,7 +130,7 @@ class ColTree extends React.Component {
       : Promise.resolve(false);
     var defaultExpandedNodes;
     return Promise.all([
-      axios(`${config.dataApi}dataset/${id}/tree`).then(
+      axios(`${config.dataApi}dataset/${id}/tree?catalogueKey=${treeType === 'gsd' ? catalogueKey : key}`).then(
         this.decorateWithSectorsAndDataset
       ),
       p
@@ -253,7 +254,7 @@ class ColTree extends React.Component {
   };
 
   fetchChildPage = (dataRef, reloadAll) => {
-    const { showSourceTaxon, dataset, treeType } = this.props;
+    const { showSourceTaxon, dataset, treeType, catalogueKey } = this.props;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
     const offset = _.get(dataRef, "childOffset");
@@ -261,7 +262,7 @@ class ColTree extends React.Component {
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
         dataRef.taxon.id //taxonKey
-      )}/children?limit=${limit}&offset=${offset}&insertPlaceholder=true`
+      )}/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${treeType === 'gsd' ? catalogueKey: dataset.key}`
     )
       .then(res => {
         if (treeType === "gsd" && _.get(dataRef, "taxon.sectorKey")) {

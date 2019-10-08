@@ -474,6 +474,7 @@ class ManagementClassification extends React.Component {
                         location={location}
                         dataset={this.state.selectedDataset}
                         treeType="gsd"
+                        catalogueKey={MANAGEMENT_CLASSIFICATION.key}
                         onDragStart={e =>
                           this.onDragStart(e, this.state.selectedDataset)
                         }
