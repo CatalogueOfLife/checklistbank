@@ -1,10 +1,12 @@
 import React from "react";
-import { Form, Input, Modal, Select, Alert, Checkbox } from "antd";
+import { Form, Input, Modal, Select, Alert, Checkbox, AutoComplete, Row, Col, Steps, notification } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
+
+const { Step } = Steps;
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -21,11 +23,13 @@ const removeEmptyValues = (myObj) => {
 
 class DecisionForm extends React.Component {
   state = {
+    error: null,
     visible: true,
-    confirmLoading: false
+    confirmLoading: false,
+    current: 0
   };
 
-  handleSubmit = e => {
+  handleSubmit = (current, cb) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
@@ -46,13 +50,21 @@ class DecisionForm extends React.Component {
 
         };
         removeEmptyValues(decision.name)
+        if(_.isEmpty(decision.name, true)){
+          delete decision.name
+        };
         removeEmptyValues(decision)
 
         if (
-          this.props.onSuccess &&
-          typeof this.props.onSuccess === "function"
+          !_.isEmpty(decision, true)
         ) {
-          this.props.onSuccess(decision, _.get(this.props, 'data'), );
+          this.applyDecision(decision)
+          .then(()=> this.setState({current}, cb))
+          .catch(()=> {
+            this.setState({current})
+          });
+        } else {
+          this.setState({current}, cb)
         }
       } else {
       }
@@ -63,6 +75,46 @@ class DecisionForm extends React.Component {
     const value = e.target.value;
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
   };
+  applyDecision = (decisionObjectFromForm) => {
+    
+    const { datasetKey, subjectDatasetKey, rowsForEdit } = this.props;
+    const {current} = this.state;
+    const currentRow = rowsForEdit[current];
+
+    const currentDecision = _.get(currentRow, 'decisions[0]' );
+
+        let decisionObject;
+        
+          decisionObject = {...decisionObjectFromForm}
+          decisionObject.mode = 'update';
+          decisionObject.subjectDatasetKey = Number(subjectDatasetKey);
+          decisionObject.datasetKey = Number(datasetKey);
+          decisionObject.subject = {
+            id: _.get(currentRow, "usage.id"),
+
+            name: _.get(currentRow, "usage.name.scientificName"),
+            authorship: _.get(currentRow, "usage.name.authorship"),
+            rank: _.get(currentRow, "usage.name.rank")
+          }
+        
+        
+         const method = currentDecision ? 'put' : 'post';
+        return axios[method](`${config.dataApi}decision${currentDecision ? '/'+currentDecision.key : ''}`, decisionObject)
+
+          .then(res => {
+            this.props.form.resetFields()
+            notification.open({
+              message: `Decision ${currentDecision ? 'updated':'applied'}`
+            });
+          })
+          .catch(err => {
+            this.props.form.resetFields()
+
+            this.setState({error: err})
+          });
+      
+
+  };
 
   render() {
     const {
@@ -72,10 +124,15 @@ class DecisionForm extends React.Component {
       nametype,
       lifezone,
       onCancel,
-      form: { getFieldDecorator },
-      data
+      onOk,
+      rowsForEdit,
+      form: { getFieldDecorator }
     } = this.props;
-    const { visible, submissionError } = this.state;
+    const { visible, submissionError, current, error } = this.state;
+
+    const currentRow = rowsForEdit[current];
+    const currentDecision = _.get(rowsForEdit[current], 'decisions[0]' );
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -88,12 +145,12 @@ class DecisionForm extends React.Component {
     };
     return (
       <Modal
-        style={{ width: "650px" }}
+        width="90%"
         title={<span>Decision</span>}
         visible={visible}
         onOk={() => {
-          this.setState({ confirmLoading: true });
-          this.handleSubmit();
+          this.handleSubmit(this.state.current, onOk)
+         // this.setState({ visible: false }, onOk)
         }}
         confirmLoading={this.state.confirmLoading}
         onCancel={() => {
@@ -101,19 +158,32 @@ class DecisionForm extends React.Component {
         }}
         destroyOnClose={true}
       >
+        <Row>
+          {error && (
+            <Alert
+              style={{ marginBottom: "10px" }}
+              message={<ErrorMsg error={error} />}
+              closable
+              type="error"
+            />
+          )}
+        </Row>
+        <Row>
+        <Col span={16}>
+        
         <Form>
         <FormItem {...formItemLayout} label="Scientific name">
             {getFieldDecorator("scientificName", {
-                          initialValue: (_.get(data, 'name.scientificName')) ? _.get(data, 'name.scientificName') : ''
+                          initialValue: (_.get(currentDecision, 'name.scientificName')) ? _.get(currentDecision, 'name.scientificName') : ''
 
-            })(<Input />)}
+            })(<AutoComplete dataSource={_.get(currentRow, `usage.name.scientificName`) ? [_.get(currentRow, `usage.name.scientificName`)] : []} />)}
           </FormItem>
           <FormItem {...formItemLayout} label="Authorship">
-            {getFieldDecorator("authorship", { initialValue: (_.get(data, 'name.authorship')) ? _.get(data, 'name.authorship') : ''
-})(<Input />)}
+            {getFieldDecorator("authorship", { initialValue: (_.get(currentDecision, 'name.authorship')) ? _.get(currentDecision, 'name.authorship') : ''
+})(<AutoComplete dataSource={_.get(currentRow, `usage.name.authorship`) ? [_.get(currentRow, `usage.name.authorship`)] : []} />)}
           </FormItem>
           <FormItem {...formItemLayout} label="Rank">
-            {getFieldDecorator("rank", {initialValue: (_.get(data, 'name.rank')) ? _.get(data, 'name.rank') : ""})(
+            {getFieldDecorator("rank", {initialValue: (_.get(currentDecision, 'name.rank')) ? _.get(currentDecision, 'name.rank') : ""})(
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -
@@ -127,7 +197,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Name type">
-            {getFieldDecorator("nametype", {initialValue: (_.get(data, 'name.nametype')) ? _.get(data, 'name.nametype') : ''})(
+            {getFieldDecorator("nametype", {initialValue: (_.get(currentDecision, 'name.nametype')) ? _.get(currentDecision, 'name.nametype') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -
@@ -141,7 +211,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Nom. status">
-            {getFieldDecorator("nomstatus", {initialValue: (_.get(data, 'name.nomstatus')) ? _.get(data, 'name.nomstatus') : ''})(
+            {getFieldDecorator("nomstatus", {initialValue: (_.get(currentDecision, 'name.nomstatus')) ? _.get(currentDecision, 'name.nomstatus') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -
@@ -155,7 +225,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Nom. code">
-            {getFieldDecorator("nomCode", {initialValue: (_.get(data, 'name.nomCode')) ? _.get(data, 'name.nomCode') : ''})(
+            {getFieldDecorator("nomCode", {initialValue: (_.get(currentDecision, 'name.nomCode')) ? _.get(currentDecision, 'name.nomCode') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -
@@ -169,7 +239,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Lifezones">
-            {getFieldDecorator("lifezones", {initialValue: (_.get(data, 'lifezones')) ? _.get(data, 'lifezones') : []})(
+            {getFieldDecorator("lifezones", {initialValue: (_.get(currentDecision, 'lifezones')) ? _.get(currentDecision, 'lifezones') : []})(
               <Select style={{ width: 200 }} showSearch mode="multiple">
                 {lifezone.map(r => (
                   <Option key={r.name} value={r.name}>
@@ -185,7 +255,7 @@ class DecisionForm extends React.Component {
         >
           {getFieldDecorator('fossil', {
             valuePropName: 'checked',
-            initialValue: (_.get(data, 'fossil')) === true ? true : false
+            initialValue: (_.get(currentDecision, 'fossil')) === true ? true : false
             
           })(
             <Checkbox />
@@ -199,7 +269,7 @@ class DecisionForm extends React.Component {
         >
           {getFieldDecorator('recent', {
             valuePropName: 'checked',
-            initialValue: (_.get(data, 'recent')) === true ? true : false
+            initialValue: (_.get(currentDecision, 'recent')) === true ? true : false
             
           })(
             <Checkbox />
@@ -208,7 +278,7 @@ class DecisionForm extends React.Component {
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="Note">
-            {getFieldDecorator("note", {initialValue: (_.get(data, 'note')) ? _.get(data, 'note') : ''})(<TextArea />)}
+            {getFieldDecorator("note", {initialValue: (_.get(currentDecision, 'note')) ? _.get(currentDecision, 'note') : ''})(<TextArea />)}
           </FormItem>
           {submissionError && (
             <FormItem>
@@ -219,6 +289,19 @@ class DecisionForm extends React.Component {
             </FormItem>
           )}
         </Form>
+        
+        </Col>
+      <Col span={7} style={{marginLeft: '20px'}}>
+    { rowsForEdit && rowsForEdit.length > 1 && <Steps 
+      type="navigation"
+      onChange={this.handleSubmit}
+       
+      current={current} direction="vertical">
+        {rowsForEdit.map(r => <Step title="" description={_.get(r, 'usage.name.scientificName')} />)}
+    </Steps>}
+    </Col>
+        </Row>
+
       </Modal>
     );
   }

@@ -56,6 +56,7 @@ class WorkBench extends React.Component {
       columns: this.defaultColumns,
       decisionFormVisible: false,
       decisionForEdit: null,
+      rowsForEdit: [],
       params: {},
       pagination: {
         pageSize: 50,
@@ -384,7 +385,7 @@ class WorkBench extends React.Component {
     this.setState({ decision });
   };
   cancelDecisionForm = () => {
-    this.setState({decisionFormVisible: false})
+    this.setState({decisionFormVisible: false, decisionForEdit: null, rowsForEdit: []})
   }
   applyDecision = (decisionObjectFromForm, decisionKey) => {
     const {
@@ -400,7 +401,7 @@ class WorkBench extends React.Component {
         if(!decisionObjectFromForm){
           decisionObject = {
           
-            datasetKey: datasetKey,
+            subjectDatasetKey: datasetKey,
             subject: {
               id: _.get(d, "usage.id"),
 
@@ -422,7 +423,7 @@ class WorkBench extends React.Component {
         } else {
           decisionObject = {...decisionObjectFromForm}
           decisionObject.mode = 'update';
-          decisionObject.datasetKey = datasetKey;
+          decisionObject.subjectDatasetKey = datasetKey;
           decisionObject.subject = {
             id: _.get(d, "usage.id"),
 
@@ -480,7 +481,7 @@ class WorkBench extends React.Component {
 
   updateDecision = (newDecision, oldDecision) => {
     const {data: {result}} = this.state
-    const decision = {...newDecision, mode: oldDecision.mode, datasetKey: oldDecision.datasetKey, subject: oldDecision.subject}
+    const decision = {...newDecision, mode: oldDecision.mode, datasetKey: oldDecision.datasetKey, subjectDatasetKey: oldDecision.subjectDatasetKey, subject: oldDecision.subject}
     return axios
           .put(`${config.dataApi}decision/${oldDecision.key}`, decision)
 
@@ -524,12 +525,13 @@ class WorkBench extends React.Component {
       columns,
       decision,
       decisionFormVisible,
-      decisionForEdit
+      rowsForEdit
     } = this.state;
     const {
       rank,
       taxonomicstatus,
-      user
+      user,
+      datasetKey
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -574,11 +576,19 @@ class WorkBench extends React.Component {
       >
        {decisionFormVisible && (
           <DecisionForm
-            data={decisionForEdit}
+            rowsForEdit={rowsForEdit}
             onCancel={this.cancelDecisionForm}
-            onSuccess={(newDecision, oldDecision) => {
-              oldDecision ? this.updateDecision(newDecision, oldDecision) : this.applyDecision(newDecision)
+            onOk={() => {
+              this.cancelDecisionForm();
+              const {data} = this.state;
+              this.getDecisions({data:data}).then(res => {
+                this.setState({
+                  data: res.data
+                })
+              })
             }}
+            datasetKey={3}
+            subjectDatasetKey={datasetKey}
           />
         )}
         <Row>
@@ -678,7 +688,7 @@ class WorkBench extends React.Component {
             </Select>
             <Button
               type="primary"
-              onClick={() => decision ? this.applyDecision() : this.setState({decisionFormVisible: true})}
+              onClick={() => decision ? this.applyDecision() : this.setState({decisionFormVisible: true, rowsForEdit: result.filter(r => selectedRowKeys.includes(_.get(r, "usage.id")))})}
               disabled={!hasSelected}
               loading={loading}
             >
