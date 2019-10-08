@@ -361,8 +361,17 @@ class BasicMenu extends Component {
                 <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
               )}
 
-              {selectedKeys.includes("verbatim") && (
-                <Menu.Item key="verbatim">Verbatim</Menu.Item>
+              {selectedDataset && selectedDataset.hasData && (
+                <Menu.Item key="verbatim"><NavLink
+                to={{
+                  pathname: `/dataset/${_.get(
+                    this.props,
+                    "selectedDataset.key"
+                  )}/verbatim`
+                }}
+              >
+                Verbatim
+              </NavLink></Menu.Item>
               )}
             </SubMenu>
           )}
