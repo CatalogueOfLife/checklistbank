@@ -53,8 +53,9 @@ class SpeciesestimateModal extends React.Component {
   };
 
   submitData = values => {
-    const { taxon } = this.props;
+    const { taxon, datasetKey } = this.props;
     const newEst = {
+      datasetKey: datasetKey,
       referenceId: this.state.selectedReference.key,
       estimate: values.estimate,
       type: values.type,

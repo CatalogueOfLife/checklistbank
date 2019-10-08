@@ -134,6 +134,7 @@ class ColTreeNode extends React.Component {
             onCancel={this.cancelEstimateModal}
             onSuccess={this.cancelEstimateModal}
             taxon={taxon}
+            datasetKey={MANAGEMENT_CLASSIFICATION.key}
           />
         )}
 
