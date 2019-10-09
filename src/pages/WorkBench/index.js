@@ -587,6 +587,11 @@ class WorkBench extends React.Component {
                 })
               })
             }}
+            onSaveDecision={() => {
+             return this.getDecisions({data: {result: rowsForEdit}}).then(res => {
+                this.setState({rowsForEdit})
+              })
+            }}
             datasetKey={3}
             subjectDatasetKey={datasetKey}
           />

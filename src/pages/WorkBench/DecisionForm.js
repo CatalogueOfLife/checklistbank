@@ -77,7 +77,7 @@ class DecisionForm extends React.Component {
   };
   applyDecision = (decisionObjectFromForm) => {
     
-    const { datasetKey, subjectDatasetKey, rowsForEdit } = this.props;
+    const { datasetKey, subjectDatasetKey, rowsForEdit, onSaveDecision } = this.props;
     const {current} = this.state;
     const currentRow = rowsForEdit[current];
 
@@ -100,7 +100,7 @@ class DecisionForm extends React.Component {
         
          const method = currentDecision ? 'put' : 'post';
         return axios[method](`${config.dataApi}decision${currentDecision ? '/'+currentDecision.key : ''}`, decisionObject)
-
+          .then(onSaveDecision)
           .then(res => {
             this.props.form.resetFields()
             notification.open({
