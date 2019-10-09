@@ -448,7 +448,7 @@ class ColTree extends React.Component {
       dragNode.props.title.props.taxon.rank ===
       e.node.props.title.props.taxon.rank
     ) {
-      mode = "MERGE";
+      mode = "UNION"
     }
     const msg =
       mode === "ATTACH" ? (
@@ -500,8 +500,8 @@ class ColTree extends React.Component {
             text: 'Ok',
             action: () => this.confirmAttach(e.node, dragNode, mode)
           }] : [{
-            text: 'Merge',
-            action: () => this.confirmAttach(e.node, dragNode, 'MERGE')
+            text: 'Union',
+            action: () => this.confirmAttach(e.node, dragNode, 'UNION')
           }, {
             text: 'Replace',
             action: () => this.confirmAttach(e.node, dragNode, 'REPLACE')
