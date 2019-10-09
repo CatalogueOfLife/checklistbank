@@ -33,7 +33,8 @@ class DatasetPage extends React.Component {
       data: null,
       loading: true,
       importState: null,
-      hasData: false
+      hasData: false,
+      lastSuccesFullImport: null
     };
   }
 
@@ -59,7 +60,7 @@ class DatasetPage extends React.Component {
       .then(res => {
         const importState = _.get(res[0], 'data[0].state') || null;
         const hasData = res[1].data.length > 0;
-        this.setState({ importState, hasData });
+        this.setState({ importState, hasData, lastSuccesFullImport: hasData ? _.get(res, '[1].data[0]') : null });
       })
       .catch(err => {
         this.setState({ importState: null });
@@ -70,7 +71,7 @@ class DatasetPage extends React.Component {
 
   render() {
   //  const { datasetKey, section, dataset } = this.props;
-  const { importState, hasData } = this.state;
+  const { importState, hasData, lastSuccesFullImport } = this.state;
 
     const {
       match: {
@@ -136,7 +137,7 @@ class DatasetPage extends React.Component {
           <Name datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
         )}
         {sect === "verbatim" && (
-          <VerbatimRecord datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
+          <VerbatimRecord datasetKey={datasetKey} lastSuccesFullImport={lastSuccesFullImport} location={this.props.location} match={this.props.match}  />
         )}
         
 

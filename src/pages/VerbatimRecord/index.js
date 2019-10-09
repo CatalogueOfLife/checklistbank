@@ -11,22 +11,33 @@ import ErrorMsg from "../../components/ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import SearchBox from "../DatasetList/SearchBox";
 import history from "../../history";
+import MultiValueFilter from "../NameSearch/MultiValueFilter";
+
+const removeEmptyValues = (obj) => {
+    
+   return Object.entries(obj).reduce((a,[k,v]) => (v ? {...a, [k]:v} : a), {})
+ 
+}
 
 class VerbatimRecord extends React.Component {
   constructor(props) {
     super(props);
+    const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
 
     this.state = {
       verbatim: [],
       verbatimError: null,
       total: 0,
-      limit: 10,
+      limit: lsLimit ? Number(lsLimit) : 10,
       offset: 0
     };
   }
 
   componentDidMount = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
+    if(!params.limit){
+      params.limit = this.state.limit
+    }
     this.getVerbatimData(params);
   };
 
@@ -36,6 +47,9 @@ class VerbatimRecord extends React.Component {
       _.get(nextProps, "location.search")
     ) {
       let params = qs.parse(_.get(nextProps, "location.search"));
+      if(!params.limit){
+        params.limit = this.state.limit
+      }
       this.getVerbatimData(params);
     }
   }
@@ -64,20 +78,32 @@ class VerbatimRecord extends React.Component {
       });
   };
 
-  onSearch = q => {
+  onSearch = search => {
     const { location } = this.props;
+    const params = qs.parse(_.get(location, "search"));
+    const query = {q: params.q, type: params.type};
+    let newQuery = {...query, ...search};
+    
     history.push({
       pathname: location.path,
-      search: `?${qs.stringify({ q: q })}`
+      search: `?${qs.stringify(removeEmptyValues(newQuery))}`
     });
   };
 
   render = () => {
-    const { dataset, location } = this.props;
+    const { location, lastSuccesFullImport } = this.props;
     const { total, limit, offset, verbatim, verbatimError } = this.state;
     const current = Number(offset) / Number(limit) + 1;
     const params = qs.parse(_.get(location, "search"));
-    const defaultQuery = qs.parse(_.get(location, "search.q"));
+
+    const typeFacets = lastSuccesFullImport ? 
+      Object.keys(lastSuccesFullImport.verbatimByTypeCount)
+        .map(t => ({
+          value: t,
+          label: `${t} (${lastSuccesFullImport.verbatimByTypeCount[t]})`
+        })) : [];
+          
+
     return (
       <div
         style={{
@@ -93,9 +119,19 @@ class VerbatimRecord extends React.Component {
         <Row style={{ marginBottom: "10px" }}>
           <Col span={12}>
             {" "}
-            <SearchBox onSearch={this.onSearch} defaultValue={_.get(params, 'q')}></SearchBox>
+            <SearchBox onSearch={value => this.onSearch({ q: value })} defaultValue={_.get(params, 'q')}></SearchBox>
+
+            
           </Col>
-          <Col span={12} style={{ textAlign: "right" }}>
+          <Col span={12}>
+          <MultiValueFilter
+                  defaultValue={_.get(params, "type")}
+                  onChange={value => this.onSearch({ type: value })}
+                  vocab={typeFacets}
+                  label="Row type"
+                />
+          </Col>
+          <Col span={24} style={{ textAlign: "right" }}>
             {" "}
             {
               <Pagination
