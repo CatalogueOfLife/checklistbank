@@ -69,7 +69,7 @@ class SpeciesestimateModal extends React.Component {
       .then(tx =>
         axios.post(`${config.dataApi}estimate`, {
           ...newEst,
-          subject: {
+          target: {
             id: _.get(tx, "data.name.id"),
 
             name: _.get(tx, "data.name.scientificName"),
