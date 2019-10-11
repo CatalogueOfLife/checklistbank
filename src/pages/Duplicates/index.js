@@ -43,7 +43,7 @@ const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
-
+const {MANAGEMENT_CLASSIFICATION} = config;
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 
@@ -333,7 +333,8 @@ class DuplicateSearchPage extends React.Component {
             method === "put" ? `/${d.decision.key}` : ""
           }`,
           {
-            datasetKey: datasetKey,
+            datasetKey: MANAGEMENT_CLASSIFICATION.key,
+            subjectDatasetKey: datasetKey,
             subject: {
               id: _.get(d, "name.id"),
 
