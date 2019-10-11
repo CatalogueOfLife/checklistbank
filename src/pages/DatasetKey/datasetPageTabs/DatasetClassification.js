@@ -100,6 +100,7 @@ class DatasetClassification extends React.Component {
         <ColTree 
           dataset={dataset} 
           treeType="gsd"
+          catalogueKey={MANAGEMENT_CLASSIFICATION.key}
           defaultExpandKey={params.sourceTaxonKey}
           location={location}
           showSourceTaxon={sector => {
