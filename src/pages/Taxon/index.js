@@ -124,7 +124,7 @@ class TaxonPage extends React.Component {
                 });
 
               axios(
-                `${config.dataApi}dataset/${_.get(sector, "data.datasetKey")}`
+                `${config.dataApi}dataset/${_.get(sector, "data.subjectDatasetKey")}`
               ).then(dataset => {
                 this.setState({ sourceDataset: dataset.data });
               });
@@ -262,11 +262,12 @@ class TaxonPage extends React.Component {
             )}
             {_.get(taxon, "accordingTo") && (
               <PresentationItem md={md} label="According to">
-                {`${_.get(taxon, "accordingTo")}${_.get(
+                {`${_.get(taxon, "accordingTo")}`}
+                {_.get(
                   taxon,
                   "accordingToDate"
                 ) &&
-                  `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}`}
+                  `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
               </PresentationItem>
             )}
             {_.get(taxon, "status") && (
