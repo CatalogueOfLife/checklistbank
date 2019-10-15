@@ -187,13 +187,14 @@ class ManagementClassification extends React.Component {
             target.name
           } was removed from the CoL draft, removing children.`
         });
-        return this.saveSector(subject, parent, "ATTACH");
+        return this.saveSector(subject, parent, "UNION");
       });
   };
 
   saveSector = (subject, target, mode) => {
     const sector = {
-      datasetKey: subject.datasetKey,
+      subjectDatasetKey: subject.datasetKey,
+      datasetKey: MANAGEMENT_CLASSIFICATION.key,
       mode: mode,
       subject: { id: subject.id, status: subject.status },
       target: { id: target.id, status: target.status }
