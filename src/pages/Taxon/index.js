@@ -422,7 +422,7 @@ class TaxonPage extends React.Component {
                     {_.get(sourceDataset, "title")}
                   </NavLink>
                   <span style={{ marginLeft: "10px" }}>
-                    {_.get(sourceDataset, "completeness") + "%"}
+                    {_.get(sourceDataset, "completeness") && (_.get(sourceDataset, "completeness") + "%")}
                   </span>
                   {_.get(sourceDataset, "confidence") && (
                     <Rate
