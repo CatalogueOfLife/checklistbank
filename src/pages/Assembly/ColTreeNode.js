@@ -88,9 +88,9 @@ class ColTreeNode extends React.Component {
   };
 
   cancelChildModal = () => {
-    const { reloadSelfAndSiblings } = this.props;
+    const { reloadChildren } = this.props;
 
-    this.setState({ childModalVisible: false }, reloadSelfAndSiblings);
+    this.setState({ childModalVisible: false }, reloadChildren);
   };
 
   cancelEditTaxonModal = () => {

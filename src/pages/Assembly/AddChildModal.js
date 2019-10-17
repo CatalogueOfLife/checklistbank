@@ -50,7 +50,7 @@ class AddChildModal extends React.Component {
         this.setState({ submissionError: null, confirmLoading: false }, () => {
           notification.open({
             message: "Child inserted",
-            description: `${values.name} was inserted as child of ${parent.name}`
+            description: `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was inserted as child of ${_.get(parent, 'name')}`
           });
           if(this.props.onSuccess && typeof this.props.onSuccess === 'function'){
             this.props.onSuccess()
