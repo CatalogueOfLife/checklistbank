@@ -661,7 +661,7 @@ class WorkBench extends React.Component {
                     >
                       <Radio value="_NOT_NULL">With decision</Radio>
                       <Radio value="_NULL">Without decision</Radio>
-                      <Radio value={undefined}>Ignore</Radio>
+                      <Radio value={undefined}>All</Radio>
                     </RadioGroup>
                     </FormItem>
           </Col>

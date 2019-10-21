@@ -97,7 +97,7 @@ class HomePage extends React.Component {
       colDataLoading,
       datasets
     } = this.state;
-
+    // http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="">
         <Helmet>
@@ -112,7 +112,7 @@ class HomePage extends React.Component {
           cover={
             <img
               alt="example"
-              src="//api.gbif.org/v1/image/unsafe/1170x422/http:%2F%2Fimages.ctfassets.net%2Fuo17ejk9rkwj%2F5q3rzdm22WSa2iYA6im0Oy%2F5ade1f2c77debc6820c875e0f5aaee4a%2FSphaerocoris_annulus.jpg"
+              src="//api.gbif.org/v1/image/unsafe/1170x422/http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg"
             />
           }
         >
