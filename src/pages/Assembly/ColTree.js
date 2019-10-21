@@ -16,7 +16,7 @@ import qs from "query-string";
 const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
-const CHILD_PAGE_SIZE = 100; // How many children will we load at a time
+const CHILD_PAGE_SIZE = 10; // How many children will we load at a time
 
 const IRREGULAR_RANKS = [
   "unranked",
@@ -618,6 +618,7 @@ class ColTree extends React.Component {
         )
       )
       .then(res => {
+        // TODO reload children for both nodes instead
         if (e.node.props.dataRef.children) {
           e.node.props.dataRef.children.push(e.dragNode.props.dataRef);
         } else {
