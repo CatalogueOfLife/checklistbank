@@ -16,7 +16,7 @@ import qs from "query-string";
 const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
-const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
+const CHILD_PAGE_SIZE = 1500; // How many children will we load at a time
 
 const IRREGULAR_RANKS = [
   "unranked",
