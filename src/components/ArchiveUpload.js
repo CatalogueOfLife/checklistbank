@@ -11,7 +11,8 @@ class ArchiveUpload extends React.Component {
     this.customRequest = this.customRequest.bind(this);
     this.onChange = this.onChange.bind(this);
     this.state = {
-      submissionError: null
+      submissionError: null,
+      fileList: []
     };
   }
 
@@ -28,6 +29,7 @@ class ArchiveUpload extends React.Component {
         this.setState({ submissionError: null });
       })
       .catch(err => {
+        options.onError(err)
         this.setState({ submissionError: err });
         console.log(err);
       });
@@ -42,14 +44,16 @@ class ArchiveUpload extends React.Component {
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
+    this.setState({fileList: [info.file]})
   }
   render() {
     const { datasetKey } = this.props;
-    const { submissionError } = this.state;
+    const { submissionError, fileList } = this.state;
     return (
       <div className="clearfix">
         {submissionError && (
           <Alert
+            style={{marginBottom: '8px'}}
             closable
             onClose={() => this.setState({ submissionError: null })}
             message={<ErrorMsg error={submissionError} />}
@@ -60,6 +64,7 @@ class ArchiveUpload extends React.Component {
           action={`${config.dataApi}importer/${datasetKey}`}
           customRequest={this.customRequest}
           onChange={this.onChange}
+          fileList={fileList}
         >
           <Button>
             <Icon type="upload" /> Upload Data Archive
