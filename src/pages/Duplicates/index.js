@@ -61,8 +61,8 @@ const ResizeableTitle = props => {
 class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
     const limit = localStorage.getItem("col_plus_duplicates_limit");
+    const {assembly} = props;
     this.state = {
       data: [],
       rawData: [],
@@ -80,7 +80,7 @@ class DuplicateSearchPage extends React.Component {
       allButOldestInGroupLoading: false,
       synonymsSelectLoading: false,
       newestInGroupLoading: false,
-      showAtomizedNames: true
+      showAtomizedNames: !assembly
     };
   }
 
