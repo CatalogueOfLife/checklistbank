@@ -164,11 +164,11 @@ class BasicMenu extends Component {
               </span>
             }
           >
-                <Menu.Item key="nameIndex">
+                {/* <Menu.Item key="nameIndex">
     <NavLink to={{ pathname: "/names" }}>
               <span>Name index</span>
-            </NavLink>
-    </Menu.Item>
+            </NavLink> 
+    </Menu.Item> */}
             <Menu.Item key="/dataset">
               <NavLink to="/dataset">Search</NavLink>
             </Menu.Item>
