@@ -66,7 +66,7 @@ class BasicMenu extends Component {
     const { selectedKeys, openKeys } = this.state;
     return (
       <React.Fragment>
-        <div className="logo">
+        {/* <div className="logo">
         <NavLink
                   to={{
                     pathname: `/`
@@ -75,7 +75,18 @@ class BasicMenu extends Component {
                 >
             <Logo />
             </NavLink>
-        </div>
+        </div> */}
+        <div className="logo">
+        <NavLink
+                  to={{
+                    pathname: `/`
+                  }}
+                  exact={true}
+                >
+                  <Logo style={{marginLeft: '10px'}} /> <h1 style={{color: 'white', display: 'inline'}}>CoL Clearinghouse</h1>
+                  </NavLink>
+                  </div>
+        
         <Menu
           selectedKeys={selectedKeys}
           openKeys={openKeys}
