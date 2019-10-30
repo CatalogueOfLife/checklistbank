@@ -44,9 +44,9 @@ class NamePage extends React.Component {
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/reference/${encodeURIComponent(
+      `${config.dataApi}dataset/${key}/reference/${
         referenceKey
-      )}`
+      }`
     )
       .then(res => {
         this.setState({
@@ -71,7 +71,7 @@ class NamePage extends React.Component {
     } = this.props;
 
     this.setState({ nameLoading: true });
-    axios(`${config.dataApi}dataset/${key}/name/${encodeURIComponent(nameKey)}`)
+    axios(`${config.dataApi}dataset/${key}/name/${nameKey}`)
       .then(res => {
         this.setState(
           { nameLoading: false, name: res.data, nameError: null },

@@ -62,16 +62,16 @@ class TaxonPage extends React.Component {
     } = this.props;
     this.setState({ loading: true });
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(taxonKey)}`
+      `${config.dataApi}dataset/${key}/taxon/${taxonKey}`
     )
       .then(res => {
         let promises = [res];
         if (_.get(res, "data.name.publishedInId")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${key}/reference/${encodeURIComponent(
+              `${config.dataApi}dataset/${key}/reference/${
                 _.get(res, "data.name.publishedInId")
-              )}`
+              }`
             ).then(publishedIn => {
               res.data.name.publishedIn = publishedIn.data;
               return res;
@@ -82,17 +82,17 @@ class TaxonPage extends React.Component {
         if (_.get(res, "data.name")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+              `${config.dataApi}dataset/${key}/name/${
                 _.get(res, "data.name.id")
-              )}/relations`
+              }/relations`
             ).then(relations => {
               res.data.name.relations = relations.data;
               return Promise.all(
                 relations.data.map(r => {
                   return axios(
-                    `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+                    `${config.dataApi}dataset/${key}/name/${
                       r.relatedNameId
-                    )}`
+                    }`
                   ).then(n => {
                     r.relatedName = n.data;
                   });
@@ -154,9 +154,9 @@ class TaxonPage extends React.Component {
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(
+      `${config.dataApi}dataset/${key}/taxon/${
         taxonKey
-      )}/info`
+      }/info`
     )
       .then(res => {
         this.setState({ infoLoading: false, info: res.data, infoError: null });
