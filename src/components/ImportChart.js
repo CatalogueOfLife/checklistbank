@@ -17,83 +17,90 @@ class ImportChart extends React.Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = nextProps;
-    var chartData = [];
-    var logChartData = [];
-    var max;
-    var min;
-    _.each(data, (v, k) => {
-      if (_.isUndefined(min) || v < min) {
-        min = v
-      }
-      if (_.isUndefined(max) || v > max) {
-        max = v
-      }
-      chartData.push([k, v])
-    });
-    var logMin = Math.log(min);
-    var logStart = Math.max(0, Math.floor(logMin));
-    var logMax = Math.log(max);
-    chartData.forEach(function (e) {
-      if (e[1] === 0) {
-        logChartData.push([e[0], 0]);
-      } else {
-        logChartData.push([e[0], Math.round(100 * (Math.log(e[1]) - logStart) / (logMax - logStart))]);
-      }
-    });
 
-    let options = {
-      chart: {
-        type: defaultType || 'column'
-      },
-      title: {
-        text: title
-      },
-      subtitle: {
-        text: subtitle
-      },
-      credits: false,
-      xAxis: {
-        type: 'category',
-        labels: {
-          rotation: -65,
-          style: {
-            fontSize: '13px',
-            fontFamily: 'Verdana, sans-serif'
-          }
-        }
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: title
-        }
-      },
-      legend: {
-        enabled: false
-      },
-      tooltip: {
-        pointFormat: `${title}: <b>{point.y}</b>`
-      },
-      series: [{
-        name: title,
-        data: chartData,
-        point: {
-          events: {
-            click: (e) => {
-              history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
-            }
-          }
-        },
-        dataLabels: this.getDataLabelOptions(defaultType || 'column')
-      }]
-    };
-
-    this.setState({ options, chartData, logChartData, chartType: defaultType || 'column' })
+    this.initChart(nextProps)
 
   }
 
- 
+  componentDidMount = () => {
+    this.initChart(this.props)
+  }
+
+ initChart = (props) => {
+  const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = props;
+  var chartData = [];
+  var logChartData = [];
+  var max;
+  var min;
+  _.each(data, (v, k) => {
+    if (_.isUndefined(min) || v < min) {
+      min = v
+    }
+    if (_.isUndefined(max) || v > max) {
+      max = v
+    }
+    chartData.push([k, v])
+  });
+  var logMin = Math.log(min);
+  var logStart = Math.max(0, Math.floor(logMin));
+  var logMax = Math.log(max);
+  chartData.forEach(function (e) {
+    if (e[1] === 0) {
+      logChartData.push([e[0], 0]);
+    } else {
+      logChartData.push([e[0], Math.round(100 * (Math.log(e[1]) - logStart) / (logMax - logStart))]);
+    }
+  });
+
+  let options = {
+    chart: {
+      type: defaultType || 'column'
+    },
+    title: {
+      text: title
+    },
+    subtitle: {
+      text: subtitle
+    },
+    credits: false,
+    xAxis: {
+      type: 'category',
+      labels: {
+        rotation: -65,
+        style: {
+          fontSize: '13px',
+          fontFamily: 'Verdana, sans-serif'
+        }
+      }
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: title
+      }
+    },
+    legend: {
+      enabled: false
+    },
+    tooltip: {
+      pointFormat: `${title}: <b>{point.y}</b>`
+    },
+    series: [{
+      name: title,
+      data: chartData,
+      point: {
+        events: {
+          click: (e) => {
+            history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
+          }
+        }
+      },
+      dataLabels: this.getDataLabelOptions(defaultType || 'column')
+    }]
+  };
+
+  this.setState({ options, chartData, logChartData, chartType: defaultType || 'column' })
+ }
 
   getDataLabelOptions = (type) => {
     if (type === 'pie') {
