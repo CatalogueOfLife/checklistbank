@@ -332,6 +332,16 @@ componentDidMount = () =>{
             <TextArea rows={6} />
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Citation"
+        >
+          {getFieldDecorator('citation', {
+            initialValue: (_.get(data, 'citation')) ? _.get(data, 'citation') : ''
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
 
         <FormItem
           {...formItemLayout}
