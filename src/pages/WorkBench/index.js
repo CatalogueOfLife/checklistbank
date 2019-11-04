@@ -693,11 +693,21 @@ class WorkBench extends React.Component {
             </Select>
             <Button
               type="primary"
-              onClick={() => decision ? this.applyDecision() : this.setState({decisionFormVisible: true, rowsForEdit: result.filter(r => selectedRowKeys.includes(_.get(r, "usage.id")))})}
+              onClick={() => this.applyDecision() }
+              disabled={!hasSelected || !decision}
+              loading={loading}
+              style={{ marginRight: 10 }}
+
+            >
+              Apply selected decision
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => this.setState({decisionFormVisible: true, rowsForEdit: result.filter(r => selectedRowKeys.includes(_.get(r, "usage.id")))})}
               disabled={!hasSelected}
               loading={loading}
             >
-              Apply decision
+              Apply complex decisions
             </Button>
             <span style={{ marginLeft: 8 }}>
               {selectedRowKeys.length > 1
