@@ -179,7 +179,7 @@ const defaultColumns = [
     key: "logs",
     render: (text, record) => (
       <Tooltip title="Kibana logs">
-        <a href={kibanaQuery(record.sectorKey, record.attempt)}>
+        <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank" >
           <Icon type="code" style={{fontSize: '20px'}} />
         </a>
       </Tooltip>

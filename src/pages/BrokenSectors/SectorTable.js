@@ -300,7 +300,7 @@ class SyncTable extends React.Component {
         key: "logs",
         render: (text, record) => (
           <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.key)}>
+            <a href={kibanaQuery(record.key)} target="_blank" >
               <Icon type="code" style={{ fontSize: "20px" }} />
             </a>
           </Tooltip>
