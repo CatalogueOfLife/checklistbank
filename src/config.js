@@ -3,6 +3,7 @@ const environments = {
     url: "https://dev.col.plus",
 
     dataApi: "https://api-dev.col.plus/",
+    downloadApi: "http://api-dev.col.plus/download/",
     env: "dev",
     kibanaEnv: {
       name: "col-dev",
@@ -22,6 +23,7 @@ const environments = {
   prod: {
     url: "https://wwww.col.plus",
     dataApi: "https://api.col.plus/",
+    downloadApi: "http://api.col.plus/download/",
     env: "prod",
     kibanaEnv: {
       name: "col-prod",

@@ -300,7 +300,7 @@ class AdminPage extends React.Component {
             </Button>
           </Popconfirm>
           <Row>
-          <a href={`${config.dataApi}download/`}>Downloads</a>
+          <a href={config.downloadApi}>Downloads</a>
 
 
           </Row>
