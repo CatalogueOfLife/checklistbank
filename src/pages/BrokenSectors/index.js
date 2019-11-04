@@ -36,7 +36,7 @@ class SyncTable extends React.Component {
     let datasets = [];
     while (!last) {
       const d = await axios(
-        `${config.dataApi}dataset?offset=${offset}&limit=${limit}`
+        `${config.dataApi}dataset?offset=${offset}&limit=${limit}&contributesTo=${MANAGEMENT_CLASSIFICATION.key}`
       );
       datasets = [...datasets, ...d.data.result];
       offset += limit;
