@@ -251,11 +251,11 @@ class DecisionForm extends React.Component {
           </FormItem>
           <FormItem
           {...formItemLayout}
-          label="Fossil"
+          label="Extinct"
         >
-          {getFieldDecorator('fossil', {
+          {getFieldDecorator('extinct', {
             valuePropName: 'checked',
-            initialValue: (_.get(currentDecision, 'fossil')) === true ? true : false
+            initialValue: (_.get(currentDecision, 'extinct')) === true ? true : false
             
           })(
             <Checkbox />
@@ -263,20 +263,7 @@ class DecisionForm extends React.Component {
               
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Recent"
-        >
-          {getFieldDecorator('recent', {
-            valuePropName: 'checked',
-            initialValue: (_.get(currentDecision, 'recent')) === true ? true : false
-            
-          })(
-            <Checkbox />
 
-              
-          )}
-        </FormItem>
         <FormItem {...formItemLayout} label="Note">
             {getFieldDecorator("note", {initialValue: (_.get(currentDecision, 'note')) ? _.get(currentDecision, 'note') : ''})(<TextArea />)}
           </FormItem>
