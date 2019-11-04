@@ -502,7 +502,7 @@ class DuplicateSearchPage extends React.Component {
       synonymsSelectLoading,
       newestInGroupLoading
     } = this.state;
-    const { rank, taxonomicstatus, user } = this.props;
+    const { rank, taxonomicstatus, user, assembly } = this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -942,7 +942,7 @@ class DuplicateSearchPage extends React.Component {
               columns={
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
-                  : columnDefaults.fullScientificName
+                  : assembly ? [this.getGsdColumn(), ...columnDefaults.fullScientificName] : columnDefaults.fullScientificName
               }
               dataSource={data}
               loading={loading}
