@@ -373,6 +373,18 @@ componentDidMount = () =>{
             </Select>
           )}
         </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Geographic scope"
+        >
+          {getFieldDecorator('geographicScope', {
+            initialValue: (_.get(data, 'geographicScope')) ? _.get(data, 'geographicScope') : '',
+          
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
+        
 
             <FormItem
           {...formItemLayout}

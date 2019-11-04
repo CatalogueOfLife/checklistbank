@@ -165,6 +165,9 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="code" defaultMessage="Code" />}>
             {data.code}
           </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="geographicScope" defaultMessage="Geographic scope" />}>
+            {data.geographicScope}
+          </PresentationItem>
           <PresentationItem label={<FormattedMessage id="Checklist Confidence" defaultMessage="Checklist Confidence" />} >
           {<Rate value={data.confidence} disabled></Rate>}
           </PresentationItem>
