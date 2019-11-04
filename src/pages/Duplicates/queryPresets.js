@@ -274,7 +274,18 @@ export default [
       rank: "genus"
     }
   },
-/*   {
+  {
+    id: "b5",
+    text: "Identical subgenus",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "subgenus"
+    }
+  },
+  {
     id: "xx",
     text: "Any uninomial",
     params: {
@@ -282,5 +293,5 @@ export default [
       mode: "STRICT",
       category: "uninomial"
     }
-  } */
+  } 
 ];
