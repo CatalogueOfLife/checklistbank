@@ -50,7 +50,7 @@ class TaxonSources extends React.Component {
                       to={{ pathname: `/dataset/${d.key}/meta` }}
                       exact={true}
                     >
-                      { (index ? ', ' : '') + d.alias }
+                      { (index ? ', ' : '') + (d.alias || d.key) }
                     </NavLink>
                     </span>
                     
@@ -70,7 +70,7 @@ class TaxonSources extends React.Component {
                       to={{ pathname: `/dataset/${d.key}/meta` }}
                       exact={true}
                     >
-                      { (index ? ', ' : '') + d.alias }
+                      { (index ? ', ' : '') + (d.alias || d.key) }
                     </NavLink>
                     </span>
                     
