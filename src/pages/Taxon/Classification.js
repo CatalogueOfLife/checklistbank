@@ -5,7 +5,7 @@ import KeyValueList from "./KeyValueList";
 import PresentationItem from "../../components/PresentationItem";
 
 const ClassificationTable = ({ datasetKey, data, style }) => (
-  <div style={style}> {_.reverse(data).map(t => (
+  <div style={style}> {_.reverse([...data]).map(t => (
     <PresentationItem md={6} label={_.startCase(t.name.rank)} key={t.name.rank}>
       <NavLink
         to={{

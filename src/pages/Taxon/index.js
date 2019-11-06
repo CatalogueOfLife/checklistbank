@@ -174,9 +174,9 @@ class TaxonPage extends React.Component {
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${encodeURIComponent(
+      `${config.dataApi}dataset/${key}/taxon/${
         taxonKey
-      )}/classification`
+      }/classification`
     )
       .then(res => {
         this.setState({
