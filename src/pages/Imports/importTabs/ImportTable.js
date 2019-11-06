@@ -99,7 +99,7 @@ const defaultColumns = [
     title: "Logs",
     key: "logs",
     render: (text, record) => 
-    <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)}><Icon type="code" style={{fontSize: '20px'}} /></a></Tooltip>,
+    <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)} target="_blank" ><Icon type="code" style={{fontSize: '20px'}} /></a></Tooltip>,
     width: 50
   }
   

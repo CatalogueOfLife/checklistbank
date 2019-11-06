@@ -439,6 +439,7 @@ class TaxonPage extends React.Component {
               <VerbatimPresentation
                 verbatimKey={taxon.verbatimKey}
                 datasetKey={taxon.datasetKey}
+                expanded={false}
               />
             )}
           </div>

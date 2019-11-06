@@ -248,6 +248,7 @@ class NamePage extends React.Component {
             <VerbatimPresentation
               verbatimKey={name.verbatimKey}
               datasetKey={name.datasetKey}
+              expanded={false}
             />
           )}
         </div>
