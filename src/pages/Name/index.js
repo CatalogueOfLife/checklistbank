@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import config from "../../config";
+import { NavLink } from "react-router-dom";
 
 import axios from "axios";
-import { Alert, Spin, Tag, Tooltip } from "antd";
+import { Alert, Spin, Row, Col, Tag } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
 import Layout from "../../components/LayoutNew";
@@ -22,7 +23,7 @@ class NamePage extends React.Component {
     this.state = {
       dataset: null,
       name: null,
-      usages: null,
+      usages: [],
       verbatim: null,
       nameLoading: true,
       datasetLoading: true,
@@ -73,15 +74,10 @@ class NamePage extends React.Component {
       }
     } = this.props;
    this.setState({ usageLoading: true });
-   axios(`${config.dataApi}dataset/${key}/name/search&NAME_ID=${nameKey}`)
+   axios(`${config.dataApi}dataset/${key}/name/search?NAME_ID=${nameKey}`)
      .then(res => {
        this.setState(
-         { usageLoading: false, usages: res.data, usageError: null },
-         () => {
-           if (res.data.publishedInId) {
-             this.getReference(res.data.publishedInId);
-           }
-         }
+         { usageLoading: false, usages: res.data.result, usageError: null }
        );
      })
      .catch(err => {
@@ -115,7 +111,7 @@ class NamePage extends React.Component {
   render() {
     const {
       nameLoading,
-      verbatimLoading,
+      usages,
       name,
       reference,
       verbatim,
@@ -123,7 +119,7 @@ class NamePage extends React.Component {
       verbatimError
         } = this.state;
 
-    const { issueMap, dataset } = this.props;
+    const { getTaxonomicStatusColor } = this.props;
     return (
      
         <div
@@ -134,11 +130,31 @@ class NamePage extends React.Component {
             margin: "16px 0"
           }}
         >
+          <Row>
+            <Col span={18}>
           {name && (
-            <h1>
+            <h1 style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" , display: 'inline-block'}}>
               Name details: {name.scientificName} {name.authorship}
             </h1>
           )}
+          </Col>
+          <Col span={6}>
+          {usages.length > 0 &&  <PresentationItem md={md} label={usages.length > 1 ? 'Usages' : 'Usage'}>
+          {usages.map(u => 
+          <NavLink
+          to={{
+            pathname: `/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id'))}`
+          }}
+          exact={true}
+        >
+          <Tag color={getTaxonomicStatusColor(u.usage.status)} style={{marginRight: '6px'}}>{u.usage.status}</Tag>
+        </NavLink>
+          )}
+              </PresentationItem>
+            }
+          </Col>
+
+</Row>
 
           {nameLoading && <Spin />}
           {nameError && (
@@ -280,6 +296,8 @@ class NamePage extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ issueMap, dataset }) => ({ issueMap, dataset });
+const mapContextToProps = ({ getTaxonomicStatusColor }) => ({ getTaxonomicStatusColor });
 
 export default withContext(mapContextToProps)(NamePage);
+
+

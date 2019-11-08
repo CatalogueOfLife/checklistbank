@@ -20,6 +20,7 @@ import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import TaxonSources from "./TaxonSources"
+import withContext from "../../components/hoc/withContext";
 
 import history from "../../history";
 
@@ -109,7 +110,8 @@ class ColTreeNode extends React.Component {
       taxon,
       taxon: { sector, decision, datasetSectors },
       hasPopOver,
-      isUpdating
+      isUpdating,
+      getTaxonomicStatusColor
     } = this.props;
     const { childModalVisible, editTaxonModalVisible, estimateModalVisible } = this.state;
 
@@ -248,7 +250,7 @@ class ColTreeNode extends React.Component {
                     </span>
                   )}
                   {taxon.status !== "accepted" && (
-                    <Tag color="red" style={{ marginLeft: "6px" }}>
+                    <Tag color={getTaxonomicStatusColor(taxon.status)} style={{ marginLeft: "6px" }}>
                       {taxon.status}
                     </Tag>
                   )}
@@ -340,4 +342,8 @@ class ColTreeNode extends React.Component {
   };
 }
 
-export default ColTreeNode;
+const mapContextToProps = ({ getTaxonomicStatusColor }) => ({ getTaxonomicStatusColor });
+
+export default withContext(mapContextToProps)(ColTreeNode);
+
+

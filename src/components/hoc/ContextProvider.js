@@ -51,6 +51,7 @@ export const AppContext = React.createContext({});
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
 const ISSUE_ORDER = {  error: 1, warning: 2, info: 3 };
+const TAXONOMIC_STATUS_COLOR = {"accepted" : "green", "provisionally accepted" : "gold", "synonym": "orange", "ambiguous synonym": "orange", "misapplied": "red"  }
 
 class ContextProvider extends React.Component {
   
@@ -137,7 +138,8 @@ class ContextProvider extends React.Component {
       } else if(Number(count) > 50) {
         return ISSUE_COLOR.error
       }
-    }
+    },
+    getTaxonomicStatusColor: status => TAXONOMIC_STATUS_COLOR[status]
   };
 
   componentDidMount() {
