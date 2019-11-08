@@ -21,6 +21,8 @@ import moment from "moment";
 import history from "../../history";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
+import ReferencePopover from "../Reference/ReferencePopover"
+
 
 const { MANAGEMENT_CLASSIFCATION } = config;
 
@@ -235,11 +237,12 @@ class TaxonPage extends React.Component {
               <Row>
                 <Col span={this.state.logoUrl ? 18 : 21}>
                   <h1
-                    style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" }}
+                    style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" , display: 'inline-block'}}
                     dangerouslySetInnerHTML={{
                       __html: taxon.name.formattedName
                     }}
-                  />{" "}
+                  />
+                 {taxon.referenceIds && <div style={{display: 'inline-block', paddingLeft: "10px"}}><ReferencePopover datasetKey={key} referenceId={taxon.referenceIds} placement="bottom"/></div>}
                 </Col>
                 <Col span={3}>
                   {taxon.provisional && <Tag color="red">Provisional</Tag>}
@@ -380,6 +383,7 @@ class TaxonPage extends React.Component {
                 <Distributions
                   style={{ marginTop: "-3px" }}
                   data={info.distributions}
+                  datasetKey={key}
                 />
               </PresentationItem>
             )}
@@ -405,8 +409,8 @@ class TaxonPage extends React.Component {
               </PresentationItem>
             )}
             <Row>
-            <Col span={12}>
-            {_.get(taxon, "accordingTo") && (
+            {_.get(taxon, "accordingTo") && (<Col span={12}>
+            
               <PresentationItem md={md * 2} label="According to">
                 {`${_.get(taxon, "accordingTo")}`}
                 {_.get(
@@ -415,8 +419,8 @@ class TaxonPage extends React.Component {
                 ) &&
                   `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
               </PresentationItem>
-            )}
-            </Col>
+            
+            </Col>)}
             <Col span={12}>
             {_.get(taxon, "origin") && (
               <PresentationItem md={md * 2} label="Origin">

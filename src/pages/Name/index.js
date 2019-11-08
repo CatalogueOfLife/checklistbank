@@ -22,6 +22,7 @@ class NamePage extends React.Component {
     this.state = {
       dataset: null,
       name: null,
+      usages: null,
       verbatim: null,
       nameLoading: true,
       datasetLoading: true,
@@ -34,6 +35,7 @@ class NamePage extends React.Component {
 
   componentWillMount() {
     this.getName();
+    this.getUsages();
   }
 
   getReference = referenceKey => {
@@ -63,6 +65,29 @@ class NamePage extends React.Component {
         });
       });
   };
+
+  getUsages = ()=> {
+    const {
+      match: {
+        params: { key, taxonOrNameKey: nameKey }
+      }
+    } = this.props;
+   this.setState({ usageLoading: true });
+   axios(`${config.dataApi}dataset/${key}/name/search&NAME_ID=${nameKey}`)
+     .then(res => {
+       this.setState(
+         { usageLoading: false, usages: res.data, usageError: null },
+         () => {
+           if (res.data.publishedInId) {
+             this.getReference(res.data.publishedInId);
+           }
+         }
+       );
+     })
+     .catch(err => {
+       this.setState({ usageLoading: false, usageError: err, usages: null });
+     });
+  }
   getName = () => {
     const {
       match: {
