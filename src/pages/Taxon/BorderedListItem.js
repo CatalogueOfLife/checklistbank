@@ -11,11 +11,7 @@ const styles = () => ({
   formItem: {
     paddingBottom: 0,
     width: '100%',
-    clear: 'both',
-    borderBottom: '1px solid #eee',
-    '&:last-of-type': {
-      border: 'none'
-    }
+    clear: 'both'
   },
   label: {
     display: 'block',

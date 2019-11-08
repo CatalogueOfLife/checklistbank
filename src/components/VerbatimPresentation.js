@@ -2,7 +2,7 @@ import React from "react";
 import config from "../config";
 import _ from "lodash";
 import axios from "axios";
-import { Alert, Tag, Spin, Tooltip, Icon } from "antd";
+import { Alert, Tag, Spin, Tooltip, Icon, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
 import PresentationGroupHeader from "./PresentationGroupHeader";
@@ -155,14 +155,15 @@ class VerbatimPresentation extends React.Component {
         : "Verbatim";
     return (
       <React.Fragment>
-        <h3
-          style={{
-            margin: 0,
-            padding: 10,
+       <Row style={{
             background: "#f7f7f7",
             border: "1px solid #eee",
-            borderWidth: "1px 0"
-          }}
+            borderWidth: "1px 0",
+            paddingTop: "10px"
+          }}>
+            <Col span={12}>
+             <h3 style={{paddingLeft: 6}}
+          
         >
           {title} <a
                   style={{ fontSize: 10 }}
@@ -170,7 +171,14 @@ class VerbatimPresentation extends React.Component {
                 >
                   <Icon type={expanded ? "up" : "down"} />
                 </a>
-        </h3>
+        </h3> 
+        </Col>
+        <Col span={12}>
+       {_.get(verbatim, "file") && <p style={{textAlign: 'right', paddingRight: 6}}>
+        {`${_.get(verbatim, "file")}${
+              _.get(verbatim, "line") ? `, line ${_.get(verbatim, "line")}` : ""
+            }`}
+          </p>}</Col></Row>
       {expanded &&  <React.Fragment>
         {verbatimLoading && <Spin />}
         {verbatimError && (

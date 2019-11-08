@@ -235,7 +235,7 @@ class TaxonPage extends React.Component {
               <Row>
                 <Col span={this.state.logoUrl ? 18 : 21}>
                   <h1
-                    style={{ fontSize: "20px", paddingLeft: "10px" }}
+                    style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" }}
                     dangerouslySetInnerHTML={{
                       __html: taxon.name.formattedName
                     }}
@@ -260,21 +260,28 @@ class TaxonPage extends React.Component {
                 )}
               </Row>
             )}
-            {_.get(taxon, "accordingTo") && (
-              <PresentationItem md={md} label="According to">
-                {`${_.get(taxon, "accordingTo")}`}
-                {_.get(
-                  taxon,
-                  "accordingToDate"
-                ) &&
-                  `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
+            {_.get(taxon, "name.publishedIn.citation") && (
+              <PresentationItem md={md} label="Published in">
+                {_.get(taxon, "name.publishedIn.citation")}
               </PresentationItem>
             )}
-            {_.get(taxon, "status") && (
-              <PresentationItem md={md} label="Status">
+            <Row style={{borderBottom: '1px solid #eee'}}>
+              <Col span={12}>
+              {_.get(taxon, "name.rank") && (
+              <PresentationItem md={md * 2} label="Rank">
+                {_.get(taxon, "name.rank")}
+              </PresentationItem>
+            )}
+              </Col>
+              <Col span={12}>
+              {_.get(taxon, "status") && (
+              <PresentationItem md={md * 2} label="Status">
                 {_.get(taxon, "status")}
               </PresentationItem>
-            )}
+            )}</Col>
+            </Row>
+            
+            
             {_.get(taxon, "webpage") && (
               <PresentationItem md={md} label="External webpage">
                 <a href={_.get(taxon, "webpage")}>
@@ -282,24 +289,23 @@ class TaxonPage extends React.Component {
                 </a>
               </PresentationItem>
             )}
-            {_.get(taxon, "name.rank") && (
-              <PresentationItem md={md} label="Rank">
-                {_.get(taxon, "name.rank")}
-              </PresentationItem>
-            )}
+
 
             {_.get(taxon, "name.nomStatus") && (
               <PresentationItem md={md} label="Nomenclatural Status">
                 {_.get(taxon, "name.nomStatus")}
               </PresentationItem>
             )}
-
+            <PresentationItem md={md} label="Extinct">
+              <BooleanValue value={_.get(taxon, "extinct")} />
+            </PresentationItem>
+{/* 
             <PresentationItem md={md} label="Fossil">
               <BooleanValue value={_.get(taxon, "fossil")} />
             </PresentationItem>
             <PresentationItem md={md} label="Recent">
               <BooleanValue value={_.get(taxon, "recent")} />
-            </PresentationItem>
+            </PresentationItem> */}
 
             {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
               <PresentationItem
@@ -315,11 +321,6 @@ class TaxonPage extends React.Component {
                   style={{ marginTop: "-3px" }}
                   data={taxon.name.relations}
                 />
-              </PresentationItem>
-            )}
-            {_.get(taxon, "name.publishedIn.citation") && (
-              <PresentationItem md={md} label="Published in">
-                {_.get(taxon, "name.publishedIn.citation")}
               </PresentationItem>
             )}
             {infoError && (
@@ -403,12 +404,29 @@ class TaxonPage extends React.Component {
                 />
               </PresentationItem>
             )}
+            <Row>
+            <Col span={12}>
+            {_.get(taxon, "accordingTo") && (
+              <PresentationItem md={md * 2} label="According to">
+                {`${_.get(taxon, "accordingTo")}`}
+                {_.get(
+                  taxon,
+                  "accordingToDate"
+                ) &&
+                  `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
+              </PresentationItem>
+            )}
+            </Col>
+            <Col span={12}>
             {_.get(taxon, "origin") && (
-              <PresentationItem md={md} label="Origin">
+              <PresentationItem md={md * 2} label="Origin">
                 {_.get(taxon, "origin")}
               </PresentationItem>
             )}
+            </Col>  
 
+            </Row>
+            
             {_.get(sourceDataset, "title") && (
               <PresentationItem md={md} label="Source database">
                 <div style={{ display: "inline-block" }}>
