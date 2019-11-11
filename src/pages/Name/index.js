@@ -74,7 +74,7 @@ class NamePage extends React.Component {
       }
     } = this.props;
    this.setState({ usageLoading: true });
-   axios(`${config.dataApi}dataset/${key}/name/search?NAME_ID=${nameKey}`)
+   axios(`${config.dataApi}dataset/${key}/nameusage/search?NAME_ID=${nameKey}`)
      .then(res => {
        this.setState(
          { usageLoading: false, usages: res.data.result, usageError: null }

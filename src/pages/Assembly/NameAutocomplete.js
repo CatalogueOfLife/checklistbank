@@ -25,7 +25,7 @@ class NameSearchAutocomplete extends React.Component {
 
     getNames = (q) => {
         const {sortBy, datasetKey} = this.props;
-        const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/name/search` : `${config.dataApi}name/search`;
+        const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`;
         
         axios(`${url}?&sortBy=${sortBy || "TAXONOMIC"}&status=accepted&limit=25&offset=0&q=${q}`)
             .then((res) => {

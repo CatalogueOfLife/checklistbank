@@ -155,7 +155,7 @@ class NameSearchPage extends React.Component {
       pathname: _.get(this.props, "location.path"), //datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
       search: `?${qs.stringify(params)}`
     });
-    const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/name/search` : `${config.dataApi}name/search`
+    const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`
     axios(
       `${url}?${qs.stringify(
         params

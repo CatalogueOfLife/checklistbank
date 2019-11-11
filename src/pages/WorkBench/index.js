@@ -266,7 +266,7 @@ class WorkBench extends React.Component {
       search: `?${qs.stringify(params)}`
     });
     axios(
-      `${config.dataApi}dataset/${datasetKey}/name/search?${qs.stringify(
+      `${config.dataApi}dataset/${datasetKey}/nameusage/search?${qs.stringify(
         params
       )}`
     )
