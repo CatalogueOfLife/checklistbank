@@ -42,7 +42,9 @@ class DatasetAutocomplete extends React.Component {
     }
     onReset = () => {
         this.setState({value: '', datasets: []})
-       // this.props.onResetSearch()
+        if(this.props.onResetSearch && typeof this.props.onResetSearch === 'function') {
+            this.props.onResetSearch()
+        } 
     }
     render = () => {
         const {value} = this.state;

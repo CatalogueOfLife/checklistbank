@@ -7,7 +7,17 @@ import PageContent from "../../components/PageContent";
 import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
-import {Row, Col, Form, Switch, Button, Alert, Popconfirm, notification } from "antd";
+import {
+  Row,
+  Col,
+  Form,
+  Switch,
+  Button,
+  Alert,
+  Popconfirm,
+  notification
+} from "antd";
+import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -25,36 +35,38 @@ class AdminPage extends React.Component {
       rematchSectorsAndDecisionsLoading: false,
       exportResponse: null,
       background: {},
-      backgroundError: null
+      backgroundError: null,
+      datasetKey: null
     };
   }
 
   componentDidMount = () => {
-    this.getBackground()
-  }
+    this.getBackground();
+  };
   getBackground = () => {
     axios
-      .get(
-        `${config.dataApi}admin/background`
-      )
+      .get(`${config.dataApi}admin/background`)
       .then(res => {
-        this.setState({ background: res.data, backgroundError: null});
+        this.setState({ background: res.data, backgroundError: null });
       })
-      .catch(err => this.setState({ backgroundError: err}));
-  }
+      .catch(err => this.setState({ backgroundError: err }));
+  };
 
   updateBackground = (param, checked) => {
-    const {background} = this.state
+    const { background } = this.state;
     axios
-      .put(
-        `${config.dataApi}admin/background`, {...background, [param]: checked}
-      )
-      .then(() => {
-        this.setState({ background: {...background, [param]: checked}, backgroundError: null});
+      .put(`${config.dataApi}admin/background`, {
+        ...background,
+        [param]: checked
       })
-      .catch(err => this.setState({ backgroundError: err}));
-
-  }
+      .then(() => {
+        this.setState({
+          background: { ...background, [param]: checked },
+          backgroundError: null
+        });
+      })
+      .catch(err => this.setState({ backgroundError: err }));
+  };
 
   syncAllSectors = () => {
     this.setState({ allSectorSyncloading: true });
@@ -63,14 +75,23 @@ class AdminPage extends React.Component {
         `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/all`
       )
       .then(res => {
-        this.setState({ allSectorSyncloading: false, error: null, exportResponse: null }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: "All sectors syncing"
-          });
-        });
+        this.setState(
+          { allSectorSyncloading: false, error: null, exportResponse: null },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "All sectors syncing"
+            });
+          }
+        );
       })
-      .catch(err => this.setState({ error: err, allSectorSyncloading: false, exportResponse: null }));
+      .catch(err =>
+        this.setState({
+          error: err,
+          allSectorSyncloading: false,
+          exportResponse: null
+        })
+      );
   };
 
   exportToOldPortal = () => {
@@ -80,16 +101,27 @@ class AdminPage extends React.Component {
         `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/exportAC`
       )
       .then(res => {
-        this.setState({ exportToOldPortalloading: false, error: null , exportResponse: res.data}, () => {
-          notification.open({
-            message: "Action triggered",
-            description:
-              "exporting CoL draft to old portal synchroneously (might take long)"
-          });
-        });
+        this.setState(
+          {
+            exportToOldPortalloading: false,
+            error: null,
+            exportResponse: res.data
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description:
+                "exporting CoL draft to old portal synchroneously (might take long)"
+            });
+          }
+        );
       })
       .catch(err =>
-        this.setState({ error: err, exportToOldPortalloading: false, exportResponse: null })
+        this.setState({
+          error: err,
+          exportToOldPortalloading: false,
+          exportResponse: null
+        })
       );
   };
   updateAllLogos = () => {
@@ -97,15 +129,22 @@ class AdminPage extends React.Component {
     axios
       .post(`${config.dataApi}admin/logo-update`)
       .then(res => {
-        this.setState({ updateAllLogosloading: false, error: null, exportResponse: null }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: "updating all logos async"
-          });
-        });
+        this.setState(
+          { updateAllLogosloading: false, error: null, exportResponse: null },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "updating all logos async"
+            });
+          }
+        );
       })
       .catch(err =>
-        this.setState({ error: err, updateAllLogosloading: false, exportResponse: null })
+        this.setState({
+          error: err,
+          updateAllLogosloading: false,
+          exportResponse: null
+        })
       );
   };
   recalculateSectorCounts = () => {
@@ -114,7 +153,11 @@ class AdminPage extends React.Component {
       .post(`${config.dataApi}admin/sector-count-update`)
       .then(res => {
         this.setState(
-          { recalculateSectorCountsLoading: false, error: null, exportResponse: null },
+          {
+            recalculateSectorCountsLoading: false,
+            error: null,
+            exportResponse: null
+          },
           () => {
             notification.open({
               message: "Action triggered",
@@ -124,16 +167,27 @@ class AdminPage extends React.Component {
         );
       })
       .catch(err =>
-        this.setState({ error: err, recalculateSectorCountsLoading: false, exportResponse: null })
+        this.setState({
+          error: err,
+          recalculateSectorCountsLoading: false,
+          exportResponse: null
+        })
       );
   };
   rematchSectorsAndDecisions = () => {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
-      .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/rematch`, {all: true})
+      .post(
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/rematch`,
+        { all: true }
+      )
       .then(res => {
         this.setState(
-          { rematchSectorsAndDecisionsLoading: false, error: null, exportResponse: null },
+          {
+            rematchSectorsAndDecisionsLoading: false,
+            error: null,
+            exportResponse: null
+          },
           () => {
             notification.open({
               message: "Action triggered",
@@ -143,17 +197,27 @@ class AdminPage extends React.Component {
         );
       })
       .catch(err =>
-        this.setState({ error: err, rematchSectorsAndDecisionsLoading: false , exportResponse: null})
+        this.setState({
+          error: err,
+          rematchSectorsAndDecisionsLoading: false,
+          exportResponse: null
+        })
       );
   };
 
-  resetEsReadOnly = ()=> {
+  resetEsReadOnly = () => {
     this.setState({ elasticSearchResetLoading: true });
     axios
-      .put(`${config.dataApi}es/*/_settings`, {"index.blocks.read_only_allow_delete": null})
+      .put(`${config.dataApi}es/*/_settings`, {
+        "index.blocks.read_only_allow_delete": null
+      })
       .then(res => {
         this.setState(
-          { elasticSearchResetLoading: false, error: null, exportResponse: null },
+          {
+            elasticSearchResetLoading: false,
+            error: null,
+            exportResponse: null
+          },
           () => {
             notification.open({
               message: "ElasticSearch",
@@ -163,9 +227,47 @@ class AdminPage extends React.Component {
         );
       })
       .catch(err =>
-        this.setState({ error: err, elasticSearchResetLoading: false , exportResponse: null})
+        this.setState({
+          error: err,
+          elasticSearchResetLoading: false,
+          exportResponse: null
+        })
       );
-  }
+  };
+
+  onSelectDataset = dataset => {
+    this.setState({
+      dataset: dataset
+    });
+  };
+
+  reindexDataset = dataset => {
+    axios
+      .post(`${config.dataApi}admin/reindex`, { datasetKey: dataset.key })
+      .then(res => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Process started",
+            description: `${dataset.title} is being reindexed`
+          });
+        });
+      })
+      .catch(err => this.setState({ error: err }));
+  };
+
+  rematchDataset = dataset => {
+    axios
+      .post(`${config.dataApi}admin/rematch`, { datasetKey: dataset.key })
+      .then(res => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Process started",
+            description: `${dataset.title} is being rematched`
+          });
+        });
+      })
+      .catch(err => this.setState({ error: err }));
+  };
 
   render() {
     const {
@@ -177,7 +279,8 @@ class AdminPage extends React.Component {
       elasticSearchResetLoading,
       exportResponse,
       error,
-      background
+      background,
+      dataset
     } = this.state;
 
     return (
@@ -188,25 +291,35 @@ class AdminPage extends React.Component {
           <link rel="canonical" href="http://www.col.plus" />
         </Helmet>
         <PageContent>
-
-          {error && <Row><Alert 
-          closable
-          onClose={() => this.setState({ error: null })}
-          message={<ErrorMsg error={error} />} type="error" /></Row>}
+          {error && (
+            <Row>
+              <Alert
+                closable
+                onClose={() => this.setState({ error: null })}
+                message={<ErrorMsg error={error} />}
+                type="error"
+              />
+            </Row>
+          )}
           <Row>
-          <Form layout="inline">
-          <FormItem label="Background GBIF Sync">
-          <Switch onChange={(checked) => {
-            this.updateBackground('gbifSync', checked)
-          }} checked={background.gbifSync} />
-          </FormItem>
-          <FormItem label="Background importer">
-
-          <Switch onChange={(checked) => {
-            this.updateBackground('importer', checked)
-          }} checked={background.importer} />
-                    </FormItem>
-                    </Form>
+            <Form layout="inline">
+              <FormItem label="Background GBIF Sync">
+                <Switch
+                  onChange={checked => {
+                    this.updateBackground("gbifSync", checked);
+                  }}
+                  checked={background.gbifSync}
+                />
+              </FormItem>
+              <FormItem label="Background importer">
+                <Switch
+                  onChange={checked => {
+                    this.updateBackground("importer", checked);
+                  }}
+                  checked={background.importer}
+                />
+              </FormItem>
+            </Form>
           </Row>
 
           <Popconfirm
@@ -299,18 +412,44 @@ class AdminPage extends React.Component {
               Exit ElasticSearch read_only_allow_delete mode
             </Button>
           </Popconfirm>
+
           <Row>
-          <a href={config.downloadApi}>Downloads</a>
+            <Col span={12}>
+              <DatasetAutocomplete onSelectDataset={this.onSelectDataset} onResetSearch={() => this.setState({dataset: null})} />
+            </Col>
+            <Col span={12}>
+              <Button
+                type="primary"
+                onClick={() => this.reindexDataset(dataset)}
+                style={{ marginLeft: "10px", marginRight: "10px", marginBottom: "10px" }}
+                disabled={!dataset}
+              >
+                Re-index selected dataset
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => this.rematchDataset(dataset)}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+                disabled={!dataset}
 
-
+              >
+                Rematch selected dataset
+              </Button>
+            </Col>
           </Row>
           <Row>
-          {exportResponse && 
-          <div>
-            The export is available <a href={`${config.dataApi}download/`}>here</a>
-            <pre>{exportResponse}</pre>
-            </div>}
-            </Row>
+            <a href={config.downloadApi}>Downloads</a>
+          </Row>
+
+          <Row>
+            {exportResponse && (
+              <div>
+                The export is available{" "}
+                <a href={`${config.dataApi}download/`}>here</a>
+                <pre>{exportResponse}</pre>
+              </div>
+            )}
+          </Row>
         </PageContent>
       </Layout>
     );
