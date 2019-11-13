@@ -440,6 +440,13 @@ class AdminPage extends React.Component {
           <Row>
             <a href={config.downloadApi}>Downloads</a>
           </Row>
+          <Row>
+            <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>
+            <a href={`${config.dataApi}monitor/threads`}>Threads</a>
+            <a href={`${config.dataApi}monitor/metrics`}>Metrics</a>
+            <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a>
+            <a href={`${config.dataApi}monitor/pprof?state=blocked`}>CPU Blocked</a>
+          </Row>
 
           <Row>
             {exportResponse && (
