@@ -29,7 +29,7 @@ class AdminPage extends React.Component {
     this.state = {
       error: null,
       allSectorSyncloading: false,
-      exportToOldPortalloading: false,
+      releaseColLoading: false,
       updateAllLogosloading: false,
       recalculateSectorCountsLoading: false,
       rematchSectorsAndDecisionsLoading: false,
@@ -94,16 +94,16 @@ class AdminPage extends React.Component {
       );
   };
 
-  exportToOldPortal = () => {
-    this.setState({ exportToOldPortalloading: true });
+  releaseCoL = () => {
+    this.setState({ releaseColLoading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/exportAC`
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/release`
       )
       .then(res => {
         this.setState(
           {
-            exportToOldPortalloading: false,
+            releaseColLoading: false,
             error: null,
             exportResponse: res.data
           },
@@ -111,7 +111,7 @@ class AdminPage extends React.Component {
             notification.open({
               message: "Action triggered",
               description:
-                "exporting CoL draft to old portal synchroneously (might take long)"
+                "release CoL draft to old portal synchroneously (might take long)"
             });
           }
         );
@@ -119,7 +119,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          exportToOldPortalloading: false,
+          releaseColLoading: false,
           exportResponse: null
         })
       );
@@ -272,7 +272,7 @@ class AdminPage extends React.Component {
   render() {
     const {
       allSectorSyncloading,
-      exportToOldPortalloading,
+      releaseColLoading,
       updateAllLogosloading,
       recalculateSectorCountsLoading,
       rematchSectorsAndDecisionsLoading,
@@ -340,16 +340,16 @@ class AdminPage extends React.Component {
           <Popconfirm
             placement="rightTop"
             title="Do you want to export the draft to the old portal?"
-            onConfirm={this.exportToOldPortal}
+            onConfirm={this.releaseCoL}
             okText="Yes"
             cancelText="No"
           >
             <Button
               type="primary"
-              loading={exportToOldPortalloading}
+              loading={releaseColLoading}
               style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              Export CoL draft to old portal
+              Release CoL draft
             </Button>
           </Popconfirm>
           <Popconfirm
