@@ -1,9 +1,9 @@
 const environments = {
   dev: {
-    url: "https://dev.col.plus",
+    url: "https://data.dev.catalogue.life/",
 
-    dataApi: "https://api-dev.col.plus/",
-    downloadApi: "http://api-dev.col.plus/download/",
+    dataApi: "http://api.dev.catalogue.life/",
+    downloadApi: "http://api.dev.catalogue.life/download/",
     env: "dev",
     kibanaEnv: {
       name: "col-dev",
@@ -21,9 +21,9 @@ const environments = {
     gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
   },
   prod: {
-    url: "https://wwww.col.plus",
-    dataApi: "https://api.col.plus/",
-    downloadApi: "http://api.col.plus/download/",
+    url: "https://data.catalogue.life/",
+    dataApi: "http://api.catalogue.life/",
+    downloadApi: "http://api.catalogue.life/download/",
     env: "prod",
     kibanaEnv: {
       name: "col-prod",
@@ -77,12 +77,12 @@ const environments = {
 const domain = window.location.hostname;
 
 let env = environments.dev;
-if (domain.endsWith("www.col.plus")) {
+if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
-} else if (domain.endsWith("dev.col.plus")) {
+} else if (domain.endsWith("dev.catalogue.life")) {
   env = environments.dev;
 } else if (domain.endsWith('localhost')) {
-  env = environments.local;
+ // env = environments.local;
 }
 
 export default env;
