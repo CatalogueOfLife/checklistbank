@@ -2,8 +2,7 @@ const environments = {
   dev: {
     url: "https://data.dev.catalogue.life/",
 
-    dataApi: "http://api.dev.catalogue.life/",
-
+    dataApi: "https://api.dev.catalogue.life/",
     downloadApi: "http://api.dev.catalogue.life/download/",
     env: "dev",
     kibanaEnv: {
@@ -23,7 +22,7 @@ const environments = {
   },
   prod: {
     url: "https://data.catalogue.life/",
-    dataApi: "http://api.catalogue.life/",
+    dataApi: "https://api.catalogue.life/",
 
     downloadApi: "http://api.catalogue.life/download/",
     env: "prod",
