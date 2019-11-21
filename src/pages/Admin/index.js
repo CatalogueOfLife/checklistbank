@@ -452,7 +452,7 @@ class AdminPage extends React.Component {
             {exportResponse && (
               <div>
                 The export is available{" "}
-                <a href={`${config.dataApi}download/`}>here</a>
+                <a href={`${config.downloadApi}`}>here</a>
                 <pre>{exportResponse}</pre>
               </div>
             )}
