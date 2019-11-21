@@ -3,6 +3,7 @@ const environments = {
     url: "https://data.dev.catalogue.life/",
 
     dataApi: "http://api.dev.catalogue.life/",
+
     downloadApi: "http://api.dev.catalogue.life/download/",
     env: "dev",
     kibanaEnv: {
@@ -14,7 +15,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -23,6 +24,7 @@ const environments = {
   prod: {
     url: "https://data.catalogue.life/",
     dataApi: "http://api.catalogue.life/",
+
     downloadApi: "http://api.catalogue.life/download/",
     env: "prod",
     kibanaEnv: {
@@ -34,7 +36,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -50,7 +52,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -66,7 +68,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -81,6 +83,8 @@ if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.catalogue.life")) {
   env = environments.dev;
+} else if (domain.endsWith("catalogue.life")) {
+  env = environments.prod;
 } else if (domain.endsWith('localhost')) {
  // env = environments.local;
 }

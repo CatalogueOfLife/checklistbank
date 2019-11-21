@@ -103,7 +103,7 @@ class HomePage extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Catalogue of Life +</title>
-          <link rel="canonical" href="http://www.col.plus" />
+          <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <Card
           style={{ marginTop: 20 }}

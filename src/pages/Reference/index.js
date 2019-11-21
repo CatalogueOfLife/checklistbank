@@ -39,7 +39,7 @@ class Reference extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>CoL References</title>
-          <link rel="canonical" href="http://www.col.plus" />
+          <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>
         {showAddNewModal && (
