@@ -32,7 +32,7 @@ class NameIndex extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Catalogue of Life + Name Index</title>
-          <link rel="canonical" href="http://www.col.plus" />
+          <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>
             <NameSearch location={this.props.location} datasetKey={NAME_INDEX.key}/>

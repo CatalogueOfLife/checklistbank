@@ -1,9 +1,9 @@
 const environments = {
   dev: {
-    url: "https://dev.col.plus",
+    url: "https://data.dev.catalogue.life",
 
-    dataApi: "https://api-dev.col.plus/",
-    downloadApi: "http://api-dev.col.plus/download/",
+    dataApi: "https://api.dev.catalogue.life/",
+    downloadApi: "http://api.dev.catalogue.life/download/",
     env: "dev",
     kibanaEnv: {
       name: "col-dev",
@@ -14,16 +14,16 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
     gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
   },
   prod: {
-    url: "https://wwww.col.plus",
-    dataApi: "https://api.col.plus/",
-    downloadApi: "http://api.col.plus/download/",
+    url: "https://data.catalogue.life",
+    dataApi: "https://api.catalogue.life/",
+    downloadApi: "http://api.catalogue.life/download/",
     env: "prod",
     kibanaEnv: {
       name: "col-prod",
@@ -34,7 +34,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -50,7 +50,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -66,7 +66,7 @@ const environments = {
       title: "CoL draft"
     },
     NAME_INDEX: {
-      key: 2,
+      key: 1,
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
@@ -77,10 +77,10 @@ const environments = {
 const domain = window.location.hostname;
 
 let env = environments.dev;
-if (domain.endsWith("www.col.plus")) {
-  env = environments.prod;
-} else if (domain.endsWith("dev.col.plus")) {
+if (domain.endsWith("dev.catalogue.life")) {
   env = environments.dev;
+} else if (domain.endsWith("catalogue.life")) {
+  env = environments.prod;
 } else if (domain.endsWith('localhost')) {
   env = environments.local;
 }
