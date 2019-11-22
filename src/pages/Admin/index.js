@@ -205,6 +205,68 @@ class AdminPage extends React.Component {
       );
   };
 
+  rematchAllSectorsDecisionsAndEstimates = () =>{
+    this.setState({ rematchAllSectorsDecisionsAndEstimatesLoading: true });
+    axios
+      .post(
+        `${config.dataApi}admin/rematch`,
+        { all: true }
+      )
+      .then(res => {
+        this.setState(
+          {
+            rematchAllSectorsDecisionsAndEstimatesLoading: false,
+            error: null,
+            exportResponse: null
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "rematching all sectors, decisions and estimates"
+            });
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          rematchAllSectorsDecisionsAndEstimatesLoading: false,
+          exportResponse: null
+        })
+      );
+  }
+
+  reindexAllDatasets = () =>{
+    this.setState({ reindexAllDatasetsLoading: true });
+    axios
+      .post(
+        `${config.dataApi}admin/reindex`,
+        { all: true }
+      )
+      .then(res => {
+        this.setState(
+          {
+            reindexAllDatasetsLoading: false,
+            error: null,
+            exportResponse: null
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "reindexing all datasets"
+            });
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          reindexAllDatasetsLoading: false,
+          exportResponse: null
+        })
+      );
+  }
+
   resetEsReadOnly = () => {
     this.setState({ elasticSearchResetLoading: true });
     axios
@@ -277,6 +339,8 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       rematchSectorsAndDecisionsLoading,
       elasticSearchResetLoading,
+      rematchAllSectorsDecisionsAndEstimatesLoading,
+      reindexAllDatasetsLoading,
       exportResponse,
       error,
       background,
@@ -396,7 +460,41 @@ class AdminPage extends React.Component {
             >
               Rematch all broken sectors and decisions
             </Button>
+            
           </Popconfirm>
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to rematch all sectors, decisions & estimates?"
+            onConfirm={this.rematchAllSectorsDecisionsAndEstimates}
+            okText="Yes"
+            cancelText="No"
+          >
+          <Button
+              type="primary"
+              loading={rematchAllSectorsDecisionsAndEstimatesLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Rematch all sectors, decisions & estimates
+            </Button>
+            </Popconfirm>
+
+            <Popconfirm
+            placement="rightTop"
+            title="Do you want to reindex all datasets?"
+            onConfirm={this.reindexAllDatasets}
+            okText="Yes"
+            cancelText="No"
+          >
+          <Button
+              type="primary"
+              loading={reindexAllDatasetsLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Reindex all datasets
+            </Button>
+            </Popconfirm>
+
+            
           <Popconfirm
             placement="rightTop"
             title="Do you want to reset ElasticSearch read_only_allow_delete?"
