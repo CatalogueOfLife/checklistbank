@@ -10,6 +10,9 @@ import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
+import NameRelations from "../Taxon/NameRelations";
+import SynonymTable from "../Taxon/Synonyms"
+
 import PresentationGroupHeader from "../../components/PresentationGroupHeader";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import BooleanValue from "../../components/BooleanValue";
@@ -24,6 +27,9 @@ class NamePage extends React.Component {
       dataset: null,
       name: null,
       usages: [],
+      relations: [],
+      synonyms: [],
+      publishedIn: null,
       verbatim: null,
       nameLoading: true,
       datasetLoading: true,
@@ -35,10 +41,32 @@ class NamePage extends React.Component {
   }
 
   componentWillMount() {
-    this.getName();
-    this.getUsages();
+    const {
+      match: {
+        params: { key, taxonOrNameKey: nameKey }
+      }
+    } = this.props;
+    this.getName(key, nameKey);
+    this.getUsages(key, nameKey);
+    this.getRelations(key, nameKey);
+    this.getSynonyms(key, nameKey);
+    this.getPublishedIn(key, nameKey);
   }
+  componentWillReceiveProps = (nextProps)=> {
+    if(nextProps.match.params.taxonOrNameKey !== this.props.match.params.taxonOrNameKey){
+      const {
+        match: {
+          params: { key, taxonOrNameKey: nameKey }
+        }
+      } = nextProps;
+    this.getName(key, nameKey);
+    this.getUsages(key, nameKey);
+    this.getRelations(key, nameKey);
+    this.getSynonyms(key, nameKey);
+    this.getPublishedIn(key, nameKey);
 
+    }
+  }
   getReference = referenceKey => {
     const {
       match: {
@@ -67,12 +95,56 @@ class NamePage extends React.Component {
       });
   };
 
-  getUsages = ()=> {
-    const {
-      match: {
-        params: { key, taxonOrNameKey: nameKey }
-      }
-    } = this.props;
+  getRelations = (key, nameKey) => {
+    
+    axios(
+      `${config.dataApi}dataset/${key}/name/${
+        nameKey
+      }/relations`
+    ).then(relations => {
+    
+      return Promise.all(
+        relations.data.map(r => {
+          return axios(
+            `${config.dataApi}dataset/${key}/name/${
+              r.relatedNameId
+            }`
+          ).then(n => {
+            r.relatedName = n.data;
+          });
+        })
+      ).then(()=>{
+        this.setState({relations: relations.data})
+      });
+    })
+
+  }
+
+  getSynonyms = (key, nameKey) => {
+    
+    axios(
+      `${config.dataApi}dataset/${key}/name/${
+        nameKey
+      }/synonyms`
+    ).then(synonyms => {
+      this.setState({synonyms: synonyms.data})
+    })
+
+  }
+  getPublishedIn = (key, nameKey) => {
+    
+    axios(
+      `${config.dataApi}dataset/${key}/name/${
+        nameKey
+      }/publishedIn`
+    ).then(publishedIn => {
+      this.setState({publishedIn: publishedIn.data})
+    })
+
+  }
+
+  getUsages = (key, nameKey)=> {
+    
    this.setState({ usageLoading: true });
    axios(`${config.dataApi}dataset/${key}/nameusage/search?NAME_ID=${nameKey}`)
      .then(res => {
@@ -84,12 +156,8 @@ class NamePage extends React.Component {
        this.setState({ usageLoading: false, usageError: err, usages: null });
      });
   }
-  getName = () => {
-    const {
-      match: {
-        params: { key, taxonOrNameKey: nameKey }
-      }
-    } = this.props;
+  getName = (key, nameKey) => {
+   
 
     this.setState({ nameLoading: true });
     axios(`${config.dataApi}dataset/${key}/name/${nameKey}`)
@@ -116,10 +184,18 @@ class NamePage extends React.Component {
       reference,
       verbatim,
       nameError,
-      verbatimError
+      verbatimError,
+      relations,
+      synonyms,
+      publishedIn
         } = this.state;
 
     const { getTaxonomicStatusColor } = this.props;
+    const {
+      match: {
+        params: { key }
+      }
+    } = this.props;
     return (
      
         <div
@@ -143,7 +219,7 @@ class NamePage extends React.Component {
           {usages.map(u => 
           <NavLink
           to={{
-            pathname: `/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id'))}`
+            pathname: `/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
           }}
           exact={true}
         >
@@ -231,6 +307,36 @@ class NamePage extends React.Component {
                   }`}
                 </PresentationItem>
               )}
+              {publishedIn &&  publishedIn.citation && (
+              <PresentationItem md={md} label="Published in">
+                {publishedIn.citation}
+              </PresentationItem>
+            )}
+              {relations && relations.length > 0 && (
+              <PresentationItem
+                md={md}
+                label="Relations"
+                helpText={
+                  <a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">
+                    Name relations are explained here
+                  </a>
+                }
+              >
+                <NameRelations
+                  style={{ marginTop: "-3px" }}
+                  data={relations}
+                />
+              </PresentationItem>
+            )}
+            {synonyms && synonyms.length > 0 && (
+              <PresentationItem md={md} label="Synonyms">
+                <SynonymTable
+                  data={synonyms.map(s => ({name: s}))}
+                  style={{ marginTop: "-3px" }}
+                  datasetKey={key}
+                />
+              </PresentationItem>
+            )}
               <PresentationItem md={md} label="ID">
                 {name.id}
               </PresentationItem>
