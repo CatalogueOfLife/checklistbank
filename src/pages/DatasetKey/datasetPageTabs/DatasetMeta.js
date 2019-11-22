@@ -124,17 +124,17 @@ class DatasetMeta extends React.Component {
             <PresentationItem label={<FormattedMessage id="alias" defaultMessage="Alias" />}>
             {data.alias}
           </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="group" defaultMessage="Taxonomic Group" />}>
-            {data.group}
+          <PresentationItem label={<FormattedMessage id="organisations" defaultMessage="Organisations" />}>
+            {data.organisations}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="description" defaultMessage="Description" />}>
             {data.description}
           </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="citation" defaultMessage="Citation" />}>
-            {data.citation}
-          </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="type" defaultMessage="Type" />}>
-            {data.type}
+          {/* <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
+            {data.released}
+          </PresentationItem> */}
+          <PresentationItem label={<FormattedMessage id="version" defaultMessage="Version" />}>
+            {`${data.version} released ${data.released}`}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
             {data.contact}
@@ -142,31 +142,30 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="authorsAndEditors" defaultMessage="Authors and Editors" />}>
             {data.authorsAndEditors}
           </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="organisations" defaultMessage="Organisations" />}>
-            {data.organisations}
-          </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
-            {data.released}
-          </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="version" defaultMessage="Version" />}>
-            {data.version}
-          </PresentationItem>
-          <PresentationItem label={<FormattedMessage id="license" defaultMessage="License" />}>
-            {data.license}
-          </PresentationItem>
           <PresentationItem label={<FormattedMessage id="website" defaultMessage="Website" />}>
             {data.website && <a href={data.website} target="_blank" >{data.website}</a>}
-
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="origin" defaultMessage="Origin" />}>
-            {data.origin === 'external' && `${data.dataFormat}: ${data.dataAccess}`}
+            {data.origin === 'external' && <span dangerouslySetInnerHTML={{__html: `${data.dataFormat}: <a href='${data.dataAccess}' target='_blank'>${data.dataAccess}</a>`}}></span>}
             {data.origin !== 'external' && data.origin}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="type" defaultMessage="Type" />}>
+            {data.type}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="code" defaultMessage="Code" />}>
             {data.code}
           </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="group" defaultMessage="Taxonomic Group" />}>
+            {data.group}
+          </PresentationItem>
           <PresentationItem label={<FormattedMessage id="geographicScope" defaultMessage="Geographic scope" />}>
             {data.geographicScope}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="citation" defaultMessage="Citation" />}>
+            {data.citation}
+          </PresentationItem>
+          <PresentationItem label={<FormattedMessage id="license" defaultMessage="License" />}>
+            {data.license}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="Checklist Confidence" defaultMessage="Checklist Confidence" />} >
           {<Rate value={data.confidence} disabled></Rate>}
@@ -183,8 +182,6 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="importFrequency" defaultMessage="Automated Import Frequency" />}>
             {data.importFrequency}
           </PresentationItem>
-
-          
           <PresentationItem label={<FormattedMessage id="created" defaultMessage="Created" />}>
           {`${moment(data.created).format('MMMM Do YYYY, h:mm:ss a')} by ${data.createdByUser}`}
           </PresentationItem>
