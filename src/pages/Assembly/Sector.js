@@ -117,7 +117,7 @@ class Sector extends React.Component {
 
     return axios
       .post(`${config.dataApi}decision`, {
-        datasetKey: datasetKey,
+        subjectDatasetKey: datasetKey,
         subject: {
           id: _.get(taxon, "id"),
 
