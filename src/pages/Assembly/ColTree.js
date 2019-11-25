@@ -814,6 +814,9 @@ class ColTree extends React.Component {
                 }
                 onExpand={(expandedKeys, obj) => {
                   if (obj.expanded) {
+                    if (_.get(obj, 'node.props.dataRef.childCount') && _.get(obj, 'node.props.dataRef.childCount') > 0 && !_.get(obj, 'node.props.dataRef.children')){
+                      this.fetchChildPage(obj.node.props.dataRef, true)
+                    }
                     const params = qs.parse(_.get(location, "search"));
                     const newParams =
                       this.props.treeType === "mc"
