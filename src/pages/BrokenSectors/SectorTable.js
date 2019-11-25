@@ -173,7 +173,7 @@ class SyncTable extends React.Component {
               </span>
               {!record.subject.id  && <NavLink
                 to={{
-                  pathname: `/dataset/${record.datasetKey}/names`,
+                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
                   search: `?q=${record.subject.name}`
                   
                 }}
