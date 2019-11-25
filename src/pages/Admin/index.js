@@ -72,7 +72,7 @@ class AdminPage extends React.Component {
     this.setState({ allSectorSyncloading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/all`
+        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {all: true}
       )
       .then(res => {
         this.setState(
