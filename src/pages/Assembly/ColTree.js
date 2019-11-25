@@ -105,9 +105,9 @@ class ColTree extends React.Component {
     let id = key;
     let p = defaultExpandKey
       ? axios(
-          `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
+          `${config.dataApi}dataset/${id}/tree/${
             defaultExpandKey
-          )}?catalogueKey=${treeType === "gsd" ? catalogueKey : key}`
+          }?catalogueKey=${treeType === "gsd" ? catalogueKey : key}`
         )
           .then(res => {
             // Load the siblings of the default expanded taxon
@@ -121,7 +121,7 @@ class ColTree extends React.Component {
                 )
                   .then(this.decorateWithSectorsAndDataset)
                   .then(children => {
-                    // Remove the teh default expanded taxon as it will be loaded
+                    // Remove the the default expanded taxon as it will be loaded
                     if (
                       children.data.result &&
                       children.data.result.length > 0
@@ -209,7 +209,10 @@ class ColTree extends React.Component {
               childCount: tx.childCount,
               childOffset: 0
             };
-
+            if (treeType === "gsd" && _.get(root, "taxon.sector")){
+              tx.sectorKey = _.get(root, "taxon.sectorKey")
+              tx.sector = _.get(root, "taxon.sector")
+            } 
             node.title = (
               <ColTreeNode
                 taxon={tx}
@@ -229,7 +232,12 @@ class ColTree extends React.Component {
                       key: c.id,
                       childCount: c.childCount,
                       childOffset: 0
-                    };
+
+                    }; 
+                    if (treeType === "gsd" && _.get(root, "taxon.sector")){
+                      c.sectorKey = _.get(root, "taxon.sectorKey")
+                      c.sector = _.get(root, "taxon.sector")
+                    } 
                     ref.title = (
                       <ColTreeNode
                         taxon={c}

@@ -115,22 +115,40 @@ class Sector extends React.Component {
     const { datasetKey } = taxon;
     this.setState({ postingDecisions: true });
 
-    return axios
-      .post(`${config.dataApi}decision`, {
+    
+
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/taxon/${_.get(taxon, "id")}`
+    ).then(tx => {
+     return Promise.all([tx, axios(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${_.get(tx, "data.parentId")}`
+      )])
+    })
+    
+    .then(taxa => {
+      const tx = taxa[0].data;
+      const parent = taxa[1].data;
+      return axios.post(`${config.dataApi}decision`, {
         subjectDatasetKey: datasetKey,
         subject: {
-          id: _.get(taxon, "id"),
+          id: _.get(tx, "id"),
 
-          name: _.get(taxon, "name").replace(/(<([^>]+)>)/ig , "")
+          name: _.get(tx, "name.scientificName"), //.replace(/(<([^>]+)>)/ig , "")
+          authorship: _.get(tx, "name.authorship"),
+            rank: _.get(tx, "name.rank"),
+            status: _.get(tx, "status"),
+            parent: _.get(parent, "name.scientificName"),
+            code: _.get(tx, "name.code")
         },
         mode: "block"
       })
+    })
       .then(decisionId => axios(`${config.dataApi}decision/${decisionId.data}`))
       .then(res => {
         taxon.decision = res;
 
         notification.open({
-          message: `Decision apllied`,
+          message: `Decision applied`,
           description: `${_.get(taxon, "name").replace(/(<([^>]+)>)/ig , "")} was blocked from the assembly`
         });
         if (typeof decisionCallback === "function") {

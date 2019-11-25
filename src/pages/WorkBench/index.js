@@ -407,7 +407,10 @@ class WorkBench extends React.Component {
 
               name: _.get(d, "usage.name.scientificName"),
               authorship: _.get(d, "usage.name.authorship"),
-              rank: _.get(d, "usage.name.rank")
+              rank: _.get(d, "usage.name.rank"),
+              status: _.get(d, "usage.status"),
+            parent: (d.classification && d.classification.length > 1) ? d.classification[d.classification.length - 2] : "",
+            code: _.get(d, "usage.name.code")
             },
             mode: ["block", "chresonym"].includes(decision)
               ? decision

@@ -94,7 +94,10 @@ class DecisionForm extends React.Component {
 
             name: _.get(currentRow, "usage.name.scientificName"),
             authorship: _.get(currentRow, "usage.name.authorship"),
-            rank: _.get(currentRow, "usage.name.rank")
+            rank: _.get(currentRow, "usage.name.rank"),
+            status: _.get(currentRow, "usage.status"),
+            parent: (currentRow.classification && currentRow.classification.length > 1) ? currentRow.classification[currentRow.classification.length - 2] : "",
+            code: _.get(currentRow, "usage.name.code")
           }
         
         
