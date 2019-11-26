@@ -14,7 +14,7 @@ import ColumnFilter from "./ColumnFilter";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import { getDatasetsBatch } from "../../api/dataset";
+import { getDatasetsBatch, getCatalogues } from "../../api/dataset";
 import DataLoader from "dataloader";
 
 
@@ -109,8 +109,15 @@ const defaultColumns = [
     dataIndex: "contributesTo",
     key: "contributesTo",
     render: (text, record) => {
-      return record.contributesToDatasets
-        ? record.contributesToDatasets.map(d => d.alias).join(", ")
+      return record.contributesToDatasets ? 
+        record.contributesToDatasets
+        .map((d, i, arr )=> <React.Fragment><NavLink
+          key={d.key}
+          to={{ pathname: `/dataset/${d.key}` }}
+          exact={true}
+        >
+          {`${d.alias} [${d.key}]`}
+        </NavLink>{arr.length - 1 !== i && " | "}</React.Fragment>)
         : "";
     }
   },
@@ -158,6 +165,7 @@ class DatasetList extends React.Component {
 
     this.state = {
       data: [],
+      catalogues: [],
       excludeColumns:
         JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
         [],
@@ -190,7 +198,11 @@ class DatasetList extends React.Component {
       
     } }, this.getData);
 
+    getCatalogues().then(catalogues => {
+      this.setState({catalogues})
+    })
   }
+
 
 
   getData = () => {
@@ -290,10 +302,11 @@ class DatasetList extends React.Component {
   }
 
   render() {
-    const { data, loading, error, excludeColumns} = this.state;
+    const { data, loading, error, excludeColumns, catalogues} = this.state;
     const { dataFormatType, nomCode, datasetType } = this.props
     defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
     defaultColumns[7].filters = nomCode.map(i => ({text: _.startCase(i.name), value: i.name}))
+    defaultColumns[8].filters = catalogues.map(i => ({text: `${i.alias} [${i.key}]`, value: i.key}))
     defaultColumns[10].filters = dataFormatType.map(i => ({text: _.startCase(i), value: i}))
 
     const filteredColumns =

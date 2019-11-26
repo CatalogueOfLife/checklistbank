@@ -29,3 +29,6 @@ export const getDuplicateOverview = datasetKey => {
 
 }
 
+export const getCatalogues = () => {
+   return axios(`${config.dataApi}dataset/catalogues`).then(({data}) => getDatasetsBatch(data));
+}
