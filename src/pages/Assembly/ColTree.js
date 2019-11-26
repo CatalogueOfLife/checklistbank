@@ -1,5 +1,5 @@
 import React from "react";
-import { Tree, notification, message, Alert, Spin } from "antd";
+import { Tree, notification, message, Alert, Spin, Button } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -17,7 +17,6 @@ const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
-
 const IRREGULAR_RANKS = [
   "unranked",
   "other",
@@ -59,6 +58,7 @@ class ColTree extends React.Component {
     this.state = {
       rootLoading: true,
       treeData: [],
+      rootTotal: 0,
       error: null,
       mode: "attach",
       ranks: [],
@@ -91,7 +91,7 @@ class ColTree extends React.Component {
     });
   };
 
-  reloadRoot = () => this.setState({ treeData: [] }, this.loadRoot);
+  reloadRoot = () => this.setState({ treeData: []}, this.loadRoot);
 
   loadRoot = () => {
     const {
@@ -102,6 +102,7 @@ class ColTree extends React.Component {
       catalogueKey,
       location
     } = this.props;
+    this.setState({rootLoading: true})
     let id = key;
     let p = defaultExpandKey
       ? axios(
@@ -113,9 +114,9 @@ class ColTree extends React.Component {
             // Load the siblings of the default expanded taxon
             return _.get(res, "data[1]")
               ? axios(
-                  `${config.dataApi}dataset/${key}/tree/${encodeURIComponent(
+                  `${config.dataApi}dataset/${key}/tree/${
                     _.get(res, "data[1].id") //taxonKey
-                  )}/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true&catalogueKey=${
+                  }/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true&catalogueKey=${
                     treeType === "gsd" ? catalogueKey : key
                   }`
                 )
@@ -145,12 +146,13 @@ class ColTree extends React.Component {
       axios(
         `${config.dataApi}dataset/${id}/tree?catalogueKey=${
           treeType === "gsd" ? catalogueKey : key
-        }`
+        }&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
       ).then(this.decorateWithSectorsAndDataset),
       p
     ])
       .then(values => {
         const mainTreeData = values[0].data.result;
+        const rootTotal = values[0].data.total;
         const defaultExpanded = values[1] ? values[1].data : null;
         const treeData = mainTreeData.map(tx => {
           let dataRef = {
@@ -173,6 +175,7 @@ class ColTree extends React.Component {
           );
           return dataRef;
         });
+
         if (defaultExpanded && defaultExpanded.length == 0) {
           this.setState(
             {
@@ -272,20 +275,18 @@ class ColTree extends React.Component {
         }
         if (defaultExpandedNodes && defaultExpandKey) {
           this.setState({
-            treeData:
-              treeType === "mc"
-                ? [...treeData]
-                : treeData.filter(r => r.childCount > 0),
+            rootTotal: rootTotal,
+            rootLoading: false,
+            treeData:[...this.state.treeData,...treeData],
             defaultExpandAll: !defaultExpanded && treeData.length < 10,
             error: null,
             defaultExpandedKeys: defaultExpandedNodes
           });
         } else {
           this.setState({
-            treeData:
-              treeType === "mc"
-                ? [...treeData]
-                : treeData.filter(r => r.childCount > 0),
+            rootTotal: rootTotal,
+            rootLoading: false,
+            treeData:[...this.state.treeData, ...treeData],
             defaultExpandAll: treeData.length < 10,
             error: null
           });
@@ -310,9 +311,9 @@ class ColTree extends React.Component {
     const offset = _.get(dataRef, "childOffset");
 
     return axios(
-      `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(
+      `${config.dataApi}dataset/${dataset.key}/tree/${
         dataRef.taxon.id //taxonKey
-      )}/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${
         treeType === "gsd" ? catalogueKey : dataset.key
       }`
     )
@@ -771,6 +772,8 @@ class ColTree extends React.Component {
   render() {
     const {
       error,
+      rootTotal,
+      rootLoading,
       treeData,
       defaultExpandAll,
       defaultExpandedKeys,
@@ -848,9 +851,12 @@ class ColTree extends React.Component {
               >
                 {this.renderTreeNodes(treeData)}
               </Tree>
+              
             )}
+            
           </ColTreeContext.Consumer>
         )}
+       {treeData.length < rootTotal && <Button loading={rootLoading} onClick={this.loadRoot}>Load more </Button>}
       </div>
     );
   }
