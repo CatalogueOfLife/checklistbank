@@ -293,7 +293,7 @@ class Sector extends React.Component {
             <Tooltip title={sectorSourceDataset.title} placement="top">
               <Tag color={stringToColour(sectorSourceDataset.title)}>
                 {isRootSector && sector.mode === 'attach' && <Icon type="caret-right" />}
-                {isRootSector && sector.mode === 'merge' && <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" /> }
+                {isRootSector && sector.mode === 'union' && <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" /> }
                 {sectorSourceDataset.alias || sectorSourceDataset.key}
                 {_.get(syncState, "running.sectorKey") === sector.key && (
                   <Icon type="sync" style={{ marginLeft: "5px" }} spin />
@@ -376,7 +376,7 @@ class Sector extends React.Component {
             <Tag color={stringToColour(sectorSourceDataset.title)}>
               {missingTargetKeys[_.get(sector, 'target.id')] === true && <Icon type="exclamation-circle" />}
               {isRootSectorInSourceTree && sector.mode === 'attach' && <Icon type="caret-right" />}
-                {isRootSectorInSourceTree && sector.mode === 'merge' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
+                {isRootSectorInSourceTree && sector.mode === 'union' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
               {sectorSourceDataset.alias || sectorSourceDataset.key}
               {_.get(syncState, "running.sectorKey") === sector.key && (
                 <Icon type="sync" style={{ marginLeft: "5px" }} spin />
