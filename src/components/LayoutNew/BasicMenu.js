@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 import injectSheet from "react-jss";
-import { Menu, Icon } from "antd";
+import { Menu, Icon, Alert } from "antd";
 import Logo from "./Logo";
 import _ from "lodash";
 import Auth from "../Auth";
 import withContext from "../hoc/withContext";
+import config from "../../config"
 const SubMenu = Menu.SubMenu;
 const styles = {};
 
@@ -96,7 +97,8 @@ class BasicMenu extends Component {
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
         >
-        {Auth.isAuthorised(user, ["editor", "admin"]) &&  <Menu.Item key="admin">
+{config.env === 'dev' &&  <Alert type="warning" style={{margin: '6px'}} message={<div style={{textAlign: 'center'}}>Test enviroment</div>}/>}       
+ {Auth.isAuthorised(user, ["editor", "admin"]) &&  <Menu.Item key="admin">
             <NavLink to={{ pathname: "/admin" }}>
               <Icon type="setting" />
               <span>Admin</span>
