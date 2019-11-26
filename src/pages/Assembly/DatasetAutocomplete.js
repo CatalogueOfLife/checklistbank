@@ -62,7 +62,7 @@ class DatasetAutocomplete extends React.Component {
             dataSource={this.state.datasets}
             onSelect={this.onSelectDataset}
             onSearch={this.getDatasets}
-            dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: o.alias || o.title})) : []}
+            dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: `${o.alias || o.title} [${o.key}]`})) : []}
             placeholder="Find dataset"
             style={{ width: '100%' }}
             onChange={(value) => this.setState({value})}
