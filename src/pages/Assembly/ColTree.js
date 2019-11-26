@@ -477,6 +477,7 @@ class ColTree extends React.Component {
 
   handleAttach = e => {
     const { dragNode } = this.props;
+    
     if (
       dragNode.props.dataRef.taxon.datasetKey ===
       e.node.props.dataRef.taxon.datasetKey
@@ -501,6 +502,9 @@ class ColTree extends React.Component {
       );
       return; // we are in modify mode and should not react to the event
     }
+
+    const willProduceDuplicateChild = e.node.props.dataRef.children ? e.node.props.dataRef.children.find(c => c.taxon.name === dragNode.props.dataRef.taxon.name) : false;
+
     const { ranks } = this.state;
 
     const showRankWarning =
@@ -539,6 +543,11 @@ class ColTree extends React.Component {
             }}
           />{" "}
           in {this.props.dataset.title}?
+         {willProduceDuplicateChild && 
+         <Alert 
+         style={{marginTop: '6px'}} 
+         type="error" 
+         message={<div><span dangerouslySetInnerHTML={{__html: e.node.props.title.props.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.props.dataRef.taxon.name}} /></div>} />}
         </span>
       ) : (
         <span>
@@ -548,7 +557,7 @@ class ColTree extends React.Component {
               type="warning"
             />
           )}
-          Ranks are equal. Do you want to replace or merge children of{" "}
+          Ranks are equal. Do you want to replace or union children of{" "}
           <span
             dangerouslySetInnerHTML={{
               __html: dragNode.props.title.props.taxon.name
