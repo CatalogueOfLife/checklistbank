@@ -187,7 +187,7 @@ class DuplicateSearchPage extends React.Component {
                 isFirstInGroup: id === 0 // not used ... keep?
               }))
             )
-            .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for hold dupes together
+            .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for holding dupes together
           rawData: dataArr,
           columns: assembly ? [this.getGsdColumn(), ...clms] : clms,
           duplicateCount: dataArr.length,

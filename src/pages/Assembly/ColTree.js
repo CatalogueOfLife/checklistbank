@@ -482,8 +482,14 @@ class ColTree extends React.Component {
       dragNode.props.dataRef.taxon.datasetKey ===
       e.node.props.dataRef.taxon.datasetKey
     ) {
-      message.warn("You cant modify the CoL draft in attachment mode");
+      message.warn("You cannot modify the CoL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
+    }
+    if (
+      e.node.props.dataRef.taxon.name === "Not assigned"
+    ) {
+      message.warn("You cannot create sectors on placeholder nodes");
+      return; 
     }
     if (
       _.get(dragNode, "props.dataRef.taxon.sector") &&
@@ -694,6 +700,14 @@ class ColTree extends React.Component {
       });
   };
   handleModify = e => {
+
+    if (
+      e.dragNode.props.dataRef.name === "Not assigned"
+    ) {
+      message.warn("You cannot move placeholder nodes");
+      return; 
+    }
+
     const msg = (
       <span>
         Move{" "}

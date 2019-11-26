@@ -43,7 +43,7 @@ class TaxonSources extends React.Component {
     return (
         showInNode ?  <React.Fragment>
        {" •"} {data.map((d, index) => (
-                      <span style={{ fontSize: "11px"}}>
+                      <span key={index} style={{ fontSize: "11px"}}>
                       
                    
                       <NavLink

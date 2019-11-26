@@ -146,7 +146,7 @@ class ColTreeNode extends React.Component {
             hasPopOver && (
               <Popover
                 content={
-                  <React.Fragment>
+                  taxon.name !== "Not assigned" ?  <React.Fragment>
                     <Button
                       style={{ width: "100%" }}
                       type="primary"
@@ -215,7 +215,10 @@ class ColTreeNode extends React.Component {
                       Estimates
                     </Button>
                  
-                  </React.Fragment>
+                  </React.Fragment> : 
+                  <p>
+                    This is a placeholder node for taxa that are not assigned to any <strong>{taxon.rank}</strong>.
+                  </p>
                 }
                 title="Options"
                 visible={this.state.popOverVisible}
