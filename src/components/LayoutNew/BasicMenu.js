@@ -64,7 +64,8 @@ class BasicMenu extends Component {
       recentDatasets,
       taxonOrNameKey
     } = this.props;
-    const hasData = _.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'origin') === 'managed';
+    const hasData = _.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'type') === 'catalogue';
+    
     const { selectedKeys, openKeys } = this.state;
     return (
       <React.Fragment>
@@ -242,7 +243,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="reference">
                   <NavLink
                     to={{
@@ -257,7 +258,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="classification">
                   <NavLink
                     to={{
@@ -271,7 +272,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="sectors">
                   <NavLink
                     to={{
@@ -299,7 +300,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
@@ -325,7 +326,7 @@ class BasicMenu extends Component {
                   Import Metrics
                 </NavLink>
               </Menu.Item> }
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="tasks">
                   <NavLink
                     to={{
@@ -340,7 +341,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
@@ -354,7 +355,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.type === 'catalogue') && (
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{
