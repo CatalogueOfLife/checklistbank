@@ -64,6 +64,7 @@ class BasicMenu extends Component {
       recentDatasets,
       taxonOrNameKey
     } = this.props;
+    const hasData = _.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'origin') === 'managed';
     const { selectedKeys, openKeys } = this.state;
     return (
       <React.Fragment>
@@ -241,7 +242,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="reference">
                   <NavLink
                     to={{
@@ -256,7 +257,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="classification">
                   <NavLink
                     to={{
@@ -270,7 +271,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="sectors">
                   <NavLink
                     to={{
@@ -298,7 +299,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
@@ -312,7 +313,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              <Menu.Item key="metrics">
+            {selectedDataset.origin !== 'managed' &&  <Menu.Item key="metrics">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
@@ -323,8 +324,8 @@ class BasicMenu extends Component {
                 >
                   Import Metrics
                 </NavLink>
-              </Menu.Item>
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              </Menu.Item> }
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="tasks">
                   <NavLink
                     to={{
@@ -339,7 +340,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
@@ -353,7 +354,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && selectedDataset.hasData &&  (selectedDataset.importState || Number(selectedDataset.key) < 1001) && (
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{

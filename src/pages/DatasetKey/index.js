@@ -54,6 +54,7 @@ class DatasetPage extends React.Component {
   };
   getData = datasetKey => {
     
+    const {dataset} = this.props;
 
     Promise.all([axios(`${config.dataApi}dataset/${datasetKey}/import`), axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)])
       
