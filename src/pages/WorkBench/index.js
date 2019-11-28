@@ -397,19 +397,16 @@ class WorkBench extends React.Component {
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map(d => {
-        let decisionObject;
-        if(!decisionObjectFromForm){
-          decisionObject = {
+         let decisionObject = {
           
             subjectDatasetKey: datasetKey,
             subject: {
               id: _.get(d, "usage.id"),
-
               name: _.get(d, "usage.name.scientificName"),
               authorship: _.get(d, "usage.name.authorship"),
               rank: _.get(d, "usage.name.rank"),
               status: _.get(d, "usage.status"),
-            parent: (d.classification && d.classification.length > 1) ? d.classification[d.classification.length - 2] : "",
+            parent: (d.classification && d.classification.length > 1) ? d.classification[d.classification.length - 2].name : "",
             code: _.get(d, "usage.name.code")
             },
             mode: ["block", "chresonym"].includes(decision)
@@ -423,20 +420,7 @@ class WorkBench extends React.Component {
         if(taxonomicstatus.includes(decision)){
           decisionObject.status = decision
         }
-        } else {
-          decisionObject = {...decisionObjectFromForm}
-          decisionObject.mode = 'update';
-          decisionObject.subjectDatasetKey = datasetKey;
-          decisionObject.subject = {
-            id: _.get(d, "usage.id"),
-
-            name: _.get(d, "usage.name.scientificName"),
-            authorship: _.get(d, "usage.name.authorship"),
-            rank: _.get(d, "usage.name.rank")
-          }
-        }
-        
-         
+          
         return axios
           .post(`${config.dataApi}decision`, decisionObject)
 
@@ -481,40 +465,6 @@ class WorkBench extends React.Component {
         });
       });
   };
-
-  updateDecision = (newDecision, oldDecision) => {
-    const {data: {result}} = this.state
-    const decision = {...newDecision, mode: oldDecision.mode, datasetKey: oldDecision.datasetKey, subjectDatasetKey: oldDecision.subjectDatasetKey, subject: oldDecision.subject}
-    return axios
-          .put(`${config.dataApi}decision/${oldDecision.key}`, decision)
-
-          .then(res => {
-            
-            const row = _.find(result, e => {
-             return _.get(e, 'decisions[0].key') === oldDecision.key 
-              
-            })
-            if(row){
-              row.decisions = [{...row.decisions[0], ...decision}]
-            }
-            notification.open({
-              message: "Decision updated",
-              description: ""
-            });
-            this.setState({
-              data: {...this.state.data},
-              decisionFormVisible: false,
-              decisionError: null
-            });
-          })
-      .catch(err => {
-        this.setState({
-    
-          decisionFormVisible: false,
-          decisionError: err
-        });
-      });; 
-  }
 
   render() {
     const {
@@ -742,7 +692,7 @@ class WorkBench extends React.Component {
             expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => _.get(record, "decisions[0]") ? 
            <React.Fragment> 
             {record.decisions[0].mode === 'update' && <a onClick={() => {
-               this.setState({decisionForEdit: _.get(record, "decisions[0]"), decisionFormVisible:true})
+               this.setState({rowsForEdit: [record], decisionFormVisible:true})
              }}>Edit <Icon type="edit" /></a>}
              <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> 
              </React.Fragment>

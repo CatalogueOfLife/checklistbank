@@ -96,7 +96,7 @@ class DecisionForm extends React.Component {
             authorship: _.get(currentRow, "usage.name.authorship"),
             rank: _.get(currentRow, "usage.name.rank"),
             status: _.get(currentRow, "usage.status"),
-            parent: (currentRow.classification && currentRow.classification.length > 1) ? currentRow.classification[currentRow.classification.length - 2] : "",
+            parent: (currentRow.classification && currentRow.classification.length > 1) ? currentRow.classification[currentRow.classification.length - 2].name : "",
             code: _.get(currentRow, "usage.name.code")
           }
         
@@ -126,6 +126,7 @@ class DecisionForm extends React.Component {
       nomCode,
       nametype,
       lifezone,
+      taxonomicstatus,
       onCancel,
       onOk,
       rowsForEdit,
@@ -192,6 +193,20 @@ class DecisionForm extends React.Component {
                     -
                   </Option>
                 {rank.map(r => (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </FormItem>
+          <FormItem {...formItemLayout} label="Taxonomic status">
+            {getFieldDecorator("status", {initialValue: (_.get(currentDecision, 'status')) ? _.get(currentDecision, 'status') : ""})(
+              <Select style={{ width: 200 }} >
+                <Option key="_null" value={""}>
+                    -
+                  </Option>
+                {taxonomicstatus.map(r => (
                   <Option key={r} value={r}>
                     {r}
                   </Option>
@@ -296,12 +311,13 @@ class DecisionForm extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ rank, nomstatus, nomCode, nametype, lifezone }) => ({
+const mapContextToProps = ({ rank, nomstatus, nomCode, nametype, lifezone, taxonomicstatus }) => ({
   rank,
   nomstatus,
   nomCode,
   nametype,
-  lifezone
+  lifezone,
+  taxonomicstatus
 });
 const WrappedDecisionForm = Form.create()(
   withContext(mapContextToProps)(DecisionForm)
