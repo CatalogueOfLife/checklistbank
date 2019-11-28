@@ -55,7 +55,6 @@ class WorkBench extends React.Component {
       decision: null,
       columns: this.defaultColumns,
       decisionFormVisible: false,
-      decisionForEdit: null,
       rowsForEdit: [],
       params: {},
       pagination: {
@@ -65,7 +64,8 @@ class WorkBench extends React.Component {
       },
       loading: false,
       selectedRowKeys: [],
-      filteredInfo: null
+      filteredInfo: null,
+      advancedFilters: false
     };
   }
   defaultColumns = [
@@ -237,7 +237,7 @@ class WorkBench extends React.Component {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0, facet: ["rank", "issue", "status"] };
+      params = { limit: 50, offset: 0, facet: ["rank", "issue", "status", "nomstatus", "type", "field"] };
       history.push({
         pathname: `/dataset/${datasetKey}/workbench`,
         search: `?limit=50&offset=0`
@@ -465,7 +465,9 @@ class WorkBench extends React.Component {
         });
       });
   };
-
+  toggleAdvancedFilters = () => {
+    this.setState({ advancedFilters: !this.state.advancedFilters });
+  };
   render() {
     const {
       data: { result, facets },
@@ -478,7 +480,8 @@ class WorkBench extends React.Component {
       columns,
       decision,
       decisionFormVisible,
-      rowsForEdit
+      rowsForEdit,
+      advancedFilters
     } = this.state;
     const {
       rank,
@@ -489,21 +492,39 @@ class WorkBench extends React.Component {
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
           value: r.value,
-          text: `${_.startCase(r.value)} (${r.count})`
+          label: `${_.startCase(r.value)} (${r.count.toLocaleString('en-GB')})`
         }))
-      : null;
+      : [];
     const facetIssues = _.get(facets, "issue")
       ? facets.issue.map(i => ({
           value: i.value,
-          label: `${_.startCase(i.value)} (${i.count})`
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString('en-GB')})`
         }))
       : [];
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map(s => ({
           value: s.value,
-          text: `${_.startCase(s.value)} (${s.count})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
-      : null;
+      : [];
+    const facetNomStatus = _.get(facets, "nomstatus")
+      ? facets.nomstatus.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+        }))
+      : [];
+    const facetNomType = _.get(facets, "type")
+      ? facets.type.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+        }))
+      : [];
+    const facetNomField = _.get(facets, "field")
+      ? facets.field.map(s => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+        }))
+      : [];
 
     columns[2].filters =
       facetTaxonomicStatus ||
@@ -573,23 +594,58 @@ class WorkBench extends React.Component {
             />
           </Col>
           <Col span={10}>
-            <Select
-              placeholder="Issue"
-              value={params.issue}
-              style={{
-                width: 200,
-                marginLeft: "10px",
-                marginBottom: "10px"
-              }}
-              showSearch
+          <MultiValueFilter
+              defaultValue={_.get(params, "issue")}
               onChange={value => this.updateSearch({ issue: value })}
-            >
-              {facetIssues.map(r => (
-                <Option key={r.value} value={r.value}>
-                  {r.label}
-                </Option>
-              ))}
-            </Select>
+              vocab={facetIssues }
+              label="Issues"
+            />
+
+            <MultiValueFilter
+              defaultValue={_.get(params, "rank")}
+              onChange={value => this.updateSearch({ rank: value })}
+              vocab={facetRanks}
+              label="Ranks"
+            />
+            <MultiValueFilter
+              defaultValue={_.get(params, "status")}
+              onChange={value => this.updateSearch({ status: value })}
+              vocab={facetTaxonomicStatus}
+              label="Status"
+            />
+            {advancedFilters && (
+              <React.Fragment>
+                <MultiValueFilter
+                  defaultValue={_.get(params, "nomstatus")}
+                  onChange={value => this.updateSearch({ nomstatus: value })}
+                  vocab={facetNomStatus}
+                  label="Nomenclatural status"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "type")}
+                  onChange={value => this.updateSearch({ type: value })}
+                  vocab={facetNomType}
+                  label="Name type"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "field")}
+                  onChange={value => this.updateSearch({ field: value })}
+                  vocab={facetNomField}
+                  label="Name field"
+                />
+              </React.Fragment>
+            )}
+            <div style={{ textAlign: "right", marginBottom: "8px" }}>
+              <a
+                style={{ marginLeft: 8, fontSize: 12 }}
+                onClick={this.toggleAdvancedFilters}
+              >
+                Advanced{" "}
+                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+              </a>
+
+              {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
+            </div>
                 <FormItem style={{
                       marginLeft: "10px",
                       marginBottom: "10px"
