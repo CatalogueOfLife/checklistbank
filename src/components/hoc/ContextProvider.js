@@ -1,6 +1,6 @@
 import React from "react";
 import getDeep from "lodash/get";
-
+import config from "../../config"
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import {
@@ -28,6 +28,8 @@ import {
   getCountries
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
+
+const {MANAGEMENT_CLASSIFICATION} = config;
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -56,6 +58,7 @@ const TAXONOMIC_STATUS_COLOR = {"accepted" : "green", "provisionally accepted" :
 class ContextProvider extends React.Component {
   
   state = {
+    catalogueKey: MANAGEMENT_CLASSIFICATION.key,  //TODO Load from localStorage if changed by user
     frequency: [],
     datasetType: [],
     dataFormatType: [],
@@ -80,6 +83,11 @@ class ContextProvider extends React.Component {
     termsMap: {},
     dataset: null,
     recentDatasets: [],
+    catalogue: MANAGEMENT_CLASSIFICATION,
+    setCatalogueKey: catalogueKey => {
+      this.setState({catalogueKey});
+    },
+    setCatalogue: catalogue => this.setState({catalogue, catalogueKey: catalogue.key }),
     setDataset: dataset => {
       this.setState({ dataset });
     },

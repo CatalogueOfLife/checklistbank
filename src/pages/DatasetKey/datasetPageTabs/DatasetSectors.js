@@ -16,6 +16,7 @@ import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import SectorTable from "../../BrokenSectors/SectorTable";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
+import withContext from "../../../components/hoc/withContext";
 
 class DatasetSectors extends React.Component {
   constructor(props) {
@@ -42,11 +43,12 @@ class DatasetSectors extends React.Component {
   };
   getData = dataset => {
     this.setState({ loading: true });
-    axios(`${config.dataApi}sector?datasetKey=${dataset.key}`)
+    const {catalogueKey} = this.props;
+    axios(`${config.dataApi}sector?subjectDatasetKey=${dataset.key}&datasetKey=${catalogueKey}`)
       .then(res => {
         this.setState({
           loading: false,
-          data: res.data.map(d => ({ ...d, dataset: dataset })),
+          data: _.get(res, 'data.result') ? res.data.result.map(d => ({ ...d, dataset: dataset })) : [],
           err: null
         });
       })
@@ -108,4 +110,10 @@ class DatasetSectors extends React.Component {
   };
 }
 
-export default DatasetSectors;
+
+ const mapContextToProps = ({
+  catalogueKey
+}) => ({ catalogueKey });
+
+export default withContext(mapContextToProps)(DatasetSectors);
+ 

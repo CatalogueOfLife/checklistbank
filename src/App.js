@@ -164,11 +164,11 @@ class App extends Component {
                 roles={["editor", "admin"]}
                 component={DatasetCreate}
               />
-              />
+              
               <Route
                 exact
                 key="datasetKey"
-                path={`/dataset/:key/:section?/:taxonOrNameKey?`}
+                path={`/catalogue/:catalogueKey/dataset/:key/:section?/:taxonOrNameKey?`}
                 component={DatasetPage}
                 /* render={({ match, location }) => (
                   <DatasetPage
@@ -191,7 +191,7 @@ class App extends Component {
           </ThemeProvider>
           <Route            
                 key="datasetProvider"
-                path={`/dataset/:key`}
+                path={`/catalogue/:catalogueKey/dataset/:key`}
                 component={DatasetProvider}
               /> 
               </React.Fragment>

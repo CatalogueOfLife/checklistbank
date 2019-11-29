@@ -16,10 +16,10 @@ import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../history";
 import colTreeActions from "./ColTreeActions";
+import withContext from "../../components/hoc/withContext";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
-class ManagementClassification extends React.Component {
+class Assembly extends React.Component {
   constructor(props) {
     super(props);
     const params = qs.parse(_.get(this.props, "location.search"));
@@ -62,7 +62,8 @@ class ManagementClassification extends React.Component {
   }
 
   getSyncState = () => {
-    axios(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}`)
+    const {catalogueKey} = this.props;
+    axios(`${config.dataApi}assembly/${catalogueKey}`)
       .then(res => {
         if (
           _.get(res, "data.running") &&
@@ -101,11 +102,13 @@ class ManagementClassification extends React.Component {
 
   getSectorInfo = (attachment, root, mode) => {
     const { datasetKey } = this.state;
+    const {catalogueKey} = this.props;
+
     return axios
       .all([
         axios(
           `${config.dataApi}dataset/${
-            MANAGEMENT_CLASSIFICATION.key
+            catalogueKey
           }/taxon/${encodeURIComponent(attachment.props.dataRef.key)}`
         ),
         axios(
@@ -144,9 +147,11 @@ class ManagementClassification extends React.Component {
   };
 
   saveChild = (subject, target) => {
+    const {catalogueKey} = this.props;
+
     return axios
       .post(
-        `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${
+        `${config.dataApi}dataset/${catalogueKey}/tree/${
           target.id
         }/copy`,
         {
@@ -157,16 +162,18 @@ class ManagementClassification extends React.Component {
       .then(res => {
         return axios(
           `${config.dataApi}dataset/${
-            MANAGEMENT_CLASSIFICATION.key
+            catalogueKey
           }/taxon/${encodeURIComponent(res.data)}`
         );
       });
   };
   replace = (subject, target, mode) => {
     const { parentId } = target;
+    const {catalogueKey} = this.props;
+
     return axios(
       `${config.dataApi}dataset/${
-        MANAGEMENT_CLASSIFICATION.key
+        catalogueKey
       }/taxon/${encodeURIComponent(parentId)}`
     )
       .then(res => {
@@ -174,7 +181,7 @@ class ManagementClassification extends React.Component {
         // delete recursive
         return axios
           .delete(
-            `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/tree/${
+            `${config.dataApi}dataset/${catalogueKey}/tree/${
               target.id
             }`
           )
@@ -192,9 +199,10 @@ class ManagementClassification extends React.Component {
   };
 
   saveSector = (subject, target, mode) => {
+    const {catalogueKey} = this.props;
     const sector = {
       subjectDatasetKey: subject.datasetKey,
-      datasetKey: MANAGEMENT_CLASSIFICATION.key,
+      datasetKey: catalogueKey,
       mode: mode,
       subject: { id: subject.id, status: subject.status },
       target: { id: target.id, status: target.status }
@@ -292,13 +300,14 @@ class ManagementClassification extends React.Component {
       sectorMappingError,
       assemblyTaxonKey,
     } = this.state;
-    const { match, location } = this.props;
+
+    const { match, location, catalogueKey, catalogue } = this.props;
     //  const {assemblyTaxonKey, sourceTaxonKey} = location
     return (
       <Layout
         openKeys={["assembly"]}
         selectedKeys={["colAssembly"]}
-        title={MANAGEMENT_CLASSIFICATION.title}
+        title={catalogue ? catalogue.title : ''}
       >
         <Helmet>
           <meta charSet="utf-8" />
@@ -359,7 +368,7 @@ class ManagementClassification extends React.Component {
                 <Card>
                   <h4>CoL Draft</h4>{" "}
                   <NameAutocomplete
-                    datasetKey={MANAGEMENT_CLASSIFICATION.key}
+                    datasetKey={catalogueKey}
                     onSelectName={name => {
                       const params = qs.parse(_.get(location, "search"));
 
@@ -398,14 +407,14 @@ class ManagementClassification extends React.Component {
                       type="error"
                     />
                   )}
-                  <div style={{ overflowY: "scroll", height: "800px" }}>
+                {catalogue &&  <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       location={location}
-                      dataset={MANAGEMENT_CLASSIFICATION}
+                      dataset={catalogue}
                       treeType="mc"
                       attachFn={this.getSectorInfo}
                       onDragStart={e =>
-                        this.onDragStart(e, MANAGEMENT_CLASSIFICATION)
+                        this.onDragStart(e, catalogue)
                       }
                       dragNode={this.state.dragNode}
                       draggable={true}
@@ -413,7 +422,7 @@ class ManagementClassification extends React.Component {
                       defaultExpandKey={assemblyTaxonKey}
                       addMissingTargetKey={this.addMissingTargetKey}
                     />
-                  </div>
+                </div> }
                 </Card>
               </Col>
               <Col span={12} style={{ padding: "10px" }}>
@@ -475,7 +484,7 @@ class ManagementClassification extends React.Component {
                         location={location}
                         dataset={this.state.selectedDataset}
                         treeType="gsd"
-                        catalogueKey={MANAGEMENT_CLASSIFICATION.key}
+                        catalogueKey={catalogueKey}
                         onDragStart={e =>
                           this.onDragStart(e, this.state.selectedDataset)
                         }
@@ -507,4 +516,6 @@ class ManagementClassification extends React.Component {
   }
 }
 
-export default ManagementClassification;
+const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue });
+
+export default withContext(mapContextToProps)(Assembly);

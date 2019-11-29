@@ -21,10 +21,10 @@ class DatasetTasks extends React.Component {
   }
 
   getData = () => {
-    const { datasetKey, issueMap } = this.props;
+    const { datasetKey, catalogueKey } = this.props;
 
     this.setState({ loading: true });
-    getDuplicateOverview(datasetKey).then(res =>
+    getDuplicateOverview(datasetKey, catalogueKey).then(res =>
       this.setState({ duplicates: res, loading: false })
     );
   };
@@ -47,7 +47,8 @@ class DatasetTasks extends React.Component {
       issue,
       issueMap,
       getDuplicateWarningColor,
-      datasetKey
+      datasetKey,
+      catalogueKey
     } = this.props;
     const groups = issue
       ? issue
@@ -78,7 +79,7 @@ class DatasetTasks extends React.Component {
           .filter(d => d.count > 50)
           .map(d => (
             <NavLink
-              to={{ pathname: `/dataset/${datasetKey}/duplicates`, search:`?_colCheck=${d.id}` }}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`, search:`?_colCheck=${d.id}` }}
               exact={true}
             >
               <Tag
@@ -94,7 +95,7 @@ class DatasetTasks extends React.Component {
           .filter(d => d.count < 51 && d.count > 0)
           .map(d => (
             <NavLink
-            to={{ pathname: `/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
+            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
             exact={true}
           >
             <Tag
@@ -109,7 +110,7 @@ class DatasetTasks extends React.Component {
           .filter(d => d.count === 0)
           .map(d => (
             <NavLink
-            to={{ pathname: `/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
+            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
             exact={true}
           >
             <Tag
@@ -131,7 +132,8 @@ const mapContextToProps = ({
   user,
   issue,
   issueMap,
-  getDuplicateWarningColor
-}) => ({ user, issue, issueMap, getDuplicateWarningColor });
+  getDuplicateWarningColor,
+  catalogueKey
+}) => ({ user, issue, issueMap, getDuplicateWarningColor, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetTasks);

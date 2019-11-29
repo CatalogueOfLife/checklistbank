@@ -36,133 +36,13 @@ const formItemLayout = {
   }
 };
 
-const defaultColumns = [
-  {
-    title: "Short name",
-    dataIndex: "alias",
-    width: 150,
-    key: "alias",
-    render: (text, record) => {
-      return (
-        <NavLink
-          to={{ pathname: `/dataset/${record.key}/names` }}
-          exact={true}
-        >
-          {text}
-        </NavLink>
-      );
-    },
-   // sorter: true
-  },
-  {
-    title: "Title",
-    dataIndex: "title",
-    width: 250,
-    key: "title",
-    render: (text, record) => {
-      return (
-        <NavLink
-          to={{ pathname: `/dataset/${record.key}/names` }}
-          exact={true}
-        >
-          {text}
-        </NavLink>
-      );
-    },
-    sorter: true
-  },
-  {
-    title: "Logo",
-    dataIndex: "key",
-    width: 100,
-    key: "logo",
-    render: (text, record) => <DatasetLogo datasetKey={record.key} />
-  },
-  {
-    title: "Authors and Editors",
-    dataIndex: "authorsAndEditors",
-    key: "authorsAndEditors",
-    sorter: true
-  },
-  {
-    title: "Version",
-    dataIndex: "version",
-    key: "version"
-  },
-  {
-    title: "Origin",
-    dataIndex: "origin",
-    key: "origin"
-  },
-  {
-    title: "Type",
-    dataIndex: "type",
-    key: "type"
-  },
-  {
-    title: "Code",
-    dataIndex: "code",
-    key: "code"
-  },
-  {
-    title: "Contributes To",
-    dataIndex: "contributesTo",
-    key: "contributesTo",
-    render: (text, record) => {
-      return record.contributesToDatasets ? 
-        record.contributesToDatasets
-        .map((d, i, arr )=> <React.Fragment><NavLink
-          key={d.key}
-          to={{ pathname: `/dataset/${d.key}` }}
-          exact={true}
-        >
-          {`${d.alias} [${d.key}]`}
-        </NavLink>{arr.length - 1 !== i && " | "}</React.Fragment>)
-        : "";
-    }
-  },
-  {
-    title: "Size",
-    dataIndex: "size",
-    key: "size",
-    sorter: true
-  },
-  {
-    title: "Data Format",
-    dataIndex: "format",
-    key: "format",
-    render: (text, record) => record.dataFormat
-  },
-  {
-    title: "Import Frequency",
-    dataIndex: "importFrequency",
-    key: "importFrequency"
-  },
-  {
-    title: "Created",
-    dataIndex: "created",
-    key: "created",
-    sorter: true,
-    render: date => {
-      return moment(date).format("MMM Do YYYY");
-    }
-  },
-  {
-    title: "Modified",
-    dataIndex: "modified",
-    key: "modified",
-    sorter: true,
-    render: date => {
-      return moment(date).format("MMM Do YYYY");
-    }
-  }
-];
+
 
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
     // const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
-
+    const {catalogueKey} = this.props;
     this.state = {
       data: [],
       catalogues: [],
@@ -170,6 +50,127 @@ class DatasetList extends React.Component {
         JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
         [],
       columns: [],
+      defaultColumns: [
+        {
+          title: "Short name",
+          dataIndex: "alias",
+          width: 150,
+          key: "alias",
+          render: (text, record) => {
+            return (
+              <NavLink
+                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                exact={true}
+              >
+                {text}
+              </NavLink>
+            );
+          },
+         // sorter: true
+        },
+        {
+          title: "Title",
+          dataIndex: "title",
+          width: 250,
+          key: "title",
+          render: (text, record) => {
+            return (
+              <NavLink
+                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                exact={true}
+              >
+                {text}
+              </NavLink>
+            );
+          },
+          sorter: true
+        },
+        {
+          title: "Logo",
+          dataIndex: "key",
+          width: 100,
+          key: "logo",
+          render: (text, record) => <DatasetLogo datasetKey={record.key} />
+        },
+        {
+          title: "Authors and Editors",
+          dataIndex: "authorsAndEditors",
+          key: "authorsAndEditors",
+          sorter: true
+        },
+        {
+          title: "Version",
+          dataIndex: "version",
+          key: "version"
+        },
+        {
+          title: "Origin",
+          dataIndex: "origin",
+          key: "origin"
+        },
+        {
+          title: "Type",
+          dataIndex: "type",
+          key: "type"
+        },
+        {
+          title: "Code",
+          dataIndex: "code",
+          key: "code"
+        },
+        {
+          title: "Contributes To",
+          dataIndex: "contributesTo",
+          key: "contributesTo",
+          render: (text, record) => {
+            return record.contributesToDatasets ? 
+              record.contributesToDatasets
+              .map((d, i, arr )=> <React.Fragment><NavLink
+                key={d.key}
+                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}` }}
+                exact={true}
+              >
+                {`${d.alias} [${d.key}]`}
+              </NavLink>{arr.length - 1 !== i && " | "}</React.Fragment>)
+              : "";
+          }
+        },
+        {
+          title: "Size",
+          dataIndex: "size",
+          key: "size",
+          sorter: true
+        },
+        {
+          title: "Data Format",
+          dataIndex: "format",
+          key: "format",
+          render: (text, record) => record.dataFormat
+        },
+        {
+          title: "Import Frequency",
+          dataIndex: "importFrequency",
+          key: "importFrequency"
+        },
+        {
+          title: "Created",
+          dataIndex: "created",
+          key: "created",
+          sorter: true,
+          render: date => {
+            return moment(date).format("MMM Do YYYY");
+          }
+        },
+        {
+          title: "Modified",
+          dataIndex: "modified",
+          key: "modified",
+          sorter: true,
+          render: date => {
+            return moment(date).format("MMM Do YYYY");
+          }
+        }
+      ],
       search: _.get(this.props, "location.search.q") || "",
       params: {},
       pagination: {
@@ -202,7 +203,6 @@ class DatasetList extends React.Component {
       this.setState({catalogues})
     })
   }
-
 
 
   getData = () => {
@@ -302,7 +302,7 @@ class DatasetList extends React.Component {
   }
 
   render() {
-    const { data, loading, error, excludeColumns, catalogues} = this.state;
+    const { data, loading, error, excludeColumns, catalogues, defaultColumns} = this.state;
     const { dataFormatType, nomCode, datasetType, datasetOrigin } = this.props
     defaultColumns[5].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
     defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
@@ -393,6 +393,6 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, dataFormatType, nomCode, datasetType, datasetOrigin }) => ({ user, dataFormatType, nomCode, datasetType, datasetOrigin });
+const mapContextToProps = ({ user, dataFormatType, nomCode, datasetType, datasetOrigin, catalogueKey }) => ({ user, dataFormatType, nomCode, datasetType, datasetOrigin, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetList);

@@ -3,6 +3,7 @@ import axios from "axios";
 import config from "../../config";
 import { Table, Input, Select, InputNumber, Popconfirm, Form } from "antd";
 import _ from "lodash";
+import withContext from "../../components/hoc/withContext";
 const Option = Select.Option
 const { MANAGEMENT_CLASSIFICATION } = config;
 
@@ -155,12 +156,13 @@ class EditableTable extends React.Component {
 
 
   decorateEstimatesWithReference = (data) => {
+    const {catalogueKey} = this.props;
     if (_.isArray(data)) {
         Promise.all(
           data.filter(a => !_.isUndefined(a.referenceId)).map(d =>
             axios(
               `${config.dataApi}dataset/${
-                MANAGEMENT_CLASSIFICATION.key
+                catalogueKey
               }/reference/${d.referenceId}`
             ).then(res => {
                 d.reference = res.data.citation
@@ -278,6 +280,10 @@ class EditableTable extends React.Component {
   };
 }
 
-const EditableFormTable = Form.create()(EditableTable);
 
-export default EditableFormTable;
+const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
+const WrappedEditableFormTable = Form.create()(
+  withContext(mapContextToProps)(WrappedEditableFormTable)
+);
+
+export default WrappedEditableFormTable;

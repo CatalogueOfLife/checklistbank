@@ -17,7 +17,6 @@ import ReferenceAutocomplete from "./ReferenceAutocomplete";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -53,7 +52,7 @@ class SpeciesestimateModal extends React.Component {
   };
 
   submitData = values => {
-    const { taxon, datasetKey } = this.props;
+    const { taxon, datasetKey, catalogueKey } = this.props;
     const newEst = {
       datasetKey: datasetKey,
       referenceId: this.state.selectedReference.key,
@@ -62,7 +61,7 @@ class SpeciesestimateModal extends React.Component {
       note: values.note
     };
     axios(
-      `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/taxon/${
+      `${config.dataApi}dataset/${catalogueKey}/taxon/${
         taxon.id
       }`
     )
@@ -110,7 +109,8 @@ class SpeciesestimateModal extends React.Component {
     const {
       taxon,
       onCancel,
-      form: { getFieldDecorator }
+      form: { getFieldDecorator },
+      catalogueKey
     } = this.props;
     const { estimates } = this.state;
     const { visible, addNewMode, submissionError } = this.state;
@@ -197,7 +197,7 @@ class SpeciesestimateModal extends React.Component {
             <FormItem {...formItemLayout} label="Reference">
               {
                 <ReferenceAutocomplete
-                  datasetKey={MANAGEMENT_CLASSIFICATION.key}
+                  datasetKey={catalogueKey}
                   onSelectReference={this.selectReference}
                   onResetSearch={() => this.setState({ selectReference: null })}
                 />
@@ -235,7 +235,7 @@ class SpeciesestimateModal extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ rank, nomstatus }) => ({ rank, nomstatus });
+const mapContextToProps = ({ rank, nomstatus, catalogueKey }) => ({ rank, nomstatus, catalogueKey });
 const WrappedSpeciesestimateModal = Form.create()(
   withContext(mapContextToProps)(SpeciesestimateModal)
 );

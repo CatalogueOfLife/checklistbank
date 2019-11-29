@@ -30,13 +30,15 @@ class SyncTable extends React.Component {
   }
 
   getDatasets = async () => {
+    const {catalogueKey} = this.props;
+
     let last = false;
     let offset = 0;
     let limit = 100;
     let datasets = [];
     while (!last) {
       const d = await axios(
-        `${config.dataApi}dataset?offset=${offset}&limit=${limit}&contributesTo=${MANAGEMENT_CLASSIFICATION.key}`
+        `${config.dataApi}dataset?offset=${offset}&limit=${limit}&contributesTo=${catalogueKey}`
       );
       datasets = [...datasets, ...d.data.result];
       offset += limit;
@@ -47,11 +49,11 @@ class SyncTable extends React.Component {
 
   getData = datasets => {
     this.setState({ loading: true });
-
+    const {catalogueKey} = this.props;
     Promise.all(
       datasets.map(d => {
-        return axios(`${config.dataApi}sector/broken?datasetKey=${d.key}`).then(
-          sectors => sectors.data.map(s => ({ ...s, dataset: d }))
+        return axios(`${config.dataApi}sector?subjectDatasetKey=${d.key}&datasetKey=${catalogueKey}&broken=true`).then(
+          sectors => sectors.data.result.map(s => ({ ...s, dataset: d }))
         );
       })
     )
@@ -179,6 +181,6 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
 
 export default withContext(mapContextToProps)(SyncTable);

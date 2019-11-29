@@ -103,7 +103,7 @@ class TaxonPage extends React.Component {
             })
           );
         }
-
+        // sector keys are only present if its a catalogue
         if (_.get(res, "data.sectorKey")) {
           axios(`${config.dataApi}sector/${_.get(res, "data.sectorKey")}`).then(
             sector => {

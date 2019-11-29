@@ -14,14 +14,14 @@ export const getDatasetsBatch = (ids) => {
 
 }
 
-export const getDuplicateOverview = datasetKey => {
+export const getDuplicateOverview = (datasetKey, catalogueKey) => {
 
     let groups = [...duplicatePresets];
 
    return Promise.all(
         groups.map(
             g => axios(`${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-            ...g.params,
+            ...g.params, catalogueKey: catalogueKey,
             limit: 51
           })}`).then(res => g.count = res.data.length)
     )
@@ -32,3 +32,5 @@ export const getDuplicateOverview = datasetKey => {
 export const getCatalogues = () => {
    return axios(`${config.dataApi}dataset/catalogues`).then(({data}) => getDatasetsBatch(data));
 }
+
+export const getDataset = datasetKey => axios(`${config.dataApi}dataset/${datasetKey}`);

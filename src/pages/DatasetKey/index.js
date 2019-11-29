@@ -52,6 +52,8 @@ class DatasetPage extends React.Component {
       this.getData(_.get(nextProps, 'match.params.key'));
     }
   };
+
+
   getData = datasetKey => {
     
     const {dataset} = this.props;
@@ -79,11 +81,13 @@ class DatasetPage extends React.Component {
         params: { key: datasetKey, section, taxonOrNameKey }
       },
       location,
-      dataset
+      dataset,
+      catalogueKey
     } = this.props;
+
     if (!section ) {
       return <Redirect to={{
-        pathname: `/dataset/${datasetKey}/names`
+        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/names`
       }} />
     }
    
@@ -95,6 +99,7 @@ class DatasetPage extends React.Component {
       <Layout
         selectedMenuItem="datasetKey"
         selectedDataset={{...dataset, importState: importState, hasData: hasData}}
+        selectedCatalogueKey={catalogueKey}
         section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
@@ -113,23 +118,23 @@ class DatasetPage extends React.Component {
           <DatasetClassification dataset={dataset}  location={location} />
         )}
         {section === "sectors" && (
-          <DatasetSectors dataset={dataset} />
+          <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} />
         )}
         
         {sect === "names" && (
           <NameSearch datasetKey={datasetKey} location={this.props.location} />
         )}
         {sect === "workbench" && (
-          <WorkBench datasetKey={datasetKey} location={this.props.location} />
-        )}
+          <WorkBench datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} /> 
+        )} {/* catalogueKeys are used to scope decisions and tasks */}
         {sect === "duplicates" && (
-          <Duplicates datasetKey={datasetKey} location={this.props.location} />
+          <Duplicates datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} />
         )}
         {sect === "reference" && (
           <DatasetReferences datasetKey={datasetKey} location={this.props.location} />
         )}
         {sect === "tasks" && (
-          <DatasetTasks datasetKey={datasetKey} location={this.props.location} />
+          <DatasetTasks datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey}/>
         )}
         {sect === "taxon" && (
           <Taxon datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
@@ -147,5 +152,5 @@ class DatasetPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({dataset}) => ({dataset})
+const mapContextToProps = ({dataset, catalogueKey}) => ({dataset, catalogueKey})
 export default withContext(mapContextToProps)(DatasetPage);

@@ -33,6 +33,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
 const columnFilters = ["status", "rank"];
+const FACETS = ["rank", "issue", "status", "nomstatus", "type", "field"];
 
 const getDecisionText = (decision) => {
   if(!_.get(decision, 'mode')) {
@@ -234,16 +235,16 @@ class WorkBench extends React.Component {
   ];
 
   componentWillMount() {
-    const { datasetKey } = this.props;
+    const { datasetKey, catalogueKey} = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0, facet: ["rank", "issue", "status", "nomstatus", "type", "field"] };
+      params = { limit: 50, offset: 0, facet: FACETS };
       history.push({
-        pathname: `/dataset/${datasetKey}/workbench`,
+        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
-      params.facet = ["rank", "issue", "status"];
+      params.facet = FACETS;
     }
     columnFilters.forEach(param => this.updateFilter(params, {}, param));
 
@@ -257,17 +258,18 @@ class WorkBench extends React.Component {
   getData = () => {
     const { params } = this.state;
     this.setState({ loading: true });
-    const { datasetKey } = this.props;
+    const { datasetKey, catalogueKey } = this.props;
     if (!params.q) {
       delete params.q;
     }
     history.push({
-      pathname: `/dataset/${datasetKey}/workbench`,
+      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
       search: `?${qs.stringify(params)}`
     });
+    // This would be cleaner with pathparam like:  /catalogue/3/dataset/1700/nameusage/search
     axios(
       `${config.dataApi}dataset/${datasetKey}/nameusage/search?${qs.stringify(
-        params
+        {...params, catalogueKey: catalogueKey}
       )}`
     )
       .then(res => this.getDecisions(res))
@@ -363,14 +365,14 @@ class WorkBench extends React.Component {
     catColumn.filteredValue = filter;
   };
   resetSearch = () => {
-    const { datasetKey } = this.props;
+    const { datasetKey, catalogueKey } = this.props;
     history.push({
-      pathname: `/dataset/${datasetKey}/workbench`,
+      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
       search: `?limit=50&offset=0`
     });
     this.setState(
       {
-        params: { limit: 50, offset: 0, facet: ["rank", "issue", "status"] },
+        params: { limit: 50, offset: 0, facet: FACETS },
         filteredInfo: null
       },
       this.getData
@@ -657,19 +659,19 @@ class WorkBench extends React.Component {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "decisionKey"
+                                "decisionMode"
                               ])
                             },
                             this.getData
                           );
                         } else {
-                          this.updateSearch({ decisionKey: evt.target.value });
+                          this.updateSearch({ decisionMode: evt.target.value });
                         }
                       }}
-                      value={params.decisionKey}
+                      value={params.decisionMode}
                     >
-                      <Radio value="_NOT_NULL">With decision</Radio>
-                      <Radio value="_NULL">Without decision</Radio>
+                      <Radio value="NOT_NULL">With decision</Radio>
+                      <Radio value="NULL">Without decision</Radio>
                       <Radio value={undefined}>All</Radio>
                     </RadioGroup>
                     </FormItem>
@@ -768,7 +770,8 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  user
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user });
+  user,
+  catalogueKey
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user, catalogueKey });
 
 export default withContext(mapContextToProps)(WorkBench);

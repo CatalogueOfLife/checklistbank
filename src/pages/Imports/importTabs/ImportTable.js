@@ -36,74 +36,7 @@ const tagColors = {
   'failed': 'red',
   'waiting': 'orange'
 }
-const defaultColumns = [
-  {
-    title: "Title",
-    dataIndex: "dataset.title",
-    key: "title",
-    render: (text, record) => {
-      return (
 
-        <NavLink
-          to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-          exact={true}
-        >
-          {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}
-        </NavLink> 
-
-      );
-    },
-    width: 150
-  },
-  {
-    title: "State",
-    dataIndex: "state",
-    key: "state",
-    render: (text, record) => {
-
-      return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
-    },
-    width: 50
-  },
-  {
-    title: "Data Format",
-    dataIndex: "dataset.dataFormat",
-    key: "dataFormat",
-    width: 50
-  },
-  {
-    title: "Attempt No",
-    dataIndex: "attempt",
-    key: "attempt",
-    width: 50
-  },
-  {
-    title: "Import Started",
-    dataIndex: "started",
-    key: "started",
-    width: 50,
-    render: date => {
-      return (date) ? moment(date).format('MMMM Do, h:mm a') : '';
-    }
-  },
-  {
-    title: "Import Finished",
-    dataIndex: "finished",
-    key: "finished",
-    width: 50,
-    render: date => {
-      return (date) ?  moment(date).format('MMMM Do, h:mm a') : '';
-    }
-  },
-  {
-    title: "Logs",
-    key: "logs",
-    render: (text, record) => 
-    <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)} target="_blank" ><Icon type="code" style={{fontSize: '20px'}} /></a></Tooltip>,
-    width: 50
-  }
-  
-];
 
 class ImportTable extends React.Component {
   constructor(props) {
@@ -115,7 +48,75 @@ class ImportTable extends React.Component {
         pageSize: 10,
         current: 1
       },
-      loading: false
+      loading: false,
+      defaultColumns : [
+        {
+          title: "Title",
+          dataIndex: "dataset.title",
+          key: "title",
+          render: (text, record) => {
+            return (
+      
+              <NavLink
+                to={{ pathname: `/catalogue/${this.props.catalogueKey}/dataset/${record.datasetKey}/names` }}
+                exact={true}
+              >
+                {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}
+              </NavLink> 
+      
+            );
+          },
+          width: 150
+        },
+        {
+          title: "State",
+          dataIndex: "state",
+          key: "state",
+          render: (text, record) => {
+      
+            return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
+          },
+          width: 50
+        },
+        {
+          title: "Data Format",
+          dataIndex: "dataset.dataFormat",
+          key: "dataFormat",
+          width: 50
+        },
+        {
+          title: "Attempt No",
+          dataIndex: "attempt",
+          key: "attempt",
+          width: 50
+        },
+        {
+          title: "Import Started",
+          dataIndex: "started",
+          key: "started",
+          width: 50,
+          render: date => {
+            return (date) ? moment(date).format('MMMM Do, h:mm a') : '';
+          }
+        },
+        {
+          title: "Import Finished",
+          dataIndex: "finished",
+          key: "finished",
+          width: 50,
+          render: date => {
+            return (date) ?  moment(date).format('MMMM Do, h:mm a') : '';
+          }
+        },
+        {
+          title: "Logs",
+          key: "logs",
+          render: (text, record) => 
+          <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)} target="_blank" ><Icon type="code" style={{fontSize: '20px'}} /></a></Tooltip>,
+          width: 50
+        }
+        
+      ]
     };
   }
 
@@ -213,7 +214,7 @@ class ImportTable extends React.Component {
 
 
   updateStatusQuery = (query) => {
-
+    const {defaultColumns} = this.state;
     let catColumn = _.find(defaultColumns, (c)=>{
       return c.key === 'state'
     });
@@ -247,7 +248,7 @@ class ImportTable extends React.Component {
 
 
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, error, defaultColumns } = this.state;
     const { section, importState, user } = this.props;
     const columns = (Auth.isAuthorised(user, ['editor', 'admin'])) ? [ ...defaultColumns, {
       title: "Action",
@@ -292,6 +293,6 @@ class ImportTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
 
 export default withContext(mapContextToProps)(ImportTable);

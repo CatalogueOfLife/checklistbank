@@ -11,6 +11,8 @@ import config from "../../config"
 const SubMenu = Menu.SubMenu;
 const styles = {};
 
+const {MANAGEMENT_CLASSIFICATION} = config;
+
 class BasicMenu extends Component {
   constructor(props) {
     super(props);
@@ -55,17 +57,15 @@ class BasicMenu extends Component {
 
   render() {
     const {
-      location,
       selectedDataset,
-      selectedTaxon,
-      selectedName,
       selectedSector,
       user,
       recentDatasets,
-      taxonOrNameKey
+      taxonOrNameKey,
+      catalogueKey
     } = this.props;
     const hasData = _.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'origin') === 'managed';
-    
+  //  const catalogueKey = selectedCatalogue ? selectedCatalogue.key : MANAGEMENT_CLASSIFICATION.key
     const { selectedKeys, openKeys } = this.state;
     return (
       <React.Fragment>
@@ -213,7 +213,7 @@ class BasicMenu extends Component {
               {recentDatasets.map(d => <Menu.Item key={`recent_${d.key}`}>
                 <NavLink
                   to={{
-                    pathname: `/dataset/${d.key}`
+                    pathname: `/catalogue/${catalogueKey}/dataset/${d.key}`
                   }}
                 >
                   {d.alias ? d.alias : d.key}
@@ -234,7 +234,7 @@ class BasicMenu extends Component {
               <Menu.Item key="meta">
                 <NavLink
                   to={{
-                    pathname: `/dataset/${_.get(
+                    pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                       this.props,
                       "selectedDataset.key"
                     )}/meta`
@@ -247,7 +247,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="reference">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/reference`
@@ -262,7 +262,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="classification">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/classification`
@@ -276,7 +276,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="sectors">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/sectors`
@@ -290,7 +290,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="names">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/names`
@@ -304,7 +304,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/issues`
@@ -317,7 +317,7 @@ class BasicMenu extends Component {
             {selectedDataset.origin !== 'managed' &&  <Menu.Item key="metrics">
                 <NavLink
                   to={{
-                    pathname: `/dataset/${_.get(
+                    pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                       this.props,
                       "selectedDataset.key"
                     )}/metrics`
@@ -330,7 +330,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="tasks">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/tasks`
@@ -345,7 +345,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/workbench`
@@ -359,7 +359,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                         this.props,
                         "selectedDataset.key"
                       )}/duplicates`
@@ -379,7 +379,7 @@ class BasicMenu extends Component {
               {selectedDataset && selectedDataset.hasData && (
                 <Menu.Item key="verbatim"><NavLink
                 to={{
-                  pathname: `/dataset/${_.get(
+                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                     this.props,
                     "selectedDataset.key"
                   )}/verbatim`
@@ -396,7 +396,7 @@ class BasicMenu extends Component {
   }
 }
 
-const mapContextToProps = ({ user, recentDatasets }) => ({ user, recentDatasets });
+const mapContextToProps = ({ user, recentDatasets, catalogueKey }) => ({ user, recentDatasets, catalogueKey });
 
 export default withRouter(
   injectSheet(styles)(withContext(mapContextToProps)(BasicMenu))

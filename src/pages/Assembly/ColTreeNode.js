@@ -24,7 +24,6 @@ import withContext from "../../components/hoc/withContext";
 
 import history from "../../history";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 class ColTreeNode extends React.Component {
   constructor(props) {
@@ -111,7 +110,8 @@ class ColTreeNode extends React.Component {
       taxon: { sector, decision, datasetSectors },
       hasPopOver,
       isUpdating,
-      getTaxonomicStatusColor
+      getTaxonomicStatusColor,
+      catalogueKey
     } = this.props;
     const { childModalVisible, editTaxonModalVisible, estimateModalVisible } = this.state;
 
@@ -136,7 +136,7 @@ class ColTreeNode extends React.Component {
             onCancel={this.cancelEstimateModal}
             onSuccess={this.cancelEstimateModal}
             taxon={taxon}
-            datasetKey={MANAGEMENT_CLASSIFICATION.key}
+            datasetKey={catalogueKey}
           />
         )}
 
@@ -273,9 +273,9 @@ class ColTreeNode extends React.Component {
                 onCancel={this.props.onCancel}
               >
                 <div >
-                  <span onClick={() => { history.push(`/dataset/${taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key ? MANAGEMENT_CLASSIFICATION.key : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
+                  <span onClick={() => { history.push(`/dataset/${taxon.datasetKey === catalogueKey? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
                   onContextMenu={()=> {
-                    const win = window.open(`/dataset/${taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key ? MANAGEMENT_CLASSIFICATION.key : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
+                    const win = window.open(`/dataset/${taxon.datasetKey === catalogueKey ? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
                     win.focus();
                   }}>
                   <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
@@ -306,7 +306,7 @@ class ColTreeNode extends React.Component {
                       {taxon.status}
                     </Tag>
                   )}
-                  {taxon.datasetKey === MANAGEMENT_CLASSIFICATION.key &&
+                  {taxon.datasetKey === catalogueKey &&
                     !datasetSectors &&
                     !sector && (
                       <Tooltip title="No sectors">
@@ -345,7 +345,7 @@ class ColTreeNode extends React.Component {
   };
 }
 
-const mapContextToProps = ({ getTaxonomicStatusColor }) => ({ getTaxonomicStatusColor });
+const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({ getTaxonomicStatusColor, catalogueKey });
 
 export default withContext(mapContextToProps)(ColTreeNode);
 

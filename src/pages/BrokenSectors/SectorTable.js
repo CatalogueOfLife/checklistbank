@@ -94,7 +94,7 @@ class SyncTable extends React.Component {
   }
  
   render() {
-    const {data, loading, user, onDeleteSector} = this.props;  
+    const {data, loading, user, onDeleteSector, catalogueKey} = this.props;  
     const { currentDataSourceLength, error } = this.state;
     const columns = [
       {
@@ -173,7 +173,7 @@ class SyncTable extends React.Component {
               </span>
               {!record.subject.id  && <NavLink
                 to={{
-                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                  pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/names`,
                   search: `?q=${record.subject.name}`
                   
                 }}
@@ -377,6 +377,6 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
 
 export default withContext(mapContextToProps)(SyncTable);

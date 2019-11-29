@@ -145,7 +145,8 @@ class DuplicateSearchPage extends React.Component {
   getData = () => {
     const { params } = this.state;
     const {
-      location: { pathname }
+      location: { pathname },
+      catalogueKey
     } = this.props;
     this.setState({ loading: true });
     const { datasetKey, assembly } = this.props;
@@ -156,7 +157,7 @@ class DuplicateSearchPage extends React.Component {
     });
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-        ...params,
+        ...params, catalogueKey: catalogueKey,
         limit: Number(params.limit) + 1
       })}`
     )
@@ -209,6 +210,7 @@ class DuplicateSearchPage extends React.Component {
   };
 
   getGsdColumn = () => {
+
     return {
       title: "gsd",
       dataIndex: "sector.dataset.alias",
@@ -219,7 +221,7 @@ class DuplicateSearchPage extends React.Component {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
+              pathname: `/catalogue/${_.get(record, "sector.datasetKey")}/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
             }}
             exact={true}
           >
@@ -231,8 +233,8 @@ class DuplicateSearchPage extends React.Component {
   };
 
   getSectors = () => {
-    const { datasetKey } = this.props;
-    axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
+    const { datasetKey, catalogueKey } = this.props;
+    axios(`${config.dataApi}sector?subjectDatasetKey=${datasetKey}&datasetKey=${catalogueKey}`)
       .then(res => {
         this.setState({
           sectors: res.data,
@@ -322,7 +324,7 @@ class DuplicateSearchPage extends React.Component {
   };
   applyDecision = () => {
     const { selectedRowKeys, data, decision } = this.state;
-    const { datasetKey } = this.props;
+    const { datasetKey, catalogueKey } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
       .filter(d => selectedRowKeys.includes(_.get(d, "id")))
@@ -333,7 +335,7 @@ class DuplicateSearchPage extends React.Component {
             method === "put" ? `/${d.decision.key}` : ""
           }`,
           {
-            datasetKey: MANAGEMENT_CLASSIFICATION.key,
+            datasetKey: catalogueKey,
             subjectDatasetKey: datasetKey,
             subject: {
               id: _.get(d, "id"),
@@ -970,7 +972,8 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  user
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user });
+  user,
+  catalogueKey
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user, catalogueKey });
 
 export default withContext(mapContextToProps)(DuplicateSearchPage);

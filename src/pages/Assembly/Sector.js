@@ -12,7 +12,6 @@ import withContext from "../../components/hoc/withContext"
 import debounce from 'lodash.debounce';
 import Auth from '../../components/Auth'
 const {Option} = Select; 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 class Sector extends React.Component {
   constructor(props) {
@@ -34,8 +33,9 @@ class Sector extends React.Component {
 
   syncSector = (sector, syncState, syncingSector) => {
     const {idle} = syncState;
+    const {catalogueKey} = this.props;
     axios
-      .post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {
+      .post(`${config.dataApi}assembly/${catalogueKey}/sync`, {
         sectorKey: sector.key,
         key: sector.key,
         target: sector.target,
@@ -164,7 +164,7 @@ class Sector extends React.Component {
   };
 
   render = () => {
-    const { taxon, nomCode, user } = this.props;
+    const { taxon, nomCode, user, catalogueKey } = this.props;
 
     const { error } = this.state;
     const { sector } = taxon;
@@ -176,7 +176,7 @@ class Sector extends React.Component {
         taxon.parentId === sector.target.id);
     const isRootSectorInSourceTree = taxon.id === sector.subject.id;
     const isSourceTree =
-      _.get(MANAGEMENT_CLASSIFICATION, "key") !== _.get(taxon, "datasetKey");
+    catalogueKey !== _.get(taxon, "datasetKey");
 
       
     if (!sectorSourceDataset) {
@@ -390,7 +390,7 @@ class Sector extends React.Component {
   };
 }
 
-const mapContextToProps = ({ nomCode, user }) => ({ nomCode, user });
+const mapContextToProps = ({ nomCode, user, catalogueKey }) => ({ nomCode, user, catalogueKey });
 export default withContext(mapContextToProps)(Sector)
 
 
