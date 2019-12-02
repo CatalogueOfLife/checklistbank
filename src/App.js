@@ -62,7 +62,7 @@ class App extends Component {
               <Route
                 exact
                 key="GSDIssues"
-                path="/issues"
+                path="/catalogue/:catalogueKey/issues"
                 component={GSDIssuesMatrix}
               />
               <PrivateRoute
@@ -75,7 +75,7 @@ class App extends Component {
               <Route
                 exact
                 key="Reference"
-                path="/assembly/reference/:key?"
+                path="/catalogue/:catalogueKey/reference/:key?"
                 render={({ match, location }) => (
                   <Reference section={match.params.section} location={location} />
                 )}
@@ -91,21 +91,21 @@ class App extends Component {
               <PrivateRoute
                 exact
                 key="Assembly"
-                path={`/assembly`}
+                path={`/catalogue/:catalogueKey/assembly`}
                 roles={["editor"]}
                 component={Assembly}
               />
               <PrivateRoute
                 exact
                 key="AssemblyDuplicates"
-                path={`/assembly/duplicates`}
+                path={`/catalogue/:catalogueKey/duplicates`}
                 roles={["editor"]}
                 component={AssemblyDuplicates}
               />
               <Route
                 exact
                 key="sectorSync"
-                path="/sector/sync"
+                path="/catalogue/:catalogueKey/sector/sync"
                 render={({ match, location }) => (
                   <SectorSync section={match.params.section} location={location} />
                 )}
@@ -114,7 +114,7 @@ class App extends Component {
               <Route
                 exact
                 key="sectorBroken"
-                path="/sector/broken"
+                path="/catalogue/:catalogueKey/sector/broken"
                 component={SectorBroken}
                 
               />
@@ -129,7 +129,7 @@ class App extends Component {
               <Route
                 exact
                 key="sectorDiff"
-                path="/assembly/:catalogueKey/sync/:sectorKey/diff"
+                path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
                 component={SectorDiff}
                 
               />

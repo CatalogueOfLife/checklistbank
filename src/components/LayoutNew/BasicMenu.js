@@ -128,28 +128,28 @@ class BasicMenu extends Component {
               key="assembly"
               title={
                 <span>
-                  <Icon type="copy" /> <span>Catalogue</span>
+                  <Icon type="copy" /> <span>{`Catalogue: ${catalogueKey}`}</span>
                 </span>
               }
             >
               <Menu.Item key="colAssembly">
-                <NavLink to={{ pathname: "/assembly" }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}>
                   <span>Assembly</span>
                 </NavLink>
               </Menu.Item>
               <Menu.Item key="assemblyDuplicates">
-                <NavLink to={{ pathname: "/assembly/duplicates" }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/duplicates` }}>
                   <span>Duplicates</span>
                 </NavLink>
               </Menu.Item>
 
               <Menu.Item key="sectorSync">
-                <NavLink to={{ pathname: "/sector/sync" }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/sync` }}>
                   <span>Sector sync</span>
                 </NavLink>
               </Menu.Item>
               <Menu.Item key="sectorBroken">
-                <NavLink to={{ pathname: "/sector/broken" }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/broken` }}>
                   <span>Broken sectors</span>
                 </NavLink>
               </Menu.Item>
@@ -161,7 +161,7 @@ class BasicMenu extends Component {
               )}
 
 <Menu.Item key="assemblyReferences">
-                <NavLink to={{ pathname: "/assembly/reference" }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/reference` }}>
                   <span>References</span>
                 </NavLink>
               </Menu.Item>

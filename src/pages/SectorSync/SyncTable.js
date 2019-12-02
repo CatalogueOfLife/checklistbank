@@ -17,7 +17,6 @@ import kibanaQuery from "./kibanaQuery";
 import SyncAllSectorsButton from "../Admin/SyncAllSectorsButton"
 import ErrorMsg from "../../components/ErrorMsg";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 const _ = require("lodash");
 
@@ -158,7 +157,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       <NavLink
         to={{
-          pathname: `/assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${
+          pathname: `/assembly/${catalogueKey}/sync/${
             record.sectorKey
           }/diff`,
           search:
@@ -216,13 +215,14 @@ class SyncTable extends React.Component {
 
   getData = params => {
     this.setState({ loading: true, params });
+    const {catalogueKey} = this.props;
     history.push({
-      pathname: `/sector/sync`,
+      pathname: `/catalogue/${catalogueKey}/sector/sync`,
       search: `?${qs.stringify(params)}`
     });
     axios(
       `${config.dataApi}assembly/${
-        MANAGEMENT_CLASSIFICATION.key
+        catalogueKey
       }/sync?${qs.stringify(params)}`
     )
       .then(res => {

@@ -15,13 +15,30 @@ import {
   Button,
   Alert,
   Popconfirm,
+  Select,
   notification
 } from "antd";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
+import { getCatalogues } from "../../api/dataset";
+
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
-const { MANAGEMENT_CLASSIFICATION } = config;
+
+const { Option } = Select;
 const FormItem = Form.Item;
+
+
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
+
 class AdminPage extends React.Component {
   constructor(props) {
     super(props);
@@ -36,13 +53,18 @@ class AdminPage extends React.Component {
       exportResponse: null,
       background: {},
       backgroundError: null,
-      datasetKey: null
+      datasetKey: null,
+      catalogues: []
     };
   }
 
   componentDidMount = () => {
     this.getBackground();
+    getCatalogues().then(catalogues => {
+      this.setState({ catalogues });
+    });
   };
+
   getBackground = () => {
     axios
       .get(`${config.dataApi}admin/background`)
@@ -69,11 +91,12 @@ class AdminPage extends React.Component {
   };
 
   syncAllSectors = () => {
+    const {catalogueKey} = this.props;
     this.setState({ allSectorSyncloading: true });
     axios
-      .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, {all: true}
-      )
+      .post(`${config.dataApi}assembly/${catalogueKey}/sync`, {
+        all: true
+      })
       .then(res => {
         this.setState(
           { allSectorSyncloading: false, error: null, exportResponse: null },
@@ -95,10 +118,12 @@ class AdminPage extends React.Component {
   };
 
   releaseCoL = () => {
+    const {catalogueKey} = this.props;
+
     this.setState({ releaseColLoading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/release`
+        `${config.dataApi}assembly/${catalogueKey}/release`
       )
       .then(res => {
         this.setState(
@@ -111,7 +136,7 @@ class AdminPage extends React.Component {
             notification.open({
               message: "Action triggered",
               description:
-                "release CoL draft to old portal synchroneously (might take long)"
+                "release selected catalogue to old portal synchroneously (might take long)"
             });
           }
         );
@@ -176,12 +201,14 @@ class AdminPage extends React.Component {
         })
       );
   };
-  
+
   rematchSectorsAndDecisions = () => {
+    const {catalogueKey} = this.props;
+
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/rematch`,
+        `${config.dataApi}assembly/${catalogueKey}/rematch`,
         { all: true }
       )
       .then(res => {
@@ -208,13 +235,10 @@ class AdminPage extends React.Component {
       );
   };
 
-  rematchAllSectorsDecisionsAndEstimates = () =>{
+  rematchAllSectorsDecisionsAndEstimates = () => {
     this.setState({ rematchAllSectorsDecisionsAndEstimatesLoading: true });
     axios
-      .post(
-        `${config.dataApi}admin/rematch`,
-        { all: true }
-      )
+      .post(`${config.dataApi}admin/rematch`, { all: true })
       .then(res => {
         this.setState(
           {
@@ -237,15 +261,12 @@ class AdminPage extends React.Component {
           exportResponse: null
         })
       );
-  }
+  };
 
-  reindexAllDatasets = () =>{
+  reindexAllDatasets = () => {
     this.setState({ reindexAllDatasetsLoading: true });
     axios
-      .post(
-        `${config.dataApi}admin/reindex`,
-        { all: true }
-      )
+      .post(`${config.dataApi}admin/reindex`, { all: true })
       .then(res => {
         this.setState(
           {
@@ -268,7 +289,7 @@ class AdminPage extends React.Component {
           exportResponse: null
         })
       );
-  }
+  };
 
   onSelectDataset = dataset => {
     this.setState({
@@ -318,6 +339,11 @@ class AdminPage extends React.Component {
       .catch(err => this.setState({ error: err }));
   };
 
+  onCatalogueChange = catalogueKey => {
+    const {setCatalogueKey} = this.props;  
+    setCatalogueKey(catalogueKey)
+  };
+
   render() {
     const {
       allSectorSyncloading,
@@ -330,9 +356,10 @@ class AdminPage extends React.Component {
       exportResponse,
       error,
       background,
-      dataset
+      dataset,
+      catalogues
     } = this.state;
-
+    const {catalogueKey} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
         <Helmet>
@@ -352,57 +379,28 @@ class AdminPage extends React.Component {
             </Row>
           )}
           <Row>
-            <Form layout="inline">
-              <FormItem label="Background GBIF Sync">
-                <Switch
-                  onChange={checked => {
-                    this.updateBackground("gbifSync", checked);
-                  }}
-                  checked={background.gbifSync}
-                />
-              </FormItem>
-              <FormItem label="Background importer">
-                <Switch
-                  onChange={checked => {
-                    this.updateBackground("importer", checked);
-                  }}
-                  checked={background.importer}
-                />
-              </FormItem>
-            </Form>
-          </Row>
+            <Col span={12}>
+              <Form layout="inline">
+                <FormItem label="Background GBIF Sync">
+                  <Switch
+                    onChange={checked => {
+                      this.updateBackground("gbifSync", checked);
+                    }}
+                    checked={background.gbifSync}
+                  />
+                </FormItem>
+                <FormItem label="Background importer">
+                  <Switch
+                    onChange={checked => {
+                      this.updateBackground("importer", checked);
+                    }}
+                    checked={background.importer}
+                  />
+                </FormItem>
+              </Form>
 
-          <Popconfirm
-            placement="rightTop"
-            title="Sync all sectors?"
-            onConfirm={this.syncAllSectors}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={allSectorSyncloading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Sync all sectors
-            </Button>
-          </Popconfirm>
-          <Popconfirm
-            placement="rightTop"
-            title="Do you want to export the draft to the old portal?"
-            onConfirm={this.releaseCoL}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={releaseColLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Release CoL draft
-            </Button>
-          </Popconfirm>
-          <Popconfirm
+              <Row>
+              <Popconfirm
             placement="rightTop"
             title="Update all logos?"
             onConfirm={this.updateAllLogos}
@@ -417,6 +415,7 @@ class AdminPage extends React.Component {
               Update all logos
             </Button>
           </Popconfirm>
+          <br/>
           <Popconfirm
             placement="rightTop"
             title="Recalculate sector counts?"
@@ -432,6 +431,83 @@ class AdminPage extends React.Component {
               Recalculate sector counts
             </Button>
           </Popconfirm>
+          <br/>
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to rematch all sectors, decisions & estimates?"
+            onConfirm={this.rematchAllSectorsDecisionsAndEstimates}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={rematchAllSectorsDecisionsAndEstimatesLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Rematch all sectors, decisions & estimates
+            </Button>
+          </Popconfirm>
+          <br/>
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to reindex all datasets?"
+            onConfirm={this.reindexAllDatasets}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={reindexAllDatasetsLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Reindex all datasets
+            </Button>
+          </Popconfirm>
+
+              </Row>
+            </Col>
+            <Col style={{textAlign: 'right'}}>
+            <Form layout="inline">
+                <FormItem label="Selected catalogue" style={{ marginRight: "10px", marginBottom: "10px"}}>
+            {catalogueKey && catalogues.length > 0 && <Select
+                showSearch
+                style={{ width: 200 }}
+                value={catalogueKey}
+                placeholder="Select catalogue"
+                optionFilterProp="children"
+                onChange={this.onCatalogueChange}
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {catalogues.map(c => (
+                  <Option
+                    value={c.key}
+                    key={c.key}
+                  >{`${c.alias} [${c.key}]`}</Option>
+                ))}
+              </Select>
+              }
+              </FormItem></Form>
+
+              <Popconfirm
+            placement="rightTop"
+            title="Do you want to export the draft to the old portal?"
+            onConfirm={this.releaseCoL}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={releaseColLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Release catalogue
+            </Button>
+          </Popconfirm>
+          <br/>
           <Popconfirm
             placement="rightTop"
             title="Do you want to rematch all broken sectors and decisions?"
@@ -446,50 +522,45 @@ class AdminPage extends React.Component {
             >
               Rematch all broken sectors and decisions
             </Button>
-            
           </Popconfirm>
+          <br/>
           <Popconfirm
             placement="rightTop"
-            title="Do you want to rematch all sectors, decisions & estimates?"
-            onConfirm={this.rematchAllSectorsDecisionsAndEstimates}
+            title="Sync all sectors?"
+            onConfirm={this.syncAllSectors}
             okText="Yes"
             cancelText="No"
           >
-          <Button
+            <Button
               type="primary"
-              loading={rematchAllSectorsDecisionsAndEstimatesLoading}
+              loading={allSectorSyncloading}
               style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              Rematch all sectors, decisions & estimates
+              Sync all sectors
             </Button>
-            </Popconfirm>
+          </Popconfirm>
+            </Col>
 
-            <Popconfirm
-            placement="rightTop"
-            title="Do you want to reindex all datasets?"
-            onConfirm={this.reindexAllDatasets}
-            okText="Yes"
-            cancelText="No"
-          >
-          <Button
-              type="primary"
-              loading={reindexAllDatasetsLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Reindex all datasets
-            </Button>
-            </Popconfirm>
-      
+          </Row>
+
+
 
           <Row>
-            <Col span={12}>
-              <DatasetAutocomplete onSelectDataset={this.onSelectDataset} onResetSearch={() => this.setState({dataset: null})} />
+            <Col span={10}>
+              <DatasetAutocomplete
+                onSelectDataset={this.onSelectDataset}
+                onResetSearch={() => this.setState({ dataset: null })}
+              />
             </Col>
-            <Col span={12}>
+            <Col span={14}>
               <Button
                 type="primary"
                 onClick={() => this.reindexDataset(dataset)}
-                style={{ marginLeft: "10px", marginRight: "10px", marginBottom: "10px" }}
+                style={{
+                  marginLeft: "10px",
+                  marginRight: "10px",
+                  marginBottom: "10px"
+                }}
                 disabled={!dataset}
               >
                 Re-index selected dataset
@@ -516,11 +587,13 @@ class AdminPage extends React.Component {
             <a href={config.downloadApi}>Downloads</a>
           </Row>
           <Row>
-              <a href={`${config.dataApi}monitor/healthcheck`}>Health</a> - 
-              <a href={`${config.dataApi}monitor/threads`}>Threads</a> - 
-              <a href={`${config.dataApi}monitor/metrics`}>Metrics</a> - 
-              <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a> - 
-              <a href={`${config.dataApi}monitor/pprof?state=blocked`}>CPU Blocked</a>              
+            <a href={`${config.dataApi}monitor/healthcheck`}>Health</a> -
+            <a href={`${config.dataApi}monitor/threads`}>Threads</a> -
+            <a href={`${config.dataApi}monitor/metrics`}>Metrics</a> -
+            <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a> -
+            <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
+              CPU Blocked
+            </a>
           </Row>
 
           <Row>
@@ -538,5 +611,9 @@ class AdminPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ dataset }) => ({ dataset });
+const mapContextToProps = ({ catalogueKey, catalogue, setCatalogueKey }) => ({
+  catalogueKey,
+  catalogue,
+  setCatalogueKey
+});
 export default withContext(mapContextToProps)(AdminPage);
