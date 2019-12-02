@@ -62,7 +62,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const limit = localStorage.getItem("col_plus_duplicates_limit");
-    const {assembly} = props;
+    const {assembly, catalogueKey} = props;
     this.state = {
       data: [],
       rawData: [],
@@ -70,7 +70,7 @@ class DuplicateSearchPage extends React.Component {
       sectors: [],
       filteredSectors: [],
       advancedMode: false,
-      columns: columnDefaults.binomial,
+      columns: columnDefaults(catalogueKey).binomial,
       params: { limit: limit ? Number(limit) : 50, offset: 0 },
       totalFaked: 0,
       loading: false,
@@ -87,12 +87,7 @@ class DuplicateSearchPage extends React.Component {
   componentWillMount() {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
-    /*  if (_.isEmpty(params)) {
-      history.push({
-        pathname: `/dataset/${datasetKey}/duplicates`,
-        search: `?limit=50&offset=0`
-      });
-   } */
+   
     this.getSectors();
     let booleans = {};
     [
@@ -172,8 +167,8 @@ class DuplicateSearchPage extends React.Component {
           data.length > Number(params.limit) ? data.slice(0, -1) : data;
         const { totalFaked } = this.state;
         const clms = params.category
-          ? columnDefaults[params.category]
-          : columnDefaults.binomial;
+          ? columnDefaults(catalogueKey)[params.category]
+          : columnDefaults(catalogueKey).binomial;
 
         this.setState({
           loading: false,
@@ -504,7 +499,7 @@ class DuplicateSearchPage extends React.Component {
       synonymsSelectLoading,
       newestInGroupLoading
     } = this.state;
-    const { rank, taxonomicstatus, user, assembly } = this.props;
+    const { rank, taxonomicstatus, user, assembly, catalogueKey } = this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -944,7 +939,7 @@ class DuplicateSearchPage extends React.Component {
               columns={
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
-                  : assembly ? [this.getGsdColumn(), ...columnDefaults.fullScientificName] : columnDefaults.fullScientificName
+                  : assembly ? [this.getGsdColumn(), ...columnDefaults(catalogueKey).fullScientificName] : columnDefaults(catalogueKey).fullScientificName
               }
               dataSource={data}
               loading={loading}

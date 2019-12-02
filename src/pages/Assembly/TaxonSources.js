@@ -17,7 +17,7 @@ class TaxonSources extends React.Component {
   }
 
   componentWillMount = () => {
-    const { datasetSectors } = this.props;
+    const { datasetSectors, catalogueKey } = this.props;
 
     if (Object.keys(datasetSectors).length < 4) {
         this.setState({showInNode: true}, this.getData)
@@ -38,7 +38,7 @@ class TaxonSources extends React.Component {
 
   render = () => {
     const { data, showInNode, popOverVisible, loading } = this.state;
-    const {taxon} = this.props;
+    const {taxon, catalogueKey} = this.props;
 
     return (
         showInNode ?  <React.Fragment>
@@ -47,7 +47,7 @@ class TaxonSources extends React.Component {
                       
                    
                       <NavLink
-                      to={{ pathname: `/dataset/${d.key}/meta` }}
+                      to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}/meta` }}
                       exact={true}
                     >
                       { (index ? ', ' : '') + (d.alias || d.key) }
@@ -67,7 +67,7 @@ class TaxonSources extends React.Component {
                       
                    
                       <NavLink
-                      to={{ pathname: `/dataset/${d.key}/meta` }}
+                      to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}/meta` }}
                       exact={true}
                     >
                       { (index ? ', ' : '') + (d.alias || d.key) }

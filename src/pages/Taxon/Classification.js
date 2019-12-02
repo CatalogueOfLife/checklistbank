@@ -4,12 +4,12 @@ import { NavLink } from "react-router-dom";
 import KeyValueList from "./KeyValueList";
 import PresentationItem from "../../components/PresentationItem";
 
-const ClassificationTable = ({ datasetKey, data, style }) => (
+const ClassificationTable = ({ datasetKey, data, style, catalogueKey }) => (
   <div style={style}> {_.reverse([...data]).map(t => (
     <PresentationItem md={6} label={_.startCase(t.name.rank)} classes={{formItem: {borderBottom: 'none'}}} key={t.name.rank}>
       <NavLink
         to={{
-          pathname: `/dataset/${datasetKey}/classification`,
+          pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
           search: `?taxonKey=${t.id}`
         }}
       >

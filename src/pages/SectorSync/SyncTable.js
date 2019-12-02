@@ -29,7 +29,7 @@ const tagColors = {
   failed: "red",
   "in queue": "orange"
 };
-const defaultColumns = [
+const getColumns = (catalogueKey) => [
   {
     title: "Source",
     dataIndex: "sector.dataset.alias",
@@ -37,7 +37,7 @@ const defaultColumns = [
     width: 150,
     render: (text, record) => <NavLink
     to={{
-      pathname: `/dataset/${
+      pathname: `/catalogue/${catalogueKey}/dataset/${
         record.sector.dataset.key
       }/meta`
     }}
@@ -59,7 +59,7 @@ const defaultColumns = [
           </span>
           <NavLink
             to={{
-              pathname: `/dataset/${record.datasetKey}/names`,
+              pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/names`,
               search: _.get(record, 'subject.id') ? `?TAXON_ID=${_.get(record, 'sector.subject.id')}` : `?q=${_.get(record, 'sector.subject.name')}`
               
             }}
@@ -287,10 +287,10 @@ class SyncTable extends React.Component {
 
   render() {
     const { data, loading, error, syncAllError, params: {sectorKey} } = this.state;
-    const { user, sectorImportState } = this.props;
+    const { user, sectorImportState, catalogueKey } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
-          ...defaultColumns,
+          ...getColumns(catalogueKey),
           {
             title: "Action",
             dataIndex: "",
@@ -304,7 +304,7 @@ class SyncTable extends React.Component {
             )
           }
         ]
-      : defaultColumns;
+      : getColumns(catalogueKey);
 
       columns[4].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
 
@@ -365,6 +365,6 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, sectorImportState }) => ({ user, sectorImportState });
+const mapContextToProps = ({ user, sectorImportState, catalogueKey }) => ({ user, sectorImportState, catalogueKey });
 
 export default withContext(mapContextToProps)(SyncTable);

@@ -16,7 +16,7 @@ import NameAutocomplete from "../Assembly/NameAutocomplete";
 import withContext from "../../components/hoc/withContext";
 
 const PAGE_SIZE = 50;
-const columns = [
+const getColumns = (catalogueKey) => [
   {
     title: "Scientific Name",
     dataIndex: "usage.name.formattedName",
@@ -26,11 +26,11 @@ const columns = [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `/dataset/${_.get(
+          ? `/catalogue/${catalogueKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-          : `/dataset/${_.get(
+          : `/catalogue/${catalogueKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/taxon/${encodeURIComponent(
@@ -108,7 +108,7 @@ class NameSearchPage extends React.Component {
     this.state = {
       data: [],
       advancedFilters: false,
-      columns: columns,
+      columns: getColumns(this.props.catalogueKey),
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
@@ -130,7 +130,7 @@ class NameSearchPage extends React.Component {
         sortBy: "taxonomic"
       };
       history.push({
-        pathname: _.get(this.props, "location.path"), // datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+        pathname: _.get(this.props, "location.path"), // datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
@@ -152,7 +152,7 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: _.get(this.props, "location.path"), //datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+      pathname: _.get(this.props, "location.path"), //datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
       search: `?${qs.stringify(params)}`
     });
     const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`
@@ -251,7 +251,8 @@ class NameSearchPage extends React.Component {
       nomstatus,
       nametype,
       namefield,
-      datasetKey
+      datasetKey,
+      catalogueKey
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -408,7 +409,7 @@ class NameSearchPage extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey={record => record.usage.nameIndexId}
-            expandedRowRender={record => <RowDetail {...record} />}
+            expandedRowRender={record => <RowDetail {...record} catalogueKey={catalogueKey}/>}
           />
         )}
       </div>
@@ -422,7 +423,8 @@ const mapContextToProps = ({
   issue,
   nomstatus,
   nametype,
-  namefield
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
+  namefield,
+  catalogueKey
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield , catalogueKey});
 
 export default withContext(mapContextToProps)(NameSearchPage);

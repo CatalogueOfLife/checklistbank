@@ -201,7 +201,8 @@ class TaxonPage extends React.Component {
       match: {
         params: { key }
       },
-      dataset
+      dataset,
+      catalogueKey
     } = this.props;
     const {
       taxon,
@@ -249,7 +250,7 @@ class TaxonPage extends React.Component {
                   <Button
                     onClick={() => {
                       history.push(
-                        `/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
+                        `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
                       );
                     }}
                   >
@@ -323,6 +324,7 @@ class TaxonPage extends React.Component {
                 <NameRelations
                   style={{ marginTop: "-3px" }}
                   data={taxon.name.relations}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -336,6 +338,7 @@ class TaxonPage extends React.Component {
                   data={synonyms}
                   style={{ marginTop: "-3px" }}
                   datasetKey={key}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -346,6 +349,7 @@ class TaxonPage extends React.Component {
                   data={misapplied}
                   style={{ marginBottom: 16, marginTop: "-3px" }}
                   datasetKey={key}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -367,6 +371,7 @@ class TaxonPage extends React.Component {
                   style={{ marginTop: "-3px", marginLeft: "-3px" }}
                   data={info.vernacularNames}
                   datasetKey={taxon.datasetKey}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -384,6 +389,7 @@ class TaxonPage extends React.Component {
                   style={{ marginTop: "-3px" }}
                   data={info.distributions}
                   datasetKey={key}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -405,6 +411,7 @@ class TaxonPage extends React.Component {
                   style={{ marginTop: "-3px", marginLeft: "-3px" }}
                   data={classification}
                   datasetKey={key}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -437,7 +444,7 @@ class TaxonPage extends React.Component {
                   {" "}
                   <NavLink
                     to={{
-                      pathname: `/dataset/${_.get(sourceDataset, "key")}/meta`
+                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(sourceDataset, "key")}/meta`
                     }}
                     exact={true}
                   >
@@ -470,6 +477,6 @@ class TaxonPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ issueMap, dataset }) => ({ issueMap, dataset });
+const mapContextToProps = ({ issueMap, dataset, catalogueKey }) => ({ issueMap, dataset, catalogueKey });
 
 export default withContext(mapContextToProps)(TaxonPage);

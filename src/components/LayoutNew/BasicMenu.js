@@ -11,7 +11,6 @@ import config from "../../config"
 const SubMenu = Menu.SubMenu;
 const styles = {};
 
-const {MANAGEMENT_CLASSIFICATION} = config;
 
 class BasicMenu extends Component {
   constructor(props) {

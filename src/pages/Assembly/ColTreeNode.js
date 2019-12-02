@@ -313,7 +313,7 @@ class ColTreeNode extends React.Component {
                         <Icon theme="filled" style={{ marginLeft: "6px", color: 'wheat' }} type="warning" />
                       </Tooltip>
                     )}
-                   {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} />} 
+                   {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} catalogueKey={catalogueKey} />} 
                   {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>

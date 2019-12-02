@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 import withContext from "../../components/hoc/withContext";
 
-  const expandedRowRender = ({data, selectedRowKeys, onSelectChange, index}) => {
+  const expandedRowRender = ({data, selectedRowKeys, onSelectChange, index, catalogueKey}) => {
     const columns = [
       {
         title: "ID",
@@ -34,7 +34,7 @@ import withContext from "../../components/hoc/withContext";
             <NavLink
               key={_.get(record, "id")}
               to={{
-                pathname: `/dataset/${_.get(record, "name.datasetKey")}/${
+                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "name.datasetKey")}/${
                   _.get(record, "bareName") ? "name" : "taxon"
                 }/${encodeURIComponent(
                    _.get(record, "accepted.name.id") ? _.get(record, "accepted.name.id") : _.get(record, "name.id")

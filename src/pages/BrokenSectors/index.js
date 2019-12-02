@@ -53,7 +53,7 @@ class SyncTable extends React.Component {
     Promise.all(
       datasets.map(d => {
         return axios(`${config.dataApi}sector?subjectDatasetKey=${d.key}&datasetKey=${catalogueKey}&broken=true`).then(
-          sectors => sectors.data.result.map(s => ({ ...s, dataset: d }))
+          sectors => sectors.data.empty ? [] : sectors.data.result.map(s => ({ ...s, dataset: d }))
         );
       })
     )

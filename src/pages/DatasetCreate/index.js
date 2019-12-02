@@ -3,6 +3,7 @@ import Layout from "../../components/LayoutNew";
 import MetaDataForm from "../../components/MetaDataForm";
 import history from "../../history";
 import PageContent from '../../components/PageContent'
+import withContext from "../../components/hoc/withContext";
 
 
 class DatasetCreate extends React.Component {
@@ -11,6 +12,7 @@ class DatasetCreate extends React.Component {
   }
 
   render() {
+    const {catalogueKey} = this.props;
     return (
       <Layout 
         openKeys={["dataset"]}
@@ -20,7 +22,7 @@ class DatasetCreate extends React.Component {
           
         <MetaDataForm
           onSaveSuccess={(res) => {
-            history.push(`/dataset/${res.data}/meta`);
+            history.push(`/catalogue/${catalogueKey}/dataset/${res.data}/meta`);
           }}
         />
         </PageContent>
@@ -29,4 +31,6 @@ class DatasetCreate extends React.Component {
   }
 }
 
-export default DatasetCreate;
+const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
+
+export default withContext(mapContextToProps)(DatasetCreate);

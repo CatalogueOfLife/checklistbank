@@ -7,25 +7,13 @@ import config from "../../config";
 import Layout from "../../components/LayoutNew";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
 
-import SearchBox from "../DatasetList/SearchBox";
 import withContext from "../../components/hoc/withContext";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
-const FormItem = Form.Item;
 
 const _ = require("lodash");
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 }
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 }
-  }
-};
+
 
 const getIssuesAbbrev = issue => issue.split(" ").map(s => s.charAt(0).toUpperCase())
 
@@ -50,9 +38,10 @@ class GSDIssuesMatrix extends React.Component {
 
   getData = () => {
       this.setState({loading: true})
+      const {catalogueKey} = this.props
     axios(
       `${config.dataApi}dataset?limit=500&contributesTo=${
-        MANAGEMENT_CLASSIFICATION.key
+        catalogueKey
       }`
     )
       .then(res => {
@@ -92,7 +81,7 @@ class GSDIssuesMatrix extends React.Component {
 
   render() {
     const { data, loading, error } = this.state;
-    const { issue, issueMap } = this.props;
+    const { issue, issueMap, catalogueKey } = this.props;
     const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
 
     const selectedGroups = localStorage.getItem('col_plus_matrix_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_matrix_selected_issue_groups')) : [...groups];
@@ -109,7 +98,7 @@ class GSDIssuesMatrix extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.key}/workbench` }}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.alias || record.key}
@@ -125,7 +114,7 @@ class GSDIssuesMatrix extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.key}/workbench` , search: `?issue=${i.name}`}}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` , search: `?issue=${i.name}`}}
               exact={true}
             >
               {text}
@@ -184,10 +173,11 @@ class GSDIssuesMatrix extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap }) => ({
+const mapContextToProps = ({ user, issue, issueMap, catalogueKey }) => ({
   user,
   issue,
-  issueMap
+  issueMap,
+  catalogueKey
 });
 
 export default withContext(mapContextToProps)(GSDIssuesMatrix);

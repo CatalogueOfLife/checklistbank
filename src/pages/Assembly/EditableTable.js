@@ -5,7 +5,6 @@ import { Table, Input, Select, InputNumber, Popconfirm, Form } from "antd";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 const Option = Select.Option
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 const EditableContext = React.createContext();
 

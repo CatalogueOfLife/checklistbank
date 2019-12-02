@@ -47,14 +47,179 @@ const getDecisionText = (decision) => {
   }
 }
 
+const getColumns = (catalogueKey) => [
+  {
+    title: "Decision",
+    dataIndex: "decisions",
+    key: "decisions",
+    width: 60,
+    className: "workbench-td",
+    render: (text, record) => (
+      !Auth.isAuthorised(this.props.user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
+    )
+  },
+  {
+    title: "ID",
+    dataIndex: "usage.id",
+    key: "nameId",
+    width: 50,
+    className: "workbench-td",
+    render: (text, record) => {
+      const uri =
+        !_.get(record, "usage.id") ||
+        record.usage.bareName ||
+        !_.get(record, "usage.status")
+          ? `/catalogue/${catalogueKey}/dataset/${_.get(
+              record,
+              "usage.name.datasetKey"
+            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : `/catalogue/${catalogueKey}/dataset/${_.get(
+              record,
+              "usage.name.datasetKey"
+            )}/taxon/${encodeURIComponent(
+              _.get(record, "usage.accepted.id")
+                ? _.get(record, "usage.accepted.id")
+                : _.get(record, "usage.id")
+            )}`;
+      return (
+        <React.Fragment>
+          <div style={{ float: "left" }}>
+            <CopyableColumnText text={text} width="40px" />
+          </div>
+          <div>
+            <NavLink
+              key={_.get(record, "usage.id")}
+              to={{
+                pathname: uri
+              }}
+              exact={true}
+            >
+              <Icon type="link" />
+            </NavLink>
+          </div>
+        </React.Fragment>
+      );
+    }
+  },
+  {
+    title: "Status",
+    dataIndex: "usage.status",
+    key: "status",
+    width: 90,
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="60px" />
+  },
+  {
+    title: "ScientificName",
+    dataIndex: "usage.name.formattedName",
+    width: 240,
+    className: "workbench-td",
+    render: (text, record) => (
+      <span
+        dangerouslySetInnerHTML={{
+          __html: _.get(record, "usage.name.formattedName")
+        }}
+      />
+    ),
+    sorter: true
+  },
+  {
+    title: "Uninomial",
+    width: 160,
+    dataIndex: "usage.name.uninomial",
+    key: "uninomial",
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="150px" />
+  },
+  {
+    title: "Genus",
+    width: 160,
+    dataIndex: "usage.name.genus",
+    key: "genus",
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="150px" />
+  },
+  {
+    title: "specificEpithet",
+    width: 160,
+    dataIndex: "usage.name.specificEpithet",
+    key: "specificEpithet",
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="150px" />
+  },
+  {
+    title: "infraspecificEpithet",
+    width: 160,
+    dataIndex: "usage.name.infraspecificEpithet",
+    key: "infraspecificEpithet",
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="150px" />
+  },
+  {
+    title: "Authorship",
+    width: 240,
+    dataIndex: "usage.name.authorship",
+    key: "authorship",
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="230px" />
+  },
+
+  {
+    title: "Rank",
+    width: 100,
+    dataIndex: "usage.name.rank",
+    key: "rank",
+    sorter: true,
+    className: "workbench-td",
+    render: (text, record) => <CopyableColumnText text={text} width="90px" />
+  },
+  {
+    title: "acceptedScientificName",
+    width: 240,
+    dataIndex: "usage.accepted.name.formattedName",
+    className: "workbench-td",
+    render: (text, record) => {
+      return !["synonym", "ambiguous synonym", "misapplied"].includes(
+        _.get(record, "usage.status")
+      ) ? (
+        ""
+      ) : (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: _.get(record, "usage.accepted.name.formattedName")
+          }}
+        />
+      );
+    }
+  },
+  {
+    title: "Classification",
+    dataIndex: "usage.classification",
+    key: "classification",
+    width: 400,
+    className: "workbench-td",
+    render: (text, record) => {
+      return !_.get(record, "classification") ? (
+        ""
+      ) : (
+        <Classification
+          key={_.get(record, "usage.id")}
+          classification={_.initial(record.classification)}
+          datasetKey={_.get(record, "usage.name.datasetKey")}
+        />
+      );
+    }
+  }
+];
+
 class WorkBench extends React.Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
+    const {catalogueKey} = this.props;
     this.state = {
       data: [],
       decision: null,
-      columns: this.defaultColumns,
+      columns: getColumns(catalogueKey),
       decisionFormVisible: false,
       rowsForEdit: [],
       params: {},
@@ -69,170 +234,6 @@ class WorkBench extends React.Component {
       advancedFilters: false
     };
   }
-  defaultColumns = [
-    {
-      title: "Decision",
-      dataIndex: "decisions",
-      key: "decisions",
-      width: 60,
-      className: "workbench-td",
-      render: (text, record) => (
-        !Auth.isAuthorised(this.props.user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
-      )
-    },
-    {
-      title: "ID",
-      dataIndex: "usage.id",
-      key: "nameId",
-      width: 50,
-      className: "workbench-td",
-      render: (text, record) => {
-        const uri =
-          !_.get(record, "usage.id") ||
-          record.usage.bareName ||
-          !_.get(record, "usage.status")
-            ? `/dataset/${_.get(
-                record,
-                "usage.name.datasetKey"
-              )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-            : `/dataset/${_.get(
-                record,
-                "usage.name.datasetKey"
-              )}/taxon/${encodeURIComponent(
-                _.get(record, "usage.accepted.id")
-                  ? _.get(record, "usage.accepted.id")
-                  : _.get(record, "usage.id")
-              )}`;
-        return (
-          <React.Fragment>
-            <div style={{ float: "left" }}>
-              <CopyableColumnText text={text} width="40px" />
-            </div>
-            <div>
-              <NavLink
-                key={_.get(record, "usage.id")}
-                to={{
-                  pathname: uri
-                }}
-                exact={true}
-              >
-                <Icon type="link" />
-              </NavLink>
-            </div>
-          </React.Fragment>
-        );
-      }
-    },
-    {
-      title: "Status",
-      dataIndex: "usage.status",
-      key: "status",
-      width: 90,
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="60px" />
-    },
-    {
-      title: "ScientificName",
-      dataIndex: "usage.name.formattedName",
-      width: 240,
-      className: "workbench-td",
-      render: (text, record) => (
-        <span
-          dangerouslySetInnerHTML={{
-            __html: _.get(record, "usage.name.formattedName")
-          }}
-        />
-      ),
-      sorter: true
-    },
-    {
-      title: "Uninomial",
-      width: 160,
-      dataIndex: "usage.name.uninomial",
-      key: "uninomial",
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
-    },
-    {
-      title: "Genus",
-      width: 160,
-      dataIndex: "usage.name.genus",
-      key: "genus",
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
-    },
-    {
-      title: "specificEpithet",
-      width: 160,
-      dataIndex: "usage.name.specificEpithet",
-      key: "specificEpithet",
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
-    },
-    {
-      title: "infraspecificEpithet",
-      width: 160,
-      dataIndex: "usage.name.infraspecificEpithet",
-      key: "infraspecificEpithet",
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
-    },
-    {
-      title: "Authorship",
-      width: 240,
-      dataIndex: "usage.name.authorship",
-      key: "authorship",
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="230px" />
-    },
-
-    {
-      title: "Rank",
-      width: 100,
-      dataIndex: "usage.name.rank",
-      key: "rank",
-      sorter: true,
-      className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="90px" />
-    },
-    {
-      title: "acceptedScientificName",
-      width: 240,
-      dataIndex: "usage.accepted.name.formattedName",
-      className: "workbench-td",
-      render: (text, record) => {
-        return !["synonym", "ambiguous synonym", "misapplied"].includes(
-          _.get(record, "usage.status")
-        ) ? (
-          ""
-        ) : (
-          <span
-            dangerouslySetInnerHTML={{
-              __html: _.get(record, "usage.accepted.name.formattedName")
-            }}
-          />
-        );
-      }
-    },
-    {
-      title: "Classification",
-      dataIndex: "usage.classification",
-      key: "classification",
-      width: 400,
-      className: "workbench-td",
-      render: (text, record) => {
-        return !_.get(record, "classification") ? (
-          ""
-        ) : (
-          <Classification
-            key={_.get(record, "usage.id")}
-            classification={_.initial(record.classification)}
-            datasetKey={_.get(record, "usage.name.datasetKey")}
-          />
-        );
-      }
-    }
-  ];
 
   componentWillMount() {
     const { datasetKey, catalogueKey} = this.props;

@@ -194,7 +194,8 @@ class NamePage extends React.Component {
     const {
       match: {
         params: { key }
-      }
+      },
+      catalogueKey
     } = this.props;
     return (
      
@@ -219,7 +220,7 @@ class NamePage extends React.Component {
           {usages.map(u => 
           <NavLink
           to={{
-            pathname: `/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
+            pathname: `/catalogue/${catalogueKey}/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
           }}
           exact={true}
         >
@@ -402,7 +403,7 @@ class NamePage extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ getTaxonomicStatusColor }) => ({ getTaxonomicStatusColor });
+const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({ getTaxonomicStatusColor , catalogueKey});
 
 export default withContext(mapContextToProps)(NamePage);
 

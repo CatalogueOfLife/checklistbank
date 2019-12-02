@@ -126,6 +126,7 @@ class SyncTable extends React.Component {
   };
   render() {
     const { data, loading, error } = this.state;
+    const {catalogueKey} = this.props;
     const columns = [
       {
         title: "Dataset",
@@ -134,7 +135,7 @@ class SyncTable extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.datasetKey}/metrics` }}
+              to={{ pathname: `catalogue/${catalogueKey}/dataset/${record.datasetKey}/metrics` }}
               exact={true}
             >
               <Highlighter
@@ -260,6 +261,6 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, catalogueKey }) => ({ user , catalogueKey});
 
 export default withContext(mapContextToProps)(SyncTable);
