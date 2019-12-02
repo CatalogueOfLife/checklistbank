@@ -60,7 +60,7 @@ class VerbatimPresentation extends React.Component {
   }
 
   renderTerm = (key, value, type) => {
-    const { termsMap, termsMapReversed, datasetKey } = this.props;
+    const { termsMap, termsMapReversed, datasetKey, catalogueKey } = this.props;
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
       (key === "col:ID" && type === "col:Taxon");
@@ -77,7 +77,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/dataset/${datasetKey}/verbatim`,
+              pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -87,7 +87,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/${encodeURIComponent(
                   value
                 )}`
               }}
@@ -112,7 +112,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/dataset/${datasetKey}/verbatim`,
+              pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -123,7 +123,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/${encodeURIComponent(
                   value
                 )}`
               }}
@@ -225,7 +225,8 @@ const mapContextToProps = ({
   issueMap,
   termsMap,
   termsMapReversed,
-  terms
-}) => ({ issueMap, termsMap, termsMapReversed, terms });
+  terms,
+  catalogueKey
+}) => ({ issueMap, termsMap, termsMapReversed, terms, catalogueKey });
 
 export default withContext(mapContextToProps)(VerbatimPresentation);

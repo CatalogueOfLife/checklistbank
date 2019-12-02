@@ -433,7 +433,7 @@ class Assembly extends React.Component {
                         {" "}
                         {this.state.selectedDataset.alias || this.state.selectedDataset.title}
                         <NavLink
-                          to={`/dataset/${this.state.selectedDataset.key}/meta`}
+                          to={`/catalogue/${catalogueKey}/dataset/${this.state.selectedDataset.key}/meta`}
                         >
                           {" "}
                           <Icon type="eye" /> source

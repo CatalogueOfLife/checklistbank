@@ -16,7 +16,7 @@ import Assembly from "./pages/Assembly";
 import AssemblyDuplicates from "./pages/AssemblyDuplicates";
 import SectorSync from "./pages/SectorSync"
 import SectorBroken from "./pages/BrokenSectors"
-import DecisionBroken from "./pages/BrokenDecisions"
+// import DecisionBroken from "./pages/BrokenDecisions"
 import Admin from "./pages/Admin"
 import SectorDiff from "./pages/SectorDiff"
 import Imports from "./pages/Imports";
@@ -118,13 +118,13 @@ class App extends Component {
                 component={SectorBroken}
                 
               />
-              <Route
+             {/*  <Route
                 exact
                 key="decisionBroken"
                 path="/decision/broken"
                 component={DecisionBroken}
                 
-              />
+              /> */}
               
               <Route
                 exact
@@ -133,30 +133,7 @@ class App extends Component {
                 component={SectorDiff}
                 
               />
-          {/*    <Route
-                exact
-                key="taxonKey"
-                path={`/dataset/:key/taxon/:taxonKey`}
-                component={Taxon}
-              />
-              <Route
-                exact
-                key="nameKey"
-                path={`/dataset/:key/name/:nameKey`}
-                component={Name}
-          /> 
-              <Route
-                exact
-                key="datasetImportsKey"
-                path={`/dataset/:datasetKey/metrics/:attempt?`}
-                component={DatasetImportMetrics}
-              />
-              <Route
-                exact
-                key="verbatimKey"
-                path={`/dataset/:key/verbatim`}
-                component={VerbatimRecord}
-              /> */}
+          
               <PrivateRoute
                 exact
                 key="datasetCreate"

@@ -8,7 +8,7 @@ import withContext from '../../../components/hoc/withContext'
 import MultiValueFilter from '../../NameSearch/MultiValueFilter'
 const _ = require("lodash");
 
-const getColumns = ({issueMap}) => {
+const getColumns = ({issueMap, catalogueKey}) => {
 return [
   {
     title: "Title",
@@ -21,7 +21,7 @@ return [
                 {_.startCase(text)}
               </Tag>
               <NavLink 
-              to={{ pathname: `/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
               exact={true}
             > verbatim <Icon type="link" />
               </NavLink>
@@ -38,7 +38,7 @@ return [
     render: (text, record) => {
        return (
             <NavLink 
-              to={{ pathname: `/dataset/${record.datasetKey}/workbench`, search: `?issue=${record.title}&limit=100` }}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/workbench`, search: `?issue=${record.title}&limit=100` }}
               exact={true}
             >
               {text}
@@ -131,6 +131,6 @@ class DatasetIssues extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap }) => ({ user, issue, issueMap });
+const mapContextToProps = ({ user, issue, issueMap, catalogueKey }) => ({ user, issue, issueMap, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetIssues);

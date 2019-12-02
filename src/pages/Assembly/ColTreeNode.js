@@ -152,7 +152,7 @@ class ColTreeNode extends React.Component {
                       type="primary"
                       onClick={() => {
                         history.push(
-                          `/dataset/${taxon.datasetKey}/taxon/${taxon.id}`
+                          `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/taxon/${taxon.id}`
                         );
                       }}
                     >
@@ -273,9 +273,9 @@ class ColTreeNode extends React.Component {
                 onCancel={this.props.onCancel}
               >
                 <div >
-                  <span onClick={() => { history.push(`/dataset/${taxon.datasetKey === catalogueKey? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
+                  <span onClick={() => { history.push(`/catalogue/${catalogueKey}/dataset/${taxon.datasetKey === catalogueKey? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
                   onContextMenu={()=> {
-                    const win = window.open(`/dataset/${taxon.datasetKey === catalogueKey ? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
+                    const win = window.open(`/catalogue/${catalogueKey}/dataset/${taxon.datasetKey === catalogueKey ? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
                     win.focus();
                   }}>
                   <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
