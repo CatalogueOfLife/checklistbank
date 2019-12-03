@@ -671,15 +671,15 @@ class WorkBench extends React.Component {
                       }}
                       value={params.decisionMode}
                     >
-                      <Radio value="NOT_NULL">With decision</Radio>
-                      <Radio value="NULL">Without decision</Radio>
+                      <Radio value="_NOT_NULL">With decision</Radio>
+                      <Radio value="_NULL">Without decision</Radio>
                       <Radio value={undefined}>All</Radio>
                     </RadioGroup>
                     </FormItem>
           </Col>
         </Row>
         <Row>
-        {Auth.isAuthorised(this.props.user, ["editor"]) &&  <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+        {Auth.isAuthorised(this.props.user, ["editor"]) &&  <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
             <Select
               style={{ width: 200, marginRight: 10 }}
               onChange={this.onDecisionChange}
@@ -729,7 +729,7 @@ class WorkBench extends React.Component {
                 }
             </span>
           </Col> }
-          <Col span={!Auth.isAuthorised(this.props.user, ["editor"]) ? 24 : 12} style={{ textAlign: "right", marginBottom: "8px" }}>
+          <Col span={!Auth.isAuthorised(this.props.user, ["editor"]) ? 24 : 8} style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
               `results: ${pagination.total}`}
