@@ -95,6 +95,7 @@ const getColumns = (catalogueKey) => [
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
+          catalogueKey={catalogueKey}
         />
       );
     }
