@@ -23,14 +23,9 @@ import {
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
-import Classification from "../NameSearch/Classification";
-import SearchBox from "../DatasetList/SearchBox";
-import MultiValueFilter from "../NameSearch/MultiValueFilter";
-import RowDetail from "./RowDetail";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import { Resizable } from "react-resizable";
-import DecisionTag from "../WorkBench/DecisionTag";
 import ErrorMsg from "../../components/ErrorMsg";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
@@ -43,7 +38,6 @@ const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
-const {MANAGEMENT_CLASSIFICATION} = config;
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 

@@ -227,6 +227,7 @@ class Assembly extends React.Component {
   showSourceTaxon = (sector, source) => {
     
     const oldDatasetKey = this.state.datasetKey;
+    const {catalogueKey} = this.props;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
         const params = qs.parse(_.get(this.props, "location.search"));
@@ -236,7 +237,7 @@ class Assembly extends React.Component {
               datasetKey: source.key
             };
             history.push({
-              pathname: `/assembly`,
+              pathname: `/catalogue/${catalogueKey}/assembly`,
               search: `?${qs.stringify(newParams)}`
             });
         this.setState(
@@ -264,7 +265,7 @@ class Assembly extends React.Component {
   };
 
   onSelectDataset = dataset => {
-    const {location} = this.props
+    const {location, catalogueKey} = this.props
     this.setState({
       datasetKey: dataset.key,
       datasetName: dataset.title,
@@ -278,7 +279,7 @@ class Assembly extends React.Component {
       datasetKey: _.get(dataset, "key")
     };
     history.push({
-      pathname: `/assembly`,
+      pathname: `/catalogue/${catalogueKey}/assembly`,
       search: `?${qs.stringify(_.omit(newParams, ["sourceTaxonKey"]))}`
     });
   };
@@ -377,7 +378,7 @@ class Assembly extends React.Component {
                         assemblyTaxonKey: _.get(name, "key")
                       };
                       history.push({
-                        pathname: `/assembly`,
+                        pathname: `/catalogue/${catalogueKey}/assembly`,
                         search: `?${qs.stringify(newParams)}`
                       });
                       this.setState({ assemblyTaxonKey: name.key }, () =>
@@ -389,7 +390,7 @@ class Assembly extends React.Component {
 
                       const newParams = { ...params, assemblyTaxonKey: null };
                       history.push({
-                        pathname: `/assembly`,
+                        pathname: `/catalogue/${catalogueKey}/assembly`,
                         search: `?${qs.stringify(
                           _.omit(newParams, ["assemblyTaxonKey"])
                         )}`
@@ -457,7 +458,7 @@ class Assembly extends React.Component {
                           sourceTaxonKey: _.get(name, "key")
                         };
                         history.push({
-                          pathname: `/assembly`,
+                          pathname: `/catalogue/${catalogueKey}/assembly`,
                           search: `?${qs.stringify(newParams)}`
                         });
                         this.setState({ sourceTaxonKey: name.key }, () =>
@@ -469,7 +470,7 @@ class Assembly extends React.Component {
 
                         const newParams = { ...params, sourceTaxonKey: null };
                         history.push({
-                          pathname: `/assembly`,
+                          pathname: `/catalogue/${catalogueKey}/assembly`,
                           search: `?${qs.stringify(
                             _.omit(newParams, ["sourceTaxonKey"])
                           )}`
@@ -498,7 +499,7 @@ class Assembly extends React.Component {
                             assemblyTaxonKey: _.get(sector, "target.id")
                           };
                           history.push({
-                            pathname: `/assembly`,
+                            pathname: `/catalogue/${catalogueKey}/assembly`,
                             search: `?${qs.stringify(newParams)}`
                           });
                           colTreeActions.refreshAssembly();

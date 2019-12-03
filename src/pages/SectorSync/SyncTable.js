@@ -90,7 +90,7 @@ const getColumns = (catalogueKey) => [
           </span>
        { _.get(record, 'sector.target.id') &&  <NavLink
             to={{
-              pathname: `/assembly`,
+              pathname: `/catalogue/${catalogueKey}/assembly`,
               search: `?assemblyTaxonKey=${ _.get(record, 'sector.target.id')}`
             }}
             exact={true}
@@ -157,7 +157,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       <NavLink
         to={{
-          pathname: `/assembly/${catalogueKey}/sync/${
+          pathname: `/catalogue/${catalogueKey}/sync/${
             record.sectorKey
           }/diff`,
           search:

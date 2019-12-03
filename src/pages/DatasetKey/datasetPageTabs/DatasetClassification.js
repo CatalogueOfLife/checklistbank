@@ -74,7 +74,7 @@ class DatasetClassification extends React.Component {
               };
   
               history.push({
-                pathname: `/assembly`,
+                pathname: `/catalogue/${catalogueKey}/assembly`,
                 search: `?${queryString.stringify(params)}`
               });
             } else {
