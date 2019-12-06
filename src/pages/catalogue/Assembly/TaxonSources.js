@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import {Popover, Spin} from 'antd'
-import { getDatasetsBatch } from "../../api/dataset";
+import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
 
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));

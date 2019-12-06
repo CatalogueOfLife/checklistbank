@@ -14,7 +14,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import { NavLink } from "react-router-dom";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
-import SectorTable from "../../BrokenSectors/SectorTable";
+import SectorTable from "../../catalogue/BrokenSectors/SectorTable";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import withContext from "../../../components/hoc/withContext";
 

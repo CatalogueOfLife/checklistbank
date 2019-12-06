@@ -1,8 +1,8 @@
 import React from "react";
 
-import Layout from "../../components/LayoutNew";
+import Layout from "../../../components/LayoutNew";
 import SyncTable from "./SyncTable";
-import config from "../../config";
+import config from "../../../config";
 
 const { MANAGEMENT_CLASSIFICATION } = config;
 

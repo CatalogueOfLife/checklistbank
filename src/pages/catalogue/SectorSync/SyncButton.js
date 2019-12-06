@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
-import config from "../../config";
-import ErrorMsg from "../../components/ErrorMsg";
+import config from "../../../config";
+import ErrorMsg from "../../../components/ErrorMsg";
 
 const {MANAGEMENT_CLASSIFICATION} = config
 

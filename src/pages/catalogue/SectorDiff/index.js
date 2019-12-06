@@ -1,13 +1,15 @@
 import React from "react";
 import axios from "axios";
-import Layout from "../../components/LayoutNew";
+import Layout from "../../../components/LayoutNew";
 import { Row, Col, Select, Alert, Tag } from "antd";
-import config from "../../config";
-import history from "../../history";
+import config from "../../../config";
+import history from "../../../history";
 import { Diff2Html } from "diff2html";
 import "diff2html/dist/diff2html.min.css";
-import PageContent from "../../components/PageContent";
-import ErrorMsg from "../../components/ErrorMsg";
+import PageContent from "../../../components/PageContent";
+import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from "../../../components/hoc/withContext";
+
 const { Option } = Select;
 
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -90,8 +92,10 @@ class SectorDiff extends React.Component {
     const diff = _.get(this.state, "data.diff");
     const {
       match: {
-        params: { sectorKey, catalogueKey }
-      }
+        params: { sectorKey }
+      },
+      catalogue,
+      catalogueKey
     } = this.props;
 
     const { error, maxAttempt } = this.state;
@@ -115,7 +119,7 @@ class SectorDiff extends React.Component {
         selectedKeys={["sectorDiff"]}
         openKeys={["assembly"]}
         selectedSector={sectorKey}
-        title={MANAGEMENT_CLASSIFICATION.title}
+        title={catalogue.title}
       >
         <PageContent>
           
@@ -128,7 +132,7 @@ class SectorDiff extends React.Component {
                   this.setState({ selectedAttempt1: value });
 
                   history.push({
-                    pathname: `/assembly/${catalogueKey}/sync/${sectorKey}/diff`,
+                    pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
                     search: `?attempts=${value}..${_.get(
                       this.state,
                       "selectedAttempt2"
@@ -148,7 +152,7 @@ class SectorDiff extends React.Component {
                 onChange={value => {
                   this.setState({ selectedAttempt2: value });
                   history.push({
-                    pathname: `/assembly/${catalogueKey}/sync/${sectorKey}/diff`,
+                    pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
                     search: `?attempts=${_.get(
                       this.state,
                       "selectedAttempt1"
@@ -183,4 +187,6 @@ class SectorDiff extends React.Component {
   }
 }
 
-export default SectorDiff;
+const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue });
+
+export default withContext(mapContextToProps)(SectorDiff);

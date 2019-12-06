@@ -1,9 +1,9 @@
 import React from "react";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 import { Table, Input, Select, InputNumber, Popconfirm, Form } from "antd";
 import _ from "lodash";
-import withContext from "../../components/hoc/withContext";
+import withContext from "../../../components/hoc/withContext";
 const Option = Select.Option
 
 const EditableContext = React.createContext();
@@ -280,9 +280,6 @@ class EditableTable extends React.Component {
 }
 
 
-const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
-const WrappedEditableFormTable = Form.create()(
-  withContext(mapContextToProps)(WrappedEditableFormTable)
-);
+const EditableFormTable = Form.create()(EditableTable);
 
-export default WrappedEditableFormTable;
+export default EditableFormTable;

@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import BorderedListItem from "./BorderedListItem"
 import ReferencePopover from "../Reference/ReferencePopover"
 const SynonymsTable = ({ datasetKey, data, style, catalogueKey }) => {
+  const uri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/name/`;
   return (
     <div style={style}>
       {data
@@ -14,7 +15,7 @@ const SynonymsTable = ({ datasetKey, data, style, catalogueKey }) => {
           <BorderedListItem key={_.get(s, 'name.id')}>
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/name/${encodeURIComponent(
+                pathname:   `${uri}${encodeURIComponent(
                   _.get(s, 'name.id')
                 )}`
               }}

@@ -2,15 +2,15 @@ import React from "react";
 import { notification,Input, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col } from "antd";
 import _ from "lodash";
 import axios from "axios";
-import config from "../../config";
-import history from "../../history";
-import { stringToColour } from "../../components/util";
+import config from "../../../config";
+import history from "../../../history";
+import { stringToColour } from "../../../components/util";
 import { ColTreeContext } from "./ColTreeContext";
-import ErrorMsg from "../../components/ErrorMsg";
+import ErrorMsg from "../../../components/ErrorMsg";
 import SectorNote from "./SectorNote"
-import withContext from "../../components/hoc/withContext"
+import withContext from "../../../components/hoc/withContext"
 import debounce from 'lodash.debounce';
-import Auth from '../../components/Auth'
+import Auth from '../../../components/Auth'
 const {Option} = Select; 
 
 class Sector extends React.Component {

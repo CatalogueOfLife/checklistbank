@@ -59,7 +59,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
                 exact={true}
               >
                 {text}
@@ -76,7 +76,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
                 exact={true}
               >
                 {text}

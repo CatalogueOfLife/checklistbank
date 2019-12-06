@@ -3,19 +3,19 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Form, Tag, Icon, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
-import config from "../../config";
+import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
-import history from "../../history";
+import history from "../../../history";
 import SyncButton from "./SyncButton";
-import PageContent from "../../components/PageContent";
-import withContext from "../../components/hoc/withContext";
-import Auth from "../../components/Auth";
-import ImportMetrics from "../../components/ImportMetrics";
+import PageContent from "../../../components/PageContent";
+import withContext from "../../../components/hoc/withContext";
+import Auth from "../../../components/Auth";
+import ImportMetrics from "../../../components/ImportMetrics";
 import kibanaQuery from "./kibanaQuery";
 
-import SyncAllSectorsButton from "../Admin/SyncAllSectorsButton"
-import ErrorMsg from "../../components/ErrorMsg";
+import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
+import ErrorMsg from "../../../components/ErrorMsg";
 
 
 const _ = require("lodash");

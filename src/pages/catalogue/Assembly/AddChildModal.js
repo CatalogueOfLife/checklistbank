@@ -1,10 +1,10 @@
 import React from "react";
 import { Form, Input, Modal, Select, Alert, Checkbox, notification } from "antd";
-import ErrorMsg from "../../components/ErrorMsg";
-import withContext from "../../components/hoc/withContext";
+import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -68,7 +68,7 @@ class AddChildModal extends React.Component {
   };
 
   render() {
-    const { parent, rank, nomstatus, onCancel, form: {getFieldDecorator}  } = this.props;
+    const { parent, rank, onCancel, form: {getFieldDecorator}  } = this.props;
     const { visible, submissionError } = this.state;
     const formItemLayout = {
       labelCol: {

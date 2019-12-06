@@ -9,20 +9,20 @@ import {
   Tooltip,
   Checkbox
 } from "antd";
-import PopconfirmMultiOption from "../../components/PopconfirmMultiOption"
+import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption"
 import _ from "lodash";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 import { ColTreeContext } from "./ColTreeContext";
 import Sector from "./Sector";
-import DecisionTag from "../WorkBench/DecisionTag";
+import DecisionTag from "../../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import TaxonSources from "./TaxonSources"
-import withContext from "../../components/hoc/withContext";
+import withContext from "../../../components/hoc/withContext";
 
-import history from "../../history";
+import history from "../../../history";
 
 
 class ColTreeNode extends React.Component {
@@ -136,13 +136,13 @@ class ColTreeNode extends React.Component {
             onCancel={this.cancelEstimateModal}
             onSuccess={this.cancelEstimateModal}
             taxon={taxon}
-            datasetKey={catalogueKey}
+            catalogueKey={catalogueKey}
           />
         )}
 
         <ColTreeContext.Consumer>
           {({ mode }) =>
-            mode === "modify" &&
+             mode === "modify" && 
             hasPopOver && (
               <Popover
                 content={
@@ -152,7 +152,7 @@ class ColTreeNode extends React.Component {
                       type="primary"
                       onClick={() => {
                         history.push(
-                          `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/taxon/${taxon.id}`
+                          `/catalogue/${catalogueKey}/taxon/${taxon.id}`
                         );
                       }}
                     >
@@ -226,7 +226,7 @@ class ColTreeNode extends React.Component {
                   this.setState({ popOverVisible: !this.state.popOverVisible })
                 }
                 trigger="click"
-                placement="rightTop"
+                placement="bottom"
               >
                 <Popconfirm
                   visible={this.props.confirmVisible}
@@ -273,9 +273,10 @@ class ColTreeNode extends React.Component {
                 onCancel={this.props.onCancel}
               >
                 <div >
-                  <span onClick={() => { history.push(`/catalogue/${catalogueKey}/dataset/${taxon.datasetKey === catalogueKey? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`);}}
+                  <span 
                   onContextMenu={()=> {
-                    const win = window.open(`/catalogue/${catalogueKey}/dataset/${taxon.datasetKey === catalogueKey ? catalogueKey : selectedSourceDatasetKey}/taxon/${taxon.id}`, '_blank');
+                    const uri = catalogueKey === taxon.datasetKey ? `/catalogue/${catalogueKey}/taxon/${taxon.id}` : `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    const win = window.open(uri, '_blank');
                     win.focus();
                   }}>
                   <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>

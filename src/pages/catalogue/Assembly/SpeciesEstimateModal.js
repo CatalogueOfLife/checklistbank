@@ -10,16 +10,17 @@ import {
   Icon,
   notification
 } from "antd";
-import ErrorMsg from "../../components/ErrorMsg";
-import withContext from "../../components/hoc/withContext";
+import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from "../../../components/hoc/withContext";
 import EditableTable from "./EditableTable";
 import ReferenceAutocomplete from "./ReferenceAutocomplete";
 import _ from "lodash";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+
 
 class SpeciesestimateModal extends React.Component {
   state = {
@@ -52,9 +53,9 @@ class SpeciesestimateModal extends React.Component {
   };
 
   submitData = values => {
-    const { taxon, datasetKey, catalogueKey } = this.props;
+    const { taxon, catalogueKey } = this.props;
     const newEst = {
-      datasetKey: datasetKey,
+      datasetKey: catalogueKey,
       referenceId: this.state.selectedReference.key,
       estimate: values.estimate,
       type: values.type,
@@ -205,7 +206,6 @@ class SpeciesestimateModal extends React.Component {
             </FormItem>
             <FormItem {...formItemLayout} label="Note">
               {getFieldDecorator("note", {
-                rules: []
               })(<Input />)}
             </FormItem>
 
@@ -229,15 +229,14 @@ class SpeciesestimateModal extends React.Component {
         )}
 
         {estimates && _.isArray(estimates) && (
-          <EditableTable data={estimates} onDataUpdate={(estimates) => this.setState({estimates}) } />
+          <EditableTable catalogueKey={catalogueKey} data={estimates} onDataUpdate={(estimates) => this.setState({estimates}) } />
         )}
       </Modal>
     );
   }
 }
-const mapContextToProps = ({ rank, nomstatus, catalogueKey }) => ({ rank, nomstatus, catalogueKey });
 const WrappedSpeciesestimateModal = Form.create()(
-  withContext(mapContextToProps)(SpeciesestimateModal)
+  SpeciesestimateModal
 );
 
 export default WrappedSpeciesestimateModal;

@@ -60,18 +60,19 @@ class TaxonPage extends React.Component {
     const {
       match: {
         params: { key, taxonOrNameKey: taxonKey }
-      }
+      },
+      datasetKey
     } = this.props;
     this.setState({ loading: true });
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${taxonKey}`
+      `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}`
     )
       .then(res => {
         let promises = [res];
         if (_.get(res, "data.name.publishedInId")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${key}/reference/${
+              `${config.dataApi}dataset/${datasetKey}/reference/${
                 _.get(res, "data.name.publishedInId")
               }`
             ).then(publishedIn => {
@@ -84,7 +85,7 @@ class TaxonPage extends React.Component {
         if (_.get(res, "data.name")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${key}/name/${
+              `${config.dataApi}dataset/${datasetKey}/name/${
                 _.get(res, "data.name.id")
               }/relations`
             ).then(relations => {
@@ -92,7 +93,7 @@ class TaxonPage extends React.Component {
               return Promise.all(
                 relations.data.map(r => {
                   return axios(
-                    `${config.dataApi}dataset/${key}/name/${
+                    `${config.dataApi}dataset/${datasetKey}/name/${
                       r.relatedNameId
                     }`
                   ).then(n => {
@@ -152,11 +153,12 @@ class TaxonPage extends React.Component {
     const {
       match: {
         params: { key, taxonOrNameKey: taxonKey }
-      }
+      },
+      datasetKey
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${
+      `${config.dataApi}dataset/${datasetKey}/taxon/${
         taxonKey
       }/info`
     )
@@ -172,11 +174,12 @@ class TaxonPage extends React.Component {
     const {
       match: {
         params: { key, taxonOrNameKey: taxonKey }
-      }
+      },
+      datasetKey
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/taxon/${
+      `${config.dataApi}dataset/${datasetKey}/taxon/${
         taxonKey
       }/classification`
     )
@@ -198,10 +201,8 @@ class TaxonPage extends React.Component {
 
   render() {
     const {
-      match: {
-        params: { key }
-      },
       dataset,
+      datasetKey,
       catalogueKey
     } = this.props;
     const {
@@ -243,14 +244,14 @@ class TaxonPage extends React.Component {
                       __html: taxon.name.formattedName
                     }}
                   />
-                 {taxon.referenceIds && <div style={{display: 'inline-block', paddingLeft: "10px"}}><ReferencePopover datasetKey={key} referenceId={taxon.referenceIds} placement="bottom"/></div>}
+                 {taxon.referenceIds && <div style={{display: 'inline-block', paddingLeft: "10px"}}><ReferencePopover datasetKey={datasetKey} referenceId={taxon.referenceIds} placement="bottom"/></div>}
                 </Col>
                 <Col span={3}>
                   {taxon.provisional && <Tag color="red">Provisional</Tag>}
                   <Button
                     onClick={() => {
                       history.push(
-                        `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
+                        datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/${taxon.name.id}` : `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
                       );
                     }}
                   >
@@ -325,6 +326,7 @@ class TaxonPage extends React.Component {
                   style={{ marginTop: "-3px" }}
                   data={taxon.name.relations}
                   catalogueKey={catalogueKey}
+                  datasetKey={datasetKey}
                 />
               </PresentationItem>
             )}
@@ -337,7 +339,7 @@ class TaxonPage extends React.Component {
                 <SynonymTable
                   data={synonyms}
                   style={{ marginTop: "-3px" }}
-                  datasetKey={key}
+                  datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
                 />
               </PresentationItem>
@@ -348,7 +350,7 @@ class TaxonPage extends React.Component {
                 <SynonymTable
                   data={misapplied}
                   style={{ marginBottom: 16, marginTop: "-3px" }}
-                  datasetKey={key}
+                  datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
                 />
               </PresentationItem>
@@ -388,7 +390,7 @@ class TaxonPage extends React.Component {
                 <Distributions
                   style={{ marginTop: "-3px" }}
                   data={info.distributions}
-                  datasetKey={key}
+                  datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
                 />
               </PresentationItem>
@@ -410,7 +412,7 @@ class TaxonPage extends React.Component {
                 <Classification
                   style={{ marginTop: "-3px", marginLeft: "-3px" }}
                   data={classification}
-                  datasetKey={key}
+                  datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
                 />
               </PresentationItem>

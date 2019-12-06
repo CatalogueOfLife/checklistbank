@@ -143,7 +143,7 @@ class DatasetImportMetrics extends React.Component {
               onClose={this.hideHistoryDrawer}
               visible={this.state.historyVisible}
             >
-              <ImportHistory importHistory={importHistory} attempt={attempt} />
+              <ImportHistory importHistory={importHistory} attempt={attempt} catalogueKey={catalogueKey} />
             </Drawer>
           )}
           {this.state.data &&

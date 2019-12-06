@@ -12,11 +12,11 @@ import MultiValueFilter from "./MultiValueFilter";
 import RowDetail from "./RowDetail";
 import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
-import NameAutocomplete from "../Assembly/NameAutocomplete";
+import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import withContext from "../../components/hoc/withContext";
 
 const PAGE_SIZE = 50;
-const getColumns = (catalogueKey) => [
+const getColumns = (baseUri) => [
   {
     title: "Scientific Name",
     dataIndex: "usage.name.formattedName",
@@ -26,14 +26,8 @@ const getColumns = (catalogueKey) => [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `/catalogue/${catalogueKey}/dataset/${_.get(
-              record,
-              "usage.name.datasetKey"
-            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-          : `/catalogue/${catalogueKey}/dataset/${_.get(
-              record,
-              "usage.name.datasetKey"
-            )}/taxon/${encodeURIComponent(
+          ? `${baseUri}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : `${baseUri}/taxon/${encodeURIComponent(
               _.get(record, "usage.accepted.id")
                 ? _.get(record, "usage.accepted.id")
                 : _.get(record, "usage.id")
@@ -95,7 +89,7 @@ const getColumns = (catalogueKey) => [
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
-          catalogueKey={catalogueKey}
+          baseUri={baseUri}
         />
       );
     }
@@ -105,11 +99,11 @@ const getColumns = (catalogueKey) => [
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-
+    const baseUri = this.props.catalogueKey === this.props.datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
     this.state = {
       data: [],
       advancedFilters: false,
-      columns: getColumns(this.props.catalogueKey),
+      columns: getColumns(baseUri),
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
@@ -121,7 +115,6 @@ class NameSearchPage extends React.Component {
   }
 
   componentWillMount() {
-    const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = {
@@ -292,6 +285,10 @@ class NameSearchPage extends React.Component {
         }))
       : null;
 
+
+      const baseUri = catalogueKey === datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
+
+
     return (
       <div
         style={{
@@ -410,7 +407,7 @@ class NameSearchPage extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey={record => record.usage.nameIndexId}
-            expandedRowRender={record => <RowDetail {...record} catalogueKey={catalogueKey}/>}
+            expandedRowRender={record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>}
           />
         )}
       </div>

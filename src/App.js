@@ -12,18 +12,21 @@ import Name from "./pages/Name";
 import VerbatimRecord from "./pages/VerbatimRecord"
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider"
-import Assembly from "./pages/Assembly";
-import AssemblyDuplicates from "./pages/AssemblyDuplicates";
-import SectorSync from "./pages/SectorSync"
-import SectorBroken from "./pages/BrokenSectors"
+import Assembly from "./pages/catalogue/Assembly";
+import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
+import SectorSync from "./pages/catalogue/SectorSync"
+import SectorBroken from "./pages/catalogue/BrokenSectors"
+import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon"
+import CatalogueName from "./pages/catalogue/CatalogueName"
+import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
+import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch"
 // import DecisionBroken from "./pages/BrokenDecisions"
 import Admin from "./pages/Admin"
-import SectorDiff from "./pages/SectorDiff"
+import SectorDiff from "./pages/catalogue/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
-import DatasetImportMetrics from "./pages/DatasetImportMetrics";
 import Reference from "./pages/Reference";
 import HomePage from "./pages/HomePage"
 import NameIndex from "./pages/NameIndex"
@@ -104,6 +107,21 @@ class App extends Component {
               />
               <Route
                 exact
+                key="catalogueMeta"
+                path="/catalogue/:catalogueKey/meta"
+                component={CatalogueMeta}
+                
+              />
+              <Route
+                exact
+                key="catalogueNameSearch"
+                path="/catalogue/:catalogueKey/names"
+                component={CatalogueNameSearch}
+                
+              />
+              
+              <Route
+                exact
                 key="sectorSync"
                 path="/catalogue/:catalogueKey/sector/sync"
                 render={({ match, location }) => (
@@ -133,6 +151,22 @@ class App extends Component {
                 component={SectorDiff}
                 
               />
+
+              <Route
+                exact
+                key="catalogueTaxon"
+                path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
+                component={CatalogueTaxon}
+                
+              />
+              <Route
+                exact
+                key="catalogueName"
+                path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
+                component={CatalogueName}
+                
+              />
+              
           
               <PrivateRoute
                 exact
@@ -147,13 +181,6 @@ class App extends Component {
                 key="datasetKey"
                 path={`/catalogue/:catalogueKey/dataset/:key/:section?/:taxonOrNameKey?`}
                 component={DatasetPage}
-                /* render={({ match, location }) => (
-                  <DatasetPage
-                    section={match.params.section}
-                    datasetKey={match.params.key}
-                    location={location}
-                  />
-                )} */
               
               />
               <Route

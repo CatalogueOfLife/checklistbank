@@ -5,13 +5,13 @@ import _ from "lodash";
 import history from "../../../history";
 
 import PageContent from "../../../components/PageContent";
-import ColTree from "../../Assembly/ColTree";
-import { ColTreeContext } from "../../Assembly/ColTreeContext"
+import ColTree from "../../catalogue/Assembly/ColTree";
+import { ColTreeContext } from "../../catalogue/Assembly/ColTreeContext"
 import queryString from "query-string";
 import Auth from "../../../components/Auth";
 import withContext from "../../../components/hoc/withContext"
-import NameAutocomplete from "../../Assembly/NameAutocomplete"
-import ColTreeActions from "../../Assembly/ColTreeActions"
+import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete"
+import ColTreeActions from "../../catalogue/Assembly/ColTreeActions"
 
 class DatasetClassification extends React.Component {
   constructor(props) {

@@ -9,11 +9,11 @@ import {
   Button,
   notification
 } from "antd";
-import ErrorMsg from "../../components/ErrorMsg";
-import withContext from "../../components/hoc/withContext";
+import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;

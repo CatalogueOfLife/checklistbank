@@ -1,19 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
 import { Table, Alert, Icon, Tooltip, Input, Button, Row, Col, notification } from "antd";
-import config from "../../config";
-import moment from "moment";
-import Layout from "../../components/LayoutNew";
-import PageContent from "../../components/PageContent";
-import withContext from "../../components/hoc/withContext";
-import kibanaQuery from "../SectorSync/kibanaQuery";
-import Highlighter from "react-highlight-words";
+import config from "../../../config";
+import Layout from "../../../components/LayoutNew";
+import PageContent from "../../../components/PageContent";
+import withContext from "../../../components/hoc/withContext";
+
 import SectorTable from "./SectorTable"
 import _ from "lodash";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 class SyncTable extends React.Component {
   constructor(props) {
     super(props);

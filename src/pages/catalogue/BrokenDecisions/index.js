@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Icon, Tooltip, Input, Button } from "antd";
-import config from "../../config";
+import config from "../../../config";
 import moment from "moment";
-import Layout from "../../components/LayoutNew";
-import PageContent from "../../components/PageContent";
-import withContext from "../../components/hoc/withContext";
+import Layout from "../../../components/LayoutNew";
+import PageContent from "../../../components/PageContent";
+import withContext from "../../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash"

@@ -2,15 +2,15 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Icon, Tooltip, Input, Button, Row, Col, notification } from "antd";
-import config from "../../config";
+import config from "../../../config";
 import moment from "moment";
 
-import withContext from "../../components/hoc/withContext";
+import withContext from "../../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
-import Auth from "../../components/Auth"
+import Auth from "../../../components/Auth"
 const { MANAGEMENT_CLASSIFICATION } = config;
 
 class SyncTable extends React.Component {
@@ -262,7 +262,7 @@ class SyncTable extends React.Component {
           <Tooltip title="Synchronization history">
             <NavLink
                 to={{
-                  pathname: `/sector/sync`,
+                  pathname: `/catalogue/${catalogueKey}/sector/sync`,
                   search: `?sectorKey=${record.key}`
                 }}
                 exact={true}

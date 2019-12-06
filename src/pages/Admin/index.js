@@ -18,7 +18,7 @@ import {
   Select,
   notification
 } from "antd";
-import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import { getCatalogues } from "../../api/dataset";
 
 import axios from "axios";
@@ -399,7 +399,6 @@ class AdminPage extends React.Component {
                 </FormItem>
               </Form>
 
-              <Row>
               <Popconfirm
             placement="rightTop"
             title="Update all logos?"
@@ -463,10 +462,8 @@ class AdminPage extends React.Component {
               Reindex all datasets
             </Button>
           </Popconfirm>
-
-              </Row>
             </Col>
-            <Col style={{textAlign: 'right'}}>
+            <Col span={12} style={{textAlign: 'right'}}>
             <Form layout="inline">
                 <FormItem label="Selected catalogue" style={{ marginRight: "10px", marginBottom: "10px"}}>
             {catalogueKey && catalogues.length > 0 && <Select

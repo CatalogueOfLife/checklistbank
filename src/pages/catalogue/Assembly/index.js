@@ -2,21 +2,21 @@ import React from "react";
 import { Row, Col, notification, Button, Icon, Card, Alert } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
-import Layout from "../../components/LayoutNew";
+import Layout from "../../../components/LayoutNew";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 import { ColTreeContext } from "./ColTreeContext";
-import ErrorMsg from "../../components/ErrorMsg";
+import ErrorMsg from "../../../components/ErrorMsg";
 import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
-import PageContent from "../../components/PageContent";
+import PageContent from "../../../components/PageContent";
 import SyncState from "./SyncState";
 import Helmet from "react-helmet";
 import qs from "query-string";
-import history from "../../history";
+import history from "../../../history";
 import colTreeActions from "./ColTreeActions";
-import withContext from "../../components/hoc/withContext";
+import withContext from "../../../components/hoc/withContext";
 
 
 class Assembly extends React.Component {

@@ -132,9 +132,20 @@ class BasicMenu extends Component {
                 </span>
               }
             >
+              
+              <Menu.Item key="catalogueMeta">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/meta` }}>
+                  <span>Metadata</span>
+                </NavLink>
+              </Menu.Item>
               <Menu.Item key="colAssembly">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}>
                   <span>Assembly</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueNameSearch">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/names` }}>
+                  <span>Names</span>
                 </NavLink>
               </Menu.Item>
               <Menu.Item key="assemblyDuplicates">
@@ -165,6 +176,15 @@ class BasicMenu extends Component {
                   <span>References</span>
                 </NavLink>
               </Menu.Item>
+
+              {selectedKeys && selectedKeys.includes("catalogueTaxon") && taxonOrNameKey && (
+                <Menu.Item key="catalogueTaxon">Taxon: {taxonOrNameKey}</Menu.Item>
+              )}
+              {selectedKeys && selectedKeys.includes("catalogueName") && taxonOrNameKey && (
+                <Menu.Item key="catalogueName">Name: {taxonOrNameKey}</Menu.Item>
+              )}
+              
+              
 
             </SubMenu>
           )}

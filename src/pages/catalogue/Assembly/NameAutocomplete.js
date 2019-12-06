@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import config from '../../config'
+import config from '../../../config'
 import {  AutoComplete, Icon, Input } from 'antd'
 import _ from 'lodash'
 import debounce from 'lodash.debounce';

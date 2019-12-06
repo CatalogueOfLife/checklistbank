@@ -1,50 +1,48 @@
 import React from 'react';
 import axios from 'axios';
-import config from '../../config'
+import config from '../../../config'
 import {  AutoComplete, Input, Button, Icon } from 'antd'
 import _ from 'lodash'
 import debounce from 'lodash.debounce';
 
 const Option = AutoComplete.Option;
 
-class DatasetAutocomplete extends React.Component {
+class ReferenceAutocomplete extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.getDatasets = debounce(this.getDatasets, 500);
+        this.getReferences = debounce(this.getReferences, 500);
 
         this.state = {
-            datasets: [],
+            references: [],
             value: ''
         }
     }
 
     componentWillUnmount() {
-        this.getDatasets.cancel();
+        this.getReferences.cancel();
     }
 
-    getDatasets = (q) => {
-
-        axios(`${config.dataApi}dataset?q=${q}&limit=30`)
+    getReferences = (q) => {
+        const {datasetKey} = this.props;
+        axios(`${config.dataApi}dataset/${datasetKey}/reference/search?q=${q}&limit=30`) // ?q=${q}&limit=30
             .then((res) => {
-                this.setState({ datasets: res.data.result})
+                this.setState({ references: res.data.result})
             })
             .catch((err) => {
-                this.setState({ datasets: [], err })
+                this.setState({ references: [], err })
             })
     }
-    onSelectDataset = (val, obj) => {
+    onSelectReference = (val, obj) => {
         this.setState({value: val})
 
-        this.props.onSelectDataset({key: val, title: obj.props.children})
+        this.props.onSelectReference({key: val, title: obj.props.children})
        // this.setState({ datasetKey: val, datasetName: obj.props.children, selectedDataset: {key: val, title: obj.props.children}})
     }
     onReset = () => {
-        this.setState({value: '', datasets: []})
-        if(this.props.onResetSearch && typeof this.props.onResetSearch === 'function') {
-            this.props.onResetSearch()
-        } 
+        this.setState({value: '', references: []})
+        this.props.onResetSearch()
     }
     render = () => {
         const {value} = this.state;
@@ -59,11 +57,11 @@ class DatasetAutocomplete extends React.Component {
             /> : ''
           ;
         return <AutoComplete
-            dataSource={this.state.datasets}
-            onSelect={this.onSelectDataset}
-            onSearch={this.getDatasets}
-            dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: `${o.alias || o.title} [${o.key}]`})) : []}
-            placeholder="Find dataset"
+            dataSource={this.state.references}
+            onSelect={this.onSelectReference}
+            onSearch={this.getReferences}
+            dataSource={this.state.references ? this.state.references.map((o) => ({value: o.id, text: o.citation})) : []}
+            placeholder="Find reference"
             style={{ width: '100%' }}
             onChange={(value) => this.setState({value})}
             value={value}
@@ -77,4 +75,4 @@ class DatasetAutocomplete extends React.Component {
 
 }
 
-export default DatasetAutocomplete;
+export default ReferenceAutocomplete;

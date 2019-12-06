@@ -4,7 +4,7 @@ import Classification from "./Classification";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 
-const RowDetail = ({ issues, usage, classification, issueMap, catalogueKey }) => (
+const RowDetail = ({ issues, usage, classification, issueMap, baseUri }) => (
   <React.Fragment>
     {_.get(usage, "id") && (
       <Row style={{ marginBottom: "10px" }}>
@@ -36,8 +36,7 @@ const RowDetail = ({ issues, usage, classification, issueMap, catalogueKey }) =>
         <Col span={18}>
           <Classification
             classification={_.initial(classification)}
-            datasetKey={_.get(usage, "name.datasetKey")}
-            catalogueKey={catalogueKey}
+            baseUri={baseUri}
           />
         </Col>
       </Row>
