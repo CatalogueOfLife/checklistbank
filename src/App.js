@@ -30,7 +30,7 @@ import Helmet from "react-helmet";
 import Reference from "./pages/Reference";
 import HomePage from "./pages/HomePage"
 import NameIndex from "./pages/NameIndex"
-import GSDIssuesMatrix from "./pages/GSDIssueMatrix"
+import CatalogueSources from "./pages/catalogue/CatalogueSources"
 const theme = {
   colorPrimary: "deepskyblue"
 };
@@ -64,9 +64,9 @@ class App extends Component {
               />
               <Route
                 exact
-                key="GSDIssues"
-                path="/catalogue/:catalogueKey/issues"
-                component={GSDIssuesMatrix}
+                key="catalogueSources"
+                path="/catalogue/:catalogueKey/sources"
+                component={CatalogueSources}
               />
               <PrivateRoute
                 exact

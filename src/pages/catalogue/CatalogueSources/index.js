@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Form, Row, Col, Tooltip } from "antd";
-import config from "../../config";
-import Layout from "../../components/LayoutNew";
-import MultiValueFilter from "../NameSearch/MultiValueFilter";
+import config from "../../../config";
+import Layout from "../../../components/LayoutNew";
+import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 
-import withContext from "../../components/hoc/withContext";
+import withContext from "../../../components/hoc/withContext";
 
 
 
@@ -40,7 +40,7 @@ class GSDIssuesMatrix extends React.Component {
       this.setState({loading: true})
       const {catalogueKey} = this.props
     axios(
-      `${config.dataApi}dataset?limit=500&contributesTo=${
+      `${config.dataApi}dataset?limit=1000&contributesTo=${
         catalogueKey
       }`
     )
@@ -59,6 +59,16 @@ class GSDIssuesMatrix extends React.Component {
         );
       })
       .then(res => {
+        return Promise.all(
+          res.filter(r => !!r.issues).map(r => {
+                return this.getCatalogueSpeciesCount(r.key).then(count => ({
+                  ...r,
+                  contributedSpecies: count
+                }));
+              })
+        );
+      })
+      .then(res => {
         this.setState({
           loading: false,
           data: res,
@@ -69,6 +79,14 @@ class GSDIssuesMatrix extends React.Component {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
+
+  getCatalogueSpeciesCount = (sourceDatasetKey) => {
+    const {catalogueKey} = this.props
+    return axios(
+      `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
+    ).then(res => _.get(res, 'data.total'))
+
+  }
 
   updateSelectedGroups = (groups) => {
     if(groups && groups.length > 0){
@@ -107,6 +125,22 @@ class GSDIssuesMatrix extends React.Component {
         },
         sorter: true
       },
+      {
+        title: <Tooltip title={`Species contributed to catalogue ${catalogueKey}`}>Species count</Tooltip>,
+        dataIndex: "contributedSpecies",
+        key: "contributedSpecies",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.contributedSpecies}
+            </NavLink>
+          );
+        },
+        sorter: true
+      },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
         title: <Tooltip title={i.name}><span style={{color: issueMap[i.name].color}}>{getIssuesAbbrev(i.name)}</span></Tooltip>,
         dataIndex: `issues.${i.name}`,
@@ -129,9 +163,9 @@ class GSDIssuesMatrix extends React.Component {
     
     return (
       <Layout
-        openKeys={["dataset"]}
-        selectedKeys={["/issues"]}
-        title="Datasets"
+        openKeys={["assembly"]}
+        selectedKeys={["catalogueSources"]}
+        title="Source datasets"
       >
         <div
           style={{
