@@ -43,39 +43,39 @@ class NamePage extends React.Component {
   componentWillMount() {
     const {
       match: {
-        params: { key, taxonOrNameKey: nameKey }
-      }
+        params: { taxonOrNameKey: nameKey }
+      },
+      datasetKey
     } = this.props;
-    this.getName(key, nameKey);
-    this.getUsages(key, nameKey);
-    this.getRelations(key, nameKey);
-    this.getSynonyms(key, nameKey);
-    this.getPublishedIn(key, nameKey);
+    this.getName(datasetKey, nameKey);
+    this.getUsages(datasetKey, nameKey);
+    this.getRelations(datasetKey, nameKey);
+    this.getSynonyms(datasetKey, nameKey);
+    this.getPublishedIn(datasetKey, nameKey);
   }
   componentWillReceiveProps = (nextProps)=> {
     if(nextProps.match.params.taxonOrNameKey !== this.props.match.params.taxonOrNameKey){
       const {
         match: {
-          params: { key, taxonOrNameKey: nameKey }
-        }
+          params: { taxonOrNameKey: nameKey }
+        },
+        datasetKey
       } = nextProps;
-    this.getName(key, nameKey);
-    this.getUsages(key, nameKey);
-    this.getRelations(key, nameKey);
-    this.getSynonyms(key, nameKey);
-    this.getPublishedIn(key, nameKey);
+    this.getName(datasetKey, nameKey);
+    this.getUsages(datasetKey, nameKey);
+    this.getRelations(datasetKey, nameKey);
+    this.getSynonyms(datasetKey, nameKey);
+    this.getPublishedIn(datasetKey, nameKey);
 
     }
   }
   getReference = referenceKey => {
     const {
-      match: {
-        params: { key }
-      }
+      datasetKey
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${key}/reference/${
+      `${config.dataApi}dataset/${datasetKey}/reference/${
         referenceKey
       }`
     )
@@ -192,10 +192,10 @@ class NamePage extends React.Component {
 
     const { getTaxonomicStatusColor } = this.props;
     const {
-      match: {
-        params: { key }
-      }
+      datasetKey,
+      catalogueKey
     } = this.props;
+    const taxonUri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/taxon/` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/`;
     return (
      
         <div
@@ -219,11 +219,11 @@ class NamePage extends React.Component {
           {usages.map(u => 
           <NavLink
           to={{
-            pathname: `/dataset/${u.usage.datasetKey}/taxon/${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
+            pathname: `${taxonUri}${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
           }}
           exact={true}
         >
-          <Tag color={getTaxonomicStatusColor(u.usage.status)} style={{marginRight: '6px'}}>{u.usage.status}</Tag>
+          <Tag  color={getTaxonomicStatusColor(u.usage.status)} style={{marginRight: '6px', cursor: 'pointer'}}>{u.usage.status}</Tag>
         </NavLink>
           )}
               </PresentationItem>
@@ -333,7 +333,8 @@ class NamePage extends React.Component {
                 <SynonymTable
                   data={synonyms.map(s => ({name: s}))}
                   style={{ marginTop: "-3px" }}
-                  datasetKey={key}
+                  datasetKey={datasetKey}
+                  catalogueKey={catalogueKey}
                 />
               </PresentationItem>
             )}
@@ -402,7 +403,7 @@ class NamePage extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ getTaxonomicStatusColor }) => ({ getTaxonomicStatusColor });
+const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({ getTaxonomicStatusColor , catalogueKey});
 
 export default withContext(mapContextToProps)(NamePage);
 

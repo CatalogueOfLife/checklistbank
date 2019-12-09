@@ -8,31 +8,40 @@ class DatasetProvider extends React.Component {
   constructor() {
     super();
     this.state = {
-      loading: false
+      loading: false,
+      catalogueLoading: false
     };
   }
   componentDidMount = () => {
     const {
       match: {
-        params: { key }
+        params: { key, catalogueKey }
       },
-      dataset
+      dataset,
+      catalogue
     } = this.props;
     if (Number(key) !== _.get(dataset, "key")) {
       this.fetchDataset(key)
   };
+  if (Number(catalogueKey) !== _.get(catalogue, "key")) {
+    this.fetchCatalogue(catalogueKey)
+};
+  
   }
   componentWillReceiveProps = nextProps => {
     const nextKey = _.get(nextProps, "match.params.key");
+    const nextCatalogueKey = _.get(nextProps, "match.params.catalogueKey");
     const {
         match: {
-          params: { key }
+          params: { key, catalogueKey }
         }
       } = this.props;
 
       if(!this.state.loading && Number(key) !== Number(nextKey)){
           this.fetchDataset(nextKey)
       }
+      if(!this.state.catalogueLoading && Number(catalogueKey) !== Number(nextCatalogueKey)){
+        this.fetchCatalogue(catalogueKey)    }
   };
 
   fetchDataset = (key) => {
@@ -61,16 +70,34 @@ class DatasetProvider extends React.Component {
       });
   };
 
+  fetchCatalogue = (key) => {
+    const {
+      setCatalogue,
+      addError
+    } = this.props;
+    this.setState({ catalogueLoading: true });
+    axios(`${config.dataApi}dataset/${key}`)
+      .then(res => {
+        this.setState({ catalogueLoading: false });
+        setCatalogue(res.data);
+
+      })
+      .catch(err => {
+        this.setState({ catalogueLoading: false });
+        addError(err);
+      });
+  };
   render = () => {
     return null;
   };
 };
 
-const mapContextToProps = ({ dataset, setDataset, setRecentDatasets, addError }) => ({
+const mapContextToProps = ({ catalogue, setCatalogue, dataset, setDataset, setRecentDatasets, addError }) => ({
   dataset,
   setDataset,
   addError,
-  setRecentDatasets
+  setRecentDatasets,
+  catalogue, setCatalogue
 });
 
 export default withContext(mapContextToProps)(DatasetProvider);

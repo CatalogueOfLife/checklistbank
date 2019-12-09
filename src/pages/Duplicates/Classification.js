@@ -2,15 +2,15 @@ import React from "react";
 import { Breadcrumb } from "antd";
 import { NavLink } from "react-router-dom";
 
- const Classification = ({ path, maxLength }) => 
+ const Classification = ({ path, maxLength, datasetKey, catalogueKey }) => 
  <Breadcrumb separator=">">
         {!maxLength && path.reverse().map(taxon => {
           return (
             <Breadcrumb.Item key={taxon.id}>
               <NavLink
                 to={{
-                  pathname: `/dataset/${taxon.datasetKey}/classification`,
-                  search: `?taxonKey=${taxon.id}`
+                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+                  search: `?sourceTaxonKey=${taxon.id}`
                 }}
               >
                 <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
@@ -23,8 +23,8 @@ import { NavLink } from "react-router-dom";
             <Breadcrumb.Item key={taxon.id}>
               <NavLink
                 to={{
-                  pathname: `/dataset/${taxon.datasetKey}/classification`,
-                  search: `?taxonKey=${taxon.id}`
+                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+                  search: `?sourceTaxonKey=${taxon.id}`
                 }}
               >
                 <span dangerouslySetInnerHTML={{ __html: taxon.name }} />

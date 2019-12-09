@@ -13,6 +13,7 @@ import {
   Card,
  
 } from "antd";
+import withContext from "../../components/hoc/withContext";
 
 import axios from "axios";
 const { MANAGEMENT_CLASSIFICATION } = config;
@@ -97,7 +98,7 @@ class HomePage extends React.Component {
       colDataLoading,
       datasets
     } = this.state;
-    // http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg
+    const {catalogueKey} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="">
         <Helmet>
@@ -133,7 +134,7 @@ class HomePage extends React.Component {
               {colDraftData && (
                 <NavLink
                   to={{
-                    pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
+                    pathname: `/catalogue/${catalogueKey}/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
                   }}
                   exact={true}
                 >
@@ -148,7 +149,7 @@ class HomePage extends React.Component {
               {datasets && (
                   <NavLink
                   to={{
-                    pathname: `/dataset`
+                    pathname: `/catalogue/${catalogueKey}/dataset`
                   }}
                   exact={true}
                 >
@@ -202,7 +203,7 @@ class HomePage extends React.Component {
                       {datasets.result.map(d => <li>
                         <NavLink
                   to={{
-                    pathname: `/dataset/${d.key}`
+                    pathname: `/catalogue/${catalogueKey}/dataset/${d.key}`
                   }}
                   exact={true}
                 >
@@ -224,4 +225,7 @@ class HomePage extends React.Component {
   }
 }
 
-export default HomePage;
+
+const mapContextToProps = ({ catalogueKey }) => ({catalogueKey});
+
+export default withContext(mapContextToProps)(HomePage);

@@ -22,7 +22,7 @@ const getDot = (h, attempt)=>{
   
 }
 
-const ImportHistory = ({ importHistory, attempt }) => (
+const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
   <Timeline>
     {importHistory.map(h => (
       <Timeline.Item key={h.attempt} color={tagColors[h.state]} dot={getDot(h, attempt)}>
@@ -31,7 +31,7 @@ const ImportHistory = ({ importHistory, attempt }) => (
           <React.Fragment>
             <NavLink
           to={{
-            pathname: `/dataset/${h.datasetKey}/metrics/${h.attempt}`
+            pathname: `/catalogue/${catalogueKey}/dataset/${h.datasetKey}/metrics/${h.attempt}`
           }}
           exact={true}
         >
@@ -45,7 +45,7 @@ const ImportHistory = ({ importHistory, attempt }) => (
           <React.Fragment>
              <NavLink
           to={{
-            pathname: `/dataset/${h.datasetKey}/metrics/${h.attempt}`
+            pathname: `/catalogue/${catalogueKey}/dataset/${h.datasetKey}/metrics/${h.attempt}`
           }}
           exact={true}
         >

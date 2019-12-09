@@ -87,7 +87,7 @@ class DatasetMeta extends React.Component {
           </Col>
           <Col span={2} offset={18}>
           { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
-          { data && <ImportButton
+          { data && _.get(data, 'origin') !== 'managed' && <ImportButton
                         style={{ marginTop: "8px" }}
                         record={{datasetKey: data.key}}
                        

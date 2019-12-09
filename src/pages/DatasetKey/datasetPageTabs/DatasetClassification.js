@@ -5,14 +5,13 @@ import _ from "lodash";
 import history from "../../../history";
 
 import PageContent from "../../../components/PageContent";
-import ColTree from "../../Assembly/ColTree";
-import { ColTreeContext } from "../../Assembly/ColTreeContext"
+import ColTree from "../../catalogue/Assembly/ColTree";
+import { ColTreeContext } from "../../catalogue/Assembly/ColTreeContext"
 import queryString from "query-string";
 import Auth from "../../../components/Auth";
 import withContext from "../../../components/hoc/withContext"
-import NameAutocomplete from "../../Assembly/NameAutocomplete"
-import ColTreeActions from "../../Assembly/ColTreeActions"
-const {MANAGEMENT_CLASSIFICATION} = config;
+import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete"
+import ColTreeActions from "../../catalogue/Assembly/ColTreeActions"
 
 class DatasetClassification extends React.Component {
   constructor(props) {
@@ -25,7 +24,7 @@ class DatasetClassification extends React.Component {
 
   render() {
    
-    const { dataset, location, user } = this.props;
+    const { dataset, location, user, catalogueKey } = this.props;
     const params = queryString.parse(this.props.location.search);
 
     return (
@@ -36,7 +35,7 @@ class DatasetClassification extends React.Component {
                       datasetKey={dataset.key}
                       onSelectName={name => {
                         history.push({
-                          pathname: `/dataset/${dataset.key}/classification`,
+                          pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
                           search: `?${queryString.stringify({sourceTaxonKey: _.get(name, "key")})}`
                         });
 
@@ -44,7 +43,7 @@ class DatasetClassification extends React.Component {
                       }}
                       onResetSearch={() => {
                         history.push({
-                          pathname: `/dataset/${dataset.key}/classification`,
+                          pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
                         });
                       }}
                     />
@@ -63,7 +62,7 @@ class DatasetClassification extends React.Component {
         <ColTree 
           dataset={dataset} 
           treeType="gsd"
-          catalogueKey={MANAGEMENT_CLASSIFICATION.key}
+          catalogueKey={catalogueKey}
           defaultExpandKey={params.sourceTaxonKey}
           location={location}
           showSourceTaxon={sector => {
@@ -75,13 +74,13 @@ class DatasetClassification extends React.Component {
               };
   
               history.push({
-                pathname: `/assembly`,
+                pathname: `/catalogue/${catalogueKey}/assembly`,
                 search: `?${queryString.stringify(params)}`
               });
             } else {
               
               history.push({
-                pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/classification`,
+                pathname: `/catalogue/${catalogueKey}/dataset/${catalogueKey}/classification`,
                 search: `?${queryString.stringify({sourceTaxonKey: _.get(sector, "target.id")})}`
               });
             }
@@ -95,5 +94,5 @@ class DatasetClassification extends React.Component {
   }
 }
 
-const mapContextToProps = ({user}) => ({user})
+const mapContextToProps = ({user, catalogueKey}) => ({user, catalogueKey})
 export default withContext(mapContextToProps)(DatasetClassification);

@@ -90,14 +90,15 @@ class DatasetImportMetrics extends React.Component {
     const {
       match: {
         params: { key: datasetKey }
-      }
+      },
+      catalogueKey
     } = this.props;
 
    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then(res => {
         const lastFinished = res.data.find(e => e.state === 'finished')
         if(!_.get(this.props, "match.params.taxonOrNameKey") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
-          history.push(`/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
+          history.push(`/catalogue/${catalogueKey}/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
         }
         this.setState({ importHistory: res.data, err: null });
       })
@@ -118,7 +119,8 @@ class DatasetImportMetrics extends React.Component {
     const {
       match: {
         params: { datasetKey, taxonOrNameKey: attempt }
-      }
+      },
+      catalogueKey
     } = this.props;
 
     const { dataset, user, origin, importState } = this.props;
@@ -141,7 +143,7 @@ class DatasetImportMetrics extends React.Component {
               onClose={this.hideHistoryDrawer}
               visible={this.state.historyVisible}
             >
-              <ImportHistory importHistory={importHistory} attempt={attempt} />
+              <ImportHistory importHistory={importHistory} attempt={attempt} catalogueKey={catalogueKey} />
             </Drawer>
           )}
           {this.state.data &&
@@ -347,6 +349,6 @@ class DatasetImportMetrics extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ user, dataset, importState }) => ({ user, dataset, importState });
+const mapContextToProps = ({ user, dataset, importState, catalogueKey }) => ({ user, dataset, importState, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetImportMetrics);

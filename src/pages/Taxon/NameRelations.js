@@ -11,7 +11,7 @@ const typeMap = {
     "superfluous": "name for"
 }
 
-const NameRelations = ({ data, style }) => {
+const NameRelations = ({ data, style, catalogueKey, datasetKey }) => {
   return (
     <div style={style}>
       {data
@@ -19,7 +19,9 @@ const NameRelations = ({ data, style }) => {
           <PresentationItem key={r.key} label={`${_.capitalize(r.type)} ${typeMap[r.type] ? typeMap[r.type]: ""}` } helpText={r.note}>
            <NavLink
               to={{
-                pathname: `/dataset/${r.datasetKey}/name/${encodeURIComponent(
+                pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
+                  r.relatedName.id
+                )}` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/name/${encodeURIComponent(
                   r.relatedName.id
                 )}`
               }}

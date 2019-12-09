@@ -5,7 +5,7 @@ import Classification from "./Classification";
 import { NavLink } from "react-router-dom";
 import CopyableColumnText from "../WorkBench/CopyableColumnText";
 import { Tooltip } from "antd";
-export default {
+export default (catalogueKey) => ({
   binomial: [
     {
       title: "ID",
@@ -17,9 +17,9 @@ export default {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "id"))}`
+              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+                _.get(record, "bareName")  ? "name" : "taxon"
+              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}
             exact={true}
           >
@@ -117,9 +117,9 @@ export default {
           <NavLink
           key={_.get(record, "id")}
           to={{
-            pathname: `/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
-            }/${encodeURIComponent(_.get(record, "id"))}`
+            pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName")  ? "name" : "taxon"
+            }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
           }}
           exact={true}
         >
@@ -225,9 +225,9 @@ export default {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "id"))}`
+              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+                _.get(record, "bareName")  ? "name" : "taxon"
+              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}
             exact={true}
           >
@@ -305,7 +305,7 @@ export default {
       className: "workbench-td",
       render: (text, record) => {
         return _.get(record, "classification") ? (
-          <Classification path={_.get(record, "classification")} />
+          <Classification path={_.get(record, "classification")} datasetKey={_.get(record, "datasetKey")} catalogueKey={catalogueKey} />
         ) : (
           ""
         );
@@ -323,9 +323,9 @@ export default {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") || record.status === 'synonym' ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "id"))}`
+              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+                _.get(record, "bareName")  ? "name" : "taxon"
+              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}
             exact={true}
           >
@@ -401,11 +401,11 @@ export default {
       className: "workbench-td",
       render: (text, record) => {
         return _.get(record, "classification") ? (
-          <Classification path={_.get(record, "classification")} maxLength={3} />
+          <Classification path={_.get(record, "classification")} maxLength={3} datasetKey={_.get(record, "datasetKey")} catalogueKey={catalogueKey} />
         ) : (
           ""
         );
       }
     }
   ]
-};
+});

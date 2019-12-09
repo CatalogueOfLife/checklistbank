@@ -5,6 +5,7 @@ import React from "react";
 import _ from 'lodash';
 import history from '../history'
 import { Row, Col, Button, Card } from 'antd'
+import withContext from "./hoc/withContext";
 
 const ButtonGroup = Button.Group
 
@@ -12,7 +13,6 @@ class ImportChart extends React.Component {
 
   constructor(props) {
     super(props);
-    this.setLogarithmic = this.setLogarithmic.bind(this)
     this.state = { options: {} };
   }
 
@@ -27,7 +27,7 @@ class ImportChart extends React.Component {
   }
 
  initChart = (props) => {
-  const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim } = props;
+  const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim, catalogueKey } = props;
   var chartData = [];
   var logChartData = [];
   var max;
@@ -91,7 +91,7 @@ class ImportChart extends React.Component {
       point: {
         events: {
           click: (e) => {
-            history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
+            history.push(`/catalogue/${catalogueKey}/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
           }
         }
       },
@@ -147,7 +147,7 @@ class ImportChart extends React.Component {
     this.setState({ chartType: type, options });
   }
 
-  setLogarithmic(checked) {
+  setLogarithmic = (checked) => {
     let { options } = this.state;
     if (checked) {
       options.series[0].data = this.state.logChartData;
@@ -180,4 +180,13 @@ class ImportChart extends React.Component {
   }
 }
 
-export default ImportChart;
+
+
+const mapContextToProps = ({
+  catalogueKey
+}) => ({
+  catalogueKey
+});
+
+
+export default withContext(mapContextToProps)(ImportChart);

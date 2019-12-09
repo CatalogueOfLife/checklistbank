@@ -12,11 +12,11 @@ import MultiValueFilter from "./MultiValueFilter";
 import RowDetail from "./RowDetail";
 import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
-import NameAutocomplete from "../Assembly/NameAutocomplete";
+import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import withContext from "../../components/hoc/withContext";
 
 const PAGE_SIZE = 50;
-const columns = [
+const getColumns = (baseUri) => [
   {
     title: "Scientific Name",
     dataIndex: "usage.name.formattedName",
@@ -26,14 +26,8 @@ const columns = [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `/dataset/${_.get(
-              record,
-              "usage.name.datasetKey"
-            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-          : `/dataset/${_.get(
-              record,
-              "usage.name.datasetKey"
-            )}/taxon/${encodeURIComponent(
+          ? `${baseUri}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : `${baseUri}/taxon/${encodeURIComponent(
               _.get(record, "usage.accepted.id")
                 ? _.get(record, "usage.accepted.id")
                 : _.get(record, "usage.id")
@@ -95,6 +89,7 @@ const columns = [
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
+          baseUri={baseUri}
         />
       );
     }
@@ -104,11 +99,11 @@ const columns = [
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-
+    const baseUri = this.props.catalogueKey === this.props.datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
     this.state = {
       data: [],
       advancedFilters: false,
-      columns: columns,
+      columns: getColumns(baseUri),
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
@@ -120,7 +115,6 @@ class NameSearchPage extends React.Component {
   }
 
   componentWillMount() {
-    const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = {
@@ -130,7 +124,7 @@ class NameSearchPage extends React.Component {
         sortBy: "taxonomic"
       };
       history.push({
-        pathname: _.get(this.props, "location.path"), // datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+        pathname: _.get(this.props, "location.path"), // datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
@@ -152,7 +146,7 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: _.get(this.props, "location.path"), //datasetKey ? `/dataset/${datasetKey}/names` : `/names`,
+      pathname: _.get(this.props, "location.path"), //datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
       search: `?${qs.stringify(params)}`
     });
     const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`
@@ -251,7 +245,8 @@ class NameSearchPage extends React.Component {
       nomstatus,
       nametype,
       namefield,
-      datasetKey
+      datasetKey,
+      catalogueKey
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -289,6 +284,10 @@ class NameSearchPage extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : null;
+
+
+      const baseUri = catalogueKey === datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
+
 
     return (
       <div
@@ -408,7 +407,7 @@ class NameSearchPage extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey={record => record.usage.nameIndexId}
-            expandedRowRender={record => <RowDetail {...record} />}
+            expandedRowRender={record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>}
           />
         )}
       </div>
@@ -422,7 +421,8 @@ const mapContextToProps = ({
   issue,
   nomstatus,
   nametype,
-  namefield
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield });
+  namefield,
+  catalogueKey
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield , catalogueKey});
 
 export default withContext(mapContextToProps)(NameSearchPage);

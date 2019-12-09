@@ -23,14 +23,9 @@ import {
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
-import Classification from "../NameSearch/Classification";
-import SearchBox from "../DatasetList/SearchBox";
-import MultiValueFilter from "../NameSearch/MultiValueFilter";
-import RowDetail from "./RowDetail";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import { Resizable } from "react-resizable";
-import DecisionTag from "../WorkBench/DecisionTag";
 import ErrorMsg from "../../components/ErrorMsg";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
@@ -43,7 +38,6 @@ const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
-const {MANAGEMENT_CLASSIFICATION} = config;
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 
@@ -62,7 +56,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const limit = localStorage.getItem("col_plus_duplicates_limit");
-    const {assembly} = props;
+    const {assembly, catalogueKey} = props;
     this.state = {
       data: [],
       rawData: [],
@@ -70,7 +64,7 @@ class DuplicateSearchPage extends React.Component {
       sectors: [],
       filteredSectors: [],
       advancedMode: false,
-      columns: columnDefaults.binomial,
+      columns: columnDefaults(catalogueKey).binomial,
       params: { limit: limit ? Number(limit) : 50, offset: 0 },
       totalFaked: 0,
       loading: false,
@@ -87,12 +81,7 @@ class DuplicateSearchPage extends React.Component {
   componentWillMount() {
     const { datasetKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
-    /*  if (_.isEmpty(params)) {
-      history.push({
-        pathname: `/dataset/${datasetKey}/duplicates`,
-        search: `?limit=50&offset=0`
-      });
-   } */
+   
     this.getSectors();
     let booleans = {};
     [
@@ -145,7 +134,8 @@ class DuplicateSearchPage extends React.Component {
   getData = () => {
     const { params } = this.state;
     const {
-      location: { pathname }
+      location: { pathname },
+      catalogueKey
     } = this.props;
     this.setState({ loading: true });
     const { datasetKey, assembly } = this.props;
@@ -156,7 +146,7 @@ class DuplicateSearchPage extends React.Component {
     });
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-        ...params,
+        ...params, catalogueKey: catalogueKey,
         limit: Number(params.limit) + 1
       })}`
     )
@@ -171,8 +161,8 @@ class DuplicateSearchPage extends React.Component {
           data.length > Number(params.limit) ? data.slice(0, -1) : data;
         const { totalFaked } = this.state;
         const clms = params.category
-          ? columnDefaults[params.category]
-          : columnDefaults.binomial;
+          ? columnDefaults(catalogueKey)[params.category]
+          : columnDefaults(catalogueKey).binomial;
 
         this.setState({
           loading: false,
@@ -209,6 +199,7 @@ class DuplicateSearchPage extends React.Component {
   };
 
   getGsdColumn = () => {
+
     return {
       title: "gsd",
       dataIndex: "sector.dataset.alias",
@@ -219,7 +210,7 @@ class DuplicateSearchPage extends React.Component {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
+              pathname: `/catalogue/${_.get(record, "sector.datasetKey")}/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
             }}
             exact={true}
           >
@@ -231,8 +222,8 @@ class DuplicateSearchPage extends React.Component {
   };
 
   getSectors = () => {
-    const { datasetKey } = this.props;
-    axios(`${config.dataApi}sector?datasetKey=${datasetKey}`)
+    const { datasetKey, catalogueKey } = this.props;
+    axios(`${config.dataApi}sector?subjectDatasetKey=${datasetKey}&datasetKey=${catalogueKey}`)
       .then(res => {
         this.setState({
           sectors: res.data,
@@ -322,7 +313,7 @@ class DuplicateSearchPage extends React.Component {
   };
   applyDecision = () => {
     const { selectedRowKeys, data, decision } = this.state;
-    const { datasetKey } = this.props;
+    const { datasetKey, catalogueKey } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
       .filter(d => selectedRowKeys.includes(_.get(d, "id")))
@@ -333,7 +324,7 @@ class DuplicateSearchPage extends React.Component {
             method === "put" ? `/${d.decision.key}` : ""
           }`,
           {
-            datasetKey: MANAGEMENT_CLASSIFICATION.key,
+            datasetKey: catalogueKey,
             subjectDatasetKey: datasetKey,
             subject: {
               id: _.get(d, "id"),
@@ -502,7 +493,7 @@ class DuplicateSearchPage extends React.Component {
       synonymsSelectLoading,
       newestInGroupLoading
     } = this.state;
-    const { rank, taxonomicstatus, user, assembly } = this.props;
+    const { rank, taxonomicstatus, user, assembly, catalogueKey } = this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -942,7 +933,7 @@ class DuplicateSearchPage extends React.Component {
               columns={
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
-                  : assembly ? [this.getGsdColumn(), ...columnDefaults.fullScientificName] : columnDefaults.fullScientificName
+                  : assembly ? [this.getGsdColumn(), ...columnDefaults(catalogueKey).fullScientificName] : columnDefaults(catalogueKey).fullScientificName
               }
               dataSource={data}
               loading={loading}
@@ -970,7 +961,8 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  user
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user });
+  user,
+  catalogueKey
+}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user, catalogueKey });
 
 export default withContext(mapContextToProps)(DuplicateSearchPage);
