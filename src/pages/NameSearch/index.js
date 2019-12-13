@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Switch, Row, Col, Button, Icon } from "antd";
+import { Table, Alert, Radio, Row, Col, Button, Icon, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -15,6 +15,8 @@ import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import withContext from "../../components/hoc/withContext";
 
+const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 const PAGE_SIZE = 50;
 const getColumns = (baseUri) => [
   {
@@ -330,6 +332,36 @@ class NameSearchPage extends React.Component {
                 autoFocus={false}
               />{" "}
             </div>
+            <div style={{ marginTop: "10px" }}>
+
+<FormItem style={{
+      marginLeft: "10px",
+      marginBottom: "10px"
+    }}>
+    <RadioGroup
+    
+      onChange={evt => {
+        if (typeof evt.target.value === "undefined") {
+          this.setState(
+            {
+              params: _.omit(this.state.params, [
+                "status"
+              ])
+            },
+            this.getData
+          );
+        } else {
+          this.updateSearch({ status: evt.target.value });
+        }
+      }}
+      value={params.status}
+    >
+      <Radio value="_NOT_NULL">Exclude bare names</Radio>
+      <Radio value="_NULL">Only bare names</Radio>
+      <Radio value={undefined}>All</Radio>
+    </RadioGroup>
+    </FormItem>
+    </div>
           </Col>
           <Col span={12}>
             <MultiValueFilter

@@ -27,6 +27,7 @@ import withContext from "../../components/hoc/withContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import DecisionForm from "./DecisionForm";
 import Auth from "../../components/Auth"
+import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
@@ -595,6 +596,49 @@ class WorkBench extends React.Component {
               onSearch={value => this.updateSearch({ q: value })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
+                        <div style={{ marginTop: "10px" }}>
+              {" "}
+              <NameAutocomplete
+                datasetKey={datasetKey}
+                onSelectName={value => {
+                  this.updateSearch({ TAXON_ID: value.key });
+                }}
+                onResetSearch={this.resetSearch}
+                placeHolder="Search by higher taxon"
+                sortBy="TAXONOMIC"
+                autoFocus={false}
+              />{" "}
+            </div>
+            <div style={{ marginTop: "10px" }}>
+
+                <FormItem style={{
+                      marginLeft: "10px",
+                      marginBottom: "10px"
+                    }}>
+                    <RadioGroup
+                    
+                      onChange={evt => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "status"
+                              ])
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ status: evt.target.value });
+                        }
+                      }}
+                      value={params.status}
+                    >
+                      <Radio value="_NOT_NULL">Exclude bare names</Radio>
+                      <Radio value="_NULL">Only bare names</Radio>
+                      <Radio value={undefined}>All</Radio>
+                    </RadioGroup>
+                    </FormItem>
+                    </div>
           </Col>
           <Col span={10}>
           <MultiValueFilter
@@ -649,6 +693,8 @@ class WorkBench extends React.Component {
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
             </div>
+            <div style={{ textAlign: "right", marginBottom: "8px" }}>
+
                 <FormItem style={{
                       marginLeft: "10px",
                       marginBottom: "10px"
@@ -676,6 +722,7 @@ class WorkBench extends React.Component {
                       <Radio value={undefined}>All</Radio>
                     </RadioGroup>
                     </FormItem>
+                    </div>
           </Col>
         </Row>
         <Row>
