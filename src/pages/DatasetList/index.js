@@ -59,7 +59,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${record.key}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
                 exact={true}
               >
                 {text}
@@ -76,7 +76,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
+                to={{ pathname: _.get(record, 'origin') === 'managed' ? `/catalogue/${record.key}/assembly` : `/catalogue/${catalogueKey}/dataset/${record.key}/names` }}
                 exact={true}
               >
                 {text}
@@ -127,7 +127,7 @@ class DatasetList extends React.Component {
               record.contributesToDatasets
               .map((d, i, arr )=> <React.Fragment><NavLink
                 key={d.key}
-                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}` }}
+                to={{ pathname: `/catalogue/${d.key}` }}
                 exact={true}
               >
                 {`${d.alias} [${d.key}]`}
