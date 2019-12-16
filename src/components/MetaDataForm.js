@@ -152,7 +152,7 @@ class RegistrationForm extends React.Component {
           <FormItem
             {...formItemLayout}
             label="Alias"
-            help="Abbreviated or shortened memorable name of Source Database intended for easy use in day-to-day communications, as supplied by the custodian"
+            help="Abbreviated or shortened memorable name of the dataset intended for easy use in day-to-day communications, as supplied by the custodian"
           >
             {getFieldDecorator("alias", {
               initialValue: _.get(data, "alias") ? _.get(data, "alias") : ""
@@ -333,8 +333,8 @@ class RegistrationForm extends React.Component {
         {data && (
           <FormItem
             {...formItemLayout}
-            label="English name of the group"
-            help="English name of the taxon covered by the Source Database"
+            label="Taxonomic coverage (english)"
+            help="English name of the taxon covered by the dataset"
           >
             {getFieldDecorator("group", {
               initialValue: _.get(data, "group") ? _.get(data, "group") : ""
@@ -439,7 +439,7 @@ class RegistrationForm extends React.Component {
             <FormItem
               {...formItemLayout}
               label="Completeness"
-              help="Percentage of completeness of species list of the taxon provided by the Source Database"
+              help="Percentage of completeness of species list of the taxon provided by the dataset"
             >
               {getFieldDecorator("completeness", {
                 initialValue: _.get(data, "completeness")
