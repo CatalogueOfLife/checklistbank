@@ -1,7 +1,8 @@
 import React from "react";
-import { Col, Row, Tag, Statistic } from "antd";
+import { Col, Row, Tag, Statistic, Tooltip, Icon } from "antd";
 import _ from "lodash";
 import moment from "moment";
+import kibanaQuery from "../SectorSync/kibanaQuery"
 
 const SyncState = ({ syncState, dataset, sector }) => (
   <React.Fragment>
@@ -47,7 +48,13 @@ const SyncState = ({ syncState, dataset, sector }) => (
     </Row>
     {_.get(syncState, "running") && (
       <React.Fragment>
-        {dataset && sector && <Row>Now syncing: <strong>{dataset.title}</strong>, Sector subject: <strong>{_.get(sector, 'subject.name')}</strong> </Row>}
+        {dataset && sector && <Row>Now syncing: <strong>{dataset.title}</strong>, Sector subject: <strong>{_.get(sector, 'subject.name')}</strong> 
+        <Tooltip title="Kibana logs">
+        <a style={{marginLeft: '6px'}}href={kibanaQuery(sector.key)} target="_blank" >
+          <Icon type="code"  />
+        </a>
+      </Tooltip>
+        </Row>}
         <Row>
           <Col span={12}>
             <Statistic
