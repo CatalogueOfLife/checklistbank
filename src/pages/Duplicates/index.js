@@ -359,7 +359,7 @@ class DuplicateSearchPage extends React.Component {
             }${decision === "chresonym" ? "marked as chresonym" : ""}`;
 
             notification.open({
-              message: `Decision ${method === "post" ? "apllied" : "changed"}`,
+              message: `Decision ${method === "post" ? "applied" : "changed"}`,
               description: ["block", "chresonym"].includes(decision)
                 ? decisionMsg
                 : statusMsg

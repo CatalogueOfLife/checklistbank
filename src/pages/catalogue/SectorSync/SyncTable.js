@@ -155,7 +155,7 @@ const getColumns = (catalogueKey) => [
     title: "Diff",
     key: "diff",
     render: (text, record) => (
-      <NavLink
+      record.attempt < 2 ? "" : <NavLink
         to={{
           pathname: `/catalogue/${catalogueKey}/sync/${
             record.sectorKey
