@@ -29,6 +29,8 @@
         "col:NameRel.col:nameID": ["col:Name.col:ID"],
         "col:NameRel.col:relatedNameID": ["col:Name.col:ID"],
         "col:NameRel.col:publishedInID": ["col:Reference.col:ID"],
+        "col:TypeMaterial.col:nameID": ["col:Name.col:ID"],
+        "col:TypeMaterial.col:referenceID": ["col:Reference.col:ID"],
         "col:Description.col:taxonID": ["col:Taxon.col:ID"],
         "col:Description.col:referenceID": ["col:Reference.col:ID"],
         "col:Media.col:taxonID": ["col:Taxon.col:ID"],
