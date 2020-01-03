@@ -78,8 +78,18 @@ class DuplicateSearchPage extends React.Component {
     };
   }
 
-  componentWillMount() {
-    const { datasetKey } = this.props;
+  componentWillMount = () => {
+    this.initOrUpdate()
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')){
+      this.initOrUpdate()
+    }
+    
+  }
+
+  initOrUpdate = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
    
     this.getSectors();
@@ -114,6 +124,7 @@ class DuplicateSearchPage extends React.Component {
       );
     }
   }
+
   decorateWithSectorsAndDataset = res => {
     if (!res.usages) return res;
 

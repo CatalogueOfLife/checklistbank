@@ -367,7 +367,7 @@ class Assembly extends React.Component {
             <Row style={{ padding: "10px", height: "100%" }}>
               <Col span={12} style={{ padding: "10px" }}>
                 <Card>
-                  <h4>CoL Draft</h4>{" "}
+                  <h4>{catalogue.title}</h4>{" "}
                   <NameAutocomplete
                     datasetKey={catalogueKey}
                     onSelectName={name => {

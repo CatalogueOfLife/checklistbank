@@ -200,7 +200,7 @@ class App extends Component {
                 component={DatasetProvider}
               /> 
               <Route            
-                key="datasetProvider"
+                key="catalogueProvider"
                 path={`/catalogue/:catalogueKey`}
                 component={DatasetProvider}
               /> 

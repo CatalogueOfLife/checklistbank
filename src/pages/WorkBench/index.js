@@ -48,7 +48,7 @@ const getDecisionText = (decision) => {
   }
 }
 
-const getColumns = (catalogueKey) => [
+const getColumns = (catalogueKey, user) => [
   {
     title: "Decision",
     dataIndex: "decisions",
@@ -56,7 +56,7 @@ const getColumns = (catalogueKey) => [
     width: 60,
     className: "workbench-td",
     render: (text, record) => (
-      !Auth.isAuthorised(this.props.user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
+      !Auth.isAuthorised(user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
     )
   },
   {
@@ -217,10 +217,11 @@ class WorkBench extends React.Component {
   constructor(props) {
     super(props);
     const {catalogueKey} = this.props;
+    const {user} = this.props;
     this.state = {
       data: [],
       decision: null,
-      columns: getColumns(catalogueKey),
+      columns: getColumns(catalogueKey, user),
       decisionFormVisible: false,
       rowsForEdit: [],
       params: {},

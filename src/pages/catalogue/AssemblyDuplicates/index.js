@@ -7,26 +7,28 @@ import _ from "lodash";
 import Helmet from "react-helmet";
 import Duplicates from "../../Duplicates";
 import PageContent from "../../../components/PageContent";
+import withContext from "../../../components/hoc/withContext"
 
 const { MANAGEMENT_CLASSIFICATION } = config;
 
-const AssemblyDuplicates = ({location}) => {
+const AssemblyDuplicates = ({location, catalogueKey, catalogue}) => {
   return (
     <Layout
       openKeys={["assembly"]}
       selectedKeys={["assemblyDuplicates"]}
-      title={MANAGEMENT_CLASSIFICATION.title}
+      title={catalogue.title}
     >
     <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+ Assembly</title>
+          <title>{catalogue.title}</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>
-      <Duplicates datasetKey={MANAGEMENT_CLASSIFICATION.key} location={location} assembly={true} />
+      <Duplicates datasetKey={catalogueKey} location={location} assembly={true} />
       </PageContent>
     </Layout>
   );
 };
 
-export default AssemblyDuplicates;
+const mapContextToProps = ({catalogueKey, catalogue}) => ({catalogueKey, catalogue})
+export default withContext(mapContextToProps)(AssemblyDuplicates);
