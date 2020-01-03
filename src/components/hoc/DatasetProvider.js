@@ -28,21 +28,24 @@ class DatasetProvider extends React.Component {
 };
   
   }
-  componentWillReceiveProps = nextProps => {
-    const nextKey = _.get(nextProps, "match.params.key");
-    const nextCatalogueKey = _.get(nextProps, "match.params.catalogueKey");
+  
+  componentDidUpdate = (prevProps) => {
+
+    const nextKey = _.get(this.props, "match.params.key");
+    const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
     const {
         match: {
           params: { key, catalogueKey }
         }
-      } = this.props;
+      } = prevProps;
 
       if(!this.state.loading && Number(key) !== Number(nextKey)){
           this.fetchDataset(nextKey)
       }
       if(!this.state.catalogueLoading && Number(catalogueKey) !== Number(nextCatalogueKey)){
-        this.fetchCatalogue(catalogueKey)    }
-  };
+        this.fetchCatalogue(catalogueKey)    } 
+  }
+   
 
   fetchDataset = (key) => {
     const {

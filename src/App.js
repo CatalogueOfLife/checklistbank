@@ -193,9 +193,15 @@ class App extends Component {
             </Switch>
             
           </ThemeProvider>
-          <Route            
+          <Route   
+                         
                 key="datasetProvider"
                 path={`/catalogue/:catalogueKey/dataset/:key`}
+                component={DatasetProvider}
+              /> 
+              <Route            
+                key="datasetProvider"
+                path={`/catalogue/:catalogueKey`}
                 component={DatasetProvider}
               /> 
               </React.Fragment>
