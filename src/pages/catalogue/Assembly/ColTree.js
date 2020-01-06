@@ -6,6 +6,7 @@ import config from "../../../config";
 import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../../components/ErrorMsg";
+import Custom404 from "./Custom404"
 import { getSectorsBatch } from "../../../api/sector";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
@@ -298,6 +299,7 @@ class ColTree extends React.Component {
       .catch(err => {
         this.setState({
           treeData: [],
+          rootLoading: false,
           defaultExpandedKeys: null,
           error: err
         });
@@ -802,18 +804,30 @@ class ColTree extends React.Component {
       defaultExpandedKeys,
       nodeNotFoundErr
     } = this.state;
-    const { draggable, onDragStart, location } = this.props;
+    const { draggable, onDragStart, location, treeType, dataset } = this.props;
     return (
       <div>
         {" "}
         {error && (
+          <React.Fragment>
+          {  _.get(error, 'response.data.code') !== 404 ?
           <Alert
             closable
             onClose={() => this.setState({ error: null })}
             style={{ marginTop: "8px" }}
             message={<ErrorMsg error={error} />}
             type="error"
+          /> :
+          <Alert
+            closable
+            onClose={() => this.setState({ error: null })}
+            style={{ marginTop: "8px" }}
+            message={<Custom404 error={error} treeType={treeType} dataset={dataset} onRootCreated={this.loadRoot} />}
+            type="warning"
           />
+
+          }
+          </React.Fragment>
         )}
         {nodeNotFoundErr && (
           <Alert
@@ -879,7 +893,7 @@ class ColTree extends React.Component {
             
           </ColTreeContext.Consumer>
         )}
-       {treeData.length < rootTotal && <Button loading={rootLoading} onClick={this.loadRoot}>Load more </Button>}
+       {!error && treeData.length < rootTotal && <Button loading={rootLoading} onClick={this.loadRoot}>Load more </Button>}
       </div>
     );
   }

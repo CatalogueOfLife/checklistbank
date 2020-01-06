@@ -19,11 +19,10 @@ class AddChildModal extends React.Component {
   }
 
   handleSubmit = e => {
+    const {parent} = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
-        const taxon = {
-          parentId: this.props.parent.id,
+        let taxon = {
           status: values.provisional ? "provisionally accepted" : "accepted",
           name: this.isGenusOrAbove(values.rank) ? {
             uninomial: values.name,
@@ -33,6 +32,10 @@ class AddChildModal extends React.Component {
             rank: values.rank
 
           }
+        }
+
+        if(_.get(parent, 'id')){
+          taxon.parentId = parent.id
         }
         this.submitData(taxon);
       } else {
@@ -49,8 +52,8 @@ class AddChildModal extends React.Component {
 
         this.setState({ submissionError: null, confirmLoading: false }, () => {
           notification.open({
-            message: "Child inserted",
-            description: `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was inserted as child of ${_.get(parent, 'name')}`
+            message: _.get(parent, 'id') ? "Child inserted" : "Root taxon created",
+            description: _.get(parent, 'id') ? `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was inserted as child of ${_.get(parent, 'name')}` : `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was created as root`
           });
           if(this.props.onSuccess && typeof this.props.onSuccess === 'function'){
             this.props.onSuccess()
@@ -84,10 +87,10 @@ class AddChildModal extends React.Component {
       <Modal
       style={{width:"650px"}}
         title={
-          <span>
+          _.get(parent, 'id') ?  <span>
             Add child to{" "}
             <span dangerouslySetInnerHTML={{ __html: parent.name }} />
-          </span>
+          </span> : <span>Create root taxon</span>
         }
         visible={visible}
         onOk={() => {
