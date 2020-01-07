@@ -14,9 +14,9 @@ export const getDatasetsBatch = (ids) => {
 
 }
 
-export const getDuplicateOverview = (datasetKey, catalogueKey) => {
+export const getDuplicateOverview = (datasetKey, catalogueKey, withDecision) => {
 
-    let groups = [...duplicatePresets];
+    let groups = [...duplicatePresets.map(p => ({...p, params: {...p.params, withDecision: withDecision}}))];
 
    return Promise.all(
         groups.map(

@@ -13,61 +13,43 @@ const _ = require("lodash");
 class DatasetTasks extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { duplicates: [], loading: false };
+    this.state = { duplicates: [], duplicatesWithdecision: [], loading: false };
   }
 
   componentWillMount() {
     this.getData();
   }
 
-  getData = () => {
+  getData = async () => {
     const { datasetKey, catalogueKey } = this.props;
 
     this.setState({ loading: true });
-    getDuplicateOverview(datasetKey, catalogueKey).then(res =>
-      this.setState({ duplicates: res, loading: false })
-    );
+    const duplicatesWithNodecision = await getDuplicateOverview(datasetKey, catalogueKey, false)
+    const duplicatesWithdecision = await getDuplicateOverview(datasetKey, catalogueKey, true)
+    let completedMap = {};
+    duplicatesWithdecision.forEach(c => {
+      completedMap[c.id] = c.count;
+    })
+    const duplicates = duplicatesWithNodecision.map(d => ({
+      id: d.id,
+      text: d.text,
+      count: d.count,
+      completed: completedMap[d.id]
+    }))
+    this.setState({ duplicates: duplicates, loading: false })
+    
+
   };
 
-  updateSelectedGroups = groups => {
-    if (groups && groups.length > 0) {
-      localStorage.setItem(
-        "col_plus_selected_issue_groups",
-        JSON.stringify(groups)
-      );
-    } else if (groups && groups.length === 0) {
-      localStorage.removeItem("col_plus_selected_issue_groups");
-    }
-    this.setState({ selectedGroups: groups });
-  };
 
   render() {
     const { error, duplicates, loading } = this.state;
     const {
-      issue,
-      issueMap,
       getDuplicateWarningColor,
       datasetKey,
       catalogueKey
     } = this.props;
-    const groups = issue
-      ? issue
-          .filter(
-            (e, i) => issue.findIndex(a => a["group"] === e["group"]) === i
-          )
-          .map(a => a.group)
-      : [];
-    const selectedGroups = localStorage.getItem(
-      "col_plus_selected_issue_groups"
-    )
-      ? JSON.parse(localStorage.getItem("col_plus_selected_issue_groups"))
-      : [...groups];
-    let groupMap = {};
-    if (issue) {
-      issue.forEach(i => {
-        groupMap[i.name] = i.group;
-      });
-    }
+   
 
     return (
       <PageContent>
@@ -76,7 +58,6 @@ class DatasetTasks extends React.Component {
         <h1>Duplicates without decision</h1>
         {loading && <Spin />}
         {duplicates
-          .filter(d => d.count > 50)
           .map(d => (
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`, search:`?_colCheck=${d.id}` }}
@@ -87,40 +68,11 @@ class DatasetTasks extends React.Component {
                 style={{ marginBottom: "10px" }}
                 color={getDuplicateWarningColor(d.count)}
               >
-                {d.text} {<strong>> 50</strong>}
+                {d.text} {<strong>{d.count > 0 && `completed ${d.completed} of`} {d.count > 50 ? '> 50' : d.count}</strong>}
               </Tag>{" "}
             </NavLink>
           ))}
-        {duplicates
-          .filter(d => d.count < 51 && d.count > 0)
-          .map(d => (
-            <NavLink
-            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
-            exact={true}
-          >
-            <Tag
-              key={d.id}
-              style={{ marginBottom: "10px" }}
-              color={getDuplicateWarningColor(d.count)}
-            >
-              {d.text} {<strong>{d.count}</strong>}
-            </Tag></NavLink>
-          ))}
-        {duplicates
-          .filter(d => d.count === 0)
-          .map(d => (
-            <NavLink
-            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates` , search:`?_colCheck=${d.id}` }}
-            exact={true}
-          >
-            <Tag
-              key={d.id}
-              style={{ marginBottom: "10px" }}
-              color={getDuplicateWarningColor(d.count)}
-            >
-              {d.text} {<strong>{d.count}</strong>}
-            </Tag></NavLink>
-          ))}
+        
                       </Card>
 
       </PageContent>

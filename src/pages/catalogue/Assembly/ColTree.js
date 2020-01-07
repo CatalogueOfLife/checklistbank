@@ -822,7 +822,7 @@ class ColTree extends React.Component {
             closable
             onClose={() => this.setState({ error: null })}
             style={{ marginTop: "8px" }}
-            message={<Custom404 error={error} treeType={treeType} dataset={dataset} onRootCreated={this.loadRoot} />}
+            message={<Custom404 error={error} treeType={treeType} dataset={dataset} loadRoot={this.loadRoot} />}
             type="warning"
           />
 
