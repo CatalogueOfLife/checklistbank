@@ -21,7 +21,7 @@ const PAGE_SIZE = 50;
 const getColumns = (baseUri) => [
   {
     title: "Scientific Name",
-    dataIndex: "usage.name.formattedName",
+    dataIndex: "usage.labelHtml",
     key: "scientificName",
     render: (text, record) => {
       const uri =
@@ -63,7 +63,7 @@ const getColumns = (baseUri) => [
           {text} {text === "misapplied" ? "to " : "of "}
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "usage.accepted.name.formattedName")
+              __html: _.get(record, "usage.accepted.labelHtml")
             }}
           />
         </React.Fragment>
@@ -188,7 +188,7 @@ class NameSearchPage extends React.Component {
     if (sorter && sorter.field) {
       let split = sorter.field.split(".");
 
-      if (split[split.length - 1] === "formattedName") {
+      if (split[split.length - 1] === "labelHtml") {
         query.sortBy = "name";
       } else if (split[split.length - 1] === "rank") {
         query.sortBy = "taxonomic";

@@ -26,7 +26,7 @@ import withContext from "../../components/hoc/withContext";
       },
       {
         title: "ScientificName",
-        dataIndex: "name.formattedName",
+        dataIndex: "labelHtml",
         width: 240,
         className: "workbench-td",
         render: (text, record) => {

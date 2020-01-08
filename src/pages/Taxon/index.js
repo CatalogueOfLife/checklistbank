@@ -241,7 +241,7 @@ class TaxonPage extends React.Component {
                   <h1
                     style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" , display: 'inline-block'}}
                     dangerouslySetInnerHTML={{
-                      __html: taxon.name.formattedName
+                      __html: taxon.labelHtml
                     }}
                   />
                  {taxon.referenceIds && <div style={{display: 'inline-block', paddingLeft: "10px"}}><ReferencePopover datasetKey={datasetKey} referenceId={taxon.referenceIds} placement="bottom"/></div>}

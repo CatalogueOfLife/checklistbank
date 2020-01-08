@@ -112,13 +112,13 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "ScientificName",
-    dataIndex: "usage.name.formattedName",
+    dataIndex: "usage.labelHtml",
     width: 240,
     className: "workbench-td",
     render: (text, record) => (
       <span
         dangerouslySetInnerHTML={{
-          __html: _.get(record, "usage.name.formattedName")
+          __html: _.get(record, "usage.labelHtml")
         }}
       />
     ),
@@ -177,7 +177,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "acceptedScientificName",
     width: 240,
-    dataIndex: "usage.accepted.name.formattedName",
+    dataIndex: "usage.accepted.labelHtml",
     className: "workbench-td",
     render: (text, record) => {
       return !["synonym", "ambiguous synonym", "misapplied"].includes(
@@ -187,7 +187,7 @@ const getColumns = (catalogueKey, user) => [
       ) : (
         <span
           dangerouslySetInnerHTML={{
-            __html: _.get(record, "usage.accepted.name.formattedName")
+            __html: _.get(record, "usage.accepted.labelHtml")
           }}
         />
       );
@@ -325,7 +325,7 @@ class WorkBench extends React.Component {
     if (sorter && sorter.field) {
       let split = sorter.field.split(".");
 
-      if (split[split.length - 1] === "formattedName") {
+      if (split[split.length - 1] === "labelHtml") {
         query.sortBy = "name";
       } else if (split[split.length - 1] === "rank") {
         query.sortBy = "taxonomic";

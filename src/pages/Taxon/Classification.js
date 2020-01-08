@@ -12,7 +12,7 @@ const ClassificationTable = ({ datasetKey, data, style, catalogueKey }) => (
           search: `?${datasetKey === catalogueKey ? 'assemblyTaxonKey' : 'taxonKey'}=${t.id}`
         }}
       >
-        <span dangerouslySetInnerHTML={{ __html: t.name.formattedName }} />
+        <span dangerouslySetInnerHTML={{ __html: t.labelHtml }} />
       </NavLink>
     </PresentationItem>
   ))} </div>

@@ -57,7 +57,7 @@ export default (catalogueKey) => ({
     },
     {
       title: "Accepted",
-      dataIndex: "accepted.name.formattedName",
+      dataIndex: "accepted.labelHtml",
       key: "accepted",
       width: 60,
       className: "workbench-td",
@@ -65,7 +65,7 @@ export default (catalogueKey) => ({
         return (
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.name.formattedName")
+              __html: _.get(record, "accepted.labelHtml")
             }}
           />
         );
@@ -158,7 +158,7 @@ export default (catalogueKey) => ({
     },
     {
       title: "Accepted",
-      dataIndex: "accepted.name.formattedName",
+      dataIndex: "accepted.labelHtml",
       key: "accepted",
       width: 60,
       className: "workbench-td",
@@ -166,7 +166,7 @@ export default (catalogueKey) => ({
         return (
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.name.formattedName")
+              __html: _.get(record, "accepted.labelHtml")
             }}
           />
         );
@@ -266,12 +266,12 @@ export default (catalogueKey) => ({
     },
     /*   {
             title: "Accepted",
-            dataIndex: "accepted.name.formattedName",
+            dataIndex: "accepted.labelHtml",
             key: "accepted",
             width: 60,
             className: "workbench-td",
             render: (text, record) => {
-            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.name.formattedName")}}></span>}
+            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.labelHtml")}}></span>}
         }, */
     {
       title: "Uninomial",
@@ -364,12 +364,12 @@ export default (catalogueKey) => ({
     },
       {
             title: "Accepted",
-            dataIndex: "accepted.name.formattedName",
+            dataIndex: "accepted.labelHtml",
             key: "accepted",
             width: 340,
             className: "workbench-td",
             render: (text, record) => {
-            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.name.formattedName")}}></span>}
+            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.labelHtml")}}></span>}
         }, 
     {
       title: "scientificName",

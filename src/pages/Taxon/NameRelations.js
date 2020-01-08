@@ -27,7 +27,7 @@ const NameRelations = ({ data, style, catalogueKey, datasetKey }) => {
               }}
               exact={true}
             >
-            <span dangerouslySetInnerHTML={{__html: r.relatedName.formattedName}}></span>
+            <span dangerouslySetInnerHTML={{__html: r.relatedName.labelHtml}}></span>
             </NavLink>
           </PresentationItem>
         ))}
