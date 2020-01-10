@@ -68,7 +68,7 @@ class DatasetTasks extends React.Component {
                 style={{ marginBottom: "10px" }}
                 color={getDuplicateWarningColor(d.count)}
               >
-                {d.text} {<strong>{d.count > 0 && `completed ${d.completed} of`} {d.count > 50 ? '> 50' : d.count}</strong>}
+                {d.text} {<strong>{`${d.completed} of ${d.count > 50 ? '> 50' : d.count}`}</strong>}
               </Tag>{" "}
             </NavLink>
           ))}
