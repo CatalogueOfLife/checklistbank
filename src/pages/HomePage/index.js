@@ -101,11 +101,20 @@ class HomePage extends React.Component {
     const {catalogueKey} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="">
-{/*         <Helmet>
-          <meta charSet="utf-8" />
-          <title>Catalogue of Life +</title>
-          <link rel="canonical" href="http://data.catalogue.life" />
-        </Helmet> */}
+       
+          <Helmet
+  title="Catalogue of Life +"
+  meta={[
+  {
+    charSet: "utf-8"
+   }
+   ]}
+   link={[{
+     rel:"canonical",
+     href: "http://data.catalogue.life"
+   }]}
+/>
+
         <Card
           style={{ marginTop: 20 }}
           title="Catalogue of Life +"
