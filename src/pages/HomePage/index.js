@@ -101,11 +101,11 @@ class HomePage extends React.Component {
     const {catalogueKey} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="">
-        <Helmet>
+{/*         <Helmet>
           <meta charSet="utf-8" />
           <title>Catalogue of Life +</title>
           <link rel="canonical" href="http://data.catalogue.life" />
-        </Helmet>
+        </Helmet> */}
         <Card
           style={{ marginTop: 20 }}
           title="Catalogue of Life +"
@@ -200,8 +200,8 @@ class HomePage extends React.Component {
       {datasets &&  <Col span={8}>
         <h3>Latest datasets registered</h3>
                   <ul>
-                      {datasets.result.map(d => <li>
-                        <NavLink
+                      {datasets.result.map(d => <li key={d.key}>
+                        <NavLink 
                   to={{
                     pathname: `/catalogue/${catalogueKey}/dataset/${d.key}`
                   }}
