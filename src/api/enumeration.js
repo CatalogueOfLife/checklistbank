@@ -98,6 +98,12 @@ export const getCountries = () => {
   );
 };
 
+export const getEstimateType = () => {
+  return axios(`${config.dataApi}vocab/estimatetype`).then(res =>
+    res.data.map(e => e.name)
+  );
+};
+
 
 
 

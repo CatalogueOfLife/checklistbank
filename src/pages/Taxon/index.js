@@ -50,11 +50,25 @@ class TaxonPage extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.getTaxon();
     this.getInfo();
     this.getClassification();
   };
+
+  componentDidUpdate = (prevProps) => {
+    const {
+      match: {
+        params: { key, taxonOrNameKey }
+      },
+      datasetKey
+    } = this.props;
+    if(prevProps.datasetKey !== datasetKey || _.get(prevProps, 'match.params.taxonOrNameKey') !==  taxonOrNameKey) {
+      this.getTaxon();
+    this.getInfo();
+    this.getClassification();
+    }
+  }
 
   getTaxon = () => {
     const {

@@ -146,12 +146,13 @@ class EditableTable extends React.Component {
     
   };
 
-  componentWillReceiveProps = (nextProps) => {
-    const { data } = nextProps;
 
-    this.decorateEstimatesWithReference(data);
-    
-  };
+  componentDidUpdate = (prevProps) => {
+    const { data } = this.props;
+    if (data.length > 0 && prevProps.data.length != data.length ) {
+      this.decorateEstimatesWithReference(data);
+    }
+  }
 
 
   decorateEstimatesWithReference = (data) => {
@@ -172,9 +173,7 @@ class EditableTable extends React.Component {
         ).then(() => {
             this.setState({ data })
         });
-      } else {
-        this.setState({ data: [] });
-      }
+      } 
   }
   isEditing = record => record.key === this.state.editingKey;
 
@@ -281,5 +280,6 @@ class EditableTable extends React.Component {
 
 
 const EditableFormTable = Form.create()(EditableTable);
+const mapContextToProps = ({ estimateType }) => ({ estimateType });
 
-export default EditableFormTable;
+export default withContext(mapContextToProps)(EditableFormTable);

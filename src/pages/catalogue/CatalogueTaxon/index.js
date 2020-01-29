@@ -20,7 +20,7 @@ const CatalogueTaxon = ({ catalogueKey, catalogue, match, location }) =>
         <Helmet title={`${_.get(catalogue, "title")} in CoL+`} />
       )}
       
-      <Taxon datasetKey={catalogueKey} location={location} match={match} />
+      <Taxon datasetKey={match.params.catalogueKey} location={location} match={match} />
     </Layout>
   );
 

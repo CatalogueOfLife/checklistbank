@@ -27,26 +27,28 @@ class BasicMenu extends Component {
     this.setState({ selectedKeys, openKeys });
   };
 
-  componentWillReceiveProps = nextProps => {
+  componentDidUpdate = prevProps => {
     let state = {};
 
     if (
-      JSON.stringify(nextProps.selectedKeys) !==
+      JSON.stringify(prevProps.selectedKeys) !==
       JSON.stringify(this.props.selectedKeys)
     ) {
-      state.selectedKeys = nextProps.selectedKeys;
+      state.selectedKeys = this.props.selectedKeys;
     }
-    if (nextProps.collapsed) {
+    if (this.props.collapsed) {
       state.openKeys = [];
     } else if (
-      JSON.stringify(nextProps.openKeys) !== JSON.stringify(this.props.openKeys)
+      JSON.stringify(this.props.openKeys) !== JSON.stringify(prevProps.openKeys)
     ) {
-      state.openKeys = nextProps.openKeys;
+      state.openKeys = this.props.openKeys;
     }
     if (!_.isEmpty(state)) {
       this.setState(state);
     }
   };
+
+
   onOpenChange = openKeys => {
     this.setState({ openKeys });
   };

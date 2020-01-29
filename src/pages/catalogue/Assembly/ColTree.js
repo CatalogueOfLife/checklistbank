@@ -67,7 +67,7 @@ class ColTree extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.loadRoot();
     this.loadRanks();
 
@@ -80,11 +80,12 @@ class ColTree extends React.Component {
       this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
     colTreeActions.removeListener(refreshEvent, this.reloadRoot);
   };
-  componentWillReceiveProps = nextProps => {
-    if (nextProps.dataset.key !== this.props.dataset.key) {
+
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.dataset.key !== this.props.dataset.key) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
-  };
+  }
 
   loadRanks = () => {
     axios(`${config.dataApi}vocab/rank`).then(res => {
@@ -103,7 +104,7 @@ class ColTree extends React.Component {
       catalogueKey,
       location
     } = this.props;
-    this.setState({rootLoading: true})
+    this.setState({rootLoading: true, treeData: []})
     let id = key;
     let p = defaultExpandKey
       ? axios(

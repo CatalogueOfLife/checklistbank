@@ -62,7 +62,7 @@ class Assembly extends React.Component {
   }
 
   getSyncState = () => {
-    const {catalogueKey} = this.props;
+    const { match: {params: {catalogueKey}}} = this.props;
     axios(`${config.dataApi}assembly/${catalogueKey}`)
       .then(res => {
         if (
@@ -102,7 +102,7 @@ class Assembly extends React.Component {
 
   getSectorInfo = (attachment, root, mode) => {
     const { datasetKey } = this.state;
-    const {catalogueKey} = this.props;
+    const { match: {params: {catalogueKey}}} = this.props;
 
     return axios
       .all([
@@ -147,7 +147,7 @@ class Assembly extends React.Component {
   };
 
   saveChild = (subject, target) => {
-    const {catalogueKey} = this.props;
+    const { match: {params: {catalogueKey}}} = this.props;
 
     return axios
       .post(
@@ -169,7 +169,7 @@ class Assembly extends React.Component {
   };
   replace = (subject, target, mode) => {
     const { parentId } = target;
-    const {catalogueKey} = this.props;
+    const { match: {params: {catalogueKey}}} = this.props;
 
     return axios(
       `${config.dataApi}dataset/${
@@ -199,7 +199,7 @@ class Assembly extends React.Component {
   };
 
   saveSector = (subject, target, mode) => {
-    const {catalogueKey} = this.props;
+    const { match: {params: {catalogueKey}}} = this.props;
     const sector = {
       subjectDatasetKey: subject.datasetKey,
       datasetKey: catalogueKey,
@@ -227,7 +227,7 @@ class Assembly extends React.Component {
   showSourceTaxon = (sector, source) => {
     
     const oldDatasetKey = this.state.datasetKey;
-    const {catalogueKey} = this.props;
+    const { match : {params: {catalogueKey}}} = this.props;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
         const params = qs.parse(_.get(this.props, "location.search"));
@@ -265,7 +265,7 @@ class Assembly extends React.Component {
   };
 
   onSelectDataset = dataset => {
-    const {location, catalogueKey} = this.props
+    const {location, match : {params: {catalogueKey}}} = this.props
     this.setState({
       datasetKey: dataset.key,
       datasetName: dataset.title,
@@ -302,7 +302,7 @@ class Assembly extends React.Component {
       assemblyTaxonKey,
     } = this.state;
 
-    const { match, location, catalogueKey, catalogue } = this.props;
+    const { match : {params: {catalogueKey} }, location, catalogue } = this.props;
     //  const {assemblyTaxonKey, sourceTaxonKey} = location
     return (
       <Layout
@@ -411,7 +411,7 @@ class Assembly extends React.Component {
                 {catalogue &&  <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       location={location}
-                      dataset={catalogue}
+                      dataset={catalogue.key === catalogueKey ? catalogue: {key: catalogueKey}}
                       treeType="mc"
                       attachFn={this.getSectorInfo}
                       onDragStart={e =>
@@ -517,6 +517,6 @@ class Assembly extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue });
+const mapContextToProps = ({  catalogue }) => ({  catalogue });
 
 export default withContext(mapContextToProps)(Assembly);

@@ -31,7 +31,7 @@ class SpeciesestimateModal extends React.Component {
     estimates: []
   };
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {
       taxon: { estimates }
     } = this.props;
@@ -56,7 +56,7 @@ class SpeciesestimateModal extends React.Component {
     const { taxon, catalogueKey } = this.props;
     const newEst = {
       datasetKey: catalogueKey,
-      referenceId: this.state.selectedReference.key,
+      referenceId: _.get(this.state, 'selectedReference.key') ? this.state.selectedReference.key : '',
       estimate: values.estimate,
       type: values.type,
       note: values.note
@@ -111,7 +111,8 @@ class SpeciesestimateModal extends React.Component {
       taxon,
       onCancel,
       form: { getFieldDecorator },
-      catalogueKey
+      catalogueKey,
+      estimateType
     } = this.props;
     const { estimates } = this.state;
     const { visible, addNewMode, submissionError } = this.state;
@@ -182,11 +183,7 @@ class SpeciesestimateModal extends React.Component {
                 ]
               })(
                 <Select>
-                  {[
-                    "described species living",
-                    "described species fossil",
-                    "estimated species"
-                  ].map(o => (
+                  {estimateType.map(o => (
                     <Option key={o} value={o}>
                       {o}
                     </Option>
@@ -239,4 +236,8 @@ const WrappedSpeciesestimateModal = Form.create()(
   SpeciesestimateModal
 );
 
-export default WrappedSpeciesestimateModal;
+//export default WrappedSpeciesestimateModal;
+
+const mapContextToProps = ({ estimateType }) => ({ estimateType });
+
+export default withContext(mapContextToProps)(WrappedSpeciesestimateModal);

@@ -6,7 +6,7 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import Helmet from "react-helmet";
 
-const CatalogueName = ({ catalogueKey, catalogue, match, location }) =>
+const CatalogueName = ({  catalogue, match, location }) =>
   !catalogue ? (
     <Exception404 />
   ) : (
@@ -20,12 +20,12 @@ const CatalogueName = ({ catalogueKey, catalogue, match, location }) =>
         <Helmet title={`${_.get(catalogue, "title")} in CoL+`} />
       )}
 
-      <Name datasetKey={catalogueKey} location={location} match={match} />
+      <Name datasetKey={match.params.catalogueKey} location={location} match={match} />
     </Layout>
   );
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({
-  catalogueKey,
+const mapContextToProps = ({  catalogue }) => ({
+  
   catalogue
 });
 export default withContext(mapContextToProps)(CatalogueName);

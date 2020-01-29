@@ -16,14 +16,16 @@ class ImportChart extends React.Component {
     this.state = { options: {} };
   }
 
-  componentWillReceiveProps = (nextProps) => {
-
-    this.initChart(nextProps)
-
-  }
 
   componentDidMount = () => {
     this.initChart(this.props)
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if(prevProps.datasetKey !== this.props.datasetKey){
+      this.initChart(this.props)
+
+    }
   }
 
  initChart = (props) => {
