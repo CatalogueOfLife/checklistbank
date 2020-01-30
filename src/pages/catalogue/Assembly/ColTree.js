@@ -551,7 +551,7 @@ class ColTree extends React.Component {
               __html: e.node.props.title.props.taxon.name
             }}
           />{" "}
-          in {this.props.dataset.title}?
+          in this catalogue?
          {willProduceDuplicateChild && 
          <Alert 
          style={{marginTop: '6px'}} 
@@ -804,7 +804,7 @@ class ColTree extends React.Component {
       defaultExpandAll,
       defaultExpandedKeys,
       nodeNotFoundErr
-    } = this.state;
+        } = this.state;
     const { draggable, onDragStart, location, treeType, dataset } = this.props;
     return (
       <div>

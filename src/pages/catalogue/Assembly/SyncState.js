@@ -56,11 +56,19 @@ const SyncState = ({ syncState, dataset, sector }) => (
       </Tooltip>
         </Row>}
         <Row>
-          <Col span={12}>
+          <Col span={6}>
             <Statistic
               title="Taxa created"
               value={syncState.running.taxonCount}
             />
+          </Col>
+          <Col span={6}>
+          {syncState.running.synonymCount && 
+            <Statistic
+            title="Synonyms created"
+            value={syncState.running.synonymCount}
+          />
+          }
           </Col>
           <Col span={12}>
             <Statistic

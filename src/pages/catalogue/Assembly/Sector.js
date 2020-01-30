@@ -43,7 +43,7 @@ class Sector extends React.Component {
       })
       .then(() => {
         // If there is no sync jobs running, try to give the backend a chance to insert the root node again
-        debounce(this.props.reloadSelfAndSiblings, 500)();
+        debounce(this.props.reloadSelfAndSiblings, 1500)();
        // this.props.reloadSelfAndSiblings();
         this.props.getSyncState();
         notification.open({

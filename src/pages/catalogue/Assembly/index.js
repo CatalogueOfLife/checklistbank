@@ -126,13 +126,11 @@ class Assembly extends React.Component {
 
           return mode === "REPLACE"
             ? this.replace(
-                // null, // No colsources anymore ??
                 rootName.data,
                 attachmentName.data,
                 mode
               )
             : this.saveSector(
-                // null, // No colsources anymore ??
                 rootName.data,
                 attachmentName.data,
                 mode
@@ -411,7 +409,7 @@ class Assembly extends React.Component {
                 {catalogue &&  <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
                       location={location}
-                      dataset={catalogue.key === catalogueKey ? catalogue: {key: catalogueKey}}
+                      dataset={{key: catalogueKey}}
                       treeType="mc"
                       attachFn={this.getSectorInfo}
                       onDragStart={e =>
