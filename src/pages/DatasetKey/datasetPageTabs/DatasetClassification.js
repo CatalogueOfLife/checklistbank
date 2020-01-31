@@ -11,7 +11,6 @@ import queryString from "query-string";
 import Auth from "../../../components/Auth";
 import withContext from "../../../components/hoc/withContext"
 import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete"
-import ColTreeActions from "../../catalogue/Assembly/ColTreeActions"
 
 class DatasetClassification extends React.Component {
   constructor(props) {
@@ -38,8 +37,7 @@ class DatasetClassification extends React.Component {
                           pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
                           search: `?${queryString.stringify({sourceTaxonKey: _.get(name, "key")})}`
                         });
-
-                        ColTreeActions.refreshSource()
+                        this.treeRef.reloadRoot()
                       }}
                       onResetSearch={() => {
                         history.push({
@@ -59,7 +57,8 @@ class DatasetClassification extends React.Component {
           selectedSourceDatasetKey: dataset.key
         }}
       >
-        <ColTree 
+        <ColTree
+          treeRef={ref => this.treeRef = ref}
           dataset={dataset} 
           treeType="gsd"
           catalogueKey={catalogueKey}

@@ -64,7 +64,7 @@ class TaxonPage extends React.Component {
       datasetKey
     } = this.props;
     if(prevProps.datasetKey !== datasetKey || _.get(prevProps, 'match.params.taxonOrNameKey') !==  taxonOrNameKey) {
-      this.getTaxon();
+    this.getTaxon();
     this.getInfo();
     this.getClassification();
     }

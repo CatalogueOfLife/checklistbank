@@ -41,12 +41,12 @@ class VerbatimRecord extends React.Component {
     this.getVerbatimData(params);
   };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate = (prevProps) => {
     if (
       _.get(this.props, "location.search") !==
-      _.get(nextProps, "location.search")
+      _.get(prevProps, "location.search")
     ) {
-      let params = qs.parse(_.get(nextProps, "location.search"));
+      let params = qs.parse(_.get(this.props, "location.search"));
       if(!params.limit){
         params.limit = this.state.limit
       }

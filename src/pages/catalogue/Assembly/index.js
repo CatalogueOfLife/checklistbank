@@ -15,7 +15,6 @@ import SyncState from "./SyncState";
 import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../../history";
-import colTreeActions from "./ColTreeActions";
 import withContext from "../../../components/hoc/withContext";
 
 
@@ -33,9 +32,12 @@ class Assembly extends React.Component {
       sourceTaxonKey: null,
       missingTargetKeys: {} // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
     };
+
+    // this.assemblyRef = React.createRef();
+   // this.sourceRef = React.createRef();
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const params = qs.parse(_.get(this.props, "location.search"));
     if (params.sourceTaxonKey && params.datasetKey) {
       this.showSourceTaxon(
@@ -49,14 +51,22 @@ class Assembly extends React.Component {
     }, 3000);
   }
 
-  componentWillReceiveProps = nextProps => {
-    let params = qs.parse(_.get(nextProps, "location.search"));
-    // this.setState({defaultAssemblyExpandKey: _.get(params, "assemblyTaxonKey") || null ,defaultExpandKey : _.get(params, "sourceTaxonKey") || null});
-    this.setState({
-      assemblyTaxonKey: _.get(params, "assemblyTaxonKey") || null,
-      sourceTaxonKey: _.get(params, "sourceTaxonKey") || null
-    });
-  };
+
+  componentDidUpdate = (prevProps) => {
+    const params = qs.parse(_.get(this.props, "location.search"));
+    const prevParams = qs.parse(_.get(prevProps, "location.search"));
+    if( _.get(params, "assemblyTaxonKey") !== _.get(prevParams, "assemblyTaxonKey")){
+      this.setState({
+        assemblyTaxonKey: _.get(params, "assemblyTaxonKey") || null
+      });
+    }
+    if( _.get(params, "sourceTaxonKey") !== _.get(prevParams, "sourceTaxonKey")){
+      this.setState({
+        sourceTaxonKey: _.get(params, "sourceTaxonKey") || null
+      });
+    }
+  }
+
   componentWillUnmount() {
     clearInterval(this.timer);
   }
@@ -224,7 +234,7 @@ class Assembly extends React.Component {
 
   showSourceTaxon = (sector, source) => {
     
-    const oldDatasetKey = this.state.datasetKey;
+    const oldDatasetKey = Number(this.state.datasetKey);
     const { match : {params: {catalogueKey}}} = this.props;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
@@ -246,8 +256,10 @@ class Assembly extends React.Component {
             selectedDataset: { key: res.data.key, title: res.data.alias || res.data.title }
           },
           () => {
-            // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentWillRecive props
-           if(oldDatasetKey === source.key) {colTreeActions.refreshSource()};
+            // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentDidUpdate
+           if(oldDatasetKey === source.key) {
+             this.sourceRef.reloadRoot()
+            };
           }
         );
       })
@@ -265,7 +277,7 @@ class Assembly extends React.Component {
   onSelectDataset = dataset => {
     const {location, match : {params: {catalogueKey}}} = this.props
     this.setState({
-      datasetKey: dataset.key,
+      datasetKey: Number(dataset.key),
       datasetName: dataset.title,
       selectedDataset: dataset,
       sourceTaxonKey: null
@@ -365,7 +377,30 @@ class Assembly extends React.Component {
             <Row style={{ padding: "10px", height: "100%" }}>
               <Col span={12} style={{ padding: "10px" }}>
                 <Card>
-                  <h4>{catalogue.title}</h4>{" "}
+                  <Row>
+                    <Col span={18}><h4>{catalogue.title}</h4>{" "}</Col>
+                    <Col span={6} style={{textAlign: 'right'}}>
+                      <Button 
+                        icon="sync"
+                        size="small" 
+                        onClick={e => {
+                          const params = qs.parse(_.get(location, "search"));
+
+                          const newParams = { ...params, assemblyTaxonKey: null };
+                          history.push({
+                            pathname: `/catalogue/${catalogueKey}/assembly`,
+                            search: `?${qs.stringify(
+                              _.omit(newParams, ["assemblyTaxonKey"])
+                            )}`
+                          });
+                          this.setState({ assemblyTaxonKey: null }, () => this.assemblyRef.reloadRoot());
+                          
+                        }
+                          }>
+                          Refresh</Button>
+                      </Col>
+                      </Row>
+                  
                   <NameAutocomplete
                     datasetKey={catalogueKey}
                     onSelectName={name => {
@@ -380,7 +415,7 @@ class Assembly extends React.Component {
                         search: `?${qs.stringify(newParams)}`
                       });
                       this.setState({ assemblyTaxonKey: name.key }, () =>
-                        colTreeActions.refreshAssembly()
+                        this.assemblyRef.reloadRoot()
                       );
                     }}
                     onResetSearch={() => {
@@ -408,6 +443,7 @@ class Assembly extends React.Component {
                   )}
                 {catalogue &&  <div style={{ overflowY: "scroll", height: "800px" }}>
                     <ColTree
+                      treeRef={ref => this.assemblyRef = ref}
                       location={location}
                       dataset={{key: catalogueKey}}
                       treeType="mc"
@@ -460,7 +496,7 @@ class Assembly extends React.Component {
                           search: `?${qs.stringify(newParams)}`
                         });
                         this.setState({ sourceTaxonKey: name.key }, () =>
-                          colTreeActions.refreshSource()
+                          this.sourceRef.reloadRoot()
                         );
                       }}
                       onResetSearch={() => {
@@ -480,6 +516,7 @@ class Assembly extends React.Component {
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     {this.state.selectedDataset && (
                       <ColTree
+                        treeRef={ref => this.sourceRef = ref}
                         location={location}
                         dataset={this.state.selectedDataset}
                         treeType="gsd"
@@ -489,7 +526,6 @@ class Assembly extends React.Component {
                         }
                         draggable={this.state.mode === "attach"}
                         defaultExpandKey={this.state.sourceTaxonKey}
-                        // showSourceTaxon={(sector) => this.setState({defaultAssemblyExpandKey: _.get(sector, 'target.id')})}
                         showSourceTaxon={sector => {
                           const params = qs.parse(_.get(location, "search"));
                           const newParams = {
@@ -500,7 +536,7 @@ class Assembly extends React.Component {
                             pathname: `/catalogue/${catalogueKey}/assembly`,
                             search: `?${qs.stringify(newParams)}`
                           });
-                          colTreeActions.refreshAssembly();
+                          this.assemblyRef.reloadRoot()
                         }}
                       />
                     )}

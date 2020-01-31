@@ -3,7 +3,6 @@ import { Tree, notification, message, Alert, Spin, Button } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
-import colTreeActions from "./ColTreeActions";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../../components/ErrorMsg";
 import Custom404 from "./Custom404"
@@ -70,16 +69,10 @@ class ColTree extends React.Component {
   componentDidMount = () => {
     this.loadRoot();
     this.loadRanks();
+    const { treeRef } = this.props;
+    treeRef(this);
+  };
 
-    const refreshEvent =
-      this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
-    colTreeActions.on(refreshEvent, this.reloadRoot);
-  };
-  componentWillUnmount = () => {
-    const refreshEvent =
-      this.props.treeType === "mc" ? "refreshAssembly" : "refreshSource";
-    colTreeActions.removeListener(refreshEvent, this.reloadRoot);
-  };
 
   componentDidUpdate = (prevProps) => {
     if (prevProps.dataset.key !== this.props.dataset.key) {

@@ -53,14 +53,14 @@ class NamePage extends React.Component {
     this.getSynonyms(datasetKey, nameKey);
     this.getPublishedIn(datasetKey, nameKey);
   }
-  componentWillReceiveProps = (nextProps)=> {
-    if(nextProps.match.params.taxonOrNameKey !== this.props.match.params.taxonOrNameKey){
+  componentDidUpdate = (prevProps)=> {
+    if(prevProps.match.params.taxonOrNameKey !== this.props.match.params.taxonOrNameKey){
       const {
         match: {
           params: { taxonOrNameKey: nameKey }
         },
         datasetKey
-      } = nextProps;
+      } = this.props;
     this.getName(datasetKey, nameKey);
     this.getUsages(datasetKey, nameKey);
     this.getRelations(datasetKey, nameKey);

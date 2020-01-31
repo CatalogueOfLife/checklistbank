@@ -22,11 +22,13 @@ class SyncTable extends React.Component {
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    if(nextProps.data && nextProps.data.length > 0 && nextProps.data.length !== this.props.data.length){
-        this.setState({currentDataSourceLength: nextProps.data.length})
-    }
+
+  componentDidUpdate = (prevProps) => {
+    if(this.props.data && this.props.data.length > 0 && this.props.data.length !== prevProps.data.length){
+      this.setState({currentDataSourceLength: this.props.data.length})
   }
+  }
+
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,

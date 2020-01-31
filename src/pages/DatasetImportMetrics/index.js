@@ -35,9 +35,10 @@ class DatasetImportMetrics extends React.Component {
       clearInterval(this.timer);
     }
   }
-  componentWillReceiveProps = nextProps => {
+
+  componentDidUpdate = (prevProps) => {
     if (
-      _.get(nextProps, "match.params.taxonOrNameKey") !==
+      _.get(prevProps, "match.params.taxonOrNameKey") !==
       _.get(this.props, "match.params.taxonOrNameKey")
     ) {
       if (this.timer) {
@@ -45,9 +46,9 @@ class DatasetImportMetrics extends React.Component {
         delete this.timer;
       }
 
-      this.getData(_.get(nextProps, "match.params.taxonOrNameKey"));
+      this.getData(_.get(this.props, "match.params.taxonOrNameKey"));
     }
-  };
+  }
 
   getData = attempt => {
     const {

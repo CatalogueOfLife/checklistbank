@@ -49,14 +49,15 @@ class SectorDiff extends React.Component {
     this.getData(query);
   };
 
-  componentWillReceiveProps = nextProps => {
+
+  componentDidUpdate = (prevProps) => {
     if (
-      _.get(nextProps, "location.search") !==
+      _.get(prevProps, "location.search") !==
       _.get(this.props, "location.search")
     ) {
-      this.getData(_.get(nextProps, "location.search"));
+      this.getData(_.get(this.props, "location.search"));
     }
-  };
+  }
   getData = query => {
     const {
       match: {

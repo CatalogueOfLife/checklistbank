@@ -46,12 +46,12 @@ class DatasetPage extends React.Component {
     } = this.props;
     this.getData(datasetKey);
   }
-  componentWillReceiveProps = nextProps => {
-    
-    if(_.get(this.props, 'match.params.key') !== _.get(nextProps, 'match.params.key')){
-      this.getData(_.get(nextProps, 'match.params.key'));
+
+  componentDidUpdate = (prevProps) => {
+    if(_.get(this.props, 'match.params.key') !== _.get(prevProps, 'match.params.key')){
+      this.getData(_.get(this.props, 'match.params.key'));
     }
-  };
+  }
 
 
   getData = datasetKey => {
