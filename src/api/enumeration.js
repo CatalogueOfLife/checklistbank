@@ -104,6 +104,18 @@ export const getEstimateType = () => {
   );
 };
 
+export const getDatasetSettings = () => {
+  return axios(`${config.dataApi}vocab/datasetSettings`).then(res =>
+    res.data
+  );
+};
+
+export const getGazetteer = () => {
+  return axios(`${config.dataApi}vocab/Gazetteer`).then(res =>
+    res.data
+  );
+};
+
 
 
 

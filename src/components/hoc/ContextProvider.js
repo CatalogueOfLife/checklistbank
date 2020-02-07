@@ -26,7 +26,9 @@ import {
   getLifezones,
   getSectorImportState,
   getCountries,
-  getEstimateType
+  getEstimateType,
+  getDatasetSettings,
+  getGazetteer
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -85,6 +87,8 @@ class ContextProvider extends React.Component {
     dataset: null,
     recentDatasets: [],
     estimateType: [],
+    datasetSettings: [],
+    gazetteer: [],
     catalogue: MANAGEMENT_CLASSIFICATION,
     setCatalogueKey: catalogueKey => {
       this.setState({catalogueKey});
@@ -176,7 +180,9 @@ class ContextProvider extends React.Component {
       getLifezones(),
       getSectorImportState(),
       getCountries(),
-      getEstimateType()
+      getEstimateType(),
+      getDatasetSettings(),
+      getGazetteer()
     ]).then(responses => {
       const issueMap = {};
       responses[6].forEach(i => {
@@ -228,6 +234,8 @@ class ContextProvider extends React.Component {
         sectorImportState: responses[16],
         country: responses[17],
         estimateType: responses[18],
+        datasetSettings: responses[19],
+        gazetteer: responses[20],
         countryAlpha3: countryAlpha3,
         countryAlpha2: countryAlpha2,
         termsMap: termsMap,

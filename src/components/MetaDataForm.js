@@ -8,7 +8,9 @@ import {
   Alert,
   Checkbox,
   Rate,
-  notification
+  notification,
+  Row,
+  Col
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -92,7 +94,8 @@ class RegistrationForm extends React.Component {
       datasettypeEnum,
       dataformatEnum,
       licenseEnum,
-      nomCodeEnum,
+      nomCode,
+      datasetSettings,
       form: { getFieldDecorator }
     } = this.props;
 
@@ -121,6 +124,7 @@ class RegistrationForm extends React.Component {
 
     return (
       <Form onSubmit={this.handleSubmit} style={{ paddingTop: "12px" }}>
+     
         {submissionError && (
           <FormItem>
             <Alert
@@ -319,7 +323,7 @@ class RegistrationForm extends React.Component {
             initialValue: _.get(data, "code") ? _.get(data, "code") : ""
           })(
             <Select style={{ width: 200 }}>
-              {nomCodeEnum.map(c => {
+              {nomCode.map(c => {
                 return (
                   <Option
                     key={c.name}
@@ -455,7 +459,65 @@ class RegistrationForm extends React.Component {
             </FormItem>
           </React.Fragment>
         )}
+        <Row>
+          <Col span={4}></Col>
+          <Col span={16}>
+          <section class="code-box">
+          <div class="code-box-title">Settings</div>
+        </section>
+          </Col>
+          
+          
+        </Row>
+        {datasetSettings.filter(s => s.type === "Boolean").map(s => 
+              <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name}>
+              {getFieldDecorator(`settings.${s.name}`, {
+                valuePropName: 'checked',
+                initialValue:  _.get(data, `settings.${s.name}`) ? _.get(data, `settings.${s.name}`) : ""
+              })(
+                <Input type="checkbox"  /> 
+              )}
+            </FormItem>
+            )}
+        {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
+              <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name}>
+              {getFieldDecorator(`settings.${s.name}`, {
+                initialValue:  _.get(data, `settings.${s.name}`) ? _.get(data, `settings.${s.name}`) : ""
+              })(
+                s.type === "String" ? <Input type="text" /> :
+                  <Input type="number" /> 
+              )}
+            </FormItem>
+            )}
 
+        {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
+              <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name}>
+              {getFieldDecorator(`settings.${s.name}`, {
+                initialValue:  _.get(data, `settings.${s.name}`) ? _.get(data, `settings.${s.name}`) : ""
+              })(
+                s.type === "NomCode" ? <Select style={{ width: 200 }}>
+                {nomCode.map(c => {
+                  return (
+                    <Option
+                      key={c.name}
+                      value={c.name}
+                    >{`${c.name} (${c.acronym})`}</Option>
+                  );
+                })}
+              </Select> :
+                <Select style={{ width: 200 }}>
+              {this.props[_.camelCase(s.type)].map(e => {
+                return (
+                  <Option key={e.name} value={e.name}>
+                    {e.name}
+                  </Option>
+                );
+              })}
+            </Select>
+              )}
+            </FormItem>
+            )}
+        
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
             Save
@@ -474,7 +536,9 @@ const mapContextToProps = ({
   dataFormatType: dataformatEnum,
   datasetOrigin: datasetoriginEnum,
   license: licenseEnum,
-  nomCode: nomCodeEnum
+  nomCode,
+  datasetSettings,
+  gazetteer
 }) => ({
   addError,
   addInfo,
@@ -483,7 +547,9 @@ const mapContextToProps = ({
   dataformatEnum,
   datasetoriginEnum,
   licenseEnum,
-  nomCodeEnum
+  nomCode,
+  datasetSettings,
+  gazetteer
 });
 
 const WrappedRegistrationForm = Form.create()(

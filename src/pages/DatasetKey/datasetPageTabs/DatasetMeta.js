@@ -66,7 +66,7 @@ class DatasetMeta extends React.Component {
   render() {
 
     const { data, editMode } = this.state;
-    const {  user } = this.props;
+    const {  user, datasetSettings } = this.props;
     const listData = _.map(data, function(value, key) {
       return { key, value };
     });
@@ -188,6 +188,15 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="modified" defaultMessage="Modified" />}>
           {`${moment(data.modified).format('MMMM Do YYYY, h:mm:ss a')} by ${data.modifiedByUser}`}
           </PresentationItem>
+          <section class="code-box" style={{marginTop: '32px'}}>
+          <div class="code-box-title">Settings</div>
+        </section>
+        
+        {datasetSettings.map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, `settings.${s.name}`)}
+            </PresentationItem>
+            )}
           
           </React.Fragment> )}
         
@@ -197,6 +206,6 @@ class DatasetMeta extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, datasetOrigin : datasetoriginEnum, setDataset }) => ({ user, datasetoriginEnum, setDataset });
+const mapContextToProps = ({ user, datasetOrigin : datasetoriginEnum, setDataset, datasetSettings }) => ({ user, datasetoriginEnum, setDataset, datasetSettings });
 
 export default withContext(mapContextToProps)(DatasetMeta);
