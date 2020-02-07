@@ -15,6 +15,7 @@ import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import moment from 'moment'
 import ImportButton from "../../Imports/importTabs/ImportButton";
+import BooleanValue from '../../../components/BooleanValue'
 
 const Option = Select.Option;
 
@@ -192,7 +193,17 @@ class DatasetMeta extends React.Component {
           <div class="code-box-title">Settings</div>
         </section>
         
-        {datasetSettings.map(s => 
+        {datasetSettings.filter(s => s.type === "Boolean").map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, `settings.${s.name}`) === true || _.get(data, `settings.${s.name}`) === false ? <BooleanValue value={_.get(data, `settings.${s.name}`)}></BooleanValue> : ""}
+            </PresentationItem>
+            )}
+        {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, `settings.${s.name}`)}
+            </PresentationItem>
+            )}
+        {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
               <PresentationItem label={_.startCase(s.name)} key={s.name}>
               {_.get(data, `settings.${s.name}`)}
             </PresentationItem>
