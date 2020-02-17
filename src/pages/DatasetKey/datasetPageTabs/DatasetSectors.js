@@ -36,8 +36,7 @@ class DatasetSectors extends React.Component {
   };
 
   componentDidUpdate = (prevProps) => {
-    const { data } = this.state;
-    if (this.props.dataset && data.length === 0) {
+    if (_.get(this.props, 'dataset.key') !== _.get(prevProps, 'dataset.key')) {
       this.getData(this.props.dataset);
     }
   }
