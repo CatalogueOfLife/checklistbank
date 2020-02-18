@@ -135,7 +135,7 @@ class DatasetMeta extends React.Component {
             {data.released}
           </PresentationItem> */}
           <PresentationItem label={<FormattedMessage id="version" defaultMessage="Version" />}>
-            {`${data.version} released ${data.released}`}
+            {(data.version || data.released) && `${data.version ? data.version : ''}${data.released ? ' Received by CoL: '+data.released : ''}`}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
             {data.contact}

@@ -191,6 +191,13 @@ class RegistrationForm extends React.Component {
           </FormItem>
         )}
         {data && (
+          <FormItem {...formItemLayout} label="Received by CoL">
+            {getFieldDecorator("released", {
+              initialValue: _.get(data, "released") ? _.get(data, "released") : ""
+            })(<Input type="text" />)}
+          </FormItem>
+        )}
+        {data && (
           <FormItem {...formItemLayout} label="Contact">
             {getFieldDecorator("contact", {
               initialValue: _.get(data, "contact") ? _.get(data, "contact") : ""
