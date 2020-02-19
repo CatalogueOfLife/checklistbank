@@ -202,7 +202,7 @@ class Assembly extends React.Component {
             target.name
           } was removed from the CoL draft, removing children.`
         });
-        return this.saveSector(subject, parent, "UNION");
+        return this.saveSector(subject, parent, "ATTACH");
       });
   };
 

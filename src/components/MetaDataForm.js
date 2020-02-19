@@ -469,8 +469,8 @@ class RegistrationForm extends React.Component {
         <Row>
           <Col span={4}></Col>
           <Col span={16}>
-          <section class="code-box">
-          <div class="code-box-title">Settings</div>
+          <section className="code-box">
+          <div className="code-box-title">Settings</div>
         </section>
           </Col>
           
