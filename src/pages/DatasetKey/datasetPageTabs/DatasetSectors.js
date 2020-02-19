@@ -43,7 +43,7 @@ class DatasetSectors extends React.Component {
   getData = dataset => {
     this.setState({ loading: true });
     const {catalogueKey} = this.props;
-    axios(`${config.dataApi}sector?subjectDatasetKey=${dataset.key}&datasetKey=${catalogueKey}`)
+    axios(`${config.dataApi}sector?subjectDatasetKey=${dataset.key}&datasetKey=${catalogueKey}&limit=1000`)
       .then(res => {
         this.setState({
           loading: false,

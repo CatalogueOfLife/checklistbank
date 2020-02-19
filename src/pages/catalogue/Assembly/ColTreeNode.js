@@ -9,6 +9,7 @@ import {
   Tooltip,
   Checkbox
 } from "antd";
+import {NavLink} from 'react-router-dom'
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption"
 import _ from "lodash";
 import axios from "axios";
@@ -21,6 +22,7 @@ import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import TaxonSources from "./TaxonSources"
 import withContext from "../../../components/hoc/withContext";
+import { stringToColour } from "../../../components/util";
 
 import history from "../../../history";
 
@@ -108,7 +110,7 @@ class ColTreeNode extends React.Component {
     const {
       taxon,
       taxon: { sector, decision, datasetSectors },
-      hasPopOver,
+      treeType,
       isUpdating,
       getTaxonomicStatusColor,
       catalogueKey
@@ -141,9 +143,10 @@ class ColTreeNode extends React.Component {
         )}
 
         <ColTreeContext.Consumer>
-          {({ mode }) =>
-             mode === "modify" && 
-            hasPopOver && (
+          {({ mode, selectedSourceDatasetKey, getSyncState }) =>
+          <React.Fragment>
+           {  mode === "modify" && 
+            treeType === "mc" && (
               <Popover
                 content={
                   taxon.name !== "Not assigned" ?  <React.Fragment>
@@ -259,12 +262,9 @@ class ColTreeNode extends React.Component {
                   )}
                 </Popconfirm>
               </Popover>
-            )
-          }
-        </ColTreeContext.Consumer>
-        <ColTreeContext.Consumer>
-          {({ mode, selectedSourceDatasetKey, getSyncState }) =>
-            (mode !== "modify" || !hasPopOver) && (
+            )}
+          
+           { ((mode !== "modify" && treeType === "mc") || (treeType === "gsd")) && (
               <PopconfirmMultiOption
                 visible={this.props.confirmVisible}
                 title={this.props.confirmTitle}
@@ -286,7 +286,7 @@ class ColTreeNode extends React.Component {
                   dangerouslySetInnerHTML={{ __html: taxon.name }} 
                   />
                   </span>
-                  {mode === "modify" && !_.isUndefined(taxon.speciesCount) && (
+                  {!_.isUndefined(taxon.speciesCount) && (
                     <span>
                       {" "}
                       • {taxon.speciesCount}{" "}
@@ -314,7 +314,7 @@ class ColTreeNode extends React.Component {
                         <Icon theme="filled" style={{ marginLeft: "6px", color: 'wheat' }} type="warning" />
                       </Tooltip>
                     )}
-                   {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} catalogueKey={catalogueKey} />} 
+                  {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} catalogueKey={catalogueKey} />} 
                   {sector && mode !== "modify" && (
                     <span>
                       <span> • </span>
@@ -340,6 +340,56 @@ class ColTreeNode extends React.Component {
               </PopconfirmMultiOption>
             )
           }
+              { treeType === "readOnly" && (
+             
+                <div >
+                  <span 
+                  onContextMenu={()=> {
+                    const uri = `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    const win = window.open(uri, '_blank');
+                    win.focus();
+                  }}>
+                    <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                  }}
+                  exact={true}
+                >
+            
+                  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                    {taxon.rank}:{" "}
+                  </span>
+                  <span 
+                  dangerouslySetInnerHTML={{ __html: taxon.name }} 
+                  />
+                                    </NavLink>
+
+                  </span>
+                  {sector && (
+                    <span>
+                      <span> • </span>
+                      <Tag color={stringToColour(sector.dataset.title)}>
+                
+                {sector.dataset.alias || sector.dataset.key}
+                
+              </Tag>
+                    </span>
+                  )}
+                  
+                  
+                  {taxon.status !== "accepted" && (
+                    <Tag color="red" style={{ marginLeft: "6px" }}>
+                      {taxon.status}
+                    </Tag>
+                  )}
+                 
+                  {datasetSectors && <TaxonSources datasetSectors={datasetSectors} taxon={taxon} catalogueKey={catalogueKey} />} 
+                  
+                  
+                </div>
+            )
+          }
+          </React.Fragment>}
         </ColTreeContext.Consumer>
       </div>
     );

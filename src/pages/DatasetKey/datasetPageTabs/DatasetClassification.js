@@ -48,7 +48,7 @@ class DatasetClassification extends React.Component {
                   )}
         <ColTreeContext.Provider
         value={{
-          mode: "ATTACH",
+          mode: "readOnly",
           toggleMode: ()=>{},
           getSyncState: ()=>{ return {}},
           syncState: { idle: true}, // Assume queue is empty
@@ -60,7 +60,7 @@ class DatasetClassification extends React.Component {
         <ColTree
           treeRef={ref => this.treeRef = ref}
           dataset={dataset} 
-          treeType="gsd"
+          treeType="readOnly"
           catalogueKey={catalogueKey}
           defaultExpandKey={params.sourceTaxonKey}
           location={location}

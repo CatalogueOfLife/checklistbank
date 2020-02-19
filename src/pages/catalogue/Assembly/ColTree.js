@@ -162,7 +162,7 @@ class ColTree extends React.Component {
               taxon={tx}
               datasetKey={id}
               confirmVisible={false}
-              hasPopOver={this.props.treeType === "mc"}
+              treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
               reloadSelfAndSiblings={this.loadRoot}
               reloadChildren={() => this.fetchChildPage(dataRef, true)}
@@ -215,7 +215,7 @@ class ColTree extends React.Component {
               <ColTreeNode
                 taxon={tx}
                 datasetKey={id}
-                hasPopOver={this.props.treeType === "mc"}
+                treeType={this.props.treeType}
                 showSourceTaxon={showSourceTaxon}
                 reloadSelfAndSiblings={() => this.fetchChildPage(root, true)}
                 reloadChildren={() => this.fetchChildPage(node, true)}
@@ -239,6 +239,7 @@ class ColTree extends React.Component {
                     ref.title = (
                       <ColTreeNode
                         taxon={c}
+                        treeType={this.props.treeType}
                         datasetKey={id}
                         showSourceTaxon={showSourceTaxon}
                         reloadSelfAndSiblings={() =>
@@ -349,7 +350,7 @@ class ColTree extends React.Component {
                   confirmVisible={false}
                   taxon={tx}
                   datasetKey={dataset.key}
-                  hasPopOver={this.props.treeType === "mc"}
+                  treeType={this.props.treeType}
                   reloadSelfAndSiblings={() =>
                     this.fetchChildPage(dataRef, true)
                   }
@@ -443,6 +444,7 @@ class ColTree extends React.Component {
        */
     node.props.dataRef.title = (
       <ColTreeNode
+        treeType={this.props.treeType}
         taxon={node.props.title.props.taxon}
         datasetKey={this.props.dataset.key}
         isUpdating={true}
@@ -455,6 +457,8 @@ class ColTree extends React.Component {
     this.props.attachFn(node, dragNode, mode).then(res => {
       node.props.dataRef.title = (
         <ColTreeNode
+        treeType={this.props.treeType}
+
           taxon={node.props.title.props.taxon}
           datasetKey={this.props.dataset.key}
           isUpdating={false}
@@ -576,6 +580,8 @@ class ColTree extends React.Component {
 
     e.node.props.dataRef.title = (
       <ColTreeNode
+      treeType={this.props.treeType}
+
         taxon={e.node.props.title.props.taxon}
         datasetKey={this.props.dataset.key}
         confirmVisible={true}
@@ -651,6 +657,7 @@ class ColTree extends React.Component {
         e.dragNode.props.dataRef.parent = e.node.props.dataRef;
         e.node.props.dataRef.title = (
           <ColTreeNode
+          treeType={this.props.treeType}
             taxon={e.node.props.title.props.taxon}
             datasetKey={this.props.dataset.key}
             confirmVisible={false}
@@ -728,6 +735,7 @@ class ColTree extends React.Component {
     e.node.props.dataRef.title = (
       <ColTreeNode
         taxon={e.node.props.title.props.taxon}
+        treeType={this.props.treeType}
         datasetKey={this.props.dataset.key}
         confirmVisible={true}
         confirmTitle={msg}
@@ -738,6 +746,7 @@ class ColTree extends React.Component {
           e.node.props.dataRef.title = (
             <ColTreeNode
               taxon={e.node.props.title.props.taxon}
+              treeType={this.props.treeType}
               datasetKey={this.props.dataset.key}
               confirmVisible={false}
             />
