@@ -58,6 +58,8 @@ class ColTree extends React.Component {
     this.state = {
       rootLoading: true,
       treeData: [],
+      loadedKeys: [],
+      expandedKeys: [],
       rootTotal: 0,
       error: null,
       mode: "attach",
@@ -86,9 +88,17 @@ class ColTree extends React.Component {
     });
   };
 
-  reloadRoot = () => this.setState({ treeData: []}, this.loadRoot);
+  reloadRoot = () => this.setState({ rootLoading: true,
+    treeData: [],
+    loadedKeys: [],
+    rootTotal: 0,
+    error: null,
+    mode: "attach",
+    ranks: [],
+    nodeNotFoundErr: null }, this.loadRoot);
+  
 
-  loadRoot = () => {
+/*   loadRoot = () => {
     const {
       treeType,
       dataset: { key },
@@ -299,9 +309,157 @@ class ColTree extends React.Component {
           error: err
         });
       });
-  };
+  }; */
 
-  fetchChildPage = (dataRef, reloadAll) => {
+  loadRoot = async () => {
+    const {
+      defaultExpandKey
+    } = this.props;
+    if(defaultExpandKey){
+      this.expandToTaxon(defaultExpandKey)
+    } else {
+      this.loadRoot_()
+    }
+  }
+
+  loadRoot_ = async () => {
+    const {
+      treeType,
+      dataset: { key },
+      showSourceTaxon,
+      defaultExpandKey,
+      catalogueKey,
+      location
+    } = this.props;
+    this.setState({rootLoading: true, treeData: []})
+    let id = key;
+    return axios(
+      `${config.dataApi}dataset/${id}/tree?catalogueKey=${
+        treeType === "gsd" ? catalogueKey : key
+      }&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
+    ).then(this.decorateWithSectorsAndDataset)
+      .then(res => {
+        const mainTreeData = res.data.result;
+        const rootTotal = res.data.total;
+        const treeData = mainTreeData.map(tx => {
+          let dataRef = {
+            taxon: tx,
+            key: tx.id,
+            datasetKey: id,
+            childCount: tx.childCount,
+            childOffset: 0
+          };
+          dataRef.title = (
+            <ColTreeNode
+              taxon={tx}
+              datasetKey={id}
+              confirmVisible={false}
+              treeType={this.props.treeType}
+              showSourceTaxon={showSourceTaxon}
+              reloadSelfAndSiblings={this.loadRoot}
+              reloadChildren={() => this.fetchChildPage(dataRef, true)}
+            />
+          );
+          return dataRef;
+        });
+      
+          this.setState({
+            rootTotal: rootTotal,
+            rootLoading: false,
+            treeData:[...this.state.treeData, ...treeData],
+            expandedKeys: treeData.length < 10 ? treeData.map(n => n.taxon.id): [],
+            error: null
+          });
+          if (treeData.length === 1) {
+            this.fetchChildPage(treeData[treeData.length - 1]);
+          }
+        
+      })
+      .catch(err => {
+        this.setState({
+          treeData: [],
+          rootLoading: false,
+          expandedKeys: null,
+          error: err
+        });
+      });
+  };  
+
+  expandToTaxon = async (defaultExpandKey) => {
+    const {
+      treeType,
+      dataset: { key },
+      showSourceTaxon,
+      catalogueKey,
+      location
+    } = this.props;
+    this.setState({rootLoading: true, treeData: []})
+    let id = key;
+    const {data} = await axios(
+          `${config.dataApi}dataset/${id}/tree/${
+            defaultExpandKey
+          }?catalogueKey=${treeType === "gsd" ? catalogueKey : key}`
+        ).then(res =>
+          this.decorateWithSectorsAndDataset({
+            data: { result: res.data }
+          }).then(() => res)
+        )
+
+    const tx = data[data.length-1]
+    let root = {
+      taxon: tx,
+      key: tx.id,
+      datasetKey: id,
+      childCount: tx.childCount,
+      childOffset: 0}
+      root.title = (
+        <ColTreeNode
+          taxon={tx}
+          datasetKey={id}
+          confirmVisible={false}
+          treeType={this.props.treeType}
+          showSourceTaxon={showSourceTaxon}
+          reloadSelfAndSiblings={this.loadRoot}
+          reloadChildren={() => this.fetchChildPage(root, true)}
+        />
+      )
+
+      const root_ = root;
+      for(let i= data.length-2; i >= 0; i--){
+        const tx = data[i];
+        const node  = {
+          taxon: tx,
+          key: tx.id,
+          datasetKey: id,
+          childCount: tx.childCount,
+          childOffset: 0}
+          node.title = (
+            <ColTreeNode
+              taxon={tx}
+              datasetKey={id}
+              confirmVisible={false}
+              treeType={this.props.treeType}
+              showSourceTaxon={showSourceTaxon}
+              reloadSelfAndSiblings={this.loadRoot}
+              reloadChildren={() => this.fetchChildPage(node, true)}
+            />
+          )
+
+          root.children = [node];
+          root = node;
+      }
+
+    const treeData = [
+     root_
+    ]
+
+     const loadedKeys = [...data.map(t => t.id).reverse()]
+
+     this.setState({treeData}, () => this.reloadLoadedKeys(loadedKeys))
+
+  }
+
+  fetchChildPage = (dataRef, reloadAll, dontUpdateState) => {
     const { showSourceTaxon, dataset, treeType, catalogueKey } = this.props;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
@@ -403,10 +561,13 @@ class ColTree extends React.Component {
             }
           ];
         }
-        this.setState({
-          treeData: [...this.state.treeData],
-          defaultExpandAll: false
-        });
+        if(!dontUpdateState){
+          this.setState({
+            treeData: [...this.state.treeData]
+          });
+        }
+        
+        
       });
   };
 
@@ -437,6 +598,73 @@ class ColTree extends React.Component {
 
     return this.fetchChildPage(dataRef, reloadAll);
   };
+
+
+  findNode = (id, nodeArray) => {    
+    let node = null;
+
+    node = nodeArray.find((n)=> _.get(n, 'taxon.id') === id );
+
+    if(node){
+      return node;
+    } else {
+      const children = nodeArray.map(n => _.get(n, 'children') || [])
+      const flattenedChildren = children.flat()
+      if (flattenedChildren.length === 0){
+        return null;
+      } else {
+        return this.findNode(id, flattenedChildren)
+      }
+    }
+  
+  }
+
+  
+  reloadLoadedKeys = async (keys) => {
+    const {loadedKeys: storedKeys} = this.state;
+    const {defaultExpandKey} = this.props;
+
+    let {treeData} = this.state;
+    const targetTaxon = defaultExpandKey ? this.findNode(defaultExpandKey, treeData) : null;
+    const loadedKeys = keys || storedKeys;
+    for (let index = 0; index < loadedKeys.length; index++) {
+      const node = this.findNode(loadedKeys[index], treeData);
+      if(node){
+        await this.fetchChildPage(node, true, true)
+        if(targetTaxon 
+          && index === loadedKeys.length - 2 
+          && _.isArray(node.children)  
+          && !node.children.find(c => _.get(c, 'taxon.id') === _.get(targetTaxon, 'taxon.id')) ){
+            if (
+              node.children.length - 1 === CHILD_PAGE_SIZE){
+              // its the parent of the taxon we are after - if its not in the first page, insert it
+              node.children = [targetTaxon, ...node.children]
+              this.setState({treeData: [...this.state.treeData]})
+            } else {
+              // It has gone missing from the tree
+                this.setState(
+                  {
+                    nodeNotFoundErr: (
+                      <span>
+                        Cannot find taxon {defaultExpandKey} in tree &#128549;
+                      </span>
+                    )
+                  },
+                  () => {
+                    if (
+                      this.props.treeType === "mc" &&
+                      typeof this.props.addMissingTargetKey === "function"
+                    ) {
+                      this.props.addMissingTargetKey(defaultExpandKey);
+                    }
+                  }
+                ); 
+            }
+        }
+      } 
+    }
+    this.setState({expandedKeys: loadedKeys, loadedKeys, rootLoading: false})
+  }
 
   confirmAttach = (node, dragNode, mode) => {
     /*
@@ -804,9 +1032,11 @@ class ColTree extends React.Component {
       rootLoading,
       treeData,
       defaultExpandAll,
-      defaultExpandedKeys,
-      nodeNotFoundErr
+      nodeNotFoundErr,
+      loadedKeys,
+      expandedKeys
         } = this.state;
+        console.log(loadedKeys)
     const { draggable, onDragStart, location, treeType, dataset } = this.props;
     return (
       <div>
@@ -847,17 +1077,21 @@ class ColTree extends React.Component {
               <Tree
                 showLine={true}
                 defaultExpandAll={defaultExpandAll}
-                defaultExpandedKeys={defaultExpandedKeys}
+               // defaultExpandedKeys={defaultExpandedKeys}
                 draggable={draggable}
                 onDrop={e => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
                 loadData={this.onLoadData}
+                onLoad={loadedKeys => this.setState({loadedKeys})}
+                loadedKeys={loadedKeys}
+                expandedKeys={expandedKeys}
                 filterTreeNode={node =>
                   node.props.dataRef.key === this.props.defaultExpandKey
                 }
                 onExpand={(expandedKeys, obj) => {
+                  this.setState({expandedKeys})
                   if (obj.expanded) {
-                    if (_.get(obj, 'node.props.dataRef.childCount') && _.get(obj, 'node.props.dataRef.childCount') > 0 && !_.get(obj, 'node.props.dataRef.children')){
+                    if (_.get(obj, 'node.props.dataRef.childCount') > 0 ){
                       this.fetchChildPage(obj.node.props.dataRef, true)
                     }
                     const params = qs.parse(_.get(location, "search"));

@@ -11,7 +11,6 @@ import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth"
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 class SyncTable extends React.Component {
   constructor(props) {
@@ -301,7 +300,7 @@ class SyncTable extends React.Component {
            style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {
-                axios.post(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/rematch`, {sectorKey: record.key})
+                axios.post(`${config.dataApi}assembly/${catalogueKey}/rematch`, {sectorKey: record.key})
                 .then(sector => {
                     const success = _.get(sector, 'data.target.id') && _.get(sector, 'data.subject.id');
 

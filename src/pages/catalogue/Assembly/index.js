@@ -393,7 +393,7 @@ class Assembly extends React.Component {
                               _.omit(newParams, ["assemblyTaxonKey"])
                             )}`
                           });
-                          this.setState({ assemblyTaxonKey: null }, () => this.assemblyRef.reloadRoot());
+                          this.setState({ assemblyTaxonKey: null }, () => this.assemblyRef.reloadLoadedKeys());
                           
                         }
                           }>
