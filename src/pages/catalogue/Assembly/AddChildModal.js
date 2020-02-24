@@ -14,6 +14,8 @@ class AddChildModal extends React.Component {
     confirmLoading: false
   };
 
+  nameInputRef = React.createRef()
+
   isGenusOrAbove = (rank) =>{
     return this.props.rank.indexOf(rank) <= this.props.rank.indexOf('genus')
   }
@@ -112,7 +114,7 @@ class AddChildModal extends React.Component {
                 message: "Please input Taxon name"
               }
             ]
-          })(<Input />)}
+          })(<Input autoFocus />)}
         </FormItem>
         <FormItem {...formItemLayout} label="Rank">
           {getFieldDecorator("rank", {
