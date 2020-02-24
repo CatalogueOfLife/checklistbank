@@ -146,7 +146,7 @@ class ColTreeNode extends React.Component {
           {({ mode, selectedSourceDatasetKey, getSyncState }) =>
           <React.Fragment>
            {  mode === "modify" && 
-            treeType === "mc" && (
+            treeType === "CATALOGUE" && (
               <Popover
                 content={
                   taxon.name !== "Not assigned" ?  <React.Fragment>
@@ -264,7 +264,7 @@ class ColTreeNode extends React.Component {
               </Popover>
             )}
           
-           { ((mode !== "modify" && treeType === "mc") || (treeType === "gsd")) && (
+           { ((mode !== "modify" && treeType === "CATALOGUE") || (treeType === "SOURCE")) && (
               <PopconfirmMultiOption
                 visible={this.props.confirmVisible}
                 title={this.props.confirmTitle}

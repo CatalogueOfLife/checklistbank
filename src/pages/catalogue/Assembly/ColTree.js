@@ -113,7 +113,7 @@ class ColTree extends React.Component {
       ? axios(
           `${config.dataApi}dataset/${id}/tree/${
             defaultExpandKey
-          }?catalogueKey=${treeType === "gsd" ? catalogueKey : key}`
+          }?catalogueKey=${catalogueKey}`
         )
           .then(res => {
             // Load the siblings of the default expanded taxon
@@ -122,7 +122,7 @@ class ColTree extends React.Component {
                   `${config.dataApi}dataset/${key}/tree/${
                     _.get(res, "data[1].id") //taxonKey
                   }/children?limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=true&catalogueKey=${
-                    treeType === "gsd" ? catalogueKey : key
+                    catalogueKey
                   }`
                 )
                   .then(this.decorateWithSectorsAndDataset)
@@ -150,7 +150,7 @@ class ColTree extends React.Component {
     return Promise.all([
       axios(
         `${config.dataApi}dataset/${id}/tree?catalogueKey=${
-          treeType === "gsd" ? catalogueKey : key
+          catalogueKey
         }&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
       ).then(this.decorateWithSectorsAndDataset),
       p
@@ -192,7 +192,7 @@ class ColTree extends React.Component {
             },
             () => {
               if (
-                this.props.treeType === "mc" &&
+                this.props.treeType === "CATALOGUE" &&
                 typeof this.props.addMissingTargetKey === "function"
               ) {
                 this.props.addMissingTargetKey(defaultExpandKey);
@@ -217,7 +217,7 @@ class ColTree extends React.Component {
               childCount: tx.childCount,
               childOffset: 0
             };
-            if (treeType === "gsd" && _.get(root, "taxon.sector")){
+            if (treeType === "SOURCE" && _.get(root, "taxon.sector")){
               tx.sectorKey = _.get(root, "taxon.sectorKey")
               tx.sector = _.get(root, "taxon.sector")
             } 
@@ -242,7 +242,7 @@ class ColTree extends React.Component {
                       childOffset: 0
 
                     }; 
-                    if (treeType === "gsd" && _.get(root, "taxon.sector")){
+                    if (treeType === "SOURCE" && _.get(root, "taxon.sector")){
                       c.sectorKey = _.get(root, "taxon.sectorKey")
                       c.sector = _.get(root, "taxon.sector")
                     } 
@@ -335,8 +335,8 @@ class ColTree extends React.Component {
     let id = key;
     return axios(
       `${config.dataApi}dataset/${id}/tree?catalogueKey=${
-        treeType === "gsd" ? catalogueKey : key
-      }&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
+        catalogueKey
+      }${this.appendTypeParam(treeType)}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
     ).then(this.decorateWithSectorsAndDataset)
       .then(res => {
         const mainTreeData = res.data.result;
@@ -384,7 +384,9 @@ class ColTree extends React.Component {
         });
       });
   };  
-
+  appendTypeParam = (treeType) => {
+    return ["CATALOGUE", "SOURCE"].includes(treeType) ? `&type=${treeType}` : '';
+  }
   expandToTaxon = async (defaultExpandKey) => {
     const {
       treeType,
@@ -398,7 +400,7 @@ class ColTree extends React.Component {
     const {data} = await axios(
           `${config.dataApi}dataset/${id}/tree/${
             defaultExpandKey
-          }?catalogueKey=${treeType === "gsd" ? catalogueKey : key}`
+          }?catalogueKey=${catalogueKey}${this.appendTypeParam(treeType)}`
         ).then(res =>
           this.decorateWithSectorsAndDataset({
             data: { result: res.data }
@@ -469,12 +471,12 @@ class ColTree extends React.Component {
       `${config.dataApi}dataset/${dataset.key}/tree/${
         dataRef.taxon.id //taxonKey
       }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${
-        treeType === "gsd" ? catalogueKey : dataset.key
-      }`
+        catalogueKey
+      }${this.appendTypeParam(treeType)}`
     )
       .then(res => {
-        if (treeType === "gsd" && _.get(dataRef, "taxon.sectorKey")) {
-          // If it is a GSD and the parent has a sectorKey, copy it to children
+        if (_.get(res, 'data.empty') !== true && treeType === "SOURCE" && _.get(dataRef, "taxon.sectorKey")) {
+          // If it is a source and the parent has a sectorKey, copy it to children
           return {
             ...res,
             data: {
@@ -652,7 +654,7 @@ class ColTree extends React.Component {
                   },
                   () => {
                     if (
-                      this.props.treeType === "mc" &&
+                      this.props.treeType === "CATALOGUE" &&
                       typeof this.props.addMissingTargetKey === "function"
                     ) {
                       this.props.addMissingTargetKey(defaultExpandKey);
@@ -987,7 +989,7 @@ class ColTree extends React.Component {
   };
   handleDrop = (e, mode) => {
     const { treeType } = this.props;
-    if (treeType !== "mc") {
+    if (treeType !== "CATALOGUE") {
       return;
     }
     if (mode === "attach") {
@@ -1036,7 +1038,6 @@ class ColTree extends React.Component {
       loadedKeys,
       expandedKeys
         } = this.state;
-        console.log(loadedKeys)
     const { draggable, onDragStart, location, treeType, dataset } = this.props;
     return (
       <div>
@@ -1096,7 +1097,7 @@ class ColTree extends React.Component {
                     }
                     const params = qs.parse(_.get(location, "search"));
                     const newParams =
-                      this.props.treeType === "mc"
+                      this.props.treeType === "CATALOGUE"
                         ? {
                             ...params,
                             assemblyTaxonKey: obj.node.props.dataRef.key
@@ -1111,7 +1112,7 @@ class ColTree extends React.Component {
                     });
                   } else {
                     const key =
-                      this.props.treeType === "mc"
+                      this.props.treeType === "CATALOGUE"
                         ? "assemblyTaxonKey"
                         : "sourceTaxonKey";
                     history.push({

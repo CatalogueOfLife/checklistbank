@@ -28,8 +28,8 @@ class Custom404 extends React.Component {
                     {_.get(error, 'response.data.details')}
                 </p>}
 
-                {treeType === 'gsd' && <ImportButton record={{datasetKey: dataset.key}}></ImportButton>}
-                {treeType === 'mc' && <Button type='primary' onClick={() => this.setState({modalVisible: !modalVisible})}>Add root taxon</Button>}
+                {treeType === 'SOURCE' && <ImportButton record={{datasetKey: dataset.key}}></ImportButton>}
+                {treeType === 'CATALOGUE' && <Button type='primary' onClick={() => this.setState({modalVisible: !modalVisible})}>Add root taxon</Button>}
                 {modalVisible && <AddChildModal parent={{datasetKey: dataset.key}} onCancel={() => this.setState({ modalVisible: false })} onSuccess={() => this.setState({ modalVisible: false }, loadRoot)}></AddChildModal>}
                 
             </div>

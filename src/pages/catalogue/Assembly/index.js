@@ -446,7 +446,8 @@ class Assembly extends React.Component {
                       treeRef={ref => this.assemblyRef = ref}
                       location={location}
                       dataset={{key: catalogueKey}}
-                      treeType="mc"
+                      treeType="CATALOGUE"
+                      catalogueKey={catalogueKey}
                       attachFn={this.getSectorInfo}
                       onDragStart={e =>
                         this.onDragStart(e, catalogue)
@@ -519,7 +520,7 @@ class Assembly extends React.Component {
                         treeRef={ref => this.sourceRef = ref}
                         location={location}
                         dataset={this.state.selectedDataset}
-                        treeType="gsd"
+                        treeType="SOURCE"
                         catalogueKey={catalogueKey}
                         onDragStart={e =>
                           this.onDragStart(e, this.state.selectedDataset)
