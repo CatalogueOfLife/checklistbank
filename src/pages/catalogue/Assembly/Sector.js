@@ -91,6 +91,22 @@ class Sector extends React.Component {
       });
   }
 
+  updateSectorRank = rank => {
+    const { taxon : {sector}} = this.props;
+    axios
+      .put(
+        `${config.dataApi}sector/${sector.key}`, {...sector, rank: rank}
+      ) 
+      .then(() => {
+        notification.open({
+          message: "Ranks for sector configured"
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  }
+
   updateSectorNote = note => {
     const { taxon : {sector}} = this.props;
     axios
@@ -101,6 +117,22 @@ class Sector extends React.Component {
         notification.open({
           message: "Sector note updated:",
           description: note
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  }
+
+  updateSectorEntities = entities => {
+    const { taxon : {sector}} = this.props;
+    axios
+      .put(
+        `${config.dataApi}sector/${sector.key}`, {...sector, entities: entities}
+      ) 
+      .then(() => {
+        notification.open({
+          message: "Sector entities updated"
         });
       })
       .catch(err => {
@@ -164,7 +196,7 @@ class Sector extends React.Component {
   };
 
   render = () => {
-    const { taxon, nomCode, user, catalogueKey } = this.props;
+    const { taxon, nomCode, user, catalogueKey, entitytype } = this.props;
 
     const { error } = this.state;
     const { sector } = taxon;
@@ -255,8 +287,35 @@ class Sector extends React.Component {
             </Col>
                 </Row> 
                 <Row style={{ marginTop: "8px" }}>
+                  <Col span={9}>
+                    Ranks
+                  </Col>
+                  <Col span={15} style={{paddingLeft: '8px'}}>
+                <Select style={{ width: '100%' }} defaultValue={sector.rank} onChange={value => this.updateSectorRank(value)}>
+
+                <Option  value={null}>All</Option>
+                <Option  value="Linnean">Linnean</Option>
+                <Option  value="CoL">CoL</Option>
+            </Select>
+            </Col>
+                </Row> 
+                <Row style={{ marginTop: "8px" }}>
+                  <Col span={9}>
+                  Entities
+                  </Col>
+                  <Col span={15} style={{paddingLeft: '8px'}}>
+                <Select mode="multiple" style={{ width: '100%' }} defaultValue={sector.entities || []} onChange={value => this.updateSectorEntities(value)}>
+
+              {entitytype.map((f) => {
+                return <Option key={f.name} value={f.name}>{f.name}</Option>
+              })}
+            </Select>
+            </Col>
+                </Row> 
+                <Row style={{ marginTop: "8px" }}>
                 <SectorNote note={sector.note} onSave={this.updateSectorNote}></SectorNote>
-                </Row></React.Fragment>
+                </Row>
+                </React.Fragment>
                 )}
                 {/* !isRootSector && (
             <React.Fragment>
@@ -390,7 +449,7 @@ class Sector extends React.Component {
   };
 }
 
-const mapContextToProps = ({ nomCode, user, catalogueKey }) => ({ nomCode, user, catalogueKey });
+const mapContextToProps = ({ nomCode, user, catalogueKey, entitytype }) => ({ nomCode, user, catalogueKey, entitytype });
 export default withContext(mapContextToProps)(Sector)
 
 

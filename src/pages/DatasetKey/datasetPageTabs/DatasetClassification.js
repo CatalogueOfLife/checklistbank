@@ -35,7 +35,7 @@ class DatasetClassification extends React.Component {
                       onSelectName={name => {
                         history.push({
                           pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
-                          search: `?${queryString.stringify({sourceTaxonKey: _.get(name, "key")})}`
+                          search: `?${queryString.stringify({taxonKey: _.get(name, "key")})}`
                         });
                         this.treeRef.reloadRoot()
                       }}
@@ -62,7 +62,7 @@ class DatasetClassification extends React.Component {
           dataset={dataset} 
           treeType="readOnly"
           catalogueKey={catalogueKey}
-          defaultExpandKey={params.sourceTaxonKey}
+          defaultExpandKey={params.taxonKey}
           location={location}
           showSourceTaxon={sector => {
             if(Auth.isAuthorised(user, ["editor", "admin"])){
@@ -80,7 +80,7 @@ class DatasetClassification extends React.Component {
               
               history.push({
                 pathname: `/catalogue/${catalogueKey}/dataset/${catalogueKey}/classification`,
-                search: `?${queryString.stringify({sourceTaxonKey: _.get(sector, "target.id")})}`
+                search: `?${queryString.stringify({taxonKey: _.get(sector, "target.id")})}`
               });
             }
             

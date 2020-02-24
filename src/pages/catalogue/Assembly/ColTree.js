@@ -339,7 +339,7 @@ class ColTree extends React.Component {
       }${this.appendTypeParam(treeType)}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
     ).then(this.decorateWithSectorsAndDataset)
       .then(res => {
-        const mainTreeData = res.data.result;
+        const mainTreeData = res.data.result || [];
         const rootTotal = res.data.total;
         const treeData = mainTreeData.map(tx => {
           let dataRef = {
@@ -442,7 +442,9 @@ class ColTree extends React.Component {
               confirmVisible={false}
               treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={this.loadRoot}
+              reloadSelfAndSiblings={() =>
+                this.fetchChildPage(root, true)
+              }
               reloadChildren={() => this.fetchChildPage(node, true)}
             />
           )
@@ -1041,7 +1043,7 @@ class ColTree extends React.Component {
     const { draggable, onDragStart, location, treeType, dataset } = this.props;
     return (
       <div>
-        {" "}
+       
         {error && (
           <React.Fragment>
           {  _.get(error, 'response.data.code') !== 404 ?

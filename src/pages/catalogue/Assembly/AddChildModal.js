@@ -45,9 +45,9 @@ class AddChildModal extends React.Component {
   };
 
   submitData = values => {
-    const { parent } = this.props;
+    const { parent, catalogueKey } = this.props;
     axios
-      .post(`${config.dataApi}dataset/${parent.datasetKey}/taxon`, values)
+      .post(`${config.dataApi}dataset/${parent ? parent.datasetKey : catalogueKey}/taxon`, values)
       .then(res => {
 
         this.setState({ submissionError: null, confirmLoading: false }, () => {

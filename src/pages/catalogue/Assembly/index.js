@@ -12,11 +12,11 @@ import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../../components/PageContent";
 import SyncState from "./SyncState";
+import AddChildModal from "./AddChildModal";
 import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
-
 
 class Assembly extends React.Component {
   constructor(props) {
@@ -30,11 +30,12 @@ class Assembly extends React.Component {
       syncingSector: null,
       assemblyTaxonKey: params.assemblyTaxonKey || null,
       sourceTaxonKey: null,
+      childModalVisible: false,
       missingTargetKeys: {} // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
     };
 
     // this.assemblyRef = React.createRef();
-   // this.sourceRef = React.createRef();
+    // this.sourceRef = React.createRef();
   }
 
   componentDidMount() {
@@ -51,28 +52,36 @@ class Assembly extends React.Component {
     }, 3000);
   }
 
-
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = prevProps => {
     const params = qs.parse(_.get(this.props, "location.search"));
     const prevParams = qs.parse(_.get(prevProps, "location.search"));
-    if( _.get(params, "assemblyTaxonKey") !== _.get(prevParams, "assemblyTaxonKey")){
+    if (
+      _.get(params, "assemblyTaxonKey") !==
+      _.get(prevParams, "assemblyTaxonKey")
+    ) {
       this.setState({
         assemblyTaxonKey: _.get(params, "assemblyTaxonKey") || null
       });
     }
-    if( _.get(params, "sourceTaxonKey") !== _.get(prevParams, "sourceTaxonKey")){
+    if (
+      _.get(params, "sourceTaxonKey") !== _.get(prevParams, "sourceTaxonKey")
+    ) {
       this.setState({
         sourceTaxonKey: _.get(params, "sourceTaxonKey") || null
       });
     }
-  }
+  };
 
   componentWillUnmount() {
     clearInterval(this.timer);
   }
 
   getSyncState = () => {
-    const { match: {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     axios(`${config.dataApi}assembly/${catalogueKey}`)
       .then(res => {
         if (
@@ -112,14 +121,18 @@ class Assembly extends React.Component {
 
   getSectorInfo = (attachment, root, mode) => {
     const { datasetKey } = this.state;
-    const { match: {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
 
     return axios
       .all([
         axios(
-          `${config.dataApi}dataset/${
-            catalogueKey
-          }/taxon/${encodeURIComponent(attachment.props.dataRef.key)}`
+          `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
+            attachment.props.dataRef.key
+          )}`
         ),
         axios(
           `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
@@ -135,16 +148,8 @@ class Assembly extends React.Component {
           rootName.data.name = rootName.data.scientificName;
 
           return mode === "REPLACE"
-            ? this.replace(
-                rootName.data,
-                attachmentName.data,
-                mode
-              )
-            : this.saveSector(
-                rootName.data,
-                attachmentName.data,
-                mode
-              );
+            ? this.replace(rootName.data, attachmentName.data, mode)
+            : this.saveSector(rootName.data, attachmentName.data, mode);
         })
       )
 
@@ -155,59 +160,60 @@ class Assembly extends React.Component {
   };
 
   saveChild = (subject, target) => {
-    const { match: {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
 
     return axios
-      .post(
-        `${config.dataApi}dataset/${catalogueKey}/tree/${
-          target.id
-        }/copy`,
-        {
-          datasetKey: subject.datasetKey,
-          id: subject.id
-        }
-      )
+      .post(`${config.dataApi}dataset/${catalogueKey}/tree/${target.id}/copy`, {
+        datasetKey: subject.datasetKey,
+        id: subject.id
+      })
       .then(res => {
         return axios(
-          `${config.dataApi}dataset/${
-            catalogueKey
-          }/taxon/${encodeURIComponent(res.data)}`
+          `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
+            res.data
+          )}`
         );
       });
   };
   replace = (subject, target, mode) => {
     const { parentId } = target;
-    const { match: {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
 
     return axios(
-      `${config.dataApi}dataset/${
-        catalogueKey
-      }/taxon/${encodeURIComponent(parentId)}`
+      `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
+        parentId
+      )}`
     )
       .then(res => {
         const parent = res.data;
         // delete recursive
         return axios
-          .delete(
-            `${config.dataApi}dataset/${catalogueKey}/tree/${
-              target.id
-            }`
-          )
+          .delete(`${config.dataApi}dataset/${catalogueKey}/tree/${target.id}`)
           .then(() => parent);
       })
       .then(parent => {
         notification.open({
           message: "Removed existing taxon",
-          description: `Old ${
-            target.name
-          } was removed from the CoL draft, removing children.`
+          description: `Old ${target.name} was removed from the CoL draft, removing children.`
         });
         return this.saveSector(subject, parent, "ATTACH");
       });
   };
 
   saveSector = (subject, target, mode) => {
-    const { match: {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     const sector = {
       subjectDatasetKey: subject.datasetKey,
       datasetKey: catalogueKey,
@@ -233,33 +239,39 @@ class Assembly extends React.Component {
   };
 
   showSourceTaxon = (sector, source) => {
-    
     const oldDatasetKey = Number(this.state.datasetKey);
-    const { match : {params: {catalogueKey}}} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     axios(`${config.dataApi}dataset/${source.key}`)
       .then(res => {
         const params = qs.parse(_.get(this.props, "location.search"));
-            const newParams = {
-              ...params,
-              sourceTaxonKey: sector.subject.id,
-              datasetKey: source.key
-            };
-            history.push({
-              pathname: `/catalogue/${catalogueKey}/assembly`,
-              search: `?${qs.stringify(newParams)}`
-            });
+        const newParams = {
+          ...params,
+          sourceTaxonKey: sector.subject.id,
+          datasetKey: source.key
+        };
+        history.push({
+          pathname: `/catalogue/${catalogueKey}/assembly`,
+          search: `?${qs.stringify(newParams)}`
+        });
         this.setState(
           {
             sourceTaxonKey: sector.subject.id,
             datasetKey: source.key,
             datasetName: res.data.title,
-            selectedDataset: { key: res.data.key, title: res.data.alias || res.data.title }
+            selectedDataset: {
+              key: res.data.key,
+              title: res.data.alias || res.data.title
+            }
           },
           () => {
             // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentDidUpdate
-           if(oldDatasetKey === source.key) {
-             this.sourceRef.reloadRoot()
-            };
+            if (oldDatasetKey === source.key) {
+              this.sourceRef.reloadRoot();
+            }
           }
         );
       })
@@ -275,7 +287,12 @@ class Assembly extends React.Component {
   };
 
   onSelectDataset = dataset => {
-    const {location, match : {params: {catalogueKey}}} = this.props
+    const {
+      location,
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     this.setState({
       datasetKey: Number(dataset.key),
       datasetName: dataset.title,
@@ -310,15 +327,22 @@ class Assembly extends React.Component {
       syncingSector,
       sectorMappingError,
       assemblyTaxonKey,
+      childModalVisible
     } = this.state;
 
-    const { match : {params: {catalogueKey} }, location, catalogue } = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      },
+      location,
+      catalogue
+    } = this.props;
     //  const {assemblyTaxonKey, sourceTaxonKey} = location
     return (
       <Layout
         openKeys={["assembly"]}
         selectedKeys={["colAssembly"]}
-        title={catalogue ? catalogue.title : ''}
+        title={catalogue ? catalogue.title : ""}
       >
         <Helmet>
           <meta charSet="utf-8" />
@@ -378,29 +402,61 @@ class Assembly extends React.Component {
               <Col span={12} style={{ padding: "10px" }}>
                 <Card>
                   <Row>
-                    <Col span={18}><h4>{catalogue.title}</h4>{" "}</Col>
-                    <Col span={6} style={{textAlign: 'right'}}>
-                      <Button 
+                    <Col span={12}>
+                      <h4>{catalogue.title}</h4>{" "}
+                    </Col>
+                    <Col span={12} style={{ textAlign: "right" }}>
+                      {childModalVisible && (
+                        <AddChildModal
+                          onCancel={() =>
+                            this.setState({ childModalVisible: false })
+                          }
+                          onSuccess={() =>
+                            this.setState(
+                              { childModalVisible: false },
+                              this.assemblyRef.reloadRoot()
+                            )
+                          }
+                          parent={null}
+                          catalogueKey={catalogueKey}
+                        />
+                      )}
+                      <Button
+                        icon="plus"
+                        size="small"
+                        style={{marginRight: '6px'}}
+                        onClick={e => {
+                          this.setState({ childModalVisible: true });
+                        }}
+                      >
+                        Add root
+                      </Button>
+                      <Button
                         icon="sync"
-                        size="small" 
+                        size="small"
                         onClick={e => {
                           const params = qs.parse(_.get(location, "search"));
 
-                          const newParams = { ...params, assemblyTaxonKey: null };
+                          const newParams = {
+                            ...params,
+                            assemblyTaxonKey: null
+                          };
                           history.push({
                             pathname: `/catalogue/${catalogueKey}/assembly`,
                             search: `?${qs.stringify(
                               _.omit(newParams, ["assemblyTaxonKey"])
                             )}`
                           });
-                          this.setState({ assemblyTaxonKey: null }, () => this.assemblyRef.reloadLoadedKeys());
-                          
-                        }
-                          }>
-                          Refresh</Button>
-                      </Col>
-                      </Row>
-                  
+                          this.setState({ assemblyTaxonKey: null }, () =>
+                            this.assemblyRef.reloadLoadedKeys()
+                          );
+                        }}
+                      >
+                        Refresh
+                      </Button>
+                    </Col>
+                  </Row>
+
                   <NameAutocomplete
                     datasetKey={catalogueKey}
                     onSelectName={name => {
@@ -441,24 +497,24 @@ class Assembly extends React.Component {
                       type="error"
                     />
                   )}
-                {catalogue &&  <div style={{ overflowY: "scroll", height: "800px" }}>
-                    <ColTree
-                      treeRef={ref => this.assemblyRef = ref}
-                      location={location}
-                      dataset={{key: catalogueKey}}
-                      treeType="CATALOGUE"
-                      catalogueKey={catalogueKey}
-                      attachFn={this.getSectorInfo}
-                      onDragStart={e =>
-                        this.onDragStart(e, catalogue)
-                      }
-                      dragNode={this.state.dragNode}
-                      draggable={true}
-                      showSourceTaxon={this.showSourceTaxon}
-                      defaultExpandKey={assemblyTaxonKey}
-                      addMissingTargetKey={this.addMissingTargetKey}
-                    />
-                </div> }
+                  {catalogue && (
+                    <div style={{ overflowY: "scroll", height: "800px" }}>
+                      <ColTree
+                        treeRef={ref => (this.assemblyRef = ref)}
+                        location={location}
+                        dataset={{ key: catalogueKey }}
+                        treeType="CATALOGUE"
+                        catalogueKey={catalogueKey}
+                        attachFn={this.getSectorInfo}
+                        onDragStart={e => this.onDragStart(e, catalogue)}
+                        dragNode={this.state.dragNode}
+                        draggable={true}
+                        showSourceTaxon={this.showSourceTaxon}
+                        defaultExpandKey={assemblyTaxonKey}
+                        addMissingTargetKey={this.addMissingTargetKey}
+                      />
+                    </div>
+                  )}
                 </Card>
               </Col>
               <Col span={12} style={{ padding: "10px" }}>
@@ -467,7 +523,8 @@ class Assembly extends React.Component {
                     {this.state.selectedDataset ? (
                       <React.Fragment>
                         {" "}
-                        {this.state.selectedDataset.alias || this.state.selectedDataset.title}
+                        {this.state.selectedDataset.alias ||
+                          this.state.selectedDataset.title}
                         <NavLink
                           to={`/catalogue/${catalogueKey}/dataset/${this.state.selectedDataset.key}/meta`}
                         >
@@ -517,7 +574,7 @@ class Assembly extends React.Component {
                   <div style={{ overflowY: "scroll", height: "800px" }}>
                     {this.state.selectedDataset && (
                       <ColTree
-                        treeRef={ref => this.sourceRef = ref}
+                        treeRef={ref => (this.sourceRef = ref)}
                         location={location}
                         dataset={this.state.selectedDataset}
                         treeType="SOURCE"
@@ -537,7 +594,7 @@ class Assembly extends React.Component {
                             pathname: `/catalogue/${catalogueKey}/assembly`,
                             search: `?${qs.stringify(newParams)}`
                           });
-                          this.assemblyRef.reloadRoot()
+                          this.assemblyRef.reloadRoot();
                         }}
                       />
                     )}
@@ -552,6 +609,6 @@ class Assembly extends React.Component {
   }
 }
 
-const mapContextToProps = ({  catalogue }) => ({  catalogue });
+const mapContextToProps = ({ catalogue }) => ({ catalogue });
 
 export default withContext(mapContextToProps)(Assembly);

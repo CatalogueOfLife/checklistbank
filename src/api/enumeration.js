@@ -116,6 +116,10 @@ export const getGazetteer = () => {
   );
 };
 
-
+export const getEntitytype = () => {
+  return axios(`${config.dataApi}vocab/entitytype`).then(res =>
+    res.data
+  );
+};
 
 
