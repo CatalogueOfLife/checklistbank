@@ -256,7 +256,7 @@ class ImportTable extends React.Component {
       key: "x",
       width: 50,
       render: record => (
-        <ImportButton key={record.datasetKey} record={record} ></ImportButton>
+       _.get(record, 'dataset.origin') === 'external' ? <ImportButton key={record.datasetKey} record={record} ></ImportButton> : ''
       )
     }] : defaultColumns;
 
