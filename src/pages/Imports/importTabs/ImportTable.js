@@ -280,10 +280,9 @@ class ImportTable extends React.Component {
             expandedRowRender={section === "finished" ? record => {
               if(record.state ==='failed'){
                 return <Alert message={record.error} type="error" />
-              } else if(record.state ==='finished'){
+              } else {
                 return <ImportMetrics data={record}></ImportMetrics>
               }
-              return null
             } :null     
             } 
           />

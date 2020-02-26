@@ -38,7 +38,7 @@ class DatasetPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       match: {
         params: { key: datasetKey }
@@ -82,7 +82,8 @@ class DatasetPage extends React.Component {
       },
       location,
       dataset,
-      catalogueKey
+      catalogueKey,
+      importStateMap
     } = this.props;
 
     if (!section ) {
@@ -109,7 +110,7 @@ class DatasetPage extends React.Component {
       title={`${_.get(dataset, 'title')} in CoL+`}
      />}
       
-      { importState && importState !== 'finished' && importState !== 'failed'  && importState !== 'unchanged' &&  <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
+      { importState && _.get(importStateMap[importState], 'running' ) === "true" && <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} match={this.props.match} updateImportState={() => this.getData(datasetKey)} />}
@@ -152,5 +153,5 @@ class DatasetPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({dataset, catalogueKey}) => ({dataset, catalogueKey})
+const mapContextToProps = ({dataset, catalogueKey, importStateMap}) => ({dataset, catalogueKey, importStateMap})
 export default withContext(mapContextToProps)(DatasetPage);

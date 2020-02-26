@@ -76,6 +76,7 @@ class ContextProvider extends React.Component {
     license: [],
     nomCode: [],
     importState: [],
+    importStateMap: {},
     user: null,
     notifications: [],
     terms: [],
@@ -213,7 +214,9 @@ class ContextProvider extends React.Component {
         countryAlpha3[c.alpha3] = c;
         countryAlpha2[c.alpha2] = c;
       });
+      const importStateMap = {};
 
+      responses[13].forEach(i => importStateMap[i.name] = i)
       const recentDatasetsAsText = localStorage.getItem('colplus_recent_datasets');
       const recentDatasets = recentDatasetsAsText ? JSON.parse(recentDatasetsAsText) : [];
 
@@ -232,6 +235,7 @@ class ContextProvider extends React.Component {
         license: responses[11],
         nomCode: responses[12],
         importState: responses[13],
+        importStateMap: importStateMap,
         terms: responses[14],
         lifezone: responses[15],
         sectorImportState: responses[16],
