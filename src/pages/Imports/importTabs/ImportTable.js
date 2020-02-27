@@ -33,6 +33,7 @@ const tagColors = {
   'downloading': 'cyan',
   'inserting': 'blue',
   'finished': 'green',
+  'released': 'green',
   'failed': 'red',
   'waiting': 'orange'
 }

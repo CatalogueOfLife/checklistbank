@@ -19,7 +19,6 @@ import {
   notification
 } from "antd";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-import { getCatalogues } from "../../api/dataset";
 
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -60,11 +59,12 @@ class AdminPage extends React.Component {
 
   componentDidMount = () => {
     this.getBackground();
-    getCatalogues().then(catalogues => {
-      this.setState({ catalogues });
-    });
+    this.getCatalogues();
   };
 
+  getCatalogues = () => {
+    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
+  }
   getBackground = () => {
     axios
       .get(`${config.dataApi}admin/background`)
@@ -340,8 +340,10 @@ class AdminPage extends React.Component {
   };
 
   onCatalogueChange = catalogueKey => {
-    const {setCatalogueKey} = this.props;  
-    setCatalogueKey(catalogueKey)
+    const { setCatalogue} = this.props;  
+    const {catalogues} = this.state;
+    const selectedCatalogue = catalogues.find(c => c.key === catalogueKey)
+    setCatalogue(selectedCatalogue)
   };
 
   render() {
@@ -359,7 +361,7 @@ class AdminPage extends React.Component {
       dataset,
       catalogues
     } = this.state;
-    const {catalogueKey} = this.props;
+    const {catalogueKey, catalogue} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
         <Helmet>
@@ -483,7 +485,7 @@ class AdminPage extends React.Component {
                   <Option
                     value={c.key}
                     key={c.key}
-                  >{`${c.alias} [${c.key}]`}</Option>
+                  >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
                 ))}
               </Select>
               }
@@ -491,7 +493,7 @@ class AdminPage extends React.Component {
 
               <Popconfirm
             placement="rightTop"
-            title="Do you want to export the draft to the old portal?"
+            title={`Do you want to export ${catalogue.title} to the old portal?`}
             onConfirm={this.releaseCoL}
             okText="Yes"
             cancelText="No"
@@ -608,9 +610,9 @@ class AdminPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogueKey, catalogue, setCatalogueKey }) => ({
+const mapContextToProps = ({ catalogueKey, catalogue, setCatalogue }) => ({
   catalogueKey,
   catalogue,
-  setCatalogueKey
+  setCatalogue
 });
 export default withContext(mapContextToProps)(AdminPage);

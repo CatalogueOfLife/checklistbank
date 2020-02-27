@@ -30,7 +30,7 @@ export const getDuplicateOverview = (datasetKey, catalogueKey, withDecision) => 
 }
 
 export const getCatalogues = () => {
-   return axios(`${config.dataApi}dataset/catalogues`).then(({data}) => getDatasetsBatch(data));
+   return axios(`${config.dataApi}dataset?origin=managed`);
 }
 
 export const getDataset = datasetKey => axios(`${config.dataApi}dataset/${datasetKey}`);
