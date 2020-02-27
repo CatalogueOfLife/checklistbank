@@ -65,21 +65,12 @@ class BasicMenu extends Component {
       taxonOrNameKey,
       catalogueKey
     } = this.props;
-    const hasData = _.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'origin') === 'managed';
+    const hasData = !_.get(selectedDataset, 'deleted') && (_.get(selectedDataset, 'hasData') || _.get(selectedDataset, 'origin') === 'managed');
   //  const catalogueKey = selectedCatalogue ? selectedCatalogue.key : MANAGEMENT_CLASSIFICATION.key
     const { selectedKeys, openKeys } = this.state;
     return (
       <React.Fragment>
-        {/* <div className="logo">
-        <NavLink
-                  to={{
-                    pathname: `/`
-                  }}
-                  exact={true}
-                >
-            <Logo />
-            </NavLink>
-        </div> */}
+
         <div className="logo">
         <NavLink
                   to={{
@@ -309,7 +300,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset  && (
+              {selectedDataset  && !selectedDataset.deleted  && (
                 <Menu.Item key="names">
                   <NavLink
                     to={{

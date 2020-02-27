@@ -207,9 +207,9 @@ class DatasetList extends React.Component {
       
     } }, this.getData);
 
-    getCatalogues().then(catalogues => {
-      this.setState({catalogues})
-    })
+    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
+
+   
   }
 
 

@@ -24,7 +24,7 @@ import Duplicates from "../Duplicates";
 import Taxon from "../Taxon"
 import Name from "../Name"
 import VerbatimRecord from "../VerbatimRecord"
-
+import moment from "moment"
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -86,17 +86,24 @@ class DatasetPage extends React.Component {
       importStateMap
     } = this.props;
 
-    if (!section ) {
+    if (dataset && !section && !_.get(dataset, 'deleted') ) {
       return <Redirect to={{
         pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/names`
       }} />
-    }
+    } 
+    if (dataset && !section && _.get(dataset, 'deleted') ) {
+      return <Redirect to={{
+        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/meta`
+      }} />
+    } 
+    
+  
    
     const sect = (!section) ? "meta" : section.split('?')[0];
     const openKeys = ['datasetKey']
     const selectedKeys = [section]
     return (
-      !dataset ? <Exception404 /> :
+      
       <Layout
         selectedMenuItem="datasetKey"
         selectedDataset={{...dataset, importState: importState, hasData: hasData}}
@@ -109,7 +116,7 @@ class DatasetPage extends React.Component {
      {_.get(dataset, 'title') && <Helmet 
       title={`${_.get(dataset, 'title')} in CoL+`}
      />}
-      
+      { dataset && _.get(dataset, 'deleted' ) && <Alert style={{marginTop: '16px'}} message={`This dataset was deleted ${moment(dataset.deleted).format('LLL')}`} type="error" />}
       { importState && _.get(importStateMap[importState], 'running' ) === "true" && <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}

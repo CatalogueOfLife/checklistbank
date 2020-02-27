@@ -78,7 +78,7 @@ class DatasetMeta extends React.Component {
       <Row>
           
           <Col span={4}>
-            <LogoUpload datasetKey={this.props.id} />
+           { data && !data.deleted &&  <LogoUpload datasetKey={this.props.id} />}
             {data && _.get(data, 'origin') === "uploaded" &&
         
          
@@ -87,7 +87,7 @@ class DatasetMeta extends React.Component {
         }
           </Col>
           <Col span={2} offset={18}>
-          { data && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
+          { data && !data.deleted && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
           { data && _.get(data, 'origin') !== 'managed' && <ImportButton
                         style={{ marginTop: "8px" }}
                         record={{datasetKey: data.key}}
@@ -98,7 +98,7 @@ class DatasetMeta extends React.Component {
         <Row>
         
         <Col span={2} offset={22}>
-            {data &&  (
+            {data && !data.deleted && (
               <Switch
                 checked={editMode}
                 onChange={this.setEditMode}
