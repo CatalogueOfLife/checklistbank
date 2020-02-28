@@ -379,7 +379,7 @@ class ColTree extends React.Component {
         this.setState({
           treeData: [],
           rootLoading: false,
-          expandedKeys: null,
+          expandedKeys: [],
           error: err
         });
       });
@@ -392,8 +392,7 @@ class ColTree extends React.Component {
       treeType,
       dataset: { key },
       showSourceTaxon,
-      catalogueKey,
-      location
+      catalogueKey
     } = this.props;
     this.setState({rootLoading: true, treeData: []})
     let id = key;
@@ -630,9 +629,17 @@ class ColTree extends React.Component {
 
     let {treeData} = this.state;
     const targetTaxon = defaultExpandKey ? this.findNode(defaultExpandKey, treeData) : null;
-    const loadedKeys = keys || storedKeys;
+    const loadedKeys = [...keys] || [...storedKeys];
     for (let index = 0; index < loadedKeys.length; index++) {
-      const node = this.findNode(loadedKeys[index], treeData);
+      let node = this.findNode(loadedKeys[index], treeData);
+      if (!node && targetTaxon && loadedKeys[index-1]){
+        // If the node is not found look for insertae sedis nodes in the children of the parent and insert the 'Not assigned' between the parent and the node 
+        const parentNode = this.findNode(loadedKeys[index-1], treeData);
+        if(parentNode && _.isArray(_.get(parentNode, 'children')) && parentNode.children.length > 0) {
+          node = parentNode.children.find(c => c.taxon.id.indexOf('incertae-sedis') > -1)
+          loadedKeys.splice(index, 0, node.taxon.id)
+        } 
+      }
       if(node){
         await this.fetchChildPage(node, true, true)
         if(targetTaxon 
