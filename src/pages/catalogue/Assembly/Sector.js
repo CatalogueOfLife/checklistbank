@@ -201,8 +201,10 @@ class Sector extends React.Component {
     const { error } = this.state;
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
+    const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
     const isRootSector =
-      !_.get(taxon, "parentId") ||
+      
+      (!_.get(taxon, "parentId") && !isPlaceHolder) ||
       (_.get(sector, "target.id") &&
         sector.target &&
         taxon.parentId === sector.target.id);
@@ -210,7 +212,9 @@ class Sector extends React.Component {
     const isSourceTree =
     catalogueKey !== _.get(taxon, "datasetKey");
 
-      
+    if(isPlaceHolder)  {
+      console.log("kjsdnc")
+    }
     if (!sectorSourceDataset) {
       return "";
     }
