@@ -13,11 +13,12 @@ const _ = require("lodash");
 class DatasetTasks extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { duplicates: [], duplicatesWithdecision: [], loading: false };
+    this.state = { duplicates: [], duplicatesWithdecision: [], manuscriptNames: null, loading: false };
   }
 
   componentWillMount() {
     this.getData();
+    this.getManusciptNames();
   }
 
   getData = async () => {
@@ -41,9 +42,24 @@ class DatasetTasks extends React.Component {
 
   };
 
+  getManusciptNames = () => {
+    const { datasetKey, catalogueKey } = this.props;
+   Promise.all(
+     [axios(`${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0`)
+    .then(res => {
+      return res.data.total
+    }),
+    axios(`${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`)
+    .then(res => {
+      return res.data.total
+    })
+  ])
+  .then(values => this.setState({manuscriptNames: {count: values[0], completed: values[1]}}))
+  }
+
 
   render() {
-    const { error, duplicates, loading } = this.state;
+    const { error, duplicates, manuscriptNames, loading } = this.state;
     const {
       getDuplicateWarningColor,
       datasetKey,
@@ -72,7 +88,19 @@ class DatasetTasks extends React.Component {
               </Tag>{" "}
             </NavLink>
           ))}
-        
+        <h1>Manuscript names without decision</h1>
+      {manuscriptNames && 
+      <NavLink
+      to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`, search:`?nomstatus=manuscript&limit=50` }}
+      exact={true}
+    >
+      <Tag
+                style={{ marginBottom: "10px" }}
+                color={getDuplicateWarningColor(manuscriptNames.count)}
+              >
+                Manuscript names {<strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>}
+              </Tag>
+              </NavLink>}
                       </Card>
 
       </PageContent>
