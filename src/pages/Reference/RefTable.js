@@ -38,12 +38,7 @@ class RefTable extends React.Component {
           dataIndex: "citation",
           key: "citation"
         },
-        {
-          title: "Created by",
-          dataIndex: "createdBy",
-          key: "createdBy"
-        },
-
+       
         {
           title: "Created",
           dataIndex: "created",
