@@ -25,8 +25,8 @@ class DatasetAutocomplete extends React.Component {
     }
 
     getDatasets = (q) => {
-
-        axios(`${config.dataApi}dataset?q=${q}&limit=30`)
+        const {contributesTo} = this.props;
+        axios(`${config.dataApi}dataset?q=${q}&limit=30${contributesTo ? '&contributesTo='+contributesTo : ''}`)
             .then((res) => {
                 this.setState({ datasets: res.data.result})
             })
@@ -63,7 +63,7 @@ class DatasetAutocomplete extends React.Component {
             onSelect={this.onSelectDataset}
             onSearch={this.getDatasets}
             dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: `${o.alias || o.title} [${o.key}]`})) : []}
-            placeholder="Find dataset"
+            placeholder={this.props.placeHolder || "Find dataset"}
             style={{ width: '100%' }}
             onChange={(value) => this.setState({value})}
             value={value}

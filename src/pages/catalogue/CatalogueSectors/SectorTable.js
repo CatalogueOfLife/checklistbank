@@ -89,14 +89,12 @@ class SyncTable extends React.Component {
     clearFilters();
     this.setState({ searchText: "" });
   };
-  onChange = (pagination, filters, sorter, extra) =>{
-    
-    this.setState({currentDataSourceLength: extra.currentDataSource.length})
-  }
+
  
   render() {
-    const {data, loading, user, onDeleteSector, catalogueKey} = this.props;  
-    const { currentDataSourceLength, error } = this.state;
+    const {data, loading, user, onDeleteSector, pagination, catalogueKey, handleTableChange} = this.props;  
+    const offset = pagination ? (pagination.current - 1) * pagination.pageSize : 0; 
+
     const columns = [
       {
         title: "Dataset",
@@ -117,9 +115,9 @@ class SyncTable extends React.Component {
             </NavLink>
           );
         },
-        sorter: (a, b) => a.dataset.alias < b.dataset.alias,
-        width: 250,
-        ...this.getColumnSearchProps("dataset.alias")
+    //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
+        width: 250
+      //  ...this.getColumnSearchProps("dataset.alias")
       },
 
       {
@@ -142,7 +140,7 @@ class SyncTable extends React.Component {
         dataIndex: "subject.name",
         key: "subject",
         width: 150,
-        sorter: (a, b) => a.subject.name < b.subject.name,
+    //    sorter: (a, b) => a.subject.name < b.subject.name,
         ...this.getColumnSearchProps("subject.name"),
         render: (text, record) => {
           return (
@@ -197,7 +195,7 @@ class SyncTable extends React.Component {
         width: 150,
         ...this.getColumnSearchProps("target.name"),
 
-        sorter: (a, b) => a.target.name < b.target.name,
+     //   sorter: (a, b) => a.target.name < b.target.name,
 
         render: (text, record) => {
           return (
@@ -241,7 +239,7 @@ class SyncTable extends React.Component {
         dataIndex: "created",
         key: "created",
         width: 50,
-        sorter: (a, b) => a.created < b.created,
+      //  sorter: (a, b) => a.created < b.created,
         render: date => {
           return date ? moment(date).format("lll") : "";
         }
@@ -251,7 +249,7 @@ class SyncTable extends React.Component {
         dataIndex: "modified",
         key: "modified",
         width: 50,
-        sorter: (a, b) => a.modified < b.modified,
+    //    sorter: (a, b) => a.modified < b.modified,
         render: date => {
           return date ? moment(date).format("lll") : "";
         }
@@ -339,15 +337,18 @@ class SyncTable extends React.Component {
     return (
       <React.Fragment>
          
-        <Row><Col style={{textAlign: "right"}}>Results: {currentDataSourceLength}</Col></Row>
+  <Row>
+   {!loading && pagination && <Col style={{textAlign: "right"}}>Results: {offset} - {offset+data.length} of {pagination.total}</Col>
+  }
+    </Row>
           
             <Table
               size="small"
-              onChange={this.onChange}
+              onChange={handleTableChange}
               columns={columns}
               dataSource={data}
               loading={loading}
-              pagination={{ pageSize: 100 }}
+              pagination={pagination}
               rowKey="key"
             />
           

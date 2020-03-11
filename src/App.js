@@ -15,7 +15,7 @@ import DatasetProvider from "./components/hoc/DatasetProvider"
 import Assembly from "./pages/catalogue/Assembly";
 import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
 import SectorSync from "./pages/catalogue/SectorSync"
-import SectorBroken from "./pages/catalogue/BrokenSectors"
+import CatalogueSectors from "./pages/catalogue/CatalogueSectors"
 import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon"
 import CatalogueName from "./pages/catalogue/CatalogueName"
 import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
@@ -131,9 +131,9 @@ class App extends Component {
               />
               <Route
                 exact
-                key="sectorBroken"
-                path="/catalogue/:catalogueKey/sector/broken"
-                component={SectorBroken}
+                key="sector"
+                path="/catalogue/:catalogueKey/sector"
+                component={CatalogueSectors}
                 
               />
              {/*  <Route

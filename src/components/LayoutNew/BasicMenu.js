@@ -156,9 +156,9 @@ class BasicMenu extends Component {
                   <span>Sector sync</span>
                 </NavLink>
               </Menu.Item>
-              <Menu.Item key="sectorBroken">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/broken` }}>
-                  <span>Broken sectors</span>
+              <Menu.Item key="catalogueSectors">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
+                  <span>Sectors</span>
                 </NavLink>
               </Menu.Item>
 

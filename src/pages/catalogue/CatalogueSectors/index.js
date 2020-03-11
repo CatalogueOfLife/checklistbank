@@ -1,31 +1,72 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Table, Alert, Icon, Tooltip, Input, Button, Row, Col, notification } from "antd";
+import { Table, Alert, Icon, Tooltip, Input, Button, Switch, Form, notification } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-
+import { getDatasetsBatch } from "../../../api/dataset";
+import DataLoader from "dataloader";
 import SectorTable from "./SectorTable"
 import _ from "lodash";
+import qs from "query-string";
+import history from "../../../history";
+import DatasetAutocomplete from "../Assembly/DatasetAutocomplete"
+const FormItem = Form.Item;
+
+const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
+
+const PAGE_SIZE = 100;
 
 class SyncTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      currentDataSourceLength: 0,
       searchText: "",
-      loading: false
+      loading: false,
+      pagination: {
+        pageSize: PAGE_SIZE,
+        current: 1,
+        showQuickJumper: true
+      }
+     
     };
   }
 
-  componentWillMount() {
-    this.getDatasets().then(this.getData);
+  componentDidMount() {
+   // this.getData();
+    let params = qs.parse(_.get(this.props, "location.search"));
+    if (_.isEmpty(params)) {
+      params = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: _.get(this.props, "location.pathname"),
+        search: `?limit=${PAGE_SIZE}&offset=0`
+      });
+    }
+   
+    this.setState({ params, pagination: {
+      pageSize: params.limit,
+      current: (Number(params.offset) / Number(params.limit)) +1,
+      pageSize: PAGE_SIZE
+
+    } }, this.getData);
   }
 
-  getDatasets = async () => {
+  componentDidUpdate = (prevProps) => {
+    if(_.get(prevProps, "location.search") !== _.get(this.props, "location.search")){
+      const params = qs.parse(_.get(this.props, "location.search"));
+      this.setState({ pagination: {
+        pageSize: params.limit,
+        current: (Number(params.offset) / Number(params.limit)) +1,
+        pageSize: PAGE_SIZE,
+        
+      } }, this.getData);
+    }
+  }
+
+/*   getDatasets = async () => {
     const {catalogueKey} = this.props;
 
     let last = false;
@@ -61,6 +102,32 @@ class SyncTable extends React.Component {
       .catch(err => {
         this.setState({ loading: false, error: err, data: [] });
       });
+  }; */
+
+
+  getData = () => {
+    const {catalogueKey} = this.props;
+    this.setState({ loading: true });
+    const params = {...qs.parse(_.get(this.props, "location.search")), datasetKey: catalogueKey};
+    axios(`${config.dataApi}sector?${qs.stringify(params)}`)
+    .then(this.decorateWithDataset)
+      .then(res => this.setState({ loading: false, error: null, data: _.get(res, 'data.result') || [], pagination: {...this.state.pagination, total: _.get(res, 'data.total')} }))
+      .catch(err => {
+        this.setState({ loading: false, error: err, data: [] });
+      })
+  }
+
+  decorateWithDataset = res => {
+    if (!res.data.result) return res;
+    return Promise.all(
+      res.data.result
+        .map(sector =>
+           datasetLoader
+              .load(sector.subjectDatasetKey)
+              .then(dataset => (sector.dataset = dataset))
+        
+        )
+    ).then(() => res);
   };
 
   getColumnSearchProps = dataIndex => ({
@@ -153,23 +220,74 @@ class SyncTable extends React.Component {
       });
   };
 
-  render() {
-    const { data, loading, error } = this.state;
+  handleTableChange = (pagination, filters, sorter) => {
+    const pager = { ...this.state.pagination };
+    pager.current = pagination.current;
+   
+    const params = {
+      ...qs.parse(_.get(this.props, "location.search")), 
+      limit: pager.pageSize,
+      offset: (pager.current - 1) * pager.pageSize
+    }
 
+
+    history.push({
+      pathname: _.get(this.props, "location.pathname"),
+      search: qs.stringify(params)
+    });
+
+    
+  };
+
+  updateSearch = params => {
+    const {catalogueKey} = this.props;
+    let newParams = {...qs.parse(_.get(this.props, "location.search")), ...params, offset : 0, datasetKey: catalogueKey};
+    history.push({
+      pathname: _.get(this.props, "location.pathname"),
+      search: qs.stringify(newParams)
+    });
+  };
+  onSelectDataset = (dataset) => {
+    this.updateSearch({subjectDatasetKey: dataset.key})
+  }
+  onResetDataset = ()=> {
+    let newParams = qs.parse(_.get(this.props, "location.search"))
+    delete newParams.subjectDatasetKey;
+    history.push({
+      pathname: _.get(this.props, "location.pathname"),
+      search: qs.stringify(newParams)
+    });
+  }
+  render() {
+    const { data, loading, pagination, error } = this.state;
+    const params = qs.parse(_.get(this.props, "location.search"));
 
     return (
       <Layout
-        selectedKeys={["sectorBroken"]}
+        selectedKeys={["catalogueSectors"]}
         openKeys={["assembly"]}
-        title="Broken sectors"
+        title="Catalogue sectors"
       >
         <PageContent>
         {error && <Alert 
         closable
         onClose={() => this.setState({ error: null })}
         message={error.message} type="error" />}
+      
+      <Form layout="inline">
+      <DatasetAutocomplete onResetSearch={this.onResetDataset} onSelectDataset={this.onSelectDataset} contributesTo={this.props.catalogueKey} placeHolder="Source dataset"/>
+
+        <FormItem label="Only broken" >
+                    <Switch
+                      checked={params.broken === true || params.broken === 'true'}
+                      onChange={value =>
+                        this.updateSearch({ broken: value })
+                      }
+                    />
+                  </FormItem>
+                  </Form>
           {!error && 
-        <SectorTable data={data} loading={loading} onSectorRematch={this.deleteSectorFromTable} onDeleteSector={this.onDeleteSector}></SectorTable>}
+        <SectorTable data={data} loading={loading} onSectorRematch={this.deleteSectorFromTable} onDeleteSector={this.onDeleteSector} pagination={pagination} handleTableChange={this.handleTableChange}></SectorTable>}
 
         </PageContent>
       </Layout>

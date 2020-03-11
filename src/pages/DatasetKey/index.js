@@ -126,7 +126,7 @@ class DatasetPage extends React.Component {
           <DatasetClassification dataset={dataset}  location={location} />
         )}
         {section === "sectors" && (
-          <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} />
+          <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} location={location} />
         )}
         
         {sect === "names" && (
