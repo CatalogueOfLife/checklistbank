@@ -12,7 +12,8 @@ import {
   Select,
   Form,
   Radio,
-  notification
+  notification,
+  Switch
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -611,9 +612,25 @@ class WorkBench extends React.Component {
               />{" "}
             </div>
             <div style={{ marginTop: "10px" }}>
+            <Form layout="inline">
+            <FormItem label="Fuzzy matching" >
+                    <Switch
+                      checked={params.fuzzy === true}
+                      onChange={value =>
+                        this.updateSearch({ fuzzy: value })
+                      }
+                    />
+                  </FormItem>
+                  <FormItem label="Match whole words">
+                    <Switch
+                      checked={params.wholeWords === true}
+                      onChange={value =>
+                        this.updateSearch({ wholeWords: value })
+                      }
+                    />
+                  </FormItem>
 
                 <FormItem style={{
-                      marginLeft: "10px",
                       marginBottom: "10px"
                     }}>
                     <RadioGroup
@@ -639,6 +656,7 @@ class WorkBench extends React.Component {
                       <Radio value={undefined}>All</Radio>
                     </RadioGroup>
                     </FormItem>
+                    </Form>
                     </div>
           </Col>
           <Col span={10}>
