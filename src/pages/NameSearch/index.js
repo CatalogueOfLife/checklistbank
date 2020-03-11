@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Button, Icon, Form } from "antd";
+import { Table, Alert, Radio, Row, Col, Button, Icon, Form, Switch } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -333,9 +333,25 @@ class NameSearchPage extends React.Component {
               />{" "}
             </div>
             <div style={{ marginTop: "10px" }}>
+            <Form layout="inline">
+            <FormItem label="Fuzzy matching" >
+                    <Switch
+                      checked={params.fuzzy === true}
+                      onChange={value =>
+                        this.updateSearch({ fuzzy: value })
+                      }
+                    />
+                  </FormItem>
+                  <FormItem label="Match whole words">
+                    <Switch
+                      checked={params.wholeWords === true}
+                      onChange={value =>
+                        this.updateSearch({ wholeWords: value })
+                      }
+                    />
+                  </FormItem>
 
 <FormItem style={{
-      marginLeft: "10px",
       marginBottom: "10px"
     }}>
     <RadioGroup
@@ -361,6 +377,8 @@ class NameSearchPage extends React.Component {
       <Radio value={undefined}>All</Radio>
     </RadioGroup>
     </FormItem>
+    </Form>
+    
     </div>
           </Col>
           <Col span={12}>

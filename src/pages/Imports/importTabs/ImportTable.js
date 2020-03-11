@@ -81,7 +81,7 @@ class ImportTable extends React.Component {
         },
         {
           title: "Data Format",
-          dataIndex: "dataset.dataFormat",
+          dataIndex: "format",
           key: "dataFormat",
           width: 50
         },
