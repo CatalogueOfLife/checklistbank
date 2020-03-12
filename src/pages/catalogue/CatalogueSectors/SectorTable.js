@@ -145,9 +145,9 @@ class SyncTable extends React.Component {
         render: (text, record) => {
           return (
             <React.Fragment>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.subject.rank}:{" "}
-              </span>
+              </div>
               {!record.subject.id  && <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/names`,
@@ -177,8 +177,7 @@ class SyncTable extends React.Component {
                   textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
                 />
                
-              </NavLink> }
-              {!record.subject.id && (
+              </NavLink>}{!record.subject.id && (
                 <Icon
                   type="warning"
                   style={{ color: "red", marginLeft: "10px" }}
@@ -200,9 +199,9 @@ class SyncTable extends React.Component {
         render: (text, record) => {
           return (
             <React.Fragment>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.target.rank}:{" "}
-              </span>
+              </div>
            { _.get(record, 'target.id') &&  <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/assembly`,
@@ -224,8 +223,7 @@ class SyncTable extends React.Component {
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                />
-                <Icon
+                /><Icon
                     type="warning"
                     style={{ color: "red", marginLeft: "10px" }}
                   /></React.Fragment>}
@@ -244,16 +242,7 @@ class SyncTable extends React.Component {
           return date ? moment(date).format("lll") : "";
         }
       },
-      {
-        title: "Modified",
-        dataIndex: "modified",
-        key: "modified",
-        width: 50,
-    //    sorter: (a, b) => a.modified < b.modified,
-        render: date => {
-          return date ? moment(date).format("lll") : "";
-        }
-      },
+
       {
         title: "History",
         key: "history",
@@ -290,7 +279,7 @@ class SyncTable extends React.Component {
       columns.push({
         title: "Action",
         key: "action",
-        width: 150,
+        width: 250,
         render: (text, record) => (
           <React.Fragment>
             { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sectorKey: record.key}}/> } 
@@ -327,7 +316,7 @@ class SyncTable extends React.Component {
           >
             Rematch
           </Button>}
-          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}> Delete</Button>}
+          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}><Icon type="delete" /></Button>}
           
           </React.Fragment>
           
