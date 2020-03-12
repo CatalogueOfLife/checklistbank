@@ -82,7 +82,7 @@ init = () => {
         }
         this.setState({
           loading: false,
-          data: res.data.result,
+          data: res.data.result || [],
           pagination: {...this.state.pagination, total: _.get(res, 'data.total')},
           err: null
         });
