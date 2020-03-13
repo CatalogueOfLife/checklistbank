@@ -12,6 +12,7 @@ import {
   Form,
   Row,
   Col,
+  DatePicker,
   notification
 } from "antd";
 import config from "../../../config";
@@ -25,8 +26,10 @@ import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../Assembly/NameAutocomplete";
+import moment from "moment";
 const FormItem = Form.Item;
-const {Option} = Select;
+const { Option } = Select;
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 
 const PAGE_SIZE = 100;
@@ -72,9 +75,10 @@ class SyncTable extends React.Component {
 
   componentDidUpdate = prevProps => {
     if (
-      (_.get(prevProps, "location.search") !==
-      _.get(this.props, "location.search"))
-      || _.get(prevProps, 'match.params.catalogueKey') !== _.get(this.props, 'match.params.catalogueKey')
+      _.get(prevProps, "location.search") !==
+        _.get(this.props, "location.search") ||
+      _.get(prevProps, "match.params.catalogueKey") !==
+        _.get(this.props, "match.params.catalogueKey")
     ) {
       const params = qs.parse(_.get(this.props, "location.search"));
       this.setState(
@@ -129,7 +133,11 @@ class SyncTable extends React.Component {
   }; */
 
   getData = () => {
-    const { match: {params: {catalogueKey}} } = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     this.setState({ loading: true });
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
@@ -295,15 +303,30 @@ class SyncTable extends React.Component {
       search: qs.stringify(newParams)
     });
   };
+  onResetName = () => {
+    let newParams = qs.parse(_.get(this.props, "location.search"));
+    delete newParams.name;
+    history.push({
+      pathname: _.get(this.props, "location.pathname"),
+      search: qs.stringify(newParams)
+    });
+  };
   resetAllFilters = () => {
     history.push({
       pathname: _.get(this.props, "location.pathname"),
       search: `?limit=${PAGE_SIZE}&offset=0`
     });
-  }
+  };
   render() {
     const { data, loading, pagination, error } = this.state;
-    const { user, rank } = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      },
+      user,
+      rank
+    } = this.props;
+
     const params = qs.parse(_.get(this.props, "location.search"));
 
     return (
@@ -323,15 +346,23 @@ class SyncTable extends React.Component {
           )}
 
           <Form layout="inline">
-          <div style={{marginBottom: '8px'}}>
-            <DatasetAutocomplete
-              onResetSearch={this.onResetDataset}
-              onSelectDataset={this.onSelectDataset}
-              contributesTo={this.props.catalogueKey}
-              placeHolder="Source dataset"
-              
+            <div style={{ marginBottom: "8px" }}>
+              <DatasetAutocomplete
+                onResetSearch={this.onResetDataset}
+                onSelectDataset={this.onSelectDataset}
+                contributesTo={this.props.catalogueKey}
+                placeHolder="Source dataset"
+              />
+            </div>
+            <div style={{ marginBottom: "8px" }}>
+            <NameAutocomplete
+              datasetKey={catalogueKey}
+              onSelectName={name => {
+                this.updateSearch({ name: name.title });
+              }}
+              onResetSearch={this.onResetName}
             />
-</div>
+            </div>
             <FormItem label="Only broken">
               <Switch
                 checked={params.broken === true || params.broken === "true"}
@@ -346,9 +377,10 @@ class SyncTable extends React.Component {
                 }
               />
             </FormItem>
-            <FormItem label="Subject rank">
+            <FormItem >
               <Select
-                style={{ width: 200 }}
+                placeholder="Subject rank"
+                style={{ width: 160 }}
                 value={params.rank}
                 showSearch
                 onChange={value => this.updateSearch({ rank: value })}
@@ -360,27 +392,35 @@ class SyncTable extends React.Component {
                 ))}
               </Select>
             </FormItem>
-            <FormItem label="Sector mode">
+            <FormItem >
               <Select
-                style={{ width: 200 }}
+                              placeholder="Sector mode"
+
+                style={{ width: 160 }}
                 value={params.mode}
                 showSearch
                 onChange={value => this.updateSearch({ mode: value })}
               >
-                {['attach', 'union', 'merge'].map(r => (
+                {["attach", "union", "merge"].map(r => (
                   <Option key={r} value={r}>
                     {r}
                   </Option>
                 ))}
               </Select>
             </FormItem>
+            <FormItem>
+            <DatePicker 
+            placeholder="Last sync"
+            defaultValue={params.lastSync ? moment(params.lastSync) : null}
+            onChange={(date, dateString) => this.updateSearch({ lastSync: dateString })} />
+            </FormItem>
           </Form>
           <Row>
-          <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Button type="danger" onClick={this.resetAllFilters}>
-              Reset all
-            </Button>
-          </Col>
+            <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+              <Button type="danger" onClick={this.resetAllFilters}>
+                Reset all
+              </Button>
+            </Col>
           </Row>
           {!error && (
             <SectorTable
