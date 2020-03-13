@@ -1,5 +1,5 @@
 # colplus-frontend
-Frontend for the CoL+ Clearinghouse
+Frontend for the CoL+ Clearinghouse.
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
