@@ -20,7 +20,7 @@ import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon"
 import CatalogueName from "./pages/catalogue/CatalogueName"
 import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
 import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch"
-// import DecisionBroken from "./pages/BrokenDecisions"
+import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions"
 import Admin from "./pages/Admin"
 import SectorDiff from "./pages/catalogue/SectorDiff"
 import Imports from "./pages/Imports";
@@ -136,13 +136,13 @@ class App extends Component {
                 component={CatalogueSectors}
                 
               />
-             {/*  <Route
+              <Route
                 exact
-                key="decisionBroken"
-                path="/decision/broken"
-                component={DecisionBroken}
+                key="decisions"
+                path="/catalogue/:catalogueKey/decision"
+                component={CatalogueDecisions}
                 
-              /> */}
+              /> 
               
               <Route
                 exact

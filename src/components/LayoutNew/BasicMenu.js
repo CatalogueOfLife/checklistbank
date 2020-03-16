@@ -161,6 +161,11 @@ class BasicMenu extends Component {
                   <span>Sectors</span>
                 </NavLink>
               </Menu.Item>
+              <Menu.Item key="catalogueDecisions">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/decision` }}>
+                  <span>Decisions</span>
+                </NavLink>
+              </Menu.Item>
 
               {selectedSector && (
                 <Menu.Item key="sectorDiff">
