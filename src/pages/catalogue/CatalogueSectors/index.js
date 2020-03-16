@@ -13,6 +13,7 @@ import {
   Row,
   Col,
   DatePicker,
+  Popconfirm,
   notification
 } from "antd";
 import config from "../../../config";
@@ -28,6 +29,8 @@ import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../Assembly/NameAutocomplete";
 import moment from "moment";
+import RematchResult from "./RematchResult"
+import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
 const FormItem = Form.Item;
 const { Option } = Select;
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
@@ -41,6 +44,8 @@ class SyncTable extends React.Component {
       data: [],
       searchText: "",
       loading: false,
+      rematchSectorsAndDecisionsLoading: false,
+      rematchInfo: null,
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
@@ -94,43 +99,6 @@ class SyncTable extends React.Component {
     }
   };
 
-  /*   getDatasets = async () => {
-    const {catalogueKey} = this.props;
-
-    let last = false;
-    let offset = 0;
-    let limit = 100;
-    let datasets = [];
-    while (!last) {
-      const d = await axios(
-        `${config.dataApi}dataset?offset=${offset}&limit=${limit}&contributesTo=${catalogueKey}`
-      );
-      datasets = [...datasets, ...d.data.result];
-      offset += limit;
-      last = d.data.last;
-    }
-    return datasets;
-  };
-
-  getData = datasets => {
-    this.setState({ loading: true });
-    const {catalogueKey} = this.props;
-    Promise.all(
-      datasets.map(d => {
-        return axios(`${config.dataApi}sector?subjectDatasetKey=${d.key}&datasetKey=${catalogueKey}&broken=true`).then(
-          sectors => sectors.data.empty ? [] : sectors.data.result.map(s => ({ ...s, dataset: d }))
-        );
-      })
-    )
-      .then(arrays => {
-        const mergedArrays = arrays.reduce((a, b) => [...a, ...b]);
-        this.setState({ loading: false, error: null, data: mergedArrays, currentDataSourceLength: mergedArrays.length });
-      })
-
-      .catch(err => {
-        this.setState({ loading: false, error: err, data: [] });
-      });
-  }; */
 
   getData = () => {
     const {
@@ -317,8 +285,40 @@ class SyncTable extends React.Component {
       search: `?limit=${PAGE_SIZE}&offset=0`
     });
   };
+
+  rematchSectorsAndDecisions = () => {
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
+
+    this.setState({ rematchSectorsAndDecisionsLoading: true });
+    axios
+      .post(
+        `${config.dataApi}assembly/${catalogueKey}/rematch`,
+        { all: true }
+      )
+      .then(res => {
+        this.setState(
+          {
+            rematchSectorsAndDecisionsLoading: false,
+            rematchInfo: res.data,
+            error: null
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          rematchSectorsAndDecisionsLoading: false,
+          rematchInfo: null
+        })
+      );
+  };
+
   render() {
-    const { data, loading, pagination, error } = this.state;
+    const { data, loading, pagination, error, rematchSectorsAndDecisionsLoading, rematchInfo } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -342,6 +342,16 @@ class SyncTable extends React.Component {
               onClose={() => this.setState({ error: null })}
               message={error.message}
               type="error"
+            />
+          )}
+          {rematchInfo && (
+            <Alert
+              closable
+              onClose={() => this.setState({ rematchInfo: null })}
+              message="Rematch succeded"
+              description={ <RematchResult rematchInfo={rematchInfo}/>}
+              type="success"
+              style={{marginBottom: '10px'}}
             />
           )}
 
@@ -420,6 +430,35 @@ class SyncTable extends React.Component {
               <Button type="danger" onClick={this.resetAllFilters}>
                 Reset all
               </Button>
+
+
+          
+            
+            </Col>
+            <Col span={12} style={{textAlign: "right"}}>
+            <SyncAllSectorsButton 
+            dataset={params.subjectDatasetKey ? {key: params.subjectDatasetKey} : null} 
+            catalogueKey={catalogueKey}
+            onError={err => this.setState({error: err})}
+            text={params.subjectDatasetKey ? `Sync all sectors from dataset ${params.subjectDatasetKey}` : null}
+            >
+              
+            </SyncAllSectorsButton>
+              <Popconfirm
+            placement="rightTop"
+            title="Do you want to rematch all broken sectors and decisions?"
+            onConfirm={this.rematchSectorsAndDecisions}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={rematchSectorsAndDecisionsLoading}
+              style={{  marginBottom: "10px" }}
+            >
+              Rematch all broken sectors and decisions
+            </Button>
+          </Popconfirm>
             </Col>
           </Row>
           {!error && (

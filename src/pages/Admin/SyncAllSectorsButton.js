@@ -5,7 +5,6 @@ import _ from "lodash";
 import { Button, Alert, Popconfirm, notification } from "antd";
 
 import axios from "axios";
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 class SyncAllSectorsButton extends React.Component {
   constructor(props) {
@@ -19,12 +18,12 @@ class SyncAllSectorsButton extends React.Component {
   syncAllSectors = () => {
     this.setState({ allSectorSyncloading: true });
     const {onError} = this.props
-    const {dataset} = this.props;
+    const {dataset, catalogueKey} = this.props;
     const body = dataset ? {datasetKey: dataset.key} : {all: true}
     
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`, body
+        `${config.dataApi}assembly/${catalogueKey}/sync`, body
       )
       .then(res => {
         this.setState({ allSectorSyncloading: false}, () => {

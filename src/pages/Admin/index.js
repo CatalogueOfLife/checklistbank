@@ -44,11 +44,9 @@ class AdminPage extends React.Component {
 
     this.state = {
       error: null,
-      allSectorSyncloading: false,
       releaseColLoading: false,
       updateAllLogosloading: false,
       recalculateSectorCountsLoading: false,
-      rematchSectorsAndDecisionsLoading: false,
       exportResponse: null,
       background: {},
       backgroundError: null,
@@ -90,32 +88,7 @@ class AdminPage extends React.Component {
       .catch(err => this.setState({ backgroundError: err }));
   };
 
-  syncAllSectors = () => {
-    const {catalogueKey} = this.props;
-    this.setState({ allSectorSyncloading: true });
-    axios
-      .post(`${config.dataApi}assembly/${catalogueKey}/sync`, {
-        all: true
-      })
-      .then(res => {
-        this.setState(
-          { allSectorSyncloading: false, error: null, exportResponse: null },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "All sectors syncing"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          allSectorSyncloading: false,
-          exportResponse: null
-        })
-      );
-  };
+
 
   releaseCoL = () => {
     const {catalogueKey} = this.props;
@@ -202,38 +175,7 @@ class AdminPage extends React.Component {
       );
   };
 
-  rematchSectorsAndDecisions = () => {
-    const {catalogueKey} = this.props;
 
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
-    axios
-      .post(
-        `${config.dataApi}assembly/${catalogueKey}/rematch`,
-        { all: true }
-      )
-      .then(res => {
-        this.setState(
-          {
-            rematchSectorsAndDecisionsLoading: false,
-            error: null,
-            exportResponse: null
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "rematching all broken sectors and decisions"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          rematchSectorsAndDecisionsLoading: false,
-          exportResponse: null
-        })
-      );
-  };
 
   rematchAllSectorsDecisionsAndEstimates = () => {
     this.setState({ rematchAllSectorsDecisionsAndEstimatesLoading: true });
@@ -507,37 +449,8 @@ class AdminPage extends React.Component {
             </Button>
           </Popconfirm>
           <br/>
-          <Popconfirm
-            placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={rematchSectorsAndDecisionsLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Rematch all broken sectors and decisions
-            </Button>
-          </Popconfirm>
-          <br/>
-          <Popconfirm
-            placement="rightTop"
-            title="Sync all sectors?"
-            onConfirm={this.syncAllSectors}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={allSectorSyncloading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Sync all sectors
-            </Button>
-          </Popconfirm>
+
+   
             </Col>
 
           </Row>

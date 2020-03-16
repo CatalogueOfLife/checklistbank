@@ -134,6 +134,7 @@ init = () => {
 
   render = () => {
     const { data, error, syncAllError, loading, pagination } = this.state;
+    const {catalogueKey} = this.props;
     return (
       <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
@@ -148,6 +149,7 @@ init = () => {
               onError={err => this.setState({ syncAllError: err })}
               onSuccess={() => this.setState({ syncAllError: null })}
               dataset={this.props.dataset}
+              catalogueKey={catalogueKey}
               text="Sync all sectors in this dataset"
             />
             {!error && (

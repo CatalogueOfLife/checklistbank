@@ -20,7 +20,7 @@ class SectorSync extends React.Component {
         openKeys={["assembly"]}
         title={MANAGEMENT_CLASSIFICATION.title}
       >
-        <SyncTable location={this.props.location} />
+        <SyncTable location={this.props.location} match={this.props.match}/>
       </Layout>
     );
   }

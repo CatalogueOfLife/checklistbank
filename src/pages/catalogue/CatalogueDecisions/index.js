@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Tooltip, Input, Button, Form, Select, Row, Col, Switch } from "antd";
+import { Table, Alert, Icon, Popconfirm, Input, Button, Form, Select, Row, Col, Switch, notification } from "antd";
 
 import config from "../../../config";
 import moment from "moment";
@@ -18,6 +18,7 @@ import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../Assembly/NameAutocomplete";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
+import RematchResult from "../CatalogueSectors/RematchResult"
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -25,13 +26,15 @@ const { Option } = Select;
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const PAGE_SIZE = 100;
 
-class SyncTable extends React.Component {
+class CatalogueDecisions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
       searchText: "",
       loading: false,
+      rematchSectorsAndDecisionsLoading: false,
+      rematchInfo: null,
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
@@ -235,8 +238,39 @@ class SyncTable extends React.Component {
     clearFilters();
     this.setState({ searchText: "" });
   };
+
+  rematchSectorsAndDecisions = () => {
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
+
+    this.setState({ rematchSectorsAndDecisionsLoading: true });
+    axios
+      .post(
+        `${config.dataApi}assembly/${catalogueKey}/rematch`,
+        { all: true }
+      )
+      .then(res => {
+        this.setState(
+          {
+            rematchSectorsAndDecisionsLoading: false,
+            error: null,
+            rematchInfo: res.data
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          rematchInfo: null,
+          rematchSectorsAndDecisionsLoading: false
+        })
+      );
+  };
   render() {
-    const { data, loading, error, pagination } = this.state;
+    const { data, loading, error, pagination, rematchSectorsAndDecisionsLoading, rematchInfo } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -340,12 +374,14 @@ class SyncTable extends React.Component {
           closable
           onClose={() => this.setState({ error: null })}
           message={error.message} type="error" />}
-                    {error && (
+          {rematchInfo && (
             <Alert
               closable
-              onClose={() => this.setState({ error: null })}
-              message={error.message}
-              type="error"
+              onClose={() => this.setState({ rematchInfo: null })}             
+              message="Rematch succeded"
+              description={ <RematchResult rematchInfo={rematchInfo}/>}
+              type="success"
+              style={{marginBottom: '10px'}}
             />
           )}
 
@@ -419,6 +455,24 @@ class SyncTable extends React.Component {
               <Button type="danger" onClick={this.resetAllFilters}>
                 Reset all
               </Button>
+   
+            </Col>
+            <Col style={{textAlign: 'right'}}>
+            <Popconfirm
+            placement="rightTop"
+            title="Do you want to rematch all broken sectors and decisions?"
+            onConfirm={this.rematchSectorsAndDecisions}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={rematchSectorsAndDecisionsLoading}
+              style={{ marginLeft: "10px", marginBottom: "10px" }}
+            >
+              Rematch all broken sectors and decisions
+            </Button>
+          </Popconfirm>
             </Col>
           </Row>
           {!error && (
@@ -441,4 +495,4 @@ class SyncTable extends React.Component {
 
 const mapContextToProps = ({ user, rank }) => ({ user , rank});
 
-export default withContext(mapContextToProps)(SyncTable);
+export default withContext(mapContextToProps)(CatalogueDecisions);

@@ -215,7 +215,11 @@ class SyncTable extends React.Component {
 
   getData = params => {
     this.setState({ loading: true, params });
-    const {catalogueKey} = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     history.push({
       pathname: `/catalogue/${catalogueKey}/sector/sync`,
       search: `?${qs.stringify(params)}`
@@ -287,7 +291,12 @@ class SyncTable extends React.Component {
 
   render() {
     const { data, loading, error, syncAllError, params: {sectorKey} } = this.state;
-    const { user, sectorImportState, catalogueKey } = this.props;
+    const { user, sectorImportState } = this.props;
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
           ...getColumns(catalogueKey),
@@ -315,6 +324,7 @@ class SyncTable extends React.Component {
         {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
 
       {!sectorKey &&  <SyncAllSectorsButton 
+          catalogueKey={catalogueKey}
           onError={err => this.setState({syncAllError: err})}
           onSuccess={() => this.setState({syncAllError: null})}
         />}

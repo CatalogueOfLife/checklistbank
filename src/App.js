@@ -125,7 +125,7 @@ class App extends Component {
                 key="sectorSync"
                 path="/catalogue/:catalogueKey/sector/sync"
                 render={({ match, location }) => (
-                  <SectorSync section={match.params.section} location={location} />
+                  <SectorSync section={match.params.section} match={match} location={location} />
                 )}
                 
               />
