@@ -3,11 +3,11 @@ import React from 'react';
 import { Form, Input,  Select,  Button, Alert, Row, Col, Rate, notification } from 'antd';
 import _ from 'lodash';
 import axios from 'axios';
-import config from '../../config';
+import config from '../../../config';
 import TextArea from 'antd/lib/input/TextArea';
-import ErrorMsg from '../../components/ErrorMsg';
-import TagControl from "../../components/TagControl"
-import withContext from '../../components/hoc/withContext';
+import ErrorMsg from '../../../components/ErrorMsg';
+import TagControl from "../../../components/TagControl"
+import withContext from '../../../components/hoc/withContext';
 
 
 const types = {

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import BorderedListItem from "./BorderedListItem"
-import ReferencePopover from "../Reference/ReferencePopover"
+import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
 
 const DistributionsTable = ({datasetKey, data, style }) => (
   

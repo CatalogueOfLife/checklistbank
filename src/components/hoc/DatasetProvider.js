@@ -43,7 +43,7 @@ class DatasetProvider extends React.Component {
           this.fetchDataset(nextKey)
       }
       if(!this.state.catalogueLoading && Number(catalogueKey) !== Number(nextCatalogueKey)){
-        this.fetchCatalogue(catalogueKey)    } 
+        this.fetchCatalogue(nextCatalogueKey)    } 
   }
    
 

@@ -78,11 +78,10 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey }
+        params: { key: datasetKey, section, taxonOrNameKey , catalogueKey}
       },
       location,
       dataset,
-      catalogueKey,
       importStateMap
     } = this.props;
 
@@ -160,5 +159,5 @@ class DatasetPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({dataset, catalogueKey, importStateMap}) => ({dataset, catalogueKey, importStateMap})
+const mapContextToProps = ({dataset, importStateMap}) => ({dataset, importStateMap})
 export default withContext(mapContextToProps)(DatasetPage);

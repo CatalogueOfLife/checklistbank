@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon, Popover, Spin } from "antd";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 import _ from "lodash";
 
 class ReferencePopover extends React.Component {

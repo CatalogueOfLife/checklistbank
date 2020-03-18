@@ -15,7 +15,6 @@ import {
   Button,
   Alert,
   Popconfirm,
-  Select,
   notification
 } from "antd";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
@@ -23,20 +22,10 @@ import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 
-const { Option } = Select;
 const FormItem = Form.Item;
 
 
-const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
+
 
 class AdminPage extends React.Component {
   constructor(props) {
@@ -50,19 +39,15 @@ class AdminPage extends React.Component {
       exportResponse: null,
       background: {},
       backgroundError: null,
-      datasetKey: null,
-      catalogues: []
+      datasetKey: null
     };
   }
 
   componentDidMount = () => {
     this.getBackground();
-    this.getCatalogues();
   };
 
-  getCatalogues = () => {
-    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
-  }
+ 
   getBackground = () => {
     axios
       .get(`${config.dataApi}admin/background`)
@@ -89,39 +74,6 @@ class AdminPage extends React.Component {
   };
 
 
-
-  releaseCoL = () => {
-    const {catalogueKey} = this.props;
-
-    this.setState({ releaseColLoading: true });
-    axios
-      .post(
-        `${config.dataApi}assembly/${catalogueKey}/release`
-      )
-      .then(res => {
-        this.setState(
-          {
-            releaseColLoading: false,
-            error: null,
-            exportResponse: res.data
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description:
-                "release selected catalogue to old portal synchroneously (might take long)"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          releaseColLoading: false,
-          exportResponse: null
-        })
-      );
-  };
 
   updateAllLogos = () => {
     this.setState({ updateAllLogosloading: true });
@@ -281,29 +233,19 @@ class AdminPage extends React.Component {
       .catch(err => this.setState({ error: err }));
   };
 
-  onCatalogueChange = catalogueKey => {
-    const { setCatalogue} = this.props;  
-    const {catalogues} = this.state;
-    const selectedCatalogue = catalogues.find(c => c.key === catalogueKey)
-    setCatalogue(selectedCatalogue)
-  };
+
 
   render() {
     const {
-      allSectorSyncloading,
-      releaseColLoading,
       updateAllLogosloading,
       recalculateSectorCountsLoading,
-      rematchSectorsAndDecisionsLoading,
       rematchAllSectorsDecisionsAndEstimatesLoading,
       reindexAllDatasetsLoading,
       exportResponse,
       error,
       background,
-      dataset,
-      catalogues
+      dataset
     } = this.state;
-    const {catalogueKey, catalogue} = this.props;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
         <Helmet>
@@ -323,7 +265,7 @@ class AdminPage extends React.Component {
             </Row>
           )}
           <Row>
-            <Col span={12}>
+            <Col span={24}>
               <Form layout="inline">
                 <FormItem label="Background GBIF Sync">
                   <Switch
@@ -358,7 +300,6 @@ class AdminPage extends React.Component {
               Update all logos
             </Button>
           </Popconfirm>
-          <br/>
           <Popconfirm
             placement="rightTop"
             title="Recalculate sector counts?"
@@ -374,7 +315,6 @@ class AdminPage extends React.Component {
               Recalculate sector counts
             </Button>
           </Popconfirm>
-          <br/>
           <Popconfirm
             placement="rightTop"
             title="Do you want to rematch all sectors, decisions & estimates?"
@@ -390,7 +330,6 @@ class AdminPage extends React.Component {
               Rematch all sectors, decisions & estimates
             </Button>
           </Popconfirm>
-          <br/>
           <Popconfirm
             placement="rightTop"
             title="Do you want to reindex all datasets?"
@@ -407,69 +346,27 @@ class AdminPage extends React.Component {
             </Button>
           </Popconfirm>
             </Col>
-            <Col span={12} style={{textAlign: 'right'}}>
-            <Form layout="inline">
-                <FormItem label="Selected catalogue" style={{ marginRight: "10px", marginBottom: "10px"}}>
-            {catalogueKey && catalogues.length > 0 && <Select
-                showSearch
-                style={{ width: 200 }}
-                value={catalogueKey}
-                placeholder="Select catalogue"
-                optionFilterProp="children"
-                onChange={this.onCatalogueChange}
-                filterOption={(input, option) =>
-                  option.props.children
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {catalogues.map(c => (
-                  <Option
-                    value={c.key}
-                    key={c.key}
-                  >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
-                ))}
-              </Select>
-              }
-              </FormItem></Form>
-
-              <Popconfirm
-            placement="rightTop"
-            title={`Do you want to export ${catalogue.title} to the old portal?`}
-            onConfirm={this.releaseCoL}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={releaseColLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Release catalogue
-            </Button>
-          </Popconfirm>
-          <br/>
-
-   
-            </Col>
+           
 
           </Row>
 
 
 
           <Row>
-            <Col span={10}>
+            <Col span={24}>
               <DatasetAutocomplete
                 onSelectDataset={this.onSelectDataset}
                 onResetSearch={() => this.setState({ dataset: null })}
               />
             </Col>
-            <Col span={14}>
+            </Row>
+            <Row style={{marginTop: '10px'}}>
+
+            <Col span={24}>
               <Button
                 type="primary"
                 onClick={() => this.reindexDataset(dataset)}
                 style={{
-                  marginLeft: "10px",
                   marginRight: "10px",
                   marginBottom: "10px"
                 }}

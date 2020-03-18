@@ -2,11 +2,8 @@ import React from "react";
 
 import Layout from "../../../components/LayoutNew";
 import SyncTable from "./SyncTable";
-import config from "../../../config";
+import withContext from "../../../components/hoc/withContext"
 
-const { MANAGEMENT_CLASSIFICATION } = config;
-
-const _ = require("lodash");
 
 class SectorSync extends React.Component {
   constructor(props) {
@@ -14,11 +11,12 @@ class SectorSync extends React.Component {
   }
 
   render() {
+    const {catalogue} = this.props;
     return (
       <Layout
         selectedKeys={["sectorSync"]}
         openKeys={["assembly"]}
-        title={MANAGEMENT_CLASSIFICATION.title}
+        title={catalogue ? catalogue.title : ''}
       >
         <SyncTable location={this.props.location} match={this.props.match}/>
       </Layout>
@@ -26,4 +24,7 @@ class SectorSync extends React.Component {
   }
 }
 
-export default SectorSync;
+const mapContextToProps = ({ catalogue }) => ({
+  catalogue
+});
+export default withContext(mapContextToProps)(SectorSync);

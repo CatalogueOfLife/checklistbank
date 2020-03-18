@@ -38,7 +38,9 @@ class GSDIssuesMatrix extends React.Component {
 
   getData = () => {
       this.setState({loading: true})
-      const {catalogueKey} = this.props
+      const {match: {
+        params: { catalogueKey }
+      }} = this.props
     axios(
       `${config.dataApi}dataset?limit=1000&contributesTo=${
         catalogueKey
@@ -81,7 +83,9 @@ class GSDIssuesMatrix extends React.Component {
   };
 
   getCatalogueSpeciesCount = (sourceDatasetKey) => {
-    const {catalogueKey} = this.props
+    const {match: {
+      params: { catalogueKey }
+    }} = this.props
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
     ).then(res => _.get(res, 'data.total'))
@@ -99,7 +103,9 @@ class GSDIssuesMatrix extends React.Component {
 
   render() {
     const { data, loading, error } = this.state;
-    const { issue, issueMap, catalogueKey } = this.props;
+    const { issue, issueMap, match: {
+      params: { catalogueKey }
+    }, catalogue } = this.props;
     const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
 
     const selectedGroups = localStorage.getItem('col_plus_matrix_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_matrix_selected_issue_groups')) : [...groups];
@@ -165,7 +171,7 @@ class GSDIssuesMatrix extends React.Component {
       <Layout
         openKeys={["assembly"]}
         selectedKeys={["catalogueSources"]}
-        title="Source datasets"
+        title={catalogue ? catalogue.title : ''}
       >
         <div
           style={{
@@ -207,11 +213,11 @@ class GSDIssuesMatrix extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap, catalogueKey }) => ({
+const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
   user,
   issue,
   issueMap,
-  catalogueKey
+  catalogue
 });
 
 export default withContext(mapContextToProps)(GSDIssuesMatrix);

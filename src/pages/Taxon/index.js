@@ -21,7 +21,7 @@ import moment from "moment";
 import history from "../../history";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
-import ReferencePopover from "../Reference/ReferencePopover"
+import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
 
 
 const { MANAGEMENT_CLASSIFCATION } = config;

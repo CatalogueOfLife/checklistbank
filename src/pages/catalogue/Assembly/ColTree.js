@@ -77,9 +77,10 @@ class ColTree extends React.Component {
 
 
   componentDidUpdate = (prevProps) => {
-    if (prevProps.dataset.key !== this.props.dataset.key) {
+    if (prevProps.dataset.key !== this.props.dataset.key || prevProps.catalogueKey !== this.props.catalogueKey) {
       this.setState({ treeData: [] }, this.loadRoot);
     }
+   
   }
 
   loadRanks = () => {

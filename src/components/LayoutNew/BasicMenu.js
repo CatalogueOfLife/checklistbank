@@ -8,6 +8,7 @@ import _ from "lodash";
 import Auth from "../Auth";
 import withContext from "../hoc/withContext";
 import config from "../../config"
+import CatalogueSelect from "./CatalogueSelect" 
 const SubMenu = Menu.SubMenu;
 const styles = {};
 
@@ -121,11 +122,15 @@ class BasicMenu extends Component {
               key="assembly"
               title={
                 <span>
-                  <Icon type="copy" /> <span>{`Catalogue: ${catalogueKey}`}</span>
+                  <Icon type="copy" /> <span>{`Catalogue: ${catalogueKey}`}</span> <CatalogueSelect />
                 </span>
               }
             >
-              
+              <Menu.Item key="catalogueOptions">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/options` }}>
+                  <span>Options</span>
+                </NavLink>
+              </Menu.Item>
               <Menu.Item key="catalogueMeta">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/meta` }}>
                   <span>Metadata</span>

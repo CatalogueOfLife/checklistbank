@@ -7,11 +7,11 @@ import {
   Row,
   Col
 } from "antd";
-import config from "../../config";
+import config from "../../../config";
 import moment from "moment";
 import qs from "query-string";
-import history from "../../history";
-import SearchBox from "../DatasetList/SearchBox"
+import history from "../../../history";
+import SearchBox from "../../DatasetList/SearchBox"
 
 import _ from "lodash";
 
@@ -70,8 +70,7 @@ class RefTable extends React.Component {
     };
   }
 
-  componentWillMount() {
-    const { datasetKey } = this.props;
+  componentDidMount() {
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = {
@@ -85,6 +84,12 @@ class RefTable extends React.Component {
     } 
 
     this.setState({ params }, this.getData);
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')){
+      this.getData()
+    }
   }
 
   getData = () => {

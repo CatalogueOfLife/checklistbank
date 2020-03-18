@@ -21,13 +21,14 @@ import CatalogueName from "./pages/catalogue/CatalogueName"
 import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
 import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch"
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions"
+import CatalogueOptions from "./pages/catalogue/Options"
 import Admin from "./pages/Admin"
 import SectorDiff from "./pages/catalogue/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import Helmet from "react-helmet";
-import Reference from "./pages/Reference";
+import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage"
 import NameIndex from "./pages/NameIndex"
 import CatalogueSources from "./pages/catalogue/CatalogueSources"
@@ -80,7 +81,7 @@ class App extends Component {
                 key="Reference"
                 path="/catalogue/:catalogueKey/reference/:key?"
                 render={({ match, location }) => (
-                  <Reference section={match.params.section} location={location} />
+                  <CatalogueReferences section={match.params.section} location={location} />
                 )}
               />
               <Route
@@ -90,6 +91,13 @@ class App extends Component {
                 render={({ match, location }) => (
                   <Imports section={match.params.section} location={location} />
                 )}
+              />
+              <PrivateRoute
+                exact
+                key="CatalogueOptions"
+                path={`/catalogue/:catalogueKey/options`}
+                roles={["editor"]}
+                component={CatalogueOptions}
               />
               <PrivateRoute
                 exact
