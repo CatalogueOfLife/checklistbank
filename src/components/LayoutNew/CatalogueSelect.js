@@ -64,12 +64,17 @@ class CatalogueSelect extends React.Component {
         }
       } = this.props;
     const {catalogues} = this.state;
-    const selectedCatalogue = catalogues.find(c => c.key === newCatalogueKey)
-    //setCatalogue(selectedCatalogue)
-      const newPath = _.get(this.props, "location.pathname").replace(`catalogue/${catalogueKey}/`, `catalogue/${newCatalogueKey}/`);
+    if(catalogueKey){
+        const newPath = _.get(this.props, "location.pathname").replace(`catalogue/${catalogueKey}/`, `catalogue/${newCatalogueKey}/`);
     history.push({
         pathname: newPath
       });
+    } else {
+        const selectedCatalogue = catalogues.find(c => c.key === newCatalogueKey)
+
+        setCatalogue(selectedCatalogue)
+    }
+      
     this.setState({visible:false})
   };
   render = () => {
