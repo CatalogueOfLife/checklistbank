@@ -205,12 +205,6 @@ class SyncTable extends React.Component {
     this.setState({ currentDataSourceLength: extra.currentDataSource.length });
   };
 
-  deleteSectorFromTable = sector => {
-    this.setState({
-      data: this.state.data.filter(d => d.key !== sector.data.key)
-    });
-  };
-
   onDeleteSector = sector => {
     axios
       .delete(`${config.dataApi}sector/${sector.key}`)
@@ -425,8 +419,8 @@ class SyncTable extends React.Component {
             onChange={(date, dateString) => this.updateSearch({ lastSync: dateString })} />
             </FormItem>
           </Form>
-          <Row>
-            <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+          <Row style={{marginTop: "10px"}}>
+            <Col span={6} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Button type="danger" onClick={this.resetAllFilters}>
                 Reset all
               </Button>
@@ -435,7 +429,7 @@ class SyncTable extends React.Component {
           
             
             </Col>
-            <Col span={12} style={{textAlign: "right"}}>
+            <Col span={18} style={{textAlign: "right"}}>
             <SyncAllSectorsButton 
             dataset={params.subjectDatasetKey ? {key: params.subjectDatasetKey} : null} 
             catalogueKey={catalogueKey}
@@ -465,7 +459,7 @@ class SyncTable extends React.Component {
             <SectorTable
               data={data}
               loading={loading}
-              onSectorRematch={this.deleteSectorFromTable}
+              onSectorRematch={this.getData}
               onDeleteSector={this.onDeleteSector}
               pagination={pagination}
               handleTableChange={this.handleTableChange}

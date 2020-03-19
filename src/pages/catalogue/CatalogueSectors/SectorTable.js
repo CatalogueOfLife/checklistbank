@@ -288,21 +288,23 @@ class SyncTable extends React.Component {
             type={"primary"}
             onClick={() => {
                 axios.post(`${config.dataApi}assembly/${catalogueKey}/rematch`, {sectorKey: record.key})
-                .then(sector => {
-                    const success = _.get(sector, 'data.target.id') && _.get(sector, 'data.subject.id');
+                .then(rematchInfo => {
+                    const success = _.get(rematchInfo, 'data.sectors.updated') ===1 && _.get(rematchInfo, 'data.sectors.broken')===0;
 
                    if(success){
                     notification.success({
-                        message: "Rematch done with success"
+                        message: "Rematch success",
+                        description: `Broken sectors: 0`
                       })
+                      
                       if(this.props.onSectorRematch && typeof this.props.onSectorRematch === 'function'){
-                        this.props.onSectorRematch(sector)
+                        this.props.onSectorRematch(record)
 
                       }
                    } else {
                     notification.error({
                         message: "Rematch failed",
-                        description: `Missing ID: ${['target', 'subject'].filter(t => !_.get(sector, `data.${t}.id`)).join(' and ')}`
+                        description: `Broken sectors: 1`
                       })
                    }
                 })
