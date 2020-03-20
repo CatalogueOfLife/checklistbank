@@ -47,7 +47,7 @@ class TaxonSources extends React.Component {
                       
                    
                       <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}/meta` }}
+                      to={{ pathname: `/dataset/${d.key}/meta` }}
                       exact={true}
                     >
                       { (index ? ', ' : '') + (d.alias || d.key) }
@@ -67,7 +67,7 @@ class TaxonSources extends React.Component {
                       
                    
                       <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/dataset/${d.key}/meta` }}
+                      to={{ pathname: `/dataset/${d.key}/meta` }}
                       exact={true}
                     >
                       { (index ? ', ' : '') + (d.alias || d.key) }

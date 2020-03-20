@@ -99,7 +99,7 @@ class DatasetImportMetrics extends React.Component {
       .then(res => {
         const lastFinished = res.data.find(e => e.state === 'finished')
         if(!_.get(this.props, "match.params.taxonOrNameKey") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
-          history.push(`/catalogue/${catalogueKey}/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
+          history.push(`/dataset/${datasetKey}/metrics/${lastFinished.attempt}`)
         }
         this.setState({ importHistory: res.data, err: null });
       })

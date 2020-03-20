@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import BorderedListItem from "./BorderedListItem"
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
 const SynonymsTable = ({ datasetKey, data, style, catalogueKey }) => {
-  const uri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/name/`;
+  const uri =  `/dataset/${datasetKey}/name/`;
   return (
     <div style={style}>
       {data

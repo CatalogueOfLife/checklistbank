@@ -221,7 +221,7 @@ class DuplicateSearchPage extends React.Component {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/catalogue/${_.get(record, "sector.datasetKey")}/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
+              pathname: `/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
             }}
             exact={true}
           >

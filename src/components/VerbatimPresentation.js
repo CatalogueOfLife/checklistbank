@@ -77,7 +77,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
+              pathname: `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -87,7 +87,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
                   value
                 )}`
               }}
@@ -112,7 +112,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
+              pathname: `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -123,7 +123,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
                   value
                 )}`
               }}

@@ -275,7 +275,7 @@ class ColTreeNode extends React.Component {
                 <div >
                   <span 
                   onContextMenu={()=> {
-                    const uri = catalogueKey === taxon.datasetKey ? `/catalogue/${catalogueKey}/taxon/${taxon.id}` : `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    const uri = catalogueKey === taxon.datasetKey ? `/catalogue/${catalogueKey}/taxon/${taxon.id}` : `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
                     const win = window.open(uri, '_blank');
                     win.focus();
                   }}>
@@ -345,13 +345,13 @@ class ColTreeNode extends React.Component {
                 <div >
                   <span 
                   onContextMenu={()=> {
-                    const uri = `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    const uri = `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
                     const win = window.open(uri, '_blank');
                     win.focus();
                   }}>
                     <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    pathname: `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
                   }}
                   exact={true}
                 >

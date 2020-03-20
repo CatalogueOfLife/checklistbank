@@ -17,7 +17,7 @@ export default (catalogueKey) => ({
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+              pathname: `/dataset/${_.get(record, "datasetKey")}/${
                 _.get(record, "bareName")  ? "name" : "taxon"
               }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}
@@ -117,7 +117,7 @@ export default (catalogueKey) => ({
           <NavLink
           key={_.get(record, "id")}
           to={{
-            pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+            pathname: `/dataset/${_.get(record, "datasetKey")}/${
               _.get(record, "bareName")  ? "name" : "taxon"
             }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
           }}
@@ -225,7 +225,7 @@ export default (catalogueKey) => ({
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+              pathname: `/dataset/${_.get(record, "datasetKey")}/${
                 _.get(record, "bareName")  ? "name" : "taxon"
               }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}
@@ -323,7 +323,7 @@ export default (catalogueKey) => ({
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "datasetKey")}/${
+              pathname: `/dataset/${_.get(record, "datasetKey")}/${
                 _.get(record, "bareName")  ? "name" : "taxon"
               }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
             }}

@@ -22,6 +22,7 @@ import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
 import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch"
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions"
 import CatalogueOptions from "./pages/catalogue/Options"
+import CatalogueSourceDataset from "./pages/catalogue/SourceDataset"
 import Admin from "./pages/Admin"
 import SectorDiff from "./pages/catalogue/SectorDiff"
 import Imports from "./pages/Imports";
@@ -186,8 +187,22 @@ class App extends Component {
               
               <Route
                 exact
+                key="CatalogueSourceDataset"
+                path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates)`}
+                component={CatalogueSourceDataset}
+              
+              />
+              <Route
+                exact
                 key="datasetKey"
-                path={`/catalogue/:catalogueKey/dataset/:key/:section?/:taxonOrNameKey?`}
+                path={`/catalogue/:catalogueKey/dataset/:key/:section:(metrics|classification|sectors|meta|names|taxon|name|verbatim)/:taxonOrNameKey?`}
+                component={DatasetPage}
+              
+              />
+              <Route
+                exact
+                key="datasetKey2"
+                path={`/dataset/:key/:section?/:taxonOrNameKey?`}
                 component={DatasetPage}
               
               />
@@ -204,6 +219,12 @@ class App extends Component {
           <Route   
                          
                 key="datasetProvider"
+                path={`/dataset/:key`}
+                component={DatasetProvider}
+              /> 
+          <Route   
+                         
+                key="sourceDatasetProvider"
                 path={`/catalogue/:catalogueKey/dataset/:key`}
                 component={DatasetProvider}
               /> 

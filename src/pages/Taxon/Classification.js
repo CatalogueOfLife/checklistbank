@@ -8,7 +8,7 @@ const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey }) =
     <PresentationItem md={6} label={_.startCase(t.name.rank)} classes={{formItem: {borderBottom: 'none'}}} key={t.name.rank}>
       <NavLink
         to={{
-          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/dataset/${datasetKey}/classification`,
           search: `?${datasetKey === catalogueKey ? 'assemblyTaxonKey' : 'taxonKey'}=${t.id}`
         }}
       >
@@ -19,7 +19,7 @@ const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey }) =
   <PresentationItem md={6} label={_.get(taxon, 'name.rank') ? _.startCase(taxon.name.rank) : ''} classes={{formItem: {borderBottom: 'none'}}} >
       <NavLink
         to={{
-          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/dataset/${datasetKey}/classification`,
           search: `?${datasetKey === catalogueKey ? 'assemblyTaxonKey' : 'taxonKey'}=${_.get(taxon, 'id')}`
         }}
       >

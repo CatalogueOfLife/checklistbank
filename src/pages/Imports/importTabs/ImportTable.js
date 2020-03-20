@@ -59,7 +59,7 @@ class ImportTable extends React.Component {
             return (
       
               <NavLink
-                to={{ pathname: `/catalogue/${this.props.catalogueKey}/dataset/${record.datasetKey}/names` }}
+                to={{ pathname: `/dataset/${record.datasetKey}/names` }}
                 exact={true}
               >
                 {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}

@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
             <Breadcrumb.Item key={taxon.id}>
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+                  pathname: `/dataset/${datasetKey}/classification`,
                   search: `?sourceTaxonKey=${taxon.id}`
                 }}
               >
@@ -23,7 +23,7 @@ import { NavLink } from "react-router-dom";
             <Breadcrumb.Item key={taxon.id}>
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`,
+                  pathname: `/dataset/${datasetKey}/classification`,
                   search: `?sourceTaxonKey=${taxon.id}`
                 }}
               >

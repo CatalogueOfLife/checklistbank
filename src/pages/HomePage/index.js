@@ -143,7 +143,7 @@ class HomePage extends React.Component {
               {colDraftData && (
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
+                    pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
                   }}
                   exact={true}
                 >
@@ -158,7 +158,7 @@ class HomePage extends React.Component {
               {datasets && (
                   <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset`
+                    pathname: `/dataset`
                   }}
                   exact={true}
                 >
@@ -212,7 +212,7 @@ class HomePage extends React.Component {
                       {datasets.result.map(d => <li key={d.key}>
                         <NavLink 
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${d.key}`
+                    pathname: `/dataset/${d.key}`
                   }}
                   exact={true}
                 >

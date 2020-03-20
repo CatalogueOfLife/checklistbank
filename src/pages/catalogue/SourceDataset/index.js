@@ -1,29 +1,20 @@
 import React from "react";
-import config from "../../config";
+import config from "../../../config";
 import { Redirect } from 'react-router-dom'
 import axios from "axios";
-import queryString from "query-string";
 import { Alert } from "antd";
-import DatasetMeta from "./datasetPageTabs/DatasetMeta";
-import DatasetImportMetrics from "../DatasetImportMetrics";
-import DatasetClassification from "./datasetPageTabs/DatasetClassification";
-import DatasetSectors from "./datasetPageTabs/DatasetSectors"
-import DatasetReferences from "./datasetPageTabs/DatasetReferences"
-import Layout from "../../components/LayoutNew";
-import DatasetIssues from "./datasetPageTabs/DatasetIssues"
-import DatasetTasks from "./datasetPageTabs/DatasetTasks"
-import NameSearch from "../NameSearch"
-import WorkBench from "../WorkBench"
 
-import withContext from "../../components/hoc/withContext"
-import Exception404 from "../../components/exception/404";
+import Layout from "../../../components/LayoutNew";
+import DatasetIssues from "./subPages/DatasetIssues"
+import DatasetTasks from "./subPages/DatasetTasks"
+import WorkBench from "../../WorkBench"
+
+import withContext from "../../../components/hoc/withContext"
 
 import _ from 'lodash'
 import Helmet from 'react-helmet'
-import Duplicates from "../Duplicates";
-import Taxon from "../Taxon"
-import Name from "../Name"
-import VerbatimRecord from "../VerbatimRecord"
+import Duplicates from "../../Duplicates";
+
 import moment from "moment"
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -56,8 +47,6 @@ class DatasetPage extends React.Component {
 
   getData = datasetKey => {
     
-    const {dataset} = this.props;
-
     Promise.all([axios(`${config.dataApi}dataset/${datasetKey}/import`), axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)])
       
       .then(res => {
@@ -80,7 +69,6 @@ class DatasetPage extends React.Component {
       match: {
         params: { key: datasetKey, section, taxonOrNameKey , catalogueKey}
       },
-      location,
       dataset,
       importStateMap
     } = this.props;
@@ -99,7 +87,7 @@ class DatasetPage extends React.Component {
   
    
     const sect = (!section) ? "meta" : section.split('?')[0];
-    const openKeys = ['datasetKey']
+    const openKeys = ['assembly','sourceDataset' ]
     const selectedKeys = [section]
     return (
       
@@ -119,38 +107,15 @@ class DatasetPage extends React.Component {
       { importState && _.get(importStateMap[importState], 'running' ) === "true" && <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
       { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "metrics" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} match={this.props.match} updateImportState={() => this.getData(datasetKey)} />}
-        {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
-        {section === "classification" && (
-          <DatasetClassification dataset={dataset}  location={location} />
-        )}
-        {section === "sectors" && (
-          <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} location={location} />
-        )}
-        
-        {sect === "names" && (
-          <NameSearch datasetKey={datasetKey} location={this.props.location} />
-        )}
         {sect === "workbench" && (
           <WorkBench datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} /> 
         )} {/* catalogueKeys are used to scope decisions and tasks */}
         {sect === "duplicates" && (
           <Duplicates datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} />
         )}
-        {sect === "reference" && (
-          <DatasetReferences datasetKey={datasetKey} location={this.props.location} />
-        )}
+        
         {sect === "tasks" && (
           <DatasetTasks datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey}/>
-        )}
-        {sect === "taxon" && (
-          <Taxon datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
-        )}
-        {sect === "name" && (
-          <Name datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
-        )}
-        {sect === "verbatim" && (
-          <VerbatimRecord datasetKey={datasetKey} lastSuccesFullImport={lastSuccesFullImport} location={this.props.location} match={this.props.match}  />
         )}
         
 

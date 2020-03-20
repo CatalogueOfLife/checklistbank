@@ -34,7 +34,7 @@ import withContext from "../../components/hoc/withContext";
             <NavLink
               key={_.get(record, "id")}
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(record, "name.datasetKey")}/${
+                pathname: `/dataset/${_.get(record, "name.datasetKey")}/${
                   _.get(record, "bareName") ? "name" : "taxon"
                 }/${encodeURIComponent(
                    _.get(record, "accepted.name.id") ? _.get(record, "accepted.name.id") : _.get(record, "name.id")

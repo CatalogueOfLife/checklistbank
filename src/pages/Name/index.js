@@ -195,7 +195,7 @@ class NamePage extends React.Component {
       datasetKey,
       catalogueKey
     } = this.props;
-    const taxonUri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/taxon/` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/`;
+    const taxonUri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/taxon/` : `/dataset/${datasetKey}/taxon/`;
     return (
      
         <div

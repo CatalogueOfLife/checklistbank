@@ -1,11 +1,11 @@
 import React from "react";
 import { Table, Alert, Tag, Tooltip, Icon } from "antd";
 import axios from "axios"
-import config from "../../../config";
+import config from "../../../../config";
 import { NavLink } from "react-router-dom";
-import PageContent from '../../../components/PageContent'
-import withContext from '../../../components/hoc/withContext'
-import MultiValueFilter from '../../NameSearch/MultiValueFilter'
+import PageContent from '../../../../components/PageContent'
+import withContext from '../../../../components/hoc/withContext'
+import MultiValueFilter from '../../../NameSearch/MultiValueFilter'
 const _ = require("lodash");
 
 const getColumns = ({issueMap, catalogueKey}) => {

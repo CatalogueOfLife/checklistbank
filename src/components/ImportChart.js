@@ -93,7 +93,7 @@ class ImportChart extends React.Component {
       point: {
         events: {
           click: (e) => {
-            history.push(`/catalogue/${catalogueKey}/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
+            history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
           }
         }
       },

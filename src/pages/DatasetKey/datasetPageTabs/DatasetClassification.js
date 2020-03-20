@@ -34,14 +34,14 @@ class DatasetClassification extends React.Component {
                       datasetKey={dataset.key}
                       onSelectName={name => {
                         history.push({
-                          pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
+                          pathname: `/dataset/${dataset.key}/classification`,
                           search: `?${queryString.stringify({taxonKey: _.get(name, "key")})}`
                         });
                         this.treeRef.reloadRoot()
                       }}
                       onResetSearch={() => {
                         history.push({
-                          pathname: `/catalogue/${catalogueKey}/dataset/${dataset.key}/classification`,
+                          pathname: `/dataset/${dataset.key}/classification`,
                         });
                       }}
                     />
@@ -79,7 +79,7 @@ class DatasetClassification extends React.Component {
             } else {
               
               history.push({
-                pathname: `/catalogue/${catalogueKey}/dataset/${catalogueKey}/classification`,
+                pathname: `/dataset/${catalogueKey}/classification`,
                 search: `?${queryString.stringify({taxonKey: _.get(sector, "target.id")})}`
               });
             }

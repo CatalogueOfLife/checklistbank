@@ -103,7 +103,7 @@ class SyncTable extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/metrics` }}
+              to={{ pathname: `/dataset/${record.subjectDatasetKey}/metrics` }}
               exact={true}
             >
               <Highlighter
@@ -150,7 +150,7 @@ class SyncTable extends React.Component {
               </div>
               {!record.subject.id  && <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/names`,
+                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
                   search: `?q=${record.subject.name}`
                   
                 }}
@@ -296,7 +296,7 @@ class SyncTable extends React.Component {
                         message: "Rematch success",
                         description: `Broken sectors: 0`
                       })
-                      
+
                       if(this.props.onSectorRematch && typeof this.props.onSectorRematch === 'function'){
                         this.props.onSectorRematch(record)
 

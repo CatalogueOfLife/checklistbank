@@ -101,7 +101,7 @@ const getColumns = (baseUri) => [
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-    const baseUri = this.props.catalogueKey === this.props.datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
+    const baseUri = this.props.catalogueKey === this.props.datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/dataset/${this.props.datasetKey}`
     this.state = {
       data: [],
       advancedFilters: false,
@@ -126,7 +126,7 @@ class NameSearchPage extends React.Component {
         sortBy: "taxonomic"
       };
       history.push({
-        pathname: _.get(this.props, "location.path"), // datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
+        pathname: _.get(this.props, "location.path"), 
         search: `?limit=50&offset=0`
       });
     } else if (!params.facet) {
@@ -148,7 +148,7 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: _.get(this.props, "location.path"), //datasetKey ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/names` : `/names`,
+      pathname: _.get(this.props, "location.path"), 
       search: `?${qs.stringify(params)}`
     });
     const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`
@@ -288,7 +288,7 @@ class NameSearchPage extends React.Component {
       : null;
 
 
-      const baseUri = catalogueKey === datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/catalogue/${this.props.catalogueKey}/dataset/${this.props.datasetKey}`
+      const baseUri = catalogueKey === datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/dataset/${this.props.datasetKey}`
 
 
     return (

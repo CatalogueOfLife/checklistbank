@@ -265,7 +265,7 @@ class TaxonPage extends React.Component {
                   <Button
                     onClick={() => {
                       history.push(
-                        datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/${taxon.name.id}` : `/catalogue/${catalogueKey}/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
+                        datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/${taxon.name.id}` : `/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
                       );
                     }}
                   >
@@ -461,7 +461,7 @@ class TaxonPage extends React.Component {
                   {" "}
                   <NavLink
                     to={{
-                      pathname: `/catalogue/${catalogueKey}/dataset/${_.get(sourceDataset, "key")}/meta`
+                      pathname: `/dataset/${_.get(sourceDataset, "key")}/meta`
                     }}
                     exact={true}
                   >

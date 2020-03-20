@@ -21,7 +21,7 @@ const NameRelations = ({ data, style, catalogueKey, datasetKey }) => {
               to={{
                 pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
                   r.relatedName.id
-                )}` : `/catalogue/${catalogueKey}/dataset/${datasetKey}/name/${encodeURIComponent(
+                )}` : `/dataset/${datasetKey}/name/${encodeURIComponent(
                   r.relatedName.id
                 )}`
               }}
