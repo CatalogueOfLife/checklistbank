@@ -18,7 +18,7 @@ import Auth from "../../components/Auth";
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: null, importHistory: [], historyVisible: false };
+    this.state = { loading: false, data: null, importHistory: null, historyVisible: false };
   }
 
   componentWillMount() {
@@ -104,7 +104,7 @@ class DatasetImportMetrics extends React.Component {
         this.setState({ importHistory: res.data, err: null });
       })
       .catch(err => {
-        this.setState({ historyError: err, importHistory: [] });
+        this.setState({ historyError: err, importHistory: null });
       });
   };
 
@@ -125,7 +125,7 @@ class DatasetImportMetrics extends React.Component {
     } = this.props;
 
     const { dataset, user, origin, importState } = this.props;
-    const { importHistory } = this.state;
+    const { importHistory, loading } = this.state;
 
     return (
       
@@ -135,7 +135,10 @@ class DatasetImportMetrics extends React.Component {
               <Alert type="warning" message="No finished imports yet" />
             </Row>
           )}
-          {importHistory && importHistory.length === 0 && <Alert style={{marginTop: '16px'}} message="This dataset has never been imported. Press the import button to import it" type="warning" />}
+          {!loading && dataset && importHistory && importHistory.length === 0 && 
+          <Alert style={{marginTop: '16px'}} 
+            message={dataset.origin === 'managed' ? "This dataset has never been released." : "This dataset has never been imported. Press the import button to import it" } 
+            type="warning" />}
           {importHistory && importHistory.length > 0 && (
             <Drawer
               title="Import history"

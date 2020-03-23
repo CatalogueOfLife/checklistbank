@@ -407,7 +407,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )} */}
-            {selectedDataset.origin !== 'managed' &&  <Menu.Item key="metrics">
+            {<Menu.Item key="metrics">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
@@ -416,7 +416,7 @@ class BasicMenu extends Component {
                     )}/metrics`
                   }}
                 >
-                  Import Metrics
+                {selectedDataset.origin !== 'managed' ? 'Import Metrics' : 'Release Metrics'}  
                 </NavLink>
               </Menu.Item> }
 {/*               {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
