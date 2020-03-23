@@ -259,6 +259,25 @@ class WorkBench extends React.Component {
     } }, this.getData);
   }
 
+  componentDidUpdate = (prevProps) => {
+    const { datasetKey, catalogueKey} = this.props;
+
+    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey') || 
+    _.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey')){
+     const  params = { limit: 50, offset: 0, facet: FACETS };
+      history.push({
+        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+        search: `?limit=50&offset=0`
+      });
+      columnFilters.forEach(param => this.updateFilter(params, {}, param));
+      this.setState({ params, pagination: {
+        pageSize: params.limit,
+        current: (Number(params.offset) / Number(params.limit)) +1
+        
+      } }, this.getData);
+    }
+  }
+
   getData = () => {
     const { params } = this.state;
     this.setState({ loading: true });

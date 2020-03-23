@@ -20,6 +20,14 @@ class DatasetTasks extends React.Component {
     this.getManusciptNames();
   }
 
+  componentDidUpdate = (prevProps) => {
+    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey') || 
+    _.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey')){
+      this.getData()
+      this.getManusciptNames();
+    }
+  }
+
   getData = async () => {
     const { datasetKey, catalogueKey } = this.props;
 

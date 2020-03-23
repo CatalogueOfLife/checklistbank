@@ -66,6 +66,12 @@ class DatasetIssues extends React.Component {
     
   }
 
+  componentDidUpdate = (prevProps) => {
+    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')){
+      this.getData()
+    }
+  }
+
   getData = () => {
     const { datasetKey, issueMap } = this.props;
 
