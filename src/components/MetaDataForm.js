@@ -233,6 +233,7 @@ class RegistrationForm extends React.Component {
             <Select
               style={{ width: 200 }}
               onChange={value => this.setState({ origin: value })}
+              showSearch
             >
               {datasetoriginEnum.map(f => {
                 return (
@@ -251,7 +252,7 @@ class RegistrationForm extends React.Component {
                 ? _.get(data, "dataFormat")
                 : ""
             })(
-              <Select style={{ width: 200 }}>
+              <Select style={{ width: 200 }} showSearch>
                 {dataformatEnum.map(f => {
                   return (
                     <Option key={f} value={f}>
@@ -292,7 +293,7 @@ class RegistrationForm extends React.Component {
                 }
               ]
             })(
-              <Select style={{ width: 200 }}>
+              <Select style={{ width: 200 }} showSearch>
                 {frequencyEnum.map(f => {
                   return (
                     <Option key={f} value={f}>
@@ -314,7 +315,7 @@ class RegistrationForm extends React.Component {
               }
             ]
           })(
-            <Select style={{ width: 200 }}>
+            <Select style={{ width: 200 }} showSearch>
               {datasettypeEnum.map(f => {
                 return (
                   <Option key={f} value={f}>
@@ -329,7 +330,7 @@ class RegistrationForm extends React.Component {
           {getFieldDecorator("code", {
             initialValue: _.get(data, "code") ? _.get(data, "code") : ""
           })(
-            <Select style={{ width: 200 }}>
+            <Select style={{ width: 200 }} showSearch>
               {nomCode.map(c => {
                 return (
                   <Option
@@ -380,7 +381,7 @@ class RegistrationForm extends React.Component {
               }
             ]
           })(
-            <Select style={{ width: 200 }}>
+            <Select style={{ width: 200 }} showSearch>
               {licenseEnum.map(f => {
                 return (
                   <Option key={f} value={f}>
@@ -502,7 +503,7 @@ class RegistrationForm extends React.Component {
               {getFieldDecorator(`settings.${s.name}`, {
                 initialValue:  _.get(data, `settings.${s.name}`) ? _.get(data, `settings.${s.name}`) : ""
               })(
-                s.type === "NomCode" ? <Select style={{ width: 200 }}>
+                s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch>
                 {nomCode.map(c => {
                   return (
                     <Option
@@ -512,7 +513,7 @@ class RegistrationForm extends React.Component {
                   );
                 })}
               </Select> :
-                <Select style={{ width: 200 }}>
+                <Select style={{ width: 200 }} showSearch>
               {this.props[_.camelCase(s.type)].map(e => {
                 return (
                   <Option key={e.name} value={e.name}>

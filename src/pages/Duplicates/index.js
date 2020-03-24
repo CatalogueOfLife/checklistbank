@@ -542,6 +542,8 @@ class DuplicateSearchPage extends React.Component {
                   value={this.state.selectedPreset}
                   style={{ width: 500, marginRight: 10 }}
                   onChange={this.onPresetSelect}
+                  optionFilterProp="children"
+                  showSearch
                 >
                   {queryPresets.map(p => (
                     <Option key={p.id} value={p.id} params={p.params}>
@@ -568,6 +570,7 @@ class DuplicateSearchPage extends React.Component {
                       marginBottom: "10px"
                     }}
                     onChange={value => this.updateSearch({ category: value })}
+                    showSearch
                   >
                     <Option value="binomial">binomial</Option>
                     <Option value="trinomial">trinomial</Option>
@@ -583,6 +586,7 @@ class DuplicateSearchPage extends React.Component {
                       marginBottom: "10px"
                     }}
                     onChange={value => this.updateSearch({ minSize: value })}
+                    showSearch
                   >
                     {[2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
                       <Option key={i} value={i}>
@@ -833,6 +837,7 @@ class DuplicateSearchPage extends React.Component {
                   onChange={this.onDecisionChange}
                   value={decision ? decision : undefined}
                   placeholder="Pick decision"
+                  showSearch
                 >
                   <OptGroup label="Status">
                     {taxonomicstatus.map(s => (
