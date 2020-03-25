@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { Switch, Rate, Row, Col, Select } from "antd";
+import { Switch, Rate, Row, Col } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -17,7 +17,6 @@ import moment from 'moment'
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import BooleanValue from '../../../components/BooleanValue'
 
-const Option = Select.Option;
 
 class DatasetMeta extends React.Component {
   constructor(props) {
@@ -79,10 +78,10 @@ class DatasetMeta extends React.Component {
           
           <Col span={4}>
            { data && !data.deleted &&  <LogoUpload datasetKey={this.props.id} />}
-            {data && _.get(data, 'origin') === "uploaded" &&
+            {data  &&
         
          
-               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.state, 'data.key')} />
+               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.state, 'data.key')} origin={_.get(this.state, 'data.origin')} />
              
         }
           </Col>
@@ -189,8 +188,8 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="modified" defaultMessage="Modified" />}>
           {`${moment(data.modified).format('MMMM Do YYYY, h:mm:ss a')} by ${data.modifiedByUser}`}
           </PresentationItem>
-          <section class="code-box" style={{marginTop: '32px'}}>
-          <div class="code-box-title">Settings</div>
+          <section className="code-box" style={{marginTop: '32px'}}>
+          <div className="code-box-title">Settings</div>
         </section>
         
         {datasetSettings.filter(s => s.type === "Boolean").map(s => 

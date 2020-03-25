@@ -342,11 +342,11 @@ class NameSearchPage extends React.Component {
                       }
                     />
                   </FormItem>
-                  <FormItem label="Match whole words">
+                  <FormItem label="Match partial words">
                     <Switch
-                      checked={params.wholeWords === true}
+                      checked={params.prefix === true}
                       onChange={value =>
-                        this.updateSearch({ wholeWords: value })
+                        this.updateSearch({ prefix: value })
                       }
                     />
                   </FormItem>

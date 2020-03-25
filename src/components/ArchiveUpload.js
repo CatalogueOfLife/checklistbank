@@ -2,8 +2,11 @@ import React from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, Icon, message, Button, Alert } from "antd";
+import { Upload, Icon, message, Button, Alert, Modal } from "antd";
 import ErrorMsg from "../components/ErrorMsg";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
+// const { confirm } = Modal;
 
 class ArchiveUpload extends React.Component {
   constructor(props) {
@@ -11,6 +14,8 @@ class ArchiveUpload extends React.Component {
     this.customRequest = this.customRequest.bind(this);
     this.onChange = this.onChange.bind(this);
     this.state = {
+      confirmPromise: null,
+      visible: false,
       submissionError: null,
       fileList: []
     };
@@ -26,11 +31,11 @@ class ArchiveUpload extends React.Component {
       .post(options.action, options.file, config)
       .then(res => {
         options.onSuccess(res.data, options.file);
-        this.setState({ submissionError: null });
+        this.setState({ submissionError: null, confirmPromise: null });
       })
       .catch(err => {
         options.onError(err)
-        this.setState({ submissionError: err });
+        this.setState({ submissionError: err, confirmPromise: null  });
         console.log(err);
       });
   };
@@ -44,11 +49,16 @@ class ArchiveUpload extends React.Component {
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
-    this.setState({fileList: [info.file]})
+    this.setState({fileList: !info.file.status ? [] : [info.file]})
   }
+
+  confirmUpload = (file) => {
+    return window.confirm(`ALL DATA WILL BE REPLACED WITH CONTENT OF ${file.name}, PROCEED?`); 
+  }
+
   render() {
-    const { datasetKey } = this.props;
-    const { submissionError, fileList } = this.state;
+    const { datasetKey, origin } = this.props;
+    const { submissionError, fileList, visible } = this.state;
     return (
       <div className="clearfix">
         {submissionError && (
@@ -60,13 +70,15 @@ class ArchiveUpload extends React.Component {
             type="error"
           />
         )}
+       
         <Upload
           action={`${config.dataApi}importer/${datasetKey}`}
           customRequest={this.customRequest}
           onChange={this.onChange}
           fileList={fileList}
-        >
-          <Button>
+          beforeUpload={this.confirmUpload}
+        >          
+          <Button >
             <Icon type="upload" /> Upload Data Archive
           </Button>
         </Upload>

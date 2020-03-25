@@ -14,21 +14,7 @@ import history from "../../history"
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 const {Option} = Select;
-/* const { Option } = Select;
-const FormItem = Form.Item;
 
-
-const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
- */
 class CatalogueSelect extends React.Component {
   constructor(props) {
     super(props);

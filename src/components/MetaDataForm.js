@@ -6,7 +6,6 @@ import {
   Select,
   Button,
   Alert,
-  Checkbox,
   Rate,
   notification,
   Row,
@@ -18,7 +17,6 @@ import config from "../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
-import ArchiveUpload from "./ArchiveUpload";
 import withContext from "./hoc/withContext";
 
 const FormItem = Form.Item;
@@ -89,7 +87,6 @@ class RegistrationForm extends React.Component {
     const { submissionError, origin } = this.state;
     const {
       data,
-      datasetoriginEnum,
       frequencyEnum,
       datasettypeEnum,
       dataformatEnum,
@@ -220,32 +217,8 @@ class RegistrationForm extends React.Component {
             })(<Input type="url" />)}
           </FormItem>
         )}
-        <FormItem {...formItemLayout} label="Dataset Origin">
-          {getFieldDecorator("origin", {
-            initialValue: _.get(data, "origin") ? _.get(data, "origin") : "",
-            rules: [
-              {
-                required: true,
-                message: "Please select the dataset origin"
-              }
-            ]
-          })(
-            <Select
-              style={{ width: 200 }}
-              onChange={value => this.setState({ origin: value })}
-              showSearch
-            >
-              {datasetoriginEnum.map(f => {
-                return (
-                  <Option key={f} value={f}>
-                    {f}
-                  </Option>
-                );
-              })}
-            </Select>
-          )}
-        </FormItem>
-        {(origin === "external" || origin === "uploaded") && (
+
+        {(origin === "external" || origin === "managed") && (
           <FormItem {...formItemLayout} label="Data Format">
             {getFieldDecorator("dataFormat", {
               initialValue: _.get(data, "dataFormat")
