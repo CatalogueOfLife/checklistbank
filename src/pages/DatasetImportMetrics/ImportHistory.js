@@ -31,7 +31,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
           <React.Fragment>
             <NavLink
           to={{
-            pathname: `/dataset/${h.datasetKey}/metrics/${h.attempt}`
+            pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`
           }}
           exact={true}
         >
@@ -45,7 +45,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
           <React.Fragment>
              <NavLink
           to={{
-            pathname: `/dataset/${h.datasetKey}/metrics/${h.attempt}`
+            pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`
           }}
           exact={true}
         >

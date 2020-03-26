@@ -336,21 +336,18 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
-                <Menu.Item key="reference">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/reference`
-                    }}
-                  >
-                    References
-                  </NavLink>
-                </Menu.Item>
-              )}
-
+              {<Menu.Item key="imports">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      this.props,
+                      "selectedDataset.key"
+                    )}/imports`
+                  }}
+                >
+                {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
+                </NavLink>
+              </Menu.Item> }
               {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="classification">
                   <NavLink
@@ -362,20 +359,6 @@ class BasicMenu extends Component {
                     }}
                   >
                     Classification
-                  </NavLink>
-                </Menu.Item>
-              )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
-                <Menu.Item key="sectors">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        this.props,
-                        "selectedDataset.key"
-                      )}/sectors`
-                    }}
-                  >
-                    Sectors
                   </NavLink>
                 </Menu.Item>
               )}
@@ -393,6 +376,48 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+                <Menu.Item key="reference">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/reference`
+                    }}
+                  >
+                    References
+                  </NavLink>
+                </Menu.Item>
+              )}
+ {selectedDataset && selectedDataset.hasData && (
+                <Menu.Item key="verbatim"><NavLink
+                to={{
+                  pathname: `/dataset/${_.get(
+                    this.props,
+                    "selectedDataset.key"
+                  )}/verbatim`
+                }}
+              >
+                Verbatim
+              </NavLink></Menu.Item>
+              )}
+              
+              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+                <Menu.Item key="sectors">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        this.props,
+                        "selectedDataset.key"
+                      )}/sectors`
+                    }}
+                  >
+                    Sectors
+                  </NavLink>
+                </Menu.Item>
+              )}
+              
               {/* {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="issues">
                   <NavLink
@@ -407,18 +432,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )} */}
-            {<Menu.Item key="metrics">
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${_.get(
-                      this.props,
-                      "selectedDataset.key"
-                    )}/metrics`
-                  }}
-                >
-                {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
-                </NavLink>
-              </Menu.Item> }
+
 {/*               {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="tasks">
                   <NavLink
@@ -469,18 +483,7 @@ class BasicMenu extends Component {
                 <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
               )}
 
-              {selectedDataset && selectedDataset.hasData && (
-                <Menu.Item key="verbatim"><NavLink
-                to={{
-                  pathname: `/dataset/${_.get(
-                    this.props,
-                    "selectedDataset.key"
-                  )}/verbatim`
-                }}
-              >
-                Verbatim
-              </NavLink></Menu.Item>
-              )}
+             
             </SubMenu>
           )}
         </Menu>
