@@ -93,6 +93,7 @@ class RegistrationForm extends React.Component {
       licenseEnum,
       nomCode,
       datasetSettings,
+      datasetoriginEnum,
       form: { getFieldDecorator }
     } = this.props;
 
@@ -217,6 +218,33 @@ class RegistrationForm extends React.Component {
             })(<Input type="url" />)}
           </FormItem>
         )}
+        { !data && <FormItem {...formItemLayout} label="Dataset Origin" help="This cannot be changed later"
+>
+                  {getFieldDecorator("origin", {
+                    initialValue: "",
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please select the dataset origin"
+                      }
+                    ]
+                  })(
+                    <Select
+                      style={{ width: 200 }}
+                      onChange={value => this.setState({ origin: value })}
+                      showSearch
+                    >
+                      {datasetoriginEnum.map(f => {
+                        return (
+                          <Option key={f} value={f}>
+                            {f}
+                          </Option>
+                        );
+                      })}
+                    </Select>
+                  )}
+                </FormItem>
+        }
 
         {(origin === "external" || origin === "managed") && (
           <FormItem {...formItemLayout} label="Data Format">

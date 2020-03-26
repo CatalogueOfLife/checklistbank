@@ -14,6 +14,7 @@ import ImportButton from "../Imports/importTabs/ImportButton";
 import ImportHistory from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
 import Auth from "../../components/Auth";
+import ArchiveUpload from "../../components/ArchiveUpload"
 
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class DatasetImportMetrics extends React.Component {
     this.state = { loading: false, data: null, importHistory: null, historyVisible: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       match: {
         params: { taxonOrNameKey:attempt }
@@ -65,7 +66,7 @@ class DatasetImportMetrics extends React.Component {
     axios(uri)
       .then(res => {
         const data = attempt ? res.data : res.data[0];
-        if (["processing", "downloading", "inserting", "building metrics"].includes(data.state)) {
+        if (data && ["processing", "downloading", "inserting", "building metrics"].includes(data.state)) {
           if (!this.timer) {
             this.timer = setInterval(() => {
               this.getData(attempt);
@@ -80,10 +81,10 @@ class DatasetImportMetrics extends React.Component {
           this.getHistory().then(updateImportState);
           
         }
-        this.setState({ loading: false, data: data, err: null });
+        this.setState({ loading: false, data: data, hasNoImports: _.isUndefined(data), err: null });
       })
       .catch(err => {
-        this.setState({ loading: false, error: err, data: {} });
+        this.setState({ loading: false, error: err, data: null });
       });
   };
 
@@ -130,14 +131,10 @@ class DatasetImportMetrics extends React.Component {
     return (
       
         <PageContent>
-          {!this.state.loading && !this.state.data && (
-            <Row style={{ padding: "10px" }}>
-              <Alert type="warning" message="No finished imports yet" />
-            </Row>
-          )}
+          
           {!loading && dataset && importHistory && importHistory.length === 0 && 
           <Alert style={{marginTop: '16px'}} 
-            message={dataset.origin === 'managed' ? "This dataset has never been released." : "This dataset has never been imported. Press the import button to import it" } 
+            message={dataset.origin === 'managed' ? "This dataset has never been released." : `This dataset has never been imported.${Auth.isAuthorised(user, ["editor", "admin"]) ?  ' Press the import button to import it': ''}` } 
             type="warning" />}
           {importHistory && importHistory.length > 0 && (
             <Drawer
@@ -172,11 +169,41 @@ class DatasetImportMetrics extends React.Component {
               <Alert type="info" message={`Import on ${moment(this.state.data.started).format("lll")} unchanged from last import`} />
             </Row>
           )}
+          { Auth.isAuthorised(user, ["editor", "admin"]) &&  dataset &&     
+          <Row style={{ padding: "10px" }} type="flex" justify="end">
+               
+                
+               
+                <Col  style={{ textAlign: "right", marginRight: "8px" }}>
+                
+                   <ArchiveUpload datasetKey={_.get(dataset, 'key')} origin={_.get(dataset, 'origin')} /> 
 
+                </Col>
+                <Col  style={{ textAlign: "right" }}>
+                  
+                      <ImportButton
+                        style={{ display: "inline" }}
+                        record={{datasetKey: dataset.key}}
+                        onStartImportSuccess={() => this.getData(attempt)}
+                        onDeleteSuccess={() => this.getData(attempt)}
+                      />
+                    
+                  {importHistory && (
+                    <Button
+                      type="primary"
+                      style={{ display: "inline", marginLeft: "8px" }}
+                      onClick={this.showHistoryDrawer}
+                    >
+                      History
+                    </Button>
+                  )}
+                </Col> 
+              </Row>}
           {this.state.data && (
             <React.Fragment>
+          
               <Row style={{ padding: "10px" }}>
-                <Col span={19}>
+              <Col >
                   {_.map(
                     ['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount', 'mediaCount', 'descriptionCount'  ],
                     c => {
@@ -188,26 +215,6 @@ class DatasetImportMetrics extends React.Component {
                         ""
                       );
                     }
-                  )}
-                </Col>
-                <Col span={5} style={{ textAlign: "right" }}>
-                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    origin !== "uploaded" && dataset && (
-                      <ImportButton
-                        style={{ display: "inline" }}
-                        record={{datasetKey: dataset.key}}
-                        onStartImportSuccess={() => this.getData(attempt)}
-                        onDeleteSuccess={() => this.getData(attempt)}
-                      />
-                    )}
-                  {importHistory && (
-                    <Button
-                      type="primary"
-                      style={{ display: "inline", marginLeft: "8px" }}
-                      onClick={this.showHistoryDrawer}
-                    >
-                      History
-                    </Button>
                   )}
                 </Col>
               </Row>

@@ -416,7 +416,7 @@ class BasicMenu extends Component {
                     )}/metrics`
                   }}
                 >
-                {selectedDataset.origin !== 'managed' ? 'Import Metrics' : 'Release Metrics'}  
+                {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
                 </NavLink>
               </Menu.Item> }
 {/*               {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (

@@ -57,7 +57,7 @@ class ArchiveUpload extends React.Component {
   }
 
   render() {
-    const { datasetKey, origin } = this.props;
+    const { datasetKey, origin, style } = this.props;
     const { submissionError, fileList, visible } = this.state;
     return (
       <div className="clearfix">
