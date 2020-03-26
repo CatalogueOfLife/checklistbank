@@ -233,7 +233,18 @@ class AdminPage extends React.Component {
       .catch(err => this.setState({ error: err }));
   };
 
-
+  restartImporter = () => {
+    axios
+      .post(`${config.dataApi}importer/restart`)
+      .then(res => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Importer restarted"
+          });
+        });
+      })
+      .catch(err => this.setState({ error: err }));
+  };
 
   render() {
     const {
@@ -345,6 +356,22 @@ class AdminPage extends React.Component {
               Reindex all datasets
             </Button>
           </Popconfirm>
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to restart the importer?"
+            onConfirm={this.restartImporter}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+            >
+              Restart importer
+            </Button>
+          </Popconfirm>
+
+          
             </Col>
            
 
