@@ -29,7 +29,7 @@ class SectorDiff extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     let query = _.get(this.props, "location.search");
     // assembly/3/sync?datasetKey=211&state=finished
     const {

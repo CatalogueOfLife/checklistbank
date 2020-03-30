@@ -202,7 +202,7 @@ class SyncTable extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
       query = { limit: 25, offset: 0 };

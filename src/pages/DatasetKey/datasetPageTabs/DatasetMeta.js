@@ -24,7 +24,7 @@ class DatasetMeta extends React.Component {
     this.state = { data: null, editMode: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getData();
   }
 

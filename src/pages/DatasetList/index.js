@@ -191,7 +191,7 @@ class DatasetList extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = { limit: PAGE_SIZE, offset: 0 };

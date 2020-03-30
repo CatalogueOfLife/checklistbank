@@ -15,7 +15,7 @@ class DatasetTasks extends React.Component {
     this.state = { duplicates: [], duplicatesWithdecision: [], manuscriptNames: null, loading: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getData();
     this.getManusciptNames();
   }

@@ -17,7 +17,7 @@ class SectorNote extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
       if(this.props.note){
           this.setState({note: this.props.note})
       }

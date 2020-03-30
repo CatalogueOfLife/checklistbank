@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
-import withWidth, { MEDIUM, EXTRA_LARGE } from 'react-width'
+import withWidth, { LARGE, MEDIUM, EXTRA_LARGE } from 'react-width'
 import { Layout, Icon, Drawer, Row, Tag } from 'antd';
 import BasicMenu from './BasicMenu'
 import SelectLang from './SelectLang'
@@ -47,7 +47,7 @@ class SiteLayout extends Component {
     const { width, classes, selectedDataset, selectedTaxon, selectedName, selectedSector, openKeys, selectedKeys, title , taxonOrNameKey} = this.props;
     const collapsed = typeof this.state.collapsed === 'boolean'
       ? this.state.collapsed
-      : width < EXTRA_LARGE;
+      : width < LARGE;
     const isMobile = width < MEDIUM;
     const {gitVersion, gitBackendVersion} = this.state;
     let contentMargin = collapsed ? menuCollapsedWidth : menuWidth;

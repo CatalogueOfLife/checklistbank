@@ -38,7 +38,7 @@ class BasicMenu extends Component {
     ) {
       state.selectedKeys = this.props.selectedKeys;
     }
-    if (this.props.collapsed) {
+    if (!prevProps.collapsed && this.props.collapsed) {
       state.openKeys = [];
     } else if (
       JSON.stringify(this.props.openKeys) !== JSON.stringify(prevProps.openKeys)

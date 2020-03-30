@@ -78,7 +78,7 @@ class DuplicateSearchPage extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.initOrUpdate()
   }
 

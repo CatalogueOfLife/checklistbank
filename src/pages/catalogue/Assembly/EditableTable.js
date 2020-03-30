@@ -139,7 +139,7 @@ class EditableTable extends React.Component {
     ];
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const { data } = this.props;
 
     this.decorateEstimatesWithReference(data);

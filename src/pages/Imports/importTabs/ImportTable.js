@@ -121,7 +121,7 @@ class ImportTable extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {

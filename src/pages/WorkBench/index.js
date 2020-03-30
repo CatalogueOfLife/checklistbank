@@ -238,7 +238,7 @@ class WorkBench extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { datasetKey, catalogueKey} = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {

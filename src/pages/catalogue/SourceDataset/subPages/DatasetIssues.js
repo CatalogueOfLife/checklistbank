@@ -61,7 +61,7 @@ class DatasetIssues extends React.Component {
     this.state = { data: null };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getData();
     
   }

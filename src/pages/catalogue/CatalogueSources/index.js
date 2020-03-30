@@ -32,7 +32,7 @@ class GSDIssuesMatrix extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getData();
   }
 

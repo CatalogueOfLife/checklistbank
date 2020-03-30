@@ -57,7 +57,7 @@ class VernacularNamesTable extends React.Component {
       ]
     };
   }
-  componentWillMount = () => {
+  componentDidMount = () => {
     const {data} = this.props;
 
     const newData = data.map(this.decorateWithCountryByCode)

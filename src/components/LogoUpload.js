@@ -13,7 +13,7 @@ class LogoUpload extends React.Component {
       fileList: []
     };
   }
-componentWillMount(){
+componentDidMount(){
     this.getData()
 }
   getData = () => {

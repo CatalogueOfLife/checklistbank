@@ -35,7 +35,7 @@ class VerbatimPresentation extends React.Component {
       expanded: props.expanded !== false
     };
   }
-  componentWillMount() {
+  componentDidMount() {
     const { verbatimKey, datasetKey } = this.props;
     this.setState({ verbatimLoading: true });
     axios(
