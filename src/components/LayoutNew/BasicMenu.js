@@ -136,16 +136,16 @@ class BasicMenu extends Component {
                     pathname: `/catalogue/${catalogueKey}/sources`
                   }}>Source datasets</NavLink>
             </Menu.Item>
-              {selectedDataset &&  this.isSourceDataset(selectedDataset) &&  <SubMenu
+              { <SubMenu
               key="sourceDataset"
               title={
                 <span>
                   <Icon type="bars" />
-                  <span>{`Source: ${selectedDataset.key}`}</span> <SourceSelect />
+                  <span>{selectedDataset &&  this.isSourceDataset(selectedDataset) ? `Source: ${selectedDataset.key}` : 'Select source'}</span> <SourceSelect catalogueKey={catalogueKey} />
                 </span>
               }
             >
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
@@ -159,7 +159,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-                            {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+                            {selectedDataset &&  this.isSourceDataset(selectedDataset) &&  hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="tasks">
                   <NavLink
                     to={{
@@ -174,7 +174,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="workbench">
                   <NavLink
                     to={{
@@ -188,7 +188,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
+              {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
                 <Menu.Item key="duplicates">
                   <NavLink
                     to={{

@@ -116,7 +116,7 @@ class NameSearchPage extends React.Component {
     };
   }
 
-  componentDidiMount() {
+  componentDidMount() {
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = {

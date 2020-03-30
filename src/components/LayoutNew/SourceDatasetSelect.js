@@ -30,15 +30,13 @@ class SourceSeelect extends React.Component {
   };
 
   componentDidUpdate = (prevProps) => {
-      if(_.get(prevProps, 'match.params.catalogueKey') !== _.get(this.props, 'match.params.catalogueKey')){
+      if(_.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey')){
           this.getSources()
       }
   }
   getSources = () => {
     const {
-        match: {
-          params: { catalogueKey }
-        }
+      catalogueKey
       } = this.props;
     axios(`${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`).then((res)=> this.setState({sources: _.get(res, 'data.result') ?_.get(res, 'data.result').filter(d => !!d.imported) : [] }))
   }
@@ -56,19 +54,22 @@ class SourceSeelect extends React.Component {
     const { setDataset} = this.props;  
     const {
         match: {
-          params: { catalogueKey, key }
-        }
+          params: { key }
+        }, catalogueKey
       } = this.props;
     const {sources} = this.state;
-    if(catalogueKey && key){
+    const selectedSource = sources.find(c => c.key === newDatasetKey)
+    if(catalogueKey && selectedSource && _.get(this.props, "location.pathname").indexOf(`catalogue/${catalogueKey}/dataset/`) > -1){
         const newPath = _.get(this.props, "location.pathname").replace(`catalogue/${catalogueKey}/dataset/${key}/`, `catalogue/${catalogueKey}/dataset/${newDatasetKey}/`);
     history.push({
         pathname: newPath
       });
-    } else {
-        const selectedSource = sources.find(c => c.key === newDatasetKey)
+    } else if(catalogueKey) {
 
         setDataset(selectedSource)
+        history.push({
+          pathname: `/catalogue/${catalogueKey}/dataset/${newDatasetKey}/issues`
+        });
     }
       
     this.setState({visible:false})
