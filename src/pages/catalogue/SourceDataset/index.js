@@ -1,21 +1,26 @@
 import React from "react";
 import config from "../../../config";
-import { Redirect } from 'react-router-dom'
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { Alert } from "antd";
 
 import Layout from "../../../components/LayoutNew";
-import DatasetIssues from "./subPages/DatasetIssues"
-import DatasetTasks from "./subPages/DatasetTasks"
-import WorkBench from "../../WorkBench"
+import DatasetIssues from "./subPages/DatasetIssues";
+import DatasetTasks from "./subPages/DatasetTasks";
+import DatasetMeta from "../../DatasetKey/datasetPageTabs/DatasetMeta";
+import DatasetReferences from "../../DatasetKey/datasetPageTabs/DatasetReferences";
+import DatasetClassification from "../../DatasetKey/datasetPageTabs/DatasetClassification";
+import DatasetImportMetrics from "../../DatasetImportMetrics"
+import WorkBench from "../../WorkBench";
+import VerbatimRecord from "../../VerbatimRecord"
 
-import withContext from "../../../components/hoc/withContext"
+import withContext from "../../../components/hoc/withContext";
 
-import _ from 'lodash'
-import Helmet from 'react-helmet'
+import _ from "lodash";
+import Helmet from "react-helmet";
 import Duplicates from "../../Duplicates";
 
-import moment from "moment"
+import moment from "moment";
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -38,91 +43,167 @@ class DatasetPage extends React.Component {
     this.getData(datasetKey);
   }
 
-  componentDidUpdate = (prevProps) => {
-    if(_.get(this.props, 'match.params.key') !== _.get(prevProps, 'match.params.key')){
-      this.getData(_.get(this.props, 'match.params.key'));
+  componentDidUpdate = prevProps => {
+    if (
+      _.get(this.props, "match.params.key") !==
+      _.get(prevProps, "match.params.key")
+    ) {
+      this.getData(_.get(this.props, "match.params.key"));
     }
-  }
-
+  };
 
   getData = datasetKey => {
-    
-    Promise.all([axios(`${config.dataApi}dataset/${datasetKey}/import`), axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)])
-      
+    Promise.all([
+      axios(`${config.dataApi}dataset/${datasetKey}/import`),
+      axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)
+    ])
+
       .then(res => {
-        const importState = _.get(res[0], 'data[0].state') || null;
+        const importState = _.get(res[0], "data[0].state") || null;
         const hasData = res[1].data.length > 0;
-        this.setState({ importState, hasData, lastSuccesFullImport: hasData ? _.get(res, '[1].data[0]') : null });
+        this.setState({
+          importState,
+          hasData,
+          lastSuccesFullImport: hasData ? _.get(res, "[1].data[0]") : null
+        });
       })
       .catch(err => {
         this.setState({ importState: null });
       });
   };
 
-
-
   render() {
-  //  const { datasetKey, section, dataset } = this.props;
-  const { importState, hasData, lastSuccesFullImport } = this.state;
+    //  const { datasetKey, section, dataset } = this.props;
+    const { importState, hasData, lastSuccesFullImport } = this.state;
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey , catalogueKey}
+        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey }
       },
+      location,
       dataset,
       importStateMap
     } = this.props;
 
-    if (dataset && !section && !_.get(dataset, 'deleted') ) {
-      return <Redirect to={{
-        pathname: `/dataset/${datasetKey}/names`
-      }} />
-    } 
-    if (dataset && !section && _.get(dataset, 'deleted') ) {
-      return <Redirect to={{
-        pathname: `/dataset/${datasetKey}/meta`
-      }} />
-    } 
-    
-  
-   
-    const sect = (!section) ? "meta" : section.split('?')[0];
-    const openKeys = ['assembly','sourceDataset' ]
-    const selectedKeys = [section]
+    if (dataset && !section && !_.get(dataset, "deleted")) {
+      return (
+        <Redirect
+          to={{
+            pathname: `/dataset/${datasetKey}/names`
+          }}
+        />
+      );
+    }
+    if (dataset && !section && _.get(dataset, "deleted")) {
+      return (
+        <Redirect
+          to={{
+            pathname: `/dataset/${datasetKey}/meta`
+          }}
+        />
+      );
+    }
+
+    const sect = !section ? "meta" : section.split("?")[0];
+    const openKeys = ["assembly", "sourceDataset"];
+    const selectedKeys = [section];
     return (
-      
       <Layout
         selectedMenuItem="datasetKey"
-        selectedDataset={{...dataset, importState: importState, hasData: hasData}}
+        selectedDataset={{
+          ...dataset,
+          importState: importState,
+          hasData: hasData
+        }}
         selectedCatalogueKey={catalogueKey}
         section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
         taxonOrNameKey={taxonOrNameKey}
       >
-     {_.get(dataset, 'title') && <Helmet 
-      title={`${_.get(dataset, 'title')} in CoL+`}
-     />}
-      { dataset && _.get(dataset, 'deleted' ) && <Alert style={{marginTop: '16px'}} message={`This dataset was deleted ${moment(dataset.deleted).format('LLL')}`} type="error" />}
-      { importState && _.get(importStateMap[importState], 'running' ) === "true" && <Alert style={{marginTop: '16px'}} message="The dataset is currently being imported. Data may be inconsistent." type="warning" />}
-      { importState && importState === 'failed' &&  <Alert style={{marginTop: '16px'}} message="Last import of this dataset failed." type="error" />}
+        {_.get(dataset, "title") && (
+          <Helmet title={`${_.get(dataset, "title")} in CoL+`} />
+        )}
+        {dataset && _.get(dataset, "deleted") && (
+          <Alert
+            style={{ marginTop: "16px" }}
+            message={`This dataset was deleted ${moment(dataset.deleted).format(
+              "LLL"
+            )}`}
+            type="error"
+          />
+        )}
+        {importState &&
+          _.get(importStateMap[importState], "running") === "true" && (
+            <Alert
+              style={{ marginTop: "16px" }}
+              message="The dataset is currently being imported. Data may be inconsistent."
+              type="warning"
+            />
+          )}
+        {importState && importState === "failed" && (
+          <Alert
+            style={{ marginTop: "16px" }}
+            message="Last import of this dataset failed."
+            type="error"
+          />
+        )}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {sect === "workbench" && (
-          <WorkBench datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} /> 
-        )} {/* catalogueKeys are used to scope decisions and tasks */}
+          <WorkBench
+            datasetKey={datasetKey}
+            location={this.props.location}
+            catalogueKey={catalogueKey}
+          />
+        )}{" "}
+        {/* catalogueKeys are used to scope decisions and tasks */}
         {sect === "duplicates" && (
-          <Duplicates datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} />
+          <Duplicates
+            datasetKey={datasetKey}
+            location={this.props.location}
+            catalogueKey={catalogueKey}
+          />
         )}
-        
         {sect === "tasks" && (
-          <DatasetTasks datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey}/>
+          <DatasetTasks
+            datasetKey={datasetKey}
+            location={this.props.location}
+            catalogueKey={catalogueKey}
+          />
         )}
-        
-
+        {!section || (section === "meta" && <DatasetMeta id={datasetKey} />)}
+        {section === "classification" && (
+          <DatasetClassification dataset={dataset} location={location} />
+        )}
+        {sect === "reference" && (
+          <DatasetReferences
+            datasetKey={datasetKey}
+            location={this.props.location}
+          />
+        )}
+        {sect === "verbatim" && (
+          <VerbatimRecord
+            datasetKey={datasetKey}
+            lastSuccesFullImport={lastSuccesFullImport}
+            location={this.props.location}
+            match={this.props.match}
+          />
+        )}
+        {section === "imports" && (
+          <DatasetImportMetrics
+            datasetKey={datasetKey}
+            origin={_.get(dataset, "origin")}
+            match={this.props.match}
+            updateImportState={() => this.getData(datasetKey)}
+          />
+        )}
       </Layout>
     );
   }
 }
 
-const mapContextToProps = ({dataset, importStateMap}) => ({dataset, importStateMap})
+const mapContextToProps = ({ dataset, importStateMap }) => ({
+  dataset,
+  importStateMap
+});
 export default withContext(mapContextToProps)(DatasetPage);
