@@ -250,7 +250,7 @@ class WorkBench extends React.Component {
     } else if (!params.facet) {
       params.facet = FACETS;
     }
-    columnFilters.forEach(param => this.updateFilter(params, {}, param));
+    columnFilters.forEach(param => this.updateFilter(params, params, param));
 
     this.setState({ params, pagination: {
       pageSize: params.limit,
