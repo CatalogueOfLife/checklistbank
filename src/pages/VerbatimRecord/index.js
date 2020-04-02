@@ -43,6 +43,22 @@ class VerbatimRecord extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
+      
+      _.get(prevProps, "match.params.key") !==
+        _.get(this.props, "match.params.key")
+    ) {
+      const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
+
+    this.setState({
+      verbatim: [],
+      verbatimError: null,
+      total: 0,
+      limit: lsLimit ? Number(lsLimit) : 10,
+      offset: 0
+    })
+      this.getVerbatimData({});
+    }
+    else if (
       _.get(this.props, "location.search") !==
       _.get(prevProps, "location.search")
     ) {
@@ -53,6 +69,8 @@ class VerbatimRecord extends React.Component {
       this.getVerbatimData(params);
     }
   }
+
+
 
   getVerbatimData = params => {
     const {

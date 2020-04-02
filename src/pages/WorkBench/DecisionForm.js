@@ -215,7 +215,7 @@ class DecisionForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label="Name type">
-            {getFieldDecorator("nametype", {initialValue: (_.get(currentDecision, 'name.nametype')) ? _.get(currentDecision, 'name.nametype') : ''})(
+            {getFieldDecorator("nametype", {initialValue: (_.get(currentDecision, 'name.type')) ? _.get(currentDecision, 'name.type') : ''})(
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -

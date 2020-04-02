@@ -38,7 +38,19 @@ class DatasetImportMetrics extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (
+      if (
+        _.get(this.props, "match.params.key") !==
+        _.get(prevProps, "match.params.key")
+      ) {
+        const {
+          match: {
+            params: { taxonOrNameKey:attempt }
+          }
+        } = this.props;
+        this.getData(attempt);
+      }
+    
+   else if (
       _.get(prevProps, "match.params.taxonOrNameKey") !==
       _.get(this.props, "match.params.taxonOrNameKey")
     ) {

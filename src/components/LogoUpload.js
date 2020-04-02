@@ -16,6 +16,14 @@ class LogoUpload extends React.Component {
 componentDidMount(){
     this.getData()
 }
+componentDidUpdate = prevProps => {
+  if (
+    this.props.datasetKey !==
+    prevProps.datasetKey
+  ) {
+    this.getData();
+  }
+};
   getData = () => {
     this.setState({ loading: true });
     const { datasetKey } = this.props;

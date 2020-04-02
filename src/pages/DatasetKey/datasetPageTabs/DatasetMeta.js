@@ -28,6 +28,15 @@ class DatasetMeta extends React.Component {
     this.getData();
   }
 
+  componentDidUpdate = prevProps => {
+    if (
+      _.get(this.props, "id") !==
+      _.get(prevProps, "id")
+    ) {
+      this.getData();
+    }
+  };
+
   getData = () => {
     const { id, setDataset } = this.props;
 
