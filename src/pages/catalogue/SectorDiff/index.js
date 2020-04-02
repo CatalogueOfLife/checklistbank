@@ -118,7 +118,7 @@ class SectorDiff extends React.Component {
     return (
       <Layout
         selectedKeys={["sectorDiff"]}
-        openKeys={["assembly"]}
+        openKeys={["assembly", "projectDetails"]}
         selectedSector={sectorKey}
         title={catalogue.title}
       >

@@ -15,7 +15,7 @@ class SectorSync extends React.Component {
     return (
       <Layout
         selectedKeys={["sectorSync"]}
-        openKeys={["assembly"]}
+        openKeys={["assembly", "projectDetails"]}
         title={catalogue ? catalogue.title : ''}
       >
         <SyncTable location={this.props.location} match={this.props.match}/>

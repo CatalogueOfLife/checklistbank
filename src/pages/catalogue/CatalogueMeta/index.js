@@ -14,7 +14,7 @@ import Helmet from 'react-helmet'
 const CatalogueMeta = ({catalogueKey, catalogue}) =>  (
       !catalogue ? <Exception404 /> :
       <Layout
-      openKeys={["assembly"]}
+      openKeys={["assembly", "projectDetails"]}
       selectedKeys={["catalogueMeta"]}
       title={catalogue ? catalogue.title : ''}
       >

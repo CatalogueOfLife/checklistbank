@@ -34,7 +34,8 @@ class Reference extends React.Component {
       <Layout 
       title={catalogue ? catalogue.title : ''}
       selectedKeys={["assemblyReferences"]}
-        openKeys={["assembly"]}>
+      openKeys={["assembly", "projectDetails"]}
+      >
         <Helmet>
           <meta charSet="utf-8" />
           <title>{catalogue ? `References - ${catalogue.title}` : 'CoL references'}</title>

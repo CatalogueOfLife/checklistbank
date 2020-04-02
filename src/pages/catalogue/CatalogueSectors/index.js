@@ -326,7 +326,7 @@ class SyncTable extends React.Component {
     return (
       <Layout
         selectedKeys={["catalogueSectors"]}
-        openKeys={["assembly"]}
+        openKeys={["assembly", "projectDetails"]}
         title="Catalogue sectors"
       >
         <PageContent>

@@ -11,8 +11,8 @@ const CatalogueName = ({  catalogue, match, location }) =>
     <Exception404 />
   ) : (
     <Layout
-      openKeys={["assembly"]}
-      selectedKeys={["catalogueName"]}
+    openKeys={["assembly", "projectDetails"]}
+    selectedKeys={["catalogueName"]}
       title={catalogue ? catalogue.title : ""}
       taxonOrNameKey={match.params.taxonOrNameKey}
     >

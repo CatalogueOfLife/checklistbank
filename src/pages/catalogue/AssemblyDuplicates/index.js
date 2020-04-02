@@ -14,7 +14,7 @@ const { MANAGEMENT_CLASSIFICATION } = config;
 const AssemblyDuplicates = ({location, catalogueKey, catalogue}) => {
   return (
     <Layout
-      openKeys={["assembly"]}
+      openKeys={["assembly", "projectDetails"]}
       selectedKeys={["assemblyDuplicates"]}
       title={catalogue.title}
     >
