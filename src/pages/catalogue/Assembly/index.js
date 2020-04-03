@@ -120,14 +120,19 @@ class Assembly extends React.Component {
   };
 
   getSectorInfo = (attachment, root, mode) => {
-    const { datasetKey } = this.state;
+    /* const { datasetKey } = this.state;
     const {
       match: {
         params: { catalogueKey }
       }
-    } = this.props;
+    } = this.props; */
+    const rootData = _.get(root, 'props.dataRef.taxon');
+    const attachmentData = _.get(attachment, 'props.dataRef.taxon');
+    return mode === "REPLACE"
+            ? this.replace(rootData, attachmentData, mode)
+            : this.saveSector(rootData, attachmentData, mode);
 
-    return axios
+   /* return axios
       .all([
         axios(
           `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
@@ -156,7 +161,7 @@ class Assembly extends React.Component {
       .catch(err => {
         this.setState({ sectorMappingError: err });
         console.log(err);
-      });
+      }); */
   };
 
   saveChild = (subject, target) => {
@@ -218,8 +223,8 @@ class Assembly extends React.Component {
       subjectDatasetKey: subject.datasetKey,
       datasetKey: catalogueKey,
       mode: mode,
-      subject: { id: subject.id, status: subject.status },
-      target: { id: target.id, status: target.status }
+      subject: { id: subject.id, status: subject.status, rank: subject.rank },
+      target: { id: target.id, status: target.status , rank: target.rank}
     };
 
     return axios

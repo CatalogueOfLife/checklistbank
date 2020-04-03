@@ -502,7 +502,7 @@ class ColTree extends React.Component {
 
   handleAttach = e => {
     const { dragNode } = this.props;
-    
+    const dragNodeIsPlaceholder = dragNode.props.dataRef.taxon.name === "Not assigned";
     if (
       dragNode.props.dataRef.taxon.datasetKey ===
       e.node.props.dataRef.taxon.datasetKey
@@ -534,7 +534,7 @@ class ColTree extends React.Component {
       return; // we are in modify mode and should not react to the event
     }
 
-    const willProduceDuplicateChild = e.node.props.dataRef.children ? e.node.props.dataRef.children.find(c => c.taxon.name === dragNode.props.dataRef.taxon.name) : false;
+    const willProduceDuplicateChild = e.node.props.dataRef.children && !dragNodeIsPlaceholder ? e.node.props.dataRef.children.find(c => c.taxon.name === dragNode.props.dataRef.taxon.name) : false;
 
     const { ranks } = this.state;
 
@@ -550,6 +550,9 @@ class ColTree extends React.Component {
       dragNode.props.title.props.taxon.rank ===
       e.node.props.title.props.taxon.rank
     ) {
+      mode = "UNION";
+    }
+    if (dragNodeIsPlaceholder){
       mode = "UNION";
     }
     const msg =
@@ -573,7 +576,7 @@ class ColTree extends React.Component {
               __html: e.node.props.title.props.taxon.name
             }}
           />{" "}
-          in this catalogue?
+          in this project?
          {willProduceDuplicateChild && 
          <Alert 
          style={{marginTop: '6px'}} 
@@ -588,12 +591,12 @@ class ColTree extends React.Component {
               type="warning"
             />
           )}
-          Ranks are equal. Do you want to replace or union children of{" "}
-          <span
+         {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.props.title.props.taxon.rank} assigned `:"Ranks are equal. Do you want to replace or union children of "}
+         {!dragNodeIsPlaceholder && <span
             dangerouslySetInnerHTML={{
               __html: dragNode.props.title.props.taxon.name
             }}
-          />{" "}
+          />}{" "}
           in {dragNode.dataset.title} into children of{" "}
           <span
             dangerouslySetInnerHTML={{
@@ -602,7 +605,21 @@ class ColTree extends React.Component {
           />{" "}
         </span>
       );
-
+    const unionOptions = dragNodeIsPlaceholder ? [
+      {
+        text: "Union",
+        action: () => this.confirmAttach(e.node, dragNode, "UNION")
+      }
+    ] : [
+      {
+        text: "Union",
+        action: () => this.confirmAttach(e.node, dragNode, "UNION")
+      },
+      {
+        text: "Replace",
+        action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
+      }
+    ]
     e.node.props.dataRef.title = (
       <ColTreeNode
       treeType={this.props.treeType}
@@ -621,16 +638,7 @@ class ColTree extends React.Component {
                   action: () => this.confirmAttach(e.node, dragNode, mode)
                 }
               ]
-            : [
-                {
-                  text: "Union",
-                  action: () => this.confirmAttach(e.node, dragNode, "UNION")
-                },
-                {
-                  text: "Replace",
-                  action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
-                }
-              ]
+            : unionOptions
         }
         onCancel={() => {
           e.node.props.dataRef.title = (
