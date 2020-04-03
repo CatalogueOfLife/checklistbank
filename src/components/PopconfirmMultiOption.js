@@ -109,7 +109,7 @@ class Popconfirm extends React.Component{
                     a.action.call(this, e);
                   }
 
-            }} type="primary" size="small" >
+            }} type={a.type || 'primary'} size="small" >
             {a.text}
           </Button>
                 )}

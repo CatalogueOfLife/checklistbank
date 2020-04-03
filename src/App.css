@@ -314,6 +314,8 @@ div.csl-entry {
 
 .popover-multi > .ant-tooltip-content > .ant-tooltip-inner {
   background-color: #fff !important;
+  width: 330px !important;
+
 }
 
 .popover-multi.ant-tooltip-placement-top > .ant-tooltip-content > .ant-tooltip-arrow {

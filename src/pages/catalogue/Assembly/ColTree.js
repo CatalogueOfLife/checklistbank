@@ -502,7 +502,8 @@ class ColTree extends React.Component {
 
   handleAttach = e => {
     const { dragNode } = this.props;
-    const dragNodeIsPlaceholder = dragNode.props.dataRef.taxon.name === "Not assigned";
+    const dragNodeIsPlaceholder =  dragNode.props.dataRef.taxon.id.indexOf('incertae-sedis') > -1;
+    const nodeIsPlaceholder = e.node.props.dataRef.taxon.id.indexOf('incertae-sedis') > -1;
     if (
       dragNode.props.dataRef.taxon.datasetKey ===
       e.node.props.dataRef.taxon.datasetKey
@@ -511,7 +512,7 @@ class ColTree extends React.Component {
       return; // we are in modify mode and should not react to the event
     }
     if (
-      e.node.props.dataRef.taxon.name === "Not assigned"
+      nodeIsPlaceholder
     ) {
       message.warn("You cannot create sectors on placeholder nodes");
       return; 
@@ -577,6 +578,8 @@ class ColTree extends React.Component {
             }}
           />{" "}
           in this project?
+          <br/>
+          You may also choose to UNION or REPLACE.
          {willProduceDuplicateChild && 
          <Alert 
          style={{marginTop: '6px'}} 
@@ -612,12 +615,20 @@ class ColTree extends React.Component {
       }
     ] : [
       {
-        text: "Union",
-        action: () => this.confirmAttach(e.node, dragNode, "UNION")
+        text: "Attach",
+        type: "primary",
+        action: () => this.confirmAttach(e.node, dragNode, "ATTACH")
       },
+      
       {
         text: "Replace",
+        type: "danger",
         action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
+      },
+      {
+        text: "Union",
+        type: "primary",
+        action: () => this.confirmAttach(e.node, dragNode, "UNION")
       }
     ]
     e.node.props.dataRef.title = (
@@ -633,9 +644,21 @@ class ColTree extends React.Component {
         actions={
           mode === "ATTACH"
             ? [
+                
                 {
-                  text: "Ok",
-                  action: () => this.confirmAttach(e.node, dragNode, mode)
+                  text: "Union",
+                  type: "dashed",
+                  action: () => this.confirmAttach(e.node, dragNode, "UNION")
+                },
+                {
+                  text: "Replace",
+                  type: "dashed",
+                  action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
+                },
+                {
+                  text: "Attach",
+                  type: "primary",
+                  action: () => this.confirmAttach(e.node, dragNode, "ATTACH")
                 }
               ]
             : unionOptions
