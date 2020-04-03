@@ -23,7 +23,7 @@ class DatasetClassification extends React.Component {
 
   render() {
    
-    const { dataset, location, user, catalogueKey } = this.props;
+    const { dataset, location, user, catalogueKey, match: {params: {key}} } = this.props;
     const params = queryString.parse(this.props.location.search);
 
     return (
@@ -54,7 +54,7 @@ class DatasetClassification extends React.Component {
           syncState: { idle: true}, // Assume queue is empty
           syncingSector: null,
           missingTargetKeys: {},
-          selectedSourceDatasetKey: dataset.key
+          selectedSourceDatasetKey: key
         }}
       >
         <ColTree
