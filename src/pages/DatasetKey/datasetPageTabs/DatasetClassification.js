@@ -23,7 +23,7 @@ class DatasetClassification extends React.Component {
 
   render() {
    
-    const { dataset, location, user, catalogueKey, match: {params: {key}} } = this.props;
+    const { dataset, location, user, catalogueKey, datasetKey } = this.props;
     const params = queryString.parse(this.props.location.search);
 
     return (
@@ -31,7 +31,7 @@ class DatasetClassification extends React.Component {
         
         {dataset && (
                     <NameAutocomplete
-                      datasetKey={dataset.key}
+                      datasetKey={datasetKey}
                       onSelectName={name => {
                         history.push({
                           pathname: `/dataset/${dataset.key}/classification`,
@@ -54,7 +54,7 @@ class DatasetClassification extends React.Component {
           syncState: { idle: true}, // Assume queue is empty
           syncingSector: null,
           missingTargetKeys: {},
-          selectedSourceDatasetKey: key
+          selectedSourceDatasetKey: datasetKey
         }}
       >
         <ColTree
@@ -69,7 +69,7 @@ class DatasetClassification extends React.Component {
               const params = {
                 sourceTaxonKey: _.get(sector, "subject.id"),
                 assemblyTaxonKey: _.get(sector, "target.id"),
-                datasetKey: dataset.key
+                datasetKey: datasetKey
               };
   
               history.push({
