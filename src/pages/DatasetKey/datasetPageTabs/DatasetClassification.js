@@ -57,7 +57,7 @@ class DatasetClassification extends React.Component {
           selectedSourceDatasetKey: datasetKey
         }}
       >
-        <ColTree
+     {dataset &&   <ColTree
           treeRef={ref => this.treeRef = ref}
           dataset={dataset} 
           treeType="readOnly"
@@ -85,7 +85,7 @@ class DatasetClassification extends React.Component {
             }
             
           }}
-           />
+           />}
 </ColTreeContext.Provider>
         
       </PageContent>
