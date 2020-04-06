@@ -245,6 +245,8 @@ class Assembly extends React.Component {
 
   showSourceTaxon = (sector, source) => {
     const oldDatasetKey = Number(this.state.datasetKey);
+    const isPlaceholder = !_.isUndefined(sector.placeholderRank);
+    const subjectID = isPlaceholder ? `${sector.subject.id}--incertae-sedis--${sector.placeholderRank.toUpperCase()}`: sector.subject.id;
     const {
       match: {
         params: { catalogueKey }
@@ -255,7 +257,7 @@ class Assembly extends React.Component {
         const params = qs.parse(_.get(this.props, "location.search"));
         const newParams = {
           ...params,
-          sourceTaxonKey: sector.subject.id,
+          sourceTaxonKey: subjectID,
           datasetKey: source.key
         };
         history.push({
@@ -264,7 +266,7 @@ class Assembly extends React.Component {
         });
         this.setState(
           {
-            sourceTaxonKey: sector.subject.id,
+            sourceTaxonKey: subjectID,
             datasetKey: source.key,
             datasetName: res.data.title,
             selectedDataset: {
@@ -590,16 +592,19 @@ class Assembly extends React.Component {
                         draggable={this.state.mode === "attach"}
                         defaultExpandKey={this.state.sourceTaxonKey}
                         showSourceTaxon={sector => {
+                          const isPlaceholder = !_.isUndefined(sector.placeholderRank);
+    const targetID = isPlaceholder ? `${sector.target.id}--incertae-sedis--${sector.placeholderRank.toUpperCase()}`: sector.target.id;
                           const params = qs.parse(_.get(location, "search"));
                           const newParams = {
                             ...params,
-                            assemblyTaxonKey: _.get(sector, "target.id")
+                            assemblyTaxonKey: targetID
                           };
                           history.push({
                             pathname: `/catalogue/${catalogueKey}/assembly`,
                             search: `?${qs.stringify(newParams)}`
                           });
-                          this.assemblyRef.reloadRoot();
+                          this.setState({assemblyTaxonKey: targetID}, this.assemblyRef.reloadRoot)
+                         // this.assemblyRef.reloadRoot();
                         }}
                       />
                     )}

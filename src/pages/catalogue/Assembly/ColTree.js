@@ -185,13 +185,16 @@ class ColTree extends React.Component {
     const {data} = await axios(
           `${config.dataApi}dataset/${id}/tree/${
             defaultExpandKey
-          }?catalogueKey=${catalogueKey}${this.appendTypeParam(treeType)}`
+          }?catalogueKey=${catalogueKey}&&insertPlaceholder=true${this.appendTypeParam(treeType)}`
         ).then(res =>
           this.decorateWithSectorsAndDataset({
             data: { result: res.data }
           }).then(() => res)
         )
 
+    if(data.length === 0){
+      return this.setState({error: {message: `No classification found for Taxon ID: ${defaultExpandKey}`}}, this.loadRoot_)
+    }    
     const tx = data[data.length-1]
     let root = {
       taxon: tx,
@@ -426,10 +429,12 @@ class ColTree extends React.Component {
           loadedKeys.splice(index, 0, node.taxon.id)
         } 
       }
+      console.log('Node: '+node.taxon.id)
       if(node){
         await this.fetchChildPage(node, true, true)
         if(targetTaxon 
           && index === loadedKeys.length - 2 
+          && _.get(node, 'taxon.id') !== _.get(targetTaxon, 'taxon.id')
           && _.isArray(node.children)  
           && !node.children.find(c => _.get(c, 'taxon.id') === _.get(targetTaxon, 'taxon.id')) ){
             if (

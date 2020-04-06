@@ -166,7 +166,7 @@ class SyncTable extends React.Component {
               {record.subject.id && <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/assembly`,
-                  search: `?sourceTaxonKey=${record.subject.id}&datasetKey=${record.subjectDatasetKey}`
+                  search: `?sourceTaxonKey=${record.placeholderRank ? record.subject.id+'--incertae-sedis--'+record.placeholderRank.toUpperCase() : record.subject.id}&datasetKey=${record.subjectDatasetKey}`
                 }}
                 exact={true}
               >

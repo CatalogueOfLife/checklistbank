@@ -212,9 +212,6 @@ class Sector extends React.Component {
     const isSourceTree =
     catalogueKey !== _.get(taxon, "datasetKey");
 
-    if(isPlaceHolder)  {
-      console.log("kjsdnc")
-    }
     if (!sectorSourceDataset) {
       return "";
     }
