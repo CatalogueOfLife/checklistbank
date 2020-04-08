@@ -1,5 +1,5 @@
 import React from "react";
-import { Tree, notification, message, Alert, Spin, Button } from "antd";
+import { Tree, notification, message, Alert, Spin, Button, Skeleton } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -413,12 +413,13 @@ class ColTree extends React.Component {
 
   
   reloadLoadedKeys = async (keys) => {
+    this.setState({rootLoading: true})
     const {loadedKeys: storedKeys} = this.state;
     const {defaultExpandKey} = this.props;
 
     let {treeData} = this.state;
     const targetTaxon = defaultExpandKey ? this.findNode(defaultExpandKey, treeData) : null;
-    const loadedKeys = [...keys] || [...storedKeys];
+    const loadedKeys = keys ? [...keys] : [...storedKeys];
     for (let index = 0; index < loadedKeys.length; index++) {
       let node = this.findNode(loadedKeys[index], treeData);
       if (!node && targetTaxon && loadedKeys[index-1]){
@@ -429,7 +430,6 @@ class ColTree extends React.Component {
           loadedKeys.splice(index, 0, node.taxon.id)
         } 
       }
-      console.log('Node: '+node.taxon.id)
       if(node){
         await this.fetchChildPage(node, true, true)
         if(targetTaxon 
@@ -903,7 +903,8 @@ class ColTree extends React.Component {
             type="warning"
           />
         )}
-        {treeData.length > 0 && (
+        {rootLoading &&  <Skeleton paragraph={{rows: 10}} active />}
+        {!rootLoading && treeData.length > 0 && (
           <ColTreeContext.Consumer>
             {({ mode }) => (
               <Tree
