@@ -507,8 +507,11 @@ class ColTree extends React.Component {
 
   handleAttach = e => {
     const { dragNode } = this.props;
+    const { ranks } = this.state;
     const dragNodeIsPlaceholder =  dragNode.props.dataRef.taxon.id.indexOf('incertae-sedis') > -1;
     const nodeIsPlaceholder = e.node.props.dataRef.taxon.id.indexOf('incertae-sedis') > -1;
+    const willProduceDuplicateChild = e.node.props.dataRef.children && !dragNodeIsPlaceholder ? e.node.props.dataRef.children.find(c => c.taxon.name === dragNode.props.dataRef.taxon.name) : false;
+    const taxonNameIsEqual = dragNode.props.dataRef.taxon.name === e.node.props.dataRef.taxon.name;
     if (
       dragNode.props.dataRef.taxon.datasetKey ===
       e.node.props.dataRef.taxon.datasetKey
@@ -540,9 +543,6 @@ class ColTree extends React.Component {
       return; // we are in modify mode and should not react to the event
     }
 
-    const willProduceDuplicateChild = e.node.props.dataRef.children && !dragNodeIsPlaceholder ? e.node.props.dataRef.children.find(c => c.taxon.name === dragNode.props.dataRef.taxon.name) : false;
-
-    const { ranks } = this.state;
 
     const showRankWarning =
       !IRREGULAR_RANKS.includes(e.node.props.title.props.taxon.rank) &&
@@ -584,7 +584,7 @@ class ColTree extends React.Component {
           />{" "}
           in this project?
           <br/>
-          You may also choose to UNION or REPLACE.
+          You may also choose to UNION.
          {willProduceDuplicateChild && 
          <Alert 
          style={{marginTop: '6px'}} 
@@ -599,7 +599,7 @@ class ColTree extends React.Component {
               type="warning"
             />
           )}
-         {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.props.title.props.taxon.rank} assigned `:"Ranks are equal. Do you want to replace or union children of "}
+         {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.props.title.props.taxon.rank} assigned `: `Ranks are equal. Do you want to ${taxonNameIsEqual ? 'replace or ':''}union children of `}
          {!dragNodeIsPlaceholder && <span
             dangerouslySetInnerHTML={{
               __html: dragNode.props.title.props.taxon.name
@@ -618,18 +618,29 @@ class ColTree extends React.Component {
         text: "Union",
         action: () => this.confirmAttach(e.node, dragNode, "UNION")
       }
-    ] : [
+    ] : taxonNameIsEqual ? [
       {
         text: "Attach",
-        type: "primary",
+        type: "dashed",
         action: () => this.confirmAttach(e.node, dragNode, "ATTACH")
       },
-      
       {
         text: "Replace",
         type: "danger",
         action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
       },
+      
+      {
+        text: "Union",
+        type: "primary",
+        action: () => this.confirmAttach(e.node, dragNode, "UNION")
+      }
+    ] : [
+      {
+        text: "Attach",
+        type: "dashed",
+        action: () => this.confirmAttach(e.node, dragNode, "ATTACH")
+      },     
       {
         text: "Union",
         type: "primary",
@@ -654,11 +665,6 @@ class ColTree extends React.Component {
                   text: "Union",
                   type: "dashed",
                   action: () => this.confirmAttach(e.node, dragNode, "UNION")
-                },
-                {
-                  text: "Replace",
-                  type: "dashed",
-                  action: () => this.confirmAttach(e.node, dragNode, "REPLACE")
                 },
                 {
                   text: "Attach",
