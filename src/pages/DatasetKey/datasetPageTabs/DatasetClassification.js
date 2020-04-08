@@ -46,7 +46,7 @@ class DatasetClassification extends React.Component {
                       }}
                     />
                   )}
-        <ColTreeContext.Provider
+  {dataset &&      <ColTreeContext.Provider
         value={{
           mode: "readOnly",
           toggleMode: ()=>{},
@@ -54,10 +54,10 @@ class DatasetClassification extends React.Component {
           syncState: { idle: true}, // Assume queue is empty
           syncingSector: null,
           missingTargetKeys: {},
-          selectedSourceDatasetKey: datasetKey
+          selectedSourceDatasetKey: dataset.key
         }}
       >
-     {dataset &&   <ColTree
+        <ColTree
           treeRef={ref => this.treeRef = ref}
           dataset={dataset} 
           treeType="readOnly"
@@ -85,8 +85,8 @@ class DatasetClassification extends React.Component {
             }
             
           }}
-           />}
-</ColTreeContext.Provider>
+           />
+</ColTreeContext.Provider>}
         
       </PageContent>
     );
