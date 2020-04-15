@@ -1,10 +1,10 @@
-import { render } from 'react-dom'
+import { withRouter } from 'react-router-dom'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import React from "react";
 import _ from 'lodash';
 import history from '../history'
-import { Row, Col, Button, Card } from 'antd'
+import {  Button, Card } from 'antd'
 import withContext from "./hoc/withContext";
 
 const ButtonGroup = Button.Group
@@ -26,6 +26,18 @@ class ImportChart extends React.Component {
       this.initChart(this.props)
 
     }
+  }
+
+  getBasePath = () => {
+    const {location, datasetKey} = this.props;
+    return location.pathname.startsWith("/catalogue") ?
+    location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/workbench` :
+    location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/names`
+  }
+
+  getVerbatimPath = () => {
+  const {location, datasetKey} = this.props;
+  return  location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/verbatim`
   }
 
  initChart = (props) => {
@@ -93,7 +105,7 @@ class ImportChart extends React.Component {
       point: {
         events: {
           click: (e) => {
-            history.push(`/dataset/${datasetKey}/${verbatim ? 'verbatim' : 'names'}?${nameSearchParam}=${e.point.name}`)
+            history.push(`${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${nameSearchParam}=${e.point.name}`)
           }
         }
       },
@@ -191,4 +203,4 @@ const mapContextToProps = ({
 });
 
 
-export default withContext(mapContextToProps)(ImportChart);
+export default withContext(mapContextToProps)(withRouter(ImportChart));

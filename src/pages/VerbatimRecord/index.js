@@ -161,7 +161,7 @@ class VerbatimRecord extends React.Component {
                 onShowSizeChange={(current, size) => {
                   localStorage.setItem("col_plus_verbatim_limit", size);
                   history.push({
-                    pathname: location.path,
+                    pathname: location.pathname,
                     search: `?${qs.stringify({
                       ...params,
                       limit: Number(size)
@@ -170,7 +170,7 @@ class VerbatimRecord extends React.Component {
                 }}
                 onChange={(page, pageSize) => {
                   history.push({
-                    pathname: location.path,
+                    pathname: location.pathname,
                     search: `?${qs.stringify({
                       ...params,
                       offset: (page - 1) * Number(limit)
@@ -192,6 +192,7 @@ class VerbatimRecord extends React.Component {
               datasetKey={v.datasetKey}
               verbatimKey={v.id}
               basicHeader={true}
+              location={location}
             />
           ))}
       </div>

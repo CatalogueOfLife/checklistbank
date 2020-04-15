@@ -188,7 +188,7 @@ class App extends Component {
               <Route
                 exact
                 key="CatalogueSourceDataset"
-                path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates|meta|classification|references|imports|verbatim)/:taxonOrNameKey?`}
+                path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates|meta|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
                 component={CatalogueSourceDataset}
               
               />

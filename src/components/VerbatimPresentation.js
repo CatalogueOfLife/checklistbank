@@ -60,7 +60,8 @@ class VerbatimPresentation extends React.Component {
   }
 
   renderTerm = (key, value, type) => {
-    const { termsMap, termsMapReversed, datasetKey, catalogueKey } = this.props;
+    const { termsMap, termsMapReversed, datasetKey, location } = this.props;
+    const taxonPath = location.pathname.split(`dataset/${datasetKey}`)[0] + `dataset/${datasetKey}/taxon/`; 
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
       (key === "col:ID" && type === "col:Taxon");
@@ -77,7 +78,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/dataset/${datasetKey}/verbatim`,
+              pathname: location.pathname,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -87,7 +88,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `${taxonPath}${encodeURIComponent(
                   value
                 )}`
               }}
@@ -112,7 +113,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: `/dataset/${datasetKey}/verbatim`,
+              pathname: location.pathname,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -123,7 +124,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                pathname: `${taxonPath}${encodeURIComponent(
                   value
                 )}`
               }}
@@ -145,7 +146,7 @@ class VerbatimPresentation extends React.Component {
   };
   render = () => {
     const { verbatimLoading, verbatimError, verbatim, expanded } = this.state;
-    const { issueMap, basicHeader, terms } = this.props;
+    const { issueMap, basicHeader, terms, location } = this.props;
     const title =
       _.get(verbatim, "type") && _.get(verbatim, "key")
         ? `${basicHeader ? "" : "Verbatim"} ${_.get(

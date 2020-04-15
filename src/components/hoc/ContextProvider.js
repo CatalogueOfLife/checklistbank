@@ -60,9 +60,8 @@ const ISSUE_ORDER = {  error: 1, warning: 2, info: 3 };
 const TAXONOMIC_STATUS_COLOR = {"accepted" : "green", "provisionally accepted" : "gold", "synonym": "orange", "ambiguous synonym": "orange", "misapplied": "red"  }
 
 class ContextProvider extends React.Component {
-  
   state = {
-    catalogueKey: MANAGEMENT_CLASSIFICATION.key,  //TODO Load from localStorage if changed by user
+    catalogueKey: localStorage.getItem('col_selected_project') ? JSON.parse(localStorage.getItem('col_selected_project')).key : MANAGEMENT_CLASSIFICATION.key,  //TODO Load from localStorage if changed by user
     frequency: [],
     datasetType: [],
     dataFormatType: [],
@@ -86,18 +85,26 @@ class ContextProvider extends React.Component {
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
-    dataset: null,
+    dataset: localStorage.getItem('col_selected_dataset') ? JSON.parse(localStorage.getItem('col_selected_dataset')) : null,
     recentDatasets: [],
     estimateType: [],
     datasetSettings: [],
     gazetteer: [],
     entitytype: [],
-    catalogue: MANAGEMENT_CLASSIFICATION,
+    _selectedKeys: [], // Menu
+    _openKeys: [], // Menu
+    setOpenKeys: _openKeys => this.setState({_openKeys}),
+    setSelectedKeys: _selectedKeys => this.setState({_selectedKeys}),
+    catalogue: localStorage.getItem('col_selected_project') ? JSON.parse(localStorage.getItem('col_selected_project')) : MANAGEMENT_CLASSIFICATION,
     setCatalogueKey: catalogueKey => {
       this.setState({catalogueKey});
     },
-    setCatalogue: catalogue => this.setState({catalogue, catalogueKey: catalogue.key }),
+    setCatalogue: catalogue => {
+      localStorage.setItem('col_selected_project', JSON.stringify(catalogue))
+      this.setState({catalogue, catalogueKey: catalogue.key })
+    },
     setDataset: dataset => {
+      localStorage.setItem('col_selected_dataset', JSON.stringify(dataset))
       this.setState({ dataset });
     },
     setRecentDatasets: recentDatasets => {

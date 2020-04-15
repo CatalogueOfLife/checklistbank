@@ -21,7 +21,7 @@ return [
                 {_.startCase(text)}
               </Tag>
               <NavLink 
-              to={{ pathname: `/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
               exact={true}
             > verbatim <Icon type="link" />
               </NavLink>

@@ -9,7 +9,7 @@ import {
   Tooltip,
   Checkbox
 } from "antd";
-import {NavLink} from 'react-router-dom'
+import {NavLink, withRouter} from 'react-router-dom'
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption"
 import _ from "lodash";
 import axios from "axios";
@@ -106,6 +106,11 @@ class ColTreeNode extends React.Component {
 
     this.setState({ estimateModalVisible: false }, reloadSelfAndSiblings);
   }
+  getTaxonUrl = (selectedSourceDatasetKey) => {
+    const {location} = this.props;
+    return location.pathname.split(`dataset/${selectedSourceDatasetKey}`)[0] +`dataset/${selectedSourceDatasetKey}/taxon/`
+
+  }
   render = () => {
     const {
       taxon,
@@ -114,7 +119,9 @@ class ColTreeNode extends React.Component {
       isUpdating,
       getTaxonomicStatusColor,
       catalogueKey
+      
     } = this.props;
+
     const { childModalVisible, editTaxonModalVisible, estimateModalVisible } = this.state;
 
     return (
@@ -345,13 +352,13 @@ class ColTreeNode extends React.Component {
                 <div >
                   <span 
                   onContextMenu={()=> {
-                    const uri = `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    const uri = `${this.getTaxonUrl(selectedSourceDatasetKey)}${taxon.id}`
                     const win = window.open(uri, '_blank');
                     win.focus();
                   }}>
                     <NavLink
                   to={{
-                    pathname: `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
+                    pathname: `${this.getTaxonUrl(selectedSourceDatasetKey)}${taxon.id}`
                   }}
                   exact={true}
                 >
@@ -398,6 +405,6 @@ class ColTreeNode extends React.Component {
 
 const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({ getTaxonomicStatusColor, catalogueKey });
 
-export default withContext(mapContextToProps)(ColTreeNode);
+export default withContext(mapContextToProps)(withRouter(ColTreeNode));
 
 

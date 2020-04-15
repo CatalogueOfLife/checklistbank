@@ -71,7 +71,7 @@ class CatalogueSelect extends React.Component {
       } = this.props;
       const {catalogues} = this.state;
     return  <React.Fragment>
-    <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><Icon type="setting" /></a>
+    <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><Icon type="search" /></a>
     <Modal
           title="Select catalogue"
           visible={this.state.visible}

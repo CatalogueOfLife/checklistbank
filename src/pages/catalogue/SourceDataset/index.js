@@ -13,7 +13,8 @@ import DatasetClassification from "../../DatasetKey/datasetPageTabs/DatasetClass
 import DatasetImportMetrics from "../../DatasetImportMetrics"
 import WorkBench from "../../WorkBench";
 import VerbatimRecord from "../../VerbatimRecord"
-
+import Taxon from "../../Taxon";
+import Name from "../../Name"
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
@@ -196,6 +197,12 @@ class DatasetPage extends React.Component {
             match={this.props.match}
             updateImportState={() => this.getData(datasetKey)}
           />
+        )}
+        {sect === "taxon" && (
+          <Taxon datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
+        )}
+        {sect === "name" && (
+          <Name datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
         )}
       </Layout>
     );

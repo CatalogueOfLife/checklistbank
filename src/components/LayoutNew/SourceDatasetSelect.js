@@ -38,7 +38,7 @@ class SourceSeelect extends React.Component {
     const {
       catalogueKey
       } = this.props;
-    axios(`${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`).then((res)=> this.setState({sources: _.get(res, 'data.result') ?_.get(res, 'data.result').filter(d => !!d.imported) : [] }))
+    axios(`${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`).then((res)=> this.setState({sources: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
   }
   hide = () => {
     this.setState({
@@ -78,11 +78,12 @@ class SourceSeelect extends React.Component {
     const {
         match: {
           params: { key }
-        }
+        },
+        dataset
       } = this.props;
       const {sources} = this.state;
     return  <React.Fragment>
-    <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><Icon type="setting" /></a>
+    <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><Icon type="search" /></a>
     <Modal
           title="Select source"
           visible={this.state.visible}
@@ -97,7 +98,7 @@ class SourceSeelect extends React.Component {
            {sources.length > 0 && <Select
                 showSearch
                 style={{ width: "100%" }}
-                value={key || null}
+                value={dataset ? dataset.key : null}
                 placeholder="Select source"
                 optionFilterProp="children"
                 onChange={this.onSourceChange}
@@ -127,10 +128,11 @@ class SourceSeelect extends React.Component {
     </React.Fragment>
   }
 }
-const mapContextToProps = ({ catalogueKey, catalogue, setDataset, user }) => ({
+const mapContextToProps = ({ catalogueKey, catalogue, setDataset, user, dataset }) => ({
     catalogueKey,
     catalogue,
     setDataset,
-    user
+    user,
+    dataset
   });
   export default withContext(mapContextToProps)(withRouter(SourceSeelect));

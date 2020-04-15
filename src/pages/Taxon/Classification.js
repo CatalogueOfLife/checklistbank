@@ -1,15 +1,20 @@
 import React from "react";
 import _ from "lodash";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import PresentationItem from "../../components/PresentationItem";
 
-const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey }) => (
+const getDatasetClassificationRoute = (location, datasetKey, catalogueKey) => {
+  return location.pathname.startsWith(`/catalogue/${catalogueKey}`) ?  `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`: `/dataset/${datasetKey}/classification`
+  
+}
+
+const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey, location }) => (
   <div style={style}> {_.reverse([...data]).map(t => (
     <PresentationItem md={6} label={_.startCase(t.name.rank)} classes={{formItem: {borderBottom: 'none'}}} key={t.name.rank}>
       <NavLink
         to={{
-          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/dataset/${datasetKey}/classification`,
-          search: `?${datasetKey === catalogueKey ? 'assemblyTaxonKey' : 'taxonKey'}=${t.id}`
+          pathname: Number(datasetKey) === Number(catalogueKey) ? `/catalogue/${catalogueKey}/assembly` : getDatasetClassificationRoute(location, datasetKey, catalogueKey ),
+          search: `?${Number(datasetKey) === Number(catalogueKey) ? 'assemblyTaxonKey' : 'taxonKey'}=${t.id}`
         }}
       >
         <span dangerouslySetInnerHTML={{ __html: t.labelHtml }} />
@@ -19,8 +24,8 @@ const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey }) =
   <PresentationItem md={6} label={_.get(taxon, 'name.rank') ? _.startCase(taxon.name.rank) : ''} classes={{formItem: {borderBottom: 'none'}}} >
       <NavLink
         to={{
-          pathname: datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/assembly` : `/dataset/${datasetKey}/classification`,
-          search: `?${datasetKey === catalogueKey ? 'assemblyTaxonKey' : 'taxonKey'}=${_.get(taxon, 'id')}`
+          pathname: Number(datasetKey) === Number(catalogueKey) ? `/catalogue/${catalogueKey}/assembly` : getDatasetClassificationRoute(location, datasetKey, catalogueKey ),
+          search: `?${Number(datasetKey) === Number(catalogueKey) ? 'assemblyTaxonKey' : 'taxonKey'}=${_.get(taxon, 'id')}`
         }}
       >
       { _.get(taxon, 'labelHtml') && <span dangerouslySetInnerHTML={{ __html: taxon.labelHtml }} />}
@@ -30,4 +35,4 @@ const ClassificationTable = ({ datasetKey, data, taxon, style, catalogueKey }) =
   </div>
 );
 
-export default ClassificationTable;
+export default withRouter(ClassificationTable);

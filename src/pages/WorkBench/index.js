@@ -71,11 +71,11 @@ const getColumns = (catalogueKey, user) => [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `/dataset/${_.get(
+          ? `/catalogue/${catalogueKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-          : `/dataset/${_.get(
+          : `/catalogue/${catalogueKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/taxon/${encodeURIComponent(

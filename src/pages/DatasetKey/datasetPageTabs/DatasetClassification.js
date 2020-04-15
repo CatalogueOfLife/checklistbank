@@ -31,17 +31,17 @@ class DatasetClassification extends React.Component {
         
         {dataset && (
                     <NameAutocomplete
-                      datasetKey={datasetKey}
+                      datasetKey={dataset.key}
                       onSelectName={name => {
                         history.push({
-                          pathname: `/dataset/${dataset.key}/classification`,
+                          pathname: location.pathname,
                           search: `?${queryString.stringify({taxonKey: _.get(name, "key")})}`
                         });
                         this.treeRef.reloadRoot()
                       }}
                       onResetSearch={() => {
                         history.push({
-                          pathname: `/dataset/${dataset.key}/classification`,
+                          pathname: location.pathname,
                         });
                       }}
                     />
