@@ -125,7 +125,7 @@ class GSDIssuesMatrix extends React.Component {
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
-              {record.alias || record.key}
+              {record.alias ? `${record.alias} [${record.key}]` : record.key}
             </NavLink>
           );
         },
