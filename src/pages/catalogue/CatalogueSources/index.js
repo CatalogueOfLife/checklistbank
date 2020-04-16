@@ -145,7 +145,9 @@ class GSDIssuesMatrix extends React.Component {
             </NavLink>
           );
         },
-        sorter: true
+        sorter: (a, b) => {
+          return Number(_.get(a, `contributedSpecies`) || 0 ) - Number(_.get(b, `contributedSpecies`) || 0 ) ;
+      }
       },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
         title: <Tooltip title={i.name}><span style={{color: issueMap[i.name].color}}>{getIssuesAbbrev(i.name)}</span></Tooltip>,
