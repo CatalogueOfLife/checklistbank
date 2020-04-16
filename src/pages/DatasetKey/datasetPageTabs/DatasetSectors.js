@@ -19,6 +19,10 @@ import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import history from "../../../history"
+import { getDatasetsBatch } from "../../../api/dataset";
+import DataLoader from "dataloader";
+const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
+
 const PAGE_SIZE = 500;
 class DatasetSectors extends React.Component {
   constructor(props) {
@@ -73,13 +77,14 @@ init = () => {
   getData = dataset => {
     this.setState({ loading: true });
     const {catalogueKey} = this.props;
-    const params = {...qs.parse(_.get(this.props, "location.search")), datasetKey: catalogueKey, subjectDatasetKey: dataset.key};
+    const params = {...qs.parse(_.get(this.props, "location.search")),  subjectDatasetKey: dataset.key};
 
     axios(`${config.dataApi}sector?${qs.stringify(params)}`)
+    .then(this.decorateWithCatalogue)
       .then(res => {
-        if(_.get(res, 'data.result')){
+       /*  if(_.get(res, 'data.result')){
           res.data.result.forEach(d => { d.dataset = dataset })
-        }
+        } */
         this.setState({
           loading: false,
           data: res.data.result || [],
@@ -92,6 +97,16 @@ init = () => {
       });
   };
 
+  decorateWithCatalogue = res => {
+    if (!res.data.result) return res;
+    return Promise.all(
+      res.data.result.map(sector =>
+        datasetLoader
+          .load(sector.datasetKey)
+          .then(dataset => (sector.dataset = dataset))
+      )
+    ).then(() => res);
+  };
 
   onDeleteSector = sector => {
     axios

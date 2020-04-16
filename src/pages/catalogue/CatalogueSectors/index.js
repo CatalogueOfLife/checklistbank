@@ -37,7 +37,7 @@ const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 
 const PAGE_SIZE = 100;
 
-class SyncTable extends React.Component {
+class CatalogueSectors extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -477,4 +477,4 @@ const mapContextToProps = ({ user, rank, catalogueKey }) => ({
   catalogueKey
 });
 
-export default withContext(mapContextToProps)(SyncTable);
+export default withContext(mapContextToProps)(CatalogueSectors);

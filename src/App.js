@@ -79,8 +79,8 @@ class App extends Component {
               />
               <Route
                 exact
-                key="Reference"
-                path="/catalogue/:catalogueKey/reference/:key?"
+                key="References"
+                path="/catalogue/:catalogueKey/references/:key?"
                 render={({ match, location }) => (
                   <CatalogueReferences section={match.params.section} location={location} />
                 )}

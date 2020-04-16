@@ -99,15 +99,13 @@ class DatasetPage extends React.Component {
   
    
     const sect = (!section) ? "meta" : section.split('?')[0];
-    const openKeys = ['datasetKey']
+    const openKeys = ['dataset', 'datasetKey']
     const selectedKeys = [section]
     return (
       
       <Layout
-        selectedMenuItem="datasetKey"
-        selectedDataset={{...dataset, importState: importState, hasData: hasData}}
+        selectedDataset={dataset}
         selectedCatalogueKey={catalogueKey}
-        section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
         taxonOrNameKey={taxonOrNameKey}
@@ -122,9 +120,9 @@ class DatasetPage extends React.Component {
         {section === "imports" && <DatasetImportMetrics datasetKey={datasetKey} origin={_.get(dataset, 'origin')} match={this.props.match} updateImportState={() => this.getData(datasetKey)} />}
         {!section || section === "meta" && <DatasetMeta id={datasetKey} />}
         {section === "classification" && (
-          <DatasetClassification dataset={dataset}  location={location} />
+          <DatasetClassification dataset={dataset} datasetKey={datasetKey}  location={location} />
         )}
-        {section === "sectors" && (
+        {section === "projects" && (
           <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} location={location} />
         )}
         
@@ -137,7 +135,7 @@ class DatasetPage extends React.Component {
         {sect === "duplicates" && (
           <Duplicates datasetKey={datasetKey} location={this.props.location} catalogueKey={catalogueKey} />
         )}
-        {sect === "reference" && (
+        {sect === "references" && (
           <DatasetReferences datasetKey={datasetKey} location={this.props.location} />
         )}
         {sect === "tasks" && (

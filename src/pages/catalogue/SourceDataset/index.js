@@ -107,17 +107,11 @@ class DatasetPage extends React.Component {
 
     const sect = !section ? "meta" : section.split("?")[0];
     const openKeys = ["assembly", "sourceDataset"];
-    const selectedKeys = [section];
+    const selectedKeys = [`source_${section}`];
     return (
       <Layout
-        selectedMenuItem="datasetKey"
-        selectedDataset={{
-          ...dataset,
-          importState: importState,
-          hasData: hasData
-        }}
+        selectedDataset={dataset}
         selectedCatalogueKey={catalogueKey}
-        section={section}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
         taxonOrNameKey={taxonOrNameKey}
@@ -176,7 +170,7 @@ class DatasetPage extends React.Component {
         {section === "classification" && (
           <DatasetClassification dataset={dataset} location={location} />
         )}
-        {sect === "reference" && (
+        {sect === "references" && (
           <DatasetReferences
             datasetKey={datasetKey}
             location={this.props.location}

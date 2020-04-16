@@ -206,7 +206,7 @@ class BasicMenu extends Component {
               )}
 
             <Menu.Item key="assemblyReferences">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/reference` }}>
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/references` }}>
                   <span>References</span>
                 </NavLink>
               </Menu.Item>
@@ -241,7 +241,7 @@ class BasicMenu extends Component {
               }
             >
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData && (
-                <Menu.Item key="issues">
+                <Menu.Item key="source_issues">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -255,7 +255,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
                             {selectedDataset &&  this.isSourceDataset(selectedDataset) &&  hasData  && (
-                <Menu.Item key="tasks">
+                <Menu.Item key="source_tasks">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -270,7 +270,7 @@ class BasicMenu extends Component {
               )}
 
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData  && (
-                <Menu.Item key="workbench">
+                <Menu.Item key="source_workbench">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -284,7 +284,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData  && (
-                <Menu.Item key="duplicates">
+                <Menu.Item key="source_duplicates">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -298,7 +298,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset)  && (
-                <Menu.Item key="meta">
+                <Menu.Item key="source_meta">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -312,7 +312,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData && (
-                <Menu.Item key="classification">
+                <Menu.Item key="source_classification">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -326,7 +326,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData && (
-                <Menu.Item key="references">
+                <Menu.Item key="source_references">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -340,7 +340,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData && (
-                <Menu.Item key="verbatim">
+                <Menu.Item key="source_verbatim">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -354,7 +354,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&  this.isSourceDataset(selectedDataset) && hasData && (
-                <Menu.Item key="imports">
+                <Menu.Item key="source_imports">
                   <NavLink
                     to={{
                       pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -367,11 +367,11 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {_.isArray(_selectedKeys) && _selectedKeys.includes("taxon") && taxonOrNameKey && (
-                <Menu.Item key="taxon">Taxon: {taxonOrNameKey}</Menu.Item>
+              {_.isArray(_selectedKeys) && _selectedKeys.includes("source_taxon") && taxonOrNameKey && (
+                <Menu.Item key="source_taxon">Taxon: {taxonOrNameKey}</Menu.Item>
               )}
-              {_.isArray(_selectedKeys) && _selectedKeys.includes("name") && taxonOrNameKey && (
-                <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
+              {_.isArray(_selectedKeys) && _selectedKeys.includes("source_name") && taxonOrNameKey && (
+                <Menu.Item key="source_name">Name: {taxonOrNameKey}</Menu.Item>
               )}
               </SubMenu>}
               
@@ -428,9 +428,7 @@ class BasicMenu extends Component {
             {/* <Menu.Item key="7">Duplicates</Menu.Item>
             <Menu.Item key="8">Constituents</Menu.Item>
             <Menu.Item key="9">Without endpoint</Menu.Item> */}
-          </SubMenu>
-
-          {selectedDataset && (
+                      {selectedDataset && (
             <SubMenu
               key="datasetKey"
               title={
@@ -452,7 +450,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {<Menu.Item key="imports">
+              <Menu.Item key="imports">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
@@ -463,7 +461,21 @@ class BasicMenu extends Component {
                 >
                 {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
                 </NavLink>
-              </Menu.Item> }
+              </Menu.Item> 
+              {selectedDataset &&   hasData && (
+                <Menu.Item key="issues">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/issues`
+                    }}
+                  >
+                    Issues
+                  </NavLink>
+                </Menu.Item>
+              )}
               {selectedDataset && hasData  && (
                 <Menu.Item key="classification">
                   <NavLink
@@ -492,14 +504,14 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData &&  (selectedDataset.importState || selectedDataset.origin === 'managed') && (
-                <Menu.Item key="reference">
+              {selectedDataset && hasData  && (
+                <Menu.Item key="references">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
                         selectedDataset,
                         "key"
-                      )}/reference`
+                      )}/references`
                     }}
                   >
                     References
@@ -520,16 +532,16 @@ class BasicMenu extends Component {
               )}
               
               {selectedDataset && hasData && (
-                <Menu.Item key="sectors">
+                <Menu.Item key="projects">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
                         selectedDataset,
                         "key"
-                      )}/sectors`
+                      )}/projects`
                     }}
                   >
-                    Sectors
+                    Projects
                   </NavLink>
                 </Menu.Item>
               )}
@@ -602,6 +614,9 @@ class BasicMenu extends Component {
              
             </SubMenu>
           )}
+          </SubMenu>
+
+
         </Menu>
       </React.Fragment>
     );
