@@ -106,15 +106,8 @@ class DatasetList extends React.Component {
         {
           title: "Origin",
           dataIndex: "origin",
-          key: "origin",
-          render: (text, record) => {
-           return _.get(record, 'origin') === 'managed' ? <NavLink
-                to={{ pathname: `/catalogue/${record.key}/assembly`}}
-                exact={true}
-              >
-                {text}
-              </NavLink> : text;
-          }
+          key: "origin"
+         
         },
         {
           title: "Type",
