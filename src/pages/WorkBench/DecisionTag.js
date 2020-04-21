@@ -5,8 +5,8 @@ import axios from 'axios'
 import {Tooltip, Tag, notification} from 'antd'
 
 
-const deleteDecision = (id, deleteCallback) => {
-  return axios.delete( `${config.dataApi}decision/${id}`)
+const deleteDecision = (id, deleteCallback, catalogueKey) => {
+  return axios.delete( `${config.dataApi}dataset/${catalogueKey}decision/${id}`)
     .then(res => {
       notification.open({
         message: "Decision deleted"
@@ -17,22 +17,22 @@ const deleteDecision = (id, deleteCallback) => {
     })
 }
 
-const DecisionTag = ({decision, deleteCallback}) => {
+const DecisionTag = ({decision, deleteCallback, catalogueKey}) => {
     if(!_.get(decision, 'mode')) {
         return "";
       } else if(['block', 'chresonym'].includes(_.get(decision, 'mode'))){
-        return  <Tooltip title={_.get(decision, 'mode')}> <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag" >
+        return  <Tooltip title={_.get(decision, 'mode')}> <Tag closable onClose={() => deleteDecision(_.get(decision, 'id'), deleteCallback, catalogueKey)} className="decision-tag" >
         {_.get(decision, 'mode').substring(0, 2)}...
         </Tag></Tooltip>
       } else if(_.get(decision, 'status')) {
         return <Tooltip title={_.get(decision, 'status')}>
-        <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag"  >
+        <Tag closable onClose={() => deleteDecision(_.get(decision, 'id'), deleteCallback, catalogueKey)} className="decision-tag"  >
         {_.get(decision, 'status') ? `${decision.status.substring(0, 2)}...` : ''}
         </Tag>
         </Tooltip>
       } else {
         return <Tooltip title="Update">
-        <Tag closable onClose={() => deleteDecision(_.get(decision, 'key'), deleteCallback)} className="decision-tag"  >
+        <Tag closable onClose={() => deleteDecision(_.get(decision, 'id'), deleteCallback, catalogueKey)} className="decision-tag"  >
         up...
         </Tag>
         </Tooltip>

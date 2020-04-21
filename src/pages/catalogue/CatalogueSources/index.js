@@ -55,7 +55,9 @@ class GSDIssuesMatrix extends React.Component {
                   `${config.dataApi}dataset/${r.key}/import?limit=1`
                 ).then(imp => ({
                   ...r,
-                  issues: _.get(imp, "data[0].issuesCount")
+                  issues: _.get(imp, "data[0].issuesCount"),
+                  usagesCount:  _.get(imp, "data[0].usagesCount"),
+                  referenceCount: _.get(imp, "data[0].referenceCount")
                 }));
               })
         );
@@ -147,6 +149,44 @@ class GSDIssuesMatrix extends React.Component {
         },
         sorter: (a, b) => {
           return Number(_.get(a, `contributedSpecies`) || 0 ) - Number(_.get(b, `contributedSpecies`) || 0 ) ;
+      }
+      },
+      {
+        // usagesCount
+        title: <Tooltip title={`Total usages in last import`}>Usages count</Tooltip>,
+        dataIndex: "usagesCount",
+        key: "usagesCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.usagesCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `usagesCount`) || 0 ) - Number(_.get(b, `usagesCount`) || 0 ) ;
+      }
+      },
+      {
+        // referenceCount
+        title: <Tooltip title={`Total references in last import`}>Refererences count</Tooltip>,
+        dataIndex: "referenceCount",
+        key: "referenceCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.referenceCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `referenceCount`) || 0 ) - Number(_.get(b, `referenceCount`) || 0 ) ;
       }
       },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({

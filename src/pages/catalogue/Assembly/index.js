@@ -97,7 +97,7 @@ class Assembly extends React.Component {
               )}`
             ),
             axios(
-              `${config.dataApi}sector/${_.get(res, "data.running.sectorKey")}`
+              `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(res, "data.running.sectorKey")}`
             )
           ]).then(resp => {
             this.setState({

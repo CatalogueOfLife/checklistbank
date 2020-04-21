@@ -13,7 +13,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
+const sectorLoader = new DataLoader((ids, catalogueKey) => getSectorsBatch(ids, catalogueKey));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const TreeNode = Tree.TreeNode;
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
@@ -365,12 +365,12 @@ class ColTree extends React.Component {
 
   decorateWithSectorsAndDataset = res => {
     if (!res.data.result) return res;
-
+    const {catalogueKey} = this.props
     return Promise.all(
       res.data.result
         .filter(tx => !!tx.sectorKey)
         .map(tx =>
-          sectorLoader.load(tx.sectorKey).then(r => {
+          sectorLoader.load(tx.sectorKey, catalogueKey).then(r => {
             tx.sector = r;
             return datasetLoader
               .load(r.subjectDatasetKey)

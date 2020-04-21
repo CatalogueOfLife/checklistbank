@@ -103,7 +103,7 @@ class EditableTable extends React.Component {
                 {form => (
                   <a
                     href="javascript:;"
-                    onClick={() => this.save(form, record.key)}
+                    onClick={() => this.save(form, record.id)}
                     style={{ marginRight: 8 }}
                   >
                     Save
@@ -112,7 +112,7 @@ class EditableTable extends React.Component {
               </EditableContext.Consumer>
               <Popconfirm
                 title="Sure to cancel?"
-                onConfirm={() => this.cancel(record.key)}
+                onConfirm={() => this.cancel(record.id)}
               >
                 <a>Cancel</a>
               </Popconfirm>
@@ -121,14 +121,14 @@ class EditableTable extends React.Component {
             <span>
               <a
                 disabled={editingKey !== ""}
-                onClick={() => this.edit(record.key)}
+                onClick={() => this.edit(record.id)}
               >
                 Edit
               </a>
               {" | "}
               <Popconfirm
                 title="Sure to delete?"
-                onConfirm={() => this.delete(record.key)}
+                onConfirm={() => this.delete(record.id)}
               >
                 <a>Delete</a>
               </Popconfirm>
@@ -175,13 +175,13 @@ class EditableTable extends React.Component {
         });
       } 
   }
-  isEditing = record => record.key === this.state.editingKey;
+  isEditing = record => record.id === this.state.editingKey;
 
   cancel = () => {
     this.setState({ editingKey: "" });
   };
   delete = (key) => {
-
+    const {catalogueKey} = this.props;
     const newData = [...this.state.data];
     const index = newData.findIndex(item => key === item.key);
       const item = newData[index];
@@ -189,7 +189,7 @@ class EditableTable extends React.Component {
   
 
 
-  axios.delete(`${config.dataApi}estimate/${key}`)
+  axios.delete(`${config.dataApi}dataset/${catalogueKey}/estimate/${key}`)
   .then(res => {
     this.setState({ data: newData, editingKey: "" });
     if(typeof this.props.onDataUpdate === 'function'){
@@ -203,6 +203,7 @@ class EditableTable extends React.Component {
 
   }
   save = (form, key) => {
+    const {catalogueKey} = this.props;
     form.validateFields((error, row) => {
       if (error) {
         return;
@@ -217,7 +218,7 @@ class EditableTable extends React.Component {
       
 
 
-      axios.put(`${config.dataApi}estimate/${key}`, {...item, ...row})
+      axios.put(`${config.dataApi}dataset/${catalogueKey}/estimate/${key}`, {...item, ...row})
       .then(res => {
         this.setState({ data: newData, editingKey: "" });
         if(typeof this.props.onDataUpdate === 'function'){

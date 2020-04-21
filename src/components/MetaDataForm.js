@@ -246,6 +246,7 @@ class RegistrationForm extends React.Component {
                 </FormItem>
         }
 
+
         {(origin === "external" || origin === "managed") && (
           <FormItem {...formItemLayout} label="Data Format">
             {getFieldDecorator("dataFormat", {
@@ -327,22 +328,7 @@ class RegistrationForm extends React.Component {
             </Select>
           )}
         </FormItem>
-        <FormItem {...formItemLayout} label="Nomenclatural code">
-          {getFieldDecorator("code", {
-            initialValue: _.get(data, "code") ? _.get(data, "code") : ""
-          })(
-            <Select style={{ width: 200 }} showSearch>
-              {nomCode.map(c => {
-                return (
-                  <Option
-                    key={c.name}
-                    value={c.name}
-                  >{`${c.name} (${c.acronym})`}</Option>
-                );
-              })}
-            </Select>
-          )}
-        </FormItem>
+
         {data && (
           <FormItem
             {...formItemLayout}
@@ -372,6 +358,14 @@ class RegistrationForm extends React.Component {
             })(<Input type="text" />)}
           </FormItem>
         )}
+        <FormItem {...formItemLayout} label="Private" key="Private">
+              {getFieldDecorator(`private`, {
+                valuePropName: 'checked',
+                initialValue:  _.get(data, `private`) === true ? true : false
+              })(
+                <Input type="checkbox"  /> 
+              )}
+            </FormItem>
         <FormItem {...formItemLayout} label="License">
           {getFieldDecorator("license", {
             initialValue: _.get(data, "license") ? _.get(data, "license") : "",

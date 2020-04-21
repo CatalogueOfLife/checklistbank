@@ -33,7 +33,7 @@ import Auth from "../../components/Auth";
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
-const sectorLoader = new DataLoader(ids => getSectorsBatch(ids));
+const sectorLoader = new DataLoader((ids, catalogueKey) => getSectorsBatch(ids, catalogueKey));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
@@ -127,12 +127,12 @@ class DuplicateSearchPage extends React.Component {
 
   decorateWithSectorsAndDataset = res => {
     if (!res.usages) return res;
-
+    const {catalogueKey} = this.props;
     return Promise.all(
       res.usages
         .filter(tx => _.get(tx, "usage.sectorKey"))
         .map(tx =>
-          sectorLoader.load(_.get(tx, "usage.sectorKey")).then(r => {
+          sectorLoader.load(_.get(tx, "usage.sectorKey"), catalogueKey).then(r => {
             tx.sector = r;
             return datasetLoader
               .load(r.subjectDatasetKey)
@@ -249,9 +249,12 @@ class DuplicateSearchPage extends React.Component {
       });
   };
   getDecisions = data => {
+
+    const { catalogueKey } = this.props;
+
     const promises = data.usages.map(d =>
       d.decision
-        ? axios(`${config.dataApi}decision/${_.get(d, "decision.key")}`).then(
+        ? axios(`${config.dataApi}dataset/${catalogueKey}/decision/${_.get(d, "decision.id")}`).then(
             decision => {
               d.usage.decision = decision.data;
             }
@@ -332,7 +335,7 @@ class DuplicateSearchPage extends React.Component {
         const method = d.decision ? "put" : "post";
         return axios[method](
           `${config.dataApi}decision${
-            method === "put" ? `/${d.decision.key}` : ""
+            method === "put" ? `/${d.decision.id}` : ""
           }`,
           {
             datasetKey: catalogueKey,
@@ -354,8 +357,8 @@ class DuplicateSearchPage extends React.Component {
         )
           .then(decisionId =>
             axios(
-              `${config.dataApi}decision/${
-                method === "post" ? decisionId.data : d.decision.key
+              `${config.dataApi}dataset/${catalogueKey}/decision/${
+                method === "post" ? decisionId.data : d.decision.id
               }`
             )
           )

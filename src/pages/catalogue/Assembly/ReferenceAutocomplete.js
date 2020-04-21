@@ -26,7 +26,7 @@ class ReferenceAutocomplete extends React.Component {
 
     getReferences = (q) => {
         const {datasetKey} = this.props;
-        axios(`${config.dataApi}dataset/${datasetKey}/reference/search?q=${q}&limit=30`) // ?q=${q}&limit=30
+        axios(`${config.dataApi}dataset/${datasetKey}/reference?q=${q}&limit=30`) // ?q=${q}&limit=30
             .then((res) => {
                 this.setState({ references: res.data.result})
             })

@@ -70,14 +70,14 @@ const environments = {
       key: 1,
       title: "Name Index"
     },
-    gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
+    gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
+    gitFrontend: "https://github.com/CatalogueOfLife/clearinghouse-ui/tree/"
   }
 };
 
 const domain = window.location.hostname;
 
-let env = environments.prod;
+let env = environments.dev;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.catalogue.life")) {

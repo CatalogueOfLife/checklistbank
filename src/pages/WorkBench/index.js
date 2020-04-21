@@ -57,7 +57,7 @@ const getColumns = (catalogueKey, user) => [
     width: 60,
     className: "workbench-td",
     render: (text, record) => (
-      !Auth.isAuthorised(user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} />
+      !Auth.isAuthorised(user, ["editor"]) ? getDecisionText(_.get(record, "decisions[0]")) : <DecisionTag decision={_.get(record, "decisions[0]")} catalogueKey={catalogueKey} />
     )
   },
   {
@@ -313,11 +313,11 @@ class WorkBench extends React.Component {
   };
 
   getDecisions = res => {
-    const { datasetKey } = this.props;
+    const { catalogueKey } = this.props;
     const promises = _.get(res, "data.result")
       ? res.data.result.map(d => {
           return _.get(d, 'decisions[0]') ? axios(
-            `${config.dataApi}decision/${_.get(d, 'decisions[0].key')}`
+            `${config.dataApi}/dataset/${catalogueKey}/decision/${_.get(d, 'decisions[0].id')}`
           ).then(decision => {
             if (decision.data ) {
               d.decisions = [decision.data];

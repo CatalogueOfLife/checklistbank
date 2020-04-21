@@ -104,7 +104,7 @@ class RefTable extends React.Component {
       search: `?${qs.stringify(params)}`
     });
     axios(
-      `${config.dataApi}dataset/${datasetKey}/reference/search?${qs.stringify(
+      `${config.dataApi}dataset/${datasetKey}/reference?${qs.stringify(
         params
       )}`
     )

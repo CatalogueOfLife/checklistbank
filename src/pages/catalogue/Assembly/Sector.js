@@ -36,8 +36,8 @@ class Sector extends React.Component {
     const {catalogueKey} = this.props;
     axios
       .post(`${config.dataApi}assembly/${catalogueKey}/sync`, {
-        sectorKey: sector.key,
-        key: sector.key,
+        sectorKey: sector.id,
+        key: sector.id,
         target: sector.target,
         subject: sector.subject
       })
@@ -48,7 +48,7 @@ class Sector extends React.Component {
         this.props.getSyncState();
         notification.open({
           message: idle ? "Sync started" : "Sync queued",
-          description: !syncingSector && idle ? `Copying taxa from ${sector.key}` : `Awaiting sector ${_.get(syncingSector, 'key')} (${_.get(syncingSector, 'subject.name')})`
+          description: !syncingSector && idle ? `Copying taxa from ${sector.id}` : `Awaiting sector ${_.get(syncingSector, 'id')} (${_.get(syncingSector, 'subject.name')})`
         });
       })
       .catch(err => {
@@ -57,17 +57,18 @@ class Sector extends React.Component {
   };
 
   deleteSector = sector => {
+    const {catalogueKey} = this.props
     axios
       .delete(
-        `${config.dataApi}sector/${
-          sector.key
+        `${config.dataApi}dataset/${catalogueKey}/sector/${
+          sector.id
         }`
       ) // /assembly/3/sync/
       .then(() => {
         debounce(this.props.reloadSelfAndSiblings, 500)();
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.key} placed on the sync queue`
+          description: `Delete job for ${sector.id} placed on the sync queue`
         });
       })
       .catch(err => {
@@ -75,10 +76,10 @@ class Sector extends React.Component {
       });
   };
   updateSectorCode = code => {
-    const { taxon : {sector}} = this.props;
+    const { taxon : {sector}, catalogueKey} = this.props;
     axios
       .put(
-        `${config.dataApi}sector/${sector.key}`, {...sector, code: code}
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, code: code}
       ) 
       .then(() => {
         notification.open({
@@ -92,10 +93,10 @@ class Sector extends React.Component {
   }
 
   updateSectorRank = rank => {
-    const { taxon : {sector}} = this.props;
+    const { taxon : {sector}, catalogueKey} = this.props;
     axios
       .put(
-        `${config.dataApi}sector/${sector.key}`, {...sector, rank: rank}
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, rank: rank}
       ) 
       .then(() => {
         notification.open({
@@ -108,10 +109,10 @@ class Sector extends React.Component {
   }
 
   updateSectorNote = note => {
-    const { taxon : {sector}} = this.props;
+    const { taxon : {sector}, catalogueKey} = this.props;
     axios
       .put(
-        `${config.dataApi}sector/${sector.key}`, {...sector, note: note}
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, note: note}
       ) 
       .then(() => {
         notification.open({
@@ -125,10 +126,10 @@ class Sector extends React.Component {
   }
 
   updateSectorEntities = entities => {
-    const { taxon : {sector}} = this.props;
+    const { taxon : {sector}, catalogueKey} = this.props;
     axios
       .put(
-        `${config.dataApi}sector/${sector.key}`, {...sector, entities: entities}
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, entities: entities}
       ) 
       .then(() => {
         notification.open({
@@ -141,7 +142,7 @@ class Sector extends React.Component {
   }
 
   applyDecision = () => {
-    const { taxon, decisionCallback } = this.props;
+    const { taxon, decisionCallback, catalogueKey } = this.props;
     const { sector } = taxon;
 
     const { datasetKey } = taxon;
@@ -160,7 +161,7 @@ class Sector extends React.Component {
     .then(taxa => {
       const tx = taxa[0].data;
       const parent = taxa[1].data;
-      return axios.post(`${config.dataApi}decision`, {
+      return axios.post(`${config.dataApi}dataset/${catalogueKey}/decision`, {
         subjectDatasetKey: datasetKey,
         subject: {
           id: _.get(tx, "id"),
@@ -175,7 +176,7 @@ class Sector extends React.Component {
         mode: "block"
       })
     })
-      .then(decisionId => axios(`${config.dataApi}decision/${decisionId.data}`))
+      .then(decisionId => axios(`${config.dataApi}dataset/${catalogueKey}/decision/${decisionId.data}`))
       .then(res => {
         taxon.decision = res;
 
@@ -234,7 +235,7 @@ class Sector extends React.Component {
                     </Button>
                     <br />
 
-                    {_.get(syncState, "running.sectorKey") !== sector.key && (
+                    {_.get(syncState, "running.sectorKey") !== sector.id && (
                       <React.Fragment>
                         <Button
                           style={{ marginTop: "8px", width: "100%" }}
@@ -355,10 +356,10 @@ class Sector extends React.Component {
                 {isRootSector && sector.mode === 'attach' && <Icon type="caret-right" />}
                 {isRootSector && sector.mode === 'union' && <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" /> }
                 {sectorSourceDataset.alias || sectorSourceDataset.key}
-                {_.get(syncState, "running.sectorKey") === sector.key && (
+                {_.get(syncState, "running.sectorKey") === sector.id && (
                   <Icon type="sync" style={{ marginLeft: "5px" }} spin />
                 )}
-                {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.key ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
+                {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
               </Tag>
             </Tooltip>
           </Popover>
@@ -391,7 +392,7 @@ class Sector extends React.Component {
                   Show sector in assembly
                 </Button>}
                 {Auth.isAuthorised(user, ["editor", "admin"]) && isRootSectorInSourceTree && missingTargetKeys[_.get(sector, 'target.id')] !== true &&
-                  _.get(syncState, "running.sectorKey") !== sector.key && (
+                  _.get(syncState, "running.sectorKey") !== sector.id && (
                     <React.Fragment>
                       <Button
                         style={{ marginTop: "8px", width: "100%" }}
@@ -438,10 +439,10 @@ class Sector extends React.Component {
               {isRootSectorInSourceTree && sector.mode === 'attach' && <Icon type="caret-right" />}
                 {isRootSectorInSourceTree && sector.mode === 'union' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
               {sectorSourceDataset.alias || sectorSourceDataset.key}
-              {_.get(syncState, "running.sectorKey") === sector.key && (
+              {_.get(syncState, "running.sectorKey") === sector.id && (
                 <Icon type="sync" style={{ marginLeft: "5px" }} spin />
               )}
-              {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.key ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
+              {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
             </Tag>
           </Popover>
         )}

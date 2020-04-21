@@ -206,15 +206,20 @@ class CatalogueSectors extends React.Component {
   };
 
   onDeleteSector = sector => {
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
     axios
-      .delete(`${config.dataApi}sector/${sector.key}`)
+      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
       .then(() => {
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.key} placed on the sync queue`
+          description: `Delete job for ${sector.id} placed on the sync queue`
         });
         this.setState({
-          data: this.state.data.filter(d => d.key !== sector.key)
+          data: this.state.data.filter(d => d.id !== sector.id)
         });
       })
       .catch(err => {

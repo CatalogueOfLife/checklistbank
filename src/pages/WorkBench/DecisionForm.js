@@ -102,7 +102,7 @@ class DecisionForm extends React.Component {
         
         
          const method = currentDecision ? 'put' : 'post';
-        return axios[method](`${config.dataApi}decision${currentDecision ? '/'+currentDecision.key : ''}`, decisionObject)
+        return axios[method](`${config.dataApi}dataset/${datasetKey}/decision${currentDecision ? '/'+currentDecision.id : ''}`, decisionObject)
           .then(onSaveDecision)
           .then(res => {
             this.props.form.resetFields()

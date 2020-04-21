@@ -233,7 +233,7 @@ class SyncTable extends React.Component {
         const promises =
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map(sync =>
-                axios(`${config.dataApi}sector/${sync.sectorKey}`)
+                axios(`${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`)
                   .then(sector => {
                     sync.sector = sector.data;
                     sync._id = `${sync.sectorKey}_${sync.attempt}`;

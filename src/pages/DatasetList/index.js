@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Row, Col } from "antd";
+import { Table, Alert, Form, Row, Col, Icon } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -131,7 +131,7 @@ class DatasetList extends React.Component {
                 to={{ pathname: `/catalogue/${d.key}` }}
                 exact={true}
               >
-                {`${d.alias} [${d.key}]`}
+                {d.alias ? `${d.alias} [${d.key}]` : d.key}
               </NavLink>{arr.length - 1 !== i && " | "}</React.Fragment>)
               : "";
           }
@@ -169,6 +169,14 @@ class DatasetList extends React.Component {
           sorter: true,
           render: date => {
             return moment(date).format("MMM Do YYYY");
+          }
+        },
+        {
+          title: "Private",
+          dataIndex: "private",
+          key: "private",
+          render: (text, record) => {
+            return text === true ? <Icon type="lock" style={{color: 'red'}} /> : <Icon type="unlock" style={{color: 'green'}}/>
           }
         }
       ],
@@ -384,6 +392,7 @@ class DatasetList extends React.Component {
               columns={columns}
               dataSource={data}
               loading={loading}
+              scroll={{x: "2000px"}}
               pagination={this.state.pagination}
               onChange={this.handleTableChange}
             />

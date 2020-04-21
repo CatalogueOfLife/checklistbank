@@ -67,7 +67,7 @@ class SectorDiff extends React.Component {
     axios(
       `${
         config.dataApi
-      }sector/${sectorKey}/treediff${query}`
+      }dataset/${catalogueKey}/sector/${sectorKey}/treediff${query}`
     )
       .then(res => {
         this.setState({

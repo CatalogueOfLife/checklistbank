@@ -77,9 +77,9 @@ init = () => {
   getData = dataset => {
     this.setState({ loading: true });
     const {catalogueKey} = this.props;
-    const params = {...qs.parse(_.get(this.props, "location.search")),  subjectDatasetKey: dataset.key};
+    const params = {...qs.parse(_.get(this.props, "location.search")),  subject: true};
 
-    axios(`${config.dataApi}sector?${qs.stringify(params)}`)
+    axios(`${config.dataApi}dataset/${dataset.key}/sector?${qs.stringify(params)}`)
     .then(this.decorateWithCatalogue)
       .then(res => {
        /*  if(_.get(res, 'data.result')){
@@ -109,10 +109,12 @@ init = () => {
   };
 
   onDeleteSector = sector => {
+
+    const {catalogueKey} = this.props;
     axios
       .delete(
-        `${config.dataApi}sector/${
-          sector.key
+        `${config.dataApi}dataset/${catalogueKey}/sector/${
+          sector.id
         }`
       ) 
       .then(() => {
