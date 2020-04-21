@@ -126,6 +126,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return record.contributesToDatasets ? 
               record.contributesToDatasets
+              .filter(d => !!d)
               .map((d, i, arr )=> <React.Fragment><NavLink
                 key={d.key}
                 to={{ pathname: `/catalogue/${d.key}` }}

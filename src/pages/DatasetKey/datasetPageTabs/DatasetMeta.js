@@ -52,13 +52,13 @@ class DatasetMeta extends React.Component {
         res.data,
         axios(`${config.dataApi}user/${createdBy}`),
         axios(`${config.dataApi}user/${modifiedBy}`),
-        Promise.all(res.data.contributesTo.map(c => axios(`${config.dataApi}dataset/${c}`)))
+        Promise.allSettled(res.data.contributesTo.map(c => axios(`${config.dataApi}dataset/${c}`)))
       ])
     })
       .then(res => {
         res[0].createdByUser = _.get(res[1], 'data.username');
         res[0].modifiedByUser = _.get(res[2], 'data.username');
-        res[0].contributesToDatasets = res[3].map(d => _.get(d, "data.title"));
+        res[0].contributesToDatasets = res[0].contributesTo.map((d, i) => res[3][i].status === "fulfilled" ? _.get(res[3][i], "value.data.title") : d);
         this.setState({ loading: false, data: res[0], err: null });
       })
       .catch(err => {
