@@ -5,7 +5,7 @@ const Auth = {
           return true;
         }
     
-        if (user && roles.some(r=> user.roles.includes(r))) {
+        if (user && user.roles && roles.some(r=> user.roles.includes(r))) {
          return true;
        }
         
