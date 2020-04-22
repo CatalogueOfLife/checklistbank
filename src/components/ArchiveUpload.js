@@ -27,6 +27,9 @@ class ArchiveUpload extends React.Component {
         "content-type": options.file.type
       }
     };
+    if( !config.headers["content-type"] && options.file.name.endsWith('.tree')){
+      config.headers["content-type"] = "text/plain"
+    }
     return axios
       .post(options.action, options.file, config)
       .then(res => {
