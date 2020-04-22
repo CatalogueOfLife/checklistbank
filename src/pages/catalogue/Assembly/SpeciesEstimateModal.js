@@ -171,7 +171,7 @@ class SpeciesestimateModal extends React.Component {
                     message: "Estimate"
                   }
                 ]
-              })(<Input />)}
+              })(<Input  type="number" />)}
             </FormItem>
             <FormItem {...formItemLayout} label="Type">
               {getFieldDecorator("type", {

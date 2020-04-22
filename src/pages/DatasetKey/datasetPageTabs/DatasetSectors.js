@@ -162,13 +162,13 @@ init = () => {
           <h4>No sectors configured</h4>
         ) : (
           <React.Fragment>
-            <SyncAllSectorsButton
+            {/* <SyncAllSectorsButton
               onError={err => this.setState({ syncAllError: err })}
               onSuccess={() => this.setState({ syncAllError: null })}
               dataset={this.props.dataset}
               catalogueKey={catalogueKey}
               text="Sync all sectors in this dataset"
-            />
+            /> */}
             {!error && (
               <SectorTable
                 data={data}

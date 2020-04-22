@@ -103,7 +103,7 @@ class SyncTable extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.subjectDatasetKey}/imports` }}
+              to={{ pathname: `/dataset/${record.dataset.key}/meta` }}
               exact={true}
             >
               <Highlighter
