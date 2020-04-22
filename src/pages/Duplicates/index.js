@@ -33,7 +33,6 @@ import Auth from "../../components/Auth";
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
-const sectorLoader = new DataLoader((ids, catalogueKey) => getSectorsBatch(ids, catalogueKey));
 const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
@@ -83,7 +82,7 @@ class DuplicateSearchPage extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if(_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')){
+    if( (_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')) || (_.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey'))){
       this.initOrUpdate()
     }
     
@@ -91,7 +90,8 @@ class DuplicateSearchPage extends React.Component {
 
   initOrUpdate = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
-   
+    this.sectorLoader = new DataLoader((ids) => getSectorsBatch(ids, this.props.catalogueKey));
+
     this.getSectors();
     let booleans = {};
     [
@@ -132,7 +132,7 @@ class DuplicateSearchPage extends React.Component {
       res.usages
         .filter(tx => _.get(tx, "usage.sectorKey"))
         .map(tx =>
-          sectorLoader.load(_.get(tx, "usage.sectorKey"), catalogueKey).then(r => {
+          this.sectorLoader.load(_.get(tx, "usage.sectorKey"), catalogueKey).then(r => {
             tx.sector = r;
             return datasetLoader
               .load(r.subjectDatasetKey)
