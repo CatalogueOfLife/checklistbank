@@ -234,7 +234,7 @@ class DuplicateSearchPage extends React.Component {
 
   getSectors = () => {
     const { datasetKey, catalogueKey } = this.props;
-    axios(`${config.dataApi}sector?subjectDatasetKey=${datasetKey}&datasetKey=${catalogueKey}`)
+    axios(`${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`)
       .then(res => {
         this.setState({
           sectors: res.data,

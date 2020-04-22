@@ -228,7 +228,7 @@ class Assembly extends React.Component {
     };
 
     return axios
-      .post(`${config.dataApi}sector`, sector)
+      .post(`${config.dataApi}dataset/${catalogueKey}/sector`, sector)
       .then(res => {
         const msg = `${_.get(target, "name.scientificName") ||
           target.id} attached to ${subject.name || subject.id} `;

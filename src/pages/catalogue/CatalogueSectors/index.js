@@ -111,7 +111,7 @@ class CatalogueSectors extends React.Component {
       ...qs.parse(_.get(this.props, "location.search")),
       datasetKey: catalogueKey
     };
-    axios(`${config.dataApi}sector?${qs.stringify(params)}`)
+    axios(`${config.dataApi}dataset/${catalogueKey}/sector?${qs.stringify(params)}`)
       .then(this.decorateWithDataset)
       .then(res =>
         this.setState({
