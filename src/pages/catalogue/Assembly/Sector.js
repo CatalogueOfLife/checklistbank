@@ -251,7 +251,16 @@ class Sector extends React.Component {
                     )}
                   </React.Fragment>
                 )}
-
+                <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  onClick={() => {
+                    history.push(`/catalogue/${catalogueKey}/sector?id=${sector.id}`);
+                  }}
+                >
+                  Show sector
+                </Button>
+                <br />
                 <Button
                   style={{ marginTop: "8px", width: "100%" }}
                   type="primary"
