@@ -182,7 +182,7 @@ class SpeciesestimateModal extends React.Component {
                   }
                 ]
               })(
-                <Select>
+                <Select showSearch>
                   {estimateType.map(o => (
                     <Option key={o} value={o}>
                       {o}

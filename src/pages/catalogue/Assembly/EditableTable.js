@@ -14,7 +14,7 @@ class EditableCell extends React.Component {
     if (this.props.dataIndex === "estimate") {
       return <InputNumber />;
     } else if(this.props.dataIndex === "type"){
-        return <Select>
+        return <Select showSearch>
             {['described species living', 'described species fossil', 'estimated species'].map(o => <Option key={o} value={o}>{o}</Option>)}
         </Select>
     }

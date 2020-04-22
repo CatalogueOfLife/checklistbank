@@ -140,6 +140,7 @@ class SectorDiff extends React.Component {
                     )}`
                   });
                 }}
+                showSearch
               >
                 {[...Array(_.get(this.state, "selectedAttempt2")).keys()].reverse().map(i => (
                   <Option value={i}>Attempt: {i}</Option>
@@ -160,6 +161,7 @@ class SectorDiff extends React.Component {
                     )}..${value}`
                   });
                 }}
+                showSearch
               >
                 {[...Array(maxAttempt +1).keys()].reverse().map(i => (
                   <Option value={i}>Attempt: {i}</Option>

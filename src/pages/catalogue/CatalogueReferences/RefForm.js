@@ -197,7 +197,7 @@ componentDidMount = () =>{
               required: true, message: 'Please select the reference type',
             }],
           })(
-            <Select style={{ width: 200 }} onChange={(value)=> this.setState({type: value})}>
+            <Select style={{ width: 200 }} onChange={(value)=> this.setState({type: value})} showSearch>
               {Object.keys(types).map((f) => {
                 return <Option key={f} value={f}>{types[f].typeLabel}</Option>
               })}

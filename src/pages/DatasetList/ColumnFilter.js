@@ -41,6 +41,7 @@ class ColumnFilter extends React.Component {
         placeholder="Please select"
         defaultValue={excludeColumns}
         onChange={this.handleHideColumnChange}
+        showSearch
       >
         {columns.map(f => {
           return (

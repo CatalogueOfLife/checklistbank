@@ -769,6 +769,7 @@ class WorkBench extends React.Component {
               style={{ width: 200, marginRight: 10 }}
               onChange={this.onDecisionChange}
               allowClear
+              showSearch
             >
               <OptGroup label="General">
                 <Option value="block">Block</Option>

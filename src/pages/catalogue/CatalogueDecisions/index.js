@@ -434,8 +434,7 @@ class CatalogueDecisions extends React.Component {
             </FormItem>
             <FormItem >
               <Select
-                              placeholder="Decision mode"
-
+                placeholder="Decision mode"
                 style={{ width: 160 }}
                 value={params.mode}
                 showSearch

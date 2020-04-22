@@ -202,7 +202,7 @@ class DecisionForm extends React.Component {
           </FormItem>
           <FormItem {...formItemLayout} label="Taxonomic status">
             {getFieldDecorator("status", {initialValue: (_.get(currentDecision, 'status')) ? _.get(currentDecision, 'status') : ""})(
-              <Select style={{ width: 200 }} >
+              <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                     -
                   </Option>

@@ -280,7 +280,7 @@ class Sector extends React.Component {
                     Nom. code
                   </Col>
                   <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select style={{ width: '100%' }} defaultValue={sector.code} onChange={value => this.updateSectorCode(value)}>
+                <Select style={{ width: '100%' }} defaultValue={sector.code} onChange={value => this.updateSectorCode(value)} showSearch>
 
               {nomCode.map((f) => {
                 return <Option key={f.name} value={f.name}>{f.name}</Option>
@@ -293,7 +293,7 @@ class Sector extends React.Component {
                     Ranks
                   </Col>
                   <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select style={{ width: '100%' }} defaultValue={sector.rank} onChange={value => this.updateSectorRank(value)}>
+                <Select style={{ width: '100%' }} defaultValue={sector.rank} onChange={value => this.updateSectorRank(value)} showSearch>
 
                 <Option  value={null}>All</Option>
                 <Option  value="Linnean">Linnean</Option>
@@ -306,7 +306,7 @@ class Sector extends React.Component {
                   Entities
                   </Col>
                   <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select mode="multiple" style={{ width: '100%' }} defaultValue={sector.entities || []} onChange={value => this.updateSectorEntities(value)}>
+                <Select mode="multiple" style={{ width: '100%' }} defaultValue={sector.entities || []} onChange={value => this.updateSectorEntities(value)} showSearch>
 
               {entitytype.map((f) => {
                 return <Option key={f.name} value={f.name}>{f.name}</Option>
