@@ -3,6 +3,7 @@ import React from "react";
 import {
   Form,
   Input,
+  InputNumber,
   Select,
   Button,
   Alert,
@@ -17,6 +18,7 @@ import config from "../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
+import CsvDelimiterInput from "./CsvDelimiterInput"
 import withContext from "./hoc/withContext";
 
 const FormItem = Form.Item;
@@ -35,11 +37,12 @@ class RegistrationForm extends React.Component {
     this.state = {
       confirmDirty: false,
       autoCompleteResult: [],
-      origin: null
+      origin: null,
+      csv_delimiter: null
     };
   }
   componentDidMount = () => {
-    this.setState({ origin: _.get(this.props, "data.origin") });
+    this.setState({ origin: _.get(this.props, "data.origin"), csv_delimiter: _.get(this.props, 'data.settings["csv delimiter"]' || null) });
   };
 
   handleSubmit = e => {
@@ -55,6 +58,9 @@ class RegistrationForm extends React.Component {
   submitData = values => {
     const key = _.get(this.props, "data.key");
     const { onSaveSuccess } = this.props;
+    if(_.get(values, 'settings["csv delimiter"]') === "\\t"){
+      values.settings["csv delimiter"] = `\t`
+    }
     let task = key
       ? axios.put(`${config.dataApi}dataset/${key}`, values)
       : axios.post(`${config.dataApi}dataset`, values);
@@ -84,7 +90,7 @@ class RegistrationForm extends React.Component {
 
   render() {
     // const { submissionError, frequencyError, datasettypeError,dataformatError } = this.state;
-    const { submissionError, origin } = this.state;
+    const { submissionError, origin, csv_delimiter } = this.state;
     const {
       data,
       frequencyEnum,
@@ -482,13 +488,20 @@ class RegistrationForm extends React.Component {
               )}
             </FormItem>
             )}
-        {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
+            <FormItem {...formItemLayout} label={_.startCase("csv delimiter")} key={"csv delimiter"}>
+              {getFieldDecorator(`settings.csv delimiter`, {
+                initialValue:  _.get(data, `settings.csv delimiter`) ? _.get(data, `settings.csv delimiter`) : ""
+              })(
+                 <CsvDelimiterInput/> 
+              )}
+            </FormItem>
+        {datasetSettings.filter(s => (s.type === "String" || s.type === "Integer") && s.name !== "csv delimiter").map(s => 
               <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name}>
               {getFieldDecorator(`settings.${s.name}`, {
                 initialValue:  _.get(data, `settings.${s.name}`) ? _.get(data, `settings.${s.name}`) : ""
               })(
                 s.type === "String" ? <Input type="text" /> :
-                  <Input type="number" /> 
+                  <InputNumber /> 
               )}
             </FormItem>
             )}

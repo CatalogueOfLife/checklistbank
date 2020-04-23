@@ -208,7 +208,7 @@ class DatasetMeta extends React.Component {
             )}
         {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
               <PresentationItem label={_.startCase(s.name)} key={s.name}>
-              {_.get(data, `settings.${s.name}`)}
+              {_.get(data, `settings.${s.name}`) === "\t" ? "<TAB>" : _.get(data, `settings.${s.name}`)}
             </PresentationItem>
             )}
         {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
