@@ -25,12 +25,13 @@ class NameSearchAutocomplete extends React.Component {
 
     getNames = (q) => {
         const {sortBy, datasetKey} = this.props;
-        const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`;
+        const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest` : `${config.dataApi}name/search`;
         
-        axios(`${url}?&sortBy=${sortBy || "TAXONOMIC"}&status=accepted&limit=25&offset=0&q=${q}`)
+        axios(`${url}?vernaculars=false&fuzzy=false&limit=25&q=${q}`)
             .then((res) => {
+                const names = res.data.result || res.data.suggestions;
                 this.setState(
-                    { names: res.data.result.map(name => ({key: name.usage.id || name.usage.name.id, title: name.usage.name.scientificName}))}
+                    { names: names.map(name => ({key: name.usageId || name.usage.name.id, title: name.match || name.usage.name.scientificName}))}
                     )
             })
             .catch((err) => {

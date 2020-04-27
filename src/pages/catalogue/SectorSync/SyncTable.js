@@ -17,6 +17,7 @@ import kibanaQuery from "./kibanaQuery";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
 import ErrorMsg from "../../../components/ErrorMsg";
 
+const PAGE_SIZE = 25;
 
 const _ = require("lodash");
 
@@ -195,7 +196,7 @@ class SyncTable extends React.Component {
       data: [],
       params: {},
       pagination: {
-        pageSize: 25,
+        pageSize: PAGE_SIZE,
         current: 1
       },
       loading: false
@@ -211,6 +212,25 @@ class SyncTable extends React.Component {
     this.getData(query);
 
   }
+
+  componentDidUpdate = prevProps => {
+    if (
+      
+      _.get(prevProps, "match.params.catalogueKey") !==
+        _.get(this.props, "match.params.catalogueKey")
+    ) {
+      const params = qs.parse(_.get(this.props, "location.search"));
+      this.setState(
+        {
+          pagination: {
+            pageSize: PAGE_SIZE,
+            current: 1
+          }
+        },
+       () =>  this.getData({ limit: 25, offset: 0 })
+      );
+    }
+  };
 
 
   getData = params => {
