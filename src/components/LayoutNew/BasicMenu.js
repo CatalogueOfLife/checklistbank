@@ -442,8 +442,8 @@ class BasicMenu extends Component {
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
-                      this.props,
-                      "selectedDataset.key"
+                      selectedDataset,
+                      "key"
                     )}/meta`
                   }}
                 >
@@ -454,8 +454,8 @@ class BasicMenu extends Component {
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
-                      this.props,
-                      "selectedDataset.key"
+                      selectedDataset,
+                      "key"
                     )}/imports`
                   }}
                 >
@@ -522,8 +522,8 @@ class BasicMenu extends Component {
                 <Menu.Item key="verbatim"><NavLink
                 to={{
                   pathname: `/dataset/${_.get(
-                    this.props,
-                    "selectedDataset.key"
+                    selectedDataset,
+                    "key"
                   )}/verbatim`
                 }}
               >

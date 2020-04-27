@@ -95,10 +95,9 @@ class CatalogueDecisions extends React.Component {
     } = this.props;
     this.setState({ loading: true });
     const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      datasetKey: catalogueKey
+      ...qs.parse(_.get(this.props, "location.search"))
     };
-    axios(`${config.dataApi}decision?${qs.stringify(params)}`)
+    axios(`${config.dataApi}dataset/${catalogueKey}/decision?${qs.stringify(params)}`)
       .then(this.decorateWithDataset)
       .then(res =>
         this.setState({
