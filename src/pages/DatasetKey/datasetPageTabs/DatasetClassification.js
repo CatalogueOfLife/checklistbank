@@ -32,6 +32,7 @@ class DatasetClassification extends React.Component {
         {dataset && (
                     <NameAutocomplete
                       datasetKey={dataset.key}
+                      defaultTaxonKey={_.get(params, 'taxonKey') || null}
                       onSelectName={name => {
                         history.push({
                           pathname: location.pathname,

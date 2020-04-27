@@ -357,6 +357,7 @@ class CatalogueSectors extends React.Component {
           <Form layout="inline">
             <div style={{ marginBottom: "8px" }}>
               <DatasetAutocomplete
+                defaultDatasetKey={_.get(params, 'subjectDatasetKey') || null}
                 onResetSearch={this.onResetDataset}
                 onSelectDataset={this.onSelectDataset}
                 contributesTo={this.props.catalogueKey}

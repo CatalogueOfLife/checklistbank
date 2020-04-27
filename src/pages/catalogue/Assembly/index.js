@@ -466,6 +466,7 @@ class Assembly extends React.Component {
 
                   <NameAutocomplete
                     datasetKey={catalogueKey}
+                    defaultTaxonKey={_.get(qs.parse(_.get(location, "search")), 'assemblyTaxonKey') || null}
                     onSelectName={name => {
                       const params = qs.parse(_.get(location, "search"));
 
@@ -543,12 +544,13 @@ class Assembly extends React.Component {
                       "No dataset selected"
                     )}
                   </h4>
-                  <DatasetAutocomplete onSelectDataset={this.onSelectDataset} />
+                  <DatasetAutocomplete onSelectDataset={this.onSelectDataset} defaultDatasetKey={_.get(this.state.selectedDataset, 'key') || null}/>
 
                   <br />
                   {this.state.selectedDataset && (
                     <NameAutocomplete
                       datasetKey={this.state.selectedDataset.key}
+                      defaultTaxonKey={_.get(qs.parse(_.get(location, "search")), 'sourceTaxonKey') || null}
                       onSelectName={name => {
                         const params = qs.parse(_.get(location, "search"));
 

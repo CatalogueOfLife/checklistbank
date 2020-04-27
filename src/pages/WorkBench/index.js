@@ -626,7 +626,7 @@ class WorkBench extends React.Component {
                 }}
                 onResetSearch={this.resetSearch}
                 placeHolder="Search by higher taxon"
-                sortBy="TAXONOMIC"
+                defaultTaxonKey={params.TAXON_ID || null}
                 autoFocus={false}
               />{" "}
             </div>

@@ -20,8 +20,31 @@ class DatasetAutocomplete extends React.Component {
         }
     }
 
+    
+
+    componentDidMount = () => {
+        const {defaultDatasetKey} = this.props;
+        if(defaultDatasetKey){
+            this.setDefaultValue(defaultDatasetKey)
+        }
+    }
+
+    componentDidUpdate = (prevProps) => {
+        const { defaultDatasetKey} = this.props;
+        if(defaultDatasetKey && defaultDatasetKey !== prevProps.defaultDatasetKey){
+            this.setDefaultValue(defaultDatasetKey)
+        }
+    }
+
     componentWillUnmount() {
         this.getDatasets.cancel();
+    }
+
+    setDefaultValue = (defaultDatasetKey) => {
+        axios(`${config.dataApi}dataset/${defaultDatasetKey}`)
+            .then(res => {
+                this.setState({value: _.get(res, 'data.title') || ''})
+            })
     }
 
     getDatasets = (q) => {

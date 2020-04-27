@@ -19,12 +19,33 @@ class NameSearchAutocomplete extends React.Component {
         }
     }
 
+    componentDidMount = () => {
+        const {defaultTaxonKey} = this.props;
+        if(defaultTaxonKey){
+            this.setDefaultValue(defaultTaxonKey)
+        }
+    }
+
+    componentDidUpdate = (prevProps) => {
+        const { defaultTaxonKey} = this.props;
+        if(defaultTaxonKey && defaultTaxonKey !== prevProps.defaultTaxonKey){
+            this.setDefaultValue(defaultTaxonKey)
+        }
+    }
+
     componentWillUnmount() {
         this.getNames.cancel();
     }
 
+    setDefaultValue = (usageId) => {
+        const {datasetKey} = this.props;
+        axios(`${config.dataApi}nameusage/search?USAGE_ID=${usageId}&DATASET_KEY=${datasetKey}`)
+            .then(res => {
+                this.setState({value: _.get(res, 'data.result[0].usage.label') || ''})
+            })
+    }
     getNames = (q) => {
-        const {sortBy, datasetKey} = this.props;
+        const {datasetKey} = this.props;
         const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest` : `${config.dataApi}name/search`;
         
         axios(`${url}?vernaculars=false&fuzzy=false&limit=25&q=${q}`)
