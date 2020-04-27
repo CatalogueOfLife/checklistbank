@@ -35,7 +35,7 @@ class Sector extends React.Component {
     const {idle} = syncState;
     const {catalogueKey} = this.props;
     axios
-      .post(`${config.dataApi}assembly/${catalogueKey}/sync`, {
+      .post(`${config.dataApi}dataset/${catalogueKey}/sector/sync`, {
         sectorKey: sector.id,
         key: sector.id,
         target: sector.target,

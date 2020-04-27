@@ -12,7 +12,7 @@ import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth"
 
-class SyncTable extends React.Component {
+class SectorTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -282,12 +282,12 @@ class SyncTable extends React.Component {
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sectorKey: record.key}}/> } 
+            { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sector: record}}/> } 
            { (!_.get(record, 'target.id') || !_.get(record, 'subject.id')) &&  <Button
            style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {
-                axios.post(`${config.dataApi}assembly/${catalogueKey}/rematch`, {sectorKey: record.key})
+                axios.post(`${config.dataApi}dataset/${catalogueKey}/rematch`, {sectorKey: record.key})
                 .then(rematchInfo => {
                     const success = _.get(rematchInfo, 'data.sectors.updated') ===1 && _.get(rematchInfo, 'data.sectors.broken')===0;
 
@@ -350,4 +350,4 @@ class SyncTable extends React.Component {
 
 const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
 
-export default withContext(mapContextToProps)(SyncTable);
+export default withContext(mapContextToProps)(SectorTable);

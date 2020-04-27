@@ -221,7 +221,7 @@ class AdminPage extends React.Component {
 
   exportDataset = dataset => {
     axios
-      .post(`${config.dataApi}assembly/${dataset.key}/export`)
+      .post(`${config.dataApi}dataset/${dataset.key}/export`)
       .then(res => {
         this.setState({ error: null }, () => {
           notification.open({

@@ -225,9 +225,9 @@ class SyncTable extends React.Component {
       search: `?${qs.stringify(params)}`
     });
     axios(
-      `${config.dataApi}assembly/${
+      `${config.dataApi}dataset/${
         catalogueKey
-      }/sync?${qs.stringify(params)}`
+      }/sector/sync?${qs.stringify(params)}`
     )
       .then(res => {
         const promises =

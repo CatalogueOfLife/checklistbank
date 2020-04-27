@@ -82,7 +82,7 @@ class Assembly extends React.Component {
         params: { catalogueKey }
       }
     } = this.props;
-    axios(`${config.dataApi}assembly/${catalogueKey}`)
+    axios(`${config.dataApi}dataset/${catalogueKey}/assembly`)
       .then(res => {
         if (
           _.get(res, "data.running") &&

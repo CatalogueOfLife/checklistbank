@@ -3,8 +3,7 @@ import { Button, Icon, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
-
-const {MANAGEMENT_CLASSIFICATION} = config
+import _ from "lodash"
 
 class SyncButton extends React.Component {
   constructor(props) {
@@ -21,10 +20,10 @@ class SyncButton extends React.Component {
     this.setState({ importTriggered: true });
     axios
       .post(
-        `${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync`,
+        `${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync`,
         {
-          'sectorKey': record.sectorKey,
-          'datasetKey': MANAGEMENT_CLASSIFICATION.key
+          'sectorKey': _.get(record, 'sector.key'),
+          'datasetKey': _.get(record, 'sector.datasetKey')
         }
       )
       .then(res => {
@@ -46,7 +45,7 @@ class SyncButton extends React.Component {
     const {record} = this.props;  
     this.setState({ importTriggered: true });
     axios
-      .delete(`${config.dataApi}assembly/${MANAGEMENT_CLASSIFICATION.key}/sync/${record.sectorKey}`)
+      .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync/${_.get(record, 'sector.key')}`)
       .then(res => {
         this.setState({ importTriggered: false });
         notification.open({

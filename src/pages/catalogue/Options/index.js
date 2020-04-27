@@ -47,7 +47,7 @@ class CatalogueOptions extends React.Component {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${catalogueKey}/rematch`,
+        `${config.dataApi}dataset/${catalogueKey}/rematch`,
         { all: true }
       )
       .then(res => {
@@ -79,7 +79,7 @@ class CatalogueOptions extends React.Component {
     this.setState({ releaseColLoading: true });
     axios
       .post(
-        `${config.dataApi}assembly/${catalogueKey}/release`
+        `${config.dataApi}dataset/${catalogueKey}/release`
       )
       .then(res => {
         this.setState(
@@ -112,7 +112,7 @@ class CatalogueOptions extends React.Component {
         params: { catalogueKey }
       }} = this.props;
     axios
-      .post(`${config.dataApi}assembly/${catalogueKey}/export`)
+      .post(`${config.dataApi}dataset/${catalogueKey}/export`)
       .then(res => {
         this.setState({ error: null }, () => {
           notification.open({

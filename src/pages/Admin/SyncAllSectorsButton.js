@@ -23,7 +23,7 @@ class SyncAllSectorsButton extends React.Component {
     
     axios
       .post(
-        `${config.dataApi}assembly/${catalogueKey}/sync`, body
+        `${config.dataApi}dataset/${catalogueKey}/sector/sync`, body
       )
       .then(res => {
         this.setState({ allSectorSyncloading: false}, () => {

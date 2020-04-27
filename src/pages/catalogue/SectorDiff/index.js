@@ -41,7 +41,7 @@ class SectorDiff extends React.Component {
     axios(
         `${
           config.dataApi
-        }assembly/${catalogueKey}/sync?sectorKey=${sectorKey}&state=finished&limit=1`
+        }dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
       )
         .then(res => {
             this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
