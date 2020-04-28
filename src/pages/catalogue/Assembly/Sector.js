@@ -1,5 +1,5 @@
 import React from "react";
-import { notification,Input, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col } from "antd";
+import { notification,Input, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col, Popconfirm } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -224,6 +224,16 @@ class Sector extends React.Component {
               <div>
                 {isRootSector && (
                   <React.Fragment>
+{/*                     <Popconfirm
+            placement="rightTop"
+            title="Delete sector will delete the sector mapping and all species and below, but keep the higher classification above species rank. Go ahead?"
+            onConfirm={() => {
+              this.deleteSector(sector);
+            }}
+            okText="Yes"
+            cancelText="No"
+          > */}
+          <Tooltip title="Delete sector will delete the sector mapping and all species, but keep the higher classification above species">
                     <Button
                       style={{ width: "100%" }}
                       type="danger"
@@ -233,6 +243,9 @@ class Sector extends React.Component {
                     >
                       Delete sector
                     </Button>
+                    </Tooltip>
+{/*           </Popconfirm>
+ */}
                     <br />
 
                     {_.get(syncState, "running.sectorKey") !== sector.id && (
