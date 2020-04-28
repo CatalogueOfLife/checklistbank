@@ -4,7 +4,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Alert, Tag, Icon, Row, Col, Button, Rate } from "antd";
+import { Alert, Tag, Icon, Row, Col, Button, Rate, message } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import References from "./References";
@@ -22,9 +22,7 @@ import history from "../../history";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
-
-
-const { MANAGEMENT_CLASSIFCATION } = config;
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const md = 5;
 
@@ -252,12 +250,17 @@ class TaxonPage extends React.Component {
             {taxon && (
               <Row>
                 <Col span={this.state.logoUrl ? 18 : 21}>
+                  <CopyToClipboard 
+                  text={taxon.label}
+                  onCopy={() =>   message.info(`Copied "${taxon.label}" to clipboard`)}
+                  >
                   <h1
                     style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" , display: 'inline-block'}}
                     dangerouslySetInnerHTML={{
                       __html: taxon.labelHtml
                     }}
                   />
+                  </CopyToClipboard>
                  {taxon.referenceIds && <div style={{display: 'inline-block', paddingLeft: "10px"}}><ReferencePopover datasetKey={datasetKey} referenceId={taxon.referenceIds} placement="bottom"/></div>}
                 </Col>
                 <Col span={3}>
