@@ -65,7 +65,7 @@ class Sector extends React.Component {
         }`
       ) // /assembly/3/sync/
       .then(() => {
-        debounce(this.props.reloadSelfAndSiblings, 500)();
+        debounce(this.props.onDeleteSector, 500)();
         notification.open({
           message: "Deletion triggered",
           description: `Delete job for ${sector.id} placed on the sync queue`

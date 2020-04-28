@@ -212,7 +212,10 @@ class Assembly extends React.Component {
         return this.saveSector(subject, parent, "ATTACH");
       });
   };
-
+  onDeleteSector = () => {
+    this.assemblyRef.reloadRoot()
+    this.sourceRef.reloadRoot()
+  }
   saveSector = (subject, target, mode) => {
     const {
       match: {
@@ -513,6 +516,7 @@ class Assembly extends React.Component {
                         dataset={{ key: catalogueKey }}
                         treeType="CATALOGUE"
                         catalogueKey={catalogueKey}
+                        onDeleteSector={this.onDeleteSector}
                         attachFn={this.getSectorInfo}
                         onDragStart={e => this.onDragStart(e, catalogue)}
                         dragNode={this.state.dragNode}
@@ -588,6 +592,7 @@ class Assembly extends React.Component {
                         dataset={this.state.selectedDataset}
                         treeType="SOURCE"
                         catalogueKey={catalogueKey}
+                        onDeleteSector={this.onDeleteSector}
                         onDragStart={e =>
                           this.onDragStart(e, this.state.selectedDataset)
                         }
