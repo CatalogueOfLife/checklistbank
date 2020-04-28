@@ -349,7 +349,7 @@ class ColTreeNode extends React.Component {
                       </Tag>
                     )}
                     {taxon.datasetKey === catalogueKey &&
-                      !datasetSectors &&
+                      (!datasetSectors || _.isEmpty(datasetSectors)) &&
                       !sector && (
                         <Tooltip title="No sectors">
                           <Icon
@@ -359,7 +359,7 @@ class ColTreeNode extends React.Component {
                           />
                         </Tooltip>
                       )}
-                    {datasetSectors && (
+                    {datasetSectors &&!_.isEmpty(datasetSectors) && (
                       <TaxonSources
                         datasetSectors={datasetSectors}
                         taxon={taxon}
@@ -432,7 +432,7 @@ class ColTreeNode extends React.Component {
                     </Tag>
                   )}
 
-                  {datasetSectors && (
+                  {datasetSectors && !_.isEmpty(datasetSectors) && (
                     <TaxonSources
                       datasetSectors={datasetSectors}
                       taxon={taxon}
