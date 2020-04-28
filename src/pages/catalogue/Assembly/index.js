@@ -214,7 +214,9 @@ class Assembly extends React.Component {
   };
   onDeleteSector = () => {
     this.assemblyRef.reloadRoot()
-    this.sourceRef.reloadRoot()
+    if(this.sourceRef && typeof this.sourceRef.reloadRoot === 'function'){
+      this.sourceRef.reloadRoot()
+    }
   }
   saveSector = (subject, target, mode) => {
     const {
