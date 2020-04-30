@@ -46,6 +46,7 @@ class CatalogueSectors extends React.Component {
       loading: false,
       rematchSectorsAndDecisionsLoading: false,
       rematchInfo: null,
+      defaultTaxonKey: null,
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
@@ -317,7 +318,7 @@ class CatalogueSectors extends React.Component {
   };
 
   render() {
-    const { data, loading, pagination, error, rematchSectorsAndDecisionsLoading, rematchInfo } = this.state;
+    const { data, loading, pagination, error, rematchSectorsAndDecisionsLoading, rematchInfo, defaultTaxonKey } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -367,7 +368,9 @@ class CatalogueSectors extends React.Component {
             <div style={{ marginBottom: "8px" }}>
             <NameAutocomplete
               datasetKey={catalogueKey}
+              defaultTaxonKey={defaultTaxonKey}
               onSelectName={name => {
+                this.setState({defaultTaxonKey: name.key})
                 this.updateSearch({ name: name.title });
               }}
               onResetSearch={this.onResetName}

@@ -4,6 +4,7 @@ import config from '../../../config'
 import {  AutoComplete, Input, Button, Icon } from 'antd'
 import _ from 'lodash'
 import debounce from 'lodash.debounce';
+import Highlighter from "react-highlight-words";
 
 const Option = AutoComplete.Option;
 
@@ -60,7 +61,7 @@ class DatasetAutocomplete extends React.Component {
     onSelectDataset = (val, obj) => {
         this.setState({value: val})
 
-        this.props.onSelectDataset({key: val, title: obj.props.children})
+        this.props.onSelectDataset({key: obj.key, title: val})
        // this.setState({ datasetKey: val, datasetName: obj.props.children, selectedDataset: {key: val, title: obj.props.children}})
     }
     onReset = () => {
@@ -81,15 +82,31 @@ class DatasetAutocomplete extends React.Component {
 
             /> : ''
           ;
+
+          const options = this.state.datasets ? this.state.datasets.map((o) => {
+              const text = `${o.alias || o.title} [${o.key}]`;
+            return (
+              <Option key={o.key} value={text}>
+                <Highlighter
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                  searchWords={value.split(" ")}
+                  autoEscape
+                  textToHighlight={text}
+                />
+              </Option>
+            );
+          }) : [];
+
         return <AutoComplete
             dataSource={this.state.datasets}
             onSelect={this.onSelectDataset}
             onSearch={this.getDatasets}
-            dataSource={this.state.datasets ? this.state.datasets.map((o) => ({value: o.key, text: `${o.alias || o.title} [${o.key}]`})) : []}
+            dataSource={options}
             placeholder={this.props.placeHolder || "Find dataset"}
             style={{ width: '100%' }}
             onChange={(value) => this.setState({value})}
             value={value}
+            optionLabelProp="value"
         >
             <Input.Search
 

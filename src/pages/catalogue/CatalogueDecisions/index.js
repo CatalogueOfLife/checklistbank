@@ -291,7 +291,7 @@ class CatalogueDecisions extends React.Component {
               exact={true}
             >
               <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                highlightStyle={{ fontWeight: "bold", padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
                 textToHighlight={text.toString()}
@@ -328,7 +328,7 @@ class CatalogueDecisions extends React.Component {
                 {record.subject.rank}:{" "}
               </span>
               <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                highlightStyle={{ fontWeight: "bold", padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
                 textToHighlight={record.subject.name.toString()}

@@ -107,7 +107,7 @@ class SectorTable extends React.Component {
               exact={true}
             >
               <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                highlightStyle={{ fontWeight: "bold", padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
                 textToHighlight={text ? text.toString() : record.dataset.title}
@@ -157,7 +157,7 @@ class SectorTable extends React.Component {
                 exact={true}
               >
                 <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={record.subject.name.toString()}
@@ -171,7 +171,7 @@ class SectorTable extends React.Component {
                 exact={true}
               >
                 <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
@@ -210,7 +210,7 @@ class SectorTable extends React.Component {
                 exact={true}
               >
                 <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
@@ -219,7 +219,7 @@ class SectorTable extends React.Component {
               </NavLink> }
               { !_.get(record, 'target.id') && <React.Fragment> 
               <Highlighter
-                  highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
