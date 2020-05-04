@@ -79,7 +79,6 @@ class NameSearchAutocomplete extends React.Component {
   render = () => {
     const { placeHolder, autoFocus } = this.props;
     const { value } = this.state;
-    console.log("VALUE: "+value.toString())
     const options = this.state.names.map((o) => {
       return (
         <Option key={o.key} value={o.title}>
