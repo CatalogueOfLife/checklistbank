@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PlusOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Modal, Button, Select, Alert, List, notification } from "antd";
+// import { Form } from '@ant-design/compatible';
+// import '@ant-design/compatible/assets/index.css';
+import { Input, Modal, Button, Select, Alert, List, notification, Form } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import EditableTable from "./EditableTable";
@@ -14,223 +14,204 @@ import config from "../../../config";
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-
-class SpeciesestimateModal extends React.Component {
-  state = {
-    visible: true,
-    addNewMode: false,
-    selectedReference: null,
-    submissionError: null,
-    estimates: []
-  };
-
-  componentDidMount = () => {
-    const {
-      taxon: { estimates }
-    } = this.props;
-    if (_.isArray(estimates)) {
-      this.setState({ estimates: [...estimates] });
-    }
-  };
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log("Received values of form: ", values);
-
-        this.submitData(values);
-      } else {
-        this.setState({ submissionError: err });
-      }
-    });
-  };
-
-  submitData = values => {
-    const { taxon, catalogueKey } = this.props;
-    const newEst = {
-      datasetKey: catalogueKey,
-      referenceId: _.get(this.state, 'selectedReference.key') ? this.state.selectedReference.key : '',
-      estimate: values.estimate,
-      type: values.type,
-      note: values.note
-    };
-    axios(
-      `${config.dataApi}dataset/${catalogueKey}/taxon/${
-        taxon.id
-      }`
-    )
-      .then(tx =>
-        axios.post(`${config.dataApi}estimate`, {
-          ...newEst,
-          target: {
-            id: _.get(tx, "data.name.id"),
-
-            name: _.get(tx, "data.name.scientificName"),
-            authorship: _.get(tx, "data.name.authorship"),
-            rank: _.get(tx, "data.name.rank")
+const SpeciesestimateModal = (props) => {
+    const [visible, setVisible] = useState(true);
+    const [addNewMode, setAddNewMode] = useState(false);
+    const [selectedReference, setSelectedReference] = useState(null);
+    const [submissionError, setSubmissionError] = useState(null);
+    const [estimates, setEstimates] = useState([]);
+    const [form] = Form.useForm();
+    useEffect(() => {
+        if (_.isArray(props.taxon.estimates)) {
+            setEstimates(props.taxon.estimates)
+        }
+               
+      }, [props.taxon.estimates]); 
+      const onFinishFailed = ({ errorFields }) => {
+        this.formRef.scrollToField(errorFields[0].name);
+      };
+    const submitData = values => {
+        const { taxon, catalogueKey } = props;
+        const newEst = {
+          datasetKey: catalogueKey,
+          referenceId: _.get(selectedReference, 'key') ? selectedReference.key : '',
+          estimate: values.estimate,
+          type: values.type,
+          note: values.note
+        };
+        axios(
+          `${config.dataApi}dataset/${catalogueKey}/taxon/${
+            taxon.id
+          }`
+        )
+          .then(tx => {
+            const target = {
+              id: _.get(tx, "data.name.id"),
+  
+              name: _.get(tx, "data.name.scientificName"),
+              authorship: _.get(tx, "data.name.authorship"),
+              rank: _.get(tx, "data.name.rank")
+            }
+            return axios.all([axios.post(`${config.dataApi}dataset/${catalogueKey}/estimate`, {
+              ...newEst,
+              target: target
+            }), target])
           }
-        })
-      )
-
-      .then(res => {
-        this.setState({ addNewMode: false,  submissionError: null, selectedReference: null, estimates: [newEst, ...this.state.estimates] }, () => {
-          notification.open({
-            message: "Estimate created",
-            description: `${values.estimate} est. species`
+            
+          )
+    
+          .then(res => {
+              setAddNewMode(false)
+              setSubmissionError(null)
+              setSelectedReference(null)
+              setEstimates([{...newEst, id: res[0].data, target: res[1]}, ...estimates])
+              form.resetFields()
+              notification.open({
+                message: "Estimate created",
+                description: `${values.estimate} est. species`
+              });
+          })
+          .catch(err => {
+            setSubmissionError(err)
+            setSelectedReference(null)
           });
-        });
-      })
-      .catch(err => {
-        this.setState({ submissionError: err, selectedReference: null });
-      });
-  };
+      };
 
-  handleConfirmBlur = e => {
-    const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
+      const toggleEdit = () => {
+        setAddNewMode(!addNewMode)
+      };
+    
+     
 
-  toggleEdit = () => {
-    const { addNewMode } = this.state;
-    this.setState({ addNewMode: !addNewMode });
-  };
-
-  selectReference = ref => {
-    this.setState({ selectedReference: ref });
-  };
-
-  render() {
-    const {
-      taxon,
-      onCancel,
-      form: { getFieldDecorator },
-      catalogueKey,
-      estimateType
-    } = this.props;
-    const { estimates } = this.state;
-    const { visible, addNewMode, submissionError } = this.state;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 19 }
-      }
-    };
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0
+      const {
+        taxon,
+        onCancel,
+       // form: { getFieldDecorator },
+        catalogueKey,
+        estimateType
+      } = props;
+    //  const { estimates } = this.state;
+     // const { visible, addNewMode, submissionError } = this.state;
+      const formItemLayout = {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
-        sm: {
-          span: 4,
-          offset: 20
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 19 }
         }
-      }
-    };
-    return (
-      <Modal
-        width={1000}
-        title={
-          <span>
-            Estimates for{" "}
-            <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
-          </span>
+      };
+      const tailFormItemLayout = {
+        wrapperCol: {
+          xs: {
+            span: 24,
+            offset: 0
+          },
+          sm: {
+            span: 4,
+            offset: 20
+          }
         }
-        visible={visible}
-        onOk={() => {
-          this.setState({ visible: false }, onCancel);
-        }}
-        onCancel={() => {
-          this.setState({ visible: false }, onCancel);
-        }}
-        destroyOnClose={true}
-      >
-        {!addNewMode && (
-          <a onClick={this.toggleEdit}>
-            <PlusOutlined /> Add new
-          </a>
-        )}
-        {addNewMode && (
-          <Form>
-            <FormItem {...formItemLayout} label="Estimate">
-              {getFieldDecorator("estimate", {
-                rules: [
-                  {
-                    required: true,
-                    message: "Estimate"
-                  }
-                ]
-              })(<Input  type="number" />)}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Type">
-              {getFieldDecorator("type", {
-                rules: [
-                  {
-                    required: true,
-                    message: "Type"
-                  }
-                ]
-              })(
-                <Select showSearch>
-                  {estimateType.map(o => (
-                    <Option key={o} value={o}>
-                      {o}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="Reference">
-              {
-                <ReferenceAutocomplete
-                  datasetKey={catalogueKey}
-                  onSelectReference={this.selectReference}
-                  onResetSearch={() => this.setState({ selectReference: null })}
-                />
-              }
-            </FormItem>
-            <FormItem {...formItemLayout} label="Note">
-              {getFieldDecorator("note", {
-              })(<Input />)}
-            </FormItem>
-
-            <FormItem {...tailFormItemLayout}>
-              <Button style={{ marginRight: "10px" }}>Cancel</Button>
-              <Button type="primary" onClick={this.handleSubmit}>
-                Save
-              </Button>
-            </FormItem>
-            {submissionError && (
-              <FormItem>
-                <Alert
-                closable
-                onClose={() => this.setState({ submissionError: null })}
-                  message={<ErrorMsg error={submissionError} />}
-                  type="error"
-                />
+      };
+      return (
+        <Modal
+          width={1000}
+          title={
+            <span>
+              Estimates for{" "}
+              <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
+            </span>
+          }
+          visible={visible}
+          onOk={() => {
+            setVisible(false); onCancel();
+          }}
+          onCancel={() => {
+            setVisible(false); onCancel();
+          }}
+          destroyOnClose={true}
+        >
+          {!addNewMode && (
+            <a onClick={toggleEdit}>
+              <PlusOutlined /> Add new
+            </a>
+          )}
+          {addNewMode && (
+            <Form 
+              form={form} 
+              name="EstimateForm"
+              onFinish={submitData} 
+              onFinishFailed={onFinishFailed}
+              >
+              <FormItem {...formItemLayout} label="Estimate" name="estimate" rules={[
+                    {
+                      required: true,
+                      message: "Estimate"
+                    }
+                  ]}>
+                <Input  type="number" />
               </FormItem>
-            )}
-          </Form>
-        )}
+              <FormItem {...formItemLayout} label="Type" name="type" rules={[
+                    {
+                      required: true,
+                      message: "Type"
+                    }
+                  ]}>
+                <Select showSearch>
+                    {estimateType.map(o => (
+                      <Option key={o} value={o}>
+                        {o}
+                      </Option>
+                    ))}
+                  </Select>
+              </FormItem>
+  
+              <FormItem {...formItemLayout} label="Reference" name="reference">
+                {
+                  <ReferenceAutocomplete
+                    datasetKey={catalogueKey}
+                    onSelectReference={setSelectedReference}
+                    onResetSearch={() => setSelectedReference(null) }
+                  />
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label="Note" name="note" >
+              <Input />
+              </FormItem>
+  
+              <FormItem {...tailFormItemLayout}>
+                <Button style={{ marginRight: "10px" }}>Cancel</Button>
+                <Button type="primary" htmlType="submit" onClick={()=> form.submit()}>
+                  Save
+                </Button>
+              </FormItem>
+              {submissionError && (
+                <FormItem>
+                  <Alert
+                  closable
+                  onClose={() => setSubmissionError(null)}
+                    message={<ErrorMsg error={submissionError} />}
+                    type="error"
+                  />
+                </FormItem>
+              )}
+            </Form>
+          )}
+  
+          {estimates && _.isArray(estimates) && (
+            <EditableTable catalogueKey={catalogueKey} data={estimates} onDataUpdate={(estimates) => setEstimates(estimates) } />
+          )}
+        </Modal>
+      );
 
-        {estimates && _.isArray(estimates) && (
-          <EditableTable catalogueKey={catalogueKey} data={estimates} onDataUpdate={(estimates) => this.setState({estimates}) } />
-        )}
-      </Modal>
-    );
-  }
 }
-const WrappedSpeciesestimateModal = Form.create()(
-  SpeciesestimateModal
-);
 
-//export default WrappedSpeciesestimateModal;
+
+// ##############################################################
+
+
 
 const mapContextToProps = ({ estimateType }) => ({ estimateType });
 
-export default withContext(mapContextToProps)(WrappedSpeciesestimateModal);
+export default withContext(mapContextToProps)(SpeciesestimateModal);
