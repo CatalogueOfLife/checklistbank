@@ -4,7 +4,7 @@ import config from '../../../config'
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { AutoComplete, Input, Button } from 'antd';
 import _ from 'lodash'
-import debounce from 'lodash.debounce';
+import {debounce} from 'lodash';
 
 const Option = AutoComplete.Option;
 

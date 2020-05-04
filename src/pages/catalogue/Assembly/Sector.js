@@ -30,7 +30,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
 import SectorNote from "./SectorNote"
 import withContext from "../../../components/hoc/withContext"
-import debounce from 'lodash.debounce';
+import {debounce} from 'lodash';
 import Auth from '../../../components/Auth'
 const {Option} = Select;
 
