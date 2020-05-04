@@ -2,7 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Popconfirm, Input, Button, Form, Select, Row, Col, Switch, notification } from "antd";
+import { SearchOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import {
+  Table,
+  Alert,
+  Popconfirm,
+  Input,
+  Button,
+  Select,
+  Row,
+  Col,
+  Switch,
+  notification,
+} from "antd";
 
 import config from "../../../config";
 import moment from "moment";
@@ -199,7 +213,7 @@ class CatalogueDecisions extends React.Component {
         <Button
           type="primary"
           onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon="search"
+          icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
@@ -215,7 +229,7 @@ class CatalogueDecisions extends React.Component {
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       _.get(record, dataIndex)

@@ -2,13 +2,25 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 import injectSheet from "react-jss";
-import { Menu, Icon, Alert } from "antd";
+
+import {
+  ApiOutlined,
+  BarsOutlined,
+  CopyOutlined,
+  MenuOutlined,
+  ProjectOutlined,
+  SettingOutlined,
+  TableOutlined,
+  ToolOutlined,
+} from '@ant-design/icons';
+
+import { Menu, Alert } from "antd";
 import Logo from "./Logo";
 import _ from "lodash";
 import Auth from "../Auth";
 import withContext from "../hoc/withContext";
 import config from "../../config"
-import CatalogueSelect from "./CatalogueSelect" 
+import CatalogueSelect from "./CatalogueSelect"
 import SourceSelect from "./SourceDatasetSelect"
 const SubMenu = Menu.SubMenu;
 const styles = {};
@@ -126,7 +138,7 @@ class BasicMenu extends Component {
 {config.env === 'dev' &&  <Alert type="warning" style={{margin: '6px'}} message={<div style={{textAlign: 'center'}}>Test enviroment</div>}/>}       
  {Auth.isAuthorised(user, ["editor", "admin"]) &&  <Menu.Item key="admin">
             <NavLink to={{ pathname: "/admin" }}>
-              <Icon type="setting" />
+              <SettingOutlined />
               <span>Admin</span>
             </NavLink>
     </Menu.Item> }
@@ -135,7 +147,7 @@ class BasicMenu extends Component {
             key="imports"
             title={
               <span>
-                <Icon type="api" />
+                <ApiOutlined />
                 <span>Imports</span>
               </span>
             }
@@ -153,7 +165,7 @@ class BasicMenu extends Component {
               key="assembly"
               title={
                 <span>
-                  <Icon type="project" /><CatalogueSelect /><span>{`Project: ${catalogueKey}`}</span> 
+                  <ProjectOutlined /><CatalogueSelect /><span>{`Project: ${catalogueKey}`}</span> 
                 </span>
               }
             >
@@ -161,7 +173,7 @@ class BasicMenu extends Component {
             key="projectDetails"
             title={
               <span>
-                <Icon type="menu" />
+                <MenuOutlined />
                 <span>Project details</span>
               </span>
             }
@@ -221,13 +233,13 @@ class BasicMenu extends Component {
           </SubMenu>
           <Menu.Item key="colAssembly">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}>
-                 <Icon type="copy" /><span>Assembly</span>
+                 <CopyOutlined /><span>Assembly</span>
                 </NavLink>
               </Menu.Item>
             <Menu.Item key="catalogueSources">
               <NavLink to={{
                     pathname: `/catalogue/${catalogueKey}/sources`
-                  }}> <Icon type="table" /><span>Source datasets</span></NavLink>
+                  }}> <TableOutlined /><span>Source datasets</span></NavLink>
             </Menu.Item>
               { <SubMenu
               key="sourceDataset"
@@ -380,7 +392,7 @@ class BasicMenu extends Component {
               
               <Menu.Item key="catalogueOptions">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/options` }}>
-                <Icon type="tool" /> <span>Options</span>
+                <ToolOutlined /> <span>Options</span>
                 </NavLink>
               </Menu.Item>
             </SubMenu>
@@ -390,7 +402,7 @@ class BasicMenu extends Component {
             key="dataset"
             title={
               <span>
-                <Icon type="table" />
+                <TableOutlined />
                 <span>Datasets</span>
               </span>
             }
@@ -433,7 +445,7 @@ class BasicMenu extends Component {
               key="datasetKey"
               title={
                 <span>
-                  <Icon type="bars" />
+                  <BarsOutlined />
                   <span>{`Dataset: ${selectedDataset.key}`}</span>
                 </span>
               }

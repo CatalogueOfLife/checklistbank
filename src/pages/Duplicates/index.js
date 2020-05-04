@@ -2,8 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { SearchOutlined } from '@ant-design/icons';
 import {
-  Form,
   Table,
   Alert,
   Select,
@@ -14,11 +16,10 @@ import {
   Card,
   AutoComplete,
   Input,
-  Icon,
   Radio,
   Pagination,
   Tooltip,
-  notification
+  notification,
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -559,7 +560,7 @@ class DuplicateSearchPage extends React.Component {
                   onClick={this.toggleAdvanced}
                 >
                   Advanced{" "}
-                  <Icon type={this.state.advancedMode ? "up" : "down"} />
+                  <LegacyIcon type={this.state.advancedMode ? "up" : "down"} />
                 </a>
               </div>
               {advancedMode && (
@@ -660,7 +661,7 @@ class DuplicateSearchPage extends React.Component {
                       marginBottom: "10px"
                     }}
                   >
-                    <Input suffix={<Icon type="search" />} />
+                    <Input suffix={<SearchOutlined />} />
                   </AutoComplete>
                   <br />
                   <FormItem label="Authorship different">

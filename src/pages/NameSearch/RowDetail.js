@@ -1,6 +1,7 @@
 import React from "react";
 import {NavLink} from "react-router-dom"
-import { Row, Col, Tag, Tooltip, Icon } from "antd";
+import { LinkOutlined } from '@ant-design/icons';
+import { Row, Col, Tag, Tooltip } from "antd";
 import Classification from "./Classification";
 import _ from "lodash";
 import Auth from "../../components/Auth"
@@ -28,7 +29,7 @@ const RowDetail = ({ issues, usage, classification, issueMap, baseUri, sectorDat
               }}
               exact={true}
             >
-              <Icon type="link" /> Workbench
+              <LinkOutlined /> Workbench
             </NavLink>
     </Col>
   </Row>

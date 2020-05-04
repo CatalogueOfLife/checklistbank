@@ -2,7 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Tag, Icon, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
+import { CodeOutlined, DiffOutlined, WarningOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Alert, Tag, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -68,10 +71,7 @@ const getColumns = (catalogueKey) => [
             {_.get(record, 'sector.subject.name')}
           </NavLink>
           {!_.get(record, 'sector.subject.id') && (
-            <Icon
-              type="warning"
-              style={{ color: "red", marginLeft: "10px" }}
-            />
+            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
         </React.Fragment>
       );
@@ -101,10 +101,7 @@ const getColumns = (catalogueKey) => [
           </NavLink> }
           { !_.get(record, 'sector.target.id') && <React.Fragment> 
           {_.get(record, "sector.target.name")}
-            <Icon
-                type="warning"
-                style={{ color: "red", marginLeft: "10px" }}
-              /></React.Fragment>}
+            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>}
         </React.Fragment>
       );
     }
@@ -168,7 +165,7 @@ const getColumns = (catalogueKey) => [
         }}
       >
         <Tooltip title="Tree diff">
-          <Icon type="diff" style={{fontSize: '20px'}}/>
+          <DiffOutlined style={{fontSize: '20px'}} />
         </Tooltip>
       </NavLink>
     ),
@@ -180,7 +177,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       <Tooltip title="Kibana logs">
         <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank" >
-          <Icon type="code" style={{fontSize: '20px'}} />
+          <CodeOutlined style={{fontSize: '20px'}} />
         </a>
       </Tooltip>
     ),

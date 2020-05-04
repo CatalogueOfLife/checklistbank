@@ -2,7 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Tag, Icon, Tooltip } from "antd";
+import { CodeOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Alert, Tag, Tooltip } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -113,7 +116,7 @@ class ImportTable extends React.Component {
           title: "Logs",
           key: "logs",
           render: (text, record) => 
-          <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)} target="_blank" ><Icon type="code" style={{fontSize: '20px'}} /></a></Tooltip>,
+          <Tooltip title="Kibana logs"><a href={kibanaQuery(record.datasetKey)} target="_blank" ><CodeOutlined style={{fontSize: '20px'}} /></a></Tooltip>,
           width: 50
         }
         

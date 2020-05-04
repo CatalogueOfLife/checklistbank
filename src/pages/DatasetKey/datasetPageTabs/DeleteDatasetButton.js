@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Icon, Popover, Popconfirm, notification } from "antd";
+import { WarningOutlined } from '@ant-design/icons';
+import { Button, Popover, Popconfirm, notification } from "antd";
 import {Redirect} from 'react-router-dom'
 import axios from "axios";
 import config from "../../../config";
@@ -65,10 +66,7 @@ onDeleteClick = () => {
             content={<ErrorMsg error={error} />}
             trigger="click"
           >
-            <Icon
-              type="warning"
-              style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
-            />
+            <WarningOutlined style={{ color: "red", marginLeft: "10px", cursor: "pointer" }} />
           </Popover>
         )}
       </React.Fragment>

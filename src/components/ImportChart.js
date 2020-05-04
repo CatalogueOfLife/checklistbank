@@ -4,6 +4,7 @@ import HighchartsReact from 'highcharts-react-official'
 import React from "react";
 import _ from 'lodash';
 import history from '../history'
+import { BarChartOutlined, PieChartOutlined } from '@ant-design/icons';
 import {  Button, Card } from 'antd'
 import withContext from "./hoc/withContext";
 
@@ -173,24 +174,26 @@ class ImportChart extends React.Component {
 
   render = () => {
     const { options, logarithmic, chartType } = this.state;
-    return <Card>
-      <ButtonGroup size='small'>
-        <Button type={!logarithmic ? 'primary' : ''} onClick={() => { this.setLogarithmic(false) }}>Linear</Button>
-        <Button type={logarithmic ? 'primary' : ''} onClick={() => { this.setLogarithmic(true) }}>Logarithmic</Button>
-      </ButtonGroup>
-      <ButtonGroup size='small' style={{ float: 'right' }}>
-        <Button type={chartType === 'pie' ? 'primary' : ''} icon="pie-chart" onClick={() => { this.toggleChartType('pie') }} />
-        <Button type={chartType === 'column' ? 'primary' : ''} icon="bar-chart" onClick={() => { this.toggleChartType('column') }} />
-      </ButtonGroup>
-      {chartType === 'pie' && <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-      />}
-      {chartType === 'column' && <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-      />}
-    </Card>
+    return (
+      <Card>
+        <ButtonGroup size='small'>
+          <Button type={!logarithmic ? 'primary' : ''} onClick={() => { this.setLogarithmic(false) }}>Linear</Button>
+          <Button type={logarithmic ? 'primary' : ''} onClick={() => { this.setLogarithmic(true) }}>Logarithmic</Button>
+        </ButtonGroup>
+        <ButtonGroup size='small' style={{ float: 'right' }}>
+          <Button type={chartType === 'pie' ? 'primary' : ''} icon={<PieChartOutlined />} onClick={() => { this.toggleChartType('pie') }} />
+          <Button type={chartType === 'column' ? 'primary' : ''} icon={<BarChartOutlined />} onClick={() => { this.toggleChartType('column') }} />
+        </ButtonGroup>
+        {chartType === 'pie' && <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+        />}
+        {chartType === 'column' && <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+        />}
+      </Card>
+    );
   }
 }
 

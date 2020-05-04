@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Alert, Tag, Card, Tooltip, Icon , Spin} from "antd";
+import { Table, Alert, Tag, Card, Tooltip, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import { NavLink } from "react-router-dom";

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import injectSheet from 'react-jss';
-import { Menu, Icon, Dropdown } from 'antd';
+import { GlobalOutlined } from '@ant-design/icons';
+import { Menu, Dropdown } from 'antd';
 
 const styles = {
 
@@ -27,10 +28,7 @@ class SelectLang extends PureComponent {
     );
     return (
       <Dropdown overlay={langMenu} placement="bottomRight">
-        <Icon
-          type="global"
-          title="title"
-        />
+        <GlobalOutlined title="title" />
       </Dropdown>
     );
   }

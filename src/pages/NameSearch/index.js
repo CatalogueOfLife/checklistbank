@@ -2,7 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Button, Icon, Form, Switch } from "antd";
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Alert, Radio, Row, Col, Button, Switch } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -429,7 +431,7 @@ class NameSearchPage extends React.Component {
                 onClick={this.toggleAdvancedFilters}
               >
                 Advanced{" "}
-                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+                <LegacyIcon type={this.state.advancedFilters ? "up" : "down"} />
               </a>
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}

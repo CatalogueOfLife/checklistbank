@@ -1,5 +1,7 @@
 import React from "react";
-import { Form, Input, Modal, Select, Alert, Checkbox, notification } from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Modal, Select, Alert, Checkbox, notification } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";

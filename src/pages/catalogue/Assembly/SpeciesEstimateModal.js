@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  Form,
-  Input,
-  Modal,
-  Button,
-  Select,
-  Alert,
-  List,
-  Icon,
-  notification
-} from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Modal, Button, Select, Alert, List, notification } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import EditableTable from "./EditableTable";
@@ -158,7 +151,7 @@ class SpeciesestimateModal extends React.Component {
       >
         {!addNewMode && (
           <a onClick={this.toggleEdit}>
-            <Icon type="plus" /> Add new
+            <PlusOutlined /> Add new
           </a>
         )}
         {addNewMode && (

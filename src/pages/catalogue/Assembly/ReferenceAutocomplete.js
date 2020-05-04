@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import config from '../../../config'
-import {  AutoComplete, Input, Button, Icon } from 'antd'
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { AutoComplete, Input, Button } from 'antd';
 import _ from 'lodash'
 import debounce from 'lodash.debounce';
 
@@ -48,13 +49,7 @@ class ReferenceAutocomplete extends React.Component {
         const {value} = this.state;
 
         const suffix = (value) ?
-            <Icon
-              type="close-circle"
-              key="suffix"
-              onClick={this.onReset}
-              style={{ marginRight: "6px" }}
-
-            /> : ''
+            <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} /> : ''
           ;
         return <AutoComplete
             dataSource={this.state.references}

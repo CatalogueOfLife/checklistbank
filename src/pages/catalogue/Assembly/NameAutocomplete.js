@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
-import { AutoComplete, Icon, Input } from "antd";
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { AutoComplete, Input } from "antd";
 import _ from "lodash";
 import debounce from "lodash.debounce";
 import Highlighter from "react-highlight-words";
@@ -93,12 +94,7 @@ class NameSearchAutocomplete extends React.Component {
       );
     });
     const suffix = value ? (
-      <Icon
-        type="close-circle"
-        key="suffix"
-        onClick={this.onReset}
-        style={{ marginRight: "6px" }}
-      />
+      <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} />
     ) : (
       ""
     );

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Tooltip, Icon, Button} from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Tooltip, Button } from 'antd';
 
 
 class Popconfirm extends React.Component{
@@ -8,7 +9,7 @@ class Popconfirm extends React.Component{
     placement: 'top' ,
     trigger: 'click' ,
     okType: 'primary' ,
-    icon: <Icon type="exclamation-circle" theme="filled" />,
+    icon: <ExclamationCircleFilled />,
     disabled: false,
   };
 

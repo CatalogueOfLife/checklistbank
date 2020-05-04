@@ -1,17 +1,9 @@
 import React from "react";
 
-import {
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Button,
-  Alert,
-  Rate,
-  notification,
-  Row,
-  Col
-} from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+
+import { Input, InputNumber, Select, Button, Alert, Rate, notification, Row, Col } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../config";

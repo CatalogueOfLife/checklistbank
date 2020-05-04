@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "ajv": "^6.5.3",
-    "antd": "^3.19.8",
+    "antd": "^4.2.0",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
     "chai": "^4.2.0",
@@ -18,7 +18,7 @@
     "lodash": ">=4.6.2",
     "moment": "^2.22.2",
     "query-string": "~5.1.1",
-    "react": "^16.5.1",
+    "react": "^16.9.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.6.0",
     "react-helmet": "^5.2.0",

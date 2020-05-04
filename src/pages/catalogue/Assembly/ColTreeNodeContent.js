@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  notification,
-  Tag,
-  Popconfirm,
-  Icon,
-  Button,
-  Popover,
-  Tooltip,
-  Checkbox
-} from "antd";
+import { SyncOutlined } from '@ant-design/icons';
+import { notification, Tag, Popconfirm, Button, Popover, Tooltip, Checkbox } from "antd";
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption"
 import _ from "lodash";
 import axios from "axios";
@@ -133,7 +125,7 @@ export const AssemblyNodeContent = ({mode}) => {
           {isUpdating && (
             <span>
               {" "}
-              <Icon type="sync" spin />
+              <SyncOutlined spin />
             </span>
           )}
           {taxon.status !== "accepted" && (

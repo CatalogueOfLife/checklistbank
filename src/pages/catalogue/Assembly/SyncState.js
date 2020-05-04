@@ -1,5 +1,6 @@
 import React from "react";
-import { Col, Row, Tag, Statistic, Tooltip, Icon } from "antd";
+import { CodeOutlined } from '@ant-design/icons';
+import { Col, Row, Tag, Statistic, Tooltip } from "antd";
 import _ from "lodash";
 import moment from "moment";
 import kibanaQuery from "../SectorSync/kibanaQuery"
@@ -51,7 +52,7 @@ const SyncState = ({ syncState, dataset, sector }) => (
         {dataset && sector && <Row>Now syncing: <strong>{dataset.title}</strong>, Sector subject: <strong>{_.get(sector, 'subject.name')}</strong> 
         <Tooltip title="Kibana logs">
         <a style={{marginLeft: '6px'}}href={kibanaQuery(sector.key)} target="_blank" >
-          <Icon type="code"  />
+          <CodeOutlined />
         </a>
       </Tooltip>
         </Row>}

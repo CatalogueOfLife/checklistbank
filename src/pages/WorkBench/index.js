@@ -2,19 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import {
-  Table,
-  Alert,
-  Icon,
-  Row,
-  Col,
-  Button,
-  Select,
-  Form,
-  Radio,
-  notification,
-  Switch
-} from "antd";
+import { EditOutlined, LinkOutlined } from '@ant-design/icons';
+import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Alert, Row, Col, Button, Select, Radio, notification, Switch } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -96,7 +87,7 @@ const getColumns = (catalogueKey, user) => [
               }}
               exact={true}
             >
-              <Icon type="link" />
+              <LinkOutlined />
             </NavLink>
           </div>
         </React.Fragment>
@@ -726,7 +717,7 @@ class WorkBench extends React.Component {
                 onClick={this.toggleAdvancedFilters}
               >
                 Advanced{" "}
-                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+                <LegacyIcon type={this.state.advancedFilters ? "up" : "down"} />
               </a>
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
@@ -838,7 +829,7 @@ class WorkBench extends React.Component {
            <React.Fragment> 
             {record.decisions[0].mode === 'update' && <a onClick={() => {
                this.setState({rowsForEdit: [record], decisionFormVisible:true})
-             }}>Edit <Icon type="edit" /></a>}
+             }}>Edit <EditOutlined /></a>}
              <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> 
              </React.Fragment>
             : ""}

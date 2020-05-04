@@ -2,7 +2,9 @@ import React from "react";
 import config from "../config";
 import _ from "lodash";
 import axios from "axios";
-import { Alert, Tag, Spin, Tooltip, Icon, Row, Col } from "antd";
+import { LinkOutlined } from '@ant-design/icons';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
 import PresentationGroupHeader from "./PresentationGroupHeader";
@@ -118,7 +120,7 @@ class VerbatimPresentation extends React.Component {
             }}
           >
             {" "}
-            <Icon type="link"></Icon>
+            <LinkOutlined></LinkOutlined>
           </NavLink>{" "}
           {isTaxonId && (
             <NavLink
@@ -170,7 +172,7 @@ class VerbatimPresentation extends React.Component {
                   style={{ fontSize: 10 }}
                   onClick={() => this.setState({expanded: !expanded})}
                 >
-                  <Icon type={expanded ? "up" : "down"} />
+                  <LegacyIcon type={expanded ? "up" : "down"} />
                 </a>
         </h3> 
         </Col>

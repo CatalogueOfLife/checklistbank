@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import injectSheet from 'react-jss';
-import { Menu, Icon, Dropdown, Avatar, Modal, Button } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Avatar, Modal, Button } from 'antd';
 
 // Wrappers
 import withContext from '../../hoc/withContext';
@@ -78,7 +79,7 @@ class UserMenu extends PureComponent {
           <Menu.Item key="logout" onClick={() => {
             logout();
           }}>
-            <Icon type="logout"/>
+            <LogoutOutlined />
             Logout
           </Menu.Item>
         )}

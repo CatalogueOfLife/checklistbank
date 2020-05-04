@@ -1,7 +1,9 @@
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
-import { Table, Input, Select, InputNumber, Popconfirm, Form } from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Table, Input, Select, InputNumber, Popconfirm } from "antd";
 import _ from "lodash";
 import withContext from "../../../components/hoc/withContext";
 const Option = Select.Option

@@ -1,5 +1,6 @@
 import React from "react";
-import { Icon, Popover, Spin } from "antd";
+import { BookOutlined } from '@ant-design/icons';
+import { Popover, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
@@ -63,7 +64,7 @@ class ReferencePopover extends React.Component {
         }
         trigger="click"
       >
-        <Icon type="book" style={{ cursor: "pointer" }} />
+        <BookOutlined style={{ cursor: "pointer" }} />
       </Popover>
     ) : (
       ""
