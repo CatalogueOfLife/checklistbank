@@ -2,8 +2,7 @@ import React from "react";
 import config from "../config";
 import _ from "lodash";
 import axios from "axios";
-import { LinkOutlined } from '@ant-design/icons';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { LinkOutlined, UpOutlined, DownOutlined, UpOutline, DownOutline } from '@ant-design/icons';
 import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
@@ -172,7 +171,7 @@ class VerbatimPresentation extends React.Component {
                   style={{ fontSize: 10 }}
                   onClick={() => this.setState({expanded: !expanded})}
                 >
-                  <LegacyIcon type={expanded ? "up" : "down"} />
+                  {expanded ? <UpOutlined /> : <DownOutlined />}
                 </a>
         </h3> 
         </Col>

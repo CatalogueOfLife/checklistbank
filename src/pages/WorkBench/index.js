@@ -2,10 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { EditOutlined, LinkOutlined } from '@ant-design/icons';
-import { Form, Icon as LegacyIcon } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Table, Alert, Row, Col, Button, Select, Radio, notification, Switch } from "antd";
+import { EditOutlined, LinkOutlined, UpOutlined, DownOutlined} from '@ant-design/icons';
+// import { Form } from '@ant-design/compatible';
+// import '@ant-design/compatible/assets/index.css';
+import { Table, Alert, Row, Col, Button, Select, Radio, notification, Switch, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -53,7 +53,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "ID",
-    dataIndex: "usage.id",
+    dataIndex: ["usage", "id"],
     key: "nameId",
     width: 50,
     className: "workbench-td",
@@ -96,7 +96,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "Status",
-    dataIndex: "usage.status",
+    dataIndex: ["usage", "status"],
     key: "status",
     width: 90,
     className: "workbench-td",
@@ -104,7 +104,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "ScientificName",
-    dataIndex: "usage.labelHtml",
+    dataIndex: ["usage", "labelHtml"],
     width: 240,
     className: "workbench-td",
     render: (text, record) => (
@@ -119,7 +119,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Uninomial",
     width: 160,
-    dataIndex: "usage.name.uninomial",
+    dataIndex: ["usage", "name", "uninomial"],
     key: "uninomial",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -127,7 +127,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Genus",
     width: 160,
-    dataIndex: "usage.name.genus",
+    dataIndex: ["usage", "name", "genus"],
     key: "genus",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -135,7 +135,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "specificEpithet",
     width: 160,
-    dataIndex: "usage.name.specificEpithet",
+    dataIndex: ["usage", "name", "specificEpithet"],
     key: "specificEpithet",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -143,7 +143,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "infraspecificEpithet",
     width: 160,
-    dataIndex: "usage.name.infraspecificEpithet",
+    dataIndex: ["usage", "name", "infraspecificEpithet"],
     key: "infraspecificEpithet",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -151,7 +151,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Authorship",
     width: 240,
-    dataIndex: "usage.name.authorship",
+    dataIndex: ["usage", "name", "authorship"],
     key: "authorship",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="230px" />
@@ -160,7 +160,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Rank",
     width: 100,
-    dataIndex: "usage.name.rank",
+    dataIndex: ["usage", "name", "rank"],
     key: "rank",
     sorter: true,
     className: "workbench-td",
@@ -169,7 +169,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "acceptedScientificName",
     width: 240,
-    dataIndex: "usage.accepted.labelHtml",
+    dataIndex: ["usage", "accepted", "labelHtml"],
     className: "workbench-td",
     render: (text, record) => {
       return !["synonym", "ambiguous synonym", "misapplied"].includes(
@@ -187,7 +187,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "Classification",
-    dataIndex: "usage.classification",
+    dataIndex: ["usage", "classification"],
     key: "classification",
     width: 400,
     className: "workbench-td",
@@ -717,7 +717,7 @@ class WorkBench extends React.Component {
                 onClick={this.toggleAdvancedFilters}
               >
                 Advanced{" "}
-                <LegacyIcon type={this.state.advancedFilters ? "up" : "down"} />
+                {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
               </a>
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}

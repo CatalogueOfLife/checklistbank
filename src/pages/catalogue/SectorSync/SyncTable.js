@@ -35,7 +35,7 @@ const tagColors = {
 const getColumns = (catalogueKey) => [
   {
     title: "Source",
-    dataIndex: "sector.dataset.alias",
+    dataIndex: ["sector", "dataset", "alias"],
     key: "alias",
     width: 150,
     render: (text, record) => <NavLink
@@ -50,7 +50,7 @@ const getColumns = (catalogueKey) => [
   },
   {
     title: "Subject",
-    dataIndex: "sector.subject.name",
+    dataIndex: ["sector", "subject", "name"],
     key: "subject",
     width: 100,
   
@@ -79,7 +79,7 @@ const getColumns = (catalogueKey) => [
   },
   {
     title: "Target",
-    dataIndex: "sector.target.name",
+    dataIndex: ["sector", "target", "name"],
     key: "target",
     width: 100,
 

@@ -214,7 +214,7 @@ class DuplicateSearchPage extends React.Component {
 
     return {
       title: "gsd",
-      dataIndex: "sector.dataset.alias",
+      dataIndex: ["sector", "dataset", "alias"],
       width: 60,
       className: "workbench-td",
       render: (text, record) => {

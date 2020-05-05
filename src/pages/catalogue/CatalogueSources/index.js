@@ -193,7 +193,7 @@ class GSDIssuesMatrix extends React.Component {
       },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
         title: <Tooltip title={i.name}><span style={{color: issueMap[i.name].color}}>{getIssuesAbbrev(i.name)}</span></Tooltip>,
-        dataIndex: `issues.${i.name}`,
+        dataIndex: ['issues', i.name],
         key: i.name,
         render: (text, record) => {
           return (

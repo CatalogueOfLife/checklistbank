@@ -56,7 +56,7 @@ class ImportTable extends React.Component {
       defaultColumns : [
         {
           title: "Title",
-          dataIndex: "dataset.title",
+          dataIndex: ["dataset", "title"],
           key: "title",
           render: (text, record) => {
             return (

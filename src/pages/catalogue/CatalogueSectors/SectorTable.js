@@ -107,7 +107,7 @@ class SectorTable extends React.Component {
     const columns = [
       {
         title: "Dataset",
-        dataIndex: "dataset.alias",
+        dataIndex: ["dataset", "alias"],
         key: "alias",
         render: (text, record) => {
           return (
@@ -146,7 +146,7 @@ class SectorTable extends React.Component {
       },
       {
         title: "Subject",
-        dataIndex: "subject.name",
+        dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
     //    sorter: (a, b) => a.subject.name < b.subject.name,
@@ -195,7 +195,7 @@ class SectorTable extends React.Component {
       },
       {
         title: "Target",
-        dataIndex: "target.name",
+        dataIndex: ["target", "name"],
         key: "target",
         width: 150,
         ...this.getColumnSearchProps("target.name"),

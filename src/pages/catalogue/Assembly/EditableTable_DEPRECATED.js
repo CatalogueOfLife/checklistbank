@@ -12,7 +12,6 @@ const EditableContext = React.createContext();
 
 class EditableCell extends React.Component {
   getInput = () => {
-    const {record} = this.props;
     if (this.props.dataIndex === "estimate") {
       return <InputNumber />;
     } else if(this.props.dataIndex === "type"){

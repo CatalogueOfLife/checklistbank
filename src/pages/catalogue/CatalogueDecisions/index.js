@@ -296,7 +296,7 @@ class CatalogueDecisions extends React.Component {
     const columns = [
       {
         title: "Dataset",
-        dataIndex: "dataset.title",
+        dataIndex: ["dataset", "title"],
         key: "title",
         render: (text, record) => {
           return (
@@ -325,13 +325,13 @@ class CatalogueDecisions extends React.Component {
       },
       {
         title: "Subject rank",
-        dataIndex: "subject.rank",
+        dataIndex: ["subject","rank"],
         key: "rank",
         width: 50
       },
       {
         title: "Subject",
-        dataIndex: "subject.name",
+        dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
         ...this.getColumnSearchProps("subject.name"),
