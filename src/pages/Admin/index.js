@@ -7,9 +7,7 @@ import PageContent from "../../components/PageContent";
 import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Switch, Button, Alert, Popconfirm, notification } from "antd";
+import { Row, Col, Switch, Button, Alert, Popconfirm, notification, Form } from "antd";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";

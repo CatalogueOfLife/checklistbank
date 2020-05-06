@@ -1,8 +1,4 @@
 import React, {useState, useEffect} from "react";
-
-// import { Form } from '@ant-design/compatible';
-// import '@ant-design/compatible/assets/index.css';
-
 import { Input, InputNumber, Select, Button, Alert, Rate, notification, Row, Col , Form} from "antd";
 import _ from "lodash";
 import axios from "axios";

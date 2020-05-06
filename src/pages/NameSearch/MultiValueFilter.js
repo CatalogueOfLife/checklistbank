@@ -1,9 +1,6 @@
 import React from "react";
 
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-
-import { Select } from "antd";
+import { Select, Form } from "antd";
 import _ from "lodash";
 
 

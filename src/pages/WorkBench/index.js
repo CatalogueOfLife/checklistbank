@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { EditOutlined, LinkOutlined, UpOutlined, DownOutlined} from '@ant-design/icons';
-// import { Form } from '@ant-design/compatible';
-// import '@ant-design/compatible/assets/index.css';
 import { Table, Alert, Row, Col, Button, Select, Radio, notification, Switch, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -267,6 +265,9 @@ class WorkBench extends React.Component {
         
       } }, this.getData);
     }
+    if( !prevProps.user && this.props.user ){
+      this.setState({columns: getColumns(catalogueKey, this.props.user)})
+    }
   }
 
   getData = () => {
@@ -409,7 +410,7 @@ class WorkBench extends React.Component {
       data: { result },
       decision
     } = this.state;
-    const { datasetKey, taxonomicstatus } = this.props;
+    const { datasetKey, catalogueKey, taxonomicstatus } = this.props;
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map(d => {
@@ -438,9 +439,10 @@ class WorkBench extends React.Component {
         }
           
         return axios
-          .post(`${config.dataApi}decision`, decisionObject)
+          .post(`${config.dataApi}dataset/${catalogueKey}/decision`, decisionObject)
 
           .then(res => {
+            d.decisions = [{id: res.data}]
             const statusMsg = `Status changed to ${decision} for ${_.get(
               d,
               "usage.name.scientificName"
@@ -503,7 +505,8 @@ class WorkBench extends React.Component {
       rank,
       taxonomicstatus,
       user,
-      datasetKey
+      datasetKey,
+      catalogueKey
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -569,20 +572,17 @@ class WorkBench extends React.Component {
             rowsForEdit={rowsForEdit}
             onCancel={this.cancelDecisionForm}
             onOk={() => {
+              
+              
               this.cancelDecisionForm();
-              const {data} = this.state;
-              this.getDecisions({data:data}).then(res => {
-                this.setState({
-                  data: res.data
-                })
+              this.setState({selectedRowKeys: []})
+            }}
+            onSaveDecision={(name) => {
+             return this.getDecisions({data: {result: [name]}}).then(res => {
+              this.setState({data: this.state.data})
               })
             }}
-            onSaveDecision={() => {
-             return this.getDecisions({data: {result: rowsForEdit}}).then(res => {
-                this.setState({rowsForEdit})
-              })
-            }}
-            datasetKey={3}
+            datasetKey={catalogueKey}
             subjectDatasetKey={datasetKey}
           />
         )}
