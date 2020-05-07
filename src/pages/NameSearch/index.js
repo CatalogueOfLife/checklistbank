@@ -458,7 +458,7 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => record.usage.nameIndexId}
+            rowKey={record => record.usage.id || record.usage.name.id}
             expandable={{
               expandedRowRender: record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>,
               rowExpandable: record => !record.usage.bareName,
