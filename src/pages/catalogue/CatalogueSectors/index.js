@@ -2,10 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { SearchOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
+
 import {
-  Table,
+  Form,
   Alert,
   Select,
   Input,

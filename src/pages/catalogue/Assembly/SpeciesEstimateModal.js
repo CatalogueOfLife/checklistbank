@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-// import { Form } from '@ant-design/compatible';
-// import '@ant-design/compatible/assets/index.css';
+
 import {
   Input,
   Modal,

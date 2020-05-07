@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { SearchOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
+
 import {
   Table,
   Alert,
@@ -15,7 +14,7 @@ import {
   Row,
   Col,
   Switch,
-  notification,
+  Form
 } from "antd";
 
 import config from "../../../config";

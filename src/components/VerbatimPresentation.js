@@ -1,8 +1,9 @@
 import React from "react";
 import config from "../config";
+import {withRouter} from "react-router-dom"
 import _ from "lodash";
 import axios from "axios";
-import { LinkOutlined, UpOutlined, DownOutlined, UpOutline, DownOutline } from '@ant-design/icons';
+import { LinkOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
@@ -231,4 +232,4 @@ const mapContextToProps = ({
   catalogueKey
 }) => ({ issueMap, termsMap, termsMapReversed, terms, catalogueKey });
 
-export default withContext(mapContextToProps)(VerbatimPresentation);
+export default withContext(mapContextToProps)(withRouter(VerbatimPresentation));

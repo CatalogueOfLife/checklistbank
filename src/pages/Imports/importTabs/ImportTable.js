@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { CodeOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
 import { Table, Alert, Tag, Tooltip } from "antd";
 import config from "../../../config";
 import qs from "query-string";
@@ -17,7 +15,6 @@ import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import ImportMetrics from '../../../components/ImportMetrics'
 import kibanaQuery from './kibanaQuery'
-const FormItem = Form.Item;
 
 const _ = require("lodash");
 

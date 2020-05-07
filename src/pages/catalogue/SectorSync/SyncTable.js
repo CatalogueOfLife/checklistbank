@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { CodeOutlined, DiffOutlined, WarningOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Table, Alert, Tag, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
+
+import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
