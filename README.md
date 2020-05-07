@@ -10,7 +10,7 @@ The UI allows public exploring of all data in the Clearinghouse. It is also a to
 
 node >= 8.9.4
 
-The Clearinghouse UI is build with [React](https://reactjs.org/) using UI components from [Ant design](https://3x.ant.design/).
+The Clearinghouse UI is build with [React](https://reactjs.org/) using UI components from [Ant design](https://ant.design/).
 
 ## Available Scripts
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
