@@ -3,11 +3,8 @@ import withContext from "../../components/hoc/withContext";
 import {withRouter} from "react-router-dom"
 import config from "../../config";
 import _ from "lodash";
-import {
-    Modal,
-  Select,
-  Icon
-} from "antd";
+import { SearchOutlined } from '@ant-design/icons';
+import { Modal, Select } from "antd";
 import history from "../../history"
 // import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
@@ -82,50 +79,52 @@ class SourceSeelect extends React.Component {
         dataset
       } = this.props;
       const {sources} = this.state;
-    return  <React.Fragment>
-    <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><Icon type="search" /></a>
-    <Modal
-          title="Select source"
-          visible={this.state.visible}
-          maskClosable={true}
-          onCancel={this.hide}
-          footer={null}
-        >
-            <div onClick={e => {
-                e.stopPropagation()
-                e.nativeEvent.stopImmediatePropagation()
-            }}>
-           {sources.length > 0 && <Select
-                showSearch
-                style={{ width: "100%" }}
-                value={dataset ? dataset.key : null}
-                placeholder="Select source"
-                optionFilterProp="children"
-                onChange={this.onSourceChange}
-                filterOption={(input, option) =>
-                  option.props.children
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
+    return (
+      <React.Fragment>
+      <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><SearchOutlined /></a>
+      <Modal
+            title="Select source"
+            visible={this.state.visible}
+            maskClosable={true}
+            onCancel={this.hide}
+            footer={null}
+          >
+              <div onClick={e => {
+                  e.stopPropagation()
+                  e.nativeEvent.stopImmediatePropagation()
+              }}>
+             {sources.length > 0 && <Select
+                  showSearch
+                  style={{ width: "100%" }}
+                  value={dataset ? dataset.key : null}
+                  placeholder="Select source"
+                  optionFilterProp="children"
+                  onChange={this.onSourceChange}
+                  filterOption={(input, option) =>
+                    option.props.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  
+                >
+                  {sources.map(c => (
+                    <Option
+                      onClick={(e)=> {
+                          e.domEvent.stopPropagation();
+      e.domEvent.nativeEvent.stopImmediatePropagation();
+                      }}
+                      value={c.key}
+                      key={c.key}
+                    >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
+                  ))}
+                </Select>
                 }
-                
-              >
-                {sources.map(c => (
-                  <Option
-                    onClick={(e)=> {
-                        e.domEvent.stopPropagation();
-    e.domEvent.nativeEvent.stopImmediatePropagation();
-                    }}
-                    value={c.key}
-                    key={c.key}
-                  >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
-                ))}
-              </Select>
-              }
-                  </div> 
-                
-        </Modal>
-    
-    </React.Fragment>
+                    </div> 
+                  
+          </Modal>
+      
+      </React.Fragment>
+    );
   }
 }
 const mapContextToProps = ({ catalogueKey, catalogue, setDataset, user, dataset }) => ({
@@ -135,4 +134,4 @@ const mapContextToProps = ({ catalogueKey, catalogue, setDataset, user, dataset 
     user,
     dataset
   });
-  export default withContext(mapContextToProps)(withRouter(SourceSeelect));
+export default withContext(mapContextToProps)(withRouter(SourceSeelect));

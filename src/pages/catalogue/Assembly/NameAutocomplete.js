@@ -1,9 +1,10 @@
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
-import { AutoComplete, Icon, Input } from "antd";
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { AutoComplete, Input } from "antd";
 import _ from "lodash";
-import debounce from "lodash.debounce";
+import {debounce} from 'lodash';
 import Highlighter from "react-highlight-words";
 
 const Option = AutoComplete.Option;
@@ -92,15 +93,11 @@ class NameSearchAutocomplete extends React.Component {
       );
     });
     const suffix = value ? (
-      <Icon
-        type="close-circle"
-        key="suffix"
-        onClick={this.onReset}
-        style={{ marginRight: "6px" }}
-      />
+      <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} />
     ) : (
       ""
     );
+    // TODO dataSource is deprecated, but options att dont work for custom options, cheildren is used for input
     return (
       <AutoComplete
         dataSource={options}
@@ -108,13 +105,12 @@ class NameSearchAutocomplete extends React.Component {
         onSelect={this.onSelectName}
         onSearch={this.getNames}
         placeholder={placeHolder || "Find taxon"}
-        dataSource={options}
         onChange={(value) => this.setState({ value })}
         value={value}
         autoFocus={autoFocus === false ? false : true}
-        optionLabelProp="value"
       >
-          <Input.Search suffix={suffix} />  
+        
+                      <Input.Search suffix={suffix} />
       </AutoComplete>
     );
   };

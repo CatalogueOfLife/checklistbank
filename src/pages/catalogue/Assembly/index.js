@@ -1,5 +1,6 @@
 import React from "react";
-import { Row, Col, notification, Button, Icon, Card, Alert } from "antd";
+import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
+import { Row, Col, notification, Button, Card, Alert } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../../components/LayoutNew";
@@ -434,7 +435,7 @@ class Assembly extends React.Component {
                         />
                       )}
                       <Button
-                        icon="plus"
+                        icon={<PlusOutlined />}
                         size="small"
                         style={{marginRight: '6px'}}
                         onClick={e => {
@@ -444,7 +445,7 @@ class Assembly extends React.Component {
                         Add root
                       </Button>
                       <Button
-                        icon="sync"
+                        icon={<SyncOutlined />}
                         size="small"
                         onClick={e => {
                           const params = qs.parse(_.get(location, "search"));
@@ -543,7 +544,7 @@ class Assembly extends React.Component {
                           to={`/dataset/${this.state.selectedDataset.key}/meta`}
                         >
                           {" "}
-                          <Icon type="eye" /> source
+                          <EyeOutlined /> source
                         </NavLink>
                       </React.Fragment>
                     ) : (

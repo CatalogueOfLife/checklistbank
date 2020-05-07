@@ -1,7 +1,16 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Tooltip, Input, Button, Row, Col, notification } from "antd";
+
+import {
+  CodeOutlined,
+  DeleteOutlined,
+  HistoryOutlined,
+  SearchOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+
+import { Table, Alert, Tooltip, Input, Button, Row, Col, notification } from "antd";
 import config from "../../../config";
 import moment from "moment";
 
@@ -51,7 +60,7 @@ class SectorTable extends React.Component {
         <Button
           type="primary"
           onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon="search"
+          icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
@@ -67,7 +76,7 @@ class SectorTable extends React.Component {
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       _.get(record, dataIndex)
@@ -98,7 +107,7 @@ class SectorTable extends React.Component {
     const columns = [
       {
         title: "Dataset",
-        dataIndex: "dataset.alias",
+        dataIndex: ["dataset", "alias"],
         key: "alias",
         render: (text, record) => {
           return (
@@ -137,7 +146,7 @@ class SectorTable extends React.Component {
       },
       {
         title: "Subject",
-        dataIndex: "subject.name",
+        dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
     //    sorter: (a, b) => a.subject.name < b.subject.name,
@@ -178,10 +187,7 @@ class SectorTable extends React.Component {
                 />
                
               </NavLink>}{!record.subject.id && (
-                <Icon
-                  type="warning"
-                  style={{ color: "red", marginLeft: "10px" }}
-                />
+                <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>
           );
@@ -189,7 +195,7 @@ class SectorTable extends React.Component {
       },
       {
         title: "Target",
-        dataIndex: "target.name",
+        dataIndex: ["target", "name"],
         key: "target",
         width: 150,
         ...this.getColumnSearchProps("target.name"),
@@ -223,10 +229,7 @@ class SectorTable extends React.Component {
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                /><Icon
-                    type="warning"
-                    style={{ color: "red", marginLeft: "10px" }}
-                  /></React.Fragment>}
+                /><WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>}
             </React.Fragment>
           );
         }
@@ -255,7 +258,7 @@ class SectorTable extends React.Component {
                 }}
                 exact={true}
               >
-              <Icon type="history" style={{ fontSize: "20px" }} />
+              <HistoryOutlined style={{ fontSize: "20px" }} />
             </NavLink>
           </Tooltip>
         ),
@@ -267,7 +270,7 @@ class SectorTable extends React.Component {
         render: (text, record) => (
           <Tooltip title="Kibana logs">
             <a href={kibanaQuery(record.key)} target="_blank" >
-              <Icon type="code" style={{ fontSize: "20px" }} />
+              <CodeOutlined style={{ fontSize: "20px" }} />
             </a>
           </Tooltip>
         ),
@@ -318,7 +321,7 @@ class SectorTable extends React.Component {
           >
             Rematch
           </Button>}
-          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}><Icon type="delete" /></Button>}
+          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}><DeleteOutlined /></Button>}
           
           </React.Fragment>
           

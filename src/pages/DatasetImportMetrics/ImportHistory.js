@@ -1,9 +1,10 @@
 import React from "react";
-import { Timeline, Icon, Tooltip } from "antd";
+import { ArrowRightOutlined, CodeOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Timeline, Tooltip } from "antd";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
 import kibanaQuery from '../Imports/importTabs/kibanaQuery'
- 
+
 const tagColors = {
   processing: "purple",
   downloading: "cyan",
@@ -15,9 +16,9 @@ const tagColors = {
 
 const getDot = (h, attempt)=>{
   if(['processing', 'downloading', 'inserting', 'building metrics'].includes(h.state)){
-    return <Icon type="loading" />
+    return <LoadingOutlined />;
   } else {
-    return attempt && attempt===h.attempt.toString() ? <Icon type="arrow-right" /> : null
+    return attempt && attempt===h.attempt.toString() ? <ArrowRightOutlined /> : null;
   }
   
 }
@@ -38,7 +39,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
           <strong>{`${h.state}`}</strong>
         </NavLink>
             
-            <p>{`${moment(h.started).format("lll")}`} {" "} <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><Icon type="code" /></a></Tooltip></p>
+            <p>{`${moment(h.started).format("lll")}`} {" "} <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip></p>
           </React.Fragment>
         )}
         {h.state === "failed" && (
@@ -51,7 +52,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
         >
           <strong>{`${h.state}`}</strong>
         </NavLink>
-          {" "}  <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><Icon type="code" /></a></Tooltip>
+          {" "}  <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip>
             <p>{`${moment(h.started).format("lll")}`}</p>
             <p>{h.error}</p>
           </React.Fragment>

@@ -1,14 +1,6 @@
-import React from "react";
-import {
-  Form,
-  Input,
-  Modal,
-  Select,
-  Alert,
-  Steps,
-  Button,
-  notification
-} from "antd";
+import React, {useState, useEffect} from "react";
+
+import { Input, Modal, Select, Alert, Steps, Button, notification, Form } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
@@ -27,6 +19,17 @@ const removeEmptyValues = (myObj) => {
 
    
 }
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 7 }
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 17 }
+  }
+};
+
 const steps = [
   {
     title: "Enter name",
@@ -45,305 +48,270 @@ const steps = [
   }
 ];
 
-class EditTaxonModal extends React.Component {
-  state = {
-    visible: true,
-    confirmLoading: false,
-    taxon: null,
-    current: 0,
-    selectedRank: null
-  };
+const EditTaxonModal = (props) => {
 
-  componentDidMount = () => {
-    this.getTaxon();
-  };
+  const {
+    rank,
+    nomstatus,
+    nametype,
+    onCancel
+  } = props;
 
-  isAboveSpeciesAggregate = rank => {
-    return this.props.rank.indexOf(rank) < this.props.rank.indexOf("species aggregate");
-  };
-  isInfraSpecific = rank => {
-    return this.props.rank.indexOf(rank) > this.props.rank.indexOf("species");
-  }
-  handleSubmit = e => {
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const {
-          taxon: { name }
-        } = this.state;
-        removeEmptyValues(values)
-        const updatedName = { ...name, ...values };
-        this.submitData(updatedName);
-      } else {
-          this.setState({current: this.state.current -1})
-      }
+  const [visible, setVisible] = useState(true);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [taxon, setTaxon] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [selectedRank, setSelectedRank] = useState(null);
+  const [suggestedNameValue, setSuggestedNameValue] = useState(null);
+  const [parsedName, setParsedName] = useState(null)
+  const [submissionError, setSubmissionError] = useState(null)
+  const [form] = Form.useForm();
+
+ 
+  useEffect(() => {
+   if(props.taxon) {
+     getTaxon()
+   }
+  }, [props.taxon]);
+
+  const getTaxon = () => {
+    const { taxon } = props;
+    axios(
+      `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(
+        taxon.id
+      )}`
+    ).then(tx => {
+      setTaxon(tx.data);
+      setSuggestedNameValue(`${_.get(tx, "data.name.scientificName")}${
+        _.get(tx, "data.name.authorship")
+          ? " " + _.get(tx, "data.name.authorship")
+          : ""
+      }`)
     });
   };
 
-  submitData = updatedName => {
-    const {
-      taxon: { name }
-    } = this.state;
+  const isAboveSpeciesAggregate = rank => {
+    return props.rank.indexOf(rank) < props.rank.indexOf("species aggregate");
+  };
+  const isInfraSpecific = rank => {
+    return props.rank.indexOf(rank) > props.rank.indexOf("species");
+  }
+
+  const parseName = () => {
+    
+    axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
+      res => {
+        
+       if(_.get(res, 'data[0]')){
+        form.setFieldsValue(_.get(res, 'data[0].name'))
+        setParsedName(_.get(res, 'data[0].name'))
+        setSelectedRank(_.get(res, 'data[0].name.rank'))
+       } 
+
+      }
+    );
+  };
+
+  const next = () => {
+    setCurrent(current + 1)
+  }
+
+  const prev = () => {
+    setCurrent(current - 1)
+  }
+
+
+  const handleSubmit = values => {
+        const {name} = taxon;
+        removeEmptyValues(values)
+      //  const updatedName = { ...name, ...values };
+        submitData({...values, origin: "user"});
+    
+  };
+
+ const submitData = updatedName => {
+    const { name } = taxon;
+     
     axios
       .put(
         `${config.dataApi}dataset/${name.datasetKey}/name/${name.id}`,
         updatedName
       )
       .then(res => {
-        this.setState({ submissionError: null, confirmLoading: false }, () => {
+        setSubmissionError(null)
+        setConfirmLoading(false)
           notification.open({
             message: "Name updated",
             description: `${updatedName.scientificName} was updated`
           });
           if (
-            this.props.onSuccess &&
-            typeof this.props.onSuccess === "function"
+            props.onSuccess &&
+            typeof props.onSuccess === "function"
           ) {
-            this.props.onSuccess();
+            props.onSuccess();
           }
-        });
       })
       .catch(err => {
-        this.setState({ submissionError: err, confirmLoading: false });
+        setCurrent(1)
+        setSubmissionError(err)
+        setConfirmLoading(false)
       });
   };
-  getTaxon = () => {
-    const { taxon } = this.props;
-    axios(
-      `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(
-        taxon.id
-      )}`
-    ).then(tx => {
-      this.setState({
-        taxon: tx.data,
-        suggestedNameValue: `${_.get(tx, "data.name.scientificName")}${
-          _.get(tx, "data.name.authorship")
-            ? " " + _.get(tx, "data.name.authorship")
-            : ""
-        }`
-      });
-    });
-  };
-
-  parseName = () => {
-    const { suggestedNameValue } = this.state;
-    axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
-      res => {
-        this.setState({ parsedName: _.get(res, 'data[0].name'), selectedRank: _.get(res, 'data[0].name.rank') });
-      }
-    );
-  };
-
-  handleConfirmBlur = e => {
-    const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
-  next = () => {
-    const current = this.state.current + 1;
-    this.setState({ current });
-  }
-
-  prev = () => {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  }
-  render() {
-    const {
-      rank,
-      nomstatus,
-      onCancel,
-      form: { getFieldDecorator }
-    } = this.props;
-    const {
-      visible,
-      submissionError,
-      taxon,
-      current,
-      suggestedNameValue,
-      parsedName,
-      selectedRank
-    } = this.state;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 7 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 17 }
-      }
-    };
-    return (
-      <Modal
-        style={{ width: "650px" }}
-        title={
-          <span>
-            Edit{" "}
-            <span
-              dangerouslySetInnerHTML={{
-                __html: _.get(taxon, "name.scientificName")
-              }}
-            />
-          </span>
-        }
-        visible={visible}
-        okText={steps[current].okText}
-        onOk={() => {
-            this.handleSubmit();
-            this.next();
-        }}
-        confirmLoading={this.state.confirmLoading}
-        cancelText={steps[current].cancelText}
-        onCancel={onCancel}
-        destroyOnClose={true}
-        footer={current === 0 ? [
-            <Button key="back" onClick={onCancel}>
-              Cancel
-            </Button>,
-            <Button key="submit" type="primary"  onClick={() => {
-                this.parseName();
-                this.next();
-            }}>
-              Parse name
-            </Button>,
-          ] : [
-            <Button key="cancel" onClick={onCancel}>
-              Cancel
-            </Button>,
-            <Button key="back" onClick={this.prev}>
-            Previous
-          </Button>,
-            <Button key="submit" type="primary" loading={this.state.confirmLoading} onClick={() => {
-                this.handleSubmit();
-                this.setState({ confirmLoading: true, current: current + 1 });
-            }}>
-              Submit
-            </Button>,
-          ]}
-      >
-        <Steps current={current} style={{ marginBottom: "10px" }}>
-          {steps.map(item => (
-            <Step key={item.title} title={item.title} />
-          ))}
-        </Steps>
-        {current === 0 && (
-          <Input
-            value={suggestedNameValue}
-            onChange={e =>
-              this.setState({ suggestedNameValue: e.target.value })
-            }
-            allowClear
+  return (
+    <Modal
+      style={{ width: "650px" }}
+      title={
+        <span>
+          Edit{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(taxon, "name.scientificName")
+            }}
           />
-        )}
-        {current === 1 && (
-          <Form>
-            <FormItem {...formItemLayout} label="Scientific name">
-              {getFieldDecorator("scientificName", {
-                initialValue: _.get(parsedName, "scientificName")
-                  ? _.get(parsedName, "scientificName")
-                  : "",
-
-                rules: [
-                  {
-                    required: true,
-                    message: "Please input Full Taxon name"
+        </span>
+      }
+      visible={visible}
+      okText={steps[current].okText}
+      onOk={() => {
+        setConfirmLoading(true)
+        form
+          .validateFields()
+          .then(values => {
+            
+            handleSubmit(values);
+            next();
+          })
+          
+      }}
+      confirmLoading={confirmLoading}
+      cancelText={steps[current].cancelText}
+      onCancel={onCancel}
+      destroyOnClose={true}
+      footer={current === 0 ? [
+          <Button key="back" onClick={onCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary"  onClick={() => {
+              parseName();
+              next();
+          }}>
+            Parse name
+          </Button>,
+        ] : [
+          <Button key="cancel" onClick={onCancel}>
+            Cancel
+          </Button>,
+          <Button key="back" onClick={prev}>
+          Previous
+        </Button>,
+          <Button key="submit" type="primary" loading={confirmLoading} onClick={() => {
+            setConfirmLoading(true)
+            form
+              .validateFields()
+              .then(values => {
+                
+                handleSubmit(values);
+                next();
+              })
+          }}>
+            Submit
+          </Button>,
+        ]}
+    >
+      <Steps current={current} style={{ marginBottom: "10px" }}>
+        {steps.map(item => (
+          <Step key={item.title} title={item.title} />
+        ))}
+      </Steps>
+      {current === 0 && (
+        <Input
+          value={suggestedNameValue}
+          onChange={e => setSuggestedNameValue(e.target.value)}
+          allowClear
+        />
+      )}
+      {current === 1 && (
+        <Form form={form} initialValues={parsedName}>
+          <FormItem {...formItemLayout} label="Scientific name" name="scientificName" rules={[
+                {
+                  required: true,
+                  message: "Please input Full Taxon name"
+                }
+              ]}>
+            <Input />
+          </FormItem>
+        { isAboveSpeciesAggregate(selectedRank) &&  <FormItem {...formItemLayout} label="Uninomial" name="uninomial">
+            <Input />
+          </FormItem> }
+          { !isAboveSpeciesAggregate(selectedRank)  &&    <FormItem {...formItemLayout} label="Genus" name="genus">
+            <Input />
+          </FormItem>}
+          { !isAboveSpeciesAggregate(selectedRank)  &&  <FormItem {...formItemLayout} label="Specific Epithet" name="specificEpithet">
+            <Input />
+          </FormItem>}
+          { isInfraSpecific(selectedRank)  &&  <FormItem {...formItemLayout} label="Infrasp. Epithet" name="infraspecificEpithet">
+            <Input />
+          </FormItem>}
+          <FormItem {...formItemLayout} label="Authorship" name="authorship">
+            <Input />
+          </FormItem>
+          <FormItem {...formItemLayout} label="Rank" name="rank" rules={[
+                {
+                  required: true,
+                  message: "Please select Taxon rank"
+                }
+              ]}>
+            <Select style={{ width: 200 }} 
+                onChange={
+                  (value) => {
+                    setSelectedRank(value)
+                    form.setFieldsValue({rank: value})
                   }
-                ]
-              })(<Input />)}
-            </FormItem>
-          { this.isAboveSpeciesAggregate(selectedRank) &&  <FormItem {...formItemLayout} label="Uninomial">
-              {getFieldDecorator("uninomial", {
-                initialValue: _.get(parsedName, "uninomial")
-                  ? _.get(parsedName, "uninomial")
-                  : ""
-              })(<Input />)}
-            </FormItem> }
-            { !this.isAboveSpeciesAggregate(selectedRank)  &&    <FormItem {...formItemLayout} label="Genus">
-              {getFieldDecorator("genus", {
-                initialValue: _.get(parsedName, "genus")
-                  ? _.get(parsedName, "genus")
-                  : ""
-              })(<Input />)}
-            </FormItem>}
-            { !this.isAboveSpeciesAggregate(selectedRank)  &&  <FormItem {...formItemLayout} label="Specific Epithet">
-              {getFieldDecorator("specificEpithet", {
-                initialValue: _.get(parsedName, "specificEpithet")
-                  ? _.get(parsedName, "specificEpithet")
-                  : ""
-              })(<Input />)}
-            </FormItem>}
-            { this.isInfraSpecific(selectedRank)  &&  <FormItem {...formItemLayout} label="Infrasp. Epithet">
-              {getFieldDecorator("infraspecificEpithet", {
-                initialValue: _.get(parsedName, "infraspecificEpithet")
-                  ? _.get(parsedName, "infraspecificEpithet")
-                  : ""
-              })(<Input />)}
-            </FormItem>}
-            <FormItem {...formItemLayout} label="Authorship">
-              {getFieldDecorator("authorship", {
-                initialValue: _.get(parsedName, "authorship")
-                  ? _.get(parsedName, "authorship")
-                  : ""
-              })(<Input />)}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Rank">
-              {getFieldDecorator("rank", {
-                initialValue: _.get(taxon, "name.rank")
-                  ? _.get(taxon, "name.rank")
-                  : "",
+                } showSearch>
+                {rank.map(r => (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                ))}
+              </Select>
+          </FormItem>
+          <FormItem {...formItemLayout} label="Nom. status" name="nomstatus">
+          <Select style={{ width: 200 }} showSearch>
+                {nomstatus.map(r => (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                ))}
+              </Select>
+          </FormItem>
+          <FormItem {...formItemLayout} label="Name type" name="type">
+          <Select style={{ width: 200 }} showSearch>
+                {nametype.map(r => (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                ))}
+              </Select>
+          </FormItem>
+          
+        </Form>
+      )}
+      {submissionError && (
+              <Alert
+              closable
+              onClose={() => setSubmissionError(null)}
+                message={<ErrorMsg error={submissionError} />}
+                type="error"
+              />
+           
+          )}
+    </Modal>
+  );
 
-                rules: [
-                  {
-                    required: true,
-                    message: "Please select Taxon rank"
-                  }
-                ]
-              })(
-                <Select style={{ width: 200 }} 
-                  onChange={
-                    (value) => this.setState({selectedRank: value}, () => this.props.form.setFieldsValue({rank: value}))
-                  } showSearch>
-                  {rank.map(r => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </FormItem>
-            <FormItem {...formItemLayout} label="Nom. status">
-              {getFieldDecorator("nomstatus", {
-                initialValue: _.get(taxon, "name.nomStatus")
-                  ? _.get(taxon, "name.nomStatus")
-                  : ""
-              })(
-                <Select style={{ width: 200 }} showSearch>
-                  {nomstatus.map(r => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </FormItem>
-            {submissionError && (
-              <FormItem>
-                <Alert
-                closable
-                onClose={() => this.setState({ submissionError: null })}
-                  message={<ErrorMsg error={submissionError} />}
-                  type="error"
-                />
-              </FormItem>
-            )}
-          </Form>
-        )}
-      </Modal>
-    );
-  }
 }
-const mapContextToProps = ({ rank, nomstatus }) => ({ rank, nomstatus });
-const WrappedAddTaxonModal = Form.create()(
-  withContext(mapContextToProps)(EditTaxonModal)
-);
 
-export default WrappedAddTaxonModal;
+
+const mapContextToProps = ({ rank, nomstatus, nametype }) => ({ rank, nomstatus, nametype });
+
+
+export default  withContext(mapContextToProps)(EditTaxonModal);

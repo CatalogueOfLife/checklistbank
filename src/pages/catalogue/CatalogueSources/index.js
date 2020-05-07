@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Row, Col, Tooltip } from "antd";
+import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
@@ -191,7 +191,7 @@ class GSDIssuesMatrix extends React.Component {
       },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
         title: <Tooltip title={i.name}><span style={{color: issueMap[i.name].color}}>{getIssuesAbbrev(i.name)}</span></Tooltip>,
-        dataIndex: `issues.${i.name}`,
+        dataIndex: ['issues', i.name],
         key: i.name,
         render: (text, record) => {
           return (

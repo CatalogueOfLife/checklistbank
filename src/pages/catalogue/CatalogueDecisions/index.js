@@ -2,7 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Icon, Popconfirm, Input, Button, Form, Select, Row, Col, Switch, notification } from "antd";
+import { SearchOutlined } from '@ant-design/icons';
+
+import {
+  Table,
+  Alert,
+  Popconfirm,
+  Input,
+  Button,
+  Select,
+  Row,
+  Col,
+  Switch,
+  Form
+} from "antd";
 
 import config from "../../../config";
 import moment from "moment";
@@ -199,7 +212,7 @@ class CatalogueDecisions extends React.Component {
         <Button
           type="primary"
           onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon="search"
+          icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
@@ -215,7 +228,7 @@ class CatalogueDecisions extends React.Component {
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       _.get(record, dataIndex)
@@ -282,7 +295,7 @@ class CatalogueDecisions extends React.Component {
     const columns = [
       {
         title: "Dataset",
-        dataIndex: "dataset.title",
+        dataIndex: ["dataset", "title"],
         key: "title",
         render: (text, record) => {
           return (
@@ -311,13 +324,13 @@ class CatalogueDecisions extends React.Component {
       },
       {
         title: "Subject rank",
-        dataIndex: "subject.rank",
+        dataIndex: ["subject","rank"],
         key: "rank",
         width: 50
       },
       {
         title: "Subject",
-        dataIndex: "subject.name",
+        dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
         ...this.getColumnSearchProps("subject.name"),

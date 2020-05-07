@@ -2,7 +2,9 @@ import React from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, Icon, Modal } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+
+import { Upload, Modal } from "antd";
 
 class LogoUpload extends React.Component {
   constructor(props) {
@@ -90,7 +92,7 @@ componentDidUpdate = prevProps => {
     const {datasetKey} = this.props;
     const uploadButton = (
       <div>
-        <Icon type="plus" />
+        <PlusOutlined />
         <div className="ant-upload-text">Upload Logo</div>
       </div>
     );

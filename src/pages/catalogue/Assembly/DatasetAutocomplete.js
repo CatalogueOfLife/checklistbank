@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import config from '../../../config'
-import {  AutoComplete, Input, Button, Icon } from 'antd'
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { AutoComplete, Input, Button } from 'antd';
 import _ from 'lodash'
-import debounce from 'lodash.debounce';
+import {debounce} from 'lodash';
 import Highlighter from "react-highlight-words";
 
 const Option = AutoComplete.Option;
@@ -74,13 +75,7 @@ class DatasetAutocomplete extends React.Component {
         const {value} = this.state;
 
         const suffix = (value) ?
-            <Icon
-              type="close-circle"
-              key="suffix"
-              onClick={this.onReset}
-              style={{ marginRight: "6px" }}
-
-            /> : ''
+            <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} /> : ''
           ;
 
           const options = this.state.datasets ? this.state.datasets.map((o) => {

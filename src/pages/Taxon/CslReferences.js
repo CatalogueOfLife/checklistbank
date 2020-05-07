@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
 import config from "../../config";
-import { Row, Col, Icon, Radio, Popover } from "antd";
+import { SettingOutlined } from '@ant-design/icons';
+import { Row, Col, Radio, Popover } from "antd";
 import locales from "../../components/csl/locales";
 import styles from "../../components/csl/styles";
 const CSL = require("citeproc");
@@ -129,7 +130,7 @@ class CslReferences extends React.Component {
       </RadioGroup>
 
         } trigger="click">
-        <Icon type="setting" style={{marginTop: '0.7em'}} />
+        <SettingOutlined style={{marginTop: '0.7em'}} />
       </Popover>
           
         </Col>

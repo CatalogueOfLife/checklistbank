@@ -1,15 +1,7 @@
 import React from "react";
 import axios from "axios";
 import _ from "lodash";
-import {
-  List,
-  Breadcrumb,
-  Button,
-  Alert,
-  Icon,
-  Tooltip,
-  notification
-} from "antd";
+import { List, Breadcrumb, Button, Alert, Tooltip, notification } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import { NavLink } from "react-router-dom";
 import PageContent from "../../../components/PageContent";

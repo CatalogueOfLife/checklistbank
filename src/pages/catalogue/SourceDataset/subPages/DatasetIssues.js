@@ -1,5 +1,6 @@
 import React from "react";
-import { Table, Alert, Tag, Tooltip, Icon } from "antd";
+import { LinkOutlined } from '@ant-design/icons';
+import { Table, Alert, Tag, Tooltip } from "antd";
 import axios from "axios"
 import config from "../../../../config";
 import { NavLink } from "react-router-dom";
@@ -15,17 +16,19 @@ return [
     dataIndex: "title",
     key: "title",
     render: (text, record) => {
-      return <Tooltip key={text} placement="right" title={_.get(issueMap, `[${text}].description`)}>
-              
-              <Tag key={text} color={_.get(issueMap, `[${text}].color`)}>
-                {_.startCase(text)}
-              </Tag>
-              <NavLink 
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
-              exact={true}
-            > verbatim <Icon type="link" />
-              </NavLink>
-            </Tooltip>
+      return (
+        <Tooltip key={text} placement="right" title={_.get(issueMap, `[${text}].description`)}>
+                
+                <Tag key={text} color={_.get(issueMap, `[${text}].color`)}>
+                  {_.startCase(text)}
+                </Tag>
+                <NavLink 
+                to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/verbatim`, search: `?issue=${text}` }}
+                exact={true}
+              > verbatim <LinkOutlined />
+                </NavLink>
+              </Tooltip>
+      );
        
     },
     width: 250,
@@ -49,7 +52,7 @@ return [
     defaultSortOrder: 'descend',
     sorter: (a, b) => a.count - b.count
   }
-]
+];
 
 }
 

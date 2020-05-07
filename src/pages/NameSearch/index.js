@@ -2,7 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Button, Icon, Form, Switch } from "antd";
+import { Table, Alert, Radio, Row, Col, Button, Form, Switch } from "antd";
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
+
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -21,7 +23,7 @@ const PAGE_SIZE = 50;
 const getColumns = (baseUri) => [
   {
     title: "Scientific Name",
-    dataIndex: "usage.labelHtml",
+    dataIndex: ["usage","labelHtml"],
     key: "scientificName",
     render: (text, record) => {
       const uri =
@@ -52,7 +54,7 @@ const getColumns = (baseUri) => [
   },
   {
     title: "Status",
-    dataIndex: "usage.status",
+    dataIndex: ["usage", "status"],
     key: "status",
     width: 200,
     render: (text, record) => {
@@ -72,14 +74,14 @@ const getColumns = (baseUri) => [
   },
   {
     title: "Rank",
-    dataIndex: "usage.name.rank",
+    dataIndex: ["usage", "name", "rank"],
     key: "rank",
     width: 60,
     sorter: true
   },
   {
     title: "Parents",
-    dataIndex: "usage.classification",
+    dataIndex: ["usage", "classification"],
     key: "parents",
     width: 180,
     render: (text, record) => {
@@ -323,12 +325,12 @@ class NameSearchPage extends React.Component {
               {" "}
               <NameAutocomplete
                 datasetKey={datasetKey}
+                defaultTaxonKey={_.get(params, "TAXON_ID") || null}
                 onSelectName={value => {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}
                 onResetSearch={this.resetSearch}
                 placeHolder="Search by higher taxon"
-                sortBy="TAXONOMIC"
                 autoFocus={false}
               />{" "}
             </div>
@@ -429,7 +431,7 @@ class NameSearchPage extends React.Component {
                 onClick={this.toggleAdvancedFilters}
               >
                 Advanced{" "}
-                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+                {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
               </a>
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
@@ -456,8 +458,11 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => record.usage.nameIndexId}
-            expandedRowRender={record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>}
+            rowKey={record => record.usage.id || record.usage.name.id}
+            expandable={{
+              expandedRowRender: record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>,
+              rowExpandable: record => !record.usage.bareName,
+            }}
           />
         )}
       </div>

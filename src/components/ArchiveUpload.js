@@ -2,9 +2,9 @@ import React from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, Icon, message, Button, Alert, Modal } from "antd";
+import { Upload, message, Button, Alert, Modal } from "antd";
 import ErrorMsg from "../components/ErrorMsg";
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
 
 // const { confirm } = Modal;
 
@@ -82,7 +82,7 @@ class ArchiveUpload extends React.Component {
           beforeUpload={this.confirmUpload}
         >          
           <Button >
-            <Icon type="upload" /> Upload Data Archive
+            <UploadOutlined /> Upload Data Archive
           </Button>
         </Upload>
       </div>

@@ -1,8 +1,10 @@
 import React from "react";
 import config from "../config";
+import {withRouter} from "react-router-dom"
 import _ from "lodash";
 import axios from "axios";
-import { Alert, Tag, Spin, Tooltip, Icon, Row, Col } from "antd";
+import { LinkOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
 import PresentationGroupHeader from "./PresentationGroupHeader";
@@ -118,7 +120,7 @@ class VerbatimPresentation extends React.Component {
             }}
           >
             {" "}
-            <Icon type="link"></Icon>
+            <LinkOutlined></LinkOutlined>
           </NavLink>{" "}
           {isTaxonId && (
             <NavLink
@@ -170,7 +172,7 @@ class VerbatimPresentation extends React.Component {
                   style={{ fontSize: 10 }}
                   onClick={() => this.setState({expanded: !expanded})}
                 >
-                  <Icon type={expanded ? "up" : "down"} />
+                  {expanded ? <UpOutlined /> : <DownOutlined />}
                 </a>
         </h3> 
         </Col>
@@ -230,4 +232,4 @@ const mapContextToProps = ({
   catalogueKey
 }) => ({ issueMap, termsMap, termsMapReversed, terms, catalogueKey });
 
-export default withContext(mapContextToProps)(VerbatimPresentation);
+export default withContext(mapContextToProps)(withRouter(VerbatimPresentation));

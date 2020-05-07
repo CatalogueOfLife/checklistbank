@@ -2,19 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import {
-  Table,
-  Alert,
-  Icon,
-  Row,
-  Col,
-  Button,
-  Select,
-  Form,
-  Radio,
-  notification,
-  Switch
-} from "antd";
+import { EditOutlined, LinkOutlined, UpOutlined, DownOutlined} from '@ant-design/icons';
+import { Table, Alert, Row, Col, Button, Select, Radio, notification, Switch, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -62,7 +51,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "ID",
-    dataIndex: "usage.id",
+    dataIndex: ["usage", "id"],
     key: "nameId",
     width: 50,
     className: "workbench-td",
@@ -96,7 +85,7 @@ const getColumns = (catalogueKey, user) => [
               }}
               exact={true}
             >
-              <Icon type="link" />
+              <LinkOutlined />
             </NavLink>
           </div>
         </React.Fragment>
@@ -105,7 +94,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "Status",
-    dataIndex: "usage.status",
+    dataIndex: ["usage", "status"],
     key: "status",
     width: 90,
     className: "workbench-td",
@@ -113,7 +102,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "ScientificName",
-    dataIndex: "usage.labelHtml",
+    dataIndex: ["usage", "labelHtml"],
     width: 240,
     className: "workbench-td",
     render: (text, record) => (
@@ -128,7 +117,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Uninomial",
     width: 160,
-    dataIndex: "usage.name.uninomial",
+    dataIndex: ["usage", "name", "uninomial"],
     key: "uninomial",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -136,7 +125,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Genus",
     width: 160,
-    dataIndex: "usage.name.genus",
+    dataIndex: ["usage", "name", "genus"],
     key: "genus",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -144,7 +133,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "specificEpithet",
     width: 160,
-    dataIndex: "usage.name.specificEpithet",
+    dataIndex: ["usage", "name", "specificEpithet"],
     key: "specificEpithet",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -152,7 +141,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "infraspecificEpithet",
     width: 160,
-    dataIndex: "usage.name.infraspecificEpithet",
+    dataIndex: ["usage", "name", "infraspecificEpithet"],
     key: "infraspecificEpithet",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -160,7 +149,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Authorship",
     width: 240,
-    dataIndex: "usage.name.authorship",
+    dataIndex: ["usage", "name", "authorship"],
     key: "authorship",
     className: "workbench-td",
     render: (text, record) => <CopyableColumnText text={text} width="230px" />
@@ -169,7 +158,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "Rank",
     width: 100,
-    dataIndex: "usage.name.rank",
+    dataIndex: ["usage", "name", "rank"],
     key: "rank",
     sorter: true,
     className: "workbench-td",
@@ -178,7 +167,7 @@ const getColumns = (catalogueKey, user) => [
   {
     title: "acceptedScientificName",
     width: 240,
-    dataIndex: "usage.accepted.labelHtml",
+    dataIndex: ["usage", "accepted", "labelHtml"],
     className: "workbench-td",
     render: (text, record) => {
       return !["synonym", "ambiguous synonym", "misapplied"].includes(
@@ -196,7 +185,7 @@ const getColumns = (catalogueKey, user) => [
   },
   {
     title: "Classification",
-    dataIndex: "usage.classification",
+    dataIndex: ["usage", "classification"],
     key: "classification",
     width: 400,
     className: "workbench-td",
@@ -275,6 +264,9 @@ class WorkBench extends React.Component {
         current: (Number(params.offset) / Number(params.limit)) +1
         
       } }, this.getData);
+    }
+    if( !prevProps.user && this.props.user ){
+      this.setState({columns: getColumns(catalogueKey, this.props.user)})
     }
   }
 
@@ -418,7 +410,7 @@ class WorkBench extends React.Component {
       data: { result },
       decision
     } = this.state;
-    const { datasetKey, taxonomicstatus } = this.props;
+    const { datasetKey, catalogueKey, taxonomicstatus } = this.props;
     const promises = result
       .filter(d => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map(d => {
@@ -447,9 +439,10 @@ class WorkBench extends React.Component {
         }
           
         return axios
-          .post(`${config.dataApi}decision`, decisionObject)
+          .post(`${config.dataApi}dataset/${catalogueKey}/decision`, decisionObject)
 
           .then(res => {
+            d.decisions = [{id: res.data}]
             const statusMsg = `Status changed to ${decision} for ${_.get(
               d,
               "usage.name.scientificName"
@@ -512,7 +505,8 @@ class WorkBench extends React.Component {
       rank,
       taxonomicstatus,
       user,
-      datasetKey
+      datasetKey,
+      catalogueKey
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map(r => ({
@@ -578,20 +572,17 @@ class WorkBench extends React.Component {
             rowsForEdit={rowsForEdit}
             onCancel={this.cancelDecisionForm}
             onOk={() => {
+              
+              
               this.cancelDecisionForm();
-              const {data} = this.state;
-              this.getDecisions({data:data}).then(res => {
-                this.setState({
-                  data: res.data
-                })
+              this.setState({selectedRowKeys: []})
+            }}
+            onSaveDecision={(name) => {
+             return this.getDecisions({data: {result: [name]}}).then(res => {
+              this.setState({data: this.state.data})
               })
             }}
-            onSaveDecision={() => {
-             return this.getDecisions({data: {result: rowsForEdit}}).then(res => {
-                this.setState({rowsForEdit})
-              })
-            }}
-            datasetKey={3}
+            datasetKey={catalogueKey}
             subjectDatasetKey={datasetKey}
           />
         )}
@@ -726,7 +717,7 @@ class WorkBench extends React.Component {
                 onClick={this.toggleAdvancedFilters}
               >
                 Advanced{" "}
-                <Icon type={this.state.advancedFilters ? "up" : "down"} />
+                {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
               </a>
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
@@ -838,7 +829,7 @@ class WorkBench extends React.Component {
            <React.Fragment> 
             {record.decisions[0].mode === 'update' && <a onClick={() => {
                this.setState({rowsForEdit: [record], decisionFormVisible:true})
-             }}>Edit <Icon type="edit" /></a>}
+             }}>Edit <EditOutlined /></a>}
              <pre>{JSON.stringify(record.decisions[0],  null, 4)}</pre> 
              </React.Fragment>
             : ""}

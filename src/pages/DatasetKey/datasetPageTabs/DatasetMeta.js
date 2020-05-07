@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { Switch, Rate, Row, Col, Icon } from "antd";
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { Switch, Rate, Row, Col } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -171,7 +172,7 @@ class DatasetMeta extends React.Component {
             {data.citation}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="private" defaultMessage="Private" />}>
-            {data.private === true ? <Icon type="lock" style={{color: 'red'}} /> : <Icon type="unlock" style={{color: 'green'}}/>}
+            {data.private === true ? <LockOutlined style={{color: 'red'}} /> : <UnlockOutlined style={{color: 'green'}} />}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="license" defaultMessage="License" />}>
             {data.license}

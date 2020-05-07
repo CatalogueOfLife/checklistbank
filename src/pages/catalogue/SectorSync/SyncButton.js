@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Icon, Popover, notification } from "antd";
+import { WarningOutlined } from '@ant-design/icons';
+import { Button, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -85,10 +86,7 @@ class SyncButton extends React.Component {
             content={<ErrorMsg error={error} />}
             trigger="click"
           >
-            <Icon
-              type="warning"
-              style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
-            />
+            <WarningOutlined style={{ color: "red", marginLeft: "10px", cursor: "pointer" }} />
           </Popover>
         )}
       </div>

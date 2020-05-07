@@ -57,7 +57,7 @@ export default (catalogueKey) => ({
     },
     {
       title: "Accepted",
-      dataIndex: "accepted.labelHtml",
+      dataIndex: ["accepted", "labelHtml"],
       key: "accepted",
       width: 60,
       className: "workbench-td",
@@ -75,7 +75,7 @@ export default (catalogueKey) => ({
     {
       title: "Genus",
       width: 160,
-      dataIndex: "name.genus",
+      dataIndex: ["name", "genus"],
       key: "genus",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -83,7 +83,7 @@ export default (catalogueKey) => ({
     {
       title: "specificEpithet",
       width: 160,
-      dataIndex: "name.specificEpithet",
+      dataIndex: ["name", "specificEpithet"],
       key: "specificEpithet",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -91,7 +91,7 @@ export default (catalogueKey) => ({
     {
       title: "Authorship",
       width: 240,
-      dataIndex: "name.authorship",
+      dataIndex: ["name", "authorship"],
       key: "authorship",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="230px" />
@@ -100,7 +100,7 @@ export default (catalogueKey) => ({
     {
       title: "Rank",
       width: 60,
-      dataIndex: "name.rank",
+      dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />
@@ -158,7 +158,7 @@ export default (catalogueKey) => ({
     },
     {
       title: "Accepted",
-      dataIndex: "accepted.labelHtml",
+      dataIndex: ["accepted", "labelHtml"],
       key: "accepted",
       width: 60,
       className: "workbench-td",
@@ -183,7 +183,7 @@ export default (catalogueKey) => ({
     {
       title: "specificEpithet",
       width: 160,
-      dataIndex: "name.specificEpithet",
+      dataIndex: ["name", "specificEpithet"],
       key: "specificEpithet",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -191,7 +191,7 @@ export default (catalogueKey) => ({
     {
       title: "infraspecificEpithet",
       width: 160,
-      dataIndex: "name.infraspecificEpithet",
+      dataIndex: ["name", "infraspecificEpithet"],
       key: "infraspecificEpithet",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="150px" />
@@ -199,7 +199,7 @@ export default (catalogueKey) => ({
     {
       title: "Authorship",
       width: 240,
-      dataIndex: "name.authorship",
+      dataIndex: ["name", "authorship"],
       key: "authorship",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="230px" />
@@ -208,7 +208,7 @@ export default (catalogueKey) => ({
     {
       title: "Rank",
       width: 60,
-      dataIndex: "name.rank",
+      dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />
@@ -217,7 +217,7 @@ export default (catalogueKey) => ({
   uninomial: [
     {
       title: "ID",
-      dataIndex: "name.id",
+      dataIndex: ["name", "id"],
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
@@ -266,7 +266,7 @@ export default (catalogueKey) => ({
     },
     /*   {
             title: "Accepted",
-            dataIndex: "accepted.labelHtml",
+            dataIndex: ["accepted", "labelHtml"],
             key: "accepted",
             width: 60,
             className: "workbench-td",
@@ -276,7 +276,7 @@ export default (catalogueKey) => ({
     {
       title: "Uninomial",
       width: 160,
-      dataIndex: "name.uninomial",
+      dataIndex: ["name", "uninomial"],
       key: "uninomial",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="140px" />
@@ -285,7 +285,7 @@ export default (catalogueKey) => ({
        {
           title: "Authorship",
           width: 240,
-          dataIndex: "name.authorship",
+          dataIndex: ["name", "authorship"],
           key: "authorship",
           className: "workbench-td",
         }, 
@@ -293,7 +293,7 @@ export default (catalogueKey) => ({
     {
       title: "Rank",
       width: 60,
-      dataIndex: "name.rank",
+      dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />
@@ -315,7 +315,7 @@ export default (catalogueKey) => ({
   fullScientificName: [
     {
       title: "ID",
-      dataIndex: "name.id",
+      dataIndex: ["name", "id"],
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
@@ -364,7 +364,7 @@ export default (catalogueKey) => ({
     },
       {
             title: "Accepted",
-            dataIndex: "accepted.labelHtml",
+            dataIndex: ["accepted", "labelHtml"],
             key: "accepted",
             width: 340,
             className: "workbench-td",
@@ -374,7 +374,7 @@ export default (catalogueKey) => ({
     {
       title: "scientificName",
       width: 340,
-      dataIndex: "name.scientificName",
+      dataIndex: ["name", "scientificName"],
       key: "scientificName",
       className: "workbench-td"
     },
@@ -382,7 +382,7 @@ export default (catalogueKey) => ({
        {
           title: "Authorship",
           width: 240,
-          dataIndex: "name.authorship",
+          dataIndex: ["name", "authorship"],
           key: "authorship",
           className: "workbench-td",
         }, 
@@ -390,7 +390,7 @@ export default (catalogueKey) => ({
     {
       title: "Rank",
       width: 60,
-      dataIndex: "name.rank",
+      dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />

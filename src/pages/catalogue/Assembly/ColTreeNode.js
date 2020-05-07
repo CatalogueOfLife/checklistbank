@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  notification,
-  Tag,
-  Popconfirm,
-  Icon,
-  Button,
-  Popover,
-  Tooltip,
-  message,
-} from "antd";
+import { SyncOutlined, WarningFilled } from '@ant-design/icons';
+import { notification, Tag, Popconfirm, Button, Popover, Tooltip, message } from "antd";
 import { NavLink, withRouter } from "react-router-dom";
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption";
 import _ from "lodash";
@@ -280,7 +272,7 @@ class ColTreeNode extends React.Component {
                     {isUpdating && (
                       <span>
                         {" "}
-                        <Icon type="sync" spin />
+                        <SyncOutlined spin />
                       </span>
                     )}
                     {taxon.status !== "accepted" && (
@@ -340,7 +332,7 @@ class ColTreeNode extends React.Component {
                     {isUpdating && (
                       <span>
                         {" "}
-                        <Icon type="sync" spin />
+                        <SyncOutlined spin />
                       </span>
                     )}
                     {taxon.status !== "accepted" && (
@@ -352,11 +344,7 @@ class ColTreeNode extends React.Component {
                       (!datasetSectors || _.isEmpty(datasetSectors)) &&
                       !sector && (
                         <Tooltip title="No sectors">
-                          <Icon
-                            theme="filled"
-                            style={{ marginLeft: "6px", color: "wheat" }}
-                            type="warning"
-                          />
+                          <WarningFilled style={{ marginLeft: "6px", color: "wheat" }} />
                         </Tooltip>
                       )}
                     {datasetSectors &&!_.isEmpty(datasetSectors) && (

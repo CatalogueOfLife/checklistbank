@@ -1,10 +1,6 @@
 import React from "react";
-import {
-  Input,
-  Icon,
-  Row,
-  Col
-} from "antd";
+import { EditOutlined, SaveOutlined } from '@ant-design/icons';
+import { Input, Row, Col } from "antd";
 
 const { TextArea } = Input;
 
@@ -35,7 +31,7 @@ class SectorNote extends React.Component {
       <Row>
           <Col span={12}>Note</Col>
           <Col span={12} style={{ textAlign: "right" }}>
-          { note ? 'Edit' : 'Write'} <Icon type="edit" onClick={this.toggleEdit} />
+          { note ? 'Edit' : 'Write'} <EditOutlined onClick={this.toggleEdit} />
           </Col>
         
         </Row>
@@ -56,13 +52,11 @@ class SectorNote extends React.Component {
           <Row>
           <Col span={12}>Note</Col>
           <Col span={12} style={{ textAlign: "right" }}>
-          Save <Icon
-          type="save"
-          onClick={() => {
-            this.toggleEdit();
-            onSave(this.state.note)
-          }}
-        />
+          Save <SaveOutlined
+            onClick={() => {
+              this.toggleEdit();
+              onSave(this.state.note)
+            }} />
           </Col>
         
         </Row>

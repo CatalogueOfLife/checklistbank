@@ -1,5 +1,5 @@
-import React from "react";
-import { Form, Input, Modal, Select, Alert, Checkbox, notification } from "antd";
+import React, {useState} from "react";
+import { Input, Modal, Select, Alert, Checkbox, notification, Form } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
@@ -8,25 +8,35 @@ import config from "../../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
-class AddChildModal extends React.Component {
-  state = {
-    visible: true,
-    confirmLoading: false
-  };
 
-  nameInputRef = React.createRef()
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 19 },
+  },
+};
 
-  isGenusOrAbove = (rank) =>{
-    return this.props.rank.indexOf(rank) <= this.props.rank.indexOf('genus')
+
+const AddChildModal = (props) => {
+  const { parent, rank, onCancel } = props;
+  const [visible, setVisible] = useState(true);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [submissionError, setSubmissionError]  = useState(null);
+  const [form] = Form.useForm();
+
+  const isGenusOrAbove = (rank) =>{
+    return props.rank.indexOf(rank) <= props.rank.indexOf('genus')
   }
-
-  handleSubmit = e => {
-    const {parent} = this.props;
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
+  const handleSubmit = values => {
+    const {parent} = props;
+          
         let taxon = {
           status: values.provisional ? "provisionally accepted" : "accepted",
-          name: this.isGenusOrAbove(values.rank) ? {
+          name: isGenusOrAbove(values.rank) ? {
             uninomial: values.name,
             rank: values.rank
           } : {
@@ -39,130 +49,107 @@ class AddChildModal extends React.Component {
         if(_.get(parent, 'id')){
           taxon.parentId = parent.id
         }
-        this.submitData(taxon);
-      } else {
-
-      }
-    });
+        submitData(taxon);
+     
+  
   };
-
-  submitData = values => {
-    const { parent, catalogueKey } = this.props;
+  const submitData = values => {
+    const { parent, catalogueKey } = props;
     axios
       .post(`${config.dataApi}dataset/${parent ? parent.datasetKey : catalogueKey}/taxon`, values)
       .then(res => {
-
-        this.setState({ submissionError: null, confirmLoading: false }, () => {
+        setSubmissionError(null)
+        setConfirmLoading(false)
           notification.open({
             message: _.get(parent, 'id') ? "Child inserted" : "Root taxon created",
             description: _.get(parent, 'id') ? `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was inserted as child of ${_.get(parent, 'name')}` : `${_.get(values, 'name.uninomial') || _.get(values, 'name.scientificName')} was created as root`
           });
-          if(this.props.onSuccess && typeof this.props.onSuccess === 'function'){
-            this.props.onSuccess()
+          if(props.onSuccess && typeof props.onSuccess === 'function'){
+            props.onSuccess()
           }
-        });
+        
       })
       .catch(err => {
-        this.setState({ submissionError: err, confirmLoading: false });
+        setConfirmLoading(false)
+        setSubmissionError(err)
       });
   };
 
-  handleConfirmBlur = e => {
-    const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
-
-  render() {
-    const { parent, rank, onCancel, form: {getFieldDecorator}  } = this.props;
-    const { visible, submissionError } = this.state;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 19 },
-      },
-    };
-    return (
-      <Modal
-      style={{width:"650px"}}
-        title={
-          _.get(parent, 'id') ?  <span>
-            Add child to{" "}
-            <span dangerouslySetInnerHTML={{ __html: parent.name }} />
-          </span> : <span>Create root taxon</span>
+  return (
+    <Modal
+    style={{width:"650px"}}
+      title={
+        _.get(parent, 'id') ?  <span>
+          Add child to{" "}
+          <span dangerouslySetInnerHTML={{ __html: parent.name }} />
+        </span> : <span>Create root taxon</span>
+      }
+      visible={visible}
+      onOk={() => {
+        setConfirmLoading(true)
+        form
+          .validateFields()
+          .then(values => {
+            form.resetFields();
+            handleSubmit(values);
+          })
+      }}
+      confirmLoading={confirmLoading}
+      onCancel={() => {
+        setVisible(false)
+        if(onCancel && typeof onCancel === 'function'){
+          onCancel()
         }
-        visible={visible}
-        onOk={() => {
-          this.setState({ confirmLoading: true });
-          this.handleSubmit()
-        }}
-        confirmLoading={this.state.confirmLoading}
-        onCancel={() => {
-          this.setState({ visible: false }, onCancel);
-        }}
-        destroyOnClose={true}
+      }}
+      destroyOnClose={true}
+    >
+    <Form form={form}>
+      <FormItem {...formItemLayout} label="Taxon name" name="name" rules={[
+            {
+              required: true,
+              message: "Please input Taxon name"
+            }
+          ]}>
+        <Input autoFocus />
+      </FormItem>
+      <FormItem {...formItemLayout} label="Rank" name="rank" rules={[
+            {
+              required: true,
+              message: "Please select Taxon rank"
+            }
+          ]}>
+        <Select 
+          style={{ width: 200 }}
+          showSearch
+          >
+            {rank.map(r => (
+              <Option key={r} value={r}>
+                {r}
+              </Option>
+            ))}
+          </Select>
+      </FormItem>
+      {<FormItem
+        {...formItemLayout}
+        label="Provisional"
+        name="provisional"
+        valuePropName="checked"
+        initialValue={false}
       >
-      <Form >
-        <FormItem {...formItemLayout} label="Taxon name">
-          {getFieldDecorator("name", {
-            rules: [
-              {
-                required: true,
-                message: "Please input Taxon name"
-              }
-            ]
-          })(<Input autoFocus />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="Rank">
-          {getFieldDecorator("rank", {
-            rules: [
-              {
-                required: true,
-                message: "Please select Taxon rank"
-              }
-            ]
-          })(
-            <Select 
-            style={{ width: 200 }}
-            showSearch
-            >
-              {rank.map(r => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
-          )}
-        </FormItem>
-        {<FormItem
-          {...formItemLayout}
-          label="Provisional"
-        >
-          {getFieldDecorator('provisional', {
-            initialValue: false,
-            valuePropName: 'checked'
-             
-          })(
-            <Checkbox />
+        <Checkbox />
+      </FormItem>}
+      {submissionError && <FormItem><Alert 
+      closable
+      onClose={() => setSubmissionError(null)}
+      message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
+      </Form>
+    </Modal>
+  );
 
-              
-          )}
-        </FormItem>}
-        {submissionError && <FormItem><Alert 
-        closable
-        onClose={() => this.setState({ submissionError: null })}
-        message={<ErrorMsg error={submissionError}></ErrorMsg>} type="error" /></FormItem>}
-        </Form>
-      </Modal>
-    );
-  }
 }
-const mapContextToProps = ({ rank, nomstatus }) => ({ rank, nomstatus });
-const WrappedAddChildModal = Form.create()(
-  withContext(mapContextToProps)(AddChildModal)
-);
 
-export default WrappedAddChildModal;
+
+
+const mapContextToProps = ({ rank, nomstatus }) => ({ rank, nomstatus });
+
+export default withContext(mapContextToProps)(AddChildModal)

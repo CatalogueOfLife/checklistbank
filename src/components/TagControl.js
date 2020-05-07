@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Input, Tag, Tooltip } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Input, Tag, Tooltip } from 'antd';
 import injectSheet from 'react-jss';
 
 const stringToArray = value => {
@@ -116,7 +117,7 @@ class TagControl extends React.Component {
         )}
         {!inputVisible && (
           <Tag onClick={this.showInput} className={classes.newTag}>
-            <Icon type="plus"/> {label}
+            <PlusOutlined /> {label}
           </Tag>
         )}
       </React.Fragment>

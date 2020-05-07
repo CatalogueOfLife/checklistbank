@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import withWidth, { LARGE, MEDIUM, EXTRA_LARGE } from 'react-width'
-import { Layout, Icon, Drawer, Row, Tag } from 'antd';
+import { Layout, Drawer, Row, Tag } from 'antd';
+import {MenuUnfoldOutlined, MenuFoldOutlined} from '@ant-design/icons';
 import BasicMenu from './BasicMenu'
 import SelectLang from './SelectLang'
 import UserMenu from './UserMenu'
@@ -90,12 +91,17 @@ class SiteLayout extends Component {
         <Layout style={{ marginLeft: contentMargin + 'px' }}>
 
           <Header style={{ background: '#fff',  display: 'flex' }}>
-            <Icon
+           {collapsed ? 
+           <MenuUnfoldOutlined 
               style={{ flex: '0 0 auto' , marginTop: '20px', marginLeft: '-58px'}}
               className="menu-trigger"
-              type={collapsed ? 'menu-unfold' : 'menu-fold'}
+              onClick={this.toggle} /> 
+              : 
+              <MenuFoldOutlined 
+              style={{ flex: '0 0 auto' , marginTop: '20px', marginLeft: '-58px'}}
+              className="menu-trigger"
               onClick={this.toggle}
-            />
+              />}
             <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
             {selectedDataset && <h1>{selectedDataset.title}</h1>}
             {!selectedDataset && title && <h1>{title}</h1>}

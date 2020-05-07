@@ -2,7 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Form, Tag, Icon, Tooltip, Breadcrumb, notification, Row, Col } from "antd";
+import { CodeOutlined, DiffOutlined, WarningOutlined } from '@ant-design/icons';
+
+import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -32,7 +34,7 @@ const tagColors = {
 const getColumns = (catalogueKey) => [
   {
     title: "Source",
-    dataIndex: "sector.dataset.alias",
+    dataIndex: ["sector", "dataset", "alias"],
     key: "alias",
     width: 150,
     render: (text, record) => <NavLink
@@ -47,7 +49,7 @@ const getColumns = (catalogueKey) => [
   },
   {
     title: "Subject",
-    dataIndex: "sector.subject.name",
+    dataIndex: ["sector", "subject", "name"],
     key: "subject",
     width: 100,
   
@@ -68,10 +70,7 @@ const getColumns = (catalogueKey) => [
             {_.get(record, 'sector.subject.name')}
           </NavLink>
           {!_.get(record, 'sector.subject.id') && (
-            <Icon
-              type="warning"
-              style={{ color: "red", marginLeft: "10px" }}
-            />
+            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
         </React.Fragment>
       );
@@ -79,7 +78,7 @@ const getColumns = (catalogueKey) => [
   },
   {
     title: "Target",
-    dataIndex: "sector.target.name",
+    dataIndex: ["sector", "target", "name"],
     key: "target",
     width: 100,
 
@@ -101,10 +100,7 @@ const getColumns = (catalogueKey) => [
           </NavLink> }
           { !_.get(record, 'sector.target.id') && <React.Fragment> 
           {_.get(record, "sector.target.name")}
-            <Icon
-                type="warning"
-                style={{ color: "red", marginLeft: "10px" }}
-              /></React.Fragment>}
+            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>}
         </React.Fragment>
       );
     }
@@ -168,7 +164,7 @@ const getColumns = (catalogueKey) => [
         }}
       >
         <Tooltip title="Tree diff">
-          <Icon type="diff" style={{fontSize: '20px'}}/>
+          <DiffOutlined style={{fontSize: '20px'}} />
         </Tooltip>
       </NavLink>
     ),
@@ -180,7 +176,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       <Tooltip title="Kibana logs">
         <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank" >
-          <Icon type="code" style={{fontSize: '20px'}} />
+          <CodeOutlined style={{fontSize: '20px'}} />
         </a>
       </Tooltip>
     ),

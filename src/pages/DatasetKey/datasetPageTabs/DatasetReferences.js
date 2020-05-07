@@ -1,7 +1,7 @@
 
 import React from "react";
 import _ from 'lodash'
-import { List, Breadcrumb, Button, Alert, Icon, Tooltip, notification } from "antd";
+import { List, Breadcrumb, Button, Alert, Tooltip, notification } from "antd";
 import ErrorMsg from '../../../components/ErrorMsg';
 import PageContent from '../../../components/PageContent'
 import RefTable from "../../catalogue/CatalogueReferences/RefTable"

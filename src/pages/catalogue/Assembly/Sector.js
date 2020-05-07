@@ -1,5 +1,26 @@
 import React from "react";
-import { notification,Input, Tag, Icon, Button, Tooltip, Popover, Alert, Select, Row, Col, Popconfirm } from "antd";
+
+import {
+  BranchesOutlined,
+  CaretRightOutlined,
+  ExclamationCircleOutlined,
+  HistoryOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
+
+import {
+  notification,
+  Input,
+  Tag,
+  Button,
+  Tooltip,
+  Popover,
+  Alert,
+  Select,
+  Row,
+  Col,
+  Popconfirm,
+} from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -9,9 +30,9 @@ import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
 import SectorNote from "./SectorNote"
 import withContext from "../../../components/hoc/withContext"
-import debounce from 'lodash.debounce';
+import {debounce} from 'lodash';
 import Auth from '../../../components/Auth'
-const {Option} = Select; 
+const {Option} = Select;
 
 class Sector extends React.Component {
   constructor(props) {
@@ -367,7 +388,7 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <Icon type="caret-right" /> : <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" />} {sector.mode}</React.Fragment>}
+            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"
@@ -375,13 +396,13 @@ class Sector extends React.Component {
           >
             <Tooltip title={sectorSourceDataset.title} placement="top">
               <Tag color={stringToColour(sectorSourceDataset.title)}>
-                {isRootSector && sector.mode === 'attach' && <Icon type="caret-right" />}
-                {isRootSector && sector.mode === 'union' && <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" /> }
+                {isRootSector && sector.mode === 'attach' && <CaretRightOutlined />}
+                {isRootSector && sector.mode === 'union' && <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} /> }
                 {sectorSourceDataset.alias || sectorSourceDataset.key}
                 {_.get(syncState, "running.sectorKey") === sector.id && (
-                  <Icon type="sync" style={{ marginLeft: "5px" }} spin />
+                  <SyncOutlined style={{ marginLeft: "5px" }} spin />
                 )}
-                {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
+                {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
               </Tag>
             </Tooltip>
           </Popover>
@@ -450,21 +471,21 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <Icon type="caret-right" /> : <Icon rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} type="branches" />} {sector.mode}</React.Fragment>}
+            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"
             placement="rightTop"
           >
             <Tag color={stringToColour(sectorSourceDataset.title)}>
-              {missingTargetKeys[_.get(sector, 'target.id')] === true && <Icon type="exclamation-circle" />}
-              {isRootSectorInSourceTree && sector.mode === 'attach' && <Icon type="caret-right" />}
-                {isRootSectorInSourceTree && sector.mode === 'union' && <Icon style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} type="branches" />}
+              {missingTargetKeys[_.get(sector, 'target.id')] === true && <ExclamationCircleOutlined />}
+              {isRootSectorInSourceTree && sector.mode === 'attach' && <CaretRightOutlined />}
+                {isRootSectorInSourceTree && sector.mode === 'union' && <BranchesOutlined style={{ fontSize: '16px', marginRight: '4px' }} rotate={90} />}
               {sectorSourceDataset.alias || sectorSourceDataset.key}
               {_.get(syncState, "running.sectorKey") === sector.id && (
-                <Icon type="sync" style={{ marginLeft: "5px" }} spin />
+                <SyncOutlined style={{ marginLeft: "5px" }} spin />
               )}
-              {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <Icon type="history" style={{ marginLeft: "5px" }}  />}
+              {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
             </Tag>
           </Popover>
         )}
