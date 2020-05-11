@@ -86,14 +86,9 @@ class DatasetMeta extends React.Component {
       <React.Fragment>
       <Row>
           
-          <Col span={4}>
+          <Col span={4} style={{minHeight: '210px'}}>
            { data && !data.deleted &&  <LogoUpload datasetKey={this.props.id} />}
-            {data  &&
-        
-         
-               <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.state, 'data.key')} origin={_.get(this.state, 'data.origin')} />
-             
-        }
+            
           </Col>
           <Col span={2} offset={18}>
           { data && !data.deleted && <DeleteDatasetButton record={data}></DeleteDatasetButton>}
@@ -105,8 +100,16 @@ class DatasetMeta extends React.Component {
           </Col>
         </Row> 
         <Row>
+          <Col span={4} >
+          {data  &&
         
-        <Col span={2} offset={22}>
+         
+        <ArchiveUpload style={{ marginLeft: '12px', float: 'right' }} datasetKey={_.get(this.state, 'data.key')} origin={_.get(this.state, 'data.origin')} />
+      
+ }
+          </Col>
+        
+        <Col span={2} offset={18}>
             {data && !data.deleted && (
               <Switch
                 checked={editMode}

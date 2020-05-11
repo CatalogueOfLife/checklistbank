@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import injectSheet from 'react-jss';
 import withWidth, { LARGE, MEDIUM, EXTRA_LARGE } from 'react-width'
-import { Layout, Drawer, Row, Tag } from 'antd';
+import { Layout, Drawer, Row, Tag , Alert} from 'antd';
 import {MenuUnfoldOutlined, MenuFoldOutlined} from '@ant-design/icons';
 import BasicMenu from './BasicMenu'
 import SelectLang from './SelectLang'
@@ -12,7 +12,10 @@ import { getGitVersion, getBackendGitVersion } from '../../api/gitVersion'
 import './menu.css';
 import config from "../../config";
 import moment from "moment";
-
+import ErrorMsg from "../ErrorMsg"
+import withContext from "../../components/hoc/withContext"
+import {flowRight} from 'lodash';
+const compose = flowRight;
 const { gitBackend, gitFrontend} = config;
 // Currently no support for rtl in Ant https://github.com/ant-design/ant-design/issues/4051
 const styles = {
@@ -45,7 +48,7 @@ class SiteLayout extends Component {
   }
 
   render() {
-    const { width, classes, selectedDataset, selectedTaxon, selectedName, selectedSector, openKeys, selectedKeys, title , taxonOrNameKey} = this.props;
+    const { width, classes, selectedDataset, selectedTaxon, selectedName, selectedSector, openKeys, selectedKeys, title , taxonOrNameKey, error, clearError} = this.props;
     const collapsed = typeof this.state.collapsed === 'boolean'
       ? this.state.collapsed
       : width < LARGE;
@@ -114,6 +117,9 @@ class SiteLayout extends Component {
 
 
           <Content style={{ overflow: 'initial', margin: '0 16px 24px 16px', minHeight: 280 }}>
+          {error && (
+            <Alert style={{marginTop: '10px'}} message={<ErrorMsg error={error} />} type="error"  closable onClose={clearError}/>
+          )}
             {this.props.children}
           </Content>
           <Footer >
@@ -137,14 +143,21 @@ class SiteLayout extends Component {
 }
 
 
-// let HOC = props => (
-//   <StateContext.Consumer>
-//     {({ locale }) => {
-//       return <SiteLayout {...props} local={locale} />;
-//     }}
-//   </StateContext.Consumer>
-// );
+const mapContextToProps = ({
+  addError,
+  clearError,
+  error
+  
+}) => ({
+  addError,
+  clearError,
+  error
+});
 
-// redux here
+export default compose(
+  injectSheet(styles),
+  withWidth(),
+  withContext(mapContextToProps)
+)(SiteLayout)
 
-export default injectSheet(styles)(withWidth()(SiteLayout));
+//export default injectSheet(styles)(withWidth()(SiteLayout));

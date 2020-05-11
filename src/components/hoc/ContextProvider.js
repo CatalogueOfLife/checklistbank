@@ -12,7 +12,7 @@ import {
 import {
   getFrequency,
   getDatasetType,
-  getDataFormatType,
+  getDataFormat,
   getDatasetOrigin,
   getRank,
   getTaxonomicStatus,
@@ -64,7 +64,7 @@ class ContextProvider extends React.Component {
     catalogueKey: localStorage.getItem('col_selected_project') ? JSON.parse(localStorage.getItem('col_selected_project')).key : MANAGEMENT_CLASSIFICATION.key,  //TODO Load from localStorage if changed by user
     frequency: [],
     datasetType: [],
-    dataFormatType: [],
+    dataFormat: [],
     datasetOrigin: [],
     issue: [],
     rank: [],
@@ -78,6 +78,7 @@ class ContextProvider extends React.Component {
     importStateMap: {},
     user: null,
     notifications: [],
+    error: null,
     terms: [],
     lifezone: [],
     sectorImportState: [],
@@ -112,40 +113,11 @@ class ContextProvider extends React.Component {
     },
     // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
-    addError: ({ status = 500, statusText = "An error occurred" } = {}) => {
-      this.setState(state => {
-        return {
-          notifications: [
-            ...state.notifications,
-            { type: "error", status, statusText }
-          ]
-        };
-      });
+    addError: (err) => {
+      this.setState({error :err});
     },
-    // Adding success messages to the list to provide them later for displaying
-    addSuccess: ({ status = 200, statusText = "Response successful" } = {}) => {
-      this.setState(state => {
-        return {
-          notifications: [
-            ...state.notifications,
-            { type: "success", status, statusText }
-          ]
-        };
-      });
-    },
-    // Adding info messages to the list to provide them later for displaying
-    addInfo: ({ status = 200, statusText = "Response successful" } = {}) => {
-      this.setState(state => {
-        return {
-          notifications: [
-            ...state.notifications,
-            { type: "info", status, statusText }
-          ]
-        };
-      });
-    },
-    clearNotifications: () => {
-      this.setState({ notifications: [] });
+    clearError: () => {
+      this.setState({ error: null });
     },
 
     login: values => {
@@ -174,7 +146,7 @@ class ContextProvider extends React.Component {
     Promise.all([
       getFrequency(),
       getDatasetType(),
-      getDataFormatType(),
+      getDataFormat(),
       getDatasetOrigin(),
       getRank(),
       getTaxonomicStatus(),
@@ -230,7 +202,7 @@ class ContextProvider extends React.Component {
       this.setState({
         frequency: responses[0],
         datasetType: responses[1],
-        dataFormatType: responses[2],
+        dataFormat: responses[2],
         datasetOrigin: responses[3],
         rank: responses[4],
         taxonomicstatus: responses[5],
@@ -257,6 +229,9 @@ class ContextProvider extends React.Component {
         termsMapReversed: termsMapReversed,
         recentDatasets
       });
+    }).catch(err => {
+      this.state.addError(err)
+      console.log(err)
     });
   }
   /*

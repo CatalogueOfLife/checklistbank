@@ -45,9 +45,9 @@ const MetaDataForm = (props) => {
 
   const {
     data,
-    frequencyEnum,
+    frequency,
     datasettypeEnum,
-    dataformatEnum,
+    dataformat,
     licenseEnum,
     nomCode,
     datasetSettings,
@@ -60,8 +60,9 @@ const MetaDataForm = (props) => {
   const [submissionError, setSubmissionError] = useState(null)
   const [form] = Form.useForm();
   useEffect(() => {
-    setOrigin(data.origin)
-  }, [data.origin]);
+    console.log("test")
+    console.log(datasetoriginEnum)
+  }, [datasetoriginEnum]);
   
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
@@ -196,9 +197,9 @@ const MetaDataForm = (props) => {
       {(origin === "external" || origin === "managed") && (
         <FormItem {...formItemLayout} label="Data Format" name="dataFormat">
           <Select style={{ width: 200 }} showSearch>
-              {dataformatEnum.map(f => {
+              {dataformat.map(f => {
                 return (
-                  <Option key={f} value={f}>
+                  <Option key={f.name} value={f.nme}>
                     {f}
                   </Option>
                 );
@@ -224,7 +225,7 @@ const MetaDataForm = (props) => {
           }
         ]}>
           <Select style={{ width: 200 }} showSearch>
-              {frequencyEnum.map(f => {
+              {frequency.map(f => {
                 return (
                   <Option key={f} value={f}>
                     {f}
@@ -350,14 +351,14 @@ const MetaDataForm = (props) => {
           <FormItem {...formItemLayout} label={_.startCase("csv delimiter")} key={"csv delimiter"} name={['settings', "csv delimiter"]}>
             <CsvDelimiterInput/> 
           </FormItem>
-      {datasetSettings.filter(s => (s.type === "String" || s.type === "Integer") && s.name !== "csv delimiter").map(s => 
+      {datasetSettings.filter(s => (s.type === "String" || s.type === "Integer" || s.type === "URI") && s.name !== "csv delimiter").map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={['settings', s.name]}>
-            {s.type === "String" ? <Input type="text" /> :
+            {s.type === "String" || s.type === "URI" ? <Input type="text" /> :
                 <InputNumber />}
           </FormItem>
           )}
 
-      {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
+      {datasetSettings.filter(s => !["String", "Integer", "Boolean", "URI"].includes(s.type)).map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={['settings', s.name]}>
               {s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch>
               {nomCode.map(c => {
@@ -396,9 +397,9 @@ const MetaDataForm = (props) => {
 const mapContextToProps = ({
   addError,
   addInfo,
-  frequency: frequencyEnum,
+  frequency,
   datasetType: datasettypeEnum,
-  dataFormatType: dataformatEnum,
+  dataFormat,
   datasetOrigin: datasetoriginEnum,
   license: licenseEnum,
   nomCode,
@@ -407,9 +408,9 @@ const mapContextToProps = ({
 }) => ({
   addError,
   addInfo,
-  frequencyEnum,
+  frequency,
   datasettypeEnum,
-  dataformatEnum,
+  dataFormat,
   datasetoriginEnum,
   licenseEnum,
   nomCode,

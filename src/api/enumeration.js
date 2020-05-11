@@ -4,7 +4,7 @@ import config from "../config";
 
 export const getFrequency = () => {
   return axios(`${config.dataApi}vocab/frequency`).then(res =>
-    res.data.map(e => e.name)
+    res.data //.map(e => e.name)
   );
 };
 
@@ -14,9 +14,9 @@ export const getDatasetType = () => {
   );
 };
 
-export const getDataFormatType = () => {
+export const getDataFormat = () => {
   return axios(`${config.dataApi}vocab/dataformat`).then(res =>
-    res.data.map(e => e.name)
+    res.data //.map(e => e.name)
   );
 };
 
@@ -105,7 +105,7 @@ export const getEstimateType = () => {
 };
 
 export const getDatasetSettings = () => {
-  return axios(`${config.dataApi}vocab/datasetSettings`).then(res =>
+  return axios(`${config.dataApi}vocab/setting`).then(res =>
     res.data
   );
 };
