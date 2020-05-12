@@ -147,8 +147,13 @@ class ColTree extends React.Component {
               onDeleteSector={onDeleteSector}
               treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={this.loadRoot}
-              reloadChildren={() => this.fetchChildPage(dataRef, true)}
+              reloadSelfAndSiblings={() => {
+                const loadedChildIds = dataRef.children ? dataRef.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
+                this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+              }}
+              reloadChildren={() => {
+                this.fetchChildPage(dataRef, true)
+              }}
             />
           );
           dataRef.ref = dataRef;
@@ -218,7 +223,10 @@ class ColTree extends React.Component {
           confirmVisible={false}
           treeType={this.props.treeType}
           showSourceTaxon={showSourceTaxon}
-          reloadSelfAndSiblings={this.loadRoot}
+          reloadSelfAndSiblings={() => {
+            const loadedChildIds = root.children ? root.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
+            this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+          }}
           reloadChildren={() => this.fetchChildPage(root, true)}
         />
       )
@@ -242,9 +250,10 @@ class ColTree extends React.Component {
               confirmVisible={false}
               treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={() =>
-                this.fetchChildPage(root, true)
-              }
+              reloadSelfAndSiblings={() => {
+                const loadedChildIds = root.children ? root.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
+                return this.fetchChildPage(root, true).then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+              }}
               reloadChildren={() => this.fetchChildPage(node, true)}
             />
           )
@@ -262,7 +271,7 @@ class ColTree extends React.Component {
      this.setState({treeData}, () => this.reloadLoadedKeys(loadedKeys))
 
   }
-
+  
   fetchChildPage = (dataRef, reloadAll, dontUpdateState) => {
     const { showSourceTaxon, dataset, treeType, catalogueKey, onDeleteSector } = this.props;
     const {treeData} = this.state;
@@ -316,9 +325,10 @@ class ColTree extends React.Component {
                   datasetKey={dataset.key}
                   onDeleteSector={onDeleteSector}
                   treeType={this.props.treeType}
-                  reloadSelfAndSiblings={() =>
-                    this.fetchChildPage(dataRef, true)
-                  }
+                  reloadSelfAndSiblings={() => {
+                    const loadedChildIds = dataRef.children ? dataRef.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
+                    return this.fetchChildPage(dataRef, true).then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+                  }}
                   reloadChildren={() => this.fetchChildPage(childDataRef, true)}
                   showSourceTaxon={showSourceTaxon}
                 />
@@ -426,7 +436,7 @@ class ColTree extends React.Component {
   }
 
   
-  reloadLoadedKeys = async (keys) => {
+  reloadLoadedKeys = async (keys, expandAll = true) => {
     this.setState({rootLoading: true})
     const {loadedKeys: storedKeys} = this.state;
     const {defaultExpandKey} = this.props;
@@ -479,53 +489,35 @@ class ColTree extends React.Component {
         }
       } 
     }
-    this.setState({expandedKeys: loadedKeys, loadedKeys, rootLoading: false})
+    const newState =  {loadedKeys, rootLoading: false};
+    if (expandAll) {
+      newState.expandedKeys = loadedKeys;
+    }
+    this.setState(newState)
   }
 
   confirmAttach = (node, dragNode, mode) => {
 
-    const {onDeleteSector} = this.props;
+    const { attachFn} = this.props;
     /*
        This is where sector mapping should be posted to the server
        */
-    node.title = (
-      <ColTreeNode
-        treeType={this.props.treeType}
-        taxon={node.taxon}
-        datasetKey={this.props.dataset.key}
-        onDeleteSector={onDeleteSector}
-        isUpdating={true}
-        confirmVisible={false}
-        reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
-        reloadChildren={node.props.title.props.reloadChildren}
-      />
-    );
+    node.title = React.cloneElement(node.title, {isUpdating: true})
+    
     this.setState({ treeData: [...this.state.treeData] });
-    this.props.attachFn(node, dragNode, mode).then(res => {
-      node.title = (
-        <ColTreeNode
-        treeType={this.props.treeType}
-
-          taxon={node.taxon}
-          datasetKey={this.props.dataset.key}
-          onDeleteSector={onDeleteSector}
-          isUpdating={false}
-          confirmVisible={false}
-          reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
-          reloadChildren={node.props.title.props.reloadChildren}
-        />
-      );
+    attachFn(node, dragNode, mode).then(res => {
+      
       dragNode.title.props.reloadSelfAndSiblings();
       node.title.props.reloadSelfAndSiblings().then(() => {
         const newNodeReference = this.findNode(node.taxon.id, this.state.treeData )
-        this.fetchChildPage(newNodeReference, true);
+        this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
+        );
       });
       //  .catch((err)=> alert(err));
     });
   };
 
   handleAttach = e => {
-    const { onDeleteSector } = this.props;
     const dragNode = this.props.dragNode.ref;
     const {node} = e;
     const { ranks } = this.state;
@@ -668,50 +660,29 @@ class ColTree extends React.Component {
         action: () => this.confirmAttach(node, dragNode, "UNION")
       }
     ]
-    e.node.ref.title = (
-      <ColTreeNode
-        treeType={this.props.treeType}
-        taxon={node.taxon}
-        datasetKey={this.props.dataset.key}
-        onDeleteSector={onDeleteSector}
-        confirmVisible={true}
-        confirmTitle={msg}
-        reloadSelfAndSiblings={node.props.title.props.reloadSelfAndSiblings}
-        reloadChildren={node.props.title.props.reloadChildren}
-        actions={
-          mode === "ATTACH"
-            ? [
-                
-                {
-                  text: "Union",
-                  type: "dashed",
-                  action: () => this.confirmAttach(node, dragNode, "UNION")
-                },
-                {
-                  text: "Attach",
-                  type: "primary",
-                  action: () => this.confirmAttach(node, dragNode, "ATTACH")
-                }
-              ]
-            : unionOptions
+
+    const nodeTitle = React.cloneElement(node.ref.title);
+    node.ref.title = React.cloneElement(node.ref.title, {confirmVisible: true, confirmTitle: msg, actions: mode === "ATTACH"
+    ? [
+        
+        {
+          text: "Union",
+          type: "dashed",
+          action: () => this.confirmAttach(node, dragNode, "UNION")
+        },
+        {
+          text: "Attach",
+          type: "primary",
+          action: () => this.confirmAttach(node, dragNode, "ATTACH")
         }
-        onCancel={() => {
-          node.title = (
-            <ColTreeNode
-              taxon={e.node.taxon}
-              datasetKey={this.props.dataset.key}
-              onDeleteSector={onDeleteSector}
-              confirmVisible={false}
-              reloadSelfAndSiblings={
-                node.title.props.reloadSelfAndSiblings
-              }
-              reloadChildren={node.title.props.reloadChildren}
-            />
-          );
-          this.setState({ treeData: [...this.state.treeData] });
-        }}
-      />
-    );
+      ]
+    : unionOptions,
+    onCancel: () => {
+      node.ref.title = nodeTitle;
+      this.setState({ treeData: [...this.state.treeData] });
+    }
+  })    
+
     console.log(
       dragNode.title.props.taxon.name +
         " --> " +
@@ -720,8 +691,7 @@ class ColTree extends React.Component {
     this.setState({ treeData: [...this.state.treeData] });
   };
 
-  confirmModify = e => {
-    const {onDeleteSector} = this.props;
+  confirmModify = (e, nodeTitle) => {
     const dragNode = this.props.dragNode.ref;
     const node = e.node.ref;
     const parent = e.node.ref.taxon;
@@ -750,19 +720,7 @@ class ColTree extends React.Component {
         
         const oldParentName = dragNode.parent.taxon.name;
         dragNode.parent = node;
-        node.title = (
-          <ColTreeNode
-            treeType={this.props.treeType}
-            taxon={node.taxon}
-            datasetKey={this.props.dataset.key}
-            onDeleteSector={onDeleteSector}
-            confirmVisible={false}
-            reloadSelfAndSiblings={
-              node.title.props.reloadSelfAndSiblings
-            }
-            reloadChildren={node.title.props.reloadChildren}
-          />
-        );
+        node.title = nodeTitle;
         let msg = (
           <span>
             You moved{" "}
@@ -803,7 +761,6 @@ class ColTree extends React.Component {
       });
   };
   handleModify = e => {
-    const {onDeleteSector} = this.props
     if (
       e.dragNode.name === "Not assigned"
     ) {
@@ -832,39 +789,13 @@ class ColTree extends React.Component {
         ?
       </span>
     );
-    e.node.ref.title = (
-      <ColTreeNode
-        taxon={e.node.taxon}
-        treeType={this.props.treeType}
-        datasetKey={this.props.dataset.key}
-        onDeleteSector={onDeleteSector}
-        reloadSelfAndSiblings={
-          e.node.props.title.props.reloadSelfAndSiblings
-        }
-        reloadChildren={e.node.props.title.props.reloadChildren}
-        confirmVisible={true}
-        confirmTitle={msg}
-        onConfirm={() => {
-          this.confirmModify(e);
-        }}
-        onCancel={() => {
-          e.node.ref.title = (
-            <ColTreeNode
-              taxon={e.node.taxon}
-              treeType={this.props.treeType}
-              datasetKey={this.props.dataset.key}
-              onDeleteSector={onDeleteSector}
-              reloadSelfAndSiblings={
-                e.node.props.title.props.reloadSelfAndSiblings
-              }
-              reloadChildren={e.node.props.title.props.reloadChildren}
-              confirmVisible={false}
-            />
-          );
-          this.setState({ treeData: [...this.state.treeData] });
-        }}
-      />
-    );
+    const nodeTitle = React.cloneElement(e.node.ref.title)
+    e.node.ref.title = React.cloneElement(e.node.ref.title, {confirmVisible: true, confirmTitle: msg, onConfirm: () => {
+      this.confirmModify(e, nodeTitle);
+    },
+    onCancel: () => {e.node.ref.title = nodeTitle}
+    
+    })
     this.setState({ treeData: [...this.state.treeData] });
   };
   handleDrop = (e, mode) => {
