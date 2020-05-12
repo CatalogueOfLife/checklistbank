@@ -251,7 +251,7 @@ class ColTreeNode extends React.Component {
                       {taxon.rank}:{" "}
                     </span>
                     <span
-                      dangerouslySetInnerHTML={{ __html: taxon.formattedName }}
+                      dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
                     />
                     {mode === "modify" && taxon.estimate && (
                       <span>
@@ -313,7 +313,7 @@ class ColTreeNode extends React.Component {
                       >
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: taxon.formattedName,
+                          __html: taxon.labelHtml,
                         }}
                       />
                        </CopyToClipboard>
@@ -400,7 +400,7 @@ class ColTreeNode extends React.Component {
                       </span>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: taxon.formattedName,
+                          __html: taxon.labelHtml,
                         }}
                       />
                     </NavLink>
