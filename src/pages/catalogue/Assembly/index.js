@@ -127,42 +127,13 @@ class Assembly extends React.Component {
         params: { catalogueKey }
       }
     } = this.props; */
-    const rootData = _.get(root, 'props.dataRef.taxon');
-    const attachmentData = _.get(attachment, 'props.dataRef.taxon');
+    const rootData = _.get(root, 'taxon');
+    const attachmentData = _.get(attachment, 'taxon');
     return mode === "REPLACE"
             ? this.replace(rootData, attachmentData, mode)
             : this.saveSector(rootData, attachmentData, mode);
 
-   /* return axios
-      .all([
-        axios(
-          `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
-            attachment.props.dataRef.key
-          )}`
-        ),
-        axios(
-          `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
-            root.props.dataRef.key
-          )}`
-        )
-      ])
-      .then(
-        axios.spread((attachmentName, rootName) => {
-          console.log(attachmentName.data);
-          console.log(rootName.data);
-          attachmentName.data.name = attachmentName.data.scientificName;
-          rootName.data.name = rootName.data.scientificName;
-
-          return mode === "REPLACE"
-            ? this.replace(rootName.data, attachmentName.data, mode)
-            : this.saveSector(rootName.data, attachmentName.data, mode);
-        })
-      )
-
-      .catch(err => {
-        this.setState({ sectorMappingError: err });
-        console.log(err);
-      }); */
+  
   };
 
   saveChild = (subject, target) => {
@@ -325,7 +296,7 @@ class Assembly extends React.Component {
   };
 
   onDragStart = (e, dataset) => {
-    e.node.dataset = dataset;
+    e.node.ref.dataset = dataset;
     this.setState({ dragNode: e.node });
   };
 
