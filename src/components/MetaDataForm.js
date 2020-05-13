@@ -194,7 +194,7 @@ const MetaDataForm = (props) => {
 
 
     
-      {origin === "external" && (
+{/*       {origin === "external" && (
         <FormItem {...formItemLayout} label="Data Access" name="dataAccess" rules={[
           {
             required: false,
@@ -221,7 +221,7 @@ const MetaDataForm = (props) => {
               })}
             </Select>
         </FormItem>
-      )}
+      )} */}
       <FormItem {...formItemLayout} label="Dataset Type" name="type" rules={[
             {
               required: true,
