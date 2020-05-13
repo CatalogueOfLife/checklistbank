@@ -462,6 +462,20 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
+              {Auth.isAuthorised(user, ["editor", "admin"]) && 
+                <Menu.Item key="settings">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      selectedDataset,
+                      "key"
+                    )}/settings`
+                  }}
+                >
+                  Settings
+                </NavLink>
+              </Menu.Item>
+              }
               <Menu.Item key="imports">
                 <NavLink
                   to={{

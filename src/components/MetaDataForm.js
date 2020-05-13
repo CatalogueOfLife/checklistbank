@@ -320,7 +320,7 @@ const MetaDataForm = (props) => {
           </FormItem>
         </React.Fragment>
       )}
-      <Row>
+{/*       <Row>
         <Col span={4}></Col>
         <Col span={16}>
         <section className="code-box">
@@ -367,7 +367,7 @@ const MetaDataForm = (props) => {
             })}
           </Select>}
           </FormItem>
-          )}
+          )} */}
       
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">

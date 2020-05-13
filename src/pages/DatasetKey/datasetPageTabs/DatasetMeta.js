@@ -201,25 +201,11 @@ class DatasetMeta extends React.Component {
           <PresentationItem label={<FormattedMessage id="modified" defaultMessage="Modified" />}>
           {`${moment(data.modified).format('MMMM Do YYYY, h:mm:ss a')} by ${data.modifiedByUser}`}
           </PresentationItem>
-          <section className="code-box" style={{marginTop: '32px'}}>
+{/*           <section className="code-box" style={{marginTop: '32px'}}>
           <div className="code-box-title">Settings</div>
-        </section>
+        </section> */}
         
-        {datasetSettings.filter(s => s.type === "Boolean").map(s => 
-              <PresentationItem label={_.startCase(s.name)} key={s.name}>
-              {_.get(data, `settings.${s.name}`) === true || _.get(data, `settings.${s.name}`) === false ? <BooleanValue value={_.get(data, `settings.${s.name}`)}></BooleanValue> : ""}
-            </PresentationItem>
-            )}
-        {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
-              <PresentationItem label={_.startCase(s.name)} key={s.name}>
-              {_.get(data, `settings.${s.name}`) === "\t" ? "<TAB>" : _.get(data, `settings.${s.name}`)}
-            </PresentationItem>
-            )}
-        {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
-              <PresentationItem label={_.startCase(s.name)} key={s.name}>
-              {_.get(data, `settings.${s.name}`)}
-            </PresentationItem>
-            )}
+
           
           </React.Fragment> )}
         
