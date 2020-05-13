@@ -25,6 +25,12 @@ const IRREGULAR_RANKS = [
   "suprageneric name"
 ];
 
+const TAXON_KEY_PARAMETER_NAMES = {
+  "CATALOGUE": "assemblyTaxonKey",
+  "SOURCE": "sourceTaxonKey",
+  "readOnly": "taxonKey"
+}
+
 class LoadMoreChildrenTreeNode extends React.Component {
   constructor(props) {
     super(props);
@@ -883,25 +889,14 @@ class ColTree extends React.Component {
                      // this.fetchChildPage(obj.node, true)
                     }
                     const params = qs.parse(_.get(location, "search"));
-                    const newParams =
-                      this.props.treeType === "CATALOGUE"
-                        ? {
-                            ...params,
-                            assemblyTaxonKey: obj.node.key
-                          }
-                        : {
-                            ...params,
-                            sourceTaxonKey: obj.node.key
-                          };
+                    const newParams = {...params, [TAXON_KEY_PARAMETER_NAMES[treeType]] : obj.node.key}
+                     
                     history.push({
                       pathname: location.path,
                       search: `?${qs.stringify(newParams)}`
                     });
                   } else {
-                    const key =
-                      this.props.treeType === "CATALOGUE"
-                        ? "assemblyTaxonKey"
-                        : "sourceTaxonKey";
+                    const key = TAXON_KEY_PARAMETER_NAMES[treeType];
                     history.push({
                       pathname: location.path,
                       search: `?${qs.stringify(
