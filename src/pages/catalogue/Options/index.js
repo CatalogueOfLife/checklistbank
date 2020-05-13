@@ -13,12 +13,16 @@ import {
   Button,
   Alert,
   Popconfirm,
+  Switch,
   notification
 } from "antd";
 import RematchResult from "../CatalogueSectors/RematchResult"
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";
+import PresentationItem from "../../../components/PresentationItem"
+import BooleanValue from "../../../components/BooleanValue"
+import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 
 
 
@@ -33,8 +37,44 @@ class CatalogueOptions extends React.Component {
       releaseColLoading: false,
       exportResponse: null,
       rematchInfo: null,
-      rematchSectorsAndDecisionsLoading: false
+      rematchSectorsAndDecisionsLoading: false,
+      data: null,
+      editMode: false
     };
+  }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  componentDidUpdate = prevProps => {
+    if (
+      _.get(this.props, "match.params.catalogueKey") !==
+      _.get(prevProps, "match.params.catalogueKey")
+    ) {
+      this.getData();
+    }
+  };
+
+  getData = () => {
+    const {
+      match: {
+        params: { catalogueKey }
+      }
+    } = this.props;
+
+    this.setState({ loading: true });
+    axios(`${config.dataApi}dataset/${catalogueKey}/settings`)
+    .then(res => {
+      this.setState({ loading: false, data: res.data, err: null });
+    })
+      .catch(err => {
+        this.setState({ loading: false, error: err, data: null });
+      });
+  };
+
+  setEditMode = (checked) => {
+    this.setState({ editMode: checked });
   }
 
   rematchSectorsAndDecisions = () => {
@@ -124,18 +164,23 @@ class CatalogueOptions extends React.Component {
       .catch(err => this.setState({ error: err }));
   };
 
+  setEditMode = (checked) => {
+    this.setState({ editMode: checked });
+  }
 
   render() {
     const {
       releaseColLoading,
       rematchInfo,
       rematchSectorsAndDecisionsLoading,
-      error
+      error,
+      data,
+      editMode
     } = this.state;
     
     const { match: {
         params: { catalogueKey }
-      }, catalogue} = this.props;
+      }, catalogue, datasetSettings} = this.props;
     return (
       <Layout selectedKeys={["catalogueOptions"]}
       openKeys={["assembly"]}
@@ -169,7 +214,58 @@ class CatalogueOptions extends React.Component {
             />
           )}
           <Row>
-            <Col span={12}>
+            <Col span={4}>
+            <h3>Settings</h3>
+            </Col>
+            <Col offset={12} span={2}>
+            {data  && (
+              <Switch
+                checked={editMode}
+                onChange={this.setEditMode}
+                checkedChildren="Cancel"
+                unCheckedChildren="Edit"
+              />
+            )}
+            </Col>
+            <Col span={6}>
+            <h3>Actions</h3>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={18}>
+            
+            {editMode && (
+          <DatasetSettingsForm
+            data={data}
+            datasetKey={catalogueKey}
+            onSaveSuccess={() => {
+              this.setEditMode(false);
+              this.getData();
+            }}
+          />
+        )}
+           {!editMode && data && 
+           <div style={{marginRight: '28px'}}>
+             {datasetSettings.filter(s => s.type === "Boolean").map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, s.name) === true || _.get(data, s.name) === false ? <BooleanValue value={_.get(data, s.name)}></BooleanValue> : ""}
+            </PresentationItem>
+            )}
+        {datasetSettings.filter(s => s.type === "String" || s.type === "Integer").map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, s.name) === "\t" ? "<TAB>" : _.get(data, s.name)}
+            </PresentationItem>
+            )}
+        {datasetSettings.filter(s => !["String", "Integer", "Boolean"].includes(s.type)).map(s => 
+              <PresentationItem label={_.startCase(s.name)} key={s.name}>
+              {_.get(data, s.name)}
+            </PresentationItem>
+            )}
+             </div>} 
+
+
+            </Col>
+            <Col span={6} >
             <SyncAllSectorsButton 
             catalogueKey={catalogueKey}
             onError={err => this.setState({error: err})}
@@ -191,8 +287,6 @@ class CatalogueOptions extends React.Component {
               Rematch all broken sectors and decisions
             </Button>
           </Popconfirm>
-            </Col>
-            <Col span={12} style={{textAlign: 'right'}}>
 
               <Popconfirm
             placement="rightTop"
@@ -229,7 +323,7 @@ class CatalogueOptions extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogue }) => ({
-  catalogue
+const mapContextToProps = ({ catalogue, datasetSettings }) => ({
+  catalogue, datasetSettings
 });
 export default withContext(mapContextToProps)(withRouter(CatalogueOptions));
