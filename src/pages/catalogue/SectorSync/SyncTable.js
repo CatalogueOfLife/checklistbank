@@ -61,7 +61,7 @@ const getColumns = (catalogueKey) => [
           </span>
           <NavLink
             to={{
-              pathname: `/dataset/${record.datasetKey}/names`,
+              pathname: `/dataset/${_.get(record, 'sector.subjectDatasetKey')}/names`,
               search: _.get(record, 'subject.id') ? `?TAXON_ID=${_.get(record, 'sector.subject.id')}` : `?q=${_.get(record, 'sector.subject.name')}`
               
             }}
