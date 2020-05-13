@@ -47,7 +47,7 @@ const MetaDataForm = (props) => {
     data,
     frequency,
     datasettypeEnum,
-    dataformat,
+    dataFormat,
     licenseEnum,
     nomCode,
     datasetSettings,
@@ -69,7 +69,6 @@ const MetaDataForm = (props) => {
   };
   const submitData = values => {
     const key = _.get(data, "key");
-   // const { onSaveSuccess } = this.props;
     if(_.get(values, 'settings["csv delimiter"]') === "\\t"){
       values.settings["csv delimiter"] = `\t`
     }
@@ -179,7 +178,7 @@ const MetaDataForm = (props) => {
 >
     <Select
                     style={{ width: 200 }}
-                    onChange={value => this.setState({ origin: value })}
+                    onChange={value => setOrigin(value)}
                     showSearch
                   >
                     {datasetoriginEnum.map(f => {
@@ -194,19 +193,7 @@ const MetaDataForm = (props) => {
       }
 
 
-      {(origin === "external" || origin === "managed") && (
-        <FormItem {...formItemLayout} label="Data Format" name="dataFormat">
-          <Select style={{ width: 200 }} showSearch>
-              {dataformat.map(f => {
-                return (
-                  <Option key={f.name} value={f.nme}>
-                    {f}
-                  </Option>
-                );
-              })}
-            </Select>
-        </FormItem>
-      )}
+    
       {origin === "external" && (
         <FormItem {...formItemLayout} label="Data Access" name="dataAccess" rules={[
           {
