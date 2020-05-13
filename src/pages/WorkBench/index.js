@@ -595,14 +595,9 @@ class WorkBench extends React.Component {
             />
           )}
         </Row>
-        <Row>
-          <Col span={2}>
-            {" "}
-            <Button type="danger" onClick={this.resetSearch}>
-              Reset all
-            </Button>
-          </Col>
-          <Col span={12} style={{ display: "flex", flexFlow: "column" }}>
+        <Row style={{marginBottom: '10px'}}>
+          
+          <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
             <SearchBox
               defaultValue={_.get(params, "q")}
               onSearch={value => this.updateSearch({ q: value })}
@@ -668,6 +663,11 @@ class WorkBench extends React.Component {
                     </FormItem>
                     </Form>
                     </div>
+                    
+            <Button type="danger" onClick={this.resetSearch} style={{width: '120px'}}>
+              Reset search
+            </Button>
+          
           </Col>
           <Col span={10}>
           <MultiValueFilter
