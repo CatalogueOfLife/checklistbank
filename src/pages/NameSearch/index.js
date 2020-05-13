@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Radio, Row, Col, Button, Form, Switch } from "antd";
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import { UpOutlined, DownOutlined } from "@ant-design/icons";
 
 import config from "../../config";
 import qs from "query-string";
@@ -15,6 +15,7 @@ import RowDetail from "./RowDetail";
 import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
 
 const FormItem = Form.Item;
@@ -23,14 +24,16 @@ const PAGE_SIZE = 50;
 const getColumns = (baseUri) => [
   {
     title: "Scientific Name",
-    dataIndex: ["usage","labelHtml"],
+    dataIndex: ["usage", "labelHtml"],
     key: "scientificName",
     render: (text, record) => {
       const uri =
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `${baseUri}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          ? `${baseUri}/name/${encodeURIComponent(
+              _.get(record, "usage.name.id")
+            )}`
           : `${baseUri}/taxon/${encodeURIComponent(
               _.get(record, "usage.accepted.id")
                 ? _.get(record, "usage.accepted.id")
@@ -41,7 +44,7 @@ const getColumns = (baseUri) => [
         <NavLink
           key={_.get(record, "usage.id")}
           to={{
-            pathname: uri
+            pathname: uri,
           }}
           exact={true}
         >
@@ -50,7 +53,7 @@ const getColumns = (baseUri) => [
       );
     },
     width: 200,
-    sorter: true
+    sorter: true,
   },
   {
     title: "Status",
@@ -65,19 +68,19 @@ const getColumns = (baseUri) => [
           {text} {text === "misapplied" ? "to " : "of "}
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "usage.accepted.labelHtml")
+              __html: _.get(record, "usage.accepted.labelHtml"),
             }}
           />
         </React.Fragment>
       );
-    }
+    },
   },
   {
     title: "Rank",
     dataIndex: ["usage", "name", "rank"],
     key: "rank",
     width: 60,
-    sorter: true
+    sorter: true,
   },
   {
     title: "Parents",
@@ -96,14 +99,17 @@ const getColumns = (baseUri) => [
           baseUri={baseUri}
         />
       );
-    }
-  }
+    },
+  },
 ];
 
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-    const baseUri = this.props.catalogueKey === this.props.datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/dataset/${this.props.datasetKey}`
+    const baseUri =
+      this.props.catalogueKey === this.props.datasetKey
+        ? `/catalogue/${this.props.catalogueKey}`
+        : `/dataset/${this.props.datasetKey}`;
     this.state = {
       data: [],
       advancedFilters: false,
@@ -112,9 +118,9 @@ class NameSearchPage extends React.Component {
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
-        showQuickJumper: true
+        showQuickJumper: true,
       },
-      loading: false
+      loading: false,
     };
   }
 
@@ -125,21 +131,27 @@ class NameSearchPage extends React.Component {
         limit: 50,
         offset: 0,
         facet: ["rank", "issue", "status", "nomstatus", "type", "field"],
-        sortBy: "taxonomic"
+        sortBy: "taxonomic",
       };
       history.push({
-        pathname: _.get(this.props, "location.path"), 
-        search: `?limit=50&offset=0`
+        pathname: _.get(this.props, "location.path"),
+        search: `?limit=50&offset=0`,
       });
     } else if (!params.facet) {
       params.facet = ["rank", "issue", "status", "nomstatus", "type", "field"];
     }
 
-    this.setState({ params, pagination: {
-      pageSize: params.limit || PAGE_SIZE,
-      current: (Number(params.offset || 0) / Number(params.limit || PAGE_SIZE)) +1
-      
-    } }, this.getData);
+    this.setState(
+      {
+        params,
+        pagination: {
+          pageSize: params.limit || PAGE_SIZE,
+          current:
+            Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+        },
+      },
+      this.getData
+    );
   }
 
   getData = () => {
@@ -150,16 +162,14 @@ class NameSearchPage extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: _.get(this.props, "location.path"), 
-      search: `?${qs.stringify(params)}`
+      pathname: _.get(this.props, "location.path"),
+      search: `?${qs.stringify(params)}`,
     });
-    const url = datasetKey ? `${config.dataApi}dataset/${datasetKey}/nameusage/search` : `${config.dataApi}name/search`
-    axios(
-      `${url}?${qs.stringify(
-        params
-      )}`
-    )
-      .then(res => {
+    const url = datasetKey
+      ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
+      : `${config.dataApi}name/search`;
+    axios(`${url}?${qs.stringify(params)}`)
+      .then((res) => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
 
@@ -167,10 +177,10 @@ class NameSearchPage extends React.Component {
           loading: false,
           data: res.data,
           err: null,
-          pagination
+          pagination,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
@@ -179,12 +189,12 @@ class NameSearchPage extends React.Component {
     pager.current = pagination.current;
 
     this.setState({
-      pagination: pager
+      pagination: pager,
     });
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
-      ...filters
+      ...filters,
     });
 
     if (sorter && sorter.field) {
@@ -206,15 +216,13 @@ class NameSearchPage extends React.Component {
     this.setState({ params: query }, this.getData);
   };
 
-  updateSearch = params => {
-
-    let newParams = {...this.state.params, offset: 0, limit: 50};
+  updateSearch = (params) => {
+    let newParams = { ...this.state.params, offset: 0, limit: 50 };
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
-    this.setState({ params: newParams}, this.getData);
+    this.setState({ params: newParams }, this.getData);
   };
-  
 
   resetSearch = () => {
     this.setState(
@@ -222,8 +230,8 @@ class NameSearchPage extends React.Component {
         params: {
           limit: 50,
           offset: 0,
-          facet: ["rank", "issue", "status", "nomstatus", "type", "field"]
-        }
+          facet: ["rank", "issue", "status", "nomstatus", "type", "field"],
+        },
       },
       this.getData
     );
@@ -240,7 +248,7 @@ class NameSearchPage extends React.Component {
       error,
       params,
       pagination,
-      advancedFilters
+      advancedFilters,
     } = this.state;
     const {
       rank,
@@ -250,48 +258,49 @@ class NameSearchPage extends React.Component {
       nametype,
       namefield,
       datasetKey,
-      catalogueKey
+      catalogueKey,
     } = this.props;
     const facetRanks = _.get(facets, "rank")
-      ? facets.rank.map(r => ({
+      ? facets.rank.map((r) => ({
           value: r.value,
-          label: `${_.startCase(r.value)} (${r.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(r.value)} (${r.count.toLocaleString("en-GB")})`,
         }))
       : null;
     const facetIssues = _.get(facets, "issue")
-      ? facets.issue.map(i => ({
+      ? facets.issue.map((i) => ({
           value: i.value,
-          label: `${_.startCase(i.value)} (${i.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
         }))
       : null;
     const facetTaxonomicStatus = _.get(facets, "status")
-      ? facets.status.map(s => ({
+      ? facets.status.map((s) => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
     const facetNomStatus = _.get(facets, "nomstatus")
-      ? facets.nomstatus.map(s => ({
+      ? facets.nomstatus.map((s) => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
     const facetNomType = _.get(facets, "type")
-      ? facets.type.map(s => ({
+      ? facets.type.map((s) => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
     const facetNomField = _.get(facets, "field")
-      ? facets.field.map(s => ({
+      ? facets.field.map((s) => ({
           value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
 
-
-      const baseUri = catalogueKey === datasetKey ? `/catalogue/${this.props.catalogueKey}` : `/dataset/${this.props.datasetKey}`
-
+    const baseUri =
+      catalogueKey === datasetKey
+        ? `/catalogue/${this.props.catalogueKey}`
+        : `/dataset/${this.props.datasetKey}`;
 
     return (
       <div
@@ -299,7 +308,7 @@ class NameSearchPage extends React.Component {
           background: "#fff",
           padding: 24,
           minHeight: 280,
-          margin: "16px 0"
+          margin: "16px 0",
         }}
       >
         <Row>
@@ -314,11 +323,11 @@ class NameSearchPage extends React.Component {
         <Row>
           <Col
             span={12}
-            style={{ display: "flex", flexFlow: "column", height: "165px" }}
+            style={{ display: "flex", flexFlow: "column" }}
           >
             <SearchBox
-              defaultValue={_.get(params, "q")}
-              onSearch={value => this.updateSearch({ q: value })}
+              defaultValue={_.get(params, "q") || null}
+              onSearch={(value) => this.updateSearch({ q: value })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
             <div style={{ marginTop: "10px" }}>
@@ -326,7 +335,7 @@ class NameSearchPage extends React.Component {
               <NameAutocomplete
                 datasetKey={datasetKey}
                 defaultTaxonKey={_.get(params, "TAXON_ID") || null}
-                onSelectName={value => {
+                onSelectName={(value) => {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}
                 onResetSearch={this.resetSearch}
@@ -334,72 +343,81 @@ class NameSearchPage extends React.Component {
                 autoFocus={false}
               />{" "}
             </div>
+            {catalogueKey === datasetKey && (
+              <div style={{ marginTop: "10px" }}>
+                <DatasetAutocomplete
+                  onSelectDataset={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                  }}
+                  defaultDatasetKey={
+                    _.get(params, "SECTOR_DATASET_KEY") || null
+                  }
+                  onResetSearch={this.resetSearch}
+                  placeHolder="Search by source dataset"
+                  autoFocus={false}
+                />
+              </div>
+            )}
             <div style={{ marginTop: "10px" }}>
-            <Form layout="inline">
-            <FormItem label="Fuzzy matching" >
-                    <Switch
-                      checked={params.fuzzy === true}
-                      onChange={value =>
-                        this.updateSearch({ fuzzy: value })
-                      }
-                    />
-                  </FormItem>
-                  <FormItem label="Match partial words">
-                    <Switch
-                      checked={params.prefix === true}
-                      onChange={value =>
-                        this.updateSearch({ prefix: value })
-                      }
-                    />
-                  </FormItem>
+              <Form layout="inline">
+                <FormItem label="Fuzzy matching">
+                  <Switch
+                    checked={params.fuzzy === true}
+                    onChange={(value) => this.updateSearch({ fuzzy: value })}
+                  />
+                </FormItem>
+                <FormItem label="Match partial words">
+                  <Switch
+                    checked={params.prefix === true}
+                    onChange={(value) => this.updateSearch({ prefix: value })}
+                  />
+                </FormItem>
 
-<FormItem style={{
-      marginBottom: "10px"
-    }}>
-    <RadioGroup
-    
-      onChange={evt => {
-        if (typeof evt.target.value === "undefined") {
-          this.setState(
-            {
-              params: _.omit(this.state.params, [
-                "status"
-              ])
-            },
-            this.getData
-          );
-        } else {
-          this.updateSearch({ status: evt.target.value });
-        }
-      }}
-      value={params.status}
-    >
-      <Radio value="_NOT_NULL">Exclude bare names</Radio>
-      <Radio value="_NULL">Only bare names</Radio>
-      <Radio value={undefined}>All</Radio>
-    </RadioGroup>
-    </FormItem>
-    </Form>
-    
-    </div>
+                <FormItem
+                  style={{
+                    marginBottom: "10px",
+                  }}
+                >
+                  <RadioGroup
+                    onChange={(evt) => {
+                      if (typeof evt.target.value === "undefined") {
+                        this.setState(
+                          {
+                            params: _.omit(this.state.params, ["status"]),
+                          },
+                          this.getData
+                        );
+                      } else {
+                        this.updateSearch({ status: evt.target.value });
+                      }
+                    }}
+                    value={params.status}
+                  >
+                    <Radio value="_NOT_NULL">Exclude bare names</Radio>
+                    <Radio value="_NULL">Only bare names</Radio>
+                    <Radio value={undefined}>All</Radio>
+                  </RadioGroup>
+                </FormItem>
+              </Form>
+            </div>
           </Col>
           <Col span={12}>
             <MultiValueFilter
               defaultValue={_.get(params, "issue")}
-              onChange={value => this.updateSearch({ issue: value })}
-              vocab={facetIssues || issue.map(i => i.name)}
+              onChange={(value) => this.updateSearch({ issue: value })}
+              vocab={facetIssues || issue.map((i) => i.name)}
               label="Issues"
             />
 
             <MultiValueFilter
               defaultValue={_.get(params, "rank")}
-              onChange={value => this.updateSearch({ rank: value })}
+              onChange={(value) => this.updateSearch({ rank: value })}
               vocab={facetRanks || rank}
               label="Ranks"
             />
             <MultiValueFilter
               defaultValue={_.get(params, "status")}
-              onChange={value => this.updateSearch({ status: value })}
+              onChange={(value) => this.updateSearch({ status: value })}
               vocab={facetTaxonomicStatus || taxonomicstatus}
               label="Status"
             />
@@ -407,19 +425,19 @@ class NameSearchPage extends React.Component {
               <React.Fragment>
                 <MultiValueFilter
                   defaultValue={_.get(params, "nomstatus")}
-                  onChange={value => this.updateSearch({ nomstatus: value })}
+                  onChange={(value) => this.updateSearch({ nomstatus: value })}
                   vocab={facetNomStatus || nomstatus}
                   label="Nomenclatural status"
                 />
                 <MultiValueFilter
                   defaultValue={_.get(params, "type")}
-                  onChange={value => this.updateSearch({ type: value })}
+                  onChange={(value) => this.updateSearch({ type: value })}
                   vocab={facetNomType || nametype}
                   label="Name type"
                 />
                 <MultiValueFilter
                   defaultValue={_.get(params, "field")}
-                  onChange={value => this.updateSearch({ field: value })}
+                  onChange={(value) => this.updateSearch({ field: value })}
                   vocab={facetNomField || namefield}
                   label="Name field"
                 />
@@ -439,7 +457,7 @@ class NameSearchPage extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+          <Col span={12} style={{  marginBottom: "8px" }}>
             <Button type="danger" onClick={this.resetSearch}>
               Reset all
             </Button>
@@ -447,7 +465,7 @@ class NameSearchPage extends React.Component {
           <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
-              `results: ${pagination.total.toLocaleString('en-GB')}`}
+              `results: ${pagination.total.toLocaleString("en-GB")}`}
           </Col>
         </Row>
         {!error && (
@@ -458,10 +476,16 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={record => record.usage.id || record.usage.name.id}
+            rowKey={(record) => record.usage.id || record.usage.name.id}
             expandable={{
-              expandedRowRender: record => <RowDetail {...record} catalogueKey={catalogueKey} baseUri={baseUri}/>,
-              rowExpandable: record => !record.usage.bareName,
+              expandedRowRender: (record) => (
+                <RowDetail
+                  {...record}
+                  catalogueKey={catalogueKey}
+                  baseUri={baseUri}
+                />
+              ),
+              rowExpandable: (record) => !record.usage.bareName,
             }}
           />
         )}
@@ -477,7 +501,15 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  catalogueKey
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield , catalogueKey});
+  catalogueKey,
+}) => ({
+  rank,
+  taxonomicstatus,
+  issue,
+  nomstatus,
+  nametype,
+  namefield,
+  catalogueKey,
+});
 
 export default withContext(mapContextToProps)(NameSearchPage);

@@ -39,7 +39,7 @@ const getColumns = (catalogueKey) => [
     width: 150,
     render: (text, record) => <NavLink
     to={{
-      pathname: `/dataset/${
+      pathname: `/catalogue/${catalogueKey}/dataset/${
         record.sector.dataset.key
       }/meta`
     }}
@@ -61,8 +61,8 @@ const getColumns = (catalogueKey) => [
           </span>
           <NavLink
             to={{
-              pathname: `/dataset/${_.get(record, 'sector.subjectDatasetKey')}/names`,
-              search: _.get(record, 'subject.id') ? `?TAXON_ID=${_.get(record, 'sector.subject.id')}` : `?q=${_.get(record, 'sector.subject.name')}`
+              pathname: `/catalogue/${catalogueKey}/names`,
+              search:  `?q=${_.get(record, 'sector.subject.name')}&SECTOR_DATASET_KEY=${_.get(record, 'sector.subjectDatasetKey')}`
               
             }}
             exact={true}

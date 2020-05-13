@@ -97,7 +97,7 @@ class NameSearchAutocomplete extends React.Component {
     ) : (
       ""
     );
-    // TODO dataSource is deprecated, but options att dont work for custom options, cheildren is used for input
+    // TODO dataSource is deprecated, but options att dont work for custom options, children is used for input
     return (
       <AutoComplete
         dataSource={options}

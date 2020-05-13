@@ -16,6 +16,14 @@ class SearchBox extends React.Component {
       this.setState({ search: this.props.defaultValue });
     }
   };
+
+  componentDidUpdate = (prevProps) => {
+    const { defaultValue } = this.props;
+    if (defaultValue && defaultValue !== prevProps.defaultValue) {
+      this.setState({ search: defaultValue });
+    }
+  };
+
   resetSearch = () => {
     this.setState({ search: "" }, () => {
       this.props.onSearch(this.state.search);
@@ -32,7 +40,6 @@ class SearchBox extends React.Component {
         value={this.state.search}
         onSearch={value => this.props.onSearch(this.state.search)}
         onChange={event => this.setState({ search: event.target.value })}
-        enterButton
         autoFocus={true}
         suffix={suffix}
         
