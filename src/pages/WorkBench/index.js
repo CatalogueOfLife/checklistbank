@@ -209,7 +209,7 @@ class WorkBench extends React.Component {
     const {catalogueKey} = this.props;
     const {user} = this.props;
     this.state = {
-      data: [],
+      data: {result: []},
       decision: null,
       columns: getColumns(catalogueKey, user),
       decisionFormVisible: false,
@@ -239,8 +239,9 @@ class WorkBench extends React.Component {
     } else if (!params.facet) {
       params.facet = FACETS;
     }
+    params.offset = params.offset || 0;
+    params.limit = params.limit || 50;
     columnFilters.forEach(param => this.updateFilter(params, params, param));
-
     this.setState({ params, pagination: {
       pageSize: params.limit,
       current: (Number(params.offset) / Number(params.limit)) +1
@@ -812,7 +813,7 @@ class WorkBench extends React.Component {
               `results: ${pagination.total}`}
           </Col>
         </Row>
-        {!error && (
+        {!error  && (
           <Table
             scroll={{ x: 3000, y: 600 }}
             size="small"
