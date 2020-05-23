@@ -335,7 +335,7 @@ class DuplicateSearchPage extends React.Component {
       .map(d => {
         const method = d.decision ? "put" : "post";
         return axios[method](
-          `${config.dataApi}decision${
+          `${config.dataApi}dataset/${catalogueKey}/decision${
             method === "put" ? `/${d.decision.id}` : ""
           }`,
           {
