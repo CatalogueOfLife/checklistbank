@@ -306,7 +306,7 @@ const DecisionForm = (props) => {
           <Checkbox />
         </FormItem>
 
-        <FormItem {...formItemLayout} label="Note" note="note">
+        <FormItem {...formItemLayout} label="Note" name="note">
           <TextArea />
           </FormItem>
           
