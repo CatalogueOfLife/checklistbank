@@ -237,6 +237,7 @@ class DatasetImportMetrics extends React.Component {
                     {_.get(this.state, "data.taxaByRankCount") && (
                       <ImportChart
                         nameSearchParam="rank"
+                        additionalParams={{status: 'accepted'}}
                         defaultType="pie"
                         datasetKey={this.state.data.datasetKey}
                         data={_.get(this.state, "data.taxaByRankCount")}

@@ -18,7 +18,7 @@ const ImportMetrics = ({data}) => {
         </Row>
         <Row>
           <Col span={12} style={{ padding: '10px' }}>
-            {_.get(data, 'taxaByRankCount') && <ImportChart nameSearchParam="rank" defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'taxaByRankCount')} title="Accepted Names by Rank" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
+            {_.get(data, 'taxaByRankCount') && <ImportChart nameSearchParam="rank" additionalParams={{status: 'accepted'}} defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'taxaByRankCount')} title="Accepted Names by Rank" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
           </Col>
           <Col span={12} style={{ padding: '10px' }}>
           {_.get(data, 'usagesByStatusCount') && <ImportChart nameSearchParam="status" defaultType="pie" datasetKey={datasetKey} data={_.get(data, 'usagesByStatusCount')} title="Usages by status" subtitle={`Imported ${moment(data.finished).format('MMMM Do YYYY, h:mm a')}`} />}

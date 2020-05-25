@@ -4,6 +4,7 @@ import HighchartsReact from 'highcharts-react-official'
 import React from "react";
 import _ from 'lodash';
 import history from '../history'
+import qs from "query-string";
 import { BarChartOutlined, PieChartOutlined } from '@ant-design/icons';
 import {  Button, Card } from 'antd'
 import withContext from "./hoc/withContext";
@@ -42,7 +43,7 @@ class ImportChart extends React.Component {
   }
 
  initChart = (props) => {
-  const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim, catalogueKey } = props;
+  const { datasetKey, data, title, subtitle, defaultType, nameSearchParam, verbatim, additionalParams } = props;
   var chartData = [];
   var logChartData = [];
   var max;
@@ -106,7 +107,7 @@ class ImportChart extends React.Component {
       point: {
         events: {
           click: (e) => {
-            history.push(`${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${nameSearchParam}=${e.point.name}`)
+            history.push(`${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${nameSearchParam}=${e.point.name}${additionalParams ? '&'+qs.stringify(additionalParams): '' }`)
           }
         }
       },
