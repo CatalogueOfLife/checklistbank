@@ -87,7 +87,7 @@ export const getLifezones = () => {
 };
 
 export const getSectorImportState = () => {
-  return axios(`${config.dataApi}vocab/sectorimport$state`).then(res =>
+  return axios(`${config.dataApi}vocab/importstate`).then(res =>
     res.data.map(e => e.name)
   );
 };
