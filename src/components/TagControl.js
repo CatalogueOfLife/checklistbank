@@ -97,7 +97,7 @@ class TagControl extends React.Component {
         {tags.map((tag, index) => {
           const isLongTag = tag && tag.length > 20;
           const tagElem = (
-            <Tag key={tag} closable={removeAll || index !== 0} afterClose={() => this.handleClose(tag)}>
+            <Tag key={tag} closable={removeAll || index !== 0} onClose={() => this.handleClose(tag)}>
               {isLongTag ? `${tag.slice(0, 20)}...` : tag}
             </Tag>
           );
