@@ -20,10 +20,10 @@ class DatasetProvider extends React.Component {
       dataset,
       catalogue
     } = this.props;
-    if (key && Number(key) !== _.get(dataset, "key")) {
+    if (key && key !== _.get(dataset, "key")) {
       this.fetchDataset(key)
   };
-  if (catalogueKey && Number(catalogueKey) !== _.get(catalogue, "key")) {
+  if (catalogueKey && Number(catalogueKey) !== Number(_.get(catalogue, "key"))) {
     this.fetchCatalogue(catalogueKey)
 };
   
@@ -39,7 +39,7 @@ class DatasetProvider extends React.Component {
         }
       } = prevProps;
 
-      if(nextKey && !this.state.loading && Number(key) !== Number(nextKey)){
+      if(nextKey && !this.state.loading && key !== nextKey){
           this.fetchDataset(nextKey)
       }
       if(nextCatalogueKey && !this.state.catalogueLoading && Number(catalogueKey) !== Number(nextCatalogueKey)){
