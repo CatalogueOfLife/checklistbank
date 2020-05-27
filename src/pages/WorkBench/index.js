@@ -336,14 +336,13 @@ class WorkBench extends React.Component {
     };
 
     if (sorter && sorter.field) {
-      let split = sorter.field.split(".");
 
-      if (split[split.length - 1] === "labelHtml") {
+      if (sorter.field[sorter.field.length - 1] === "labelHtml") {
         query.sortBy = "name";
-      } else if (split[split.length - 1] === "rank") {
+      } else if (sorter.field[sorter.field.length - 1] === "rank") {
         query.sortBy = "taxonomic";
       } else {
-        query.sortBy = split[split.length - 1];
+        query.sortBy = sorter.field[sorter.field.length - 1];
       }
     }
     if (sorter && sorter.order === "descend") {
