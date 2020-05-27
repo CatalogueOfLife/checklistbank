@@ -547,7 +547,7 @@ class WorkBench extends React.Component {
       : [];
 
     columns[2].filters =
-      facetTaxonomicStatus ||
+      facetTaxonomicStatus ? facetTaxonomicStatus.map(s => ({ value: s.value, text: s.label })) :
       taxonomicstatus.map(s => ({ value: s, text: _.startCase(s) }));
     columns[2].filteredValue = _.get(filteredInfo, "status") || null;
     columns[9].filters =
