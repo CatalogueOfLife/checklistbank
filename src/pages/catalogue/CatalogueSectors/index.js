@@ -65,7 +65,7 @@ class CatalogueSectors extends React.Component {
         search: `?limit=${PAGE_SIZE}&offset=0`
       });
     }
-
+    params = { limit: PAGE_SIZE, offset: 0, ...params };
     this.setState(
       {
         params,
