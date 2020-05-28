@@ -77,7 +77,7 @@ const environments = {
 
 const domain = window.location.hostname;
 
-let env = environments.dev;
+let env = environments.prod;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.catalogue.life")) {

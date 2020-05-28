@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import PageContent from "../../../../components/PageContent";
 import withContext from "../../../../components/hoc/withContext";
 import { getDuplicateOverview } from "../../../../api/dataset";
-
+import ErrorMsg from "../../../../components/ErrorMsg"
 const _ = require("lodash");
 
 class DatasetTasks extends React.Component {
@@ -36,13 +36,15 @@ class DatasetTasks extends React.Component {
     const duplicatesWithdecision = await getDuplicateOverview(datasetKey, catalogueKey, true)
     let completedMap = {};
     duplicatesWithdecision.forEach(c => {
-      completedMap[c.id] = c.count;
+      completedMap[c.id] = { count: c.count, error: c.error}
     })
-    const duplicates = duplicatesWithNodecision.map(d => ({
+    const duplicates = duplicatesWithNodecision.map(d => (
+      {
       id: d.id,
       text: d.text,
       count: d.count,
-      completed: completedMap[d.id]
+      completed: completedMap[d.id].count,
+      error: d.error || completedMap[d.id].error
     }))
     this.setState({ duplicates: duplicates, loading: false })
     
@@ -76,11 +78,13 @@ class DatasetTasks extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={error.message} type="error" />}
+        {error && <Alert message={<ErrorMsg error={error}/>} type="error" />}
+        {duplicates.filter(d => d.error)
+          .map(d => <Alert style={{marginTop: '8px'}} message={<ErrorMsg error={d.error}/>} type="error" />)}
         <Card>
         <h1>Duplicates without decision</h1>
         {loading && <Spin />}
-        {duplicates
+        {duplicates.filter(d => !d.error)
           .map(d => (
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`, search:`?_colCheck=${d.id}` }}
