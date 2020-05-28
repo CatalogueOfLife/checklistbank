@@ -41,7 +41,7 @@ return [
     render: (text, record) => {
        return (
             <NavLink 
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/workbench`, search: `?issue=${record.title}` }}
+              to={{ pathname: `/dataset/${record.datasetKey}/names`, search: `?issue=${record.title}` }}
               exact={true}
             >
               {text}
