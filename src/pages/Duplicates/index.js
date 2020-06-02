@@ -28,6 +28,7 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import { Resizable } from "react-resizable";
 import ErrorMsg from "../../components/ErrorMsg";
+import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete"
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
 import Auth from "../../components/Auth";
@@ -276,7 +277,7 @@ class DuplicateSearchPage extends React.Component {
   updateSearch = params => {
     this.setState(
       {
-        params: { ...this.state.params, ...params, offset: 0 },
+        params: _.pickBy({ ...this.state.params, ...params, offset: 0 }, (val)=> val !== null),
         totalFaked: 0,
         selectedPreset: undefined
       },
@@ -565,6 +566,13 @@ class DuplicateSearchPage extends React.Component {
               </div>
               {advancedMode && (
                 <Form layout="inline">
+                  {assembly && 
+                  <DatasetAutocomplete 
+                  placeHolder="Source dataset" 
+                  style={{marginBottom: '10px', width: '100%'}} 
+                  onSelectDataset={value => this.updateSearch({ sourceDatasetKey: value.key })} 
+                  onResetSearch={() => this.updateSearch({ sourceDatasetKey: null})}
+                  defaultDatasetKey={_.get(params, 'sourceDatasetKey') || null}/>}
                   <Select
                     placeholder="Name category"
                     value={params.category}

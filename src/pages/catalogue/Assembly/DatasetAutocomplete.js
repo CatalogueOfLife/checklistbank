@@ -73,6 +73,7 @@ class DatasetAutocomplete extends React.Component {
     }
     render = () => {
         const {value} = this.state;
+        const {style} = this.props
 
         const suffix = (value) ?
             <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} /> : ''
@@ -98,7 +99,7 @@ class DatasetAutocomplete extends React.Component {
             onSearch={this.getDatasets}
             dataSource={options}
             placeholder={this.props.placeHolder || "Find dataset"}
-            style={{ width: '100%' }}
+            style={style ? style : { width: '100%' }}
             onChange={(value) => this.setState({value})}
             value={value}
             optionLabelProp="value"
