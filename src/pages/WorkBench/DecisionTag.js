@@ -6,7 +6,7 @@ import {Tooltip, Tag, notification} from 'antd'
 
 
 const deleteDecision = (id, deleteCallback, catalogueKey) => {
-  return axios.delete( `${config.dataApi}dataset/${catalogueKey}decision/${id}`)
+  return axios.delete( `${config.dataApi}dataset/${catalogueKey}/decision/${id}`)
     .then(res => {
       notification.open({
         message: "Decision deleted"
