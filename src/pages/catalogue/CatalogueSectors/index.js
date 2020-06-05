@@ -296,8 +296,8 @@ class CatalogueSectors extends React.Component {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
+        `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
+        { datasetKey: catalogueKey, subjectDatasetKey: null, broken: true }
       )
       .then(res => {
         this.setState(

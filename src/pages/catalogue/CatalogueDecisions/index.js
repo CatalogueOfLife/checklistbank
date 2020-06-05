@@ -46,7 +46,7 @@ class CatalogueDecisions extends React.Component {
       data: [],
       searchText: "",
       loading: false,
-      rematchSectorsAndDecisionsLoading: false,
+      rematchDecisionsLoading: false,
       rematchInfo: null,
       pagination: {
         pageSize: PAGE_SIZE,
@@ -251,23 +251,23 @@ class CatalogueDecisions extends React.Component {
     this.setState({ searchText: "" });
   };
 
-  rematchSectorsAndDecisions = () => {
+  rematchDecisions = () => {
     const {
       match: {
         params: { catalogueKey }
       }
     } = this.props;
 
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
+    this.setState({ rematchDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
+        `${config.dataApi}dataset/${catalogueKey}/decision/rematch`,
+        { datasetKey: catalogueKey, subjectDatasetKey: null, broken: true }
       )
       .then(res => {
         this.setState(
           {
-            rematchSectorsAndDecisionsLoading: false,
+            rematchDecisionsLoading: false,
             error: null,
             rematchInfo: res.data
           }
@@ -277,12 +277,12 @@ class CatalogueDecisions extends React.Component {
         this.setState({
           error: err,
           rematchInfo: null,
-          rematchSectorsAndDecisionsLoading: false
+          rematchDecisionsLoading: false
         })
       );
   };
   render() {
-    const { data, loading, error, pagination, rematchSectorsAndDecisionsLoading, rematchInfo } = this.state;
+    const { data, loading, error, pagination, rematchDecisionsLoading: rematchDecisionsLoading, rematchInfo } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -360,19 +360,6 @@ class CatalogueDecisions extends React.Component {
           return date ? moment(date).format("lll") : "";
         }
       }
-/*       ,
-      {
-        title: "Logs",
-        key: "logs",
-        render: (text, record) => (
-          <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.key)} target="_blank" >
-              <Icon type="code" style={{ fontSize: "20px" }} />
-            </a>
-          </Tooltip>
-        ),
-        width: 50
-      } */
     ];
 
     return (
@@ -407,7 +394,7 @@ class CatalogueDecisions extends React.Component {
                 placeHolder="Source dataset"
               />
             </div>
-           {/*  <div style={{ marginBottom: "8px" }}>
+            <div style={{ marginBottom: "8px" }}>
             <NameAutocomplete
               datasetKey={catalogueKey}
               onSelectName={name => {
@@ -415,7 +402,7 @@ class CatalogueDecisions extends React.Component {
               }}
               onResetSearch={this.onResetName}
             />
-            </div> */}
+            </div>
             <FormItem label="Only broken">
               <Switch
                 checked={params.broken === true || params.broken === "true"}
@@ -472,17 +459,17 @@ class CatalogueDecisions extends React.Component {
             <Col style={{textAlign: 'right'}}>
             <Popconfirm
             placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
+            title="Do you want to rematch all broken decisions?"
+            onConfirm={this.rematchDecisions}
             okText="Yes"
             cancelText="No"
           >
             <Button
               type="primary"
-              loading={rematchSectorsAndDecisionsLoading}
+              loading={rematchDecisionsLoading}
               style={{ marginLeft: "10px", marginBottom: "10px" }}
             >
-              Rematch all broken sectors and decisions
+              Rematch all broken decisions
             </Button>
           </Popconfirm>
             </Col>
