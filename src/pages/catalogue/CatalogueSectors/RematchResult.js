@@ -4,19 +4,12 @@ import _ from "lodash";
 const RematchResult = ({ rematchInfo }) => {
   
    return <React.Fragment>
-      <Row key={type}>
-        <Col span={4} key={type}>{_.startCase(type)}</Col>
+      <Row>
         {["broken", "updated", "unchanged", "total"].map(category => (
           <Tag style={{width: '120px'}} key={category}>
-            {_.startCase(category)}: {_.get(rematchInfo, `[${type}][${category}]`)}
+            {_.startCase(category)}: {_.get(rematchInfo, `[${category}]`)}
           </Tag>
         ))}
-        <Col></Col>
-      </Row>
-
-      <Row>
-        <Col span={4}>Datasets</Col>
-        <Col>{_.get(rematchInfo, 'datasets')}</Col>
       </Row>
     </React.Fragment>;
   };
