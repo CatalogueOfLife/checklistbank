@@ -3,7 +3,7 @@ import { Tag, Row, Col } from "antd";
 import _ from "lodash";
 const RematchResult = ({ rematchInfo }) => {
   
-   return <React.Fragment>{["sectors", "decisions", "estimates"].map(type => (
+   return <React.Fragment>
       <Row key={type}>
         <Col span={4} key={type}>{_.startCase(type)}</Col>
         {["broken", "updated", "unchanged", "total"].map(category => (
@@ -13,16 +13,11 @@ const RematchResult = ({ rematchInfo }) => {
         ))}
         <Col></Col>
       </Row>
-    )
-    
-    )}
 
-    <Row>
-    <Col span={4}>Datasets</Col>
-    <Col>{_.get(rematchInfo, 'datasets')}</Col>
-    </Row>
-    
-    
+      <Row>
+        <Col span={4}>Datasets</Col>
+        <Col>{_.get(rematchInfo, 'datasets')}</Col>
+      </Row>
     </React.Fragment>;
   };
 export default RematchResult;
