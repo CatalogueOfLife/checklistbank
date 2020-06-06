@@ -8,7 +8,6 @@ import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import { Row, Col, Switch, Button, Alert, Popconfirm, notification, Form } from "antd";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -69,7 +68,7 @@ class AdminPage extends React.Component {
       .post(`${config.dataApi}admin/logo-update`)
       .then(res => {
         this.setState(
-          { updateAllLogosloading: false, error: null, exportResponse: null },
+          { updateAllLogosloading: false, error: null },
           () => {
             notification.open({
               message: "Action triggered",
@@ -81,8 +80,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          updateAllLogosloading: false,
-          exportResponse: null
+          updateAllLogosloading: false
         })
       );
   };
@@ -95,8 +93,7 @@ class AdminPage extends React.Component {
         this.setState(
           {
             recalculateSectorCountsLoading: false,
-            error: null,
-            exportResponse: null
+            error: null
           },
           () => {
             notification.open({
@@ -109,8 +106,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          recalculateSectorCountsLoading: false,
-          exportResponse: null
+          recalculateSectorCountsLoading: false
         })
       );
   };
@@ -123,8 +119,7 @@ class AdminPage extends React.Component {
         this.setState(
           {
             reindexAllDatasetsLoading: false,
-            error: null,
-            exportResponse: null
+            error: null
           },
           () => {
             notification.open({
@@ -137,8 +132,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          reindexAllDatasetsLoading: false,
-          exportResponse: null
+          reindexAllDatasetsLoading: false
         })
       );
   };
@@ -253,7 +247,7 @@ class AdminPage extends React.Component {
               Reindex all datasets
             </Button>
           </Popconfirm>
-          
+
           <Popconfirm
             placement="rightTop"
             title="Do you want to restart the importer?"
@@ -284,15 +278,6 @@ class AdminPage extends React.Component {
             </a>
           </Row>
 
-          <Row>
-            {exportResponse && (
-              <div>
-                The export is available{" "}
-                <a href={`${config.downloadApi}`}>here</a>
-                <pre>{exportResponse}</pre>
-              </div>
-            )}
-          </Row>
         </PageContent>
       </Layout>
     );
