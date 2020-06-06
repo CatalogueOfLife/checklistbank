@@ -178,7 +178,6 @@ class HomePage extends React.Component {
 
 <Row style={{ marginTop: 20 }}>
     <Col style={{ paddingRight: "10px" }} span={16}>
-          <h3>Welcome to the Catalogue of Life Clearinghouse</h3>
           <p>
           The <a href="http://www.catalogueoflife.org">Catalogue of Life</a> has the mission to catalogue all known species as an authoritative consensus taxonomy produced by the global taxonomic community. Up to now it has completed peer-reviewed inclusion of nearly all extant species.
           </p>

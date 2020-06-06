@@ -36,8 +36,6 @@ class CatalogueOptions extends React.Component {
       error: null,
       releaseColLoading: false,
       exportResponse: null,
-      rematchInfo: null,
-      rematchSectorsAndDecisionsLoading: false,
       data: null,
       editMode: false
     };
@@ -76,39 +74,6 @@ class CatalogueOptions extends React.Component {
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   }
-
-  rematchSectorsAndDecisions = () => {
-    const {
-      match: {
-        params: { catalogueKey }
-      }
-    } = this.props;
-
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
-    axios
-      .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
-      )
-      .then(res => {
-        this.setState(
-          {
-            rematchSectorsAndDecisionsLoading: false,
-            error: null,
-            rematchInfo: res.data
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          rematchInfo: null,
-          rematchSectorsAndDecisionsLoading: false
-        })
-      );
-  };
-
- 
 
 
   releaseCatalogue = () => {
@@ -171,8 +136,6 @@ class CatalogueOptions extends React.Component {
   render() {
     const {
       releaseColLoading,
-      rematchInfo,
-      rematchSectorsAndDecisionsLoading,
       error,
       data,
       editMode
@@ -203,16 +166,6 @@ class CatalogueOptions extends React.Component {
             </Row>
           )}
           
-          {rematchInfo && (
-            <Alert
-              closable
-              onClose={() => this.setState({ rematchInfo: null })}
-              message="Rematch succeded"
-              description={ <RematchResult rematchInfo={rematchInfo}/>}
-              type="success"
-              style={{marginBottom: '10px'}}
-            />
-          )}
           <Row>
             <Col span={4}>
             <h3>Settings</h3>
@@ -266,27 +219,6 @@ class CatalogueOptions extends React.Component {
 
             </Col>
             <Col span={6} >
-            <SyncAllSectorsButton 
-            catalogueKey={catalogueKey}
-            onError={err => this.setState({error: err})}
-            >
-              
-            </SyncAllSectorsButton>
-              <Popconfirm
-            placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={rematchSectorsAndDecisionsLoading}
-              style={{  marginBottom: "10px" }}
-            >
-              Rematch all broken sectors and decisions
-            </Button>
-          </Popconfirm>
 
               <Popconfirm
             placement="rightTop"

@@ -24,13 +24,10 @@ class AdminPage extends React.Component {
 
     this.state = {
       error: null,
-      releaseColLoading: false,
       updateAllLogosloading: false,
       recalculateSectorCountsLoading: false,
-      exportResponse: null,
       background: {},
       backgroundError: null,
-      datasetKey: null
     };
   }
 
@@ -118,36 +115,6 @@ class AdminPage extends React.Component {
       );
   };
 
-
-
-  rematchAllSectorsDecisionsAndEstimates = () => {
-    this.setState({ rematchAllSectorsDecisionsAndEstimatesLoading: true });
-    axios
-      .post(`${config.dataApi}admin/rematch`, { all: true })
-      .then(res => {
-        this.setState(
-          {
-            rematchAllSectorsDecisionsAndEstimatesLoading: false,
-            error: null,
-            exportResponse: null
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "rematching all sectors, decisions and estimates"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          rematchAllSectorsDecisionsAndEstimatesLoading: false,
-          exportResponse: null
-        })
-      );
-  };
-
   reindexAllDatasets = () => {
     this.setState({ reindexAllDatasetsLoading: true });
     axios
@@ -176,54 +143,6 @@ class AdminPage extends React.Component {
       );
   };
 
-  onSelectDataset = dataset => {
-    this.setState({
-      dataset: dataset
-    });
-  };
-
-  reindexDataset = dataset => {
-    axios
-      .post(`${config.dataApi}admin/reindex`, { datasetKey: dataset.key })
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being reindexed`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
-
-  rematchDataset = dataset => {
-    axios
-      .post(`${config.dataApi}admin/rematch`, { datasetKey: dataset.key })
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being rematched`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
-
-  exportDataset = dataset => {
-    axios
-      .post(`${config.dataApi}dataset/${dataset.key}/export`)
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being exported`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
-
   restartImporter = () => {
     axios
       .post(`${config.dataApi}importer/restart`)
@@ -241,12 +160,9 @@ class AdminPage extends React.Component {
     const {
       updateAllLogosloading,
       recalculateSectorCountsLoading,
-      rematchAllSectorsDecisionsAndEstimatesLoading,
       reindexAllDatasetsLoading,
-      exportResponse,
       error,
       background,
-      dataset
     } = this.state;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
@@ -286,7 +202,10 @@ class AdminPage extends React.Component {
                   />
                 </FormItem>
               </Form>
+            </Col>
+            </Row>
 
+            <Row>
               <Popconfirm
             placement="rightTop"
             title="Update all logos?"
@@ -302,6 +221,7 @@ class AdminPage extends React.Component {
               Update all logos
             </Button>
           </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
             title="Recalculate sector counts?"
@@ -317,21 +237,7 @@ class AdminPage extends React.Component {
               Recalculate sector counts
             </Button>
           </Popconfirm>
-          <Popconfirm
-            placement="rightTop"
-            title="Do you want to rematch all sectors, decisions & estimates?"
-            onConfirm={this.rematchAllSectorsDecisionsAndEstimates}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={rematchAllSectorsDecisionsAndEstimatesLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Rematch all sectors, decisions & estimates
-            </Button>
-          </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
             title="Do you want to reindex all datasets?"
@@ -347,6 +253,7 @@ class AdminPage extends React.Component {
               Reindex all datasets
             </Button>
           </Popconfirm>
+          
           <Popconfirm
             placement="rightTop"
             title="Do you want to restart the importer?"
@@ -360,56 +267,10 @@ class AdminPage extends React.Component {
             >
               Restart importer
             </Button>
-          </Popconfirm>
-
-          
-            </Col>
-           
+          </Popconfirm>           
 
           </Row>
 
-
-
-          <Row>
-            <Col span={24}>
-              <DatasetAutocomplete
-                onSelectDataset={this.onSelectDataset}
-                onResetSearch={() => this.setState({ dataset: null })}
-              />
-            </Col>
-            </Row>
-            <Row style={{marginTop: '10px'}}>
-
-            <Col span={24}>
-              <Button
-                type="primary"
-                onClick={() => this.reindexDataset(dataset)}
-                style={{
-                  marginRight: "10px",
-                  marginBottom: "10px"
-                }}
-                disabled={!dataset}
-              >
-                Re-index selected dataset
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => this.rematchDataset(dataset)}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-                disabled={!dataset}
-              >
-                Rematch selected dataset
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => this.exportDataset(dataset)}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-                disabled={!dataset}
-              >
-                Export selected dataset
-              </Button>
-            </Col>
-          </Row>
           <Row>
             <a href={config.downloadApi}>Downloads</a>
           </Row>
