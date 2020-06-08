@@ -35,9 +35,8 @@ class CatalogueOptions extends React.Component {
     this.state = {
       error: null,
       releaseColLoading: false,
-      exportResponse: null,
-      rematchInfo: null,
       rematchSectorsAndDecisionsLoading: false,
+      exportResponse: null,
       data: null,
       editMode: false
     };
@@ -171,7 +170,6 @@ class CatalogueOptions extends React.Component {
   render() {
     const {
       releaseColLoading,
-      rematchInfo,
       rematchSectorsAndDecisionsLoading,
       error,
       data,
@@ -203,16 +201,6 @@ class CatalogueOptions extends React.Component {
             </Row>
           )}
           
-          {rematchInfo && (
-            <Alert
-              closable
-              onClose={() => this.setState({ rematchInfo: null })}
-              message="Rematch succeded"
-              description={ <RematchResult rematchInfo={rematchInfo}/>}
-              type="success"
-              style={{marginBottom: '10px'}}
-            />
-          )}
           <Row>
             <Col span={4}>
             <h3>Settings</h3>
@@ -306,7 +294,7 @@ class CatalogueOptions extends React.Component {
 
               <Popconfirm
             placement="rightTop"
-            title={`Do you want to export ${catalogue.title} to the old portal?`}
+            title={`Do you want to release ${catalogue.title}?`}
             onConfirm={this.releaseCatalogue}
             okText="Yes"
             cancelText="No"
@@ -316,7 +304,7 @@ class CatalogueOptions extends React.Component {
               loading={releaseColLoading}
               style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              Release catalogue
+              Release project
             </Button>
             
           </Popconfirm>

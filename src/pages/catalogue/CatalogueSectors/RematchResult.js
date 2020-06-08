@@ -8,10 +8,9 @@ const RematchResult = ({ rematchInfo }) => {
         <Col span={4} key={type}>{_.startCase(type)}</Col>
         {["broken", "updated", "unchanged", "total"].map(category => (
           <Tag style={{width: '120px'}} key={category}>
-            {_.startCase(category)}: {_.get(rematchInfo, `[${type}][${category}]`)}
+            {_.startCase(category)}: {_.get(rematchInfo, `[${category}]`)}
           </Tag>
         ))}
-        <Col></Col>
       </Row>
     )
     

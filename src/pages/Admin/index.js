@@ -8,7 +8,6 @@ import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import { Row, Col, Switch, Button, Alert, Popconfirm, notification, Form } from "antd";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -24,13 +23,10 @@ class AdminPage extends React.Component {
 
     this.state = {
       error: null,
-      releaseColLoading: false,
       updateAllLogosloading: false,
       recalculateSectorCountsLoading: false,
-      exportResponse: null,
       background: {},
       backgroundError: null,
-      datasetKey: null
     };
   }
 
@@ -72,7 +68,7 @@ class AdminPage extends React.Component {
       .post(`${config.dataApi}admin/logo-update`)
       .then(res => {
         this.setState(
-          { updateAllLogosloading: false, error: null, exportResponse: null },
+          { updateAllLogosloading: false, error: null },
           () => {
             notification.open({
               message: "Action triggered",
@@ -84,8 +80,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          updateAllLogosloading: false,
-          exportResponse: null
+          updateAllLogosloading: false
         })
       );
   };
@@ -98,8 +93,7 @@ class AdminPage extends React.Component {
         this.setState(
           {
             recalculateSectorCountsLoading: false,
-            error: null,
-            exportResponse: null
+            error: null
           },
           () => {
             notification.open({
@@ -128,8 +122,7 @@ class AdminPage extends React.Component {
         this.setState(
           {
             reindexAllDatasetsLoading: false,
-            error: null,
-            exportResponse: null
+            error: null
           },
           () => {
             notification.open({
@@ -142,58 +135,9 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          reindexAllDatasetsLoading: false,
-          exportResponse: null
+          reindexAllDatasetsLoading: false
         })
       );
-  };
-
-  onSelectDataset = dataset => {
-    this.setState({
-      dataset: dataset
-    });
-  };
-
-  reindexDataset = dataset => {
-    axios
-      .post(`${config.dataApi}admin/reindex`, { datasetKey: dataset.key })
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being reindexed`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
-
-  rematchDataset = dataset => {
-    axios
-      .post(`${config.dataApi}admin/rematch`, { datasetKey: dataset.key })
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being rematched`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
-
-  exportDataset = dataset => {
-    axios
-      .post(`${config.dataApi}dataset/${dataset.key}/export`)
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `${dataset.title} is being exported`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
   };
 
   restartImporter = () => {
@@ -213,12 +157,9 @@ class AdminPage extends React.Component {
     const {
       updateAllLogosloading,
       recalculateSectorCountsLoading,
-      rematchAllSectorsDecisionsAndEstimatesLoading,
       reindexAllDatasetsLoading,
-      exportResponse,
       error,
       background,
-      dataset
     } = this.state;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
@@ -258,7 +199,10 @@ class AdminPage extends React.Component {
                   />
                 </FormItem>
               </Form>
+            </Col>
+            </Row>
 
+            <Row>
               <Popconfirm
             placement="rightTop"
             title="Update all logos?"
@@ -274,6 +218,7 @@ class AdminPage extends React.Component {
               Update all logos
             </Button>
           </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
             title="Recalculate sector counts?"
@@ -305,6 +250,7 @@ class AdminPage extends React.Component {
               Reindex all datasets
             </Button>
           </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
             title="Do you want to restart the importer?"
@@ -318,56 +264,10 @@ class AdminPage extends React.Component {
             >
               Restart importer
             </Button>
-          </Popconfirm>
-
-          
-            </Col>
-           
+          </Popconfirm>           
 
           </Row>
 
-
-
-          <Row>
-            <Col span={24}>
-              <DatasetAutocomplete
-                onSelectDataset={this.onSelectDataset}
-                onResetSearch={() => this.setState({ dataset: null })}
-              />
-            </Col>
-            </Row>
-            <Row style={{marginTop: '10px'}}>
-
-            <Col span={24}>
-              <Button
-                type="primary"
-                onClick={() => this.reindexDataset(dataset)}
-                style={{
-                  marginRight: "10px",
-                  marginBottom: "10px"
-                }}
-                disabled={!dataset}
-              >
-                Re-index selected dataset
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => this.rematchDataset(dataset)}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-                disabled={!dataset}
-              >
-                Rematch selected dataset
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => this.exportDataset(dataset)}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-                disabled={!dataset}
-              >
-                Export selected dataset
-              </Button>
-            </Col>
-          </Row>
           <Row>
             <a href={config.downloadApi}>Downloads</a>
           </Row>
@@ -381,15 +281,6 @@ class AdminPage extends React.Component {
             </a>
           </Row>
 
-          <Row>
-            {exportResponse && (
-              <div>
-                The export is available{" "}
-                <a href={`${config.downloadApi}`}>here</a>
-                <pre>{exportResponse}</pre>
-              </div>
-            )}
-          </Row>
         </PageContent>
       </Layout>
     );

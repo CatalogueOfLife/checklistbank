@@ -393,9 +393,9 @@ class CatalogueSectors extends React.Component {
             </FormItem>
             <FormItem label="Created by me" style={{ marginBottom: "8px" , marginRight: "8px" }}>
               <Switch
-                checked={user && Number(params.userKey) === user.key}
+                checked={user && Number(params.modifiedBy) === user.key}
                 onChange={value =>
-                  this.updateSearch({ userKey: value ? user.key : null })
+                  this.updateSearch({ modifiedBy: value ? user.key : null })
                 }
               />
             </FormItem>
