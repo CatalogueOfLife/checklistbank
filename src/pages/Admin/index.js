@@ -120,34 +120,6 @@ class AdminPage extends React.Component {
 
 
 
-  rematchAllSectorsDecisionsAndEstimates = () => {
-    this.setState({ rematchAllSectorsDecisionsAndEstimatesLoading: true });
-    axios
-      .post(`${config.dataApi}admin/rematch`, { all: true })
-      .then(res => {
-        this.setState(
-          {
-            rematchAllSectorsDecisionsAndEstimatesLoading: false,
-            error: null,
-            exportResponse: null
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "rematching all sectors, decisions and estimates"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          rematchAllSectorsDecisionsAndEstimatesLoading: false,
-          exportResponse: null
-        })
-      );
-  };
-
   reindexAllDatasets = () => {
     this.setState({ reindexAllDatasetsLoading: true });
     axios
@@ -317,21 +289,7 @@ class AdminPage extends React.Component {
               Recalculate sector counts
             </Button>
           </Popconfirm>
-          <Popconfirm
-            placement="rightTop"
-            title="Do you want to rematch all sectors, decisions & estimates?"
-            onConfirm={this.rematchAllSectorsDecisionsAndEstimates}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={rematchAllSectorsDecisionsAndEstimatesLoading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Rematch all sectors, decisions & estimates
-            </Button>
-          </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
             title="Do you want to reindex all datasets?"

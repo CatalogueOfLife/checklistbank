@@ -28,10 +28,6 @@ class DatasetSettings extends React.Component {
 
     this.state = {
       error: null,
-      releaseColLoading: false,
-      exportResponse: null,
-      rematchInfo: null,
-      rematchSectorsAndDecisionsLoading: false,
       data: null,
       editMode: false
     };
@@ -69,92 +65,7 @@ class DatasetSettings extends React.Component {
     this.setState({ editMode: checked });
   }
 
-  rematchSectorsAndDecisions = () => {
-    const {
-      match: {
-        params: { catalogueKey }
-      }
-    } = this.props;
 
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
-    axios
-      .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
-      )
-      .then(res => {
-        this.setState(
-          {
-            rematchSectorsAndDecisionsLoading: false,
-            error: null,
-            rematchInfo: res.data
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          rematchInfo: null,
-          rematchSectorsAndDecisionsLoading: false
-        })
-      );
-  };
-
- 
-
-
-  releaseCatalogue = () => {
-    const { match: {
-        params: { catalogueKey }
-      }} = this.props;
-
-    this.setState({ releaseColLoading: true });
-    axios
-      .post(
-        `${config.dataApi}dataset/${catalogueKey}/release`
-      )
-      .then(res => {
-        this.setState(
-          {
-            releaseColLoading: false,
-            error: null,
-            exportResponse: res.data
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description:
-                "release selected catalogue to old portal synchroneously (might take long)"
-            });
-          }
-        );
-      })
-      .catch(err =>
-        this.setState({
-          error: err,
-          releaseColLoading: false,
-          exportResponse: null
-        })
-      );
-  };
-
-  
-  exportDataset = () => {
-    const { match: {
-        params: { catalogueKey }
-      }} = this.props;
-    axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/export`)
-      .then(res => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `The dataset is being exported`
-          });
-        });
-      })
-      .catch(err => this.setState({ error: err }));
-  };
 
   setEditMode = (checked) => {
     this.setState({ editMode: checked });

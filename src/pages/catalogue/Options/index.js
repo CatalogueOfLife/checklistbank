@@ -77,7 +77,7 @@ class CatalogueOptions extends React.Component {
     this.setState({ editMode: checked });
   }
 
-  rematchSectorsAndDecisions = () => {
+  rematchSectorsOrDecisions = (type) => {
     const {
       match: {
         params: { catalogueKey }
@@ -87,15 +87,15 @@ class CatalogueOptions extends React.Component {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
+        `${config.dataApi}dataset/${catalogueKey}/${type}/rematch`,
+        { }
       )
       .then(res => {
         this.setState(
           {
             rematchSectorsAndDecisionsLoading: false,
             error: null,
-            rematchInfo: res.data
+            rematchInfo: {[type]: res.data}
           }
         );
       })
@@ -274,8 +274,8 @@ class CatalogueOptions extends React.Component {
             </SyncAllSectorsButton>
               <Popconfirm
             placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
+            title="Do you want to rematch sectors?"
+            onConfirm={() => this.rematchSectorsOrDecisions("sectors")}
             okText="Yes"
             cancelText="No"
           >
@@ -284,7 +284,23 @@ class CatalogueOptions extends React.Component {
               loading={rematchSectorsAndDecisionsLoading}
               style={{  marginBottom: "10px" }}
             >
-              Rematch all broken sectors and decisions
+              Rematch all sectors
+            </Button>
+          </Popconfirm>
+
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to rematch sectors?"
+            onConfirm={() => this.rematchSectorsOrDecisions("decisions")}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={rematchSectorsAndDecisionsLoading}
+              style={{  marginBottom: "10px" }}
+            >
+              Rematch all decisions
             </Button>
           </Popconfirm>
 

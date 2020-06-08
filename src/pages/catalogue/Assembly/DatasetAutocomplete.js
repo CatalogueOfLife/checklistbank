@@ -35,6 +35,8 @@ class DatasetAutocomplete extends React.Component {
         const { defaultDatasetKey} = this.props;
         if(defaultDatasetKey && defaultDatasetKey !== prevProps.defaultDatasetKey){
             this.setDefaultValue(defaultDatasetKey)
+        } else if(prevProps.defaultDatasetKey && !defaultDatasetKey){
+            this.setState({value: ''})
         }
     }
 

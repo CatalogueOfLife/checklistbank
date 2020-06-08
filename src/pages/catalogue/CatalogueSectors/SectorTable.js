@@ -290,9 +290,9 @@ class SectorTable extends React.Component {
            style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {
-                axios.post(`${config.dataApi}dataset/${catalogueKey}/rematch`, {sectorKey: record.key})
+                axios.post(`${config.dataApi}dataset/${catalogueKey}/sector/rematch`, {id: record.id})
                 .then(rematchInfo => {
-                    const success = _.get(rematchInfo, 'data.sectors.updated') ===1 && _.get(rematchInfo, 'data.sectors.broken')===0;
+                    const success = (_.get(rematchInfo, 'data.updated') ===1 ||  _.get(rematchInfo, 'data.unchanged') === 1) && _.get(rematchInfo, 'data.broken')===0;
 
                    if(success){
                     notification.success({

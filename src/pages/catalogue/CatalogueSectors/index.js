@@ -44,7 +44,7 @@ class CatalogueSectors extends React.Component {
       data: [],
       searchText: "",
       loading: false,
-      rematchSectorsAndDecisionsLoading: false,
+      rematchSectorsLoading: false,
       rematchInfo: null,
       defaultTaxonKey: null,
       pagination: {
@@ -286,24 +286,25 @@ class CatalogueSectors extends React.Component {
     });
   };
 
-  rematchSectorsAndDecisions = () => {
+  rematchSectors = (subjectDatasetKey) => {
     const {
       match: {
         params: { catalogueKey }
       }
     } = this.props;
 
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
+    this.setState({ rematchSectorsLoading: true });
+    const body = subjectDatasetKey ? {subjectDatasetKey}: {}
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
+        `${config.dataApi}dataset/${catalogueKey}/sectors/rematch`,
+        body
       )
       .then(res => {
         this.setState(
           {
-            rematchSectorsAndDecisionsLoading: false,
-            rematchInfo: res.data,
+            rematchSectorsLoading: false,
+            rematchInfo: {sectors: res.data},
             error: null
           }
         );
@@ -311,14 +312,14 @@ class CatalogueSectors extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          rematchSectorsAndDecisionsLoading: false,
+          rematchSectorsLoading: false,
           rematchInfo: null
         })
       );
   };
 
   render() {
-    const { data, loading, pagination, error, rematchSectorsAndDecisionsLoading, rematchInfo, defaultTaxonKey } = this.state;
+    const { data, loading, pagination, error, rematchSectorsLoading, rematchInfo, defaultTaxonKey } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -356,7 +357,8 @@ class CatalogueSectors extends React.Component {
           )}
 
           <Form layout="inline">
-            <div style={{ marginBottom: "8px" }}>
+            <FormItem>
+            <div style={{ marginBottom: "8px" , marginRight: "8px"}}>
               <DatasetAutocomplete
                 defaultDatasetKey={_.get(params, 'subjectDatasetKey') || null}
                 onResetSearch={this.onResetDataset}
@@ -365,7 +367,14 @@ class CatalogueSectors extends React.Component {
                 placeHolder="Source dataset"
               />
             </div>
-            <div style={{ marginBottom: "8px" }}>
+            {params.subjectDatasetKey && 
+            <Button type="primary"
+              loading={rematchSectorsLoading} style={{ marginBottom: "8px", marginRight:  "8px"}}
+              onClick={() => this.rematchSectors(params.subjectDatasetKey)}
+              >Rematch selected source dataset</Button>}
+            </FormItem>
+            
+            <div style={{ marginBottom: "8px" , marginRight: "8px" }}>
             <NameAutocomplete
               datasetKey={catalogueKey}
               defaultTaxonKey={defaultTaxonKey}
@@ -376,13 +385,13 @@ class CatalogueSectors extends React.Component {
               onResetSearch={this.onResetName}
             />
             </div>
-            <FormItem label="Only broken">
+            <FormItem label="Only broken" style={{ marginBottom: "8px" , marginRight: "8px" }}>
               <Switch
                 checked={params.broken === true || params.broken === "true"}
                 onChange={value => this.updateSearch({ broken: value })}
               />
             </FormItem>
-            <FormItem label="Created by me">
+            <FormItem label="Created by me" style={{ marginBottom: "8px" , marginRight: "8px" }}>
               <Switch
                 checked={user && Number(params.userKey) === user.key}
                 onChange={value =>
@@ -390,7 +399,7 @@ class CatalogueSectors extends React.Component {
                 }
               />
             </FormItem>
-            <FormItem >
+            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
               <Select
                 placeholder="Subject rank"
                 style={{ width: 160 }}
@@ -405,7 +414,7 @@ class CatalogueSectors extends React.Component {
                 ))}
               </Select>
             </FormItem>
-            <FormItem >
+            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
               <Select
                               placeholder="Sector mode"
 
@@ -421,7 +430,7 @@ class CatalogueSectors extends React.Component {
                 ))}
               </Select>
             </FormItem>
-            <FormItem>
+            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
             <DatePicker 
             placeholder="Last sync"
             defaultValue={params.lastSync ? moment(params.lastSync) : null}
@@ -449,17 +458,17 @@ class CatalogueSectors extends React.Component {
             </SyncAllSectorsButton>
               <Popconfirm
             placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
+            title="Do you want to rematch all sectors?"
+            onConfirm={this.rematchSectors}
             okText="Yes"
             cancelText="No"
           >
             <Button
               type="primary"
-              loading={rematchSectorsAndDecisionsLoading}
+              loading={rematchSectorsLoading}
               style={{  marginBottom: "10px" }}
             >
-              Rematch all broken sectors and decisions
+              Rematch all sectors
             </Button>
           </Popconfirm>
             </Col>

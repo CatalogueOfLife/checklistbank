@@ -48,7 +48,7 @@ class CatalogueDecisions extends React.Component {
       data: [],
       searchText: "",
       loading: false,
-      rematchSectorsAndDecisionsLoading: false,
+      rematchDecisionsLoading: false,
       rematchInfo: null,
       pagination: {
         pageSize: PAGE_SIZE,
@@ -174,9 +174,11 @@ class CatalogueDecisions extends React.Component {
       search: qs.stringify(newParams)
     });
   };
+
   onSelectDataset = dataset => {
     this.updateSearch({ subjectDatasetKey: dataset.key });
   };
+
   onResetDataset = () => {
     let newParams = qs.parse(_.get(this.props, "location.search"));
     delete newParams.subjectDatasetKey;
@@ -185,64 +187,14 @@ class CatalogueDecisions extends React.Component {
       search: qs.stringify(newParams)
     });
   };
+
   resetAllFilters = () => {
     history.push({
       pathname: _.get(this.props, "location.pathname"),
       search: `?limit=${PAGE_SIZE}&offset=0`
     });
   };
-  getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex.split('.')[0]}`}
-          value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon={<SearchOutlined />}
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
-        </Button>
-        <Button
-          onClick={() => this.handleReset(clearFilters)}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
-        </Button>
-      </div>
-    ),
-    filterIcon: filtered => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      _.get(record, dataIndex)
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
-      if (visible) {
-        setTimeout(() => this.searchInput.select());
-      }
-    }
-  });
+
   handleSearch = (selectedKeys, confirm) => {
     confirm();
     this.setState({ searchText: selectedKeys[0] });
@@ -253,24 +205,25 @@ class CatalogueDecisions extends React.Component {
     this.setState({ searchText: "" });
   };
 
-  rematchSectorsAndDecisions = () => {
+  rematchDecisions = (subjectDatasetKey) => {
     const {
       match: {
         params: { catalogueKey }
       }
     } = this.props;
 
-    this.setState({ rematchSectorsAndDecisionsLoading: true });
+    this.setState({ rematchDecisionsLoading: true });
+    const body = subjectDatasetKey ? {subjectDatasetKey} : {};
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/decision/rematch`
+        `${config.dataApi}dataset/${catalogueKey}/decision/rematch`, body
       )
       .then(res => {
         this.setState(
           {
-            rematchSectorsAndDecisionsLoading: false,
+            rematchDecisionsLoading: false,
             error: null,
-            rematchInfo: res.data
+            rematchInfo: {decisions: res.data}
           }
         );
       })
@@ -278,12 +231,12 @@ class CatalogueDecisions extends React.Component {
         this.setState({
           error: err,
           rematchInfo: null,
-          rematchSectorsAndDecisionsLoading: false
+          rematchDecisionsLoading: false
         })
       );
   };
   render() {
-    const { data, loading, error, pagination, rematchSectorsAndDecisionsLoading, rematchInfo } = this.state;
+    const { data, loading, error, pagination, rematchDecisionsLoading, rematchInfo } = this.state;
     const {
       match: {
         params: { catalogueKey }
@@ -359,19 +312,7 @@ class CatalogueDecisions extends React.Component {
           return date ? moment(date).format("lll") : "";
         }
       }
-/*       ,
-      {
-        title: "Logs",
-        key: "logs",
-        render: (text, record) => (
-          <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.key)} target="_blank" >
-              <Icon type="code" style={{ fontSize: "20px" }} />
-            </a>
-          </Tooltip>
-        ),
-        width: 50
-      } */
+
     ];
 
     if(Auth.isAuthorised(user, ['admin', 'editor'])){
@@ -413,12 +354,15 @@ class CatalogueDecisions extends React.Component {
           >
             Rematch
           </Button>}
-          {<Button style={{display: 'inline'}} type="danger" onClick={(record) => {
+          {<Button style={{display: 'inline'}} type="danger" onClick={() => {
             return axios.delete( `${config.dataApi}dataset/${catalogueKey}/decision/${record.id}`)
             .then(res => {
-              notification.open({
+              this.setState({
+                data: this.state.data.filter(d => d.id !== record.id)
+              }, () => notification.open({
                 message: "Decision deleted"
-              });
+              }));
+              
              
             })
           }}><DeleteOutlined /></Button>}
@@ -453,7 +397,7 @@ class CatalogueDecisions extends React.Component {
 
           <Form layout="inline">
           <FormItem >
-            <div style={{ marginBottom: "8px" }}>
+            <div style={{ marginBottom: "8px", marginRight:  "8px"}}>
               <DatasetAutocomplete
                 defaultDatasetKey={_.get(params, 'subjectDatasetKey') || null}
                 onResetSearch={this.onResetDataset}
@@ -462,8 +406,13 @@ class CatalogueDecisions extends React.Component {
                 placeHolder="Source dataset"
               />
             </div>
+            {params.subjectDatasetKey && 
+            <Button type="primary"
+              loading={rematchDecisionsLoading} style={{ marginBottom: "8px", marginRight:  "8px"}}
+              onClick={() => this.rematchDecisions(params.subjectDatasetKey)}
+              >Rematch selected source dataset</Button>}
             </FormItem>
-             <div style={{ marginBottom: "8px" }}>
+             <div style={{ marginBottom: "8px" ,  marginRight:  "8px"}}>
             <NameAutocomplete
               datasetKey={catalogueKey}
               onSelectName={name => {
@@ -472,13 +421,13 @@ class CatalogueDecisions extends React.Component {
               onResetSearch={this.onResetName}
             />
             </div> 
-            <FormItem label="Only broken">
+            <FormItem label="Only broken" style={{ marginBottom: "8px" ,  marginRight:  "8px"}}>
               <Switch
                 checked={params.broken === true || params.broken === "true"}
                 onChange={value => this.updateSearch({ broken: value })}
               />
             </FormItem>
-            <FormItem label="Created by me">
+            <FormItem label="Created by me" style={{ marginBottom: "8px" ,  marginRight:  "8px"}}>
               <Switch
                 checked={user && Number(params.userKey) === user.key}
                 onChange={value =>
@@ -486,7 +435,7 @@ class CatalogueDecisions extends React.Component {
                 }
               />
             </FormItem>
-            <FormItem >
+            <FormItem style={{ marginBottom: "8px" ,  marginRight:  "8px"}}>
               <Select
                 placeholder="Subject rank"
                 style={{ width: 160 }}
@@ -501,7 +450,7 @@ class CatalogueDecisions extends React.Component {
                 ))}
               </Select>
             </FormItem>
-            <FormItem >
+            <FormItem style={{ marginBottom: "8px" ,  marginRight:  "8px"}}>
               <Select
                 placeholder="Decision mode"
                 style={{ width: 160 }}
@@ -528,17 +477,17 @@ class CatalogueDecisions extends React.Component {
             <Col style={{textAlign: 'right'}}>
             <Popconfirm
             placement="rightTop"
-            title="Do you want to rematch all broken sectors and decisions?"
-            onConfirm={this.rematchSectorsAndDecisions}
+            title="Do you want to rematch all decisions?"
+            onConfirm={this.rematchDecisions}
             okText="Yes"
             cancelText="No"
           >
             <Button
               type="primary"
-              loading={rematchSectorsAndDecisionsLoading}
+              loading={rematchDecisionsLoading}
               style={{ marginLeft: "10px", marginBottom: "10px" }}
             >
-              Rematch all broken sectors and decisions
+              Rematch all decisions
             </Button>
           </Popconfirm>
             </Col>
