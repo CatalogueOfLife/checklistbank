@@ -297,7 +297,7 @@ class CatalogueSectors extends React.Component {
     const body = subjectDatasetKey ? {subjectDatasetKey}: {}
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/sectors/rematch`,
+        `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
         body
       )
       .then(res => {

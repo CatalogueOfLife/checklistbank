@@ -8,7 +8,7 @@ const RematchResult = ({ rematchInfo }) => {
         <Col span={4} key={type}>{_.startCase(type)}</Col>
         {["broken", "updated", "unchanged", "total"].map(category => (
           <Tag style={{width: '120px'}} key={category}>
-            {_.startCase(category)}: {_.get(rematchInfo, `[${category}]`)}
+            {_.startCase(category)}: {_.get(rematchInfo, `${type}[${category}]`) || 0}
           </Tag>
         ))}
       </Row>
@@ -16,10 +16,6 @@ const RematchResult = ({ rematchInfo }) => {
     
     )}
 
-  {_.get(rematchInfo, 'datasets') &&  <Row>
-    <Col span={4}>Datasets</Col>
-    <Col>{_.get(rematchInfo, 'datasets')}</Col>
-    </Row>}
     
     
     </React.Fragment>;
