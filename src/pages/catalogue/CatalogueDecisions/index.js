@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined , DeleteOutlined} from '@ant-design/icons';
+import Auth from "../../../components/Auth"
 
 import {
   Table,
@@ -14,7 +15,8 @@ import {
   Row,
   Col,
   Switch,
-  Form
+  Form,
+  notification
 } from "antd";
 
 import config from "../../../config";
@@ -261,8 +263,7 @@ class CatalogueDecisions extends React.Component {
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/rematch`,
-        { all: true }
+        `${config.dataApi}dataset/${catalogueKey}/decision/rematch`
       )
       .then(res => {
         this.setState(
@@ -313,8 +314,7 @@ class CatalogueDecisions extends React.Component {
           );
         },
         sorter: (a, b) => a.dataset.title < b.dataset.title,
-        width: 250,
-        ...this.getColumnSearchProps("dataset.title")
+        width: 250
       },
       {
         title: "Mode",
@@ -333,7 +333,6 @@ class CatalogueDecisions extends React.Component {
         dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
-        ...this.getColumnSearchProps("subject.name"),
         render: (text, record) => {
           return (
             <React.Fragment>
@@ -375,6 +374,61 @@ class CatalogueDecisions extends React.Component {
       } */
     ];
 
+    if(Auth.isAuthorised(user, ['admin', 'editor'])){
+      columns.push({
+        title: "Action",
+        key: "action",
+        width: 250,
+        render: (text, record) => (
+          <React.Fragment>
+           {  <Button
+           style={{display: 'inline', marginRight: '8px'}}
+            type={"primary"}
+            onClick={() => {
+                axios.post(`${config.dataApi}dataset/${catalogueKey}/decision/rematch`, {id: record.id, })
+                .then(rematchInfo => {
+                    const success = (_.get(rematchInfo, 'data.updated') ===1 || _.get(rematchInfo, 'data.unchanged') ===1)&& _.get(rematchInfo, 'data.broken')===0;
+
+                   if(success){
+                    notification.success({
+                        message: "Rematch success",
+                        description: `Updated: ${_.get(rematchInfo, 'data.updated')} Unchanged: ${_.get(rematchInfo, 'data.unchanged')}`
+                      })
+
+          
+                   } else {
+                    notification.error({
+                        message: "Rematch failed",
+                        description: `Broken decisions: 1`
+                      })
+                   }
+                })
+                .catch(err => {
+                    notification.error({
+                        message: `Server error ${_.get(err, 'response.status')}`,
+                        description: _.get(err, 'response.data.message')
+                      })
+                })
+            }}
+          >
+            Rematch
+          </Button>}
+          {<Button style={{display: 'inline'}} type="danger" onClick={(record) => {
+            return axios.delete( `${config.dataApi}dataset/${catalogueKey}/decision/${record.id}`)
+            .then(res => {
+              notification.open({
+                message: "Decision deleted"
+              });
+             
+            })
+          }}><DeleteOutlined /></Button>}
+          
+          </React.Fragment>
+          
+        )
+      })
+    }
+
     return (
       <Layout
         selectedKeys={["catalogueDecisions"]}
@@ -398,6 +452,7 @@ class CatalogueDecisions extends React.Component {
           )}
 
           <Form layout="inline">
+          <FormItem >
             <div style={{ marginBottom: "8px" }}>
               <DatasetAutocomplete
                 defaultDatasetKey={_.get(params, 'subjectDatasetKey') || null}
@@ -407,7 +462,8 @@ class CatalogueDecisions extends React.Component {
                 placeHolder="Source dataset"
               />
             </div>
-           {/*  <div style={{ marginBottom: "8px" }}>
+            </FormItem>
+             <div style={{ marginBottom: "8px" }}>
             <NameAutocomplete
               datasetKey={catalogueKey}
               onSelectName={name => {
@@ -415,7 +471,7 @@ class CatalogueDecisions extends React.Component {
               }}
               onResetSearch={this.onResetName}
             />
-            </div> */}
+            </div> 
             <FormItem label="Only broken">
               <Switch
                 checked={params.broken === true || params.broken === "true"}
