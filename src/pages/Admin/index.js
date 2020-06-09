@@ -8,7 +8,6 @@ import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import { Row, Col, Switch, Button, Alert, Popconfirm, notification, Form } from "antd";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 
@@ -24,11 +23,9 @@ class AdminPage extends React.Component {
     this.state = {
       error: null,
       updateAllLogosloading: false,
-      exportResponse: null,
       recalculateSectorCountsLoading: false,
       background: {},
-      backgroundError: null,
-      datasetKey: null
+      backgroundError: null
     };
   }
 
@@ -108,8 +105,7 @@ class AdminPage extends React.Component {
       .catch(err =>
         this.setState({
           error: err,
-          recalculateSectorCountsLoading: false,
-          exportResponse: null
+          recalculateSectorCountsLoading: false
         })
       );
   };
@@ -141,41 +137,9 @@ class AdminPage extends React.Component {
         })
       );
   };
-  onSelectDataset = dataset => {	
-    this.setState({	
-      dataset: dataset	
-    });	
-  };	
-
-  reindexDataset = dataset => {	
-    axios	
-      .post(`${config.dataApi}admin/reindex`, { datasetKey: dataset.key })	
-      .then(res => {	
-        this.setState({ error: null }, () => {	
-          notification.open({	
-            message: "Process started",	
-            description: `${dataset.title} is being reindexed`	
-          });	
-        });	
-      })	
-      .catch(err => this.setState({ error: err }));	
-  };	
 
 
 
-  exportDataset = dataset => {	
-    axios	
-      .post(`${config.dataApi}dataset/${dataset.key}/export`)	
-      .then(res => {	
-        this.setState({ error: null }, () => {	
-          notification.open({	
-            message: "Process started",	
-            description: `${dataset.title} is being exported`	
-          });	
-        });	
-      })	
-      .catch(err => this.setState({ error: err }));	
-  };
   restartImporter = () => {
     axios
       .post(`${config.dataApi}importer/restart`)
@@ -195,8 +159,7 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
-      background,
-      dataset
+      background
     } = this.state;
     return (
       <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
@@ -304,38 +267,7 @@ class AdminPage extends React.Component {
           </Popconfirm>           
 
           </Row>
-          <Row>	
-            <Col span={24}>	
-              <DatasetAutocomplete	
-                onSelectDataset={this.onSelectDataset}	
-                onResetSearch={() => this.setState({ dataset: null })}	
-              />	
-            </Col>	
-            </Row>	
-            <Row style={{marginTop: '10px'}}>	
 
-            <Col span={24}>	
-              <Button	
-                type="primary"	
-                onClick={() => this.reindexDataset(dataset)}	
-                style={{	
-                  marginRight: "10px",	
-                  marginBottom: "10px"	
-                }}	
-                disabled={!dataset}	
-              >	
-                Re-index selected dataset	
-              </Button>
-              <Button	
-                type="primary"	
-                onClick={() => this.exportDataset(dataset)}	
-                style={{ marginRight: "10px", marginBottom: "10px" }}	
-                disabled={!dataset}	
-              >	
-                Export selected dataset	
-              </Button>	
-            </Col>	
-          </Row>
 
           <Row>
             <a href={config.downloadApi}>Downloads</a>

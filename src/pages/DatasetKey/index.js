@@ -12,7 +12,7 @@ import DatasetReferences from "./datasetPageTabs/DatasetReferences"
 import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
 import DatasetTasks from "./datasetPageTabs/DatasetTasks"
-import DatasetSettings from "./datasetPageTabs/DatasetSettings"
+import DatasetOptions from "./datasetPageTabs/DatasetOptions"
 import NameSearch from "../NameSearch"
 import WorkBench from "../WorkBench"
 
@@ -152,7 +152,7 @@ class DatasetPage extends React.Component {
           <VerbatimRecord datasetKey={datasetKey} lastSuccesFullImport={lastSuccesFullImport} location={this.props.location} match={this.props.match}  />
         )}
         
-        {sect === "settings" && <DatasetSettings datasetKey={datasetKey} />}
+        {sect === "options" && <DatasetOptions datasetKey={datasetKey} />}
       </Layout>
     );
   }

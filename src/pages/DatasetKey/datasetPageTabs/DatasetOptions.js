@@ -9,6 +9,7 @@ import {
   Col,
   Alert,
   Switch,
+  Button,
   notification
 } from "antd";
 
@@ -61,6 +62,42 @@ class DatasetSettings extends React.Component {
       });
   };
 
+  reindexDataset = () => {	
+    const {
+      datasetKey
+    } = this.props;
+    axios	
+      .post(`${config.dataApi}admin/reindex`, { datasetKey })	
+      .then(res => {	
+        this.setState({ error: null }, () => {	
+          notification.open({	
+            message: "Process started",	
+            description: `Dataset ${datasetKey} is being reindexed`	
+          });	
+        });	
+      })	
+      .catch(err => this.setState({ error: err }));	
+  };	
+
+
+
+  exportDataset = () => {	
+    const {
+      datasetKey
+    } = this.props;
+    axios	
+      .post(`${config.dataApi}dataset/${datasetKey}/export`)	
+      .then(res => {	
+        this.setState({ error: null }, () => {	
+          notification.open({	
+            message: "Process started",	
+            description: `Dataset ${datasetKey} is being exported`	
+          });	
+        });	
+      })	
+      .catch(err => this.setState({ error: err }));	
+  };
+
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   }
@@ -98,7 +135,7 @@ class DatasetSettings extends React.Component {
             <Col span={4}>
             <h3>Settings</h3>
             </Col>
-            <Col offset={18} span={2}>
+            <Col offset={12} span={2}>
             {data  && (
               <Switch
                 checked={editMode}
@@ -111,7 +148,7 @@ class DatasetSettings extends React.Component {
             
           </Row>
           <Row>
-            <Col span={24}>
+            <Col span={18}>
             
             {editMode && (
           <DatasetSettingsForm
@@ -144,9 +181,28 @@ class DatasetSettings extends React.Component {
 
 
             </Col>
-           
+           <Col span={6}>
+           <Button	
+                type="primary"	
+                onClick={this.reindexDataset}	
+                style={{	
+                  marginRight: "10px",	
+                  marginBottom: "10px"	
+                }}	
+              >	
+                Re-index dataset	
+              </Button>
+              <Button	
+                type="primary"	
+                onClick={this.exportDataset}	
+                style={{ marginRight: "10px", marginBottom: "10px" }}	
+              >	
+                Export dataset	
+              </Button>	
+           </Col>
 
           </Row>
+        
 
         </PageContent>
      

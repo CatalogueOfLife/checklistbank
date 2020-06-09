@@ -463,16 +463,16 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
               {Auth.isAuthorised(user, ["editor", "admin"]) && 
-                <Menu.Item key="settings">
+                <Menu.Item key="options">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
                       selectedDataset,
                       "key"
-                    )}/settings`
+                    )}/options`
                   }}
                 >
-                  Settings
+                  Options
                 </NavLink>
               </Menu.Item>
               }
