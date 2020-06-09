@@ -298,19 +298,23 @@ class DuplicateSearchPage extends React.Component {
   };
 
   onPresetSelect = (value, option) => {
-    const {
-      props: { params }
-    } = option;
-    this.setState(
-      {
-        params: { ...params, offset: 0, limit: this.state.params.limit },
-        selectedPreset: value,
-        totalFaked: 0,
-        decision: null,
-        selectedRowKeys: []
-      },
-      this.getData
-    );
+    if(!value){
+      this.resetSearch()
+    } else {
+      const {
+        props: { params }
+      } = option;
+      this.setState(
+        {
+          params: { ...params, offset: 0, limit: this.state.params.limit },
+          selectedPreset: value,
+          totalFaked: 0,
+          decision: null,
+          selectedRowKeys: []
+        },
+        this.getData
+      );
+    }
   };
   onSectorSearch = val => {
     const { sectors } = this.state;
@@ -549,6 +553,7 @@ class DuplicateSearchPage extends React.Component {
                   onChange={this.onPresetSelect}
                   optionFilterProp="children"
                   showSearch
+                  allowClear
                 >
                   {queryPresets.map(p => (
                     <Option key={p.id} value={p.id} params={p.params}>
@@ -583,6 +588,7 @@ class DuplicateSearchPage extends React.Component {
                     }}
                     onChange={value => this.updateSearch({ category: value })}
                     showSearch
+                    allowClear
                   >
                     <Option value="binomial">binomial</Option>
                     <Option value="trinomial">trinomial</Option>
@@ -599,6 +605,7 @@ class DuplicateSearchPage extends React.Component {
                     }}
                     onChange={value => this.updateSearch({ minSize: value })}
                     showSearch
+                    allowClear
                   >
                     {[2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
                       <Option key={i} value={i}>
@@ -625,6 +632,7 @@ class DuplicateSearchPage extends React.Component {
                     }}
                     mode="multiple"
                     showSearch
+                    allowClear
                     onChange={value => this.updateSearch({ status: value })}
                   >
                     {taxonomicstatus.map(s => (
@@ -643,6 +651,7 @@ class DuplicateSearchPage extends React.Component {
                     }}
                     mode="multiple"
                     showSearch
+                    allowClear
                     onChange={value => this.updateSearch({ rank: value })}
                   >
                     {rank.map(r => (
@@ -850,6 +859,7 @@ class DuplicateSearchPage extends React.Component {
                   value={decision ? decision : undefined}
                   placeholder="Pick decision"
                   showSearch
+                  allowClear
                 >
                   <OptGroup label="Status">
                     {taxonomicstatus.map(s => (

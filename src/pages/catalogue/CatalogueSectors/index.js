@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from "@ant-design/icons";
 
 import {
   Form,
@@ -29,11 +29,12 @@ import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../Assembly/NameAutocomplete";
 import moment from "moment";
-import RematchResult from "./RematchResult"
-import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
+import RematchResult from "./RematchResult";
+import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 const FormItem = Form.Item;
 const { Option } = Select;
-const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
+const { Search } = Input;
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const PAGE_SIZE = 100;
 
@@ -50,10 +51,12 @@ class CatalogueSectors extends React.Component {
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
-        showQuickJumper: true
-      }
+        showQuickJumper: true,
+      },
     };
   }
+
+  nameRef = React.createRef();
 
   componentDidMount() {
     // this.getData();
@@ -62,7 +65,7 @@ class CatalogueSectors extends React.Component {
       params = { limit: PAGE_SIZE, offset: 0 };
       history.push({
         pathname: _.get(this.props, "location.pathname"),
-        search: `?limit=${PAGE_SIZE}&offset=0`
+        search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
     params = { limit: PAGE_SIZE, offset: 0, ...params };
@@ -72,14 +75,14 @@ class CatalogueSectors extends React.Component {
         pagination: {
           pageSize: params.limit,
           current: Number(params.offset) / Number(params.limit) + 1,
-          pageSize: PAGE_SIZE
-        }
+          pageSize: PAGE_SIZE,
+        },
       },
       this.getData
     );
   }
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps) => {
     if (
       _.get(prevProps, "location.search") !==
         _.get(this.props, "location.search") ||
@@ -87,75 +90,77 @@ class CatalogueSectors extends React.Component {
         _.get(this.props, "match.params.catalogueKey")
     ) {
       const params = qs.parse(_.get(this.props, "location.search"));
+
       this.setState(
         {
           pagination: {
             pageSize: params.limit,
             current: Number(params.offset) / Number(params.limit) + 1,
-            pageSize: PAGE_SIZE
-          }
+            pageSize: PAGE_SIZE,
+          },
         },
         this.getData
       );
     }
   };
 
-
   getData = () => {
     const {
       match: {
-        params: { catalogueKey }
-      }
+        params: { catalogueKey },
+      },
     } = this.props;
     this.setState({ loading: true });
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
-      datasetKey: catalogueKey
+      datasetKey: catalogueKey,
     };
-    axios(`${config.dataApi}dataset/${catalogueKey}/sector?${qs.stringify(params)}`)
+    axios(
+      `${config.dataApi}dataset/${catalogueKey}/sector?${qs.stringify(params)}`
+    )
       .then(this.decorateWithDataset)
-      .then(res =>
+      .then((res) =>
         this.setState({
           loading: false,
           error: null,
           data: _.get(res, "data.result") || [],
           pagination: {
             ...this.state.pagination,
-            total: _.get(res, "data.total")
-          }
+            total: _.get(res, "data.total"),
+          },
         })
       )
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
-  decorateWithDataset = res => {
+  decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
-      res.data.result.map(sector =>
+      res.data.result.map((sector) =>
         datasetLoader
           .load(sector.subjectDatasetKey)
-          .then(dataset => (sector.dataset = dataset))
+          .then((dataset) => (sector.dataset = dataset))
       )
     ).then(() => res);
   };
 
-  getColumnSearchProps = dataIndex => ({
+  getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={node => {
+          ref={(node) => {
             this.searchInput = node;
           }}
           placeholder={`Search ${dataIndex.split(".")[0]}`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
@@ -179,7 +184,7 @@ class CatalogueSectors extends React.Component {
         </Button>
       </div>
     ),
-    filterIcon: filtered => (
+    filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
@@ -187,18 +192,18 @@ class CatalogueSectors extends React.Component {
         .toString()
         .toLowerCase()
         .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
       }
-    }
+    },
   });
   handleSearch = (selectedKeys, confirm) => {
     confirm();
     this.setState({ searchText: selectedKeys[0] });
   };
 
-  handleReset = clearFilters => {
+  handleReset = (clearFilters) => {
     clearFilters();
     this.setState({ searchText: "" });
   };
@@ -206,24 +211,24 @@ class CatalogueSectors extends React.Component {
     this.setState({ currentDataSourceLength: extra.currentDataSource.length });
   };
 
-  onDeleteSector = sector => {
+  onDeleteSector = (sector) => {
     const {
       match: {
-        params: { catalogueKey }
-      }
+        params: { catalogueKey },
+      },
     } = this.props;
     axios
       .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
       .then(() => {
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.id} placed on the sync queue`
+          description: `Delete job for ${sector.id} placed on the sync queue`,
         });
         this.setState({
-          data: this.state.data.filter(d => d.id !== sector.id)
+          data: this.state.data.filter((d) => d.id !== sector.id),
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ error: err });
       });
   };
@@ -235,32 +240,32 @@ class CatalogueSectors extends React.Component {
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
       limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize
+      offset: (pager.current - 1) * pager.pageSize,
     };
 
     history.push({
       pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(params)
+      search: qs.stringify(params),
     });
   };
 
-  updateSearch = params => {
+  updateSearch = (params) => {
     let newParams = {
       ...qs.parse(_.get(this.props, "location.search")),
       ...params,
-      offset: 0
+      offset: 0,
     };
-    Object.keys(params).forEach(param => {
-      if (params[param] === null) {
+    Object.keys(params).forEach((param) => {
+      if (!params[param]) {
         delete newParams[param];
       }
     });
     history.push({
       pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(newParams)
+      search: qs.stringify(newParams),
     });
   };
-  onSelectDataset = dataset => {
+  onSelectDataset = (dataset) => {
     this.updateSearch({ subjectDatasetKey: dataset.key });
   };
   onResetDataset = () => {
@@ -268,64 +273,61 @@ class CatalogueSectors extends React.Component {
     delete newParams.subjectDatasetKey;
     history.push({
       pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(newParams)
+      search: qs.stringify(newParams),
     });
   };
-  onResetName = () => {
-    let newParams = qs.parse(_.get(this.props, "location.search"));
-    delete newParams.name;
-    history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(newParams)
-    });
-  };
+
   resetAllFilters = () => {
+    this.nameRef.current.input.state.value = "";
     history.push({
       pathname: _.get(this.props, "location.pathname"),
-      search: `?limit=${PAGE_SIZE}&offset=0`
+      search: `?limit=${PAGE_SIZE}&offset=0`,
     });
   };
 
   rematchSectors = (subjectDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey }
-      }
+        params: { catalogueKey },
+      },
     } = this.props;
 
     this.setState({ rematchSectorsLoading: true });
-    const body = subjectDatasetKey ? {subjectDatasetKey}: {}
+    const body = subjectDatasetKey ? { subjectDatasetKey } : {};
     axios
-      .post(
-        `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
-        body
-      )
-      .then(res => {
-        this.setState(
-          {
-            rematchSectorsLoading: false,
-            rematchInfo: {sectors: res.data},
-            error: null
-          }
-        );
+      .post(`${config.dataApi}dataset/${catalogueKey}/sector/rematch`, body)
+      .then((res) => {
+        this.setState({
+          rematchSectorsLoading: false,
+          rematchInfo: { sectors: res.data },
+          error: null,
+        });
       })
-      .catch(err =>
+      .catch((err) =>
         this.setState({
           error: err,
           rematchSectorsLoading: false,
-          rematchInfo: null
+          rematchInfo: null,
         })
       );
   };
 
   render() {
-    const { data, loading, pagination, error, rematchSectorsLoading, rematchInfo, defaultTaxonKey } = this.state;
+    const {
+      data,
+      loading,
+      pagination,
+      error,
+      rematchSectorsLoading,
+      rematchInfo,
+      defaultTaxonKey,
+    } = this.state;
     const {
       match: {
-        params: { catalogueKey }
+        params: { catalogueKey },
       },
       user,
-      rank
+      rank,
     } = this.props;
 
     const params = qs.parse(_.get(this.props, "location.search"));
@@ -350,127 +352,135 @@ class CatalogueSectors extends React.Component {
               closable
               onClose={() => this.setState({ rematchInfo: null })}
               message="Rematch succeded"
-              description={ <RematchResult rematchInfo={rematchInfo}/>}
+              description={<RematchResult rematchInfo={rematchInfo} />}
               type="success"
-              style={{marginBottom: '10px'}}
+              style={{ marginBottom: "10px" }}
             />
           )}
 
           <Form layout="inline">
             <FormItem>
-            <div style={{ marginBottom: "8px" , marginRight: "8px"}}>
-              <DatasetAutocomplete
-                defaultDatasetKey={_.get(params, 'subjectDatasetKey') || null}
-                onResetSearch={this.onResetDataset}
-                onSelectDataset={this.onSelectDataset}
-                contributesTo={this.props.catalogueKey}
-                placeHolder="Source dataset"
-              />
-            </div>
-            {params.subjectDatasetKey && 
-            <Button type="primary"
-              loading={rematchSectorsLoading} style={{ marginBottom: "8px", marginRight:  "8px"}}
-              onClick={() => this.rematchSectors(params.subjectDatasetKey)}
-              >Rematch selected source dataset</Button>}
+              <div style={{ marginBottom: "8px", marginRight: "8px" }}>
+                <DatasetAutocomplete
+                  defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
+                  onResetSearch={this.onResetDataset}
+                  onSelectDataset={this.onSelectDataset}
+                  contributesTo={this.props.catalogueKey}
+                  placeHolder="Source dataset"
+                />
+              </div>
             </FormItem>
-            
-            <div style={{ marginBottom: "8px" , marginRight: "8px" }}>
-            <NameAutocomplete
-              datasetKey={catalogueKey}
-              defaultTaxonKey={defaultTaxonKey}
-              onSelectName={name => {
-                this.setState({defaultTaxonKey: name.key})
-                this.updateSearch({ name: name.title });
-              }}
-              onResetSearch={this.onResetName}
-            />
-            </div>
-            <FormItem label="Only broken" style={{ marginBottom: "8px" , marginRight: "8px" }}>
+
+            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+              <Search
+                placeholder="Taxon name"
+                ref={this.nameRef}
+                defaultValue={params.name}
+                allowClear
+                onSearch={(name) => {
+                  this.setState({ name }, () => this.updateSearch({ name }));
+                }}
+                style={{ width: 200 }}
+              />
+            </FormItem>
+            <FormItem
+              label="Only broken"
+              style={{ marginBottom: "8px", marginRight: "8px" }}
+            >
               <Switch
                 checked={params.broken === true || params.broken === "true"}
-                onChange={value => this.updateSearch({ broken: value })}
+                onChange={(value) => this.updateSearch({ broken: value })}
               />
             </FormItem>
-            <FormItem label="Created by me" style={{ marginBottom: "8px" , marginRight: "8px" }}>
+            <FormItem
+              label="Created by me"
+              style={{ marginBottom: "8px", marginRight: "8px" }}
+            >
               <Switch
                 checked={user && Number(params.modifiedBy) === user.key}
-                onChange={value =>
+                onChange={(value) =>
                   this.updateSearch({ modifiedBy: value ? user.key : null })
                 }
               />
             </FormItem>
-            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
+            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
                 placeholder="Subject rank"
                 style={{ width: 160 }}
                 value={params.rank}
                 showSearch
-                onChange={value => this.updateSearch({ rank: value })}
+                allowClear
+                onChange={(value) => this.updateSearch({ rank: value })}
               >
-                {rank.map(r => (
+                {rank.map((r) => (
                   <Option key={r} value={r}>
                     {r}
                   </Option>
                 ))}
               </Select>
             </FormItem>
-            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
+            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
-                              placeholder="Sector mode"
-
+                placeholder="Sector mode"
                 style={{ width: 160 }}
                 value={params.mode}
                 showSearch
-                onChange={value => this.updateSearch({ mode: value })}
+                allowClear
+                onChange={(value) => this.updateSearch({ mode: value })}
               >
-                {["attach", "union", "merge"].map(r => (
+                {["attach", "union", "merge"].map((r) => (
                   <Option key={r} value={r}>
                     {r}
                   </Option>
                 ))}
               </Select>
             </FormItem>
-            <FormItem style={{ marginBottom: "8px" , marginRight: "8px" }}>
-            <DatePicker 
-            placeholder="Last sync"
-            defaultValue={params.lastSync ? moment(params.lastSync) : null}
-            onChange={(date, dateString) => this.updateSearch({ lastSync: dateString })} />
+            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+              <DatePicker
+                placeholder="Last sync"
+                defaultValue={params.lastSync ? moment(params.lastSync) : null}
+                onChange={(date, dateString) =>
+                  this.updateSearch({ lastSync: dateString })
+                }
+              />
             </FormItem>
           </Form>
-          <Row style={{marginTop: "10px"}}>
+          <Row style={{ marginTop: "10px" }}>
             <Col span={6} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Button type="danger" onClick={this.resetAllFilters}>
                 Reset all
               </Button>
-
-
-          
-            
             </Col>
-            <Col span={18} style={{textAlign: "right"}}>
-            <SyncAllSectorsButton 
-            dataset={params.subjectDatasetKey ? {key: params.subjectDatasetKey} : null} 
-            catalogueKey={catalogueKey}
-            onError={err => this.setState({error: err})}
-            text={params.subjectDatasetKey ? `Sync all sectors from dataset ${params.subjectDatasetKey}` : null}
-            >
-              
-            </SyncAllSectorsButton>
+            <Col span={18} style={{ textAlign: "right" }}>
+              <SyncAllSectorsButton
+                dataset={
+                  params.subjectDatasetKey
+                    ? { key: params.subjectDatasetKey }
+                    : null
+                }
+                catalogueKey={catalogueKey}
+                onError={(err) => this.setState({ error: err })}
+                text={
+                  params.subjectDatasetKey
+                    ? `Sync all sectors from dataset ${params.subjectDatasetKey}`
+                    : null
+                }
+              ></SyncAllSectorsButton>
               <Popconfirm
-            placement="rightTop"
-            title="Do you want to rematch all sectors?"
-            onConfirm={this.rematchSectors}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={rematchSectorsLoading}
-              style={{  marginBottom: "10px" }}
-            >
-              Rematch all sectors
-            </Button>
-          </Popconfirm>
+                placement="rightTop"
+                title="Do you want to rematch all sectors?"
+                onConfirm={() => this.rematchSectors(params.subjectDatasetKey)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={rematchSectorsLoading}
+                  style={{ marginBottom: "10px" }}
+                >
+                  Rematch all sectors {params.subjectDatasetKey ? ` from dataset ${params.subjectDatasetKey}` : ''}
+                </Button>
+              </Popconfirm>
             </Col>
           </Row>
           {!error && (
@@ -492,7 +502,7 @@ class CatalogueSectors extends React.Component {
 const mapContextToProps = ({ user, rank, catalogueKey }) => ({
   user,
   rank,
-  catalogueKey
+  catalogueKey,
 });
 
 export default withContext(mapContextToProps)(CatalogueSectors);
