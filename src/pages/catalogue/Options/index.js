@@ -152,7 +152,26 @@ class CatalogueOptions extends React.Component {
       })
       .catch((err) => this.setState({ error: err }));
   };
-
+  recalculateSectorCounts = () => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    axios
+        .post(`${config.dataApi}dataset/${catalogueKey}/sector/count-update`)
+        .then((res) => {
+          notification.open({
+            message: `Recalculating sector counts`,
+          });
+        })
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: <ErrorMsg error={err} />,
+          });
+        });
+  }
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   };
@@ -332,6 +351,15 @@ class CatalogueOptions extends React.Component {
               >
                 Export dataset
               </Button>
+
+              <Button
+                type="primary"
+                onClick={() => this.recalculateSectorCounts()}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+              >
+                Recalculate sector counts
+              </Button>
+             
 
               <DeleteOrphansButton
                 datasetKey={catalogueKey}
