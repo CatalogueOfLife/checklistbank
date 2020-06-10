@@ -266,7 +266,7 @@ class CatalogueDecisions extends React.Component {
           return (
             <NavLink
               to={{
-                pathname: `catalogue/${catalogueKey}/dataset/${record.datasetKey}/imports`,
+                pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/imports`,
               }}
               exact={true}
             >
