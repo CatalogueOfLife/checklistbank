@@ -62,3 +62,15 @@ const jwt = localStorage.getItem(JWT_STORAGE_NAME);
 
   getTokenUser();// will log the user out if the token has expired
 }
+
+const reflect = (p) =>
+  p.then(
+    (v) => v.data,
+    (e) => null
+  );
+
+export const getUsersBatch = (ids) => {
+  return Promise.all(
+    ids.map((i) => reflect(axios(`${config.dataApi}user/${i}`)))
+  );
+};

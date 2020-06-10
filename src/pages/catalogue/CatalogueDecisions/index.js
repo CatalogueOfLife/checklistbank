@@ -33,6 +33,7 @@ import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../Assembly/NameAutocomplete";
 import { getDatasetsBatch } from "../../../api/dataset";
+import { getUsersBatch } from "../../../api/user"
 import DataLoader from "dataloader";
 import RematchResult from "../CatalogueSectors/RematchResult";
 
@@ -40,6 +41,8 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
+const userLoader = new DataLoader((ids) => getUsersBatch(ids));
+
 const PAGE_SIZE = 100;
 
 class CatalogueDecisions extends React.Component {
@@ -140,11 +143,17 @@ class CatalogueDecisions extends React.Component {
   decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
-      res.data.result.map((sector) =>
+     [ ...res.data.result.map((decision) =>
         datasetLoader
-          .load(sector.subjectDatasetKey)
-          .then((dataset) => (sector.dataset = dataset))
+          .load(decision.subjectDatasetKey)
+          .then((dataset) => (decision.dataset = dataset))
+      ), 
+      ...res.data.result.map((decision) =>
+        userLoader
+          .load(decision.createdBy)
+          .then((user) => (decision.user = user))
       )
+    ]
     ).then(() => res);
   };
 
@@ -314,6 +323,11 @@ class CatalogueDecisions extends React.Component {
             </React.Fragment>
           );
         },
+      },
+      {
+        title: "Created by",
+        dataIndex: ["user", "username"],
+        key: "createdBy"
       },
 
       {
