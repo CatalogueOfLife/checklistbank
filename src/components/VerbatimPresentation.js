@@ -101,9 +101,10 @@ class VerbatimPresentation extends React.Component {
         </React.Fragment>
       );
     } else if (_.get(termsMapReversed, `${type}.${key}`)) {
-      const foreignKeys = _.get(termsMapReversed, `${type}.${key}`).filter(
+      const foreignKeys = _.get(termsMapReversed, `${type}.${key}`)
+     /*  .filter(
         k => !parentRelations.includes(k)
-      );
+      ); */
 
       const types = [
         ...new Set(foreignKeys.map(p => `type=${p.split(".")[0]}`))

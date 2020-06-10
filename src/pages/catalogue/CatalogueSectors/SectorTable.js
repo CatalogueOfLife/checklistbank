@@ -149,8 +149,6 @@ class SectorTable extends React.Component {
         dataIndex: ["subject", "name"],
         key: "subject",
         width: 150,
-    //    sorter: (a, b) => a.subject.name < b.subject.name,
-        ...this.getColumnSearchProps("subject.name"),
         render: (text, record) => {
           return (
             <React.Fragment>

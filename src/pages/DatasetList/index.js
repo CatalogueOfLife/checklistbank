@@ -115,11 +115,11 @@ class DatasetList extends React.Component {
           dataIndex: "type",
           key: "type"
         },
-        {
+        /* {
           title: "Code",
           dataIndex: "code",
           key: "code"
-        },
+        }, */
         {
           title: "Contributes To",
           dataIndex: "contributesTo",
@@ -144,17 +144,17 @@ class DatasetList extends React.Component {
           key: "size",
           sorter: true
         },
-        {
+        /* {
           title: "Data Format",
           dataIndex: "format",
           key: "format",
           render: (text, record) => record.dataFormat
-        },
-        {
+        }, */
+       /*  {
           title: "Import Frequency",
           dataIndex: "importFrequency",
           key: "importFrequency"
-        },
+        }, */
         {
           title: "Created",
           dataIndex: "created",
