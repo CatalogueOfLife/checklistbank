@@ -11,7 +11,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
-import DeleteOrphansButton from "../../catalogue/Options";
+import DeleteOrphansButton from "../../catalogue/Options/DeleteOrphansButton";
 
 class DatasetSettings extends React.Component {
   constructor(props) {
