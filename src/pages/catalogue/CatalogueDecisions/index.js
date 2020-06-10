@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SearchOutlined, DeleteOutlined, WarningOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
 import { debounce } from "lodash";
 
@@ -309,19 +309,45 @@ class CatalogueDecisions extends React.Component {
         key: "subject",
         width: 150,
         render: (text, record) => {
-          return (
+          return  (
             <React.Fragment>
-              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {record.subject.rank}:{" "}
-              </span>
+            <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {record.subject.rank}:{" "}
+            </div>
+            {!record.subject.id  && <NavLink
+              to={{
+                pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                search: `?q=${record.subject.name}`
+                
+              }}
+              exact={true}
+            >
               <Highlighter
                 highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                searchWords={[this.state.searchText]}
+                searchWords={[params.name]}
                 autoEscape
                 textToHighlight={record.subject.name.toString()}
               />
-            </React.Fragment>
-          );
+            </NavLink> }
+            {record.subject.id && <NavLink
+              to={{
+                pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record.subject.id}`
+              }}
+              exact={true}
+            >
+              <Highlighter
+                highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                searchWords={[params.name]}
+                autoEscape
+                textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
+              />
+             
+            </NavLink>}{!record.subject.id && (
+              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
+            )}
+          </React.Fragment>
+          )
+          
         },
       },
       {
