@@ -78,7 +78,7 @@ class DatasetImportMetrics extends React.Component {
     axios(uri)
       .then(res => {
         const data = attempt ? res.data : res.data[0];
-        if (data && ["processing", "downloading", "inserting", "building metrics"].includes(data.state)) {
+        if (data && ["processing", "downloading", "inserting", "analyzing"].includes(data.state)) {
           if (!this.timer) {
             this.timer = setInterval(() => {
               this.getData(attempt);
