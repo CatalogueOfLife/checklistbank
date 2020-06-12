@@ -23,6 +23,7 @@ class AdminPage extends React.Component {
     this.state = {
       error: null,
       updateAllLogosloading: false,
+      updateAllMetricsloading: false,
       recalculateSectorCountsLoading: false,
       background: {},
       backgroundError: null
@@ -84,6 +85,29 @@ class AdminPage extends React.Component {
       );
   };
 
+  updateAllMetrics = () => {
+    this.setState({ updateAllMetricsloading: true });
+    axios
+      .post(`${config.dataApi}admin/metrics-update`)
+      .then(res => {
+        this.setState(
+          { updateAllMetricsloading: false, error: null },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "updating all metrics async"
+            });
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          updateAllMetricsloading: false
+        })
+      );
+  };
+  
   recalculateSectorCounts = () => {
     this.setState({ recalculateSectorCountsLoading: true });
     axios
@@ -156,6 +180,7 @@ class AdminPage extends React.Component {
   render() {
     const {
       updateAllLogosloading,
+      updateAllMetricsloading,
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
@@ -204,20 +229,36 @@ class AdminPage extends React.Component {
 
             <Row>
               <Popconfirm
-            placement="rightTop"
-            title="Update all logos?"
-            onConfirm={this.updateAllLogos}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="primary"
-              loading={updateAllLogosloading}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Update all logos
-            </Button>
-          </Popconfirm>
+                placement="rightTop"
+                title="Update all logos?"
+                onConfirm={this.updateAllLogos}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={updateAllLogosloading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Update all logos
+                </Button>
+              </Popconfirm>
+
+              <Popconfirm
+                placement="rightTop"
+                title="Update all metrics?"
+                onConfirm={this.updateAllMetrics}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={updateAllMetricsloading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Update all metrics
+                </Button>
+              </Popconfirm>
 
           <Popconfirm
             placement="rightTop"
