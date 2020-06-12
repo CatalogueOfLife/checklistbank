@@ -131,7 +131,7 @@ const getColumns = (catalogueKey) => [
     width: 50
   },
   {
-    title: "Sync Started",
+    title: "Started",
     dataIndex: "started",
     key: "started",
     width: 50,
@@ -140,7 +140,7 @@ const getColumns = (catalogueKey) => [
     }
   },
   {
-    title: "Sync Finished",
+    title: "Finished",
     dataIndex: "finished",
     key: "finished",
     width: 50,
@@ -154,16 +154,14 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       record.attempt < 2 ? "" : <NavLink
         to={{
-          pathname: `/catalogue/${catalogueKey}/sync/${
-            record.sectorKey
-          }/diff`,
+          pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
           search:
             record.attempt > 0
               ? `?attempts=${record.attempt - 1}..${record.attempt}`
               : ""
         }}
       >
-        <Tooltip title="Tree diff">
+        <Tooltip title="Names diff">
           <DiffOutlined style={{fontSize: '20px'}} />
         </Tooltip>
       </NavLink>

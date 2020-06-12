@@ -31,7 +31,6 @@ class SectorDiff extends React.Component {
 
   componentDidMount = () => {
     let query = _.get(this.props, "location.search");
-    // assembly/3/sync?datasetKey=211&state=finished
     const {
         match: {
           params: { sectorKey, catalogueKey }
@@ -39,13 +38,11 @@ class SectorDiff extends React.Component {
       } = this.props;
 
     axios(
-        `${
-          config.dataApi
-        }dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
-      )
-        .then(res => {
-            this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
-        })
+      `${config.dataApi}dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
+    )
+    .then(res => {
+        this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
+    })
     this.getData(query);
   };
 
@@ -65,26 +62,26 @@ class SectorDiff extends React.Component {
       }
     } = this.props;
     axios(
-      `${
-        config.dataApi
-      }dataset/${catalogueKey}/sector/${sectorKey}/treediff${query}`
+      // for dataset diffs: dataset/{key}/diff/names
+      // for sector diffs : /dataset/{datasetKey}/sector/{key}/diff/names
+      `${config.dataApi}dataset/${catalogueKey}/sector/${sectorKey}/diff/names${query}`
     )
-      .then(res => {
-        this.setState({
-          loading: false,
-          data: res.data,
-          error: null,
-          selectedAttempt1: _.get(res, "data.attempt1"),
-          selectedAttempt2: _.get(res, "data.attempt2")
-        });
-      })
-      .catch(err => {
-        this.setState({
-          loading: false,
-          error: err,
-          data: null
-        });
+    .then(res => {
+      this.setState({
+        loading: false,
+        data: res.data,
+        error: null,
+        selectedAttempt1: _.get(res, "data.attempt1"),
+        selectedAttempt2: _.get(res, "data.attempt2")
       });
+    })
+    .catch(err => {
+      this.setState({
+        loading: false,
+        error: err,
+        data: null
+      });
+    });
   };
 
   changeAttempt = () => {};

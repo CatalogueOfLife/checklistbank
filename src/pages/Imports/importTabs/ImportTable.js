@@ -86,13 +86,13 @@ class ImportTable extends React.Component {
           width: 50
         },
         {
-          title: "Attempt No",
+          title: "Attempt",
           dataIndex: "attempt",
           key: "attempt",
           width: 50
         },
         {
-          title: "Import Started",
+          title: "Started",
           dataIndex: "started",
           key: "started",
           width: 50,
@@ -101,7 +101,7 @@ class ImportTable extends React.Component {
           }
         },
         {
-          title: "Import Finished",
+          title: "Finished",
           dataIndex: "finished",
           key: "finished",
           width: 50,
@@ -109,6 +109,26 @@ class ImportTable extends React.Component {
             return (date) ?  moment(date).format('MMMM Do, h:mm a') : '';
           }
         },
+        {
+          title: "Diff",
+          key: "diff",
+          render: (text, record) => (
+            record.attempt < 2 ? "" : <NavLink
+              to={{
+                pathname: `/dataset/${record.datasetKey}/diff`,
+                search:
+                  record.attempt > 0
+                    ? `?attempts=${record.attempt - 1}..${record.attempt}`
+                    : ""
+              }}
+            >
+              <Tooltip title="Names diff">
+                <DiffOutlined style={{fontSize: '20px'}} />
+              </Tooltip>
+            </NavLink>
+          ),
+          width: 50
+        },        
         {
           title: "Logs",
           key: "logs",
