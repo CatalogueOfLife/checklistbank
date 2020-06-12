@@ -15,7 +15,7 @@ const tagColors = {
 };
 
 const getDot = (h, attempt)=>{
-  if(['processing', 'downloading', 'inserting', 'building metrics'].includes(h.state)){
+  if(['processing', 'downloading', 'inserting', 'analyzing'].includes(h.state)){
     return <LoadingOutlined />;
   } else {
     return attempt && attempt===h.attempt.toString() ? <ArrowRightOutlined /> : null;
