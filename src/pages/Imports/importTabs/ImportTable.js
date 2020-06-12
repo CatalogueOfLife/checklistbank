@@ -146,7 +146,7 @@ class ImportTable extends React.Component {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "analyzing"] };
     }
     if(query.state){
       this.updateStatusQuery(query)
@@ -176,7 +176,7 @@ class ImportTable extends React.Component {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "analyzing"] };
     }
     if(query.state){
       this.updateStatusQuery(query)
