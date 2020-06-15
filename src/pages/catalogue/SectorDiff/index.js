@@ -9,10 +9,10 @@ import "diff2html/dist/diff2html.min.css";
 import PageContent from "../../../components/PageContent";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
+import qs from "query-string";
 
 const { Option } = Select;
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 const _ = require("lodash");
 
@@ -64,18 +64,22 @@ class SectorDiff extends React.Component {
         params: { sectorKey, catalogueKey }
       }
     } = this.props;
+    const params = qs.parse(_.get(this.props, "location.search"));
+    const splittedAttempts =  params.attempts ? params.attempts.split('..') : null;
+    const selectedAttempt1 = splittedAttempts ? splittedAttempts[0]: null;
+    const selectedAttempt2 = splittedAttempts ? splittedAttempts[1]: null;
     axios(
       `${
         config.dataApi
-      }dataset/${catalogueKey}/sector/${sectorKey}/treediff${query}`
+      }dataset/${catalogueKey}/sector/${sectorKey}/diff/tree${query}`
     )
       .then(res => {
         this.setState({
           loading: false,
           data: res.data,
           error: null,
-          selectedAttempt1: _.get(res, "data.attempt1"),
-          selectedAttempt2: _.get(res, "data.attempt2")
+          selectedAttempt1: Number(selectedAttempt1),
+          selectedAttempt2: Number(selectedAttempt2)
         });
       })
       .catch(err => {
@@ -90,7 +94,8 @@ class SectorDiff extends React.Component {
   changeAttempt = () => {};
 
   render() {
-    const diff = _.get(this.state, "data.diff");
+    //const diff = _.get(this.state, "data.diff");
+    const diff = _.get(this.state, "data");
     const {
       match: {
         params: { sectorKey }
@@ -99,7 +104,7 @@ class SectorDiff extends React.Component {
       catalogueKey
     } = this.props;
 
-    const { error, maxAttempt } = this.state;
+    const { error, maxAttempt, selectedAttempt1, selectedAttempt2 } = this.state;
 
     let html;
     if (diff) {
@@ -134,15 +139,12 @@ class SectorDiff extends React.Component {
 
                   history.push({
                     pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
-                    search: `?attempts=${value}..${_.get(
-                      this.state,
-                      "selectedAttempt2"
-                    )}`
+                    search: `?attempts=${value}..${selectedAttempt2}`
                   });
                 }}
                 showSearch
               >
-                {[...Array(_.get(this.state, "selectedAttempt2")).keys()].reverse().map(i => (
+                {[...Array(_.get(this.state, "selectedAttempt2")).keys()].filter(i => i > 0).reverse().map(i => (
                   <Option value={i}>Attempt: {i}</Option>
                 ))}
               </Select>
@@ -155,15 +157,12 @@ class SectorDiff extends React.Component {
                   this.setState({ selectedAttempt2: value });
                   history.push({
                     pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
-                    search: `?attempts=${_.get(
-                      this.state,
-                      "selectedAttempt1"
-                    )}..${value}`
+                    search: `?attempts=${selectedAttempt1}..${value}`
                   });
                 }}
                 showSearch
               >
-                {[...Array(maxAttempt +1).keys()].reverse().map(i => (
+                {[...Array(maxAttempt +1).keys()].reverse().filter(i => i > selectedAttempt1).map(i => (
                   <Option value={i}>Attempt: {i}</Option>
                 ))}
               </Select>
