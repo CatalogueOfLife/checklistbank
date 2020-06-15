@@ -252,7 +252,7 @@ class SectorTable extends React.Component {
             <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/sector/sync`,
-                  search: `?sectorKey=${record.key}`
+                  search: `?sectorKey=${record.id}`
                 }}
                 exact={true}
               >
@@ -267,7 +267,7 @@ class SectorTable extends React.Component {
         key: "logs",
         render: (text, record) => (
           <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.key)} target="_blank" >
+            <a href={kibanaQuery(record.id)} target="_blank" >
               <CodeOutlined style={{ fontSize: "20px" }} />
             </a>
           </Tooltip>

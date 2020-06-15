@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined } from '@ant-design/icons';
+import { CodeOutlined, DiffOutlined } from '@ant-design/icons';
+
 import { Table, Alert, Tag, Tooltip } from "antd";
 import config from "../../../config";
 import qs from "query-string";
@@ -86,13 +87,13 @@ class ImportTable extends React.Component {
           width: 50
         },
         {
-          title: "Attempt No",
+          title: "Attempt",
           dataIndex: "attempt",
           key: "attempt",
           width: 50
         },
         {
-          title: "Import Started",
+          title: "Started",
           dataIndex: "started",
           key: "started",
           width: 50,
@@ -101,7 +102,7 @@ class ImportTable extends React.Component {
           }
         },
         {
-          title: "Import Finished",
+          title: "Finished",
           dataIndex: "finished",
           key: "finished",
           width: 50,
@@ -109,6 +110,26 @@ class ImportTable extends React.Component {
             return (date) ?  moment(date).format('MMMM Do, h:mm a') : '';
           }
         },
+        {
+          title: "Diff",
+          key: "diff",
+          render: (text, record) => (
+            record.attempt < 2 ? "" : <NavLink
+              to={{
+                pathname: `/dataset/${record.datasetKey}/diff`,
+                search:
+                  record.attempt > 0
+                    ? `?attempts=${record.attempt - 1}..${record.attempt}`
+                    : ""
+              }}
+            >
+              <Tooltip title="Names diff">
+                <DiffOutlined style={{fontSize: '20px'}} />
+              </Tooltip>
+            </NavLink>
+          ),
+          width: 50
+        },        
         {
           title: "Logs",
           key: "logs",
@@ -125,7 +146,7 @@ class ImportTable extends React.Component {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "analyzing"] };
     }
     if(query.state){
       this.updateStatusQuery(query)
@@ -155,7 +176,7 @@ class ImportTable extends React.Component {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
-      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "building metrics"] };
+      query = { limit: 10, offset: 0, state: (importState.length > 0 || section === 'finished') ? importState : ["downloading", "processing", "inserting", "indexing", "analyzing"] };
     }
     if(query.state){
       this.updateStatusQuery(query)

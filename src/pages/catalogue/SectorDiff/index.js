@@ -31,7 +31,6 @@ class SectorDiff extends React.Component {
 
   componentDidMount = () => {
     let query = _.get(this.props, "location.search");
-    // assembly/3/sync?datasetKey=211&state=finished
     const {
         match: {
           params: { sectorKey, catalogueKey }
@@ -39,13 +38,11 @@ class SectorDiff extends React.Component {
       } = this.props;
 
     axios(
-        `${
-          config.dataApi
-        }dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
-      )
-        .then(res => {
-            this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
-        })
+      `${config.dataApi}dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
+    )
+    .then(res => {
+        this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
+    })
     this.getData(query);
   };
 
@@ -93,7 +90,7 @@ class SectorDiff extends React.Component {
 
   changeAttempt = () => {};
 
-  render() {
+  render = () =>  {
     //const diff = _.get(this.state, "data.diff");
     const diff = _.get(this.state, "data");
     const {
