@@ -336,7 +336,7 @@ class ColTree extends React.Component {
           dataRef.children && offset !== 0 && !reloadAll
             ? [...dataRef.children, ...data]
             : data;
-
+        dataRef.taxon.firstChildRank = _.get(dataRef, 'children[0].taxon.rank')
         if (offset + CHILD_PAGE_SIZE < childcount) {
           const loadMoreFn = () => {
             dataRef.childOffset += CHILD_PAGE_SIZE;

@@ -74,7 +74,7 @@ const AddChildModal = (props) => {
         setSubmissionError(err)
       });
   };
-
+  const initialRank = _.get(parent, 'firstChildRank') || null;
   return (
     <Modal
     style={{width:"650px"}}
@@ -112,7 +112,7 @@ const AddChildModal = (props) => {
           ]}>
         <Input autoFocus />
       </FormItem>
-      <FormItem {...formItemLayout} label="Rank" name="rank" rules={[
+      <FormItem {...formItemLayout} initialValue={initialRank || null} label="Rank" name="rank" rules={[
             {
               required: true,
               message: "Please select Taxon rank"
