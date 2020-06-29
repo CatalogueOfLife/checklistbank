@@ -321,20 +321,25 @@ class CatalogueSectors extends React.Component {
     } = this.props;
     this.setState({ deleteSectorsLoading: true });
     axios
-      .delete(`${config.dataApi}dataset/${catalogueKey}/sector?datasetKey=${subjectDatasetKey}`)
+      .delete(
+        `${config.dataApi}dataset/${catalogueKey}/sector?datasetKey=${subjectDatasetKey}`
+      )
       .then((res) => {
-        this.setState({
-          deleteSectorsLoading: false,
-          error: null,
-        }, this.getData);
+        this.setState(
+          {
+            deleteSectorsLoading: false,
+            error: null,
+          },
+          this.getData
+        );
       })
       .catch((err) =>
         this.setState({
           error: err,
-          deleteSectorsLoading: false
+          deleteSectorsLoading: false,
         })
       );
-  }
+  };
 
   render() {
     const {
@@ -503,24 +508,31 @@ class CatalogueSectors extends React.Component {
                   loading={rematchSectorsLoading}
                   style={{ marginBottom: "10px", marginRight: "10px" }}
                 >
-                  Rematch all sectors {params.subjectDatasetKey ? ` from dataset ${params.subjectDatasetKey}` : ''}
+                  Rematch all sectors{" "}
+                  {params.subjectDatasetKey
+                    ? ` from dataset ${params.subjectDatasetKey}`
+                    : ""}
                 </Button>
               </Popconfirm>
-             {params.subjectDatasetKey && <Popconfirm
-                placement="rightTop"
-                title={`Do you want to delete all sectors from dataset ${params.subjectDatasetKey}?`}
-                onConfirm={() => this.deleteAllSectorsFromSource(params.subjectDatasetKey)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button
-                  type="danger"
-                  loading={deleteSectorsLoading}
-                  style={{ marginBottom: "10px" }}
+              {params.subjectDatasetKey && (
+                <Popconfirm
+                  placement="rightTop"
+                  title={`Do you want to delete all sectors from dataset ${params.subjectDatasetKey}?`}
+                  onConfirm={() =>
+                    this.deleteAllSectorsFromSource(params.subjectDatasetKey)
+                  }
+                  okText="Yes"
+                  cancelText="No"
                 >
-                 {`Delete all sectors from dataset ${params.subjectDatasetKey}`}
-                </Button>
-              </Popconfirm>}
+                  <Button
+                    type="danger"
+                    loading={deleteSectorsLoading}
+                    style={{ marginBottom: "10px" }}
+                  >
+                    {`Delete all sectors from dataset ${params.subjectDatasetKey}`}
+                  </Button>
+                </Popconfirm>
+              )}
             </Col>
           </Row>
           {!error && (
