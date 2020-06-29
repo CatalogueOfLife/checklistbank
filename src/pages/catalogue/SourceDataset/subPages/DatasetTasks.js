@@ -18,6 +18,7 @@ class DatasetTasks extends React.Component {
   componentDidMount() {
     this.getData();
     this.getManusciptNames();
+    this.getBrokenDecisions();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -25,6 +26,7 @@ class DatasetTasks extends React.Component {
     _.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey')){
       this.getData()
       this.getManusciptNames();
+      this.getBrokenDecisions();
     }
   }
 
@@ -66,9 +68,16 @@ class DatasetTasks extends React.Component {
   .then(values => this.setState({manuscriptNames: {count: values[0], completed: values[1]}}))
   }
 
+  getBrokenDecisions = () => {
+    const { datasetKey, catalogueKey } = this.props;
+    axios(`${config.dataApi}dataset/${catalogueKey}/decision?subjectDatasetKey=${datasetKey}&broken=true&limit=0`)
+    .then(res => this.setState({brokenDecisions: res.data.total}))
+  }
+
+
 
   render() {
-    const { error, duplicates, manuscriptNames, loading } = this.state;
+    const { error, duplicates, manuscriptNames, loading, brokenDecisions } = this.state;
     const {
       getDuplicateWarningColor,
       datasetKey,
@@ -110,6 +119,19 @@ class DatasetTasks extends React.Component {
                 color={getDuplicateWarningColor(manuscriptNames.count)}
               >
                 Manuscript names {<strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>}
+              </Tag>
+              </NavLink>}
+              <h1>Broken decisions</h1>
+              {brokenDecisions && 
+      <NavLink
+      to={{ pathname: `/catalogue/${catalogueKey}/decisions`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}` }}
+      exact={true}
+    >
+      <Tag
+                style={{ marginBottom: "10px" }}
+                color={getDuplicateWarningColor(brokenDecisions)}
+              >
+                Broken decisions: {<strong>{`${brokenDecisions}`}</strong>}
               </Tag>
               </NavLink>}
                       </Card>
