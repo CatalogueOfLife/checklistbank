@@ -217,7 +217,7 @@ class GSDIssuesMatrix extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-            to={{ pathname: `/catalogue/${catalogueKey}/decisions`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}` }}
+            to={{ pathname: `/catalogue/${catalogueKey}/decision`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}` }}
               exact={true}
             >
               {record.brokenDecisions}

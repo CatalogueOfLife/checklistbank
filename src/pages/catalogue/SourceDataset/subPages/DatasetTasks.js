@@ -124,7 +124,7 @@ class DatasetTasks extends React.Component {
               <h1>Broken decisions</h1>
               {brokenDecisions && 
       <NavLink
-      to={{ pathname: `/catalogue/${catalogueKey}/decisions`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}` }}
+      to={{ pathname: `/catalogue/${catalogueKey}/decision`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}` }}
       exact={true}
     >
       <Tag
