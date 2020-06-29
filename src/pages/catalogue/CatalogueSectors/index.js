@@ -46,6 +46,7 @@ class CatalogueSectors extends React.Component {
       searchText: "",
       loading: false,
       rematchSectorsLoading: false,
+      deleteSectorsLoading: false,
       rematchInfo: null,
       defaultTaxonKey: null,
       pagination: {
@@ -312,6 +313,29 @@ class CatalogueSectors extends React.Component {
       );
   };
 
+  deleteAllSectorsFromSource = (subjectDatasetKey) => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    this.setState({ deleteSectorsLoading: true });
+    axios
+      .delete(`${config.dataApi}dataset/${catalogueKey}/sector?datasetKey=${subjectDatasetKey}`)
+      .then((res) => {
+        this.setState({
+          deleteSectorsLoading: false,
+          error: null,
+        }, this.getData);
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          deleteSectorsLoading: false
+        })
+      );
+  }
+
   render() {
     const {
       data,
@@ -319,6 +343,7 @@ class CatalogueSectors extends React.Component {
       pagination,
       error,
       rematchSectorsLoading,
+      deleteSectorsLoading,
       rematchInfo,
       defaultTaxonKey,
     } = this.state;
@@ -446,12 +471,12 @@ class CatalogueSectors extends React.Component {
             </FormItem>
           </Form>
           <Row style={{ marginTop: "10px" }}>
-            <Col span={6} style={{ textAlign: "left", marginBottom: "8px" }}>
+            <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Button type="danger" onClick={this.resetAllFilters}>
                 Reset all
               </Button>
             </Col>
-            <Col span={18} style={{ textAlign: "right" }}>
+            <Col span={21} style={{ textAlign: "right" }}>
               <SyncAllSectorsButton
                 dataset={
                   params.subjectDatasetKey
@@ -476,11 +501,26 @@ class CatalogueSectors extends React.Component {
                 <Button
                   type="primary"
                   loading={rematchSectorsLoading}
-                  style={{ marginBottom: "10px" }}
+                  style={{ marginBottom: "10px", marginRight: "10px" }}
                 >
                   Rematch all sectors {params.subjectDatasetKey ? ` from dataset ${params.subjectDatasetKey}` : ''}
                 </Button>
               </Popconfirm>
+             {params.subjectDatasetKey && <Popconfirm
+                placement="rightTop"
+                title={`Do you want to delete all sectors from dataset ${params.subjectDatasetKey}?`}
+                onConfirm={() => this.deleteAllSectorsFromSource(params.subjectDatasetKey)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="danger"
+                  loading={deleteSectorsLoading}
+                  style={{ marginBottom: "10px" }}
+                >
+                 {`Delete all sectors from dataset ${params.subjectDatasetKey}`}
+                </Button>
+              </Popconfirm>}
             </Col>
           </Row>
           {!error && (
