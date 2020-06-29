@@ -73,6 +73,16 @@ class GSDIssuesMatrix extends React.Component {
         );
       })
       .then(res => {
+        return Promise.all(
+          res.filter(r => !!r.issues).map(r => {
+                return this.getBrokenDecisions(r.key).then(count => ({
+                  ...r,
+                  brokenDecisions: count
+                }));
+              })
+        );
+      })
+      .then(res => {
         this.setState({
           loading: false,
           data: res,
@@ -90,6 +100,16 @@ class GSDIssuesMatrix extends React.Component {
     }} = this.props
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
+    ).then(res => _.get(res, 'data.total'))
+
+  }
+
+  getBrokenDecisions = (sourceDatasetKey) => {
+    const {match: {
+      params: { catalogueKey }
+    }} = this.props
+    return axios(
+      `${config.dataApi}dataset/${catalogueKey}/decision?limit=0&subjectDatasetKey=${sourceDatasetKey}&limit=0`
     ).then(res => _.get(res, 'data.total'))
 
   }
@@ -187,6 +207,25 @@ class GSDIssuesMatrix extends React.Component {
         },
         sorter: (a, b) => {
           return Number(_.get(a, `referenceCount`) || 0 ) - Number(_.get(b, `referenceCount`) || 0 ) ;
+      }
+      },
+      {
+        // brokenDecisions
+        title: <Tooltip title={`Total references in last import`}>Broken decisions</Tooltip>,
+        dataIndex: "brokenDecisions",
+        key: "brokenDecisions",
+        render: (text, record) => {
+          return (
+            <NavLink
+            to={{ pathname: `/catalogue/${catalogueKey}/decisions`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}` }}
+              exact={true}
+            >
+              {record.brokenDecisions}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `brokenDecisions`) || 0 ) - Number(_.get(b, `brokenDecisions`) || 0 ) ;
       }
       },
       ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
