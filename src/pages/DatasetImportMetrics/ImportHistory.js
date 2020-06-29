@@ -54,7 +54,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
         </NavLink>
           {" "}  <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip>
             <p>{`${moment(h.started).format("lll")}`}</p>
-            <p>{h.error}</p>
+            <p>{h.error.length > 200 ? `${h.error.substring(0, 200)} .....` : h.error}</p>
           </React.Fragment>
         )}
       </Timeline.Item>
