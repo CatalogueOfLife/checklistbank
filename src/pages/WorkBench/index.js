@@ -195,6 +195,7 @@ const getColumns = (catalogueKey, user) => [
       ) : (
         <Classification
           key={_.get(record, "usage.id")}
+          baseUri={`/catalogue/${catalogueKey}/dataset/${_.get(record, 'usage.datasetKey')}`}
           classification={_.initial(record.classification)}
           datasetKey={_.get(record, "usage.name.datasetKey")}
         />
