@@ -23,7 +23,7 @@ class SyncButton extends React.Component {
       .post(
         `${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync`,
         {
-          'sectorKey': _.get(record, 'sector.key'),
+          'sectorKey': _.get(record, 'sector.id'),
           'datasetKey': _.get(record, 'sector.datasetKey')
         }
       )
@@ -31,7 +31,7 @@ class SyncButton extends React.Component {
         this.setState({ importTriggered: false });
         notification.open({
           title: "Sync started",
-          message: `Now syncyning sector ${record.sectorKey}`
+          message: `Now syncyning sector ${ _.get(record, 'sector.id')}`
         })
         if(this.props.onStartSyncSuccess && typeof this.props.onStartSyncSuccess === 'function'){
           this.props.onStartSyncSuccess();
@@ -46,7 +46,7 @@ class SyncButton extends React.Component {
     const {record} = this.props;  
     this.setState({ importTriggered: true });
     axios
-      .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync/${_.get(record, 'sector.key')}`)
+      .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync/${_.get(record, 'sector.id')}`)
       .then(res => {
         this.setState({ importTriggered: false });
         notification.open({
