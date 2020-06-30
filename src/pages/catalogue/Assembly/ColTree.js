@@ -336,6 +336,7 @@ class ColTree extends React.Component {
           dataRef.children && offset !== 0 && !reloadAll
             ? [...dataRef.children, ...data]
             : data;
+        dataRef.isLeaf =  !dataRef.children ||    dataRef.children.length === 0;
         dataRef.taxon.firstChildRank = _.get(dataRef, 'children[0].taxon.rank')
         if (offset + CHILD_PAGE_SIZE < childcount) {
           const loadMoreFn = () => {
@@ -407,10 +408,10 @@ class ColTree extends React.Component {
   };
 
 
-  findNode = (id, nodeArray) => {    
+  findNode = (id, nodeArray, findByName) => {    
     let node = null;
 
-    node = nodeArray.find((n)=> _.get(n, 'taxon.id') === id );
+    node = nodeArray.find((n)=> !findByName ? _.get(n, 'taxon.id') === id  : _.get(n, 'taxon.name') === id )
 
     if(node){
       return node;
@@ -420,7 +421,7 @@ class ColTree extends React.Component {
       if (flattenedChildren.length === 0){
         return null;
       } else {
-        return this.findNode(id, flattenedChildren)
+        return this.findNode(id, flattenedChildren, findByName)
       }
     }
   
@@ -500,7 +501,7 @@ class ColTree extends React.Component {
       
       dragNode.title.props.reloadSelfAndSiblings();
       node.title.props.reloadSelfAndSiblings().then(() => {
-        const newNodeReference = this.findNode(node.taxon.id, this.state.treeData )
+        const newNodeReference = mode === "REPLACE" ? this.findNode(dragNode.taxon.name, node.parent.children, true ) : this.findNode(node.taxon.id, node.parent.children );
         this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
         );
       })

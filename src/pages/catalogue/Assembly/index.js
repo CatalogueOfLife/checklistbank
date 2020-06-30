@@ -158,12 +158,13 @@ class Assembly extends React.Component {
   };
   replace = (subject, target, mode) => {
     const { parentId } = target;
+    const {assemblyTaxonKey} = this.state;
     const {
       match: {
         params: { catalogueKey }
       }
     } = this.props;
-
+    const params = qs.parse(_.get(this.props, "location.search"));
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
         parentId
@@ -177,6 +178,15 @@ class Assembly extends React.Component {
           .then(() => parent);
       })
       .then(parent => {
+        if(assemblyTaxonKey === target.id){
+          history.push({
+            pathname: `/catalogue/${catalogueKey}/assembly`,
+            search: `?${qs.stringify(
+              _.omit(params, ["assemblyTaxonKey"])
+            )}`
+          });
+          this.setState({ assemblyTaxonKey: null })
+        }
         notification.open({
           message: "Removed existing taxon",
           description: `Old ${target.name} was removed from the CoL draft, removing children.`
@@ -321,6 +331,8 @@ class Assembly extends React.Component {
       location,
       catalogue
     } = this.props;
+    const params = qs.parse(_.get(location, "search"));
+
     //  const {assemblyTaxonKey, sourceTaxonKey} = location
     return (
       <Layout
@@ -522,7 +534,18 @@ class Assembly extends React.Component {
                       "No dataset selected"
                     )}
                   </h4>
-                  <DatasetAutocomplete onSelectDataset={this.onSelectDataset} defaultDatasetKey={_.get(this.state.selectedDataset, 'key') || null}/>
+                  <DatasetAutocomplete 
+                    onSelectDataset={this.onSelectDataset} 
+                    defaultDatasetKey={_.get(params, "datasetKey") || null}
+                    onResetSearch={() => {
+                      history.push({
+                        pathname: `/catalogue/${catalogueKey}/assembly`,
+                        search: `?${qs.stringify(
+                          _.omit(params, ["datasetKey"])
+                        )}`
+                      });
+                      this.setState({selectedDataset: null})} 
+                      }/>
 
                   <br />
                   {this.state.selectedDataset && (
