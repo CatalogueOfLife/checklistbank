@@ -215,8 +215,9 @@ class NamePage extends React.Component {
           )}
           </Col>
           <Col span={6}>
-          {usages.length > 0 &&  <PresentationItem md={md} label={usages.length > 1 ? 'Usages' : 'Usage'}>
-          {usages.map(u => 
+            {!usages && <Tag color="warning">No usages</Tag>}
+          {usages && usages.length > 0 &&  <PresentationItem md={md} label={usages.length > 1 ? 'Usages' : 'Usage'}>
+          {usages && usages.map(u => 
           <NavLink
           to={{
             pathname: `${taxonUri}${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
