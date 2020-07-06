@@ -223,6 +223,14 @@ class AdminPage extends React.Component {
                     checked={background.importer}
                   />
                 </FormItem>
+                <FormItem label="Background scheduler">
+                  <Switch
+                    onChange={checked => {
+                      this.updateBackground("scheduler", checked);
+                    }}
+                    checked={background.scheduler}
+                  />
+                </FormItem>
               </Form>
             </Col>
             </Row>
