@@ -207,7 +207,7 @@ class AdminPage extends React.Component {
           <Row>
             <Col span={24}>
               <Form layout="inline">
-                <FormItem label="Background GBIF Sync">
+                <FormItem label="GBIF Registry Sync">
                   <Switch
                     onChange={checked => {
                       this.updateBackground("gbifSync", checked);
@@ -215,7 +215,7 @@ class AdminPage extends React.Component {
                     checked={background.gbifSync}
                   />
                 </FormItem>
-                <FormItem label="Background importer">
+                <FormItem label="Dataset importer">
                   <Switch
                     onChange={checked => {
                       this.updateBackground("importer", checked);
@@ -223,7 +223,7 @@ class AdminPage extends React.Component {
                     checked={background.importer}
                   />
                 </FormItem>
-                <FormItem label="Background scheduler">
+                <FormItem label="Import scheduler">
                   <Switch
                     onChange={checked => {
                       this.updateBackground("scheduler", checked);
