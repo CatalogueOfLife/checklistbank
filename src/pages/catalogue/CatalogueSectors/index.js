@@ -423,6 +423,15 @@ class CatalogueSectors extends React.Component {
               />
             </FormItem>
             <FormItem
+              label="Without data"
+              style={{ marginBottom: "8px", marginRight: "8px" }}
+            >
+              <Switch
+                checked={params.withoutData === true || params.withoutData === "true"}
+                onChange={(value) => this.updateSearch({ withoutData: value })}
+              />
+            </FormItem>
+            <FormItem
               label="Created by me"
               style={{ marginBottom: "8px", marginRight: "8px" }}
             >
@@ -433,6 +442,7 @@ class CatalogueSectors extends React.Component {
                 }
               />
             </FormItem>
+
             <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
                 placeholder="Subject rank"
