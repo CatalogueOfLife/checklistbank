@@ -71,6 +71,8 @@ class ColTree extends React.Component {
       ranks: [],
       nodeNotFoundErr: null
     };
+
+    this.treeRef = React.createRef();
   }
 
   componentDidMount = () => {
@@ -453,11 +455,17 @@ class ColTree extends React.Component {
           && _.get(node, 'taxon.id') !== _.get(targetTaxon, 'taxon.id')
           && _.isArray(node.children)  
           && !node.children.find(c => _.get(c, 'taxon.id') === _.get(targetTaxon, 'taxon.id')) ){
-            if (
-              node.children.length - 1 === CHILD_PAGE_SIZE){
+            if (node.children.length - 1 === CHILD_PAGE_SIZE){
               // its the parent of the taxon we are after - if its not in the first page, insert it
               node.children = [targetTaxon, ...node.children]
-              this.setState({treeData: [...this.state.treeData]})
+              this.setState({treeData: [...this.state.treeData]}, () => {
+                setTimeout(()=>{
+                  if(_.get(this, 'treeRef.current')){
+                    this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
+                }
+                } , 100)
+                              
+              })
             } else {
               // It has gone missing from the tree
                 this.setState(
@@ -478,6 +486,14 @@ class ColTree extends React.Component {
                   }
                 ); 
             }
+        } else {
+          setTimeout(()=>{
+            if(_.get(this, 'treeRef.current')){
+              this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
+          }
+          } , 100)
+         
+          
         }
       } 
     }
@@ -857,6 +873,8 @@ class ColTree extends React.Component {
           <ColTreeContext.Consumer>
             {({ mode }) => (
               <Tree
+                ref={this.treeRef}
+                height={this.props.height || 800}
                 showLine={true}
                 defaultExpandAll={defaultExpandAll}
                // defaultExpandedKeys={defaultExpandedKeys}
@@ -869,8 +887,11 @@ class ColTree extends React.Component {
                 expandedKeys={expandedKeys}
                 selectedKeys={false}
                 treeData={treeData}
-                filterTreeNode={node =>
-                  node.key === this.props.defaultExpandKey
+                selectable={true}
+                filterTreeNode={node => {                
+                  return node.key === this.props.defaultExpandKey
+                }
+                  
                 }
                 onExpand={(expandedKeys, obj) => {
                   this.setState({expandedKeys})

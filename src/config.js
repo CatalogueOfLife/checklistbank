@@ -18,7 +18,8 @@ const environments = {
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
+    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    syncStateHeartbeat: 3000
   },
   prod: {
     url: "https://data.catalogue.life/",
@@ -39,7 +40,8 @@ const environments = {
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
+    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    syncStateHeartbeat: 3000
   },
   docker: {
     url: "http://localhost:3000",
@@ -55,7 +57,8 @@ const environments = {
       title: "Name Index"
     },
     gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/"
+    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    syncStateHeartbeat: 3000
   },
   local: {
     url: "http://localhost:3000",
@@ -71,13 +74,14 @@ const environments = {
       title: "Name Index"
     },
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
-    gitFrontend: "https://github.com/CatalogueOfLife/clearinghouse-ui/tree/"
+    gitFrontend: "https://github.com/CatalogueOfLife/clearinghouse-ui/tree/",
+    syncStateHeartbeat: 3000
   }
 };
 
 const domain = window.location.hostname;
 
-let env = environments.prod;
+let env = environments.dev;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.catalogue.life")) {

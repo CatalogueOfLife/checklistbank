@@ -31,6 +31,7 @@ class ColTreeNode extends React.Component {
       estimateModalVisible: false,
     };
   }
+
   setMode = (mode) => {
     this.setState({ mode });
   };
@@ -250,7 +251,7 @@ class ColTreeNode extends React.Component {
                       {taxon.rank}:{" "}
                     </span>
                     <span
-                      dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
+                      dangerouslySetInnerHTML={{ __html: taxon.name }}
                     />
                     {mode === "modify" && taxon.estimate && (
                       <span>
@@ -312,7 +313,7 @@ class ColTreeNode extends React.Component {
                       >
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: taxon.labelHtml,
+                          __html: taxon.name,
                         }}
                       />
                        </CopyToClipboard>
@@ -399,7 +400,7 @@ class ColTreeNode extends React.Component {
                       </span>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: taxon.labelHtml,
+                          __html: taxon.name,
                         }}
                       />
                     </NavLink>
@@ -438,7 +439,7 @@ class ColTreeNode extends React.Component {
 
 const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({
   getTaxonomicStatusColor,
-  catalogueKey,
+  catalogueKey
 });
 
 export default withContext(mapContextToProps)(withRouter(ColTreeNode));

@@ -1,6 +1,6 @@
 import React from "react";
 import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
-import { Row, Col, notification, Button, Card, Alert } from "antd";
+import { Row, Col, notification, Button, Card, Alert, Radio, Slider, Switch } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../../components/LayoutNew";
@@ -19,6 +19,7 @@ import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 
+const {syncStateHeartbeat} = config;
 class Assembly extends React.Component {
   constructor(props) {
     super(props);
@@ -26,6 +27,9 @@ class Assembly extends React.Component {
 
     this.state = {
       mode: "attach",
+      assemblyColSpan: 12,
+      sourceColSpan: 12,
+      showSync: true,
       syncState: {},
       syncingDataset: null,
       syncingSector: null,
@@ -50,7 +54,7 @@ class Assembly extends React.Component {
     this.getSyncState();
     this.timer = setInterval(() => {
       this.getSyncState();
-    }, 3000);
+    }, syncStateHeartbeat);
   }
 
   componentDidUpdate = prevProps => {
@@ -321,7 +325,10 @@ class Assembly extends React.Component {
       syncingSector,
       sectorMappingError,
       assemblyTaxonKey,
-      childModalVisible
+      childModalVisible,
+      assemblyColSpan,
+      sourceColSpan,
+      showSync
     } = this.state;
 
     const {
@@ -345,7 +352,7 @@ class Assembly extends React.Component {
           <title>CoL+ Assembly</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
-        <PageContent>
+        <PageContent style={{padding: 12}}>
           <ColTreeContext.Provider
             value={{
               mode: this.state.mode,
@@ -357,34 +364,37 @@ class Assembly extends React.Component {
               selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
             }}
           >
-            <Row style={{ paddingLeft: "16px" }}>
-              <Col span={12}>
+            <Row >
+              <Col span={8}>
                 <ColTreeContext.Consumer>
                   {({ mode, toggleMode }) => (
-                    <React.Fragment>
-                      <Button
-                        type={mode === "modify" ? "primary" : ""}
-                        onClick={() => toggleMode("modify")}
-                        size="large"
-                        style={{ marginBottom: "20px" }}
-                      >
-                        Modify Tree
-                      </Button>
-                      <Button
-                        style={{ marginLeft: "10px", marginBottom: "20px" }}
-                        type={mode === "attach" ? "primary" : ""}
-                        onClick={() => toggleMode("attach")}
-                        size="large"
-                      >
-                        Attach sectors
-                      </Button>
-                    </React.Fragment>
+                            <Radio.Group value={mode} onChange={e => toggleMode(e.target.value)}>
+                            <Radio.Button value="modify">Modify Tree</Radio.Button>
+                            <Radio.Button value="attach">Attach sectors</Radio.Button>
+                          </Radio.Group> 
+                          
+                          
+                  
                   )}
+                  
                 </ColTreeContext.Consumer>
+                   
+                
+
+              </Col>
+              <Col span={4} style={{textAlign: 'right'}}>
+              <Switch 
+                  style={{marginRight: '10px'}}
+                  onChange={(checked) => {
+                                this.setState({showSync: checked})
+                          }} 
+                  checked={showSync}        
+                  checkedChildren="Hide syncstate"
+                  unCheckedChildren="Show syncstate"        />
               </Col>
 
               <Col span={12}>
-                {syncState && (
+                {showSync && syncState && (
                   <SyncState
                     syncState={syncState}
                     dataset={syncingDataset}
@@ -393,10 +403,26 @@ class Assembly extends React.Component {
                 )}
               </Col>
             </Row>
+            <Row>
+            <div style={{ width: '100%' }}>
+            <Slider
+            min={0}
+            max={24}
+            value={assemblyColSpan}
+            onChange={(value) => {
+              this.setState({
+                assemblyColSpan: value,
+                sourceColSpan: 24 - value
+              })
+            }}
+            step={1}
+          />
+            </div>
+            
+            </Row>
 
-            <Row style={{ padding: "10px", height: "100%" }}>
-              <Col span={12} style={{ padding: "10px" }}>
-                <Card>
+            <Row style={{ height: "100%" }}>
+              <Col span={assemblyColSpan} className="assembly-tree-box" >
                   <Row>
                     <Col span={12}>
                       <h4>{catalogue.title}</h4>{" "}
@@ -495,8 +521,8 @@ class Assembly extends React.Component {
                     />
                   )}
                   {catalogue && (
-                    <div style={{ overflowY: "scroll", height: "800px" }}>
                       <ColTree
+                        height={600}
                         treeRef={ref => (this.assemblyRef = ref)}
                         location={location}
                         dataset={{ key: catalogueKey }}
@@ -511,12 +537,10 @@ class Assembly extends React.Component {
                         defaultExpandKey={assemblyTaxonKey}
                         addMissingTargetKey={this.addMissingTargetKey}
                       />
-                    </div>
                   )}
-                </Card>
               </Col>
-              <Col span={12} style={{ padding: "10px" }}>
-                <Card>
+              
+              <Col span={sourceColSpan} style={{ paddingLeft: "8px" }}>
                   <h4>
                     {this.state.selectedDataset ? (
                       <React.Fragment>
@@ -581,9 +605,9 @@ class Assembly extends React.Component {
                       }}
                     />
                   )}
-                  <div style={{ overflowY: "scroll", height: "800px" }}>
                     {this.state.selectedDataset && (
                       <ColTree
+                        height={600}
                         treeRef={ref => (this.sourceRef = ref)}
                         location={location}
                         dataset={this.state.selectedDataset}
@@ -597,7 +621,7 @@ class Assembly extends React.Component {
                         defaultExpandKey={this.state.sourceTaxonKey}
                         showSourceTaxon={sector => {
                           const isPlaceholder = !_.isUndefined(sector.placeholderRank);
-    const targetID = isPlaceholder ? `${sector.target.id}--incertae-sedis--${sector.placeholderRank.toUpperCase()}`: sector.target.id;
+                          const targetID = isPlaceholder ? `${sector.target.id}--incertae-sedis--${sector.placeholderRank.toUpperCase()}`: sector.target.id;
                           const params = qs.parse(_.get(location, "search"));
                           const newParams = {
                             ...params,
@@ -612,8 +636,6 @@ class Assembly extends React.Component {
                         }}
                       />
                     )}
-                  </div>
-                </Card>
               </Col>
             </Row>
           </ColTreeContext.Provider>

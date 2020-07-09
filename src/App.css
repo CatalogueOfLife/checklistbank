@@ -321,3 +321,8 @@ div.csl-entry {
 .popover-multi.ant-tooltip-placement-top > .ant-tooltip-content > .ant-tooltip-arrow {
   border-top-color: #fff !important;
 }
+
+.assembly-tree-box {
+  border-right: 1px solid #c4c0c0;
+  padding-right: 8px;
+}

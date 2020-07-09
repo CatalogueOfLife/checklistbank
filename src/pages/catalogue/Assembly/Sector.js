@@ -394,7 +394,6 @@ class Sector extends React.Component {
             trigger="click"
             placement="rightTop"
           >
-            <Tooltip title={sectorSourceDataset.title} placement="top">
               <Tag color={stringToColour(sectorSourceDataset.title)}>
                 {isRootSector && sector.mode === 'attach' && <CaretRightOutlined />}
                 {isRootSector && sector.mode === 'union' && <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} /> }
@@ -404,7 +403,6 @@ class Sector extends React.Component {
                 )}
                 {_.find(_.get(syncState, "queued"), e => e.sectorKey === sector.id ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
               </Tag>
-            </Tooltip>
           </Popover>
         )}
       </ColTreeContext.Consumer>
