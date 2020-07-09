@@ -287,8 +287,9 @@ class ColTree extends React.Component {
             data: {
               ...res.data,
               result: res.data.result.map(r => ({
-                ...r,
-                sectorKey: _.get(dataRef, "taxon.sectorKey")
+                sectorKey: _.get(dataRef, "taxon.sectorKey"),
+                ...r
+                
               }))
             }
           };
