@@ -191,7 +191,21 @@ class ColTree extends React.Component {
           `${config.dataApi}dataset/${id}/tree/${
             defaultExpandKey
           }?catalogueKey=${catalogueKey}&&insertPlaceholder=true${this.appendTypeParam(treeType)}`
-        ).then(res =>
+        )
+        .then(res => {
+          if(treeType === "SOURCE"){
+            for(let i = res.data.length -2; i > -1; i--){
+              if(!res.data[i].sectorKey && res.data[i+1].sectorKey){
+                res.data[i].sectorKey = res.data[i+1].sectorKey
+              }
+            }
+            return res;
+          } else {
+            return res;
+          }
+        }
+        )
+        .then(res =>
           this.decorateWithSectorsAndDataset({
             data: { result: res.data }
           }).then(() => res)
