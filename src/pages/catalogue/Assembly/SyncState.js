@@ -49,13 +49,18 @@ const SyncState = ({ syncState, dataset, sector }) => (
     </Row>
     {_.get(syncState, "running") && (
       <React.Fragment>
-        {dataset && sector && <Row>Now syncing: <strong>{dataset.title}</strong>, Sector subject: <strong>{_.get(sector, 'subject.name')}</strong> 
+        {dataset && sector && 
+        <React.Fragment><Row><Col span={6}>Now syncing: </Col><Col><strong>{dataset.title}</strong> </Col>
+        
+        </Row>
+        <Row><Col span={6}>Sector subject: </Col><Col> 
+        <strong>{_.get(sector, 'subject.name')}</strong>
         <Tooltip title="Kibana logs">
         <a style={{marginLeft: '6px'}}href={kibanaQuery(sector.key)} target="_blank" >
           <CodeOutlined />
         </a>
-      </Tooltip>
-        </Row>}
+      </Tooltip></Col></Row>
+        </React.Fragment>}
         <Row>
           <Col span={6}>
             <Statistic
