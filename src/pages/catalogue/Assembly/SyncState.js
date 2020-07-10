@@ -50,7 +50,7 @@ const SyncState = ({ syncState, dataset, sector }) => (
     {_.get(syncState, "running") && (
       <React.Fragment>
         {dataset && sector && 
-        <React.Fragment><Row><Col span={6}>Now syncing: </Col><Col><strong>{dataset.title}</strong> </Col>
+        <React.Fragment><Row><Col span={6}>Now syncing: </Col><Col><strong>{dataset.alias || dataset.title }</strong> </Col>
         
         </Row>
         <Row><Col span={6}>Sector subject: </Col><Col> 
