@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
  const Classification = ({ path, maxLength, datasetKey, catalogueKey }) => 
  <Breadcrumb separator=">">
-        {!maxLength && path.reverse().map(taxon => {
+        {!maxLength && [...path].reverse().map(taxon => {
           return (
             <Breadcrumb.Item key={taxon.id}>
               <NavLink
