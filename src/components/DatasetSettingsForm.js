@@ -126,7 +126,7 @@ const SettingsForm = (props) => {
                 );
               })}
             </Select> :
-              <Select style={{ width: 200 }} showSearch>
+              <Select style={{ width: 200 }} mode={s.multiple ? 'multiple' : null} showSearch>
             {props[_.camelCase(s.type)].map(e => {
               return (
                 <Option key={e.name} value={e.name}>
@@ -159,6 +159,8 @@ const mapContextToProps = ({
   datasetOrigin: datasetoriginEnum,
   license: licenseEnum,
   nomCode,
+  entitytype: entityType,
+  rank,
   datasetSettings,
   gazetteer
 }) => ({
@@ -170,6 +172,8 @@ const mapContextToProps = ({
   datasetoriginEnum,
   licenseEnum,
   nomCode,
+  entityType,
+  rank,
   datasetSettings,
   gazetteer
 });
