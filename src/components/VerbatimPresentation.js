@@ -62,7 +62,7 @@ class VerbatimPresentation extends React.Component {
   }
 
   renderTerm = (key, value, type) => {
-    const { termsMap, termsMapReversed, datasetKey, location } = this.props;
+    const { termsMap, termsMapReversed, datasetKey, catalogueKey, location } = this.props;
     const taxonPath = location.pathname.split(`dataset/${datasetKey}`)[0] + `dataset/${datasetKey}/taxon/`; 
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
@@ -80,7 +80,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: location.pathname,
+              pathname: location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1 ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim` : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
@@ -116,7 +116,7 @@ class VerbatimPresentation extends React.Component {
           <NavLink
             key={key}
             to={{
-              pathname: location.pathname,
+              pathname: location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1 ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim` : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
             }}
           >
