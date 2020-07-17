@@ -245,9 +245,10 @@ class CatalogueOptions extends React.Component {
                   }}
                 />
               )}
-              {!editMode && data && (
+              {!editMode && data && catalogue && (
                 <div style={{ marginRight: "28px" }}>
                   {datasetSettings
+                  .filter(s => s.origin.indexOf(catalogue.origin) > -1)
                     .filter((s) => s.type === "Boolean")
                     .map((s) => (
                       <PresentationItem
@@ -265,6 +266,7 @@ class CatalogueOptions extends React.Component {
                       </PresentationItem>
                     ))}
                   {datasetSettings
+                    .filter(s => s.origin.indexOf(catalogue.origin) > -1)
                     .filter((s) => s.type === "String" || s.type === "Integer")
                     .map((s) => (
                       <PresentationItem
@@ -277,6 +279,7 @@ class CatalogueOptions extends React.Component {
                       </PresentationItem>
                     ))}
                   {datasetSettings
+                  .filter(s => s.origin.indexOf(catalogue.origin) > -1)
                     .filter(
                       (s) => !["String", "Integer", "Boolean"].includes(s.type)
                     )

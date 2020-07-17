@@ -49,7 +49,8 @@ const SettingsForm = (props) => {
     datasetSettings,
     datasetoriginEnum,
     onSaveSuccess,
-    datasetKey
+    datasetKey,
+    dataset
   } = props;
 
 
@@ -99,7 +100,9 @@ const SettingsForm = (props) => {
       )}
 
   
-      {datasetSettings.filter(s => s.type === "Boolean").map(s => 
+      {datasetSettings
+      .filter(s => s.origin.indexOf(dataset.origin) > -1)
+      .filter(s => s.type === "Boolean").map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={s.name} valuePropName='checked'>
             <Input type="checkbox"  />
           </FormItem>
@@ -107,14 +110,18 @@ const SettingsForm = (props) => {
           <FormItem {...formItemLayout} label={_.startCase("csv delimiter")} key={"csv delimiter"} name={ "csv delimiter"}>
             <CsvDelimiterInput/> 
           </FormItem>
-      {datasetSettings.filter(s => (s.type === "String" || s.type === "Integer" || s.type === "URI") && s.name !== "csv delimiter").map(s => 
+      {datasetSettings
+      .filter(s => s.origin.indexOf(dataset.origin) > -1)
+      .filter(s => (s.type === "String" || s.type === "Integer" || s.type === "URI") && s.name !== "csv delimiter").map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={s.name}>
             {s.type === "String" || s.type === "URI" ? <Input type="text" /> :
                 <InputNumber />}
           </FormItem>
           )}
 
-      {datasetSettings.filter(s => !["String", "Integer", "Boolean", "URI"].includes(s.type)).map(s => 
+      {datasetSettings
+      .filter(s => s.origin.indexOf(dataset.origin) > -1)
+      .filter(s => !["String", "Integer", "Boolean", "URI"].includes(s.type)).map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={s.name}>
               {s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch>
               {nomCode.map(c => {
@@ -162,7 +169,8 @@ const mapContextToProps = ({
   entitytype: entityType,
   rank,
   datasetSettings,
-  gazetteer
+  gazetteer,
+  dataset
 }) => ({
   addError,
   addInfo,
@@ -175,7 +183,8 @@ const mapContextToProps = ({
   entityType,
   rank,
   datasetSettings,
-  gazetteer
+  gazetteer,
+  dataset
 });
 
 

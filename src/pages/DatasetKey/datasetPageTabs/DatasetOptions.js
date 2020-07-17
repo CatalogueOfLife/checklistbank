@@ -88,7 +88,7 @@ class DatasetSettings extends React.Component {
   render() {
     const { error, data, editMode } = this.state;
 
-    const { datasetSettings, datasetKey } = this.props;
+    const { datasetSettings, datasetKey, dataset } = this.props;
     return (
       <PageContent>
         {error && (
@@ -129,9 +129,10 @@ class DatasetSettings extends React.Component {
                 }}
               />
             )}
-            {!editMode && data && (
+            {!editMode && data && dataset && (
               <div style={{ marginRight: "28px" }}>
                 {datasetSettings
+                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "Boolean")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -146,6 +147,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
+                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "String" || s.type === "Integer")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -155,6 +157,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
+                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
                   .filter(
                     (s) => !["String", "Integer", "Boolean"].includes(s.type)
                   )
@@ -202,7 +205,8 @@ class DatasetSettings extends React.Component {
   }
 }
 
-const mapContextToProps = ({ datasetSettings }) => ({
+const mapContextToProps = ({ datasetSettings, dataset }) => ({
   datasetSettings,
+  dataset
 });
 export default withContext(mapContextToProps)(withRouter(DatasetSettings));
