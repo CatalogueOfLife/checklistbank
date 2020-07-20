@@ -136,7 +136,9 @@ const SettingsForm = (props) => {
               <Select style={{ width: 200 }} mode={s.multiple ? 'multiple' : null} showSearch>
             {props[_.camelCase(s.type)].map(e => {
               return (
-                <Option key={e.name} value={e.name}>
+              typeof e === "string" ? <Option key={e} value={e}>
+                  {e}
+                </Option> : <Option key={e.name} value={e.name}>
                   {e.name}
                 </Option>
               );
@@ -169,8 +171,8 @@ const mapContextToProps = ({
   entitytype: entityType,
   rank,
   datasetSettings,
-  gazetteer,
-  dataset
+  gazetteer
+  
 }) => ({
   addError,
   addInfo,
@@ -183,8 +185,8 @@ const mapContextToProps = ({
   entityType,
   rank,
   datasetSettings,
-  gazetteer,
-  dataset
+  gazetteer
+  
 });
 
 

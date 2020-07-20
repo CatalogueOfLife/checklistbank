@@ -123,6 +123,7 @@ class DatasetSettings extends React.Component {
               <DatasetSettingsForm
                 data={data}
                 datasetKey={datasetKey}
+                dataset={dataset}
                 onSaveSuccess={() => {
                   this.setEditMode(false);
                   this.getData();

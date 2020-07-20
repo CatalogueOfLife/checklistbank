@@ -239,6 +239,7 @@ class CatalogueOptions extends React.Component {
                 <DatasetSettingsForm
                   data={data}
                   datasetKey={catalogueKey}
+                  dataset={catalogue}
                   onSaveSuccess={() => {
                     this.setEditMode(false);
                     this.getData();
