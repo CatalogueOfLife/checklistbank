@@ -44,7 +44,7 @@ class App extends Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>CoL+</title>
-          <link rel="canonical" href="http://test.col.plus" />
+          <link rel="canonical" href="https://data.catalogue.life/" />
         </Helmet>
         <Router history={history}>
         <React.Fragment>
