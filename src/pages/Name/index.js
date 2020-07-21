@@ -339,6 +339,10 @@ class NamePage extends React.Component {
                 />
               </PresentationItem>
             )}
+            <PresentationItem md={md} label="Nomenclatural Note">
+                {name.nomenclaturalNote}
+              </PresentationItem>
+            
               <PresentationItem md={md} label="ID">
                 {name.id}
               </PresentationItem>
