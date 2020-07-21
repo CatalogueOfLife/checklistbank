@@ -55,19 +55,36 @@ class GSDIssuesMatrix extends React.Component {
                   `${config.dataApi}dataset/${r.key}/import?limit=1`
                 ).then(imp => ({
                   ...r,
-                  issues: _.get(imp, "data[0].issuesCount"),
+                  issues: _.get(imp, "data[0].issuesCount")
+/*                   ,
                   usagesCount:  _.get(imp, "data[0].usagesCount"),
-                  referenceCount: _.get(imp, "data[0].referenceCount")
+                  referenceCount: _.get(imp, "data[0].referenceCount") */
                 }));
               })
         );
       })
-      .then(res => {
+/*       .then(res => {
         return Promise.all(
           res.filter(r => !!r.issues).map(r => {
                 return this.getCatalogueSpeciesCount(r.key).then(count => ({
                   ...r,
                   contributedSpecies: count
+                }));
+              })
+        );
+      }) */
+      .then(res => {
+        return Promise.all(
+          res.filter(r => !!r.issues).map(r => {
+                return this.getMetrics(r.key).then(metrics => ({
+                  ...r,
+                  nameCount: metrics.nameCount,
+                  taxonCount: metrics.taxonCount,
+                  synonymCount: metrics.synonymCount,
+                  referenceCount: metrics.referenceCount,
+                  distributionCount: metrics.distributionCount,
+                  vernacularCount: metrics.vernacularCount,
+                  usagesCount: metrics.usagesCount
                 }));
               })
         );
@@ -102,6 +119,15 @@ class GSDIssuesMatrix extends React.Component {
       `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
     ).then(res => _.get(res, 'data.total'))
 
+  }
+
+  getMetrics = (sourceDatasetKey) => {
+    const {match: {
+      params: { catalogueKey }
+    }} = this.props
+    return axios(
+      `${config.dataApi}dataset/${catalogueKey}/source/${sourceDatasetKey}/metrics`
+    ).then(res => res.data)
   }
 
   getBrokenDecisions = (sourceDatasetKey) => {
@@ -153,7 +179,9 @@ class GSDIssuesMatrix extends React.Component {
         },
         sorter: true
       },
-      {
+      
+/*   
+{
         title: <Tooltip title={`Species contributed to catalogue ${catalogueKey}`}>Species count</Tooltip>,
         dataIndex: "contributedSpecies",
         key: "contributedSpecies",
@@ -170,10 +198,30 @@ class GSDIssuesMatrix extends React.Component {
         sorter: (a, b) => {
           return Number(_.get(a, `contributedSpecies`) || 0 ) - Number(_.get(b, `contributedSpecies`) || 0 ) ;
       }
+      }, */
+
+      {
+        // nameCount
+        title: <Tooltip title={`Total name count in last sync`}>Name count</Tooltip>,
+        dataIndex: "nameCount",
+        key: "nameCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.nameCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `nameCount`) || 0 ) - Number(_.get(b, `nameCount`) || 0 ) ;
+      }
       },
       {
         // usagesCount
-        title: <Tooltip title={`Total usages in last import`}>Usages count</Tooltip>,
+        title: <Tooltip title={`Total usages in last sync`}>Usages count</Tooltip>,
         dataIndex: "usagesCount",
         key: "usagesCount",
         render: (text, record) => {
@@ -190,6 +238,83 @@ class GSDIssuesMatrix extends React.Component {
           return Number(_.get(a, `usagesCount`) || 0 ) - Number(_.get(b, `usagesCount`) || 0 ) ;
       }
       },
+      {
+        // synonymCount
+        title: <Tooltip title={`Total synonym count in last sync`}>Synonym count</Tooltip>,
+        dataIndex: "synonymCount",
+        key: "synonymCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.synonymCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `synonymCount`) || 0 ) - Number(_.get(b, `synonymCount`) || 0 ) ;
+      }
+      },
+      {
+        // taxonCount
+        title: <Tooltip title={`Total taxon count in last sync`}>Taxon count</Tooltip>,
+        dataIndex: "taxonCount",
+        key: "taxonCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.taxonCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `taxonCount`) || 0 ) - Number(_.get(b, `taxonCount`) || 0 ) ;
+      }
+      },
+      {
+        // vernacularCount
+        title: <Tooltip title={`Total vernacular count in last sync`}>Vernacular count</Tooltip>,
+        dataIndex: "vernacularCount",
+        key: "vernacularCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.vernacularCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `vernacularCount`) || 0 ) - Number(_.get(b, `vernacularCount`) || 0 ) ;
+      }
+      },
+      {
+        // distributionCount
+        title: <Tooltip title={`Total distribution count in last sync`}>Distribution count</Tooltip>,
+        dataIndex: "distributionCount",
+        key: "distributionCount",
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              exact={true}
+            >
+              {record.distributionCount}
+            </NavLink>
+          );
+        },
+        sorter: (a, b) => {
+          return Number(_.get(a, `distributionCount`) || 0 ) - Number(_.get(b, `distributionCount`) || 0 ) ;
+      }
+      },
+
       {
         // referenceCount
         title: <Tooltip title={`Total references in last import`}>Refererences count</Tooltip>,
@@ -211,7 +336,7 @@ class GSDIssuesMatrix extends React.Component {
       },
       {
         // brokenDecisions
-        title: <Tooltip title={`Total references in last import`}>Broken decisions</Tooltip>,
+        title: <Tooltip title={`Number of broken decisions`}>Broken decisions</Tooltip>,
         dataIndex: "brokenDecisions",
         key: "brokenDecisions",
         render: (text, record) => {
