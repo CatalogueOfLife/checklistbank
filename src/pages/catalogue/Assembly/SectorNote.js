@@ -30,34 +30,28 @@ class SectorNote extends React.Component {
         <React.Fragment>
       <Row>
           <Col span={12}>Note</Col>
-          <Col span={12} style={{ textAlign: "right" }}>
-          { note ? 'Edit' : 'Write'} <EditOutlined onClick={this.toggleEdit} />
+          <Col span={11} style={{ textAlign: "right" }}>
+          { note ? 'Edit' : 'Write'}
           </Col>
-        
+          <Col span={1} style={{ paddingLeft: "3px" }}><EditOutlined onClick={this.toggleEdit} /></Col>
+          {note && <Col span={24}>{note}</Col>}
         </Row>
-        {note && (
-          <div
-            style={{
-                borderTop: "1px solid #ebedf0"
-            }}
-          >
-            
-            <p>{note}</p>
-          </div>
-        )}
+        
        
       </React.Fragment>
     ) : (
       <React.Fragment>
           <Row>
           <Col span={12}>Note</Col>
-          <Col span={12} style={{ textAlign: "right" }}>
-          Save <SaveOutlined
+          <Col span={11} style={{ textAlign: "right" }}>
+          Save 
+          </Col>
+          <Col span={1} style={{ paddingLeft: "3px" }}>
+          <SaveOutlined
             onClick={() => {
               this.toggleEdit();
               onSave(this.state.note)
-            }} />
-          </Col>
+            }} /></Col>
         
         </Row>
           <div style={{ borderBottom: "1px solid #ebedf0" }} />

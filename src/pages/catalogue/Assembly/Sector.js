@@ -10,16 +10,12 @@ import {
 
 import {
   notification,
-  Input,
   Tag,
   Button,
   Tooltip,
   Popover,
-  Alert,
-  Select,
-  Row,
-  Col,
-  Popconfirm,
+  Alert
+
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -28,11 +24,10 @@ import history from "../../../history";
 import { stringToColour } from "../../../components/util";
 import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
-import SectorNote from "./SectorNote"
 import withContext from "../../../components/hoc/withContext"
 import {debounce} from 'lodash';
 import Auth from '../../../components/Auth'
-const {Option} = Select;
+import SectorForm from './SectorForm'
 
 class Sector extends React.Component {
   constructor(props) {
@@ -96,71 +91,7 @@ class Sector extends React.Component {
         this.setState({ error: err });
       });
   };
-  updateSectorCode = code => {
-    const { taxon : {sector}, catalogueKey} = this.props;
-    axios
-      .put(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, code: code}
-      ) 
-      .then(() => {
-        notification.open({
-          message: "Nom. code for sector updated",
-          description: `New code is ${code}`
-        });
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
-  }
 
-  updateSectorRank = rank => {
-    const { taxon : {sector}, catalogueKey} = this.props;
-    axios
-      .put(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, rank: rank}
-      ) 
-      .then(() => {
-        notification.open({
-          message: "Ranks for sector configured"
-        });
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
-  }
-
-  updateSectorNote = note => {
-    const { taxon : {sector}, catalogueKey} = this.props;
-    axios
-      .put(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, note: note}
-      ) 
-      .then(() => {
-        notification.open({
-          message: "Sector note updated:",
-          description: note
-        });
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
-  }
-
-  updateSectorEntities = entities => {
-    const { taxon : {sector}, catalogueKey} = this.props;
-    axios
-      .put(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, entities: entities}
-      ) 
-      .then(() => {
-        notification.open({
-          message: "Sector entities updated"
-        });
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
-  }
 
   applyDecision = () => {
     const { taxon, decisionCallback, catalogueKey } = this.props;
@@ -316,66 +247,7 @@ class Sector extends React.Component {
                 </Button>
 
 
-                {isRootSector && (  
-                <React.Fragment>
-                <Row style={{ marginTop: "8px" }}>
-                  <Col span={9}>
-                    Nom. code
-                  </Col>
-                  <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select style={{ width: '100%' }} defaultValue={sector.code} onChange={value => this.updateSectorCode(value)} showSearch>
-
-              {nomCode.map((f) => {
-                return <Option key={f.name} value={f.name}>{f.name}</Option>
-              })}
-            </Select>
-            </Col>
-                </Row> 
-                <Row style={{ marginTop: "8px" }}>
-                  <Col span={9}>
-                    Ranks
-                  </Col>
-                  <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select style={{ width: '100%' }} defaultValue={sector.rank} onChange={value => this.updateSectorRank(value)} showSearch>
-
-                <Option  value={null}>All</Option>
-                <Option  value="Linnean">Linnean</Option>
-                <Option  value="CoL">CoL</Option>
-            </Select>
-            </Col>
-                </Row> 
-                <Row style={{ marginTop: "8px" }}>
-                  <Col span={9}>
-                  Entities
-                  </Col>
-                  <Col span={15} style={{paddingLeft: '8px'}}>
-                <Select mode="multiple" style={{ width: '100%' }} defaultValue={sector.entities || []} onChange={value => this.updateSectorEntities(value)} showSearch>
-
-              {entitytype.map((f) => {
-                return <Option key={f.name} value={f.name}>{f.name}</Option>
-              })}
-            </Select>
-            </Col>
-                </Row> 
-                <Row style={{ marginTop: "8px" }}>
-                <SectorNote note={sector.note} onSave={this.updateSectorNote}></SectorNote>
-                </Row>
-                </React.Fragment>
-                )}
-                {/* !isRootSector && (
-            <React.Fragment>
-              <br />
-              <Button
-              style={{ marginTop: "8px", width: "100%" }}
-              type="danger"
-              onClick={() => {
-                alert("block")
-              }}
-            >
-              Block taxon
-            </Button>
-            </React.Fragment>
-            ) */}
+                {isRootSector && <SectorForm sector={sector} onError={err => this.setState({ error: err })}/>}
                 {error && (
                   <Alert
                   closable
@@ -388,7 +260,7 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
+            title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"
@@ -469,7 +341,7 @@ class Sector extends React.Component {
                 )}
               </div>
             }
-            title={<React.Fragment>Sector mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
+            title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
             trigger="click"

@@ -101,7 +101,7 @@ class SectorTable extends React.Component {
 
  
   render() {
-    const {data, loading, user, onDeleteSector, pagination, catalogueKey, handleTableChange} = this.props;  
+    const {data, loading, user, onDeleteSector, pagination, catalogueKey, handleTableChange, expandedRowRender} = this.props;  
     const offset = pagination ? (pagination.current - 1) * pagination.pageSize : 0; 
 
     const columns = [
@@ -341,7 +341,8 @@ class SectorTable extends React.Component {
               dataSource={data}
               loading={loading}
               pagination={pagination}
-              rowKey="key"
+              rowKey="id"
+              expandedRowRender={expandedRowRender}
             />
           
       </React.Fragment>

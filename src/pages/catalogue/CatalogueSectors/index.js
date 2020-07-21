@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { SearchOutlined } from "@ant-design/icons";
-
+import { SearchOutlined, EditOutlined } from "@ant-design/icons";
+import Auth from "../../../components/Auth"
 import {
   Form,
   Alert,
@@ -31,6 +31,7 @@ import NameAutocomplete from "../Assembly/NameAutocomplete";
 import moment from "moment";
 import RematchResult from "./RematchResult";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
+import SectorForm from "../Assembly/SectorForm"
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
@@ -553,6 +554,13 @@ class CatalogueSectors extends React.Component {
               onDeleteSector={this.onDeleteSector}
               pagination={pagination}
               handleTableChange={this.handleTableChange}
+              expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => 
+           <React.Fragment> 
+             <SectorForm sector={record} onError={err => this.setState({ error: err })}/>
+           
+             {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
+             </React.Fragment>
+            }
             ></SectorTable>
           )}
         </PageContent>
