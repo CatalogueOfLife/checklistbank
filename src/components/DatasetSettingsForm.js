@@ -123,7 +123,7 @@ const SettingsForm = (props) => {
       .filter(s => s.origin.indexOf(dataset.origin) > -1)
       .filter(s => !["String", "Integer", "Boolean", "URI"].includes(s.type)).map(s => 
             <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={s.name}>
-              {s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch>
+              {s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch allowClear>
               {nomCode.map(c => {
                 return (
                   <Option
@@ -133,7 +133,7 @@ const SettingsForm = (props) => {
                 );
               })}
             </Select> :
-              <Select style={{ width: 200 }} mode={s.multiple ? 'multiple' : null} showSearch>
+              <Select style={{ width: 200 }} mode={s.multiple ? 'multiple' : null} showSearch allowClear>
             {props[_.camelCase(s.type)].map(e => {
               return (
               typeof e === "string" ? <Option key={e} value={e}>
