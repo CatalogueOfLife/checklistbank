@@ -109,7 +109,7 @@ class BasicMenu extends Component {
       _selectedKeys,
       _openKeys
     } = this.props;
-    const hasData = !_.get(selectedDataset, 'deleted') && (_.get(selectedDataset, 'size') || _.get(selectedDataset, 'origin') === 'managed');
+    const hasData = !_.get(selectedDataset, 'deleted') && (_.get(selectedDataset, 'size') || _.get(selectedDataset, 'origin') === 'managed' || _.get(selectedDataset, 'origin') === 'released');
   //  const catalogueKey = selectedCatalogue ? selectedCatalogue.key : MANAGEMENT_CLASSIFICATION.key
   //  const { selectedKeys, openKeys } = this.state;
     return (
@@ -462,7 +462,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {Auth.isAuthorised(user, ["editor", "admin"]) && 
+              {Auth.isAuthorised(user, ["editor", "admin"]) && _.get(selectedDataset, 'origin') !== 'released' && 
                 <Menu.Item key="options">
                 <NavLink
                   to={{
@@ -476,7 +476,7 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
               }
-              <Menu.Item key="imports">
+            { _.get(selectedDataset, 'origin') !== 'released' && <Menu.Item key="imports">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
@@ -487,8 +487,8 @@ class BasicMenu extends Component {
                 >
                 {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
                 </NavLink>
-              </Menu.Item> 
-              {selectedDataset &&   hasData && (
+              </Menu.Item>}   
+              {selectedDataset &&  _.get(selectedDataset, 'origin') !== 'released' && hasData && (
                 <Menu.Item key="issues">
                   <NavLink
                     to={{
