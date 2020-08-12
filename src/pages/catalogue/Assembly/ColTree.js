@@ -577,6 +577,8 @@ class ColTree extends React.Component {
     const {selectedSourceTreeNodes} = this.props;
     const selectedNodesOfSameRanksAsDragnode = selectedSourceTreeNodes
       .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.rank === dragNode.taxon.rank && n.taxon.id !== dragNode.taxon.id)
+    const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(n => n.taxon.id === dragNode.taxon.id)
+  
     const {node} = e;
     const { rank } = this.props;
     const dragNodeIsPlaceholder =  dragNode.taxon.id.indexOf('incertae-sedis') > -1;
@@ -685,7 +687,7 @@ class ColTree extends React.Component {
     </span>
     }
 
-    if(selectedNodesOfSameRanksAsDragnode.length > 0){
+    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
       const limit = 5;
       const taxa = [dragNode, ...selectedNodesOfSameRanksAsDragnode];
       msg = <span>
@@ -758,7 +760,7 @@ class ColTree extends React.Component {
     ]
 
     let actions = [];
-    if(selectedNodesOfSameRanksAsDragnode.length > 0){
+    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
       actions= [
         {
           text: "Attach",
@@ -990,8 +992,8 @@ class ColTree extends React.Component {
                 expandedKeys={expandedKeys}
                 multiple
                 treeData={treeData}
-                selectedKeys={(mode === 'modify' && treeType === 'CATALOGUE') || treeType === 'SOURCE' ? selectedKeys : []}
-                selectable={(mode === 'modify' && treeType === 'CATALOGUE') || treeType === 'SOURCE'}
+                selectedKeys={treeType !== 'readOnly' ? selectedKeys : []}
+                selectable={treeType !== 'readOnly'}
                 onSelect={ (selectedKeys, e)=> {
                   this.setState({selectedKeys: selectedKeys })
                   this.setState({selectedNodes: e.selectedNodes })
