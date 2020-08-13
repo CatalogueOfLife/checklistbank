@@ -4,7 +4,7 @@ import { Timeline, Tooltip } from "antd";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
 import kibanaQuery from '../Imports/importTabs/kibanaQuery'
-
+import _ from "lodash"
 const tagColors = {
   processing: "purple",
   downloading: "cyan",
@@ -38,6 +38,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
         >
           <strong>{`${h.state}`}</strong>
         </NavLink>
+          {_.get(h, 'user.username') && <p>Created by {h.user.username}</p>}
             
             <p>{`${moment(h.started).format("lll")}`} {" "} <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip></p>
           </React.Fragment>
@@ -53,6 +54,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
           <strong>{`${h.state}`}</strong>
         </NavLink>
           {" "}  <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip>
+          {_.get(h, 'user.username') && <p>Created by {h.user.username}</p>}
             <p>{`${moment(h.started).format("lll")}`}</p>
             <p>{h.error.length > 200 ? `${h.error.substring(0, 200)} .....` : h.error}</p>
           </React.Fragment>

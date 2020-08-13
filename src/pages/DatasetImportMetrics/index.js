@@ -7,7 +7,7 @@ import axios from "axios";
 import moment from "moment";
 import history from "../../history"
 import Layout from "../../components/LayoutNew";
-import { Drawer, Tag, Row, Col, Alert, Button, Spin } from "antd";
+import { Drawer, Tag, Row, Col, Alert, Button, Spin, Divider } from "antd";
 import ImportChart from "../../components/ImportChart";
 import PageContent from "../../components/PageContent";
 import ImportButton from "../Imports/importTabs/ImportButton";
@@ -15,6 +15,12 @@ import ImportHistory from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
 import Auth from "../../components/Auth";
 import ArchiveUpload from "../../components/ArchiveUpload"
+import PresentationItem from "../../components/PresentationItem";
+import BooleanValue from "../../components/BooleanValue";
+import DataLoader from "dataloader"
+import {getUsersBatch} from "../../api/user"
+
+const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 class DatasetImportMetrics extends React.Component {
   constructor(props) {
@@ -78,6 +84,15 @@ class DatasetImportMetrics extends React.Component {
     axios(uri)
       .then(res => {
         const data = attempt ? res.data : res.data[0];
+        return userLoader
+        .load(data.createdBy)
+        .then((user) => {
+          data.user = user;
+          return data
+        })
+      })
+      .then(data => {
+        
         if (data && ["processing", "downloading", "inserting", "analyzing"].includes(data.state)) {
           if (!this.timer) {
             this.timer = setInterval(() => {
@@ -110,6 +125,15 @@ class DatasetImportMetrics extends React.Component {
 
    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then(res => {
+        return Promise.all(res.data.map((hist) =>
+        userLoader
+          .load(hist.createdBy)
+          .then((user) => (hist.user = user))
+          )  
+      )
+      .then(() => res)
+      })
+      .then(res => {
         const lastFinished = res.data.find(e => e.state === 'finished')
         if(!_.get(this.props, "match.params.taxonOrNameKey") && this.state.data && this.state.data.state === 'unchanged' && lastFinished){
           history.push(`/dataset/${datasetKey}/imports/${lastFinished.attempt}`)
@@ -138,7 +162,7 @@ class DatasetImportMetrics extends React.Component {
     } = this.props;
 
     const { dataset, user, origin, importState } = this.props;
-    const { importHistory, loading } = this.state;
+    const { importHistory, loading, data } = this.state;
 
     return (
       
@@ -366,6 +390,33 @@ class DatasetImportMetrics extends React.Component {
 </Col>
 
 </Row>}
+<Row style={{ padding: "10px" }}>
+<Divider orientation="left">Details</Divider>
+<PresentationItem label="State" >
+{_.get(data, 'state')}
+</PresentationItem>
+<PresentationItem label="Created by" >
+{_.get(data, 'user.username')}
+</PresentationItem>
+<PresentationItem label="Started" >
+{moment(data.started).format("lll")}
+</PresentationItem>
+<PresentationItem label="Finished" >
+{moment(data.finished).format("lll")}
+</PresentationItem>
+<PresentationItem label="Download uri" >
+{_.get(data, 'downloadUri')}
+</PresentationItem>
+<PresentationItem label="Upload" >
+                      
+                        <BooleanValue
+                          value={_.get(data, 'upload')}
+                        ></BooleanValue>
+                     
+                    </PresentationItem>
+
+</Row>
+
 
             </React.Fragment>
           )}
