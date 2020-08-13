@@ -253,7 +253,7 @@ class Sector extends React.Component {
             title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
-            trigger="click"
+            trigger="contextMenu"
             placement="rightTop"
           >
               <Tag color={stringToColour(sectorSourceDataset.title)}>
@@ -334,7 +334,7 @@ class Sector extends React.Component {
             title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
-            trigger="click"
+            trigger="contextMenu"
             placement="rightTop"
           >
             <Tag color={stringToColour(sectorSourceDataset.title)}>
