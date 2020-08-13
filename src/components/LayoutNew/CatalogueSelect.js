@@ -18,7 +18,8 @@ class CatalogueSelect extends React.Component {
 
     this.state = {
       catalogues: [],
-      visible: false
+      visible: false,
+      loading: false
     };
   }
 
@@ -27,7 +28,8 @@ class CatalogueSelect extends React.Component {
   };
 
   getCatalogues = () => {
-    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
+    this.setState({loading: true})
+    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [], loading: false }))
   }
   hide = () => {
     this.setState({
@@ -66,7 +68,7 @@ class CatalogueSelect extends React.Component {
           params: { catalogueKey }
         }
       } = this.props;
-      const {catalogues} = this.state;
+      const {catalogues, loading} = this.state;
     return (
       <React.Fragment>
       <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><SearchOutlined /></a>
@@ -81,8 +83,9 @@ class CatalogueSelect extends React.Component {
                   e.stopPropagation()
                   e.nativeEvent.stopImmediatePropagation()
               }}>
-             {catalogues.length > 0 && <Select
+              <Select
                   showSearch
+                  loading={loading}
                   style={{ width: "100%" }}
                   value={catalogueKey || null}
                   placeholder="Select catalogue"
@@ -93,6 +96,11 @@ class CatalogueSelect extends React.Component {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
+                  onDropdownVisibleChange={open => {
+                    if(open){
+                      this.getCatalogues()
+                    }
+                  }}
                   
                 >
                   {catalogues.map(c => (
@@ -106,7 +114,7 @@ class CatalogueSelect extends React.Component {
                     >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
                   ))}
                 </Select>
-                }
+                
                     </div> 
                   
           </Modal>

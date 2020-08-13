@@ -18,7 +18,8 @@ class SourceSeelect extends React.Component {
 
     this.state = {
       sources: [],
-      visible: false
+      visible: false,
+      loading: false
     };
   }
 
@@ -35,7 +36,9 @@ class SourceSeelect extends React.Component {
     const {
       catalogueKey
       } = this.props;
-    axios(`${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`).then((res)=> this.setState({sources: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
+      this.setState({loading: true})
+    axios(`${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`)
+    .then((res)=> this.setState({sources: _.get(res, 'data.result') ?_.get(res, 'data.result') : [], loading: false }))
   }
   hide = () => {
     this.setState({
@@ -78,7 +81,7 @@ class SourceSeelect extends React.Component {
         },
         dataset
       } = this.props;
-      const {sources} = this.state;
+      const {sources, loading} = this.state;
     return (
       <React.Fragment>
       <a onClick={e => {e.stopPropagation(); this.setState({visible: true})}} ><SearchOutlined /></a>
@@ -93,8 +96,9 @@ class SourceSeelect extends React.Component {
                   e.stopPropagation()
                   e.nativeEvent.stopImmediatePropagation()
               }}>
-             {sources.length > 0 && <Select
+              <Select
                   showSearch
+                  loading={loading}
                   style={{ width: "100%" }}
                   value={dataset ? dataset.key : null}
                   placeholder="Select source"
@@ -105,6 +109,11 @@ class SourceSeelect extends React.Component {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
+                  onDropdownVisibleChange={open => {
+                    if(open){
+                      this.getSources()
+                    }
+                  }}
                   
                 >
                   {sources.map(c => (
@@ -118,7 +127,7 @@ class SourceSeelect extends React.Component {
                     >{`${c.alias ? c.alias+' ' : ''}[${c.key}]`}</Option>
                   ))}
                 </Select>
-                }
+                
                     </div> 
                   
           </Modal>

@@ -20,8 +20,8 @@ class Home extends React.Component {
     
     return (
       <Layout openKeys={["imports"]} selectedKeys={[section]} title={`${_.startCase(section)} imports`}>
-        {section === "running" && <ImportTable importState={importState.filter(i => i.running === "true" || i.name === "waiting" ).map(i => i.name)} section={section} location={location}  />}
-        {section === "finished" && <ImportTable importState={importState.filter(i => i.running === "false" && i.name !== "waiting").map(i => i.name)} section={section} location={location} />}
+        {section === "running" && <ImportTable importState={importState.filter(i => i.running === "true" || i.running === true || i.name === "waiting" ).map(i => i.name)} section={section} location={location}  />}
+        {section === "finished" && <ImportTable importState={importState.filter(i => i.running === "false" || i.running === false && i.name !== "waiting").map(i => i.name)} section={section} location={location} />}
       </Layout>
     );
   }
