@@ -65,6 +65,7 @@ class ColTree extends React.Component {
       treeData: [],
       loadedKeys: [],
       expandedKeys: [],
+      selectedKeys: [],
       rootTotal: 0,
       error: null,
       mode: "attach",
@@ -543,8 +544,41 @@ class ColTree extends React.Component {
     });
   };
 
+  confirmMultiAttach = (node, dragNodes) => {
+
+    const { attachFn} = this.props;
+    /*
+       This is where sector mapping should be posted to the server
+       */
+    node.title = React.cloneElement(node.title, {isUpdating: true})
+    
+    this.setState({ treeData: [...this.state.treeData] });
+    Promise.allSettled(dragNodes.map(dragNode => attachFn(node, dragNode, 'ATTACH')))
+    .then(res => {
+      const errors = res.filter(r => r.status === 'rejected');
+      if(errors.length > 0){
+        alert(`There were ${errors.length} errors out of ${dragNodes.length} attachments. Please reload trees and inspect carefully.`)
+      }
+      dragNodes.forEach(dragNode => dragNode.title.props.reloadSelfAndSiblings())
+      node.title.props.reloadSelfAndSiblings().then(() => {
+        const newNodeReference = this.findNode(node.taxon.id, node.parent.children );
+        this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
+        );
+      })
+      .catch((err)=> {
+        console.log(err)
+        alert(err)});
+      //  .catch((err)=> alert(err));
+    });
+  };
+
   handleAttach = e => {
     const dragNode = this.props.dragNode.ref;
+    const {selectedSourceTreeNodes} = this.props;
+    const selectedNodesOfSameRanksAsDragnode = selectedSourceTreeNodes
+      .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.rank === dragNode.taxon.rank && n.taxon.id !== dragNode.taxon.id)
+    const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(n => n.taxon.id === dragNode.taxon.id)
+  
     const {node} = e;
     const { rank } = this.props;
     const dragNodeIsPlaceholder =  dragNode.taxon.id.indexOf('incertae-sedis') > -1;
@@ -600,59 +634,97 @@ class ColTree extends React.Component {
     if (dragNodeIsPlaceholder){
       mode = "UNION";
     }
-    const msg =
-      mode === "ATTACH" ? (
-        <span>
-          {showRankWarning && (
-            <Alert
-              message="Subject rank is higher than target rank"
-              type="warning"
-            />
-          )}
-          Attach{" "}
-          <span
-            dangerouslySetInnerHTML={{
-              __html: dragNode.taxon.name
-            }}
-          />{" "}
-          from {dragNode.dataset.title} under{" "}
-          <span
-            dangerouslySetInnerHTML={{
-              __html: node.taxon.name
-            }}
-          />{" "}
-          in this project?
-          <br/>
-          You may also choose to UNION.
-         {willProduceDuplicateChild && 
-         <Alert 
-         style={{marginTop: '6px'}} 
-         type="error" 
-         message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
-        </span>
-      ) : (
-        <span>
-          {showRankWarning && (
-            <Alert
-              message="Subject rank is higher than target rank"
-              type="warning"
-            />
-          )}
-         {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `: `Ranks are equal. Do you want to ${taxonNameIsEqual ? 'replace or ':''}union children of `}
-         {!dragNodeIsPlaceholder && <span
-            dangerouslySetInnerHTML={{
-              __html: dragNode.taxon.name
-            }}
-          />}{" "}
-          in {dragNode.dataset.title} into children of{" "}
-          <span
-            dangerouslySetInnerHTML={{
-              __html: e.node.taxon.name
-            }}
-          />{" "}
-        </span>
-      );
-    const unionOptions = dragNodeIsPlaceholder ? [
+    let msg;
+    if(mode === "ATTACH"){
+      msg = <span>
+      {showRankWarning && (
+        <Alert
+          message="Subject rank is higher than target rank"
+          type="warning"
+        />
+      )}
+      Attach{" "}
+      <span
+        dangerouslySetInnerHTML={{
+          __html: dragNode.taxon.name
+        }}
+      />{" "}
+      from {dragNode.dataset.title} under{" "}
+      <span
+        dangerouslySetInnerHTML={{
+          __html: node.taxon.name
+        }}
+      />{" "}
+      in this project?
+      <br/>
+      You may also choose to UNION.
+     {willProduceDuplicateChild && 
+     <Alert 
+     style={{marginTop: '6px'}} 
+     type="error" 
+     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
+    </span>
+    } else {
+      msg =         <span>
+      {showRankWarning && (
+        <Alert
+          message="Subject rank is higher than target rank"
+          type="warning"
+        />
+      )}
+     {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `: `Ranks are equal. Do you want to ${taxonNameIsEqual ? 'replace or ':''}union children of `}
+     {!dragNodeIsPlaceholder && <span
+        dangerouslySetInnerHTML={{
+          __html: dragNode.taxon.name
+        }}
+      />}{" "}
+      in {dragNode.dataset.title} into children of{" "}
+      <span
+        dangerouslySetInnerHTML={{
+          __html: e.node.taxon.name
+        }}
+      />{" "}
+    </span>
+    }
+
+    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
+      const limit = 5;
+      const taxa = [dragNode, ...selectedNodesOfSameRanksAsDragnode];
+      msg = <span>
+      {showRankWarning && (
+        <Alert
+          message="Subject rank is higher than target rank"
+          type="warning"
+        />
+      )}
+      Attach{" "}
+      <ul>
+      {taxa.slice(0, limit).map(t => <li
+        dangerouslySetInnerHTML={{
+          __html: t.taxon.name
+        }}
+      />)}
+      </ul>
+      {taxa.length > limit && ` and ${taxa.length - limit} more taxa `}
+      {" "}
+      from {dragNode.dataset.title} under{" "}
+      <span
+        dangerouslySetInnerHTML={{
+          __html: node.taxon.name
+        }}
+      />{" "}
+      in this project?
+      <br/>
+     {willProduceDuplicateChild && 
+     <Alert 
+     style={{marginTop: '6px'}} 
+     type="error" 
+     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
+    </span>
+      
+    }
+
+    const unionOptions =  dragNodeIsPlaceholder ? [
       {
         text: "Union",
         action: () => this.confirmAttach(node, dragNode, "UNION")
@@ -687,9 +759,17 @@ class ColTree extends React.Component {
       }
     ]
 
-    const nodeTitle = React.cloneElement(node.ref.title);
-    node.ref.title = React.cloneElement(node.ref.title, {confirmVisible: true, confirmTitle: msg, actions: mode === "ATTACH"
-    ? [
+    let actions = [];
+    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
+      actions= [
+        {
+          text: "Attach",
+          type: "primary",
+          action: () => this.confirmMultiAttach(node, [dragNode, ...selectedNodesOfSameRanksAsDragnode])
+        }
+      ]
+    } else if(mode === "ATTACH"){
+      actions = [
         
         {
           text: "Union",
@@ -702,7 +782,12 @@ class ColTree extends React.Component {
           action: () => this.confirmAttach(node, dragNode, "ATTACH")
         }
       ]
-    : unionOptions,
+    } else {
+      actions = unionOptions
+    }
+
+    const nodeTitle = React.cloneElement(node.ref.title);
+    node.ref.title = React.cloneElement(node.ref.title, {confirmVisible: true, confirmTitle: msg, actions: actions,
     onCancel: () => {
       node.ref.title = nodeTitle;
       this.setState({ treeData: [...this.state.treeData] });
@@ -847,9 +932,12 @@ class ColTree extends React.Component {
       defaultExpandAll,
       nodeNotFoundErr,
       loadedKeys,
-      expandedKeys
+      expandedKeys,
+      selectedKeys
         } = this.state;
     const { draggable, onDragStart, location, treeType, dataset } = this.props;
+    
+
     return (
       <div>
        
@@ -887,10 +975,12 @@ class ColTree extends React.Component {
         {!rootLoading && treeData.length > 0 && (
           <ColTreeContext.Consumer>
             {({ mode }) => (
-              <Tree
+              <Tree.DirectoryTree
+                expandAction={false}
                 ref={this.treeRef}
                 height={this.props.height || 800}
-                showLine={true}
+                // showLine={{showLeafIcon: false}}
+                showIcon={false}
                 defaultExpandAll={defaultExpandAll}
                // defaultExpandedKeys={defaultExpandedKeys}
                 draggable={draggable}
@@ -900,9 +990,14 @@ class ColTree extends React.Component {
                 onLoad={loadedKeys => this.setState({loadedKeys})}
                 loadedKeys={loadedKeys}
                 expandedKeys={expandedKeys}
-                selectedKeys={false}
+                multiple
                 treeData={treeData}
-                selectable={true}
+                selectedKeys={treeType !== 'readOnly' ? selectedKeys : []}
+                selectable={treeType !== 'readOnly'}
+                onSelect={ (selectedKeys, e)=> {
+                  this.setState({selectedKeys: selectedKeys })
+                  this.setState({selectedNodes: e.selectedNodes })
+                }}
                 filterTreeNode={node => {                
                   return node.key === this.props.defaultExpandKey
                 }

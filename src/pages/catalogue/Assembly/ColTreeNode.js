@@ -43,13 +43,47 @@ class ColTreeNode extends React.Component {
         this.props.reloadSelfAndSiblings();
         notification.open({
           message: "Taxon deleted",
-          description: `${taxon.name} was deleted from the CoL draft`,
+          description: `${taxon.name} was deleted from the assembly`,
         });
       })
       .catch((err) => {
         this.setState({ error: err });
       });
   };
+
+  deleteTaxonBatch = (taxa) => {
+    Promise.allSettled(taxa.map(taxon => axios
+      .delete(`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}`)))
+    .then(res => {
+      const errors = res.filter(r => r.status === 'rejected');
+      if(errors.length > 0){
+        alert(`There were ${errors.length} errors out of ${taxa.length} deletions. Please reload trees and inspect carefully.`)
+      }
+      this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Taxa deleted",
+          description: `${taxa.length - errors.length} were deleted from the assembly`,
+        });
+
+    })
+  }
+
+  deleteTaxonRecursiveBatch = (taxa) => {
+    Promise.allSettled(taxa.map(taxon => axios
+      .delete(`${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`)))
+    .then(res => {
+      const errors = res.filter(r => r.status === 'rejected');
+      if(errors.length > 0){
+        alert(`There were ${errors.length} errors out of ${taxa.length} deletions. Please reload trees and inspect carefully.`)
+      }
+      this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Taxa deleted",
+          description: `${taxa.length - errors.length} were deleted recursively from the assembly`,
+        });
+
+    })
+  }
 
   deleteTaxonRecursive = (taxon) => {
     axios
@@ -58,7 +92,7 @@ class ColTreeNode extends React.Component {
         this.props.reloadSelfAndSiblings();
         notification.open({
           message: "Taxon deleted",
-          description: `${taxon.name} was deleted from the CoL draft`,
+          description: `${taxon.name} was deleted recursively from the assembly`,
         });
       })
       .catch((err) => {
@@ -149,14 +183,15 @@ class ColTreeNode extends React.Component {
         )}
 
         <ColTreeContext.Consumer>
-          {({ mode, selectedSourceDatasetKey, getSyncState }) => (
-            <React.Fragment>
+          {({ mode, selectedSourceDatasetKey, getSyncState, selectedAssemblyTreeNodes }) => {
+           const taxonIsInSelectedNodes = selectedAssemblyTreeNodes.find(n => n.taxon.id === taxon.id)
+           return <React.Fragment>
               {mode === "modify" && treeType === "CATALOGUE" && (
                 <Popover
                   content={
                     taxon.name !== "Not assigned" ? (
                       <React.Fragment>
-                        <Button
+                        {!taxonIsInSelectedNodes && <React.Fragment> <Button
                           style={{ width: "100%" }}
                           type="primary"
                           onClick={() => {
@@ -200,7 +235,7 @@ class ColTreeNode extends React.Component {
                           style={{ marginTop: "8px", width: "100%" }}
                           onClick={() => this.deleteTaxon(taxon)}
                         >
-                          Delete taxon
+                         Delete taxon
                         </Button>
                         <br />
                         <Button
@@ -222,7 +257,26 @@ class ColTreeNode extends React.Component {
                           }
                         >
                           Estimates
+                        </Button></React.Fragment>}
+                        {taxonIsInSelectedNodes &&
+                        <React.Fragment> 
+                          <Button
+                          type="danger"
+                          style={{ marginTop: "8px", width: "100%" }}
+                          onClick={() => this.deleteTaxonBatch(selectedAssemblyTreeNodes.map(n => n.taxon))}
+                        >
+                         {`Delete ${selectedAssemblyTreeNodes.length} taxa`} 
                         </Button>
+                        <br />
+                        <Button
+                          type="danger"
+                          style={{ marginTop: "8px", width: "100%" }}
+                          onClick={() => this.deleteTaxonRecursiveBatch(selectedAssemblyTreeNodes.map(n => n.taxon))}
+                        >
+                          {`Delete subtrees for ${selectedAssemblyTreeNodes.length} taxa`} 
+                        </Button>
+                          </React.Fragment>}
+                        
                       </React.Fragment>
                     ) : (
                       <p>
@@ -238,7 +292,7 @@ class ColTreeNode extends React.Component {
                       popOverVisible: !this.state.popOverVisible,
                     })
                   }
-                  trigger="click"
+                  trigger="contextMenu"
                   placement="bottom"
                 >
                   <Popconfirm
@@ -297,13 +351,7 @@ class ColTreeNode extends React.Component {
                   onCancel={this.props.onCancel}
                 >
                   <div>
-                    <span
-                    /*                   onContextMenu={()=> {
-                    const uri = catalogueKey === taxon.datasetKey ? `/catalogue/${catalogueKey}/taxon/${taxon.id}` : `/dataset/${selectedSourceDatasetKey}/taxon/${taxon.id}`
-                    const win = window.open(uri, '_blank');
-                    win.focus();
-                  }} */
-                    >
+                    <span>
                       <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                         {taxon.rank}:{" "}
                       </span>
@@ -430,7 +478,7 @@ class ColTreeNode extends React.Component {
                 </div>
               )}
             </React.Fragment>
-          )}
+}}
         </ColTreeContext.Consumer>
       </div>
     );

@@ -149,7 +149,7 @@ class Sector extends React.Component {
   };
 
   render = () => {
-    const { taxon, nomCode, user, catalogueKey, entitytype } = this.props;
+    const { taxon, user, catalogueKey } = this.props;
 
     const { error } = this.state;
     const { sector } = taxon;
@@ -176,15 +176,7 @@ class Sector extends React.Component {
               <div>
                 {isRootSector && (
                   <React.Fragment>
-{/*                     <Popconfirm
-            placement="rightTop"
-            title="Delete sector will delete the sector mapping and all species and below, but keep the higher classification above species rank. Go ahead?"
-            onConfirm={() => {
-              this.deleteSector(sector);
-            }}
-            okText="Yes"
-            cancelText="No"
-          > */}
+
           <Tooltip title="Delete sector will delete the sector mapping and all species, but keep the higher classification above species">
                     <Button
                       style={{ width: "100%" }}
@@ -196,8 +188,6 @@ class Sector extends React.Component {
                       Delete sector
                     </Button>
                     </Tooltip>
-{/*           </Popconfirm>
- */}
                     <br />
 
                     {_.get(syncState, "running.sectorKey") !== sector.id && (
@@ -263,7 +253,7 @@ class Sector extends React.Component {
             title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
-            trigger="click"
+            trigger="contextMenu"
             placement="rightTop"
           >
               <Tag color={stringToColour(sectorSourceDataset.title)}>
@@ -344,7 +334,7 @@ class Sector extends React.Component {
             title={<React.Fragment>Sector {sector.id} mode: {sector.mode === 'attach' ? <CaretRightOutlined /> : <BranchesOutlined rotate={90} style={{ fontSize: '16px', marginRight: '4px'}} />} {sector.mode}</React.Fragment>}
             visible={this.state.popOverVisible}
             onVisibleChange={this.handleVisibleChange}
-            trigger="click"
+            trigger="contextMenu"
             placement="rightTop"
           >
             <Tag color={stringToColour(sectorSourceDataset.title)}>
@@ -364,7 +354,7 @@ class Sector extends React.Component {
   };
 }
 
-const mapContextToProps = ({ nomCode, user, catalogueKey, entitytype }) => ({ nomCode, user, catalogueKey, entitytype });
+const mapContextToProps = ({ user, catalogueKey }) => ({  user, catalogueKey });
 export default withContext(mapContextToProps)(Sector)
 
 

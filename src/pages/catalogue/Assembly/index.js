@@ -361,7 +361,9 @@ class Assembly extends React.Component {
               syncState: this.state.syncState,
               syncingSector: this.state.syncingSector,
               missingTargetKeys: this.state.missingTargetKeys,
-              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key")
+              selectedSourceDatasetKey: _.get(this.state, "selectedDataset.key"),
+              selectedSourceTreeNodes: _.get(this.sourceRef, "state.selectedNodes") || [],
+              selectedAssemblyTreeNodes: _.get(this.assemblyRef, "state.selectedNodes") || []
             }}
           >
             <Row >
@@ -532,6 +534,7 @@ class Assembly extends React.Component {
                         attachFn={this.getSectorInfo}
                         onDragStart={e => this.onDragStart(e, catalogue)}
                         dragNode={this.state.dragNode}
+                        selectedSourceTreeNodes={_.get(this.sourceRef, 'state.selectedNodes') || []}
                         draggable={true}
                         showSourceTaxon={this.showSourceTaxon}
                         defaultExpandKey={assemblyTaxonKey}
