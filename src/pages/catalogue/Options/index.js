@@ -195,7 +195,7 @@ class CatalogueOptions extends React.Component {
     return (
       <Layout
         selectedKeys={["catalogueOptions"]}
-        openKeys={["assembly"]}
+        openKeys={["assembly", "projectDetails"]}
         title={catalogue ? catalogue.title : ""}
       >
         <Helmet>

@@ -12,6 +12,8 @@ import {
   SettingOutlined,
   TableOutlined,
   ToolOutlined,
+  PartitionOutlined,
+  CheckOutlined
 } from '@ant-design/icons';
 
 import { Menu, Alert } from "antd";
@@ -199,7 +201,7 @@ class BasicMenu extends Component {
                   <span>Sector sync</span>
                 </NavLink>
               </Menu.Item>
-              <Menu.Item key="catalogueSectors">
+{/*               <Menu.Item key="catalogueSectors">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
                   <span>Sectors</span>
                 </NavLink>
@@ -208,7 +210,7 @@ class BasicMenu extends Component {
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/decision` }}>
                   <span>Decisions</span>
                 </NavLink>
-              </Menu.Item>
+              </Menu.Item> */}
               
 
               {selectedSector && (
@@ -223,6 +225,12 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
 
+              <Menu.Item key="catalogueOptions">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/options` }}>
+                 <span>Project options</span>
+                </NavLink>
+              </Menu.Item>
+
               {_selectedKeys && _selectedKeys.includes("catalogueTaxon") && taxonOrNameKey && (
                 <Menu.Item key="catalogueTaxon">Taxon: {taxonOrNameKey}</Menu.Item>
               )}
@@ -234,6 +242,16 @@ class BasicMenu extends Component {
           <Menu.Item key="colAssembly">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}>
                  <CopyOutlined /><span>Assembly</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueSectors">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
+                <PartitionOutlined /><span>Sectors</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueDecisions">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/decision` }}>
+                <CheckOutlined /><span>Decisions</span>
                 </NavLink>
               </Menu.Item>
             <Menu.Item key="catalogueSources">
@@ -390,11 +408,11 @@ class BasicMenu extends Component {
 
               
               
-              <Menu.Item key="catalogueOptions">
+  {/*             <Menu.Item key="catalogueOptions">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/options` }}>
                 <ToolOutlined /> <span>Options</span>
                 </NavLink>
-              </Menu.Item>
+              </Menu.Item> */}
             </SubMenu>
           )}
 

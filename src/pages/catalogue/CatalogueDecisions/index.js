@@ -457,7 +457,7 @@ class CatalogueDecisions extends React.Component {
     return (
       <Layout
         selectedKeys={["catalogueDecisions"]}
-        openKeys={["assembly", "projectDetails"]}
+        openKeys={["assembly"]}
         title="Decisions"
       >
         <PageContent>
