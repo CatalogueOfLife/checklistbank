@@ -573,14 +573,22 @@ class ColTree extends React.Component {
   };
 
   handleAttach = e => {
+    const { rank } = this.props;
     const dragNode = this.props.dragNode.ref;
     const {selectedSourceTreeNodes} = this.props;
-    const selectedNodesOfSameRanksAsDragnode = selectedSourceTreeNodes
-      .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.rank === dragNode.taxon.rank && n.taxon.id !== dragNode.taxon.id)
+    // Group draggednodes by taxon rank
+    const rankGroupedSelectedNodes = _.groupBy(selectedSourceTreeNodes, n => n.taxon.rank);
+    const draggedNodeRanksAreMixed = Object.keys(rankGroupedSelectedNodes).length > 1;
+    // Pick only nodes of the highest rank among dragged nodes
+    const sortedDraggedRanks = Object.keys(rankGroupedSelectedNodes).sort((a, b) => rank.indexOf(a) <= rank.indexOf(b))
+    const highestDraggedRank = sortedDraggedRanks[0];
+    const selectedNodesOfSameRanksAsDragnode = rankGroupedSelectedNodes[highestDraggedRank]
+      .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.id !== dragNode.taxon.id)
+    // Only do multiselect if the dragged taxon is actually among selected nodes
     const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(n => n.taxon.id === dragNode.taxon.id)
   
     const {node} = e;
-    const { rank } = this.props;
+    
     const dragNodeIsPlaceholder =  dragNode.taxon.id.indexOf('incertae-sedis') > -1;
     const nodeIsPlaceholder = node.taxon.id.indexOf('incertae-sedis') > -1;
     const willProduceDuplicateChild = node.children && !dragNodeIsPlaceholder ? node.children.find(c => c.taxon.name === dragNode.taxon.name) : false;
@@ -688,12 +696,18 @@ class ColTree extends React.Component {
     }
 
     if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
-      const limit = 5;
+      const limit = 10;
       const taxa = [dragNode, ...selectedNodesOfSameRanksAsDragnode];
       msg = <span>
       {showRankWarning && (
         <Alert
           message="Subject rank is higher than target rank"
+          type="warning"
+        />
+      )}
+      {draggedNodeRanksAreMixed && (
+        <Alert
+          message={`You selected nodes of ${sortedDraggedRanks.length} different ranks! Only ${rankGroupedSelectedNodes[highestDraggedRank].length} taxa of rank ${highestDraggedRank} will be attached. Ignoring ${sortedDraggedRanks.slice(1).map(e => `${e} (${rankGroupedSelectedNodes[e].length}) `).join(', ')}`}
           type="warning"
         />
       )}
