@@ -184,7 +184,7 @@ class ColTreeNode extends React.Component {
 
         <ColTreeContext.Consumer>
           {({ mode, selectedSourceDatasetKey, getSyncState, selectedAssemblyTreeNodes }) => {
-           const taxonIsInSelectedNodes = selectedAssemblyTreeNodes.find(n => n.taxon.id === taxon.id)
+           const taxonIsInSelectedNodes = selectedAssemblyTreeNodes && selectedAssemblyTreeNodes.find(n => n.taxon.id === taxon.id)
            return <React.Fragment>
               {mode === "modify" && treeType === "CATALOGUE" && (
                 <Popover
