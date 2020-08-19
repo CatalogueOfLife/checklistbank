@@ -187,7 +187,7 @@ class AdminPage extends React.Component {
       background
     } = this.state;
     return (
-      <Layout openKeys={[]} selectedKeys={["admin"]} title="CoL+ Admin">
+      <Layout openKeys={["admin"]} selectedKeys={["adminSettings"]} title="CoL+ Admin">
         <Helmet>
           <meta charSet="utf-8" />
           <title>CoL+ Admin</title>

@@ -24,6 +24,7 @@ import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions"
 import CatalogueOptions from "./pages/catalogue/Options"
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset"
 import Admin from "./pages/Admin"
+import EsAdmin from "./pages/Admin/EsAdmin"
 import SectorDiff from "./pages/catalogue/SectorDiff"
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -73,9 +74,16 @@ class App extends Component {
               <PrivateRoute
                 exact
                 key="Admin"
-                path={`/admin`}
+                path={`/admin/settiings`}
                 roles={["editor", "admin"]}
                 component={Admin}
+              />
+              <PrivateRoute
+                exact
+                key="EsAdmin"
+                path={`/admin/es`}
+                roles={["editor", "admin"]}
+                component={EsAdmin}
               />
               <Route
                 exact

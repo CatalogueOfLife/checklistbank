@@ -138,12 +138,28 @@ class BasicMenu extends Component {
           onSelect={this.onSelect}
         >
 {config.env === 'dev' &&  <Alert type="warning" style={{margin: '6px'}} message={<div style={{textAlign: 'center'}}>Test enviroment</div>}/>}       
- {Auth.isAuthorised(user, ["editor", "admin"]) &&  <Menu.Item key="admin">
-            <NavLink to={{ pathname: "/admin" }}>
-              <SettingOutlined />
+ {Auth.isAuthorised(user, ["editor", "admin"]) && 
+ <SubMenu
+ key="admin"
+ title={
+   <span>
+     <SettingOutlined />
               <span>Admin</span>
+   </span>
+ }
+ 
+>
+<Menu.Item key="esAdmin">
+            <NavLink to={{ pathname: "/admin/es" }}>
+              <span>Elastic</span>
             </NavLink>
-    </Menu.Item> }
+    </Menu.Item> 
+ <Menu.Item key="adminSettings">
+            <NavLink to={{ pathname: "/admin/settings" }}>
+              <span>Settings</span>
+            </NavLink>
+    </Menu.Item> 
+    </SubMenu>}
 
           <SubMenu
             key="imports"

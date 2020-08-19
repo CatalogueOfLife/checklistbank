@@ -330,7 +330,7 @@ class DatasetList extends React.Component {
               dataIndex: "",
               width: 60,
               key: "__actions__",
-              render: record =>
+              render: (text, record)  =>
                 record.origin === "external" ? (
                   <ImportButton
                     key={record.key}
