@@ -199,6 +199,9 @@ class DatasetList extends React.Component {
       code: filters.code,
       format: filters.format,
     };
+    if (sorter) {
+        query.sortBy = sorter.field
+      }
     if (sorter && sorter.order === "descend") {
       query.reverse = true;
     } else {

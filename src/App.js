@@ -74,7 +74,7 @@ class App extends Component {
               <PrivateRoute
                 exact
                 key="Admin"
-                path={`/admin/settiings`}
+                path={`/admin/settings`}
                 roles={["editor", "admin"]}
                 component={Admin}
               />
