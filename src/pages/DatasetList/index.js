@@ -121,24 +121,6 @@ class DatasetList extends React.Component {
           key: "code"
         }, */
         {
-          title: "Contributes To",
-          dataIndex: "contributesTo",
-          key: "contributesTo",
-          render: (text, record) => {
-            return record.contributesToDatasets ? 
-              record.contributesToDatasets
-              .filter(d => !!d)
-              .map((d, i, arr )=> <React.Fragment><NavLink
-                key={d.key}
-                to={{ pathname: `/catalogue/${d.key}` }}
-                exact={true}
-              >
-                {d.alias ? `${d.alias} [${d.key}]` : d.key}
-              </NavLink>{arr.length - 1 !== i && " | "}</React.Fragment>)
-              : "";
-          }
-        },
-        {
           title: "Size",
           dataIndex: "size",
           key: "size",
@@ -228,26 +210,6 @@ class DatasetList extends React.Component {
       search: `?${qs.stringify(params)}`
     });
     axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
-      .then(res => {
-
-        const contributesToLoader = new DataLoader(ids =>
-          getDatasetsBatch(ids)
-        );
-        return Promise.all(
-         !res.data.result ? [] : res.data.result.map(r => {
-            if (r.contributesTo) {
-              const promise = Promise.all(
-                r.contributesTo.map(i => contributesToLoader.load(i))
-              ).then(datasets => {
-                r.contributesToDatasets = datasets;
-              });
-              return promise;
-            } else {
-              return Promise.resolve();
-            }
-          })
-        ).then(() => res);
-      })
       .then(res => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;

@@ -1,22 +1,39 @@
 import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import qs from "query-string";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Tooltip } from "antd";
+import { Table, Alert, Row, Col, Tooltip , Form} from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
-
+import ReleaseSelect from "./ReleaseSelect"
+import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
-
-
-
 const _ = require("lodash");
 
-
-
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
 const getIssuesAbbrev = issue => issue.split(" ").map(s => s.charAt(0).toUpperCase())
 
+const getColorForDiff = (current, released) => {
+  const pct = released > 0 ? (current / released) * 100 : 100;
+  if (pct >= 100) {
+    return "green"
+  } else if(pct >= 75) {
+    return "orange"
+  } else {
+    return "red"
+  }
+}
 
 class GSDIssuesMatrix extends React.Component {
   constructor(props) {
@@ -36,11 +53,27 @@ class GSDIssuesMatrix extends React.Component {
     this.getData();
   }
 
+  componentDidUpdate = (prevProps) => {
+    const {match: {
+      params: { catalogueKey },
+      
+    }} = this.props;
+
+    if(_.get(prevProps, 'match.params.catalogueKey') !== catalogueKey){
+      this.getData();
+    } 
+
+  }
+
   getData = () => {
       this.setState({loading: true})
       const {match: {
-        params: { catalogueKey }
-      }} = this.props
+        params: { catalogueKey },
+        
+      },
+      location} = this.props
+      const params = qs.parse(_.get(location, "search"));
+      const {releaseKey} = params;
     axios(
       `${config.dataApi}dataset?limit=1000&contributesTo=${
         catalogueKey
@@ -75,8 +108,8 @@ class GSDIssuesMatrix extends React.Component {
       }) */
       .then(res => {
         return Promise.all(
-          res.filter(r => !!r.issues).map(r => {
-                return this.getMetrics(r.key).then(metrics => ({
+          res.map(r => {
+                return this.getMetrics(catalogueKey, r.key).then(metrics => ({
                   ...r,
                   nameCount: metrics.nameCount,
                   taxonCount: metrics.taxonCount,
@@ -90,8 +123,31 @@ class GSDIssuesMatrix extends React.Component {
         );
       })
       .then(res => {
+        if(releaseKey){
+          return Promise.all(
+            res.map(r => {
+                  return this.getMetrics(releaseKey, r.key).then(metrics => ({
+                    ...r,
+                    selectedReleaseMetrics: {
+                      nameCount: metrics.nameCount,
+                    taxonCount: metrics.taxonCount,
+                    synonymCount: metrics.synonymCount,
+                    referenceCount: metrics.referenceCount,
+                    distributionCount: metrics.distributionCount,
+                    vernacularCount: metrics.vernacularCount,
+                    usagesCount: metrics.usagesCount
+                    }
+                    
+                  }));
+                })
+          ); 
+        } else {
+          return res;
+        }
+      })
+      .then(res => {
         return Promise.all(
-          res.filter(r => !!r.issues).map(r => {
+          res.map(r => {
                 return this.getBrokenDecisions(r.key).then(count => ({
                   ...r,
                   brokenDecisions: count
@@ -113,7 +169,7 @@ class GSDIssuesMatrix extends React.Component {
 
   getCatalogueSpeciesCount = (sourceDatasetKey) => {
     const {match: {
-      params: { catalogueKey }
+      params: { catalogueKey },
     }} = this.props
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
@@ -121,12 +177,9 @@ class GSDIssuesMatrix extends React.Component {
 
   }
 
-  getMetrics = (sourceDatasetKey) => {
-    const {match: {
-      params: { catalogueKey }
-    }} = this.props
+  getMetrics = (datasetKey, sourceDatasetKey) => {
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/source/${sourceDatasetKey}/metrics`
+      `${config.dataApi}dataset/${datasetKey}/source/${sourceDatasetKey}/metrics`
     ).then(res => res.data)
   }
 
@@ -149,11 +202,43 @@ class GSDIssuesMatrix extends React.Component {
     this.setState({ selectedGroups: groups })
   }
 
+  refreshReaseMetrics = (releaseKey) => {
+    const { location } = this.props;
+    const params = qs.parse(_.get(location, "search"));
+                  history.push({
+                    pathname: location.path,
+                    search: `?${qs.stringify({...params, releaseKey : releaseKey})}`
+                  });
+    this.setState({loading: true})
+    if(releaseKey){
+      Promise.all(
+        this.state.data.map(r => {
+              return this.getMetrics(releaseKey, r.key).then(metrics => {
+                
+                r.selectedReleaseMetrics = {
+                  nameCount: metrics.nameCount,
+                taxonCount: metrics.taxonCount,
+                synonymCount: metrics.synonymCount,
+                referenceCount: metrics.referenceCount,
+                distributionCount: metrics.distributionCount,
+                vernacularCount: metrics.vernacularCount,
+                usagesCount: metrics.usagesCount
+                }
+                
+              });
+            })
+      ).then(()=> this.setState({loading: false, data: [...this.state.data]}))
+    } else {
+      this.state.data.forEach(r => { delete r.selectedReleaseMetrics})
+      this.setState({loading: false, data: [...this.state.data]})
+    }
+
+  }
   render() {
     const { data, loading, error } = this.state;
     const { issue, issueMap, match: {
       params: { catalogueKey }
-    }, catalogue } = this.props;
+    }, catalogue, location } = this.props;
     const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
 
     const selectedGroups = localStorage.getItem('col_plus_matrix_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_matrix_selected_issue_groups')) : [...groups];
@@ -169,12 +254,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "title",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.alias ? `${record.alias} [${record.key}]` : record.key}
             </NavLink>
+            {record.selectedReleaseMetrics && <div>Selected release:</div>}
+            </React.Fragment>
           );
         },
         sorter: true
@@ -207,12 +295,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "nameCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.nameCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.nameCount || 0), (record.selectedReleaseMetrics.nameCount || 0))}}>{record.selectedReleaseMetrics.nameCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -226,12 +317,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "usagesCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.usagesCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.usagesCount || 0), (record.selectedReleaseMetrics.usagesCount || 0))}}>{record.selectedReleaseMetrics.usagesCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -245,12 +339,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "synonymCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.synonymCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.synonymCount || 0), (record.selectedReleaseMetrics.synonymCount || 0))}}>{record.selectedReleaseMetrics.synonymCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -264,12 +361,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "taxonCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.taxonCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.taxonCount || 0), (record.selectedReleaseMetrics.taxonCount || 0))}}>{record.selectedReleaseMetrics.taxonCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -283,12 +383,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "vernacularCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.vernacularCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.vernacularCount || 0), (record.selectedReleaseMetrics.vernacularCount || 0))}}>{record.selectedReleaseMetrics.vernacularCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -302,12 +405,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "distributionCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.distributionCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.distributionCount || 0), (record.selectedReleaseMetrics.distributionCount || 0))}}>{record.selectedReleaseMetrics.distributionCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -322,12 +428,15 @@ class GSDIssuesMatrix extends React.Component {
         key: "referenceCount",
         render: (text, record) => {
           return (
+            <React.Fragment>
             <NavLink
               to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
               exact={true}
             >
               {record.referenceCount}
             </NavLink>
+            {record.selectedReleaseMetrics && <div style={{color: getColorForDiff((record.referenceCount || 0), (record.selectedReleaseMetrics.referenceCount || 0))}}>{record.selectedReleaseMetrics.referenceCount || 0}</div>}
+            </React.Fragment>
           );
         },
         sorter: (a, b) => {
@@ -390,7 +499,16 @@ class GSDIssuesMatrix extends React.Component {
           <div>
             <Row>
               <Col md={12} sm={24}>
-                
+              <Form.Item
+       {...formItemLayout}
+        label="Compare with release"
+        style={{marginBottom: '8px'}}
+      > 
+                <ReleaseSelect 
+                catalogueKey={catalogueKey}                     
+                defaultReleaseKey={_.get(qs.parse(_.get(location, "search")), 'releaseKey') || null}
+                 onReleaseChange={this.refreshReaseMetrics}/>
+                 </Form.Item>
               </Col>
               <Col md={12} sm={24}>
               <MultiValueFilter
