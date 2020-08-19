@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Form } from "antd";
+import { Table, Alert, Row, Col, Button, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -93,15 +93,22 @@ class DatasetList extends React.Component {
             dataIndex: "",
             width: 60,
             key: "__actions__",
-            render: (text, record) =>
-              record.origin === "external" ? (
-                <ImportButton
-                  key={record.key}
-                  record={{ datasetKey: record.key }}
-                />
-              ) : (
-                ""
-              )
+            render: (text, record) => <React.Fragment>
+            <Button
+            type="primary"
+            onClick={() => this.reindexDataset(record.key)}
+            
+          >
+            Re-index
+          </Button>
+          {record.origin !== 'managed' && record.origin !== 'released' && <Button
+            type="primary"
+            onClick={() => this.reimportDataset(record.key)}
+            style={{marginTop: '6px'}}
+          >
+            Re-import
+          </Button>}
+          </React.Fragment>
           }
       ],
       search: _.get(this.props, "location.search.q") || "",
@@ -210,6 +217,33 @@ class DatasetList extends React.Component {
     this.setState({ params: query }, this.getData);
   };
 
+  reindexDataset = (datasetKey) => {
+    axios
+      .post(`${config.dataApi}admin/reindex`, { datasetKey })
+      .then((res) => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Process started",
+            description: `Dataset ${datasetKey} is being reindexed`,
+          });
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
+
+  reimportDataset = (datasetKey) => {
+    axios
+      .post(`${config.dataApi}importer/${datasetKey}`)
+      .then((res) => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Process started",
+            description: `Dataset ${datasetKey} is being reimported`,
+          });
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
 
   render() {
     const { data, loading, error, columns} = this.state;
