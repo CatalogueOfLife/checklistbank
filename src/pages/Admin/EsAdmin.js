@@ -253,7 +253,7 @@ class DatasetList extends React.Component {
   render() {
     const { data, loading, error, columns} = this.state;
     const { datasetOrigin } = this.props
-    columns[1].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
+    columns[3].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
 
     return (
       <Layout
