@@ -33,8 +33,14 @@ class DatasetList extends React.Component {
     this.state = {
       data: [],
       columns: [
-/*         {
-          title: "Short name",
+        {
+          title: "Key",
+          dataIndex: "key",
+          width: 100,
+          key: "key"
+        },
+        {
+          title: "Alias",
           dataIndex: "alias",
           width: 150,
           key: "alias",
@@ -49,11 +55,11 @@ class DatasetList extends React.Component {
             );
           },
          // sorter: true
-        }, */
+        },
         {
           title: "Title",
           dataIndex: "title",
-          width: 250,
+          width: 400,
           key: "title",
           render: (text, record) => {
             return (
@@ -71,7 +77,6 @@ class DatasetList extends React.Component {
           title: "Origin",
           dataIndex: "origin",
           key: "origin"
-         
         },
        
         {
