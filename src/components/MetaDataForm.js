@@ -181,7 +181,7 @@ const MetaDataForm = (props) => {
                     onChange={value => setOrigin(value)}
                     showSearch
                   >
-                    {datasetoriginEnum.map(f => {
+                    {datasetoriginEnum.filter(f => f !== "released").map(f => {
                       return (
                         <Option key={f} value={f}>
                           {f}
