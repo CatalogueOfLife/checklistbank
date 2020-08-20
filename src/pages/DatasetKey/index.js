@@ -8,6 +8,8 @@ import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetSectors from "./datasetPageTabs/DatasetSectors"
+import DatasetProjects from "./datasetPageTabs/DatasetProjects"
+
 import DatasetReferences from "./datasetPageTabs/DatasetReferences"
 import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues"
@@ -124,7 +126,7 @@ class DatasetPage extends React.Component {
           <DatasetClassification dataset={dataset} datasetKey={datasetKey}  location={location} />
         )}
         {section === "projects" && (
-          <DatasetSectors dataset={dataset} catalogueKey={catalogueKey} location={location} />
+          <DatasetProjects dataset={dataset}  location={location} />
         )}
         
         {sect === "names" && (
