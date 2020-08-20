@@ -265,7 +265,9 @@ class GSDIssuesMatrix extends React.Component {
             </React.Fragment>
           );
         },
-        sorter: true
+        sorter: (a, b) => {
+           return ('' + a.alias).localeCompare(b.alias);
+      }
       },
       
 /*   
