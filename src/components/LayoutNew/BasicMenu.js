@@ -11,7 +11,7 @@ import {
   ProjectOutlined,
   SettingOutlined,
   TableOutlined,
-  ToolOutlined,
+  LineChartOutlined,
   PartitionOutlined,
   CheckOutlined
 } from '@ant-design/icons';
@@ -274,6 +274,11 @@ class BasicMenu extends Component {
               <NavLink to={{
                     pathname: `/catalogue/${catalogueKey}/sources`
                   }}> <TableOutlined /><span>Source datasets</span></NavLink>
+            </Menu.Item>
+            <Menu.Item key="catalogueSourceMetrics">
+              <NavLink to={{
+                    pathname: `/catalogue/${catalogueKey}/sourcemetrics`
+                  }}> <LineChartOutlined /><span>Source metrics</span></NavLink>
             </Menu.Item>
               { <SubMenu
               key="sourceDataset"

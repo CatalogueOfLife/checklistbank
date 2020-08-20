@@ -34,7 +34,7 @@ import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage"
 import NameIndex from "./pages/NameIndex"
 import CatalogueSources from "./pages/catalogue/CatalogueSources"
-import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSources2"
+import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics"
 
 const theme = {
   colorPrimary: "deepskyblue"
@@ -75,7 +75,7 @@ class App extends Component {
               />
                <Route
                 exact
-                key="catalogueSources"
+                key="catalogueSourceMetrics"
                 path="/catalogue/:catalogueKey/sourcemetrics"
                 component={CatalogueSourceMetrics}
               />
