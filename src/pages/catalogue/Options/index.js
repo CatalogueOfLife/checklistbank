@@ -120,7 +120,7 @@ class CatalogueOptions extends React.Component {
             notification.open({
               message: "Action triggered",
               description:
-                "release selected catalogue to old portal synchroneously (might take long)",
+                "release selected project (might take long)",
             });
           }
         );
