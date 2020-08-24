@@ -141,10 +141,10 @@ class ColTree extends React.Component {
               showSourceTaxon={showSourceTaxon}
               reloadSelfAndSiblings={() => {
                 const loadedChildIds = dataRef.children ? dataRef.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-                this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+                return this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
               }}
               reloadChildren={() => {
-                this.fetchChildPage(dataRef, true)
+                return this.fetchChildPage(dataRef, true)
               }}
             />
           );
@@ -233,7 +233,7 @@ class ColTree extends React.Component {
           showSourceTaxon={showSourceTaxon}
           reloadSelfAndSiblings={() => {
             const loadedChildIds = root.children ? root.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-            this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+           return this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
           }}
           reloadChildren={() => this.fetchChildPage(root, true)}
         />
@@ -533,7 +533,8 @@ class ColTree extends React.Component {
       
       dragNode.title.props.reloadSelfAndSiblings();
       node.title.props.reloadSelfAndSiblings().then(() => {
-        const newNodeReference = mode === "REPLACE" ? this.findNode(dragNode.taxon.name, node.parent.children, true ) : this.findNode(node.taxon.id, node.parent.children );
+        const children = _.get(node, 'parent.children') || this.state.treeData;
+        const newNodeReference = mode === "REPLACE" ? this.findNode(dragNode.taxon.name, children, true ) : this.findNode(node.taxon.id, children );
         this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
         );
       })
@@ -582,7 +583,7 @@ class ColTree extends React.Component {
     // Pick only nodes of the highest rank among dragged nodes
     const sortedDraggedRanks = Object.keys(rankGroupedSelectedNodes).sort((a, b) => rank.indexOf(a) <= rank.indexOf(b))
     const highestDraggedRank = sortedDraggedRanks[0];
-    const selectedNodesOfSameRanksAsDragnode = rankGroupedSelectedNodes[highestDraggedRank]
+    const selectedNodesOfSameRanksAsDragnode = selectedSourceTreeNodes.length === 0 ? [] : rankGroupedSelectedNodes[highestDraggedRank]
       .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.id !== dragNode.taxon.id)
     // Only do multiselect if the dragged taxon is actually among selected nodes
     const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(n => n.taxon.id === dragNode.taxon.id)
