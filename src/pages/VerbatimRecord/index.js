@@ -115,10 +115,10 @@ class VerbatimRecord extends React.Component {
     const params = qs.parse(_.get(location, "search"));
 
     const typeFacets = lastSuccesFullImport ? 
-      Object.keys(lastSuccesFullImport.verbatimByTypeCount)
+      Object.keys(lastSuccesFullImport.verbatimByTermCount)
         .map(t => ({
           value: t,
-          label: `${t} (${lastSuccesFullImport.verbatimByTypeCount[t]})`
+          label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`
         })) : [];
           
 

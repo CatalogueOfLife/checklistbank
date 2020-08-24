@@ -9,6 +9,8 @@ import history from "../../history"
 import Layout from "../../components/LayoutNew";
 import { Drawer, Tag, Row, Col, Alert, Button, Spin, Divider } from "antd";
 import ImportChart from "../../components/ImportChart";
+import ImportMetrics from "../../components/ImportMetrics";
+
 import PageContent from "../../components/PageContent";
 import ImportButton from "../Imports/importTabs/ImportButton";
 import ImportHistory from "./ImportHistory";
@@ -237,159 +239,8 @@ class DatasetImportMetrics extends React.Component {
               </Row>}
           {this.state.data && (
             <React.Fragment>
-          
-              <Row style={{ padding: "10px" }}>
-              <Col >
-                  {_.map(
-                    ['taxonCount', 'nameCount', 'verbatimCount', 'referenceCount', 'distributionCount', 'vernacularCount', 'mediaCount', 'descriptionCount'  ],
-                    c => {
-                      return _.get(this.state, `data.${c}`) ? (
-                        <Tag key={c} color="blue">
-                          {_.startCase(c)}: {_.get(this.state, `data.${c}`)}
-                        </Tag>
-                      ) : (
-                        ""
-                      );
-                    }
-                  )}
-                </Col>
-              </Row>
-              {(_.get(this.state, "data.taxaByRankCount") ||
-                _.get(this.state, "data.usagesByStatusCount")) && (
-                <Row>
-                  <Col span={12} style={{ padding: "10px" }}>
-                    {_.get(this.state, "data.taxaByRankCount") && (
-                      <ImportChart
-                        nameSearchParam="rank"
-                        additionalParams={{status: 'accepted'}}
-                        defaultType="pie"
-                        datasetKey={this.state.data.datasetKey}
-                        data={_.get(this.state, "data.taxaByRankCount")}
-                        title="Accepted Names by Rank"
-                        subtitle={`Imported ${moment(
-                          this.state.data.finished
-                        ).format("MMMM Do YYYY, h:mm a")}`}
-                      />
-                    )}
-                  </Col>
-                  <Col span={12} style={{ padding: "10px" }}>
-                    {_.get(this.state, "data.usagesByStatusCount") && (
-                      <ImportChart
-                        nameSearchParam="status"
-                        defaultType="pie"
-                        datasetKey={this.state.data.datasetKey}
-                        data={_.get(this.state, "data.usagesByStatusCount")}
-                        title="Usages by status"
-                        subtitle={`Imported ${moment(
-                          this.state.data.finished
-                        ).format("MMMM Do YYYY, h:mm a")}`}
-                      />
-                    )}
-                  </Col>
-                </Row>
-              )}
-              <Row>
-                <Col span={12} style={{ padding: "10px" }}>
-                  {_.get(this.state, "data.namesByRankCount") && (
-                    <ImportChart
-                      nameSearchParam="rank"
-                      defaultType="pie"
-                      datasetKey={this.state.data.datasetKey}
-                      data={_.get(this.state, "data.namesByRankCount")}
-                      title="Names by rank"
-                      subtitle={`Imported ${moment(
-                        this.state.data.finished
-                      ).format("MMMM Do YYYY, h:mm a")}`}
-                    />
-                  )}
-                </Col>
-                <Col span={12} style={{ padding: "10px" }}>
-                  {_.get(this.state, "data.namesByTypeCount") && (
-                    <ImportChart
-                      nameSearchParam="type"
-                      defaultType="pie"
-                      datasetKey={this.state.data.datasetKey}
-                      data={_.get(this.state, "data.namesByTypeCount")}
-                      title="Names by type"
-                      subtitle={`Imported ${moment(
-                        this.state.data.finished
-                      ).format("MMMM Do YYYY, h:mm a")}`}
-                    />
-                  )}
-                </Col>
-              </Row>
-
-              <Row>
-                <Col span={12} style={{ padding: "10px" }}>
-                  {_.get(this.state, "data.namesByOriginCount") && (
-                    <ImportChart
-                      nameSearchParam="origin"
-                      defaultType="pie"
-                      datasetKey={this.state.data.datasetKey}
-                      data={_.get(this.state, "data.namesByOriginCount")}
-                      title="Names by origin"
-                      subtitle={`Imported ${moment(
-                        this.state.data.finished
-                      ).format("MMMM Do YYYY, h:mm a")}`}
-                    />
-                  )}
-                </Col>
-                <Col span={12} style={{ padding: "10px" }}>
-                  {_.get(this.state, "data.verbatimByTypeCount") && (
-                    <ImportChart
-                      nameSearchParam="type" 
-                      verbatim={true}
-                      defaultType="pie"
-                      datasetKey={this.state.data.datasetKey}
-                      data={_.get(this.state, "data.verbatimByTypeCount")}
-                      title="Verbatim records by type"
-                      subtitle={`Imported ${moment(
-                        this.state.data.finished
-                      ).format("MMMM Do YYYY, h:mm a")}`}
-                    />
-                  )}
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24} style={{ padding: "10px" }}>
-                  {_.get(this.state, "data.vernacularsByLanguageCount") && (
-                    <ImportChart
-                      nameSearchParam="vernacularLang"
-                      defaultType="column"
-                      datasetKey={this.state.data.datasetKey}
-                      data={_.get(
-                        this.state,
-                        "data.vernacularsByLanguageCount"
-                      )}
-                      title="Vernacular names by language"
-                      subtitle={`Imported ${moment(
-                        this.state.data.finished
-                      ).format("MMMM Do YYYY, h:mm a")}`}
-                    />
-                  )}
-                </Col>
-              </Row>
-           { (_.get(this.state, 'data.nameRelationsByTypeCount') || _.get(this.state, 'data.distributionsByGazetteerCount')) &&  <Row>
-          <Col span={_.get(this.state, 'data.distributionsByGazetteerCount') ? 12 : 24} style={{ padding: '10px' }}>
-          {_.get(this.state, 'data.nameRelationsByTypeCount') && <ImportChart defaultType="pie" datasetKey={this.state.data.datasetKey} data={_.get(this.state, 'data.nameRelationsByTypeCount')} title="Relations by type" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
-          </Col>
-          <Col span={_.get(this.state, 'data.nameRelationsByTypeCount') ? 12 : 24} style={{ padding: '10px' }}>
-          {_.get(this.state, 'data.distributionsByGazetteerCount') && <ImportChart  verbatim={true} defaultType="pie" datasetKey={this.state.data.datasetKey} data={_.get(this.state, 'data.distributionsByGazetteerCount')} title="Distribution by Gazetteer" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
-
-          </Col>
-          
-        </Row>}
-
-{ (_.get(this.state, 'data.mediaByTypeCount') || _.get(this.state, 'data.namesByStatusCount')) &&  <Row>
-<Col span={_.get(this.state, 'data.namesByStatusCount') ? 12 : 24} style={{ padding: '10px' }}>
-{_.get(this.state, 'data.mediaByTypeCount') && <ImportChart defaultType="pie" datasetKey={this.state.data.datasetKey} data={_.get(this.state, 'data.mediaByTypeCount')} title="Media by type" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
-</Col>
-<Col span={_.get(this.state, 'data.mediaByTypeCount') ? 12 : 24} style={{ padding: '10px' }}>
-{_.get(this.state, 'data.namesByStatusCount') && <ImportChart  verbatim={true} defaultType="pie" datasetKey={this.state.data.datasetKey} data={_.get(this.state, 'data.namesByStatusCount')} title="Names by Status" subtitle={`Imported ${moment(this.state.data.finished).format('MMMM Do YYYY, h:mm a')}`} />}
-
-</Col>
-
-</Row>}
+          <ImportMetrics data={this.state.data }/>
+              
 <Row style={{ padding: "10px" }}>
 <Divider orientation="left">Details</Divider>
 <PresentationItem label="State" >

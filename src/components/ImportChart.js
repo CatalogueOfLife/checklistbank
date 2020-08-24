@@ -32,14 +32,22 @@ class ImportChart extends React.Component {
 
   getBasePath = () => {
     const {location, datasetKey} = this.props;
-    return location.pathname.startsWith("/catalogue") ?
-    location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/workbench` :
-    location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/names`
+    if(location.pathname.startsWith("/catalogue")){
+      location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/workbench`
+    } else {
+      return `/dataset/${datasetKey}/names`
+    }
+    
   }
 
   getVerbatimPath = () => {
   const {location, datasetKey} = this.props;
-  return  location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/verbatim`
+
+  if(location.pathname.startsWith("/catalogue")){
+    return  location.pathname.split(`dataset/${datasetKey}/`)[0]+ `dataset/${datasetKey}/verbatim`
+  } else {
+    return `/dataset/${datasetKey}/verbatim`
+  }
   }
 
  initChart = (props) => {
