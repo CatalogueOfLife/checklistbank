@@ -320,7 +320,7 @@ class SyncTable extends React.Component {
             key: "x",
             width: 50,
             render: record => (
-              record.type === "SectorSync" ?  <SyncButton
+              record.job === "SectorSync" ?  <SyncButton
                 key={record.datasetKey}
                 record={record}
               /> : ""
