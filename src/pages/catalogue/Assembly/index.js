@@ -81,47 +81,41 @@ class Assembly extends React.Component {
     clearInterval(this.timer);
   }
 
-  getSyncState = () => {
+  getSyncState = async () => {
     const {
       match: {
         params: { catalogueKey }
       }
     } = this.props;
-    axios(`${config.dataApi}dataset/${catalogueKey}/assembly`)
-      .then(res => {
-        if (
-          _.get(res, "data.running") &&
-          _.get(res, "data.running.sectorKey") !==
-            _.get(this.state, "syncState.running.sectorKey")
-        ) {
-          return Promise.all([
-            axios(
-              `${config.dataApi}dataset/${_.get(
-                res,
-                "data.running.datasetKey"
-              )}`
-            ),
-            axios(
-              `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(res, "data.running.sectorKey")}`
-            )
-          ]).then(resp => {
-            this.setState({
-              syncingDataset: resp[0].data,
-              syncingSector: resp[1].data,
-              syncState: res.data
-            });
-          });
-        } else if (!_.get(res, "data.running")) {
-          this.setState({
-            syncingDataset: null,
-            syncingSector: null,
-            syncState: res.data
-          });
-        } else {
-          this.setState({ syncState: res.data });
-        }
-      })
-      .catch(err => this.setState({ syncError: err }));
+
+    try {
+      const {data: syncState} = await  axios(`${config.dataApi}dataset/${catalogueKey}/assembly`);
+      if (
+        _.get(syncState, "running") &&
+        _.get(syncState, "running.sectorKey") !==
+          _.get(this.state, "syncState.running.sectorKey")
+      ){
+        const {data: sector} = await axios(`${config.dataApi}dataset/${catalogueKey}/sector/${_.get(syncState, "running.sectorKey")}`)
+        const {data: sectorDataset} = await axios(`${config.dataApi}dataset/${sector.subjectDatasetKey}`)
+        this.setState({
+          syncingDataset: sectorDataset,
+          syncingSector: sector,
+          syncState: syncState
+        });
+      } else if (!_.get(syncState, "running")) {
+        this.setState({
+          syncingDataset: null,
+          syncingSector: null,
+          syncState: syncState
+        });
+      } else {
+        this.setState({ syncState: syncState });
+      }
+
+    } catch(err) {
+      this.setState({ syncError: err })
+    }
+
   };
 
   getSectorInfo = (attachment, root, mode) => {
