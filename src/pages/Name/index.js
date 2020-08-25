@@ -271,7 +271,7 @@ class NamePage extends React.Component {
               </PresentationItem>
               {name.combinationAuthorship && (
                 <PresentationItem md={md} label="Combination Authorship">
-                  {`${name.combinationAuthorship.authors.join(", ")} ${
+                  {`${name.combinationAuthorship.authors ? name.combinationAuthorship.authors.join(", ") : ''} ${
                     name.combinationAuthorship.exAuthors
                       ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
                       : ""
