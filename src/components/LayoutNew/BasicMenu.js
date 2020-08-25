@@ -501,7 +501,7 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
-              {Auth.isAuthorised(user, ["editor", "admin"]) && _.get(selectedDataset, 'origin') !== 'released' && 
+              {Auth.isAuthorised(user, ["editor", "admin"]) && 
                 <Menu.Item key="options">
                 <NavLink
                   to={{
