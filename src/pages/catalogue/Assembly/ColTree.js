@@ -1024,7 +1024,7 @@ return  axios
       expandedKeys,
       selectedKeys
         } = this.state;
-    const { draggable, onDragStart, location, treeType, dataset } = this.props;
+    const { draggable, onDragStart, location, treeType, dataset , defaultExpandKey} = this.props;
     
 
     return (
@@ -1088,7 +1088,7 @@ return  axios
                   this.setState({selectedNodes: e.selectedNodes })
                 }}
                 filterTreeNode={node => {                
-                  return node.key === this.props.defaultExpandKey
+                  return node.key === defaultExpandKey
                 }
                   
                 }

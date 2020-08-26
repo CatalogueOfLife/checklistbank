@@ -326,3 +326,7 @@ div.csl-entry {
   border-right: 1px solid #c4c0c0;
   padding-right: 8px;
 }
+
+.ant-tree-treenode.filter-node {
+  color: red;
+}
