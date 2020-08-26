@@ -157,19 +157,7 @@ const SectorForm = ({sector, nomCode, entitytype, rank, onError}) => {
     </Select>
     </Col>
         </Row> 
-        <Row style={{ marginTop: "8px" }}>
-          <Col span={9}>
-            Placeholder rank
-          </Col>
-          <Col span={15} style={{paddingLeft: '8px'}}>
-        <Select  style={{ width: '100%' }} defaultValue={sector.placeholderRank} onChange={value => updatePlaceholderRank(value)} showSearch allowClear>
-    
-        {rank.map((r) => {
-        return <Option key={r} value={r}>{r}</Option>
-      })}
-    </Select>
-    </Col>
-        </Row> 
+        
         <Row style={{ marginTop: "8px" }}>
           <Col span={9}>
           Entities
@@ -235,6 +223,19 @@ const SectorForm = ({sector, nomCode, entitytype, rank, onError}) => {
             defaultValue={_.get(sector, 'subject.parent') || null} /> */}
     </Col>
         </Row> 
+     {sector.placeholderRank && <Row style={{ marginTop: "8px" }}>
+          <Col span={9}>
+            Placeholder rank
+          </Col>
+          <Col span={15} style={{paddingLeft: '8px'}}>
+        <Select  style={{ width: '100%' }} defaultValue={sector.placeholderRank} onChange={value => updatePlaceholderRank(value)} showSearch allowClear>
+    
+        {rank.map((r) => {
+        return <Option key={r} value={r}>{r}</Option>
+      })}
+    </Select>
+    </Col>
+        </Row> }
 
 
         <Row style={{ marginTop: "8px" }}>
