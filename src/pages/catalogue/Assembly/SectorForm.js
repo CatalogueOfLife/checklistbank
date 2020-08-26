@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, {useState} from "react";
 
 import {
   notification,
@@ -8,12 +8,12 @@ import {
   Col,
   Input
 } from "antd";
-import { SaveOutlined } from '@ant-design/icons';
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
-
+import NameAutocomplete from "./NameAutocomplete"
 import SectorNote from "./SectorNote"
 import withContext from "../../../components/hoc/withContext"
 
@@ -22,6 +22,9 @@ const {Option} = Select;
 
 
 const SectorForm = ({sector, nomCode, entitytype, rank, onError}) => {
+
+  const [subjectDisabled, setSubjectDisabled] = useState(true)
+  const [targetDisabled, setTargetDisabled] = useState(true)
 
     const updateSectorCode = code => {
         axios
@@ -41,14 +44,14 @@ const SectorForm = ({sector, nomCode, entitytype, rank, onError}) => {
           });
       }
     
-      const updateParent = (parentName, targetOrSubject) => {
+      const updateTargetOrSubject = (obj, targetOrSubject) => {
         axios
           .put(
-            `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`, {...sector, [targetOrSubject]: {...sector[targetOrSubject], parent: parentName}}
+            `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`, {...sector, [targetOrSubject]: {id: obj.key, name: obj.title}}
           ) 
           .then(() => {
             notification.open({
-              message: `${targetOrSubject} parent configured`
+              message: `${targetOrSubject} updated`
             });
           })
           .catch(err => {
@@ -182,25 +185,54 @@ const SectorForm = ({sector, nomCode, entitytype, rank, onError}) => {
         </Row> 
 
         <Row style={{ marginTop: "8px" }}>
-          <Col span={9}>
-          Target parent
+          <Col span={8}>
+          Target 
+
+          </Col>
+          <Col span={1} style={{textAlign: 'right'}}>
+          {targetDisabled && <a><LockOutlined  onClick={() => setTargetDisabled(false)}/></a>}
+          {!targetDisabled && <a><UnlockOutlined  onClick={() => setTargetDisabled(true)}/></a>}
           </Col>
           <Col span={15} style={{paddingLeft: '8px'}}>
-          <Input.Search 
+          
+          <NameAutocomplete
+                    disabled={targetDisabled}
+                    datasetKey={sector.datasetKey}
+                    defaultTaxonKey={_.get(sector, "target.id") || null}
+                    onSelectName={name => updateTargetOrSubject(name, 'target')}
+                    onResetSearch={() => {
+                     
+                    }}
+                  />
+{/*           <Input.Search 
             enterButton={<SaveOutlined />} 
             onSearch={parentName => updateParent(parentName, 'target')}
-            defaultValue={_.get(sector, 'target.parent') || null} />
+            defaultValue={_.get(sector, 'target.parent') || null} /> */}
     </Col>
         </Row> 
         <Row style={{ marginTop: "8px" }}>
-          <Col span={9}>
-          Subject parent
+          <Col span={8}>
+          Subject 
+          </Col>
+          <Col span={1} style={{textAlign: 'right'}}>
+          {subjectDisabled && <a><LockOutlined onClick={() => setSubjectDisabled(false)}/></a>}
+          {!subjectDisabled && <a><UnlockOutlined  onClick={() => setSubjectDisabled(true)}/></a>}
           </Col>
           <Col span={15} style={{paddingLeft: '8px'}}>
-          <Input.Search 
+
+          <NameAutocomplete
+                    disabled={subjectDisabled}
+                    datasetKey={sector.subjectDatasetKey}
+                    defaultTaxonKey={_.get(sector, "subject.id") || null}
+                    onSelectName={name => updateTargetOrSubject(name, 'subject')}
+                    onResetSearch={() => {
+                     
+                    }}
+                  />
+{/*           <Input.Search 
             enterButton={<SaveOutlined />} 
             onSearch={parentName => updateParent(parentName, 'subject')}
-            defaultValue={_.get(sector, 'subject.parent') || null} />
+            defaultValue={_.get(sector, 'subject.parent') || null} /> */}
     </Col>
         </Row> 
 

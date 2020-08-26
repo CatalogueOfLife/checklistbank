@@ -78,7 +78,7 @@ class NameSearchAutocomplete extends React.Component {
     this.props.onResetSearch();
   };
   render = () => {
-    const { placeHolder, autoFocus } = this.props;
+    const { placeHolder, autoFocus, disabled = false } = this.props;
     const { value } = this.state;
     const options = this.state.names.map((o) => {
       return (
@@ -92,7 +92,7 @@ class NameSearchAutocomplete extends React.Component {
         </Option>
       );
     });
-    const suffix = value ? (
+    const suffix = !disabled && value ? (
       <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} />
     ) : (
       ""
@@ -108,9 +108,10 @@ class NameSearchAutocomplete extends React.Component {
         onChange={(value) => this.setState({ value })}
         value={value}
         autoFocus={autoFocus === false ? false : true}
+        disabled={disabled}
       >
         
-                      <Input.Search suffix={suffix} />
+                      <Input.Search suffix={suffix}  />
       </AutoComplete>
     );
   };

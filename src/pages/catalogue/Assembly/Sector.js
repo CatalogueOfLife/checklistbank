@@ -14,8 +14,8 @@ import {
   Button,
   Tooltip,
   Popover,
-  Alert
-
+  Alert,
+  Switch
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -34,6 +34,7 @@ class Sector extends React.Component {
     super(props);
     this.state = {
       popOverVisible: false,
+      showEditForm: false,
       error: null
     };
   }
@@ -151,7 +152,7 @@ class Sector extends React.Component {
   render = () => {
     const { taxon, user, catalogueKey } = this.props;
 
-    const { error } = this.state;
+    const { error, showEditForm } = this.state;
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
     const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
@@ -236,8 +237,15 @@ class Sector extends React.Component {
                   Source Dataset Metadata
                 </Button>
 
+                {isRootSector && <Switch
+                style={{ marginTop: "8px" }}
+                checked={showEditForm}
+                onChange={checked => this.setState({ showEditForm: checked })}
+                checkedChildren="Cancel"
+                unCheckedChildren="Edit sector"
+              />}
 
-                {isRootSector && <SectorForm sector={sector} onError={err => this.setState({ error: err })}/>}
+                {isRootSector && showEditForm && <SectorForm sector={sector} onError={err => this.setState({ error: err })}/>}
                 {error && (
                   <Alert
                   closable

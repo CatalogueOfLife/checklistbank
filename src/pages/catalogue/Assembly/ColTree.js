@@ -573,6 +573,49 @@ class ColTree extends React.Component {
     });
   };
 
+  replaceSectorTarget = (node, dragNode) => {
+    const {taxon: {sector}} = dragNode;
+    const target = {
+      id: _.get(node, 'taxon.id'),
+      name: _.get(node, 'taxon.name'),
+      rank: _.get(node, 'taxon.rank'),
+      status: _.get(node, 'taxon.status'),
+      parent: _.get(node, 'taxon.parentId'),
+    }
+    const {datasetKey, id, mode, originalSubjectId, subjectDatasetKey, subject} = sector;
+    const updatedSector = {
+      datasetKey, 
+      id, 
+      mode, 
+      originalSubjectId, 
+      subjectDatasetKey, 
+      subject,
+      target}
+return  axios
+          .put(
+            `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`, updatedSector
+          ) 
+          .then(res => {
+      
+            dragNode.title.props.reloadSelfAndSiblings();
+            node.title.props.reloadSelfAndSiblings().then(() => {
+              const children = _.get(node, 'parent.children') || this.state.treeData;
+              const newNodeReference =  this.findNode(node.taxon.id, children );
+              this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
+              );
+              notification.open({
+                message: `Sector target updated`
+              });
+            })
+            .catch((err)=> {
+              console.log(err)
+              alert(err)});
+            //  .catch((err)=> alert(err));
+          });
+           
+          
+  }
+
   handleAttach = e => {
     const { rank } = this.props;
     const dragNode = this.props.dragNode.ref;
@@ -594,6 +637,8 @@ class ColTree extends React.Component {
     const nodeIsPlaceholder = node.taxon.id.indexOf('incertae-sedis') > -1;
     const willProduceDuplicateChild = node.children && !dragNodeIsPlaceholder ? node.children.find(c => c.taxon.name === dragNode.taxon.name) : false;
     const taxonNameIsEqual = dragNode.taxon.name === node.taxon.name;
+    const dragNodeIsAlreadySectorSubject = _.get(dragNode, "taxon.sector") && _.get(dragNode, "taxon.id") === _.get(dragNode, "taxon.sector.subject.id")
+    
     if (
       dragNode.taxon.datasetKey ===
       node.taxon.datasetKey
@@ -607,7 +652,7 @@ class ColTree extends React.Component {
       message.warn("You cannot create sectors on placeholder nodes");
       return; 
     }
-    if (
+/*     if (
       _.get(dragNode, "taxon.sector") &&
       _.get(dragNode, "taxon.id") ===
         _.get(dragNode, "taxon.sector.subject.id")
@@ -623,7 +668,7 @@ class ColTree extends React.Component {
         6
       );
       return; // we are in modify mode and should not react to the event
-    }
+    } */
 
 
     const showRankWarning =
@@ -634,6 +679,7 @@ class ColTree extends React.Component {
 
     // default to attach mode
     let mode = "ATTACH";
+    
     if (
       dragNode.taxon.rank ===
       node.taxon.rank
@@ -739,6 +785,26 @@ class ColTree extends React.Component {
       
     }
 
+    if (dragNodeIsAlreadySectorSubject) {
+      msg = <span>
+      {showRankWarning && (
+        <Alert
+          message="Subject rank is higher than target rank"
+          type="warning"
+        />
+      )}
+      
+      Replace sector target?
+      
+      <br/>
+     {willProduceDuplicateChild && 
+     <Alert 
+     style={{marginTop: '6px'}} 
+     type="error" 
+     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
+    </span>
+    }
+
     const unionOptions =  dragNodeIsPlaceholder ? [
       {
         text: "Union",
@@ -783,6 +849,14 @@ class ColTree extends React.Component {
           action: () => this.confirmMultiAttach(node, [dragNode, ...selectedNodesOfSameRanksAsDragnode])
         }
       ]
+    } else if(dragNodeIsAlreadySectorSubject) {
+      actions = [
+        {
+          text: "Replace target",
+          type: "primary",
+          action: () => this.replaceSectorTarget(node, dragNode)
+        }
+      ]
     } else if(mode === "ATTACH"){
       actions = [
         
@@ -797,7 +871,7 @@ class ColTree extends React.Component {
           action: () => this.confirmAttach(node, dragNode, "ATTACH")
         }
       ]
-    } else {
+    }  else {
       actions = unionOptions
     }
 
