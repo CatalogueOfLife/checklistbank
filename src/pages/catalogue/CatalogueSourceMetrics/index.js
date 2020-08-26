@@ -175,9 +175,27 @@ class SourceMetrics extends React.Component {
       },
       catalogue,
       location,
+      rank
     } = this.props;
 
+   
+
+    const columnsSorter = selectedGroup && selectedGroup.indexOf('Rank') > -1 ? 
+      (a, b) => rank.indexOf(b) - rank.indexOf(a) :
+      (a, b) => a.localeCompare(b)
+  /*     (a, b) => {
+        const pathA = selectedGroup === 'default' ? `metrics[${a}]` : `metrics[${selectedGroup}][${a}]`
+        const pathB = selectedGroup === 'default' ? `metrics[${b}]` : `metrics[${selectedGroup}][${b}]`
+        if(data[0]){
+          return _.get(data[0], pathB) - _.get(data[0], pathA)
+        } else {
+          return a.localeCompare(b)
+        }
+      } */
+
+
     const additionalColumns = !groups[selectedGroup] ? [] : groups[selectedGroup]
+    .sort(columnsSorter)
     .map(column => ({
       // nameCount
       title: _.startCase(column),
@@ -218,7 +236,7 @@ class SourceMetrics extends React.Component {
         );
       },
     }) )
-    
+
     const columns = [
       {
         title: "Title",
@@ -316,8 +334,9 @@ class SourceMetrics extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogue }) => ({
+const mapContextToProps = ({ user,rank, catalogue }) => ({
   user,
+  rank,
   catalogue,
 });
 
