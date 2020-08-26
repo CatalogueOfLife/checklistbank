@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Tooltip, Form } from "antd";
+import { Table, Alert, Row, Col, Tooltip, Form, Select } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
@@ -22,8 +22,7 @@ const formItemLayout = {
     sm: { span: 16 },
   },
 };
-const getIssuesAbbrev = (issue) =>
-  issue.split(" ").map((s) => s.charAt(0).toUpperCase());
+
 
 const getColorForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : 100;
@@ -36,16 +35,15 @@ const getColorForDiff = (current, released) => {
   }
 };
 
-class GSDIssuesMatrix extends React.Component {
+class SourceMetrics extends React.Component {
   constructor(props) {
     super(props);
     // const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
       data: [],
-
-      columns: [],
-
+      groups: {},
+      selectedGroup: null,
       loading: false,
     };
   }
@@ -78,22 +76,33 @@ class GSDIssuesMatrix extends React.Component {
     const { releaseKey } = params;
     axios(`${config.dataApi}dataset?limit=1000&contributesTo=${catalogueKey}`)
       .then((res) => {
+        let columns = {};
         return Promise.all(
           !res.data.result
             ? []
             : res.data.result.map((r) => {
-                return this.getMetrics(catalogueKey, r.key).then((metrics) => ({
+                return this.getMetrics(catalogueKey, r.key).then((metrics) => {
+                  columns = _.merge(columns, metrics);
+                  return {
                   ...r,
-                  nameCount: metrics.nameCount,
-                  taxonCount: metrics.taxonCount,
-                  synonymCount: metrics.synonymCount,
-                  referenceCount: metrics.referenceCount,
-                  distributionCount: metrics.distributionCount,
-                  vernacularCount: metrics.vernacularCount,
-                  usagesCount: metrics.usagesCount,
-                }));
+                  metrics: metrics
+                }});
               })
-        ).then((res) => res);
+        ).then((res) => {
+          this.setState({
+            groups : {
+              default: Object.keys(columns).filter(c => typeof columns[c] !== 'object' && !['attempt', 'datasetKey'].includes(c)),
+              ...Object.keys(columns)
+              .filter( c => typeof columns[c] === 'object')
+              .reduce((obj, key) => {
+                obj[key] = Object.keys(columns[key]);
+                return obj;
+              }, {})
+            },
+            selectedGroup: 'default'
+          })
+          return res;
+        });
       })
       .then((res) => {
         if (releaseKey) {
@@ -101,15 +110,7 @@ class GSDIssuesMatrix extends React.Component {
             res.map((r) => {
               return this.getMetrics(releaseKey, r.key).then((metrics) => ({
                 ...r,
-                selectedReleaseMetrics: {
-                  nameCount: metrics.nameCount,
-                  taxonCount: metrics.taxonCount,
-                  synonymCount: metrics.synonymCount,
-                  referenceCount: metrics.referenceCount,
-                  distributionCount: metrics.distributionCount,
-                  vernacularCount: metrics.vernacularCount,
-                  usagesCount: metrics.usagesCount,
-                },
+                selectedReleaseMetrics: metrics,
               }));
             })
           );
@@ -129,16 +130,6 @@ class GSDIssuesMatrix extends React.Component {
       });
   };
 
-  getCatalogueSpeciesCount = (sourceDatasetKey) => {
-    const {
-      match: {
-        params: { catalogueKey },
-      },
-    } = this.props;
-    return axios(
-      `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
-    ).then((res) => _.get(res, "data.total"));
-  };
 
   getMetrics = (datasetKey, sourceDatasetKey) => {
     return axios(
@@ -146,28 +137,6 @@ class GSDIssuesMatrix extends React.Component {
     ).then((res) => res.data);
   };
 
-  getBrokenDecisions = (sourceDatasetKey) => {
-    const {
-      match: {
-        params: { catalogueKey },
-      },
-    } = this.props;
-    return axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision?limit=0&subjectDatasetKey=${sourceDatasetKey}&limit=0`
-    ).then((res) => _.get(res, "data.total"));
-  };
-
-  updateSelectedGroups = (groups) => {
-    if (groups && groups.length > 0) {
-      localStorage.setItem(
-        "col_plus_matrix_selected_issue_groups",
-        JSON.stringify(groups)
-      );
-    } else if (groups && groups.length === 0) {
-      localStorage.removeItem("col_plus_matrix_selected_issue_groups");
-    }
-    this.setState({ selectedGroups: groups });
-  };
 
   refreshReaseMetrics = (releaseKey) => {
     const { location } = this.props;
@@ -181,15 +150,7 @@ class GSDIssuesMatrix extends React.Component {
       Promise.all(
         this.state.data.map((r) => {
           return this.getMetrics(releaseKey, r.key).then((metrics) => {
-            r.selectedReleaseMetrics = {
-              nameCount: metrics.nameCount,
-              taxonCount: metrics.taxonCount,
-              synonymCount: metrics.synonymCount,
-              referenceCount: metrics.referenceCount,
-              distributionCount: metrics.distributionCount,
-              vernacularCount: metrics.vernacularCount,
-              usagesCount: metrics.usagesCount,
-            };
+            r.selectedReleaseMetrics = metrics;
           });
         })
       ).then(() =>
@@ -202,8 +163,12 @@ class GSDIssuesMatrix extends React.Component {
       this.setState({ loading: false, data: [...this.state.data] });
     }
   };
+
+  selectGroup = (value) => {
+    this.setState({selectedGroup: value})
+  }
   render() {
-    const { data, loading, error } = this.state;
+    const { data, loading, error, groups, selectedGroup } = this.state;
     const {
       match: {
         params: { catalogueKey },
@@ -212,6 +177,48 @@ class GSDIssuesMatrix extends React.Component {
       location,
     } = this.props;
 
+    const additionalColumns = !groups[selectedGroup] ? [] : groups[selectedGroup]
+    .map(column => ({
+      // nameCount
+      title: _.startCase(column),
+      dataIndex: selectedGroup === 'default' ? ["metrics", column] : ["metrics", selectedGroup, column],
+      key: column,
+      render: (text, record) => {
+        const selectedRelaseValue = selectedGroup === 'default' ? _.get(record, `selectedReleaseMetrics[${column}]`) : _.get(record, `selectedReleaseMetrics[${selectedGroup}][${column}]`) ;
+        return (
+          <React.Fragment>
+            <NavLink
+              to={{
+                pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+              }}
+              exact={true}
+            >
+              {text || 0}
+            </NavLink>
+            {record.selectedReleaseMetrics && (
+              <div
+                style={{
+                  color: getColorForDiff(
+                    text || 0,
+                    selectedRelaseValue || 0
+                  ),
+                }}
+              >
+                {selectedRelaseValue || 0}
+              </div>
+            )}
+          </React.Fragment>
+        );
+      },
+      sorter: (a, b) => {
+        const path = selectedGroup === 'default' ? `metrics[${column}]` : `metrics[${selectedGroup}][${column}]`
+        return (
+          Number(_.get(a, path) || 0) -
+          Number(_.get(b, path) || 0)
+        );
+      },
+    }) )
+    
     const columns = [
       {
         title: "Title",
@@ -237,299 +244,9 @@ class GSDIssuesMatrix extends React.Component {
         },
       },
 
-      {
-        // nameCount
-        title: (
-          <Tooltip title={`Total name count in last sync`}>Name count</Tooltip>
-        ),
-        dataIndex: "nameCount",
-        key: "nameCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.nameCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.nameCount || 0,
-                      record.selectedReleaseMetrics.nameCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.nameCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `nameCount`) || 0) -
-            Number(_.get(b, `nameCount`) || 0)
-          );
-        },
-      },
-      {
-        // usagesCount
-        title: (
-          <Tooltip title={`Total usages in last sync`}>Usages count</Tooltip>
-        ),
-        dataIndex: "usagesCount",
-        key: "usagesCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.usagesCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.usagesCount || 0,
-                      record.selectedReleaseMetrics.usagesCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.usagesCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `usagesCount`) || 0) -
-            Number(_.get(b, `usagesCount`) || 0)
-          );
-        },
-      },
-      {
-        // synonymCount
-        title: (
-          <Tooltip title={`Total synonym count in last sync`}>
-            Synonym count
-          </Tooltip>
-        ),
-        dataIndex: "synonymCount",
-        key: "synonymCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.synonymCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.synonymCount || 0,
-                      record.selectedReleaseMetrics.synonymCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.synonymCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `synonymCount`) || 0) -
-            Number(_.get(b, `synonymCount`) || 0)
-          );
-        },
-      },
-      {
-        // taxonCount
-        title: (
-          <Tooltip title={`Total taxon count in last sync`}>
-            Taxon count
-          </Tooltip>
-        ),
-        dataIndex: "taxonCount",
-        key: "taxonCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.taxonCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.taxonCount || 0,
-                      record.selectedReleaseMetrics.taxonCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.taxonCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `taxonCount`) || 0) -
-            Number(_.get(b, `taxonCount`) || 0)
-          );
-        },
-      },
-      {
-        // vernacularCount
-        title: (
-          <Tooltip title={`Total vernacular count in last sync`}>
-            Vernacular count
-          </Tooltip>
-        ),
-        dataIndex: "vernacularCount",
-        key: "vernacularCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.vernacularCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.vernacularCount || 0,
-                      record.selectedReleaseMetrics.vernacularCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.vernacularCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `vernacularCount`) || 0) -
-            Number(_.get(b, `vernacularCount`) || 0)
-          );
-        },
-      },
-      {
-        // distributionCount
-        title: (
-          <Tooltip title={`Total distribution count in last sync`}>
-            Distribution count
-          </Tooltip>
-        ),
-        dataIndex: "distributionCount",
-        key: "distributionCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.distributionCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.distributionCount || 0,
-                      record.selectedReleaseMetrics.distributionCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.distributionCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `distributionCount`) || 0) -
-            Number(_.get(b, `distributionCount`) || 0)
-          );
-        },
-      },
-
-      {
-        // referenceCount
-        title: (
-          <Tooltip title={`Total references in last import`}>
-            Refererences count
-          </Tooltip>
-        ),
-        dataIndex: "referenceCount",
-        key: "referenceCount",
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-                }}
-                exact={true}
-              >
-                {record.referenceCount}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      record.referenceCount || 0,
-                      record.selectedReleaseMetrics.referenceCount || 0
-                    ),
-                  }}
-                >
-                  {record.selectedReleaseMetrics.referenceCount || 0}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          return (
-            Number(_.get(a, `referenceCount`) || 0) -
-            Number(_.get(b, `referenceCount`) || 0)
-          );
-        },
-      },
+      ...additionalColumns
     ];
-
+    const scroll = columns.length < 8 ? null : {x: `${800 + (columns.length - 7) * 200}px`}
     return (
       <Layout
         openKeys={["assembly"]}
@@ -546,7 +263,22 @@ class GSDIssuesMatrix extends React.Component {
         >
           <div>
             <Row>
-              <Col md={12} sm={24}></Col>
+              <Col md={12} sm={24}>
+              <Form.Item
+                  {...formItemLayout}
+                  label="Select view"
+                  style={{ marginBottom: "8px" }}
+                >
+                <Select style={{width: '300px'}} 
+                  value={selectedGroup}
+                  onChange={this.selectGroup}
+                  >
+                  {Object.keys(groups).map(k => 
+                  <Select.Option value={k}>{_.startCase(k)}</Select.Option>
+                  )}
+                </Select>
+                </Form.Item>
+              </Col>
               <Col md={12} sm={24}>
                 <Form.Item
                   {...formItemLayout}
@@ -574,6 +306,7 @@ class GSDIssuesMatrix extends React.Component {
               columns={columns}
               dataSource={data}
               loading={loading}
+              scroll={scroll}
               pagination={{ pageSize: 100 }}
             />
           )}
@@ -583,11 +316,9 @@ class GSDIssuesMatrix extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
+const mapContextToProps = ({ user, catalogue }) => ({
   user,
-  issue,
-  issueMap,
   catalogue,
 });
 
-export default withContext(mapContextToProps)(GSDIssuesMatrix);
+export default withContext(mapContextToProps)(SourceMetrics);
