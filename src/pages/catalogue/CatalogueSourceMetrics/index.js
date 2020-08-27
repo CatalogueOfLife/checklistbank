@@ -26,10 +26,14 @@ const formItemLayout = {
 const defaultViewColumnOrder = 'sectorCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount'.split(' ');
 
 const getColorForDiff = (current, released) => {
-  const pct = released > 0 ? (current / released) * 100 : 100;
-  if (pct >= 100) {
+  const pct = released > 0 ? (current / released) * 100 : -1;
+  if (pct === -1) {
+    return "grey";
+  } else if (pct === 100) {
     return "green";
-  } else if (pct >= 75) {
+  } else if (pct > 100) {
+    return "orange";
+  }else if (pct >= 75) {
     return "orange";
   } else {
     return "red";

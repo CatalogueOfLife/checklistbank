@@ -201,6 +201,13 @@ class ColTree extends React.Component {
               }
             }
             return res;
+          } else if(treeType === "CATALOGUE"){
+            for(let i = res.data.length -2; i > -1; i--){
+              if(res.data[i].sectorKey && res.data[i].sectorKey !== res.data[i+1].sectorKey){
+                res.data[i].sectorRoot = true
+              }
+            }
+            return res;
           } else {
             return res;
           }
@@ -303,6 +310,19 @@ class ColTree extends React.Component {
               ...res.data,
               result: res.data.result.map(r => ({
                 sectorKey: _.get(dataRef, "taxon.sectorKey"),
+                ...r
+                
+              }))
+            }
+          };
+        } else if (_.get(res, 'data.empty') !== true && treeType === "CATALOGUE" && _.get(dataRef, "taxon.sectorKey")) {
+          // If it is a source and the parent has a sectorKey, copy it to children
+          return {
+            ...res,
+            data: {
+              ...res.data,
+              result: res.data.result.map(r => ({
+                isRootSector: _.get(r, 'sectorKey') && _.get(r, 'sectorKey') !== _.get(dataRef, "taxon.sectorKey"),
                 ...r
                 
               }))
