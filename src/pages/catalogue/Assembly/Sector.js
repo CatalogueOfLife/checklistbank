@@ -159,9 +159,11 @@ class Sector extends React.Component {
     const isRootSector =
       
       (!_.get(taxon, "parentId") && !isPlaceHolder) ||
+      isPlaceHolder && _.get(sector, "target.id") === _.get(taxon, "parentId") ||
       (_.get(sector, "target.id") &&
         sector.target &&
         taxon.parentId === sector.target.id);
+
     const isRootSectorInSourceTree = taxon.id === sector.subject.id;
     const isSourceTree =
     catalogueKey !== _.get(taxon, "datasetKey");

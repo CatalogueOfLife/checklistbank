@@ -59,7 +59,8 @@ class NameSearchAutocomplete extends React.Component {
             title: name.usage.name.scientificName,
           })) : res.data.suggestions.map((name) => ({
             key: name.usageId ,
-            title: name.suggestion 
+            title: name.suggestion,
+            name: name.match
           }));
         this.setState({
           names
@@ -82,7 +83,7 @@ class NameSearchAutocomplete extends React.Component {
     const { value } = this.state;
     const options = this.state.names.map((o) => {
       return (
-        <Option key={o.key} value={o.title}>
+        <Option key={o.key} value={o.name}>
            <Highlighter
             highlightStyle={{ fontWeight: "bold", padding: 0 }}
             searchWords={value.split(" ")}
