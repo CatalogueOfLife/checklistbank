@@ -15,7 +15,7 @@ import ColumnFilter from "./ColumnFilter";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import { getDatasetsBatch, getCatalogues } from "../../api/dataset";
+import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 
 
@@ -46,7 +46,6 @@ class DatasetList extends React.Component {
     const {catalogueKey} = this.props;
     this.state = {
       data: [],
-      catalogues: [],
       excludeColumns:
         JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
         [],
@@ -94,7 +93,7 @@ class DatasetList extends React.Component {
           render: (text, record) => <DatasetLogo datasetKey={record.key} />
         },
         {
-          title: "Authors and Editors",
+          title: "Authors & Editors",
           dataIndex: "authorsAndEditors",
           key: "authorsAndEditors",
           sorter: true
@@ -115,28 +114,12 @@ class DatasetList extends React.Component {
           dataIndex: "type",
           key: "type"
         },
-        /* {
-          title: "Code",
-          dataIndex: "code",
-          key: "code"
-        }, */
         {
           title: "Size",
           dataIndex: "size",
           key: "size",
           sorter: true
         },
-        /* {
-          title: "Data Format",
-          dataIndex: "format",
-          key: "format",
-          render: (text, record) => record.dataFormat
-        }, */
-       /*  {
-          title: "Import Frequency",
-          dataIndex: "importFrequency",
-          key: "importFrequency"
-        }, */
         {
           title: "Created",
           dataIndex: "created",
@@ -191,10 +174,6 @@ class DatasetList extends React.Component {
       current: (Number(params.offset) / Number(params.limit)) +1
       
     } }, this.getData);
-
-    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res)=> this.setState({catalogues: _.get(res, 'data.result') ?_.get(res, 'data.result') : [] }))
-
-   
   }
 
 
@@ -250,8 +229,6 @@ class DatasetList extends React.Component {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
-      code: filters.code,
-      format: filters.format,
     };
 
     if (sorter) {
@@ -275,13 +252,10 @@ class DatasetList extends React.Component {
   }
 
   render() {
-    const { data, loading, error, excludeColumns, catalogues, defaultColumns} = this.state;
-    const { dataFormat, nomCode, datasetType, datasetOrigin } = this.props
+    const { data, loading, error, excludeColumns, defaultColumns} = this.state;
+    const { datasetType, datasetOrigin } = this.props
     defaultColumns[5].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
     defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
-    defaultColumns[7].filters = nomCode.map(i => ({text: _.startCase(i.name), value: i.name}))
-    defaultColumns[8].filters = catalogues.map(i => ({text: `${i.alias} [${i.key}]`, value: i.key}))
-    defaultColumns[10].filters = dataFormat.map(i => ({text: _.startCase(i.name), value: i.name}))
 
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
@@ -367,6 +341,6 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, dataFormat, nomCode, datasetType, datasetOrigin, catalogueKey }) => ({ user, dataFormat, nomCode, datasetType, datasetOrigin, catalogueKey });
+const mapContextToProps = ({ user, datasetType, datasetOrigin, catalogueKey }) => ({ user, datasetType, datasetOrigin, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetList);
