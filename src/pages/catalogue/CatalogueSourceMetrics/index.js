@@ -23,6 +23,7 @@ const formItemLayout = {
   },
 };
 
+const defaultViewColumnOrder = 'sectorCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount'.split(' ');
 
 const getColorForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : 100;
@@ -38,12 +39,11 @@ const getColorForDiff = (current, released) => {
 class SourceMetrics extends React.Component {
   constructor(props) {
     super(props);
-    // const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
 
     this.state = {
       data: [],
       groups: {},
-      selectedGroup: null,
+      selectedGroup: 'default',
       loading: false,
     };
   }
@@ -181,24 +181,16 @@ class SourceMetrics extends React.Component {
    
 
     const columnsSorter = selectedGroup && selectedGroup.indexOf('Rank') > -1 ? 
-      (a, b) => rank.indexOf(b) - rank.indexOf(a) :
+      (a, b) => rank.indexOf(b) - rank.indexOf(a) : selectedGroup === 'default' ?
+      (a, b) => defaultViewColumnOrder.indexOf(a) - defaultViewColumnOrder.indexOf(b) :
       (a, b) => a.localeCompare(b)
-  /*     (a, b) => {
-        const pathA = selectedGroup === 'default' ? `metrics[${a}]` : `metrics[${selectedGroup}][${a}]`
-        const pathB = selectedGroup === 'default' ? `metrics[${b}]` : `metrics[${selectedGroup}][${b}]`
-        if(data[0]){
-          return _.get(data[0], pathB) - _.get(data[0], pathA)
-        } else {
-          return a.localeCompare(b)
-        }
-      } */
 
 
     const additionalColumns = !groups[selectedGroup] ? [] : groups[selectedGroup]
     .sort(columnsSorter)
     .map(column => ({
       // nameCount
-      title: _.startCase(column),
+      title: _.startCase(column).split(' Count')[0],
       dataIndex: selectedGroup === 'default' ? ["metrics", column] : ["metrics", selectedGroup, column],
       key: column,
       render: (text, record) => {
