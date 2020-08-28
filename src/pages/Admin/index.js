@@ -107,6 +107,29 @@ class AdminPage extends React.Component {
         })
       );
   };
+
+  updateUsageCounts = () => {
+    this.setState({ updateUsageCountsLoading: true });
+    axios
+      .post(`${config.dataApi}admin/counter-update`)
+      .then(res => {
+        this.setState(
+          { updateUsageCountsLoading: false, error: null },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "updating all managed usage counts"
+            });
+          }
+        );
+      })
+      .catch(err =>
+        this.setState({
+          error: err,
+          updateUsageCountsLoading: false
+        })
+      );
+  };
   
   recalculateSectorCounts = () => {
     this.setState({ recalculateSectorCountsLoading: true });
@@ -181,6 +204,7 @@ class AdminPage extends React.Component {
     const {
       updateAllLogosloading,
       updateAllMetricsloading,
+      updateUsageCountsLoading,
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
@@ -268,9 +292,25 @@ class AdminPage extends React.Component {
                 </Button>
               </Popconfirm>
 
+              <Popconfirm
+                placement="rightTop"
+                title="Update usage counts?"
+                onConfirm={this.updateUsageCounts}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={updateUsageCountsLoading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Update usage counts
+                </Button>
+              </Popconfirm>
+
           <Popconfirm
             placement="rightTop"
-            title="Recalculate sector counts?"
+            title="Update sector counts?"
             onConfirm={this.recalculateSectorCounts}
             okText="Yes"
             cancelText="No"
@@ -280,7 +320,7 @@ class AdminPage extends React.Component {
               loading={recalculateSectorCountsLoading}
               style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              Recalculate sector counts
+              Update sector counts
             </Button>
           </Popconfirm>
 

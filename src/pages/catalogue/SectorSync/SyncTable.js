@@ -361,9 +361,10 @@ class SyncTable extends React.Component {
               } else if (record.state === "finished") {
                 return (
                   <React.Fragment>
+                    <Tag key="speciesCount" color="blue">Species Count: {_.get(record, `taxaByRankCount.species`)}</Tag>
                     {[
                       "taxonCount",
-                      "nameCount",
+                      "synonymCount",
                       "referenceCount",
                       "distributionCount",
                       "descriptionCount",

@@ -11,6 +11,7 @@ const ImportMetrics = ({data}) => {
       <React.Fragment>
         <Row style={{padding: '10px'}}>
         <Col span={24}>
+          <Tag key="speciesCount" color="blue">Species Count: {_.get(data, `taxaByRankCount.species`)}</Tag>
           {_.map('nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount'.split(' '), (c)=>{
             return (_.get(data, `${c}`))? <Tag key={c} color="blue">{_.startCase(c)}: {_.get(data, `${c}`)}</Tag> : '';
           })}
