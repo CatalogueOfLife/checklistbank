@@ -537,7 +537,15 @@ class ColTree extends React.Component {
     if (expandAll) {
       newState.expandedKeys = loadedKeys;
     }
-    this.setState(newState)
+    this.setState(newState, () => {
+      if(defaultExpandKey){
+        setTimeout(()=>{
+          if(_.get(this, 'treeRef.current')){
+            this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
+        }
+        } , 100)
+      }             
+    })
   }
 
   confirmAttach = (node, dragNode, mode) => {
