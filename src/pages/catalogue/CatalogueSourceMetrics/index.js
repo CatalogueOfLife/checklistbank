@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Tooltip, Form, Select } from "antd";
+import { Table, Alert, Row, Col, Form, Select } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
-import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
+import TaxonomicCoverage from "./TaxonomicCoverage"
 const _ = require("lodash");
 
 const formItemLayout = {
@@ -321,6 +321,7 @@ class SourceMetrics extends React.Component {
               dataSource={data}
               loading={loading}
               scroll={scroll}
+              expandable={{ expandedRowRender: row => <div style={{marginLeft: '46px'}}><h4>Taxonomic coverage</h4><TaxonomicCoverage dataset={row} catalogueKey={catalogueKey} /></div> }}
               pagination={{ pageSize: 100 }}
             />
           )}
