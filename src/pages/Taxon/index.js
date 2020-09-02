@@ -24,6 +24,7 @@ import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import IncludesTable from "./Includes"
 
 const md = 5;
 
@@ -45,7 +46,8 @@ class TaxonPage extends React.Component {
       verbatimError: null,
       verbatim: null,
       logoUrl: null,
-      sourceDataset: null
+      sourceDataset: null,
+      includes: []
     };
   }
 
@@ -53,6 +55,7 @@ class TaxonPage extends React.Component {
     this.getTaxon();
     this.getInfo();
     this.getClassification();
+    this.getIncludes();
   };
 
   componentDidUpdate = (prevProps) => {
@@ -66,6 +69,7 @@ class TaxonPage extends React.Component {
     this.getTaxon();
     this.getInfo();
     this.getClassification();
+    this.getIncludes();
     }
   }
 
@@ -212,6 +216,33 @@ class TaxonPage extends React.Component {
       });
   };
 
+  getIncludes = () => {
+    const {
+      match: {
+        params: { key, taxonOrNameKey: taxonKey }
+      },
+      datasetKey
+    } = this.props;
+
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${
+        taxonKey
+      }&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+    )
+    .then(res => {
+      this.setState({
+        includesLoading: false,
+        includes: _.get(res, 'data.facets.rank') || [],
+      });
+    })
+    .catch(err => {
+      this.setState({
+        includesLoading: false,
+        includes: []
+      });
+    });
+  }
+
   render() {
     const {
       dataset,
@@ -227,7 +258,8 @@ class TaxonPage extends React.Component {
       taxonError,
       synonymsError,
       classificationError,
-      infoError    
+      infoError,
+      includes    
     } = this.state;
 
     const synonyms = info && info.synonyms && info.synonyms.length > 0 ? info.synonyms.filter(s => s.status !== 'misapplied') : [];
@@ -432,6 +464,16 @@ class TaxonPage extends React.Component {
                 taxon={taxon}
                 datasetKey={datasetKey}
                 catalogueKey={catalogueKey}
+              />
+            </PresentationItem>
+          )}
+          {includes.length > 1  && taxon && (
+            <PresentationItem md={md} label="Includes">
+              <IncludesTable
+                style={{ marginTop: "-3px", marginLeft: "-3px" }}
+                data={includes}
+                taxon={taxon}
+                datasetKey={datasetKey}
               />
             </PresentationItem>
           )}
