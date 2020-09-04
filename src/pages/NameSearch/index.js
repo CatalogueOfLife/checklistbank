@@ -365,11 +365,24 @@ class NameSearchPage extends React.Component {
                     onChange={(value) => this.updateSearch({ fuzzy: value })}
                   />
                 </FormItem>
-                <FormItem label="Match partial words">
-                  <Switch
+                <FormItem >
+{/*                   <Switch
                     checked={params.prefix === true}
                     onChange={(value) => this.updateSearch({ prefix: value })}
-                  />
+                  /> */}
+                   <RadioGroup
+                    onChange={(evt) => {
+                      
+                        this.updateSearch({ type: evt.target.value });
+                      
+                    }}
+                    value={params.type || "WHOLE_WORDS"}
+                  > 
+                  <Radio value="WHOLE_WORDS">Match whole words</Radio>
+                    <Radio value="PREFIX">Partial words</Radio>
+                    
+                    <Radio value="EXACT">Exact</Radio>
+                  </RadioGroup>
                 </FormItem>
 
                 <FormItem
