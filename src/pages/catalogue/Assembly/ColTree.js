@@ -481,7 +481,9 @@ class ColTree extends React.Component {
         const parentNode = this.findNode(loadedKeys[index-1], treeData);
         if(parentNode && _.isArray(_.get(parentNode, 'children')) && parentNode.children.length > 0) {
           node = parentNode.children.find(c => c.taxon.id.indexOf('incertae-sedis') > -1)
-          loadedKeys.splice(index, 0, node.taxon.id)
+          if(node){
+            loadedKeys.splice(index, 0, node.taxon.id)
+          }
         } 
       }
       if(node){

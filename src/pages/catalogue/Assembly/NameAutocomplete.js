@@ -7,7 +7,6 @@ import _ from "lodash";
 import {debounce} from 'lodash';
 import Highlighter from "react-highlight-words";
 
-const Option = AutoComplete.Option;
 
 class NameSearchAutocomplete extends React.Component {
   constructor(props) {
@@ -54,16 +53,8 @@ class NameSearchAutocomplete extends React.Component {
 
     axios(`${url}?vernaculars=false&fuzzy=false&limit=25&q=${q}`)
       .then((res) => {
-        const names = res.data.result ? res.data.result.map((name) => ({
-            key: name.usage.name.id,
-            title: name.usage.name.scientificName,
-          })) : res.data.suggestions.map((name) => ({
-            key: name.usageId ,
-            title: name.suggestion,
-            name: name.match
-          }));
         this.setState({
-          names
+          names: res.data.suggestions || []
         });
       })
       .catch((err) => {
@@ -71,8 +62,11 @@ class NameSearchAutocomplete extends React.Component {
       });
   };
   onSelectName = (val, obj) => {
+    const selectedTaxon = _.get(obj, 'data.acceptedUsageId') ? 
+    {key: _.get(obj, 'data.acceptedUsageId'), title: _.get(obj, 'data.parentOrAcceptedName')} :
+    {key: _.get(obj, 'data.usageId'), title: _.get(obj, 'data.name')}
     this.setState({ value: val });
-    this.props.onSelectName({ key: obj.key, title: val});
+    this.props.onSelectName(selectedTaxon);
   };
   onReset = () => {
     this.setState({ value: "", names: [] });
@@ -81,27 +75,30 @@ class NameSearchAutocomplete extends React.Component {
   render = () => {
     const { placeHolder, autoFocus, disabled = false } = this.props;
     const { value } = this.state;
+
     const options = this.state.names.map((o) => {
-      return (
-        <Option key={o.key} value={o.name}>
-           <Highlighter
-            highlightStyle={{ fontWeight: "bold", padding: 0 }}
-            searchWords={value.split(" ")}
-            autoEscape
-            textToHighlight={o.title}
-          /> 
-        </Option>
-      );
-    });
+      return {
+          key: o.usageId,
+          value: o.suggestion,
+          label: (
+              <Highlighter
+              highlightStyle={{ fontWeight: "bold", padding: 0 }}
+              searchWords={value.split(" ")}
+              autoEscape
+              textToHighlight={o.suggestion}
+            /> 
+          ),
+          data: o
+        }
+  });
     const suffix = !disabled && value ? (
       <CloseCircleOutlined key="suffix" onClick={this.onReset} style={{ marginRight: "6px" }} />
     ) : (
       ""
     );
-    // TODO dataSource is deprecated, but options att dont work for custom options, children is used for input
     return (
       <AutoComplete
-        dataSource={options}
+        options={options}
         style={{ width: "100%" }}
         onSelect={this.onSelectName}
         onSearch={this.getNames}

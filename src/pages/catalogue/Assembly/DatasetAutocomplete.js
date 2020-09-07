@@ -84,23 +84,26 @@ class DatasetAutocomplete extends React.Component {
 
           const options = this.state.datasets ? this.state.datasets.map((o) => {
               const text = `${o.alias || o.title} [${o.key}]`;
-            return (
-              <Option key={o.key} value={text}>
-                <Highlighter
+              return {
+                key: o.key,
+                value: text,
+                label: (
+                    <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={value.split(" ")}
                   autoEscape
                   textToHighlight={text}
                 />
-              </Option>
-            );
+                ),
+                data: o
+              }
+            
           }) : [];
 
         return <AutoComplete
-            dataSource={this.state.datasets}
             onSelect={this.onSelectDataset}
             onSearch={this.getDatasets}
-            dataSource={options}
+            options={options}
             placeholder={this.props.placeHolder || "Find dataset"}
             style={style ? style : { width: '100%' }}
             onChange={(value) => this.setState({value})}
