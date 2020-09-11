@@ -346,13 +346,6 @@ class TaxonPage extends React.Component {
           <PresentationItem md={md} label="Extinct">
             <BooleanValue value={_.get(taxon, "extinct")} />
           </PresentationItem>
-{/* 
-          <PresentationItem md={md} label="Fossil">
-            <BooleanValue value={_.get(taxon, "fossil")} />
-          </PresentationItem>
-          <PresentationItem md={md} label="Recent">
-            <BooleanValue value={_.get(taxon, "recent")} />
-          </PresentationItem> */}
 
           {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
             <PresentationItem
@@ -471,38 +464,15 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
           <Row>
-          {_.get(taxon, "accordingTo") && (<Col span={12}>
-          
-          <PresentationItem md={md * 2} label="According to">
-            {_.get(taxon, "accordingTo")}
-           
-          </PresentationItem>
-        
-        </Col>)}
-          {_.get(taxon, "scrutinizer") && (<Col span={12}>
-          
-          <PresentationItem md={md * 2} label="Taxonomic scrutiny">
-            {`${_.get(taxon, "scrutinizer")}`}
-            {_.get(
-              taxon,
-              "accordingToDate"
-            ) &&
-              `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
-          </PresentationItem>
-        
-        </Col>)}
-{/*           {_.get(taxon, "accordingTo") && (<Col span={12}>
-          
-            <PresentationItem md={md * 2} label="According to">
-              {`${_.get(taxon, "accordingTo")}`}
-              {_.get(
-                taxon,
-                "accordingToDate"
-              ) &&
-                `, ${moment(_.get(taxon, "accordingToDate")).format("LL")}`}
+
+          {_.get(taxon, "scrutinizer") && (<Col span={12}>          
+            <PresentationItem md={md * 2} label="Taxonomic scrutiny">
+              {`${_.get(taxon, "scrutinizer")}`}
+              {_.get(taxon,"scrutinizerDate") && `, ${moment(_.get(taxon, "scrutinizerDate")).format("LL")}`}
             </PresentationItem>
-          
-          </Col>)} */}
+          </Col>)
+          }
+
           <Col span={12}>
           {_.get(taxon, "origin") && (
             <PresentationItem md={md * 2} label="Origin">
