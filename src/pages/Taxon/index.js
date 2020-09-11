@@ -321,20 +321,13 @@ class TaxonPage extends React.Component {
           )}
           <Row style={{borderBottom: '1px solid #eee'}}>
             <Col span={12}>
-            {_.get(taxon, "name.rank") && (
-            <PresentationItem md={md * 2} label="Rank">
-              {_.get(taxon, "name.rank")}
+            {_.get(taxon, "status") && (
+            <PresentationItem md={md * 2} label="Status">
+              {_.get(taxon, "status") && " " && _.get(taxon, "name.rank")}
             </PresentationItem>
           )}
             </Col>
-            <Col span={12}>
-            {_.get(taxon, "status") && (
-            <PresentationItem md={md * 2} label="Status">
-              {_.get(taxon, "status")}
-            </PresentationItem>
-          )}</Col>
-          </Row>
-          
+          </Row>          
           
           {_.get(taxon, "webpage") && (
             <PresentationItem md={md} label="External webpage">
