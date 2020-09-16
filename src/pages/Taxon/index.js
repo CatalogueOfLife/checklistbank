@@ -396,9 +396,9 @@ class TaxonPage extends React.Component {
               type="error"
             />
           )}
-          {_.get(taxon, "lifezones") && (
-            <PresentationItem md={md} label="Lifezones">
-              {_.get(taxon, "lifezones").join(", ")}
+          {_.get(taxon, "environments") && (
+            <PresentationItem md={md} label="environments">
+              {_.get(taxon, "environments").join(", ")}
             </PresentationItem>
           )}
 

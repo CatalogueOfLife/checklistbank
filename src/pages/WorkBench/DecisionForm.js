@@ -54,7 +54,7 @@ const DecisionForm = (props) => {
       nomstatus,
       nomCode,
       nametype,
-      lifezone,
+      environment,
       taxonomicstatus,
       onCancel,
       onOk,
@@ -89,7 +89,7 @@ const DecisionForm = (props) => {
             code: values.nomCode,
             type: values.nametype
           },
-          lifezones: values.lifezones,
+          environments: values.environments,
           status: values.status,
           fossil: values.fossil,
           recent: values.recent,
@@ -185,7 +185,7 @@ const DecisionForm = (props) => {
         nametype: (_.get(currentDecision, 'name.type')) ? _.get(currentDecision, 'name.type') : '',
         nomstatus: (_.get(currentDecision, 'name.nomstatus')) ? _.get(currentDecision, 'name.nomstatus') : '',
         nomCode: (_.get(currentDecision, 'name.nomCode')) ? _.get(currentDecision, 'name.nomCode') : '',
-        lifezones: (_.get(currentDecision, 'lifezones')) ? _.get(currentDecision, 'lifezones') : [],
+        environments: (_.get(currentDecision, 'environments')) ? _.get(currentDecision, 'environments') : [],
         extinct: (_.get(currentDecision, 'extinct')) === true ? true : false,
         note: (_.get(currentDecision, 'note')) ? _.get(currentDecision, 'note') : ''
       }
@@ -288,9 +288,9 @@ const DecisionForm = (props) => {
                 ))}
               </Select>
           </FormItem>
-          <FormItem {...formItemLayout} label="Lifezones" name="lifezones">
+          <FormItem {...formItemLayout} label="environments" name="environments">
           <Select style={{ width: 200 }} showSearch mode="multiple">
-                {lifezone.map(r => (
+                {environment.map(r => (
                   <Option key={r.name} value={r.name}>
                     {r.name}
                   </Option>
@@ -331,12 +331,12 @@ const DecisionForm = (props) => {
 }
 
 
-const mapContextToProps = ({ rank, nomstatus, nomCode, nametype, lifezone, taxonomicstatus }) => ({
+const mapContextToProps = ({ rank, nomstatus, nomCode, nametype, environment, taxonomicstatus }) => ({
   rank,
   nomstatus,
   nomCode,
   nametype,
-  lifezone,
+  environment,
   taxonomicstatus
 });
 
