@@ -525,9 +525,10 @@ class ColTree extends React.Component {
                 ); 
             }
         } else {
+          const treeRef = _.get(this, 'treeRef');
           setTimeout(()=>{
-            if(_.get(this, 'treeRef.current')){
-              this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
+            if(_.get(treeRef, 'current')){
+              treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
           }
           } , 100)
          
@@ -1058,7 +1059,7 @@ return  axios
     
 
     return (
-      <div>
+      <React.Fragment>
        
         {error && (
           <React.Fragment>
@@ -1152,7 +1153,7 @@ return  axios
           </ColTreeContext.Consumer>
         )}
        {!error && treeData.length < rootTotal && <Button loading={rootLoading} onClick={this.loadRoot}>Load more </Button>}
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -36,11 +36,14 @@ class Assembly extends React.Component {
       assemblyTaxonKey: params.assemblyTaxonKey || null,
       sourceTaxonKey: null,
       childModalVisible: false,
-      missingTargetKeys: {} // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
+      missingTargetKeys: {}, // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
+      height: 600
     };
 
     // this.assemblyRef = React.createRef();
     // this.sourceRef = React.createRef();
+    this.wrapperRef = React.createRef();
+
   }
 
   componentDidMount() {
@@ -55,8 +58,15 @@ class Assembly extends React.Component {
     this.timer = setInterval(() => {
       this.getSyncState();
     }, syncStateHeartbeat);
+    this.resizeHandler()
+    window.addEventListener('resize', this.resizeHandler)
   }
-
+  resizeHandler = () => {
+    const height = _.get(this.wrapperRef, 'current.clientHeight');
+    if(height){
+      this.setState({ height })
+    } 
+  }
   componentDidUpdate = prevProps => {
     const params = qs.parse(_.get(this.props, "location.search"));
     const prevParams = qs.parse(_.get(prevProps, "location.search"));
@@ -79,6 +89,7 @@ class Assembly extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
   getSyncState = async () => {
@@ -322,7 +333,8 @@ class Assembly extends React.Component {
       childModalVisible,
       assemblyColSpan,
       sourceColSpan,
-      showSync
+      showSync,
+      height
     } = this.state;
 
     const {
@@ -346,7 +358,7 @@ class Assembly extends React.Component {
           <title>CoL+ Assembly</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
-        <PageContent style={{padding: 12}}>
+        <PageContent style={{padding: 12, marginBottom: 0, height: "100%"}}>
           <ColTreeContext.Provider
             value={{
               mode: this.state.mode,
@@ -417,8 +429,8 @@ class Assembly extends React.Component {
             
             </Row>
 
-            <Row style={{ height: "100%" }}>
-              <Col span={assemblyColSpan} className="assembly-tree-box" >
+            <Row >
+              <Col span={assemblyColSpan} className="assembly-tree-box"  >
                   <Row>
                     <Col span={12}>
                       <h4>{catalogue.title}</h4>{" "}
@@ -517,8 +529,8 @@ class Assembly extends React.Component {
                     />
                   )}
                   {catalogue && (
-                      <ColTree
-                        height={600}
+                     <div ref={this.wrapperRef} style={{height: "100%"}}> <ColTree
+                        height={height}
                         treeRef={ref => (this.assemblyRef = ref)}
                         location={location}
                         dataset={{ key: catalogueKey }}
@@ -534,6 +546,7 @@ class Assembly extends React.Component {
                         defaultExpandKey={assemblyTaxonKey}
                         addMissingTargetKey={this.addMissingTargetKey}
                       />
+                      </div>
                   )}
               </Col>
               
@@ -604,7 +617,7 @@ class Assembly extends React.Component {
                   )}
                     {this.state.selectedDataset && (
                       <ColTree
-                        height={600}
+                        height={height}
                         treeRef={ref => (this.sourceRef = ref)}
                         location={location}
                         dataset={this.state.selectedDataset}
