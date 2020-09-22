@@ -150,10 +150,10 @@ class DatasetMeta extends React.Component {
             {(data.version || data.released) && `${data.version ? data.version : ''}${data.released ? ' Received by CoL: '+data.released : ''}`}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
-            {data.contact}
+            {data.contact && data.contact.familyName}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="authorsAndEditors" defaultMessage="Authors and Editors" />}>
-            {data.authorsAndEditors}
+            {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && data.authorsAndEditors.map(a => a.familyName).join(', ')}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="website" defaultMessage="Website" />}>
             {data.website && <a href={data.website} target="_blank" >{data.website}</a>}
