@@ -96,24 +96,27 @@ class DatasetList extends React.Component {
           title: "Authors & Editors",
           dataIndex: "authorsAndEditors",
           key: "authorsAndEditors",
-          sorter: true
+          sorter: true,
+          render: (text, record) => {
+            return text && _.isArray(text) ? text.map(t => t.familyName).join(', ') : ''
+          }
         },
         {
           title: "Version",
           dataIndex: "version",
           key: "version"
         },
-        {
+         {
           title: "Origin",
           dataIndex: "origin",
           key: "origin"
          
         },
-        {
+       {
           title: "Type",
           dataIndex: "type",
           key: "type"
-        },
+        }, 
         {
           title: "Size",
           dataIndex: "size",
@@ -221,14 +224,15 @@ class DatasetList extends React.Component {
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
-
+    
+    
     this.setState({
       pagination: pager
     });
-    let query = {... this.state.params, 
+    let query = { 
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
-      ...filters,
+      ...Object.keys(filters).reduce((acc, cur)=> (filters[cur] !== null && (acc[cur] = filters[cur]), acc ), {}),
     };
 
     if (sorter) {
@@ -247,16 +251,23 @@ class DatasetList extends React.Component {
     this.setState({ excludeColumns });
   };
 
-  setRecentlyVistied = () => {
-
-  }
+ 
 
   render() {
-    const { data, loading, error, excludeColumns, defaultColumns} = this.state;
+    const { data, loading, error, excludeColumns, defaultColumns, params} = this.state;
     const { datasetType, datasetOrigin } = this.props
     defaultColumns[5].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
+    if(params.origin){
+      defaultColumns[5].filteredValue = _.isArray(params.origin) ? params.origin : [params.origin]
+    } else {
+      defaultColumns[5].filteredValue = null
+    }  
     defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
-
+    if(params.type){
+      defaultColumns[6].filteredValue = _.isArray(params.type) ? params.type : [params.type]
+    } else {
+      defaultColumns[6].filteredValue = null
+    } 
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
         ? [
