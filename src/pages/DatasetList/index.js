@@ -98,7 +98,7 @@ class DatasetList extends React.Component {
           key: "authorsAndEditors",
           sorter: true,
           render: (text, record) => {
-            return text && _.isArray(text) ? text.map(t => t.familyName).join(', ') : ''
+            return text && _.isArray(text) ? text.map(t => t.name).join(', ') : ''
           }
         },
         {
