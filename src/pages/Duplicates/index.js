@@ -388,7 +388,8 @@ class DuplicateSearchPage extends React.Component {
           .catch(err => {
             notification.error({
               message: "Error",
-              description: err.message
+              description: _.get(err, 'response.data.message') || err.message
+
             });
           });
       });

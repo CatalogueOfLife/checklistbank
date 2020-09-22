@@ -64,9 +64,7 @@ class DatasetAutocomplete extends React.Component {
     }
     onSelectDataset = (val, obj) => {
         this.setState({value: val})
-
         this.props.onSelectDataset({key: obj.key, title: val})
-       // this.setState({ datasetKey: val, datasetName: obj.props.children, selectedDataset: {key: val, title: obj.props.children}})
     }
     onReset = () => {
         this.setState({value: '', datasets: []})
