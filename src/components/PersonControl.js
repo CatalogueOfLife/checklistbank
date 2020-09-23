@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { PlusOutlined } from '@ant-design/icons';
-import { Input, Tag, Tooltip } from 'antd';
+import { Row, Tag, Col } from 'antd';
 import injectSheet from 'react-jss';
 import PersonForm from './PersonForm'
 import PersonPresentation from './PersonPresentation'
+import ReactDragListView from 'react-drag-listview'
+const { DragColumn } = ReactDragListView;
+
+
 const stringToArray = value => {
     if (Array.isArray(value)) {
       return value;
@@ -18,7 +22,8 @@ const stringToArray = value => {
 const styles = {
   newTag: {
     background: '#fff',
-    borderStyle: 'dashed'
+    borderStyle: 'dashed',
+    maxHeight: '22px'
   }
 };
 
@@ -44,7 +49,7 @@ class PersonControl extends React.Component {
     this.state = {
       persons: stringToArray(props.value),
       formVisible: false,
-      inputValue: ''
+      personForEdit: null
     };
   }
 
@@ -55,8 +60,8 @@ class PersonControl extends React.Component {
     this.triggerChange(array ? persons : null);
   };
 
-  showForm = () => {
-    this.setState({ formVisible: true });
+  showForm = (person) => {
+    this.setState({ personForEdit: person, formVisible: true });
   };
 
   handleInputChange = event => {
@@ -64,6 +69,7 @@ class PersonControl extends React.Component {
   };
 
   onFormSubmit = (person) => {
+
     const persons = [...this.state.persons, person];
     const {array = true} = this.props
     this.setState({
@@ -80,30 +86,53 @@ class PersonControl extends React.Component {
     }
   };
 
+  onDragEnd = (fromIndex, toIndex) => {
+    const persons = [...this.state.persons];
+    const person = persons.splice(fromIndex, 1)[0];
+    persons.splice(toIndex, 0, person);
+    const onChange = this.props.onChange;
+    if (onChange) {
+      onChange(persons); // will get derived state from props
+    }
+  }
 
   render() {
     const { persons, formVisible, inputValue } = this.state;
     const { classes, label, removeAll, array = true } = this.props;
 
+    const dragProps = {
+        onDragEnd: this.onDragEnd,
+        nodeSelector: 'li',
+        handleSelector: 'li'
+      }
+
     return (
       <React.Fragment>
+        <Row><DragColumn {...dragProps}> 
+          <ol style={{listStyle : 'none', paddingInlineStart: '0px'}}>
         {persons.map((person, index) => {
           
           const tagElem = (
-            <Tag key={person.familyName+person.givenName} closable={removeAll || index !== 0} onClose={() => this.handleClose(person)}>
+           <li style={{float: 'left', marginBottom: '4px'}}> <Tag key={person.familyName+person.givenName} closable={removeAll || index !== 0} onClose={() => this.handleClose(person)}>
               <PersonPresentation person={person} style={{display: 'inline-grid', margin: '3px 0px 3px 0px'}} />
+              
             </Tag>
+            </li>
           );
           return  tagElem;
         })}
-        {formVisible && (
-            <PersonForm style={{marginTop: '10px'}} onSubmit={this.onFormSubmit} onCancel={() => this.setState({formVisible: false})}/>
+        </ol>
+        </DragColumn>
+        
 
-        )}
         {!formVisible && (array ||  persons.length === 0) && (
           <Tag onClick={this.showForm} className={classes.newTag}>
             <PlusOutlined /> {label}
           </Tag>
+        )}
+        </Row> 
+                {formVisible && (
+           <Row><Col span={24}><PersonForm style={{marginTop: '10px'}} onSubmit={this.onFormSubmit} onCancel={() => this.setState({formVisible: false})}/></Col> </Row>
         )}
       </React.Fragment>
     );

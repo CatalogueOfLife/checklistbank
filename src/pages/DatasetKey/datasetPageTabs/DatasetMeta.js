@@ -153,7 +153,7 @@ class DatasetMeta extends React.Component {
             {data.contact && <PersonPresentation person={data.contact} />}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="authorsAndEditors" defaultMessage="Authors and Editors" />}>
-            {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && <Space align="start">{data.authorsAndEditors.map(a => <PersonPresentation person={a} />)}</Space>}
+            {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && <Row gutter={[8, 8]}>{data.authorsAndEditors.map(a => <Col ><PersonPresentation person={a} /></Col>)}</Row>}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="website" defaultMessage="Website" />}>
             {data.website && <a href={data.website} target="_blank" >{data.website}</a>}
