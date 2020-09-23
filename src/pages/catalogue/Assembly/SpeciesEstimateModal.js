@@ -201,7 +201,7 @@ const SpeciesestimateModal = (props) => {
           </FormItem>
 
           <FormItem {...tailFormItemLayout}>
-            <Button style={{ marginRight: "10px" }}>Cancel</Button>
+            <Button style={{ marginRight: "10px" }} onClick={toggleEdit} >Cancel</Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -234,7 +234,6 @@ const SpeciesestimateModal = (props) => {
   );
 };
 
-// ##############################################################
 
 const mapContextToProps = ({ estimateType }) => ({ estimateType });
 

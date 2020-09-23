@@ -6,6 +6,8 @@ import config from "../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
+import PersonControl from "./PersonControl";
+
 import CsvDelimiterInput from "./CsvDelimiterInput"
 import withContext from "./hoc/withContext";
 
@@ -156,12 +158,12 @@ const MetaDataForm = (props) => {
       )}
       {data && (
         <FormItem {...formItemLayout} label="Contact" name="contact">
-          <Input type="text" />
+          <PersonControl label="New contact" removeAll={true} array={false}/>
         </FormItem>
       )}
       {data && (
         <FormItem {...formItemLayout} label="Authors and Editors" name="authorsAndEditors">
-          <TagControl label="New person" removeAll={true} />
+          <PersonControl label="New Author/Editor" removeAll={true} />
         </FormItem>
       )}
       {data && (

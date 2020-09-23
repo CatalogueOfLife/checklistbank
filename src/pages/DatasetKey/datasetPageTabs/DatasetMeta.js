@@ -4,7 +4,7 @@ import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
-import { Switch, Rate, Row, Col } from "antd";
+import { Switch, Rate, Row, Col, Space } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -16,7 +16,7 @@ import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import moment from 'moment'
 import ImportButton from "../../Imports/importTabs/ImportButton";
-import BooleanValue from '../../../components/BooleanValue'
+import PersonPresentation from '../../../components/PersonPresentation'
 
 
 class DatasetMeta extends React.Component {
@@ -150,10 +150,10 @@ class DatasetMeta extends React.Component {
             {(data.version || data.released) && `${data.version ? data.version : ''}${data.released ? ' Received by CoL: '+data.released : ''}`}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="contact" defaultMessage="Contact" />}>
-            {data.contact && data.contact.name}
+            {data.contact && <PersonPresentation person={data.contact} />}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="authorsAndEditors" defaultMessage="Authors and Editors" />}>
-            {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && data.authorsAndEditors.map(a => a.name).join(', ')}
+            {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && <Space align="start">{data.authorsAndEditors.map(a => <PersonPresentation person={a} />)}</Space>}
           </PresentationItem>
           <PresentationItem label={<FormattedMessage id="website" defaultMessage="Website" />}>
             {data.website && <a href={data.website} target="_blank" >{data.website}</a>}
