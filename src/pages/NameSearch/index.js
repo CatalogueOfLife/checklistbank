@@ -130,7 +130,7 @@ class NameSearchPage extends React.Component {
       params = {
         limit: 50,
         offset: 0,
-        facet: ["rank", "issue", "status", "nomstatus", "type", "field"],
+        facet: ["rank", "issue", "status", "nomStatus", "nameType", "field"],
         sortBy: "taxonomic",
       };
       history.push({
@@ -138,7 +138,7 @@ class NameSearchPage extends React.Component {
         search: `?limit=50&offset=0`,
       });
     } else if (!params.facet) {
-      params.facet = ["rank", "issue", "status", "nomstatus", "type", "field"];
+      params.facet = ["rank", "issue", "status", "nomStatus", "nameType", "field"];
     }
 
     this.setState(
@@ -229,7 +229,7 @@ class NameSearchPage extends React.Component {
         params: {
           limit: 50,
           offset: 0,
-          facet: ["rank", "issue", "status", "nomstatus", "type", "field"],
+          facet: ["rank", "issue", "status", "nomStatus", "nameType", "field"],
         },
       },
       this.getData
@@ -253,8 +253,8 @@ class NameSearchPage extends React.Component {
       rank,
       taxonomicstatus,
       issue,
-      nomstatus,
-      nametype,
+      nomStatus,
+      nameType,
       namefield,
       datasetKey,
       catalogueKey,
@@ -278,14 +278,14 @@ class NameSearchPage extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
-    const facetNomStatus = _.get(facets, "nomstatus")
-      ? facets["nomstatus"].map((s) => ({
+    const facetNomStatus = _.get(facets, "nomStatus")
+      ? facets["nomStatus"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
-    const facetNomType = _.get(facets, "type")
-      ? facets.type.map((s) => ({
+    const facetNomType = _.get(facets, "nameType")
+      ? facets["nameType"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
@@ -443,15 +443,15 @@ class NameSearchPage extends React.Component {
             {advancedFilters && (
               <React.Fragment>
                 <MultiValueFilter
-                  defaultValue={_.get(params, "nomstatus")}
-                  onChange={(value) => this.updateSearch({ nomstatus: value })}
-                  vocab={facetNomStatus || nomstatus}
+                  defaultValue={_.get(params, "nomStatus")}
+                  onChange={(value) => this.updateSearch({ nomStatus: value })}
+                  vocab={facetNomStatus || nomStatus}
                   label="Nomenclatural status"
                 />
                 <MultiValueFilter
-                  defaultValue={_.get(params, "type")}
-                  onChange={(value) => this.updateSearch({ type: value })}
-                  vocab={facetNomType || nametype}
+                  defaultValue={_.get(params, "nameType")}
+                  onChange={(value) => this.updateSearch({ nameType: value })}
+                  vocab={facetNomType || nameType}
                   label="Name type"
                 />
                 <MultiValueFilter

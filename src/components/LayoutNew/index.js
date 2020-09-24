@@ -123,7 +123,7 @@ class SiteLayout extends Component {
             {this.props.children}
           </Content>
           <Footer >
-            <Row style={{ textAlign: 'center' }}>Catalogue of Life+</Row>
+            <Row style={{ textAlign: 'center' }}>Catalogue of Life</Row>
             <Row style={{ textAlign: 'center', marginTop: '8px' }}>
             {gitVersion && <Tag>
       <a href={`${gitFrontend}${gitVersion.short}`}>Frontend version: <strong>{gitVersion.short}</strong> {moment(gitVersion.created).format('LLL')}</a>

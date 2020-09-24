@@ -103,7 +103,7 @@ class HomePage extends React.Component {
       <Layout openKeys={[]} selectedKeys={[]} title="">
        
           <Helmet
-  title="Catalogue of Life +"
+  title="ChecklistBank"
   meta={[
   {
     charSet: "utf-8"
@@ -115,96 +115,83 @@ class HomePage extends React.Component {
    }]}
 />
 
-        <Card
-          style={{ marginTop: 20 }}
-          title="Catalogue of Life +"
-          hoverable
-          cover={
-            <img
-              alt="example"
-              src="//api.gbif.org/v1/image/unsafe/1170x422/http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg"
-            />
-          }
+<Card
+  style={{ marginTop: 20 }}
+  title="COL ChecklistBank"
+  hoverable
+  cover={
+    <img
+      alt="example"
+      src="//api.gbif.org/v1/image/unsafe/1170x422/http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg"
+    />
+  }
+>
+  <Row>
+    <Col span={8}>
+      {nameIndexData && (
+          <NavLink
+          to={{
+            pathname: `/names`
+          }}
+          exact={true}
         >
-          <Row>
-            <Col span={8}>
-              {nameIndexData && (
-                  <NavLink
-                  to={{
-                    pathname: `/names`
-                  }}
-                  exact={true}
-                >
-                <Statistic title="Names indexed" value={nameIndexData.total} />
-                </NavLink>
-              )}
-            </Col>
-            <Col span={8}>
-              {colDraftData && (
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
-                  }}
-                  exact={true}
-                >
-                  <Statistic
-                    title="Names in the CoL draft"
-                    value={colDraftData.total}
-                  />
-                </NavLink>
-              )}
-            </Col>
-            <Col span={8}>
-              {datasets && (
-                  <NavLink
-                  to={{
-                    pathname: `/dataset`
-                  }}
-                  exact={true}
-                >
-                <Statistic
-                  title="Datasets in the clearinghouse"
-                  value={datasets.total}
-                />
-                </NavLink>
-              )}
-            </Col>
-          </Row>
+        <Statistic title="Names indexed" value={nameIndexData.total} />
+        </NavLink>
+      )}
+    </Col>
+    <Col span={8}>
+      {colDraftData && (
+        <NavLink
+          to={{
+            pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
+          }}
+          exact={true}
+        >
+          <Statistic
+            title="Names in the CoL draft"
+            value={colDraftData.total}
+          />
+        </NavLink>
+      )}
+    </Col>
+    <Col span={8}>
+      {datasets && (
+          <NavLink
+          to={{
+            pathname: `/dataset`
+          }}
+          exact={true}
+        >
+        <Statistic
+          title="Datasets in ChecklistBank"
+          value={datasets.total}
+        />
+        </NavLink>
+      )}
+    </Col>
+  </Row>
 
 
+  <Meta title="Welcome to ChecklistBank" />
 
-          <Meta title="Welcome to the Catalogue of Life Clearinghouse" />
 
-
-<Row style={{ marginTop: 20 }}>
+  <Row style={{ marginTop: 20 }}>
     <Col style={{ paddingRight: "10px" }} span={16}>
-          <p>
-          The <a href="http://www.catalogueoflife.org">Catalogue of Life</a> has the mission to catalogue all known species as an authoritative consensus taxonomy produced by the global taxonomic community. Up to now it has completed peer-reviewed inclusion of nearly all extant species.
-          </p>
-          <p>
-          Many large institutional users (i.e. GBIF, EOL, ALA, Lifewatch) extend their copy of the catalogue with additional names and species to complete it to serve their own specific purpose. These disconnected efforts result in ‘taxonomic inconsistencies’ and cause confusion amongst users.
-          </p>
-          <p>
-          The <a href="https://github.com/Sp2000/colplus/blob/master/docs/CoL+slide-doc.pdf" >CoL+ project</a> seeks to replace these efforts with a shared, extended catalogue and complete the reviewed name coverage without sacrificing quality. Creating an open, shared, and sustainable consensus taxonomy to serve the proper linking of data in the global biodiversity information initiatives is the ultimate goal the project contributes to.
-          </p>
-          <p>The goals for the <a href="https://github.com/Sp2000/colplus/blob/master/docs/CoL+slide-doc.pdf" >Catalogue of Life Plus (CoL+)</a> project are:
-
-</p>
-          <ol>
-            <li>
-            creating both an extended and a strictly scrutinized taxonomic catalogue to replace the current GBIF Backbone Taxonomy and Catalogue of Life
-            </li>
-            <li>
-            separating nomenclature (facts) and taxonomy (opinion) with different identifiers and authorities for names and taxa for better reuse            </li>
-            <li>
-            providing (infrastructural) support to the completion and strengthening of taxonomic and nomenclature content authorities            </li>
-            <li>
-            ensuring a sustainable, robust, and more dynamic IT infrastructure for maintaining the Catalogue of Life.
-            </li>
-            
-          </ol>
-          
-        </Col>
+      <p>
+      The <a href="http://www.catalogueoflife.org">Catalogue of Life (COL)</a> aims to support the publication and curation of checklists and to provide a platform for their consistent discovery, use and citation. 
+      <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a> has for some time maintained ChecklistBank as a repository for its community to share checklist data. 
+      COL and GBIF have united their capabilities to make ChecklistBank a consistent foundation and repository for all COL datasets and any other publicly published species lists.          
+      </p>
+      <p>
+      The taxonomic community can publish a checklist to ChecklistBank either 
+      by directly uploading a <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">ColDP</a>, DwC-A or ACEF file along with metadata describing its content 
+      or by publishing such a file on the Internet in a form that COL can consume and then registering the dataset with ChecklistBank.
+      </p>          
+      <p>
+      Regardless of the original data format, ChecklistBank generates a standardised interpretation. 
+      All datasets can be searched, browsed, downloaded or accessed programmatically via the <a href="https://api.catalogue.life">COL API</a>. 
+      </p>
+    </Col>
       {datasets &&  <Col span={8}>
         <h3>Latest datasets registered</h3>
                   <ul>
@@ -220,15 +207,11 @@ class HomePage extends React.Component {
                       </li>)}
                   </ul>
         </Col> }
-        </Row>
+  </Row>
 
 
-
-
-
-
-        </Card>
-      </Layout>
+  </Card>
+</Layout>
     );
   }
 }

@@ -124,7 +124,7 @@ class BasicMenu extends Component {
                   }}
                   exact={true}
                 >
-                  <Logo style={{marginLeft: '10px'}} /> <h1 style={{color: 'white', display: 'inline'}}>CoL Clearinghouse</h1>
+                  <Logo style={{marginLeft: '10px'}} /> <h1 style={{color: 'white', display: 'inline'}}>ChecklistBank</h1>
                   </NavLink>
                   </div>
         
