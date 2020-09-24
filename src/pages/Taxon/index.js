@@ -8,8 +8,6 @@ import { LinkOutlined } from '@ant-design/icons';
 import { Alert, Tag, Row, Col, Button, Rate, message } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
-import References from "./References";
-import CslReferences from "./CslReferences";
 import Distributions from "./Distributions";
 import Classification from "./Classification";
 import NameRelations from "./NameRelations";
@@ -413,12 +411,7 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
 
-          {/*_.get(info, "references") && (
-            <PresentationItem md={md} label="References">
-             <CslReferences references={info.references}></CslReferences>
-
-            </PresentationItem>
-          ) */}
+     
 
           {_.get(info, "distributions") && (
             <PresentationItem md={md} label="Distributions">
