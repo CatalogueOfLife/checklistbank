@@ -220,7 +220,7 @@ class NameSearchPage extends React.Component {
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
-    this.setState({ params: newParams }, this.getData);
+    this.setState({ params: Object.keys(newParams).reduce((acc, cur) => (newParams[cur] !== null && (acc[cur] = newParams[cur]), acc ),{}) }, this.getData);
   };
 
   resetSearch = () => {
@@ -258,6 +258,7 @@ class NameSearchPage extends React.Component {
       namefield,
       datasetKey,
       catalogueKey,
+      dataset
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map((r) => ({
@@ -278,7 +279,7 @@ class NameSearchPage extends React.Component {
         }))
       : null;
     const facetNomStatus = _.get(facets, "nomstatus")
-      ? facets.nomstatus.map((s) => ({
+      ? facets["nomstatus"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
@@ -327,6 +328,7 @@ class NameSearchPage extends React.Component {
             <SearchBox
               defaultValue={_.get(params, "q") || null}
               onSearch={(value) => this.updateSearch({ q: value })}
+              onResetSearch={(value) => this.updateSearch({ q: null })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
             <div style={{ marginTop: "10px" }}>
@@ -337,21 +339,26 @@ class NameSearchPage extends React.Component {
                 onSelectName={(value) => {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}
-                onResetSearch={this.resetSearch}
+                onResetSearch={(value) => {
+                  this.updateSearch({ TAXON_ID: null });
+                }}
                 placeHolder="Search by higher taxon"
                 autoFocus={false}
               />{" "}
             </div>
-            {catalogueKey === datasetKey && (
+            {(catalogueKey === datasetKey) || (Number(datasetKey) === _.get(dataset, 'key')) && (
               <div style={{ marginTop: "10px" }}>
                 <DatasetAutocomplete
+                  contributesTo={Number(datasetKey)}
                   onSelectDataset={(value) => {
                     this.updateSearch({ SECTOR_DATASET_KEY: value.key });
                   }}
                   defaultDatasetKey={
                     _.get(params, "SECTOR_DATASET_KEY") || null
                   }
-                  onResetSearch={this.resetSearch}
+                  onResetSearch={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: null });
+                  }}
                   placeHolder="Search by source dataset"
                   autoFocus={false}
                 />
@@ -514,6 +521,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   catalogueKey,
+  dataset
 }) => ({
   rank,
   taxonomicstatus,
@@ -522,6 +530,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   catalogueKey,
+  dataset
 });
 
 export default withContext(mapContextToProps)(NameSearchPage);

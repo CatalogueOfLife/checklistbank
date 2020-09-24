@@ -284,7 +284,7 @@ class SectorTable extends React.Component {
         render: (text, record) => (
           <React.Fragment>
             { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sector: record}}/> } 
-           { (!_.get(record, 'target.id') || !_.get(record, 'subject.id')) &&  <Button
+           { /* (!_.get(record, 'target.id') || !_.get(record, 'subject.id')) &&  */ <Button
            style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {

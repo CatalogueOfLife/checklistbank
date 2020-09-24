@@ -31,7 +31,6 @@ import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../Assembly/NameAutocomplete";
 import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user"
 import DataLoader from "dataloader";
