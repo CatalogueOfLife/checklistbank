@@ -184,7 +184,8 @@ class SectorTable extends React.Component {
                   textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
                 />
                
-              </NavLink>}{!record.subject.id && (
+              </NavLink>}
+              {record.subject.broken && (
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>
@@ -206,28 +207,29 @@ class SectorTable extends React.Component {
               <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.target.rank}:{" "}
               </div>
-           { _.get(record, 'target.id') &&  <NavLink
+              {!_.get(record, 'target.broken') &&  <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/assembly`,
                   search: `?assemblyTaxonKey=${record.target.id}`
                 }}
-                exact={true}
-              >
+                exact={true}>
                 <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                />
-               
-              </NavLink> }
-              { !_.get(record, 'target.id') && <React.Fragment> 
+                />               
+                </NavLink>
+              }
+              {_.get(record, 'target.broken') && <React.Fragment> 
               <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                /><WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>}
+                />
+              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>
+              }
             </React.Fragment>
           );
         }
@@ -283,9 +285,10 @@ class SectorTable extends React.Component {
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            { _.get(record, 'target.id') && _.get(record, 'subject.id') && <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sector: record}}/> } 
-           { /* (!_.get(record, 'target.id') || !_.get(record, 'subject.id')) &&  */ <Button
-           style={{display: 'inline', marginRight: '8px'}}
+            { !_.get(record, 'target.broken') && !_.get(record, 'subject.broken') && 
+            <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sector: record}}/> 
+            } 
+           <Button style={{display: 'inline', marginRight: '8px'}}
             type={"primary"}
             onClick={() => {
                 axios.post(`${config.dataApi}dataset/${catalogueKey}/sector/rematch`, {id: record.id})
@@ -316,9 +319,8 @@ class SectorTable extends React.Component {
                       })
                 })
             }}
-          >
-            Rematch
-          </Button>}
+            >Rematch
+            </Button>
           {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}><DeleteOutlined /></Button>}
           
           </React.Fragment>

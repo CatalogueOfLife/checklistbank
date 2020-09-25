@@ -341,7 +341,7 @@ class CatalogueDecisions extends React.Component {
                 textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
               />
              
-            </NavLink>}{!record.subject.id && (
+            </NavLink>}{record.subject.broken && (
               <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
             )}
           </React.Fragment>

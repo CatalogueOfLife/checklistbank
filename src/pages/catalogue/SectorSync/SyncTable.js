@@ -69,7 +69,7 @@ const getColumns = (catalogueKey) => [
           >
             {_.get(record, 'sector.subject.name')}
           </NavLink>
-          {!_.get(record, 'sector.subject.id') && (
+          {_.get(record, 'sector.subject.broken') && (
             <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
         </React.Fragment>
@@ -98,9 +98,10 @@ const getColumns = (catalogueKey) => [
             {_.get(record, "sector.target.name")}
            
           </NavLink> }
-          { !_.get(record, 'sector.target.id') && <React.Fragment> 
-          {_.get(record, "sector.target.name")}
-            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>}
+          { _.get(record, 'sector.target.broken') && <React.Fragment> 
+            {_.get(record, "sector.target.name")}
+            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>
+          }
         </React.Fragment>
       );
     }
