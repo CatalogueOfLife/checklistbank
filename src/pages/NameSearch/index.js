@@ -346,7 +346,7 @@ class NameSearchPage extends React.Component {
                 autoFocus={false}
               />{" "}
             </div>
-            {(catalogueKey === datasetKey) || (Number(datasetKey) === _.get(dataset, 'key')) && (
+            {(catalogueKey === datasetKey) || (Number(datasetKey) === _.get(dataset, 'key') && ['managed', 'released'].includes(dataset.origin)) && (
               <div style={{ marginTop: "10px" }}>
                 <DatasetAutocomplete
                   contributesTo={Number(datasetKey)}

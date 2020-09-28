@@ -456,9 +456,12 @@ class ColTreeNode extends React.Component {
                   {sector && (
                     <span>
                       <span> • </span>
-                      <Tag color={stringToColour(sector.dataset.title)}>
-                        {sector.dataset.alias || sector.dataset.key}
-                      </Tag>
+                      <NavLink
+                      to={{
+                        pathname: `/dataset/${sector.dataset.key}/meta`,
+                      }}
+                      exact={true}
+                    > {sector.dataset.alias || sector.dataset.key} </NavLink>
                     </span>
                   )}
 

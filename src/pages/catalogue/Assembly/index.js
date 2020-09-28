@@ -234,7 +234,7 @@ class Assembly extends React.Component {
         });
       })
       .catch(err => {
-        this.setState({ sectorMappingError: err });
+        this.setState({ error: err });
         console.log(err);
       });
   };
@@ -328,7 +328,7 @@ class Assembly extends React.Component {
       syncState,
       syncingDataset,
       syncingSector,
-      sectorMappingError,
+      error,
       assemblyTaxonKey,
       childModalVisible,
       assemblyColSpan,
@@ -490,6 +490,7 @@ class Assembly extends React.Component {
                   <NameAutocomplete
                     datasetKey={catalogueKey}
                     defaultTaxonKey={_.get(qs.parse(_.get(location, "search")), 'assemblyTaxonKey') || null}
+                    onError={error => this.setState({error})}
                     onSelectName={name => {
                       const params = qs.parse(_.get(location, "search"));
 
@@ -518,13 +519,13 @@ class Assembly extends React.Component {
                       this.setState({ assemblyTaxonKey: null });
                     }}
                   />
-                  {sectorMappingError && (
+                  {error && (
                     <Alert
                       closable
                       onClose={() =>
-                        this.setState({ sectorMappingError: null })
+                        this.setState({ error: null })
                       }
-                      message={<ErrorMsg error={sectorMappingError} />}
+                      message={<ErrorMsg error={error} />}
                       type="error"
                     />
                   )}
@@ -586,6 +587,7 @@ class Assembly extends React.Component {
                     <NameAutocomplete
                       datasetKey={this.state.selectedDataset.key}
                       defaultTaxonKey={_.get(qs.parse(_.get(location, "search")), 'sourceTaxonKey') || null}
+                      onError={error => this.setState({error})}
                       onSelectName={name => {
                         const params = qs.parse(_.get(location, "search"));
 

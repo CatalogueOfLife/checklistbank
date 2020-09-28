@@ -15,7 +15,7 @@ class NameSearchAutocomplete extends React.Component {
     this.getNames = debounce(this.getNames, 500);
     this.state = {
       names: [],
-      value: "",
+      value: ""
     };
   }
 
@@ -43,6 +43,12 @@ class NameSearchAutocomplete extends React.Component {
       `${config.dataApi}nameusage/search?USAGE_ID=${usageId}&DATASET_KEY=${datasetKey}`
     ).then((res) => {
       this.setState({ value: _.get(res, "data.result[0].usage.label") || "" });
+    }).catch((err) => {
+      this.setState({ value: "" }, ()=> {
+        if(this.props.onError && typeof this.props.onError === 'function'){
+          this.props.onError(err)
+        }
+      });
     });
   };
   getNames = (q) => {
@@ -58,7 +64,11 @@ class NameSearchAutocomplete extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ names: [], err });
+        this.setState({ names: [] }, ()=> {
+          if(this.props.onError && typeof this.props.onError === 'function'){
+            this.props.onError(err)
+          }
+        });
       });
   };
   onSelectName = (val, obj) => {

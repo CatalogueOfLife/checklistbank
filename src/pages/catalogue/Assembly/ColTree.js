@@ -176,7 +176,7 @@ class ColTree extends React.Component {
       });
   };  
   appendTypeParam = (treeType) => {
-    return ["CATALOGUE", "SOURCE"].includes(treeType) ? `&type=${treeType}` : '';
+    return treeType === 'readOnly' ? `&type=CATALOGUE` : ["CATALOGUE", "SOURCE"].includes(treeType) ? `&type=${treeType}` : '';
   }
   expandToTaxon = async (defaultExpandKey) => {
     const {
@@ -201,7 +201,7 @@ class ColTree extends React.Component {
               }
             }
             return res;
-          } else if(treeType === "CATALOGUE"){
+          } else if(treeType === "CATALOGUE" || treeType === "readOnly"){
             for(let i = res.data.length -2; i > -1; i--){
               if(res.data[i].sectorKey && res.data[i].sectorKey !== res.data[i+1].sectorKey){
                 res.data[i].sectorRoot = true
@@ -315,7 +315,7 @@ class ColTree extends React.Component {
               }))
             }
           };
-        } else if (_.get(res, 'data.empty') !== true && treeType === "CATALOGUE" && _.get(dataRef, "taxon.sectorKey")) {
+        } else if (_.get(res, 'data.empty') !== true && (treeType === "CATALOGUE" ||  treeType === "redOnly")&& _.get(dataRef, "taxon.sectorKey")) {
           // If it is a source and the parent has a sectorKey, copy it to children
           return {
             ...res,
