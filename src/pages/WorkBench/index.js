@@ -24,7 +24,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
 const columnFilters = ["status", "rank"];
-const FACETS = ["rank", "issue", "status", "nomstatus", "type", "field"];
+const FACETS = ["rank", "issue", "status", "nomStatus", "nameType", "field"];
 
 const getDecisionText = (decision) => {
   if(!_.get(decision, 'mode')) {
@@ -533,8 +533,8 @@ class WorkBench extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
       : [];
-    const facetNomType = _.get(facets, "type")
-      ? facets.type.map(s => ({
+    const facetNomType = _.get(facets, "nameType")
+      ? facets.nameType.map(s => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString('en-GB')})`
         }))
@@ -627,14 +627,25 @@ class WorkBench extends React.Component {
                       }
                     />
                   </FormItem>
-                  <FormItem label="Match partial words">
-                    <Switch
-                      checked={params.prefix === true}
-                      onChange={value =>
-                        this.updateSearch({ prefix: value })
-                      }
-                    />
-                  </FormItem>
+                  <FormItem >
+{/*                   <Switch
+                    checked={params.prefix === true}
+                    onChange={(value) => this.updateSearch({ prefix: value })}
+                  /> */}
+                   <RadioGroup
+                    onChange={(evt) => {
+                      
+                        this.updateSearch({ type: evt.target.value });
+                      
+                    }}
+                    value={params.type || "WHOLE_WORDS"}
+                  > 
+                  <Radio value="WHOLE_WORDS">Match whole words</Radio>
+                    <Radio value="PREFIX">Partial words</Radio>
+                    
+                    <Radio value="EXACT">Exact</Radio>
+                  </RadioGroup>
+                </FormItem>
 
                 <FormItem style={{
                       marginBottom: "10px"
@@ -693,13 +704,13 @@ class WorkBench extends React.Component {
             {advancedFilters && (
               <React.Fragment>
                 <MultiValueFilter
-                  defaultValue={_.get(params, "nomstatus")}
+                  defaultValue={_.get(params, "nomStatus")}
                   onChange={value => this.updateSearch({ nomstatus: value })}
                   vocab={facetNomStatus}
                   label="Nomenclatural status"
                 />
                 <MultiValueFilter
-                  defaultValue={_.get(params, "type")}
+                  defaultValue={_.get(params, "nameType")}
                   onChange={value => this.updateSearch({ type: value })}
                   vocab={facetNomType}
                   label="Name type"

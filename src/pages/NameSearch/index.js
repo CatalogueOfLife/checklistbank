@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Radio, Row, Col, Button, Form, Switch } from "antd";
@@ -253,8 +252,8 @@ class NameSearchPage extends React.Component {
       rank,
       taxonomicstatus,
       issue,
-      nomStatus,
-      nameType,
+      nomstatus,
+      nametype,
       namefield,
       datasetKey,
       catalogueKey,
@@ -445,13 +444,13 @@ class NameSearchPage extends React.Component {
                 <MultiValueFilter
                   defaultValue={_.get(params, "nomStatus")}
                   onChange={(value) => this.updateSearch({ nomStatus: value })}
-                  vocab={facetNomStatus || nomStatus}
+                  vocab={facetNomStatus || nomstatus}
                   label="Nomenclatural status"
                 />
                 <MultiValueFilter
                   defaultValue={_.get(params, "nameType")}
                   onChange={(value) => this.updateSearch({ nameType: value })}
-                  vocab={facetNomType || nameType}
+                  vocab={facetNomType || nametype}
                   label="Name type"
                 />
                 <MultiValueFilter
