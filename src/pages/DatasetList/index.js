@@ -90,7 +90,7 @@ class DatasetList extends React.Component {
           dataIndex: "key",
           width: 100,
           key: "logo",
-          render: (text, record) => <DatasetLogo datasetKey={record.key} />
+          render: (text, record) => <DatasetLogo datasetKey={record.key} size="SMALL" />
         },
         {
           title: "Authors & Editors",

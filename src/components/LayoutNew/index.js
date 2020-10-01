@@ -15,6 +15,7 @@ import moment from "moment";
 import ErrorMsg from "../ErrorMsg"
 import withContext from "../../components/hoc/withContext"
 import {flowRight} from 'lodash';
+import DatasetLogo from '../../pages/DatasetList/DatasetLogo'
 const compose = flowRight;
 const { gitBackend, gitFrontend} = config;
 // Currently no support for rtl in Ant https://github.com/ant-design/ant-design/issues/4051
@@ -106,7 +107,7 @@ class SiteLayout extends Component {
               onClick={this.toggle}
               />}
             <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
-            {selectedDataset && <h1>{selectedDataset.title}</h1>}
+            {selectedDataset && <React.Fragment><DatasetLogo datasetKey={selectedDataset.key} style={{height: '50px', marginRight: '10px'}} /><h1 style={{display: 'inline'}}>{selectedDataset.title}</h1></React.Fragment> }
             {!selectedDataset && title && <h1>{title}</h1>}
             </div>
             <div className="header__secondary" style={{ flex: '0 0 auto' }}>

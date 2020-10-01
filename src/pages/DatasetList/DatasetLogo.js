@@ -1,35 +1,24 @@
 import React from "react";
 import config from "../../config";
-import axios from "axios";
 
 class DatasetLogo extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hasLogo: false
-    };
+    this.state = { error: true, loading: true };
   }
-  componentDidMount = () => {
-    const { datasetKey } = this.props;
 
-    axios(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
-      .then(res => this.setState({ hasLogo: true }))
-      .catch(err => {});
-  };
-  render = () => {
-    const { hasLogo } = this.state;
-    const { datasetKey } = this.props;
-    return hasLogo ? (
-      <img style={{
-        height: "auto",
-        maxHeight: "40px",
-        maxWidth:"40px",
-        width: "auto"
-    }} src={`${config.dataApi}dataset/${datasetKey}/logo?size=small`} />
-    ) : (
-      ""
-    );
-  };
+  render() {
+      const {fallBack = null, datasetKey, style, size = 'MEDIUM'} = this.props;
+      const {error, loading} = this.state;
+    return (loading || !error) ?  
+        <img
+          style={style}
+          src={`${config.dataApi}dataset/${datasetKey}/logo?size=${size}`}
+          onLoad={() => this.setState({error: false, loading: false})}
+          onError={() => this.setState({error: true, loading: false})}
+        /> : fallBack;
+       
+    ;
+  }
 }
-
 export default DatasetLogo;
