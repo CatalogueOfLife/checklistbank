@@ -341,9 +341,6 @@ class TaxonPage extends React.Component {
               {_.get(taxon, "name.nomStatus")}
             </PresentationItem>
           )}
-          <PresentationItem md={md} label="Extinct">
-            <BooleanValue value={_.get(taxon, "extinct")} />
-          </PresentationItem>
 
           {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
             <PresentationItem
