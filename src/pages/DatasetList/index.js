@@ -173,8 +173,8 @@ class DatasetList extends React.Component {
     }
    
     this.setState({ params, pagination: {
-      pageSize: params.limit,
-      current: (Number(params.offset) / Number(params.limit)) +1
+      pageSize: params.limit || PAGE_SIZE,
+      current: (Number(params.offset || 0) / Number(params.limit || PAGE_SIZE)) +1
       
     } }, this.getData);
   }

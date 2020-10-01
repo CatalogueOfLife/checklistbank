@@ -67,13 +67,13 @@ class App extends Component {
                   <NameIndex section={match.params.section} location={location} />
                 )}
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="catalogueSources"
                 path="/catalogue/:catalogueKey/sources"
                 component={CatalogueSources}
               />
-               <Route
+               <PrivateRoute
                 exact
                 key="catalogueSourceMetrics"
                 path="/catalogue/:catalogueKey/sourcemetrics"
@@ -93,7 +93,7 @@ class App extends Component {
                 roles={["editor", "admin"]}
                 component={EsAdmin}
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="References"
                 path="/catalogue/:catalogueKey/references/:key?"
@@ -101,7 +101,7 @@ class App extends Component {
                   <CatalogueReferences section={match.params.section} location={location} />
                 )}
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="imports"
                 path="/imports/:section?"
@@ -130,14 +130,14 @@ class App extends Component {
                 roles={["editor"]}
                 component={AssemblyDuplicates}
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="catalogueMeta"
                 path="/catalogue/:catalogueKey/meta"
                 component={CatalogueMeta}
                 
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="catalogueNameSearch"
                 path="/catalogue/:catalogueKey/names"
@@ -145,7 +145,7 @@ class App extends Component {
                 
               />
               
-              <Route
+              <PrivateRoute
                 exact
                 key="sectorSync"
                 path="/catalogue/:catalogueKey/sector/sync"
@@ -154,14 +154,14 @@ class App extends Component {
                 )}
                 
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="sector"
                 path="/catalogue/:catalogueKey/sector"
                 component={CatalogueSectors}
                 
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="decisions"
                 path="/catalogue/:catalogueKey/decision"
@@ -169,7 +169,7 @@ class App extends Component {
                 
               /> 
               
-              <Route
+              <PrivateRoute
                 exact
                 key="sectorDiff"
                 path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
@@ -177,14 +177,14 @@ class App extends Component {
                 
               />
 
-              <Route
+              <PrivateRoute
                 exact
                 key="catalogueTaxon"
                 path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
                 component={CatalogueTaxon}
                 
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="catalogueName"
                 path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
@@ -201,14 +201,14 @@ class App extends Component {
                 component={DatasetCreate}
               />
               
-              <Route
+              <PrivateRoute
                 exact
                 key="CatalogueSourceDataset"
                 path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates|meta|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
                 component={CatalogueSourceDataset}
               
               />
-              <Route
+              <PrivateRoute
                 exact
                 key="datasetKey"
                 path={`/catalogue/:catalogueKey/dataset/:key/:section:(imports|classification|sectors|meta|names|taxon|name|verbatim)/:taxonOrNameKey?`}

@@ -207,24 +207,24 @@ class DatasetImportMetrics extends React.Component {
               <Alert type="info" message={`Import on ${moment(this.state.data.started).format("lll")} unchanged from last import`} />
             </Row>
           )}
-          { Auth.isAuthorised(user, ["editor", "admin"]) &&  dataset &&     
+          { dataset &&     
           <Row style={{ padding: "10px" }} type="flex" justify="end">
                
                 
                
                 <Col  style={{ textAlign: "right", marginRight: "8px" }}>
                 
-                   <ArchiveUpload datasetKey={_.get(dataset, 'key')} origin={_.get(dataset, 'origin')} /> 
+          {Auth.isAuthorised(user, ["editor", "admin"]) && <ArchiveUpload datasetKey={_.get(dataset, 'key')} origin={_.get(dataset, 'origin')} /> }
 
                 </Col>
                 <Col  style={{ textAlign: "right" }}>
                   
-                      <ImportButton
+                  {Auth.isAuthorised(user, ["editor", "admin"]) &&    <ImportButton
                         style={{ display: "inline" }}
                         record={{datasetKey: dataset.key}}
                         onStartImportSuccess={() => this.getData(attempt)}
                         onDeleteSuccess={() => this.getData(attempt)}
-                      />
+                      />}
                     
                   {importHistory && (
                     <Button

@@ -13,7 +13,12 @@ import {
   TableOutlined,
   LineChartOutlined,
   PartitionOutlined,
-  CheckOutlined
+  CheckOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  HistoryOutlined,
+  TagsOutlined,
+  TagOutlined
 } from '@ant-design/icons';
 
 import { Menu, Alert } from "antd";
@@ -161,7 +166,7 @@ class BasicMenu extends Component {
     </Menu.Item> 
     </SubMenu>}
 
-          <SubMenu
+    {Auth.isAuthorised(user, ["editor", "admin"]) &&  <SubMenu
             key="imports"
             title={
               <span>
@@ -177,7 +182,7 @@ class BasicMenu extends Component {
             <Menu.Item key="finished">
               <NavLink to={{ pathname: "/imports/finished" }}>Finished</NavLink>
             </Menu.Item>
-          </SubMenu>
+          </SubMenu>}
           {Auth.isAuthorised(user, ["editor"]) && (
             <SubMenu
               key="assembly"
@@ -437,7 +442,7 @@ class BasicMenu extends Component {
             </SubMenu>
           )}
 
-          <SubMenu
+{/*           <SubMenu
             key="dataset"
             title={
               <span>
@@ -445,12 +450,34 @@ class BasicMenu extends Component {
                 <span>Datasets</span>
               </span>
             }
-          >
-                         {recentDatasets && recentDatasets.length > 1 && <SubMenu
+          > */}
+            { !user && <Menu.Item >
+              <NavLink
+                to={{
+                  pathname: `/dataset/3LR`
+                }}
+              >
+               <TagOutlined />CoL: latest release
+              </NavLink>
+            </Menu.Item>
+            }
+            { !user && <Menu.Item >
+              <NavLink
+                to={{
+                  pathname: '/dataset',
+                  search: '?releasedFrom=3'
+                }}
+              >
+               <TagsOutlined />CoL: releases
+              </NavLink>
+            </Menu.Item>
+            }
+            {user && recentDatasets && recentDatasets.length > 1 && <SubMenu
               key="recentDatasets"
               title={
                 <span>
-                  <span>Recently visited</span>
+                  <HistoryOutlined />
+                  <span>Recently visited datasets</span>
                 </span>
               }
             >
@@ -466,26 +493,24 @@ class BasicMenu extends Component {
 
             </SubMenu> }
             <Menu.Item key="/dataset">
-              <NavLink to="/dataset">Search</NavLink>
+              <NavLink to="/dataset"><SearchOutlined />Dataset search</NavLink>
             </Menu.Item>
             
 
             {Auth.isAuthorised(user, ["editor", "admin"]) && (
               <Menu.Item key="datasetCreate">
-                <NavLink to={{ pathname: "/newdataset" }}>New Dataset</NavLink>
+                <NavLink to={{ pathname: "/newdataset" }}><PlusOutlined />New Dataset</NavLink>
               </Menu.Item>
             )}
 
-            {/* <Menu.Item key="7">Duplicates</Menu.Item>
-            <Menu.Item key="8">Constituents</Menu.Item>
-            <Menu.Item key="9">Without endpoint</Menu.Item> */}
+           
                       {selectedDataset && (
             <SubMenu
               key="datasetKey"
               title={
                 <span>
                   <BarsOutlined />
-                  <span>{`Dataset: ${selectedDataset.key}`}</span>
+                  <span>{selectedDataset.alias || `Dataset: ${selectedDataset.key}`}</span>
                 </span>
               }
             >
@@ -515,32 +540,7 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
               }
-            { _.get(selectedDataset, 'origin') !== 'released' && <Menu.Item key="imports">
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${_.get(
-                      selectedDataset,
-                      "key"
-                    )}/imports`
-                  }}
-                >
-                {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
-                </NavLink>
-              </Menu.Item>}   
-              {selectedDataset &&  _.get(selectedDataset, 'origin') !== 'released' && hasData && (
-                <Menu.Item key="issues">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/issues`
-                    }}
-                  >
-                    Issues
-                  </NavLink>
-                </Menu.Item>
-              )}
+
               {selectedDataset && hasData  && (
                 <Menu.Item key="classification">
                   <NavLink
@@ -569,7 +569,33 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && hasData  && (
+                          { _.get(selectedDataset, 'origin') !== 'released' && <Menu.Item key="imports">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      selectedDataset,
+                      "key"
+                    )}/imports`
+                  }}
+                >
+                {selectedDataset.origin !== 'managed' ? 'Imports' : 'Releases'}  
+                </NavLink>
+              </Menu.Item>}   
+              {user && selectedDataset &&  _.get(selectedDataset, 'origin') !== 'released' && hasData && (
+                <Menu.Item key="issues">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/issues`
+                    }}
+                  >
+                    Issues
+                  </NavLink>
+                </Menu.Item>
+              )}
+              {user && selectedDataset && hasData  && (
                 <Menu.Item key="references">
                   <NavLink
                     to={{
@@ -596,7 +622,7 @@ class BasicMenu extends Component {
               </NavLink></Menu.Item>
               )}
               
-              {selectedDataset && hasData && (
+              {user && selectedDataset && hasData && (
                 <Menu.Item key="projects">
                   <NavLink
                     to={{
@@ -679,8 +705,8 @@ class BasicMenu extends Component {
              
             </SubMenu>
           )}
-          </SubMenu>
-
+{/*           </SubMenu>
+ */}
 
         </Menu>
       </React.Fragment>
