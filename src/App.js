@@ -101,7 +101,7 @@ class App extends Component {
                   <CatalogueReferences section={match.params.section} location={location} />
                 )}
               />
-              <PrivateRoute
+              <Route
                 exact
                 key="imports"
                 path="/imports/:section?"

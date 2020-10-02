@@ -45,7 +45,7 @@ class HomePage extends React.Component {
     axios(
       `${
         config.dataApi
-      }/dataset/${NAME_INDEX.key}/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=type&facet=field&limit=0`
+      }/dataset/${NAME_INDEX.key}/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=nameType&facet=field&limit=0`
     )
       .then(res => {
         this.setState({
@@ -62,7 +62,7 @@ class HomePage extends React.Component {
     axios(
       `${config.dataApi}dataset/${
         MANAGEMENT_CLASSIFICATION.key
-      }/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=type&facet=field&limit=0`
+      }/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=nameType&facet=field&limit=0`
     )
       .then(res => {
         this.setState({
