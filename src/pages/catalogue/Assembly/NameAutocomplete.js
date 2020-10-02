@@ -52,12 +52,12 @@ class NameSearchAutocomplete extends React.Component {
     });
   };
   getNames = (q) => {
-    const { datasetKey } = this.props;
+    const { datasetKey, minRank } = this.props;
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest`
       : `${config.dataApi}name/search`;
 
-    axios(`${url}?vernaculars=false&fuzzy=false&limit=25&q=${q}`)
+    axios(`${url}?vernaculars=false&fuzzy=false&limit=25&q=${q}${minRank ? `&minRank=${minRank}`: ''}`)
       .then((res) => {
         this.setState({
           names: res.data.suggestions || []

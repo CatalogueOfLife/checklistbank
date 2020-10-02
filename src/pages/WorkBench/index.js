@@ -608,6 +608,7 @@ class WorkBench extends React.Component {
               {" "}
               <NameAutocomplete
                 datasetKey={datasetKey}
+                minRank="GENUS"
                 onSelectName={value => {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}

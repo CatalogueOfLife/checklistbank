@@ -335,6 +335,7 @@ class NameSearchPage extends React.Component {
               <NameAutocomplete
                 datasetKey={datasetKey}
                 defaultTaxonKey={_.get(params, "TAXON_ID") || null}
+                minRank="GENUS"
                 onSelectName={(value) => {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}
