@@ -10,11 +10,11 @@ import DatasetTasks from "./subPages/DatasetTasks";
 import DatasetMeta from "../../DatasetKey/datasetPageTabs/DatasetMeta";
 import DatasetReferences from "../../DatasetKey/datasetPageTabs/DatasetReferences";
 import DatasetClassification from "../../DatasetKey/datasetPageTabs/DatasetClassification";
-import DatasetImportMetrics from "../../DatasetImportMetrics"
+import DatasetImportMetrics from "../../DatasetImportMetrics";
 import WorkBench from "../../WorkBench";
-import VerbatimRecord from "../../VerbatimRecord"
+import VerbatimRecord from "../../VerbatimRecord";
 import Taxon from "../../Taxon";
-import Name from "../../Name"
+import Name from "../../Name";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
@@ -31,20 +31,20 @@ class DatasetPage extends React.Component {
       loading: true,
       importState: null,
       hasData: false,
-      lastSuccesFullImport: null
+      lastSuccesFullImport: null,
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: { key: datasetKey }
-      }
+        params: { key: datasetKey },
+      },
     } = this.props;
     this.getData(datasetKey);
   }
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps) => {
     if (
       _.get(this.props, "match.params.key") !==
       _.get(prevProps, "match.params.key")
@@ -53,22 +53,22 @@ class DatasetPage extends React.Component {
     }
   };
 
-  getData = datasetKey => {
+  getData = (datasetKey) => {
     Promise.all([
       axios(`${config.dataApi}dataset/${datasetKey}/import`),
-      axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`)
+      axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`),
     ])
 
-      .then(res => {
+      .then((res) => {
         const importState = _.get(res[0], "data[0].state") || null;
         const hasData = res[1].data.length > 0;
         this.setState({
           importState,
           hasData,
-          lastSuccesFullImport: hasData ? _.get(res, "[1].data[0]") : null
+          lastSuccesFullImport: hasData ? _.get(res, "[1].data[0]") : null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ importState: null });
       });
   };
@@ -79,18 +79,18 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey }
+        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey },
       },
       location,
       dataset,
-      importStateMap
+      importStateMap,
     } = this.props;
 
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/names`
+            pathname: `/dataset/${datasetKey}/names`,
           }}
         />
       );
@@ -99,7 +99,7 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/meta`
+            pathname: `/dataset/${datasetKey}/meta`,
           }}
         />
       );
@@ -193,10 +193,18 @@ class DatasetPage extends React.Component {
           />
         )}
         {sect === "taxon" && (
-          <Taxon datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
+          <Taxon
+            datasetKey={datasetKey}
+            location={this.props.location}
+            match={this.props.match}
+          />
         )}
         {sect === "name" && (
-          <Name datasetKey={datasetKey} location={this.props.location} match={this.props.match}  />
+          <Name
+            datasetKey={datasetKey}
+            location={this.props.location}
+            match={this.props.match}
+          />
         )}
       </Layout>
     );
@@ -205,6 +213,6 @@ class DatasetPage extends React.Component {
 
 const mapContextToProps = ({ dataset, importStateMap }) => ({
   dataset,
-  importStateMap
+  importStateMap,
 });
 export default withContext(mapContextToProps)(DatasetPage);
