@@ -47,7 +47,6 @@ class DatasetList extends React.Component {
         {
           title: "Short name",
           dataIndex: "alias",
-          width: 150,
           key: "alias",
           render: (text, record) => {
             return (
@@ -64,7 +63,6 @@ class DatasetList extends React.Component {
         {
           title: "Title",
           dataIndex: "title",
-          width: 250,
           key: "title",
           render: (text, record) => {
             return (
@@ -81,7 +79,6 @@ class DatasetList extends React.Component {
         {
           title: "Logo",
           dataIndex: "key",
-          width: 100,
           key: "logo",
           render: (text, record) => (
             <DatasetLogo datasetKey={record.key} size="SMALL" />
@@ -180,6 +177,7 @@ class DatasetList extends React.Component {
           title: "Private",
           dataIndex: "private",
           key: "private",
+          width: 24,
           render: (text, record) => {
             return text === true ? (
               <LockOutlined style={{ color: "red" }} />
@@ -304,18 +302,18 @@ class DatasetList extends React.Component {
       params,
     } = this.state;
     const { datasetType, datasetOrigin } = this.props;
-    defaultColumns[5].filters = datasetOrigin.map((i) => ({
+    defaultColumns[6].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.origin) {
-      defaultColumns[5].filteredValue = _.isArray(params.origin)
+      defaultColumns[6].filteredValue = _.isArray(params.origin)
         ? params.origin
         : [params.origin];
     } else {
-      defaultColumns[5].filteredValue = null;
+      defaultColumns[6].filteredValue = null;
     }
-    defaultColumns[6].filters = datasetType.map((i) => ({
+    /*     defaultColumns[6].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
@@ -325,7 +323,7 @@ class DatasetList extends React.Component {
         : [params.type];
     } else {
       defaultColumns[6].filteredValue = null;
-    }
+    } */
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
         ? [
@@ -397,7 +395,7 @@ class DatasetList extends React.Component {
               columns={columns}
               dataSource={data}
               loading={loading}
-              scroll={{ x: `${columns.length * 100}px` }}
+              scroll={{ x: `${columns.length * 120}px` }}
               pagination={this.state.pagination}
               onChange={this.handleTableChange}
             />
