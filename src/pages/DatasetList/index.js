@@ -154,6 +154,14 @@ class DatasetList extends React.Component {
           dataIndex: "size",
           key: "size",
           sorter: true,
+          render: (text) => {
+            try {
+              return Number(text).toLocaleString("en-GB");
+            } catch (err) {
+              console.log(err);
+              return "";
+            }
+          },
         },
         {
           title: "Created",
