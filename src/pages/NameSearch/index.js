@@ -118,6 +118,7 @@ class NameSearchPage extends React.Component {
         pageSize: PAGE_SIZE,
         current: 1,
         showQuickJumper: true,
+        pageSizeOptions: [50, 100, 500, 1000],
       },
       loading: false,
     };
@@ -127,17 +128,31 @@ class NameSearchPage extends React.Component {
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = {
-        limit: 50,
+        limit: PAGE_SIZE,
         offset: 0,
         facet: ["rank", "issue", "status", "nomStatus", "nameType", "field"],
         sortBy: "taxonomic",
       };
       history.push({
         pathname: _.get(this.props, "location.path"),
-        search: `?limit=50&offset=0`,
+        search: `?limit=${PAGE_SIZE}&offset=0`,
       });
-    } else if (!params.facet) {
-      params.facet = ["rank", "issue", "status", "nomStatus", "nameType", "field"];
+    }
+    if (!params.facet) {
+      params.facet = [
+        "rank",
+        "issue",
+        "status",
+        "nomStatus",
+        "nameType",
+        "field",
+      ];
+    }
+    if (!params.limit) {
+      params.limit = PAGE_SIZE;
+    }
+    if (!params.offset) {
+      params.offset = 0;
     }
 
     this.setState(
@@ -147,6 +162,8 @@ class NameSearchPage extends React.Component {
           pageSize: params.limit || PAGE_SIZE,
           current:
             Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+          showQuickJumper: true,
+          pageSizeOptions: [50, 100, 500, 1000],
         },
       },
       this.getData
@@ -154,29 +171,37 @@ class NameSearchPage extends React.Component {
   }
 
   getData = () => {
-    const { params } = this.state;
-    this.setState({ loading: true });
     const { datasetKey } = this.props;
+
+    const {
+      params,
+      pagination: { pageSize: limit, current },
+    } = this.state;
+
+    this.setState({ loading: true });
     if (!params.q) {
       delete params.q;
     }
+    const newParamsWithPaging = {
+      ...params,
+      limit,
+      offset: (current - 1) * limit,
+    };
+
     history.push({
       pathname: _.get(this.props, "location.path"),
-      search: `?${qs.stringify(params)}`,
+      search: `?${qs.stringify(newParamsWithPaging)}`,
     });
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
       : `${config.dataApi}name/search`;
-    axios(`${url}?${qs.stringify(params)}`)
+    axios(`${url}?${qs.stringify(newParamsWithPaging)}`)
       .then((res) => {
-        const pagination = { ...this.state.pagination };
-        pagination.total = res.data.total;
-
         this.setState({
           loading: false,
           data: res.data,
           err: null,
-          pagination,
+          pagination: { ...this.state.pagination, total: res.data.total },
         });
       })
       .catch((err) => {
@@ -184,20 +209,11 @@ class NameSearchPage extends React.Component {
       });
   };
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
-
-    this.setState({
-      pagination: pager,
-    });
     let query = _.merge(this.state.params, {
-      limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize,
       ...filters,
     });
 
     if (sorter && sorter.field) {
-
       if (sorter.field[sorter.field.length - 1] === "labelHtml") {
         query.sortBy = "name";
       } else if (sorter.field[sorter.field.length - 1] === "rank") {
@@ -211,15 +227,26 @@ class NameSearchPage extends React.Component {
     } else {
       query.reverse = false;
     }
-    this.setState({ params: query }, this.getData);
+    this.setState({ params: query, pagination }, this.getData);
   };
 
   updateSearch = (params) => {
-    let newParams = { ...this.state.params, offset: 0, limit: 50 };
+    let newParams = { ...this.state.params };
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
-    this.setState({ params: Object.keys(newParams).reduce((acc, cur) => (newParams[cur] !== null && (acc[cur] = newParams[cur]), acc ),{}) }, this.getData);
+    this.setState(
+      {
+        params: Object.keys(newParams).reduce(
+          (acc, cur) => (
+            newParams[cur] !== null && (acc[cur] = newParams[cur]), acc
+          ),
+          {}
+        ),
+        pagination: { ...this.state.pagination, current: 1 },
+      },
+      this.getData
+    );
   };
 
   resetSearch = () => {
@@ -257,7 +284,7 @@ class NameSearchPage extends React.Component {
       namefield,
       datasetKey,
       catalogueKey,
-      dataset
+      dataset,
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map((r) => ({
@@ -320,10 +347,7 @@ class NameSearchPage extends React.Component {
           )}
         </Row>
         <Row>
-          <Col
-            span={12}
-            style={{ display: "flex", flexFlow: "column" }}
-          >
+          <Col span={12} style={{ display: "flex", flexFlow: "column" }}>
             <SearchBox
               defaultValue={_.get(params, "q") || null}
               onSearch={(value) => this.updateSearch({ q: value })}
@@ -346,24 +370,26 @@ class NameSearchPage extends React.Component {
                 autoFocus={false}
               />{" "}
             </div>
-            {(catalogueKey === datasetKey) || (Number(datasetKey) === _.get(dataset, 'key') && ['managed', 'released'].includes(dataset.origin)) && (
-              <div style={{ marginTop: "10px" }}>
-                <DatasetAutocomplete
-                  contributesTo={Number(datasetKey)}
-                  onSelectDataset={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
-                  }}
-                  defaultDatasetKey={
-                    _.get(params, "SECTOR_DATASET_KEY") || null
-                  }
-                  onResetSearch={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: null });
-                  }}
-                  placeHolder="Search by source dataset"
-                  autoFocus={false}
-                />
-              </div>
-            )}
+            {catalogueKey === datasetKey ||
+              (Number(datasetKey) === _.get(dataset, "key") &&
+                ["managed", "released"].includes(dataset.origin) && (
+                  <div style={{ marginTop: "10px" }}>
+                    <DatasetAutocomplete
+                      contributesTo={Number(datasetKey)}
+                      onSelectDataset={(value) => {
+                        this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                      }}
+                      defaultDatasetKey={
+                        _.get(params, "SECTOR_DATASET_KEY") || null
+                      }
+                      onResetSearch={(value) => {
+                        this.updateSearch({ SECTOR_DATASET_KEY: null });
+                      }}
+                      placeHolder="Search by source dataset"
+                      autoFocus={false}
+                    />
+                  </div>
+                ))}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
                 <FormItem label="Fuzzy matching">
@@ -372,22 +398,20 @@ class NameSearchPage extends React.Component {
                     onChange={(value) => this.updateSearch({ fuzzy: value })}
                   />
                 </FormItem>
-                <FormItem >
-{/*                   <Switch
+                <FormItem>
+                  {/*                   <Switch
                     checked={params.prefix === true}
                     onChange={(value) => this.updateSearch({ prefix: value })}
                   /> */}
-                   <RadioGroup
+                  <RadioGroup
                     onChange={(evt) => {
-                      
-                        this.updateSearch({ type: evt.target.value });
-                      
+                      this.updateSearch({ type: evt.target.value });
                     }}
                     value={params.type || "WHOLE_WORDS"}
-                  > 
-                  <Radio value="WHOLE_WORDS">Match whole words</Radio>
+                  >
+                    <Radio value="WHOLE_WORDS">Match whole words</Radio>
                     <Radio value="PREFIX">Partial words</Radio>
-                    
+
                     <Radio value="EXACT">Exact</Radio>
                   </RadioGroup>
                 </FormItem>
@@ -476,7 +500,7 @@ class NameSearchPage extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={12} style={{  marginBottom: "8px" }}>
+          <Col span={12} style={{ marginBottom: "8px" }}>
             <Button type="danger" onClick={this.resetSearch}>
               Reset all
             </Button>
@@ -521,7 +545,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   catalogueKey,
-  dataset
+  dataset,
 }) => ({
   rank,
   taxonomicstatus,
@@ -530,7 +554,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   catalogueKey,
-  dataset
+  dataset,
 });
 
 export default withContext(mapContextToProps)(NameSearchPage);
