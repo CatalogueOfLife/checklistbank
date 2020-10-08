@@ -508,7 +508,14 @@ class NameSearchPage extends React.Component {
           <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
-              `results: ${pagination.total.toLocaleString("en-GB")}`}
+              `${(
+                (pagination.current - 1) * pagination.pageSize +
+                1
+              ).toLocaleString("en-GB")} - ${(
+                pagination.current * pagination.pageSize
+              ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
+                "en-GB"
+              )}`}
           </Col>
         </Row>
         {!error && (
