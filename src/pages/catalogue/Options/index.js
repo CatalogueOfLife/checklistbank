@@ -159,7 +159,7 @@ class CatalogueOptions extends React.Component {
       },
     } = this.props;
     axios
-        .post(`${config.dataApi}dataset/${catalogueKey}/sector/count-update`)
+        .post(`${config.dataApi}admin/sector-count-update?datasetKey=${catalogueKey}`)
         .then((res) => {
           notification.open({
             message: `Recalculating sector counts`,

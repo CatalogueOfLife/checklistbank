@@ -244,7 +244,9 @@ class GSDIssuesMatrix extends React.Component {
           <div>
             <Row>
               <Col md={12} sm={24}>
-                
+                <NavLink to={{ pathname: `/dataset` , search: `?contributesTo=${catalogueKey}`}} exact={true}>
+                View metadata of all sources
+                </NavLink>
               </Col>
               <Col md={12} sm={24}>
               <MultiValueFilter
