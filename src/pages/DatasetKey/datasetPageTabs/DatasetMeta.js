@@ -188,18 +188,26 @@ class DatasetMeta extends React.Component {
             <PresentationItem
               label={<FormattedMessage id="contact" defaultMessage="Contact" />}
             >
-              {data.contact && <PersonPresentation person={data.contact} />}
+              {Auth.isAuthorised(user, ["editor", "admin"]) && data.contact && (
+                <PersonPresentation person={data.contact} />
+              )}
+              {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+                data.contact &&
+                data.contact.name}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="authors" defaultMessage="Authors" />}
             >
               {data.authors && _.isArray(data.authors) && (
                 <Row gutter={[8, 8]}>
-                  {data.authors.map((a) => (
-                    <Col>
-                      <PersonPresentation person={a} />
-                    </Col>
-                  ))}
+                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    data.authors.map((a) => (
+                      <Col>
+                        <PersonPresentation person={a} />
+                      </Col>
+                    ))}
+                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    data.authors.map((a) => a.name).join(", ")}
                 </Row>
               )}
             </PresentationItem>
@@ -208,11 +216,14 @@ class DatasetMeta extends React.Component {
             >
               {data.editors && _.isArray(data.editors) && (
                 <Row gutter={[8, 8]}>
-                  {data.editors.map((a) => (
-                    <Col>
-                      <PersonPresentation person={a} />
-                    </Col>
-                  ))}
+                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    data.editors.map((a) => (
+                      <Col>
+                        <PersonPresentation person={a} />
+                      </Col>
+                    ))}
+                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    data.editors.map((a) => a.name).join(", ")}
                 </Row>
               )}
             </PresentationItem>
@@ -228,14 +239,7 @@ class DatasetMeta extends React.Component {
             <PresentationItem
               label={<FormattedMessage id="origin" defaultMessage="Origin" />}
             >
-              {data.origin === "external" && (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: `${data.dataFormat}: <a href='${data.dataAccess}' target='_blank'>${data.dataAccess}</a>`,
-                  }}
-                ></span>
-              )}
-              {data.origin !== "external" && data.origin}
+              {data.origin}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="type" defaultMessage="Type" />}
