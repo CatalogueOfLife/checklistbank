@@ -60,7 +60,7 @@ class DatasetPage extends React.Component {
     ])
 
       .then((res) => {
-        const importState = _.get(res[0], "data[0].state") || null;
+        const importState = _.get(res[0], "data[0]") || null;
         const hasData = res[1].data.length > 0;
         this.setState({
           importState,
@@ -129,17 +129,19 @@ class DatasetPage extends React.Component {
           />
         )}
         {importState &&
-          _.get(importStateMap[importState], "running") === "true" && (
+          _.get(importStateMap[importState.state], "running") === "true" && (
             <Alert
               style={{ marginTop: "16px" }}
               message="The dataset is currently being imported. Data may be inconsistent."
               type="warning"
             />
           )}
-        {importState && importState === "failed" && (
+        {importState && importState.state === "failed" && (
           <Alert
             style={{ marginTop: "16px" }}
-            message="Last import of this dataset failed."
+            message={`Last ${_.startCase(
+              importState.job
+            )} of this dataset failed.`}
             type="error"
           />
         )}
