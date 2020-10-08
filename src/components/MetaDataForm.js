@@ -1,5 +1,16 @@
-import React, {useState, useEffect} from "react";
-import { Input, InputNumber, Select, Button, Alert, Rate, notification, Row, Col , Form} from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Input,
+  InputNumber,
+  Select,
+  Button,
+  Alert,
+  Rate,
+  notification,
+  Row,
+  Col,
+  Form,
+} from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../config";
@@ -8,7 +19,7 @@ import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
 import PersonControl from "./PersonControl";
 
-import CsvDelimiterInput from "./CsvDelimiterInput"
+import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
 
 const FormItem = Form.Item;
@@ -16,35 +27,34 @@ const Option = Select.Option;
 const openNotification = (title, description) => {
   notification.open({
     message: title,
-    description: description
+    description: description,
   });
 };
 
 const formItemLayout = {
   labelCol: {
     xs: { span: 20 },
-    sm: { span: 4 }
+    sm: { span: 4 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 }
-  }
+    sm: { span: 16 },
+  },
 };
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
       span: 24,
-      offset: 0
+      offset: 0,
     },
     sm: {
       span: 16,
-      offset: 4
-    }
-  }
+      offset: 4,
+    },
+  },
 };
 
 const MetaDataForm = (props) => {
-
   const {
     data,
     frequency,
@@ -54,57 +64,68 @@ const MetaDataForm = (props) => {
     nomCode,
     datasetSettings,
     datasetoriginEnum,
-    onSaveSuccess
+    onSaveSuccess,
   } = props;
 
-  const [confirmDirty, setConfirmDirty] = useState(false)
-  const [origin, setOrigin] = useState(null)
-  const [submissionError, setSubmissionError] = useState(null)
+  const [confirmDirty, setConfirmDirty] = useState(false);
+  const [origin, setOrigin] = useState(null);
+  const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
   useEffect(() => {
-    console.log("test")
-    console.log(datasetoriginEnum)
+    console.log("test");
+    console.log(datasetoriginEnum);
   }, [datasetoriginEnum]);
-  
+
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
   };
-  const submitData = values => {
+  const submitData = (values) => {
     const key = _.get(data, "key");
-    if(_.get(values, 'settings["csv delimiter"]') === "\\t"){
-      values.settings["csv delimiter"] = `\t`
+    if (_.get(values, 'settings["csv delimiter"]') === "\\t") {
+      values.settings["csv delimiter"] = `\t`;
     }
     let task = key
       ? axios.put(`${config.dataApi}dataset/${key}`, values)
       : axios.post(`${config.dataApi}dataset`, values);
 
     task
-      .then(res => {
+      .then((res) => {
         let title = key ? "Meta data updated" : "Dataset registered";
         let msg = key
           ? `Meta data updated successfully updated for ${values.title}`
           : `${values.title} registered and ready for import`;
-          if (onSaveSuccess && typeof onSaveSuccess === "function") {
-            onSaveSuccess(res);
-          }
-          openNotification(title, msg);
-          setSubmissionError(null)
+        if (onSaveSuccess && typeof onSaveSuccess === "function") {
+          onSaveSuccess(res);
+        }
+        openNotification(title, msg);
+        setSubmissionError(null);
       })
-      .catch(err => {
-        setSubmissionError(err)
+      .catch((err) => {
+        setSubmissionError(err);
       });
   };
 
-  const handleConfirmBlur = e => {
+  const handleConfirmBlur = (e) => {
     const value = e.target.value;
-    setConfirmDirty(confirmDirty || !!value)
+    setConfirmDirty(confirmDirty || !!value);
   };
 
-  const initialValues = {organisations: [], authorsAndEditors: [], private: false, confidence: null, completeness: 0, ...data}
+  const initialValues = {
+    organisations: [],
+    authorsAndEditors: [],
+    private: false,
+    confidence: null,
+    completeness: 0,
+    ...data,
+  };
 
   return (
-    <Form initialValues={initialValues} onFinish={submitData} onFinishFailed={onFinishFailed} style={{ paddingTop: "12px" }}>
-   
+    <Form
+      initialValues={initialValues}
+      onFinish={submitData}
+      onFinishFailed={onFinishFailed}
+      style={{ paddingTop: "12px" }}
+    >
       {submissionError && (
         <FormItem>
           <Alert
@@ -116,12 +137,17 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
 
-      <FormItem {...formItemLayout} label="Title" name="title" rules={[
-            {
-              required: true,
-              message: "Please input dataset title"
-            }
-          ]}>
+      <FormItem
+        {...formItemLayout}
+        label="Title"
+        name="title"
+        rules={[
+          {
+            required: true,
+            message: "Please input dataset title",
+          },
+        ]}
+      >
         <Input />
       </FormItem>
       {data && (
@@ -135,7 +161,11 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Organisations" name="organisations">
+        <FormItem
+          {...formItemLayout}
+          label="Organisations"
+          name="organisations"
+        >
           <TagControl label="New organisation" removeAll={true} />
         </FormItem>
       )}
@@ -158,12 +188,17 @@ const MetaDataForm = (props) => {
       )}
       {data && (
         <FormItem {...formItemLayout} label="Contact" name="contact">
-          <PersonControl label="New contact" removeAll={true} array={false}/>
+          <PersonControl label="New contact" removeAll={true} array={false} />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Authors and Editors" name="authorsAndEditors">
-          <PersonControl label="New Author/Editor" removeAll={true} />
+        <FormItem {...formItemLayout} label="Authors" name="authors">
+          <PersonControl label="New Author" removeAll={true} />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem {...formItemLayout} label="Editors" name="editors">
+          <PersonControl label="New Editor" removeAll={true} />
         </FormItem>
       )}
       {data && (
@@ -171,32 +206,38 @@ const MetaDataForm = (props) => {
           <Input type="url" />
         </FormItem>
       )}
-      { !data && <FormItem {...formItemLayout} label="Dataset Origin" name="origin" rules={[
-                    {
-                      required: true,
-                      message: "Please select the dataset origin"
-                    }
-                  ]} help="This cannot be changed later"
->
-    <Select
-                    style={{ width: 200 }}
-                    onChange={value => setOrigin(value)}
-                    showSearch
-                  >
-                    {datasetoriginEnum.filter(f => f !== "released").map(f => {
-                      return (
-                        <Option key={f} value={f}>
-                          {f}
-                        </Option>
-                      );
-                    })}
-                  </Select>
-              </FormItem>
-      }
+      {!data && (
+        <FormItem
+          {...formItemLayout}
+          label="Dataset Origin"
+          name="origin"
+          rules={[
+            {
+              required: true,
+              message: "Please select the dataset origin",
+            },
+          ]}
+          help="This cannot be changed later"
+        >
+          <Select
+            style={{ width: 200 }}
+            onChange={(value) => setOrigin(value)}
+            showSearch
+          >
+            {datasetoriginEnum
+              .filter((f) => f !== "released")
+              .map((f) => {
+                return (
+                  <Option key={f} value={f}>
+                    {f}
+                  </Option>
+                );
+              })}
+          </Select>
+        </FormItem>
+      )}
 
-
-    
-{/*       {origin === "external" && (
+      {/*       {origin === "external" && (
         <FormItem {...formItemLayout} label="Data Access" name="dataAccess" rules={[
           {
             required: false,
@@ -224,21 +265,26 @@ const MetaDataForm = (props) => {
             </Select>
         </FormItem>
       )} */}
-      <FormItem {...formItemLayout} label="Dataset Type" name="type" rules={[
-            {
-              required: true,
-              message: "Please select a dataset type"
-            }
-          ]}>
+      <FormItem
+        {...formItemLayout}
+        label="Dataset Type"
+        name="type"
+        rules={[
+          {
+            required: true,
+            message: "Please select a dataset type",
+          },
+        ]}
+      >
         <Select style={{ width: 200 }} showSearch>
-            {datasettypeEnum.map(f => {
-              return (
-                <Option key={f} value={f}>
-                  {f}
-                </Option>
-              );
-            })}
-          </Select>
+          {datasettypeEnum.map((f) => {
+            return (
+              <Option key={f} value={f}>
+                {f}
+              </Option>
+            );
+          })}
+        </Select>
       </FormItem>
 
       {data && (
@@ -252,7 +298,11 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Geographic scope" name="geographicScope">
+        <FormItem
+          {...formItemLayout}
+          label="Geographic scope"
+          name="geographicScope"
+        >
           <Input type="text" />
         </FormItem>
       )}
@@ -261,31 +311,42 @@ const MetaDataForm = (props) => {
           <Input type="text" />
         </FormItem>
       )}
-      <FormItem {...formItemLayout} label="Private" key="Private" name="private" valuePropName="checked">
-      <Input type="checkbox"  /> 
-          </FormItem>
-      <FormItem {...formItemLayout} label="License" name="license" rules={[
-            {
-              required: true,
-              message: "Please select a license"
-            }
-          ]}>
+      <FormItem
+        {...formItemLayout}
+        label="Private"
+        key="Private"
+        name="private"
+        valuePropName="checked"
+      >
+        <Input type="checkbox" />
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="License"
+        name="license"
+        rules={[
+          {
+            required: true,
+            message: "Please select a license",
+          },
+        ]}
+      >
         <Select style={{ width: 200 }} showSearch>
-            {licenseEnum.map(f => {
-              return (
-                <Option key={f} value={f}>
-                  {f}
-                </Option>
-              );
-            })}
-          </Select>
+          {licenseEnum.map((f) => {
+            return (
+              <Option key={f} value={f}>
+                {f}
+              </Option>
+            );
+          })}
+        </Select>
       </FormItem>
 
       {/* Only to be shown on existing datasets */}
       {data && (
         <React.Fragment>
           <FormItem {...formItemLayout} label="Logo Url" name="logo">
-          <Input type="url" />
+            <Input type="url" />
           </FormItem>
 
           <FormItem
@@ -295,8 +356,8 @@ const MetaDataForm = (props) => {
             help={
               <span>
                 Quality of taxonomic checklist with values 1 to 5; quality is
-                stated by the custodian in agreement with CoL editor.
-                Confidence indicators are described at{" "}
+                stated by the custodian in agreement with CoL editor. Confidence
+                indicators are described at{" "}
                 <a
                   href="http://www.catalogueoflife.org/col/info/databases"
                   target="_blank"
@@ -322,7 +383,7 @@ const MetaDataForm = (props) => {
           </FormItem>
         </React.Fragment>
       )}
-{/*       <Row>
+      {/*       <Row>
         <Col span={4}></Col>
         <Col span={16}>
         <section className="code-box">
@@ -370,7 +431,7 @@ const MetaDataForm = (props) => {
           </Select>}
           </FormItem>
           )} */}
-      
+
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
           Save
@@ -378,10 +439,7 @@ const MetaDataForm = (props) => {
       </FormItem>
     </Form>
   );
-
-}
-
-
+};
 
 const mapContextToProps = ({
   addError,
@@ -393,7 +451,7 @@ const mapContextToProps = ({
   license: licenseEnum,
   nomCode,
   datasetSettings,
-  gazetteer
+  gazetteer,
 }) => ({
   addError,
   addInfo,
@@ -404,8 +462,7 @@ const mapContextToProps = ({
   licenseEnum,
   nomCode,
   datasetSettings,
-  gazetteer
+  gazetteer,
 });
-
 
 export default withContext(mapContextToProps)(MetaDataForm);

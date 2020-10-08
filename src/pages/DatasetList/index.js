@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { Table, Alert, Row, Col, Form } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -15,35 +15,28 @@ import ColumnFilter from "./ColumnFilter";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import { getDatasetsBatch } from "../../api/dataset";
-import DataLoader from "dataloader";
-
-
 
 const FormItem = Form.Item;
 
 const _ = require("lodash");
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 8 }
+    sm: { span: 8 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 }
-  }
+    sm: { span: 16 },
+  },
 };
-
-
 
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
-    // const excludeColumns = JSON.parse(localStorage.getItem('colplus_datasetlist_hide_columns')) || [];
-    const {catalogueKey} = this.props;
+
     this.state = {
       data: [],
       excludeColumns:
@@ -66,7 +59,7 @@ class DatasetList extends React.Component {
               </NavLink>
             );
           },
-         // sorter: true
+          // sorter: true
         },
         {
           title: "Title",
@@ -83,82 +76,128 @@ class DatasetList extends React.Component {
               </NavLink>
             );
           },
-          sorter: true
+          sorter: true,
         },
         {
           title: "Logo",
           dataIndex: "key",
           width: 100,
           key: "logo",
-          render: (text, record) => <DatasetLogo datasetKey={record.key} size="SMALL" />
+          render: (text, record) => (
+            <DatasetLogo datasetKey={record.key} size="SMALL" />
+          ),
         },
         {
-          title: "Authors & Editors",
-          dataIndex: "authorsAndEditors",
-          key: "authorsAndEditors",
+          title: "Authors",
+          dataIndex: "authors",
+          key: "authors",
           sorter: true,
           render: (text, record) => {
-            return text && _.isArray(text) ? text.map(t => t.name).join(', ') : ''
-          }
+            return text && _.isArray(text)
+              ? text.map((t) => t.name).join(", ")
+              : "";
+          },
+        },
+        {
+          title: "Editors",
+          dataIndex: "editors",
+          key: "editors",
+          sorter: true,
+          render: (text, record) => {
+            return text && _.isArray(text)
+              ? text.map((t) => t.name).join(", ")
+              : "";
+          },
         },
         {
           title: "Version",
           dataIndex: "version",
-          key: "version"
+          key: "version",
         },
-         {
+        {
           title: "Origin",
           dataIndex: "origin",
-          key: "origin"
-         
+          key: "origin",
         },
-       {
-          title: "Type",
-          dataIndex: "type",
-          key: "type"
-        }, 
+        {
+          title: "Contact",
+          dataIndex: ["contact", "name"],
+          key: "contact",
+        },
+        {
+          title: "Organisations",
+          dataIndex: "organisations",
+          key: "organisations",
+          render: (text, record) => {
+            return text && _.isArray(text) ? text.join(", ") : "";
+          },
+        },
+        {
+          title: "License",
+          dataIndex: "license",
+          key: "license",
+        },
+        {
+          title: "Geographic Scope",
+          dataIndex: "geographicScope",
+          key: "geographicScope",
+        },
+        {
+          title: "Confidence",
+          dataIndex: "confidence",
+          key: "confidence",
+        },
+        {
+          title: "Completeness",
+          dataIndex: "completeness",
+          key: "completeness",
+        },
         {
           title: "Size",
           dataIndex: "size",
           key: "size",
-          sorter: true
+          sorter: true,
         },
         {
           title: "Created",
           dataIndex: "created",
           key: "created",
           sorter: true,
-          render: date => {
+          render: (date) => {
             return moment(date).format("MMM Do YYYY");
-          }
+          },
         },
         {
           title: "Modified",
           dataIndex: "modified",
           key: "modified",
           sorter: true,
-          render: date => {
+          render: (date) => {
             return moment(date).format("MMM Do YYYY");
-          }
+          },
         },
         {
           title: "Private",
           dataIndex: "private",
           key: "private",
           render: (text, record) => {
-            return text === true ? <LockOutlined style={{color: 'red'}} /> : <UnlockOutlined style={{color: 'green'}} />;
-          }
-        }
+            return text === true ? (
+              <LockOutlined style={{ color: "red" }} />
+            ) : (
+              <UnlockOutlined style={{ color: "green" }} />
+            );
+          },
+        },
       ],
       search: _.get(this.props, "location.search.q") || "",
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
-        showQuickJumper: true
+        showQuickJumper: true,
       },
-     
-      loading: false
+
+      loading: false,
     };
   }
 
@@ -168,106 +207,125 @@ class DatasetList extends React.Component {
       params = { limit: PAGE_SIZE, offset: 0 };
       history.push({
         pathname: "/dataset",
-        search: `?limit=${PAGE_SIZE}&offset=0`
+        search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
-   
-    this.setState({ params, pagination: {
-      pageSize: params.limit || PAGE_SIZE,
-      current: (Number(params.offset || 0) / Number(params.limit || PAGE_SIZE)) +1
-      
-    } }, this.getData);
+
+    this.setState(
+      {
+        params,
+        pagination: {
+          pageSize: params.limit || PAGE_SIZE,
+          current:
+            Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+        },
+      },
+      this.getData
+    );
   }
 
-
   getData = () => {
-    const { params } = this.state;
+    const {
+      params,
+      pagination: { pageSize: limit, current },
+    } = this.state;
 
     this.setState({ loading: true });
     if (!params.q) {
       delete params.q;
     }
+    const newParamsWithPaging = {
+      ...params,
+      limit,
+      offset: (current - 1) * limit,
+    };
     history.push({
       pathname: "/dataset",
-      search: `?${qs.stringify(params)}`
+      search: `?${qs.stringify(newParamsWithPaging)}`,
     });
-    axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
-      .then(res => {
-        const pagination = { ...this.state.pagination };
-        pagination.total = res.data.total;
-
+    axios(`${config.dataApi}dataset?${qs.stringify(newParamsWithPaging)}`)
+      .then((res) => {
         this.setState({
           loading: false,
           data: res.data.result,
           err: null,
-          pagination
+          pagination: { ...this.state.pagination, total: res.data.total },
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
-
-  updateSearch = params => {
-
-    let newParams = {...this.state.params, offset: 0, limit: 50};
+  updateSearch = (params) => {
+    let newParams = { ...this.state.params };
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
-    this.setState({ params: newParams}, this.getData);
+    this.setState(
+      {
+        params: newParams,
+        pagination: {
+          pageSize: PAGE_SIZE,
+          current: 1,
+        },
+      },
+      this.getData
+    );
   };
 
-
-
-  
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
-    
-    
-    this.setState({
-      pagination: pager
-    });
-    let query = { 
-      limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize,
-      ...Object.keys(filters).reduce((acc, cur)=> (filters[cur] !== null && (acc[cur] = filters[cur]), acc ), {}),
+    let query = {
+      ...Object.keys(filters).reduce(
+        (acc, cur) => (filters[cur] !== null && (acc[cur] = filters[cur]), acc),
+        {}
+      ),
     };
 
-    if (sorter) {
-      query.sortBy =
-        sorter.field === "authorsAndEditors" ? "authors" : sorter.field;
-    }
     if (sorter && sorter.order === "descend") {
       query.reverse = true;
     } else {
       query.reverse = false;
     }
-    this.setState({ params: query }, this.getData);
+    this.setState({ params: query, pagination }, this.getData);
   };
 
-  handleColumns = excludeColumns => {
+  handleColumns = (excludeColumns) => {
     this.setState({ excludeColumns });
   };
 
- 
-
   render() {
-    const { data, loading, error, excludeColumns, defaultColumns, params} = this.state;
-    const { datasetType, datasetOrigin } = this.props
-    defaultColumns[5].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
-    if(params.origin){
-      defaultColumns[5].filteredValue = _.isArray(params.origin) ? params.origin : [params.origin]
+    const {
+      data,
+      loading,
+      error,
+      excludeColumns,
+      defaultColumns,
+      params,
+    } = this.state;
+    const { datasetType, datasetOrigin } = this.props;
+    defaultColumns[5].filters = datasetOrigin.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
+    if (params.origin) {
+      defaultColumns[5].filteredValue = _.isArray(params.origin)
+        ? params.origin
+        : [params.origin];
     } else {
-      defaultColumns[5].filteredValue = null
-    }  
-    defaultColumns[6].filters = datasetType.map(i => ({text: _.startCase(i), value: i}))
-    if(params.type){
-      defaultColumns[6].filteredValue = _.isArray(params.type) ? params.type : [params.type]
+      defaultColumns[5].filteredValue = null;
+    }
+    defaultColumns[6].filters = datasetType.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
+    if (params.type) {
+      defaultColumns[6].filteredValue = _.isArray(params.type)
+        ? params.type
+        : [params.type];
     } else {
-      defaultColumns[6].filteredValue = null
-    } 
+      defaultColumns[6].filteredValue = null;
+    }
     const filteredColumns =
       this.props.user && _.includes(this.props.user.roles, "admin")
         ? [
@@ -277,7 +335,7 @@ class DatasetList extends React.Component {
               dataIndex: "",
               width: 60,
               key: "__actions__",
-              render: (text, record)  =>
+              render: (text, record) =>
                 record.origin === "external" ? (
                   <ImportButton
                     key={record.key}
@@ -285,14 +343,14 @@ class DatasetList extends React.Component {
                   />
                 ) : (
                   ""
-                )
-            }
+                ),
+            },
           ]
         : defaultColumns;
 
     const columns = _.filter(
       filteredColumns,
-      v => !_.includes(excludeColumns, v.key)
+      (v) => !_.includes(excludeColumns, v.key)
     );
 
     return (
@@ -306,7 +364,7 @@ class DatasetList extends React.Component {
             background: "#fff",
             padding: 24,
             minHeight: 280,
-            margin: "16px 0"
+            margin: "16px 0",
           }}
         >
           <div>
@@ -315,16 +373,14 @@ class DatasetList extends React.Component {
                 <SearchBox
                   defaultValue={_.get(this.state, "params.q")}
                   style={{ marginBottom: "10px", width: "50%" }}
-                  onSearch={value =>
-                    this.updateSearch({ q: value })
-                  }
+                  onSearch={(value) => this.updateSearch({ q: value })}
                 />
               </Col>
               <Col md={12} sm={24}>
                 <FormItem
                   style={{ width: "100%" }}
                   {...formItemLayout}
-                  label="Omit columns"
+                  label="Hide columns"
                 >
                   <ColumnFilter
                     columns={columns}
@@ -341,7 +397,7 @@ class DatasetList extends React.Component {
               columns={columns}
               dataSource={data}
               loading={loading}
-              scroll={{x: "2000px"}}
+              scroll={{ x: `${columns.length * 100}px` }}
               pagination={this.state.pagination}
               onChange={this.handleTableChange}
             />
@@ -352,6 +408,11 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, datasetType, datasetOrigin, catalogueKey }) => ({ user, datasetType, datasetOrigin, catalogueKey });
+const mapContextToProps = ({
+  user,
+  datasetType,
+  datasetOrigin,
+  catalogueKey,
+}) => ({ user, datasetType, datasetOrigin, catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetList);

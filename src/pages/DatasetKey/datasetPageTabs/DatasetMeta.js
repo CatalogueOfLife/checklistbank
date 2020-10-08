@@ -191,16 +191,24 @@ class DatasetMeta extends React.Component {
               {data.contact && <PersonPresentation person={data.contact} />}
             </PresentationItem>
             <PresentationItem
-              label={
-                <FormattedMessage
-                  id="authorsAndEditors"
-                  defaultMessage="Authors and Editors"
-                />
-              }
+              label={<FormattedMessage id="authors" defaultMessage="Authors" />}
             >
-              {data.authorsAndEditors && _.isArray(data.authorsAndEditors) && (
+              {data.authors && _.isArray(data.authors) && (
                 <Row gutter={[8, 8]}>
-                  {data.authorsAndEditors.map((a) => (
+                  {data.authors.map((a) => (
+                    <Col>
+                      <PersonPresentation person={a} />
+                    </Col>
+                  ))}
+                </Row>
+              )}
+            </PresentationItem>
+            <PresentationItem
+              label={<FormattedMessage id="editors" defaultMessage="Editors" />}
+            >
+              {data.editors && _.isArray(data.editors) && (
+                <Row gutter={[8, 8]}>
+                  {data.editors.map((a) => (
                     <Col>
                       <PersonPresentation person={a} />
                     </Col>
