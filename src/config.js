@@ -12,6 +12,7 @@ const environments = {
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "CoL draft",
+      origin: "managed",
     },
     NAME_INDEX: {
       key: 1,
@@ -34,6 +35,7 @@ const environments = {
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "CoL draft",
+      origin: "managed",
     },
     NAME_INDEX: {
       key: 1,
@@ -51,6 +53,7 @@ const environments = {
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "CoL draft",
+      origin: "managed",
     },
     NAME_INDEX: {
       key: 1,
@@ -68,6 +71,7 @@ const environments = {
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "CoL draft",
+      origin: "managed",
     },
     NAME_INDEX: {
       key: 1,
