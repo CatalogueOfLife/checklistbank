@@ -406,16 +406,13 @@ class NameSearchPage extends React.Component {
                     value={
                       typeof params.extinct === "undefined"
                         ? null
-                        : params.extinct === "false"
-                        ? false
                         : params.extinct === "true"
                         ? true
-                        : params.extinct
+                        : null
                     }
                   >
                     <Radio value={null}>Living and extinct</Radio>
                     <Radio value={true}>Extinct</Radio>
-                    <Radio value={false}>Living</Radio>
                   </RadioGroup>
                 </FormItem>
                 <FormItem>
