@@ -18,8 +18,10 @@ export default (catalogueKey) => ({
             key={_.get(record, "id")}
             to={{
               pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName")  ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
+                _.get(record, "bareName") ? "name" : "taxon"
+              }/${encodeURIComponent(
+                _.get(record, "accepted.id") || _.get(record, "id")
+              )}`,
             }}
             exact={true}
           >
@@ -30,7 +32,7 @@ export default (catalogueKey) => ({
             </Tooltip>
           </NavLink>
         );
-      }
+      },
     },
     {
       title: "Decision",
@@ -45,7 +47,7 @@ export default (catalogueKey) => ({
             deleteCallback={this.getData}
           />
         );
-      }
+      },
     },
     {
       title: "Status",
@@ -53,7 +55,7 @@ export default (catalogueKey) => ({
       key: "status",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
     {
       title: "Accepted",
@@ -65,11 +67,11 @@ export default (catalogueKey) => ({
         return (
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.labelHtml")
+              __html: _.get(record, "accepted.labelHtml"),
             }}
           />
         );
-      }
+      },
     },
 
     {
@@ -78,7 +80,10 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "genus"],
       key: "genus",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+      render: (text, record) => {
+        console.log(text);
+        return <CopyableColumnText text={text} width="150px" />;
+      },
     },
     {
       title: "specificEpithet",
@@ -86,7 +91,9 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "specificEpithet"],
       key: "specificEpithet",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="150px" />
+      ),
     },
     {
       title: "Authorship",
@@ -94,7 +101,9 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "authorship"],
       key: "authorship",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="230px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="230px" />
+      ),
     },
 
     {
@@ -103,8 +112,8 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
-    }
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
+    },
   ],
   trinomial: [
     {
@@ -115,14 +124,16 @@ export default (catalogueKey) => ({
       render: (text, record) => {
         return (
           <NavLink
-          key={_.get(record, "id")}
-          to={{
-            pathname: `/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName")  ? "name" : "taxon"
-            }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
-          }}
-          exact={true}
-        >
+            key={_.get(record, "id")}
+            to={{
+              pathname: `/dataset/${_.get(record, "datasetKey")}/${
+                _.get(record, "bareName") ? "name" : "taxon"
+              }/${encodeURIComponent(
+                _.get(record, "accepted.id") || _.get(record, "id")
+              )}`,
+            }}
+            exact={true}
+          >
             <Tooltip title={text}>
               <div style={{ width: "50px" }} className="truncate">
                 {text}
@@ -130,7 +141,7 @@ export default (catalogueKey) => ({
             </Tooltip>
           </NavLink>
         );
-      }
+      },
     },
     {
       title: "Decision",
@@ -146,7 +157,7 @@ export default (catalogueKey) => ({
             deleteCallback={this.getData}
           />
         );
-      }
+      },
     },
     {
       title: "Status",
@@ -154,7 +165,7 @@ export default (catalogueKey) => ({
       key: "status",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
     {
       title: "Accepted",
@@ -166,19 +177,21 @@ export default (catalogueKey) => ({
         return (
           <span
             dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.labelHtml")
+              __html: _.get(record, "accepted.labelHtml"),
             }}
           />
         );
-      }
+      },
     },
     {
       title: "Genus",
       width: 160,
-      dataIndex: "name.genus",
+      dataIndex: ["name", "genus"],
       key: "genus",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="150px" />
+      ),
     },
     {
       title: "specificEpithet",
@@ -186,7 +199,9 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "specificEpithet"],
       key: "specificEpithet",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="150px" />
+      ),
     },
     {
       title: "infraspecificEpithet",
@@ -194,7 +209,9 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "infraspecificEpithet"],
       key: "infraspecificEpithet",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="150px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="150px" />
+      ),
     },
     {
       title: "Authorship",
@@ -202,7 +219,9 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "authorship"],
       key: "authorship",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="230px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="230px" />
+      ),
     },
 
     {
@@ -211,8 +230,8 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
-    }
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
+    },
   ],
   uninomial: [
     {
@@ -226,8 +245,10 @@ export default (catalogueKey) => ({
             key={_.get(record, "id")}
             to={{
               pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName")  ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
+                _.get(record, "bareName") ? "name" : "taxon"
+              }/${encodeURIComponent(
+                _.get(record, "accepted.id") || _.get(record, "id")
+              )}`,
             }}
             exact={true}
           >
@@ -238,7 +259,7 @@ export default (catalogueKey) => ({
             </Tooltip>
           </NavLink>
         );
-      }
+      },
     },
     {
       title: "Decision",
@@ -254,7 +275,7 @@ export default (catalogueKey) => ({
             deleteCallback={this.getData}
           />
         );
-      }
+      },
     },
     {
       title: "Status",
@@ -262,7 +283,7 @@ export default (catalogueKey) => ({
       key: "status",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
     /*   {
             title: "Accepted",
@@ -279,16 +300,18 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "uninomial"],
       key: "uninomial",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="140px" />
+      render: (text, record) => (
+        <CopyableColumnText text={text} width="140px" />
+      ),
     },
 
-       {
-          title: "Authorship",
-          width: 240,
-          dataIndex: ["name", "authorship"],
-          key: "authorship",
-          className: "workbench-td",
-        }, 
+    {
+      title: "Authorship",
+      width: 240,
+      dataIndex: ["name", "authorship"],
+      key: "authorship",
+      className: "workbench-td",
+    },
 
     {
       title: "Rank",
@@ -296,7 +319,7 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
     {
       title: "Classification",
@@ -305,12 +328,16 @@ export default (catalogueKey) => ({
       className: "workbench-td",
       render: (text, record) => {
         return _.get(record, "classification") ? (
-          <Classification path={_.get(record, "classification")} datasetKey={_.get(record, "datasetKey")} catalogueKey={catalogueKey} />
+          <Classification
+            path={_.get(record, "classification")}
+            datasetKey={_.get(record, "datasetKey")}
+            catalogueKey={catalogueKey}
+          />
         ) : (
           ""
         );
-      }
-    }
+      },
+    },
   ],
   fullScientificName: [
     {
@@ -324,8 +351,10 @@ export default (catalogueKey) => ({
             key={_.get(record, "id")}
             to={{
               pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName")  ? "name" : "taxon"
-              }/${encodeURIComponent(_.get(record, "accepted.id") || _.get(record, "id"))}`
+                _.get(record, "bareName") ? "name" : "taxon"
+              }/${encodeURIComponent(
+                _.get(record, "accepted.id") || _.get(record, "id")
+              )}`,
             }}
             exact={true}
           >
@@ -336,7 +365,7 @@ export default (catalogueKey) => ({
             </Tooltip>
           </NavLink>
         );
-      }
+      },
     },
     {
       title: "Decision",
@@ -352,7 +381,7 @@ export default (catalogueKey) => ({
             deleteCallback={this.getData}
           />
         );
-      }
+      },
     },
     {
       title: "Status",
@@ -360,32 +389,39 @@ export default (catalogueKey) => ({
       key: "status",
       width: 60,
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
-      {
-            title: "Accepted",
-            dataIndex: ["accepted", "labelHtml"],
-            key: "accepted",
-            width: 340,
-            className: "workbench-td",
-            render: (text, record) => {
-            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.labelHtml")}}></span>}
-        }, 
+    {
+      title: "Accepted",
+      dataIndex: ["accepted", "labelHtml"],
+      key: "accepted",
+      width: 340,
+      className: "workbench-td",
+      render: (text, record) => {
+        return (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(record, "accepted.labelHtml"),
+            }}
+          ></span>
+        );
+      },
+    },
     {
       title: "scientificName",
       width: 340,
       dataIndex: ["name", "scientificName"],
       key: "scientificName",
-      className: "workbench-td"
+      className: "workbench-td",
     },
 
-       {
-          title: "Authorship",
-          width: 240,
-          dataIndex: ["name", "authorship"],
-          key: "authorship",
-          className: "workbench-td",
-        }, 
+    {
+      title: "Authorship",
+      width: 240,
+      dataIndex: ["name", "authorship"],
+      key: "authorship",
+      className: "workbench-td",
+    },
 
     {
       title: "Rank",
@@ -393,7 +429,7 @@ export default (catalogueKey) => ({
       dataIndex: ["name", "rank"],
       key: "rank",
       className: "workbench-td",
-      render: (text, record) => <CopyableColumnText text={text} width="50px" />
+      render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
     {
       title: "Classification",
@@ -401,11 +437,16 @@ export default (catalogueKey) => ({
       className: "workbench-td",
       render: (text, record) => {
         return _.get(record, "classification") ? (
-          <Classification path={_.get(record, "classification")} maxLength={3} datasetKey={_.get(record, "datasetKey")} catalogueKey={catalogueKey} />
+          <Classification
+            path={_.get(record, "classification")}
+            maxLength={3}
+            datasetKey={_.get(record, "datasetKey")}
+            catalogueKey={catalogueKey}
+          />
         ) : (
           ""
         );
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
