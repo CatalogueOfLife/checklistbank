@@ -11,7 +11,7 @@ import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
-import SynonymTable from "../Taxon/Synonyms"
+import SynonymTable from "../Taxon/Synonyms";
 
 import PresentationGroupHeader from "../../components/PresentationGroupHeader";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
@@ -36,16 +36,16 @@ class NamePage extends React.Component {
       verbatimLoading: true,
       nameError: null,
       datasetError: null,
-      verbatimError: null
+      verbatimError: null,
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: { taxonOrNameKey: nameKey }
+        params: { taxonOrNameKey: nameKey },
       },
-      datasetKey
+      datasetKey,
     } = this.props;
     this.getName(datasetKey, nameKey);
     this.getUsages(datasetKey, nameKey);
@@ -53,115 +53,95 @@ class NamePage extends React.Component {
     this.getSynonyms(datasetKey, nameKey);
     this.getPublishedIn(datasetKey, nameKey);
   }
-  componentDidUpdate = (prevProps)=> {
-    if(prevProps.match.params.taxonOrNameKey !== this.props.match.params.taxonOrNameKey){
+  componentDidUpdate = (prevProps) => {
+    if (
+      prevProps.match.params.taxonOrNameKey !==
+      this.props.match.params.taxonOrNameKey
+    ) {
       const {
         match: {
-          params: { taxonOrNameKey: nameKey }
+          params: { taxonOrNameKey: nameKey },
         },
-        datasetKey
+        datasetKey,
       } = this.props;
-    this.getName(datasetKey, nameKey);
-    this.getUsages(datasetKey, nameKey);
-    this.getRelations(datasetKey, nameKey);
-    this.getSynonyms(datasetKey, nameKey);
-    this.getPublishedIn(datasetKey, nameKey);
-
+      this.getName(datasetKey, nameKey);
+      this.getUsages(datasetKey, nameKey);
+      this.getRelations(datasetKey, nameKey);
+      this.getSynonyms(datasetKey, nameKey);
+      this.getPublishedIn(datasetKey, nameKey);
     }
-  }
-  getReference = referenceKey => {
-    const {
-      datasetKey
-    } = this.props;
+  };
+  getReference = (referenceKey) => {
+    const { datasetKey } = this.props;
 
-    axios(
-      `${config.dataApi}dataset/${datasetKey}/reference/${
-        referenceKey
-      }`
-    )
-      .then(res => {
+    axios(`${config.dataApi}dataset/${datasetKey}/reference/${referenceKey}`)
+      .then((res) => {
         this.setState({
           referenceLoading: false,
           reference: res.data,
-          referenceError: null
+          referenceError: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           referenceLoading: false,
           referenceErrorError: err,
-          name: null
+          name: null,
         });
       });
   };
 
   getRelations = (key, nameKey) => {
-    
-    axios(
-      `${config.dataApi}dataset/${key}/name/${
-        nameKey
-      }/relations`
-    ).then(relations => {
-    
-      return Promise.all(
-        relations.data.map(r => {
-          return axios(
-            `${config.dataApi}dataset/${key}/name/${
-              r.relatedNameId
-            }`
-          ).then(n => {
-            r.relatedName = n.data;
-          });
-        })
-      ).then(()=>{
-        this.setState({relations: relations.data})
-      });
-    })
-
-  }
+    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/relations`).then(
+      (relations) => {
+        return Promise.all(
+          relations.data.map((r) => {
+            return axios(
+              `${config.dataApi}dataset/${key}/name/${r.relatedNameId}`
+            ).then((n) => {
+              r.relatedName = n.data;
+            });
+          })
+        ).then(() => {
+          this.setState({ relations: relations.data });
+        });
+      }
+    );
+  };
 
   getSynonyms = (key, nameKey) => {
-    
-    axios(
-      `${config.dataApi}dataset/${key}/name/${
-        nameKey
-      }/synonyms`
-    ).then(synonyms => {
-      this.setState({synonyms: synonyms.data})
-    })
-
-  }
+    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/synonyms`).then(
+      (synonyms) => {
+        this.setState({ synonyms: synonyms.data });
+      }
+    );
+  };
   getPublishedIn = (key, nameKey) => {
-    
-    axios(
-      `${config.dataApi}dataset/${key}/name/${
-        nameKey
-      }/publishedIn`
-    ).then(publishedIn => {
-      this.setState({publishedIn: publishedIn.data})
-    })
+    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/publishedIn`).then(
+      (publishedIn) => {
+        this.setState({ publishedIn: publishedIn.data });
+      }
+    );
+  };
 
-  }
-
-  getUsages = (key, nameKey)=> {
-    
-   this.setState({ usageLoading: true });
-   axios(`${config.dataApi}dataset/${key}/nameusage/search?NAME_ID=${nameKey}`)
-     .then(res => {
-       this.setState(
-         { usageLoading: false, usages: res.data.result, usageError: null }
-       );
-     })
-     .catch(err => {
-       this.setState({ usageLoading: false, usageError: err, usages: null });
-     });
-  }
+  getUsages = (key, nameKey) => {
+    this.setState({ usageLoading: true });
+    axios(`${config.dataApi}dataset/${key}/nameusage/search?NAME_ID=${nameKey}`)
+      .then((res) => {
+        this.setState({
+          usageLoading: false,
+          usages: res.data.result,
+          usageError: null,
+        });
+      })
+      .catch((err) => {
+        this.setState({ usageLoading: false, usageError: err, usages: null });
+      });
+  };
   getName = (key, nameKey) => {
-   
-
     this.setState({ nameLoading: true });
     axios(`${config.dataApi}dataset/${key}/name/${nameKey}`)
-      .then(res => {
+      .then((res) => {
         this.setState(
           { nameLoading: false, name: res.data, nameError: null },
           () => {
@@ -171,7 +151,7 @@ class NamePage extends React.Component {
           }
         );
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ nameLoading: false, nameError: err, name: null });
       });
   };
@@ -187,133 +167,165 @@ class NamePage extends React.Component {
       verbatimError,
       relations,
       synonyms,
-      publishedIn
-        } = this.state;
+      publishedIn,
+    } = this.state;
 
-    const { getTaxonomicStatusColor } = this.props;
     const {
       datasetKey,
-      catalogueKey
+      catalogueKey,
+      getTaxonomicStatusColor,
+      nomstatus,
     } = this.props;
-    const taxonUri = datasetKey === catalogueKey ? `/catalogue/${catalogueKey}/taxon/` : `/dataset/${datasetKey}/taxon/`;
+
+    const nomStatusMap =
+      nomstatus.length > 0
+        ? nomstatus.reduce((a, c) => {
+            a[c.name] = c;
+            return a;
+          }, {})
+        : null;
+
+    const taxonUri =
+      datasetKey === catalogueKey
+        ? `/catalogue/${catalogueKey}/taxon/`
+        : `/dataset/${datasetKey}/taxon/`;
     return (
-     
-        <div
-          style={{
-            background: "#fff",
-            padding: 24,
-            minHeight: 280,
-            margin: "16px 0"
-          }}
-        >
-          <Row>
-            <Col span={18}>
-          {name && (
-            <h1 style={{ fontSize: "30px", fontWeight: '400', paddingLeft: "10px" , display: 'inline-block'}}>
-              Name details: {name.scientificName} {name.authorship}
-            </h1>
-          )}
+      <div
+        style={{
+          background: "#fff",
+          padding: 24,
+          minHeight: 280,
+          margin: "16px 0",
+        }}
+      >
+        <Row>
+          <Col span={18}>
+            {name && (
+              <h1
+                style={{
+                  fontSize: "30px",
+                  fontWeight: "400",
+                  paddingLeft: "10px",
+                  display: "inline-block",
+                }}
+              >
+                Name details: {name.scientificName} {name.authorship}
+              </h1>
+            )}
           </Col>
           <Col span={6}>
             {!usages && <Tag color="warning">No usages</Tag>}
-          {usages && usages.length > 0 &&  <PresentationItem md={md} label={usages.length > 1 ? 'Usages' : 'Usage'}>
-          {usages && usages.map(u => 
-          <NavLink
-          to={{
-            pathname: `${taxonUri}${encodeURIComponent(_.get(u, 'usage.accepted.id') || _.get(u, 'usage.id'))}`
-          }}
-          exact={true}
-        >
-          <Tag  color={getTaxonomicStatusColor(u.usage.status)} style={{marginRight: '6px', cursor: 'pointer'}}>{u.usage.status}</Tag>
-        </NavLink>
-          )}
+            {usages && usages.length > 0 && (
+              <PresentationItem
+                md={md}
+                label={usages.length > 1 ? "Usages" : "Usage"}
+              >
+                {usages &&
+                  usages.map((u) => (
+                    <NavLink
+                      to={{
+                        pathname: `${taxonUri}${encodeURIComponent(
+                          _.get(u, "usage.accepted.id") || _.get(u, "usage.id")
+                        )}`,
+                      }}
+                      exact={true}
+                    >
+                      <Tag
+                        color={getTaxonomicStatusColor(u.usage.status)}
+                        style={{ marginRight: "6px", cursor: "pointer" }}
+                      >
+                        {u.usage.status}
+                      </Tag>
+                    </NavLink>
+                  ))}
               </PresentationItem>
-            }
+            )}
           </Col>
+        </Row>
 
-</Row>
-
-          {nameLoading && <Spin />}
-          {nameError && (
-            <Alert message={<ErrorMsg error={nameError} />} type="error" />
-          )}
-          {name && (
-            <React.Fragment>
-              <PresentationItem md={md} label="Scientific Name">
-                {name.scientificName}
+        {nameLoading && <Spin />}
+        {nameError && (
+          <Alert message={<ErrorMsg error={nameError} />} type="error" />
+        )}
+        {name && (
+          <React.Fragment>
+            <PresentationItem md={md} label="Scientific Name">
+              {name.scientificName}
+            </PresentationItem>
+            <PresentationItem md={md} label="Rank">
+              {name.rank}
+            </PresentationItem>
+            <PresentationItem md={md} label="Uninomial">
+              {name.uninomial}
+            </PresentationItem>
+            <PresentationItem md={md} label="Genus">
+              {name.genus}
+            </PresentationItem>
+            <PresentationItem md={md} label="Infrageneric Epithet">
+              {name.infragenericEpithet}
+            </PresentationItem>
+            <PresentationItem md={md} label="Specific Epithet">
+              {name.specificEpithet}
+            </PresentationItem>
+            <PresentationItem md={md} label="Infraspecific Epithet">
+              {name.infraspecificEpithet}
+            </PresentationItem>
+            <PresentationItem md={md} label="Cultivar Epithet">
+              {name.cultivarEpithet}
+            </PresentationItem>
+            <PresentationItem md={md} label="Strain">
+              {name.strain}
+            </PresentationItem>
+            <PresentationItem md={md} label="Authorship">
+              {name.authorship}
+            </PresentationItem>
+            {name.combinationAuthorship && (
+              <PresentationItem md={md} label="Combination Authorship">
+                {`${
+                  name.combinationAuthorship.authors
+                    ? name.combinationAuthorship.authors.join(", ")
+                    : ""
+                } ${
+                  name.combinationAuthorship.exAuthors
+                    ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
+                    : ""
+                } ${
+                  name.combinationAuthorship.year
+                    ? name.combinationAuthorship.year
+                    : ""
+                }`}
               </PresentationItem>
-              <PresentationItem md={md} label="Rank">
-                {name.rank}
+            )}
+            {name.basionymAuthorship && (
+              <PresentationItem md={md} label="Basionym Authorship">
+                {`${name.basionymAuthorship.authors.join(", ")} ${
+                  name.basionymAuthorship.exAuthors
+                    ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
+                    : ""
+                } ${
+                  name.basionymAuthorship.year
+                    ? name.basionymAuthorship.year
+                    : ""
+                }`}
               </PresentationItem>
-              <PresentationItem md={md} label="Uninomial">
-                {name.uninomial}
+            )}
+            {name.sanctioningAuthor && (
+              <PresentationItem md={md} label="Sanctioning Author">
+                {`${name.sanctioningAuthor.authors.join(", ")} ${
+                  name.sanctioningAuthor.exAuthors
+                    ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
+                    : ""
+                } ${
+                  name.sanctioningAuthor.year ? name.sanctioningAuthor.year : ""
+                }`}
               </PresentationItem>
-              <PresentationItem md={md} label="Genus">
-                {name.genus}
-              </PresentationItem>
-              <PresentationItem md={md} label="Infrageneric Epithet">
-                {name.infragenericEpithet}
-              </PresentationItem>
-              <PresentationItem md={md} label="Specific Epithet">
-                {name.specificEpithet}
-              </PresentationItem>
-              <PresentationItem md={md} label="Infraspecific Epithet">
-                {name.infraspecificEpithet}
-              </PresentationItem>
-              <PresentationItem md={md} label="Cultivar Epithet">
-                {name.cultivarEpithet}
-              </PresentationItem>
-              <PresentationItem md={md} label="Strain">
-                {name.strain}
-              </PresentationItem>
-              <PresentationItem md={md} label="Authorship">
-                {name.authorship}
-              </PresentationItem>
-              {name.combinationAuthorship && (
-                <PresentationItem md={md} label="Combination Authorship">
-                  {`${name.combinationAuthorship.authors ? name.combinationAuthorship.authors.join(", ") : ''} ${
-                    name.combinationAuthorship.exAuthors
-                      ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
-                      : ""
-                  } ${
-                    name.combinationAuthorship.year
-                      ? name.combinationAuthorship.year
-                      : ""
-                  }`}
-                </PresentationItem>
-              )}
-              {name.basionymAuthorship && (
-                <PresentationItem md={md} label="Basionym Authorship">
-                  {`${name.basionymAuthorship.authors.join(", ")} ${
-                    name.basionymAuthorship.exAuthors
-                      ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                      : ""
-                  } ${
-                    name.basionymAuthorship.year
-                      ? name.basionymAuthorship.year
-                      : ""
-                  }`}
-                </PresentationItem>
-              )}
-              {name.sanctioningAuthor && (
-                <PresentationItem md={md} label="Sanctioning Author">
-                  {`${name.sanctioningAuthor.authors.join(", ")} ${
-                    name.sanctioningAuthor.exAuthors
-                      ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                      : ""
-                  } ${
-                    name.sanctioningAuthor.year
-                      ? name.sanctioningAuthor.year
-                      : ""
-                  }`}
-                </PresentationItem>
-              )}
-              {publishedIn &&  publishedIn.citation && (
+            )}
+            {publishedIn && publishedIn.citation && (
               <PresentationItem md={md} label="Published in">
                 {publishedIn.citation}
               </PresentationItem>
             )}
-              {relations && relations.length > 0 && (
+            {relations && relations.length > 0 && (
               <PresentationItem
                 md={md}
                 label="Relations"
@@ -323,16 +335,13 @@ class NamePage extends React.Component {
                   </a>
                 }
               >
-                <NameRelations
-                  style={{ marginTop: "-3px" }}
-                  data={relations}
-                />
+                <NameRelations style={{ marginTop: "-3px" }} data={relations} />
               </PresentationItem>
             )}
             {synonyms && synonyms.length > 0 && (
               <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
-                  data={synonyms.map(s => ({name: s}))}
+                  data={synonyms.map((s) => ({ name: s }))}
                   style={{ marginTop: "-3px" }}
                   datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
@@ -340,76 +349,83 @@ class NamePage extends React.Component {
               </PresentationItem>
             )}
             <PresentationItem md={md} label="Nomenclatural Note">
-                {name.nomenclaturalNote}
-              </PresentationItem>
-            
-              <PresentationItem md={md} label="ID">
-                {name.id}
-              </PresentationItem>
-              <PresentationItem md={md} label="Homotypic Name Id">
-                {name.homotypicNameId}
-              </PresentationItem>
-              <PresentationItem md={md} label="Name Index Id">
-                {name.nameIndexId}
-              </PresentationItem>
-              <PresentationItem md={md} label="Candidatus">
-                <BooleanValue value={name.candidatus} />
-              </PresentationItem>
-              <PresentationItem md={md} label="Notho">
-                {name.notho}
-              </PresentationItem>
-              <PresentationItem md={md} label="Code">
-                {name.code}
-              </PresentationItem>
-              <PresentationItem md={md} label="Nomenclatural Status">
-                {name.nomStatus}
-              </PresentationItem>
-              <PresentationItem md={md} label="Origin">
-                {name.origin}
-              </PresentationItem>
-              <PresentationItem md={md} label="Type">
-                {name.type}
-              </PresentationItem>
-              <PresentationItem md={md} label="Fossil">
-                <BooleanValue value={name.fossil} />
-              </PresentationItem>
-              <PresentationItem md={md} label="Source Url">
-                {name.sourceUrl && (
-                  <a href={name.sourceUrl} target="_blank">
-                    {name.sourceUrl}
-                  </a>
-                )}
-              </PresentationItem>
-              <PresentationItem md={md} label="Remarks">
-                {name.remarks}
-              </PresentationItem>
-              {reference && (
-                <PresentationItem md={md} label="Reference">
-                  {reference.citation}
-                </PresentationItem>
-              )}
-              <PresentationItem md={md} label="Published In">
-                {name.publishedInId}
-              </PresentationItem>
-              <PresentationItem md={md} label="Published In Page">
-                {name.publishedInPage}
-              </PresentationItem>
-            </React.Fragment>
-          )}
+              {name.nomenclaturalNote}
+            </PresentationItem>
 
-          {_.get(name, "verbatimKey") && (
-            <VerbatimPresentation
-              verbatimKey={name.verbatimKey}
-              datasetKey={name.datasetKey}
-              expanded={false}
-            />
-          )}
-        </div>
+            <PresentationItem md={md} label="ID">
+              {name.id}
+            </PresentationItem>
+            <PresentationItem md={md} label="Homotypic Name Id">
+              {name.homotypicNameId}
+            </PresentationItem>
+            <PresentationItem md={md} label="Name Index Id">
+              {name.nameIndexId}
+            </PresentationItem>
+            <PresentationItem md={md} label="Candidatus">
+              <BooleanValue value={name.candidatus} />
+            </PresentationItem>
+            <PresentationItem md={md} label="Notho">
+              {name.notho}
+            </PresentationItem>
+            <PresentationItem md={md} label="Code">
+              {name.code}
+            </PresentationItem>
+            <PresentationItem md={md} label="Nomenclatural Status">
+              {nomStatusMap
+                ? nomStatusMap[name.nomStatus] &&
+                  nomStatusMap[name.nomStatus][name.code]
+                  ? nomStatusMap[name.nomStatus][name.code]
+                  : nomStatusMap[name.nomStatus]["zoology"]
+                : name.nomStatus}
+            </PresentationItem>
+            <PresentationItem md={md} label="Origin">
+              {name.origin}
+            </PresentationItem>
+            <PresentationItem md={md} label="Type">
+              {name.type}
+            </PresentationItem>
+            <PresentationItem md={md} label="Fossil">
+              <BooleanValue value={name.fossil} />
+            </PresentationItem>
+            <PresentationItem md={md} label="Source Url">
+              {name.sourceUrl && (
+                <a href={name.sourceUrl} target="_blank">
+                  {name.sourceUrl}
+                </a>
+              )}
+            </PresentationItem>
+            <PresentationItem md={md} label="Remarks">
+              {name.remarks}
+            </PresentationItem>
+            {reference && (
+              <PresentationItem md={md} label="Reference">
+                {reference.citation}
+              </PresentationItem>
+            )}
+            <PresentationItem md={md} label="Published In">
+              {name.publishedInId}
+            </PresentationItem>
+            <PresentationItem md={md} label="Published In Page">
+              {name.publishedInPage}
+            </PresentationItem>
+          </React.Fragment>
+        )}
+
+        {_.get(name, "verbatimKey") && (
+          <VerbatimPresentation
+            verbatimKey={name.verbatimKey}
+            datasetKey={name.datasetKey}
+            expanded={false}
+          />
+        )}
+      </div>
     );
   }
 }
-const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({ getTaxonomicStatusColor , catalogueKey});
+const mapContextToProps = ({
+  getTaxonomicStatusColor,
+  catalogueKey,
+  nomstatus,
+}) => ({ getTaxonomicStatusColor, catalogueKey, nomstatus });
 
 export default withContext(mapContextToProps)(NamePage);
-
-

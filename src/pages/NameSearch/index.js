@@ -486,7 +486,7 @@ class NameSearchPage extends React.Component {
                 <MultiValueFilter
                   defaultValue={_.get(params, "nomStatus")}
                   onChange={(value) => this.updateSearch({ nomStatus: value })}
-                  vocab={facetNomStatus || nomstatus}
+                  vocab={facetNomStatus || nomstatus.map((n) => n.name)}
                   label="Nomenclatural status"
                 />
                 <MultiValueFilter
