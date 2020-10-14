@@ -19,6 +19,17 @@ import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 const md = 5;
 
+const getNomStatus = (name, nomStatusMap) => {
+  if (!nomStatusMap) {
+    return name.nomStatus;
+  } else {
+    return nomStatusMap[name.nomStatus] &&
+      nomStatusMap[name.nomStatus][name.code]
+      ? nomStatusMap[name.nomStatus][name.code]
+      : nomStatusMap[name.nomStatus]["zoological"];
+  }
+};
+
 class NamePage extends React.Component {
   constructor(props) {
     super(props);
@@ -371,12 +382,7 @@ class NamePage extends React.Component {
               {name.code}
             </PresentationItem>
             <PresentationItem md={md} label="Nomenclatural Status">
-              {nomStatusMap
-                ? nomStatusMap[name.nomStatus] &&
-                  nomStatusMap[name.nomStatus][name.code]
-                  ? nomStatusMap[name.nomStatus][name.code]
-                  : nomStatusMap[name.nomStatus]["zoology"]
-                : name.nomStatus}
+              {getNomStatus(name, nomStatusMap)}
             </PresentationItem>
             <PresentationItem md={md} label="Origin">
               {name.origin}

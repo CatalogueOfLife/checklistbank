@@ -398,22 +398,13 @@ class NameSearchPage extends React.Component {
                     onChange={(value) => this.updateSearch({ fuzzy: value })}
                   />
                 </FormItem>
-                <FormItem>
-                  <RadioGroup
-                    onChange={(evt) => {
-                      this.updateSearch({ extinct: evt.target.value });
-                    }}
-                    value={
-                      typeof params.extinct === "undefined"
-                        ? null
-                        : params.extinct === "true"
-                        ? true
-                        : null
+                <FormItem label="Extinct">
+                  <Switch
+                    checked={params.extinct}
+                    onChange={(value) =>
+                      this.updateSearch({ extinct: value || null })
                     }
-                  >
-                    <Radio value={null}>Living and extinct</Radio>
-                    <Radio value={true}>Extinct</Radio>
-                  </RadioGroup>
+                  />
                 </FormItem>
                 <FormItem>
                   {/*                   <Switch
