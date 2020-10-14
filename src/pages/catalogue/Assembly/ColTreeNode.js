@@ -357,8 +357,7 @@ class ColTreeNode extends React.Component {
                       {mode === "modify" && taxon.estimate && (
                         <span>
                           {" "}
-                          • {taxon.estimate.toLocaleString("en-GB")} est.
-                          described species{" "}
+                          • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
                           {taxon.estimates.length
                             ? `(${taxon.estimates.length.toLocaleString(
                                 "en-GB"
@@ -376,12 +375,12 @@ class ColTreeNode extends React.Component {
                           <SyncOutlined spin />
                         </span>
                       )}
-                      {taxon.status !== "accepted" && (
+                      {taxon.status === "provisionally accepted" && (
                         <Tag
                           color={getTaxonomicStatusColor(taxon.status)}
                           style={{ marginLeft: "6px" }}
                         >
-                          {taxon.status}
+                          prov.
                         </Tag>
                       )}
                     </Popconfirm>

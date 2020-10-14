@@ -9,6 +9,12 @@ const getDatasetTaxonRoute = (location, datasetKey, catalogueKey) => {
     : `/dataset/${datasetKey}/taxon/`;
 };
 
+const getDatasetTreeRoute = (location, datasetKey, catalogueKey) => {
+  return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
+    ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`
+    : `/dataset/${datasetKey}/classification`;
+};
+
 const isAssembly = (location, catalogueKey) => {
   return (
     location.pathname.startsWith(`/catalogue/${catalogueKey}`) &&
@@ -56,12 +62,11 @@ const ClassificationTable = ({
       <NavLink
         to={{
           pathname: isAssembly(location, catalogueKey)
-            ? `/catalogue/${catalogueKey}/taxon/${_.get(taxon, "id")}`
-            : `${getDatasetTaxonRoute(
-                location,
-                datasetKey,
-                catalogueKey
-              )}${_.get(taxon, "id")}`,
+            ? `/catalogue/${catalogueKey}/assembly`
+            : getDatasetTreeRoute(location, datasetKey, catalogueKey),
+          search: isAssembly(location, catalogueKey)
+            ? `?assemblyTaxonKey=${_.get(taxon, "id")}`
+            : `?taxonKey=${_.get(taxon, "id")}`,
         }}
       >
         {_.get(taxon, "labelHtml") && (

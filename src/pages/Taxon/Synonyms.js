@@ -5,32 +5,15 @@ import BorderedListItem from "./BorderedListItem";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import withContext from "../../components/hoc/withContext";
 
-const getNomStatus = (name, nomStatusMap) => {
-  if (!nomStatusMap) {
-    return name.nomStatus;
-  } else {
-    return nomStatusMap[name.nomStatus] &&
-      nomStatusMap[name.nomStatus][name.code]
-      ? nomStatusMap[name.nomStatus][name.code]
-      : nomStatusMap[name.nomStatus]["zoological"];
-  }
-};
-
 const SynonymsTable = ({
   datasetKey,
   data,
   style,
   catalogueKey,
-  nomstatus,
+  getNomStatus,
 }) => {
   const uri = `/dataset/${datasetKey}/name/`;
-  const nomStatusMap =
-    nomstatus.length > 0
-      ? nomstatus.reduce((a, c) => {
-          a[c.name] = c;
-          return a;
-        }, {})
-      : null;
+
   return (
     <div style={style}>
       {data
@@ -64,8 +47,7 @@ const SynonymsTable = ({
                   ),
                 }}
               />{" "}
-              {_.get(s, "name.nomStatus") &&
-                `(${getNomStatus(s.name, nomStatusMap)})`}{" "}
+              {_.get(s, "name.nomStatus") && `(${getNomStatus(s.name)})`}{" "}
               {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
                 ? _.get(s, "accordingTo")
                 : ""}
@@ -81,5 +63,5 @@ const SynonymsTable = ({
   );
 };
 
-const mapContextToProps = ({ nomstatus }) => ({ nomstatus });
+const mapContextToProps = ({ getNomStatus }) => ({ getNomStatus });
 export default withContext(mapContextToProps)(SynonymsTable);

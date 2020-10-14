@@ -1,13 +1,13 @@
 import React from "react";
 import getDeep from "lodash/get";
-import config from "../../config"
+import config from "../../config";
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import {
   whoAmI,
   authenticate as logUserIn,
   logout as logUserOut,
-  JWT_STORAGE_NAME
+  JWT_STORAGE_NAME,
 } from "../../api/user";
 import {
   getFrequency,
@@ -29,11 +29,11 @@ import {
   getEstimateType,
   getDatasetSettings,
   getGazetteer,
-  getEntitytype
+  getEntitytype,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
-const {MANAGEMENT_CLASSIFICATION} = config;
+const { MANAGEMENT_CLASSIFICATION } = config;
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -56,12 +56,20 @@ export const AppContext = React.createContext({});
  */
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
-const ISSUE_ORDER = {  error: 1, warning: 2, info: 3 };
-const TAXONOMIC_STATUS_COLOR = {"accepted" : "green", "provisionally accepted" : "gold", "synonym": "orange", "ambiguous synonym": "orange", "misapplied": "red"  }
+const ISSUE_ORDER = { error: 1, warning: 2, info: 3 };
+const TAXONOMIC_STATUS_COLOR = {
+  accepted: "green",
+  "provisionally accepted": "gold",
+  synonym: "orange",
+  "ambiguous synonym": "orange",
+  misapplied: "red",
+};
 
 class ContextProvider extends React.Component {
   state = {
-    catalogueKey: localStorage.getItem('col_selected_project') ? JSON.parse(localStorage.getItem('col_selected_project')).key : MANAGEMENT_CLASSIFICATION.key,  //TODO Load from localStorage if changed by user
+    catalogueKey: localStorage.getItem("col_selected_project")
+      ? JSON.parse(localStorage.getItem("col_selected_project")).key
+      : MANAGEMENT_CLASSIFICATION.key, //TODO Load from localStorage if changed by user
     frequency: [],
     datasetType: [],
     dataFormat: [],
@@ -70,6 +78,7 @@ class ContextProvider extends React.Component {
     rank: [],
     taxonomicstatus: [],
     nomstatus: [],
+    nomStatusMap: null,
     nametype: [],
     namefield: [],
     license: [],
@@ -86,7 +95,9 @@ class ContextProvider extends React.Component {
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
-    dataset: localStorage.getItem('col_selected_dataset') ? JSON.parse(localStorage.getItem('col_selected_dataset')) : null,
+    dataset: localStorage.getItem("col_selected_dataset")
+      ? JSON.parse(localStorage.getItem("col_selected_dataset"))
+      : null,
     recentDatasets: [],
     estimateType: [],
     datasetSettings: [],
@@ -94,48 +105,60 @@ class ContextProvider extends React.Component {
     entitytype: [],
     _selectedKeys: [], // Menu
     _openKeys: [], // Menu
-    setOpenKeys: _openKeys => this.setState({_openKeys}),
-    setSelectedKeys: _selectedKeys => this.setState({_selectedKeys}),
-    catalogue: localStorage.getItem('col_selected_project') ? JSON.parse(localStorage.getItem('col_selected_project')) : MANAGEMENT_CLASSIFICATION,
-    setCatalogueKey: catalogueKey => {
-      this.setState({catalogueKey});
+    setOpenKeys: (_openKeys) => this.setState({ _openKeys }),
+    setSelectedKeys: (_selectedKeys) => this.setState({ _selectedKeys }),
+    catalogue: localStorage.getItem("col_selected_project")
+      ? JSON.parse(localStorage.getItem("col_selected_project"))
+      : MANAGEMENT_CLASSIFICATION,
+    setCatalogueKey: (catalogueKey) => {
+      this.setState({ catalogueKey });
     },
-    setCatalogue: catalogue => {
-      localStorage.setItem('col_selected_project', JSON.stringify(catalogue))
-      this.setState({catalogue, catalogueKey: catalogue.key })
+    setCatalogue: (catalogue) => {
+      localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
+      this.setState({ catalogue, catalogueKey: catalogue.key });
     },
-    setDataset: dataset => {
-      localStorage.setItem('col_selected_dataset', JSON.stringify(dataset))
+    setDataset: (dataset) => {
+      localStorage.setItem("col_selected_dataset", JSON.stringify(dataset));
       this.setState({ dataset });
     },
-    setRecentDatasets: recentDatasets => {
+    setRecentDatasets: (recentDatasets) => {
       this.setState({ recentDatasets });
     },
     // locale: { loading: true },
     // Adding errors to the list to provide them later for displaying
     addError: (err) => {
-      this.setState({error :err});
+      this.setState({ error: err });
     },
     clearError: () => {
       this.setState({ error: null });
     },
 
-    login: values => {
+    login: (values) => {
       return this.login(values);
     },
     logout: () => {
       this.logout();
     },
-    getDuplicateWarningColor: count => {
-      if(Number(count) === 0){
-        return ISSUE_COLOR.info
-      } else if(Number(count) < 51) {
-        return ISSUE_COLOR.warning
-      } else if(Number(count) > 50) {
-        return ISSUE_COLOR.error
+    getDuplicateWarningColor: (count) => {
+      if (Number(count) === 0) {
+        return ISSUE_COLOR.info;
+      } else if (Number(count) < 51) {
+        return ISSUE_COLOR.warning;
+      } else if (Number(count) > 50) {
+        return ISSUE_COLOR.error;
       }
     },
-    getTaxonomicStatusColor: status => TAXONOMIC_STATUS_COLOR[status]
+    getTaxonomicStatusColor: (status) => TAXONOMIC_STATUS_COLOR[status],
+    getNomStatus: (name) => {
+      if (!this.nomStatusMap) {
+        return name.nomStatus;
+      } else {
+        return this.nomStatusMap[name.nomStatus] &&
+          this.nomStatusMap[name.nomStatus][name.code]
+          ? this.nomStatusMap[name.nomStatus][name.code]
+          : this.nomStatusMap[name.nomStatus]["zoological"];
+      }
+    },
   };
 
   componentDidMount() {
@@ -165,74 +188,87 @@ class ContextProvider extends React.Component {
       getEstimateType(),
       getDatasetSettings(),
       getGazetteer(),
-      getEntitytype()
-    ]).then(responses => {
-      const issueMap = {};
-      responses[6].forEach(i => {
-        issueMap[i.name] = {
-          group: i.group,
-          level: i.level,
-          color: ISSUE_COLOR[i.level],
-          description: i.description
-        };
-      });
-      const termsMapReversed = {};
-      const termsMap = responses[10];
-      Object.keys(termsMap).forEach(t => {
-        termsMap[t].forEach(j => {
-          if (!termsMapReversed[j]) {
-            termsMapReversed[j] = [t];
-          } else {
-            termsMapReversed[j] = [...termsMapReversed[j], t];
-          }
+      getEntitytype(),
+    ])
+      .then((responses) => {
+        const issueMap = {};
+        responses[6].forEach((i) => {
+          issueMap[i.name] = {
+            group: i.group,
+            level: i.level,
+            color: ISSUE_COLOR[i.level],
+            description: i.description,
+          };
         });
-      });
-      const countryAlpha3 = {};
-      const countryAlpha2 = {};
-      responses[17].forEach(c => {
-        countryAlpha3[c.alpha3] = c;
-        countryAlpha2[c.alpha2] = c;
-      });
-      const importStateMap = {};
+        const termsMapReversed = {};
+        const termsMap = responses[10];
+        Object.keys(termsMap).forEach((t) => {
+          termsMap[t].forEach((j) => {
+            if (!termsMapReversed[j]) {
+              termsMapReversed[j] = [t];
+            } else {
+              termsMapReversed[j] = [...termsMapReversed[j], t];
+            }
+          });
+        });
+        const countryAlpha3 = {};
+        const countryAlpha2 = {};
+        responses[17].forEach((c) => {
+          countryAlpha3[c.alpha3] = c;
+          countryAlpha2[c.alpha2] = c;
+        });
+        const importStateMap = {};
 
-      responses[13].forEach(i => importStateMap[i.name] = i)
-      const recentDatasetsAsText = localStorage.getItem('colplus_recent_datasets');
-      const recentDatasets = recentDatasetsAsText ? JSON.parse(recentDatasetsAsText) : [];
+        responses[13].forEach((i) => (importStateMap[i.name] = i));
+        const recentDatasetsAsText = localStorage.getItem(
+          "colplus_recent_datasets"
+        );
+        const recentDatasets = recentDatasetsAsText
+          ? JSON.parse(recentDatasetsAsText)
+          : [];
 
-      this.setState({
-        frequency: responses[0],
-        datasetType: responses[1],
-        dataFormat: responses[2],
-        datasetOrigin: responses[3],
-        rank: responses[4],
-        taxonomicstatus: responses[5],
-        issue: responses[6].sort((a, b) => (ISSUE_ORDER[a.level] - ISSUE_ORDER[b.level])), // Order by severity
-        issueMap: issueMap,
-        nomstatus: responses[7],
-        nametype: responses[8],
-        namefield: responses[9],
-        license: responses[11],
-        nomCode: responses[12],
-        importState: responses[13],
-        importStateMap: importStateMap,
-        terms: responses[14],
-        environment: responses[15],
-        sectorImportState: responses[16],
-        country: responses[17],
-        estimateType: responses[18],
-        datasetSettings: responses[19],
-        gazetteer: responses[20],
-        entitytype: responses[21],
-        countryAlpha3: countryAlpha3,
-        countryAlpha2: countryAlpha2,
-        termsMap: termsMap,
-        termsMapReversed: termsMapReversed,
-        recentDatasets
+        const nomStatusMap = responses[7].reduce((a, c) => {
+          a[c.name] = c;
+          return a;
+        }, {});
+        this.setState({
+          frequency: responses[0],
+          datasetType: responses[1],
+          dataFormat: responses[2],
+          datasetOrigin: responses[3],
+          rank: responses[4],
+          taxonomicstatus: responses[5],
+          issue: responses[6].sort(
+            (a, b) => ISSUE_ORDER[a.level] - ISSUE_ORDER[b.level]
+          ), // Order by severity
+          issueMap: issueMap,
+          nomstatus: responses[7],
+          nomStatusMap: nomStatusMap,
+          nametype: responses[8],
+          namefield: responses[9],
+          license: responses[11],
+          nomCode: responses[12],
+          importState: responses[13],
+          importStateMap: importStateMap,
+          terms: responses[14],
+          environment: responses[15],
+          sectorImportState: responses[16],
+          country: responses[17],
+          estimateType: responses[18],
+          datasetSettings: responses[19],
+          gazetteer: responses[20],
+          entitytype: responses[21],
+          countryAlpha3: countryAlpha3,
+          countryAlpha2: countryAlpha2,
+          termsMap: termsMap,
+          termsMapReversed: termsMapReversed,
+          recentDatasets,
+        });
+      })
+      .catch((err) => {
+        this.state.addError(err);
+        console.log(err);
       });
-    }).catch(err => {
-      this.state.addError(err)
-      console.log(err)
-    });
   }
   /*
   changeLocale = locale => {
@@ -256,7 +292,7 @@ class ContextProvider extends React.Component {
   */
 
   login = ({ username, password, remember }) => {
-    return logUserIn(username, password, remember).then(user => {
+    return logUserIn(username, password, remember).then((user) => {
       const jwt = user.token;
       sessionStorage.setItem(JWT_STORAGE_NAME, jwt);
       if (remember) {
@@ -279,11 +315,11 @@ class ContextProvider extends React.Component {
     const jwt = sessionStorage.getItem(JWT_STORAGE_NAME);
     if (jwt) {
       whoAmI()
-        .then(res => {
+        .then((res) => {
           this.setState({ user: { ...res.data, editorRoleScopeItems: [] } });
           // this.getUserItems(res.data);
         })
-        .catch(err => {
+        .catch((err) => {
           const statusCode = getDeep(err, "response.status", 500);
           if (statusCode < 500) {
             logUserOut();

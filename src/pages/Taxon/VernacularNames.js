@@ -4,97 +4,104 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
-import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover"
-
-
+import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 
 class VernacularNamesTable extends React.Component {
-  
   constructor(props) {
     super(props);
 
     this.state = {
       data: this.props.data ? [...this.props.data] : [],
-      columns : [
+      columns: [
         {
-          title: "name",
+          title: "Original name",
           dataIndex: "name",
           key: "name",
-          width: 150
+          width: 150,
         },
         {
-          title: "latin",
+          title: "Transliterated name",
           dataIndex: "latin",
           key: "latin",
-          width: 150
+          width: 150,
         },
         {
-          title: "language",
+          title: "Language",
           dataIndex: "language",
           key: "language",
           width: 150,
-          render: (text, record) => record.languageName ?  record.languageName : text
-          
+          render: (text, record) =>
+            record.languageName ? record.languageName : text,
         },
         {
-          title: "country",
+          title: "Country of use",
           dataIndex: "country",
           key: "country",
           width: 150,
-          render: (text, record) => record.countryTitle ?  record.countryTitle : text
-      
+          render: (text, record) =>
+            record.countryTitle ? record.countryTitle : text,
         },
         {
           title: "",
           dataIndex: "referenceId",
           key: "referenceId",
-          
+
           render: (text, record) => {
-            return text ?  <ReferencePopover referenceId={text} datasetKey={this.props.datasetKey} placement="left"></ReferencePopover> : ""
-          }
-          
-        }
-      ]
+            return text ? (
+              <ReferencePopover
+                referenceId={text}
+                datasetKey={this.props.datasetKey}
+                placement="left"
+              ></ReferencePopover>
+            ) : (
+              ""
+            );
+          },
+        },
+      ],
     };
   }
   componentDidMount = () => {
-    const {data} = this.props;
+    const { data } = this.props;
 
-    const newData = data.map(this.decorateWithCountryByCode)
-    this.setState({data: newData})
-    Promise.all(
-      newData.map(this.decorateWithLanguageByCode)
-      )
-      .then(() => this.setState({data: [...this.state.data]}))
-
-  }
+    const newData = data.map(this.decorateWithCountryByCode);
+    this.setState({ data: newData });
+    Promise.all(newData.map(this.decorateWithLanguageByCode)).then(() =>
+      this.setState({ data: [...this.state.data] })
+    );
+  };
 
   decorateWithCountryByCode = (name) => {
     const { countryAlpha3, countryAlpha2 } = this.props;
 
-    if(countryAlpha2 && name.country && name.country.length === 2){
-      return {...name, countryTitle: _.get(countryAlpha2, `[${name.country}].title`) || ""}
-    } else if(countryAlpha3 && name.country && name.country.length === 3){
-      return {...name, countryTitle: _.get(countryAlpha3, `[${name.country}].title`) || ""}
+    if (countryAlpha2 && name.country && name.country.length === 2) {
+      return {
+        ...name,
+        countryTitle: _.get(countryAlpha2, `[${name.country}].title`) || "",
+      };
+    } else if (countryAlpha3 && name.country && name.country.length === 3) {
+      return {
+        ...name,
+        countryTitle: _.get(countryAlpha3, `[${name.country}].title`) || "",
+      };
     } else {
       return name;
     }
-  }
+  };
 
   decorateWithLanguageByCode = (name) => {
-  return !name.language ? Promise.resolve() : axios(
-      `${config.dataApi}vocab/language/${name.language}`
-    )
-      .then(res => {
-        name.languageName = res.data
-      })
-      .catch(error => console.log(error))
-  }
+    return !name.language
+      ? Promise.resolve()
+      : axios(`${config.dataApi}vocab/language/${name.language}`)
+          .then((res) => {
+            name.languageName = res.data;
+          })
+          .catch((error) => console.log(error));
+  };
   render() {
-    const {style } = this.props;
-    const {data, columns} = this.state;
+    const { style } = this.props;
+    const { data, columns } = this.state;
 
-    
     return (
       <Table
         style={style}
@@ -109,7 +116,9 @@ class VernacularNamesTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ countryAlpha3, countryAlpha2 }) => ({ countryAlpha3, countryAlpha2 });
+const mapContextToProps = ({ countryAlpha3, countryAlpha2 }) => ({
+  countryAlpha3,
+  countryAlpha2,
+});
 
 export default withContext(mapContextToProps)(VernacularNamesTable);
-

@@ -19,17 +19,6 @@ import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 const md = 5;
 
-const getNomStatus = (name, nomStatusMap) => {
-  if (!nomStatusMap) {
-    return name.nomStatus;
-  } else {
-    return nomStatusMap[name.nomStatus] &&
-      nomStatusMap[name.nomStatus][name.code]
-      ? nomStatusMap[name.nomStatus][name.code]
-      : nomStatusMap[name.nomStatus]["zoological"];
-  }
-};
-
 class NamePage extends React.Component {
   constructor(props) {
     super(props);
@@ -185,16 +174,8 @@ class NamePage extends React.Component {
       datasetKey,
       catalogueKey,
       getTaxonomicStatusColor,
-      nomstatus,
+      getNomStatus,
     } = this.props;
-
-    const nomStatusMap =
-      nomstatus.length > 0
-        ? nomstatus.reduce((a, c) => {
-            a[c.name] = c;
-            return a;
-          }, {})
-        : null;
 
     const taxonUri =
       datasetKey === catalogueKey
@@ -382,7 +363,7 @@ class NamePage extends React.Component {
               {name.code}
             </PresentationItem>
             <PresentationItem md={md} label="Nomenclatural Status">
-              {getNomStatus(name, nomStatusMap)}
+              {getNomStatus(name)}
             </PresentationItem>
             <PresentationItem md={md} label="Origin">
               {name.origin}
@@ -431,7 +412,7 @@ class NamePage extends React.Component {
 const mapContextToProps = ({
   getTaxonomicStatusColor,
   catalogueKey,
-  nomstatus,
-}) => ({ getTaxonomicStatusColor, catalogueKey, nomstatus });
+  getNomStatus,
+}) => ({ getTaxonomicStatusColor, catalogueKey, getNomStatus });
 
 export default withContext(mapContextToProps)(NamePage);
