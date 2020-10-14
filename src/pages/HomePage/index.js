@@ -27,51 +27,43 @@ class HomePage extends React.Component {
 
     this.state = {
       error: null,
-      nameIndexData: null,
-      nameIndexLoading: false,
-      colDraftData: null,
-      colDataLoading: false,
+      nameUsages: null,
+      nameUsagesLoading: false,
+      colSpecies: null,
+      colSpeciesLoading: false,
       datasets: null,
       datasetsLoading: false
     };
   }
   componentDidMount = () => {
-    this.getNameIndexData();
-    this.getCoLDraftData();
+    this.getNameUsages();
+    this.getCoLData();
     this.getDatasets();
   };
-  getNameIndexData = () => {
-    this.setState({ nameIndexLoading: true });
-    axios(
-      `${
-        config.dataApi
-      }/dataset/${NAME_INDEX.key}/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=nameType&facet=field&limit=0`
-    )
+  getNameUsages = () => {
+    this.setState({ nameUsagesLoading: true });
+    axios(`${config.dataApi}/nameusage/search?limit=0`)
       .then(res => {
         this.setState({
           error: null,
-          nameIndexLoading: false,
-          nameIndexData: res.data
+          nameUsagesLoading: false,
+          nameUsages: res.data
         });
       })
-      .catch(err => this.setState({ error: err, nameIndexLoading: false }));
+      .catch(err => this.setState({ error: err, nameUsagesLoading: false }));
   };
 
-  getCoLDraftData = () => {
-    this.setState({ colDataLoading: true });
-    axios(
-      `${config.dataApi}dataset/${
-        MANAGEMENT_CLASSIFICATION.key
-      }/nameusage/search?facet=rank&facet=issue&facet=status&facet=nomstatus&facet=nameType&facet=field&limit=0`
-    )
+  getCoLData = () => {
+    this.setState({ colSpeciesLoading: true });
+    axios(`${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/nameusage/search?rank=species&status=accepted&status=provisionally_accepted&limit=0`)
       .then(res => {
         this.setState({
           error: null,
-          colDataLoading: false,
-          colDraftData: res.data
+          colSpeciesLoading: false,
+          colSpecies: res.data
         });
       })
-      .catch(err => this.setState({ error: err, colDataLoading: false }));
+      .catch(err => this.setState({ error: err, colSpeciesLoading: false }));
   };
 
   getDatasets = () => {
@@ -92,15 +84,15 @@ class HomePage extends React.Component {
 
   render() {
     const {
-      nameIndexData,
-      nameIndexLoading,
-      colDraftData,
-      colDataLoading,
+      nameUsages,
+      nameUsagesLoading,
+      colSpecies,
+      colSpeciesLoading,
       datasets
     } = this.state;
     const {catalogueKey} = this.props;
     return (
-      <Layout openKeys={[]} selectedKeys={[]} title="">
+      <Layout openKeys={[]} selectedKeys={[]} title="COL ChecklistBank">
        
           <Helmet
   title="ChecklistBank"
@@ -117,66 +109,42 @@ class HomePage extends React.Component {
 
 <Card
   style={{ marginTop: 20 }}
-  title="COL ChecklistBank"
   hoverable
   cover={
-    <img
-      alt="example"
+    <img alt="ChecklistBank"
       src="//api.gbif.org/v1/image/unsafe/1170x422/http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg"
     />
   }
 >
   <Row>
     <Col span={8}>
-      {nameIndexData && (
-          <NavLink
-          to={{
-            pathname: `/names`
-          }}
-          exact={true}
-        >
-        <Statistic title="Names indexed" value={nameIndexData.total} />
+      {colSpecies && (
+        <NavLink to={{pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`}} exact={true}>
+          <Statistic title="Species in Catalogue of Life" value={colSpecies.total}/>
         </NavLink>
       )}
     </Col>
     <Col span={8}>
-      {colDraftData && (
-        <NavLink
-          to={{
-            pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`
-          }}
-          exact={true}
-        >
-          <Statistic
-            title="Names in the CoL draft"
-            value={colDraftData.total}
-          />
+      {nameUsages && (
+        <NavLink to={{pathname: `/`}} exact={true}>
+          <Statistic title="Name Usages in ChecklistBank" value={nameUsages.total} />
         </NavLink>
       )}
     </Col>
     <Col span={8}>
       {datasets && (
-          <NavLink
-          to={{
-            pathname: `/dataset`
-          }}
-          exact={true}
-        >
-        <Statistic
-          title="Datasets in ChecklistBank"
-          value={datasets.total}
-        />
+        <NavLink to={{ pathname: `/dataset`}} exact={true}>
+          <Statistic title="Datasets in ChecklistBank" value={datasets.total}/>
         </NavLink>
       )}
     </Col>
   </Row>
 
 
-  <Meta title="Welcome to ChecklistBank" />
 
 
   <Row style={{ marginTop: 20 }}>
-    <Col style={{ paddingRight: "10px" }} span={16}>
+    <Col style={{ paddingRight: "30px" }} span={16}>
       <p>
       The <a href="http://www.catalogueoflife.org">Catalogue of Life (COL)</a> aims to support the publication and curation of checklists and to provide a platform for their consistent discovery, use and citation. 
       <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a> has for some time maintained ChecklistBank as a repository for its community to share checklist data. 

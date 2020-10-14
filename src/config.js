@@ -18,8 +18,8 @@ const environments = {
       key: 1,
       title: "Name Index",
     },
-    gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
+    gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
   },
   prod: {
@@ -41,8 +41,8 @@ const environments = {
       key: 1,
       title: "Name Index",
     },
-    gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
+    gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
   },
   docker: {
@@ -59,8 +59,8 @@ const environments = {
       key: 1,
       title: "Name Index",
     },
-    gitBackend: "https://github.com/Sp2000/colplus-backend/tree/",
-    gitFrontend: "https://github.com/Sp2000/colplus-frontend/tree/",
+    gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
+    gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
   },
   local: {
@@ -78,7 +78,7 @@ const environments = {
       title: "Name Index",
     },
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
-    gitFrontend: "https://github.com/CatalogueOfLife/clearinghouse-ui/tree/",
+    gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
   },
 };

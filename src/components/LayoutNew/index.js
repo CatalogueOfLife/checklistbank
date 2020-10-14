@@ -126,16 +126,14 @@ class SiteLayout extends Component {
           <Footer >
             <Row style={{ textAlign: 'center' }}>Catalogue of Life</Row>
             <Row style={{ textAlign: 'center', marginTop: '8px' }}>
-            {gitVersion && <Tag>
-      <a href={`${gitFrontend}${gitVersion.short}`}>Frontend version: <strong>{gitVersion.short}</strong> {moment(gitVersion.created).format('LLL')}</a>
-    </Tag>}
-            {gitBackendVersion && <Tag>
-      <a href={`${gitBackend}${gitBackendVersion.short}`}>Backend version: <strong>{gitBackendVersion.short}</strong> {moment(gitBackendVersion.created).format('LLL')}</a>
-    </Tag>}
-
+              <Tag><a target="_blank" href="https://github.com/CatalogueOfLife/checklistbank/issues/new">Leave Feedback</a></Tag>
+              {gitVersion && <Tag>
+                <a target="_blank" href={`${gitFrontend}${gitVersion.short}`}>Frontend version: <strong>{gitVersion.short}</strong> {moment(gitVersion.created).format('LLL')}</a>
+              </Tag>}
+              {gitBackendVersion && <Tag>
+                <a target="_blank" href={`${gitBackend}${gitBackendVersion.short}`}>Backend version: <strong>{gitBackendVersion.short}</strong> {moment(gitBackendVersion.created).format('LLL')}</a>
+              </Tag>}
             </Row>
-            
-            
           </Footer>
         </Layout>
       </Layout>

@@ -366,7 +366,7 @@ class NameSearchPage extends React.Component {
                 onResetSearch={(value) => {
                   this.updateSearch({ TAXON_ID: null });
                 }}
-                placeHolder="Search by higher taxon"
+                placeHolder="Filter by higher taxon"
                 autoFocus={false}
               />{" "}
             </div>
@@ -385,14 +385,14 @@ class NameSearchPage extends React.Component {
                       onResetSearch={(value) => {
                         this.updateSearch({ SECTOR_DATASET_KEY: null });
                       }}
-                      placeHolder="Search by source dataset"
+                      placeHolder="Filter by source dataset"
                       autoFocus={false}
                     />
                   </div>
                 ))}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
-                <FormItem label="Fuzzy matching">
+                <FormItem label="Fuzzy">
                   <Switch
                     checked={params.fuzzy === true}
                     onChange={(value) => this.updateSearch({ fuzzy: value })}
@@ -406,47 +406,16 @@ class NameSearchPage extends React.Component {
                     }
                   />
                 </FormItem>
-                <FormItem>
-                  {/*                   <Switch
-                    checked={params.prefix === true}
-                    onChange={(value) => this.updateSearch({ prefix: value })}
-                  /> */}
+                <FormItem label="Matching">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ type: evt.target.value });
                     }}
                     value={params.type || "WHOLE_WORDS"}
                   >
-                    <Radio value="WHOLE_WORDS">Match whole words</Radio>
-                    <Radio value="PREFIX">Partial words</Radio>
-
                     <Radio value="EXACT">Exact</Radio>
-                  </RadioGroup>
-                </FormItem>
-
-                <FormItem
-                  style={{
-                    marginBottom: "10px",
-                  }}
-                >
-                  <RadioGroup
-                    onChange={(evt) => {
-                      if (typeof evt.target.value === "undefined") {
-                        this.setState(
-                          {
-                            params: _.omit(this.state.params, ["status"]),
-                          },
-                          this.getData
-                        );
-                      } else {
-                        this.updateSearch({ status: evt.target.value });
-                      }
-                    }}
-                    value={params.status}
-                  >
-                    <Radio value="_NOT_NULL">Exclude bare names</Radio>
-                    <Radio value="_NULL">Only bare names</Radio>
-                    <Radio value={undefined}>All</Radio>
+                    <Radio value="WHOLE_WORDS">Words</Radio>
+                    <Radio value="PREFIX">Partial</Radio>
                   </RadioGroup>
                 </FormItem>
               </Form>
@@ -502,18 +471,8 @@ class NameSearchPage extends React.Component {
                 Advanced{" "}
                 {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
               </a>
-
-              {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12} style={{ marginBottom: "8px" }}>
-            <Button type="danger" onClick={this.resetSearch}>
-              Reset all
-            </Button>
-          </Col>
-          <Col span={12} style={{ textAlign: "right", marginBottom: "8px" }}>
+            <div style={{ textAlign: "right", marginBottom: "8px" }}>
             {pagination &&
               !isNaN(pagination.total) &&
               `${(
@@ -524,6 +483,7 @@ class NameSearchPage extends React.Component {
               ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
                 "en-GB"
               )}`}
+            </div>
           </Col>
         </Row>
         {!error && (

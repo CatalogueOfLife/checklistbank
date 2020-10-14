@@ -20,10 +20,10 @@ const LoginForm = ({onLogin, invalid}) => {
     <Form onFinish={onFinish} onFinishFailed={onFinishFailed} initialValues={{
       remember: true,
     }}>
-      <FormItem rules={[{ required: true, message: 'Please input your username!' }]} name="username">
+      <FormItem rules={[{ required: true, message: 'Please enter your GBIF username!' }]} name="username">
         <Input prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
       </FormItem>
-      <FormItem rules={[{ required: true, message: 'Please input your Password!' }]} name="password">
+      <FormItem rules={[{ required: true, message: 'Please enter your GBIF password!' }]} name="password">
         <Input prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
       </FormItem>
       <FormItem style={{width: '100%'}} valuePropName="checked" name="remember">

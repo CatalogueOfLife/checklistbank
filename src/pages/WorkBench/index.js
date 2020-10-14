@@ -682,34 +682,29 @@ class WorkBench extends React.Component {
                   this.updateSearch({ TAXON_ID: value.key });
                 }}
                 onResetSearch={this.resetSearch}
-                placeHolder="Search by higher taxon"
+                placeHolder="Filter by higher taxon"
                 defaultTaxonKey={params.TAXON_ID || null}
                 autoFocus={false}
               />{" "}
             </div>
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
-                <FormItem label="Fuzzy matching">
+                <FormItem label="Fuzzy">
                   <Switch
                     checked={params.fuzzy === true}
                     onChange={(value) => this.updateSearch({ fuzzy: value })}
                   />
                 </FormItem>
-                <FormItem>
-                  {/*                   <Switch
-                    checked={params.prefix === true}
-                    onChange={(value) => this.updateSearch({ prefix: value })}
-                  /> */}
+                <FormItem label="Matching">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ type: evt.target.value });
                     }}
                     value={params.type || "WHOLE_WORDS"}
                   >
-                    <Radio value="WHOLE_WORDS">Match whole words</Radio>
-                    <Radio value="PREFIX">Partial words</Radio>
-
                     <Radio value="EXACT">Exact</Radio>
+                    <Radio value="WHOLE_WORDS">Words</Radio>
+                    <Radio value="PREFIX">Partial</Radio>
                   </RadioGroup>
                 </FormItem>
 

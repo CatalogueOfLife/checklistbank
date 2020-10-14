@@ -110,7 +110,7 @@ class UserMenu extends PureComponent {
           </Dropdown>
         )}
         <Modal
-          title="Login"
+          title="Login with your GBIF account"
           visible={this.state.visible}
           onOk={this.handleLogin}
           onCancel={this.handleCancel}
