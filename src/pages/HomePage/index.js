@@ -142,11 +142,10 @@ class HomePage extends React.Component {
 
 
 
-
   <Row style={{ marginTop: 20 }}>
     <Col style={{ paddingRight: "30px" }} span={16}>
       <p>
-      The <a href="http://www.catalogueoflife.org">Catalogue of Life (COL)</a> aims to support the publication and curation of checklists and to provide a platform for their consistent discovery, use and citation. 
+      The <a href="http://www.catalogue.life">Catalogue of Life (COL)</a> aims to support the publication and curation of checklists and to provide a platform for their consistent discovery, use and citation. 
       <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a> has for some time maintained ChecklistBank as a repository for its community to share checklist data. 
       COL and GBIF have united their capabilities to make ChecklistBank a consistent foundation and repository for all COL datasets and any other publicly published species lists.          
       </p>
