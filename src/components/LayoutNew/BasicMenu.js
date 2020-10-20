@@ -536,7 +536,7 @@ class BasicMenu extends Component {
                 }}
               >
                 <TagOutlined />
-                CoL: latest release
+                COL: latest release
               </NavLink>
             </Menu.Item>
           )}
@@ -549,7 +549,7 @@ class BasicMenu extends Component {
                 }}
               >
                 <TagsOutlined />
-                CoL: releases
+                COL: releases
               </NavLink>
             </Menu.Item>
           )}
