@@ -16,6 +16,10 @@ import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import ImportMetrics from '../../../components/ImportMetrics'
 import kibanaQuery from './kibanaQuery'
+import {
+  UploadOutlined,
+  DownloadOutlined
+} from "@ant-design/icons";
 
 const _ = require("lodash");
 
