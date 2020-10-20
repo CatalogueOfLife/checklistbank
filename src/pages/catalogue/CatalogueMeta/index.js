@@ -19,7 +19,7 @@ const CatalogueMeta = ({catalogueKey, catalogue}) =>  (
       title={catalogue ? catalogue.title : ''}
       >
      {_.get(catalogue, 'title') && <Helmet 
-      title={`${_.get(catalogue, 'title')} in CoL+`}
+      title={`${_.get(catalogue, 'title')} in COL`}
      />}
       
     

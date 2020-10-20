@@ -38,7 +38,7 @@ class Reference extends React.Component {
       >
         <Helmet>
           <meta charSet="utf-8" />
-          <title>{catalogue ? `References - ${catalogue.title}` : 'CoL references'}</title>
+          <title>{catalogue ? `References - ${catalogue.title}` : 'COL references'}</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>

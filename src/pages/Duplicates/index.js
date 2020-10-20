@@ -548,7 +548,7 @@ class DuplicateSearchPage extends React.Component {
             <Card>
               <div style={{ marginBottom: "10px" }}>
                 <Select
-                  placeholder="CoL Check"
+                  placeholder="COL Check"
                   value={this.state.selectedPreset}
                   style={{ width: 500, marginRight: 10 }}
                   onChange={this.onPresetSelect}

@@ -198,7 +198,7 @@ class Assembly extends React.Component {
         }
         notification.open({
           message: "Removed existing taxon",
-          description: `Old ${target.name} was removed from the CoL draft, removing children.`
+          description: `Old ${target.name} was removed from the assembly, removing children.`
         });
         return this.saveSector(subject, parent, "ATTACH");
       });
@@ -355,7 +355,7 @@ class Assembly extends React.Component {
       >
         <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+ Assembly</title>
+          <title>COL Assembly</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent style={{padding: 12, marginBottom: 0, height: "100%"}}>

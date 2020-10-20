@@ -46,7 +46,7 @@ class App extends Component {
       <ContextProvider>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+</title>
+          <title>COL Checklistbank</title>
           <link rel="canonical" href="https://data.catalogue.life/" />
         </Helmet>
         <Router history={history}>

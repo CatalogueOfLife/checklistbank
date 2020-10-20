@@ -11,7 +11,7 @@ const environments = {
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
-      title: "CoL draft",
+      title: "COL draft",
       origin: "managed",
     },
     NAME_INDEX: {
@@ -34,7 +34,7 @@ const environments = {
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
-      title: "CoL draft",
+      title: "COL draft",
       origin: "managed",
     },
     NAME_INDEX: {
@@ -52,7 +52,7 @@ const environments = {
     kibanaEnv: { name: "col-docker", index: "AWyLa4mQHCKcR6PFXu4X" },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
-      title: "CoL draft",
+      title: "COL draft",
       origin: "managed",
     },
     NAME_INDEX: {
@@ -70,7 +70,7 @@ const environments = {
     kibanaEnv: { name: "col-local", index: "AWyLa4mQHCKcR6PFXu4X" },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
-      title: "CoL draft",
+      title: "COL draft",
       origin: "managed",
     },
     NAME_INDEX: {

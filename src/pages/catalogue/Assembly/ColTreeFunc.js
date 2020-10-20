@@ -516,7 +516,7 @@ const reloadRoot = () => {
       dragNode.taxon.datasetKey ===
       e.node.taxon.datasetKey
     ) {
-      message.warn("You cannot modify the CoL draft in attachment mode");
+      message.warn("You cannot modify the COL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
     if (

@@ -200,7 +200,7 @@ class CatalogueOptions extends React.Component {
       >
         <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+ Options</title>
+          <title>COL Options</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>

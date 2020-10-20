@@ -17,7 +17,7 @@ const CatalogueTaxon = ({ catalogueKey, catalogue, match, location }) =>
       taxonOrNameKey={match.params.taxonOrNameKey}
     >
       {_.get(catalogue, "title") && (
-        <Helmet title={`${_.get(catalogue, "title")} in CoL+`} />
+        <Helmet title={`${_.get(catalogue, "title")} in COL`} />
       )}
       
       <Taxon datasetKey={match.params.catalogueKey} location={location} match={match} />

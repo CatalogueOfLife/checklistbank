@@ -125,7 +125,7 @@ class DatasetPage extends React.Component {
         taxonOrNameKey={taxonOrNameKey}
       >
         {_.get(dataset, "title") && (
-          <Helmet title={`${_.get(dataset, "title")} in CoL+`} />
+          <Helmet title={`${_.get(dataset, "title")} in COL`} />
         )}
         {dataset && _.get(dataset, "deleted") && (
           <Alert

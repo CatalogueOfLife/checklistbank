@@ -16,7 +16,7 @@ const CatalogueNameSearch = ({ catalogueKey, catalogue, location }) =>
       title={catalogue ? catalogue.title : ""}
     >
       {_.get(catalogue, "title") && (
-        <Helmet title={`${_.get(catalogue, "title")} in CoL+`} />
+        <Helmet title={`${_.get(catalogue, "title")} in COL`} />
       )}
       <NameSearch datasetKey={catalogueKey} location={location} />
     </Layout>

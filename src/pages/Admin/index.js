@@ -211,10 +211,10 @@ class AdminPage extends React.Component {
       background
     } = this.state;
     return (
-      <Layout openKeys={["admin"]} selectedKeys={["adminSettings"]} title="CoL+ Admin">
+      <Layout openKeys={["admin"]} selectedKeys={["adminSettings"]} title="COL Admin">
         <Helmet>
           <meta charSet="utf-8" />
-          <title>CoL+ Admin</title>
+          <title>COL Admin</title>
           <link rel="canonical" href="http://data.catalogue.life" />
         </Helmet>
         <PageContent>
