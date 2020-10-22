@@ -126,7 +126,9 @@ class DatasetList extends React.Component {
           dataIndex: "organisations",
           key: "organisations",
           render: (text, record) => {
-            return text && _.isArray(text) ? text.join(", ") : "";
+            return text && _.isArray(text) ? 
+              text.map((t) => t.label).join("; ")
+              : "";
           },
         },
         {
