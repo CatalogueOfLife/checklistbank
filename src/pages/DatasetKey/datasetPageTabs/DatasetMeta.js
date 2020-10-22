@@ -162,7 +162,7 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.organisations}
+              {data.organisations.map(o => o.label).join(', ')}
             </PresentationItem>
             <PresentationItem
               label={
