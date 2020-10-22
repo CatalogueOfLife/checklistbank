@@ -18,8 +18,8 @@ import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
 import PersonControl from "./PersonControl";
+import OrganisationControl from "./OrganisationControl";
 
-import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
 
 const FormItem = Form.Item;
@@ -166,7 +166,7 @@ const MetaDataForm = (props) => {
           label="Organisations"
           name="organisations"
         >
-          <TagControl label="New organisation" removeAll={true} />
+          <OrganisationControl label="New organisation" removeAll={true} />
         </FormItem>
       )}
 
@@ -182,7 +182,7 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Received by CoL" name="released">
+        <FormItem {...formItemLayout} label="Received by COL" name="released">
           <Input type="text" />
         </FormItem>
       )}
@@ -356,7 +356,7 @@ const MetaDataForm = (props) => {
             help={
               <span>
                 Quality of taxonomic checklist with values 1 to 5; quality is
-                stated by the custodian in agreement with CoL editor. Confidence
+                stated by the custodian in agreement with COL editor. Confidence
                 indicators are described at{" "}
                 <a
                   href="http://www.catalogueoflife.org/col/info/databases"
