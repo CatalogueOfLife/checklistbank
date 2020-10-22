@@ -253,16 +253,6 @@ class BasicMenu extends Component {
                     <span>Sector sync</span>
                   </NavLink>
                 </Menu.Item>
-                {/*               <Menu.Item key="catalogueSectors">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
-                  <span>Sectors</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="catalogueDecisions">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/decision` }}>
-                  <span>Decisions</span>
-                </NavLink>
-              </Menu.Item> */}
 
                 {selectedSector && (
                   <Menu.Item key="sectorDiff">
@@ -275,6 +265,15 @@ class BasicMenu extends Component {
                     to={{ pathname: `/catalogue/${catalogueKey}/references` }}
                   >
                     <span>References</span>
+                  </NavLink>
+                </Menu.Item>
+
+                <Menu.Item key="releases">
+                  <NavLink to={{ 
+                    pathname: "/dataset",
+                    search: `?releasedFrom=${catalogueKey}`,
+                    }}>
+                    <span>Releases</span>
                   </NavLink>
                 </Menu.Item>
 

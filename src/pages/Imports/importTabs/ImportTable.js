@@ -16,6 +16,10 @@ import withContext from '../../../components/hoc/withContext'
 import Auth from '../../../components/Auth'
 import ImportMetrics from '../../../components/ImportMetrics'
 import kibanaQuery from './kibanaQuery'
+import {
+  UploadOutlined,
+  DownloadOutlined
+} from "@ant-design/icons";
 
 const _ = require("lodash");
 
@@ -56,34 +60,31 @@ class ImportTable extends React.Component {
           title: "Title",
           dataIndex: ["dataset", "title"],
           key: "title",
-          render: (text, record) => {
-            return (
-      
-              <NavLink
-                to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-                exact={true}
-              >
-                {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}
-              </NavLink> 
-      
-            );
-          },
+          render: (text, record) => 
+            <NavLink
+              to={{ pathname: `/dataset/${record.datasetKey}/names` }}
+              exact={true}
+            >
+              {_.get(record, 'dataset.alias') || _.get(record, 'dataset.title')}
+            </NavLink>,
           width: 150
         },
         {
           title: "State",
           dataIndex: "state",
           key: "state",
-          render: (text, record) => {
-      
-            return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
-          },
+          render: (text, record) => <Tag color={tagColors[record.state]}>{record.state}</Tag>,
           width: 50
         },
         {
           title: "Job",
           dataIndex: "job",
           key: "job",
+          render: (text, record) => 
+            <React.Fragment>
+              <span>{_.get(record, 'job')}</span>&nbsp;
+              {_.get(record, 'upload') ? <UploadOutlined/> : <DownloadOutlined/>}
+            </React.Fragment>,
           width: 50
         },
         {
