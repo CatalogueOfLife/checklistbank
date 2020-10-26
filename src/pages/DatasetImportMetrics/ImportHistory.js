@@ -41,7 +41,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
           }}
           exact={true}
         >
-          <strong>{`${h.state}`} {'upload' in record && (_.get(h, 'upload') ? <UploadOutlined/> : <DownloadOutlined/>)}</strong>
+          <strong>{`${h.state}`} {'upload' in h && (_.get(h, 'upload') ? <UploadOutlined/> : <DownloadOutlined/>)}</strong>
         </NavLink>
           {_.get(h, 'user.username') && <p>{_.get(h, 'upload') ? "Upload" : "Download"} by {h.user.username}</p>}
             <p>{`${moment(h.started).format("lll")}`} {" "} <Tooltip title="Kibana logs" placement="right"><a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank" ><CodeOutlined /></a></Tooltip></p>
