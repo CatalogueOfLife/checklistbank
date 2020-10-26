@@ -141,17 +141,14 @@ class DatasetMeta extends React.Component {
               </Col>
 
               <Col span={2} offset={18}>
-                {data &&
-                  _.get(data, "origin") !== "external" &&
-                  !data.deleted &&
-                  !patchMode && (
-                    <Switch
-                      checked={editMode}
-                      onChange={this.setEditMode}
-                      checkedChildren="Cancel"
-                      unCheckedChildren="Edit"
-                    />
-                  )}
+                {data && !data.deleted && !patchMode && (
+                  <Switch
+                    checked={editMode}
+                    onChange={this.setEditMode}
+                    checkedChildren="Cancel"
+                    unCheckedChildren="Edit"
+                  />
+                )}
                 {data && !data.deleted && patchMode && (
                   <Switch
                     checked={editPatchMode}
