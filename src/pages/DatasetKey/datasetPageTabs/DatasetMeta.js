@@ -162,7 +162,9 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.organisations.map(o => o.label)}
+              {_.isArray(data.organisations)
+                ? data.organisations.map((o) => o.label)
+                : ""}
             </PresentationItem>
             <PresentationItem
               label={
