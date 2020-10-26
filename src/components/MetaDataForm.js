@@ -19,7 +19,7 @@ import ErrorMsg from "../components/ErrorMsg";
 import TagControl from "./TagControl";
 import PersonControl from "./PersonControl";
 import OrganisationControl from "./OrganisationControl";
-
+import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "./hoc/withContext";
 
 const FormItem = Form.Item;
@@ -57,14 +57,12 @@ const tailFormItemLayout = {
 const MetaDataForm = (props) => {
   const {
     data,
-    frequency,
     datasettypeEnum,
-    dataFormat,
     licenseEnum,
-    nomCode,
-    datasetSettings,
+    catalogueKey,
     datasetoriginEnum,
     onSaveSuccess,
+    originalData,
   } = props;
 
   const [confirmDirty, setConfirmDirty] = useState(false);
@@ -72,7 +70,6 @@ const MetaDataForm = (props) => {
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
   useEffect(() => {
-    console.log("test");
     console.log(datasetoriginEnum);
   }, [datasetoriginEnum]);
 
@@ -81,9 +78,7 @@ const MetaDataForm = (props) => {
   };
   const submitData = (values) => {
     const key = _.get(data, "key");
-    if (_.get(values, 'settings["csv delimiter"]') === "\\t") {
-      values.settings["csv delimiter"] = `\t`;
-    }
+
     let task = key
       ? axios.put(`${config.dataApi}dataset/${key}`, values)
       : axios.post(`${config.dataApi}dataset`, values);
@@ -105,26 +100,64 @@ const MetaDataForm = (props) => {
       });
   };
 
-  const handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    setConfirmDirty(confirmDirty || !!value);
+  const submitPatch = (values) => {
+    const key = _.get(originalData, "key");
+
+    const sanitised = Object.keys(values).reduce(
+      (acc, cur) => {
+        if (!_.isUndefined(values[cur])) {
+          acc[cur] = values[cur];
+        }
+        return acc;
+      },
+      { key }
+    );
+
+    const task = _.get(data, "key") // there was already a patch
+      ? axios.put(
+          `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
+          sanitised
+        )
+      : axios.post(`${config.dataApi}dataset/${catalogueKey}/patch`, sanitised);
+
+    task
+      .then((res) => {
+        let title = "Meta data patch";
+        let msg = `Successfully patched meta data for ${originalData.title}`;
+
+        if (onSaveSuccess && typeof onSaveSuccess === "function") {
+          onSaveSuccess(res);
+        }
+        openNotification(title, msg);
+        setSubmissionError(null);
+      })
+      .catch((err) => {
+        setSubmissionError(err);
+      });
   };
 
-  const initialValues = {
-    organisations: [],
-    authorsAndEditors: [],
-    private: false,
-    confidence: null,
-    completeness: 0,
-    ...data,
+  const initialValues = originalData
+    ? data
+    : {
+        organisations: [],
+        authorsAndEditors: [],
+        private: false,
+        confidence: null,
+        completeness: 0,
+        ...data,
+      };
+
+  const transferOriginalValueToPatch = (value, field) => {
+    form.setFieldsValue({ [field]: value });
   };
 
   return (
     <Form
       initialValues={initialValues}
-      onFinish={submitData}
+      onFinish={originalData ? submitPatch : submitData}
       onFinishFailed={onFinishFailed}
       style={{ paddingTop: "12px" }}
+      form={form}
     >
       {submissionError && (
         <FormItem>
@@ -141,21 +174,45 @@ const MetaDataForm = (props) => {
         {...formItemLayout}
         label="Title"
         name="title"
-        rules={[
-          {
-            required: true,
-            message: "Please input dataset title",
-          },
-        ]}
+        help={
+          originalData ? (
+            <PatchFormOriginalDataHelp
+              data={originalData}
+              field="title"
+              transferFn={transferOriginalValueToPatch}
+            />
+          ) : null
+        }
+        rules={
+          originalData
+            ? null
+            : [
+                {
+                  required: true,
+                  message: "Please input dataset title",
+                },
+              ]
+        }
       >
         <Input />
       </FormItem>
+
       {data && (
         <FormItem
           {...formItemLayout}
           label="Alias"
           name="alias"
-          help="Abbreviated or shortened memorable name of the dataset intended for easy use in day-to-day communications, as supplied by the custodian"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="alias"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "Abbreviated or shortened memorable name of the dataset intended for easy use in day-to-day communications, as supplied by the custodian"
+            )
+          }
         >
           <Input />
         </FormItem>
@@ -165,44 +222,144 @@ const MetaDataForm = (props) => {
           {...formItemLayout}
           label="Organisations"
           name="organisations"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="organisations"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
         >
           <OrganisationControl label="New organisation" removeAll={true} />
         </FormItem>
       )}
 
       {data && (
-        <FormItem {...formItemLayout} label="Description" name="description">
+        <FormItem
+          {...formItemLayout}
+          label="Description"
+          name="description"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="description"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <TextArea rows={6} />
         </FormItem>
       )}
 
       {data && (
-        <FormItem {...formItemLayout} label="Version" name="version">
+        <FormItem
+          {...formItemLayout}
+          label="Version"
+          name="version"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="version"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <Input type="text" />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Received by COL" name="released">
+        <FormItem
+          {...formItemLayout}
+          label="Received by COL"
+          name="released"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="released"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <Input type="text" />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Contact" name="contact">
+        <FormItem
+          {...formItemLayout}
+          label="Contact"
+          name="contact"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="contact"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <PersonControl label="New contact" removeAll={true} array={false} />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Authors" name="authors">
+        <FormItem
+          {...formItemLayout}
+          label="Authors"
+          name="authors"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="authors"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <PersonControl label="New Author" removeAll={true} />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Editors" name="editors">
+        <FormItem
+          {...formItemLayout}
+          label="Editors"
+          name="editors"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="editors"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <PersonControl label="New Editor" removeAll={true} />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Website" name="website">
+        <FormItem
+          {...formItemLayout}
+          label="Website"
+          name="website"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="website"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <Input type="url" />
         </FormItem>
       )}
@@ -237,44 +394,20 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
 
-      {/*       {origin === "external" && (
-        <FormItem {...formItemLayout} label="Data Access" name="dataAccess" rules={[
-          {
-            required: false,
-            message: "Please input the url to access data from"
-          }
-        ]}>
-          <Input type="url" />
-        </FormItem>
-      )}
-      {origin === "external" && (
-        <FormItem {...formItemLayout} label="Automated Import Frequency" name="importFrequency" rules={[
-          {
-            required: true,
-            message: "Please select import frequency"
-          }
-        ]}>
-          <Select style={{ width: 200 }} showSearch>
-              {frequency.map(f => {
-                return (
-                  <Option key={f} value={f}>
-                    {f}
-                  </Option>
-                );
-              })}
-            </Select>
-        </FormItem>
-      )} */}
       <FormItem
         {...formItemLayout}
         label="Dataset Type"
         name="type"
-        rules={[
-          {
-            required: true,
-            message: "Please select a dataset type",
-          },
-        ]}
+        rules={
+          originalData
+            ? null
+            : [
+                {
+                  required: true,
+                  message: "Please select a dataset type",
+                },
+              ]
+        }
       >
         <Select style={{ width: 200 }} showSearch>
           {datasettypeEnum.map((f) => {
@@ -291,7 +424,17 @@ const MetaDataForm = (props) => {
         <FormItem
           {...formItemLayout}
           label="Taxonomic coverage (english)"
-          help="English name of the taxon covered by the dataset"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="group"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "English name of the taxon covered by the dataset"
+            )
+          }
           name="group"
         >
           <Input />
@@ -302,12 +445,34 @@ const MetaDataForm = (props) => {
           {...formItemLayout}
           label="Geographic scope"
           name="geographicScope"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="geographicScope"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
         >
           <Input type="text" />
         </FormItem>
       )}
       {data && (
-        <FormItem {...formItemLayout} label="Citation" name="citation">
+        <FormItem
+          {...formItemLayout}
+          label="Citation"
+          name="citation"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="citation"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
           <Input type="text" />
         </FormItem>
       )}
@@ -324,12 +489,16 @@ const MetaDataForm = (props) => {
         {...formItemLayout}
         label="License"
         name="license"
-        rules={[
-          {
-            required: true,
-            message: "Please select a license",
-          },
-        ]}
+        rules={
+          originalData
+            ? null
+            : [
+                {
+                  required: true,
+                  message: "Please select a license",
+                },
+              ]
+        }
       >
         <Select style={{ width: 200 }} showSearch>
           {licenseEnum.map((f) => {
@@ -345,7 +514,20 @@ const MetaDataForm = (props) => {
       {/* Only to be shown on existing datasets */}
       {data && (
         <React.Fragment>
-          <FormItem {...formItemLayout} label="Logo Url" name="logo">
+          <FormItem
+            {...formItemLayout}
+            label="Logo Url"
+            name="logo"
+            help={
+              originalData ? (
+                <PatchFormOriginalDataHelp
+                  data={originalData}
+                  field="logo"
+                  transferFn={transferOriginalValueToPatch}
+                />
+              ) : null
+            }
+          >
             <Input type="url" />
           </FormItem>
 
@@ -354,17 +536,25 @@ const MetaDataForm = (props) => {
             label="Checklist Confidence"
             name="confidence"
             help={
-              <span>
-                Quality of taxonomic checklist with values 1 to 5; quality is
-                stated by the custodian in agreement with COL editor. Confidence
-                indicators are described at{" "}
-                <a
-                  href="http://www.catalogueoflife.org/col/info/databases"
-                  target="_blank"
-                >
-                  http://www.catalogueoflife.org/col/info/databases
-                </a>
-              </span>
+              originalData ? (
+                <PatchFormOriginalDataHelp
+                  data={originalData}
+                  field="confidence"
+                  transferFn={transferOriginalValueToPatch}
+                />
+              ) : (
+                <span>
+                  Quality of taxonomic checklist with values 1 to 5; quality is
+                  stated by the custodian in agreement with COL editor.
+                  Confidence indicators are described at{" "}
+                  <a
+                    href="http://www.catalogueoflife.org/col/info/databases"
+                    target="_blank"
+                  >
+                    http://www.catalogueoflife.org/col/info/databases
+                  </a>
+                </span>
+              )
             }
           >
             <Rate />
@@ -373,64 +563,39 @@ const MetaDataForm = (props) => {
             {...formItemLayout}
             label="Completeness"
             name="completeness"
-            help="Percentage of completeness of species list of the taxon provided by the dataset"
+            help={
+              originalData ? (
+                <PatchFormOriginalDataHelp
+                  data={originalData}
+                  field="completeness"
+                  transferFn={transferOriginalValueToPatch}
+                />
+              ) : (
+                "Percentage of completeness of species list of the taxon provided by the dataset"
+              )
+            }
           >
             <Input type="number" min="0" max="100" />
           </FormItem>
 
-          <FormItem {...formItemLayout} label="Notes" name="notes">
+          <FormItem
+            {...formItemLayout}
+            label="Notes"
+            name="notes"
+            help={
+              originalData ? (
+                <PatchFormOriginalDataHelp
+                  data={originalData}
+                  field="notes"
+                  transferFn={transferOriginalValueToPatch}
+                />
+              ) : null
+            }
+          >
             <TextArea rows={3} />
           </FormItem>
         </React.Fragment>
       )}
-      {/*       <Row>
-        <Col span={4}></Col>
-        <Col span={16}>
-        <section className="code-box">
-        <div className="code-box-title">Settings</div>
-      </section>
-        </Col>
-        
-        
-      </Row>
-      {datasetSettings.filter(s => s.type === "Boolean").map(s => 
-            <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={['settings', s.name]} valuePropName='checked'>
-            <Input type="checkbox"  />
-          </FormItem>
-          )}
-          <FormItem {...formItemLayout} label={_.startCase("csv delimiter")} key={"csv delimiter"} name={['settings', "csv delimiter"]}>
-            <CsvDelimiterInput/> 
-          </FormItem>
-      {datasetSettings.filter(s => (s.type === "String" || s.type === "Integer" || s.type === "URI") && s.name !== "csv delimiter").map(s => 
-            <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={['settings', s.name]}>
-            {s.type === "String" || s.type === "URI" ? <Input type="text" /> :
-                <InputNumber />}
-          </FormItem>
-          )}
-
-      {datasetSettings.filter(s => !["String", "Integer", "Boolean", "URI"].includes(s.type)).map(s => 
-            <FormItem {...formItemLayout} label={_.startCase(s.name)} key={s.name} name={['settings', s.name]}>
-              {s.type === "NomCode" ? <Select style={{ width: 200 }} showSearch>
-              {nomCode.map(c => {
-                return (
-                  <Option
-                    key={c.name}
-                    value={c.name}
-                  >{`${c.name} (${c.acronym})`}</Option>
-                );
-              })}
-            </Select> :
-              <Select style={{ width: 200 }} showSearch>
-            {props[_.camelCase(s.type)].map(e => {
-              return (
-                <Option key={e.name} value={e.name}>
-                  {e.name}
-                </Option>
-              );
-            })}
-          </Select>}
-          </FormItem>
-          )} */}
 
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">

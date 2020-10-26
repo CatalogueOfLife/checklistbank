@@ -21,11 +21,18 @@ import PersonPresentation from "../../../components/PersonPresentation";
 class DatasetMeta extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: null, editMode: false };
+    this.state = {
+      data: null,
+      patch: null,
+      editMode: false,
+      editPatchMode: false,
+      patchError: null,
+    };
   }
 
   componentDidMount() {
     this.getData();
+    this.getPatch();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -34,6 +41,13 @@ class DatasetMeta extends React.Component {
     }
   };
 
+  getPatch = () => {
+    const { id, catalogueKey } = this.props;
+
+    axios(`${config.dataApi}dataset/${catalogueKey}/patch/${id}`)
+      .then((res) => this.setState({ patch: res.data, patchError: null }))
+      .catch((err) => this.setState({ patchError: err, patch: null }));
+  };
   getData = () => {
     const { id, setDataset } = this.props;
 
@@ -85,12 +99,14 @@ class DatasetMeta extends React.Component {
     this.setState({ editMode: checked });
   };
 
+  setEditPatchMode = (checked) => {
+    this.setState({ editPatchMode: checked });
+  };
   render() {
-    const { data, editMode } = this.state;
-    const { user, datasetSettings } = this.props;
-    const listData = _.map(data, function (value, key) {
-      return { key, value };
-    });
+    const { data, editMode, editPatchMode, patch } = this.state;
+    const { user, catalogueKey } = this.props;
+    const patchMode = !!catalogueKey;
+
     return (
       <PageContent>
         {Auth.isAuthorised(user, ["editor", "admin"]) && (
@@ -125,12 +141,23 @@ class DatasetMeta extends React.Component {
               </Col>
 
               <Col span={2} offset={18}>
-                {data && !data.deleted && (
+                {data &&
+                  _.get(data, "origin") !== "external" &&
+                  !data.deleted &&
+                  !patchMode && (
+                    <Switch
+                      checked={editMode}
+                      onChange={this.setEditMode}
+                      checkedChildren="Cancel"
+                      unCheckedChildren="Edit"
+                    />
+                  )}
+                {data && !data.deleted && patchMode && (
                   <Switch
-                    checked={editMode}
-                    onChange={this.setEditMode}
+                    checked={editPatchMode}
+                    onChange={this.setEditPatchMode}
                     checkedChildren="Cancel"
-                    unCheckedChildren="Edit"
+                    unCheckedChildren="Patch"
                   />
                 )}
               </Col>
@@ -138,7 +165,7 @@ class DatasetMeta extends React.Component {
           </React.Fragment>
         )}
 
-        {editMode && (
+        {editMode && !patchMode && (
           <MetaDataForm
             data={data}
             onSaveSuccess={() => {
@@ -147,7 +174,18 @@ class DatasetMeta extends React.Component {
             }}
           />
         )}
-        {!editMode && data && (
+        {editPatchMode && patchMode && data && (
+          <MetaDataForm
+            data={patch || {}}
+            catalogueKey={catalogueKey}
+            originalData={data}
+            onSaveSuccess={() => {
+              this.setEditPatchMode(false);
+              this.getPatch();
+            }}
+          />
+        )}
+        {!editMode && !editPatchMode && data && (
           <React.Fragment>
             <PresentationItem
               label={<FormattedMessage id="alias" defaultMessage="Alias" />}
@@ -162,7 +200,9 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.organisations.map(o => o.label)}
+              {_.isArray(data.organisations)
+                ? data.organisations.map((o) => o.label)
+                : ""}
             </PresentationItem>
             <PresentationItem
               label={
@@ -354,9 +394,6 @@ class DatasetMeta extends React.Component {
                 data.modifiedByUser
               }`}
             </PresentationItem>
-            {/*           <section className="code-box" style={{marginTop: '32px'}}>
-          <div className="code-box-title">Settings</div>
-        </section> */}
           </React.Fragment>
         )}
       </PageContent>
