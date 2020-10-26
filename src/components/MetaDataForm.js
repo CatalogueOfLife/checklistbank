@@ -394,31 +394,29 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
 
-      <FormItem
-        {...formItemLayout}
-        label="Dataset Type"
-        name="type"
-        rules={
-          originalData
-            ? null
-            : [
-                {
-                  required: true,
-                  message: "Please select a dataset type",
-                },
-              ]
-        }
-      >
-        <Select style={{ width: 200 }} showSearch>
-          {datasettypeEnum.map((f) => {
-            return (
-              <Option key={f} value={f}>
-                {f}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+      {!originalData && (
+        <FormItem
+          {...formItemLayout}
+          label="Dataset Type"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: "Please select a dataset type",
+            },
+          ]}
+        >
+          <Select style={{ width: 200 }} showSearch>
+            {datasettypeEnum.map((f) => {
+              return (
+                <Option key={f} value={f}>
+                  {f}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
+      )}
 
       {data && (
         <FormItem
@@ -476,15 +474,17 @@ const MetaDataForm = (props) => {
           <Input type="text" />
         </FormItem>
       )}
-      <FormItem
-        {...formItemLayout}
-        label="Private"
-        key="Private"
-        name="private"
-        valuePropName="checked"
-      >
-        <Input type="checkbox" />
-      </FormItem>
+      {!originalData && (
+        <FormItem
+          {...formItemLayout}
+          label="Private"
+          key="Private"
+          name="private"
+          valuePropName="checked"
+        >
+          <Input type="checkbox" />
+        </FormItem>
+      )}
       <FormItem
         {...formItemLayout}
         label="License"
