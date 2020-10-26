@@ -83,7 +83,9 @@ class ImportTable extends React.Component {
           render: (text, record) => 
             <React.Fragment>
               <span>{_.get(record, 'job')}</span>&nbsp;
-              {_.get(record, 'upload') ? <UploadOutlined/> : <DownloadOutlined/>}
+              {'upload' in record &&
+                (_.get(record, 'upload') ? <UploadOutlined/> : <DownloadOutlined/>)
+              }
             </React.Fragment>,
           width: 50
         },
