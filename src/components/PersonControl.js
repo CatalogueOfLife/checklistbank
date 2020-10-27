@@ -1,30 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { PlusOutlined } from '@ant-design/icons';
-import { Row, Tag, Col } from 'antd';
-import injectSheet from 'react-jss';
-import PersonForm from './PersonForm'
-import PersonPresentation from './PersonPresentation'
-import ReactDragListView from 'react-drag-listview'
+import React from "react";
+import PropTypes from "prop-types";
+import { PlusOutlined } from "@ant-design/icons";
+import { Row, Tag, Col } from "antd";
+import injectSheet from "react-jss";
+import PersonForm from "./PersonForm";
+import PersonPresentation from "./PersonPresentation";
+import ReactDragListView from "react-drag-listview";
 const { DragColumn } = ReactDragListView;
 
+const stringToArray = (value) => {
+  if (Array.isArray(value)) {
+    return value;
+  } else if (value) {
+    return [value];
+  }
 
-const stringToArray = value => {
-    if (Array.isArray(value)) {
-      return value;
-    } else if (value) {
-      return [value];
-    }
-  
-    return [];
-  };
+  return [];
+};
 
 const styles = {
   newTag: {
-    background: '#fff',
-    borderStyle: 'dashed',
-    maxHeight: '22px'
-  }
+    background: "#fff",
+    borderStyle: "dashed",
+    maxHeight: "22px",
+  },
 };
 
 /**
@@ -35,7 +34,7 @@ const styles = {
 class PersonControl extends React.Component {
   static getDerivedStateFromProps(nextProps) {
     // Should be a controlled component
-    if ('value' in nextProps) {
+    if ("value" in nextProps) {
       let value = stringToArray(nextProps.value);
 
       return { persons: value };
@@ -49,13 +48,13 @@ class PersonControl extends React.Component {
     this.state = {
       persons: stringToArray(props.value),
       formVisible: false,
-      personForEdit: null
+      personForEdit: null,
     };
   }
 
-  handleClose = removedTag => {
-    const persons = this.state.persons.filter(tag => tag !== removedTag);
-    const {array = true} = this.props
+  handleClose = (removedTag) => {
+    const persons = this.state.persons.filter((tag) => tag !== removedTag);
+    const { array = true } = this.props;
     this.setState({ persons });
     this.triggerChange(array ? persons : null);
   };
@@ -64,21 +63,24 @@ class PersonControl extends React.Component {
     this.setState({ personForEdit: person, formVisible: true });
   };
 
-  handleInputChange = event => {
+  handleInputChange = (event) => {
     this.setState({ inputValue: event.target.value });
   };
 
   onFormSubmit = (person) => {
-
     const persons = [...this.state.persons, person];
-    const {array = true} = this.props
-    this.setState({
-      persons,
-      formVisible: false,
-    }, () => this.triggerChange(array ? persons : person));  
+    const { array = true } = this.props;
+    this.setState(
+      {
+        persons,
+        formVisible: false,
+        personForEdit: null,
+      },
+      () => this.triggerChange(array ? persons : person)
+    );
   };
 
-  triggerChange = changedValue => {
+  triggerChange = (changedValue) => {
     // Should provide an event to pass value to Form
     const onChange = this.props.onChange;
     if (onChange) {
@@ -94,45 +96,75 @@ class PersonControl extends React.Component {
     if (onChange) {
       onChange(persons); // will get derived state from props
     }
-  }
+  };
+
+  editPerson = (person) => {
+    this.setState({ personForEdit: person, formVisible: true }, () =>
+      this.handleClose(person)
+    );
+  };
 
   render() {
-    const { persons, formVisible, inputValue } = this.state;
+    const { persons, formVisible, personForEdit } = this.state;
     const { classes, label, removeAll, array = true } = this.props;
 
     const dragProps = {
-        onDragEnd: this.onDragEnd,
-        nodeSelector: 'li',
-        handleSelector: 'li'
-      }
+      onDragEnd: this.onDragEnd,
+      nodeSelector: "li",
+      handleSelector: "li",
+    };
 
     return (
       <React.Fragment>
-        <Row><DragColumn {...dragProps}> 
-          <ol style={{listStyle : 'none', paddingInlineStart: '0px'}}>
-        {persons.map((person, index) => {
-          
-          const tagElem = (
-           <li style={{float: 'left', marginBottom: '4px'}}> <Tag key={person.familyName+person.givenName} closable={removeAll || index !== 0} onClose={() => this.handleClose(person)}>
-              <PersonPresentation person={person} style={{display: 'inline-grid', margin: '3px 0px 3px 0px'}} />
-              
-            </Tag>
-            </li>
-          );
-          return  tagElem;
-        })}
-        </ol>
-        </DragColumn>
-        
+        <Row>
+          <DragColumn {...dragProps}>
+            <ol style={{ listStyle: "none", paddingInlineStart: "0px" }}>
+              {persons.map((person, index) => {
+                const tagElem = (
+                  <li style={{ float: "left", marginBottom: "4px" }}>
+                    {" "}
+                    <Tag
+                      key={person.familyName + person.givenName}
+                      onClick={() => this.editPerson(person)}
+                      closable={removeAll || index !== 0}
+                      onClose={() => this.handleClose(person)}
+                    >
+                      <PersonPresentation
+                        person={person}
+                        style={{
+                          display: "inline-grid",
+                          margin: "3px 0px 3px 0px",
+                        }}
+                      />
+                    </Tag>
+                  </li>
+                );
+                return tagElem;
+              })}
+            </ol>
+          </DragColumn>
 
-        {!formVisible && (array ||  persons.length === 0) && (
-          <Tag onClick={this.showForm} className={classes.newTag}>
-            <PlusOutlined /> {label}
-          </Tag>
-        )}
-        </Row> 
-                {formVisible && (
-           <Row><Col span={24}><PersonForm style={{marginTop: '10px'}} onSubmit={this.onFormSubmit} onCancel={() => this.setState({formVisible: false})}/></Col> </Row>
+          {!formVisible && (array || persons.length === 0) && (
+            <Tag onClick={this.showForm} className={classes.newTag}>
+              <PlusOutlined /> {label}
+            </Tag>
+          )}
+        </Row>
+        {formVisible && (
+          <Row>
+            <Col span={24}>
+              <PersonForm
+                data={personForEdit}
+                style={{ marginTop: "10px" }}
+                onSubmit={this.onFormSubmit}
+                onCancel={() =>
+                  personForEdit
+                    ? this.onFormSubmit(personForEdit)
+                    : this.setState({ formVisible: false })
+                }
+              />
+            </Col>{" "}
+          </Row>
         )}
       </React.Fragment>
     );
@@ -143,7 +175,7 @@ PersonControl.propTypes = {
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired, // text label
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]), // value passed from form field decorator
   onChange: PropTypes.func.isRequired, // callback to been called on any data change
-  removeAll: PropTypes.bool // optional flag, to allow remove all persons or not
+  removeAll: PropTypes.bool, // optional flag, to allow remove all persons or not
 };
 
 export default injectSheet(styles)(PersonControl);
