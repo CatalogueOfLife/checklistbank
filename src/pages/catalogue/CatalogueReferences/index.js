@@ -1,13 +1,13 @@
 import React from "react";
-import {withRouter} from "react-router-dom"
+import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
-import {Button, Modal, Row, Col} from "antd"
+import { Button, Modal, Row, Col } from "antd";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import RefTable from "./RefTable";
-import RefForm from "./RefForm"
+import RefForm from "./RefForm";
 
 class Reference extends React.Component {
   constructor(props) {
@@ -16,57 +16,58 @@ class Reference extends React.Component {
     this.state = {
       ref: null,
       error: null,
-      showAddNewModal: false
+      showAddNewModal: false,
     };
   }
 
   render() {
+    const { ref, error, showAddNewModal } = this.state;
     const {
-      ref,
-      error,
-      showAddNewModal
-    } = this.state;
-    const {catalogue, match: {
-      params: { catalogueKey }
-    },} = this.props;
-    
+      catalogue,
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+
     return (
-      <Layout 
-      title={catalogue ? catalogue.title : ''}
-      selectedKeys={["assemblyReferences"]}
-      openKeys={["assembly", "projectDetails"]}
+      <Layout
+        title={catalogue ? catalogue.title : ""}
+        selectedKeys={["assemblyReferences"]}
+        openKeys={["assembly", "projectDetails"]}
       >
         <Helmet>
           <meta charSet="utf-8" />
-          <title>{catalogue ? `References - ${catalogue.title}` : 'COL references'}</title>
-          <link rel="canonical" href="http://data.catalogue.life" />
+          <title>
+            {catalogue ? `References - ${catalogue.title}` : "COL references"}
+          </title>
+          <link rel="canonical" href="http://data.catalogueoflife.org" />
         </Helmet>
         <PageContent>
-        {showAddNewModal && (
-          <Modal
-          width={1000}
-          title="New reference"
-          visible={showAddNewModal}
-          onOk={() => {
-            this.setState({ showAddNewModal: false });
-          }}
-          onCancel={() => {
-            this.setState({ showAddNewModal: false });
-          }}
-          destroyOnClose={true}
-        > 
-        <RefForm datasetKey={catalogueKey} />
-        </Modal>
-        )}
-        <Row>
-            <Col style={{textAlign: "right", marginBottom: "10px"}}>
-            <Button onClick={() => this.setState({showAddNewModal: true})}>
+          {showAddNewModal && (
+            <Modal
+              width={1000}
+              title="New reference"
+              visible={showAddNewModal}
+              onOk={() => {
+                this.setState({ showAddNewModal: false });
+              }}
+              onCancel={() => {
+                this.setState({ showAddNewModal: false });
+              }}
+              destroyOnClose={true}
+            >
+              <RefForm datasetKey={catalogueKey} />
+            </Modal>
+          )}
+          <Row>
+            <Col style={{ textAlign: "right", marginBottom: "10px" }}>
+              <Button onClick={() => this.setState({ showAddNewModal: true })}>
                 Add new
-            </Button></Col>
+              </Button>
+            </Col>
+          </Row>
 
-        </Row>
-            
-           <RefTable datasetKey={catalogueKey}></RefTable> 
+          <RefTable datasetKey={catalogueKey}></RefTable>
         </PageContent>
       </Layout>
     );
@@ -74,7 +75,6 @@ class Reference extends React.Component {
 }
 
 const mapContextToProps = ({ catalogue }) => ({
-  catalogue
+  catalogue,
 });
 export default withContext(mapContextToProps)(withRouter(Reference));
-

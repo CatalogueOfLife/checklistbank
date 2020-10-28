@@ -119,8 +119,7 @@ class CatalogueOptions extends React.Component {
           () => {
             notification.open({
               message: "Action triggered",
-              description:
-                "release selected project (might take long)",
+              description: "release selected project (might take long)",
             });
           }
         );
@@ -159,19 +158,21 @@ class CatalogueOptions extends React.Component {
       },
     } = this.props;
     axios
-        .post(`${config.dataApi}admin/sector-count-update?datasetKey=${catalogueKey}`)
-        .then((res) => {
-          notification.open({
-            message: `Recalculating sector counts`,
-          });
-        })
-        .catch((err) => {
-          notification.error({
-            message: "Error",
-            description: <ErrorMsg error={err} />,
-          });
+      .post(
+        `${config.dataApi}admin/sector-count-update?datasetKey=${catalogueKey}`
+      )
+      .then((res) => {
+        notification.open({
+          message: `Recalculating sector counts`,
         });
-  }
+      })
+      .catch((err) => {
+        notification.error({
+          message: "Error",
+          description: <ErrorMsg error={err} />,
+        });
+      });
+  };
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   };
@@ -201,7 +202,7 @@ class CatalogueOptions extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>COL Options</title>
-          <link rel="canonical" href="http://data.catalogue.life" />
+          <link rel="canonical" href="http://data.catalogueoflife.org" />
         </Helmet>
         <PageContent>
           {error && (
@@ -249,7 +250,7 @@ class CatalogueOptions extends React.Component {
               {!editMode && data && catalogue && (
                 <div style={{ marginRight: "28px" }}>
                   {datasetSettings
-                  .filter(s => s.origin.indexOf(catalogue.origin) > -1)
+                    .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
                     .filter((s) => s.type === "Boolean")
                     .map((s) => (
                       <PresentationItem
@@ -267,7 +268,7 @@ class CatalogueOptions extends React.Component {
                       </PresentationItem>
                     ))}
                   {datasetSettings
-                    .filter(s => s.origin.indexOf(catalogue.origin) > -1)
+                    .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
                     .filter((s) => s.type === "String" || s.type === "Integer")
                     .map((s) => (
                       <PresentationItem
@@ -280,7 +281,7 @@ class CatalogueOptions extends React.Component {
                       </PresentationItem>
                     ))}
                   {datasetSettings
-                  .filter(s => s.origin.indexOf(catalogue.origin) > -1)
+                    .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
                     .filter(
                       (s) => !["String", "Integer", "Boolean"].includes(s.type)
                     )
@@ -363,7 +364,6 @@ class CatalogueOptions extends React.Component {
               >
                 Recalculate sector counts
               </Button>
-             
 
               <DeleteOrphansButton
                 datasetKey={catalogueKey}

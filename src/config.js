@@ -1,9 +1,9 @@
 const environments = {
   dev: {
-    url: "https://data.dev.catalogue.life/",
+    url: "https://data.dev.catalogueoflife.org/",
 
-    dataApi: "https://api.dev.catalogue.life/",
-    downloadApi: "http://api.dev.catalogue.life/download/",
+    dataApi: "https://api.dev.catalogueoflife.org/",
+    downloadApi: "http://api.dev.catalogueoflife.org/download/",
     env: "dev",
     kibanaEnv: {
       name: "col-dev",
@@ -23,10 +23,10 @@ const environments = {
     syncStateHeartbeat: 3000,
   },
   prod: {
-    url: "https://data.catalogue.life/",
-    dataApi: "https://api.catalogue.life/",
+    url: "https://data.catalogueoflife.org/",
+    dataApi: "https://api.catalogueoflife.org/",
 
-    downloadApi: "http://api.catalogue.life/download/",
+    downloadApi: "http://api.catalogueoflife.org/download/",
     env: "prod",
     kibanaEnv: {
       name: "col-prod",
@@ -86,11 +86,11 @@ const environments = {
 const domain = window.location.hostname;
 
 let env = environments.dev;
-if (domain.endsWith("data.catalogue.life")) {
+if (domain.endsWith("data.catalogueoflife.org")) {
   env = environments.prod;
-} else if (domain.endsWith("dev.catalogue.life")) {
+} else if (domain.endsWith("dev.catalogueoflife.org")) {
   env = environments.dev;
-} else if (domain.endsWith("catalogue.life")) {
+} else if (domain.endsWith("catalogueoflife.org")) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
   // env = environments.local;

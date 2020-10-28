@@ -27,17 +27,27 @@ class DatasetMeta extends React.Component {
       editMode: false,
       editPatchMode: false,
       patchError: null,
+      sourceError: null,
     };
   }
 
   componentDidMount() {
-    this.getData();
-    this.getPatch();
+    this.fetchAllData();
   }
 
   componentDidUpdate = (prevProps) => {
     if (_.get(this.props, "id") !== _.get(prevProps, "id")) {
-      this.getData();
+      this.fetchAllData();
+    }
+  };
+
+  fetchAllData = () => {
+    const { catalogueKey } = this.props;
+
+    this.getData();
+    this.getPatch();
+    if (catalogueKey) {
+      this.getSourceMeta();
     }
   };
 
@@ -47,6 +57,13 @@ class DatasetMeta extends React.Component {
     axios(`${config.dataApi}dataset/${catalogueKey}/patch/${id}`)
       .then((res) => this.setState({ patch: res.data, patchError: null }))
       .catch((err) => this.setState({ patchError: err, patch: null }));
+  };
+  getSourceMeta = () => {
+    const { id, catalogueKey } = this.props;
+
+    axios(`${config.dataApi}dataset/${catalogueKey}/source/${id}`)
+      .then((res) => this.setState({ sourceMeta: res.data, sourceError: null }))
+      .catch((err) => this.setState({ sourceError: err, sourceMeta: null }));
   };
   getData = () => {
     const { id, setDataset } = this.props;
@@ -103,10 +120,11 @@ class DatasetMeta extends React.Component {
     this.setState({ editPatchMode: checked });
   };
   render() {
-    const { data, editMode, editPatchMode, patch } = this.state;
+    const { data, editMode, editPatchMode, patch, sourceMeta } = this.state;
     const { user, catalogueKey } = this.props;
     const patchMode = !!catalogueKey;
-
+    // If we are in a project, show the patched data. Otherwise the original data
+    const displayData = patchMode ? sourceMeta : data;
     return (
       <PageContent>
         {Auth.isAuthorised(user, ["editor", "admin"]) && (
@@ -171,6 +189,7 @@ class DatasetMeta extends React.Component {
             }}
           />
         )}
+        {/* The patch form will show the unpatched raw data as a copy with option to transfer to patch*/}
         {editPatchMode && patchMode && data && (
           <MetaDataForm
             data={patch || {}}
@@ -182,12 +201,12 @@ class DatasetMeta extends React.Component {
             }}
           />
         )}
-        {!editMode && !editPatchMode && data && (
+        {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
             <PresentationItem
               label={<FormattedMessage id="alias" defaultMessage="Alias" />}
             >
-              {data.alias}
+              {displayData.alias}
             </PresentationItem>
             <PresentationItem
               label={
@@ -197,8 +216,8 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {_.isArray(data.organisations)
-                ? data.organisations.map((o) => o.label)
+              {_.isArray(displayData.organisations)
+                ? displayData.organisations.map((o) => o.label)
                 : ""}
             </PresentationItem>
             <PresentationItem
@@ -209,7 +228,7 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.description}
+              {displayData.description}
             </PresentationItem>
             {/* <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
             {data.released}
@@ -217,78 +236,81 @@ class DatasetMeta extends React.Component {
             <PresentationItem
               label={<FormattedMessage id="version" defaultMessage="Version" />}
             >
-              {(data.version || data.released) &&
-                `${data.version ? data.version : ""}${
-                  data.released ? " Received by COL: " + data.released : ""
+              {(displayData.version || displayData.released) &&
+                `${displayData.version ? displayData.version : ""}${
+                  displayData.released
+                    ? " Received by COL: " + displayData.released
+                    : ""
                 }`}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="contact" defaultMessage="Contact" />}
             >
-              {Auth.isAuthorised(user, ["editor", "admin"]) && data.contact && (
-                <PersonPresentation person={data.contact} />
-              )}
+              {Auth.isAuthorised(user, ["editor", "admin"]) &&
+                displayData.contact && (
+                  <PersonPresentation person={displayData.contact} />
+                )}
               {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                data.contact &&
-                data.contact.name}
+                displayData.contact &&
+                displayData.contact.name}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="authors" defaultMessage="Authors" />}
             >
-              {data.authors && _.isArray(data.authors) && (
+              {displayData.authors && _.isArray(displayData.authors) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    data.authors.map((a) => (
+                    displayData.authors.map((a) => (
                       <Col>
                         <PersonPresentation person={a} />
                       </Col>
                     ))}
                   {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    data.authors.map((a) => a.name).join(", ")}
+                    displayData.authors.map((a) => a.name).join(", ")}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="editors" defaultMessage="Editors" />}
             >
-              {data.editors && _.isArray(data.editors) && (
+              {displayData.editors && _.isArray(displayData.editors) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    data.editors.map((a) => (
+                    displayData.editors.map((a) => (
                       <Col>
                         <PersonPresentation person={a} />
                       </Col>
                     ))}
                   {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    data.editors.map((a) => a.name).join(", ")}
+                    displayData.editors.map((a) => a.name).join(", ")}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="website" defaultMessage="Website" />}
             >
-              {data.website && (
+              {displayData.website && (
                 <a href={data.website} target="_blank">
-                  {data.website}
+                  {displayData.website}
                 </a>
               )}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="origin" defaultMessage="Origin" />}
             >
-              {data.origin}
+              {displayData.origin}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="type" defaultMessage="Type" />}
             >
-              {data.type}
+              {displayData.type}
             </PresentationItem>
             <PresentationItem
               label={
                 <FormattedMessage id="group" defaultMessage="Taxonomic Group" />
               }
             >
-              {data.group}
+              {displayData.group}
             </PresentationItem>
             <PresentationItem
               label={
@@ -298,19 +320,19 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.geographicScope}
+              {displayData.geographicScope}
             </PresentationItem>
             <PresentationItem
               label={
                 <FormattedMessage id="citation" defaultMessage="Citation" />
               }
             >
-              {data.citation}
+              {displayData.citation}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="private" defaultMessage="Private" />}
             >
-              {data.private === true ? (
+              {displayData.private === true ? (
                 <LockOutlined style={{ color: "red" }} />
               ) : (
                 <UnlockOutlined style={{ color: "green" }} />
@@ -319,7 +341,7 @@ class DatasetMeta extends React.Component {
             <PresentationItem
               label={<FormattedMessage id="license" defaultMessage="License" />}
             >
-              {data.license}
+              {displayData.license}
             </PresentationItem>
             <PresentationItem
               label={
@@ -329,7 +351,7 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {<Rate value={data.confidence} disabled></Rate>}
+              {<Rate value={displayData.confidence} disabled></Rate>}
             </PresentationItem>
             <PresentationItem
               label={
@@ -339,7 +361,7 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.completeness}
+              {displayData.completeness}
             </PresentationItem>
             <PresentationItem
               label={
@@ -349,19 +371,19 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.contributesToDatasets}
+              {displayData.contributesToDatasets}
             </PresentationItem>
             <PresentationItem
               label={
                 <FormattedMessage id="gbifKey" defaultMessage="GBIF Key" />
               }
             >
-              {data.gbifKey && (
+              {displayData.gbifKey && (
                 <a
-                  href={`https://www.gbif.org/dataset/${data.gbifKey}`}
+                  href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}
                   target="_blank"
                 >
-                  {data.gbifKey}
+                  {displayData.gbifKey}
                 </a>
               )}
             </PresentationItem>
@@ -373,23 +395,23 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {data.importFrequency}
+              {displayData.importFrequency}
             </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="created" defaultMessage="Created" />}
             >
-              {`${moment(data.created).format("MMMM Do YYYY, h:mm:ss a")} by ${
-                data.createdByUser
-              }`}
+              {`${moment(displayData.created).format(
+                "MMMM Do YYYY, h:mm:ss a"
+              )} by ${displayData.createdByUser}`}
             </PresentationItem>
             <PresentationItem
               label={
                 <FormattedMessage id="modified" defaultMessage="Modified" />
               }
             >
-              {`${moment(data.modified).format("MMMM Do YYYY, h:mm:ss a")} by ${
-                data.modifiedByUser
-              }`}
+              {`${moment(displayData.modified).format(
+                "MMMM Do YYYY, h:mm:ss a"
+              )} by ${displayData.modifiedByUser}`}
             </PresentationItem>
           </React.Fragment>
         )}

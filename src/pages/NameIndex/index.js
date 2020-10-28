@@ -5,10 +5,9 @@ import config from "../../config";
 import _ from "lodash";
 import Helmet from "react-helmet";
 
-
 import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
-import NameSearch from "../NameSearch"
+import NameSearch from "../NameSearch";
 
 const { NAME_INDEX } = config;
 
@@ -16,26 +15,28 @@ class NameIndex extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      
-    };
+    this.state = {};
   }
-  
 
   render() {
-    const {
-      
-    } = this.state;
+    const {} = this.state;
 
     return (
-      <Layout openKeys={["dataset"]} selectedKeys={['nameIndex']} title="Catalogue of Life + Name Index">
+      <Layout
+        openKeys={["dataset"]}
+        selectedKeys={["nameIndex"]}
+        title="Catalogue of Life + Name Index"
+      >
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Catalogue of Life + Name Index</title>
-          <link rel="canonical" href="http://data.catalogue.life" />
+          <title>Catalogue of Life Name Index</title>
+          <link rel="canonical" href="http://data.catalogueoflife.org" />
         </Helmet>
         <PageContent>
-            <NameSearch location={this.props.location} datasetKey={NAME_INDEX.key}/>
+          <NameSearch
+            location={this.props.location}
+            datasetKey={NAME_INDEX.key}
+          />
         </PageContent>
       </Layout>
     );
