@@ -149,7 +149,11 @@ class OrganisationControl extends React.Component {
                 style={{ marginTop: "10px" }}
                 data={organisationForEdit}
                 onSubmit={this.onFormSubmit}
-                onCancel={() => this.setState({ formVisible: false })}
+                onCancel={
+                  organisationForEdit
+                    ? this.onFormSubmit(organisationForEdit)
+                    : this.setState({ formVisible: false })
+                }
               />
             </Col>{" "}
           </Row>
