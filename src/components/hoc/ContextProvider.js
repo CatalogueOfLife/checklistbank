@@ -1,6 +1,8 @@
 import React from "react";
 import getDeep from "lodash/get";
 import config from "../../config";
+import _ from "lodash";
+import axios from "axios";
 // APIs
 //import localeApi, { LOCALE_STORAGE_NAME } from '../../api/locale';
 import {
@@ -105,6 +107,9 @@ class ContextProvider extends React.Component {
     entitytype: [],
     _selectedKeys: [], // Menu
     _openKeys: [], // Menu
+    syncState: {},
+    syncingSector: null,
+    syncingDataset: null,
     setOpenKeys: (_openKeys) => this.setState({ _openKeys }),
     setSelectedKeys: (_selectedKeys) => this.setState({ _selectedKeys }),
     catalogue: localStorage.getItem("col_selected_project")
@@ -159,6 +164,8 @@ class ContextProvider extends React.Component {
           : this.nomStatusMap[name.nomStatus]["zoological"];
       }
     },
+
+    getSyncState: () => this.getSyncState(),
   };
 
   componentDidMount() {
@@ -332,6 +339,44 @@ class ContextProvider extends React.Component {
     }
   };
 
+  getSyncState = async () => {
+    const { catalogueKey } = this.state;
+    try {
+      const { data: syncState } = await axios(
+        `${config.dataApi}dataset/${catalogueKey}/assembly`
+      );
+      if (
+        _.get(syncState, "running") &&
+        _.get(syncState, "running.sectorKey") !==
+          _.get(this.state, "syncState.running.sectorKey")
+      ) {
+        const { data: sector } = await axios(
+          `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
+            syncState,
+            "running.sectorKey"
+          )}`
+        );
+        const { data: sectorDataset } = await axios(
+          `${config.dataApi}dataset/${sector.subjectDatasetKey}`
+        );
+        this.setState({
+          syncState,
+          syncingSector: sector,
+          syncingDataset: sectorDataset,
+        });
+      } else if (!_.get(syncState, "running")) {
+        this.setState({
+          syncState,
+        });
+      } else {
+        this.setState({
+          syncState,
+        });
+      }
+    } catch (err) {
+      this.state.addError(err);
+    }
+  };
   /**
    * Requesting user items by keys from editorRoleScopes list
    * @param editorRoleScopes - list of UIDs which indicates users scope

@@ -205,12 +205,7 @@ class ColTreeNode extends React.Component {
         )}
 
         <ColTreeContext.Consumer>
-          {({
-            mode,
-            selectedSourceDatasetKey,
-            getSyncState,
-            selectedAssemblyTreeNodes,
-          }) => {
+          {({ mode, selectedSourceDatasetKey, selectedAssemblyTreeNodes }) => {
             const taxonIsInSelectedNodes =
               selectedAssemblyTreeNodes &&
               selectedAssemblyTreeNodes.length > 1 &&
@@ -458,7 +453,6 @@ class ColTreeNode extends React.Component {
                           <Sector
                             {...this.props}
                             selectedSourceDatasetKey={selectedSourceDatasetKey}
-                            getSyncState={getSyncState}
                             decisionCallback={this.props.reloadSelfAndSiblings}
                           />
                         </span>

@@ -12,6 +12,8 @@ import Name from "./pages/Name";
 import VerbatimRecord from "./pages/VerbatimRecord";
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider";
+import SyncProvider from "./components/hoc/SyncProvider";
+
 import Assembly from "./pages/catalogue/Assembly";
 import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
 import SectorSync from "./pages/catalogue/SectorSync";
@@ -230,6 +232,11 @@ class App extends Component {
               key="catalogueProvider"
               path={`/catalogue/:catalogueKey`}
               component={DatasetProvider}
+            />
+            <Route
+              key="syncProvider"
+              path={`/catalogue/:catalogueKey`}
+              component={SyncProvider}
             />
           </React.Fragment>
         </Router>

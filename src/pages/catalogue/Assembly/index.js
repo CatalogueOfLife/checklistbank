@@ -39,10 +39,6 @@ class Assembly extends React.Component {
       mode: "attach",
       assemblyColSpan: 12,
       sourceColSpan: 12,
-      showSync: true,
-      syncState: {},
-      syncingDataset: null,
-      syncingSector: null,
       assemblyTaxonKey: params.assemblyTaxonKey || null,
       sourceTaxonKey: null,
       childModalVisible: false,
@@ -63,10 +59,7 @@ class Assembly extends React.Component {
         { key: params.datasetKey }
       );
     }
-    this.getSyncState();
-    this.timer = setInterval(() => {
-      this.getSyncState();
-    }, syncStateHeartbeat);
+
     this.resizeHandler();
     window.addEventListener("resize", this.resizeHandler);
   }
@@ -100,50 +93,6 @@ class Assembly extends React.Component {
     clearInterval(this.timer);
     window.removeEventListener("resize", this.resizeHandler);
   }
-
-  getSyncState = async () => {
-    const {
-      match: {
-        params: { catalogueKey },
-      },
-    } = this.props;
-
-    try {
-      const { data: syncState } = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/assembly`
-      );
-      if (
-        _.get(syncState, "running") &&
-        _.get(syncState, "running.sectorKey") !==
-          _.get(this.state, "syncState.running.sectorKey")
-      ) {
-        const { data: sector } = await axios(
-          `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
-            syncState,
-            "running.sectorKey"
-          )}`
-        );
-        const { data: sectorDataset } = await axios(
-          `${config.dataApi}dataset/${sector.subjectDatasetKey}`
-        );
-        this.setState({
-          syncingDataset: sectorDataset,
-          syncingSector: sector,
-          syncState: syncState,
-        });
-      } else if (!_.get(syncState, "running")) {
-        this.setState({
-          syncingDataset: null,
-          syncingSector: null,
-          syncState: syncState,
-        });
-      } else {
-        this.setState({ syncState: syncState });
-      }
-    } catch (err) {
-      this.setState({ syncError: err });
-    }
-  };
 
   getSectorInfo = (attachment, root, mode) => {
     /* const { datasetKey } = this.state;
@@ -342,15 +291,11 @@ class Assembly extends React.Component {
 
   render() {
     const {
-      syncState,
-      syncingDataset,
-      syncingSector,
       error,
       assemblyTaxonKey,
       childModalVisible,
       assemblyColSpan,
       sourceColSpan,
-      showSync,
       height,
     } = this.state;
 
@@ -380,9 +325,6 @@ class Assembly extends React.Component {
             value={{
               mode: this.state.mode,
               toggleMode: this.toggleMode,
-              getSyncState: this.getSyncState,
-              syncState: this.state.syncState,
-              syncingSector: this.state.syncingSector,
               missingTargetKeys: this.state.missingTargetKeys,
               selectedSourceDatasetKey: _.get(
                 this.state,
@@ -395,40 +337,17 @@ class Assembly extends React.Component {
             }}
           >
             <Row>
-              <Col span={8}>
-                <ColTreeContext.Consumer>
-                  {({ mode, toggleMode }) => (
-                    <Radio.Group
-                      value={mode}
-                      onChange={(e) => toggleMode(e.target.value)}
-                    >
-                      <Radio.Button value="modify">Modify Tree</Radio.Button>
-                      <Radio.Button value="attach">Attach sectors</Radio.Button>
-                    </Radio.Group>
-                  )}
-                </ColTreeContext.Consumer>
-              </Col>
-              <Col span={4} style={{ textAlign: "right" }}>
-                <Switch
-                  style={{ marginRight: "10px" }}
-                  onChange={(checked) => {
-                    this.setState({ showSync: checked });
-                  }}
-                  checked={showSync}
-                  checkedChildren="Hide syncstate"
-                  unCheckedChildren="Show syncstate"
-                />
-              </Col>
-
-              <Col span={12}>
-                {showSync && syncState && (
-                  <SyncState
-                    syncState={syncState}
-                    dataset={syncingDataset}
-                    sector={syncingSector}
-                  />
+              <ColTreeContext.Consumer>
+                {({ mode, toggleMode }) => (
+                  <Radio.Group
+                    value={mode}
+                    onChange={(e) => toggleMode(e.target.value)}
+                  >
+                    <Radio.Button value="modify">Modify Tree</Radio.Button>
+                    <Radio.Button value="attach">Attach sectors</Radio.Button>
+                  </Radio.Group>
                 )}
-              </Col>
+              </ColTreeContext.Consumer>
             </Row>
             <Row>
               <div style={{ width: "100%" }}>

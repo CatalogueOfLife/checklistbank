@@ -1,17 +1,11 @@
 import React from "react";
 
 export const ColTreeContext = React.createContext({
-    mode: "attach",
-    selectedSourceDatasetKey: null,
-    syncState: null,
-    syncingSector: null,
-    assemblyTaxonKey: null,
-    sourceTaxonKey: null,
-    toggleMode: () => {},
-    getSyncState: () => {},
-    selectedSourceTreeNodes: [],
-    selectedAssemblyTreeNodes: []
-  });
-
-
-  
+  mode: "attach",
+  selectedSourceDatasetKey: null,
+  assemblyTaxonKey: null,
+  sourceTaxonKey: null,
+  toggleMode: () => {},
+  selectedSourceTreeNodes: [],
+  selectedAssemblyTreeNodes: [],
+});
