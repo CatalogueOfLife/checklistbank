@@ -3,7 +3,7 @@ const environments = {
     url: "https://data.dev.catalogueoflife.org/",
 
     dataApi: "https://api.dev.catalogueoflife.org/",
-    downloadApi: "http://api.dev.catalogueoflife.org/download/",
+    downloadApi: "http://download.dev.catalogueoflife.org/",
     env: "dev",
     kibanaEnv: {
       name: "col-dev",
@@ -23,10 +23,10 @@ const environments = {
     syncStateHeartbeat: 3000,
   },
   prod: {
-    url: "https://data.catalogueoflife.org/",
-    dataApi: "https://api.catalogueoflife.org/",
+    url: "https://data.catalogue.life/",
+    dataApi: "https://api.catalogue.life/",
 
-    downloadApi: "http://api.catalogueoflife.org/download/",
+    downloadApi: "https://download.catalogue.life/",
     env: "prod",
     kibanaEnv: {
       name: "col-prod",
@@ -86,7 +86,7 @@ const environments = {
 const domain = window.location.hostname;
 
 let env = environments.dev;
-if (domain.endsWith("data.catalogueoflife.org")) {
+if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("dev.catalogueoflife.org")) {
   env = environments.dev;
