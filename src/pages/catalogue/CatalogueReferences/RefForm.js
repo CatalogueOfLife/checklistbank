@@ -105,7 +105,7 @@ const getCslPersons = (values) => {
 const getCslDate = (value) => {
   return value
     ? {
-        "date-parts": value.split("-"),
+        "date-parts": value.split("-").map((n) => Number(n)),
       }
     : "";
 };
