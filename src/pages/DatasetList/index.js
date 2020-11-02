@@ -126,8 +126,8 @@ class DatasetList extends React.Component {
           dataIndex: "organisations",
           key: "organisations",
           render: (text, record) => {
-            return text && _.isArray(text) ? 
-              text.map((t) => t.label).join("; ")
+            return text && _.isArray(text)
+              ? text.map((t) => t.label).join("; ")
               : "";
           },
         },
@@ -290,11 +290,15 @@ class DatasetList extends React.Component {
       ),
     };
 
-    if (sorter && sorter.order === "descend") {
-      query.reverse = true;
-    } else {
-      query.reverse = false;
+    if (sorter) {
+      query.sortBy = sorter.field;
+      if (sorter.order === "descend") {
+        query.reverse = true;
+      } else {
+        query.reverse = false;
+      }
     }
+
     this.setState({ params: query, pagination }, this.getData);
   };
 
