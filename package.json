@@ -30,12 +30,15 @@
     "react-scripts": "1.1.5",
     "react-width": "^0.1.8"
   },
+  "devDependencies": {
+    "gzipper": "^4.3.0"
+  },
   "resolutions": {
     "moment": "2.24.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node gitTag.js; react-scripts build",
+    "build": "node gitTag.js; react-scripts build; gzipper compress ./build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions"
