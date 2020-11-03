@@ -8,15 +8,17 @@ The UI allows public exploring of all data in ChecklistBank. It is also a tool f
 
 ## Prerequisites
 
-node >= 8.9.4
+node >= 14
 
 The ChecklistBank UI is build with [React](https://reactjs.org/) using UI components from [Ant design](https://ant.design/).
 
 ## Available Scripts
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 In the project directory, you can run:
 
 ### `npm install`
+
 To install the package.json dependencies.
 
 ### `npm start`
@@ -39,5 +41,3 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
-
-

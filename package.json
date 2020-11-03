@@ -1,7 +1,10 @@
 {
-  "name": "col-plus",
+  "name": "col-checklistbank",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=14"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
     "ajv": "^6.9.1",
