@@ -289,7 +289,7 @@ class DatasetMeta extends React.Component {
               label={<FormattedMessage id="website" defaultMessage="Website" />}
             >
               {displayData.website && (
-                <a href={data.website} target="_blank">
+                <a href={displayData.website} target="_blank">
                   {displayData.website}
                 </a>
               )}
