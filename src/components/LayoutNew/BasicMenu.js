@@ -33,15 +33,6 @@ const SubMenu = Menu.SubMenu;
 const styles = {};
 
 class BasicMenu extends Component {
-  constructor(props) {
-    super(props);
-
-    /*     this.state = {
-      selectedKeys: this.props._selectedKeys,
-      openKeys: this.props._openKeys
-    }; */
-  }
-
   componentDidMount = () => {
     const {
       selectedKeys,
@@ -269,10 +260,12 @@ class BasicMenu extends Component {
                 </Menu.Item>
 
                 <Menu.Item key="releases">
-                  <NavLink to={{ 
-                    pathname: "/dataset",
-                    search: `?releasedFrom=${catalogueKey}`,
-                    }}>
+                  <NavLink
+                    to={{
+                      pathname: "/dataset",
+                      search: `?releasedFrom=${catalogueKey}`,
+                    }}
+                  >
                     <span>Releases</span>
                   </NavLink>
                 </Menu.Item>

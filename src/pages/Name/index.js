@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import config from "../../config";
 import { NavLink } from "react-router-dom";
 
@@ -7,13 +6,11 @@ import axios from "axios";
 import { Alert, Spin, Row, Col, Tag } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
-import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 
-import PresentationGroupHeader from "../../components/PresentationGroupHeader";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
@@ -162,9 +159,7 @@ class NamePage extends React.Component {
       usages,
       name,
       reference,
-      verbatim,
       nameError,
-      verbatimError,
       relations,
       synonyms,
       publishedIn,

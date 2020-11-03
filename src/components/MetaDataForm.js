@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Input,
-  InputNumber,
-  Select,
-  Button,
-  Alert,
-  Rate,
-  notification,
-  Row,
-  Col,
-  Form,
-} from "antd";
+import { Input, Select, Button, Alert, Rate, notification, Form } from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
-import TagControl from "./TagControl";
 import PersonControl from "./PersonControl";
 import OrganisationControl from "./OrganisationControl";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
@@ -65,8 +53,6 @@ const MetaDataForm = (props) => {
     originalData,
   } = props;
 
-  const [confirmDirty, setConfirmDirty] = useState(false);
-  const [origin, setOrigin] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
   useEffect(() => {
@@ -376,11 +362,7 @@ const MetaDataForm = (props) => {
           ]}
           help="This cannot be changed later"
         >
-          <Select
-            style={{ width: 200 }}
-            onChange={(value) => setOrigin(value)}
-            showSearch
-          >
+          <Select style={{ width: 200 }} showSearch>
             {datasetoriginEnum
               .filter((f) => f !== "released")
               .map((f) => {
@@ -550,6 +532,7 @@ const MetaDataForm = (props) => {
                   <a
                     href="http://www.catalogueoflife.org/col/info/databases"
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     http://www.catalogueoflife.org/col/info/databases
                   </a>

@@ -1,6 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
-import Layout from "../../components/LayoutNew";
 import config from "../../config";
 import axios from "axios";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
@@ -14,10 +12,11 @@ import history from "../../history";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
 
 const removeEmptyValues = (obj) => {
-    
-   return Object.entries(obj).reduce((a,[k,v]) => (v ? {...a, [k]:v} : a), {})
- 
-}
+  return Object.entries(obj).reduce(
+    (a, [k, v]) => (v ? { ...a, [k]: v } : a),
+    {}
+  );
+};
 
 class VerbatimRecord extends React.Component {
   constructor(props) {
@@ -29,82 +28,78 @@ class VerbatimRecord extends React.Component {
       verbatimError: null,
       total: 0,
       limit: lsLimit ? Number(lsLimit) : 10,
-      offset: 0
+      offset: 0,
     };
   }
 
   componentDidMount = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
-    if(!params.limit){
-      params.limit = this.state.limit
+    if (!params.limit) {
+      params.limit = this.state.limit;
     }
     this.getVerbatimData(params);
   };
 
   componentDidUpdate = (prevProps) => {
     if (
-      
       _.get(prevProps, "match.params.key") !==
-        _.get(this.props, "match.params.key")
+      _.get(this.props, "match.params.key")
     ) {
       const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
 
-    this.setState({
-      verbatim: [],
-      verbatimError: null,
-      total: 0,
-      limit: lsLimit ? Number(lsLimit) : 10,
-      offset: 0
-    })
+      this.setState({
+        verbatim: [],
+        verbatimError: null,
+        total: 0,
+        limit: lsLimit ? Number(lsLimit) : 10,
+        offset: 0,
+      });
       this.getVerbatimData({});
-    }
-    else if (
+    } else if (
       _.get(this.props, "location.search") !==
       _.get(prevProps, "location.search")
     ) {
       let params = qs.parse(_.get(this.props, "location.search"));
-      if(!params.limit){
-        params.limit = this.state.limit
+      if (!params.limit) {
+        params.limit = this.state.limit;
       }
       this.getVerbatimData(params);
     }
-  }
+  };
 
-
-
-  getVerbatimData = params => {
+  getVerbatimData = (params) => {
     const {
       match: {
-        params: { key }
-      }
+        params: { key },
+      },
     } = this.props;
     axios(`${config.dataApi}dataset/${key}/verbatim?${qs.stringify(params)}`)
-      .then(res => {
+      .then((res) => {
         this.setState({
           verbatim: res.data.result,
           verbatimError: null,
           limit: res.data.limit,
           offset: res.data.offset,
-          total: res.data.total
+          total: res.data.total,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           verbatimError: err,
-          verbatim: []
+          verbatim: [],
         });
       });
   };
 
-  onSearch = search => {
+  onSearch = (search) => {
     const { location } = this.props;
     const params = qs.parse(_.get(location, "search"));
-    const query = {q: params.q, type: params.type};
-    let newQuery = {...query, ...search};
-    
+    const query = { q: params.q, type: params.type };
+    let newQuery = { ...query, ...search };
+
     history.push({
       pathname: location.path,
-      search: `?${qs.stringify(removeEmptyValues(newQuery))}`
+      search: `?${qs.stringify(removeEmptyValues(newQuery))}`,
     });
   };
 
@@ -114,13 +109,12 @@ class VerbatimRecord extends React.Component {
     const current = Number(offset) / Number(limit) + 1;
     const params = qs.parse(_.get(location, "search"));
 
-    const typeFacets = lastSuccesFullImport ? 
-      Object.keys(lastSuccesFullImport.verbatimByTermCount)
-        .map(t => ({
+    const typeFacets = lastSuccesFullImport
+      ? Object.keys(lastSuccesFullImport.verbatimByTermCount).map((t) => ({
           value: t,
-          label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`
-        })) : [];
-          
+          label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`,
+        }))
+      : [];
 
     return (
       <div
@@ -128,7 +122,7 @@ class VerbatimRecord extends React.Component {
           background: "#fff",
           padding: 24,
           minHeight: 280,
-          margin: "16px 0"
+          margin: "16px 0",
         }}
       >
         {verbatimError && (
@@ -137,17 +131,18 @@ class VerbatimRecord extends React.Component {
         <Row style={{ marginBottom: "10px" }}>
           <Col span={12}>
             {" "}
-            <SearchBox onSearch={value => this.onSearch({ q: value })} defaultValue={_.get(params, 'q')}></SearchBox>
-
-            
+            <SearchBox
+              onSearch={(value) => this.onSearch({ q: value })}
+              defaultValue={_.get(params, "q")}
+            ></SearchBox>
           </Col>
           <Col span={12}>
-          <MultiValueFilter
-                  defaultValue={_.get(params, "type")}
-                  onChange={value => this.onSearch({ type: value })}
-                  vocab={typeFacets}
-                  label="Row type"
-                />
+            <MultiValueFilter
+              defaultValue={_.get(params, "type")}
+              onChange={(value) => this.onSearch({ type: value })}
+              vocab={typeFacets}
+              label="Row type"
+            />
           </Col>
           <Col span={24} style={{ textAlign: "right" }}>
             {" "}
@@ -164,8 +159,8 @@ class VerbatimRecord extends React.Component {
                     pathname: location.pathname,
                     search: `?${qs.stringify({
                       ...params,
-                      limit: Number(size)
-                    })}`
+                      limit: Number(size),
+                    })}`,
                   });
                 }}
                 onChange={(page, pageSize) => {
@@ -173,8 +168,8 @@ class VerbatimRecord extends React.Component {
                     pathname: location.pathname,
                     search: `?${qs.stringify({
                       ...params,
-                      offset: (page - 1) * Number(limit)
-                    })}`
+                      offset: (page - 1) * Number(limit),
+                    })}`,
                   });
                 }}
                 pageSize={Number(limit)}
@@ -186,7 +181,7 @@ class VerbatimRecord extends React.Component {
 
         {verbatim &&
           verbatim.length > 0 &&
-          verbatim.map(v => (
+          verbatim.map((v) => (
             <VerbatimPresentation
               key={v.id}
               datasetKey={v.datasetKey}

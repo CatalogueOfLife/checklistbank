@@ -6,9 +6,6 @@ import config from "../../config";
 const { syncStateHeartbeat } = config;
 
 class SyncProvider extends React.Component {
-  constructor() {
-    super();
-  }
   componentDidMount = () => {
     this.props.getSyncState();
     this.timer = setInterval(() => {

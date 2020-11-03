@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import injectSheet from "react-jss";
-import withWidth, { LARGE, MEDIUM, EXTRA_LARGE } from "react-width";
+import withWidth, { LARGE, MEDIUM } from "react-width";
 import { Layout, Drawer, Row, Tag, Alert } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import BasicMenu from "./BasicMenu";
-import SelectLang from "./SelectLang";
 import UserMenu from "./UserMenu";
-import Logo from "./Logo";
 import { getGitVersion, getBackendGitVersion } from "../../api/gitVersion";
 import "./menu.css";
 import config from "../../config";
@@ -165,7 +163,6 @@ class SiteLayout extends Component {
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
               <UserMenu />
               <Sync />
-              {/* <SelectLang /> */}
             </div>
           </Header>
 
@@ -193,6 +190,7 @@ class SiteLayout extends Component {
               <Tag>
                 <a
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://github.com/CatalogueOfLife/checklistbank/issues/new"
                 >
                   Leave Feedback

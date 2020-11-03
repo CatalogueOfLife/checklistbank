@@ -22,7 +22,6 @@ import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import TaxonSources from "./TaxonSources";
 import withContext from "../../../components/hoc/withContext";
-import { stringToColour } from "../../../components/util";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import history from "../../../history";

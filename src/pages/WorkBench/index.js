@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import {
@@ -40,7 +39,6 @@ const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
-const columnFilters = ["status", "rank"];
 const FACETS = ["rank", "issue", "status", "nomStatus", "nameType", "field"];
 const PAGE_SIZE = 50;
 const getDecisionText = (decision) => {
@@ -566,20 +564,13 @@ class WorkBench extends React.Component {
       params,
       pagination,
       selectedRowKeys,
-      filteredInfo,
       columns,
       decision,
       decisionFormVisible,
       rowsForEdit,
       advancedFilters,
     } = this.state;
-    const {
-      rank,
-      taxonomicstatus,
-      user,
-      datasetKey,
-      catalogueKey,
-    } = this.props;
+    const { taxonomicstatus, user, datasetKey, catalogueKey } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map((r) => ({
           value: r.value,
@@ -705,7 +696,7 @@ class WorkBench extends React.Component {
                   autoFocus={false}
                 />
               </div>
-            )}            
+            )}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
                 <FormItem label="Fuzzy">

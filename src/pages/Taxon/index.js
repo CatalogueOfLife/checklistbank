@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import config from "../../config";
 
 import axios from "axios";
@@ -12,13 +11,11 @@ import Distributions from "./Distributions";
 import Classification from "./Classification";
 import NameRelations from "./NameRelations";
 import ErrorMsg from "../../components/ErrorMsg";
-import Layout from "../../components/LayoutNew";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import moment from "moment";
 import history from "../../history";
-import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -59,7 +56,7 @@ class TaxonPage extends React.Component {
   componentDidUpdate = (prevProps) => {
     const {
       match: {
-        params: { key, taxonOrNameKey },
+        params: { taxonOrNameKey },
       },
       datasetKey,
     } = this.props;
@@ -77,7 +74,7 @@ class TaxonPage extends React.Component {
   getTaxon = () => {
     const {
       match: {
-        params: { key, taxonOrNameKey: taxonKey },
+        params: { taxonOrNameKey: taxonKey },
       },
       datasetKey,
     } = this.props;
@@ -174,7 +171,7 @@ class TaxonPage extends React.Component {
   getInfo = () => {
     const {
       match: {
-        params: { key, taxonOrNameKey: taxonKey },
+        params: { taxonOrNameKey: taxonKey },
       },
       datasetKey,
     } = this.props;
@@ -191,7 +188,7 @@ class TaxonPage extends React.Component {
   getClassification = () => {
     const {
       match: {
-        params: { key, taxonOrNameKey: taxonKey },
+        params: { taxonOrNameKey: taxonKey },
       },
       datasetKey,
     } = this.props;
@@ -218,7 +215,7 @@ class TaxonPage extends React.Component {
   getIncludes = () => {
     const {
       match: {
-        params: { key, taxonOrNameKey: taxonKey },
+        params: { taxonOrNameKey: taxonKey },
       },
       datasetKey,
     } = this.props;
@@ -241,7 +238,7 @@ class TaxonPage extends React.Component {
   };
 
   render() {
-    const { dataset, datasetKey, catalogueKey, getNomStatus } = this.props;
+    const { datasetKey, catalogueKey, getNomStatus } = this.props;
     const {
       taxon,
       //   synonyms,
@@ -325,7 +322,10 @@ class TaxonPage extends React.Component {
               </Col>
               {this.state.logoUrl && (
                 <Col span={3}>
-                  <img src={this.state.logoUrl} />
+                  <img
+                    src={this.state.logoUrl}
+                    alt={_.get(taxon, "name.scientificName")}
+                  />
                 </Col>
               )}
             </Row>

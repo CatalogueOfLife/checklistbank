@@ -2,12 +2,11 @@ import React, { useState } from "react";
 
 import { Input, Button, Alert, Form } from "antd";
 import ErrorMsg from "./ErrorMsg";
-import _ from "lodash";
 
 const FormItem = Form.Item;
 
 const PersonForm = (props) => {
-  const [addNewMode, setAddNewMode] = useState(false);
+  // const [addNewMode, setAddNewMode] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
 
@@ -19,9 +18,9 @@ const PersonForm = (props) => {
     props.onSubmit(values);
   };
 
-  const toggleEdit = () => {
+  /*  const toggleEdit = () => {
     setAddNewMode(!addNewMode);
-  };
+  }; */
 
   //  const { persons } = this.state;
   // const { visible, addNewMode, submissionError } = this.state;

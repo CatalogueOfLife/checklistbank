@@ -4,7 +4,6 @@ import Layout from "../../../components/LayoutNew";
 import { Button, Modal, Row, Col } from "antd";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
-import _ from "lodash";
 import Helmet from "react-helmet";
 import RefTable from "./RefTable";
 import RefForm from "./RefForm";
@@ -21,7 +20,7 @@ class Reference extends React.Component {
   }
 
   render() {
-    const { ref, error, showAddNewModal } = this.state;
+    const { showAddNewModal } = this.state;
     const {
       catalogue,
       match: {

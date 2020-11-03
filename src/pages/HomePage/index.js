@@ -3,7 +3,6 @@ import React from "react";
 import Layout from "../../components/LayoutNew";
 import { NavLink } from "react-router-dom";
 import config from "../../config";
-import _ from "lodash";
 import moment from "moment";
 import Helmet from "react-helmet";
 import { Row, Col, Statistic, Card } from "antd";
@@ -11,9 +10,6 @@ import withContext from "../../components/hoc/withContext";
 
 import axios from "axios";
 const { MANAGEMENT_CLASSIFICATION } = config;
-const { NAME_INDEX } = config;
-
-const { Meta } = Card;
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -79,14 +75,7 @@ class HomePage extends React.Component {
   };
 
   render() {
-    const {
-      nameUsages,
-      nameUsagesLoading,
-      colSpecies,
-      colSpeciesLoading,
-      datasets,
-    } = this.state;
-    const { catalogueKey } = this.props;
+    const { nameUsages, colSpecies, datasets } = this.state;
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="COL ChecklistBank">
         <Helmet

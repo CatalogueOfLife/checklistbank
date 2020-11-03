@@ -1,24 +1,23 @@
 import React from "react";
 import config from "../config";
-import {withRouter} from "react-router-dom"
+import { withRouter } from "react-router-dom";
 import _ from "lodash";
 import axios from "axios";
-import { LinkOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { LinkOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
 import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
-import PresentationGroupHeader from "./PresentationGroupHeader";
 import { NavLink } from "react-router-dom";
 
 import withContext from "./hoc/withContext";
 
 const md = 5;
 
-const parentRelations = [
+/* const parentRelations = [
   "dwc:Taxon.dwc:parentNameUsageID",
   "col:Taxon.col:parentID"
-];
-const isValidURL = string => {
+]; */
+const isValidURL = (string) => {
   if (typeof string !== "string") return false;
   var res = string.match(
     /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
@@ -34,7 +33,7 @@ class VerbatimPresentation extends React.Component {
       verbatimLoading: true,
       verbatim: null,
       verbatimError: null,
-      expanded: props.expanded !== false
+      expanded: props.expanded !== false,
     };
   }
   componentDidMount() {
@@ -45,25 +44,33 @@ class VerbatimPresentation extends React.Component {
         verbatimKey
       )}`
     )
-      .then(res => {
+      .then((res) => {
         this.setState({
           verbatimLoading: false,
           verbatim: res.data,
-          verbatimError: null
+          verbatimError: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           verbatimLoading: false,
           verbatimError: err,
-          verbatim: null
+          verbatim: null,
         });
       });
   }
 
   renderTerm = (key, value, type) => {
-    const { termsMap, termsMapReversed, datasetKey, catalogueKey, location } = this.props;
-    const taxonPath = location.pathname.split(`dataset/${datasetKey}`)[0] + `dataset/${datasetKey}/taxon/`; 
+    const {
+      termsMap,
+      termsMapReversed,
+      datasetKey,
+      catalogueKey,
+      location,
+    } = this.props;
+    const taxonPath =
+      location.pathname.split(`dataset/${datasetKey}`)[0] +
+      `dataset/${datasetKey}/taxon/`;
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
       (key === "col:ID" && type === "col:Taxon");
@@ -72,16 +79,19 @@ class VerbatimPresentation extends React.Component {
       const primaryKeys = _.get(termsMap, `${type}.${key}`);
 
       const types = [
-        ...new Set(primaryKeys.map(p => `type=${p.split(".")[0]}`))
+        ...new Set(primaryKeys.map((p) => `type=${p.split(".")[0]}`)),
       ];
-      const terms = primaryKeys.map(p => `${p.split(".")[1]}=${value}`);
+      const terms = primaryKeys.map((p) => `${p.split(".")[1]}=${value}`);
       return (
         <React.Fragment>
           <NavLink
             key={key}
             to={{
-              pathname: location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1 ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim` : `/dataset/${datasetKey}/verbatim`,
-              search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
+              pathname:
+                location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1
+                  ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`
+                  : `/dataset/${datasetKey}/verbatim`,
+              search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
             }}
           >
             {value}
@@ -90,9 +100,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `${taxonPath}${encodeURIComponent(
-                  value
-                )}`
+                pathname: `${taxonPath}${encodeURIComponent(value)}`,
               }}
             >
               taxon page
@@ -101,23 +109,26 @@ class VerbatimPresentation extends React.Component {
         </React.Fragment>
       );
     } else if (_.get(termsMapReversed, `${type}.${key}`)) {
-      const foreignKeys = _.get(termsMapReversed, `${type}.${key}`)
-     /*  .filter(
+      const foreignKeys = _.get(termsMapReversed, `${type}.${key}`);
+      /*  .filter(
         k => !parentRelations.includes(k)
       ); */
 
       const types = [
-        ...new Set(foreignKeys.map(p => `type=${p.split(".")[0]}`))
+        ...new Set(foreignKeys.map((p) => `type=${p.split(".")[0]}`)),
       ];
-      const terms = foreignKeys.map(p => `${p.split(".")[1]}=${value}`);
+      const terms = foreignKeys.map((p) => `${p.split(".")[1]}=${value}`);
       return (
         <React.Fragment>
           {value}{" "}
           <NavLink
             key={key}
             to={{
-              pathname: location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1 ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim` : `/dataset/${datasetKey}/verbatim`,
-              search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`
+              pathname:
+                location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1
+                  ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`
+                  : `/dataset/${datasetKey}/verbatim`,
+              search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
             }}
           >
             {" "}
@@ -127,9 +138,7 @@ class VerbatimPresentation extends React.Component {
             <NavLink
               key={`taxonLink:${key}`}
               to={{
-                pathname: `${taxonPath}${encodeURIComponent(
-                  value
-                )}`
+                pathname: `${taxonPath}${encodeURIComponent(value)}`,
               }}
             >
               taxon page
@@ -149,7 +158,7 @@ class VerbatimPresentation extends React.Component {
   };
   render = () => {
     const { verbatimLoading, verbatimError, verbatim, expanded } = this.state;
-    const { issueMap, basicHeader, terms, location } = this.props;
+    const { issueMap, basicHeader, terms } = this.props;
     const title =
       _.get(verbatim, "type") && _.get(verbatim, "key")
         ? `${basicHeader ? "" : "Verbatim"} ${_.get(
@@ -159,67 +168,88 @@ class VerbatimPresentation extends React.Component {
         : "Verbatim";
     return (
       <React.Fragment>
-       <Row style={{
+        <Row
+          style={{
             background: "#f7f7f7",
             border: "1px solid #eee",
             borderWidth: "1px 0",
-            paddingTop: "10px"
-          }}>
-            <Col span={12}>
-             <h3 style={{paddingLeft: 6}}
-          
+            paddingTop: "10px",
+          }}
         >
-          {title} <a
-                  style={{ fontSize: 10 }}
-                  onClick={() => this.setState({expanded: !expanded})}
-                >
-                  {expanded ? <UpOutlined /> : <DownOutlined />}
-                </a>
-        </h3> 
-        </Col>
-        <Col span={12}>
-       {_.get(verbatim, "file") && <p style={{textAlign: 'right', paddingRight: 6}}>
-        {`${_.get(verbatim, "file")}${
-              _.get(verbatim, "line") ? `, line ${_.get(verbatim, "line")}` : ""
-            }`}
-          </p>}</Col></Row>
-      {expanded &&  <React.Fragment>
-        {verbatimLoading && <Spin />}
-        {verbatimError && (
-          <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
-        )}
-        {_.get(verbatim, "file") && (
-          <PresentationItem md={md} key="file" label="File">
-            {`${_.get(verbatim, "file")}${
-              _.get(verbatim, "line") ? `, line ${_.get(verbatim, "line")}` : ""
-            }`}
-          </PresentationItem>
-        )}
-        {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
-          <PresentationItem md={md} label="Issues and flags">
-            <div>
-              {verbatim.issues.map(i => (
-                <Tooltip key={i} title={_.get(issueMap, `[${i}].description`)}>
-                  <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                    {i}
-                  </Tag>
-                </Tooltip>
-              ))}
-            </div>
-          </PresentationItem>
-        )}
-
-        {_.get(verbatim, "terms") &&
-          terms.map(t =>
-            verbatim.terms[t] ? (
-              <PresentationItem md={md} label={t} key={t}>
-                {this.renderTerm(t, verbatim.terms[t], _.get(verbatim, "type"))}
+          <Col span={12}>
+            <h3 style={{ paddingLeft: 6 }}>
+              {title}{" "}
+              <a
+                style={{ fontSize: 10 }}
+                onClick={() => this.setState({ expanded: !expanded })}
+              >
+                {expanded ? <UpOutlined /> : <DownOutlined />}
+              </a>
+            </h3>
+          </Col>
+          <Col span={12}>
+            {_.get(verbatim, "file") && (
+              <p style={{ textAlign: "right", paddingRight: 6 }}>
+                {`${_.get(verbatim, "file")}${
+                  _.get(verbatim, "line")
+                    ? `, line ${_.get(verbatim, "line")}`
+                    : ""
+                }`}
+              </p>
+            )}
+          </Col>
+        </Row>
+        {expanded && (
+          <React.Fragment>
+            {verbatimLoading && <Spin />}
+            {verbatimError && (
+              <Alert
+                message={<ErrorMsg error={verbatimError} />}
+                type="error"
+              />
+            )}
+            {_.get(verbatim, "file") && (
+              <PresentationItem md={md} key="file" label="File">
+                {`${_.get(verbatim, "file")}${
+                  _.get(verbatim, "line")
+                    ? `, line ${_.get(verbatim, "line")}`
+                    : ""
+                }`}
               </PresentationItem>
-            ) : (
-              ""
-            )
-          )}
-          </React.Fragment>}
+            )}
+            {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
+              <PresentationItem md={md} label="Issues and flags">
+                <div>
+                  {verbatim.issues.map((i) => (
+                    <Tooltip
+                      key={i}
+                      title={_.get(issueMap, `[${i}].description`)}
+                    >
+                      <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                        {i}
+                      </Tag>
+                    </Tooltip>
+                  ))}
+                </div>
+              </PresentationItem>
+            )}
+
+            {_.get(verbatim, "terms") &&
+              terms.map((t) =>
+                verbatim.terms[t] ? (
+                  <PresentationItem md={md} label={t} key={t}>
+                    {this.renderTerm(
+                      t,
+                      verbatim.terms[t],
+                      _.get(verbatim, "type")
+                    )}
+                  </PresentationItem>
+                ) : (
+                  ""
+                )
+              )}
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   };
@@ -230,7 +260,7 @@ const mapContextToProps = ({
   termsMap,
   termsMapReversed,
   terms,
-  catalogueKey
+  catalogueKey,
 }) => ({ issueMap, termsMap, termsMapReversed, terms, catalogueKey });
 
 export default withContext(mapContextToProps)(withRouter(VerbatimPresentation));

@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink } from "react-router-dom";
@@ -9,7 +8,7 @@ import Layout from "../../../components/LayoutNew";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
-import TaxonomicCoverage from "./TaxonomicCoverage"
+import TaxonomicCoverage from "./TaxonomicCoverage";
 const _ = require("lodash");
 
 const formItemLayout = {
@@ -23,7 +22,9 @@ const formItemLayout = {
   },
 };
 
-const defaultViewColumnOrder = 'sectorCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount'.split(' ');
+const defaultViewColumnOrder = "sectorCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount".split(
+  " "
+);
 
 const getColorForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : -1;
@@ -33,7 +34,7 @@ const getColorForDiff = (current, released) => {
     return "green";
   } else if (pct > 100) {
     return "orange";
-  }else if (pct >= 75) {
+  } else if (pct >= 75) {
     return "orange";
   } else {
     return "red";
@@ -47,7 +48,7 @@ class SourceMetrics extends React.Component {
     this.state = {
       data: [],
       groups: {},
-      selectedGroup: 'default',
+      selectedGroup: "default",
       loading: false,
     };
   }
@@ -88,23 +89,28 @@ class SourceMetrics extends React.Component {
                 return this.getMetrics(catalogueKey, r.key).then((metrics) => {
                   columns = _.merge(columns, metrics);
                   return {
-                  ...r,
-                  metrics: metrics
-                }});
+                    ...r,
+                    metrics: metrics,
+                  };
+                });
               })
         ).then((res) => {
           this.setState({
-            groups : {
-              default: Object.keys(columns).filter(c => typeof columns[c] !== 'object' && !['attempt', 'datasetKey'].includes(c)),
+            groups: {
+              default: Object.keys(columns).filter(
+                (c) =>
+                  typeof columns[c] !== "object" &&
+                  !["attempt", "datasetKey"].includes(c)
+              ),
               ...Object.keys(columns)
-              .filter( c => typeof columns[c] === 'object')
-              .reduce((obj, key) => {
-                obj[key] = Object.keys(columns[key]);
-                return obj;
-              }, {})
+                .filter((c) => typeof columns[c] === "object")
+                .reduce((obj, key) => {
+                  obj[key] = Object.keys(columns[key]);
+                  return obj;
+                }, {}),
             },
-            selectedGroup: 'default'
-          })
+            selectedGroup: "default",
+          });
           return res;
         });
       })
@@ -134,13 +140,11 @@ class SourceMetrics extends React.Component {
       });
   };
 
-
   getMetrics = (datasetKey, sourceDatasetKey) => {
     return axios(
       `${config.dataApi}dataset/${datasetKey}/source/${sourceDatasetKey}/metrics`
     ).then((res) => res.data);
   };
-
 
   refreshReaseMetrics = (releaseKey) => {
     const { location } = this.props;
@@ -169,8 +173,8 @@ class SourceMetrics extends React.Component {
   };
 
   selectGroup = (value) => {
-    this.setState({selectedGroup: value})
-  }
+    this.setState({ selectedGroup: value });
+  };
   render() {
     const { data, loading, error, groups, selectedGroup } = this.state;
     const {
@@ -179,59 +183,69 @@ class SourceMetrics extends React.Component {
       },
       catalogue,
       location,
-      rank
+      rank,
     } = this.props;
 
-   
+    const columnsSorter =
+      selectedGroup && selectedGroup.indexOf("Rank") > -1
+        ? (a, b) => rank.indexOf(b) - rank.indexOf(a)
+        : selectedGroup === "default"
+        ? (a, b) =>
+            defaultViewColumnOrder.indexOf(a) -
+            defaultViewColumnOrder.indexOf(b)
+        : (a, b) => a.localeCompare(b);
 
-    const columnsSorter = selectedGroup && selectedGroup.indexOf('Rank') > -1 ? 
-      (a, b) => rank.indexOf(b) - rank.indexOf(a) : selectedGroup === 'default' ?
-      (a, b) => defaultViewColumnOrder.indexOf(a) - defaultViewColumnOrder.indexOf(b) :
-      (a, b) => a.localeCompare(b)
-
-
-    const additionalColumns = !groups[selectedGroup] ? [] : groups[selectedGroup]
-    .sort(columnsSorter)
-    .map(column => ({
-      // nameCount
-      title: _.startCase(column).split(' Count')[0],
-      dataIndex: selectedGroup === 'default' ? ["metrics", column] : ["metrics", selectedGroup, column],
-      key: column,
-      render: (text, record) => {
-        const selectedRelaseValue = selectedGroup === 'default' ? _.get(record, `selectedReleaseMetrics[${column}]`) : _.get(record, `selectedReleaseMetrics[${selectedGroup}][${column}]`) ;
-        return (
-          <React.Fragment>
-            <NavLink
-              to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
-              }}
-              exact={true}
-            >
-              {text || 0}
-            </NavLink>
-            {record.selectedReleaseMetrics && (
-              <div
-                style={{
-                  color: getColorForDiff(
-                    text || 0,
-                    selectedRelaseValue || 0
-                  ),
-                }}
-              >
-                {selectedRelaseValue || 0}
-              </div>
-            )}
-          </React.Fragment>
-        );
-      },
-      sorter: (a, b) => {
-        const path = selectedGroup === 'default' ? `metrics[${column}]` : `metrics[${selectedGroup}][${column}]`
-        return (
-          Number(_.get(a, path) || 0) -
-          Number(_.get(b, path) || 0)
-        );
-      },
-    }) )
+    const additionalColumns = !groups[selectedGroup]
+      ? []
+      : groups[selectedGroup].sort(columnsSorter).map((column) => ({
+          // nameCount
+          title: _.startCase(column).split(" Count")[0],
+          dataIndex:
+            selectedGroup === "default"
+              ? ["metrics", column]
+              : ["metrics", selectedGroup, column],
+          key: column,
+          render: (text, record) => {
+            const selectedRelaseValue =
+              selectedGroup === "default"
+                ? _.get(record, `selectedReleaseMetrics[${column}]`)
+                : _.get(
+                    record,
+                    `selectedReleaseMetrics[${selectedGroup}][${column}]`
+                  );
+            return (
+              <React.Fragment>
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                  }}
+                  exact={true}
+                >
+                  {text || 0}
+                </NavLink>
+                {record.selectedReleaseMetrics && (
+                  <div
+                    style={{
+                      color: getColorForDiff(
+                        text || 0,
+                        selectedRelaseValue || 0
+                      ),
+                    }}
+                  >
+                    {selectedRelaseValue || 0}
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          },
+          sorter: (a, b) => {
+            const path =
+              selectedGroup === "default"
+                ? `metrics[${column}]`
+                : `metrics[${selectedGroup}][${column}]`;
+            return Number(_.get(a, path) || 0) - Number(_.get(b, path) || 0);
+          },
+        }));
 
     const columns = [
       {
@@ -258,9 +272,12 @@ class SourceMetrics extends React.Component {
         },
       },
 
-      ...additionalColumns
+      ...additionalColumns,
     ];
-    const scroll = columns.length < 8 ? null : {x: `${800 + (columns.length - 7) * 200}px`}
+    const scroll =
+      columns.length < 8
+        ? null
+        : { x: `${800 + (columns.length - 7) * 200}px` };
     return (
       <Layout
         openKeys={["assembly"]}
@@ -278,19 +295,20 @@ class SourceMetrics extends React.Component {
           <div>
             <Row>
               <Col md={12} sm={24}>
-              <Form.Item
+                <Form.Item
                   {...formItemLayout}
                   label="Select view"
                   style={{ marginBottom: "8px" }}
                 >
-                <Select style={{width: '300px'}} 
-                  value={selectedGroup}
-                  onChange={this.selectGroup}
+                  <Select
+                    style={{ width: "300px" }}
+                    value={selectedGroup}
+                    onChange={this.selectGroup}
                   >
-                  {Object.keys(groups).map(k => 
-                  <Select.Option value={k}>{_.startCase(k)}</Select.Option>
-                  )}
-                </Select>
+                    {Object.keys(groups).map((k) => (
+                      <Select.Option value={k}>{_.startCase(k)}</Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col md={12} sm={24}>
@@ -321,7 +339,17 @@ class SourceMetrics extends React.Component {
               dataSource={data}
               loading={loading}
               scroll={scroll}
-              expandable={{ expandedRowRender: row => <div style={{marginLeft: '46px'}}><h4>Taxonomic coverage</h4><TaxonomicCoverage dataset={row} catalogueKey={catalogueKey} /></div> }}
+              expandable={{
+                expandedRowRender: (row) => (
+                  <div style={{ marginLeft: "46px" }}>
+                    <h4>Taxonomic coverage</h4>
+                    <TaxonomicCoverage
+                      dataset={row}
+                      catalogueKey={catalogueKey}
+                    />
+                  </div>
+                ),
+              }}
               pagination={{ pageSize: 100 }}
             />
           )}
@@ -331,7 +359,7 @@ class SourceMetrics extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user,rank, catalogue }) => ({
+const mapContextToProps = ({ user, rank, catalogue }) => ({
   user,
   rank,
   catalogue,

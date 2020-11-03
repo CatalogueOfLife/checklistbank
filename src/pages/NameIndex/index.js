@@ -2,10 +2,8 @@ import React from "react";
 
 import Layout from "../../components/LayoutNew";
 import config from "../../config";
-import _ from "lodash";
 import Helmet from "react-helmet";
 
-import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
 import NameSearch from "../NameSearch";
 
@@ -19,8 +17,6 @@ class NameIndex extends React.Component {
   }
 
   render() {
-    const {} = this.state;
-
     return (
       <Layout
         openKeys={["dataset"]}

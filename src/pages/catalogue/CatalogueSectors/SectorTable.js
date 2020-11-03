@@ -8,9 +8,9 @@ import {
   HistoryOutlined,
   SearchOutlined,
   WarningOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
-import { Table, Alert, Tooltip, Input, Button, Row, Col, notification } from "antd";
+import { Table, Tooltip, Input, Button, Row, Col, notification } from "antd";
 import config from "../../../config";
 import moment from "moment";
 
@@ -19,39 +19,42 @@ import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
-import Auth from "../../../components/Auth"
+import Auth from "../../../components/Auth";
 
 class SectorTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentDataSourceLength: 0,
-      searchText: ""
+      searchText: "",
     };
   }
 
-
   componentDidUpdate = (prevProps) => {
-    if(this.props.data && this.props.data.length > 0 && this.props.data.length !== prevProps.data.length){
-      this.setState({currentDataSourceLength: this.props.data.length})
-  }
-  }
+    if (
+      this.props.data &&
+      this.props.data.length > 0 &&
+      this.props.data.length !== prevProps.data.length
+    ) {
+      this.setState({ currentDataSourceLength: this.props.data.length });
+    }
+  };
 
-  getColumnSearchProps = dataIndex => ({
+  getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={node => {
+          ref={(node) => {
             this.searchInput = node;
           }}
           placeholder={`Search ${dataIndex.split(".")[0]}`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
@@ -75,7 +78,7 @@ class SectorTable extends React.Component {
         </Button>
       </div>
     ),
-    filterIcon: filtered => (
+    filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
@@ -83,26 +86,36 @@ class SectorTable extends React.Component {
         .toString()
         .toLowerCase()
         .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
       }
-    }
+    },
   });
   handleSearch = (selectedKeys, confirm) => {
     confirm();
     this.setState({ searchText: selectedKeys[0] });
   };
 
-  handleReset = clearFilters => {
+  handleReset = (clearFilters) => {
     clearFilters();
     this.setState({ searchText: "" });
   };
 
- 
   render() {
-    const {data, loading, user, onDeleteSector, pagination, catalogueKey, handleTableChange, expandedRowRender} = this.props;  
-    const offset = pagination ? (pagination.current - 1) * pagination.pageSize : 0; 
+    const {
+      data,
+      loading,
+      user,
+      onDeleteSector,
+      pagination,
+      catalogueKey,
+      handleTableChange,
+      expandedRowRender,
+    } = this.props;
+    const offset = pagination
+      ? (pagination.current - 1) * pagination.pageSize
+      : 0;
 
     const columns = [
       {
@@ -124,25 +137,27 @@ class SectorTable extends React.Component {
             </NavLink>
           );
         },
-    //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
-        width: 250
-      //  ...this.getColumnSearchProps("dataset.alias")
+        //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
+        width: 250,
+        //  ...this.getColumnSearchProps("dataset.alias")
       },
 
       {
         title: "Mode",
         dataIndex: "mode",
         key: "mode",
-        width: 50,  
-        filters : [{
-            text: 'Attach',
-            value: 'attach',
-          }, {
-            text: 'Merge',
-            value: 'merge',
-          }],
-          onFilter: (value, record) => record.mode === value,
-
+        width: 50,
+        filters: [
+          {
+            text: "Attach",
+            value: "attach",
+          },
+          {
+            text: "Merge",
+            value: "merge",
+          },
+        ],
+        onFilter: (value, record) => record.mode === value,
       },
       {
         title: "Subject",
@@ -155,42 +170,54 @@ class SectorTable extends React.Component {
               <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.subject.rank}:{" "}
               </div>
-              {!record.subject.id  && <NavLink
-                to={{
-                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                  search: `?q=${record.subject.name}`
-                  
-                }}
-                exact={true}
-              >
-                <Highlighter
-                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={record.subject.name.toString()}
-                />
-              </NavLink> }
-              {record.subject.id && <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/assembly`,
-                  search: `?sourceTaxonKey=${record.placeholderRank ? record.subject.id+'--incertae-sedis--'+record.placeholderRank.toUpperCase() : record.subject.id}&datasetKey=${record.subjectDatasetKey}`
-                }}
-                exact={true}
-              >
-                <Highlighter
-                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
-                />
-               
-              </NavLink>}
+              {!record.subject.id && (
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                    search: `?q=${record.subject.name}`,
+                  }}
+                  exact={true}
+                >
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[this.state.searchText]}
+                    autoEscape
+                    textToHighlight={record.subject.name.toString()}
+                  />
+                </NavLink>
+              )}
+              {record.subject.id && (
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/assembly`,
+                    search: `?sourceTaxonKey=${
+                      record.placeholderRank
+                        ? record.subject.id +
+                          "--incertae-sedis--" +
+                          record.placeholderRank.toUpperCase()
+                        : record.subject.id
+                    }&datasetKey=${record.subjectDatasetKey}`,
+                  }}
+                  exact={true}
+                >
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[this.state.searchText]}
+                    autoEscape
+                    textToHighlight={
+                      _.get(record, "subject.name")
+                        ? record.subject.name.toString()
+                        : ""
+                    }
+                  />
+                </NavLink>
+              )}
               {record.subject.broken && (
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>
           );
-        }
+        },
       },
       {
         title: "Target",
@@ -199,7 +226,7 @@ class SectorTable extends React.Component {
         width: 150,
         ...this.getColumnSearchProps("target.name"),
 
-     //   sorter: (a, b) => a.target.name < b.target.name,
+        //   sorter: (a, b) => a.target.name < b.target.name,
 
         render: (text, record) => {
           return (
@@ -207,32 +234,46 @@ class SectorTable extends React.Component {
               <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record.target.rank}:{" "}
               </div>
-              {!_.get(record, 'target.broken') &&  <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/assembly`,
-                  search: `?assemblyTaxonKey=${record.target.id}`
-                }}
-                exact={true}>
-                <Highlighter
-                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                />               
+              {!_.get(record, "target.broken") && (
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/assembly`,
+                    search: `?assemblyTaxonKey=${record.target.id}`,
+                  }}
+                  exact={true}
+                >
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[this.state.searchText]}
+                    autoEscape
+                    textToHighlight={
+                      _.get(record, "target.name")
+                        ? record.target.name.toString()
+                        : ""
+                    }
+                  />
                 </NavLink>
-              }
-              {_.get(record, 'target.broken') && <React.Fragment> 
-              <Highlighter
-                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                  searchWords={[this.state.searchText]}
-                  autoEscape
-                  textToHighlight={_.get(record, "target.name") ? record.target.name.toString() : ""}
-                />
-              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>
-              }
+              )}
+              {_.get(record, "target.broken") && (
+                <React.Fragment>
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[this.state.searchText]}
+                    autoEscape
+                    textToHighlight={
+                      _.get(record, "target.name")
+                        ? record.target.name.toString()
+                        : ""
+                    }
+                  />
+                  <WarningOutlined
+                    style={{ color: "red", marginLeft: "10px" }}
+                  />
+                </React.Fragment>
+              )}
             </React.Fragment>
           );
-        }
+        },
       },
 
       {
@@ -240,10 +281,10 @@ class SectorTable extends React.Component {
         dataIndex: "created",
         key: "created",
         width: 50,
-      //  sorter: (a, b) => a.created < b.created,
-        render: date => {
+        //  sorter: (a, b) => a.created < b.created,
+        render: (date) => {
           return date ? moment(date).format("lll") : "";
-        }
+        },
       },
 
       {
@@ -252,101 +293,123 @@ class SectorTable extends React.Component {
         render: (text, record) => (
           <Tooltip title="Synchronization history">
             <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/sector/sync`,
-                  search: `?sectorKey=${record.id}`
-                }}
-                exact={true}
-              >
+              to={{
+                pathname: `/catalogue/${catalogueKey}/sector/sync`,
+                search: `?sectorKey=${record.id}`,
+              }}
+              exact={true}
+            >
               <HistoryOutlined style={{ fontSize: "20px" }} />
             </NavLink>
           </Tooltip>
         ),
-        width: 50
+        width: 50,
       },
       {
         title: "Logs",
         key: "logs",
         render: (text, record) => (
           <Tooltip title="Kibana logs">
-            <a href={kibanaQuery(record.id)} target="_blank" >
+            <a href={kibanaQuery(record.id)} target="_blank">
               <CodeOutlined style={{ fontSize: "20px" }} />
             </a>
           </Tooltip>
         ),
-        width: 50
-      }
+        width: 50,
+      },
     ];
 
-    if(Auth.isAuthorised(user, ['admin', 'editor'])){
+    if (Auth.isAuthorised(user, ["admin", "editor"])) {
       columns.push({
         title: "Action",
         key: "action",
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            { !_.get(record, 'target.broken') && !_.get(record, 'subject.broken') && 
-            <SyncButton style={{display: 'inline', marginRight: '8px'}} record={{sector: record}}/> 
-            } 
-           <Button style={{display: 'inline', marginRight: '8px'}}
-            type={"primary"}
-            onClick={() => {
-                axios.post(`${config.dataApi}dataset/${catalogueKey}/sector/rematch`, {id: record.id})
-                .then(rematchInfo => {
-                    const success = (_.get(rematchInfo, 'data.updated') ===1 ||  _.get(rematchInfo, 'data.unchanged') === 1) && _.get(rematchInfo, 'data.broken')===0;
+            {!_.get(record, "target.broken") &&
+              !_.get(record, "subject.broken") && (
+                <SyncButton
+                  style={{ display: "inline", marginRight: "8px" }}
+                  record={{ sector: record }}
+                />
+              )}
+            <Button
+              style={{ display: "inline", marginRight: "8px" }}
+              type={"primary"}
+              onClick={() => {
+                axios
+                  .post(
+                    `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
+                    { id: record.id }
+                  )
+                  .then((rematchInfo) => {
+                    const success =
+                      (_.get(rematchInfo, "data.updated") === 1 ||
+                        _.get(rematchInfo, "data.unchanged") === 1) &&
+                      _.get(rematchInfo, "data.broken") === 0;
 
-                   if(success){
-                    notification.success({
+                    if (success) {
+                      notification.success({
                         message: "Rematch success",
-                        description: `Broken sectors: 0`
-                      })
+                        description: `Broken sectors: 0`,
+                      });
 
-                      if(this.props.onSectorRematch && typeof this.props.onSectorRematch === 'function'){
-                        this.props.onSectorRematch(record)
-
+                      if (
+                        this.props.onSectorRematch &&
+                        typeof this.props.onSectorRematch === "function"
+                      ) {
+                        this.props.onSectorRematch(record);
                       }
-                   } else {
-                    notification.error({
+                    } else {
+                      notification.error({
                         message: "Rematch failed",
-                        description: `Broken sectors: 1`
-                      })
-                   }
-                })
-                .catch(err => {
+                        description: `Broken sectors: 1`,
+                      });
+                    }
+                  })
+                  .catch((err) => {
                     notification.error({
-                        message: `Server error ${_.get(err, 'response.status')}`,
-                        description: _.get(err, 'response.data.message')
-                      })
-                })
-            }}
-            >Rematch
+                      message: `Server error ${_.get(err, "response.status")}`,
+                      description: _.get(err, "response.data.message"),
+                    });
+                  });
+              }}
+            >
+              Rematch
             </Button>
-          {onDeleteSector && typeof onDeleteSector === 'function' && <Button style={{display: 'inline'}} type="danger" onClick={() => onDeleteSector(record)}><DeleteOutlined /></Button>}
-          
+            {onDeleteSector && typeof onDeleteSector === "function" && (
+              <Button
+                style={{ display: "inline" }}
+                type="danger"
+                onClick={() => onDeleteSector(record)}
+              >
+                <DeleteOutlined />
+              </Button>
+            )}
           </React.Fragment>
-          
-        )
-      })
+        ),
+      });
     }
     return (
       <React.Fragment>
-         
-  <Row>
-   {!loading && pagination && <Col style={{textAlign: "right"}}>Results: {offset} - {offset+data.length} of {pagination.total}</Col>
-  }
-    </Row>
-          
-            <Table
-              size="small"
-              onChange={handleTableChange}
-              columns={columns}
-              dataSource={data}
-              loading={loading}
-              pagination={pagination}
-              rowKey="id"
-              expandedRowRender={expandedRowRender}
-            />
-          
+        <Row>
+          {!loading && pagination && (
+            <Col style={{ textAlign: "right" }}>
+              Results: {offset} - {offset + data.length} of {pagination.total}
+            </Col>
+          )}
+        </Row>
+
+        <Table
+          size="small"
+          onChange={handleTableChange}
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          pagination={pagination}
+          rowKey="id"
+          expandedRowRender={expandedRowRender}
+        />
       </React.Fragment>
     );
   }

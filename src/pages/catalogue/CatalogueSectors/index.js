@@ -1,8 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
-import { SearchOutlined, EditOutlined } from "@ant-design/icons";
-import Auth from "../../../components/Auth"
+import { SearchOutlined } from "@ant-design/icons";
+import Auth from "../../../components/Auth";
 import {
   Form,
   Alert,
@@ -27,11 +26,10 @@ import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../Assembly/NameAutocomplete";
 import moment from "moment";
 import RematchResult from "./RematchResult";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
-import SectorForm from "../Assembly/SectorForm"
+import SectorForm from "../Assembly/SectorForm";
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
@@ -75,9 +73,8 @@ class CatalogueSectors extends React.Component {
       {
         params,
         pagination: {
-          pageSize: params.limit,
+          pageSize: params.limit || PAGE_SIZE,
           current: Number(params.offset) / Number(params.limit) + 1,
-          pageSize: PAGE_SIZE,
         },
       },
       this.getData
@@ -96,9 +93,8 @@ class CatalogueSectors extends React.Component {
       this.setState(
         {
           pagination: {
-            pageSize: params.limit,
+            pageSize: params.limit || PAGE_SIZE,
             current: Number(params.offset) / Number(params.limit) + 1,
-            pageSize: PAGE_SIZE,
           },
         },
         this.getData
@@ -235,7 +231,7 @@ class CatalogueSectors extends React.Component {
       });
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
+  handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
 
@@ -351,7 +347,6 @@ class CatalogueSectors extends React.Component {
       rematchSectorsLoading,
       deleteSectorsLoading,
       rematchInfo,
-      defaultTaxonKey,
     } = this.state;
     const {
       match: {
@@ -428,7 +423,9 @@ class CatalogueSectors extends React.Component {
               style={{ marginBottom: "8px", marginRight: "8px" }}
             >
               <Switch
-                checked={params.withoutData === true || params.withoutData === "true"}
+                checked={
+                  params.withoutData === true || params.withoutData === "true"
+                }
                 onChange={(value) => this.updateSearch({ withoutData: value })}
               />
             </FormItem>
@@ -554,13 +551,20 @@ class CatalogueSectors extends React.Component {
               onDeleteSector={this.onDeleteSector}
               pagination={pagination}
               handleTableChange={this.handleTableChange}
-              expandedRowRender={ !Auth.isAuthorised(user, ["editor"]) ? null :  record => 
-           <React.Fragment> 
-             <SectorForm sector={record} onError={err => this.setState({ error: err })}/>
-           
-             {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
-             </React.Fragment>
-            }
+              expandedRowRender={
+                !Auth.isAuthorised(user, ["editor"])
+                  ? null
+                  : (record) => (
+                      <React.Fragment>
+                        <SectorForm
+                          sector={record}
+                          onError={(err) => this.setState({ error: err })}
+                        />
+
+                        {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
+                      </React.Fragment>
+                    )
+              }
             ></SectorTable>
           )}
         </PageContent>

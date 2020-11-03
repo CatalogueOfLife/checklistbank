@@ -1,10 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { SearchOutlined, DeleteOutlined, WarningOutlined } from "@ant-design/icons";
+import { DeleteOutlined, WarningOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
-import { debounce } from "lodash";
 
 import {
   Table,
@@ -25,14 +23,13 @@ import moment from "moment";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import kibanaQuery from "./kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import { getDatasetsBatch } from "../../../api/dataset";
-import { getUsersBatch } from "../../../api/user"
+import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import RematchResult from "../CatalogueSectors/RematchResult";
 
@@ -77,9 +74,8 @@ class CatalogueDecisions extends React.Component {
       {
         params,
         pagination: {
-          pageSize: params.limit,
+          pageSize: params.limit || PAGE_SIZE,
           current: Number(params.offset) / Number(params.limit) + 1,
-          pageSize: PAGE_SIZE,
         },
       },
       this.getData
@@ -97,9 +93,8 @@ class CatalogueDecisions extends React.Component {
       this.setState(
         {
           pagination: {
-            pageSize: params.limit,
+            pageSize: params.limit || PAGE_SIZE,
             current: Number(params.offset) / Number(params.limit) + 1,
-            pageSize: PAGE_SIZE,
           },
         },
         this.getData
@@ -141,19 +136,18 @@ class CatalogueDecisions extends React.Component {
 
   decorateWithDataset = (res) => {
     if (!res.data.result) return res;
-    return Promise.all(
-     [ ...res.data.result.map((decision) =>
+    return Promise.all([
+      ...res.data.result.map((decision) =>
         datasetLoader
           .load(decision.subjectDatasetKey)
           .then((dataset) => (decision.dataset = dataset))
-      ), 
+      ),
       ...res.data.result.map((decision) =>
         userLoader
           .load(decision.createdBy)
           .then((user) => (decision.user = user))
-      )
-    ]
-    ).then(() => res);
+      ),
+    ]).then(() => res);
   };
 
   handleTableChange = (pagination, filters, sorter) => {
@@ -308,51 +302,57 @@ class CatalogueDecisions extends React.Component {
         key: "subject",
         width: 150,
         render: (text, record) => {
-          return  (
+          return (
             <React.Fragment>
-            <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-              {record.subject.rank}:{" "}
-            </div>
-            {!record.subject.id  && <NavLink
-              to={{
-                pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                search: `?q=${record.subject.name}`
-                
-              }}
-              exact={true}
-            >
-              <Highlighter
-                highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                searchWords={[params.name]}
-                autoEscape
-                textToHighlight={record.subject.name.toString()}
-              />
-            </NavLink> }
-            {record.subject.id && <NavLink
-              to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record.subject.id}`
-              }}
-              exact={true}
-            >
-              <Highlighter
-                highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                searchWords={[params.name]}
-                autoEscape
-                textToHighlight={_.get(record, "subject.name") ? record.subject.name.toString() : ""}
-              />
-             
-            </NavLink>}{record.subject.broken && (
-              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
-            )}
-          </React.Fragment>
-          )
-          
+              <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                {record.subject.rank}:{" "}
+              </div>
+              {!record.subject.id && (
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                    search: `?q=${record.subject.name}`,
+                  }}
+                  exact={true}
+                >
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[params.name]}
+                    autoEscape
+                    textToHighlight={record.subject.name.toString()}
+                  />
+                </NavLink>
+              )}
+              {record.subject.id && (
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record.subject.id}`,
+                  }}
+                  exact={true}
+                >
+                  <Highlighter
+                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                    searchWords={[params.name]}
+                    autoEscape
+                    textToHighlight={
+                      _.get(record, "subject.name")
+                        ? record.subject.name.toString()
+                        : ""
+                    }
+                  />
+                </NavLink>
+              )}
+              {record.subject.broken && (
+                <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
+              )}
+            </React.Fragment>
+          );
         },
       },
       {
         title: "Created by",
         dataIndex: ["user", "username"],
-        key: "createdBy"
+        key: "createdBy",
       },
 
       {
@@ -567,7 +567,9 @@ class CatalogueDecisions extends React.Component {
               <Popconfirm
                 placement="rightTop"
                 title="Do you want to rematch all decisions?"
-                onConfirm={() => this.rematchDecisions(params.subjectDatasetKey)}
+                onConfirm={() =>
+                  this.rematchDecisions(params.subjectDatasetKey)
+                }
                 okText="Yes"
                 cancelText="No"
               >
@@ -576,7 +578,10 @@ class CatalogueDecisions extends React.Component {
                   loading={rematchDecisionsLoading}
                   style={{ marginLeft: "10px", marginBottom: "10px" }}
                 >
-                  Rematch all decisions {params.subjectDatasetKey ? ` from dataset ${params.subjectDatasetKey}`: ''}
+                  Rematch all decisions{" "}
+                  {params.subjectDatasetKey
+                    ? ` from dataset ${params.subjectDatasetKey}`
+                    : ""}
                 </Button>
               </Popconfirm>
             </Col>

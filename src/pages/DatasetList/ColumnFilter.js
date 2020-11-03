@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Select } from "antd";
-import _ from "lodash";
 const Option = Select.Option;
 
 class ColumnFilter extends React.Component {
@@ -13,21 +12,17 @@ class ColumnFilter extends React.Component {
 
     this.handleHideColumnChange = this.handleHideColumnChange.bind(this);
     this.state = {
-      excludeColumns: excludeColumns
+      excludeColumns: excludeColumns,
     };
   }
 
-  handleHideColumnChange = excludeColumns => {
-    const { columns } = this.props;
-
+  handleHideColumnChange = (excludeColumns) => {
     localStorage.setItem(
       "colplus_datasetlist_hide_columns",
       JSON.stringify(excludeColumns)
     );
     this.setState({ excludeColumns }, () => {
-      this.props.onChange(
-        excludeColumns
-      );
+      this.props.onChange(excludeColumns);
     });
   };
 
@@ -43,7 +38,7 @@ class ColumnFilter extends React.Component {
         onChange={this.handleHideColumnChange}
         showSearch
       >
-        {columns.map(f => {
+        {columns.map((f) => {
           return (
             <Option key={f.key} value={f.key}>
               {f.title}

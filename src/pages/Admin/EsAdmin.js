@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Button, notification } from "antd";
@@ -9,23 +8,19 @@ import Layout from "../../components/LayoutNew";
 import history from "../../history";
 
 import SearchBox from "../DatasetList/SearchBox";
-import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-
 
 const _ = require("lodash");
 
 const PAGE_SIZE = 1000;
 
-
 const getWarningHighlightedNumber = (a, b) => {
-    const numA = isNaN(a) ? 0 : Number(a);
-    const numB = isNaN(b) ? 0 : Number(b);
-    if((numA - numB) === 0){
-        return numA;
-    } else return <span style={{color: '#ff4d4f'}}>{numA}</span>
-}
-
+  const numA = isNaN(a) ? 0 : Number(a);
+  const numB = isNaN(b) ? 0 : Number(b);
+  if (numA - numB === 0) {
+    return numA;
+  } else return <span style={{ color: "#ff4d4f" }}>{numA}</span>;
+};
 
 class DatasetList extends React.Component {
   constructor(props) {
@@ -37,7 +32,7 @@ class DatasetList extends React.Component {
           title: "Key",
           dataIndex: "key",
           width: 100,
-          key: "key"
+          key: "key",
         },
         {
           title: "Alias",
@@ -54,7 +49,7 @@ class DatasetList extends React.Component {
               </NavLink>
             );
           },
-         // sorter: true
+          // sorter: true
         },
         {
           title: "Title",
@@ -71,50 +66,59 @@ class DatasetList extends React.Component {
               </NavLink>
             );
           },
-          sorter: true
+          sorter: true,
         },
         {
           title: "Origin",
           dataIndex: "origin",
-          key: "origin"
+          key: "origin",
         },
-       
+
         {
           title: "Size",
           dataIndex: "size",
           key: "size",
           sorter: true,
-          render: (text, record) => record.origin !== "managed" ? getWarningHighlightedNumber(record.size, record.nameUsageTotal) : record.size
+          render: (text, record) =>
+            record.origin !== "managed"
+              ? getWarningHighlightedNumber(record.size, record.nameUsageTotal)
+              : record.size,
         },
         {
-            title: "NameUsages",
-            dataIndex: "nameUsageTotal",
-            key: "nameUsageTotal",
-            sorter: false,
-            render: (text, record) => record.origin !== "managed" ? getWarningHighlightedNumber(record.nameUsageTotal, record.size) : record.nameUsageTotal
-          },
+          title: "NameUsages",
+          dataIndex: "nameUsageTotal",
+          key: "nameUsageTotal",
+          sorter: false,
+          render: (text, record) =>
+            record.origin !== "managed"
+              ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
+              : record.nameUsageTotal,
+        },
         {
-            title: "Action",
-            dataIndex: "",
-            width: 60,
-            key: "__actions__",
-            render: (text, record) => <React.Fragment>
-            <Button
-            type="primary"
-            onClick={() => this.reindexDataset(record.key)}
-            
-          >
-            Re-index
-          </Button>
-          {record.origin !== 'managed' && record.origin !== 'released' && <Button
-            type="primary"
-            onClick={() => this.reimportDataset(record.key)}
-            style={{marginTop: '6px'}}
-          >
-            Re-import
-          </Button>}
-          </React.Fragment>
-          }
+          title: "Action",
+          dataIndex: "",
+          width: 60,
+          key: "__actions__",
+          render: (text, record) => (
+            <React.Fragment>
+              <Button
+                type="primary"
+                onClick={() => this.reindexDataset(record.key)}
+              >
+                Re-index
+              </Button>
+              {record.origin !== "managed" && record.origin !== "released" && (
+                <Button
+                  type="primary"
+                  onClick={() => this.reimportDataset(record.key)}
+                  style={{ marginTop: "6px" }}
+                >
+                  Re-import
+                </Button>
+              )}
+            </React.Fragment>
+          ),
+        },
       ],
       search: _.get(this.props, "location.search.q") || "",
       params: {},
@@ -122,10 +126,10 @@ class DatasetList extends React.Component {
         pageSize: PAGE_SIZE,
         showSizeChanger: false,
         current: 1,
-        showQuickJumper: true
+        showQuickJumper: true,
       },
-     
-      loading: false
+
+      loading: false,
     };
   }
 
@@ -135,18 +139,21 @@ class DatasetList extends React.Component {
       params = { limit: PAGE_SIZE, offset: 0 };
       history.push({
         pathname: "/admin/es",
-        search: `?limit=${PAGE_SIZE}&offset=0`
+        search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
-   
-    this.setState({ params, pagination: {
-      pageSize: params.limit,
-      current: (Number(params.offset) / Number(params.limit)) +1
-      
-    } }, this.getData);
-   
-  }
 
+    this.setState(
+      {
+        params,
+        pagination: {
+          pageSize: params.limit,
+          current: Number(params.offset) / Number(params.limit) + 1,
+        },
+      },
+      this.getData
+    );
+  }
 
   getData = () => {
     const { params } = this.state;
@@ -157,18 +164,23 @@ class DatasetList extends React.Component {
     }
     history.push({
       pathname: "/admin/es",
-      search: `?${qs.stringify(params)}`
+      search: `?${qs.stringify(params)}`,
     });
     axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
-      .then(res => {
+      .then((res) => {
         return Promise.all(
-         !res.data.result ? [] : res.data.result.map(r => 
-            axios(`${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`)
-                .then(nameusages => r.nameUsageTotal = nameusages.data.total)
-          )
+          !res.data.result
+            ? []
+            : res.data.result.map((r) =>
+                axios(
+                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                ).then(
+                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                )
+              )
         ).then(() => res);
       })
-      .then(res => {
+      .then((res) => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
 
@@ -176,35 +188,31 @@ class DatasetList extends React.Component {
           loading: false,
           data: res.data.result,
           err: null,
-          pagination
+          pagination,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
-
-  updateSearch = params => {
-
-    let newParams = {...this.state.params, offset: 0, limit: 50};
+  updateSearch = (params) => {
+    let newParams = { ...this.state.params, offset: 0, limit: 50 };
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
-    this.setState({ params: newParams}, this.getData);
+    this.setState({ params: newParams }, this.getData);
   };
 
-
-
-  
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
 
     this.setState({
-      pagination: pager
+      pagination: pager,
     });
-    let query = {... this.state.params, 
+    let query = {
+      ...this.state.params,
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
@@ -212,8 +220,8 @@ class DatasetList extends React.Component {
       format: filters.format,
     };
     if (sorter) {
-        query.sortBy = sorter.field
-      }
+      query.sortBy = sorter.field;
+    }
     if (sorter && sorter.order === "descend") {
       query.reverse = true;
     } else {
@@ -251,35 +259,32 @@ class DatasetList extends React.Component {
   };
 
   render() {
-    const { data, loading, error, columns} = this.state;
-    const { datasetOrigin } = this.props
-    columns[3].filters = datasetOrigin.map(i => ({text: _.startCase(i), value: i}))
+    const { data, loading, error, columns } = this.state;
+    const { datasetOrigin } = this.props;
+    columns[3].filters = datasetOrigin.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
 
     return (
-      <Layout
-      openKeys={["admin"]} selectedKeys={["esAdmin"]}
-        title="Admin"
-      >
+      <Layout openKeys={["admin"]} selectedKeys={["esAdmin"]} title="Admin">
         <div
           style={{
             background: "#fff",
             padding: 24,
             minHeight: 280,
-            margin: "16px 0"
+            margin: "16px 0",
           }}
         >
           <div>
-            <Row style={{ marginBottom: "10px"}}>
+            <Row style={{ marginBottom: "10px" }}>
               <Col md={12} sm={24}>
                 <SearchBox
                   defaultValue={_.get(this.state, "params.q")}
                   style={{ marginBottom: "10px", width: "50%" }}
-                  onSearch={value =>
-                    this.updateSearch({ q: value })
-                  }
+                  onSearch={(value) => this.updateSearch({ q: value })}
                 />
               </Col>
-             
             </Row>
             {error && <Alert message={error.message} type="error" />}
           </div>
@@ -299,6 +304,9 @@ class DatasetList extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user,datasetOrigin }) => ({ user, datasetOrigin });
+const mapContextToProps = ({ user, datasetOrigin }) => ({
+  user,
+  datasetOrigin,
+});
 
 export default withContext(mapContextToProps)(DatasetList);

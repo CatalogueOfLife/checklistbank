@@ -5,10 +5,6 @@ import SyncTable from "./SyncTable";
 import withContext from "../../../components/hoc/withContext";
 
 class SectorSync extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { catalogue } = this.props;
     return (

@@ -1,19 +1,17 @@
 import React from "react";
 import axios from "axios";
 import _ from "lodash";
-import { List, Breadcrumb, Button, Alert, Tooltip, notification } from "antd";
+import { Alert, notification } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
-import { NavLink } from "react-router-dom";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import SectorTable from "../../catalogue/CatalogueSectors/SectorTable";
-import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-import history from "../../../history"
+import history from "../../../history";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
-const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const PAGE_SIZE = 500;
 class DatasetSectors extends React.Component {
@@ -25,99 +23,109 @@ class DatasetSectors extends React.Component {
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
-        showQuickJumper: true
+        showQuickJumper: true,
       },
       loading: false,
-      syncAllError: null
+      syncAllError: null,
     };
   }
-
 
   componentDidMount() {
     // this.getData();
     const { data } = this.state;
     if (this.props.dataset && data.length === 0) {
-      this.init()
+      this.init();
     }
-   }
- 
-   componentDidUpdate = (prevProps) => {
-     if((_.get(prevProps, "location.search") !== _.get(this.props, "location.search")) || (_.get(this.props, 'dataset.key') !== _.get(prevProps, 'dataset.key'))){
-       this.init()
-     }
-   }
-
-init = () => {
-  let params = qs.parse(_.get(this.props, "location.search"));
-  if (_.isEmpty(params)) {
-    params = { limit: PAGE_SIZE, offset: 0 };
-    history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: `?limit=${PAGE_SIZE}&offset=0`
-    });
   }
- 
-  this.setState({  pagination: {
-    pageSize: params.limit,
-    current: (Number(params.offset) / Number(params.limit)) +1,
-    pageSize: PAGE_SIZE
 
-  } }, () => this.getData(this.props.dataset));
-}
+  componentDidUpdate = (prevProps) => {
+    if (
+      _.get(prevProps, "location.search") !==
+        _.get(this.props, "location.search") ||
+      _.get(this.props, "dataset.key") !== _.get(prevProps, "dataset.key")
+    ) {
+      this.init();
+    }
+  };
 
+  init = () => {
+    let params = qs.parse(_.get(this.props, "location.search"));
+    if (_.isEmpty(params)) {
+      params = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: _.get(this.props, "location.pathname"),
+        search: `?limit=${PAGE_SIZE}&offset=0`,
+      });
+    }
 
-  getData = dataset => {
+    this.setState(
+      {
+        pagination: {
+          pageSize: params.limit,
+          current: Number(params.offset) / Number(params.limit) + 1,
+          pageSize: PAGE_SIZE,
+        },
+      },
+      () => this.getData(this.props.dataset)
+    );
+  };
+
+  getData = (dataset) => {
     this.setState({ loading: true });
-    const {catalogueKey} = this.props;
-    const params = {...qs.parse(_.get(this.props, "location.search")),  subject: true};
+    const { catalogueKey } = this.props;
+    const params = {
+      ...qs.parse(_.get(this.props, "location.search")),
+      subject: true,
+    };
 
-    axios(`${config.dataApi}dataset/${dataset.key}/sector?${qs.stringify(params)}`)
-    .then(this.decorateWithCatalogue)
-      .then(res => {
-       /*  if(_.get(res, 'data.result')){
+    axios(
+      `${config.dataApi}dataset/${dataset.key}/sector?${qs.stringify(params)}`
+    )
+      .then(this.decorateWithCatalogue)
+      .then((res) => {
+        /*  if(_.get(res, 'data.result')){
           res.data.result.forEach(d => { d.dataset = dataset })
         } */
         this.setState({
           loading: false,
           data: res.data.result || [],
-          pagination: {...this.state.pagination, total: _.get(res, 'data.total')},
-          err: null
+          pagination: {
+            ...this.state.pagination,
+            total: _.get(res, "data.total"),
+          },
+          err: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
-  decorateWithCatalogue = res => {
+  decorateWithCatalogue = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
-      res.data.result.map(sector =>
+      res.data.result.map((sector) =>
         datasetLoader
           .load(sector.datasetKey)
-          .then(dataset => (sector.dataset = dataset))
+          .then((dataset) => (sector.dataset = dataset))
       )
     ).then(() => res);
   };
 
-  onDeleteSector = sector => {
-
-    const {catalogueKey} = this.props;
+  onDeleteSector = (sector) => {
+    const { catalogueKey } = this.props;
     axios
-      .delete(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${
-          sector.id
-        }`
-      ) 
+      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
       .then(() => {
-
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.key} placed on the sync queue`
+          description: `Delete job for ${sector.key} placed on the sync queue`,
         });
-        this.setState({ data: this.state.data.filter(d => d.key !== sector.key) });
+        this.setState({
+          data: this.state.data.filter((d) => d.key !== sector.key),
+        });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ error: err });
       });
   };
@@ -125,25 +133,22 @@ init = () => {
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
-   
-    const params = {
-      ...qs.parse(_.get(this.props, "location.search")), 
-      limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize
-    }
 
+    const params = {
+      ...qs.parse(_.get(this.props, "location.search")),
+      limit: pager.pageSize,
+      offset: (pager.current - 1) * pager.pageSize,
+    };
 
     history.push({
       pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(params)
+      search: qs.stringify(params),
     });
-
-    
   };
 
   render = () => {
     const { data, error, syncAllError, loading, pagination } = this.state;
-    const {catalogueKey} = this.props;
+    const { catalogueKey } = this.props;
     return (
       <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
@@ -177,10 +182,6 @@ init = () => {
   };
 }
 
-
- const mapContextToProps = ({
-  catalogueKey
-}) => ({ catalogueKey });
+const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
 
 export default withContext(mapContextToProps)(DatasetSectors);
- 

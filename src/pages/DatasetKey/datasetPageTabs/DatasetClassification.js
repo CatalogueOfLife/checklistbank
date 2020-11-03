@@ -1,6 +1,4 @@
 import React from "react";
-
-import config from "../../../config";
 import _ from "lodash";
 import history from "../../../history";
 import { Alert } from "antd";

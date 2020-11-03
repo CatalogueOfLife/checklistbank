@@ -16,7 +16,6 @@ import {
   Switch,
   notification,
 } from "antd";
-import RematchResult from "../CatalogueSectors/RematchResult";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";

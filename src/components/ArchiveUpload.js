@@ -2,9 +2,9 @@ import React from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, message, Button, Alert, Modal } from "antd";
+import { Upload, message, Button, Alert } from "antd";
 import ErrorMsg from "../components/ErrorMsg";
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from "@ant-design/icons";
 
 // const { confirm } = Modal;
 
@@ -17,28 +17,31 @@ class ArchiveUpload extends React.Component {
       confirmPromise: null,
       visible: false,
       submissionError: null,
-      fileList: []
+      fileList: [],
     };
   }
 
-  customRequest = options => {
+  customRequest = (options) => {
     const config = {
       headers: {
-        "content-type": options.file.type
-      }
+        "content-type": options.file.type,
+      },
     };
-    if( !config.headers["content-type"] && options.file.name.endsWith('.tree')){
-      config.headers["content-type"] = "text/plain"
+    if (
+      !config.headers["content-type"] &&
+      options.file.name.endsWith(".tree")
+    ) {
+      config.headers["content-type"] = "text/plain";
     }
     return axios
       .post(options.action, options.file, config)
-      .then(res => {
+      .then((res) => {
         options.onSuccess(res.data, options.file);
         this.setState({ submissionError: null, confirmPromise: null });
       })
-      .catch(err => {
-        options.onError(err)
-        this.setState({ submissionError: err, confirmPromise: null  });
+      .catch((err) => {
+        options.onError(err);
+        this.setState({ submissionError: err, confirmPromise: null });
         console.log(err);
       });
   };
@@ -52,36 +55,38 @@ class ArchiveUpload extends React.Component {
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
-    this.setState({fileList: !info.file.status ? [] : [info.file]})
+    this.setState({ fileList: !info.file.status ? [] : [info.file] });
   }
 
   confirmUpload = (file) => {
-    return window.confirm(`ALL DATA WILL BE REPLACED WITH CONTENT OF ${file.name}, PROCEED?`); 
-  }
+    return window.confirm(
+      `ALL DATA WILL BE REPLACED WITH CONTENT OF ${file.name}, PROCEED?`
+    );
+  };
 
   render() {
-    const { datasetKey, origin, style } = this.props;
-    const { submissionError, fileList, visible } = this.state;
+    const { datasetKey } = this.props;
+    const { submissionError, fileList } = this.state;
     return (
       <div className="clearfix">
         {submissionError && (
           <Alert
-            style={{marginBottom: '8px'}}
+            style={{ marginBottom: "8px" }}
             closable
             onClose={() => this.setState({ submissionError: null })}
             message={<ErrorMsg error={submissionError} />}
             type="error"
           />
         )}
-       
+
         <Upload
           action={`${config.dataApi}importer/${datasetKey}`}
           customRequest={this.customRequest}
           onChange={this.onChange}
           fileList={fileList}
           beforeUpload={this.confirmUpload}
-        >          
-          <Button >
+        >
+          <Button>
             <UploadOutlined /> Upload Data Archive
           </Button>
         </Upload>

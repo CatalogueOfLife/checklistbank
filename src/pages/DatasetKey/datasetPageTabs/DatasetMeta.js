@@ -1,10 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
-import { Switch, Rate, Row, Col, Space } from "antd";
+import { Switch, Rate, Row, Col } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";

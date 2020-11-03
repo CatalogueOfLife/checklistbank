@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Tooltip } from "antd";
@@ -9,14 +8,10 @@ import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 
 import withContext from "../../../components/hoc/withContext";
 
-
-
 const _ = require("lodash");
 
-
-
-const getIssuesAbbrev = issue => issue.split(" ").map(s => s.charAt(0).toUpperCase())
-
+const getIssuesAbbrev = (issue) =>
+  issue.split(" ").map((s) => s.charAt(0).toUpperCase());
 
 class GSDIssuesMatrix extends React.Component {
   constructor(props) {
@@ -28,7 +23,7 @@ class GSDIssuesMatrix extends React.Component {
 
       columns: [],
 
-      loading: false
+      loading: false,
     };
   }
 
@@ -37,33 +32,31 @@ class GSDIssuesMatrix extends React.Component {
   }
 
   getData = () => {
-      this.setState({loading: true})
-      const {match: {
-        params: { catalogueKey }
-      }} = this.props
-    axios(
-      `${config.dataApi}dataset?limit=1000&contributesTo=${
-        catalogueKey
-      }`
-    )
-      .then(res => {
+    this.setState({ loading: true });
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    axios(`${config.dataApi}dataset?limit=1000&contributesTo=${catalogueKey}`)
+      .then((res) => {
         return Promise.all(
           !res.data.result
             ? []
-            : res.data.result.map(r => {
+            : res.data.result.map((r) => {
                 return axios(
                   `${config.dataApi}dataset/${r.key}/import?limit=1`
-                ).then(imp => ({
+                ).then((imp) => ({
                   ...r,
-                  issues: _.get(imp, "data[0].issuesCount")
-/*                   ,
+                  issues: _.get(imp, "data[0].issuesCount"),
+                  /*                   ,
                   usagesCount:  _.get(imp, "data[0].usagesCount"),
                   referenceCount: _.get(imp, "data[0].referenceCount") */
                 }));
               })
         );
       })
-/*       .then(res => {
+      /*       .then(res => {
         return Promise.all(
           res.filter(r => !!r.issues).map(r => {
                 return this.getCatalogueSpeciesCount(r.key).then(count => ({
@@ -74,77 +67,105 @@ class GSDIssuesMatrix extends React.Component {
         );
       }) */
 
-      .then(res => {
+      .then((res) => {
         return Promise.all(
-          res.filter(r => !!r.issues).map(r => {
-                return this.getBrokenDecisions(r.key).then(count => ({
-                  ...r,
-                  brokenDecisions: count
-                }));
-              })
+          res
+            .filter((r) => !!r.issues)
+            .map((r) => {
+              return this.getBrokenDecisions(r.key).then((count) => ({
+                ...r,
+                brokenDecisions: count,
+              }));
+            })
         );
       })
-      .then(res => {
+      .then((res) => {
         this.setState({
           loading: false,
           data: res,
-          err: null
+          err: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
   getCatalogueSpeciesCount = (sourceDatasetKey) => {
-    const {match: {
-      params: { catalogueKey }
-    }} = this.props
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
-    ).then(res => _.get(res, 'data.total'))
-
-  }
+    ).then((res) => _.get(res, "data.total"));
+  };
 
   getMetrics = (sourceDatasetKey) => {
-    const {match: {
-      params: { catalogueKey }
-    }} = this.props
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/source/${sourceDatasetKey}/metrics`
-    ).then(res => res.data)
-  }
+    ).then((res) => res.data);
+  };
 
   getBrokenDecisions = (sourceDatasetKey) => {
-    const {match: {
-      params: { catalogueKey }
-    }} = this.props
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
     return axios(
       `${config.dataApi}dataset/${catalogueKey}/decision?limit=0&subjectDatasetKey=${sourceDatasetKey}&limit=0`
-    ).then(res => _.get(res, 'data.total'))
-
-  }
+    ).then((res) => _.get(res, "data.total"));
+  };
 
   updateSelectedGroups = (groups) => {
-    if(groups && groups.length > 0){
-      localStorage.setItem('col_plus_matrix_selected_issue_groups', JSON.stringify(groups))
-    } else if(groups && groups.length === 0){
-      localStorage.removeItem('col_plus_matrix_selected_issue_groups')
+    if (groups && groups.length > 0) {
+      localStorage.setItem(
+        "col_plus_matrix_selected_issue_groups",
+        JSON.stringify(groups)
+      );
+    } else if (groups && groups.length === 0) {
+      localStorage.removeItem("col_plus_matrix_selected_issue_groups");
     }
-    this.setState({ selectedGroups: groups })
-  }
+    this.setState({ selectedGroups: groups });
+  };
 
   render() {
     const { data, loading, error } = this.state;
-    const { issue, issueMap, match: {
-      params: { catalogueKey }
-    }, catalogue } = this.props;
-    const groups = issue ? issue.filter((e, i) => issue.findIndex(a => a['group'] === e['group']) === i).map((a)=> a.group) : []
+    const {
+      issue,
+      issueMap,
+      match: {
+        params: { catalogueKey },
+      },
+      catalogue,
+    } = this.props;
+    const groups = issue
+      ? issue
+          .filter(
+            (e, i) => issue.findIndex((a) => a["group"] === e["group"]) === i
+          )
+          .map((a) => a.group)
+      : [];
 
-    const selectedGroups = localStorage.getItem('col_plus_matrix_selected_issue_groups') ? JSON.parse(localStorage.getItem('col_plus_matrix_selected_issue_groups')) : [...groups];
-    let groupMap =  {} ;
-    if(issue){
-      issue.forEach((i)=> { groupMap[i.name] = i.group})
+    const selectedGroups = localStorage.getItem(
+      "col_plus_matrix_selected_issue_groups"
+    )
+      ? JSON.parse(
+          localStorage.getItem("col_plus_matrix_selected_issue_groups")
+        )
+      : [...groups];
+    let groupMap = {};
+    if (issue) {
+      issue.forEach((i) => {
+        groupMap[i.name] = i.group;
+      });
     }
 
     const columns = [
@@ -155,7 +176,9 @@ class GSDIssuesMatrix extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
+              to={{
+                pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+              }}
               exact={true}
             >
               {record.alias ? `${record.alias} [${record.key}]` : record.key}
@@ -163,11 +186,11 @@ class GSDIssuesMatrix extends React.Component {
           );
         },
         sorter: (a, b) => {
-            return ("" + a.alias).localeCompare(b.alias);
-          }
+          return ("" + a.alias).localeCompare(b.alias);
+        },
       },
-      
-/*   
+
+      /*   
 {
         title: <Tooltip title={`Species contributed to catalogue ${catalogueKey}`}>Species count</Tooltip>,
         dataIndex: "contributedSpecies",
@@ -187,16 +210,22 @@ class GSDIssuesMatrix extends React.Component {
       }
       }, */
 
-     
       {
         // brokenDecisions
-        title: <Tooltip title={`Number of broken decisions`}>Broken decisions</Tooltip>,
+        title: (
+          <Tooltip title={`Number of broken decisions`}>
+            Broken decisions
+          </Tooltip>
+        ),
         dataIndex: "brokenDecisions",
         key: "brokenDecisions",
         render: (text, record) => {
           return (
             <NavLink
-            to={{ pathname: `/catalogue/${catalogueKey}/decision`, search:`?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}` }}
+              to={{
+                pathname: `/catalogue/${catalogueKey}/decision`,
+                search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}`,
+              }}
               exact={true}
             >
               {record.brokenDecisions}
@@ -204,57 +233,84 @@ class GSDIssuesMatrix extends React.Component {
           );
         },
         sorter: (a, b) => {
-          return Number(_.get(a, `brokenDecisions`) || 0 ) - Number(_.get(b, `brokenDecisions`) || 0 ) ;
-      }
-      },
-      ...issue.filter((d)=> selectedGroups.includes(groupMap[d.name])).map(i => ({
-        title: <Tooltip title={i.name}><span style={{color: issueMap[i.name].color}}>{getIssuesAbbrev(i.name)}</span></Tooltip>,
-        dataIndex: ['issues', i.name],
-        key: i.name,
-        render: (text, record) => {
           return (
-            <NavLink
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` , search: `?issue=${i.name}`}}
-              exact={true}
-            >
-              {text}
-            </NavLink>
+            Number(_.get(a, `brokenDecisions`) || 0) -
+            Number(_.get(b, `brokenDecisions`) || 0)
           );
         },
-        sorter: (a, b) => {
-            return (_.get(a, `issues.${i.name}`) || 0 ) - (_.get(b, `issues.${i.name}`) || 0 ) ;
-        }
-      }))
+      },
+      ...issue
+        .filter((d) => selectedGroups.includes(groupMap[d.name]))
+        .map((i) => ({
+          title: (
+            <Tooltip title={i.name}>
+              <span style={{ color: issueMap[i.name].color }}>
+                {getIssuesAbbrev(i.name)}
+              </span>
+            </Tooltip>
+          ),
+          dataIndex: ["issues", i.name],
+          key: i.name,
+          render: (text, record) => {
+            return (
+              <NavLink
+                to={{
+                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                  search: `?issue=${i.name}`,
+                }}
+                exact={true}
+              >
+                {text}
+              </NavLink>
+            );
+          },
+          sorter: (a, b) => {
+            return (
+              (_.get(a, `issues.${i.name}`) || 0) -
+              (_.get(b, `issues.${i.name}`) || 0)
+            );
+          },
+        })),
     ];
-    
+
     return (
       <Layout
         openKeys={["assembly"]}
         selectedKeys={["catalogueSources"]}
-        title={catalogue ? catalogue.title : ''}
+        title={catalogue ? catalogue.title : ""}
       >
         <div
           style={{
             background: "#fff",
             padding: 24,
             minHeight: 280,
-            margin: "16px 0"
+            margin: "16px 0",
           }}
         >
           <div>
             <Row>
               <Col md={12} sm={24}>
-                <NavLink to={{ pathname: `/dataset` , search: `?contributesTo=${catalogueKey}`}} exact={true}>
-                View metadata of all sources
+                <NavLink
+                  to={{
+                    pathname: `/dataset`,
+                    search: `?contributesTo=${catalogueKey}`,
+                  }}
+                  exact={true}
+                >
+                  View metadata of all sources
                 </NavLink>
               </Col>
               <Col md={12} sm={24}>
-              <MultiValueFilter
-              defaultValue={selectedGroups && selectedGroups.length > 0 ? selectedGroups : groups}
-              onChange={this.updateSelectedGroups}
-              vocab={groups}
-              label="Issue groups"
-            />
+                <MultiValueFilter
+                  defaultValue={
+                    selectedGroups && selectedGroups.length > 0
+                      ? selectedGroups
+                      : groups
+                  }
+                  onChange={this.updateSelectedGroups}
+                  vocab={groups}
+                  label="Issue groups"
+                />
               </Col>
             </Row>
             {error && <Alert message={error.message} type="error" />}
@@ -263,10 +319,10 @@ class GSDIssuesMatrix extends React.Component {
             <Table
               size="small"
               columns={columns}
-              dataSource={data.filter(d => d.issues)}
+              dataSource={data.filter((d) => d.issues)}
               loading={loading}
-              scroll={{x: "2000px"}}
-              pagination={{pageSize:100}}
+              scroll={{ x: "2000px" }}
+              pagination={{ pageSize: 100 }}
             />
           )}
         </div>
@@ -279,7 +335,7 @@ const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
   user,
   issue,
   issueMap,
-  catalogue
+  catalogue,
 });
 
 export default withContext(mapContextToProps)(GSDIssuesMatrix);

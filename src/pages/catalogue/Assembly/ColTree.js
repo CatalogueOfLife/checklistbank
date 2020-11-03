@@ -1,11 +1,19 @@
 import React from "react";
-import { Tree, notification, message, Alert, Spin, Button, Skeleton } from "antd";
+import {
+  Tree,
+  notification,
+  message,
+  Alert,
+  Spin,
+  Button,
+  Skeleton,
+} from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
 import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../../components/ErrorMsg";
-import Custom404 from "./Custom404"
+import Custom404 from "./Custom404";
 import { getSectorsBatch } from "../../../api/sector";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
@@ -13,8 +21,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
-const TreeNode = Tree.TreeNode;
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
 const IRREGULAR_RANKS = [
   "unranked",
@@ -22,14 +29,14 @@ const IRREGULAR_RANKS = [
   "infraspecific name",
   "infrageneric name",
   "infrasubspecific name",
-  "suprageneric name"
+  "suprageneric name",
 ];
 
 const TAXON_KEY_PARAMETER_NAMES = {
-  "CATALOGUE": "assemblyTaxonKey",
-  "SOURCE": "sourceTaxonKey",
-  "readOnly": "taxonKey"
-}
+  CATALOGUE: "assemblyTaxonKey",
+  SOURCE: "sourceTaxonKey",
+  readOnly: "taxonKey",
+};
 
 class LoadMoreChildrenTreeNode extends React.Component {
   constructor(props) {
@@ -70,7 +77,7 @@ class ColTree extends React.Component {
       error: null,
       mode: "attach",
       ranks: [],
-      nodeNotFoundErr: null
+      nodeNotFoundErr: null,
     };
 
     this.treeRef = React.createRef();
@@ -78,30 +85,38 @@ class ColTree extends React.Component {
 
   componentDidMount = () => {
     this.loadRoot();
-    this.sectorLoader = new DataLoader((ids) => getSectorsBatch(ids, this.props.catalogueKey));
+    this.sectorLoader = new DataLoader((ids) =>
+      getSectorsBatch(ids, this.props.catalogueKey)
+    );
     const { treeRef } = this.props;
     treeRef(this);
   };
 
-
   componentDidUpdate = (prevProps) => {
-    if (prevProps.dataset.key !== this.props.dataset.key || prevProps.catalogueKey !== this.props.catalogueKey) {
+    if (
+      prevProps.dataset.key !== this.props.dataset.key ||
+      prevProps.catalogueKey !== this.props.catalogueKey
+    ) {
       this.setState({ treeData: [] }, this.loadRoot);
-      this.sectorLoader = new DataLoader((ids) => getSectorsBatch(ids, this.props.catalogueKey));
-
+      this.sectorLoader = new DataLoader((ids) =>
+        getSectorsBatch(ids, this.props.catalogueKey)
+      );
     }
-   
-  }
+  };
 
-
-  reloadRoot = () => this.setState({ rootLoading: true,
-    treeData: [],
-    loadedKeys: [],
-    rootTotal: 0,
-    error: null,
-    mode: "attach",
-    nodeNotFoundErr: null }, this.loadRoot);
-  
+  reloadRoot = () =>
+    this.setState(
+      {
+        rootLoading: true,
+        treeData: [],
+        loadedKeys: [],
+        rootTotal: 0,
+        error: null,
+        mode: "attach",
+        nodeNotFoundErr: null,
+      },
+      this.loadRoot
+    );
 
   loadRoot = async () => {
     const {
@@ -110,26 +125,29 @@ class ColTree extends React.Component {
       showSourceTaxon,
       catalogueKey,
       onDeleteSector,
-      defaultExpandKey
+      defaultExpandKey,
     } = this.props;
-    this.setState({rootLoading: true, treeData: []})
+    this.setState({ rootLoading: true, treeData: [] });
     let id = key;
     return axios(
-      `${config.dataApi}dataset/${id}/tree?catalogueKey=${
-        catalogueKey
-      }${this.appendTypeParam(treeType)}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
-    ).then(this.decorateWithSectorsAndDataset)
-      .then(res => {
+      `${
+        config.dataApi
+      }dataset/${id}/tree?catalogueKey=${catalogueKey}${this.appendTypeParam(
+        treeType
+      )}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
+    )
+      .then(this.decorateWithSectorsAndDataset)
+      .then((res) => {
         const mainTreeData = res.data.result || [];
         const rootTotal = res.data.total;
-        const treeData = mainTreeData.map(tx => {
+        const treeData = mainTreeData.map((tx) => {
           let dataRef = {
             taxon: tx,
             key: tx.id,
             datasetKey: id,
             childCount: tx.childCount,
             isLeaf: tx.childCount === 0,
-            childOffset: 0
+            childOffset: 0,
           };
           dataRef.title = (
             <ColTreeNode
@@ -140,97 +158,161 @@ class ColTree extends React.Component {
               treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
               reloadSelfAndSiblings={() => {
-                const loadedChildIds = dataRef.children ? dataRef.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-                return this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+                const loadedChildIds = dataRef.children
+                  ? dataRef.children
+                      .filter((c) => c.children && c.children.length > 0)
+                      .map((c) => c.key)
+                  : null;
+                return this.loadRoot().then(() =>
+                  loadedChildIds
+                    ? this.reloadLoadedKeys(loadedChildIds, false)
+                    : false
+                );
               }}
               reloadChildren={() => {
-                return this.fetchChildPage(dataRef, true)
+                return this.fetchChildPage(dataRef, true);
               }}
             />
           );
           dataRef.ref = dataRef;
           return dataRef;
         });
-      
-          this.setState({
+
+        this.setState(
+          {
             rootTotal: rootTotal,
             rootLoading: false,
-            treeData:[...this.state.treeData, ...treeData],
-            expandedKeys: !defaultExpandKey && treeData.length < 10 ? treeData.map(n => n.taxon.id): [],
-            error: null
-          }, () => {
-            if(defaultExpandKey){
-              return this.expandToTaxon(defaultExpandKey)
-             }
-          });
-
-        
+            treeData: [...this.state.treeData, ...treeData],
+            expandedKeys:
+              !defaultExpandKey && treeData.length < 10
+                ? treeData.map((n) => n.taxon.id)
+                : [],
+            error: null,
+          },
+          () => {
+            if (defaultExpandKey) {
+              return this.expandToTaxon(defaultExpandKey);
+            }
+          }
+        );
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           treeData: [],
           rootLoading: false,
           expandedKeys: [],
-          error: err
+          error: err,
         });
       });
-  };  
+  };
   appendTypeParam = (treeType) => {
-    return treeType === 'readOnly' ? `&type=CATALOGUE` : ["CATALOGUE", "SOURCE"].includes(treeType) ? `&type=${treeType}` : '';
-  }
+    return treeType === "readOnly"
+      ? `&type=CATALOGUE`
+      : ["CATALOGUE", "SOURCE"].includes(treeType)
+      ? `&type=${treeType}`
+      : "";
+  };
   expandToTaxon = async (defaultExpandKey) => {
     const {
       treeType,
       dataset: { key },
       showSourceTaxon,
       catalogueKey,
-      onDeleteSector
+      onDeleteSector,
     } = this.props;
-    this.setState({rootLoading: true})
+    this.setState({ rootLoading: true });
     let id = key;
-    const {data} = await axios(
-          `${config.dataApi}dataset/${id}/tree/${
-            defaultExpandKey
-          }?catalogueKey=${catalogueKey}&&insertPlaceholder=true${this.appendTypeParam(treeType)}`
-        )
-        .then(res => {
-          if(treeType === "SOURCE"){
-            for(let i = res.data.length -2; i > -1; i--){
-              if(!res.data[i].sectorKey && res.data[i+1].sectorKey){
-                res.data[i].sectorKey = res.data[i+1].sectorKey
-              }
+    const { data } = await axios(
+      `${
+        config.dataApi
+      }dataset/${id}/tree/${defaultExpandKey}?catalogueKey=${catalogueKey}&&insertPlaceholder=true${this.appendTypeParam(
+        treeType
+      )}`
+    )
+      .then((res) => {
+        if (treeType === "SOURCE") {
+          for (let i = res.data.length - 2; i > -1; i--) {
+            if (!res.data[i].sectorKey && res.data[i + 1].sectorKey) {
+              res.data[i].sectorKey = res.data[i + 1].sectorKey;
             }
-            return res;
-          } else if(treeType === "CATALOGUE" || treeType === "readOnly"){
-            for(let i = res.data.length -2; i > -1; i--){
-              if(res.data[i].sectorKey && res.data[i].sectorKey !== res.data[i+1].sectorKey){
-                res.data[i].sectorRoot = true
-              }
-            }
-            return res;
-          } else {
-            return res;
           }
+          return res;
+        } else if (treeType === "CATALOGUE" || treeType === "readOnly") {
+          for (let i = res.data.length - 2; i > -1; i--) {
+            if (
+              res.data[i].sectorKey &&
+              res.data[i].sectorKey !== res.data[i + 1].sectorKey
+            ) {
+              res.data[i].sectorRoot = true;
+            }
+          }
+          return res;
+        } else {
+          return res;
         }
-        )
-        .then(res =>
-          this.decorateWithSectorsAndDataset({
-            data: { result: res.data }
-          }).then(() => res)
-        )
+      })
+      .then((res) =>
+        this.decorateWithSectorsAndDataset({
+          data: { result: res.data },
+        }).then(() => res)
+      );
 
-    if(data.length === 0){
-      return this.setState({error: {message: `No classification found for Taxon ID: ${defaultExpandKey}`}}, this.loadRoot_)
-    }    
-    const tx = data[data.length-1]
+    if (data.length === 0) {
+      return this.setState(
+        {
+          error: {
+            message: `No classification found for Taxon ID: ${defaultExpandKey}`,
+          },
+        },
+        this.loadRoot_
+      );
+    }
+    const tx = data[data.length - 1];
     let root = {
       taxon: tx,
       key: tx.id,
       datasetKey: id,
       childCount: tx.childCount,
       isLeaf: tx.childCount === 0,
-      childOffset: 0}
-      root.title = (
+      childOffset: 0,
+    };
+    root.title = (
+      <ColTreeNode
+        taxon={tx}
+        datasetKey={id}
+        onDeleteSector={onDeleteSector}
+        confirmVisible={false}
+        treeType={this.props.treeType}
+        showSourceTaxon={showSourceTaxon}
+        reloadSelfAndSiblings={() => {
+          const loadedChildIds = root.children
+            ? root.children
+                .filter((c) => c.children && c.children.length > 0)
+                .map((c) => c.key)
+            : null;
+          return this.loadRoot().then(() =>
+            loadedChildIds
+              ? this.reloadLoadedKeys(loadedChildIds, false)
+              : false
+          );
+        }}
+        reloadChildren={() => this.fetchChildPage(root, true)}
+      />
+    );
+
+    const root_ = root;
+    for (let i = data.length - 2; i >= 0; i--) {
+      const tx = data[i];
+      const node = {
+        taxon: tx,
+        key: tx.id,
+        datasetKey: id,
+        childCount: tx.childCount,
+        isLeaf: tx.childCount === 0,
+        childOffset: 0,
+      };
+      node.ref = node;
+      node.title = (
         <ColTreeNode
           taxon={tx}
           datasetKey={id}
@@ -239,103 +321,99 @@ class ColTree extends React.Component {
           treeType={this.props.treeType}
           showSourceTaxon={showSourceTaxon}
           reloadSelfAndSiblings={() => {
-            const loadedChildIds = root.children ? root.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-           return this.loadRoot().then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+            const loadedChildIds = root.children
+              ? root.children
+                  .filter((c) => c.children && c.children.length > 0)
+                  .map((c) => c.key)
+              : null;
+            return this.fetchChildPage(root, true).then(() =>
+              loadedChildIds
+                ? this.reloadLoadedKeys(loadedChildIds, false)
+                : false
+            );
           }}
-          reloadChildren={() => this.fetchChildPage(root, true)}
+          reloadChildren={() => this.fetchChildPage(node, true)}
         />
-      )
+      );
 
-      const root_ = root;
-      for(let i= data.length-2; i >= 0; i--){
-        const tx = data[i];
-        const node  = {
-          taxon: tx,
-          key: tx.id,
-          datasetKey: id,
-          childCount: tx.childCount,
-          isLeaf: tx.childCount === 0,
-          childOffset: 0}
-          node.ref = node;
-          node.title = (
-            <ColTreeNode
-              taxon={tx}
-              datasetKey={id}
-              onDeleteSector={onDeleteSector}
-              confirmVisible={false}
-              treeType={this.props.treeType}
-              showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={() => {
-                const loadedChildIds = root.children ? root.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-                return this.fetchChildPage(root, true).then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
-              }}
-              reloadChildren={() => this.fetchChildPage(node, true)}
-            />
-          )
+      root.children = [node];
+      root = node;
+    }
 
-          root.children = [node];
-          root = node;
-      }
-
-    const {treeData} = this.state;
-    var rootIndex = treeData.findIndex(x => x.key == root_.key);
+    const { treeData } = this.state;
+    var rootIndex = treeData.findIndex((x) => x.key == root_.key);
     treeData[rootIndex] = root_;
 
-     const loadedKeys = [...data.map(t => t.id).reverse()]
+    const loadedKeys = [...data.map((t) => t.id).reverse()];
 
-     this.setState({treeData, rootLoading:false}, () => this.reloadLoadedKeys(loadedKeys))
+    this.setState({ treeData, rootLoading: false }, () =>
+      this.reloadLoadedKeys(loadedKeys)
+    );
+  };
 
-  }
-  
   fetchChildPage = (dataRef, reloadAll, dontUpdateState) => {
-    const { showSourceTaxon, dataset, treeType, catalogueKey, onDeleteSector } = this.props;
-    const {treeData} = this.state;
+    const {
+      showSourceTaxon,
+      dataset,
+      treeType,
+      catalogueKey,
+      onDeleteSector,
+    } = this.props;
+    const { treeData } = this.state;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
     const offset = _.get(dataRef, "childOffset");
-    
+
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         dataRef.taxon.id //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${
-        catalogueKey
-      }${this.appendTypeParam(treeType)}`
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${catalogueKey}${this.appendTypeParam(
+        treeType
+      )}`
     )
-      .then(res => {
-        if (_.get(res, 'data.empty') !== true && treeType === "SOURCE" && _.get(dataRef, "taxon.sectorKey")) {
+      .then((res) => {
+        if (
+          _.get(res, "data.empty") !== true &&
+          treeType === "SOURCE" &&
+          _.get(dataRef, "taxon.sectorKey")
+        ) {
           // If it is a source and the parent has a sectorKey, copy it to children
           return {
             ...res,
             data: {
               ...res.data,
-              result: res.data.result.map(r => ({
+              result: res.data.result.map((r) => ({
                 sectorKey: _.get(dataRef, "taxon.sectorKey"),
-                ...r
-                
-              }))
-            }
+                ...r,
+              })),
+            },
           };
-        } else if (_.get(res, 'data.empty') !== true && (treeType === "CATALOGUE" ||  treeType === "redOnly")&& _.get(dataRef, "taxon.sectorKey")) {
+        } else if (
+          _.get(res, "data.empty") !== true &&
+          (treeType === "CATALOGUE" || treeType === "redOnly") &&
+          _.get(dataRef, "taxon.sectorKey")
+        ) {
           // If it is a source and the parent has a sectorKey, copy it to children
           return {
             ...res,
             data: {
               ...res.data,
-              result: res.data.result.map(r => ({
-                isRootSector: _.get(r, 'sectorKey') && _.get(r, 'sectorKey') !== _.get(dataRef, "taxon.sectorKey"),
-                ...r
-                
-              }))
-            }
+              result: res.data.result.map((r) => ({
+                isRootSector:
+                  _.get(r, "sectorKey") &&
+                  _.get(r, "sectorKey") !== _.get(dataRef, "taxon.sectorKey"),
+                ...r,
+              })),
+            },
           };
         } else {
           return res;
         }
       })
       .then(this.decorateWithSectorsAndDataset)
-      .then(res =>
+      .then((res) =>
         res.data.result
-          ? res.data.result.map(tx => {
+          ? res.data.result.map((tx) => {
               let childDataRef = {
                 taxon: tx,
                 key: tx.id,
@@ -344,7 +422,7 @@ class ColTree extends React.Component {
                 isLeaf: tx.childCount === 0,
                 childOffset: 0,
                 parent: dataRef,
-                name: tx.name
+                name: tx.name,
               };
 
               childDataRef.title = (
@@ -355,8 +433,16 @@ class ColTree extends React.Component {
                   onDeleteSector={onDeleteSector}
                   treeType={this.props.treeType}
                   reloadSelfAndSiblings={() => {
-                    const loadedChildIds = dataRef.children ? dataRef.children.filter(c => c.children && c.children.length > 0).map(c => c.key) : null;
-                    return this.fetchChildPage(dataRef, true).then(() => loadedChildIds? this.reloadLoadedKeys(loadedChildIds, false) : false)
+                    const loadedChildIds = dataRef.children
+                      ? dataRef.children
+                          .filter((c) => c.children && c.children.length > 0)
+                          .map((c) => c.key)
+                      : null;
+                    return this.fetchChildPage(dataRef, true).then(() =>
+                      loadedChildIds
+                        ? this.reloadLoadedKeys(loadedChildIds, false)
+                        : false
+                    );
                   }}
                   reloadChildren={() => this.fetchChildPage(childDataRef, true)}
                   showSourceTaxon={showSourceTaxon}
@@ -368,14 +454,14 @@ class ColTree extends React.Component {
             })
           : []
       )
-      .then(data => {
+      .then((data) => {
         // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
         dataRef.children =
           dataRef.children && offset !== 0 && !reloadAll
             ? [...dataRef.children, ...data]
             : data;
-        dataRef.isLeaf =  !dataRef.children ||    dataRef.children.length === 0;
-        dataRef.taxon.firstChildRank = _.get(dataRef, 'children[0].taxon.rank')
+        dataRef.isLeaf = !dataRef.children || dataRef.children.length === 0;
+        dataRef.taxon.firstChildRank = _.get(dataRef, "children[0].taxon.rank");
         if (offset + CHILD_PAGE_SIZE < childcount) {
           const loadMoreFn = () => {
             dataRef.childOffset += CHILD_PAGE_SIZE;
@@ -388,7 +474,7 @@ class ColTree extends React.Component {
             this.setState(
               {
                 treeData: [...treeData],
-                defaultExpandAll: false
+                defaultExpandAll: false,
               },
               () => {
                 this.fetchChildPage(dataRef, false);
@@ -406,33 +492,31 @@ class ColTree extends React.Component {
               ),
               key: "__loadMoreBTN__",
               childCount: 0,
-              isLeaf: true
-            }
+              isLeaf: true,
+            },
           ];
         }
-        if(!dontUpdateState){
+        if (!dontUpdateState) {
           this.setState({
             treeData: [...treeData],
-            loadedKeys: [...new Set([...this.state.loadedKeys, dataRef.key])]
+            loadedKeys: [...new Set([...this.state.loadedKeys, dataRef.key])],
           });
         }
-        
-        
       });
   };
 
-  decorateWithSectorsAndDataset = res => {
+  decorateWithSectorsAndDataset = (res) => {
     if (!res.data.result) return res;
-    const {catalogueKey} = this.props
+    const { catalogueKey } = this.props;
     return Promise.all(
       res.data.result
-        .filter(tx => !!tx.sectorKey)
-        .map(tx =>
-          this.sectorLoader.load(tx.sectorKey, catalogueKey).then(r => {
+        .filter((tx) => !!tx.sectorKey)
+        .map((tx) =>
+          this.sectorLoader.load(tx.sectorKey, catalogueKey).then((r) => {
             tx.sector = r;
             return datasetLoader
               .load(r.subjectDatasetKey)
-              .then(dataset => (tx.sector.dataset = dataset));
+              .then((dataset) => (tx.sector.dataset = dataset));
           })
         )
     ).then(() => res);
@@ -445,245 +529,310 @@ class ColTree extends React.Component {
     return this.fetchChildPage(treeNode.ref, reloadAll);
   };
 
-
-  findNode = (id, nodeArray, findByName) => {    
+  findNode = (id, nodeArray, findByName) => {
     let node = null;
 
-    node = nodeArray.find((n)=> !findByName ? _.get(n, 'taxon.id') === id  : _.get(n, 'taxon.name') === id )
+    node = nodeArray.find((n) =>
+      !findByName ? _.get(n, "taxon.id") === id : _.get(n, "taxon.name") === id
+    );
 
-    if(node){
+    if (node) {
       return node;
     } else {
-      const children = nodeArray.map(n => _.get(n, 'children') || [])
-      const flattenedChildren = children.flat()
-      if (flattenedChildren.length === 0){
+      const children = nodeArray.map((n) => _.get(n, "children") || []);
+      const flattenedChildren = children.flat();
+      if (flattenedChildren.length === 0) {
         return null;
       } else {
-        return this.findNode(id, flattenedChildren, findByName)
+        return this.findNode(id, flattenedChildren, findByName);
       }
     }
-  
-  }
+  };
 
-  
   reloadLoadedKeys = async (keys, expandAll = true) => {
-    this.setState({rootLoading: true})
-    const {loadedKeys: storedKeys} = this.state;
-    const {defaultExpandKey} = this.props;
+    this.setState({ rootLoading: true });
+    const { loadedKeys: storedKeys } = this.state;
+    const { defaultExpandKey } = this.props;
 
-    let {treeData} = this.state;
-    const targetTaxon = defaultExpandKey ? this.findNode(defaultExpandKey, treeData) : null;
+    let { treeData } = this.state;
+    const targetTaxon = defaultExpandKey
+      ? this.findNode(defaultExpandKey, treeData)
+      : null;
     const loadedKeys = keys ? [...keys] : [...storedKeys];
     for (let index = 0; index < loadedKeys.length; index++) {
       let node = this.findNode(loadedKeys[index], treeData);
-      if (!node && targetTaxon && loadedKeys[index-1]){
-        // If the node is not found look for insertae sedis nodes in the children of the parent and insert the 'Not assigned' between the parent and the node 
-        const parentNode = this.findNode(loadedKeys[index-1], treeData);
-        if(parentNode && _.isArray(_.get(parentNode, 'children')) && parentNode.children.length > 0) {
-          node = parentNode.children.find(c => c.taxon.id.indexOf('incertae-sedis') > -1)
-          if(node){
-            loadedKeys.splice(index, 0, node.taxon.id)
+      if (!node && targetTaxon && loadedKeys[index - 1]) {
+        // If the node is not found look for insertae sedis nodes in the children of the parent and insert the 'Not assigned' between the parent and the node
+        const parentNode = this.findNode(loadedKeys[index - 1], treeData);
+        if (
+          parentNode &&
+          _.isArray(_.get(parentNode, "children")) &&
+          parentNode.children.length > 0
+        ) {
+          node = parentNode.children.find(
+            (c) => c.taxon.id.indexOf("incertae-sedis") > -1
+          );
+          if (node) {
+            loadedKeys.splice(index, 0, node.taxon.id);
           }
-        } 
-      }
-      if(node){
-        await this.fetchChildPage(node, true, true)
-        if(targetTaxon 
-          && index === loadedKeys.length - 2 
-          && _.get(node, 'taxon.id') !== _.get(targetTaxon, 'taxon.id')
-          && _.isArray(node.children)  
-          && !node.children.find(c => _.get(c, 'taxon.id') === _.get(targetTaxon, 'taxon.id')) ){
-            if (node.children.length - 1 === CHILD_PAGE_SIZE){
-              // its the parent of the taxon we are after - if its not in the first page, insert it
-              node.children = [targetTaxon, ...node.children]
-              this.setState({treeData: [...this.state.treeData]}, () => {
-                setTimeout(()=>{
-                  if(_.get(this, 'treeRef.current')){
-                    this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
-                }
-                } , 100)
-                              
-              })
-            } else {
-              // It has gone missing from the tree
-                this.setState(
-                  {
-                    nodeNotFoundErr: (
-                      <span>
-                        Cannot find taxon {defaultExpandKey} in tree &#128549;
-                      </span>
-                    )
-                  },
-                  () => {
-                    if (
-                      this.props.treeType === "CATALOGUE" &&
-                      typeof this.props.addMissingTargetKey === "function"
-                    ) {
-                      this.props.addMissingTargetKey(defaultExpandKey);
-                    }
-                  }
-                ); 
-            }
-        } else {
-          const treeRef = _.get(this, 'treeRef');
-          setTimeout(()=>{
-            if(_.get(treeRef, 'current')){
-              treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
-          }
-          } , 100)
-         
-          
         }
-      } 
+      }
+      if (node) {
+        await this.fetchChildPage(node, true, true);
+        if (
+          targetTaxon &&
+          index === loadedKeys.length - 2 &&
+          _.get(node, "taxon.id") !== _.get(targetTaxon, "taxon.id") &&
+          _.isArray(node.children) &&
+          !node.children.find(
+            (c) => _.get(c, "taxon.id") === _.get(targetTaxon, "taxon.id")
+          )
+        ) {
+          if (node.children.length - 1 === CHILD_PAGE_SIZE) {
+            // its the parent of the taxon we are after - if its not in the first page, insert it
+            node.children = [targetTaxon, ...node.children];
+            this.setState({ treeData: [...this.state.treeData] }, () => {
+              setTimeout(() => {
+                if (_.get(this, "treeRef.current")) {
+                  this.treeRef.current.scrollTo({
+                    key: this.props.defaultExpandKey,
+                  });
+                }
+              }, 100);
+            });
+          } else {
+            // It has gone missing from the tree
+            this.setState(
+              {
+                nodeNotFoundErr: (
+                  <span>
+                    Cannot find taxon {defaultExpandKey} in tree &#128549;
+                  </span>
+                ),
+              },
+              () => {
+                if (
+                  this.props.treeType === "CATALOGUE" &&
+                  typeof this.props.addMissingTargetKey === "function"
+                ) {
+                  this.props.addMissingTargetKey(defaultExpandKey);
+                }
+              }
+            );
+          }
+        } else {
+          const treeRef = _.get(this, "treeRef");
+          setTimeout(() => {
+            if (_.get(treeRef, "current")) {
+              treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
+            }
+          }, 100);
+        }
+      }
     }
-    const newState =  {loadedKeys, rootLoading: false};
+    const newState = { loadedKeys, rootLoading: false };
     if (expandAll) {
       newState.expandedKeys = loadedKeys;
     }
     this.setState(newState, () => {
-      if(defaultExpandKey){
-        setTimeout(()=>{
-          if(_.get(this, 'treeRef.current')){
+      if (defaultExpandKey) {
+        setTimeout(() => {
+          if (_.get(this, "treeRef.current")) {
             this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
-        }
-        } , 100)
-      }             
-    })
-  }
+          }
+        }, 100);
+      }
+    });
+  };
 
   confirmAttach = (node, dragNode, mode) => {
-
-    const { attachFn} = this.props;
+    const { attachFn } = this.props;
     /*
        This is where sector mapping should be posted to the server
        */
-    node.title = React.cloneElement(node.title, {isUpdating: true})
-    
+    node.title = React.cloneElement(node.title, { isUpdating: true });
+
     this.setState({ treeData: [...this.state.treeData] });
-    attachFn(node, dragNode, mode).then(res => {
-      
+    attachFn(node, dragNode, mode).then((res) => {
       dragNode.title.props.reloadSelfAndSiblings();
-      node.title.props.reloadSelfAndSiblings().then(() => {
-        const children = _.get(node, 'parent.children') || this.state.treeData;
-        const newNodeReference = mode === "REPLACE" ? this.findNode(dragNode.taxon.name, children, true ) : this.findNode(node.taxon.id, children );
-        this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
-        );
-      })
-      .catch((err)=> {
-        console.log(err)
-        alert(err)});
+      node.title.props
+        .reloadSelfAndSiblings()
+        .then(() => {
+          const children =
+            _.get(node, "parent.children") || this.state.treeData;
+          const newNodeReference =
+            mode === "REPLACE"
+              ? this.findNode(dragNode.taxon.name, children, true)
+              : this.findNode(node.taxon.id, children);
+          this.fetchChildPage(newNodeReference, true).then(
+            () =>
+              (node.title = React.cloneElement(node.title, {
+                isUpdating: false,
+              }))
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err);
+        });
       //  .catch((err)=> alert(err));
     });
   };
 
   confirmMultiAttach = (node, dragNodes) => {
-
-    const { attachFn} = this.props;
+    const { attachFn } = this.props;
     /*
        This is where sector mapping should be posted to the server
        */
-    node.title = React.cloneElement(node.title, {isUpdating: true})
-    
+    node.title = React.cloneElement(node.title, { isUpdating: true });
+
     this.setState({ treeData: [...this.state.treeData] });
-    Promise.allSettled(dragNodes.map(dragNode => attachFn(node, dragNode, 'ATTACH')))
-    .then(res => {
-      const errors = res.filter(r => r.status === 'rejected');
-      if(errors.length > 0){
-        alert(`There were ${errors.length} errors out of ${dragNodes.length} attachments. Please reload trees and inspect carefully.`)
-      }
-      dragNodes.forEach(dragNode => dragNode.title.props.reloadSelfAndSiblings())
-      node.title.props.reloadSelfAndSiblings().then(() => {
-        const newNodeReference = this.findNode(node.taxon.id, node.parent.children );
-        this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
+    Promise.allSettled(
+      dragNodes.map((dragNode) => attachFn(node, dragNode, "ATTACH"))
+    ).then((res) => {
+      const errors = res.filter((r) => r.status === "rejected");
+      if (errors.length > 0) {
+        alert(
+          `There were ${errors.length} errors out of ${dragNodes.length} attachments. Please reload trees and inspect carefully.`
         );
-      })
-      .catch((err)=> {
-        console.log(err)
-        alert(err)});
+      }
+      dragNodes.forEach((dragNode) =>
+        dragNode.title.props.reloadSelfAndSiblings()
+      );
+      node.title.props
+        .reloadSelfAndSiblings()
+        .then(() => {
+          const newNodeReference = this.findNode(
+            node.taxon.id,
+            node.parent.children
+          );
+          this.fetchChildPage(newNodeReference, true).then(
+            () =>
+              (node.title = React.cloneElement(node.title, {
+                isUpdating: false,
+              }))
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err);
+        });
       //  .catch((err)=> alert(err));
     });
   };
 
   replaceSectorTarget = (node, dragNode) => {
-    const {taxon: {sector}} = dragNode;
+    const {
+      taxon: { sector },
+    } = dragNode;
     const target = {
-      id: _.get(node, 'taxon.id'),
-      name: _.get(node, 'taxon.name'),
-      rank: _.get(node, 'taxon.rank'),
-      status: _.get(node, 'taxon.status'),
-      parent: _.get(node, 'taxon.parentId'),
-    }
-    const {datasetKey, id, mode, originalSubjectId, subjectDatasetKey, subject} = sector;
-    const updatedSector = {
-      datasetKey, 
-      id, 
-      mode, 
-      originalSubjectId, 
-      subjectDatasetKey, 
+      id: _.get(node, "taxon.id"),
+      name: _.get(node, "taxon.name"),
+      rank: _.get(node, "taxon.rank"),
+      status: _.get(node, "taxon.status"),
+      parent: _.get(node, "taxon.parentId"),
+    };
+    const {
+      datasetKey,
+      id,
+      mode,
+      originalSubjectId,
+      subjectDatasetKey,
       subject,
-      target}
-return  axios
-          .put(
-            `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`, updatedSector
-          ) 
-          .then(res => {
-      
-            dragNode.title.props.reloadSelfAndSiblings();
-            node.title.props.reloadSelfAndSiblings().then(() => {
-              const children = _.get(node, 'parent.children') || this.state.treeData;
-              const newNodeReference =  this.findNode(node.taxon.id, children );
-              this.fetchChildPage(newNodeReference, true).then(()=> node.title = React.cloneElement(node.title, {isUpdating: false})
-              );
-              notification.open({
-                message: `Sector target updated`
-              });
-            })
-            .catch((err)=> {
-              console.log(err)
-              alert(err)});
-            //  .catch((err)=> alert(err));
+    } = sector;
+    const updatedSector = {
+      datasetKey,
+      id,
+      mode,
+      originalSubjectId,
+      subjectDatasetKey,
+      subject,
+      target,
+    };
+    return axios
+      .put(
+        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
+        updatedSector
+      )
+      .then((res) => {
+        dragNode.title.props.reloadSelfAndSiblings();
+        node.title.props
+          .reloadSelfAndSiblings()
+          .then(() => {
+            const children =
+              _.get(node, "parent.children") || this.state.treeData;
+            const newNodeReference = this.findNode(node.taxon.id, children);
+            this.fetchChildPage(newNodeReference, true).then(
+              () =>
+                (node.title = React.cloneElement(node.title, {
+                  isUpdating: false,
+                }))
+            );
+            notification.open({
+              message: `Sector target updated`,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            alert(err);
           });
-           
-          
-  }
+        //  .catch((err)=> alert(err));
+      });
+  };
 
-  handleAttach = e => {
+  handleAttach = (e) => {
     const { rank } = this.props;
     const dragNode = this.props.dragNode.ref;
-    const {selectedSourceTreeNodes} = this.props;
+    const { selectedSourceTreeNodes } = this.props;
     // Group draggednodes by taxon rank
-    const rankGroupedSelectedNodes = _.groupBy(selectedSourceTreeNodes, n => n.taxon.rank);
-    const draggedNodeRanksAreMixed = Object.keys(rankGroupedSelectedNodes).length > 1;
+    const rankGroupedSelectedNodes = _.groupBy(
+      selectedSourceTreeNodes,
+      (n) => n.taxon.rank
+    );
+    const draggedNodeRanksAreMixed =
+      Object.keys(rankGroupedSelectedNodes).length > 1;
     // Pick only nodes of the highest rank among dragged nodes
-    const sortedDraggedRanks = Object.keys(rankGroupedSelectedNodes).sort((a, b) => rank.indexOf(a) <= rank.indexOf(b))
+    const sortedDraggedRanks = Object.keys(rankGroupedSelectedNodes).sort(
+      (a, b) => rank.indexOf(a) <= rank.indexOf(b)
+    );
     const highestDraggedRank = sortedDraggedRanks[0];
-    const selectedNodesOfSameRanksAsDragnode = selectedSourceTreeNodes.length === 0 ? [] : rankGroupedSelectedNodes[highestDraggedRank]
-      .filter(n => n.taxon.id.indexOf('incertae-sedis') === -1 && n.taxon.id !== dragNode.taxon.id)
+    const selectedNodesOfSameRanksAsDragnode =
+      selectedSourceTreeNodes.length === 0
+        ? []
+        : rankGroupedSelectedNodes[highestDraggedRank].filter(
+            (n) =>
+              n.taxon.id.indexOf("incertae-sedis") === -1 &&
+              n.taxon.id !== dragNode.taxon.id
+          );
     // Only do multiselect if the dragged taxon is actually among selected nodes
-    const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(n => n.taxon.id === dragNode.taxon.id)
-  
-    const {node} = e;
-    
-    const dragNodeIsPlaceholder =  dragNode.taxon.id.indexOf('incertae-sedis') > -1;
-    const nodeIsPlaceholder = node.taxon.id.indexOf('incertae-sedis') > -1;
-    const willProduceDuplicateChild = node.children && !dragNodeIsPlaceholder ? node.children.find(c => c.taxon.name === dragNode.taxon.name) : false;
+    const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(
+      (n) => n.taxon.id === dragNode.taxon.id
+    );
+
+    const { node } = e;
+
+    const dragNodeIsPlaceholder =
+      dragNode.taxon.id.indexOf("incertae-sedis") > -1;
+    const nodeIsPlaceholder = node.taxon.id.indexOf("incertae-sedis") > -1;
+    const willProduceDuplicateChild =
+      node.children && !dragNodeIsPlaceholder
+        ? node.children.find((c) => c.taxon.name === dragNode.taxon.name)
+        : false;
     const taxonNameIsEqual = dragNode.taxon.name === node.taxon.name;
-    const dragNodeIsAlreadySectorSubject = _.get(dragNode, "taxon.sector") && _.get(dragNode, "taxon.id") === _.get(dragNode, "taxon.sector.subject.id")
-    
-    if (
-      dragNode.taxon.datasetKey ===
-      node.taxon.datasetKey
-    ) {
+    const dragNodeIsAlreadySectorSubject =
+      _.get(dragNode, "taxon.sector") &&
+      _.get(dragNode, "taxon.id") ===
+        _.get(dragNode, "taxon.sector.subject.id");
+
+    if (dragNode.taxon.datasetKey === node.taxon.datasetKey) {
       message.warn("You cannot modify the COL draft in attachment mode");
       return; // we are in modify mode and should not react to the event
     }
-    if (
-      nodeIsPlaceholder
-    ) {
+    if (nodeIsPlaceholder) {
       message.warn("You cannot create sectors on placeholder nodes");
-      return; 
+      return;
     }
-/*     if (
+    /*     if (
       _.get(dragNode, "taxon.sector") &&
       _.get(dragNode, "taxon.id") ===
         _.get(dragNode, "taxon.sector.subject.id")
@@ -701,218 +850,278 @@ return  axios
       return; // we are in modify mode and should not react to the event
     } */
 
-
     const showRankWarning =
       !IRREGULAR_RANKS.includes(node.taxon.rank) &&
       !IRREGULAR_RANKS.includes(dragNode.taxon.rank) &&
-      rank.indexOf(dragNode.taxon.rank) <
-        rank.indexOf(node.taxon.rank);
+      rank.indexOf(dragNode.taxon.rank) < rank.indexOf(node.taxon.rank);
 
     // default to attach mode
     let mode = "ATTACH";
-    
-    if (
-      dragNode.taxon.rank ===
-      node.taxon.rank
-    ) {
+
+    if (dragNode.taxon.rank === node.taxon.rank) {
       mode = "UNION";
     }
-    if (dragNodeIsPlaceholder){
+    if (dragNodeIsPlaceholder) {
       mode = "UNION";
     }
     let msg;
-    if(mode === "ATTACH"){
-      msg = <span>
-      {showRankWarning && (
-        <Alert
-          message="Subject rank is higher than target rank"
-          type="warning"
-        />
-      )}
-      Attach{" "}
-      <span
-        dangerouslySetInnerHTML={{
-          __html: dragNode.taxon.name
-        }}
-      />{" "}
-      from {dragNode.dataset.title} under{" "}
-      <span
-        dangerouslySetInnerHTML={{
-          __html: node.taxon.name
-        }}
-      />{" "}
-      in this project?
-      <br/>
-      You may also choose to UNION.
-     {willProduceDuplicateChild && 
-     <Alert 
-     style={{marginTop: '6px'}} 
-     type="error" 
-     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
-    </span>
+    if (mode === "ATTACH") {
+      msg = (
+        <span>
+          {showRankWarning && (
+            <Alert
+              message="Subject rank is higher than target rank"
+              type="warning"
+            />
+          )}
+          Attach{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: dragNode.taxon.name,
+            }}
+          />{" "}
+          from {dragNode.dataset.title} under{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: node.taxon.name,
+            }}
+          />{" "}
+          in this project?
+          <br />
+          You may also choose to UNION.
+          {willProduceDuplicateChild && (
+            <Alert
+              style={{ marginTop: "6px" }}
+              type="error"
+              message={
+                <div>
+                  <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
+                  already has a child named{" "}
+                  <span
+                    dangerouslySetInnerHTML={{ __html: dragNode.taxon.name }}
+                  />
+                </div>
+              }
+            />
+          )}
+        </span>
+      );
     } else {
-      msg =         <span>
-      {showRankWarning && (
-        <Alert
-          message="Subject rank is higher than target rank"
-          type="warning"
-        />
-      )}
-     {dragNodeIsPlaceholder ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `: `Ranks are equal. Do you want to ${taxonNameIsEqual ? 'replace or ':''}union children of `}
-     {!dragNodeIsPlaceholder && <span
-        dangerouslySetInnerHTML={{
-          __html: dragNode.taxon.name
-        }}
-      />}{" "}
-      in {dragNode.dataset.title} into children of{" "}
-      <span
-        dangerouslySetInnerHTML={{
-          __html: e.node.taxon.name
-        }}
-      />{" "}
-    </span>
+      msg = (
+        <span>
+          {showRankWarning && (
+            <Alert
+              message="Subject rank is higher than target rank"
+              type="warning"
+            />
+          )}
+          {dragNodeIsPlaceholder
+            ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `
+            : `Ranks are equal. Do you want to ${
+                taxonNameIsEqual ? "replace or " : ""
+              }union children of `}
+          {!dragNodeIsPlaceholder && (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: dragNode.taxon.name,
+              }}
+            />
+          )}{" "}
+          in {dragNode.dataset.title} into children of{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: e.node.taxon.name,
+            }}
+          />{" "}
+        </span>
+      );
     }
 
-    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
+    if (
+      selectedNodesOfSameRanksAsDragnode.length > 0 &&
+      taxonIsInSelectedNodes
+    ) {
       const limit = 10;
       const taxa = [dragNode, ...selectedNodesOfSameRanksAsDragnode];
-      msg = <span>
-      {showRankWarning && (
-        <Alert
-          message="Subject rank is higher than target rank"
-          type="warning"
-        />
-      )}
-      {draggedNodeRanksAreMixed && (
-        <Alert
-          message={`You selected nodes of ${sortedDraggedRanks.length} different ranks! Only ${rankGroupedSelectedNodes[highestDraggedRank].length} taxa of rank ${highestDraggedRank} will be attached. Ignoring ${sortedDraggedRanks.slice(1).map(e => `${e} (${rankGroupedSelectedNodes[e].length}) `).join(', ')}`}
-          type="warning"
-        />
-      )}
-      Attach{" "}
-      <ul>
-      {taxa.slice(0, limit).map(t => <li
-        dangerouslySetInnerHTML={{
-          __html: t.taxon.name
-        }}
-      />)}
-      </ul>
-      {taxa.length > limit && ` and ${taxa.length - limit} more taxa `}
-      {" "}
-      from {dragNode.dataset.title} under{" "}
-      <span
-        dangerouslySetInnerHTML={{
-          __html: node.taxon.name
-        }}
-      />{" "}
-      in this project?
-      <br/>
-     {willProduceDuplicateChild && 
-     <Alert 
-     style={{marginTop: '6px'}} 
-     type="error" 
-     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
-    </span>
-      
+      msg = (
+        <span>
+          {showRankWarning && (
+            <Alert
+              message="Subject rank is higher than target rank"
+              type="warning"
+            />
+          )}
+          {draggedNodeRanksAreMixed && (
+            <Alert
+              message={`You selected nodes of ${
+                sortedDraggedRanks.length
+              } different ranks! Only ${
+                rankGroupedSelectedNodes[highestDraggedRank].length
+              } taxa of rank ${highestDraggedRank} will be attached. Ignoring ${sortedDraggedRanks
+                .slice(1)
+                .map((e) => `${e} (${rankGroupedSelectedNodes[e].length}) `)
+                .join(", ")}`}
+              type="warning"
+            />
+          )}
+          Attach{" "}
+          <ul>
+            {taxa.slice(0, limit).map((t) => (
+              <li
+                dangerouslySetInnerHTML={{
+                  __html: t.taxon.name,
+                }}
+              />
+            ))}
+          </ul>
+          {taxa.length > limit && ` and ${taxa.length - limit} more taxa `} from{" "}
+          {dragNode.dataset.title} under{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: node.taxon.name,
+            }}
+          />{" "}
+          in this project?
+          <br />
+          {willProduceDuplicateChild && (
+            <Alert
+              style={{ marginTop: "6px" }}
+              type="error"
+              message={
+                <div>
+                  <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
+                  already has a child named{" "}
+                  <span
+                    dangerouslySetInnerHTML={{ __html: dragNode.taxon.name }}
+                  />
+                </div>
+              }
+            />
+          )}
+        </span>
+      );
     }
 
     if (dragNodeIsAlreadySectorSubject) {
-      msg = <span>
-      {showRankWarning && (
-        <Alert
-          message="Subject rank is higher than target rank"
-          type="warning"
-        />
-      )}
-      
-      Replace sector target?
-      
-      <br/>
-     {willProduceDuplicateChild && 
-     <Alert 
-     style={{marginTop: '6px'}} 
-     type="error" 
-     message={<div><span dangerouslySetInnerHTML={{__html: node.taxon.name}} /> already has a child named <span dangerouslySetInnerHTML={{__html: dragNode.taxon.name}} /></div>} />}
-    </span>
+      msg = (
+        <span>
+          {showRankWarning && (
+            <Alert
+              message="Subject rank is higher than target rank"
+              type="warning"
+            />
+          )}
+          Replace sector target?
+          <br />
+          {willProduceDuplicateChild && (
+            <Alert
+              style={{ marginTop: "6px" }}
+              type="error"
+              message={
+                <div>
+                  <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
+                  already has a child named{" "}
+                  <span
+                    dangerouslySetInnerHTML={{ __html: dragNode.taxon.name }}
+                  />
+                </div>
+              }
+            />
+          )}
+        </span>
+      );
     }
 
-    const unionOptions =  dragNodeIsPlaceholder ? [
-      {
-        text: "Union",
-        action: () => this.confirmAttach(node, dragNode, "UNION")
-      }
-    ] : taxonNameIsEqual ? [
-      {
-        text: "Attach",
-        type: "dashed",
-        action: () => this.confirmAttach(node, dragNode, "ATTACH")
-      },
-      {
-        text: "Replace",
-        type: "danger",
-        action: () => this.confirmAttach(node, dragNode, "REPLACE")
-      },
-      
-      {
-        text: "Union",
-        type: "primary",
-        action: () => this.confirmAttach(node, dragNode, "UNION")
-      }
-    ] : [
-      {
-        text: "Attach",
-        type: "dashed",
-        action: () => this.confirmAttach(e.node, dragNode, "ATTACH")
-      },     
-      {
-        text: "Union",
-        type: "primary",
-        action: () => this.confirmAttach(node, dragNode, "UNION")
-      }
-    ]
+    const unionOptions = dragNodeIsPlaceholder
+      ? [
+          {
+            text: "Union",
+            action: () => this.confirmAttach(node, dragNode, "UNION"),
+          },
+        ]
+      : taxonNameIsEqual
+      ? [
+          {
+            text: "Attach",
+            type: "dashed",
+            action: () => this.confirmAttach(node, dragNode, "ATTACH"),
+          },
+          {
+            text: "Replace",
+            type: "danger",
+            action: () => this.confirmAttach(node, dragNode, "REPLACE"),
+          },
+
+          {
+            text: "Union",
+            type: "primary",
+            action: () => this.confirmAttach(node, dragNode, "UNION"),
+          },
+        ]
+      : [
+          {
+            text: "Attach",
+            type: "dashed",
+            action: () => this.confirmAttach(e.node, dragNode, "ATTACH"),
+          },
+          {
+            text: "Union",
+            type: "primary",
+            action: () => this.confirmAttach(node, dragNode, "UNION"),
+          },
+        ];
 
     let actions = [];
-    if(selectedNodesOfSameRanksAsDragnode.length > 0 && taxonIsInSelectedNodes){
-      actions= [
+    if (
+      selectedNodesOfSameRanksAsDragnode.length > 0 &&
+      taxonIsInSelectedNodes
+    ) {
+      actions = [
         {
           text: "Attach",
           type: "primary",
-          action: () => this.confirmMultiAttach(node, [dragNode, ...selectedNodesOfSameRanksAsDragnode])
-        }
-      ]
-    } else if(dragNodeIsAlreadySectorSubject) {
+          action: () =>
+            this.confirmMultiAttach(node, [
+              dragNode,
+              ...selectedNodesOfSameRanksAsDragnode,
+            ]),
+        },
+      ];
+    } else if (dragNodeIsAlreadySectorSubject) {
       actions = [
         {
           text: "Replace target",
           type: "primary",
-          action: () => this.replaceSectorTarget(node, dragNode)
-        }
-      ]
-    } else if(mode === "ATTACH"){
+          action: () => this.replaceSectorTarget(node, dragNode),
+        },
+      ];
+    } else if (mode === "ATTACH") {
       actions = [
-        
         {
           text: "Union",
           type: "dashed",
-          action: () => this.confirmAttach(node, dragNode, "UNION")
+          action: () => this.confirmAttach(node, dragNode, "UNION"),
         },
         {
           text: "Attach",
           type: "primary",
-          action: () => this.confirmAttach(node, dragNode, "ATTACH")
-        }
-      ]
-    }  else {
-      actions = unionOptions
+          action: () => this.confirmAttach(node, dragNode, "ATTACH"),
+        },
+      ];
+    } else {
+      actions = unionOptions;
     }
 
     const nodeTitle = React.cloneElement(node.ref.title);
-    node.ref.title = React.cloneElement(node.ref.title, {confirmVisible: true, confirmTitle: msg, actions: actions,
-    onCancel: () => {
-      node.ref.title = nodeTitle;
-      this.setState({ treeData: [...this.state.treeData] });
-    }
-  })    
+    node.ref.title = React.cloneElement(node.ref.title, {
+      confirmVisible: true,
+      confirmTitle: msg,
+      actions: actions,
+      onCancel: () => {
+        node.ref.title = nodeTitle;
+        this.setState({ treeData: [...this.state.treeData] });
+      },
+    });
 
     console.log(
       dragNode.title.props.taxon.name +
@@ -930,25 +1139,24 @@ return  axios
     axios(
       `${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`
     )
-      .then(res => res.data)
-      .then(draggedTaxon =>
+      .then((res) => res.data)
+      .then((draggedTaxon) =>
         axios.put(
           `${config.dataApi}dataset/${draggedTaxon.datasetKey}/taxon/${draggedTaxon.id}`,
           { ...draggedTaxon, parentId: parent.id }
         )
       )
-      .then(res => {
-       
-        _.remove(dragNode.parent.children, function(n) {
+      .then((res) => {
+        _.remove(dragNode.parent.children, function (n) {
           return n.key === dragNode.key;
         });
-        dragNode.parent.childCount --;
+        dragNode.parent.childCount--;
         dragNode.parent.isLeaf = dragNode.parent.childCount === 0;
         node.title.props.reloadChildren().then(() => {
-          node.childCount ++;
+          node.childCount++;
           node.isLeaf = node.childCount === 0;
-        })
-        
+        });
+
         const oldParentName = dragNode.parent.taxon.name;
         dragNode.parent = node;
         node.title = nodeTitle;
@@ -957,19 +1165,19 @@ return  axios
             You moved{" "}
             <span
               dangerouslySetInnerHTML={{
-                __html: dragNode.name
+                __html: dragNode.name,
               }}
             />{" "}
             from parent{" "}
             <span
               dangerouslySetInnerHTML={{
-                __html: oldParentName
+                __html: oldParentName,
               }}
             />{" "}
             to parent{" "}
             <span
               dangerouslySetInnerHTML={{
-                __html: node.taxon.name
+                __html: node.taxon.name,
               }}
             />
           </span>
@@ -977,56 +1185,55 @@ return  axios
         this.setState(
           {
             treeData: [...this.state.treeData],
-            defaultExpandAll: false
+            defaultExpandAll: false,
           },
           () => {
             notification.open({
               message: "Taxon moved",
-              description: msg
+              description: msg,
             });
           }
         );
       })
-      .catch(err => {
+      .catch((err) => {
         alert(err);
       });
   };
-  handleModify = e => {
-    if (
-      e.dragNode.name === "Not assigned"
-    ) {
+  handleModify = (e) => {
+    if (e.dragNode.name === "Not assigned") {
       message.warn("You cannot move placeholder nodes");
-      return; 
+      return;
     }
 
     const msg = (
       <span>
-        Move{" "}
-        <span
-          dangerouslySetInnerHTML={{ __html: e.dragNode.name }}
-        />{" "}
-        from parent{" "}
+        Move <span dangerouslySetInnerHTML={{ __html: e.dragNode.name }} /> from
+        parent{" "}
         <span
           dangerouslySetInnerHTML={{
-            __html: e.dragNode.parent.title.props.taxon.name
+            __html: e.dragNode.parent.title.props.taxon.name,
           }}
         />{" "}
         to parent{" "}
         <span
           dangerouslySetInnerHTML={{
-            __html: e.node.ref.title.props.taxon.name
+            __html: e.node.ref.title.props.taxon.name,
           }}
         />
         ?
       </span>
     );
-    const nodeTitle = React.cloneElement(e.node.ref.title)
-    e.node.ref.title = React.cloneElement(e.node.ref.title, {confirmVisible: true, confirmTitle: msg, onConfirm: () => {
-      this.confirmModify(e, nodeTitle);
-    },
-    onCancel: () => {e.node.ref.title = nodeTitle}
-    
-    })
+    const nodeTitle = React.cloneElement(e.node.ref.title);
+    e.node.ref.title = React.cloneElement(e.node.ref.title, {
+      confirmVisible: true,
+      confirmTitle: msg,
+      onConfirm: () => {
+        this.confirmModify(e, nodeTitle);
+      },
+      onCancel: () => {
+        e.node.ref.title = nodeTitle;
+      },
+    });
     this.setState({ treeData: [...this.state.treeData] });
   };
   handleDrop = (e, mode) => {
@@ -1041,8 +1248,6 @@ return  axios
     }
   };
 
-
-
   render() {
     const {
       error,
@@ -1053,33 +1258,45 @@ return  axios
       nodeNotFoundErr,
       loadedKeys,
       expandedKeys,
-      selectedKeys
-        } = this.state;
-    const { draggable, onDragStart, location, treeType, dataset , defaultExpandKey} = this.props;
-    
+      selectedKeys,
+    } = this.state;
+    const {
+      draggable,
+      onDragStart,
+      location,
+      treeType,
+      dataset,
+      defaultExpandKey,
+    } = this.props;
 
     return (
       <React.Fragment>
-       
         {error && (
           <React.Fragment>
-          {  _.get(error, 'response.data.code') !== 404 ?
-          <Alert
-            closable
-            onClose={() => this.setState({ error: null })}
-            style={{ marginTop: "8px" }}
-            message={<ErrorMsg error={error} />}
-            type="error"
-          /> :
-          <Alert
-            closable
-            onClose={() => this.setState({ error: null })}
-            style={{ marginTop: "8px" }}
-            message={<Custom404 error={error} treeType={treeType} dataset={dataset} loadRoot={this.loadRoot} />}
-            type="warning"
-          />
-
-          }
+            {_.get(error, "response.data.code") !== 404 ? (
+              <Alert
+                closable
+                onClose={() => this.setState({ error: null })}
+                style={{ marginTop: "8px" }}
+                message={<ErrorMsg error={error} />}
+                type="error"
+              />
+            ) : (
+              <Alert
+                closable
+                onClose={() => this.setState({ error: null })}
+                style={{ marginTop: "8px" }}
+                message={
+                  <Custom404
+                    error={error}
+                    treeType={treeType}
+                    dataset={dataset}
+                    loadRoot={this.loadRoot}
+                  />
+                }
+                type="warning"
+              />
+            )}
           </React.Fragment>
         )}
         {nodeNotFoundErr && (
@@ -1091,7 +1308,7 @@ return  axios
             type="warning"
           />
         )}
-        {rootLoading &&  <Skeleton paragraph={{rows: 10}} active />}
+        {rootLoading && <Skeleton paragraph={{ rows: 10 }} active />}
         {!rootLoading && treeData.length > 0 && (
           <ColTreeContext.Consumer>
             {({ mode }) => (
@@ -1102,39 +1319,40 @@ return  axios
                 // showLine={{showLeafIcon: false}}
                 showIcon={false}
                 defaultExpandAll={defaultExpandAll}
-               // defaultExpandedKeys={defaultExpandedKeys}
+                // defaultExpandedKeys={defaultExpandedKeys}
                 draggable={draggable}
-                onDrop={e => this.handleDrop(e, mode)}
+                onDrop={(e) => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
                 loadData={this.onLoadData}
-                onLoad={loadedKeys => this.setState({loadedKeys})}
+                onLoad={(loadedKeys) => this.setState({ loadedKeys })}
                 loadedKeys={loadedKeys}
                 expandedKeys={expandedKeys}
                 multiple
                 treeData={treeData}
-                selectedKeys={treeType !== 'readOnly' ? selectedKeys : []}
-                selectable={treeType !== 'readOnly'}
-                onSelect={ (selectedKeys, e)=> {
-                  this.setState({selectedKeys: selectedKeys })
-                  this.setState({selectedNodes: e.selectedNodes })
+                selectedKeys={treeType !== "readOnly" ? selectedKeys : []}
+                selectable={treeType !== "readOnly"}
+                onSelect={(selectedKeys, e) => {
+                  this.setState({ selectedKeys: selectedKeys });
+                  this.setState({ selectedNodes: e.selectedNodes });
                 }}
-                filterTreeNode={node => {                
-                  return node.key === defaultExpandKey
-                }
-                  
-                }
+                filterTreeNode={(node) => {
+                  return node.key === defaultExpandKey;
+                }}
                 onExpand={(expandedKeys, obj) => {
-                  this.setState({expandedKeys})
+                  this.setState({ expandedKeys });
                   if (obj.expanded) {
-                    if (_.get(obj, 'node.childCount') > 0 ){
-                     // this.fetchChildPage(obj.node, true)
+                    if (_.get(obj, "node.childCount") > 0) {
+                      // this.fetchChildPage(obj.node, true)
                     }
                     const params = qs.parse(_.get(location, "search"));
-                    const newParams = {...params, [TAXON_KEY_PARAMETER_NAMES[treeType]] : obj.node.key}
-                     
+                    const newParams = {
+                      ...params,
+                      [TAXON_KEY_PARAMETER_NAMES[treeType]]: obj.node.key,
+                    };
+
                     history.push({
                       pathname: location.path,
-                      search: `?${qs.stringify(newParams)}`
+                      search: `?${qs.stringify(newParams)}`,
                     });
                   } else {
                     const key = TAXON_KEY_PARAMETER_NAMES[treeType];
@@ -1142,17 +1360,19 @@ return  axios
                       pathname: location.path,
                       search: `?${qs.stringify(
                         _.omit(qs.parse(_.get(location, "search")), [key])
-                      )}`
+                      )}`,
                     });
                   }
                 }}
               />
-                              
             )}
-            
           </ColTreeContext.Consumer>
         )}
-       {!error && treeData.length < rootTotal && <Button loading={rootLoading} onClick={this.loadRoot}>Load more </Button>}
+        {!error && treeData.length < rootTotal && (
+          <Button loading={rootLoading} onClick={this.loadRoot}>
+            Load more{" "}
+          </Button>
+        )}
       </React.Fragment>
     );
   }

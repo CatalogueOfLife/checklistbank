@@ -30,8 +30,10 @@ class ImportChart extends React.Component {
   getBasePath = () => {
     const { location, datasetKey } = this.props;
     if (location.pathname.startsWith("/catalogue")) {
-      location.pathname.split(`dataset/${datasetKey}/`)[0] +
-        `dataset/${datasetKey}/workbench`;
+      return (
+        location.pathname.split(`dataset/${datasetKey}/`)[0] +
+        `dataset/${datasetKey}/workbench`
+      );
     } else {
       return `/dataset/${datasetKey}/names`;
     }
@@ -52,7 +54,6 @@ class ImportChart extends React.Component {
 
   initChart = (props) => {
     const {
-      datasetKey,
       data,
       title,
       subtitle,
@@ -181,7 +182,6 @@ class ImportChart extends React.Component {
 
   toggleChartType = (type) => {
     let { options } = this.state;
-    const { title } = this.props;
     options.chart.type = type;
 
     options.series[0].dataLabels = this.getDataLabelOptions(type);

@@ -1,7 +1,6 @@
-import React from 'react';
-import { Badge } from 'antd';
-import { FormattedMessage } from 'react-intl';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Badge } from "antd";
+import { FormattedMessage } from "react-intl";
 
 /**
  * Widget for boolean value representation with color indicator and Yes/No text transcription
@@ -9,14 +8,18 @@ import PropTypes from 'prop-types';
  * @returns {*}
  * @constructor
  */
-const BooleanValue = ({ value }) => (
-  (value === false || value === true) ? <Badge
-    status={value ? 'success' : 'error'}
-    text={
-      value ? <FormattedMessage id="yes" defaultMessage="Yes"/> : <FormattedMessage id="no" defaultMessage="No"/>
-    }
-  /> : null
-);
-
+const BooleanValue = ({ value }) =>
+  value === false || value === true ? (
+    <Badge
+      status={value ? "success" : "error"}
+      text={
+        value ? (
+          <FormattedMessage id="yes" defaultMessage="Yes" />
+        ) : (
+          <FormattedMessage id="no" defaultMessage="No" />
+        )
+      }
+    />
+  ) : null;
 
 export default BooleanValue;

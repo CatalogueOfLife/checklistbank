@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
@@ -315,7 +314,7 @@ class DatasetList extends React.Component {
       defaultColumns,
       params,
     } = this.state;
-    const { datasetType, datasetOrigin } = this.props;
+    const { datasetOrigin } = this.props;
     defaultColumns[6].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,

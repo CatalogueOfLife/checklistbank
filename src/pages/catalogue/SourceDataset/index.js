@@ -75,7 +75,7 @@ class DatasetPage extends React.Component {
 
   render() {
     //  const { datasetKey, section, dataset } = this.props;
-    const { importState, hasData, lastSuccesFullImport } = this.state;
+    const { importState, lastSuccesFullImport } = this.state;
 
     const {
       match: {
@@ -168,8 +168,10 @@ class DatasetPage extends React.Component {
             catalogueKey={catalogueKey}
           />
         )}
-        {!section || (section === "meta" && <DatasetMeta id={datasetKey} catalogueKey={catalogueKey}/>)}
-
+        {!section ||
+          (section === "meta" && (
+            <DatasetMeta id={datasetKey} catalogueKey={catalogueKey} />
+          ))}
         {section === "classification" && (
           <DatasetClassification dataset={dataset} location={location} />
         )}
@@ -216,6 +218,6 @@ class DatasetPage extends React.Component {
 
 const mapContextToProps = ({ dataset, importStateMap }) => ({
   dataset,
-  importStateMap
+  importStateMap,
 });
 export default withContext(mapContextToProps)(DatasetPage);

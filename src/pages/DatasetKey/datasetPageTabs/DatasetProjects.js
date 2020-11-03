@@ -1,39 +1,12 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
-import qs from "query-string";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Tooltip, Form } from "antd";
+import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
-import Layout from "../../../components/LayoutNew";
-import history from "../../../history";
 import PageContent from "../../../components/PageContent";
 
 import withContext from "../../../components/hoc/withContext";
 const _ = require("lodash");
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-
-
-const getColorForDiff = (current, released) => {
-  const pct = released > 0 ? (current / released) * 100 : 100;
-  if (pct >= 100) {
-    return "green";
-  } else if (pct >= 75) {
-    return "orange";
-  } else {
-    return "red";
-  }
-};
 
 class DatasetProjects extends React.Component {
   constructor(props) {
@@ -52,22 +25,25 @@ class DatasetProjects extends React.Component {
     // this.getData();
     const { data } = this.state;
     if (this.props.dataset && data.length === 0) {
-      this.getData(this.props.dataset.key)
+      this.getData(this.props.dataset.key);
     }
-   }
+  }
 
   componentDidUpdate = (prevProps) => {
-    
-
-    if (_.get(this.props, "dataset.key") && _.get(prevProps, "dataset.key") !== _.get(this.props, "dataset.key")) {
+    if (
+      _.get(this.props, "dataset.key") &&
+      _.get(prevProps, "dataset.key") !== _.get(this.props, "dataset.key")
+    ) {
       this.getData(_.get(this.props, "dataset.key"));
     }
   };
 
   getData = (datasetKey) => {
     this.setState({ loading: true });
- 
-    axios(`${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=MANAGED`)
+
+    axios(
+      `${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=MANAGED`
+    )
       .then((res) => {
         return Promise.all(
           !res.data.result
@@ -99,20 +75,14 @@ class DatasetProjects extends React.Component {
       });
   };
 
-
   getMetrics = (datasetKey, sourceDatasetKey) => {
     return axios(
       `${config.dataApi}dataset/${datasetKey}/source/${sourceDatasetKey}/metrics`
     ).then((res) => res.data);
   };
 
-
   render() {
     const { data, loading, error } = this.state;
-    const {
-      catalogue,
-      location,
-    } = this.props;
 
     const columns = [
       {
@@ -141,7 +111,9 @@ class DatasetProjects extends React.Component {
       {
         // sectorCount
         title: (
-          <Tooltip title={`Total sector count in last sync`}>Sector count</Tooltip>
+          <Tooltip title={`Total sector count in last sync`}>
+            Sector count
+          </Tooltip>
         ),
         dataIndex: "sectorCount",
         key: "sectorCount",
@@ -156,7 +128,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.sectorCount}
               </NavLink>
-             
             </React.Fragment>
           );
         },
@@ -185,7 +156,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.nameCount}
               </NavLink>
-             
             </React.Fragment>
           );
         },
@@ -214,7 +184,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.usagesCount}
               </NavLink>
-             
             </React.Fragment>
           );
         },
@@ -245,7 +214,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.synonymCount}
               </NavLink>
-             
             </React.Fragment>
           );
         },
@@ -276,7 +244,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.taxonCount}
               </NavLink>
-              
             </React.Fragment>
           );
         },
@@ -307,7 +274,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.vernacularCount}
               </NavLink>
-              
             </React.Fragment>
           );
         },
@@ -338,7 +304,6 @@ class DatasetProjects extends React.Component {
               >
                 {record.distributionCount}
               </NavLink>
-              
             </React.Fragment>
           );
         },
@@ -383,7 +348,7 @@ class DatasetProjects extends React.Component {
     ];
 
     return (
-        <PageContent>
+      <PageContent>
         <div
           style={{
             background: "#fff",
@@ -395,9 +360,7 @@ class DatasetProjects extends React.Component {
           <div>
             <Row>
               <Col md={12} sm={24}></Col>
-              <Col md={12} sm={24}>
-               
-              </Col>
+              <Col md={12} sm={24}></Col>
             </Row>
             {error && <Alert message={error.message} type="error" />}
           </div>
@@ -411,7 +374,7 @@ class DatasetProjects extends React.Component {
             />
           )}
         </div>
-        </PageContent>
+      </PageContent>
     );
   }
 }

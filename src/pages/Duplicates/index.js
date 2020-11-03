@@ -1,9 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 
-import { SearchOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { SearchOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
 import {
   Table,
   Alert,
@@ -19,7 +18,7 @@ import {
   Pagination,
   Tooltip,
   notification,
-  Form
+  Form,
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -28,18 +27,18 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import { Resizable } from "react-resizable";
 import ErrorMsg from "../../components/ErrorMsg";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete"
+import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
 import Auth from "../../components/Auth";
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
-const datasetLoader = new DataLoader(ids => getDatasetsBatch(ids));
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
-const ResizeableTitle = props => {
+const ResizeableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
 
   if (!width) {
@@ -57,7 +56,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const limit = localStorage.getItem("col_plus_duplicates_limit");
-    const {assembly, catalogueKey} = props;
+    const { assembly, catalogueKey } = props;
     this.state = {
       data: [],
       rawData: [],
@@ -75,24 +74,28 @@ class DuplicateSearchPage extends React.Component {
       allButOldestInGroupLoading: false,
       synonymsSelectLoading: false,
       newestInGroupLoading: false,
-      showAtomizedNames: !assembly
+      showAtomizedNames: !assembly,
     };
   }
 
   componentDidMount = () => {
-    this.initOrUpdate()
-  }
+    this.initOrUpdate();
+  };
 
   componentDidUpdate = (prevProps) => {
-    if( (_.get(prevProps, 'datasetKey') !== _.get(this.props, 'datasetKey')) || (_.get(prevProps, 'catalogueKey') !== _.get(this.props, 'catalogueKey'))){
-      this.initOrUpdate()
+    if (
+      _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey") ||
+      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
+    ) {
+      this.initOrUpdate();
     }
-    
-  }
+  };
 
   initOrUpdate = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
-    this.sectorLoader = new DataLoader((ids) => getSectorsBatch(ids, this.props.catalogueKey));
+    this.sectorLoader = new DataLoader((ids) =>
+      getSectorsBatch(ids, this.props.catalogueKey)
+    );
 
     this.getSectors();
     let booleans = {};
@@ -101,8 +104,8 @@ class DuplicateSearchPage extends React.Component {
       "acceptedDifferent",
       "authorshipDifferent",
       "rankDifferent",
-      "codeDifferent"
-    ].forEach(n => {
+      "codeDifferent",
+    ].forEach((n) => {
       if (params[n] === "true") {
         booleans[n] = true;
       }
@@ -114,9 +117,9 @@ class DuplicateSearchPage extends React.Component {
     if (params._colCheck) {
       let option = {
         props: {
-          params: queryPresets.filter(qp => qp.id === params._colCheck)[0]
-            .params
-        }
+          params: queryPresets.filter((qp) => qp.id === params._colCheck)[0]
+            .params,
+        },
       };
       this.onPresetSelect(params._colCheck, option);
     } else {
@@ -125,51 +128,54 @@ class DuplicateSearchPage extends React.Component {
         this.getData
       );
     }
-  }
+  };
 
-  decorateWithSectorsAndDataset = res => {
+  decorateWithSectorsAndDataset = (res) => {
     if (!res.usages) return res;
-    const {catalogueKey} = this.props;
+    const { catalogueKey } = this.props;
     return Promise.all(
       res.usages
-        .filter(tx => _.get(tx, "usage.sectorKey"))
-        .map(tx =>
-          this.sectorLoader.load(_.get(tx, "usage.sectorKey"), catalogueKey).then(r => {
-            tx.sector = r;
-            return datasetLoader
-              .load(r.subjectDatasetKey)
-              .then(dataset => (tx.sector.dataset = dataset));
-          })
+        .filter((tx) => _.get(tx, "usage.sectorKey"))
+        .map((tx) =>
+          this.sectorLoader
+            .load(_.get(tx, "usage.sectorKey"), catalogueKey)
+            .then((r) => {
+              tx.sector = r;
+              return datasetLoader
+                .load(r.subjectDatasetKey)
+                .then((dataset) => (tx.sector.dataset = dataset));
+            })
         )
     ).then(() => res);
   };
-  
+
   getData = () => {
     const { params } = this.state;
     const {
       location: { pathname },
-      catalogueKey
+      catalogueKey,
     } = this.props;
     this.setState({ loading: true });
     const { datasetKey, assembly } = this.props;
 
     history.push({
       pathname: pathname,
-      search: `?${qs.stringify({ ...params, limit: Number(params.limit) })}`
+      search: `?${qs.stringify({ ...params, limit: Number(params.limit) })}`,
     });
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-        ...params, catalogueKey: catalogueKey,
-        limit: Number(params.limit) + 1
+        ...params,
+        catalogueKey: catalogueKey,
+        limit: Number(params.limit) + 1,
       })}`
     )
-      .then(res => Promise.all(res.data.map(e => this.getDecisions(e))))
-      .then(res => {
+      .then((res) => Promise.all(res.data.map((e) => this.getDecisions(e))))
+      .then((res) => {
         return assembly
-          ? Promise.all(res.map(e => this.decorateWithSectorsAndDataset(e)))
+          ? Promise.all(res.map((e) => this.decorateWithSectorsAndDataset(e)))
           : res;
       })
-      .then(data => {
+      .then((data) => {
         const dataArr =
           data.length > Number(params.limit) ? data.slice(0, -1) : data;
         const { totalFaked } = this.state;
@@ -187,7 +193,7 @@ class DuplicateSearchPage extends React.Component {
                 dupID: i,
                 dubKey: e.key,
                 classification: u.classification,
-                isFirstInGroup: id === 0 // not used ... keep?
+                isFirstInGroup: id === 0, // not used ... keep?
               }))
             )
             .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for holding dupes together
@@ -198,21 +204,20 @@ class DuplicateSearchPage extends React.Component {
             totalFaked > data.length + Number(params.offset)
               ? totalFaked
               : data.length + Number(params.offset),
-          error: null
+          error: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           loading: false,
           error: err,
           data: [],
-          duplicateCount: 0
+          duplicateCount: 0,
         });
       });
   };
 
   getGsdColumn = () => {
-
     return {
       title: "gsd",
       dataIndex: ["sector", "dataset", "alias"],
@@ -223,44 +228,51 @@ class DuplicateSearchPage extends React.Component {
           <NavLink
             key={_.get(record, "id")}
             to={{
-              pathname: `/dataset/${_.get(record, "sector.subjectDatasetKey")}/taxon/${_.get(record, "sector.subject.id")}`
+              pathname: `/dataset/${_.get(
+                record,
+                "sector.subjectDatasetKey"
+              )}/taxon/${_.get(record, "sector.subject.id")}`,
             }}
             exact={true}
           >
             {_.get(record, "sector.dataset.alias")}
           </NavLink>
         );
-      }
+      },
     };
   };
 
   getSectors = () => {
     const { datasetKey, catalogueKey } = this.props;
-    axios(`${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`)
-      .then(res => {
+    axios(
+      `${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`
+    )
+      .then((res) => {
         this.setState({
           sectors: res.data,
-          filteredSectors: res.data.map(o => ({
+          filteredSectors: res.data.map((o) => ({
             value: o.key,
-            text: _.get(o, "subject.name")
-          }))
+            text: _.get(o, "subject.name"),
+          })),
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ sectors: [] });
       });
   };
-  getDecisions = data => {
-
+  getDecisions = (data) => {
     const { catalogueKey } = this.props;
 
-    const promises = data.usages.map(d =>
+    const promises = data.usages.map((d) =>
       d.decision
-        ? axios(`${config.dataApi}dataset/${catalogueKey}/decision/${_.get(d, "decision.id")}`).then(
-            decision => {
-              d.usage.decision = decision.data;
-            }
-          )
+        ? axios(
+            `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
+              d,
+              "decision.id"
+            )}`
+          ).then((decision) => {
+            d.usage.decision = decision.data;
+          })
         : Promise.resolve()
     );
     return Promise.all(promises).then(() => data);
@@ -268,18 +280,21 @@ class DuplicateSearchPage extends React.Component {
 
   handleTableChange = (pagination, filters, sorter) => {
     let query = _.merge(this.state.params, {
-      ...filters
+      ...filters,
     });
 
     this.setState({ params: query }, this.getData);
   };
 
-  updateSearch = params => {
+  updateSearch = (params) => {
     this.setState(
       {
-        params: _.pickBy({ ...this.state.params, ...params, offset: 0 }, (val)=> val !== null),
+        params: _.pickBy(
+          { ...this.state.params, ...params, offset: 0 },
+          (val) => val !== null
+        ),
         totalFaked: 0,
-        selectedPreset: undefined
+        selectedPreset: undefined,
       },
       this.getData
     );
@@ -291,18 +306,18 @@ class DuplicateSearchPage extends React.Component {
         params: { limit: this.state.params.limit, offset: 0 },
         selectedPreset: undefined,
         totalFaked: 0,
-        selectedRowKeys: []
+        selectedRowKeys: [],
       },
       this.getData
     );
   };
 
   onPresetSelect = (value, option) => {
-    if(!value){
-      this.resetSearch()
+    if (!value) {
+      this.resetSearch();
     } else {
       const {
-        props: { params }
+        props: { params },
       } = option;
       this.setState(
         {
@@ -310,25 +325,25 @@ class DuplicateSearchPage extends React.Component {
           selectedPreset: value,
           totalFaked: 0,
           decision: null,
-          selectedRowKeys: []
+          selectedRowKeys: [],
         },
         this.getData
       );
     }
   };
-  onSectorSearch = val => {
+  onSectorSearch = (val) => {
     const { sectors } = this.state;
     this.setState({
       filteredSectors: sectors
-        .filter(s => s.subject.name.toLowerCase().startsWith(val))
-        .map(o => ({ value: o.key, text: _.get(o, "subject.name") }))
+        .filter((s) => s.subject.name.toLowerCase().startsWith(val))
+        .map((o) => ({ value: o.key, text: _.get(o, "subject.name") })),
     });
   };
 
-  onSelectChange = selectedRowKeys => {
+  onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
-  onDecisionChange = decision => {
+  onDecisionChange = (decision) => {
     this.setState({ decision });
   };
   applyDecision = () => {
@@ -336,8 +351,8 @@ class DuplicateSearchPage extends React.Component {
     const { datasetKey, catalogueKey } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
-      .filter(d => selectedRowKeys.includes(_.get(d, "id")))
-      .map(d => {
+      .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
+      .map((d) => {
         const method = d.decision ? "put" : "post";
         return axios[method](
           `${config.dataApi}dataset/${catalogueKey}/decision${
@@ -351,24 +366,24 @@ class DuplicateSearchPage extends React.Component {
 
               name: _.get(d, "name.scientificName"),
               authorship: _.get(d, "name.authorship"),
-              rank: _.get(d, "name.rank")
+              rank: _.get(d, "name.rank"),
             },
             mode: ["block", "chresonym"].includes(decision)
               ? decision
               : "update",
             status: ["block", "chresonym"].includes(decision)
               ? _.get(d, "status")
-              : decision
+              : decision,
           }
         )
-          .then(decisionId =>
+          .then((decisionId) =>
             axios(
               `${config.dataApi}dataset/${catalogueKey}/decision/${
                 method === "post" ? decisionId.data : d.decision.id
               }`
             )
           )
-          .then(res => {
+          .then((res) => {
             d.decision = res.data;
             const statusMsg = `Status changed to ${decision} for ${_.get(
               d,
@@ -382,35 +397,34 @@ class DuplicateSearchPage extends React.Component {
               message: `Decision ${method === "post" ? "applied" : "changed"}`,
               description: ["block", "chresonym"].includes(decision)
                 ? decisionMsg
-                : statusMsg
+                : statusMsg,
             });
           })
-          .catch(err => {
+          .catch((err) => {
             notification.error({
               message: "Error",
-              description: _.get(err, 'response.data.message') || err.message
-
+              description: _.get(err, "response.data.message") || err.message,
             });
           });
       });
 
     return Promise.all(promises)
-      .then(res => {
+      .then((res) => {
         this.setState({
           data: [...this.state.data],
           selectedRowKeys: [],
           decision: null,
           postingDecisions: false,
-          decisionError: null
+          decisionError: null,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           data: [...this.state.data],
           selectedRowKeys: [],
           decision: null,
           postingDecisions: false,
-          decisionError: err
+          decisionError: err,
         });
       });
   };
@@ -421,22 +435,22 @@ class DuplicateSearchPage extends React.Component {
 
   components = {
     header: {
-      cell: ResizeableTitle
-    }
+      cell: ResizeableTitle,
+    },
   };
 
-  handleResize = index => (e, { size }) => {
+  handleResize = (index) => (e, { size }) => {
     this.setState(({ columns }) => {
       const nextColumns = [...columns];
       nextColumns[index] = {
         ...nextColumns[index],
-        width: size.width
+        width: size.width,
       };
       return { columns: nextColumns };
     });
   };
 
-  columnFilter = c => {
+  columnFilter = (c) => {
     const { params } = this.state;
 
     if (params.status && params.status.indexOf("synonym") === -1) {
@@ -450,15 +464,15 @@ class DuplicateSearchPage extends React.Component {
     this.setState({ newestInGroupLoading: true });
     const { rawData } = this.state;
     let selectedRowKeys = [];
-    rawData.forEach(group => {
+    rawData.forEach((group) => {
       const max = Math.max(
-        ...group.usages.map(r => r.usage.name.publishedInYear)
+        ...group.usages.map((r) => r.usage.name.publishedInYear)
       );
       selectedRowKeys = [
         ...selectedRowKeys,
         ...group.usages
-          .filter(r => Number(r.usage.name.publishedInYear) === max)
-          .map(i => i.usage.id)
+          .filter((r) => Number(r.usage.name.publishedInYear) === max)
+          .map((i) => i.usage.id),
       ];
     });
     this.setState({ selectedRowKeys, newestInGroupLoading: false });
@@ -468,15 +482,15 @@ class DuplicateSearchPage extends React.Component {
     this.setState({ allButOldestInGroupLoading: true });
     const { rawData } = this.state;
     let selectedRowKeys = [];
-    rawData.forEach(group => {
+    rawData.forEach((group) => {
       const min = Math.min(
-        ...group.usages.map(r => r.usage.name.publishedInYear)
+        ...group.usages.map((r) => r.usage.name.publishedInYear)
       );
       selectedRowKeys = [
         ...selectedRowKeys,
         ...group.usages
-          .filter(r => Number(r.usage.name.publishedInYear) > min)
-          .map(i => i.usage.id)
+          .filter((r) => Number(r.usage.name.publishedInYear) > min)
+          .map((i) => i.usage.id),
       ];
     });
     this.setState({ selectedRowKeys, allButOldestInGroupLoading: false });
@@ -486,12 +500,12 @@ class DuplicateSearchPage extends React.Component {
     this.setState({ synonymsSelectLoading: true });
     const { rawData } = this.state;
     let selectedRowKeys = [];
-    rawData.forEach(group => {
+    rawData.forEach((group) => {
       selectedRowKeys = [
         ...selectedRowKeys,
         ...group.usages
-          .filter(r => r.usage.status === "synonym")
-          .map(i => i.usage.id)
+          .filter((r) => r.usage.status === "synonym")
+          .map((i) => i.usage.id),
       ];
     });
     this.setState({ selectedRowKeys, synonymsSelectLoading: false });
@@ -505,14 +519,13 @@ class DuplicateSearchPage extends React.Component {
       selectedRowKeys,
       decision,
       postingDecisions,
-      duplicateCount,
       showAtomizedNames,
       advancedMode,
       totalFaked,
       columns,
       allButOldestInGroupLoading,
       synonymsSelectLoading,
-      newestInGroupLoading
+      newestInGroupLoading,
     } = this.state;
     const { rank, taxonomicstatus, user, assembly, catalogueKey } = this.props;
     const hasSelected =
@@ -521,7 +534,7 @@ class DuplicateSearchPage extends React.Component {
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
-      columnWidth: "30px"
+      columnWidth: "30px",
     };
 
     return (
@@ -530,7 +543,7 @@ class DuplicateSearchPage extends React.Component {
           background: "#fff",
           padding: 24,
           minHeight: 280,
-          margin: "16px 0"
+          margin: "16px 0",
         }}
       >
         <Row>
@@ -556,7 +569,7 @@ class DuplicateSearchPage extends React.Component {
                   showSearch
                   allowClear
                 >
-                  {queryPresets.map(p => (
+                  {queryPresets.map((p) => (
                     <Option key={p.id} value={p.id} params={p.params}>
                       {p.text}
                     </Option>
@@ -572,22 +585,30 @@ class DuplicateSearchPage extends React.Component {
               </div>
               {advancedMode && (
                 <Form layout="inline">
-                  {assembly && 
-                  <DatasetAutocomplete 
-                  placeHolder="Source dataset" 
-                  style={{marginBottom: '10px', width: '100%'}} 
-                  onSelectDataset={value => this.updateSearch({ sourceDatasetKey: value.key })} 
-                  onResetSearch={() => this.updateSearch({ sourceDatasetKey: null})}
-                  defaultDatasetKey={_.get(params, 'sourceDatasetKey') || null}/>}
+                  {assembly && (
+                    <DatasetAutocomplete
+                      placeHolder="Source dataset"
+                      style={{ marginBottom: "10px", width: "100%" }}
+                      onSelectDataset={(value) =>
+                        this.updateSearch({ sourceDatasetKey: value.key })
+                      }
+                      onResetSearch={() =>
+                        this.updateSearch({ sourceDatasetKey: null })
+                      }
+                      defaultDatasetKey={
+                        _.get(params, "sourceDatasetKey") || null
+                      }
+                    />
+                  )}
                   <Select
                     placeholder="Name category"
                     value={params.category}
                     style={{
                       width: 200,
                       marginRight: 10,
-                      marginBottom: "10px"
+                      marginBottom: "10px",
                     }}
-                    onChange={value => this.updateSearch({ category: value })}
+                    onChange={(value) => this.updateSearch({ category: value })}
                     showSearch
                     allowClear
                   >
@@ -602,13 +623,13 @@ class DuplicateSearchPage extends React.Component {
                     style={{
                       width: 200,
                       marginRight: 10,
-                      marginBottom: "10px"
+                      marginBottom: "10px",
                     }}
-                    onChange={value => this.updateSearch({ minSize: value })}
+                    onChange={(value) => this.updateSearch({ minSize: value })}
                     showSearch
                     allowClear
                   >
-                    {[2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
+                    {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                       <Option key={i} value={i}>
                         {i}
                       </Option>
@@ -618,7 +639,7 @@ class DuplicateSearchPage extends React.Component {
                   <FormItem label="Fuzzy matching">
                     <Switch
                       checked={params.mode === "FUZZY"}
-                      onChange={value =>
+                      onChange={(value) =>
                         this.updateSearch({ mode: value ? "FUZZY" : "STRICT" })
                       }
                     />
@@ -629,14 +650,14 @@ class DuplicateSearchPage extends React.Component {
                     style={{
                       width: 200,
                       marginRight: 10,
-                      marginBottom: "10px"
+                      marginBottom: "10px",
                     }}
                     mode="multiple"
                     showSearch
                     allowClear
-                    onChange={value => this.updateSearch({ status: value })}
+                    onChange={(value) => this.updateSearch({ status: value })}
                   >
-                    {taxonomicstatus.map(s => (
+                    {taxonomicstatus.map((s) => (
                       <Option value={s} key={s}>
                         {_.startCase(s)}
                       </Option>
@@ -648,14 +669,14 @@ class DuplicateSearchPage extends React.Component {
                     style={{
                       width: 200,
                       marginRight: 10,
-                      marginBottom: "10px"
+                      marginBottom: "10px",
                     }}
                     mode="multiple"
                     showSearch
                     allowClear
-                    onChange={value => this.updateSearch({ rank: value })}
+                    onChange={(value) => this.updateSearch({ rank: value })}
                   >
-                    {rank.map(r => (
+                    {rank.map((r) => (
                       <Option key={r} value={r}>
                         {r}
                       </Option>
@@ -663,8 +684,9 @@ class DuplicateSearchPage extends React.Component {
                   </Select>
 
                   <AutoComplete
-                    dataSource={this.state.sectors}
-                    onSelect={value => this.updateSearch({ sectorKey: value })}
+                    onSelect={(value) =>
+                      this.updateSearch({ sectorKey: value })
+                    }
                     dataSource={this.state.filteredSectors}
                     onSearch={this.onSectorSearch}
                     placeholder={
@@ -676,7 +698,7 @@ class DuplicateSearchPage extends React.Component {
                     style={{
                       width: 200,
                       marginRight: 10,
-                      marginBottom: "10px"
+                      marginBottom: "10px",
                     }}
                   >
                     <Input suffix={<SearchOutlined />} />
@@ -684,19 +706,19 @@ class DuplicateSearchPage extends React.Component {
                   <br />
                   <FormItem label="Authorship different">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "authorshipDifferent"
-                              ])
+                                "authorshipDifferent",
+                              ]),
                             },
                             this.getData
                           );
                         } else {
                           this.updateSearch({
-                            authorshipDifferent: evt.target.value
+                            authorshipDifferent: evt.target.value,
                           });
                         }
                       }}
@@ -709,19 +731,19 @@ class DuplicateSearchPage extends React.Component {
                   </FormItem>
                   <FormItem label="Accepted different">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "acceptedDifferent"
-                              ])
+                                "acceptedDifferent",
+                              ]),
                             },
                             this.getData
                           );
                         } else {
                           this.updateSearch({
-                            acceptedDifferent: evt.target.value
+                            acceptedDifferent: evt.target.value,
                           });
                         }
                       }}
@@ -735,19 +757,19 @@ class DuplicateSearchPage extends React.Component {
 
                   <FormItem label="Rank different">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "rankDifferent"
-                              ])
+                                "rankDifferent",
+                              ]),
                             },
                             this.getData
                           );
                         } else {
                           this.updateSearch({
-                            rankDifferent: evt.target.value
+                            rankDifferent: evt.target.value,
                           });
                         }
                       }}
@@ -761,19 +783,19 @@ class DuplicateSearchPage extends React.Component {
 
                   <FormItem label="Code different">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "codeDifferent"
-                              ])
+                                "codeDifferent",
+                              ]),
                             },
                             this.getData
                           );
                         } else {
                           this.updateSearch({
-                            codeDifferent: evt.target.value
+                            codeDifferent: evt.target.value,
                           });
                         }
                       }}
@@ -787,13 +809,13 @@ class DuplicateSearchPage extends React.Component {
 
                   <FormItem label="With decision">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
-                                "withDecision"
-                              ])
+                                "withDecision",
+                              ]),
                             },
                             this.getData
                           );
@@ -811,11 +833,11 @@ class DuplicateSearchPage extends React.Component {
 
                   <FormItem label="Entity">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
                           this.setState(
                             {
-                              params: _.omit(this.state.params, ["entity"])
+                              params: _.omit(this.state.params, ["entity"]),
                             },
                             this.getData
                           );
@@ -832,7 +854,7 @@ class DuplicateSearchPage extends React.Component {
 
                   <FormItem label="Show atomized names">
                     <RadioGroup
-                      onChange={evt => {
+                      onChange={(evt) => {
                         this.setState({ showAtomizedNames: evt.target.value });
                       }}
                       value={showAtomizedNames}
@@ -863,7 +885,7 @@ class DuplicateSearchPage extends React.Component {
                   allowClear
                 >
                   <OptGroup label="Status">
-                    {taxonomicstatus.map(s => (
+                    {taxonomicstatus.map((s) => (
                       <Option value={s} key={s}>
                         {_.startCase(s)}
                       </Option>
@@ -950,8 +972,8 @@ class DuplicateSearchPage extends React.Component {
                     {
                       params: {
                         ...this.state.params,
-                        offset: (page - 1) * Number(this.state.params.limit)
-                      }
+                        offset: (page - 1) * Number(this.state.params.limit),
+                      },
                     },
                     this.getData
                   );
@@ -972,13 +994,18 @@ class DuplicateSearchPage extends React.Component {
               columns={
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
-                  : assembly ? [this.getGsdColumn(), ...columnDefaults(catalogueKey).fullScientificName] : columnDefaults(catalogueKey).fullScientificName
+                  : assembly
+                  ? [
+                      this.getGsdColumn(),
+                      ...columnDefaults(catalogueKey).fullScientificName,
+                    ]
+                  : columnDefaults(catalogueKey).fullScientificName
               }
               dataSource={data}
               loading={loading}
               onChange={this.handleTableChange}
               rowKey="id"
-              rowClassName={record =>
+              rowClassName={(record) =>
                 record.dupID % 2 ? "duplicate-alternate-row" : ""
               }
               pagination={false}
@@ -1001,7 +1028,16 @@ const mapContextToProps = ({
   nametype,
   namefield,
   user,
-  catalogueKey
-}) => ({ rank, taxonomicstatus, issue, nomstatus, nametype, namefield, user, catalogueKey });
+  catalogueKey,
+}) => ({
+  rank,
+  taxonomicstatus,
+  issue,
+  nomstatus,
+  nametype,
+  namefield,
+  user,
+  catalogueKey,
+});
 
 export default withContext(mapContextToProps)(DuplicateSearchPage);

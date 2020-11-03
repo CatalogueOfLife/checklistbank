@@ -9,7 +9,6 @@ import history from "../../history";
 // import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
-import ErrorMsg from "../../components/ErrorMsg";
 const { Option } = Select;
 
 class SourceSeelect extends React.Component {
@@ -90,12 +89,7 @@ class SourceSeelect extends React.Component {
     this.setState({ visible: false });
   };
   render = () => {
-    const {
-      match: {
-        params: { key },
-      },
-      dataset,
-    } = this.props;
+    const { dataset } = this.props;
     const { sources, loading } = this.state;
     return (
       <React.Fragment>

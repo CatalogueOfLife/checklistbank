@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 
-import {
-  Input,
-  Modal,
-  Button,
-  Select,
-  Alert,
-  List,
-  notification,
-  Form,
-} from "antd";
+import { Input, Modal, Button, Select, Alert, notification, Form } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import EditableTable from "./EditableTable";
@@ -201,7 +192,9 @@ const SpeciesestimateModal = (props) => {
           </FormItem>
 
           <FormItem {...tailFormItemLayout}>
-            <Button style={{ marginRight: "10px" }} onClick={toggleEdit} >Cancel</Button>
+            <Button style={{ marginRight: "10px" }} onClick={toggleEdit}>
+              Cancel
+            </Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -233,7 +226,6 @@ const SpeciesestimateModal = (props) => {
     </Modal>
   );
 };
-
 
 const mapContextToProps = ({ estimateType }) => ({ estimateType });
 

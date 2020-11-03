@@ -1,8 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined, DiffOutlined, WarningOutlined } from '@ant-design/icons';
+import { CodeOutlined, DiffOutlined, WarningOutlined } from "@ant-design/icons";
 
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
@@ -13,10 +12,9 @@ import SyncButton from "./SyncButton";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
-import ImportMetrics from "../../../components/ImportMetrics";
 import kibanaQuery from "./kibanaQuery";
 
-import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton"
+import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
 
 const PAGE_SIZE = 25;
@@ -29,7 +27,7 @@ const tagColors = {
   inserting: "blue",
   finished: "green",
   failed: "red",
-  "in queue": "orange"
+  "in queue": "orange",
 };
 const getColumns = (catalogueKey) => [
   {
@@ -37,44 +35,50 @@ const getColumns = (catalogueKey) => [
     dataIndex: ["sector", "dataset", "alias"],
     key: "alias",
     width: 150,
-    render: (text, record) => <NavLink
-    to={{
-      pathname: `/catalogue/${catalogueKey}/dataset/${
-        record.sector.dataset.key
-      }/meta`
-    }}
-  >
-    {_.get(record, "sector.dataset.alias")  || _.get(record, "sector.dataset.title")}
-  </NavLink>
+    render: (text, record) => (
+      <NavLink
+        to={{
+          pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/meta`,
+        }}
+      >
+        {_.get(record, "sector.dataset.alias") ||
+          _.get(record, "sector.dataset.title")}
+      </NavLink>
+    ),
   },
   {
     title: "Subject",
     dataIndex: ["sector", "subject", "name"],
     key: "subject",
     width: 100,
-  
+
     render: (text, record) => {
       return (
         <React.Fragment>
           <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-            {_.get(record, 'sector.subject.rank')}:{" "}
+            {_.get(record, "sector.subject.rank")}:{" "}
           </span>
           <NavLink
             to={{
               pathname: `/catalogue/${catalogueKey}/names`,
-              search:  `?q=${_.get(record, 'sector.subject.name')}&SECTOR_DATASET_KEY=${_.get(record, 'sector.subjectDatasetKey')}`
-              
+              search: `?q=${_.get(
+                record,
+                "sector.subject.name"
+              )}&SECTOR_DATASET_KEY=${_.get(
+                record,
+                "sector.subjectDatasetKey"
+              )}`,
             }}
             exact={true}
           >
-            {_.get(record, 'sector.subject.name')}
+            {_.get(record, "sector.subject.name")}
           </NavLink>
-          {_.get(record, 'sector.subject.broken') && (
+          {_.get(record, "sector.subject.broken") && (
             <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
         </React.Fragment>
       );
-    }
+    },
   },
   {
     title: "Target",
@@ -86,25 +90,31 @@ const getColumns = (catalogueKey) => [
       return (
         <React.Fragment>
           <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-            {_.get(record, 'sector.target.rank')}:{" "}
+            {_.get(record, "sector.target.rank")}:{" "}
           </span>
-       { _.get(record, 'sector.target.id') &&  <NavLink
-            to={{
-              pathname: `/catalogue/${catalogueKey}/assembly`,
-              search: `?assemblyTaxonKey=${ _.get(record, 'sector.target.id')}`
-            }}
-            exact={true}
-          >
-            {_.get(record, "sector.target.name")}
-           
-          </NavLink> }
-          { _.get(record, 'sector.target.broken') && <React.Fragment> 
-            {_.get(record, "sector.target.name")}
-            <WarningOutlined style={{ color: "red", marginLeft: "10px" }} /></React.Fragment>
-          }
+          {_.get(record, "sector.target.id") && (
+            <NavLink
+              to={{
+                pathname: `/catalogue/${catalogueKey}/assembly`,
+                search: `?assemblyTaxonKey=${_.get(
+                  record,
+                  "sector.target.id"
+                )}`,
+              }}
+              exact={true}
+            >
+              {_.get(record, "sector.target.name")}
+            </NavLink>
+          )}
+          {_.get(record, "sector.target.broken") && (
+            <React.Fragment>
+              {_.get(record, "sector.target.name")}
+              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
+            </React.Fragment>
+          )}
         </React.Fragment>
       );
-    }
+    },
   },
   {
     title: "Type",
@@ -113,7 +123,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return record.type;
     },
-    width: 50
+    width: 50,
   },
   {
     title: "State",
@@ -122,65 +132,68 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
     },
-    width: 50
+    width: 50,
   },
 
   {
     title: "Attempt",
     dataIndex: "attempt",
     key: "attempt",
-    width: 50
+    width: 50,
   },
   {
     title: "Started",
     dataIndex: "started",
     key: "started",
     width: 50,
-    render: date => {
-      return date ? moment(date).format('MMMM Do, h:mm a') : "";
-    }
+    render: (date) => {
+      return date ? moment(date).format("MMMM Do, h:mm a") : "";
+    },
   },
   {
     title: "Finished",
     dataIndex: "finished",
     key: "finished",
     width: 50,
-    render: date => {
-      return date ? moment(date).format('MMMM Do, h:mm a') : "";
-    }
+    render: (date) => {
+      return date ? moment(date).format("MMMM Do, h:mm a") : "";
+    },
   },
   {
     title: "Diff",
     key: "diff",
-    render: (text, record) => (
-      record.attempt < 2 ? "" : <NavLink
-        to={{
-          pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
-          search:
-            record.attempt > 0
-              ? `?attempts=${record.attempt - 1}..${record.attempt}`
-              : ""
-        }}
-      >
-        <Tooltip title="Names diff">
-          <DiffOutlined style={{fontSize: '20px'}} />
-        </Tooltip>
-      </NavLink>
-    ),
-    width: 50
+    render: (text, record) =>
+      record.attempt < 2 ? (
+        ""
+      ) : (
+        <NavLink
+          to={{
+            pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
+            search:
+              record.attempt > 0
+                ? `?attempts=${record.attempt - 1}..${record.attempt}`
+                : "",
+          }}
+        >
+          <Tooltip title="Names diff">
+            <DiffOutlined style={{ fontSize: "20px" }} />
+          </Tooltip>
+        </NavLink>
+      ),
+    width: 50,
   },
   {
     title: "Logs",
     key: "logs",
     render: (text, record) => (
       <Tooltip title="Kibana logs">
-        <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank" >
-          <CodeOutlined style={{fontSize: '20px'}} />
+        <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank">
+          <CodeOutlined style={{ fontSize: "20px" }} />
         </a>
       </Tooltip>
     ),
-    width: 50
-  }
+    width: 50,
+  },
 ];
 
 class SyncTable extends React.Component {
@@ -192,9 +205,9 @@ class SyncTable extends React.Component {
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
-        current: 1
+        current: 1,
       },
-      loading: false
+      loading: false,
     };
   }
 
@@ -203,69 +216,68 @@ class SyncTable extends React.Component {
     if (_.isEmpty(query)) {
       query = { limit: 25, offset: 0 };
     }
-   
-    this.getData(query);
 
+    this.getData(query);
   }
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps) => {
     if (
-      
       _.get(prevProps, "match.params.catalogueKey") !==
-        _.get(this.props, "match.params.catalogueKey")
+      _.get(this.props, "match.params.catalogueKey")
     ) {
-      const params = qs.parse(_.get(this.props, "location.search"));
       this.setState(
         {
           pagination: {
             pageSize: PAGE_SIZE,
-            current: 1
-          }
+            current: 1,
+          },
         },
-       () =>  this.getData({ limit: 25, offset: 0 })
+        () => this.getData({ limit: 25, offset: 0 })
       );
     }
   };
 
-
-  getData = params => {
+  getData = (params) => {
     this.setState({ loading: true, params });
     const {
       match: {
-        params: { catalogueKey }
-      }
+        params: { catalogueKey },
+      },
     } = this.props;
     history.push({
       pathname: `/catalogue/${catalogueKey}/sector/sync`,
-      search: `?${qs.stringify(params)}`
+      search: `?${qs.stringify(params)}`,
     });
     axios(
-      `${config.dataApi}dataset/${
-        catalogueKey
-      }/sector/sync?${qs.stringify(params)}`
+      `${config.dataApi}dataset/${catalogueKey}/sector/sync?${qs.stringify(
+        params
+      )}`
     )
-      .then(res => {
+      .then((res) => {
         const promises =
           res.data.result && _.isArray(res.data.result)
-            ? res.data.result.map(sync =>
-                axios(`${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`)
-                  .then(sector => {
+            ? res.data.result.map((sync) =>
+                axios(
+                  `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
+                )
+                  .then((sector) => {
                     sync.sector = sector.data;
                     sync._id = `${sync.sectorKey}_${sync.attempt}`;
                   })
-                  .then(() => 
-                    axios(`${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`)
+                  .then(() =>
+                    axios(
+                      `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
+                    )
                   )
                   .then((res) => {
-                    sync.sector.dataset=res.data
+                    sync.sector.dataset = res.data;
                   })
-            
               )
             : [];
 
         return Promise.all(promises).then(() => res);
       })
-      .then(res => {
+      .then((res) => {
         const pagination = { ...this.state.pagination };
         pagination.total = res.data.total;
 
@@ -273,27 +285,26 @@ class SyncTable extends React.Component {
           loading: false,
           data: res.data.result,
           err: null,
-          pagination
+          pagination,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ loading: false, error: err, data: [] });
       });
   };
-
 
   handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination };
     pager.current = pagination.current;
 
     this.setState({
-      pagination: pager
+      pagination: pager,
     });
 
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
-      ...filters
+      ...filters,
     });
     if (filters.state && _.get(filters, "state.length")) {
       query.state = filters.state;
@@ -305,12 +316,17 @@ class SyncTable extends React.Component {
   };
 
   render() {
-    const { data, loading, error, syncAllError, params: {sectorKey} } = this.state;
+    const {
+      data,
+      error,
+      syncAllError,
+      params: { sectorKey },
+    } = this.state;
     const { user, sectorImportState } = this.props;
     const {
       match: {
-        params: { catalogueKey }
-      }
+        params: { catalogueKey },
+      },
     } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
@@ -320,33 +336,47 @@ class SyncTable extends React.Component {
             dataIndex: "",
             key: "x",
             width: 50,
-            render: record => (
-              record.job === "SectorSync" ?  <SyncButton
-                key={record.datasetKey}
-                record={record}
-              /> : ""
-            )
-          }
+            render: (record) =>
+              record.job === "SectorSync" ? (
+                <SyncButton key={record.datasetKey} record={record} />
+              ) : (
+                ""
+              ),
+          },
         ]
       : getColumns(catalogueKey);
 
-      columns[4].filters = sectorImportState.map(i => ({text: _.startCase(i), value: i}))
-
+    columns[4].filters = sectorImportState.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
 
     return (
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
-        {syncAllError && <Alert message={<ErrorMsg error={syncAllError} />} type="error" />}
+        {syncAllError && (
+          <Alert message={<ErrorMsg error={syncAllError} />} type="error" />
+        )}
 
-      {!sectorKey &&  <SyncAllSectorsButton 
-          catalogueKey={catalogueKey}
-          onError={err => this.setState({syncAllError: err})}
-          onSuccess={() => this.setState({syncAllError: null})}
-        />}
-        {sectorKey && <Row>
-          <Col><h1>Imports for sector {sectorKey}</h1> <a onClick={() => this.getData({ limit: 25, offset: 0 })}> Show imports for all sectors</a></Col>
-          <Col></Col>
-        </Row>}
+        {!sectorKey && (
+          <SyncAllSectorsButton
+            catalogueKey={catalogueKey}
+            onError={(err) => this.setState({ syncAllError: err })}
+            onSuccess={() => this.setState({ syncAllError: null })}
+          />
+        )}
+        {sectorKey && (
+          <Row>
+            <Col>
+              <h1>Imports for sector {sectorKey}</h1>{" "}
+              <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
+                {" "}
+                Show imports for all sectors
+              </a>
+            </Col>
+            <Col></Col>
+          </Row>
+        )}
         {!error && (
           <Table
             scroll={{ x: 1000 }}
@@ -356,13 +386,15 @@ class SyncTable extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey="_id"
-            expandedRowRender={record => {
+            expandedRowRender={(record) => {
               if (record.state === "failed") {
                 return <Alert message={record.error} type="error" />;
               } else if (record.state === "finished") {
                 return (
                   <React.Fragment>
-                    <Tag key="speciesCount" color="blue">Species Count: {_.get(record, `taxaByRankCount.species`)}</Tag>
+                    <Tag key="speciesCount" color="blue">
+                      Species Count: {_.get(record, `taxaByRankCount.species`)}
+                    </Tag>
                     {[
                       "taxonCount",
                       "synonymCount",
@@ -370,8 +402,8 @@ class SyncTable extends React.Component {
                       "distributionCount",
                       "descriptionCount",
                       "vernacularCount",
-                      "mediaCount"
-                    ].map(c =>
+                      "mediaCount",
+                    ].map((c) =>
                       !isNaN(_.get(record, `${c}`)) ? (
                         <Tag key={c} color="blue">
                           {_.startCase(c)}: {_.get(record, `${c}`)}
@@ -391,6 +423,10 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, sectorImportState, catalogueKey }) => ({ user, sectorImportState, catalogueKey });
+const mapContextToProps = ({ user, sectorImportState, catalogueKey }) => ({
+  user,
+  sectorImportState,
+  catalogueKey,
+});
 
 export default withContext(mapContextToProps)(SyncTable);

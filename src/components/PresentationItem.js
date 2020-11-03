@@ -1,52 +1,51 @@
-import React from 'react';
-import injectSheet from 'react-jss';
-import { Row, Col } from 'antd';
-import { FormattedMessage } from 'react-intl';
-import PropTypes from 'prop-types';
+import React from "react";
+import injectSheet from "react-jss";
+import { Row, Col } from "antd";
+import { FormattedMessage } from "react-intl";
 
-import Help from './Help';
+import Help from "./Help";
 
 // Wrappers
-import withWidth, { MEDIUM } from './hoc/Width';
+import withWidth, { MEDIUM } from "./hoc/Width";
 
 const styles = () => ({
   formItem: {
     paddingBottom: 0,
-    width: '100%',
-    clear: 'both',
-    borderBottom: '1px solid #eee',
-    '&:last-of-type': {
-      border: 'none'
+    width: "100%",
+    clear: "both",
+    borderBottom: "1px solid #eee",
+    "&:last-of-type": {
+      border: "none",
     },
-    '&>div': {
+    "&>div": {
       paddingLeft: 10,
-      paddingRight: 10
-    }
+      paddingRight: 10,
+    },
   },
   label: {
-    display: 'block',
-    color: 'rgba(0, 0, 0, 0.85)'
+    display: "block",
+    color: "rgba(0, 0, 0, 0.85)",
   },
   content: {
-    wordBreak: 'break-word',
-    marginBottom: 0
+    wordBreak: "break-word",
+    marginBottom: 0,
   },
   noContent: {
-    wordBreak: 'break-word',
-    color: '#bbb',
-    marginBottom: 0
+    wordBreak: "break-word",
+    color: "#bbb",
+    marginBottom: 0,
   },
   contentCol: {
-    wordBreak: 'break-word'
+    wordBreak: "break-word",
   },
   smallMargin: {
     marginBottom: 3,
-    marginTop: 3
+    marginTop: 3,
   },
   mediumMargin: {
     marginBottom: 10,
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
 /**
@@ -61,17 +60,29 @@ const styles = () => ({
  * @returns {*}
  * @constructor
  */
-const PresentationItem = ({ label, helpText, classes, children, width, md, size }) => {
+const PresentationItem = ({
+  label,
+  helpText,
+  classes,
+  children,
+  width,
+  md,
+  size,
+}) => {
   const getValue = () => {
     let value = (
       <dd className={classes.noContent}>
-        <FormattedMessage id="noInformation" defaultMessage="No information"/>
+        <FormattedMessage id="noInformation" defaultMessage="No information" />
       </dd>
     );
 
     if (Array.isArray(children) && children.length > 0) {
-      value =  children.map((item, i) => (<dd className={classes.content} key={i}>{item}</dd>));
-    } else if (!Array.isArray(children) && typeof children !== 'undefined') {
+      value = children.map((item, i) => (
+        <dd className={classes.content} key={i}>
+          {item}
+        </dd>
+      ));
+    } else if (!Array.isArray(children) && typeof children !== "undefined") {
       value = <dd className={classes.content}>{children}</dd>;
     }
 
@@ -80,24 +91,33 @@ const PresentationItem = ({ label, helpText, classes, children, width, md, size 
 
   const medium = md || 8;
   const mediumCol2 = medium < 24 ? 24 - medium : 24;
-  const marginSize = size === 'medium' ? classes.mediumMargin : classes.smallMargin;
+  const marginSize =
+    size === "medium" ? classes.mediumMargin : classes.smallMargin;
   return (
     <Row className={classes.formItem}>
-      <Col sm={24} md={medium} style={width < MEDIUM ? { marginBottom: 0 } : {}} className={marginSize}>
+      <Col
+        sm={24}
+        md={medium}
+        style={width < MEDIUM ? { marginBottom: 0 } : {}}
+        className={marginSize}
+      >
         <div>
           <dt className={classes.label}>
             {label}
-            <Help title={helpText}/>
+            <Help title={helpText} />
           </dt>
         </div>
       </Col>
-      <Col sm={24} md={mediumCol2} style={width < MEDIUM ? { marginTop: 0 } : {}} className={marginSize}>
+      <Col
+        sm={24}
+        md={mediumCol2}
+        style={width < MEDIUM ? { marginTop: 0 } : {}}
+        className={marginSize}
+      >
         {getValue()}
       </Col>
     </Row>
   );
 };
-
-
 
 export default withWidth()(injectSheet(styles)(PresentationItem));

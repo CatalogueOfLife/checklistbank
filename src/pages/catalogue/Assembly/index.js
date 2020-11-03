@@ -1,16 +1,6 @@
 import React from "react";
 import { EyeOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
-import {
-  Row,
-  Col,
-  notification,
-  Button,
-  Card,
-  Alert,
-  Radio,
-  Slider,
-  Switch,
-} from "antd";
+import { Row, Col, notification, Button, Alert, Radio, Slider } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../../components/LayoutNew";
@@ -22,14 +12,12 @@ import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../../components/PageContent";
-import SyncState from "./SyncState";
 import AddChildModal from "./AddChildModal";
 import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 
-const { syncStateHeartbeat } = config;
 class Assembly extends React.Component {
   constructor(props) {
     super(props);
@@ -128,7 +116,7 @@ class Assembly extends React.Component {
         );
       });
   };
-  replace = (subject, target, mode) => {
+  replace = (subject, target) => {
     const { parentId } = target;
     const { assemblyTaxonKey } = this.state;
     const {

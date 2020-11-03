@@ -5,7 +5,6 @@ import Layout from "../../components/LayoutNew";
 import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
 import config from "../../config";
-import _ from "lodash";
 import Helmet from "react-helmet";
 import {
   Row,

@@ -97,7 +97,6 @@ class Sector extends React.Component {
 
   applyDecision = () => {
     const { taxon, decisionCallback, catalogueKey } = this.props;
-    const { sector } = taxon;
 
     const { datasetKey } = taxon;
     this.setState({ postingDecisions: true });

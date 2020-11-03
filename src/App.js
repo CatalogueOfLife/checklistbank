@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Router, Route, Switch, Redirect } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 
 import history from "./history";
@@ -7,9 +7,7 @@ import "./App.css";
 import DatasetList from "./pages/DatasetList";
 import DatasetPage from "./pages/DatasetKey";
 import DatasetCreate from "./pages/DatasetCreate";
-import Taxon from "./pages/Taxon";
-import Name from "./pages/Name";
-import VerbatimRecord from "./pages/VerbatimRecord";
+
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider";
 import SyncProvider from "./components/hoc/SyncProvider";

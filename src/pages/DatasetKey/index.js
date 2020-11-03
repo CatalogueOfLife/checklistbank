@@ -2,12 +2,10 @@ import React from "react";
 import config from "../../config";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import queryString from "query-string";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
-import DatasetSectors from "./datasetPageTabs/DatasetSectors";
 import DatasetProjects from "./datasetPageTabs/DatasetProjects";
 
 import DatasetReferences from "./datasetPageTabs/DatasetReferences";
@@ -19,7 +17,6 @@ import NameSearch from "../NameSearch";
 import WorkBench from "../WorkBench";
 
 import withContext from "../../components/hoc/withContext";
-import Exception404 from "../../components/exception/404";
 
 import _ from "lodash";
 import Helmet from "react-helmet";
@@ -60,8 +57,6 @@ class DatasetPage extends React.Component {
   };
 
   getData = (datasetKey) => {
-    const { dataset } = this.props;
-
     Promise.all([
       axios(`${config.dataApi}dataset/${datasetKey}/import`),
       axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`),
@@ -83,7 +78,7 @@ class DatasetPage extends React.Component {
 
   render() {
     //  const { datasetKey, section, dataset } = this.props;
-    const { importState, hasData, lastSuccesFullImport } = this.state;
+    const { importState, lastSuccesFullImport } = this.state;
 
     const {
       match: {

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Button, Form, Switch } from "antd";
+import { Table, Alert, Radio, Row, Col, Form, Switch } from "antd";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 
 import config from "../../config";
@@ -473,16 +473,16 @@ class NameSearchPage extends React.Component {
               </a>
             </div>
             <div style={{ textAlign: "right", marginBottom: "8px" }}>
-            {pagination &&
-              !isNaN(pagination.total) &&
-              `${(
-                (pagination.current - 1) * pagination.pageSize +
-                1
-              ).toLocaleString("en-GB")} - ${(
-                pagination.current * pagination.pageSize
-              ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
-                "en-GB"
-              )}`}
+              {pagination &&
+                !isNaN(pagination.total) &&
+                `${(
+                  (pagination.current - 1) * pagination.pageSize +
+                  1
+                ).toLocaleString("en-GB")} - ${(
+                  pagination.current * pagination.pageSize
+                ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
+                  "en-GB"
+                )}`}
             </div>
           </Col>
         </Row>

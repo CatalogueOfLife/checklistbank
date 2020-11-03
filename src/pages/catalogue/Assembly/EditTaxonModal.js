@@ -122,7 +122,6 @@ const EditTaxonModal = (props) => {
   };
 
   const handleSubmit = (values) => {
-    const { name } = taxon;
     removeEmptyValues(values);
     //  const updatedName = { ...name, ...values };
     submitData({ ...values, origin: "user" });
