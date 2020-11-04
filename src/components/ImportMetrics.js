@@ -15,9 +15,7 @@ const ImportMetrics = ({ data }) => {
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
           {_.map(
-            "nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount".split(
-              " "
-            ),
+            "nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(" "),
             (c) => {
               return _.get(data, `${c}`) ? (
                 <Tag key={c} color="blue">
@@ -127,7 +125,7 @@ const ImportMetrics = ({ data }) => {
               defaultType="pie"
               datasetKey={datasetKey}
               data={_.get(data, "verbatimByTermCount")}
-              title="Verbatim records by type"
+              title="Verbatim records by rowtype"
               subtitle={`Imported ${moment(data.finished).format(
                 "MMMM Do YYYY, h:mm a"
               )}`}
@@ -170,13 +168,39 @@ const ImportMetrics = ({ data }) => {
               defaultType="pie"
               datasetKey={datasetKey}
               data={_.get(data, "nameRelationsByTypeCount")}
-              title="Relations by type"
+              title="Name relations"
               subtitle={`Imported ${moment(data.finished).format(
                 "MMMM Do YYYY, h:mm a"
               )}`}
             />
           </Col>
         )}
+        {_.get(data, "taxonConceptRelationsByTypeCount") && (
+          <Col span={12} style={{ padding: "10px" }}>
+            <ImportChart
+              defaultType="pie"
+              datasetKey={datasetKey}
+              data={_.get(data, "taxonConceptRelationsByTypeCount")}
+              title="Taxon concept relations"
+              subtitle={`Imported ${moment(data.finished).format(
+                "MMMM Do YYYY, h:mm a"
+              )}`}
+            />
+          </Col>
+        )}
+        {_.get(data, "speciesInteractionsByTypeCount") && (
+          <Col span={12} style={{ padding: "10px" }}>
+            <ImportChart
+              defaultType="pie"
+              datasetKey={datasetKey}
+              data={_.get(data, "speciesInteractionsByTypeCount")}
+              title="Species interactions"
+              subtitle={`Imported ${moment(data.finished).format(
+                "MMMM Do YYYY, h:mm a"
+              )}`}
+            />
+          </Col>
+        )}        
         {_.get(data, "distributionsByGazetteerCount") && (
           <Col span={12} style={{ padding: "10px" }}>
             <ImportChart
