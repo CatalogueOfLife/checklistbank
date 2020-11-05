@@ -88,12 +88,8 @@ const domain = window.location.hostname;
 let env = environments.prod;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
-} else if (domain.endsWith("dev.catalogueoflife.org")) {
-  env = environments.dev;
-} else if (domain.endsWith("catalogueoflife.org")) {
-  env = environments.prod;
-} else if (domain.endsWith("localhost")) {
-  // env = environments.local;
+} else {
+  env = environments.dev;  
 }
 
 export default env;
