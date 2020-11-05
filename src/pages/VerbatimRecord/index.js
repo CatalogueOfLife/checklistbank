@@ -109,7 +109,7 @@ class VerbatimRecord extends React.Component {
     const current = Number(offset) / Number(limit) + 1;
     const params = qs.parse(_.get(location, "search"));
 
-    const typeFacets = lastSuccesFullImport
+    const typeFacets = _.get(lastSuccesFullImport, "verbatimByTermCount")
       ? Object.keys(lastSuccesFullImport.verbatimByTermCount).map((t) => ({
           value: t,
           label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`,
