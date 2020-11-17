@@ -2,8 +2,12 @@ import config from "../../../config";
 
 const { kibanaEnv } = config;
 const kibanaQuery = (datasetKey, attempt) =>
-  attempt
-    ? `https://logs.gbif.org/app/discover#/?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(),index:'${kibanaEnv.index}',interval:auto,query:(language:lucene,query:(query_string:(analyze_wildcard:!t,query:'datasetKey:"${datasetKey}" AND attempt:"${attempt}"',time_zone:UTC))),sort:!('@timestamp',desc))`
-    : `https://logs.gbif.org/app/discover#/?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(),index:'${kibanaEnv.index}',interval:auto,query:(language:lucene,query:(query_string:(analyze_wildcard:!t,query:'datasetKey:"${datasetKey}"',time_zone:UTC))),sort:!('@timestamp',desc))`;
+  `https://logs.gbif.org/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(columns:!(level,datasetKey,service,logger_name,message),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${
+    kibanaEnv.index
+  }',key:dataset,negate:!f,params:(query:'${datasetKey}'),type:phrase),query:(match_phrase:(dataset:'${datasetKey}')))),index:'${
+    kibanaEnv.index
+  }',interval:auto,query:(language:kuery,query:${
+    attempt ? `'"import attempt ${attempt}"'` : "import"
+  }),sort:!())`;
 
 export default kibanaQuery;

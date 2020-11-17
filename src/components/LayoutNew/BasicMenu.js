@@ -648,7 +648,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {_.get(selectedDataset, "origin") !== "managed" && (
+              {selectedDataset && (
                 <Menu.Item key="imports">
                   <NavLink
                     to={{
