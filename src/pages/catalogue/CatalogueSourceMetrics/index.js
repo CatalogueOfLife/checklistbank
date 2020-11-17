@@ -217,7 +217,9 @@ class SourceMetrics extends React.Component {
               <React.Fragment>
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                    //pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                    pathname: `/catalogue/${catalogueKey}/names`,
+                    search: `?SECTOR_DATASET_KEY=${record.key}`,
                   }}
                   exact={true}
                 >
@@ -257,7 +259,9 @@ class SourceMetrics extends React.Component {
             <React.Fragment>
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                  //pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                  pathname: `/catalogue/${catalogueKey}/names`,
+                  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
                 exact={true}
               >
