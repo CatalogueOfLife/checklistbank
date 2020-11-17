@@ -20,7 +20,7 @@ import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
-
+import TaxonMedia from "./TaxonMedia";
 const md = 5;
 
 class TaxonPage extends React.Component {
@@ -517,6 +517,12 @@ class TaxonPage extends React.Component {
               )}
             </Col>
           </Row>
+          {/* 
+          {_.get(info, "media") && (
+            <PresentationItem md={md} label="Media">
+              <TaxonMedia media={_.get(info, "media")} />
+            </PresentationItem>
+          )} */}
 
           {_.get(taxon, "verbatimKey") && (
             <VerbatimPresentation

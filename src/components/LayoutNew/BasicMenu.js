@@ -648,7 +648,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {_.get(selectedDataset, "origin") !== "released" && (
+              {_.get(selectedDataset, "origin") !== "managed" && (
                 <Menu.Item key="imports">
                   <NavLink
                     to={{
@@ -658,9 +658,9 @@ class BasicMenu extends Component {
                       )}/imports`,
                     }}
                   >
-                    {selectedDataset.origin !== "managed"
+                    {selectedDataset.origin === "external"
                       ? "Imports"
-                      : "Releases"}
+                      : "Metrics"}
                   </NavLink>
                 </Menu.Item>
               )}

@@ -1,9 +1,9 @@
+import config from "../../../config";
 
-import config from '../../../config'
+const { kibanaEnv } = config;
+const kibanaQuery = (datasetKey, attempt) =>
+  attempt
+    ? `https://logs.gbif.org/app/discover#/?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(),index:'${kibanaEnv.index}',interval:auto,query:(language:lucene,query:(query_string:(analyze_wildcard:!t,query:'datasetKey:"${datasetKey}" AND attempt:"${attempt}"',time_zone:UTC))),sort:!('@timestamp',desc))`
+    : `https://logs.gbif.org/app/discover#/?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(),index:'${kibanaEnv.index}',interval:auto,query:(language:lucene,query:(query_string:(analyze_wildcard:!t,query:'datasetKey:"${datasetKey}"',time_zone:UTC))),sort:!('@timestamp',desc))`;
 
-const {kibanaEnv} = config;
-const kibanaQuery = (datasetKey, attempt) => attempt ? `https://logs.gbif.org/app/kibana#/discover?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:environment,negate:!f,type:phrase,value:${kibanaEnv.name}),query:(match:(environment:(query:${kibanaEnv.name},type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:level,negate:!t,type:phrase,value:DEBUG),query:(match:(level:(query:DEBUG,type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:level,negate:!t,type:phrase,value:INFO),query:(match:(level:(query:INFO,type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:dataset,negate:!f,type:phrase,value:'${datasetKey}'),query:(match:(dataset:(query:'${datasetKey}',type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:attempt,negate:!f,type:phrase,value:'1'),query:(match:(attempt:(query:'${attempt}',type:phrase))))),index:${kibanaEnv.index},interval:auto,query:(match_all:()),sort:!('@timestamp',desc))`
-: `https://logs.gbif.org/app/kibana#/discover?_g=(refreshInterval:(display:On,pause:!f,value:0),time:(from:now-7d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:environment,negate:!f,type:phrase,value:col),query:(match:(environment:(query:${kibanaEnv.name},type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:level,negate:!t,type:phrase,value:DEBUG),query:(match:(level:(query:DEBUG,type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:level,negate:!t,type:phrase,value:INFO),query:(match:(level:(query:INFO,type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:${kibanaEnv.index},key:dataset,negate:!f,type:phrase,value:'${datasetKey}'),query:(match:(dataset:(query:'${datasetKey}',type:phrase))))),index:${kibanaEnv.index},interval:auto,query:(match_all:()),sort:!('@timestamp',desc))` ;
-
-
-export default kibanaQuery
+export default kibanaQuery;

@@ -1,6 +1,6 @@
-# Assembling the CoL
+# Assembling the COL
 The purpose of this document is to summarize the entire editorial workflow needed when assembling a Catalogue of Life.
-It is targeted at a CoL editor and uses the frontend exclusively.
+It is targeted at a COL editor and uses the frontend exclusively.
 
 ## Overview
  - optionally register a new dataset
@@ -32,8 +32,8 @@ tbd.
 
 
 ## Taxonomic Sectors
-### The CoL hierarchy
-Comes from the existing CoL down to genera.
+### The COL hierarchy
+Comes from the existing COL down to genera.
 Use `Catalogue/Assembly/ModifyTree` to modify the tree
 
 ### Mappings

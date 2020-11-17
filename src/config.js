@@ -6,8 +6,8 @@ const environments = {
     downloadApi: "http://download.dev.catalogueoflife.org/",
     env: "dev",
     kibanaEnv: {
-      name: "col-dev",
-      index: "AWyLa2lBHCKcR6PFXu26",
+      name: "col-dev-ws",
+      index: "1834aa30-fe43-11ea-93de-b97c40066ce8",
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
@@ -29,8 +29,8 @@ const environments = {
     downloadApi: "https://download.catalogue.life/",
     env: "prod",
     kibanaEnv: {
-      name: "col-prod",
-      index: "AWyLa4mQHCKcR6PFXu4X",
+      name: "col-prod-ws",
+      index: "463d38b0-fe44-11ea-93de-b97c40066ce8",
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
@@ -89,7 +89,7 @@ let env = environments.prod;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else {
-  env = environments.dev;  
+  env = environments.prod;
 }
 
 export default env;
