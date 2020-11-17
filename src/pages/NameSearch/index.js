@@ -370,26 +370,26 @@ class NameSearchPage extends React.Component {
                 autoFocus={false}
               />{" "}
             </div>
-            {catalogueKey === datasetKey ||
-              (Number(datasetKey) === _.get(dataset, "key") &&
-                ["managed", "released"].includes(dataset.origin) && (
-                  <div style={{ marginTop: "10px" }}>
-                    <DatasetAutocomplete
-                      contributesTo={Number(datasetKey)}
-                      onSelectDataset={(value) => {
-                        this.updateSearch({ SECTOR_DATASET_KEY: value.key });
-                      }}
-                      defaultDatasetKey={
-                        _.get(params, "SECTOR_DATASET_KEY") || null
-                      }
-                      onResetSearch={(value) => {
-                        this.updateSearch({ SECTOR_DATASET_KEY: null });
-                      }}
-                      placeHolder="Filter by source dataset"
-                      autoFocus={false}
-                    />
-                  </div>
-                ))}
+            {(catalogueKey === datasetKey ||
+              Number(datasetKey) === catalogueKey ||
+              ["managed", "released"].includes(dataset.origin)) && (
+              <div style={{ marginTop: "10px" }}>
+                <DatasetAutocomplete
+                  contributesTo={Number(datasetKey)}
+                  onSelectDataset={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                  }}
+                  defaultDatasetKey={
+                    _.get(params, "SECTOR_DATASET_KEY") || null
+                  }
+                  onResetSearch={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: null });
+                  }}
+                  placeHolder="Filter by source dataset"
+                  autoFocus={false}
+                />
+              </div>
+            )}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
                 <FormItem label="Fuzzy">

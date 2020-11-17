@@ -89,7 +89,7 @@ let env = environments.prod;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else {
-  env = environments.dev;
+  env = environments.prod;
 }
 
 export default env;
