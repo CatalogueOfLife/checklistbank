@@ -15,7 +15,9 @@ const ImportMetrics = ({ data }) => {
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
           {_.map(
-            "nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(" "),
+            "nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(
+              " "
+            ),
             (c) => {
               return _.get(data, `${c}`) ? (
                 <Tag key={c} color="blue">
@@ -75,7 +77,7 @@ const ImportMetrics = ({ data }) => {
         {_.get(data, "namesByTypeCount") && (
           <Col span={12} style={{ padding: "10px" }}>
             <ImportChart
-              nameSearchParam="type"
+              nameSearchParam="nameType"
               defaultType="pie"
               datasetKey={datasetKey}
               data={_.get(data, "namesByTypeCount")}
@@ -200,7 +202,7 @@ const ImportMetrics = ({ data }) => {
               )}`}
             />
           </Col>
-        )}        
+        )}
         {_.get(data, "distributionsByGazetteerCount") && (
           <Col span={12} style={{ padding: "10px" }}>
             <ImportChart
