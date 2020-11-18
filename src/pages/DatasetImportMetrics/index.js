@@ -267,9 +267,9 @@ class DatasetImportMetrics extends React.Component {
             </Col>
           </Row>
         )}
-        {this.state.data && (
+        {data && (
           <React.Fragment>
-            <ImportMetrics data={this.state.data} />
+            <ImportMetrics data={data} />
 
             <Row style={{ padding: "10px" }}>
               <Divider orientation="left">Details</Divider>

@@ -22,7 +22,10 @@ class ImportChart extends React.Component {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (prevProps.datasetKey !== this.props.datasetKey) {
+    if (
+      prevProps.datasetKey !== this.props.datasetKey ||
+      JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)
+    ) {
       this.initChart(this.props);
     }
   };
