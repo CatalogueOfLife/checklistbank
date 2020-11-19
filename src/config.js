@@ -6,18 +6,14 @@ const environments = {
     downloadApi: "http://download.dev.catalogueoflife.org/",
     env: "dev",
     kibanaEnv: {
-      name: "col-dev-ws",
-      index: "1834aa30-fe43-11ea-93de-b97c40066ce8",
+      index: "198317e0-29a0-11eb-9ca0-ddc1af98892f",
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "COL draft",
       origin: "managed",
     },
-    NAME_INDEX: {
-      key: 1,
-      title: "Name Index",
-    },
+
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
     gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
@@ -29,18 +25,14 @@ const environments = {
     downloadApi: "https://download.catalogue.life/",
     env: "prod",
     kibanaEnv: {
-      name: "col-prod-ws",
-      index: "463d38b0-fe44-11ea-93de-b97c40066ce8",
+      index: "37c669c0-2a5c-11eb-9ca0-ddc1af98892f",
     },
     MANAGEMENT_CLASSIFICATION: {
       key: 3,
       title: "COL draft",
       origin: "managed",
     },
-    NAME_INDEX: {
-      key: 1,
-      title: "Name Index",
-    },
+
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
     gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
@@ -55,10 +47,7 @@ const environments = {
       title: "COL draft",
       origin: "managed",
     },
-    NAME_INDEX: {
-      key: 1,
-      title: "Name Index",
-    },
+
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
     gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
     syncStateHeartbeat: 3000,
@@ -72,10 +61,6 @@ const environments = {
       key: 3,
       title: "COL draft",
       origin: "managed",
-    },
-    NAME_INDEX: {
-      key: 1,
-      title: "Name Index",
     },
     gitBackend: "https://github.com/CatalogueOfLife/backend/tree/",
     gitFrontend: "https://github.com/CatalogueOfLife/checklistbank/tree/",
