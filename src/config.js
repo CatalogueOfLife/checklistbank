@@ -74,7 +74,7 @@ let env = environments.dev;
 if (domain.endsWith("data.catalogue.life")) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
-  env = environments.dev;
+  env = environments.prod;
 } else {
   env = environments.dev;
 }

@@ -94,8 +94,7 @@ class VerbatimRecord extends React.Component {
   onSearch = (search) => {
     const { location } = this.props;
     const params = qs.parse(_.get(location, "search"));
-    const query = { q: params.q, type: params.type };
-    let newQuery = { ...query, ...search };
+    let newQuery = { ...params, ...search };
 
     history.push({
       pathname: location.path,
