@@ -236,7 +236,7 @@ class DatasetList extends React.Component {
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
-            message: "Process started",
+            message: "Indexing started",
             description: `Dataset ${datasetKey} is being reindexed`,
           });
         });
@@ -246,12 +246,12 @@ class DatasetList extends React.Component {
 
   reimportDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}importer/${datasetKey}`)
+      .post(`${config.dataApi}importer/${datasetKey}/reimport`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
-            message: "Process started",
-            description: `Dataset ${datasetKey} is being reimported`,
+            message: "Reimport started",
+            description: `Dataset ${datasetKey} is being reimported from last archive`,
           });
         });
       })
