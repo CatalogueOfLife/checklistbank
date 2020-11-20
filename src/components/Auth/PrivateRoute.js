@@ -12,9 +12,8 @@ const PrivateRoute = ({ user, roles, component: Component, ...rest }) => (
       auth.isAuthorised(user, roles) ? (
         <Component {...props} />
       ) : (
-        <Layout>
-          {" "}
-          <Exception403></Exception403>
+        <Layout openKeys={[]} selectedKeys={[]}>
+          <Exception403 />
         </Layout>
       )
     }

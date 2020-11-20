@@ -83,7 +83,17 @@ class BasicMenu extends Component {
       
     } */
   };
-
+  showPrivateDataset = (user, dataset) => {
+    if (!dataset || !dataset.private) {
+      return true;
+    } else {
+      return (
+        user &&
+        user.datasets &&
+        user.datasets.find((d) => d.key === dataset.key)
+      );
+    }
+  };
   onOpenChange = (openKeys) => {
     const { setOpenKeys } = this.props;
     setOpenKeys(openKeys);
@@ -584,7 +594,7 @@ class BasicMenu extends Component {
             </Menu.Item>
           )}
 
-          {selectedDataset && (
+          {selectedDataset && this.showPrivateDataset(user, selectedDataset) && (
             <SubMenu
               key="datasetKey"
               title={

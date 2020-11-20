@@ -17,7 +17,7 @@ import NameSearch from "../NameSearch";
 import WorkBench from "../WorkBench";
 
 import withContext from "../../components/hoc/withContext";
-
+import Exception403 from "../../components/exception/403";
 import _ from "lodash";
 import Helmet from "react-helmet";
 import Duplicates from "../Duplicates";
@@ -87,6 +87,7 @@ class DatasetPage extends React.Component {
       location,
       dataset,
       importStateMap,
+      user,
     } = this.props;
 
     if (dataset && !section && !_.get(dataset, "deleted")) {
@@ -111,6 +112,31 @@ class DatasetPage extends React.Component {
     const sect = !section ? "meta" : section.split("?")[0];
     const openKeys = ["dataset", "datasetKey"];
     const selectedKeys = [section];
+    if (dataset && dataset.private) {
+      if (
+        !user ||
+        !user.datasets ||
+        !user.datasets.find((d) => Number(d.key) === dataset.key)
+      ) {
+        const recentDatasetsAsText = localStorage.getItem(
+          "colplus_recent_datasets"
+        );
+        let recentDatasets = recentDatasetsAsText
+          ? JSON.parse(recentDatasetsAsText)
+          : [];
+        recentDatasets = recentDatasets.filter((d) => d.key !== dataset.key);
+        localStorage.setItem(
+          "colplus_recent_datasets",
+          JSON.stringify(recentDatasets)
+        );
+        localStorage.removeItem("col_selected_dataset");
+        return (
+          <Layout openKeys={[]} selectedKeys={[]}>
+            <Exception403 />
+          </Layout>
+        );
+      }
+    }
     return (
       <Layout
         selectedDataset={dataset}
@@ -227,8 +253,9 @@ class DatasetPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ dataset, importStateMap }) => ({
+const mapContextToProps = ({ dataset, importStateMap, user }) => ({
   dataset,
   importStateMap,
+  user,
 });
 export default withContext(mapContextToProps)(DatasetPage);
