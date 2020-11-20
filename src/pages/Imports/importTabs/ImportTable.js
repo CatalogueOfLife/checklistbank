@@ -50,7 +50,9 @@ class ImportTable extends React.Component {
               to={{ pathname: `/dataset/${record.datasetKey}/names` }}
               exact={true}
             >
-              {_.get(record, "dataset.alias") || _.get(record, "dataset.title")}
+              {_.get(record, "dataset.alias") ||
+                _.get(record, "dataset.title") ||
+                `Dataset ${record.datasetKey}`}
             </NavLink>
           ),
           width: 150,
@@ -252,7 +254,7 @@ class ImportTable extends React.Component {
               )
             : [];
 
-        return Promise.all(promises).then(() => res);
+        return Promise.allSettled(promises).then(() => res);
       })
 
       .then((res) => {
