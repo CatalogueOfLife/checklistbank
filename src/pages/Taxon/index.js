@@ -489,9 +489,7 @@ class TaxonPage extends React.Component {
           )}
           {_.get(taxon, "link") && (
             <PresentationItem md={md} label="Online resource">
-              <a href={_.get(taxon, "link")}>
-                <LinkOutlined />
-              </a>
+              <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
             </PresentationItem>
           )}
 

@@ -369,10 +369,17 @@ class NamePage extends React.Component {
             <PresentationItem md={md} label="Fossil">
               <BooleanValue value={name.fossil} />
             </PresentationItem>
-            <PresentationItem md={md} label="Source Url">
+            {/* <PresentationItem md={md} label="Source Url">
               {name.sourceUrl && (
                 <a href={name.sourceUrl} target="_blank">
                   {name.sourceUrl}
+                </a>
+              )}
+            </PresentationItem> */}
+            <PresentationItem md={md} label="Link">
+              {name.Link && (
+                <a href={name.Link} target="_blank">
+                  {name.Link}
                 </a>
               )}
             </PresentationItem>
