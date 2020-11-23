@@ -496,6 +496,21 @@ class ColTreeNode extends React.Component {
                         />
                       </NavLink>
                     </span>
+                    {taxon.estimate && (
+                      <span>
+                        {" "}
+                        • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
+                        {taxon.estimates.length
+                          ? `(${taxon.estimates.length.toLocaleString(
+                              "en-GB"
+                            )} ${
+                              taxon.estimates.length > 1
+                                ? "estimates"
+                                : "estimate"
+                            })`
+                          : ""}
+                      </span>
+                    )}
                     {sector && (
                       <span>
                         <span> • </span>

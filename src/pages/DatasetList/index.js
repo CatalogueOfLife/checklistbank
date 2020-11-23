@@ -391,7 +391,7 @@ class DatasetList extends React.Component {
                 <FormItem
                   style={{ width: "100%" }}
                   {...formItemLayout}
-                  label="Hide columns"
+                  label="Hidden columns"
                 >
                   <ColumnFilter
                     columns={columns}
