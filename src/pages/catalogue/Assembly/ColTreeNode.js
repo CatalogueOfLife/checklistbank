@@ -370,12 +370,16 @@ class ColTreeNode extends React.Component {
                         </span>
                       )}
                       {taxon.status === "provisionally accepted" && (
-                        <Tag
-                          color={getTaxonomicStatusColor(taxon.status)}
-                          style={{ marginLeft: "6px" }}
-                        >
-                          prov.
-                        </Tag>
+                        <React.Fragment>
+                          {" "}
+                          •{" "}
+                          <Tag
+                            color={getTaxonomicStatusColor(taxon.status)}
+                            style={{ marginRight: 0 }}
+                          >
+                            prov.
+                          </Tag>
+                        </React.Fragment>
                       )}
                     </Popconfirm>
                   </Popover>
@@ -425,10 +429,17 @@ class ColTreeNode extends React.Component {
                           <SyncOutlined spin />
                         </span>
                       )}
-                      {taxon.status !== "accepted" && (
-                        <Tag color="red" style={{ marginLeft: "6px" }}>
-                          {taxon.status}
-                        </Tag>
+                      {taxon.status === "provisionally accepted" && (
+                        <React.Fragment>
+                          {" "}
+                          •{" "}
+                          <Tag
+                            color={getTaxonomicStatusColor(taxon.status)}
+                            style={{ marginRight: 0 }}
+                          >
+                            prov.
+                          </Tag>
+                        </React.Fragment>
                       )}
                       {taxon.datasetKey === catalogueKey &&
                         (!datasetSectors || _.isEmpty(datasetSectors)) &&
@@ -528,10 +539,17 @@ class ColTreeNode extends React.Component {
                       </span>
                     )}
 
-                    {taxon.status !== "accepted" && (
-                      <Tag color="red" style={{ marginLeft: "6px" }}>
-                        {taxon.status}
-                      </Tag>
+                    {taxon.status === "provisionally accepted" && (
+                      <React.Fragment>
+                        {" "}
+                        •{" "}
+                        <Tag
+                          color={getTaxonomicStatusColor(taxon.status)}
+                          style={{ marginRight: 0 }}
+                        >
+                          prov.
+                        </Tag>
+                      </React.Fragment>
                     )}
 
                     {datasetSectors && !_.isEmpty(datasetSectors) && (

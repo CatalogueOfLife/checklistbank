@@ -549,6 +549,27 @@ class ColTree extends React.Component {
     }
   };
 
+  pageThroughChildrenUntilTaxonFound = async (parentNode, taxonId) => {
+    let node;
+    while (!node && parentNode.children.length < parentNode.childCount) {
+      parentNode.childOffset += CHILD_PAGE_SIZE;
+      if (
+        parentNode.children[parentNode.children.length - 1].key ===
+        "__loadMoreBTN__"
+      ) {
+        parentNode.children = parentNode.children.slice(0, -1);
+      }
+      await this.fetchChildPage(parentNode, false, true);
+      node = this.findNode(taxonId, parentNode.children);
+    }
+    if (!node) {
+      node = parentNode.children.find((c) =>
+        _.get(c, "taxon.id") ? c.taxon.id.indexOf("incertae-sedis") > -1 : false
+      );
+    }
+    return node;
+  };
+
   reloadLoadedKeys = async (keys, expandAll = true) => {
     this.setState({ rootLoading: true });
     const { loadedKeys: storedKeys } = this.state;
@@ -569,37 +590,12 @@ class ColTree extends React.Component {
           _.isArray(_.get(parentNode, "children")) &&
           parentNode.children.length > 0
         ) {
-          node = parentNode.children.find(
-            (c) => c.taxon.id.indexOf("incertae-sedis") > -1
+          node = await this.pageThroughChildrenUntilTaxonFound(
+            parentNode,
+            loadedKeys[index]
           );
           if (node) {
             loadedKeys.splice(index, 0, node.taxon.id);
-          }
-        }
-      }
-      if (node) {
-        await this.fetchChildPage(node, true, true);
-        if (
-          targetTaxon &&
-          index === loadedKeys.length - 2 &&
-          _.get(node, "taxon.id") !== _.get(targetTaxon, "taxon.id") &&
-          _.isArray(node.children) &&
-          !node.children.find(
-            (c) => _.get(c, "taxon.id") === _.get(targetTaxon, "taxon.id")
-          )
-        ) {
-          if (node.children.length - 1 === CHILD_PAGE_SIZE) {
-            // its the parent of the taxon we are after - if its not in the first page, insert it
-            node.children = [targetTaxon, ...node.children];
-            this.setState({ treeData: [...this.state.treeData] }, () => {
-              setTimeout(() => {
-                if (_.get(this, "treeRef.current")) {
-                  this.treeRef.current.scrollTo({
-                    key: this.props.defaultExpandKey,
-                  });
-                }
-              }, 100);
-            });
           } else {
             // It has gone missing from the tree
             this.setState(
@@ -609,6 +605,7 @@ class ColTree extends React.Component {
                     Cannot find taxon {defaultExpandKey} in tree &#128549;
                   </span>
                 ),
+                rootLoading: false,
               },
               () => {
                 if (
@@ -619,6 +616,68 @@ class ColTree extends React.Component {
                 }
               }
             );
+          }
+        }
+      }
+      if (node) {
+        await this.fetchChildPage(node, true, true);
+        let targetNode = node.children.find(
+          (c) => _.get(c, "taxon.id") === _.get(targetTaxon, "taxon.id")
+        );
+        if (
+          targetTaxon &&
+          index === loadedKeys.length - 2 &&
+          _.get(node, "taxon.id") !== _.get(targetTaxon, "taxon.id") &&
+          _.isArray(node.children) &&
+          !targetNode
+        ) {
+          if (node.children.length < node.childCount) {
+            // its the parent of the taxon we are after - if its not in the first page, insert it
+            // its the parent of the taxon we are after - if its not in the first page, insert it
+            targetNode = await this.pageThroughChildrenUntilTaxonFound(
+              node,
+              _.get(targetTaxon, "taxon.id")
+            );
+            // node.children = [targetTaxon, ...node.children];
+            if (targetNode) {
+              this.setState({ treeData: [...this.state.treeData] }, () => {
+                setTimeout(() => {
+                  if (_.get(this, "treeRef.current")) {
+                    this.treeRef.current.scrollTo({
+                      key: this.props.defaultExpandKey,
+                    });
+                  }
+                }, 100);
+              });
+            } else {
+              // It has gone missing from the tree
+              this.setState(
+                {
+                  nodeNotFoundErr: (
+                    <span>
+                      Cannot find taxon {defaultExpandKey} in tree &#128549;
+                    </span>
+                  ),
+                },
+                () => {
+                  if (
+                    this.props.treeType === "CATALOGUE" &&
+                    typeof this.props.addMissingTargetKey === "function"
+                  ) {
+                    this.props.addMissingTargetKey(defaultExpandKey);
+                  }
+                }
+              );
+            }
+            /*  this.setState({ treeData: [...this.state.treeData] }, () => {
+              setTimeout(() => {
+                if (_.get(this, "treeRef.current")) {
+                  this.treeRef.current.scrollTo({
+                    key: this.props.defaultExpandKey,
+                  });
+                }
+              }, 100);
+            }); */
           }
         } else {
           const treeRef = _.get(this, "treeRef");
