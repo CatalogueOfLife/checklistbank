@@ -32,7 +32,7 @@ class HomePage extends React.Component {
   };
   getNameUsages = () => {
     this.setState({ nameUsagesLoading: true });
-    axios(`${config.dataApi}/nameusage/search?limit=0`)
+    axios(`${config.dataApi}nameusage/search?limit=0`)
       .then((res) => {
         this.setState({
           error: null,
