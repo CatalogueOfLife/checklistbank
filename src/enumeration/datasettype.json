@@ -1,0 +1,23 @@
+[
+  {
+    "name": "nomenclatural"
+  },
+  {
+    "name": "taxonomic"
+  },
+  {
+    "name": "article"
+  },
+  {
+    "name": "personal"
+  },
+  {
+    "name": "otu"
+  },
+  {
+    "name": "thematic"
+  },
+  {
+    "name": "other"
+  }
+]

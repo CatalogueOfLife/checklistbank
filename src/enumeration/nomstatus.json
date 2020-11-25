@@ -1,0 +1,58 @@
+[
+  {
+    "botanical": "nomen validum",
+    "name": "established",
+    "zoological": "available"
+  },
+  {
+    "botanical": "nomen invalidum",
+    "name": "not established",
+    "zoological": "unavailable",
+    "abbreviated": "nom. inval."
+  },
+  {
+    "parent": "established",
+    "botanical": "nomen legitimum",
+    "name": "acceptable",
+    "zoological": "potentially valid"
+  },
+  {
+    "parent": "established",
+    "botanical": "nomen illegitimum",
+    "name": "unacceptable",
+    "zoological": "objectively invalid",
+    "abbreviated": "nom. illeg."
+  },
+  {
+    "parent": "acceptable",
+    "botanical": "nomen conservandum",
+    "name": "conserved",
+    "zoological": "conserved name",
+    "abbreviated": "nom. cons."
+  },
+  {
+    "parent": "unacceptable",
+    "botanical": "nomen rejiciendum",
+    "name": "rejected",
+    "zoological": "rejected",
+    "abbreviated": "nom. rej."
+  },
+  {
+    "botanical": "nomen dubium",
+    "name": "doubtful",
+    "zoological": "doubtful",
+    "abbreviated": "nom. dub."
+  },
+  {
+    "parent": "not established",
+    "botanical": "manuscript name",
+    "name": "manuscript",
+    "zoological": "manuscript name",
+    "abbreviated": "ms."
+  },
+  {
+    "botanical": "chresonym",
+    "name": "chresonym",
+    "zoological": "chresonym"
+  }
+]

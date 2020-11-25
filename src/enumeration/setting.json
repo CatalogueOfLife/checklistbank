@@ -1,0 +1,138 @@
+[
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "csv delimiter",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "csv quote",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "csv quote escape",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "distribution gazetteer",
+    "type": "Gazetteer"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "nomenclatural code",
+    "type": "NomCode"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "rematch decisions",
+    "type": "Boolean"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": false,
+    "name": "release title template",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": false,
+    "name": "release alias template",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": false,
+    "name": "release citation template",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": false,
+    "name": "release source citation template",
+    "type": "String"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "data format",
+    "type": "DataFormat"
+  },
+  {
+    "origin": [
+      "external"
+    ],
+    "multiple": false,
+    "name": "import frequency",
+    "type": "Frequency"
+  },
+  {
+    "origin": [
+      "external"
+    ],
+    "multiple": false,
+    "name": "data access",
+    "type": "URI"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": true,
+    "name": "sector entities",
+    "type": "EntityType"
+  },
+  {
+    "origin": [
+      "managed"
+    ],
+    "multiple": true,
+    "name": "sector ranks",
+    "type": "Rank"
+  },
+  {
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "multiple": false,
+    "name": "gbif sync lock",
+    "type": "Boolean"
+  }
+]

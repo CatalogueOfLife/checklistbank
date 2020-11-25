@@ -1,0 +1,41 @@
+[
+  {
+    "name": "any"
+  },
+  {
+    "name": "name"
+  },
+  {
+    "name": "name relation"
+  },
+  {
+    "name": "name usage"
+  },
+  {
+    "name": "taxon concept relation"
+  },
+  {
+    "name": "type material"
+  },
+  {
+    "name": "treatment"
+  },
+  {
+    "name": "distribution"
+  },
+  {
+    "name": "media"
+  },
+  {
+    "name": "vernacular"
+  },
+  {
+    "name": "reference"
+  },
+  {
+    "name": "estimate"
+  },
+  {
+    "name": "species interaction"
+  }
+]

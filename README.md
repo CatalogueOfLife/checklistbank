@@ -17,6 +17,10 @@ The ChecklistBank UI is build with [React](https://reactjs.org/) using UI compon
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 In the project directory, you can run:
 
+### `node writeEnums.js`
+
+Fetch all enums and write them as json files to  `src/enumeration`
+
 ### `npm install`
 
 To install the package.json dependencies.

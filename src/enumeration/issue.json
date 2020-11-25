@@ -1,0 +1,614 @@
+[
+  {
+    "level": "error",
+    "name": "not interpreted",
+    "description": "A verbatim record could not be interpreted at all and has been ignored.",
+    "group": "any"
+  },
+  {
+    "level": "warning",
+    "name": "escaped characters",
+    "description": "Escaped characters such as html entities have been unescaped during interpretation. The following escaped character formats are recognized:  1) named, decimal or hexadecimal xml & html entities  2) unicode entities U+0026  3) hexadecimal or octal java unicode entites  4) CSS & ECMA Javascript entities",
+    "group": "any"
+  },
+  {
+    "level": "error",
+    "name": "reference id invalid",
+    "description": "Identifier for a reference could not be resolved. This can be from any entity, e.g. name, distribution, vernaculars, etc",
+    "group": "any"
+  },
+  {
+    "level": "error",
+    "name": "id not unique",
+    "description": "A taxon, name or reference with duplicate ids. We remove the subsequent records but flag the first record with this issue.",
+    "group": "any"
+  },
+  {
+    "level": "error",
+    "name": "url invalid",
+    "description": "Any of the coldp:link, dc:references, acef:InfraSpeciesURL, acef:SpeciesURL or other terms that are supposed to be URLs cannot be interpreted into a valid URL",
+    "group": "any"
+  },
+  {
+    "level": "warning",
+    "name": "partial date",
+    "description": "Date string was provided a year, but month and/or day were absent",
+    "group": "any"
+  },
+  {
+    "level": "warning",
+    "name": "previous line skipped",
+    "description": "The CSV record before this one had to be ignored because it had no content or wrong number of columns. Often indicates a serious delimiter problem",
+    "group": "any"
+  },
+  {
+    "level": "error",
+    "name": "unparsable name",
+    "description": "The scientific name string could not be parsed at all, but appears to be a parsable name type, i.e. it is not classified as a virus or hybrid formula.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "partially parsable name",
+    "description": "The beginning of the scientific name string was parsed, but there is additional information in the string that was not understood.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "unparsable authorship",
+    "description": "The authorship string could not be parsed.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "doubtful name",
+    "description": "The name has been classified as doubtful by the parser.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "inconsistent authorship",
+    "description": "Authorship found in scientificName and scientificNameAuthorship differ.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "inconsistent name",
+    "description": "An parsed, but inconsistent name. E.g. the rank of the name does not match the given name parts or suffices.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "parsed name differs",
+    "description": "The parsed scientific name string results in a different name then was given as already atomized parts.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "unusual name characters",
+    "description": "The name parts contain unusual characters.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "multi word epithet",
+    "description": "At least one epithet contains multiple words before parsing.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "uppercase epithet",
+    "description": "At least one epithet contains upper case letters.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "contains reference",
+    "description": "The name contains a bibliographic reference",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "null epithet",
+    "description": "At least one epithet equals literal value \"null\" or \"none\".",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "blacklisted epithet",
+    "description": "At least one epithet is blacklisted by the name parser",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "subspecies assigned",
+    "description": "Name was declared a species but contains infraspecific epithet",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "lc monomial",
+    "description": "Lower case monomial match",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "indetermined",
+    "description": "Indetermined species name with \"lower\" rank than epithets",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "higher rank binomial",
+    "description": "Binomial with rank higher than species aggregate",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "question marks removed",
+    "description": "Question marks removed from name",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "repl enclosing quote",
+    "description": "Removed enclosing quotes from name",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "missing genus",
+    "description": "Epithet without genus",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "nomenclatural status invalid",
+    "description": "The nomenclatural status could not be interpreted",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "authorship contains nomenclatural note",
+    "description": "The name authorship contains nomenclatural status notes that are transferred to the name",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "conflicting nomenclatural status",
+    "description": "The name authorship contains nomenclatural status notes which conflict with the explicitly given status",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "nomenclatural code invalid",
+    "description": "dwc:nomenclaturalCode could not be interpreted",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "basionym author mismatch",
+    "description": "A recombination with a basionym authorship which does not match the authorship of the linked basionym",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "basionym derived",
+    "description": "Record has a original name (basionym) relationship which was derived from name & authorship comparison, but did not exist explicitly in the data. Provisional catalogue specific issue.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "conflicting basionym combination",
+    "description": "There have been more than one accepted name in a homotypical basionym group of names. Provisional catalogue specific issue.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "chained basionym",
+    "description": "A basionym that claims to have itself another basionym.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "name not unique",
+    "description": "A scientific name has been used to point to another record (synonym->accepted, combination->basionym) which is not unique and refers to several records.",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "name match inserted",
+    "description": "The name was never seen before and inserted into the Names Index for the first time",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "name match variant",
+    "description": "The name matches an orthographic variant of the name, authorship and/or rank already found in the names index and which is considered to be still the same name.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "name match ambiguous",
+    "description": "Multiple matching names found in the Names Index.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "name match none",
+    "description": "Name not found in the Names Index.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "potential chresonym",
+    "description": "A potential chresonym exists in the dataset.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "published before genus",
+    "description": "A bi/trinomial name published earlier than the parent genus was published. This might indicate that the name should rather be a recombination.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "basionym id invalid",
+    "description": "The name id pointing to a related original name could not be resolved.",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "rank invalid",
+    "description": "dwc:taxonRank could not be interpreted",
+    "group": "name"
+  },
+  {
+    "level": "error",
+    "name": "unmatched name brackets",
+    "description": "The name (authorship) contains unmatched brackets, i.e. it misses closing brackets usually indicating truncated data.",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "truncated name",
+    "description": "The name or its authorship appears to be truncated.",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "duplicate name",
+    "description": "Same name appears several time in dataset.",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "name variant",
+    "description": "Multiple variants of the same name appear several times in the dataset.",
+    "group": "name"
+  },
+  {
+    "level": "info",
+    "name": "authorship contains taxonomic note",
+    "description": "The name authorship contains taxonomic notes that are transferred to the name usage",
+    "group": "name"
+  },
+  {
+    "level": "warning",
+    "name": "type status invalid",
+    "description": "type status could not be interpreted",
+    "group": "type material"
+  },
+  {
+    "level": "warning",
+    "name": "lat lon invalid",
+    "description": "decimal coordinate could not be interpreted",
+    "group": "type material"
+  },
+  {
+    "level": "warning",
+    "name": "altitude invalid",
+    "description": "altitude could not be interpreted. Should be a plain integer.",
+    "group": "type material"
+  },
+  {
+    "level": "warning",
+    "name": "country invalid",
+    "description": "decimal coordinate could not be interpreted",
+    "group": "type material"
+  },
+  {
+    "level": "info",
+    "name": "taxon variant",
+    "description": "Multiple (accepted) taxa appear to be orthographic variants in the dataset.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "taxon id invalid",
+    "description": "Identifier for a taxon/name could not be resolved.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "name id invalid",
+    "description": "The name object for col:nameId could not be resolved.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "parent id invalid",
+    "description": "The value for dwc:parentNameUsageID could not be resolved or is missing.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "accepted id invalid",
+    "description": "The value for dwc:acceptedNameUsageID could not be resolved or is missing.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "accepted name missing",
+    "description": "Synonym lacking an accepted name. These will be treated as bare names in the datastore",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "taxonomic status invalid",
+    "description": "dwc:taxonomicStatus could not be interpreted",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "provisional status invalid",
+    "description": "col:provisional is no boolean",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "environment invalid",
+    "description": "environment contains values that cannot be interpreted",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "is extinct invalid",
+    "description": "acef:IsExtinct contains values that cannot be interpreted",
+    "group": "name usage"
+  },
+  {
+    "level": "info",
+    "name": "name contains extinct symbol",
+    "description": "The usage extinct flag was set because the name contained an extinct symbol",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "geotime invalid",
+    "description": "The geochronological time given cannot be interpreted",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "scrutinizer date invalid",
+    "description": "acef:LTSDate cannot be interpreted into a date",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "chained synonym",
+    "description": "If a synonym points to another synonym as its accepted taxon the chain is resolved.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "parent cycle",
+    "description": "The child parent classification resulted into a cycle that needed to be resolved/cut.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "synonym parent",
+    "description": "An accepted taxon which has a synonym as its parent. This relation is moved to the synonyms accepted name if possible, otherwise just removed.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "classification rank order invalid",
+    "description": "The given ranks of the names in the classification hierarchy do not follow the hierarchy of ranks.",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "classification not applied",
+    "description": "The denormalized classification could not be applied to the name usage. For example if the id based classification has no ranks.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "parent name mismatch",
+    "description": "The (accepted) bi/trinomial name does not match the parent genus/species. For example the species Picea alba with a parent genus Abies is a mismatch.",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "derived taxonomic status",
+    "description": "The taxonomic status was programmatically derived. E.g. a synonym made a misapplied name or ambigous synonym based on name annotations.",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "taxonomic status doubtful",
+    "description": "The given taxonomic status appears unlikely. E.g. a misapplied name without any taxonomic remark indicating the source it was misapplied in.",
+    "group": "name usage"
+  },
+  {
+    "level": "info",
+    "name": "synonym data moved",
+    "description": "A synonym which originally had some associated data (descriptions distributions, media items, vernacular names, bibliography) but which was moved to its accepted taxon.",
+    "group": "name usage"
+  },
+  {
+    "level": "info",
+    "name": "synonym data removed",
+    "description": "A synonym which originally had some associated data (descriptions distributions, media items, vernacular names, bibliography) but which was removed as it lacks an accepted taxon.",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "reftype invalid",
+    "description": "ACEF reference type values unparsable or missing",
+    "group": "name usage"
+  },
+  {
+    "level": "warning",
+    "name": "according to conflict",
+    "description": "The taxonomic concept reference was given explicitly and implicitly through the names authorship",
+    "group": "name usage"
+  },
+  {
+    "level": "error",
+    "name": "vernacular name invalid",
+    "description": "A vernacular name extension record attached to this name usage is empty or clearly not a name.",
+    "group": "vernacular"
+  },
+  {
+    "level": "warning",
+    "name": "vernacular language invalid",
+    "description": "A vernacular name extension record attached to this name usage has an unparsable language.",
+    "group": "vernacular"
+  },
+  {
+    "level": "warning",
+    "name": "vernacular sex invalid",
+    "description": "A vernacular name extension record attached to this name usage has an unparsable sex.",
+    "group": "vernacular"
+  },
+  {
+    "level": "warning",
+    "name": "vernacular country invalid",
+    "description": "A vernacular name extension record attached to this name usage has an unparsable country.",
+    "group": "vernacular"
+  },
+  {
+    "level": "info",
+    "name": "vernacular name transliterated",
+    "description": "Transliterated vernacular name missing and generated automatically. Assembled Catalogue specific issue.",
+    "group": "vernacular"
+  },
+  {
+    "level": "error",
+    "name": "distribution invalid",
+    "description": "A distribution record is invalid and cannot be interpreted at all.",
+    "group": "distribution"
+  },
+  {
+    "level": "error",
+    "name": "distribution area invalid",
+    "description": "A distribution record contains an invalid area name/code.",
+    "group": "distribution"
+  },
+  {
+    "level": "error",
+    "name": "distribution status invalid",
+    "description": "A distribution record contains an invalid status code.",
+    "group": "distribution"
+  },
+  {
+    "level": "error",
+    "name": "distribution gazeteer invalid",
+    "description": "A distribution record contains an unsupported gazeteer name.",
+    "group": "distribution"
+  },
+  {
+    "level": "error",
+    "name": "media created date invalid",
+    "description": "The created date for the media record cannot be interpreted",
+    "group": "media"
+  },
+  {
+    "level": "warning",
+    "name": "unparsable year",
+    "description": "The given year of publication cannot be parsed into a sensible integer year.",
+    "group": "reference"
+  },
+  {
+    "level": "warning",
+    "name": "unlikely year",
+    "description": "The given year of publication is unlikely to be real.",
+    "group": "reference"
+  },
+  {
+    "level": "warning",
+    "name": "multiple published in references",
+    "description": "There are multiple references for the original publication of a name.",
+    "group": "reference"
+  },
+  {
+    "level": "error",
+    "name": "unparsable reference",
+    "description": "The reference could not be parsed and broken down into a sensible record.",
+    "group": "reference"
+  },
+  {
+    "level": "warning",
+    "name": "unparsable reference type",
+    "description": "The required reference type could not be parsed and a default has been assigned.",
+    "group": "reference"
+  },
+  {
+    "level": "warning",
+    "name": "unmatched reference brackets",
+    "description": "The name (authorship) contains unmatched brackets, i.e. it misses closing brackets usually indicating truncated data.",
+    "group": "reference"
+  },
+  {
+    "level": "info",
+    "name": "citation container title unparsed",
+    "description": "Value for container title was stored literally when it probably included additional information, e.g. pages",
+    "group": "reference"
+  },
+  {
+    "level": "info",
+    "name": "citation details unparsed",
+    "description": "Value for reference details was stored literally and placed in CSL page",
+    "group": "reference"
+  },
+  {
+    "level": "info",
+    "name": "citation authors unparsed",
+    "description": "Value for reference authors was stored literally and not broken down into individual authors",
+    "group": "reference"
+  },
+  {
+    "level": "info",
+    "name": "citation unparsed",
+    "description": "Value for citation was accepted as-is",
+    "group": "reference"
+  },
+  {
+    "level": "error",
+    "name": "unparsable treatment",
+    "description": "The treatment document could not be read.",
+    "group": "treatment"
+  },
+  {
+    "level": "error",
+    "name": "unparsable treament format",
+    "description": "The required treatment format could not be parsed.",
+    "group": "treatment"
+  },
+  {
+    "level": "error",
+    "name": "estimate invalid",
+    "description": "The species estimate could not be parsed to a positive integer.",
+    "group": "estimate"
+  },
+  {
+    "level": "warning",
+    "name": "estimate type invalid",
+    "description": "The species estimate type could not be parsed.",
+    "group": "estimate"
+  }
+]

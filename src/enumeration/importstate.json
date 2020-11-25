@@ -1,0 +1,62 @@
+[
+  {
+    "running": false,
+    "name": "waiting"
+  },
+  {
+    "running": true,
+    "name": "preparing"
+  },
+  {
+    "running": true,
+    "name": "downloading"
+  },
+  {
+    "running": true,
+    "name": "processing"
+  },
+  {
+    "running": true,
+    "name": "deleting"
+  },
+  {
+    "running": true,
+    "name": "inserting"
+  },
+  {
+    "running": true,
+    "name": "matching"
+  },
+  {
+    "running": true,
+    "name": "indexing"
+  },
+  {
+    "running": true,
+    "name": "analyzing"
+  },
+  {
+    "running": true,
+    "name": "archiving"
+  },
+  {
+    "running": true,
+    "name": "exporting"
+  },
+  {
+    "running": false,
+    "name": "unchanged"
+  },
+  {
+    "running": false,
+    "name": "finished"
+  },
+  {
+    "running": false,
+    "name": "canceled"
+  },
+  {
+    "running": false,
+    "name": "failed"
+  }
+]

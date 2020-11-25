@@ -1,0 +1,449 @@
+[
+  {
+    "plural": "domains",
+    "marker": "dom.",
+    "name": "domain"
+  },
+  {
+    "plural": "realms",
+    "marker": "realm",
+    "name": "realm"
+  },
+  {
+    "plural": "subrealms",
+    "marker": "subrealm",
+    "name": "subrealm"
+  },
+  {
+    "plural": "superkingdoms",
+    "marker": "superreg.",
+    "name": "superkingdom"
+  },
+  {
+    "plural": "kingdoms",
+    "marker": "reg.",
+    "name": "kingdom"
+  },
+  {
+    "plural": "subkingdoms",
+    "marker": "subreg.",
+    "name": "subkingdom"
+  },
+  {
+    "plural": "infrakingdoms",
+    "marker": "infrareg.",
+    "name": "infrakingdom"
+  },
+  {
+    "plural": "superphyla",
+    "marker": "superphyl.",
+    "name": "superphylum"
+  },
+  {
+    "plural": "phyla",
+    "marker": "phyl.",
+    "name": "phylum"
+  },
+  {
+    "plural": "subphyla",
+    "marker": "subphyl.",
+    "name": "subphylum"
+  },
+  {
+    "plural": "infraphyla",
+    "marker": "infraphyl.",
+    "name": "infraphylum"
+  },
+  {
+    "plural": "superclasses",
+    "marker": "supercl.",
+    "name": "superclass"
+  },
+  {
+    "plural": "classes",
+    "marker": "cl.",
+    "name": "class"
+  },
+  {
+    "plural": "subclasses",
+    "marker": "subcl.",
+    "name": "subclass"
+  },
+  {
+    "plural": "infraclasses",
+    "marker": "infracl.",
+    "name": "infraclass"
+  },
+  {
+    "plural": "parvclasses",
+    "marker": "parvcl.",
+    "name": "parvclass"
+  },
+  {
+    "plural": "superdivisions",
+    "marker": "superdiv.",
+    "name": "superdivision"
+  },
+  {
+    "plural": "divisions",
+    "marker": "div.",
+    "name": "division"
+  },
+  {
+    "plural": "subdivisions",
+    "marker": "subdiv.",
+    "name": "subdivision"
+  },
+  {
+    "plural": "infradivisions",
+    "marker": "infradiv.",
+    "name": "infradivision"
+  },
+  {
+    "plural": "superlegions",
+    "marker": "superleg.",
+    "name": "superlegion"
+  },
+  {
+    "plural": "legions",
+    "marker": "leg.",
+    "name": "legion"
+  },
+  {
+    "plural": "sublegions",
+    "marker": "subleg.",
+    "name": "sublegion"
+  },
+  {
+    "plural": "infralegions",
+    "marker": "infraleg.",
+    "name": "infralegion"
+  },
+  {
+    "plural": "supercohorts",
+    "marker": "supercohort",
+    "name": "supercohort"
+  },
+  {
+    "plural": "cohorts",
+    "marker": "cohort",
+    "name": "cohort"
+  },
+  {
+    "plural": "subcohorts",
+    "marker": "subcohort",
+    "name": "subcohort"
+  },
+  {
+    "plural": "infracohorts",
+    "marker": "infracohort",
+    "name": "infracohort"
+  },
+  {
+    "plural": "gigaorders",
+    "marker": "gigaord.",
+    "name": "gigaorder"
+  },
+  {
+    "plural": "magnorders",
+    "marker": "magnord.",
+    "name": "magnorder"
+  },
+  {
+    "plural": "grandorders",
+    "marker": "grandord.",
+    "name": "grandorder"
+  },
+  {
+    "plural": "mirorders",
+    "marker": "mirord.",
+    "name": "mirorder"
+  },
+  {
+    "plural": "superorders",
+    "marker": "superord.",
+    "name": "superorder"
+  },
+  {
+    "plural": "orders",
+    "marker": "ord.",
+    "name": "order"
+  },
+  {
+    "plural": "nanorders",
+    "marker": "nanord.",
+    "name": "nanorder"
+  },
+  {
+    "plural": "hypoorders",
+    "marker": "hypoord.",
+    "name": "hypoorder"
+  },
+  {
+    "plural": "minorders",
+    "marker": "minord.",
+    "name": "minorder"
+  },
+  {
+    "plural": "suborders",
+    "marker": "subord.",
+    "name": "suborder"
+  },
+  {
+    "plural": "infraorders",
+    "marker": "infraord.",
+    "name": "infraorder"
+  },
+  {
+    "plural": "parvorders",
+    "marker": "parvord.",
+    "name": "parvorder"
+  },
+  {
+    "plural": "megafamilies",
+    "marker": "megafam.",
+    "name": "megafamily"
+  },
+  {
+    "plural": "grandfamilies",
+    "marker": "grandfam.",
+    "name": "grandfamily"
+  },
+  {
+    "plural": "superfamilies",
+    "marker": "superfam.",
+    "name": "superfamily"
+  },
+  {
+    "plural": "epifamilies",
+    "marker": "epifam.",
+    "name": "epifamily"
+  },
+  {
+    "plural": "families",
+    "marker": "fam.",
+    "name": "family"
+  },
+  {
+    "plural": "subfamilies",
+    "marker": "subfam.",
+    "name": "subfamily"
+  },
+  {
+    "plural": "infrafamilies",
+    "marker": "infrafam.",
+    "name": "infrafamily"
+  },
+  {
+    "plural": "supertribes",
+    "marker": "supertrib.",
+    "name": "supertribe"
+  },
+  {
+    "plural": "tribes",
+    "marker": "trib.",
+    "name": "tribe"
+  },
+  {
+    "plural": "subtribes",
+    "marker": "subtrib.",
+    "name": "subtribe"
+  },
+  {
+    "plural": "infratribes",
+    "marker": "infratrib.",
+    "name": "infratribe"
+  },
+  {
+    "plural": "suprageneric_names",
+    "marker": "supragen.",
+    "name": "suprageneric name"
+  },
+  {
+    "plural": "genera",
+    "marker": "gen.",
+    "name": "genus"
+  },
+  {
+    "plural": "subgenera",
+    "marker": "subgen.",
+    "name": "subgenus"
+  },
+  {
+    "plural": "infragenera",
+    "marker": "infrag.",
+    "name": "infragenus"
+  },
+  {
+    "plural": "supersections",
+    "marker": "supersect.",
+    "name": "supersection"
+  },
+  {
+    "plural": "sections",
+    "marker": "sect.",
+    "name": "section"
+  },
+  {
+    "plural": "subsections",
+    "marker": "subsect.",
+    "name": "subsection"
+  },
+  {
+    "plural": "superseries",
+    "marker": "superser.",
+    "name": "superseries"
+  },
+  {
+    "plural": "series",
+    "marker": "ser.",
+    "name": "series"
+  },
+  {
+    "plural": "subseries",
+    "marker": "subser.",
+    "name": "subseries"
+  },
+  {
+    "plural": "infrageneric_names",
+    "marker": "infragen.",
+    "name": "infrageneric name"
+  },
+  {
+    "plural": "species_aggregates",
+    "marker": "agg.",
+    "name": "species aggregate"
+  },
+  {
+    "plural": "species",
+    "marker": "sp.",
+    "name": "species"
+  },
+  {
+    "plural": "infraspecific_names",
+    "marker": "infrasp.",
+    "name": "infraspecific name"
+  },
+  {
+    "plural": "grexs",
+    "marker": "gx",
+    "name": "grex"
+  },
+  {
+    "plural": "subspecies",
+    "marker": "subsp.",
+    "name": "subspecies"
+  },
+  {
+    "plural": "cultivar_groups",
+    "name": "cultivar group"
+  },
+  {
+    "plural": "convarieties",
+    "marker": "convar.",
+    "name": "convariety"
+  },
+  {
+    "plural": "infrasubspecific_names",
+    "marker": "infrasubsp.",
+    "name": "infrasubspecific name"
+  },
+  {
+    "plural": "proles",
+    "marker": "prol.",
+    "name": "proles"
+  },
+  {
+    "plural": "natios",
+    "marker": "natio",
+    "name": "natio"
+  },
+  {
+    "plural": "aberrations",
+    "marker": "ab.",
+    "name": "aberration"
+  },
+  {
+    "plural": "morphs",
+    "marker": "morph",
+    "name": "morph"
+  },
+  {
+    "plural": "varieties",
+    "marker": "var.",
+    "name": "variety"
+  },
+  {
+    "plural": "subvarieties",
+    "marker": "subvar.",
+    "name": "subvariety"
+  },
+  {
+    "plural": "forms",
+    "marker": "f.",
+    "name": "form"
+  },
+  {
+    "plural": "subforms",
+    "marker": "subf.",
+    "name": "subform"
+  },
+  {
+    "plural": "pathovars",
+    "marker": "pv.",
+    "name": "pathovar"
+  },
+  {
+    "plural": "biovars",
+    "marker": "biovar",
+    "name": "biovar"
+  },
+  {
+    "plural": "chemovars",
+    "marker": "chemovar",
+    "name": "chemovar"
+  },
+  {
+    "plural": "morphovars",
+    "marker": "morphovar",
+    "name": "morphovar"
+  },
+  {
+    "plural": "phagovars",
+    "marker": "phagovar",
+    "name": "phagovar"
+  },
+  {
+    "plural": "serovars",
+    "marker": "serovar",
+    "name": "serovar"
+  },
+  {
+    "plural": "chemoforms",
+    "marker": "chemoform",
+    "name": "chemoform"
+  },
+  {
+    "plural": "forma_specialiss",
+    "marker": "f.sp.",
+    "name": "forma specialis"
+  },
+  {
+    "plural": "cultivars",
+    "marker": "cv.",
+    "name": "cultivar"
+  },
+  {
+    "plural": "strains",
+    "marker": "strain",
+    "name": "strain"
+  },
+  {
+    "plural": "others",
+    "name": "other"
+  },
+  {
+    "plural": "unrankeds",
+    "name": "unranked"
+  }
+]
