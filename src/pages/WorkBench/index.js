@@ -363,7 +363,7 @@ class WorkBench extends React.Component {
       ? res.data.result.map((d) => {
           return _.get(d, "decisions[0]")
             ? axios(
-                `${config.dataApi}/dataset/${catalogueKey}/decision/${_.get(
+                `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
                   d,
                   "decisions[0].id"
                 )}`
