@@ -1,19 +1,21 @@
-import React, { PureComponent } from 'react';
-import injectSheet from 'react-jss';
-import { LogoutOutlined } from '@ant-design/icons';
-import { Menu, Dropdown, Avatar, Modal, Button } from 'antd';
+import React, { PureComponent } from "react";
+import injectSheet from "react-jss";
+import { LogoutOutlined } from "@ant-design/icons";
+import { Menu, Dropdown, Avatar, Modal, Button } from "antd";
 
 // Wrappers
-import withContext from '../../hoc/withContext';
+import withContext from "../../hoc/withContext";
 // Components
-import LoginForm from './LoginForm';
+import LoginForm from "./LoginForm";
 
 const hashCode = function (str) {
-  let hash = 0, i, chr;
+  let hash = 0,
+    i,
+    chr;
   if (str.length === 0) return hash;
   for (i = 0; i < str.length; i++) {
     chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
@@ -21,34 +23,38 @@ const hashCode = function (str) {
 
 const styles = {
   avatar: {
-    '& img': {
-      imageRendering: 'crisp-edges',
+    "& img": {
+      imageRendering: "crisp-edges",
       fallbacks: {
-        imageRendering: 'pixelated'
-      }
-    }
-  }
+        imageRendering: "pixelated",
+      },
+    },
+  },
 };
 
 class UserMenu extends PureComponent {
   state = {
     visible: false,
-    invalid: false
+    invalid: false,
   };
 
   showLogin = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
   };
 
   handleLogin = (values) => {
-    this.props.login(values)
+    this.props
+      .login(values)
       .then(() => {
-        this.setState({
-          visible: false,
-          invalid: false
-        });
+        this.setState(
+          {
+            visible: false,
+            invalid: false,
+          },
+          () => window.location.reload()
+        );
       })
       .catch((err) => {
         this.setState({ invalid: err.message });
@@ -58,7 +64,7 @@ class UserMenu extends PureComponent {
   handleCancel = () => {
     this.setState({
       visible: false,
-      invalid: false
+      invalid: false,
     });
   };
 
@@ -69,16 +75,20 @@ class UserMenu extends PureComponent {
       const imgNr = Math.abs(hashCode(user.username)) % 10;
       currentUser = {
         name: user.username,
-        avatar: `/_palettes/${imgNr}.png`
+        avatar: `/_palettes/${imgNr}.png`,
       };
     }
 
     const menu = (
       <Menu selectedKeys={[]}>
         {user && (
-          <Menu.Item key="logout" onClick={() => {
-            logout();
-          }}>
+          <Menu.Item
+            key="logout"
+            onClick={() => {
+              logout();
+              window.location.reload();
+            }}
+          >
             <LogoutOutlined />
             Logout
           </Menu.Item>
@@ -89,24 +99,24 @@ class UserMenu extends PureComponent {
     return (
       <React.Fragment>
         {!user && (
-          <span style={{ padding: '0 16px' }}>
+          <span style={{ padding: "0 16px" }}>
             <Button htmlType="button" type="primary" onClick={this.showLogin}>
               Login
             </Button>
           </span>
         )}
         {user && (
-          <Dropdown overlay={menu} trigger={['hover', 'click']}>
-          <span style={{ padding: '0 16px' }}>
-            <Avatar
-              style={{ marginRight: 8 }}
-              size="small"
-              className={classes.avatar}
-              src={currentUser.avatar}
-              alt="avatar"
-            />
-            <span>{currentUser.name}</span>
-          </span>
+          <Dropdown overlay={menu} trigger={["hover", "click"]}>
+            <span style={{ padding: "0 16px" }}>
+              <Avatar
+                style={{ marginRight: 8 }}
+                size="small"
+                className={classes.avatar}
+                src={currentUser.avatar}
+                alt="avatar"
+              />
+              <span>{currentUser.name}</span>
+            </span>
           </Dropdown>
         )}
         <Modal
@@ -124,12 +134,15 @@ class UserMenu extends PureComponent {
             />
           </div>
         </Modal>
-
       </React.Fragment>
     );
   }
 }
 
-const mapContextToProps = ({ user, login, logout }) => ({ user, login, logout });
+const mapContextToProps = ({ user, login, logout }) => ({
+  user,
+  login,
+  logout,
+});
 
 export default withContext(mapContextToProps)(injectSheet(styles)(UserMenu));

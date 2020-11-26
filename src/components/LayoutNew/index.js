@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import injectSheet from "react-jss";
 import withWidth, { LARGE, MEDIUM } from "react-width";
+import { withRouter } from "react-router-dom";
 import { Layout, Drawer, Row, Tag, Alert } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import BasicMenu from "./BasicMenu";
@@ -11,11 +12,23 @@ import config from "../../config";
 import moment from "moment";
 import ErrorMsg from "../ErrorMsg";
 import withContext from "../../components/hoc/withContext";
-import { flowRight } from "lodash";
+import _ from "lodash";
 import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
 import Sync from "./Sync";
-const compose = flowRight;
+import Exception from "../exception/Exception";
+
+const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
+
+const exceptionIsDataset404 = (error) => {
+  return (
+    _.get(error, "response.status") === 404 &&
+    _.get(error, "response.request.responseURL") &&
+    _.get(error, "response.request.responseURL").startsWith(
+      `${config.dataApi}dataset/`
+    )
+  );
+};
 // Currently no support for rtl in Ant https://github.com/ant-design/ant-design/issues/4051
 const styles = {
   sider: {
@@ -42,6 +55,7 @@ class SiteLayout extends Component {
       this.setState({ gitBackendVersion })
     );
   };
+
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
@@ -173,16 +187,30 @@ class SiteLayout extends Component {
               minHeight: 280,
             }}
           >
-            {error && (
-              <Alert
-                style={{ marginTop: "10px" }}
-                message={<ErrorMsg error={error} />}
-                type="error"
-                closable
-                onClose={clearError}
+            {error &&
+              ![401, 403].includes(_.get(error, "response.status")) &&
+              !exceptionIsDataset404(error) && (
+                <Alert
+                  style={{ marginTop: "10px" }}
+                  message={<ErrorMsg error={error} />}
+                  type="error"
+                  closable
+                  onClose={clearError}
+                />
+              )}
+            {(error && [401, 403].includes(_.get(error, "response.status"))) ||
+            exceptionIsDataset404(error) ? (
+              <Exception
+                type={_.get(error, "response.status").toString()}
+                desc={
+                  exceptionIsDataset404(error)
+                    ? _.get(error, "response.data.message")
+                    : null
+                }
               />
+            ) : (
+              this.props.children
             )}
-            {this.props.children}
           </Content>
           <Footer>
             <Row style={{ textAlign: "center" }}>Catalogue of Life</Row>
@@ -232,7 +260,8 @@ const mapContextToProps = ({ addError, clearError, error }) => ({
 export default compose(
   injectSheet(styles),
   withWidth(),
-  withContext(mapContextToProps)
+  withContext(mapContextToProps),
+  withRouter
 )(SiteLayout);
 
 //export default injectSheet(styles)(withWidth()(SiteLayout));

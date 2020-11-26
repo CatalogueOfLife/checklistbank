@@ -508,15 +508,21 @@ class ColTree extends React.Component {
   decorateWithSectorsAndDataset = (res) => {
     if (!res.data.result) return res;
     const { catalogueKey } = this.props;
-    return Promise.all(
+    return Promise.allSettled(
       res.data.result
         .filter((tx) => !!tx.sectorKey)
         .map((tx) =>
           this.sectorLoader.load(tx.sectorKey, catalogueKey).then((r) => {
-            tx.sector = r;
-            return datasetLoader
-              .load(r.subjectDatasetKey)
-              .then((dataset) => (tx.sector.dataset = dataset));
+            if (!r) {
+              return this.setState({
+                error: { message: `Sector ${tx.sectorKey} was not found` },
+              });
+            } else {
+              tx.sector = r;
+              return datasetLoader
+                .load(r.subjectDatasetKey)
+                .then((dataset) => (tx.sector.dataset = dataset));
+            }
           })
         )
     ).then(() => res);
@@ -540,7 +546,7 @@ class ColTree extends React.Component {
       return node;
     } else {
       const children = nodeArray.map((n) => _.get(n, "children") || []);
-      const flattenedChildren = children.flat();
+      const flattenedChildren = _.flatten(children); // children.flat(); - doesn´t work in oler browsers
       if (flattenedChildren.length === 0) {
         return null;
       } else {

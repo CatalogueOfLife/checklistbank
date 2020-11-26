@@ -1,11 +1,11 @@
-import React, { createElement } from 'react';
-import { Button } from 'antd';
-import PropTypes from 'prop-types';
+import React, { createElement } from "react";
+import { Button } from "antd";
+import PropTypes from "prop-types";
 
 // Config
-import config from './config';
+import config from "./config";
 // Styles
-import './index.css';
+import "./index.css";
 
 /**
  * Base Exception Components
@@ -19,7 +19,7 @@ import './index.css';
  */
 class Exception extends React.PureComponent {
   static defaultProps = {
-    redirect: '/'
+    redirect: "/",
   };
 
   constructor(props) {
@@ -28,8 +28,16 @@ class Exception extends React.PureComponent {
   }
 
   render() {
-    const { backText, linkElement = 'a', type, title, desc, img, redirect } = this.props;
-    const pageType = type in config ? type : '404';
+    const {
+      backText,
+      linkElement = "a",
+      type,
+      title,
+      desc,
+      img,
+      redirect,
+    } = this.props;
+    const pageType = type in config ? type : "404";
 
     return (
       <div className="exception">
@@ -64,7 +72,7 @@ Exception.propTypes = {
   img: PropTypes.string,
   linkElement: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   backText: PropTypes.string,
-  redirect: PropTypes.string
+  redirect: PropTypes.string,
 };
 
 export default Exception;

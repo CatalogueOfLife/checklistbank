@@ -29,6 +29,7 @@ import SectorDiff from "./pages/catalogue/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
+import ExceptionHandler from "./components/exception/ExceptionHandler";
 import Helmet from "react-helmet";
 import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage";
@@ -54,7 +55,7 @@ class App extends Component {
             <ThemeProvider theme={theme}>
               <Switch>
                 <Route exact key="HomePage" path="/" component={HomePage} />
-                <Route
+                {/*                 <Route
                   exact
                   key="NameIndex"
                   path="/names"
@@ -64,7 +65,7 @@ class App extends Component {
                       location={location}
                     />
                   )}
-                />
+                /> */}
                 <PrivateRoute
                   exact
                   key="catalogueSources"
@@ -235,6 +236,11 @@ class App extends Component {
               key="syncProvider"
               path={`/catalogue/:catalogueKey`}
               component={SyncProvider}
+            />
+            <Route
+              key="exceptionHandler"
+              path={`/`}
+              component={ExceptionHandler}
             />
           </React.Fragment>
         </Router>

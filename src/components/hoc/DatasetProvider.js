@@ -3,7 +3,7 @@ import withContext from "./withContext";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-
+import { withRouter } from "react-router-dom";
 class DatasetProvider extends React.Component {
   constructor() {
     super();
@@ -86,6 +86,20 @@ class DatasetProvider extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
+
+        const recentDatasetsAsText = localStorage.getItem(
+          "colplus_recent_datasets"
+        );
+        let recentDatasets = recentDatasetsAsText
+          ? JSON.parse(recentDatasetsAsText)
+          : [];
+        recentDatasets = recentDatasets.filter((d) => d.key !== key);
+        localStorage.setItem(
+          "colplus_recent_datasets",
+          JSON.stringify(recentDatasets)
+        );
+        localStorage.removeItem("col_selected_dataset");
+
         addError(err);
       });
   };
@@ -124,4 +138,4 @@ const mapContextToProps = ({
   setCatalogue,
 });
 
-export default withContext(mapContextToProps)(DatasetProvider);
+export default withContext(mapContextToProps)(withRouter(DatasetProvider));

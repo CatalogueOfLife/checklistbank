@@ -44,9 +44,10 @@ class DatasetMeta extends React.Component {
     const { catalogueKey } = this.props;
 
     this.getData();
-    this.getPatch();
+
     if (catalogueKey) {
       this.getSourceMeta();
+      this.getPatch();
     }
   };
 
@@ -396,9 +397,20 @@ class DatasetMeta extends React.Component {
             >
               {displayData.importFrequency}
             </PresentationItem>
-            <PresentationItem label={<FormattedMessage id="download" defaultMessage="Download"/>}>
-              {<a href={`${config.dataApi}dataset/${displayData.key}/export`}target="_blank">original archive</a>}
-            </PresentationItem>            
+            <PresentationItem
+              label={
+                <FormattedMessage id="download" defaultMessage="Download" />
+              }
+            >
+              {
+                <a
+                  href={`${config.dataApi}dataset/${displayData.key}/export`}
+                  target="_blank"
+                >
+                  original archive
+                </a>
+              }
+            </PresentationItem>
             <PresentationItem
               label={<FormattedMessage id="created" defaultMessage="Created" />}
             >
