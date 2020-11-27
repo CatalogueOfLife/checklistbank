@@ -720,7 +720,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              {user && selectedDataset && hasData && (
+              {selectedDataset && (
                 <Menu.Item key="projects">
                   <NavLink
                     to={{
