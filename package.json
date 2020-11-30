@@ -8,7 +8,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
     "ajv": "^6.9.1",
-    "antd": "^4.6.4",
+    "antd": "^4.8.6",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
     "dataloader": "^1.4.0",
