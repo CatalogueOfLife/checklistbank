@@ -4,6 +4,7 @@ import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import _ from "lodash";
+
 import { Row, Col, Alert, Switch, Button, notification } from "antd";
 
 import axios from "axios";
@@ -12,6 +13,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "../../catalogue/Options/DeleteOrphansButton";
+import DatasetExport from "../DatasetExport";
 
 class DatasetSettings extends React.Component {
   constructor(props) {
@@ -60,25 +62,6 @@ class DatasetSettings extends React.Component {
         });
       })
       .catch((err) => this.setState({ error: err }));
-  };
-
-  exportDataset = () => {
-    const { datasetKey } = this.props;
-    axios
-      .post(`${config.dataApi}dataset/${datasetKey}/export`)
-      .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `Dataset ${datasetKey} is being exported`,
-          });
-        });
-      })
-      .catch((err) => this.setState({ error: err }));
-  };
-
-  setEditMode = (checked) => {
-    this.setState({ editMode: checked });
   };
 
   setEditMode = (checked) => {
@@ -133,7 +116,7 @@ class DatasetSettings extends React.Component {
             {!editMode && data && dataset && (
               <div style={{ marginRight: "28px" }}>
                 {datasetSettings
-                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
+                  .filter((s) => s.origin.indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "Boolean")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -148,7 +131,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
+                  .filter((s) => s.origin.indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "String" || s.type === "Integer")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -158,7 +141,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter(s => s.origin.indexOf(dataset.origin) > -1)
+                  .filter((s) => s.origin.indexOf(dataset.origin) > -1)
                   .filter(
                     (s) => !["String", "Integer", "Boolean"].includes(s.type)
                   )
@@ -181,13 +164,7 @@ class DatasetSettings extends React.Component {
             >
               Re-index dataset
             </Button>
-            <Button
-              type="primary"
-              onClick={this.exportDataset}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            >
-              Export dataset
-            </Button>
+            <DatasetExport datasetKey={datasetKey} />
 
             <DeleteOrphansButton
               datasetKey={datasetKey}
@@ -208,6 +185,6 @@ class DatasetSettings extends React.Component {
 
 const mapContextToProps = ({ datasetSettings, dataset }) => ({
   datasetSettings,
-  dataset
+  dataset,
 });
 export default withContext(mapContextToProps)(withRouter(DatasetSettings));

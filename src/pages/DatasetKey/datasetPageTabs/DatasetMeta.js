@@ -11,6 +11,7 @@ import PageContent from "../../../components/PageContent";
 import { FormattedMessage } from "react-intl";
 import PresentationItem from "../../../components/PresentationItem";
 import DeleteDatasetButton from "./DeleteDatasetButton";
+import DatasetExport from "../DatasetExport";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
@@ -130,25 +131,28 @@ class DatasetMeta extends React.Component {
         {Auth.isAuthorised(user, ["editor", "admin"]) && (
           <React.Fragment>
             <Row>
-              <Col span={4} style={{ minHeight: "210px" }}>
+              <Col flex="auto">
                 {data && !data.deleted && (
                   <LogoUpload datasetKey={this.props.id} />
                 )}
               </Col>
-              <Col span={2} offset={18}>
+              <Col style={{ textAlign: "right" }}>
                 {data && !data.deleted && (
                   <DeleteDatasetButton record={data}></DeleteDatasetButton>
                 )}
                 {data && _.get(data, "origin") !== "managed" && (
                   <ImportButton
-                    style={{ marginTop: "8px" }}
+                    style={{ marginLeft: "8px", marginBottom: "10px" }}
                     record={{ datasetKey: data.key }}
                   />
+                )}
+                {data && !data.deleted && (
+                  <DatasetExport datasetKey={data.key} />
                 )}
               </Col>
             </Row>
             <Row>
-              <Col span={4}>
+              <Col flex="auto">
                 {data && (
                   <ArchiveUpload
                     style={{ marginLeft: "12px", float: "right" }}
@@ -158,7 +162,7 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
 
-              <Col span={2} offset={18}>
+              <Col>
                 {data && !data.deleted && !patchMode && (
                   <Switch
                     checked={editMode}
@@ -179,7 +183,16 @@ class DatasetMeta extends React.Component {
             </Row>{" "}
           </React.Fragment>
         )}
-
+        {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+          data &&
+          !data.deleted && (
+            <Row>
+              <Col flex></Col>
+              <Col>
+                <DatasetExport datasetKey={data.key} />
+              </Col>
+            </Row>
+          )}
         {editMode && !patchMode && (
           <MetaDataForm
             data={data}
