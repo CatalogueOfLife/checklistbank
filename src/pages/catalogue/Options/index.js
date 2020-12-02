@@ -132,24 +132,6 @@ class CatalogueOptions extends React.Component {
       );
   };
 
-  exportDataset = () => {
-    const {
-      match: {
-        params: { catalogueKey },
-      },
-    } = this.props;
-    axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/export`)
-      .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `The dataset is being exported`,
-          });
-        });
-      })
-      .catch((err) => this.setState({ error: err }));
-  };
   recalculateSectorCounts = () => {
     const {
       match: {
@@ -300,6 +282,23 @@ class CatalogueOptions extends React.Component {
                 catalogueKey={catalogueKey}
                 onError={(err) => this.setState({ error: err })}
               ></SyncAllSectorsButton>
+
+              <Popconfirm
+                placement="rightTop"
+                title={`Do you want to release ${catalogue.title}?`}
+                onConfirm={this.releaseCatalogue}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={releaseColLoading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Release project
+                </Button>
+              </Popconfirm>
+
               <Popconfirm
                 placement="rightTop"
                 title="Do you want to rematch sectors?"
@@ -331,30 +330,6 @@ class CatalogueOptions extends React.Component {
                   Rematch all decisions
                 </Button>
               </Popconfirm>
-
-              <Popconfirm
-                placement="rightTop"
-                title={`Do you want to release ${catalogue.title}?`}
-                onConfirm={this.releaseCatalogue}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button
-                  type="primary"
-                  loading={releaseColLoading}
-                  style={{ marginRight: "10px", marginBottom: "10px" }}
-                >
-                  Release project
-                </Button>
-              </Popconfirm>
-              <br />
-              <Button
-                type="primary"
-                onClick={() => this.exportDataset()}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Export dataset
-              </Button>
 
               <Button
                 type="primary"
