@@ -13,7 +13,6 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "../../catalogue/Options/DeleteOrphansButton";
-import DatasetExport from "../DatasetExport";
 
 class DatasetSettings extends React.Component {
   constructor(props) {
@@ -164,7 +163,6 @@ class DatasetSettings extends React.Component {
             >
               Re-index dataset
             </Button>
-            <DatasetExport datasetKey={datasetKey} />
 
             <DeleteOrphansButton
               datasetKey={datasetKey}
