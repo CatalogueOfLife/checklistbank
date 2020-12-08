@@ -3,7 +3,7 @@ import environments from "./env.json";
 const domain = window.location.hostname;
 
 let env = environments.dev;
-if (domain.endsWith("data.catalogue.life")) {
+if (domain.endsWith("data.catalogueoflife.org")) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
   env = environments.dev;
