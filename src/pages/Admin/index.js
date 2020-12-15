@@ -41,7 +41,7 @@ class AdminPage extends React.Component {
 
   getBackground = () => {
     axios
-      .get(`${config.dataApi}admin/background`)
+      .get(`${config.dataApi}admin/settings`)
       .then((res) => {
         this.setState({ background: res.data, backgroundError: null });
       })
@@ -51,7 +51,7 @@ class AdminPage extends React.Component {
   updateBackground = (param, checked) => {
     const { background } = this.state;
     axios
-      .put(`${config.dataApi}admin/background`, {
+      .put(`${config.dataApi}admin/settings`, {
         ...background,
         [param]: checked,
       })
