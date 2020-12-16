@@ -11,6 +11,7 @@ const SynonymsTable = ({
   style,
   catalogueKey,
   getNomStatus,
+  references,
 }) => {
   const uri = `/dataset/${datasetKey}/name/`;
 
@@ -54,7 +55,12 @@ const SynonymsTable = ({
             </NavLink>{" "}
             <ReferencePopover
               datasetKey={datasetKey}
-              referenceId={s.referenceIds}
+              references={references}
+              referenceId={
+                _.get(s, "name.publishedInID")
+                  ? [_.get(s, "name.publishedInID"), ...s.referenceIds]
+                  : s.referenceIds
+              }
               placement="bottom"
             />
           </BorderedListItem>

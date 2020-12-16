@@ -82,19 +82,6 @@ class TaxonPage extends React.Component {
     axios(`${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}`)
       .then((res) => {
         let promises = [res];
-        if (_.get(res, "data.name.publishedInId")) {
-          promises.push(
-            axios(
-              `${config.dataApi}dataset/${datasetKey}/reference/${_.get(
-                res,
-                "data.name.publishedInId"
-              )}`
-            ).then((publishedIn) => {
-              res.data.name.publishedIn = publishedIn.data;
-              return res;
-            })
-          );
-        }
 
         if (_.get(res, "data.name")) {
           promises.push(
@@ -178,6 +165,18 @@ class TaxonPage extends React.Component {
 
     axios(`${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/info`)
       .then((res) => {
+        if (
+          _.get(res, "data.taxon.name.publishedInId") &&
+          _.get(
+            res,
+            `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+          )
+        ) {
+          res.data.taxon.name.publishedIn = _.get(
+            res,
+            `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+          );
+        }
         this.setState({ infoLoading: false, info: res.data, infoError: null });
       })
       .catch((err) => {
@@ -345,9 +344,9 @@ class TaxonPage extends React.Component {
             />
           )}
 
-          {_.get(taxon, "name.publishedIn.citation") && (
+          {_.get(info, "taxon.name.publishedIn.citation") && (
             <PresentationItem md={md} label="Published in">
-              {_.get(taxon, "name.publishedIn.citation")}
+              {_.get(info, "taxon.name.publishedIn.citation")}
             </PresentationItem>
           )}
           <Row style={{ borderBottom: "1px solid #eee" }}>
@@ -370,6 +369,7 @@ class TaxonPage extends React.Component {
             <PresentationItem md={md} label="Synonyms">
               <SynonymTable
                 data={synonyms}
+                references={_.get(info, "references")}
                 style={{ marginTop: "-3px" }}
                 datasetKey={datasetKey}
                 catalogueKey={catalogueKey}
@@ -381,6 +381,7 @@ class TaxonPage extends React.Component {
             <PresentationItem md={md} label="Misapplied names">
               <SynonymTable
                 data={misapplied}
+                references={_.get(info, "references")}
                 style={{ marginBottom: 16, marginTop: "-3px" }}
                 datasetKey={datasetKey}
                 catalogueKey={catalogueKey}

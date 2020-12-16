@@ -17,16 +17,18 @@ class ReferencePopover extends React.Component {
   }
 
   getData = () => {
-    const { referenceId, datasetKey } = this.props;
+    const { referenceId, datasetKey, references } = this.props;
     if (referenceId) {
       const refIds = !_.isArray(referenceId) ? [referenceId] : referenceId;
       const reference = [];
       this.setState({ loading: true });
       Promise.all(
         refIds.map((id) =>
-          axios(
-            `${config.dataApi}dataset/${datasetKey}/reference/${id}`
-          ).then((res) => reference.push(res.data))
+          _.get(references, id)
+            ? Promise.resolve(reference.push(references[id]))
+            : axios(
+                `${config.dataApi}dataset/${datasetKey}/reference/${id}`
+              ).then((res) => reference.push(res.data))
         )
       ).then(() => this.setState({ reference, loading: false }));
     }
