@@ -11,6 +11,7 @@ import DatasetCreate from "./pages/DatasetCreate";
 import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider";
 import SyncProvider from "./components/hoc/SyncProvider";
+import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import Assembly from "./pages/catalogue/Assembly";
 import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
@@ -241,6 +242,11 @@ class App extends Component {
               key="exceptionHandler"
               path={`/`}
               component={ExceptionHandler}
+            />
+            <Route
+              key="backgroundProvider"
+              path={`/`}
+              component={BackgroundProvider}
             />
           </React.Fragment>
         </Router>

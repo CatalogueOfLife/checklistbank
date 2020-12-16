@@ -315,10 +315,11 @@ div.csl-entry {
 .popover-multi > .ant-tooltip-content > .ant-tooltip-inner {
   background-color: #fff !important;
   width: 330px !important;
-
 }
 
-.popover-multi.ant-tooltip-placement-top > .ant-tooltip-content > .ant-tooltip-arrow {
+.popover-multi.ant-tooltip-placement-top
+  > .ant-tooltip-content
+  > .ant-tooltip-arrow {
   border-top-color: #fff !important;
 }
 
@@ -329,4 +330,54 @@ div.csl-entry {
 
 .ant-tree-treenode.filter-node {
   color: red;
+}
+
+.green {
+  background: #66ff99;
+}
+
+.wheat {
+  background: wheat;
+}
+
+.tomato {
+  background: tomato;
+}
+
+.center {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100vh;
+}
+
+.circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 1px 1px #0000001a;
+}
+
+.pulse {
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+  }
+}
+
+.master {
+  color: black;
+  float: right;
+}
+
+@media (max-width: 900px) {
+  .master {
+    display: none;
+  }
 }

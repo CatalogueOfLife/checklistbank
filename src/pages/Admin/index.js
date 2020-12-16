@@ -36,32 +36,17 @@ class AdminPage extends React.Component {
   }
 
   componentDidMount = () => {
-    this.getBackground();
-  };
-
-  getBackground = () => {
-    axios
-      .get(`${config.dataApi}admin/settings`)
-      .then((res) => {
-        this.setState({ background: res.data, backgroundError: null });
-      })
-      .catch((err) => this.setState({ backgroundError: err }));
+    this.props.getBackground();
   };
 
   updateBackground = (param, checked) => {
-    const { background } = this.state;
+    const { background, getBackground } = this.props;
     axios
       .put(`${config.dataApi}admin/settings`, {
         ...background,
         [param]: checked,
       })
-      .then(() => {
-        this.setState({
-          background: { ...background, [param]: checked },
-          backgroundError: null,
-        });
-      })
-      .catch((err) => this.setState({ backgroundError: err }));
+      .then(getBackground);
   };
 
   updateAllLogos = () => {
@@ -197,8 +182,9 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
-      background,
     } = this.state;
+
+    const { background } = this.props;
     return (
       <Layout
         openKeys={["admin"]}
@@ -246,6 +232,14 @@ class AdminPage extends React.Component {
                       this.updateBackground("scheduler", checked);
                     }}
                     checked={background.scheduler}
+                  />
+                </FormItem>
+                <FormItem label="Maintenance">
+                  <Switch
+                    onChange={(checked) => {
+                      this.updateBackground("maintenance", checked);
+                    }}
+                    checked={background.maintenance}
                   />
                 </FormItem>
               </Form>
@@ -367,9 +361,17 @@ class AdminPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogueKey, catalogue, setCatalogue }) => ({
+const mapContextToProps = ({
   catalogueKey,
   catalogue,
   setCatalogue,
+  getBackground,
+  background,
+}) => ({
+  catalogueKey,
+  catalogue,
+  setCatalogue,
+  getBackground,
+  background,
 });
 export default withContext(mapContextToProps)(AdminPage);

@@ -110,6 +110,7 @@ class ContextProvider extends React.Component {
     syncState: {},
     syncingSector: null,
     syncingDataset: null,
+    background: {},
     setOpenKeys: (_openKeys) => this.setState({ _openKeys }),
     setSelectedKeys: (_selectedKeys) => this.setState({ _selectedKeys }),
     catalogue: localStorage.getItem("col_selected_project")
@@ -166,6 +167,7 @@ class ContextProvider extends React.Component {
     },
 
     getSyncState: () => this.getSyncState(),
+    getBackground: () => this.getBackground(),
   };
 
   componentDidMount() {
@@ -376,6 +378,15 @@ class ContextProvider extends React.Component {
     } catch (err) {
       this.state.addError(err);
     }
+  };
+
+  getBackground = async () => {
+    try {
+      const { data: background } = await axios(
+        `${config.dataApi}admin/settings`
+      );
+      this.setState({ background });
+    } catch (err) {}
   };
   /**
    * Requesting user items by keys from editorRoleScopes list

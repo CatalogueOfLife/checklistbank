@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import injectSheet from "react-jss";
 import withWidth, { LARGE, MEDIUM } from "react-width";
 import { withRouter } from "react-router-dom";
-import { Layout, Drawer, Row, Tag, Alert } from "antd";
+import { Layout, Drawer, Row, Col, Tag, Alert } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import BasicMenu from "./BasicMenu";
 import UserMenu from "./UserMenu";
@@ -16,7 +16,7 @@ import _ from "lodash";
 import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
 import Sync from "./Sync";
 import Exception from "../exception/Exception";
-
+import PulsatingDot from "./PulsatingDot";
 const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
 
@@ -76,6 +76,7 @@ class SiteLayout extends Component {
       taxonOrNameKey,
       error,
       clearError,
+      background,
     } = this.props;
     const collapsed =
       typeof this.state.collapsed === "boolean"
@@ -187,6 +188,22 @@ class SiteLayout extends Component {
               minHeight: 280,
             }}
           >
+            {background && background.maintenance && (
+              <Alert
+                style={{ marginTop: "10px" }}
+                message={
+                  <Row align="middle">
+                    <Col>
+                      <PulsatingDot />
+                    </Col>
+                    <Col style={{ paddingLeft: "10px" }}>
+                      The system is under maintenance - please expect errors.
+                    </Col>
+                  </Row>
+                }
+                type="warning"
+              />
+            )}
             {error &&
               ![401, 403].includes(_.get(error, "response.status")) &&
               !exceptionIsDataset404(error) && (
@@ -251,10 +268,11 @@ class SiteLayout extends Component {
   }
 }
 
-const mapContextToProps = ({ addError, clearError, error }) => ({
+const mapContextToProps = ({ addError, clearError, error, background }) => ({
   addError,
   clearError,
   error,
+  background,
 });
 
 export default compose(
