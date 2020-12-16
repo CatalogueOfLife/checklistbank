@@ -48,7 +48,6 @@ class NamePage extends React.Component {
     this.getUsages(datasetKey, nameKey);
     this.getRelations(datasetKey, nameKey);
     this.getSynonyms(datasetKey, nameKey);
-    this.getPublishedIn(datasetKey, nameKey);
   }
   componentDidUpdate = (prevProps) => {
     if (
@@ -65,7 +64,6 @@ class NamePage extends React.Component {
       this.getUsages(datasetKey, nameKey);
       this.getRelations(datasetKey, nameKey);
       this.getSynonyms(datasetKey, nameKey);
-      this.getPublishedIn(datasetKey, nameKey);
     }
   };
   getReference = (referenceKey) => {
@@ -110,13 +108,6 @@ class NamePage extends React.Component {
     axios(`${config.dataApi}dataset/${key}/name/${nameKey}/synonyms`).then(
       (synonyms) => {
         this.setState({ synonyms: synonyms.data });
-      }
-    );
-  };
-  getPublishedIn = (key, nameKey) => {
-    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/publishedIn`).then(
-      (publishedIn) => {
-        this.setState({ publishedIn: publishedIn.data });
       }
     );
   };
@@ -165,6 +156,7 @@ class NamePage extends React.Component {
       publishedIn,
     } = this.state;
 
+    const filteredSynonyms = synonyms.filter((s) => s.id !== name.id);
     const {
       datasetKey,
       catalogueKey,
@@ -325,10 +317,10 @@ class NamePage extends React.Component {
                 <NameRelations style={{ marginTop: "-3px" }} data={relations} />
               </PresentationItem>
             )}
-            {synonyms && synonyms.length > 0 && (
+            {filteredSynonyms && filteredSynonyms.length > 0 && (
               <PresentationItem md={md} label="Synonyms">
                 <SynonymTable
-                  data={synonyms.map((s) => ({ name: s }))}
+                  data={filteredSynonyms.map((s) => ({ name: s }))}
                   style={{ marginTop: "-3px" }}
                   datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
@@ -387,11 +379,11 @@ class NamePage extends React.Component {
               {name.remarks}
             </PresentationItem>
             {reference && (
-              <PresentationItem md={md} label="Reference">
+              <PresentationItem md={md} label="Published In">
                 {reference.citation}
               </PresentationItem>
             )}
-            <PresentationItem md={md} label="Published In">
+            <PresentationItem md={md} label="Published In ID">
               {name.publishedInId}
             </PresentationItem>
             <PresentationItem md={md} label="Published In Page">

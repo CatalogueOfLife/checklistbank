@@ -57,8 +57,8 @@ const SynonymsTable = ({
               datasetKey={datasetKey}
               references={references}
               referenceId={
-                _.get(s, "name.publishedInID")
-                  ? [_.get(s, "name.publishedInID"), ...s.referenceIds]
+                _.get(s, "name.publishedInId")
+                  ? [_.get(s, "name.publishedInId"), ...(s.referenceIds || [])]
                   : s.referenceIds
               }
               placement="bottom"
