@@ -65,8 +65,8 @@ const ClassificationTable = ({
             ? `/catalogue/${catalogueKey}/assembly`
             : getDatasetTreeRoute(location, datasetKey, catalogueKey),
           search: isAssembly(location, catalogueKey)
-            ? `?assemblyTaxonKey=${_.get(taxon, "id")}`
-            : `?taxonKey=${_.get(taxon, "id")}`,
+            ? `?assemblyTaxonKey=${encodeURIComponent(_.get(taxon, "id"))}`
+            : `?taxonKey=${encodeURIComponent(_.get(taxon, "id"))}`,
         }}
       >
         {_.get(taxon, "labelHtml") && (

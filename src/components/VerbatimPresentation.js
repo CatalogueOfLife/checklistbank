@@ -79,9 +79,13 @@ class VerbatimPresentation extends React.Component {
       const primaryKeys = _.get(termsMap, `${type}.${key}`);
 
       const types = [
-        ...new Set(primaryKeys.map((p) => `type=${p.split(".")[0]}`)),
+        ...new Set(
+          primaryKeys.map((p) => `type=${encodeURIComponent(p.split(".")[0])}`)
+        ),
       ];
-      const terms = primaryKeys.map((p) => `${p.split(".")[1]}=${value}`);
+      const terms = primaryKeys.map(
+        (p) => `${p.split(".")[1]}=${encodeURIComponent(value)}`
+      );
       return (
         <React.Fragment>
           <NavLink
