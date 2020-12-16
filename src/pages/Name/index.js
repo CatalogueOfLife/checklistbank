@@ -318,7 +318,7 @@ class NamePage extends React.Component {
               </PresentationItem>
             )}
             {filteredSynonyms && filteredSynonyms.length > 0 && (
-              <PresentationItem md={md} label="Synonyms">
+              <PresentationItem md={md} label="Homotypic names">
                 <SynonymTable
                   data={filteredSynonyms.map((s) => ({ name: s }))}
                   style={{ marginTop: "-3px" }}
