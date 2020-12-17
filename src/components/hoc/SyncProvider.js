@@ -10,7 +10,6 @@ class SyncProvider extends React.Component {
     this.props.getSyncState();
     this.timer = setInterval(() => {
       this.props.getSyncState();
-      console.log("Sync update");
     }, syncStateHeartbeat);
   };
 
