@@ -39,7 +39,9 @@ class NameSearchAutocomplete extends React.Component {
   setDefaultValue = (usageId) => {
     const { datasetKey } = this.props;
     axios(
-      `${config.dataApi}nameusage/search?USAGE_ID=${usageId}&DATASET_KEY=${datasetKey}`
+      `${config.dataApi}nameusage/search?USAGE_ID=${encodeURIComponent(
+        usageId
+      )}&DATASET_KEY=${datasetKey}`
     )
       .then((res) => {
         this.setState({
@@ -61,7 +63,7 @@ class NameSearchAutocomplete extends React.Component {
       : `${config.dataApi}name/search`;
 
     axios(
-      `${url}?fuzzy=false&limit=25&q=${q}${
+      `${url}?fuzzy=false&limit=25&q=${encodeURIComponent(q)}${
         minRank ? `&minRank=${minRank}` : ""
       }`
     )

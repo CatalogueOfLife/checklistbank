@@ -37,6 +37,7 @@ class VerbatimRecord extends React.Component {
     if (!params.limit) {
       params.limit = this.state.limit;
     }
+
     this.getVerbatimData(params);
   };
 

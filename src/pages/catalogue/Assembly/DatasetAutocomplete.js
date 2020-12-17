@@ -52,7 +52,7 @@ class DatasetAutocomplete extends React.Component {
   getDatasets = (q) => {
     const { contributesTo } = this.props;
     axios(
-      `${config.dataApi}dataset?q=${q}&limit=30${
+      `${config.dataApi}dataset?q=${encodeURIComponent(q)}&limit=30${
         contributesTo ? "&contributesTo=" + contributesTo : ""
       }`
     )
