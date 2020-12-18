@@ -119,7 +119,9 @@ class VerbatimPresentation extends React.Component {
       ); */
 
       const types = [
-        ...new Set(foreignKeys.map((p) => `type=${p.split(".")[0]}`)),
+        ...new Set(
+          foreignKeys.map((p) => `type=${encodeURIComponent(p.split(".")[0])}`)
+        ),
       ];
       const terms = foreignKeys.map(
         (p) => `${p.split(".")[1]}=${encodeURIComponent(value)}`
