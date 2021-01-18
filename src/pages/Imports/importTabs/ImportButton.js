@@ -1,68 +1,70 @@
 import React from "react";
-import { WarningOutlined } from '@ant-design/icons';
+import { WarningOutlined } from "@ant-design/icons";
 import { Button, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
-import withContext from '../../../components/hoc/withContext'
+import withContext from "../../../components/hoc/withContext";
 
 class ImportButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       importTriggered: false,
-      error: null
+      error: null,
     };
   }
 
   startImport = () => {
-    const {record} = this.props;  
+    const { record } = this.props;
     this.setState({ importTriggered: true });
     axios
-      .post(
-        `${config.dataApi}importer`,
-        {
-          'datasetKey': record.datasetKey,
-          'priority': true,
-          'force': true,
-        }
-      )
-      .then(res => {
+      .post(`${config.dataApi}importer`, {
+        datasetKey: record.datasetKey,
+        priority: true,
+        force: true,
+      })
+      .then((res) => {
         this.setState({ importTriggered: false });
-        if(this.props.onStartImportSuccess && typeof this.props.onStartImportSuccess === 'function'){
+        if (
+          this.props.onStartImportSuccess &&
+          typeof this.props.onStartImportSuccess === "function"
+        ) {
           this.props.onStartImportSuccess();
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ importTriggered: false, error: err });
       });
   };
 
   stopImport = () => {
-    const {record} = this.props;  
+    const { record } = this.props;
     this.setState({ importTriggered: true });
     axios
       .delete(`${config.dataApi}importer/${record.datasetKey}`)
-      .then(res => {
+      .then((res) => {
         this.setState({ importTriggered: false });
-        if(record.state !== 'waiting'){
+        if (record.state !== "waiting") {
           notification.open({
-            title: 'Import stopped',
-            description: `Import of ${record.dataset.title} was stopped`
-          })
+            title: "Import stopped",
+            description: `Import of ${record.dataset.title} was stopped`,
+          });
         } else {
           notification.open({
-            title: 'Import canceled',
-            description: `${record.dataset.title} was removed from the queue`
-          })
+            title: "Import canceled",
+            description: `${record.dataset.title} was removed from the queue`,
+          });
         }
-        
-        if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
+
+        if (
+          this.props.onDeleteSuccess &&
+          typeof this.props.onDeleteSuccess === "function"
+        ) {
           this.props.onDeleteSuccess();
         }
-        
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ importTriggered: false, error: err });
       });
   };
@@ -70,20 +72,24 @@ class ImportButton extends React.Component {
   render = () => {
     const { error } = this.state;
     const { record, style, importState } = this.props;
-    const isStopButton = ['waiting', ...importState.filter(i => i.running === "true").map(i => i.name)].indexOf(record.state) > -1;
-    
+    const isStopButton =
+      [
+        "waiting",
+        ...importState.filter((i) => i.running).map((i) => i.name),
+      ].indexOf(record.state) > -1;
+
     return (
       <React.Fragment>
         <Button
           name="import-button"
           style={style}
-          type={isStopButton ? 'danger' : 'primary'}
+          type={isStopButton ? "danger" : "primary"}
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopImport : this.startImport}
         >
-          {!isStopButton && 'Import'}
-          {isStopButton && record.state !== 'waiting' &&  'Stop import'}
-          {isStopButton && record.state === 'waiting' &&  'Cancel'}
+          {!isStopButton && "Import"}
+          {isStopButton && record.state !== "waiting" && "Stop import"}
+          {isStopButton && record.state === "waiting" && "Cancel"}
         </Button>
         {error && (
           <Popover
@@ -92,7 +98,9 @@ class ImportButton extends React.Component {
             content={<ErrorMsg error={error} />}
             trigger="click"
           >
-            <WarningOutlined style={{ color: "red", marginLeft: "10px", cursor: "pointer" }} />
+            <WarningOutlined
+              style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
+            />
           </Popover>
         )}
       </React.Fragment>
@@ -102,4 +110,3 @@ class ImportButton extends React.Component {
 
 const mapContextToProps = ({ importState }) => ({ importState });
 export default withContext(mapContextToProps)(ImportButton);
-
