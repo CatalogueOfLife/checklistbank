@@ -354,27 +354,27 @@ class DuplicateSearchPage extends React.Component {
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
       .map((d) => {
         const method = d.decision ? "put" : "post";
+        const body = {
+          datasetKey: catalogueKey,
+          subjectDatasetKey: datasetKey,
+          subject: {
+            id: _.get(d, "id"),
+
+            name: _.get(d, "name.scientificName"),
+            authorship: _.get(d, "name.authorship"),
+            rank: _.get(d, "name.rank"),
+          },
+          mode: decision === "block" ? decision : "update",
+          status: decision === "block" ? _.get(d, "status") : decision,
+        };
+        if (decision === "chresonym") {
+          body.name = { nomstatus: "chresonym" };
+        }
         return axios[method](
           `${config.dataApi}dataset/${catalogueKey}/decision${
             method === "put" ? `/${d.decision.id}` : ""
           }`,
-          {
-            datasetKey: catalogueKey,
-            subjectDatasetKey: datasetKey,
-            subject: {
-              id: _.get(d, "id"),
-
-              name: _.get(d, "name.scientificName"),
-              authorship: _.get(d, "name.authorship"),
-              rank: _.get(d, "name.rank"),
-            },
-            mode: ["block", "chresonym"].includes(decision)
-              ? decision
-              : "update",
-            status: ["block", "chresonym"].includes(decision)
-              ? _.get(d, "status")
-              : decision,
-          }
+          body
         )
           .then((decisionId) =>
             axios(
@@ -891,9 +891,11 @@ class DuplicateSearchPage extends React.Component {
                       </Option>
                     ))}
                   </OptGroup>
+                  <OptGroup label="Nom. Status">
+                    <Option value="chresonym">Chresonym</Option>
+                  </OptGroup>
                   <OptGroup label="Other">
                     <Option value="block">Block</Option>
-                    <Option value="chresonym">Chresonym</Option>
                   </OptGroup>
                 </Select>
 

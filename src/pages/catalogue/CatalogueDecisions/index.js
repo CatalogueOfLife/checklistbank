@@ -241,6 +241,37 @@ class CatalogueDecisions extends React.Component {
         })
       );
   };
+
+  deleteBrokenDecisions = (subjectDatasetKey) => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+
+    this.setState({ deleteBrokenDecisionsLoading: true });
+    axios
+      .delete(
+        `${config.dataApi}dataset/${catalogueKey}/decision?datasetKey=${subjectDatasetKey}&broken=true`
+      )
+      .then((res) => {
+        notification.success({
+          message: "Success",
+          description: `Deleted ${res} broken decisions`,
+        });
+        this.setState({
+          deleteBrokenDecisionsLoading: false,
+          error: null,
+        });
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          deleteBrokenDecisionsLoading: false,
+        })
+      );
+  };
+
   render() {
     const {
       data,
@@ -248,6 +279,7 @@ class CatalogueDecisions extends React.Component {
       error,
       pagination,
       rematchDecisionsLoading,
+      deleteBrokenDecisionsLoading,
       rematchInfo,
     } = this.state;
     const {
@@ -566,7 +598,7 @@ class CatalogueDecisions extends React.Component {
             <Col style={{ textAlign: "right" }}>
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch all decisions?"
+                title={`Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`}
                 onConfirm={() =>
                   this.rematchDecisions(params.subjectDatasetKey)
                 }
@@ -584,6 +616,26 @@ class CatalogueDecisions extends React.Component {
                     : ""}
                 </Button>
               </Popconfirm>
+
+              {params.subjectDatasetKey && (
+                <Popconfirm
+                  placement="rightTop"
+                  title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
+                  onConfirm={() =>
+                    this.deleteBrokenDecisions(params.subjectDatasetKey)
+                  }
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    type="primary"
+                    loading={deleteBrokenDecisionsLoading}
+                    style={{ marginLeft: "10px", marginBottom: "10px" }}
+                  >
+                    {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
+                  </Button>
+                </Popconfirm>
+              )}
             </Col>
           </Row>
           {!error && (

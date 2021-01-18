@@ -492,7 +492,7 @@ class WorkBench extends React.Component {
                 : "",
             code: _.get(d, "usage.name.code"),
           },
-          mode: ["block", "chresonym"].includes(decision) ? decision : "update",
+          mode: decision === "block" ? "block" : "update",
         };
         if (
           ["informal", "no name", "hybrid formula", "placeholder"].includes(
@@ -500,6 +500,8 @@ class WorkBench extends React.Component {
           )
         ) {
           decisionObject.name = { type: decision };
+        } else if (decision === "chresonym") {
+          decisionObject.name = { nomstatus: "chresonym" };
         }
         if (taxonomicstatus.includes(decision)) {
           decisionObject.status = decision;
@@ -848,7 +850,6 @@ class WorkBench extends React.Component {
               >
                 <OptGroup label="General">
                   <Option value="block">Block</Option>
-                  <Option value="chresonym">Chresonym</Option>
                 </OptGroup>
                 <OptGroup label="Status">
                   {taxonomicstatus.map((s) => (
@@ -862,6 +863,9 @@ class WorkBench extends React.Component {
                   <Option value="placeholder">Placeholder</Option>
                   <Option value="hybrid formula">Hybrid formula</Option>
                   <Option value="informal">Informal</Option>
+                </OptGroup>
+                <OptGroup label="Nom. status">
+                  <Option value="chresonym">Chresonym</Option>
                 </OptGroup>
               </Select>
               <Button
