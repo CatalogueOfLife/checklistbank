@@ -156,7 +156,14 @@ class VerbatimPresentation extends React.Component {
       );
     } else {
       return isValidURL(value) ? (
-        <a href={value} target="_blank">
+        <a
+          href={
+            value.startsWith("urn:lsid:")
+              ? `http://www.lsid.info/resolver/?lsid=${value}`
+              : value
+          }
+          target="_blank"
+        >
           {value}
         </a>
       ) : (
