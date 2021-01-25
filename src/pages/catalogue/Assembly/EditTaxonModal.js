@@ -104,10 +104,15 @@ const EditTaxonModal = (props) => {
   const parseName = () => {
     axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
       (res) => {
-        if (_.get(res, "data[0]")) {
+        /*         if (_.get(res, "data[0]")) {
           form.setFieldsValue(_.get(res, "data[0].name"));
           setParsedName(_.get(res, "data[0].name"));
           setSelectedRank(_.get(res, "data[0].name.rank"));
+        } */
+        if (_.get(res, "data")) {
+          form.setFieldsValue(_.get(res, "data"));
+          setParsedName(_.get(res, "data"));
+          setSelectedRank(_.get(res, "data.rank"));
         }
       }
     );
@@ -312,7 +317,17 @@ const EditTaxonModal = (props) => {
               ))}
             </Select>
           </FormItem>
-          <FormItem {...formItemLayout} label="Name type" name="type">
+          <FormItem
+            {...formItemLayout}
+            label="Name type"
+            name="type"
+            rules={[
+              {
+                required: true,
+                message: "Please select Name Type",
+              },
+            ]}
+          >
             <Select style={{ width: 200 }} showSearch>
               {nametype.map((r) => (
                 <Option key={r} value={r}>
