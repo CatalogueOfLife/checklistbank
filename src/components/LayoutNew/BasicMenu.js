@@ -19,6 +19,7 @@ import {
   HistoryOutlined,
   TagsOutlined,
   TagOutlined,
+  ToolOutlined,
 } from "@ant-design/icons";
 
 import { Menu, Alert } from "antd";
@@ -153,6 +154,23 @@ class BasicMenu extends Component {
               }
             />
           )}
+
+          <SubMenu
+            key="tools"
+            title={
+              <span>
+                <ToolOutlined />
+                <span>Tools</span>
+              </span>
+            }
+          >
+            <Menu.Item key="metadatavalidator">
+              <NavLink to={{ pathname: "/tools/metadata-validator" }}>
+                <span>Metadata validator</span>
+              </NavLink>
+            </Menu.Item>
+          </SubMenu>
+
           {Auth.isAuthorised(user, ["editor", "admin"]) && (
             <SubMenu
               key="admin"

@@ -37,6 +37,7 @@ import HomePage from "./pages/HomePage";
 import NameIndex from "./pages/NameIndex";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
+import MetaDataValidator from "./pages/tools/MetaDataValidator";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -214,6 +215,12 @@ class App extends Component {
                   key="dataset"
                   path="/dataset"
                   render={(props) => <DatasetList location={props.location} />}
+                />
+                <Route
+                  exact
+                  key="metadatavalidator"
+                  path={`/tools/metadata-validator`}
+                  component={MetaDataValidator}
                 />
                 <Route component={Exception404} />
               </Switch>
