@@ -74,8 +74,13 @@ const MetaDataValidator = () => {
   };
 
   const validateFromYaml = (yaml) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append("metadata", yaml);
+
     return axios
-      .post(`${config.dataApi}parser/metadata`, { metadata: yaml })
+      .post(`${config.dataApi}parser/metadata`, bodyFormData, {
+        headers: { "Content-Type": "text/yaml" },
+      })
       .then((res) => {
         setValidatorResult(res.data);
       })
