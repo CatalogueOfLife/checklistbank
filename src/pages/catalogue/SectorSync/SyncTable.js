@@ -163,7 +163,7 @@ const getColumns = (catalogueKey) => [
     title: "Diff",
     key: "diff",
     render: (text, record) =>
-      record.attempt < 2 ? (
+      record.attempt > 1 ? (
         ""
       ) : (
         <NavLink
