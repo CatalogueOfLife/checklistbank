@@ -516,8 +516,8 @@ class TaxonPage extends React.Component {
               )}
             </Col>
           </Row>
-          {/* 
-          {_.get(info, "media") && (
+
+          {/*           {_.get(info, "media") && (
             <PresentationItem md={md} label="Media">
               <TaxonMedia media={_.get(info, "media")} />
             </PresentationItem>
