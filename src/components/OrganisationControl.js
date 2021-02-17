@@ -4,6 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Col } from "antd";
 import injectSheet from "react-jss";
 import OrganisationForm from "./OrganisationForm";
+import OrganisationPresentation from "./OrganisationPresentation";
 import ReactDragListView from "react-drag-listview";
 const { DragColumn } = ReactDragListView;
 
@@ -115,7 +116,6 @@ class OrganisationControl extends React.Component {
       nodeSelector: "li",
       handleSelector: "li",
     };
-
     return (
       <React.Fragment>
         <Row>
@@ -124,12 +124,18 @@ class OrganisationControl extends React.Component {
               {organisations.map((organisation, index) => (
                 <li style={{ float: "left", marginBottom: "4px" }}>
                   <Tag
-                    key={organisation.label}
+                    key={organisation.label || organisation.name}
                     closable={removeAll || index !== 0}
                     onClose={() => this.handleClose(organisation)}
                     onClick={() => this.editOrganisation(organisation)}
                   >
-                    {organisation.label}
+                    <OrganisationPresentation
+                      organisation={organisation}
+                      style={{
+                        display: "inline-grid",
+                        margin: "3px 0px 3px 0px",
+                      }}
+                    />
                   </Tag>
                 </li>
               ))}
@@ -149,7 +155,7 @@ class OrganisationControl extends React.Component {
                 style={{ marginTop: "10px" }}
                 data={organisationForEdit}
                 onSubmit={this.onFormSubmit}
-                onCancel={
+                onCancel={() =>
                   organisationForEdit
                     ? this.onFormSubmit(organisationForEdit)
                     : this.setState({ formVisible: false })
