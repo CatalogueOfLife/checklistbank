@@ -14,6 +14,7 @@ import ColumnFilter from "./ColumnFilter";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
+import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
@@ -269,6 +270,11 @@ class DatasetList extends React.Component {
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
+    Object.keys(params).forEach((param) => {
+      if (!params[param]) {
+        delete newParams[param];
+      }
+    });
     this.setState(
       {
         params: newParams,
@@ -279,6 +285,12 @@ class DatasetList extends React.Component {
       },
       this.getData
     );
+  };
+  onSelectReleasedFrom = (dataset) => {
+    this.updateSearch({ releasedFrom: dataset.key });
+  };
+  onResetReleasedFrom = () => {
+    this.updateSearch({ releasedFrom: null });
   };
 
   handleTableChange = (pagination, filters, sorter) => {
@@ -386,7 +398,18 @@ class DatasetList extends React.Component {
                   style={{ marginBottom: "10px", width: "50%" }}
                   onSearch={(value) => this.updateSearch({ q: value })}
                 />
-
+                <FormItem>
+                  <div style={{ marginTop: "10px" }}>
+                    <DatasetAutocomplete
+                      defaultDatasetKey={_.get(params, "releasedFrom") || null}
+                      onResetSearch={this.onResetReleasedFrom}
+                      onSelectDataset={this.onSelectReleasedFrom}
+                      placeHolder="Released from"
+                      origin="managed"
+                      autoFocus={false}
+                    />
+                  </div>
+                </FormItem>
                 {isEditorOrAdmin(this.props.user) && (
                   <NavLink to={{ pathname: `/newdataset` }} exact={true}>
                     <Button style={{ marginTop: "10px" }} type="primary">

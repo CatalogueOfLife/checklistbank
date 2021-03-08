@@ -542,20 +542,8 @@ class BasicMenu extends Component {
             <Menu.Item>
               <NavLink
                 to={{
-                  pathname: `/dataset/3LR`,
-                }}
-              >
-                <TagOutlined />
-                COL: latest release
-              </NavLink>
-            </Menu.Item>
-          )}
-          {!user && (
-            <Menu.Item>
-              <NavLink
-                to={{
                   pathname: "/dataset",
-                  search: "?releasedFrom=3",
+                  search: "?releasedFrom=3&sortBy=created",
                 }}
               >
                 <TagsOutlined />
