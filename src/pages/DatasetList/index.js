@@ -1,14 +1,14 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
-import { Table, Alert, Row, Col, Form } from "antd";
+import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, Alert, Row, Col, Form, Button } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
 import moment from "moment";
 import history from "../../history";
-
+import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";
 import ColumnFilter from "./ColumnFilter";
 import DatasetLogo from "./DatasetLogo";
@@ -16,7 +16,7 @@ import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 
 const FormItem = Form.Item;
-
+const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
 
 const PAGE_SIZE = 50;
@@ -337,27 +337,27 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[6].filteredValue = null;
     } */
-    const filteredColumns =
-      this.props.user && _.includes(this.props.user.roles, "admin")
-        ? [
-            ...defaultColumns,
-            {
-              title: "Action",
-              dataIndex: "",
-              width: 60,
-              key: "__actions__",
-              render: (text, record) =>
-                record.origin === "external" ? (
-                  <ImportButton
-                    key={record.key}
-                    record={{ datasetKey: record.key }}
-                  />
-                ) : (
-                  ""
-                ),
-            },
-          ]
-        : defaultColumns;
+    const filteredColumns = isEditorOrAdmin(this.props.user)
+      ? [
+          ...defaultColumns,
+          {
+            title: "Action",
+            dataIndex: "",
+            width: 60,
+            key: "__actions__",
+            render: (text, record) =>
+              record.origin === "external" &&
+              canEditDataset(record, this.props.user) ? (
+                <ImportButton
+                  key={record.key}
+                  record={{ datasetKey: record.key }}
+                />
+              ) : (
+                ""
+              ),
+          },
+        ]
+      : defaultColumns;
 
     const columns = _.filter(
       filteredColumns,
@@ -386,6 +386,15 @@ class DatasetList extends React.Component {
                   style={{ marginBottom: "10px", width: "50%" }}
                   onSearch={(value) => this.updateSearch({ q: value })}
                 />
+
+                {isEditorOrAdmin(this.props.user) && (
+                  <NavLink to={{ pathname: `/newdataset` }} exact={true}>
+                    <Button style={{ marginTop: "10px" }} type="primary">
+                      <PlusOutlined />
+                      New Dataset
+                    </Button>
+                  </NavLink>
+                )}
               </Col>
               <Col md={12} sm={24}>
                 <FormItem

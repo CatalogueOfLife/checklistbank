@@ -589,18 +589,9 @@ class BasicMenu extends Component {
           <Menu.Item key="/dataset">
             <NavLink to="/dataset">
               <SearchOutlined />
-              Dataset search
+              Datasets
             </NavLink>
           </Menu.Item>
-
-          {Auth.isAuthorised(user, ["editor", "admin"]) && (
-            <Menu.Item key="datasetCreate">
-              <NavLink to={{ pathname: "/newdataset" }}>
-                <PlusOutlined />
-                New Dataset
-              </NavLink>
-            </Menu.Item>
-          )}
 
           {selectedDataset && (
             <SubMenu
