@@ -682,8 +682,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {user &&
-                selectedDataset &&
+              {selectedDataset &&
                 _.get(selectedDataset, "origin") !== "released" &&
                 hasData && (
                   <Menu.Item key="issues">
@@ -699,7 +698,7 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {user && selectedDataset && hasData && (
+              {selectedDataset && hasData && (
                 <Menu.Item key="references">
                   <NavLink
                     to={{
