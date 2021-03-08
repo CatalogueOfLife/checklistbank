@@ -703,20 +703,22 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && selectedDataset.size && (
-                <Menu.Item key="verbatim">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/verbatim`,
-                    }}
-                  >
-                    Verbatim
-                  </NavLink>
-                </Menu.Item>
-              )}
+              {selectedDataset &&
+                _.get(selectedDataset, "origin") !== "managed" &&
+                selectedDataset.size && (
+                  <Menu.Item key="verbatim">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/verbatim`,
+                      }}
+                    >
+                      Verbatim
+                    </NavLink>
+                  </Menu.Item>
+                )}
 
               {selectedDataset && (
                 <Menu.Item key="projects">
