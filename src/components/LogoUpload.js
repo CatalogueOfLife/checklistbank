@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import config from "../config";
 
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from "@ant-design/icons";
 
 import { Upload, Modal } from "antd";
 
@@ -12,25 +12,22 @@ class LogoUpload extends React.Component {
     this.state = {
       previewVisible: false,
       previewImage: "",
-      fileList: []
+      fileList: [],
     };
   }
-componentDidMount(){
-    this.getData()
-}
-componentDidUpdate = prevProps => {
-  if (
-    this.props.datasetKey !==
-    prevProps.datasetKey
-  ) {
+  componentDidMount() {
     this.getData();
   }
-};
+  componentDidUpdate = (prevProps) => {
+    if (this.props.datasetKey !== prevProps.datasetKey) {
+      this.getData();
+    }
+  };
   getData = () => {
     this.setState({ loading: true });
     const { datasetKey } = this.props;
     axios(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
-      .then(res => {
+      .then((res) => {
         this.setState({
           loading: false,
           fileList: [
@@ -38,58 +35,60 @@ componentDidUpdate = prevProps => {
               uid: "-1",
               name: "logo.png",
               status: "done",
-              url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`
-            }
-          ]
+              url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`,
+            },
+          ],
         });
       })
-      .catch(err => {
+      .catch((err) => {
         // this.setState({ loading: false, error: err, data: [] });
         console.log(err);
       });
   };
   handleCancel = () => this.setState({ previewVisible: false });
 
-  handlePreview = file => {
+  handlePreview = (file) => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
-      previewVisible: true
+      previewVisible: true,
     });
   };
 
-  handleChange = ({fileList}) => {
-    this.setState({ fileList })
+  handleChange = ({ fileList }) => {
+    this.setState({ fileList });
   };
-  onRemove = (e) =>{
-    console.log(e)
-    const {datasetKey} = this.props;
+  onRemove = (e) => {
+    console.log(e);
+    const { datasetKey } = this.props;
 
-    axios.delete(`${config.dataApi}dataset/${datasetKey}/logo`)
-      .then(()=>{
-          console.log('logo deleted')
+    axios
+      .delete(`${config.dataApi}dataset/${datasetKey}/logo`)
+      .then(() => {
+        console.log("logo deleted");
       })
       .catch((err) => {
-      console.log(err)
-    })
-  }
-  customRequest= (options) => {
-    
-    const config= {
-      "headers": {
-        "content-type": options.file.type
-      }
-    }
-    axios.post(options.action, options.file, config).then((res) => {
-      options.onSuccess(res.data, options.file)
-    }).catch((err) => {
-      console.log(err)
-    })
-    
-  }
+        console.log(err);
+      });
+  };
+  customRequest = (options) => {
+    const config = {
+      headers: {
+        "content-type": options.file.type,
+      },
+    };
+    axios
+      .post(options.action, options.file, config)
+      .then((res) => {
+        options.onSuccess(res.data, options.file);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
-    const {datasetKey} = this.props;
+    const { datasetKey } = this.props;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -97,12 +96,14 @@ componentDidUpdate = prevProps => {
       </div>
     );
     return (
-      <div className="clearfix">
+      <div
+        className="clearfix"
+        style={fileList.length >= 1 ? { height: "220px" } : null}
+      >
         <Upload
           action={`${config.dataApi}dataset/${datasetKey}/logo`}
           customRequest={this.customRequest}
           listType="picture-card"
-          className="logo-uploader"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}

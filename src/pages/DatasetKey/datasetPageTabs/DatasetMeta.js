@@ -152,7 +152,7 @@ class DatasetMeta extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col flex="auto" style={{ minHeight: "212px" }}>
+              <Col flex="auto">
                 {data && (
                   <ArchiveUpload
                     style={{ marginLeft: "12px", float: "right" }}
