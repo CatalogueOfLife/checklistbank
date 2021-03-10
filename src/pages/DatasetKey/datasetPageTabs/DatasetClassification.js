@@ -67,30 +67,9 @@ class DatasetClassification extends React.Component {
               treeRef={(ref) => (this.treeRef = ref)}
               dataset={dataset}
               treeType="readOnly"
-              catalogueKey={catalogueKey}
+              catalogueKey={dataset.key}
               defaultExpandKey={params.taxonKey}
               location={location}
-              showSourceTaxon={(sector) => {
-                if (Auth.isAuthorised(user, ["editor", "admin"])) {
-                  const params = {
-                    sourceTaxonKey: _.get(sector, "subject.id"),
-                    assemblyTaxonKey: _.get(sector, "target.id"),
-                    datasetKey: datasetKey,
-                  };
-
-                  history.push({
-                    pathname: `/catalogue/${catalogueKey}/assembly`,
-                    search: `?${queryString.stringify(params)}`,
-                  });
-                } else {
-                  history.push({
-                    pathname: `/dataset/${catalogueKey}/classification`,
-                    search: `?${queryString.stringify({
-                      taxonKey: _.get(sector, "target.id"),
-                    })}`,
-                  });
-                }
-              }}
             />
           </ColTreeContext.Provider>
         )}

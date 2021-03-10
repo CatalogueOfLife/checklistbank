@@ -350,8 +350,160 @@ class ColTree extends React.Component {
       this.reloadLoadedKeys(loadedKeys)
     );
   };
+  fetchChildPage = async (dataRef, reloadAll, dontUpdateState) => {
+    const {
+      showSourceTaxon,
+      dataset,
+      treeType,
+      catalogueKey,
+      onDeleteSector,
+    } = this.props;
+    const { treeData } = this.state;
+    const childcount = _.get(dataRef, "childCount");
+    const limit = CHILD_PAGE_SIZE;
+    const offset = _.get(dataRef, "childOffset");
 
-  fetchChildPage = (dataRef, reloadAll, dontUpdateState) => {
+    const res = await axios(
+      `${config.dataApi}dataset/${dataset.key}/tree/${
+        dataRef.taxon.id //taxonKey
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${catalogueKey}${this.appendTypeParam(
+        treeType
+      )}`
+    );
+
+    let resWithSectorKeys;
+
+    if (
+      _.get(res, "data.empty") !== true &&
+      treeType === "SOURCE" &&
+      _.get(dataRef, "taxon.sectorKey")
+    ) {
+      // If it is a source and the parent has a sectorKey, copy it to children
+      resWithSectorKeys = {
+        ...res,
+        data: {
+          ...res.data,
+          result: res.data.result.map((r) => ({
+            sectorKey: _.get(dataRef, "taxon.sectorKey"),
+            ...r,
+          })),
+        },
+      };
+    } else if (
+      _.get(res, "data.empty") !== true &&
+      (treeType === "CATALOGUE" || treeType === "readOnly") &&
+      _.get(dataRef, "taxon.sectorKey")
+    ) {
+      // If it is a source and the parent has a sectorKey, copy it to children
+      resWithSectorKeys = {
+        ...res,
+        data: {
+          ...res.data,
+          result: res.data.result.map((r) => ({
+            isRootSector:
+              _.get(r, "sectorKey") &&
+              _.get(r, "sectorKey") !== _.get(dataRef, "taxon.sectorKey"),
+            ...r,
+          })),
+        },
+      };
+    } else {
+      resWithSectorKeys = res;
+    }
+    let decoratedRes = await this.decorateWithSectorsAndDataset(
+      resWithSectorKeys
+    );
+    const data = decoratedRes.data.result
+      ? decoratedRes.data.result.map((tx) => {
+          let childDataRef = {
+            taxon: tx,
+            key: tx.id,
+            datasetKey: dataset.key,
+            childCount: tx.childCount,
+            isLeaf: tx.childCount === 0,
+            childOffset: 0,
+            parent: dataRef,
+            name: tx.name,
+          };
+
+          childDataRef.title = (
+            <ColTreeNode
+              confirmVisible={false}
+              taxon={tx}
+              datasetKey={dataset.key}
+              onDeleteSector={onDeleteSector}
+              treeType={this.props.treeType}
+              reloadSelfAndSiblings={() => {
+                const loadedChildIds = dataRef.children
+                  ? dataRef.children
+                      .filter((c) => c.children && c.children.length > 0)
+                      .map((c) => c.key)
+                  : null;
+                return this.fetchChildPage(dataRef, true).then(() =>
+                  loadedChildIds
+                    ? this.reloadLoadedKeys(loadedChildIds, false)
+                    : false
+                );
+              }}
+              reloadChildren={() => this.fetchChildPage(childDataRef, true)}
+              showSourceTaxon={showSourceTaxon}
+            />
+          );
+          childDataRef.ref = childDataRef;
+
+          return childDataRef;
+        })
+      : [];
+
+    // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
+    dataRef.children =
+      dataRef.children && offset !== 0 && !reloadAll
+        ? [...dataRef.children, ...data]
+        : data;
+    dataRef.isLeaf = !dataRef.children || dataRef.children.length === 0;
+    dataRef.taxon.firstChildRank = _.get(dataRef, "children[0].taxon.rank");
+    if (!decoratedRes.data.last) {
+      const loadMoreFn = () => {
+        dataRef.childOffset += CHILD_PAGE_SIZE;
+        if (
+          dataRef.children[dataRef.children.length - 1].key ===
+          "__loadMoreBTN__"
+        ) {
+          dataRef.children = dataRef.children.slice(0, -1);
+        }
+        this.setState(
+          {
+            treeData: [...treeData],
+            defaultExpandAll: false,
+          },
+          () => {
+            this.fetchChildPage(dataRef, false);
+          }
+        );
+      };
+      dataRef.children = [
+        ...dataRef.children,
+        {
+          title: (
+            <LoadMoreChildrenTreeNode
+              onClick={loadMoreFn}
+              key="__loadMoreBTN__"
+            />
+          ),
+          key: "__loadMoreBTN__",
+          childCount: 0,
+          isLeaf: true,
+        },
+      ];
+    }
+    if (!dontUpdateState) {
+      this.setState({
+        treeData: [...treeData],
+        loadedKeys: [...new Set([...this.state.loadedKeys, dataRef.key])],
+      });
+    }
+  };
+  /*  fetchChildPage = (dataRef, reloadAll, dontUpdateState) => {
     const {
       showSourceTaxon,
       dataset,
@@ -390,7 +542,7 @@ class ColTree extends React.Component {
           };
         } else if (
           _.get(res, "data.empty") !== true &&
-          (treeType === "CATALOGUE" || treeType === "redOnly") &&
+          (treeType === "CATALOGUE" || treeType === "readOnly") &&
           _.get(dataRef, "taxon.sectorKey")
         ) {
           // If it is a source and the parent has a sectorKey, copy it to children
@@ -503,7 +655,7 @@ class ColTree extends React.Component {
           });
         }
       });
-  };
+  }; */
 
   decorateWithSectorsAndDataset = (res) => {
     if (!res.data.result) return res;
