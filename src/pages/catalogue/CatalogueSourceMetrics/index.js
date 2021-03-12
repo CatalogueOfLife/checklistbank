@@ -22,7 +22,7 @@ const formItemLayout = {
   },
 };
 
-const defaultViewColumnOrder = "sectorCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount".split(
+const defaultViewColumnOrder = "sectorCount appliedDecisionCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount nameRelationsCount taxonConceptRelationsCount speciesInteractionsCount".split(
   " "
 );
 

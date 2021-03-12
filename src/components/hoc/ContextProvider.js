@@ -36,6 +36,7 @@ import {
 import { getTerms, getTermsOrder } from "../../api/terms";
 
 const { MANAGEMENT_CLASSIFICATION } = config;
+
 // Helpers
 // import { getUserItems } from '../helpers';
 
@@ -43,18 +44,13 @@ const { MANAGEMENT_CLASSIFICATION } = config;
 export const AppContext = React.createContext({});
 
 /**
- * This is a State of application
+ * This is the Main State of the application
  *
  * Here you can find:
- * - countries: a list of countries CODES requested from /enumeration/basic/Country
- * - userTypes: a list of user types to create a new Contact requested from /enumeration/basic/ContactType
- * - licenses: a list of licenses requested from /enumeration/license
- * - languages: a list of languages CODES requested from /enumeration/basic/Language
- * - installationTypes: a list of installation types requested from /enumeration/basic/InstallationType
- * - user: active user requested after login or whoAmI requests
- * - notifications: success/info/error messages from all over the app to provide them later for Notification component
- * - locale: current localization key:value pairs requested from the JSON files located in a public folder
- * - syncInstallationTypes: list of types of installation for which user can invoke Synchronization
+ * - enumerations
+ * - global error handling
+ * - access to backends health
+ * - etc
  */
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
@@ -171,6 +167,16 @@ class ContextProvider extends React.Component {
   };
 
   componentDidMount() {
+    // Add interceptor to catch auth errors from XHR
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if ([401, 403].includes(_.get(error, "status"))) {
+          this.setState({ error });
+        }
+        return Promise.reject(error);
+      }
+    );
     // Requesting user by token to restore active session on App load
     // if a user was authenticated
     this.loadTokenUser();
