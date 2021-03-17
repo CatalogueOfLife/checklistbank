@@ -85,7 +85,7 @@ class DatasetList extends React.Component {
               : record.size,
         },
         {
-          title: "NameUsages",
+          title: "Indexed",
           dataIndex: "nameUsageTotal",
           key: "nameUsageTotal",
           sorter: false,
@@ -172,12 +172,12 @@ class DatasetList extends React.Component {
           !res.data.result
             ? []
             : res.data.result.map((r) =>
-                axios(
-                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
-                ).then(
-                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
-                )
+              axios(
+                `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+              ).then(
+                (nameusages) => (r.nameUsageTotal = nameusages.data.total)
               )
+            )
         ).then(() => res);
       })
       .then((res) => {

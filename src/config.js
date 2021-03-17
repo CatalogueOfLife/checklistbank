@@ -9,9 +9,7 @@ if (
 ) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
-  env = environments.dev;
-} else {
-  env = environments.dev;
+  env = environments.local;
 }
 
 export default env;
