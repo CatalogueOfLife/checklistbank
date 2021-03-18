@@ -57,6 +57,7 @@ class RealeaseSelect extends React.Component {
   };
   render = () => {
     const { releases, selectedRelease, loading } = this.state;
+    const omitList = this.props.omitList || [];
     return (
       <Select
         showSearch
@@ -71,11 +72,13 @@ class RealeaseSelect extends React.Component {
           option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
       >
-        {releases.map((c) => (
-          <Option value={c.key} key={c.key}>{`${c.alias ? c.alias + " " : ""}[${
-            c.key
-          }]`}</Option>
-        ))}
+        {releases
+          .filter((c) => !omitList.includes(c.key))
+          .map((c) => (
+            <Option value={c.key} key={c.key}>{`${
+              c.alias ? c.alias + " " : ""
+            }[${c.key}]`}</Option>
+          ))}
       </Select>
     );
   };

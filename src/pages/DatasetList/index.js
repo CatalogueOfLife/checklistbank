@@ -231,7 +231,23 @@ class DatasetList extends React.Component {
       this.getData
     );
   }
-
+  componentDidUpdate = (prevProps) => {
+    const prevParams = qs.parse(_.get(prevProps, "location.search"));
+    const params = qs.parse(_.get(this.props, "location.search"));
+    if (params.releasedFrom !== prevParams.releasedFrom) {
+      let params = qs.parse(_.get(this.props, "location.search"));
+      this.setState(
+        {
+          params,
+          pagination: {
+            pageSize: params.limit || PAGE_SIZE,
+            current: 0 / Number(params.limit || PAGE_SIZE) + 1,
+          },
+        },
+        this.getData
+      );
+    }
+  };
   getData = () => {
     const {
       params,
@@ -287,10 +303,21 @@ class DatasetList extends React.Component {
     );
   };
   onSelectReleasedFrom = (dataset) => {
-    this.updateSearch({ releasedFrom: dataset.key });
+    let params = qs.parse(_.get(this.props, "location.search"));
+    history.push({
+      pathname: "/dataset",
+      search: `?${qs.stringify({ ...params, releasedFrom: dataset.key })}`,
+    });
+
+    // this.updateSearch({ releasedFrom: dataset.key });
   };
   onResetReleasedFrom = () => {
-    this.updateSearch({ releasedFrom: null });
+    let params = qs.parse(_.get(this.props, "location.search"));
+    history.push({
+      pathname: "/dataset",
+      search: `?${qs.stringify(_.omit(params, "releasedFrom"))}`,
+    });
+    // this.updateSearch({ releasedFrom: null });
   };
 
   handleTableChange = (pagination, filters, sorter) => {

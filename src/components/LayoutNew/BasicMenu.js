@@ -645,22 +645,22 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && (
-                <Menu.Item key="imports">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/imports`,
-                    }}
-                  >
-                    {selectedDataset.origin === "external"
-                      ? "Imports"
-                      : "Metrics"}
-                  </NavLink>
-                </Menu.Item>
-              )}
+              {selectedDataset &&
+                _.get(selectedDataset, "origin") !== "released" &&
+                _.get(selectedDataset, "origin") !== "managed" && (
+                  <Menu.Item key="imports">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/imports`,
+                      }}
+                    >
+                      Imports
+                    </NavLink>
+                  </Menu.Item>
+                )}
               {selectedDataset &&
                 _.get(selectedDataset, "origin") !== "released" &&
                 hasData && (
@@ -674,6 +674,36 @@ class BasicMenu extends Component {
                       }}
                     >
                       Issues
+                    </NavLink>
+                  </Menu.Item>
+                )}
+              {selectedDataset &&
+                _.get(selectedDataset, "origin") === "released" &&
+                hasData && (
+                  <Menu.Item key="sourcemetrics">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/sourcemetrics`,
+                      }}
+                    >
+                      Source metrics
+                    </NavLink>
+                  </Menu.Item>
+                )}
+              {selectedDataset &&
+                _.get(selectedDataset, "origin") === "managed" &&
+                hasData && (
+                  <Menu.Item>
+                    <NavLink
+                      to={{
+                        pathname: "/dataset",
+                        search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
+                      }}
+                    >
+                      Releases
                     </NavLink>
                   </Menu.Item>
                 )}
