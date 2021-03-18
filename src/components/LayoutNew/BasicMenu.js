@@ -172,7 +172,7 @@ class BasicMenu extends Component {
             </Menu.Item>
           </SubMenu>
 
-          {Auth.isAuthorised(user, ["editor", "admin"]) && (
+          {Auth.isAuthorised(user, ["admin"]) && (
             <SubMenu
               key="admin"
               title={
