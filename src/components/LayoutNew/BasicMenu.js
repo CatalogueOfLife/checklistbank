@@ -107,6 +107,7 @@ class BasicMenu extends Component {
   render() {
     const {
       dataset: selectedDataset,
+      catalogue,
       selectedSector,
       user,
       recentDatasets,
@@ -222,7 +223,11 @@ class BasicMenu extends Component {
                 <span>
                   <ProjectOutlined />
                   <CatalogueSelect />
-                  <span>{`Project: ${catalogueKey}`}</span>
+                  <span>
+                    {_.get(catalogue, "alias")
+                      ? `${catalogue.alias} [${catalogue.key}]`
+                      : `Project: ${catalogueKey}`}
+                  </span>
                 </span>
               }
             >
@@ -776,6 +781,7 @@ const mapContextToProps = ({
   recentDatasets,
   catalogueKey,
   dataset,
+  catalogue,
   _selectedKeys,
   _openKeys,
   setSelectedKeys,
@@ -785,6 +791,7 @@ const mapContextToProps = ({
   recentDatasets,
   catalogueKey,
   dataset,
+  catalogue,
   _selectedKeys,
   _openKeys,
   setSelectedKeys,
