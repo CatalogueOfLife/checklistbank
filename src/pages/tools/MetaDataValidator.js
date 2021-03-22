@@ -16,7 +16,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import Helmet from "react-helmet";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
-import withContext from "../../components/hoc/withContext";
+import history from "../../history";
 import PageContent from "../../components/PageContent";
 import _ from "lodash";
 import axios from "axios";
@@ -114,7 +114,7 @@ const MetaDataValidator = () => {
           style={{ marginBottom: "24px" }}
           onChange={(current) => setValidatorResult(null)}
         >
-          <Step title={"Upload or link Metadata"} />
+          <Step title={"Upload or enter Metadata"} />
           <Step title={"Review validation result"} disabled />
         </Steps>
         {submissionError && (
