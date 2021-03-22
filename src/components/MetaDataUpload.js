@@ -41,11 +41,19 @@ class MetadataUpload extends React.Component {
       .put(options.action, options.file, config)
       .then((res) => {
         options.onSuccess(res.data, options.file);
-        this.setState({ submissionError: null, confirmPromise: null });
+        this.setState({
+          submissionError: null,
+          confirmPromise: null,
+          fileList: [],
+        });
       })
       .catch((err) => {
         options.onError(err);
-        this.setState({ submissionError: err, confirmPromise: null });
+        this.setState({
+          submissionError: err,
+          confirmPromise: null,
+          fileList: [],
+        });
         console.log(err);
       });
   };
