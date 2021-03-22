@@ -7,6 +7,7 @@ import { Switch, Rate, Row, Col } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
+import MetaDataUpload from "../../../components/MetaDataUpload";
 import PageContent from "../../../components/PageContent";
 import { FormattedMessage } from "react-intl";
 import PresentationItem from "../../../components/PresentationItem";
@@ -136,9 +137,13 @@ class DatasetMeta extends React.Component {
                   <LogoUpload datasetKey={this.props.id} />
                 )}
               </Col>
+
               <Col style={{ textAlign: "right" }}>
                 {data && !data.deleted && (
-                  <DeleteDatasetButton record={data}></DeleteDatasetButton>
+                  <DeleteDatasetButton
+                    style={{ marginBottom: "10px" }}
+                    record={data}
+                  ></DeleteDatasetButton>
                 )}
                 {data && _.get(data, "origin") !== "managed" && (
                   <ImportButton
@@ -152,16 +157,23 @@ class DatasetMeta extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col flex="auto">
+              <Col>
                 {data && (
                   <ArchiveUpload
-                    style={{ marginLeft: "12px", float: "right" }}
                     datasetKey={_.get(this.state, "data.key")}
                     origin={_.get(this.state, "data.origin")}
                   />
                 )}
               </Col>
-
+              <Col flex="auto">
+                {data && !data.deleted && (
+                  <MetaDataUpload
+                    style={{ marginLeft: "10px" }}
+                    datasetKey={this.props.id}
+                    onSuccess={this.getData}
+                  />
+                )}
+              </Col>
               <Col>
                 {data && !data.deleted && !patchMode && (
                   <Switch
