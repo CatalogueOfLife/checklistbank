@@ -683,7 +683,9 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
               {selectedDataset &&
-                _.get(selectedDataset, "origin") === "released" &&
+                ["released", "managed"].includes(
+                  _.get(selectedDataset, "origin")
+                ) &&
                 hasData && (
                   <Menu.Item key="sourcemetrics">
                     <NavLink
@@ -694,7 +696,7 @@ class BasicMenu extends Component {
                         )}/sourcemetrics`,
                       }}
                     >
-                      Source metrics
+                      Sources
                     </NavLink>
                   </Menu.Item>
                 )}
