@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
-import { Table, Alert, Row, Col, Form, Select } from "antd";
+import { Table, Alert, Row, Col, Form, Select, Switch } from "antd";
 import config from "../../../config";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
@@ -46,9 +46,12 @@ class SourceMetrics extends React.Component {
 
     this.state = {
       data: [],
+      filteredData: [],
       groups: {},
       selectedGroup: "default",
       loading: false,
+      releaseKey: null,
+      hideUnchanged: false,
     };
   }
 
@@ -68,10 +71,11 @@ class SourceMetrics extends React.Component {
   };
 
   getData = () => {
-    this.setState({ loading: true });
     const { datasetKey, location } = this.props;
     const params = qs.parse(_.get(location, "search"));
-    const { releaseKey } = params;
+    const { releaseKey, hideUnchanged } = params;
+    this.setState({ loading: true, releaseKey });
+
     axios(`${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}`)
       .then((res) => {
         let columns = {};
@@ -88,26 +92,27 @@ class SourceMetrics extends React.Component {
                 });
               })
         ).then((res) => {
+          const groups = {
+            default: Object.keys(columns).filter(
+              (c) =>
+                typeof columns[c] !== "object" &&
+                !["attempt", "datasetKey"].includes(c)
+            ),
+            ...Object.keys(columns)
+              .filter((c) => typeof columns[c] === "object")
+              .reduce((obj, key) => {
+                obj[key] = Object.keys(columns[key]);
+                return obj;
+              }, {}),
+          };
           this.setState({
-            groups: {
-              default: Object.keys(columns).filter(
-                (c) =>
-                  typeof columns[c] !== "object" &&
-                  !["attempt", "datasetKey"].includes(c)
-              ),
-              ...Object.keys(columns)
-                .filter((c) => typeof columns[c] === "object")
-                .reduce((obj, key) => {
-                  obj[key] = Object.keys(columns[key]);
-                  return obj;
-                }, {}),
-            },
+            groups,
             selectedGroup: "default",
           });
-          return res;
+          return { res, groups };
         });
       })
-      .then((res) => {
+      .then(({ res, groups }) => {
         if (releaseKey) {
           return Promise.all(
             res.map((r) => {
@@ -116,15 +121,23 @@ class SourceMetrics extends React.Component {
                 selectedReleaseMetrics: metrics,
               }));
             })
-          );
+          ).then((result) => ({ res: result, groups }));
         } else {
-          return res;
+          return { res, groups };
         }
       })
-      .then((res) => {
+      .then(({ res, groups }) => {
+        const columns = groups.default.map((column) => ({
+          dataIndex: ["metrics", column],
+        }));
+        const filteredData = hideUnchanged
+          ? this.getChangedDataOnly(res, columns)
+          : [];
         this.setState({
           loading: false,
           data: res,
+          filteredData,
+          hideUnchanged,
           err: null,
         });
       })
@@ -139,14 +152,14 @@ class SourceMetrics extends React.Component {
     ).then((res) => res.data);
   };
 
-  refreshReaseMetrics = (releaseKey) => {
+  refreshReleaseMetrics = (releaseKey) => {
     const { location } = this.props;
     const params = qs.parse(_.get(location, "search"));
     history.push({
       pathname: location.path,
       search: `?${qs.stringify({ ...params, releaseKey: releaseKey })}`,
     });
-    this.setState({ loading: true });
+    this.setState({ loading: true, releaseKey });
     if (releaseKey) {
       Promise.all(
         this.state.data.map((r) => {
@@ -165,11 +178,44 @@ class SourceMetrics extends React.Component {
     }
   };
 
-  selectGroup = (value) => {
-    this.setState({ selectedGroup: value });
+  selectGroup = (value, additionalColumns) => {
+    const { hideUnchanged, data } = this.state;
+    if (hideUnchanged) {
+      const filteredData = this.getChangedDataOnly(data, additionalColumns);
+      this.setState({
+        selectedGroup: value,
+        filteredData,
+        loading: false,
+      });
+    } else {
+      this.setState({ selectedGroup: value, filteredData: [] });
+    }
   };
+
+  getChangedDataOnly = (data, additionalColumns) => {
+    const columns = additionalColumns.map((c) =>
+      c.dataIndex.slice(1).join(".")
+    );
+    return data.filter((record) => {
+      return columns.find(
+        (column) =>
+          _.get(record, `metrics.${column}`) !==
+          _.get(record, `selectedReleaseMetrics.${column}`)
+      );
+    });
+  };
+
   render() {
-    const { data, loading, error, groups, selectedGroup } = this.state;
+    const {
+      data,
+      loading,
+      error,
+      groups,
+      selectedGroup,
+      hideUnchanged,
+      releaseKey,
+      filteredData,
+    } = this.state;
     const { catalogueKey, datasetKey, location, rank, namesPath } = this.props;
 
     const columnsSorter =
@@ -244,7 +290,6 @@ class SourceMetrics extends React.Component {
             <React.Fragment>
               <NavLink
                 to={{
-                  //pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
                   pathname: namesPath,
                   search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
@@ -267,6 +312,7 @@ class SourceMetrics extends React.Component {
       columns.length < 8
         ? null
         : { x: `${800 + (columns.length - 7) * 200}px` };
+
     return (
       <React.Fragment>
         <div>
@@ -280,7 +326,9 @@ class SourceMetrics extends React.Component {
                 <Select
                   style={{ width: "300px" }}
                   value={selectedGroup}
-                  onChange={this.selectGroup}
+                  onChange={(value) =>
+                    this.selectGroup(value, additionalColumns)
+                  }
                 >
                   {Object.keys(groups).map((k) => (
                     <Select.Option value={k}>{_.startCase(k)}</Select.Option>
@@ -301,18 +349,58 @@ class SourceMetrics extends React.Component {
                     _.get(qs.parse(_.get(location, "search")), "releaseKey") ||
                     null
                   }
-                  onReleaseChange={this.refreshReaseMetrics}
+                  onReleaseChange={this.refreshReleaseMetrics}
                 />
               </Form.Item>
             </Col>
           </Row>
+          {releaseKey && (
+            <Row>
+              <Col flex="auto"></Col>
+              <Col>
+                <Form.Item
+                  label="Show changed only"
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Switch
+                    checked={hideUnchanged}
+                    onChange={(hideUnchanged) => {
+                      this.setState({ hideUnchanged });
+                      const params = qs.parse(_.get(location, "search"));
+                      if (hideUnchanged) {
+                        history.push({
+                          pathname: location.path,
+                          search: `?${qs.stringify({
+                            ...params,
+                            hideUnchanged: hideUnchanged,
+                          })}`,
+                        });
+                        const filteredData = this.getChangedDataOnly(
+                          data,
+                          additionalColumns
+                        );
+                        this.setState({ filteredData });
+                      } else {
+                        history.push({
+                          pathname: location.path,
+                          search: `?${qs.stringify({
+                            ..._.omit(params, "hideUnchanged"),
+                          })}`,
+                        });
+                      }
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
           {error && <Alert message={error.message} type="error" />}
         </div>
         {!error && (
           <Table
             size="small"
             columns={columns}
-            dataSource={data}
+            dataSource={hideUnchanged ? filteredData : data}
             loading={loading}
             scroll={scroll}
             expandable={{
