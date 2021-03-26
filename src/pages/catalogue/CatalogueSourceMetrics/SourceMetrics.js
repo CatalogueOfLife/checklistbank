@@ -254,7 +254,7 @@ class SourceMetrics extends React.Component {
                   }}
                   exact={true}
                 >
-                  {text || 0}
+                  {Number(text || 0).toLocaleString()}
                 </NavLink>
                 {record.selectedReleaseMetrics && (
                   <div
@@ -265,7 +265,7 @@ class SourceMetrics extends React.Component {
                       ),
                     }}
                   >
-                    {selectedRelaseValue || 0}
+                    {Number(selectedRelaseValue || 0).toLocaleString()}
                   </div>
                 )}
               </React.Fragment>
