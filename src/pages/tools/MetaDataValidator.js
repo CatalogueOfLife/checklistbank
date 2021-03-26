@@ -7,7 +7,7 @@ import {
   Alert,
   Steps,
   Button,
-  notification,
+  Radio,
   Upload,
   Form,
 } from "antd";
@@ -50,10 +50,13 @@ const tailLayout = {
 const MetaDataValidator = () => {
   const [validatorResult, setValidatorResult] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
+  const [type, setType] = useState("YAML");
   const [form] = Form.useForm();
   const customRequest = (options) => {
     const config = {
-      headers: { "Content-Type": "text/yaml" },
+      headers: {
+        "Content-Type": type === "EML" ? "application/xml" : "text/yaml",
+      },
     };
     return axios
       .post(options.action, options.file, config)
@@ -66,7 +69,7 @@ const MetaDataValidator = () => {
   };
 
   const validateFromUrl = (url) => {
-    return axios(`${config.dataApi}parser/metadata?url=${url}`)
+    return axios(`${config.dataApi}parser/metadata?url=${url}&format=${type}`)
       .then((res) => {
         setValidatorResult(res.data);
       })
@@ -96,6 +99,9 @@ const MetaDataValidator = () => {
   };
   const onFinishFailed = (err) => {
     setSubmissionError(err);
+  };
+  const onTypeChange = (e) => {
+    setType(e.target.value);
   };
   return (
     <Layout
@@ -132,7 +138,19 @@ const MetaDataValidator = () => {
         )}
         {!validatorResult && (
           <React.Fragment>
-            <FormItem {...formItemLayout} label="Upload YAML file">
+            <FormItem {...formItemLayout} label={`Data type`}>
+              <Radio.Group
+                options={[
+                  { label: "YAML", value: "YAML" },
+                  { label: "EML", value: "EML" },
+                ]}
+                onChange={onTypeChange}
+                value={type}
+                optionType="button"
+                buttonStyle="solid"
+              />
+            </FormItem>
+            <FormItem {...formItemLayout} label={`Upload ${type} file`}>
               <Upload
                 name="yamlfile"
                 action={`${config.dataApi}parser/metadata`}
@@ -152,7 +170,7 @@ const MetaDataValidator = () => {
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
             >
-              <FormItem {...formItemLayout} label="Url to YAML" name="url">
+              <FormItem {...formItemLayout} label={`Url to ${type}`} name="url">
                 <Input
                   placeholder="https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml"
                   type="url"
@@ -161,7 +179,7 @@ const MetaDataValidator = () => {
               <Row style={{ marginBottom: "20px" }}>
                 <Col offset={4}>OR</Col>
               </Row>
-              <FormItem {...formItemLayout} label="Enter YAML" name="yaml">
+              <FormItem {...formItemLayout} label={`Enter ${type}`} name="yaml">
                 <TextArea rows={10}></TextArea>
               </FormItem>
               <Form.Item {...tailLayout}>
