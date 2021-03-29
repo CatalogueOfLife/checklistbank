@@ -27,8 +27,15 @@ class CatalogueSelect extends React.Component {
   };
 
   getCatalogues = () => {
+    const { user } = this.props;
+    const { roles } = user;
+    roles.includes("admin") || roles.includes("editor");
     this.setState({ loading: true });
-    axios(`${config.dataApi}dataset?origin=managed&limit=1000`).then((res) =>
+    axios(
+      `${config.dataApi}dataset?origin=managed&limit=1000${
+        roles.includes("admin") ? "" : "&editor=" + user.key
+      }`
+    ).then((res) =>
       this.setState({
         catalogues: _.get(res, "data.result") ? _.get(res, "data.result") : [],
         loading: false,
