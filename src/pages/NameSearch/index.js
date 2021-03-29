@@ -16,7 +16,19 @@ import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
-
+const FACETS = [
+  "rank",
+  "issue",
+  "status",
+  "nomStatus",
+  "nameType",
+  "field",
+  "authorship",
+  "authorshipYear",
+  "extinct",
+  "environment",
+  "origin",
+];
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const PAGE_SIZE = 50;
@@ -130,18 +142,7 @@ class NameSearchPage extends React.Component {
       params = {
         limit: PAGE_SIZE,
         offset: 0,
-        facet: [
-          "rank",
-          "issue",
-          "status",
-          "nomStatus",
-          "nameType",
-          "field",
-          "authorship",
-          "authorshipYear",
-          "extinct",
-          "environment",
-        ],
+        facet: FACETS,
         sortBy: "taxonomic",
       };
       history.push({
@@ -150,18 +151,7 @@ class NameSearchPage extends React.Component {
       });
     }
     if (!params.facet) {
-      params.facet = [
-        "rank",
-        "issue",
-        "status",
-        "nomStatus",
-        "nameType",
-        "field",
-        "authorship",
-        "authorshipYear",
-        "extinct",
-        "environment",
-      ];
+      params.facet = FACETS;
     }
     if (!params.limit) {
       params.limit = PAGE_SIZE;
@@ -270,18 +260,7 @@ class NameSearchPage extends React.Component {
         params: {
           limit: 50,
           offset: 0,
-          facet: [
-            "rank",
-            "issue",
-            "status",
-            "nomStatus",
-            "nameType",
-            "field",
-            "authorship",
-            "authorshipYear",
-            "extinct",
-            "environment",
-          ],
+          facet: FACETS,
         },
       },
       this.getData
@@ -368,6 +347,12 @@ class NameSearchPage extends React.Component {
       : [];
     const facetEnvironment = _.get(facets, "environment")
       ? facets["environment"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
+    const facetOrigin = _.get(facets, "origin")
+      ? facets["origin"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
@@ -538,6 +523,12 @@ class NameSearchPage extends React.Component {
                   onChange={(value) => this.updateSearch({ extinct: value })}
                   vocab={facetExtinct}
                   label="Extinct"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "origin")}
+                  onChange={(value) => this.updateSearch({ origin: value })}
+                  vocab={facetOrigin}
+                  label="Origin"
                 />
               </React.Fragment>
             )}

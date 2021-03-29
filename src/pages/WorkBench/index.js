@@ -39,7 +39,19 @@ const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
-const FACETS = ["rank", "issue", "status", "nomStatus", "nameType", "field"];
+const FACETS = [
+  "rank",
+  "issue",
+  "status",
+  "nomStatus",
+  "nameType",
+  "field",
+  "authorship",
+  "authorshipYear",
+  "extinct",
+  "environment",
+  "origin",
+];
 const PAGE_SIZE = 50;
 const getDecisionText = (decision) => {
   if (!_.get(decision, "mode")) {
@@ -609,6 +621,36 @@ class WorkBench extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : [];
+    const facetAuthorship = _.get(facets, "authorship")
+      ? facets["authorship"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
+    const facetAuthorshipYear = _.get(facets, "authorshipYear")
+      ? facets["authorshipYear"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
+    const facetExtinct = _.get(facets, "extinct")
+      ? facets["extinct"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
+    const facetEnvironment = _.get(facets, "environment")
+      ? facets["environment"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
+    const facetOrigin = _.get(facets, "origin")
+      ? facets["origin"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
 
     /*     columns[2].filters = facetTaxonomicStatus
       ? facetTaxonomicStatus.map((s) => ({ value: s.value, text: s.label }))
@@ -795,6 +837,40 @@ class WorkBench extends React.Component {
                   onChange={(value) => this.updateSearch({ field: value })}
                   vocab={facetNomField}
                   label="Name field"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "authorship")}
+                  onChange={(value) => this.updateSearch({ authorship: value })}
+                  vocab={facetAuthorship}
+                  label="Authorship"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "authorshipYear")}
+                  onChange={(value) =>
+                    this.updateSearch({ authorshipYear: value })
+                  }
+                  vocab={facetAuthorshipYear}
+                  label="Authorship Year"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "environment")}
+                  onChange={(value) =>
+                    this.updateSearch({ environment: value })
+                  }
+                  vocab={facetEnvironment}
+                  label="Environment"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "extinct")}
+                  onChange={(value) => this.updateSearch({ extinct: value })}
+                  vocab={facetExtinct}
+                  label="Extinct"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "origin")}
+                  onChange={(value) => this.updateSearch({ origin: value })}
+                  vocab={facetOrigin}
+                  label="Origin"
                 />
               </React.Fragment>
             )}
