@@ -3,7 +3,7 @@ import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
-import { Switch, Rate, Row, Col } from "antd";
+import { Switch, Rate, Row, Col, notification, Popconfirm } from "antd";
 import MetaDataForm from "../../../components/MetaDataForm";
 import LogoUpload from "../../../components/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -29,6 +29,8 @@ class DatasetMeta extends React.Component {
       editPatchMode: false,
       patchError: null,
       sourceError: null,
+      confirmPrivatePopupVisible: false,
+      privateChangeLoading: false,
     };
   }
 
@@ -121,8 +123,49 @@ class DatasetMeta extends React.Component {
   setEditPatchMode = (checked) => {
     this.setState({ editPatchMode: checked });
   };
+
+  setPrivate = () => {
+    const { data } = this.state;
+    const { addError } = this.props;
+    const toggledPrivate = !data.private;
+    axios
+      .put(`${config.dataApi}dataset/${data.key}`, {
+        ...data,
+        private: toggledPrivate,
+      })
+      .then(() => {
+        notification.open({
+          message: "Updated",
+          description: `The dataset is now ${
+            toggledPrivate ? "private" : "public"
+          }`,
+        });
+        this.setState(
+          {
+            confirmPrivatePopupVisible: false,
+            privateChangeLoading: false,
+          },
+          this.getData
+        );
+      })
+      .catch((err) => {
+        this.setState({
+          confirmPrivatePopupVisible: false,
+          privateChangeLoading: false,
+        });
+        addError(err);
+      });
+  };
   render() {
-    const { data, editMode, editPatchMode, patch, sourceMeta } = this.state;
+    const {
+      data,
+      editMode,
+      editPatchMode,
+      patch,
+      sourceMeta,
+      confirmPrivatePopupVisible,
+      privateChangeLoading,
+    } = this.state;
     const { user, catalogueKey } = this.props;
     const patchMode = !!catalogueKey;
     // If we are in a project, show the patched data. Otherwise the original data
@@ -175,6 +218,29 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
               <Col>
+                {data && !data.deleted && (
+                  <Popconfirm
+                    title={`Make dataset ${
+                      data.private ? "public" : "private"
+                    }`}
+                    visible={confirmPrivatePopupVisible}
+                    onConfirm={this.setPrivate}
+                    okButtonProps={{ loading: privateChangeLoading }}
+                    onCancel={() =>
+                      this.setState({ confirmPrivatePopupVisible: false })
+                    }
+                  >
+                    <Switch
+                      style={{ marginRight: "8px" }}
+                      checked={data.private}
+                      onChange={() =>
+                        this.setState({ confirmPrivatePopupVisible: true })
+                      }
+                      checkedChildren="Private"
+                      unCheckedChildren="Private"
+                    />
+                  </Popconfirm>
+                )}
                 {data && !data.deleted && !patchMode && (
                   <Switch
                     checked={editMode}
@@ -355,15 +421,6 @@ class DatasetMeta extends React.Component {
               {displayData.citation}
             </PresentationItem>
             <PresentationItem
-              label={<FormattedMessage id="private" defaultMessage="Private" />}
-            >
-              {displayData.private === true ? (
-                <LockOutlined style={{ color: "red" }} />
-              ) : (
-                <UnlockOutlined style={{ color: "green" }} />
-              )}
-            </PresentationItem>
-            <PresentationItem
               label={<FormattedMessage id="license" defaultMessage="License" />}
             >
               {displayData.license}
@@ -464,6 +521,7 @@ const mapContextToProps = ({
   datasetOrigin: datasetoriginEnum,
   setDataset,
   datasetSettings,
-}) => ({ user, datasetoriginEnum, setDataset, datasetSettings });
+  addError,
+}) => ({ user, datasetoriginEnum, setDataset, datasetSettings, addError });
 
 export default withContext(mapContextToProps)(DatasetMeta);

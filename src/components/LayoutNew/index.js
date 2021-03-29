@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import injectSheet from "react-jss";
 import withWidth, { LARGE, MEDIUM } from "react-width";
 import { withRouter } from "react-router-dom";
-import { Layout, Drawer, Row, Col, Tag, Alert } from "antd";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { Layout, Drawer, Row, Col, Tag, Alert, Tooltip } from "antd";
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  LockOutlined,
+} from "@ant-design/icons";
 import BasicMenu from "./BasicMenu";
 import UserMenu from "./UserMenu";
 import { getGitVersion, getBackendGitVersion } from "../../api/gitVersion";
@@ -170,7 +174,17 @@ class SiteLayout extends Component {
                     datasetKey={selectedDataset.key}
                     style={{ height: "50px", marginRight: "10px" }}
                   />
-                  <h1 style={{ display: "inline" }}>{selectedDataset.title}</h1>
+                  <h1 style={{ display: "inline" }}>
+                    {selectedDataset.title}{" "}
+                    {selectedDataset.private && (
+                      <Tooltip
+                        placement="bottom"
+                        title={"This dataset is private"}
+                      >
+                        <LockOutlined style={{ color: "red" }} />
+                      </Tooltip>
+                    )}
+                  </h1>
                 </React.Fragment>
               )}
               {!selectedDataset && title && <h1>{title}</h1>}

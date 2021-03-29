@@ -456,17 +456,6 @@ const MetaDataForm = (props) => {
           <Input type="text" />
         </FormItem>
       )}
-      {!originalData && (
-        <FormItem
-          {...formItemLayout}
-          label="Private"
-          key="Private"
-          name="private"
-          valuePropName="checked"
-        >
-          <Input type="checkbox" />
-        </FormItem>
-      )}
       <FormItem
         {...formItemLayout}
         label="License"
