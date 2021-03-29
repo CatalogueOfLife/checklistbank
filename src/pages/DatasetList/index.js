@@ -321,13 +321,17 @@ class DatasetList extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
+    let params = qs.parse(_.get(this.props, "location.search"));
+
     let query = {
       ...Object.keys(filters).reduce(
         (acc, cur) => (filters[cur] !== null && (acc[cur] = filters[cur]), acc),
         {}
       ),
     };
-
+    if (params.releasedFrom) {
+      query.releasedFrom = params.releasedFrom;
+    }
     if (sorter) {
       query.sortBy = sorter.field;
       if (sorter.order === "descend") {
