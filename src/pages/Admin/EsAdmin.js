@@ -172,12 +172,12 @@ class DatasetList extends React.Component {
           !res.data.result
             ? []
             : res.data.result.map((r) =>
-              axios(
-                `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
-              ).then(
-                (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                axios(
+                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                ).then(
+                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                )
               )
-            )
         ).then(() => res);
       })
       .then((res) => {
@@ -199,7 +199,11 @@ class DatasetList extends React.Component {
   updateSearch = (params) => {
     let newParams = { ...this.state.params, offset: 0, limit: 50 };
     _.forEach(params, (v, k) => {
-      newParams[k] = v;
+      if (typeof v !== "undefined" && v !== null) {
+        newParams[k] = v;
+      } else {
+        delete newParams[k];
+      }
     });
     this.setState({ params: newParams }, this.getData);
   };
@@ -227,6 +231,13 @@ class DatasetList extends React.Component {
     } else {
       query.reverse = false;
     }
+    _.forEach(query, (v, k) => {
+      if (typeof v !== "undefined" && v !== null) {
+        query[k] = v;
+      } else {
+        delete query[k];
+      }
+    });
     this.setState({ params: query }, this.getData);
   };
 
