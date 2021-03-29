@@ -66,10 +66,7 @@ class DatasetList extends React.Component {
           key: "title",
           render: (text, record) => {
             return (
-              <NavLink
-                to={{ pathname: `/dataset/${record.key}/names` }}
-                exact={true}
-              >
+              <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true}>
                 {text}
               </NavLink>
             );
