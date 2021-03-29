@@ -8,5 +8,8 @@
 
 .header__secondary {
   float: right;
-  padding: 0 16px;
+}
+
+.ant-layout-header {
+  padding-right: 16px !important;
 }

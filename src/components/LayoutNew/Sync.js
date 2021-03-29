@@ -24,12 +24,15 @@ class SyncState extends React.Component {
       <React.Fragment>
         {_.get(syncState, "running") ? (
           <SyncOutlined
-            style={{ color: "green" }}
+            style={{ color: "green", marginRight: "4px" }}
             spin
             onClick={() => this.setState({ visible: true })}
           />
         ) : (
-          <SyncOutlined onClick={() => this.setState({ visible: true })} />
+          <SyncOutlined
+            style={{ marginRight: "4px" }}
+            onClick={() => this.setState({ visible: true })}
+          />
         )}
         <Modal
           title="Sync state"
