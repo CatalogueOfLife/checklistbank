@@ -470,6 +470,15 @@ const MetaDataForm = (props) => {
                 },
               ]
         }
+        help={
+          originalData ? (
+            <PatchFormOriginalDataHelp
+              data={originalData}
+              field="license"
+              transferFn={transferOriginalValueToPatch}
+            />
+          ) : null
+        }
       >
         <Select style={{ width: 200 }} showSearch>
           {licenseEnum.map((f) => {
