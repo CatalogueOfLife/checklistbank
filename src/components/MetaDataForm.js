@@ -66,7 +66,10 @@ const MetaDataForm = (props) => {
     const key = _.get(data, "key");
 
     let task = key
-      ? axios.put(`${config.dataApi}dataset/${key}`, values)
+      ? axios.put(`${config.dataApi}dataset/${key}`, {
+          ...values,
+          private: data.private,
+        })
       : axios.post(`${config.dataApi}dataset`, values);
 
     task
