@@ -143,8 +143,6 @@ const mapContextToProps = ({ user, login, logout }) => ({
   user,
   login,
   logout,
-  clearError,
-  error,
 });
 
 export default withContext(mapContextToProps)(injectSheet(styles)(UserMenu));
