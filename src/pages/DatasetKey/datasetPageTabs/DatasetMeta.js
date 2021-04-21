@@ -18,6 +18,8 @@ import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import PersonPresentation from "../../../components/PersonPresentation";
+import marked from "marked";
+import DOMPurify from "dompurify";
 
 class DatasetMeta extends React.Component {
   constructor(props) {
@@ -319,7 +321,13 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {displayData.description}
+              {displayData.description && (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(marked(displayData.description)),
+                  }}
+                ></span>
+              )}
             </PresentationItem>
             {/* <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
             {data.released}
