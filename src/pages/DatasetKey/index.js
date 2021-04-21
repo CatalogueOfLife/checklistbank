@@ -14,6 +14,7 @@ import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
 import DatasetSourceMetrics from "./datasetPageTabs/DatasetSourceMetrics";
+import ReleaseSource from "./datasetPageTabs/ReleaseSource";
 import NameSearch from "../NameSearch";
 import WorkBench from "../WorkBench";
 
@@ -219,6 +220,13 @@ class DatasetPage extends React.Component {
           <VerbatimRecord
             datasetKey={datasetKey}
             lastSuccesFullImport={lastSuccesFullImport}
+            location={this.props.location}
+            match={this.props.match}
+          />
+        )}
+        {sect === "source" && (
+          <ReleaseSource
+            datasetKey={datasetKey}
             location={this.props.location}
             match={this.props.match}
           />

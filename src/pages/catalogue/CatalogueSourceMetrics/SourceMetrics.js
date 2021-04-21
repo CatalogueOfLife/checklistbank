@@ -216,7 +216,14 @@ class SourceMetrics extends React.Component {
       releaseKey,
       filteredData,
     } = this.state;
-    const { catalogueKey, datasetKey, location, rank, namesPath } = this.props;
+    const {
+      catalogueKey,
+      datasetKey,
+      location,
+      rank,
+      namesPath,
+      isProject,
+    } = this.props;
 
     const columnsSorter =
       selectedGroup && selectedGroup.indexOf("Rank") > -1
@@ -290,8 +297,10 @@ class SourceMetrics extends React.Component {
             <React.Fragment>
               <NavLink
                 to={{
-                  pathname: namesPath,
-                  search: `?SECTOR_DATASET_KEY=${record.key}`,
+                  pathname: isProject
+                    ? `/catalogue/${datasetKey}/dataset/${record.key}/meta`
+                    : `/dataset/${datasetKey}/source/${record.key}`,
+                  //  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
                 exact={true}
               >
@@ -407,7 +416,11 @@ class SourceMetrics extends React.Component {
               expandedRowRender: (row) => (
                 <div style={{ marginLeft: "46px" }}>
                   <h4>Taxonomic coverage</h4>
-                  <TaxonomicCoverage dataset={row} catalogueKey={datasetKey} />
+                  <TaxonomicCoverage
+                    isProject={true}
+                    dataset={row}
+                    catalogueKey={datasetKey}
+                  />
                 </div>
               ),
             }}

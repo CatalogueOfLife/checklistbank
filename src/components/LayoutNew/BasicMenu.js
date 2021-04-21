@@ -700,6 +700,11 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
+              {_.isArray(_selectedKeys) &&
+                _selectedKeys.includes("source") &&
+                taxonOrNameKey && (
+                  <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
+                )}
               {selectedDataset &&
                 _.get(selectedDataset, "origin") === "managed" &&
                 hasData && (
@@ -759,7 +764,6 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-
               {_.isArray(_selectedKeys) &&
                 _selectedKeys.includes("taxon") &&
                 taxonOrNameKey && (

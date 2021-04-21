@@ -55,7 +55,7 @@ class TaxonomicCoverage extends React.Component {
 
   render = () => {
     const { taxonMap } = this.state;
-    const { catalogueKey, style } = this.props;
+    const { catalogueKey, style, isProject } = this.props;
     return taxonMap
       ? Object.keys(taxonMap).map((k) => (
           <div style={style}>
@@ -64,8 +64,12 @@ class TaxonomicCoverage extends React.Component {
               <React.Fragment>
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/assembly`,
-                    search: `?assemblyTaxonKey=${tx.id}`,
+                    pathname: isProject
+                      ? `/catalogue/${catalogueKey}/assembly`
+                      : `/dataset/${catalogueKey}/classification`,
+                    search: isProject
+                      ? `?assemblyTaxonKey=${tx.id}`
+                      : `?taxonKey=${tx.id}`,
                   }}
                 >
                   {tx.name}

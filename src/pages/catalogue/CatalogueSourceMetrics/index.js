@@ -27,6 +27,7 @@ class CatalogueSourceMetrics extends React.Component {
           }}
         >
           <SourceMetrics
+            isProject={true}
             catalogueKey={catalogueKey}
             datasetKey={catalogueKey}
             namesPath={`/catalogue/${catalogueKey}/names`}
