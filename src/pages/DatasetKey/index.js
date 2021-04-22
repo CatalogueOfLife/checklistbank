@@ -13,6 +13,8 @@ import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
+import DatasetDownload from "./datasetPageTabs/DatasetDownload";
+
 import DatasetSourceMetrics from "./datasetPageTabs/DatasetSourceMetrics";
 import ReleaseSource from "./datasetPageTabs/ReleaseSource";
 import NameSearch from "../NameSearch";
@@ -234,6 +236,9 @@ class DatasetPage extends React.Component {
         {sect === "options" && <DatasetOptions datasetKey={datasetKey} />}
         {sect === "sourcemetrics" && (
           <DatasetSourceMetrics datasetKey={datasetKey} />
+        )}
+        {section === "download" && (
+          <DatasetDownload dataset={dataset} location={location} />
         )}
       </Layout>
     );

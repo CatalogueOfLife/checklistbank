@@ -607,6 +607,20 @@ class BasicMenu extends Component {
                   Metadata
                 </NavLink>
               </Menu.Item>
+              {user && (
+                <Menu.Item key="download">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/download`,
+                    }}
+                  >
+                    Download
+                  </NavLink>
+                </Menu.Item>
+              )}
               {Auth.isAuthorised(user, ["editor", "admin"]) && (
                 <Menu.Item key="options">
                   <NavLink
