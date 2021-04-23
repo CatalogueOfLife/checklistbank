@@ -2,6 +2,7 @@ import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { CopyOutlined, DownloadOutlined } from "@ant-design/icons";
 import history from "../../../history";
+import moment from "moment";
 import _ from "lodash";
 import {
   Button,
@@ -47,7 +48,7 @@ class DatasetDownload extends React.Component {
 
   exportDataset = (options) => {
     const { dataset, addError } = this.props;
-    const { rootTaxon } = this.state;
+
     axios
       .post(`${config.dataApi}dataset/${dataset.key}/export`, options)
       .then((res) => {
@@ -59,6 +60,16 @@ class DatasetDownload extends React.Component {
         });
       })
       .catch((err) => addError(err));
+  };
+
+  createCitation = () => {
+    const { dataset } = this.props;
+    const authors = _.get(dataset, "authors", [])
+      .map((a) => a.name)
+      .join(", ");
+    return `${dataset.title}. ${authors} ${moment(dataset.modified).format(
+      "LL"
+    )}`;
   };
 
   getRootTaxon = (key) => {
@@ -154,19 +165,26 @@ class DatasetDownload extends React.Component {
             </Checkbox>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row style={{ marginTop: "24px" }}>
+          <Col span={24}>
             <Divider plain>Please cite as:</Divider>
-            <p>
-              {rootTaxon && (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: rootTaxon.labelHtml + " in ",
-                  }}
-                />
-              )}
-              {dataset.citation}
-            </p>
+            <CopyToClipboard
+              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
+                dataset.citation || this.createCitation()
+              }`}
+              onCopy={() => message.info(`Copied citation to clipboard`)}
+            >
+              <p style={{ textAlign: "center", cursor: "pointer" }}>
+                {rootTaxon && (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: rootTaxon.labelHtml + " in ",
+                    }}
+                  />
+                )}
+                {dataset.citation || this.createCitation()}
+              </p>
+            </CopyToClipboard>
           </Col>
         </Row>
         <Modal
