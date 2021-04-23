@@ -196,9 +196,9 @@ class DatasetMeta extends React.Component {
                     record={{ datasetKey: data.key }}
                   />
                 )}
-                {data && !data.deleted && (
+                {/*                 {data && !data.deleted && (
                   <DatasetExport datasetKey={data.key} />
-                )}
+                )} */}
               </Col>
             </Row>
             <Row>
@@ -263,16 +263,6 @@ class DatasetMeta extends React.Component {
             </Row>{" "}
           </React.Fragment>
         )}
-        {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-          data &&
-          !data.deleted && (
-            <Row>
-              <Col flex></Col>
-              <Col>
-                <DatasetExport datasetKey={data.key} />
-              </Col>
-            </Row>
-          )}
         {editMode && !patchMode && (
           <MetaDataForm
             data={data}
