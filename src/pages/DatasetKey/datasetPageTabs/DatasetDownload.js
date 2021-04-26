@@ -92,11 +92,26 @@ class DatasetDownload extends React.Component {
     return user ? (
       <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {dataset.origin === "external" && (
+          <Row style={{ marginBottom: "10px" }}>
+            <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
+              Prepared downloads
+            </Col>
+            <Col span={20}>
+              <a
+                href={`${config.dataApi}dataset/${dataset.key}/export`}
+                target="_blank"
+              >
+                original archive
+              </a>
+            </Col>
+          </Row>
+        )}
         <Row>
-          <Col span={3} style={{ textAlign: "right", paddingRight: "10px" }}>
+          <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose format
           </Col>
-          <Col span={15}>
+          <Col span={14}>
             <Radio.Group
               options={dataFormat.map((f) => ({
                 label: f.name,
@@ -126,10 +141,10 @@ class DatasetDownload extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={3} style={{ textAlign: "right", paddingRight: "10px" }}>
+          <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose root taxon (optional)
           </Col>
-          <Col span={15}>
+          <Col span={14}>
             <NameAutocomplete
               minRank="GENUS"
               datasetKey={dataset.key}
@@ -155,7 +170,7 @@ class DatasetDownload extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={3}></Col>
+          <Col span={4}></Col>
           <Col>
             <Checkbox
               checked={synonyms}
