@@ -117,7 +117,7 @@ class DatasetDownload extends React.Component {
           </Col>
           <Col span={14}>
             <Radio.Group
-              options={dataFormat.map((f) => ({
+              options={dataFormat.filter(f => f.name != 'proxy').map((f) => ({
                 label: f.name,
                 value: f.name,
               }))}
