@@ -69,9 +69,9 @@ class Sector extends React.Component {
             !syncingSector && idle
               ? `Copying taxa from ${sector.id}`
               : `Awaiting sector ${_.get(syncingSector, "id")} (${_.get(
-                  syncingSector,
-                  "subject.name"
-                )})`,
+                syncingSector,
+                "subject.name"
+              )})`,
         });
       })
       .catch((err) => {
@@ -242,7 +242,7 @@ class Sector extends React.Component {
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
               onClick={() => {
-                history.push(`dataset/${sectorSourceDataset.key}/meta`);
+                history.push(`dataset/${sectorSourceDataset.key}/about`);
               }}
             >
               Source Dataset Metadata

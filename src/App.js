@@ -135,7 +135,7 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   key="catalogueMeta"
-                  path="/catalogue/:catalogueKey/meta"
+                  path="/catalogue/:catalogueKey/about"
                   component={CatalogueMeta}
                 />
                 <PrivateRoute

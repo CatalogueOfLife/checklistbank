@@ -49,18 +49,18 @@ class DatasetProjects extends React.Component {
           !res.data.result
             ? []
             : res.data.result.map((r) => {
-                return this.getMetrics(r.key, datasetKey).then((metrics) => ({
-                  ...r,
-                  sectorCount: metrics.sectorCount,
-                  nameCount: metrics.nameCount,
-                  taxonCount: metrics.taxonCount,
-                  synonymCount: metrics.synonymCount,
-                  referenceCount: metrics.referenceCount,
-                  distributionCount: metrics.distributionCount,
-                  vernacularCount: metrics.vernacularCount,
-                  usagesCount: metrics.usagesCount,
-                }));
-              })
+              return this.getMetrics(r.key, datasetKey).then((metrics) => ({
+                ...r,
+                sectorCount: metrics.sectorCount,
+                nameCount: metrics.nameCount,
+                taxonCount: metrics.taxonCount,
+                synonymCount: metrics.synonymCount,
+                referenceCount: metrics.referenceCount,
+                distributionCount: metrics.distributionCount,
+                vernacularCount: metrics.vernacularCount,
+                usagesCount: metrics.usagesCount,
+              }));
+            })
         ).then((res) => res);
       })
       .then((res) => {
@@ -86,7 +86,7 @@ class DatasetProjects extends React.Component {
 
     const columns = [
       {
-        title: "Title",
+        title: "Project",
         dataIndex: "title",
         key: "title",
         render: (text, record) => {

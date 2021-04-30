@@ -125,7 +125,7 @@ class SectorTable extends React.Component {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.dataset.key}/meta` }}
+              to={{ pathname: `/dataset/${record.dataset.key}/about` }}
               exact={true}
             >
               <Highlighter
@@ -190,13 +190,12 @@ class SectorTable extends React.Component {
                 <NavLink
                   to={{
                     pathname: `/catalogue/${catalogueKey}/assembly`,
-                    search: `?sourceTaxonKey=${
-                      record.placeholderRank
+                    search: `?sourceTaxonKey=${record.placeholderRank
                         ? record.subject.id +
-                          "--incertae-sedis--" +
-                          record.placeholderRank.toUpperCase()
+                        "--incertae-sedis--" +
+                        record.placeholderRank.toUpperCase()
                         : record.subject.id
-                    }&datasetKey=${record.subjectDatasetKey}`,
+                      }&datasetKey=${record.subjectDatasetKey}`,
                   }}
                   exact={true}
                 >
