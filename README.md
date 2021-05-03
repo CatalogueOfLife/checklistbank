@@ -1,4 +1,4 @@
-[![Build Status](https://builds.gbif.org/job/col-clearinghouse-ui/badge/icon)](https://builds.gbif.org/job/col-clearinghouse-ui/)
+[![Build Status](https://builds.gbif.org/job/col-checklistbank/badge/icon)](https://builds.gbif.org/job/col-checklistbank/)
 
 # Catalogue of Life — ChecklistBank UI
 

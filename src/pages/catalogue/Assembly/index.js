@@ -175,9 +175,8 @@ class Assembly extends React.Component {
     return axios
       .post(`${config.dataApi}dataset/${catalogueKey}/sector`, sector)
       .then((res) => {
-        const msg = `${
-          _.get(target, "name.scientificName") || target.id
-        } attached to ${subject.name || subject.id} `;
+        const msg = `${_.get(target, "name.scientificName") || target.id
+          } attached to ${subject.name || subject.id} `;
         notification.open({
           message: "Sector created",
           description: msg,
@@ -193,9 +192,8 @@ class Assembly extends React.Component {
     const oldDatasetKey = Number(this.state.datasetKey);
     const isPlaceholder = !_.isUndefined(sector.placeholderRank);
     const subjectID = isPlaceholder
-      ? `${
-          sector.subject.id
-        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+      ? `${sector.subject.id
+      }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
       : sector.subject.id;
     const {
       match: {
@@ -491,7 +489,7 @@ class Assembly extends React.Component {
                       {this.state.selectedDataset.alias ||
                         this.state.selectedDataset.title}
                       <NavLink
-                        to={`/dataset/${this.state.selectedDataset.key}/meta`}
+                        to={`/dataset/${this.state.selectedDataset.key}/about`}
                       >
                         {" "}
                         <EyeOutlined /> source
@@ -574,9 +572,8 @@ class Assembly extends React.Component {
                         sector.placeholderRank
                       );
                       const targetID = isPlaceholder
-                        ? `${
-                            sector.target.id
-                          }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+                        ? `${sector.target.id
+                        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
                         : sector.target.id;
                       const params = qs.parse(_.get(location, "search"));
                       const newParams = {

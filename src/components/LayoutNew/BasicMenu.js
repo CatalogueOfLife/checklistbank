@@ -241,7 +241,7 @@ class BasicMenu extends Component {
                 }
               >
                 <Menu.Item key="catalogueMeta">
-                  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/meta` }}>
+                  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/about` }}>
                     <span>Metadata</span>
                   </NavLink>
                 </Menu.Item>
@@ -370,12 +370,11 @@ class BasicMenu extends Component {
                         style={{ textOverflow: "ellipsis", maxWidth: "40px" }}
                       >
                         {selectedDataset &&
-                        this.isSourceDataset(selectedDataset)
-                          ? `${
-                              selectedDataset.alias
-                                ? selectedDataset.alias
-                                : "Source"
-                            } [${selectedDataset.key}]`
+                          this.isSourceDataset(selectedDataset)
+                          ? `${selectedDataset.alias
+                            ? selectedDataset.alias
+                            : "Source"
+                          } [${selectedDataset.key}]`
                           : "Select source"}
                       </span>
                     </span>
@@ -453,10 +452,10 @@ class BasicMenu extends Component {
                           pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                             selectedDataset,
                             "key"
-                          )}/meta`,
+                          )}/about`,
                         }}
                       >
-                        Metadata
+                        About
                       </NavLink>
                     </Menu.Item>
                   )}
@@ -601,26 +600,12 @@ class BasicMenu extends Component {
               <Menu.Item key="meta">
                 <NavLink
                   to={{
-                    pathname: `/dataset/${_.get(selectedDataset, "key")}/meta`,
+                    pathname: `/dataset/${_.get(selectedDataset, "key")}/about`,
                   }}
                 >
-                  Metadata
+                  About
                 </NavLink>
               </Menu.Item>
-              {user && (
-                <Menu.Item key="download">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/download`,
-                    }}
-                  >
-                    Download
-                  </NavLink>
-                </Menu.Item>
-              )}
               {Auth.isAuthorised(user, ["editor", "admin"]) && (
                 <Menu.Item key="options">
                   <NavLink
@@ -635,7 +620,57 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-
+              {user && (
+                <Menu.Item key="download">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/download`,
+                    }}
+                  >
+                    Download
+                  </NavLink>
+                </Menu.Item>
+              )}
+              {selectedDataset &&
+                ["released", "managed"].includes(
+                  _.get(selectedDataset, "origin")
+                ) &&
+                hasData && (
+                  <Menu.Item key="sourcemetrics">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/sourcemetrics`,
+                      }}
+                    >
+                      Sources
+                    </NavLink>
+                  </Menu.Item>
+                )}
+              {_.isArray(_selectedKeys) &&
+                _selectedKeys.includes("source") &&
+                taxonOrNameKey && (
+                  <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
+                )}
+              {selectedDataset &&
+                _.get(selectedDataset, "origin") === "managed" &&
+                hasData && (
+                  <Menu.Item>
+                    <NavLink
+                      to={{
+                        pathname: "/dataset",
+                        search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
+                      }}
+                    >
+                      Releases
+                    </NavLink>
+                  </Menu.Item>
+                )}
               {selectedDataset && hasData && (
                 <Menu.Item key="classification">
                   <NavLink
@@ -696,43 +731,6 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset &&
-                ["released", "managed"].includes(
-                  _.get(selectedDataset, "origin")
-                ) &&
-                hasData && (
-                  <Menu.Item key="sourcemetrics">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          selectedDataset,
-                          "key"
-                        )}/sourcemetrics`,
-                      }}
-                    >
-                      Sources
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {_.isArray(_selectedKeys) &&
-                _selectedKeys.includes("source") &&
-                taxonOrNameKey && (
-                  <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
-                )}
-              {selectedDataset &&
-                _.get(selectedDataset, "origin") === "managed" &&
-                hasData && (
-                  <Menu.Item>
-                    <NavLink
-                      to={{
-                        pathname: "/dataset",
-                        search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
-                      }}
-                    >
-                      Releases
-                    </NavLink>
-                  </Menu.Item>
-                )}
               {selectedDataset && hasData && (
                 <Menu.Item key="references">
                   <NavLink
@@ -774,7 +772,7 @@ class BasicMenu extends Component {
                       )}/projects`,
                     }}
                   >
-                    Projects
+                    Contributes
                   </NavLink>
                 </Menu.Item>
               )}

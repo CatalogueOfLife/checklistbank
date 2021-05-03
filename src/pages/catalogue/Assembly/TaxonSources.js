@@ -45,7 +45,7 @@ class TaxonSources extends React.Component {
         {" •"}{" "}
         {data.map((d, index) => (
           <span key={index} style={{ fontSize: "11px" }}>
-            <NavLink to={{ pathname: `/dataset/${d.key}/meta` }} exact={true}>
+            <NavLink to={{ pathname: `/dataset/${d.key}/about` }} exact={true}>
               {(index ? ", " : "") + (d.alias || d.key)}
             </NavLink>
           </span>
@@ -63,7 +63,7 @@ class TaxonSources extends React.Component {
                 {data.map((d, index) => (
                   <span style={{ fontSize: "11px" }}>
                     <NavLink
-                      to={{ pathname: `/dataset/${d.key}/meta` }}
+                      to={{ pathname: `/dataset/${d.key}/about` }}
                       exact={true}
                     >
                       {(index ? ", " : "") + (d.alias || d.key)}

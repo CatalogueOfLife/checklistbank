@@ -51,7 +51,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: `/dataset/${record.key}/meta` }}
+                to={{ pathname: `/dataset/${record.key}/about` }}
                 exact={true}
               >
                 {text}
@@ -379,24 +379,24 @@ class DatasetList extends React.Component {
     } */
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
-          ...defaultColumns,
-          {
-            title: "Action",
-            dataIndex: "",
-            width: 60,
-            key: "__actions__",
-            render: (text, record) =>
-              record.origin === "external" &&
+        ...defaultColumns,
+        {
+          title: "Action",
+          dataIndex: "",
+          width: 60,
+          key: "__actions__",
+          render: (text, record) =>
+            record.origin === "external" &&
               canEditDataset(record, this.props.user) ? (
-                <ImportButton
-                  key={record.key}
-                  record={{ datasetKey: record.key }}
-                />
-              ) : (
-                ""
-              ),
-          },
-        ]
+              <ImportButton
+                key={record.key}
+                record={{ datasetKey: record.key }}
+              />
+            ) : (
+              ""
+            ),
+        },
+      ]
       : defaultColumns;
 
     const columns = _.filter(

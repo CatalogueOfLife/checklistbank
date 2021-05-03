@@ -468,7 +468,7 @@ class TaxonPage extends React.Component {
                 {" "}
                 <NavLink
                   to={{
-                    pathname: `/dataset/${_.get(sourceDataset, "key")}/meta`,
+                    pathname: `/dataset/${_.get(sourceDataset, "key")}/about`,
                   }}
                   exact={true}
                 >
@@ -498,12 +498,11 @@ class TaxonPage extends React.Component {
             {_.get(taxon, "scrutinizer") && (
               <Col span={12}>
                 <PresentationItem md={md * 2} label="Taxonomic scrutiny">
-                  {`${_.get(taxon, "scrutinizer")}${
-                    _.get(taxon, "scrutinizerDate")
+                  {`${_.get(taxon, "scrutinizer")}${_.get(taxon, "scrutinizerDate")
                       ? ", " +
-                        moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                      moment(_.get(taxon, "scrutinizerDate")).format("LL")
                       : ""
-                  }`}
+                    }`}
                 </PresentationItem>
               </Col>
             )}

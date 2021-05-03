@@ -99,7 +99,7 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/meta`,
+            pathname: `/dataset/${datasetKey}/about`,
           }}
         />
       );

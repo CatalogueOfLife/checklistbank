@@ -106,13 +106,13 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/meta`,
+            pathname: `/dataset/${datasetKey}/about`,
           }}
         />
       );
     }
 
-    const sect = !section ? "meta" : section.split("?")[0];
+    const sect = !section ? "about" : section.split("?")[0];
     const openKeys = ["dataset", "datasetKey"];
     const selectedKeys = [section];
 
@@ -162,7 +162,7 @@ class DatasetPage extends React.Component {
             updateImportState={() => this.getData(datasetKey)}
           />
         )}
-        {!section || (section === "meta" && <DatasetMeta id={datasetKey} />)}
+        {!section || (section === "about" && <DatasetMeta id={datasetKey} />)}
         {section === "classification" && (
           <DatasetClassification
             dataset={dataset}

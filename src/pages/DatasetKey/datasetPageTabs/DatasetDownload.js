@@ -7,6 +7,7 @@ import _ from "lodash";
 import {
   Button,
   Modal,
+  Select,
   message,
   Alert,
   Radio,
@@ -25,6 +26,8 @@ import Exception403 from "../../../components/exception/403";
 import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
 import qs from "query-string";
 
+const Option = Select.Option;
+
 class DatasetDownload extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +38,7 @@ class DatasetDownload extends React.Component {
       downloadModalVisible: false,
       rootTaxon: null,
       synonyms: true,
+      excel: false,
     };
   }
 
@@ -83,11 +87,11 @@ class DatasetDownload extends React.Component {
       .catch((err) => addError(err));
   };
   render() {
-    const { error, rootTaxon, synonyms } = this.state;
+    const { error, rootTaxon, synonyms, excel, minRank } = this.state;
 
     const { selectedDataFormat, downloadModalVisible, exportUrl } = this.state;
 
-    const { dataFormat, dataset, location, user } = this.props;
+    const { dataFormat, dataset, location, user, rank } = this.props;
 
     return user ? (
       <PageContent>
@@ -113,10 +117,12 @@ class DatasetDownload extends React.Component {
           </Col>
           <Col span={14}>
             <Radio.Group
-              options={dataFormat.map((f) => ({
-                label: f.name,
-                value: f.name,
-              }))}
+              options={dataFormat
+                .filter((f) => f.name != "proxy")
+                .map((f) => ({
+                  label: f.name,
+                  value: f.name,
+                }))}
               value={selectedDataFormat}
               onChange={(e) =>
                 this.setState({ selectedDataFormat: e.target.value })
@@ -131,6 +137,12 @@ class DatasetDownload extends React.Component {
                 let options = { format: selectedDataFormat, synonyms };
                 if (rootTaxon) {
                   options.taxonID = rootTaxon.id;
+                }
+                if (excel) {
+                  options.excel = excel;
+                }
+                if (minRank) {
+                  options.minRank = minRank;
                 }
                 this.exportDataset(options);
               }}
@@ -170,13 +182,36 @@ class DatasetDownload extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={4}></Col>
+          <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
+            Exclude ranks below (optional)
+          </Col>
           <Col>
+            <Select
+              style={{ width: 200 }}
+              showSearch
+              onChange={(val) => this.setState({ minRank: val })}
+            >
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col style={{ paddingLeft: "10px" }}>
             <Checkbox
               checked={synonyms}
               onChange={(e) => this.setState({ synonyms: e.target.checked })}
             >
               Include synonyms
+            </Checkbox>
+          </Col>
+          <Col>
+            <Checkbox
+              checked={excel}
+              onChange={(e) => this.setState({ excel: e.target.checked })}
+            >
+              Excel
             </Checkbox>
           </Col>
         </Row>
@@ -225,7 +260,8 @@ class DatasetDownload extends React.Component {
   }
 }
 
-const mapContextToProps = ({ dataFormat, addError, user }) => ({
+const mapContextToProps = ({ rank, dataFormat, addError, user }) => ({
+  rank,
   user,
   dataFormat,
   addError,
