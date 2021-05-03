@@ -117,10 +117,12 @@ class DatasetDownload extends React.Component {
           </Col>
           <Col span={14}>
             <Radio.Group
-              options={dataFormat.filter(f => f.name != 'proxy').map((f) => ({
-                label: f.name,
-                value: f.name,
-              }))}
+              options={dataFormat
+                .filter((f) => f.name != "proxy")
+                .map((f) => ({
+                  label: f.name,
+                  value: f.name,
+                }))}
               value={selectedDataFormat}
               onChange={(e) =>
                 this.setState({ selectedDataFormat: e.target.value })
@@ -183,8 +185,10 @@ class DatasetDownload extends React.Component {
           <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Exclude ranks below (optional)
           </Col>
-          <Col span={4}>
-            <Select style={{ width: 200 }} showSearch
+          <Col>
+            <Select
+              style={{ width: 200 }}
+              showSearch
               onChange={(val) => this.setState({ minRank: val })}
             >
               {rank.map((r) => (
@@ -194,7 +198,7 @@ class DatasetDownload extends React.Component {
               ))}
             </Select>
           </Col>
-          <Col>
+          <Col style={{ paddingLeft: "10px" }}>
             <Checkbox
               checked={synonyms}
               onChange={(e) => this.setState({ synonyms: e.target.checked })}
@@ -215,8 +219,9 @@ class DatasetDownload extends React.Component {
           <Col span={24}>
             <Divider plain>Please cite as:</Divider>
             <CopyToClipboard
-              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${dataset.citation || this.createCitation()
-                }`}
+              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
+                dataset.citation || this.createCitation()
+              }`}
               onCopy={() => message.info(`Copied citation to clipboard`)}
             >
               <p style={{ textAlign: "center", cursor: "pointer" }}>
