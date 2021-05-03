@@ -111,7 +111,7 @@ const MetaDataValidator = () => {
     >
       <Helmet>
         <meta charSet="utf-8" />
-        <title>COL Options</title>
+        <title>COL Metadata Validator</title>
         <link rel="canonical" href="http://data.catalogueoflife.org" />
       </Helmet>
       <PageContent>

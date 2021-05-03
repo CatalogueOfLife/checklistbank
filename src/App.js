@@ -38,6 +38,7 @@ import NameIndex from "./pages/NameIndex";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataValidator from "./pages/tools/MetaDataValidator";
+import NameMatch from "./pages/tools/NameMatch";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -221,6 +222,12 @@ class App extends Component {
                   key="metadatavalidator"
                   path={`/tools/metadata-validator`}
                   component={MetaDataValidator}
+                />
+                <Route
+                  exact
+                  key="namematch"
+                  path={`/tools/name-match`}
+                  component={NameMatch}
                 />
                 <Route component={Exception404} />
               </Switch>

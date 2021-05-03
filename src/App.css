@@ -377,3 +377,11 @@ div.csl-entry {
     display: none;
   }
 }
+
+.code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: lightgray;
+  border-radius: 6px;
+}
