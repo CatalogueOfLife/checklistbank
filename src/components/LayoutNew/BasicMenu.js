@@ -170,6 +170,11 @@ class BasicMenu extends Component {
                 <span>Metadata validator</span>
               </NavLink>
             </Menu.Item>
+            <Menu.Item key="namematch">
+              <NavLink to={{ pathname: "/tools/name-match" }}>
+                <span>Name matcher</span>
+              </NavLink>
+            </Menu.Item>
           </SubMenu>
 
           {Auth.isAuthorised(user, ["admin"]) && (
@@ -241,7 +246,9 @@ class BasicMenu extends Component {
                 }
               >
                 <Menu.Item key="catalogueMeta">
-                  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/about` }}>
+                  <NavLink
+                    to={{ pathname: `/catalogue/${catalogueKey}/about` }}
+                  >
                     <span>Metadata</span>
                   </NavLink>
                 </Menu.Item>
@@ -370,11 +377,12 @@ class BasicMenu extends Component {
                         style={{ textOverflow: "ellipsis", maxWidth: "40px" }}
                       >
                         {selectedDataset &&
-                          this.isSourceDataset(selectedDataset)
-                          ? `${selectedDataset.alias
-                            ? selectedDataset.alias
-                            : "Source"
-                          } [${selectedDataset.key}]`
+                        this.isSourceDataset(selectedDataset)
+                          ? `${
+                              selectedDataset.alias
+                                ? selectedDataset.alias
+                                : "Source"
+                            } [${selectedDataset.key}]`
                           : "Select source"}
                       </span>
                     </span>

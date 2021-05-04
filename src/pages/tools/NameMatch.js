@@ -15,8 +15,14 @@ import {
   Tag,
   message,
   Typography,
+  Space,
 } from "antd";
-import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
+import { CSVLink } from "react-csv";
+import {
+  DownloadOutlined,
+  UploadOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
@@ -32,7 +38,7 @@ import ImportChart from "../../components/ImportChart";
 const { Dragger } = Upload;
 const { TextArea } = Input;
 const Step = Steps.Step;
-
+const defaultRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
 const FormItem = Form.Item;
 const matchTypeTypeMap = {
   exact: "green",
@@ -87,26 +93,15 @@ const MatchProgress = ({ matched, total }) => {
   );
 };
 const getPercent = (num, total) => Math.round((num / total) * 100);
-const Metrics = ({ metrics, total }) => (
-  <Row>
-    <Col flex="auto"></Col>
-    <Col style={{ marginTop: "-22px" }}>
-      <span>Name index matches:</span>
+const Metrics = ({ metrics, total }) =>
+  Object.keys(metrics).map((m) => (
+    <React.Fragment>
+      <Tag color={matchTypeTypeMap[m]} style={{ marginBottom: "6px" }}>
+        {`${m}: ${metrics[m]} / ${total} (${getPercent(metrics[m], total)}%)`}
+      </Tag>
       <br />
-      {Object.keys(metrics).map((m) => (
-        <React.Fragment>
-          <Tag color={matchTypeTypeMap[m]} style={{ marginBottom: "6px" }}>
-            {`${m}: ${metrics[m]} / ${total} (${getPercent(
-              metrics[m],
-              total
-            )}%)`}
-          </Tag>
-          <br />
-        </React.Fragment>
-      ))}
-    </Col>
-  </Row>
-);
+    </React.Fragment>
+  ));
 const COL_LR = {
   key: "3LR",
   alias: "COL LR",
@@ -182,8 +177,6 @@ const NameMatch = () => {
       console.log(err);
       //setError(err.message);
     }
-    // http://api.catalogueoflife.org/nidx/match?q=cortinarius%20caerulescens%20(Schaeff.)%20Fr.&verbose=true
-    // https://api.catalogueoflife.org/dataset/3LR/nameusage?nidx=2802316
   };
 
   const isValidFile = (file) => {
@@ -282,9 +275,10 @@ const NameMatch = () => {
       });
     };
     reader.readAsText(file);
+    return false;
   };
   const getClassificationColumns = () =>
-    ["kingdom", "phylum", "class", "order", "family", "genus"].map((rank) => ({
+    defaultRanks.map((rank) => ({
       title: rank,
       dataIndex: ["primaryDatasetUsage", "classification", rank, "name"],
       key: rank,
@@ -314,12 +308,46 @@ const NameMatch = () => {
         </React.Fragment>
       ),
     }));
+
+  const getDownLoadData = () => {
+    return names.map((n) => {
+      let row = {
+        providedScientificName: n.providedScientificName,
+        matchType: n.matchType,
+        [`${
+          primaryDataset.alias || "Dataset " + primaryDataset.key
+        } scientificName`]: _.get(n, "primaryDatasetUsage.label", ""),
+      };
+      defaultRanks.forEach((r) => {
+        row[
+          `${primaryDataset.alias || "Dataset " + primaryDataset.key} ${r}`
+        ] = _.get(n, `primaryDatasetUsage.classification.${r}.label`, "");
+      });
+
+      if (secondaryDataset) {
+        row[
+          `${
+            secondaryDataset.alias || "Dataset " + secondaryDataset.key
+          } scientificName`
+        ] = _.get(n, "secondaryDatasetUsage.label", "");
+        defaultRanks.forEach((r) => {
+          row[
+            `${
+              secondaryDataset.alias || "Dataset " + secondaryDataset.key
+            } ${r}`
+          ] = _.get(n, `secondaryDatasetUsage.classification.${r}.label`, "");
+        });
+      }
+      return row;
+    });
+  };
   const draggerProps = {
     name: "file",
     multiple: false,
     beforeUpload(file) {
       return parseFile(file);
     },
+    style: { marginTop: "10px" },
   };
 
   return (
@@ -365,7 +393,10 @@ const NameMatch = () => {
 
         {step !== 1 && (
           <Row>
-            <Col span={step === 0 || !secondaryDataset ? 12 : 10}>
+            <Col
+              style={{ paddingRight: "8px" }}
+              span={step === 0 || !secondaryDataset ? 12 : 10}
+            >
               <DatasetAutocomplete
                 defaultDatasetKey={primaryDataset.key}
                 onResetSearch={() => setPrimaryDataset(COL_LR)}
@@ -382,7 +413,10 @@ const NameMatch = () => {
               )}
             </Col>
             {(step < 1 || secondaryDataset) && (
-              <Col span={step === 0 || !secondaryDataset ? 12 : 10}>
+              <Col
+                style={{ paddingLeft: "8px" }}
+                span={step === 0 || !secondaryDataset ? 12 : 10}
+              >
                 <DatasetAutocomplete
                   defaultDatasetKey={
                     secondaryDataset ? secondaryDataset.key : null
@@ -403,7 +437,28 @@ const NameMatch = () => {
             )}
             {step === 2 && (
               <Col span={secondaryDataset ? 4 : 12}>
-                <Metrics metrics={nameIndexMetrics} total={names.length} />
+                <Row>
+                  <Col flex="auto"></Col>
+                  <Col style={{ marginTop: "-22px" }}>
+                    <span>Name index matches:</span>
+                    <br />
+                    <Space direction="vertical">
+                      <Metrics
+                        metrics={nameIndexMetrics}
+                        total={names.length}
+                      />
+
+                      <CSVLink
+                        filename={"COL-namematch-result.csv"}
+                        data={getDownLoadData()}
+                      >
+                        <Button type="primary" style={{ marginBottom: "10px" }}>
+                          <DownloadOutlined /> Download result
+                        </Button>
+                      </CSVLink>
+                    </Space>
+                  </Col>
+                </Row>
               </Col>
             )}
           </Row>
