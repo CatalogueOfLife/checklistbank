@@ -170,11 +170,11 @@ class BasicMenu extends Component {
                 <span>Metadata validator</span>
               </NavLink>
             </Menu.Item>
-            <Menu.Item key="namematch">
+            {/*             <Menu.Item key="namematch">
               <NavLink to={{ pathname: "/tools/name-match" }}>
                 <span>Name matcher</span>
               </NavLink>
-            </Menu.Item>
+            </Menu.Item> */}
           </SubMenu>
 
           {Auth.isAuthorised(user, ["admin"]) && (
