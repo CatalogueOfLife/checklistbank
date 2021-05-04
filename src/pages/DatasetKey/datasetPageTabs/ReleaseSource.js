@@ -121,6 +121,7 @@ class ReleaseSource extends React.Component {
               )}
               <PresentationItem label="Taxonomic coverage">
                 <TaxonomicCoverage
+                  isProject={false}
                   dataset={data}
                   catalogueKey={datasetKey}
                   pathToTree={pathToTree}

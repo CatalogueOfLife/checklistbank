@@ -782,8 +782,8 @@ class WorkBench extends React.Component {
                     }}
                     value={params.status}
                   >
-                    <Radio value="_NOT_NULL">Exclude bare names</Radio>
-                    <Radio value="_NULL">Only bare names</Radio>
+                    <Radio value="_NULL">Exclude bare names</Radio>
+                    <Radio value="_NOT_NULL">Only bare names</Radio>
                     <Radio value={undefined}>All</Radio>
                   </RadioGroup>
                 </FormItem>
