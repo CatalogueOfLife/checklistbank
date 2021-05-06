@@ -1,7 +1,7 @@
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { CopyOutlined, DownloadOutlined } from "@ant-design/icons";
-import history from "../../../history";
+import history from "../../history";
 import moment from "moment";
 import _ from "lodash";
 import {
@@ -17,13 +17,13 @@ import {
   Checkbox,
 } from "antd";
 import axios from "axios";
-import config from "../../../config";
-import PageContent from "../../../components/PageContent";
-import ErrorMsg from "../../../components/ErrorMsg";
-import withContext from "../../../components/hoc/withContext";
-import Exception403 from "../../../components/exception/403";
+import config from "../../config";
+import PageContent from "../../components/PageContent";
+import ErrorMsg from "../../components/ErrorMsg";
+import withContext from "../../components/hoc/withContext";
+import Exception403 from "../../components/exception/403";
 
-import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
+import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import qs from "query-string";
 
 const Option = Select.Option;
