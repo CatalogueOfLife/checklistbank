@@ -134,12 +134,10 @@ class DatasetDownload extends React.Component {
             <Button
               type="primary"
               onClick={() => {
-                let options = { format: selectedDataFormat, synonyms };
+                let options = { format: selectedDataFormat, synonyms, excel };
                 if (rootTaxon) {
-                  options.taxonID = rootTaxon.id;
-                }
-                if (excel) {
-                  options.excel = excel;
+                  options.root = {};
+                  options.root.id = rootTaxon.id;
                 }
                 if (minRank) {
                   options.minRank = minRank;
@@ -219,9 +217,8 @@ class DatasetDownload extends React.Component {
           <Col span={24}>
             <Divider plain>Please cite as:</Divider>
             <CopyToClipboard
-              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
-                dataset.citation || this.createCitation()
-              }`}
+              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${dataset.citation || this.createCitation()
+                }`}
               onCopy={() => message.info(`Copied citation to clipboard`)}
             >
               <p style={{ textAlign: "center", cursor: "pointer" }}>
