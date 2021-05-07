@@ -95,7 +95,7 @@ const MatchProgress = ({ matched, total }) => {
 const getPercent = (num, total) => Math.round((num / total) * 100);
 const Metrics = ({ metrics, total }) =>
   Object.keys(metrics).map((m) => (
-    <React.Fragment>
+    <React.Fragment key="m">
       <Tag color={matchTypeTypeMap[m]} style={{ marginBottom: "6px" }}>
         {`${m}: ${metrics[m]} / ${total} (${getPercent(metrics[m], total)}%)`}
       </Tag>
@@ -127,6 +127,9 @@ const NameMatch = () => {
       }
       if (name.rank) {
         nidxParams += `&rank=${name.rank}`;
+      }
+      if (name.author) {
+        nidxParams += `&author=${name.author}`;
       }
       const { data: indexMatch } = await axios(
         `${config.dataApi}nidx/match${nidxParams}`
@@ -309,37 +312,36 @@ const NameMatch = () => {
       ),
     }));
 
-  const getDownLoadData = () => {
+  const getDownLoadData = (whichDataset) => {
+    const usage =
+      !whichDataset || whichDataset === "primary"
+        ? "primaryDatasetUsage"
+        : "secondaryDatasetUsage";
     return names.map((n) => {
       let row = {
         providedScientificName: n.providedScientificName,
         matchType: n.matchType,
-        [`${
-          primaryDataset.alias || "Dataset " + primaryDataset.key
-        } scientificName`]: _.get(n, "primaryDatasetUsage.label", ""),
+        nameIndexId: _.get(n, `nidx.name.id`, ""),
+        taxonId: _.get(n, `${usage}.id`, ""),
+        parentTaxonId: _.get(n, `${usage}.parentId`, ""),
+        scientificName: _.get(n, `${usage}.label`, ""),
       };
       defaultRanks.forEach((r) => {
-        row[
-          `${primaryDataset.alias || "Dataset " + primaryDataset.key} ${r}`
-        ] = _.get(n, `primaryDatasetUsage.classification.${r}.label`, "");
+        row[r] = _.get(n, `${usage}.classification.${r}.label`, "");
       });
-
-      if (secondaryDataset) {
-        row[
-          `${
-            secondaryDataset.alias || "Dataset " + secondaryDataset.key
-          } scientificName`
-        ] = _.get(n, "secondaryDatasetUsage.label", "");
-        defaultRanks.forEach((r) => {
-          row[
-            `${
-              secondaryDataset.alias || "Dataset " + secondaryDataset.key
-            } ${r}`
-          ] = _.get(n, `secondaryDatasetUsage.classification.${r}.label`, "");
-        });
-      }
       return row;
     });
+  };
+  const getDownLoadDataFileName = (whichDataset) => {
+    const dataset =
+      !whichDataset || whichDataset === "primary"
+        ? primaryDataset
+        : secondaryDataset;
+    return `${
+      dataset.alias
+        ? "Namematch_result_" + dataset.alias
+        : "Namematch_result_dataset_" + dataset.key
+    }.csv`.replace(" ", "_");
   };
   const draggerProps = {
     name: "file",
@@ -405,16 +407,30 @@ const NameMatch = () => {
                 placeHolder="Choose primary dataset"
               />
               {step === 2 && (
-                <Statistic
-                  title={"Usages"}
-                  value={primaryUsageMetrics}
-                  suffix={`/ ${names.length}`}
-                />
+                <Row justify="space-between">
+                  <Col>
+                    <Statistic
+                      title={"Usages"}
+                      value={primaryUsageMetrics}
+                      suffix={`/ ${names.length}`}
+                    />
+                  </Col>
+                  <Col>
+                    <CSVLink
+                      filename={getDownLoadDataFileName("primary")}
+                      data={getDownLoadData("primary")}
+                    >
+                      <Button type="primary" style={{ marginTop: "10px" }}>
+                        <DownloadOutlined /> Download result
+                      </Button>
+                    </CSVLink>
+                  </Col>
+                </Row>
               )}
             </Col>
             {(step < 1 || secondaryDataset) && (
               <Col
-                style={{ paddingLeft: "8px" }}
+                style={{ paddingLeft: "8px", paddingRight: "8px" }}
                 span={step === 0 || !secondaryDataset ? 12 : 10}
               >
                 <DatasetAutocomplete
@@ -427,36 +443,39 @@ const NameMatch = () => {
                   placeHolder="Choose secondary dataset"
                 />
                 {step === 2 && (
-                  <Statistic
-                    title={"Usages"}
-                    value={secondaryUsageMetrics}
-                    suffix={`/ ${names.length}`}
-                  />
+                  <Row justify="space-between">
+                    <Col>
+                      <Statistic
+                        title={"Usages"}
+                        value={secondaryUsageMetrics}
+                        suffix={`/ ${names.length}`}
+                      />
+                    </Col>
+                    <Col>
+                      <CSVLink
+                        filename={getDownLoadDataFileName("secondary")}
+                        data={getDownLoadData("secondary")}
+                      >
+                        <Button type="primary" style={{ marginTop: "10px" }}>
+                          <DownloadOutlined /> Download result
+                        </Button>
+                      </CSVLink>
+                    </Col>
+                  </Row>
                 )}
               </Col>
             )}
             {step === 2 && (
-              <Col span={secondaryDataset ? 4 : 12}>
+              <Col
+                span={secondaryDataset ? 4 : 12}
+                style={{ paddingRight: "8px" }}
+              >
                 <Row>
                   <Col flex="auto"></Col>
                   <Col style={{ marginTop: "-22px" }}>
                     <span>Name index matches:</span>
                     <br />
-                    <Space direction="vertical">
-                      <Metrics
-                        metrics={nameIndexMetrics}
-                        total={names.length}
-                      />
-
-                      <CSVLink
-                        filename={"COL-namematch-result.csv"}
-                        data={getDownLoadData()}
-                      >
-                        <Button type="primary" style={{ marginBottom: "10px" }}>
-                          <DownloadOutlined /> Download result
-                        </Button>
-                      </CSVLink>
-                    </Space>
+                    <Metrics metrics={nameIndexMetrics} total={names.length} />
                   </Col>
                 </Row>
               </Col>
@@ -474,8 +493,10 @@ const NameMatch = () => {
             </p>
             <p className="ant-upload-hint">
               Your csv must contain a column{" "}
-              <code className="code">scientificName</code> (incl. author) and
-              optional columns <code className="code">rank</code> and{" "}
+              <code className="code">scientificName</code> (which may include
+              the author) and optional columns{" "}
+              <code className="code">author</code>,{" "}
+              <code className="code">rank</code> and{" "}
               <code className="code">code</code> (nomenclatural code)
             </p>
           </Dragger>
