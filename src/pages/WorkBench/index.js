@@ -56,7 +56,7 @@ const PAGE_SIZE = 50;
 const getDecisionText = (decision) => {
   if (!_.get(decision, "mode")) {
     return "";
-  } else if (["block", "chresonym"].includes(_.get(decision, "mode"))) {
+  } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {
     return _.get(decision, "mode");
   } else if (_.get(decision, "status")) {
     return _.get(decision, "status");
@@ -504,7 +504,10 @@ class WorkBench extends React.Component {
                 : "",
             code: _.get(d, "usage.name.code"),
           },
-          mode: decision === "block" ? "block" : "update",
+          mode:
+            decision === ["block", "ignore"].includes(decision)
+              ? decision
+              : "update",
         };
         if (
           ["informal", "no name", "hybrid formula", "placeholder"].includes(
@@ -512,8 +515,6 @@ class WorkBench extends React.Component {
           )
         ) {
           decisionObject.name = { type: decision };
-        } else if (decision === "chresonym") {
-          decisionObject.name = { nomstatus: "chresonym" };
         }
         if (taxonomicstatus.includes(decision)) {
           decisionObject.status = decision;
@@ -533,11 +534,11 @@ class WorkBench extends React.Component {
             )}`;
             const decisionMsg = `${_.get(d, "usage.name.scientificName")} was ${
               decision === "block" ? "blocked from the assembly" : ""
-            }${decision === "chresonym" ? "marked as chresonym" : ""}`;
+            }${decision === "ignore" ? "was ignored" : ""}`;
 
             notification.open({
               message: "Decision applied",
-              description: ["block", "chresonym"].includes(decision)
+              description: ["block", "ignore"].includes(decision)
                 ? decisionMsg
                 : statusMsg,
             });
@@ -926,6 +927,7 @@ class WorkBench extends React.Component {
               >
                 <OptGroup label="General">
                   <Option value="block">Block</Option>
+                  <Option value="ignore">Ignore</Option>
                 </OptGroup>
                 <OptGroup label="Status">
                   {taxonomicstatus.map((s) => (
@@ -940,9 +942,9 @@ class WorkBench extends React.Component {
                   <Option value="hybrid formula">Hybrid formula</Option>
                   <Option value="informal">Informal</Option>
                 </OptGroup>
-                <OptGroup label="Nom. status">
+                {/* <OptGroup label="Nom. status">
                   <Option value="chresonym">Chresonym</Option>
-                </OptGroup>
+                </OptGroup> */}
               </Select>
               <Button
                 type="primary"

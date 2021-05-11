@@ -288,6 +288,7 @@ class CatalogueDecisions extends React.Component {
       },
       user,
       rank,
+      decisionMode,
     } = this.props;
     const params = qs.parse(_.get(this.props, "location.search"));
 
@@ -579,13 +580,11 @@ class CatalogueDecisions extends React.Component {
                 allowClear
                 onChange={(value) => this.updateSearch({ mode: value })}
               >
-                {["block", "reviewed", "update", "update recursive"].map(
-                  (r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  )
-                )}
+                {decisionMode.map((r) => (
+                  <Option key={r.name} value={r.name}>
+                    {r.name}
+                  </Option>
+                ))}
               </Select>
             </FormItem>
           </Form>
@@ -658,6 +657,10 @@ class CatalogueDecisions extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, rank }) => ({ user, rank });
+const mapContextToProps = ({ user, rank, decisionMode }) => ({
+  user,
+  rank,
+  decisionMode,
+});
 
 export default withContext(mapContextToProps)(CatalogueDecisions);

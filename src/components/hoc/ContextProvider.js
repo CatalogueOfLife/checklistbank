@@ -32,6 +32,7 @@ import {
   getDatasetSettings,
   getGazetteer,
   getEntitytype,
+  getDecisionMode,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -90,6 +91,7 @@ class ContextProvider extends React.Component {
     environment: [],
     sectorImportState: [],
     country: [],
+    decisionMode: [],
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
@@ -204,6 +206,7 @@ class ContextProvider extends React.Component {
       getDatasetSettings(),
       getGazetteer(),
       getEntitytype(),
+      getDecisionMode(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -273,6 +276,7 @@ class ContextProvider extends React.Component {
           datasetSettings: responses[19],
           gazetteer: responses[20],
           entitytype: responses[21],
+          decisionMode: responses[22],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

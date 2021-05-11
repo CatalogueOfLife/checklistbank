@@ -94,3 +94,7 @@ export const getGazetteer = () => {
 export const getEntitytype = () => {
   return getData(`entitytype`).then((res) => res.data);
 };
+
+export const getDecisionMode = () => {
+  return getData(`editorialdecision$mode`).then((res) => res.data);
+};

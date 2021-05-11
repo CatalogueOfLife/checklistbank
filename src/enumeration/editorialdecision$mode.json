@@ -1,0 +1,17 @@
+[
+  {
+    "name": "block"
+  },
+  {
+    "name": "reviewed"
+  },
+  {
+    "name": "update"
+  },
+  {
+    "name": "update recursive"
+  },
+  {
+    "name": "ignore"
+  }
+]
