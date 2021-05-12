@@ -484,6 +484,7 @@ const MetaDataForm = (props) => {
         }
       >
         <Select style={{ width: 200 }} showSearch>
+          <Option value={undefined}>-</Option>
           {licenseEnum.map((f) => {
             return (
               <Option key={f} value={f}>
