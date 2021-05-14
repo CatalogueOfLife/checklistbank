@@ -454,7 +454,7 @@ class BasicMenu extends Component {
                       </Menu.Item>
                     )}
                   {selectedDataset && this.isSourceDataset(selectedDataset) && (
-                    <Menu.Item key="source_meta">
+                    <Menu.Item key="source_about">
                       <NavLink
                         to={{
                           pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
@@ -605,7 +605,7 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-              <Menu.Item key="meta">
+              <Menu.Item key="about">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(selectedDataset, "key")}/about`,
