@@ -10,6 +10,7 @@ import {
   Row,
   Col,
   Switch,
+  Badge,
   Button,
   Alert,
   Popconfirm,
@@ -207,6 +208,18 @@ class AdminPage extends React.Component {
               />
             </Row>
           )}
+
+          <Row>
+            <FormItem label="Background jobs">
+              {background.idle && (
+                <Badge count={"idle"} style={{ backgroundColor: '#52c41a' }} />
+              )}
+              {background.idle || (
+                <Badge count={"active"} style={{ backgroundColor: 'red' }} />
+              )}
+            </FormItem>
+          </Row>
+
           <Row>
             <Col span={24}>
               <Form layout="inline">
