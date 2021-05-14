@@ -249,7 +249,7 @@ class BasicMenu extends Component {
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/about` }}
                   >
-                    <span>Metadata</span>
+                    <span>About</span>
                   </NavLink>
                 </Menu.Item>
                 <Menu.Item key="catalogueNameSearch">

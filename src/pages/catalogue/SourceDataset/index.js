@@ -169,7 +169,7 @@ class DatasetPage extends React.Component {
           />
         )}
         {!section ||
-          (section === "meta" && (
+          (section === "about" && (
             <DatasetMeta id={datasetKey} catalogueKey={catalogueKey} />
           ))}
         {section === "classification" && (
