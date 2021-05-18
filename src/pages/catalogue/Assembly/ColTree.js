@@ -122,6 +122,7 @@ class ColTree extends React.Component {
     const {
       treeType,
       dataset: { key },
+      dataset,
       showSourceTaxon,
       catalogueKey,
       onDeleteSector,
@@ -152,7 +153,7 @@ class ColTree extends React.Component {
           dataRef.title = (
             <ColTreeNode
               taxon={tx}
-              datasetKey={id}
+              dataset={dataset}
               confirmVisible={false}
               onDeleteSector={onDeleteSector}
               treeType={this.props.treeType}
@@ -216,6 +217,7 @@ class ColTree extends React.Component {
     const {
       treeType,
       dataset: { key },
+      dataset,
       showSourceTaxon,
       catalogueKey,
       onDeleteSector,
@@ -279,7 +281,7 @@ class ColTree extends React.Component {
     root.title = (
       <ColTreeNode
         taxon={tx}
-        datasetKey={id}
+        dataset={dataset}
         onDeleteSector={onDeleteSector}
         confirmVisible={false}
         treeType={this.props.treeType}
@@ -315,7 +317,7 @@ class ColTree extends React.Component {
       node.title = (
         <ColTreeNode
           taxon={tx}
-          datasetKey={id}
+          dataset={dataset}
           onDeleteSector={onDeleteSector}
           confirmVisible={false}
           treeType={this.props.treeType}
@@ -430,7 +432,7 @@ class ColTree extends React.Component {
             <ColTreeNode
               confirmVisible={false}
               taxon={tx}
-              datasetKey={dataset.key}
+              dataset={dataset}
               onDeleteSector={onDeleteSector}
               treeType={this.props.treeType}
               reloadSelfAndSiblings={() => {

@@ -38,14 +38,21 @@ class TaxonSources extends React.Component {
 
   render = () => {
     const { data, showInNode, popOverVisible, loading } = this.state;
-    const { taxon } = this.props;
+    const { taxon, releaseKey } = this.props;
 
     return showInNode ? (
       <React.Fragment>
         {" •"}{" "}
         {data.map((d, index) => (
           <span key={index} style={{ fontSize: "11px" }}>
-            <NavLink to={{ pathname: `/dataset/${d.key}/about` }} exact={true}>
+            <NavLink
+              to={{
+                pathname: releaseKey
+                  ? `/dataset/${releaseKey}/source/${d.key}`
+                  : `/dataset/${d.key}/about`,
+              }}
+              exact={true}
+            >
               {(index ? ", " : "") + (d.alias || d.key)}
             </NavLink>
           </span>
@@ -63,7 +70,11 @@ class TaxonSources extends React.Component {
                 {data.map((d, index) => (
                   <span style={{ fontSize: "11px" }}>
                     <NavLink
-                      to={{ pathname: `/dataset/${d.key}/about` }}
+                      to={{
+                        pathname: releaseKey
+                          ? `/dataset/${releaseKey}/source/${d.key}`
+                          : `/dataset/${d.key}/about`,
+                      }}
                       exact={true}
                     >
                       {(index ? ", " : "") + (d.alias || d.key)}

@@ -83,14 +83,14 @@ class SourceMetrics extends React.Component {
           !res.data.result
             ? []
             : res.data.result.map((r) => {
-              return this.getMetrics(datasetKey, r.key).then((metrics) => {
-                columns = _.merge(columns, metrics);
-                return {
-                  ...r,
-                  metrics: metrics,
-                };
-              });
-            })
+                return this.getMetrics(datasetKey, r.key).then((metrics) => {
+                  columns = _.merge(columns, metrics);
+                  return {
+                    ...r,
+                    metrics: metrics,
+                  };
+                });
+              })
         ).then((res) => {
           const groups = {
             default: Object.keys(columns).filter(
@@ -229,63 +229,63 @@ class SourceMetrics extends React.Component {
       selectedGroup && selectedGroup.indexOf("Rank") > -1
         ? (a, b) => rank.indexOf(b) - rank.indexOf(a)
         : selectedGroup === "default"
-          ? (a, b) =>
+        ? (a, b) =>
             defaultViewColumnOrder.indexOf(a) -
             defaultViewColumnOrder.indexOf(b)
-          : (a, b) => a.localeCompare(b);
+        : (a, b) => a.localeCompare(b);
 
     const additionalColumns = !groups[selectedGroup]
       ? []
       : groups[selectedGroup].sort(columnsSorter).map((column) => ({
-        // nameCount
-        title: _.startCase(column).split(" Count")[0],
-        dataIndex:
-          selectedGroup === "default"
-            ? ["metrics", column]
-            : ["metrics", selectedGroup, column],
-        key: column,
-        render: (text, record) => {
-          const selectedRelaseValue =
+          // nameCount
+          title: _.startCase(column).split(" Count")[0],
+          dataIndex:
             selectedGroup === "default"
-              ? _.get(record, `selectedReleaseMetrics[${column}]`)
-              : _.get(
-                record,
-                `selectedReleaseMetrics[${selectedGroup}][${column}]`
-              );
-          return (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: namesPath,
-                  search: `?SECTOR_DATASET_KEY=${record.key}`,
-                }}
-                exact={true}
-              >
-                {Number(text || 0).toLocaleString()}
-              </NavLink>
-              {record.selectedReleaseMetrics && (
-                <div
-                  style={{
-                    color: getColorForDiff(
-                      text || 0,
-                      selectedRelaseValue || 0
-                    ),
+              ? ["metrics", column]
+              : ["metrics", selectedGroup, column],
+          key: column,
+          render: (text, record) => {
+            const selectedRelaseValue =
+              selectedGroup === "default"
+                ? _.get(record, `selectedReleaseMetrics[${column}]`)
+                : _.get(
+                    record,
+                    `selectedReleaseMetrics[${selectedGroup}][${column}]`
+                  );
+            return (
+              <React.Fragment>
+                <NavLink
+                  to={{
+                    pathname: namesPath,
+                    search: `?SECTOR_DATASET_KEY=${record.key}`,
                   }}
+                  exact={true}
                 >
-                  {Number(selectedRelaseValue || 0).toLocaleString()}
-                </div>
-              )}
-            </React.Fragment>
-          );
-        },
-        sorter: (a, b) => {
-          const path =
-            selectedGroup === "default"
-              ? `metrics[${column}]`
-              : `metrics[${selectedGroup}][${column}]`;
-          return Number(_.get(a, path) || 0) - Number(_.get(b, path) || 0);
-        },
-      }));
+                  {Number(text || 0).toLocaleString()}
+                </NavLink>
+                {record.selectedReleaseMetrics && (
+                  <div
+                    style={{
+                      color: getColorForDiff(
+                        text || 0,
+                        selectedRelaseValue || 0
+                      ),
+                    }}
+                  >
+                    {Number(selectedRelaseValue || 0).toLocaleString()}
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          },
+          sorter: (a, b) => {
+            const path =
+              selectedGroup === "default"
+                ? `metrics[${column}]`
+                : `metrics[${selectedGroup}][${column}]`;
+            return Number(_.get(a, path) || 0) - Number(_.get(b, path) || 0);
+          },
+        }));
 
     const columns = [
       {
@@ -417,7 +417,7 @@ class SourceMetrics extends React.Component {
                 <div style={{ marginLeft: "46px" }}>
                   <h4>Taxonomic coverage</h4>
                   <TaxonomicCoverage
-                    isProject={true}
+                    isProject={this.props.isProject === false ? false : true}
                     dataset={row}
                     catalogueKey={datasetKey}
                   />
