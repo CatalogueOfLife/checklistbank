@@ -77,9 +77,10 @@ class DatasetList extends React.Component {
           title: "Logo",
           dataIndex: "key",
           key: "logo",
-          render: (text, record) => (
-            <DatasetLogo datasetKey={record.key} size="SMALL" />
-          ),
+          render: (text, record) =>
+            record.private ? null : (
+              <DatasetLogo datasetKey={record.key} size="SMALL" />
+            ),
         },
         {
           title: "Authors",
@@ -379,24 +380,24 @@ class DatasetList extends React.Component {
     } */
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
-        ...defaultColumns,
-        {
-          title: "Action",
-          dataIndex: "",
-          width: 60,
-          key: "__actions__",
-          render: (text, record) =>
-            record.origin === "external" &&
+          ...defaultColumns,
+          {
+            title: "Action",
+            dataIndex: "",
+            width: 60,
+            key: "__actions__",
+            render: (text, record) =>
+              record.origin === "external" &&
               canEditDataset(record, this.props.user) ? (
-              <ImportButton
-                key={record.key}
-                record={{ datasetKey: record.key }}
-              />
-            ) : (
-              ""
-            ),
-        },
-      ]
+                <ImportButton
+                  key={record.key}
+                  record={{ datasetKey: record.key }}
+                />
+              ) : (
+                ""
+              ),
+          },
+        ]
       : defaultColumns;
 
     const columns = _.filter(
