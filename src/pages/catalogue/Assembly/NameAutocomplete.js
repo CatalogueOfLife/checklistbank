@@ -57,6 +57,9 @@ class NameSearchAutocomplete extends React.Component {
       });
   };
   getNames = (q) => {
+    if (!q) {
+      return;
+    }
     const { datasetKey, minRank } = this.props;
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest`
