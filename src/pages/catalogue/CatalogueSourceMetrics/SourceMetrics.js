@@ -340,7 +340,9 @@ class SourceMetrics extends React.Component {
                   }
                 >
                   {Object.keys(groups).map((k) => (
-                    <Select.Option value={k}>{_.startCase(k)}</Select.Option>
+                    <Select.Option key={k} value={k}>
+                      {_.startCase(k)}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>

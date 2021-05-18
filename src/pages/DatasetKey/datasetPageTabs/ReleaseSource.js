@@ -97,12 +97,10 @@ class ReleaseSource extends React.Component {
 
           {data && (
             <React.Fragment>
-              <PresentationItem label="Short name">
-                {data.alias}
-              </PresentationItem>
-              <PresentationItem label="Full name">
+              <PresentationItem label="Alias">{data.alias}</PresentationItem>
+              {/*               <PresentationItem label="Full name">
                 {data.title}
-              </PresentationItem>
+              </PresentationItem> */}
               <PresentationItem label="Version">
                 {(data.version || data.released) &&
                   `${data.version ? data.version : ""}${
@@ -127,7 +125,7 @@ class ReleaseSource extends React.Component {
                   pathToTree={pathToTree}
                 />
               </PresentationItem>
-              <PresentationItem label="English name of the Group">
+              <PresentationItem label="Taxonomic scope">
                 {data.group}
               </PresentationItem>
               <Metrics
@@ -135,7 +133,7 @@ class ReleaseSource extends React.Component {
                 dataset={data}
                 pathToSearch={`/dataset/${datasetKey}/names`}
               />
-              <PresentationItem label="Abstract">
+              <PresentationItem label="Description">
                 {data.description}
               </PresentationItem>
 

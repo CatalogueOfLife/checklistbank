@@ -12,9 +12,9 @@ const getLivingTaxa = (metrics, rank) =>
 const getExtinctTaxa = (metrics, rank) =>
   _.get(metrics, `extinctTaxaByRankCount.${rank}`) || 0;
 
-const MetricsPresentation = ({ metrics, rank, style, dataset, pathToSearch }) =>
+const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
   metrics && rank ? (
-    <div style={style}>
+    <React.Fragment>
       <React.Fragment>
         <PresentationItem label={`Living species`}>
           {dataset && pathToSearch ? (
@@ -79,7 +79,7 @@ const MetricsPresentation = ({ metrics, rank, style, dataset, pathToSearch }) =>
           (metrics.synonymCount || 0).toLocaleString("en-GB")
         )}
       </PresentationItem>
-      <PresentationItem label={"Common names"} key={"vernaculars"}>
+      <PresentationItem label={"Vernacular names"} key={"vernaculars"}>
         {(metrics.vernacularCount || 0).toLocaleString("en-GB")}
       </PresentationItem>
       <PresentationItem label={"Total number of names"} key={"names"}>
@@ -96,7 +96,7 @@ const MetricsPresentation = ({ metrics, rank, style, dataset, pathToSearch }) =>
           (metrics.nameCount || 0).toLocaleString("en-GB")
         )}
       </PresentationItem>
-    </div>
+    </React.Fragment>
   ) : (
     <PresentationItem label="">
       <Skeleton active paragraph={{ rows: 4 }} />
