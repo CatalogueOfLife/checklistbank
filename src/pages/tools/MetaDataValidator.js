@@ -53,13 +53,13 @@ const MetaDataValidator = () => {
   const [type, setType] = useState("YAML");
   const [form] = Form.useForm();
   const customRequest = (options) => {
-    const config = {
+    const reqConfig = {
       headers: {
         "Content-Type": type === "EML" ? "application/xml" : "text/yaml",
       },
     };
     return axios
-      .post(options.action, options.file, config)
+      .post(options.action, options.file, reqConfig)
       .then((res) => {
         options.onSuccess(res.data, options.file);
       })
@@ -154,7 +154,6 @@ const MetaDataValidator = () => {
               <Upload
                 name="yamlfile"
                 action={`${config.dataApi}parser/metadata`}
-                accept=".yaml"
                 customRequest={customRequest}
                 onSuccess={setValidatorResult}
               >
