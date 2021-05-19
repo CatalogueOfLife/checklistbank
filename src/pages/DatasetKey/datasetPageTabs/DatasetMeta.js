@@ -327,9 +327,7 @@ class DatasetMeta extends React.Component {
             >
               {(displayData.version || displayData.released) &&
                 `${displayData.version ? displayData.version : ""}${
-                  displayData.released
-                    ? " Received by COL: " + displayData.released
-                    : ""
+                  displayData.released ? displayData.released : ""
                 }`}
             </PresentationItem>
             <PresentationItem

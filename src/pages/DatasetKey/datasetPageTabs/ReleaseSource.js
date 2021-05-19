@@ -104,7 +104,7 @@ class ReleaseSource extends React.Component {
               <PresentationItem label="Version">
                 {(data.version || data.released) &&
                   `${data.version ? data.version : ""}${
-                    data.released ? " Received by CoL: " + data.released : ""
+                    data.released ? " " + data.released : ""
                   }`}
               </PresentationItem>
               {data.authors && _.isArray(data.authors) && (
