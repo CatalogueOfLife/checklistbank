@@ -459,19 +459,32 @@ class DuplicateSearchPage extends React.Component {
       return true;
     }
   };
-
+  getLatestYear = (name) => {
+    const basionymAuthorshipYear = Number(
+      _.get(name, "basionymAuthorship.year", -1000)
+    );
+    const combinationAuthorshipYear = Number(
+      _.get(name, "combinationAuthorship.year", -1000)
+    );
+    const publishedInYear = Number(_.get(name, "publishedInYear", -1000));
+    return Math.max(
+      basionymAuthorshipYear,
+      combinationAuthorshipYear,
+      publishedInYear
+    );
+  };
   selectNewestInGroup = () => {
     this.setState({ newestInGroupLoading: true });
     const { rawData } = this.state;
     let selectedRowKeys = [];
     rawData.forEach((group) => {
       const max = Math.max(
-        ...group.usages.map((r) => r.usage.name.publishedInYear)
+        ...group.usages.map((r) => this.getLatestYear(r.usage.name))
       );
       selectedRowKeys = [
         ...selectedRowKeys,
         ...group.usages
-          .filter((r) => Number(r.usage.name.publishedInYear) === max)
+          .filter((r) => this.getLatestYear(r.usage.name) === max)
           .map((i) => i.usage.id),
       ];
     });

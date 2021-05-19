@@ -81,7 +81,7 @@ export default (catalogueKey) => ({
       key: "genus",
       className: "workbench-td",
       render: (text, record) => {
-        console.log(text);
+        // console.log(text);
         return <CopyableColumnText text={text} width="150px" />;
       },
     },
@@ -150,7 +150,7 @@ export default (catalogueKey) => ({
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
-        console.log(_.get(record, "decision"));
+        // console.log(_.get(record, "decision"));
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
@@ -268,7 +268,7 @@ export default (catalogueKey) => ({
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
-        console.log(_.get(record, "decision"));
+        //  console.log(_.get(record, "decision"));
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
@@ -374,7 +374,7 @@ export default (catalogueKey) => ({
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
-        console.log(_.get(record, "decision"));
+        //console.log(_.get(record, "decision"));
         return (
           <DecisionTag
             decision={_.get(record, "decision")}

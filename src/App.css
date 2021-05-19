@@ -114,7 +114,7 @@ thead th.workbench-td > div {
   margin: 0 0 0 0 !important;
 }
 
-.duplicate-alternate-row {
+.duplicate-alternate-row > td {
   background: #bfbfbf !important;
 }
 
