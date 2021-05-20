@@ -978,7 +978,9 @@ class DuplicateSearchPage extends React.Component {
                 onShowSizeChange={(current, size) => {
                   localStorage.setItem("col_plus_duplicates_limit", size);
                   this.setState(
-                    { params: { ...this.state.params, limit: size } },
+                    {
+                      params: { ...this.state.params, limit: size, offset: 0 },
+                    },
                     this.getData
                   );
                 }}
@@ -987,7 +989,8 @@ class DuplicateSearchPage extends React.Component {
                     {
                       params: {
                         ...this.state.params,
-                        offset: (page - 1) * Number(this.state.params.limit),
+                        offset: page === 0 ? page : (page - 1) * pageSize,
+                        limit: pageSize,
                       },
                     },
                     this.getData
