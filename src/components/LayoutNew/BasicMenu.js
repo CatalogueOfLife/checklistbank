@@ -768,7 +768,9 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&
-                _.get(selectedDataset, "origin") !== "managed" &&
+                !["managed", "released"].includes(
+                  _.get(selectedDataset, "origin")
+                ) &&
                 selectedDataset.size && (
                   <Menu.Item key="verbatim">
                     <NavLink
@@ -784,7 +786,7 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
 
-              {selectedDataset && (
+              {/*               {selectedDataset && (
                 <Menu.Item key="projects">
                   <NavLink
                     to={{
@@ -797,7 +799,7 @@ class BasicMenu extends Component {
                     Contributes
                   </NavLink>
                 </Menu.Item>
-              )}
+              )} */}
               {_.isArray(_selectedKeys) &&
                 _selectedKeys.includes("taxon") &&
                 taxonOrNameKey && (
