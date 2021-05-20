@@ -136,7 +136,7 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   key="catalogueMeta"
-                  path="/catalogue/:catalogueKey/about"
+                  path="/catalogue/:catalogueKey/metadata"
                   component={CatalogueMeta}
                 />
                 <PrivateRoute
@@ -196,13 +196,13 @@ class App extends Component {
                 <PrivateRoute
                   exact
                   key="CatalogueSourceDataset"
-                  path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates|about|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
+                  path={`/catalogue/:catalogueKey/dataset/:key/:section(issues|tasks|workbench|duplicates|metadata|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
                   component={CatalogueSourceDataset}
                 />
                 <PrivateRoute
                   exact
                   key="datasetKey"
-                  path={`/catalogue/:catalogueKey/dataset/:key/:section:(imports|classification|sectors|about|names|taxon|name|verbatim)/:taxonOrNameKey?`}
+                  path={`/catalogue/:catalogueKey/dataset/:key/:section:(imports|classification|sectors|metadata|names|taxon|name|verbatim)/:taxonOrNameKey?`}
                   component={DatasetPage}
                 />
                 <Route

@@ -38,7 +38,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => (
       <NavLink
         to={{
-          pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/about`,
+          pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/metadata`,
         }}
       >
         {_.get(record, "sector.dataset.alias") ||
@@ -257,22 +257,22 @@ class SyncTable extends React.Component {
         const promises =
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map((sync) =>
-              axios(
-                `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
-              )
-                .then((sector) => {
-                  sync.sector = sector.data;
-                  sync._id = `${sync.sectorKey}_${sync.attempt}`;
-                })
-                .then(() =>
-                  axios(
-                    `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
-                  )
+                axios(
+                  `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
                 )
-                .then((res) => {
-                  sync.sector.dataset = res.data;
-                })
-            )
+                  .then((sector) => {
+                    sync.sector = sector.data;
+                    sync._id = `${sync.sectorKey}_${sync.attempt}`;
+                  })
+                  .then(() =>
+                    axios(
+                      `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
+                    )
+                  )
+                  .then((res) => {
+                    sync.sector.dataset = res.data;
+                  })
+              )
             : [];
 
         return Promise.all(promises).then(() => res);
@@ -330,20 +330,20 @@ class SyncTable extends React.Component {
     } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
-        ...getColumns(catalogueKey),
-        {
-          title: "Action",
-          dataIndex: "",
-          key: "x",
-          width: 50,
-          render: (record) =>
-            record.job === "SectorSync" ? (
-              <SyncButton key={record.datasetKey} record={record} />
-            ) : (
-              ""
-            ),
-        },
-      ]
+          ...getColumns(catalogueKey),
+          {
+            title: "Action",
+            dataIndex: "",
+            key: "x",
+            width: 50,
+            render: (record) =>
+              record.job === "SectorSync" ? (
+                <SyncButton key={record.datasetKey} record={record} />
+              ) : (
+                ""
+              ),
+          },
+        ]
       : getColumns(catalogueKey);
 
     columns[4].filters = sectorImportState.map((i) => ({

@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
+import DatasetAbout from "./datasetPageTabs/DatasetAbout";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetProjects from "./datasetPageTabs/DatasetProjects";
@@ -162,7 +163,9 @@ class DatasetPage extends React.Component {
             updateImportState={() => this.getData(datasetKey)}
           />
         )}
-        {!section || (section === "about" && <DatasetMeta id={datasetKey} />)}
+        {section === "metadata" && <DatasetMeta id={datasetKey} />}
+        {!section ||
+          (section === "about" && <DatasetAbout datasetKey={datasetKey} />)}
         {section === "classification" && (
           <DatasetClassification
             dataset={dataset}
@@ -182,7 +185,7 @@ class DatasetPage extends React.Component {
             location={this.props.location}
             catalogueKey={catalogueKey}
           />
-        )}{" "}
+        )}
         {/* catalogueKeys are used to scope decisions and tasks */}
         {sect === "duplicates" && (
           <Duplicates

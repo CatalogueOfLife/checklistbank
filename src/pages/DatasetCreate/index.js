@@ -16,7 +16,7 @@ class DatasetCreate extends React.Component {
         <PageContent>
           <MetaDataForm
             onSaveSuccess={(res) => {
-              history.push(`/dataset/${res.data}/about`);
+              history.push(`/dataset/${res.data}/metadata`);
             }}
           />
         </PageContent>

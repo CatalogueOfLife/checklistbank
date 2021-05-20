@@ -298,7 +298,7 @@ class SourceMetrics extends React.Component {
               <NavLink
                 to={{
                   pathname: isProject
-                    ? `/catalogue/${datasetKey}/dataset/${record.key}/about`
+                    ? `/catalogue/${datasetKey}/dataset/${record.key}/metadata`
                     : `/dataset/${datasetKey}/source/${record.key}`,
                   //  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}

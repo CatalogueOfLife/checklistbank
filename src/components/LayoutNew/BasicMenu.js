@@ -247,9 +247,9 @@ class BasicMenu extends Component {
               >
                 <Menu.Item key="catalogueMeta">
                   <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/about` }}
+                    to={{ pathname: `/catalogue/${catalogueKey}/metadata` }}
                   >
-                    <span>About</span>
+                    <span>Metadata</span>
                   </NavLink>
                 </Menu.Item>
                 <Menu.Item key="catalogueNameSearch">
@@ -454,16 +454,16 @@ class BasicMenu extends Component {
                       </Menu.Item>
                     )}
                   {selectedDataset && this.isSourceDataset(selectedDataset) && (
-                    <Menu.Item key="source_about">
+                    <Menu.Item key="source_metadata">
                       <NavLink
                         to={{
                           pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
                             selectedDataset,
                             "key"
-                          )}/about`,
+                          )}/metadata`,
                         }}
                       >
-                        About
+                        Metadata
                       </NavLink>
                     </Menu.Item>
                   )}
@@ -605,6 +605,20 @@ class BasicMenu extends Component {
                 </span>
               }
             >
+              {Auth.isAuthorised(user, ["editor", "admin"]) && (
+                <Menu.Item key="metadata">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/metadata`,
+                    }}
+                  >
+                    Metadata
+                  </NavLink>
+                </Menu.Item>
+              )}
               <Menu.Item key="about">
                 <NavLink
                   to={{

@@ -99,13 +99,13 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/about`,
+            pathname: `/dataset/${datasetKey}/metadata`,
           }}
         />
       );
     }
 
-    const sect = !section ? "meta" : section.split("?")[0];
+    const sect = !section ? "metadata" : section.split("?")[0];
     const openKeys = ["assembly", "sourceDataset"];
     const selectedKeys = [`source_${section}`];
     return (
@@ -169,7 +169,7 @@ class DatasetPage extends React.Component {
           />
         )}
         {!section ||
-          (section === "about" && (
+          (section === "metadata" && (
             <DatasetMeta id={datasetKey} catalogueKey={catalogueKey} />
           ))}
         {section === "classification" && (
