@@ -354,6 +354,9 @@ class DuplicateSearchPage extends React.Component {
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
       .map((d) => {
         const method = d.decision ? "put" : "post";
+        const mode = ["block", "ignore"].includes(decision)
+          ? decision
+          : "update";
         const body = {
           datasetKey: catalogueKey,
           subjectDatasetKey: datasetKey,
@@ -364,12 +367,10 @@ class DuplicateSearchPage extends React.Component {
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
           },
-          mode: decision === "block" ? decision : "update",
-          status: decision === "block" ? _.get(d, "status") : decision,
+          mode: mode,
+          status: mode !== "update" ? _.get(d, "status") : decision,
         };
-        if (decision === "chresonym") {
-          body.name = { nomstatus: "chresonym" };
-        }
+
         return axios[method](
           `${config.dataApi}dataset/${catalogueKey}/decision${
             method === "put" ? `/${d.decision.id}` : ""
@@ -391,11 +392,11 @@ class DuplicateSearchPage extends React.Component {
             )}`;
             const decisionMsg = `${_.get(d, "name.scientificName")} was ${
               decision === "block" ? "blocked from the assembly" : ""
-            }${decision === "chresonym" ? "marked as chresonym" : ""}`;
+            }${decision === "ignore" ? "ignored" : ""}`;
 
             notification.open({
               message: `Decision ${method === "post" ? "applied" : "changed"}`,
-              description: ["block", "chresonym"].includes(decision)
+              description: ["block", "ignore"].includes(decision)
                 ? decisionMsg
                 : statusMsg,
             });
@@ -439,16 +440,18 @@ class DuplicateSearchPage extends React.Component {
     },
   };
 
-  handleResize = (index) => (e, { size }) => {
-    this.setState(({ columns }) => {
-      const nextColumns = [...columns];
-      nextColumns[index] = {
-        ...nextColumns[index],
-        width: size.width,
-      };
-      return { columns: nextColumns };
-    });
-  };
+  handleResize =
+    (index) =>
+    (e, { size }) => {
+      this.setState(({ columns }) => {
+        const nextColumns = [...columns];
+        nextColumns[index] = {
+          ...nextColumns[index],
+          width: size.width,
+        };
+        return { columns: nextColumns };
+      });
+    };
 
   columnFilter = (c) => {
     const { params } = this.state;
@@ -904,11 +907,9 @@ class DuplicateSearchPage extends React.Component {
                       </Option>
                     ))}
                   </OptGroup>
-                  <OptGroup label="Nom. Status">
-                    <Option value="chresonym">Chresonym</Option>
-                  </OptGroup>
                   <OptGroup label="Other">
                     <Option value="block">Block</Option>
+                    <Option value="ignore">Ignore</Option>
                   </OptGroup>
                 </Select>
 

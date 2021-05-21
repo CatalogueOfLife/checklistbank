@@ -490,6 +490,10 @@ class WorkBench extends React.Component {
     const promises = result
       .filter((d) => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map((d) => {
+        const mode = ["block", "ignore"].includes(decision)
+          ? decision
+          : "update";
+        console.log(mode);
         let decisionObject = {
           subjectDatasetKey: datasetKey,
           subject: {
@@ -504,10 +508,7 @@ class WorkBench extends React.Component {
                 : "",
             code: _.get(d, "usage.name.code"),
           },
-          mode:
-            decision === ["block", "ignore"].includes(decision)
-              ? decision
-              : "update",
+          mode: mode,
         };
         if (
           ["informal", "no name", "hybrid formula", "placeholder"].includes(
