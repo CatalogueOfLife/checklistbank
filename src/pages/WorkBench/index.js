@@ -493,7 +493,6 @@ class WorkBench extends React.Component {
         const mode = ["block", "ignore"].includes(decision)
           ? decision
           : "update";
-        console.log(mode);
         let decisionObject = {
           subjectDatasetKey: datasetKey,
           subject: {
