@@ -21,9 +21,10 @@ const formItemLayout = {
   },
 };
 
-const defaultViewColumnOrder = "sectorCount appliedDecisionCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount nameRelationsCount taxonConceptRelationsCount speciesInteractionsCount".split(
-  " "
-);
+const defaultViewColumnOrder =
+  "sectorCount appliedDecisionCount usagesCount taxonCount synonymCount bareNameCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount nameRelationsCount taxonConceptRelationsCount speciesInteractionsCount".split(
+    " "
+  );
 
 const getColorForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : -1;
@@ -76,7 +77,9 @@ class SourceMetrics extends React.Component {
     const { releaseKey, hideUnchanged } = params;
     this.setState({ loading: true, releaseKey });
 
-    axios(`${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}`)
+    axios(
+      `${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}&sortBy=alias`
+    )
       .then((res) => {
         let columns = {};
         return Promise.all(
@@ -216,14 +219,8 @@ class SourceMetrics extends React.Component {
       releaseKey,
       filteredData,
     } = this.state;
-    const {
-      catalogueKey,
-      datasetKey,
-      location,
-      rank,
-      namesPath,
-      isProject,
-    } = this.props;
+    const { catalogueKey, datasetKey, location, rank, namesPath, isProject } =
+      this.props;
 
     const columnsSorter =
       selectedGroup && selectedGroup.indexOf("Rank") > -1
@@ -304,7 +301,9 @@ class SourceMetrics extends React.Component {
                 }}
                 exact={true}
               >
-                {record.alias ? `${record.alias} [${record.key}]` : record.key}
+                {record.alias
+                  ? `${record.alias}${isProject ? " [" + record.key + "]" : ""}`
+                  : record.key}
               </NavLink>
               {record.selectedReleaseMetrics && <div>Selected release:</div>}
             </React.Fragment>
@@ -426,7 +425,10 @@ class SourceMetrics extends React.Component {
                 </div>
               ),
             }}
-            pagination={{ pageSize: 100 }}
+            pagination={{
+              pageSize: 1000,
+              hideOnSinglePage: true,
+            }}
           />
         )}
       </React.Fragment>
