@@ -311,12 +311,14 @@ class DatasetMeta extends React.Component {
                 />
               }
             >
-              {displayData.description && (
+              {displayData.description ? (
                 <span
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(marked(displayData.description)),
                   }}
                 ></span>
+              ) : (
+                displayData.description
               )}
             </PresentationItem>
             {/* <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>

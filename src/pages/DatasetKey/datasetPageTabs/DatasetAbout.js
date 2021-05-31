@@ -101,11 +101,15 @@ class DatasetAbout extends React.Component {
                 pathToSearch={`/dataset/${datasetKey}/names`}
               />  */}
                 <PresentationItem label="Description">
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(marked(dataset.description)),
-                    }}
-                  ></span>
+                  {dataset.description ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(marked(dataset.description)),
+                      }}
+                    ></span>
+                  ) : (
+                    dataset.description
+                  )}
                 </PresentationItem>
 
                 <PresentationItem label="Organisation">
