@@ -42,6 +42,7 @@ class TaxonPage extends React.Component {
       verbatim: null,
       logoUrl: null,
       sourceDataset: null,
+      sourceTaxon: null,
       includes: [],
     };
   }
@@ -82,6 +83,16 @@ class TaxonPage extends React.Component {
     axios(`${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}`)
       .then((res) => {
         let promises = [res];
+
+        promises.push(
+          axios(
+            `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/source`
+          )
+            .then((sourceTaxon) => {
+              this.setState({ sourceTaxon: sourceTaxon.data });
+            })
+            .catch((e) => this.setState({ sourceTaxon: null }))
+        );
 
         if (_.get(res, "data.name")) {
           promises.push(
@@ -244,6 +255,7 @@ class TaxonPage extends React.Component {
       info,
       classification,
       sourceDataset,
+      sourceTaxon,
       taxonError,
       synonymsError,
       classificationError,
@@ -489,6 +501,18 @@ class TaxonPage extends React.Component {
                   />
                 )}
               </div>
+            </PresentationItem>
+          )}
+          {sourceTaxon && (
+            <PresentationItem md={md} label="Source taxon">
+              <NavLink
+                to={{
+                  pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
+                }}
+                exact={true}
+              >
+                {sourceTaxon.sourceId}
+              </NavLink>
             </PresentationItem>
           )}
           {_.get(taxon, "link") && (
