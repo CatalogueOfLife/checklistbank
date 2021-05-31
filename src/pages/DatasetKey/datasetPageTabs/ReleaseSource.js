@@ -3,6 +3,9 @@ import config from "../../../config";
 import axios from "axios";
 import { Alert, Rate, Row, Col, Divider } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
+import Exception from "../../../components/exception/Exception";
+import { Link } from "react-router-dom";
+
 import Metrics from "../../../components/ReleaseSourceMetrics";
 import _ from "lodash";
 import PresentationItem from "../../../components/PresentationItem";
@@ -54,9 +57,19 @@ class ReleaseSource extends React.Component {
             fontSize: "12px",
           }}
         >
-          {datasetError && (
-            <Alert message={<ErrorMsg error={datasetError} />} type="error" />
-          )}
+          {datasetError &&
+            _.get(datasetError, "response.data.code") !== 404 && (
+              <Alert message={<ErrorMsg error={datasetError} />} type="error" />
+            )}
+          {datasetError &&
+            _.get(datasetError, "response.data.code") === 404 && (
+              <Exception
+                type="404"
+                desc="Sorry, the page you visited does not exist"
+                linkElement={Link}
+                backText="Back to dashboard"
+              />
+            )}
           {data && (
             <Row>
               <Col flex="auto">
