@@ -93,7 +93,7 @@ class DatasetDownload extends React.Component {
 
     const { dataFormat, dataset, location, user, rank } = this.props;
 
-    return user ? (
+    return (
       <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
         {dataset.origin === "external" && (
@@ -111,7 +111,7 @@ class DatasetDownload extends React.Component {
             </Col>
           </Row>
         )}
-        <Row>
+        <Row style={{ marginRight: "0px", marginBottom: "10px" }}>
           <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose format
           </Col>
@@ -131,23 +131,25 @@ class DatasetDownload extends React.Component {
             />
           </Col>
           <Col span={6} style={{ textAlign: "right" }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                let options = { format: selectedDataFormat, synonyms, excel };
-                if (rootTaxon) {
-                  options.root = {};
-                  options.root.id = rootTaxon.id;
-                }
-                if (minRank) {
-                  options.minRank = minRank;
-                }
-                this.exportDataset(options);
-              }}
-              style={{ marginRight: "0px", marginBottom: "10px" }}
-            >
-              Download <DownloadOutlined />
-            </Button>
+            {user && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  let options = { format: selectedDataFormat, synonyms, excel };
+                  if (rootTaxon) {
+                    options.root = {};
+                    options.root.id = rootTaxon.id;
+                  }
+                  if (minRank) {
+                    options.minRank = minRank;
+                  }
+                  this.exportDataset(options);
+                }}
+              >
+                Download <DownloadOutlined />
+              </Button>
+            )}
+            {!user && `Please login to create downloads`}
           </Col>
         </Row>
         <Row>
@@ -217,8 +219,9 @@ class DatasetDownload extends React.Component {
           <Col span={24}>
             <Divider plain>Please cite as:</Divider>
             <CopyToClipboard
-              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${dataset.citation || this.createCitation()
-                }`}
+              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
+                dataset.citation || this.createCitation()
+              }`}
               onCopy={() => message.info(`Copied citation to clipboard`)}
             >
               <p style={{ textAlign: "center", cursor: "pointer" }}>
@@ -251,8 +254,6 @@ class DatasetDownload extends React.Component {
           </CopyToClipboard>
         </Modal>
       </PageContent>
-    ) : (
-      <Exception403 />
     );
   }
 }

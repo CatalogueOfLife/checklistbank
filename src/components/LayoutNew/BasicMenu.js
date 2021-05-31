@@ -35,13 +35,8 @@ const styles = {};
 
 class BasicMenu extends Component {
   componentDidMount = () => {
-    const {
-      selectedKeys,
-      openKeys,
-      _openKeys,
-      setSelectedKeys,
-      setOpenKeys,
-    } = this.props;
+    const { selectedKeys, openKeys, _openKeys, setSelectedKeys, setOpenKeys } =
+      this.props;
     if (openKeys) {
       setOpenKeys([...new Set([...openKeys, ..._openKeys])]);
     }
@@ -642,20 +637,20 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {user && (
-                <Menu.Item key="download">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/download`,
-                    }}
-                  >
-                    Download
-                  </NavLink>
-                </Menu.Item>
-              )}
+
+              <Menu.Item key="download">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(
+                      selectedDataset,
+                      "key"
+                    )}/download`,
+                  }}
+                >
+                  Download
+                </NavLink>
+              </Menu.Item>
+
               {selectedDataset &&
                 ["released", "managed"].includes(
                   _.get(selectedDataset, "origin")
