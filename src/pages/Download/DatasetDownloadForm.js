@@ -15,6 +15,7 @@ import {
   Col,
   Divider,
   Checkbox,
+  Tag,
 } from "antd";
 import axios from "axios";
 import config from "../../config";
@@ -156,7 +157,7 @@ class DatasetDownload extends React.Component {
           <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose root taxon (optional)
           </Col>
-          <Col span={14}>
+          <Col span={10}>
             <NameAutocomplete
               minRank="GENUS"
               datasetKey={dataset.key}
@@ -179,6 +180,28 @@ class DatasetDownload extends React.Component {
                 this.setState({ rootTaxon: null });
               }}
             />
+          </Col>
+
+          <Col span={10} style={{ textAlign: "right" }}>
+            {rootTaxon && (
+              <React.Fragment>
+                Selected root taxon:{" "}
+                <Tag
+                  closable
+                  onClose={() => {
+                    history.push({
+                      pathname: location.pathname,
+                    });
+                    this.setState({ rootTaxon: null });
+                  }}
+                >
+                  <span
+                    dangerouslySetInnerHTML={{ __html: rootTaxon.labelHtml }}
+                  />
+                </Tag>
+              </React.Fragment>
+            )}
+            {!rootTaxon && "No root taxon selected"}
           </Col>
         </Row>
         <Row>
