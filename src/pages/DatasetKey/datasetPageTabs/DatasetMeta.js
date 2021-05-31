@@ -441,7 +441,7 @@ class DatasetMeta extends React.Component {
             >
               {displayData.completeness}
             </PresentationItem>
-            <PresentationItem
+            {/*             <PresentationItem
               label={
                 <FormattedMessage
                   id="contributesTo"
@@ -450,7 +450,7 @@ class DatasetMeta extends React.Component {
               }
             >
               {displayData.contributesToDatasets}
-            </PresentationItem>
+            </PresentationItem> */}
             <PresentationItem
               label={
                 <FormattedMessage id="gbifKey" defaultMessage="GBIF Key" />
@@ -464,16 +464,6 @@ class DatasetMeta extends React.Component {
                   {displayData.gbifKey}
                 </a>
               )}
-            </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="importFrequency"
-                  defaultMessage="Automated Import Frequency"
-                />
-              }
-            >
-              {displayData.importFrequency}
             </PresentationItem>
             <PresentationItem
               label={

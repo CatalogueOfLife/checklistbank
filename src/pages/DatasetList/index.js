@@ -329,6 +329,8 @@ class DatasetList extends React.Component {
     };
     if (params.releasedFrom) {
       query.releasedFrom = params.releasedFrom;
+      query.sortBy = "created";
+      query.reverse = true;
     }
     if (sorter) {
       query.sortBy = sorter.field;
@@ -347,14 +349,8 @@ class DatasetList extends React.Component {
   };
 
   render() {
-    const {
-      data,
-      loading,
-      error,
-      excludeColumns,
-      defaultColumns,
-      params,
-    } = this.state;
+    const { data, loading, error, excludeColumns, defaultColumns, params } =
+      this.state;
     const { datasetOrigin } = this.props;
     defaultColumns[6].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
