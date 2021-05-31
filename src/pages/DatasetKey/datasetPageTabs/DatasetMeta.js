@@ -220,7 +220,7 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
               <Col>
-                {data && !data.deleted && (
+                {!catalogueKey && data && !data.deleted && (
                   <Popconfirm
                     title={`Make dataset ${
                       data.private ? "public" : "private"
@@ -408,6 +408,11 @@ class DatasetMeta extends React.Component {
               }
             >
               {displayData.geographicScope}
+            </PresentationItem>
+            <PresentationItem
+              label={<FormattedMessage id="DOI" defaultMessage="DOI" />}
+            >
+              {displayData.doi}
             </PresentationItem>
             <PresentationItem
               label={
