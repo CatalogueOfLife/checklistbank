@@ -265,7 +265,7 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Received by COL"
+          label="Released"
           name="released"
           help={
             originalData ? (
