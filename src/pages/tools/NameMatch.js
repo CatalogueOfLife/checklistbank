@@ -24,6 +24,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import history from "../../history";
@@ -33,7 +34,8 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import { Converter } from "csvtojson/v1";
-import ImportChart from "../../components/ImportChart";
+
+const MAX_LIST_SIZE = 6000;
 
 const { Dragger } = Upload;
 const { TextArea } = Input;
@@ -56,23 +58,6 @@ const getLowerKeysObj = (obj) => {
     newobj[key.toLowerCase()] = obj[key];
   }
   return newobj;
-};
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 4 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-
-const tailLayout = {
-  wrapperCol: {
-    offset: 4,
-    span: 16,
-  },
 };
 
 const MatchProgress = ({ matched, total }) => {
@@ -114,6 +99,9 @@ const NameMatch = () => {
   const [step, setStep] = useState(0);
   const [primaryDataset, setPrimaryDataset] = useState(COL_LR);
   const [secondaryDataset, setSecondaryDataset] = useState(null);
+  const [subjectDataset, setSubjectDataset] = useState(null);
+  const [subjectTaxon, setSubjectTaxon] = useState(null);
+  const [subjectDataTotal, setSubjectDataTotal] = useState(null);
   const [numMatchedNames, setNumMatchedNames] = useState(0);
   const [nameIndexMetrics, setNameIndexMetrics] = useState(null);
   const [primaryUsageMetrics, setPrimaryUsageMetrics] = useState(null);
@@ -191,6 +179,42 @@ const NameMatch = () => {
         file.name.indexOf(".csv") > 1)
     );
   };
+  const matchResult = (result) => {
+    setNames(result);
+    setStep(1);
+    let matchedNames = 0;
+    Promise.allSettled(
+      result.map((name) =>
+        match(name).then(() => {
+          matchedNames++;
+          setNumMatchedNames(matchedNames);
+        })
+      )
+    ).then(() => {
+      const grouped = _.groupBy(result, "matchType");
+      let metrics = {};
+      Object.keys(grouped).forEach((k, v) => {
+        metrics[k] = grouped[k].length;
+      });
+      let hasPrimaryDatasetUsageCount = 0;
+      let hasSecondaryDatasetUsageCount = 0;
+      result.forEach((r) => {
+        if (r.primaryDatasetUsage) {
+          hasPrimaryDatasetUsageCount++;
+        }
+        if (r.secondaryDatasetUsage) {
+          hasSecondaryDatasetUsageCount++;
+        }
+      });
+      setPrimaryUsageMetrics(hasPrimaryDatasetUsageCount);
+
+      if (secondaryDataset) {
+        setSecondaryUsageMetrics(hasSecondaryDatasetUsageCount);
+      }
+      setNameIndexMetrics(metrics);
+      setStep(2);
+    });
+  };
   const parseFile = (file) => {
     let invalidFileFormat = false;
     if (!isValidFile(file)) {
@@ -232,40 +256,7 @@ const NameMatch = () => {
                 e.code = e.code || defaultCode;
                 e.scientificName = undefined;
               });
-              setNames(result);
-              setStep(1);
-              let matchedNames = 0;
-              Promise.allSettled(
-                result.map((name) =>
-                  match(name).then(() => {
-                    matchedNames++;
-                    setNumMatchedNames(matchedNames);
-                  })
-                )
-              ).then(() => {
-                const grouped = _.groupBy(result, "matchType");
-                let metrics = {};
-                Object.keys(grouped).forEach((k, v) => {
-                  metrics[k] = grouped[k].length;
-                });
-                let hasPrimaryDatasetUsageCount = 0;
-                let hasSecondaryDatasetUsageCount = 0;
-                result.forEach((r) => {
-                  if (r.primaryDatasetUsage) {
-                    hasPrimaryDatasetUsageCount++;
-                  }
-                  if (r.secondaryDatasetUsage) {
-                    hasSecondaryDatasetUsageCount++;
-                  }
-                });
-                setPrimaryUsageMetrics(hasPrimaryDatasetUsageCount);
-
-                if (secondaryDataset) {
-                  setSecondaryUsageMetrics(hasSecondaryDatasetUsageCount);
-                }
-                setNameIndexMetrics(metrics);
-                setStep(2);
-              });
+              matchResult(result);
             } else {
               setError(
                 "all rows must have a scientificName - see example file for the required format"
@@ -349,7 +340,28 @@ const NameMatch = () => {
     beforeUpload(file) {
       return parseFile(file);
     },
-    style: { marginTop: "10px" },
+  };
+
+  const testSizeLimit = async (tx) => {
+    const {
+      data: { total },
+    } = await axios(
+      `${config.dataApi}dataset/${subjectDataset.key}/nameusage/search?TAXON_ID=${tx.key}&limit=0`
+    );
+    setSubjectDataTotal(total);
+  };
+
+  const getSubjectDataAndMatch = async () => {
+    const { data } = await axios(
+      `${config.dataApi}dataset/${subjectDataset.key}/export/${subjectTaxon.key}.json`
+    );
+    const result = data.map((e) => ({
+      providedScientificName: e.label,
+      code: e.code || defaultCode,
+      scientificName: undefined,
+    }));
+    matchResult(result);
+    // console.log(data[0]);
   };
 
   return (
@@ -368,6 +380,7 @@ const NameMatch = () => {
           <Step
             title={"Matching"}
             icon={step === 1 ? <LoadingOutlined /> : null}
+            disabled={step !== 1}
           />
           <Step title={"Review result"} disabled />
         </Steps>
@@ -412,7 +425,7 @@ const NameMatch = () => {
                     <Statistic
                       title={"Usages"}
                       value={primaryUsageMetrics}
-                      suffix={`/ ${names.length}`}
+                      suffix={`/ ${names.length.toLocaleString()}`}
                     />
                   </Col>
                   <Col>
@@ -484,22 +497,78 @@ const NameMatch = () => {
         )}
 
         {step === 0 && (
-          <Dragger {...draggerProps}>
-            <p className="ant-upload-drag-icon">
-              <UploadOutlined />
-            </p>
-            <p className="ant-upload-text">
-              Click or drag csv file to this area to upload
-            </p>
-            <p className="ant-upload-hint">
-              Your csv must contain a column{" "}
-              <code className="code">scientificName</code> (which may include
-              the author) and optional columns{" "}
-              <code className="code">author</code>,{" "}
-              <code className="code">rank</code> and{" "}
-              <code className="code">code</code> (nomenclatural code)
-            </p>
-          </Dragger>
+          <Row style={{ marginTop: "10px" }}>
+            <Col span={12} style={{ paddingRight: "8px" }}>
+              <Dragger {...draggerProps}>
+                <p className="ant-upload-drag-icon">
+                  <UploadOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag csv file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Your csv must contain a column{" "}
+                  <code className="code">scientificName</code> (which may
+                  include the author) and optional columns{" "}
+                  <code className="code">author</code>,{" "}
+                  <code className="code">rank</code> and{" "}
+                  <code className="code">code</code> (nomenclatural code)
+                </p>
+              </Dragger>
+            </Col>
+            <Col span={12} style={{ paddingRight: "8px", paddingLeft: "8px" }}>
+              Or select a subject dataset:
+              <DatasetAutocomplete
+                onResetSearch={() => {
+                  setSubjectDataset(null);
+                  setSubjectTaxon(null);
+                }}
+                onSelectDataset={(dataset) => {
+                  setSubjectDataset(dataset);
+                  setSubjectTaxon(null);
+                }}
+                placeHolder="Choose subject dataset"
+              />
+              And a root taxon:
+              <NameAutocomplete
+                minRank="GENUS"
+                datasetKey={_.get(subjectDataset, "key")}
+                onError={setError}
+                disabled={!subjectDataset}
+                onSelectName={(name) => {
+                  setSubjectTaxon(name);
+                  testSizeLimit(name);
+                }}
+                onResetSearch={() => {
+                  setSubjectTaxon(null);
+                  setSubjectDataTotal(null);
+                }}
+              />
+              {!_.isNull(subjectDataTotal) &&
+                subjectDataTotal <= MAX_LIST_SIZE && (
+                  <Button
+                    onClick={getSubjectDataAndMatch}
+                    style={{ marginTop: "10px" }}
+                    type="primary"
+                  >
+                    Match {subjectDataTotal.toLocaleString()} names
+                  </Button>
+                )}
+              {!_.isNull(subjectDataTotal) && subjectDataTotal > MAX_LIST_SIZE && (
+                <Alert
+                  message="Too many names"
+                  description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
+                  type="error"
+                  style={{ marginTop: "10px" }}
+                  closable
+                  onClose={() => {
+                    setSubjectTaxon(null);
+                    setSubjectDataTotal(null);
+                  }}
+                />
+              )}
+            </Col>
+          </Row>
         )}
         {step === 1 && (
           <MatchProgress total={names.length} matched={numMatchedNames} />
