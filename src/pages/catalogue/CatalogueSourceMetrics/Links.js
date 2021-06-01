@@ -3,9 +3,29 @@ basePath will be either /dataset/:key (release source metrics) or catalogue/:key
 */
 
 export default {
+  sectorCount: (key, SECTOR_DATASET_KEY, basePath) => ({
+    pathname: `${basePath}/about`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
+  }),
+  synonymCount: (key, SECTOR_DATASET_KEY, basePath) => ({
+    pathname: `${basePath}/names`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
+  }),
+  taxonCount: (key, SECTOR_DATASET_KEY, basePath) => ({
+    pathname: `${basePath}/names`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=accepted&status=provisionally%20accepted`,
+  }),
+  bareNameCount: (key, SECTOR_DATASET_KEY, basePath) => ({
+    pathname: `${basePath}/names`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=bare%20name`,
+  }),
   taxaByRankCount: (key, SECTOR_DATASET_KEY, basePath) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&rank=${key}`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=accepted&status=provisionally%20accepted&rank=${key}`,
+  }),
+  synonymsByRankCount: (key, SECTOR_DATASET_KEY, basePath) => ({
+    pathname: `${basePath}/names`,
+    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied&rank=${key}`,
   }),
   usagesByStatusCount: (key, SECTOR_DATASET_KEY, basePath) => ({
     pathname: `${basePath}/names`,
