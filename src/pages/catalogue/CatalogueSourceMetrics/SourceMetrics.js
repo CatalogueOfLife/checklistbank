@@ -3,6 +3,7 @@ import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
 import { Table, Alert, Row, Col, Form, Select, Switch } from "antd";
+import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import config from "../../../config";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
@@ -27,18 +28,14 @@ const defaultViewColumnOrder =
     " "
   );
 
-const getColorForDiff = (current, released) => {
+const getIconForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : -1;
-  if (pct === -1) {
-    return "grey";
-  } else if (pct === 100) {
-    return "green";
+  if (pct === -1 || pct === 100) {
+    return "";
   } else if (pct > 100) {
-    return "orange";
-  } else if (pct >= 75) {
-    return "orange";
-  } else {
-    return "red";
+    return <ArrowUpOutlined style={{ color: "green" }} />;
+  } else if (pct < 100) {
+    return <ArrowDownOutlined style={{ color: "red" }} />;
   }
 };
 
@@ -265,23 +262,19 @@ class SourceMetrics extends React.Component {
                     }}
                     exact={true}
                   >
-                    {Number(text || 0).toLocaleString()}
+                    {Number(text || 0).toLocaleString()}{" "}
+                    {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                   </NavLink>
                 )}
-                {typeof Links[linkKey] !== "function" &&
-                  Number(text || 0).toLocaleString()}
+                {typeof Links[linkKey] !== "function" && (
+                  <React.Fragment>
+                    {Number(text || 0).toLocaleString()}{" "}
+                    {getIconForDiff(text || 0, selectedRelaseValue || 0)}
+                  </React.Fragment>
+                )}
 
                 {record.selectedReleaseMetrics && (
-                  <div
-                    style={{
-                      color: getColorForDiff(
-                        text || 0,
-                        selectedRelaseValue || 0
-                      ),
-                    }}
-                  >
-                    {Number(selectedRelaseValue || 0).toLocaleString()}
-                  </div>
+                  <div>{Number(selectedRelaseValue || 0).toLocaleString()}</div>
                 )}
               </React.Fragment>
             );
