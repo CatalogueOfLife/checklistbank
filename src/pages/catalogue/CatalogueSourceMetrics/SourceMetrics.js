@@ -8,6 +8,7 @@ import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import TaxonomicCoverage from "./TaxonomicCoverage";
+import Links from "./Links";
 const _ = require("lodash");
 
 const formItemLayout = {
@@ -219,7 +220,7 @@ class SourceMetrics extends React.Component {
       releaseKey,
       filteredData,
     } = this.state;
-    const { catalogueKey, datasetKey, location, rank, namesPath, isProject } =
+    const { catalogueKey, datasetKey, location, rank, basePath, isProject } =
       this.props;
 
     const columnsSorter =
@@ -249,17 +250,27 @@ class SourceMetrics extends React.Component {
                     record,
                     `selectedReleaseMetrics[${selectedGroup}][${column}]`
                   );
+
+            const linkKey =
+              selectedGroup === "default" ? column : selectedGroup;
             return (
               <React.Fragment>
-                <NavLink
-                  to={{
-                    pathname: namesPath,
-                    search: `?SECTOR_DATASET_KEY=${record.key}`,
-                  }}
-                  exact={true}
-                >
-                  {Number(text || 0).toLocaleString()}
-                </NavLink>
+                {typeof Links[linkKey] === "function" && (
+                  <NavLink
+                    to={{
+                      pathname: Links[linkKey](column, record.key, basePath)
+                        .pathname,
+                      search: Links[linkKey](column, record.key, basePath)
+                        .search,
+                    }}
+                    exact={true}
+                  >
+                    {Number(text || 0).toLocaleString()}
+                  </NavLink>
+                )}
+                {typeof Links[linkKey] !== "function" &&
+                  Number(text || 0).toLocaleString()}
+
                 {record.selectedReleaseMetrics && (
                   <div
                     style={{

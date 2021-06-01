@@ -30,7 +30,7 @@ class CatalogueSourceMetrics extends React.Component {
             isProject={true}
             catalogueKey={catalogueKey}
             datasetKey={catalogueKey}
-            namesPath={`/catalogue/${catalogueKey}/names`}
+            basePath={`/catalogue/${catalogueKey}/names`}
           />
         </div>
       </Layout>
