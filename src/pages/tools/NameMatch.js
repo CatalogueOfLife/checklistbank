@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Input,
   Row,
@@ -13,9 +12,6 @@ import {
   Upload,
   Form,
   Tag,
-  message,
-  Typography,
-  Space,
 } from "antd";
 import { CSVLink } from "react-csv";
 import {
@@ -27,18 +23,17 @@ import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
-import history from "../../history";
 import PageContent from "../../components/PageContent";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import { Converter } from "csvtojson/v1";
+import PQueue from "p-queue";
 
 const MAX_LIST_SIZE = 6000;
 
 const { Dragger } = Upload;
-const { TextArea } = Input;
 const Step = Steps.Step;
 const defaultRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
 const FormItem = Form.Item;
@@ -101,12 +96,13 @@ const NameMatch = () => {
   const [secondaryDataset, setSecondaryDataset] = useState(null);
   const [subjectDataset, setSubjectDataset] = useState(null);
   const [subjectTaxon, setSubjectTaxon] = useState(null);
+  const [subjectDataLoading, setSubjectDataLoading] = useState(false);
   const [subjectDataTotal, setSubjectDataTotal] = useState(null);
   const [numMatchedNames, setNumMatchedNames] = useState(0);
   const [nameIndexMetrics, setNameIndexMetrics] = useState(null);
   const [primaryUsageMetrics, setPrimaryUsageMetrics] = useState(null);
   const [secondaryUsageMetrics, setSecondaryUsageMetrics] = useState(null);
-
+  // const [erroredNames, setErroredNames] = useState(null);
   const match = async (name) => {
     try {
       let nidxParams = `?q=${name.providedScientificName}`;
@@ -163,9 +159,10 @@ const NameMatch = () => {
       } else {
         name.matchType = "none";
       }
-    } catch (err) {
+    } catch (error) {
       name.matchType = "none";
-      console.log(err);
+      name.error = error;
+      console.log(error);
       //setError(err.message);
     }
   };
@@ -179,41 +176,46 @@ const NameMatch = () => {
         file.name.indexOf(".csv") > 1)
     );
   };
-  const matchResult = (result) => {
+  const matchResult = async (result) => {
     setNames(result);
     setStep(1);
     let matchedNames = 0;
-    Promise.allSettled(
-      result.map((name) =>
+    const queue = new PQueue({ concurrency: 10 });
+
+    result.map((name) =>
+      queue.add(() =>
         match(name).then(() => {
           matchedNames++;
           setNumMatchedNames(matchedNames);
         })
       )
-    ).then(() => {
-      const grouped = _.groupBy(result, "matchType");
-      let metrics = {};
-      Object.keys(grouped).forEach((k, v) => {
-        metrics[k] = grouped[k].length;
-      });
-      let hasPrimaryDatasetUsageCount = 0;
-      let hasSecondaryDatasetUsageCount = 0;
-      result.forEach((r) => {
-        if (r.primaryDatasetUsage) {
-          hasPrimaryDatasetUsageCount++;
-        }
-        if (r.secondaryDatasetUsage) {
-          hasSecondaryDatasetUsageCount++;
-        }
-      });
-      setPrimaryUsageMetrics(hasPrimaryDatasetUsageCount);
+    );
+    await queue.onIdle();
 
-      if (secondaryDataset) {
-        setSecondaryUsageMetrics(hasSecondaryDatasetUsageCount);
-      }
-      setNameIndexMetrics(metrics);
-      setStep(2);
+    // const erroredNames = result.filter((n) => !!n.error);
+    // console.log(erroredNames.length);
+    const grouped = _.groupBy(result, "matchType");
+    let metrics = {};
+    Object.keys(grouped).forEach((k, v) => {
+      metrics[k] = grouped[k].length;
     });
+    let hasPrimaryDatasetUsageCount = 0;
+    let hasSecondaryDatasetUsageCount = 0;
+    result.forEach((r) => {
+      if (r.primaryDatasetUsage) {
+        hasPrimaryDatasetUsageCount++;
+      }
+      if (r.secondaryDatasetUsage) {
+        hasSecondaryDatasetUsageCount++;
+      }
+    });
+    setPrimaryUsageMetrics(hasPrimaryDatasetUsageCount);
+
+    if (secondaryDataset) {
+      setSecondaryUsageMetrics(hasSecondaryDatasetUsageCount);
+    }
+    setNameIndexMetrics(metrics);
+    setStep(2);
   };
   const parseFile = (file) => {
     let invalidFileFormat = false;
@@ -352,6 +354,7 @@ const NameMatch = () => {
   };
 
   const getSubjectDataAndMatch = async () => {
+    setSubjectDataLoading(true);
     const { data } = await axios(
       `${config.dataApi}dataset/${subjectDataset.key}/export/${subjectTaxon.key}.json`
     );
@@ -360,6 +363,8 @@ const NameMatch = () => {
       code: e.code || defaultCode,
       scientificName: undefined,
     }));
+    setSubjectDataLoading(false);
+
     matchResult(result);
     // console.log(data[0]);
   };
@@ -550,6 +555,7 @@ const NameMatch = () => {
                     onClick={getSubjectDataAndMatch}
                     style={{ marginTop: "10px" }}
                     type="primary"
+                    loading={subjectDataLoading}
                   >
                     Match {subjectDataTotal.toLocaleString()} names
                   </Button>
