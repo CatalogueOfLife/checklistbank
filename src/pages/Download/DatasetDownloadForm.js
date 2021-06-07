@@ -40,15 +40,33 @@ class DatasetDownload extends React.Component {
       rootTaxon: null,
       synonyms: true,
       excel: false,
+      dataAccess: null,
     };
   }
 
   componentDidMount = () => {
     const { location } = this.props;
+    this.getSettings();
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
     if (taxonID) {
       this.getRootTaxon(taxonID);
     }
+  };
+
+  getSettings = () => {
+    const {
+      dataset: { key },
+    } = this.props;
+
+    this.setState({ loading: true });
+    axios(`${config.dataApi}dataset/${key}/settings`)
+      .then((res) => {
+        this.setState({ dataAccess: _.get(res, 'data["data access"]') });
+      })
+      .catch((err) => {
+        console.log(err);
+        //this.setState({ loading: false, error: err, data: null });
+      });
   };
 
   exportDataset = (options) => {
@@ -88,9 +106,17 @@ class DatasetDownload extends React.Component {
       .catch((err) => addError(err));
   };
   render() {
-    const { error, rootTaxon, synonyms, excel, minRank } = this.state;
-
-    const { selectedDataFormat, downloadModalVisible, exportUrl } = this.state;
+    const {
+      error,
+      rootTaxon,
+      synonyms,
+      excel,
+      minRank,
+      dataAccess,
+      selectedDataFormat,
+      downloadModalVisible,
+      exportUrl,
+    } = this.state;
 
     const { dataFormat, dataset, location, user, rank } = this.props;
 
@@ -109,6 +135,14 @@ class DatasetDownload extends React.Component {
               >
                 original archive
               </a>
+              {dataAccess && (
+                <React.Fragment>
+                  {", "}
+                  <a href={dataAccess} target="_blank">
+                    external source archive
+                  </a>
+                </React.Fragment>
+              )}
             </Col>
           </Row>
         )}
