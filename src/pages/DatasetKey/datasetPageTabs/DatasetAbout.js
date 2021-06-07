@@ -142,7 +142,7 @@ class DatasetAbout extends React.Component {
                 <PresentationItem label="Checklist Confidence">
                   {<Rate defaultValue={dataset.confidence} disabled></Rate>}
                 </PresentationItem>
-
+                <PresentationItem label={"DOI"}>{dataset.doi}</PresentationItem>
                 <PresentationItem label="Citation">
                   {dataset.citation || "-"}
                 </PresentationItem>
