@@ -98,7 +98,7 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/names`,
+            pathname: `/dataset/${datasetKey}/about`,
           }}
         />
       );
