@@ -597,7 +597,11 @@ class CatalogueDecisions extends React.Component {
             <Col style={{ textAlign: "right" }}>
               <Popconfirm
                 placement="rightTop"
-                title={`Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`}
+                title={
+                  params.subjectDatasetKey
+                    ? `Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`
+                    : `Do you want to rematch all decisions?`
+                }
                 onConfirm={() =>
                   this.rematchDecisions(params.subjectDatasetKey)
                 }
