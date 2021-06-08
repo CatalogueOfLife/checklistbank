@@ -763,7 +763,7 @@ class WorkBench extends React.Component {
                   </RadioGroup>
                 </FormItem>
 
-                <FormItem
+                {/*                 <FormItem
                   style={{
                     marginBottom: "10px",
                   }}
@@ -787,17 +787,9 @@ class WorkBench extends React.Component {
                     <Radio value="_NOT_NULL">Only bare names</Radio>
                     <Radio value={undefined}>All</Radio>
                   </RadioGroup>
-                </FormItem>
+                </FormItem> */}
               </Form>
             </div>
-
-            <Button
-              type="danger"
-              onClick={this.resetSearch}
-              style={{ width: "120px" }}
-            >
-              Reset search
-            </Button>
           </Col>
           <Col span={10}>
             <MultiValueFilter
@@ -886,34 +878,46 @@ class WorkBench extends React.Component {
 
               {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
             </div>
-            <div style={{ textAlign: "right", marginBottom: "8px" }}>
-              <FormItem
-                style={{
-                  marginLeft: "10px",
-                  marginBottom: "10px",
+          </Col>
+        </Row>
+        <Row>
+          <Col span={14}>
+            {" "}
+            <Button
+              type="danger"
+              onClick={this.resetSearch}
+              style={{ width: "120px" }}
+            >
+              Reset search
+            </Button>
+          </Col>
+          <Col span={10} style={{ textAlign: "right" }}>
+            <FormItem
+              style={{
+                marginLeft: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              <RadioGroup
+                onChange={(evt) => {
+                  if (typeof evt.target.value === "undefined") {
+                    this.setState(
+                      {
+                        params: _.omit(this.state.params, ["decisionMode"]),
+                      },
+                      this.getData
+                    );
+                  } else {
+                    this.updateSearch({ decisionMode: evt.target.value });
+                  }
                 }}
+                value={params.decisionMode}
               >
-                <RadioGroup
-                  onChange={(evt) => {
-                    if (typeof evt.target.value === "undefined") {
-                      this.setState(
-                        {
-                          params: _.omit(this.state.params, ["decisionMode"]),
-                        },
-                        this.getData
-                      );
-                    } else {
-                      this.updateSearch({ decisionMode: evt.target.value });
-                    }
-                  }}
-                  value={params.decisionMode}
-                >
-                  <Radio value="_NOT_NULL">With decision</Radio>
-                  <Radio value="_NULL">Without decision</Radio>
-                  <Radio value={undefined}>All</Radio>
-                </RadioGroup>
-              </FormItem>
-            </div>
+                <Radio value="_NOT_NULL">With decision</Radio>
+                <Radio value="_NULL">Without decision</Radio>
+                <Radio value={undefined}>All</Radio>
+              </RadioGroup>
+            </FormItem>
           </Col>
         </Row>
         <Row>
