@@ -23,6 +23,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
         { ...sector, code: code }
       )
       .then(() => {
+        sector.code = code;
         notification.open({
           message: "Nom. code for sector updated",
           description: `New code is ${code}`,
@@ -43,7 +44,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
       )
       .then(() => {
         notification.open({
-          message: `${targetOrSubject} updated`,
+          message: `${targetOrSubject} updated, please refresh tree`,
         });
       })
       .catch((err) => {
@@ -53,13 +54,14 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
       });
   };
 
-  const updateSectorRank = (rank) => {
+  const updateSectorRank = (ranks) => {
     axios
       .put(
         `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, rank: rank }
+        { ...sector, ranks: ranks }
       )
       .then(() => {
+        sector.ranks = ranks;
         notification.open({
           message: "Ranks for sector configured",
         });
@@ -78,6 +80,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
         { ...sector, placeholderRank: rank }
       )
       .then(() => {
+        sector.placeholderRank = rank;
         notification.open({
           message: "Placeholder rank for sector configured",
         });
@@ -96,6 +99,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
         { ...sector, note: note }
       )
       .then(() => {
+        sector.note = note;
         notification.open({
           message: "Sector note updated:",
           description: note,
@@ -115,6 +119,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
         { ...sector, entities: entities }
       )
       .then(() => {
+        sector.entities = entities;
         notification.open({
           message: "Sector entities updated",
         });
@@ -154,7 +159,7 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
           <Select
             mode="multiple"
             style={{ width: "100%" }}
-            defaultValue={sector.rank || []}
+            defaultValue={sector.ranks || []}
             onChange={(value) => updateSectorRank(value)}
             showSearch
             allowClear

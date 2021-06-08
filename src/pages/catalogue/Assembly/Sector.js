@@ -28,6 +28,7 @@ import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
 import Auth from "../../../components/Auth";
 import SectorForm from "./SectorForm";
+import PresentationItem from "../../../components/PresentationItem";
 
 class Sector extends React.Component {
   constructor(props) {
@@ -69,9 +70,9 @@ class Sector extends React.Component {
             !syncingSector && idle
               ? `Copying taxa from ${sector.id}`
               : `Awaiting sector ${_.get(syncingSector, "id")} (${_.get(
-                syncingSector,
-                "subject.name"
-              )})`,
+                  syncingSector,
+                  "subject.name"
+                )})`,
         });
       })
       .catch((err) => {
@@ -253,7 +254,7 @@ class Sector extends React.Component {
                 style={{ marginTop: "8px" }}
                 checked={showEditForm}
                 onChange={(checked) => this.setState({ showEditForm: checked })}
-                checkedChildren="Cancel"
+                checkedChildren="Finish edit"
                 unCheckedChildren="Edit sector"
               />
             )}
@@ -263,6 +264,30 @@ class Sector extends React.Component {
                 sector={sector}
                 onError={(err) => this.setState({ error: err })}
               />
+            )}
+            {isRootSector && !showEditForm && (
+              <React.Fragment>
+                {sector.code && (
+                  <PresentationItem label="Nom. code">
+                    {sector.code}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "ranks[0]") && (
+                  <PresentationItem label="Ranks">
+                    {sector.ranks.join(", ")}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "entities[0]") && (
+                  <PresentationItem label="Entities">
+                    {sector.entities.join(", ")}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "note") && (
+                  <PresentationItem label="Note">
+                    {sector.note}
+                  </PresentationItem>
+                )}
+              </React.Fragment>
             )}
             {error && (
               <Alert
