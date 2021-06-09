@@ -61,18 +61,24 @@ class DatasetMeta extends React.Component {
   };
 
   getPatch = () => {
-    const { id, catalogueKey } = this.props;
+    const { id, catalogueKey, addError } = this.props;
 
     axios(`${config.dataApi}dataset/${catalogueKey}/patch/${id}`)
       .then((res) => this.setState({ patch: res.data, patchError: null }))
-      .catch((err) => this.setState({ patchError: err, patch: null }));
+      .catch((err) => {
+        addError(err);
+        this.setState({ patchError: err, patch: null });
+      });
   };
   getSourceMeta = () => {
-    const { id, catalogueKey } = this.props;
+    const { id, catalogueKey, addError } = this.props;
 
     axios(`${config.dataApi}dataset/${catalogueKey}/source/${id}`)
       .then((res) => this.setState({ sourceMeta: res.data, sourceError: null }))
-      .catch((err) => this.setState({ sourceError: err, sourceMeta: null }));
+      .catch((err) => {
+        addError(err);
+        this.setState({ sourceError: err, sourceMeta: null });
+      });
   };
   getData = () => {
     const { id, setDataset } = this.props;
