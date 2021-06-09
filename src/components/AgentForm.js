@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
-import { Input, Button, Alert, Form } from "antd";
+import { Input, Button, Alert, Select, Form } from "antd";
 import ErrorMsg from "./ErrorMsg";
-
+import withContext from "./hoc/withContext";
+import _ from "lodash";
 const FormItem = Form.Item;
-
-const PersonForm = (props) => {
+const Option = Select.Option;
+const AgentForm = (props) => {
   // const [addNewMode, setAddNewMode] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
@@ -50,7 +51,7 @@ const PersonForm = (props) => {
     <Form
       form={form}
       initialValues={props.data}
-      name="EstimateForm"
+      name="AgentForm"
       onFinish={submitData}
       onFinishFailed={onFinishFailed}
       style={props.style}
@@ -62,12 +63,12 @@ const PersonForm = (props) => {
         {...formItemLayout}
         label="Family name"
         name="familyName"
-        rules={[
+        /* rules={[
           {
             required: true,
             message: "familyName",
           },
-        ]}
+        ]} */
       >
         <Input />
       </FormItem>
@@ -76,7 +77,53 @@ const PersonForm = (props) => {
         <Input />
       </FormItem>
 
-      <FormItem {...formItemLayout} label="orcid" name="orcid">
+      <FormItem {...formItemLayout} label="ORCID" name="orcid">
+        <Input />
+      </FormItem>
+
+      <FormItem {...formItemLayout} label="Organisation" name="organisation">
+        <Input />
+      </FormItem>
+      <FormItem {...formItemLayout} label="RORID" name="rorid">
+        <Input />
+      </FormItem>
+      <FormItem {...formItemLayout} label="Department" name="department">
+        <Input />
+      </FormItem>
+
+      <FormItem {...formItemLayout} label="City" name="city">
+        <Input />
+      </FormItem>
+      <FormItem {...formItemLayout} label="State" name="state">
+        <Input />
+      </FormItem>
+
+      <FormItem {...formItemLayout} label="Country" name="country">
+        <Select
+          style={{ width: 300 }}
+          filterOption={(input, option) => {
+            return option.children
+              .toLowerCase()
+              .startsWith(input.toLowerCase());
+          }}
+          showSearch
+          allowClear
+        >
+          {props.country.map((c) => {
+            return (
+              <Option key={c.alpha2} value={c.alpha2}>
+                {c.title}
+              </Option>
+            );
+          })}
+        </Select>
+      </FormItem>
+
+      <FormItem {...formItemLayout} label="Url (webpage)" name="url">
+        <Input />
+      </FormItem>
+
+      <FormItem {...formItemLayout} label="Note" name="note">
         <Input />
       </FormItem>
 
@@ -101,5 +148,8 @@ const PersonForm = (props) => {
     </Form>
   );
 };
+const mapContextToProps = ({ country }) => ({
+  country,
+});
 
-export default PersonForm;
+export default withContext(mapContextToProps)(AgentForm);

@@ -1,25 +1,27 @@
 import React from "react";
 import { ArrowUpOutlined } from "@ant-design/icons";
-import PersonPresentation from "./PersonPresentation";
+import AgentPresentation from "./AgentPresentation";
 import { Row, Col, Switch, Divider } from "antd";
 
 import _ from "lodash";
 const render = (data, field) => {
   switch (field) {
-    case "organisations":
-      return _.isArray(data.organisations)
-        ? data.organisations.map((o) => o.label)
+    case "creator":
+      return _.isArray(data.creator)
+        ? data.creator.map((o) => <AgentPresentation agent={o} />)
         : null;
-    case "authors":
-      return _.isArray(data.authors)
-        ? data.authors.map((o) => o.name).join("; ")
+    case "editor":
+      return _.isArray(data.editor)
+        ? data.editor.map((o) => <AgentPresentation agent={o} />)
         : null;
-    case "editors":
-      return _.isArray(data.editors)
-        ? data.editors.map((o) => o.name).join("; ")
+    case "contributor":
+      return _.isArray(data.contributor)
+        ? data.contributor.map((o) => <AgentPresentation agent={o} />)
         : null;
     case "contact":
-      return <PersonPresentation person={data.contact} />;
+      return <AgentPresentation agent={data.contact} />;
+    case "publisher":
+      return <AgentPresentation agent={data.publisher} />;
     default:
       return data[field];
   }

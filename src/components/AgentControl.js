@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Col } from "antd";
 import injectSheet from "react-jss";
-import PersonForm from "./PersonForm";
-import PersonPresentation from "./PersonPresentation";
+import AgentForm from "./AgentForm";
+import AgentPresentation from "./AgentPresentation";
 import ReactDragListView from "react-drag-listview";
 const { DragColumn } = ReactDragListView;
 
@@ -31,13 +31,13 @@ const styles = {
  * https://ant.design/components/form/#components-form-demo-customized-form-controls
  * Based on built-in Tag https://ant.design/components/tag/#components-tag-demo-control
  */
-class PersonControl extends React.Component {
+class AgentControl extends React.Component {
   static getDerivedStateFromProps(nextProps) {
     // Should be a controlled component
     if ("value" in nextProps) {
       let value = stringToArray(nextProps.value);
 
-      return { persons: value };
+      return { agents: value };
     }
     return null;
   }
@@ -46,37 +46,37 @@ class PersonControl extends React.Component {
     super(props);
 
     this.state = {
-      persons: stringToArray(props.value),
+      agents: stringToArray(props.value),
       formVisible: false,
-      personForEdit: null,
+      agentForEdit: null,
     };
   }
 
   handleClose = (removedTag) => {
-    const persons = this.state.persons.filter((tag) => tag !== removedTag);
+    const agents = this.state.agents.filter((tag) => tag !== removedTag);
     const { array = true } = this.props;
-    this.setState({ persons });
-    this.triggerChange(array ? persons : null);
+    this.setState({ agents });
+    this.triggerChange(array ? agents : null);
   };
 
-  showForm = (person) => {
-    this.setState({ personForEdit: person, formVisible: true });
+  showForm = (agent) => {
+    this.setState({ agentForEdit: agent, formVisible: true });
   };
 
   handleInputChange = (event) => {
     this.setState({ inputValue: event.target.value });
   };
 
-  onFormSubmit = (person) => {
-    const persons = [...this.state.persons, person];
+  onFormSubmit = (agent) => {
+    const agents = [...this.state.agents, agent];
     const { array = true } = this.props;
     this.setState(
       {
-        persons,
+        agents,
         formVisible: false,
-        personForEdit: null,
+        agentForEdit: null,
       },
-      () => this.triggerChange(array ? persons : person)
+      () => this.triggerChange(array ? agents : agent)
     );
   };
 
@@ -89,23 +89,23 @@ class PersonControl extends React.Component {
   };
 
   onDragEnd = (fromIndex, toIndex) => {
-    const persons = [...this.state.persons];
-    const person = persons.splice(fromIndex, 1)[0];
-    persons.splice(toIndex, 0, person);
+    const agents = [...this.state.agents];
+    const agent = agents.splice(fromIndex, 1)[0];
+    agents.splice(toIndex, 0, agent);
     const onChange = this.props.onChange;
     if (onChange) {
-      onChange(persons); // will get derived state from props
+      onChange(agents); // will get derived state from props
     }
   };
 
-  editPerson = (person) => {
-    this.setState({ personForEdit: person, formVisible: true }, () =>
-      this.handleClose(person)
+  editAgent = (agent) => {
+    this.setState({ agentForEdit: agent, formVisible: true }, () =>
+      this.handleClose(agent)
     );
   };
 
   render() {
-    const { persons, formVisible, personForEdit } = this.state;
+    const { agents, formVisible, agentForEdit } = this.state;
     const { classes, label, removeAll, array = true } = this.props;
 
     const dragProps = {
@@ -119,18 +119,18 @@ class PersonControl extends React.Component {
         <Row>
           <DragColumn {...dragProps}>
             <ol style={{ listStyle: "none", paddingInlineStart: "0px" }}>
-              {persons.map((person, index) => {
+              {agents.map((agent, index) => {
                 const tagElem = (
                   <li style={{ float: "left", marginBottom: "4px" }}>
                     {" "}
                     <Tag
-                      key={person.familyName + person.givenName}
-                      onClick={() => this.editPerson(person)}
+                      key={index}
+                      onClick={() => this.editAgent(agent)}
                       closable={removeAll || index !== 0}
-                      onClose={() => this.handleClose(person)}
+                      onClose={() => this.handleClose(agent)}
                     >
-                      <PersonPresentation
-                        person={person}
+                      <AgentPresentation
+                        agent={agent}
                         style={{
                           display: "inline-grid",
                           margin: "3px 0px 3px 0px",
@@ -144,7 +144,7 @@ class PersonControl extends React.Component {
             </ol>
           </DragColumn>
 
-          {!formVisible && (array || persons.length === 0) && (
+          {!formVisible && (array || agents.length === 0) && (
             <Tag onClick={this.showForm} className={classes.newTag}>
               <PlusOutlined /> {label}
             </Tag>
@@ -153,13 +153,13 @@ class PersonControl extends React.Component {
         {formVisible && (
           <Row>
             <Col span={24}>
-              <PersonForm
-                data={personForEdit}
+              <AgentForm
+                data={agentForEdit}
                 style={{ marginTop: "10px" }}
                 onSubmit={this.onFormSubmit}
                 onCancel={() =>
-                  personForEdit
-                    ? this.onFormSubmit(personForEdit)
+                  agentForEdit
+                    ? this.onFormSubmit(agentForEdit)
                     : this.setState({ formVisible: false })
                 }
               />
@@ -171,11 +171,11 @@ class PersonControl extends React.Component {
   }
 }
 
-PersonControl.propTypes = {
+AgentControl.propTypes = {
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired, // text label
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]), // value passed from form field decorator
   onChange: PropTypes.func.isRequired, // callback to been called on any data change
-  removeAll: PropTypes.bool, // optional flag, to allow remove all persons or not
+  removeAll: PropTypes.bool, // optional flag, to allow remove all agents or not
 };
 
-export default injectSheet(styles)(PersonControl);
+export default injectSheet(styles)(AgentControl);

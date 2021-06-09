@@ -5,8 +5,7 @@ import axios from "axios";
 import config from "../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../components/ErrorMsg";
-import PersonControl from "./PersonControl";
-import OrganisationControl from "./OrganisationControl";
+import AgentControl from "./AgentControl";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "./hoc/withContext";
 
@@ -206,24 +205,6 @@ const MetaDataForm = (props) => {
           <Input />
         </FormItem>
       )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Organisations"
-          name="organisations"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="organisations"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <OrganisationControl label="New organisation" removeAll={true} />
-        </FormItem>
-      )}
 
       {data && (
         <FormItem
@@ -265,13 +246,13 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Released"
-          name="released"
+          label="Issued"
+          name="issued"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="released"
+                field="issued"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
@@ -295,55 +276,91 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <PersonControl label="New contact" removeAll={true} array={false} />
+          <AgentControl label="New contact" removeAll={true} array={false} />
         </FormItem>
       )}
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Authors"
-          name="authors"
+          label="Publisher"
+          name="publisher"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="authors"
+                field="publisher"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
           }
         >
-          <PersonControl label="New Author" removeAll={true} />
+          <AgentControl label="New publisher" removeAll={true} array={false} />
         </FormItem>
       )}
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Editors"
-          name="editors"
+          label="Creator"
+          name="creator"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="editors"
+                field="creator"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
           }
         >
-          <PersonControl label="New Editor" removeAll={true} />
+          <AgentControl label="New creator" removeAll={true} />
         </FormItem>
       )}
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Website"
-          name="website"
+          label="Editor"
+          name="editor"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="website"
+                field="editor"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <AgentControl label="New editor" removeAll={true} />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Contributor"
+          name="contributor"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="contributor"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <AgentControl label="New contributor" removeAll={true} />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Url (website)"
+          name="url"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="url"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
@@ -406,19 +423,39 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Taxonomic coverage (english)"
+          label="Taxonomic scope"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="group"
+                field="taxonomicScope"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : (
               "English name of the taxon covered by the dataset"
             )
           }
-          name="group"
+          name="taxonomicScope"
+        >
+          <Input />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Temporal scope"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="temporalScope"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "Temporal scope of the dataset"
+            )
+          }
+          name="temporalScope"
         >
           <Input />
         </FormItem>
@@ -433,6 +470,24 @@ const MetaDataForm = (props) => {
               <PatchFormOriginalDataHelp
                 data={originalData}
                 field="geographicScope"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="text" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="ISSN"
+          name="issn"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="issn"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null

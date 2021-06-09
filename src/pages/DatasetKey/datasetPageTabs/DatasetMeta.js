@@ -17,9 +17,12 @@ import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
-import PersonPresentation from "../../../components/PersonPresentation";
+import AgentPresentation from "../../../components/AgentPresentation";
 import marked from "marked";
 import DOMPurify from "dompurify";
+
+const readOnlyAgent = (agent) =>
+  [agent.name, agent.address].filter((a) => !!a).join(", ");
 
 class DatasetMeta extends React.Component {
   constructor(props) {
@@ -294,18 +297,6 @@ class DatasetMeta extends React.Component {
             <PresentationItem
               label={
                 <FormattedMessage
-                  id="organisations"
-                  defaultMessage="Organisations"
-                />
-              }
-            >
-              {_.isArray(displayData.organisations)
-                ? displayData.organisations.map((o) => o.label)
-                : ""}
-            </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
                   id="description"
                   defaultMessage="Description"
                 />
@@ -321,15 +312,13 @@ class DatasetMeta extends React.Component {
                 displayData.description
               )}
             </PresentationItem>
-            {/* <PresentationItem label={<FormattedMessage id="released" defaultMessage="Released" />}>
-            {data.released}
-          </PresentationItem> */}
+
             <PresentationItem
               label={<FormattedMessage id="version" defaultMessage="Version" />}
             >
-              {(displayData.version || displayData.released) &&
+              {(displayData.version || displayData.issued) &&
                 `${displayData.version ? displayData.version : ""}${
-                  displayData.released ? displayData.released : ""
+                  displayData.issued ? displayData.issued : ""
                 }`}
             </PresentationItem>
             <PresentationItem
@@ -337,50 +326,86 @@ class DatasetMeta extends React.Component {
             >
               {Auth.isAuthorised(user, ["editor", "admin"]) &&
                 displayData.contact && (
-                  <PersonPresentation person={displayData.contact} />
+                  <AgentPresentation agent={displayData.contact} />
                 )}
               {!Auth.isAuthorised(user, ["editor", "admin"]) &&
                 displayData.contact &&
-                displayData.contact.name}
+                readOnlyAgent(displayData.contact)}
             </PresentationItem>
             <PresentationItem
-              label={<FormattedMessage id="authors" defaultMessage="Authors" />}
+              label={
+                <FormattedMessage id="publisher" defaultMessage="Publisher" />
+              }
             >
-              {displayData.authors && _.isArray(displayData.authors) && (
+              {Auth.isAuthorised(user, ["editor", "admin"]) &&
+                displayData.contact && (
+                  <AgentPresentation agent={displayData.publisher} />
+                )}
+              {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+                displayData.publisher &&
+                readOnlyAgent(displayData.publisher)}
+            </PresentationItem>
+            <PresentationItem
+              label={<FormattedMessage id="creator" defaultMessage="Creator" />}
+            >
+              {displayData.creator && _.isArray(displayData.creator) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.authors.map((a) => (
+                    displayData.creator.map((a) => (
                       <Col>
-                        <PersonPresentation person={a} />
+                        <AgentPresentation agent={a} />
                       </Col>
                     ))}
                   {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.authors.map((a) => a.name).join(", ")}
+                    displayData.creator.map(readOnlyAgent).join(" | ")}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem
-              label={<FormattedMessage id="editors" defaultMessage="Editors" />}
+              label={<FormattedMessage id="editor" defaultMessage="Editor" />}
             >
-              {displayData.editors && _.isArray(displayData.editors) && (
+              {displayData.editor && _.isArray(displayData.editor) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.editors.map((a) => (
+                    displayData.editor.map((a) => (
                       <Col>
-                        <PersonPresentation person={a} />
+                        <AgentPresentation agent={a} />
                       </Col>
                     ))}
                   {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.editors.map((a) => a.name).join(", ")}
+                    displayData.editor.map(readOnlyAgent).join(" | ")}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem
-              label={<FormattedMessage id="website" defaultMessage="Website" />}
+              label={
+                <FormattedMessage
+                  id="contributor"
+                  defaultMessage="Contributor"
+                />
+              }
             >
-              {displayData.website && (
-                <a href={displayData.website} target="_blank">
-                  {displayData.website}
+              {displayData.contributor && _.isArray(displayData.contributor) && (
+                <Row gutter={[8, 8]}>
+                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    displayData.contributor.map((a) => (
+                      <Col>
+                        <AgentPresentation agent={a} />
+                      </Col>
+                    ))}
+                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
+                    displayData.contributor.map(readOnlyAgent).join(" | ")}
+                </Row>
+              )}
+            </PresentationItem>
+            <PresentationItem
+              label={
+                <FormattedMessage id="website" defaultMessage="Url (website)" />
+              }
+            >
+              {displayData.url && (
+                <a href={displayData.url} target="_blank">
+                  {displayData.url}
                 </a>
               )}
             </PresentationItem>
@@ -396,10 +421,23 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
             <PresentationItem
               label={
-                <FormattedMessage id="group" defaultMessage="Taxonomic Group" />
+                <FormattedMessage
+                  id="taxonomicScope"
+                  defaultMessage="Taxonomic scope"
+                />
               }
             >
-              {displayData.group}
+              {displayData.taxonomicScope}
+            </PresentationItem>
+            <PresentationItem
+              label={
+                <FormattedMessage
+                  id="temporalScope"
+                  defaultMessage="Temporal scope"
+                />
+              }
+            >
+              {displayData.temporalScope}
             </PresentationItem>
             <PresentationItem
               label={
@@ -415,6 +453,11 @@ class DatasetMeta extends React.Component {
               label={<FormattedMessage id="DOI" defaultMessage="DOI" />}
             >
               {displayData.doi}
+            </PresentationItem>
+            <PresentationItem
+              label={<FormattedMessage id="issn" defaultMessage="ISSN" />}
+            >
+              {displayData.issn}
             </PresentationItem>
             <PresentationItem
               label={
