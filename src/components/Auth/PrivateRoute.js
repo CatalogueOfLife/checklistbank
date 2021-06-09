@@ -6,11 +6,17 @@ import withContext from "../hoc/withContext";
 import Layout from "../LayoutNew";
 import auth from "./index.js";
 
-const PrivateRoute = ({ user, roles, component: Component, ...rest }) => (
+const PrivateRoute = ({
+  user,
+  roles,
+  catalogue,
+  component: Component,
+  ...rest
+}) => (
   <Route
     {...rest}
     render={(props) =>
-      auth.isAuthorised(user, roles) ? (
+      auth.canEditDataset(catalogue, user) ? (
         <Component {...props} />
       ) : (
         <Layout openKeys={[]} selectedKeys={[]}>
@@ -21,6 +27,10 @@ const PrivateRoute = ({ user, roles, component: Component, ...rest }) => (
   />
 );
 
-const mapContextToProps = ({ user }) => ({ user });
+const mapContextToProps = ({ user, catalogue, dataset }) => ({
+  user,
+  catalogue,
+  dataset,
+});
 
 export default withContext(mapContextToProps)(PrivateRoute);

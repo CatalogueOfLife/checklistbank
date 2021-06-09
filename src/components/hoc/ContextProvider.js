@@ -317,7 +317,7 @@ class ContextProvider extends React.Component {
       if (remember) {
         localStorage.setItem(JWT_STORAGE_NAME, jwt);
       }
-      this.setState({ user: { ...user, editorRoleScopeItems: [] } });
+      this.setState({ user: { ...user } });
       // this.getUserItems(user);
     });
   };
@@ -335,7 +335,7 @@ class ContextProvider extends React.Component {
     if (jwt) {
       whoAmI()
         .then((res) => {
-          this.setState({ user: { ...res.data, editorRoleScopeItems: [] } });
+          this.setState({ user: { ...res.data } });
           // this.getUserItems(res.data);
         })
         .catch((err) => {
@@ -398,25 +398,7 @@ class ContextProvider extends React.Component {
       this.setState({ background });
     } catch (err) {}
   };
-  /**
-   * Requesting user items by keys from editorRoleScopes list
-   * @param editorRoleScopes - list of UIDs which indicates users scope
-   */
-  /*
-  getUserItems = ({ editorRoleScopes }) => {
-    getUserItems(editorRoleScopes).then(response => {
-      this.setState(state => {
-        return {
-          user: {
-            ...state.user,
-            editorRoleScopeItems: response
-          }
-        }
-      });
-    });
-  };
 
-  */
   render() {
     return (
       <AppContext.Provider value={this.state}>

@@ -8,7 +8,7 @@ import DatasetAbout from "./datasetPageTabs/DatasetAbout";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetProjects from "./datasetPageTabs/DatasetProjects";
-
+import Auth from "../../components/Auth";
 import DatasetReferences from "./datasetPageTabs/DatasetReferences";
 import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues";
@@ -163,7 +163,9 @@ class DatasetPage extends React.Component {
             updateImportState={() => this.getData(datasetKey)}
           />
         )}
-        {section === "metadata" && <DatasetMeta id={datasetKey} />}
+        {section === "metadata" && Auth.canEditDataset(dataset, user) && (
+          <DatasetMeta id={datasetKey} />
+        )}
         {!section ||
           (section === "about" && <DatasetAbout datasetKey={datasetKey} />)}
         {section === "classification" && (
@@ -236,7 +238,9 @@ class DatasetPage extends React.Component {
             match={this.props.match}
           />
         )}
-        {sect === "options" && <DatasetOptions datasetKey={datasetKey} />}
+        {sect === "options" && Auth.canEditDataset(dataset, user) && (
+          <DatasetOptions datasetKey={datasetKey} />
+        )}
         {sect === "sourcemetrics" && (
           <DatasetSourceMetrics datasetKey={datasetKey} />
         )}
