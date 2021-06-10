@@ -66,7 +66,6 @@ class DatasetMeta extends React.Component {
     axios(`${config.dataApi}dataset/${catalogueKey}/patch/${id}`)
       .then((res) => this.setState({ patch: res.data, patchError: null }))
       .catch((err) => {
-        addError(err);
         this.setState({ patchError: err, patch: null });
       });
   };
