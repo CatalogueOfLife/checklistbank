@@ -276,7 +276,12 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <AgentControl label="New contact" removeAll={true} array={false} />
+          <AgentControl
+            agentType="contact"
+            label="New contact"
+            removeAll={true}
+            array={false}
+          />
         </FormItem>
       )}
       {data && (
@@ -294,7 +299,12 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <AgentControl label="New publisher" removeAll={true} array={false} />
+          <AgentControl
+            agentType="publisher"
+            label="New publisher"
+            removeAll={true}
+            array={false}
+          />
         </FormItem>
       )}
       {data && (
@@ -312,7 +322,11 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <AgentControl label="New creator" removeAll={true} />
+          <AgentControl
+            agentType="creator"
+            label="New creator"
+            removeAll={true}
+          />
         </FormItem>
       )}
       {data && (
@@ -330,7 +344,11 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <AgentControl label="New editor" removeAll={true} />
+          <AgentControl
+            agentType="editor"
+            label="New editor"
+            removeAll={true}
+          />
         </FormItem>
       )}
       {data && (
@@ -348,7 +366,11 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <AgentControl label="New contributor" removeAll={true} />
+          <AgentControl
+            agentType="contributor"
+            label="New contributor"
+            removeAll={true}
+          />
         </FormItem>
       )}
       {data && (

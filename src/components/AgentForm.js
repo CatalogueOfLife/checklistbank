@@ -42,8 +42,8 @@ const AgentForm = (props) => {
         offset: 0,
       },
       sm: {
-        span: 6,
-        offset: 18,
+        span: 8,
+        offset: 16,
       },
     },
   };
@@ -59,17 +59,7 @@ const AgentForm = (props) => {
       <FormItem {...formItemLayout} label="Given name" name="given">
         <Input />
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="Family name"
-        name="family"
-        /* rules={[
-          {
-            required: true,
-            message: "familyName",
-          },
-        ]} */
-      >
+      <FormItem {...formItemLayout} label="Family name" name="family">
         <Input />
       </FormItem>
 

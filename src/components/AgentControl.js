@@ -1,11 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
-import { Row, Tag, Col } from "antd";
+import { Row, Tag, Col, Modal } from "antd";
 import injectSheet from "react-jss";
 import AgentForm from "./AgentForm";
 import AgentPresentation from "./AgentPresentation";
 import ReactDragListView from "react-drag-listview";
+import _ from "lodash";
 const { DragColumn } = ReactDragListView;
 
 const stringToArray = (value) => {
@@ -106,7 +107,13 @@ class AgentControl extends React.Component {
 
   render() {
     const { agents, formVisible, agentForEdit } = this.state;
-    const { classes, label, removeAll, array = true } = this.props;
+    const {
+      classes,
+      label,
+      removeAll,
+      agentType = "contact",
+      array = true,
+    } = this.props;
 
     const dragProps = {
       onDragEnd: this.onDragEnd,
@@ -131,6 +138,7 @@ class AgentControl extends React.Component {
                     >
                       <AgentPresentation
                         agent={agent}
+                        noLinks={true}
                         style={{
                           display: "inline-grid",
                           margin: "3px 0px 3px 0px",
@@ -145,27 +153,39 @@ class AgentControl extends React.Component {
           </DragColumn>
 
           {!formVisible && (array || agents.length === 0) && (
-            <Tag onClick={this.showForm} className={classes.newTag}>
+            <Tag onClick={() => this.showForm()} className={classes.newTag}>
               <PlusOutlined /> {label}
             </Tag>
           )}
         </Row>
-        {formVisible && (
-          <Row>
-            <Col span={24}>
-              <AgentForm
-                data={agentForEdit}
-                style={{ marginTop: "10px" }}
-                onSubmit={this.onFormSubmit}
-                onCancel={() =>
-                  agentForEdit
-                    ? this.onFormSubmit(agentForEdit)
-                    : this.setState({ formVisible: false })
-                }
-              />
-            </Col>{" "}
-          </Row>
-        )}
+
+        <Modal
+          visible={formVisible}
+          footer={null}
+          onCancel={() =>
+            agentForEdit
+              ? this.onFormSubmit(agentForEdit)
+              : this.setState({ formVisible: false })
+          }
+          title={
+            agentForEdit
+              ? `Editing ${agentType}${
+                  agentForEdit.name ? " " + agentForEdit.name : ""
+                }`
+              : `New ${agentType}`
+          }
+        >
+          <AgentForm
+            data={agentForEdit}
+            style={{ marginTop: "10px" }}
+            onSubmit={this.onFormSubmit}
+            onCancel={() =>
+              agentForEdit
+                ? this.onFormSubmit(agentForEdit)
+                : this.setState({ formVisible: false })
+            }
+          />
+        </Modal>
       </React.Fragment>
     );
   }
