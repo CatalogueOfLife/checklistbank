@@ -125,13 +125,26 @@ class AgentControl extends React.Component {
       <React.Fragment>
         <Row>
           <DragColumn {...dragProps}>
-            <ol style={{ listStyle: "none", paddingInlineStart: "0px" }}>
+            <ol
+              style={{
+                height: "100%",
+                listStyle: "none",
+                paddingInlineStart: "0px",
+              }}
+            >
               {agents.map((agent, index) => {
                 const tagElem = (
-                  <li style={{ float: "left", marginBottom: "4px" }}>
+                  <li
+                    style={{
+                      float: "left",
+                      marginBottom: "4px",
+                      height: "100%",
+                    }}
+                  >
                     {" "}
                     <Tag
                       key={index}
+                      style={{ height: "100%" }}
                       onClick={() => this.editAgent(agent)}
                       closable={removeAll || index !== 0}
                       onClose={() => this.handleClose(agent)}
