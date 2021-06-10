@@ -12,9 +12,9 @@ const AgentPresentation = ({ agent, countryAlpha2, style }) => {
     : null;
   return agent ? (
     <span style={style}>
-      {(agent.givenName || agent.familyName) && (
+      {(agent.given || agent.family) && (
         <span style={{ display: "block" }}>
-          {[agent.familyName, agent.givenName].filter((a) => !!a).join(", ")}
+          {[agent.family, agent.given].filter((a) => !!a).join(", ")}
         </span>
       )}
       {agent.orcid && (

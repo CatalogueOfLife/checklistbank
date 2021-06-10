@@ -56,13 +56,13 @@ const AgentForm = (props) => {
       onFinishFailed={onFinishFailed}
       style={props.style}
     >
-      <FormItem {...formItemLayout} label="Given name" name="givenName">
+      <FormItem {...formItemLayout} label="Given name" name="given">
         <Input />
       </FormItem>
       <FormItem
         {...formItemLayout}
         label="Family name"
-        name="familyName"
+        name="family"
         /* rules={[
           {
             required: true,

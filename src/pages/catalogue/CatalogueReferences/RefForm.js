@@ -87,16 +87,30 @@ const getPages = (values) => {
 const getCslPersons = (values) => {
   if (_.isArray(values) && _.get(values, "[0]")) {
     return values.map((a) => {
-      const splitted = a.split(" ");
-      if (splitted.length > 1) {
-        return {
-          family: splitted[splitted.length - 1],
-          given: splitted.slice(0, -1).join(" "),
-        };
-      } else if (splitted.length === 1) {
-        return {
-          family: a,
-        };
+      if (a.indexOf(",") > -1) {
+        const splitted = a.split(",");
+        if (splitted.length > 1) {
+          return {
+            family: splitted[0].trim(),
+            given: splitted.slice(1).join(",").trim(),
+          };
+        } else if (splitted.length === 1) {
+          return {
+            family: a,
+          };
+        }
+      } else {
+        const splitted = a.split(" ");
+        if (splitted.length > 1) {
+          return {
+            family: splitted[splitted.length - 1],
+            given: splitted.slice(0, -1).join(" "),
+          };
+        } else if (splitted.length === 1) {
+          return {
+            family: a,
+          };
+        }
       }
     });
   }
