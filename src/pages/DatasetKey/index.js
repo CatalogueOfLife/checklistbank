@@ -151,6 +151,7 @@ class DatasetPage extends React.Component {
             message={`Last ${_.startCase(
               importState.job
             )} of this dataset failed.`}
+            description={importState.error}
             type="error"
           />
         )}

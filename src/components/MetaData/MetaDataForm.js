@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Input, Select, Button, Alert, Rate, notification, Form } from "antd";
 import _ from "lodash";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import TextArea from "antd/lib/input/TextArea";
-import ErrorMsg from "../components/ErrorMsg";
+import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
-import withContext from "./hoc/withContext";
+import withContext from "../hoc/withContext";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -516,6 +516,78 @@ const MetaDataForm = (props) => {
           }
         >
           <Input type="text" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="COL identifier"
+          name={["identifier", "col"]}
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier.col"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="GBIF identifier"
+          name={["identifier", "gbif"]}
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier.gbif"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="PLAZI identifier"
+          name={["identifier", "plazi"]}
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier.plazi"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="DOI identifier"
+          name={["identifier", "doi"]}
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier.doi"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input />
         </FormItem>
       )}
       {data && (

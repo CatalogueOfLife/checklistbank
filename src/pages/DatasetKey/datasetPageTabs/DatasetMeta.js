@@ -4,10 +4,10 @@ import _ from "lodash";
 import axios from "axios";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { Switch, Rate, Row, Col, notification, Popconfirm } from "antd";
-import MetaDataForm from "../../../components/MetaDataForm";
-import LogoUpload from "../../../components/LogoUpload";
+import MetaDataForm from "../../../components/MetaData/MetaDataForm";
+import LogoUpload from "../../../components/MetaData/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
-import MetaDataUpload from "../../../components/MetaDataUpload";
+import MetaDataUpload from "../../../components/MetaData/MetaDataUpload";
 import PageContent from "../../../components/PageContent";
 import { FormattedMessage } from "react-intl";
 import PresentationItem from "../../../components/PresentationItem";
@@ -17,9 +17,16 @@ import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
-import AgentPresentation from "../../../components/AgentPresentation";
+import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import marked from "marked";
 import DOMPurify from "dompurify";
+
+const IDENTIFIER_TYPES = {
+  col: "https://data.catalogueoflife.org/dataset/",
+  gbif: "https://www.gbif.org/dataset/",
+  plazi: "http://publication.plazi.org/id/",
+  doi: "https://doi.org/",
+};
 
 const readOnlyAgent = (agent) =>
   [agent.name, agent.address].filter((a) => !!a).join(", ");
@@ -508,16 +515,36 @@ class DatasetMeta extends React.Component {
             </PresentationItem> */}
             <PresentationItem
               label={
-                <FormattedMessage id="gbifKey" defaultMessage="GBIF Key" />
+                <FormattedMessage
+                  id="identifiers"
+                  defaultMessage="Identifiers"
+                />
               }
             >
-              {displayData.gbifKey && (
-                <a
-                  href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}
-                  target="_blank"
+              {displayData.identifier && (
+                <ol
+                  style={{
+                    listStyle: "none",
+                    paddingInlineStart: "0px",
+                  }}
                 >
-                  {displayData.gbifKey}
-                </a>
+                  {Object.keys(displayData.identifier).map((i) => (
+                    <li
+                      style={{
+                        float: "left",
+                        marginRight: "8px",
+                      }}
+                    >
+                      {`${i.toUpperCase()}: `}
+                      <a
+                        href={`${IDENTIFIER_TYPES[i]}${displayData.identifier[i]}`}
+                        target="_blank"
+                      >
+                        {displayData.identifier[i]}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
               )}
             </PresentationItem>
             <PresentationItem

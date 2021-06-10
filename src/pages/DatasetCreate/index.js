@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "../../components/LayoutNew";
-import MetaDataForm from "../../components/MetaDataForm";
+import MetaDataForm from "../../components/MetaData/MetaDataForm";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";

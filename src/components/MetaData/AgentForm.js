@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import { Input, Button, Alert, Select, Form } from "antd";
-import ErrorMsg from "./ErrorMsg";
-import withContext from "./hoc/withContext";
+import ErrorMsg from "../ErrorMsg";
+import withContext from "../hoc/withContext";
 import _ from "lodash";
 const FormItem = Form.Item;
 const Option = Select.Option;

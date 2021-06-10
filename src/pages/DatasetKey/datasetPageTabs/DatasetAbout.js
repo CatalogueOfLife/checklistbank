@@ -5,9 +5,17 @@ import { Rate, Divider, Row, Col } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import PresentationItem from "../../../components/PresentationItem";
+import PageContent from "../../../components/PageContent";
 import marked from "marked";
 import DOMPurify from "dompurify";
 import withContext from "../../../components/hoc/withContext";
+
+const IDENTIFIER_TYPES = {
+  col: "https://data.catalogueoflife.org/dataset/",
+  gbif: "https://www.gbif.org/dataset/",
+  plazi: "http://publication.plazi.org/id/",
+  doi: "https://doi.org/",
+};
 
 class DatasetAbout extends React.Component {
   constructor(props) {
@@ -48,43 +56,45 @@ class DatasetAbout extends React.Component {
     const { dataset } = this.props;
     const { contributesTo } = this.state;
     return (
-      <React.Fragment>
-        <div
-          className="catalogue-of-life"
-          style={{
-            background: "#fff",
-            padding: 24,
-            minHeight: 280,
-            margin: "16px 0",
-            fontSize: "12px",
-          }}
-        >
-          {dataset && (
-            <React.Fragment>
-              <div>
-                <PresentationItem label="Alias">
-                  {dataset.alias}
-                </PresentationItem>
-                {/*               <PresentationItem label="Full name">
+      <PageContent>
+        {dataset && (
+          <React.Fragment>
+            <div>
+              <PresentationItem label="Alias">{dataset.alias}</PresentationItem>
+              {/*               <PresentationItem label="Full name">
                 {dataset.title}
               </PresentationItem> */}
-                <PresentationItem label="Version">
-                  {(dataset.version || dataset.released) &&
-                    `${dataset.version ? dataset.version : ""}${
-                      dataset.released ? " " + dataset.released : ""
-                    }`}
+              <PresentationItem label="Version">
+                {(dataset.version || dataset.issued) &&
+                  `${dataset.version ? dataset.version : ""}${
+                    dataset.issued ? " " + dataset.issued : ""
+                  }`}
+              </PresentationItem>
+              {dataset.creator && _.isArray(dataset.creator) && (
+                <PresentationItem label="Creators">
+                  {dataset.creator
+                    .filter((a) => !!a.name)
+                    .map((a) => a.name)
+                    .join(", ")}
                 </PresentationItem>
-                {dataset.authors && _.isArray(dataset.authors) && (
-                  <PresentationItem label="Authors">
-                    {dataset.authors.map((a) => a.name).join(", ")}
-                  </PresentationItem>
-                )}
-                {dataset.editors && _.isArray(dataset.editors) && (
-                  <PresentationItem label="Editors">
-                    {dataset.editors.map((a) => a.name).join(", ")}
-                  </PresentationItem>
-                )}
-                {/*   <PresentationItem label="Taxonomic coverage">
+              )}
+              {dataset.contributor && _.isArray(dataset.contributor) && (
+                <PresentationItem label="Contributors">
+                  {dataset.contributor
+                    .filter((a) => !!a.name)
+                    .map((a) => a.name)
+                    .join(", ")}
+                </PresentationItem>
+              )}
+              {dataset.editor && _.isArray(dataset.editor) && (
+                <PresentationItem label="Editors">
+                  {dataset.editor
+                    .filter((a) => !!a.name)
+                    .map((a) => a.name)
+                    .join(", ")}
+                </PresentationItem>
+              )}
+              {/*   <PresentationItem label="Taxonomic coverage">
                               
                   <TaxonomicCoverage
                     isProject={false}
@@ -92,38 +102,37 @@ class DatasetAbout extends React.Component {
                     pathToTree={pathToTree}
                   /> 
               </PresentationItem>*/}
-                <PresentationItem label="Taxonomic scope">
-                  {dataset.group}
-                </PresentationItem>
-                {/*               <Metrics
+              <PresentationItem label="Taxonomic scope">
+                {dataset.taxonomicScope}
+              </PresentationItem>
+              {/*               <Metrics
                 catalogueKey={datasetKey}
                 dataset={data}
                 pathToSearch={`/dataset/${datasetKey}/names`}
               />  */}
-                <PresentationItem label="Description">
-                  {dataset.description ? (
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(marked(dataset.description)),
-                      }}
-                    ></span>
-                  ) : (
-                    dataset.description
-                  )}
-                </PresentationItem>
+              <PresentationItem label="Description">
+                {dataset.description ? (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(marked(dataset.description)),
+                    }}
+                  ></span>
+                ) : (
+                  dataset.description
+                )}
+              </PresentationItem>
 
-                <PresentationItem label="Organisation">
-                  {_.isArray(dataset.organisations) &&
-                    dataset.organisations.map((o) => <div>{o.label}</div>)}
-                </PresentationItem>
-                <PresentationItem label="Website">
-                  {dataset.website && (
-                    <a href={dataset.website} target="_blank">
-                      {dataset.website}
-                    </a>
-                  )}
-                </PresentationItem>
-                {/*  
+              <PresentationItem label="Publisher">
+                {_.get(dataset, "publisher.name")}
+              </PresentationItem>
+              <PresentationItem label="Url (website)">
+                {dataset.url && (
+                  <a href={dataset.url} target="_blank">
+                    {dataset.url}
+                  </a>
+                )}
+              </PresentationItem>
+              {/*  
           <PresentationItem label="Contact">
             {dataset.contact}
           </PresentationItem>
@@ -133,56 +142,74 @@ class DatasetAbout extends React.Component {
             {dataset.type}
           </PresentationItem> */}
 
-                <PresentationItem label="Geographic scope">
-                  {dataset.geographicScope || "-"}
-                </PresentationItem>
-                <PresentationItem label="Completeness">
-                  {dataset.completeness}
-                </PresentationItem>
-                <PresentationItem label="Checklist Confidence">
-                  {<Rate defaultValue={dataset.confidence} disabled></Rate>}
-                </PresentationItem>
-                <PresentationItem label={"DOI"}>{dataset.doi}</PresentationItem>
-                <PresentationItem label="Citation">
-                  {dataset.citation || "-"}
-                </PresentationItem>
+              <PresentationItem label="Geographic scope">
+                {dataset.geographicScope}
+              </PresentationItem>
+              <PresentationItem label="Temporal scope">
+                {dataset.temporalScope}
+              </PresentationItem>
+              <PresentationItem label="Completeness">
+                {dataset.completeness}
+              </PresentationItem>
+              <PresentationItem label="Checklist Confidence">
+                {<Rate defaultValue={dataset.confidence} disabled></Rate>}
+              </PresentationItem>
+              <PresentationItem label={"DOI"}>{dataset.doi}</PresentationItem>
+              <PresentationItem label="Citation">
+                {dataset.citation}
+              </PresentationItem>
 
-                <PresentationItem label="License">
-                  {dataset.license || "-"}
-                </PresentationItem>
-
-                {dataset.gbifKey && (
-                  <PresentationItem label="GBIF">
-                    <a
-                      href={`https://www.gbif.org/dataset/${dataset.gbifKey}`}
-                      target="_blank"
-                    >
-                      Browse in GBIF
-                    </a>
-                  </PresentationItem>
-                )}
-              </div>
-              {contributesTo && (
-                <React.Fragment>
-                  <Divider orientation="left">Contributes</Divider>
-                  {contributesTo
-                    .map((c) => (
-                      <NavLink
-                        to={{
-                          pathname: `/dataset/${c.key}/source/${dataset.key}`,
+              <PresentationItem label="License">
+                {dataset.license}
+              </PresentationItem>
+              {dataset.identifier && (
+                <PresentationItem label="Identifiers">
+                  <ol
+                    style={{
+                      listStyle: "none",
+                      paddingInlineStart: "0px",
+                    }}
+                  >
+                    {Object.keys(dataset.identifier).map((i) => (
+                      <li
+                        style={{
+                          float: "left",
+                          marginRight: "8px",
                         }}
-                        exact={true}
                       >
-                        {c.title}
-                      </NavLink>
-                    ))
-                    .reduce((prev, curr) => [prev, " | ", curr])}
-                </React.Fragment>
+                        {`${i.toUpperCase()}: `}
+                        <a
+                          href={`${IDENTIFIER_TYPES[i]}${dataset.identifier[i]}`}
+                          target="_blank"
+                        >
+                          {dataset.identifier[i]}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </PresentationItem>
               )}
-            </React.Fragment>
-          )}
-        </div>
-      </React.Fragment>
+            </div>
+            {contributesTo && (
+              <React.Fragment>
+                <Divider orientation="left">Contributes</Divider>
+                {contributesTo
+                  .map((c) => (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${c.key}/source/${dataset.key}`,
+                      }}
+                      exact={true}
+                    >
+                      {c.title}
+                    </NavLink>
+                  ))
+                  .reduce((prev, curr) => [prev, " | ", curr])}
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+      </PageContent>
     );
   }
 }

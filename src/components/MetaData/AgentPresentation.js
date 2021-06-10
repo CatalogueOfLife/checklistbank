@@ -1,5 +1,5 @@
 import React from "react";
-import withContext from "./hoc/withContext";
+import withContext from "../hoc/withContext";
 import _ from "lodash";
 
 const AgentPresentation = ({ agent, countryAlpha2, style, noLinks }) => {
