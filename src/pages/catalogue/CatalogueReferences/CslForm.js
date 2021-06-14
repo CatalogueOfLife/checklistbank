@@ -48,6 +48,9 @@ const types = {
   personal_communication: {
     typeLabel: "Personal communication",
   },
+  dataset: {
+    typeLabel: "Dataset",
+  },
 };
 
 const formItemLayout = {
@@ -119,9 +122,9 @@ const getCslPersons = (values) => {
 const getCslDate = (value) => {
   return value
     ? {
-        "date-parts": value.split("-").map((n) => Number(n)),
+        "date-parts": [value.split("-").map((n) => Number(n))],
       }
-    : "";
+    : null;
 };
 
 const FormItem = Form.Item;
@@ -133,11 +136,11 @@ const openNotification = (title, description) => {
   });
 };
 
-const RefForm = (props) => {
-  const [submissionError, setSubmissionError] = useState(null);
+const CslForm = (props) => {
+  // const [submissionError, setSubmissionError] = useState(null);
   const [type, setType] = useState(null);
   const [form] = Form.useForm();
-  const { data, datasetKey, onSaveSuccess } = props;
+  const { data, datasetKey, onSaveSuccess, onSubmit, submissionError } = props;
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
@@ -156,10 +159,10 @@ const RefForm = (props) => {
     };
 
     console.log(JSON.stringify(csl, null, 2));
-    submitData(csl);
+    onSubmit(csl);
   };
 
-  const submitData = (values) => {
+  /*   const submitData = (values) => {
     const id = _.get(props, "data.id");
     const conf = {
       headers: {
@@ -193,7 +196,7 @@ const RefForm = (props) => {
       .catch((err) => {
         setSubmissionError(err);
       });
-  };
+  }; */
   const initialData = data || {};
   const initialValues = {
     author: [],
@@ -203,7 +206,6 @@ const RefForm = (props) => {
     volume: 1,
     ...initialData,
   };
-
   return (
     <Form
       form={form}
@@ -292,6 +294,7 @@ const RefForm = (props) => {
         "article-journal",
         "article-magazine",
         "article-newspaper",
+        "dataset",
       ].indexOf(type) > -1 && (
         <FormItem {...formItemLayout} label="Editor(s)" name="editor">
           <TagControl label="Add editor" removeAll={true} />
@@ -350,13 +353,15 @@ const RefForm = (props) => {
           <Input type="text" />
         </FormItem>
       )}
-      {["book", "incollection", "paper-conference"].indexOf(type) > -1 && (
+      {["book", "incollection", "paper-conference", "dataset"].indexOf(type) >
+        -1 && (
         <FormItem {...formItemLayout} label="Publisher" name="publisher">
           <Input type="text" />
         </FormItem>
       )}
 
-      {["book", "incollection", "article-newspaper"].indexOf(type) > -1 && (
+      {["book", "incollection", "article-newspaper", "dataset"].indexOf(type) >
+        -1 && (
         <FormItem {...formItemLayout} label="Place" name="publisher-place">
           <Input type="text" />
         </FormItem>
@@ -370,12 +375,14 @@ const RefForm = (props) => {
         "article-magazine",
         "article-newspaper",
         "webpage",
+        "dataset",
       ].indexOf(type) > -1 && (
         <FormItem {...formItemLayout} label="URL" name="URL">
           <Input type="url" />
         </FormItem>
       )}
-      {["paper-conference", "article-journal"].indexOf(type) > -1 && (
+      {["paper-conference", "article-journal", "dataset"].indexOf(type) >
+        -1 && (
         <FormItem {...formItemLayout} label="DOI" name="DOI">
           <Input type="text" />
         </FormItem>
@@ -404,6 +411,7 @@ const RefForm = (props) => {
         "article-newspaper",
         "webpage",
         "personal_communication",
+        "dataset",
       ].indexOf(type) > -1 && (
         <FormItem {...formItemLayout} label="Issued" name="issued">
           <Input type="date" />
@@ -419,6 +427,7 @@ const RefForm = (props) => {
         "article-newspaper",
         "webpage",
         "personal_communication",
+        "dataset",
       ].indexOf(type) > -1 && (
         <FormItem {...formItemLayout} label="Accessed" name="accessed">
           <Input type="date" />
@@ -434,4 +443,4 @@ const RefForm = (props) => {
   );
 };
 
-export default RefForm;
+export default CslForm;

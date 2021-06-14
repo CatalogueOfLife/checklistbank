@@ -1,12 +1,22 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
+import axios from "axios";
+import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
-import { Button, Modal, Row, Col } from "antd";
+import { Button, Modal, Row, Col, notification } from "antd";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import Helmet from "react-helmet";
 import RefTable from "./RefTable";
-import RefForm from "./RefForm";
+import RefForm from "./CslForm";
+import _ from "lodash";
+
+const openNotification = (title, description) => {
+  notification.open({
+    message: title,
+    description: description,
+  });
+};
 
 class Reference extends React.Component {
   constructor(props) {
@@ -16,11 +26,53 @@ class Reference extends React.Component {
       ref: null,
       error: null,
       showAddNewModal: false,
+      submissionError: null,
     };
   }
 
+  submitData = (values) => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    const id = _.get(values, "id");
+    const conf = {
+      headers: {
+        "Content-Type": "application/vnd.citationstyles.csl+json",
+      },
+    };
+    const task = id
+      ? axios.put(
+          `${config.dataApi}dataset/${catalogueKey}/reference/${id}`,
+          values,
+          conf
+        )
+      : axios.post(
+          `${config.dataApi}dataset/${catalogueKey}/reference`,
+          values,
+          conf
+        );
+
+    task
+      .then((res) => {
+        let title = id ? "Reference updated" : "Reference saved";
+        let msg = id
+          ? `Data successfully updated for ${values.title}`
+          : `${values.title} saved with id ${res.id}`;
+        this.setState({ submissionError: null });
+        /*         if (onSaveSuccess && typeof onSaveSuccess === "function") {
+          onSaveSuccess(res);
+        } */
+        openNotification(title, msg);
+      })
+      .catch((err) => {
+        this.setState({ submissionError: err });
+      });
+  };
+
   render() {
-    const { showAddNewModal } = this.state;
+    const { showAddNewModal, submissionError } = this.state;
     const {
       catalogue,
       match: {
@@ -48,14 +100,23 @@ class Reference extends React.Component {
               title="New reference"
               visible={showAddNewModal}
               onOk={() => {
-                this.setState({ showAddNewModal: false });
+                this.setState({
+                  showAddNewModal: false,
+                  submissionError: null,
+                });
               }}
               onCancel={() => {
-                this.setState({ showAddNewModal: false });
+                this.setState({
+                  showAddNewModal: false,
+                  submissionError: null,
+                });
               }}
               destroyOnClose={true}
             >
-              <RefForm datasetKey={catalogueKey} />
+              <RefForm
+                submissionError={submissionError}
+                onSubmit={this.submitData}
+              />
             </Modal>
           )}
           <Row>

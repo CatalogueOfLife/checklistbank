@@ -6,6 +6,7 @@ import config from "../../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
+import CitationControl from "./CitationControl";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
 
@@ -590,24 +591,7 @@ const MetaDataForm = (props) => {
           <Input />
         </FormItem>
       )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Citation"
-          name="citation"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="citation"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input type="text" />
-        </FormItem>
-      )}
+
       <FormItem
         {...formItemLayout}
         label="License"
@@ -711,7 +695,24 @@ const MetaDataForm = (props) => {
           >
             <Input type="number" min="0" max="100" />
           </FormItem>
-
+          {data && (
+            <FormItem
+              {...formItemLayout}
+              label="Source"
+              name="source"
+              help={
+                originalData ? (
+                  <PatchFormOriginalDataHelp
+                    data={originalData}
+                    field="source"
+                    transferFn={transferOriginalValueToPatch}
+                  />
+                ) : null
+              }
+            >
+              <CitationControl label="Add citation" data={data.source} />
+            </FormItem>
+          )}
           <FormItem
             {...formItemLayout}
             label="Notes"
