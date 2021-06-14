@@ -207,6 +207,7 @@ div.admonition {
   transition: all 0.75s ease;
 }
 .csl-entry {
+  margin-left: 0 !important;
   margin-bottom: 0.5em;
 }
 .csl-left-margin {
