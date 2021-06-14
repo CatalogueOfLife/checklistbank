@@ -45,7 +45,7 @@ class DatasetList extends React.Component {
       columns: [],
       defaultColumns: [
         {
-          title: "Short name",
+          title: "Alias",
           dataIndex: "alias",
           key: "alias",
           render: (text, record) => {
@@ -83,9 +83,9 @@ class DatasetList extends React.Component {
             ),
         },
         {
-          title: "Authors",
-          dataIndex: "authors",
-          key: "authors",
+          title: "Creator",
+          dataIndex: "creator",
+          key: "creator",
           sorter: true,
           render: (text, record) => {
             return text && _.isArray(text)
@@ -94,9 +94,20 @@ class DatasetList extends React.Component {
           },
         },
         {
-          title: "Editors",
-          dataIndex: "editors",
-          key: "editors",
+          title: "Editor",
+          dataIndex: "editor",
+          key: "editor",
+          sorter: true,
+          render: (text, record) => {
+            return text && _.isArray(text)
+              ? text.map((t) => t.name).join(", ")
+              : "";
+          },
+        },
+        {
+          title: "Contributor",
+          dataIndex: "contributor",
+          key: "contributor",
           sorter: true,
           render: (text, record) => {
             return text && _.isArray(text)
@@ -119,16 +130,7 @@ class DatasetList extends React.Component {
           dataIndex: ["contact", "name"],
           key: "contact",
         },
-        {
-          title: "Organisations",
-          dataIndex: "organisations",
-          key: "organisations",
-          render: (text, record) => {
-            return text && _.isArray(text)
-              ? text.map((t) => t.label).join("; ")
-              : "";
-          },
-        },
+
         {
           title: "License",
           dataIndex: "license",

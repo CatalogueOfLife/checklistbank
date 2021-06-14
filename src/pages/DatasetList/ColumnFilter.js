@@ -6,20 +6,33 @@ const Option = Select.Option;
 class ColumnFilter extends React.Component {
   constructor(props) {
     super(props);
-    const excludeColumns = JSON.parse(
+    let excludeColumns = JSON.parse(
       localStorage.getItem("colplus_datasetlist_hide_columns")
     ) || [
-      "authors",
+      "creator",
       "version",
       "confidence",
-      "editors",
+      "editor",
       "geographicScope",
       "private",
       "modified",
       "created",
       "completeness",
-      "organisations",
     ];
+    // Handle metadata update
+    if (excludeColumns.includes("organisations")) {
+      excludeColumns = [
+        "creator",
+        "version",
+        "confidence",
+        "editor",
+        "geographicScope",
+        "private",
+        "modified",
+        "created",
+        "completeness",
+      ];
+    }
 
     this.handleHideColumnChange = this.handleHideColumnChange.bind(this);
     this.state = {
