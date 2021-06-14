@@ -2,22 +2,20 @@ import React from "react";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { Switch, Rate, Row, Col, notification, Popconfirm } from "antd";
 import MetaDataForm from "../../../components/MetaData/MetaDataForm";
 import LogoUpload from "../../../components/MetaData/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
 import MetaDataUpload from "../../../components/MetaData/MetaDataUpload";
 import PageContent from "../../../components/PageContent";
-import { FormattedMessage } from "react-intl";
 import PresentationItem from "../../../components/PresentationItem";
 import DeleteDatasetButton from "./DeleteDatasetButton";
-import DatasetExport from "../DatasetExport";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
+import CitationPresentation from "../../../components/MetaData/CitationPresentation";
 import marked from "marked";
 import DOMPurify from "dompurify";
 
@@ -301,19 +299,10 @@ class DatasetMeta extends React.Component {
         )}
         {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
-            <PresentationItem
-              label={<FormattedMessage id="alias" defaultMessage="Alias" />}
-            >
+            <PresentationItem label="Alias">
               {displayData.alias}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="description"
-                  defaultMessage="Description"
-                />
-              }
-            >
+            <PresentationItem label="Description">
               {displayData.description ? (
                 <span
                   dangerouslySetInnerHTML={{
@@ -325,17 +314,13 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
 
-            <PresentationItem
-              label={<FormattedMessage id="version" defaultMessage="Version" />}
-            >
+            <PresentationItem label="Version">
               {(displayData.version || displayData.issued) &&
                 `${displayData.version ? displayData.version : ""}${
                   displayData.issued ? displayData.issued : ""
                 }`}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="contact" defaultMessage="Contact" />}
-            >
+            <PresentationItem label="Contact">
               {Auth.isAuthorised(user, ["editor", "admin"]) &&
                 displayData.contact && (
                   <AgentPresentation agent={displayData.contact} />
@@ -344,11 +329,7 @@ class DatasetMeta extends React.Component {
                 displayData.contact &&
                 readOnlyAgent(displayData.contact)}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage id="publisher" defaultMessage="Publisher" />
-              }
-            >
+            <PresentationItem label="Publisher">
               {Auth.isAuthorised(user, ["editor", "admin"]) &&
                 displayData.contact && (
                   <AgentPresentation agent={displayData.publisher} />
@@ -357,9 +338,7 @@ class DatasetMeta extends React.Component {
                 displayData.publisher &&
                 readOnlyAgent(displayData.publisher)}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="creator" defaultMessage="Creator" />}
-            >
+            <PresentationItem label="Creator">
               {displayData.creator && _.isArray(displayData.creator) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
@@ -373,9 +352,7 @@ class DatasetMeta extends React.Component {
                 </Row>
               )}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="editor" defaultMessage="Editor" />}
-            >
+            <PresentationItem label="Editor">
               {displayData.editor && _.isArray(displayData.editor) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
@@ -389,14 +366,7 @@ class DatasetMeta extends React.Component {
                 </Row>
               )}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="contributor"
-                  defaultMessage="Contributor"
-                />
-              }
-            >
+            <PresentationItem label="Contributor">
               {displayData.contributor && _.isArray(displayData.contributor) && (
                 <Row gutter={[8, 8]}>
                   {Auth.isAuthorised(user, ["editor", "admin"]) &&
@@ -410,97 +380,40 @@ class DatasetMeta extends React.Component {
                 </Row>
               )}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage id="website" defaultMessage="Url (website)" />
-              }
-            >
+            <PresentationItem label="Url (website)">
               {displayData.url && (
                 <a href={displayData.url} target="_blank">
                   {displayData.url}
                 </a>
               )}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="origin" defaultMessage="Origin" />}
-            >
+            <PresentationItem label="Origin">
               {displayData.origin}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="type" defaultMessage="Type" />}
-            >
-              {displayData.type}
-            </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="taxonomicScope"
-                  defaultMessage="Taxonomic scope"
-                />
-              }
-            >
+            <PresentationItem label="Type">{displayData.type}</PresentationItem>
+            <PresentationItem label="Taxonomic scope">
               {displayData.taxonomicScope}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="temporalScope"
-                  defaultMessage="Temporal scope"
-                />
-              }
-            >
+            <PresentationItem label="Temporal scope">
               {displayData.temporalScope}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="geographicScope"
-                  defaultMessage="Geographic scope"
-                />
-              }
-            >
+            <PresentationItem label="Geographic scope">
               {displayData.geographicScope}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="DOI" defaultMessage="DOI" />}
-            >
-              {displayData.doi}
+            <PresentationItem label="DOI">{displayData.doi}</PresentationItem>
+            <PresentationItem label="ISSN">{displayData.issn}</PresentationItem>
+            <PresentationItem label="Source">
+              {displayData.source && (
+                <CitationPresentation csl={displayData.source} />
+              )}
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="issn" defaultMessage="ISSN" />}
-            >
-              {displayData.issn}
-            </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage id="citation" defaultMessage="Citation" />
-              }
-            >
-              {displayData.citation}
-            </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="license" defaultMessage="License" />}
-            >
+            <PresentationItem label="License">
               {displayData.license}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="Checklist Confidence"
-                  defaultMessage="Checklist Confidence"
-                />
-              }
-            >
+            <PresentationItem label="Checklist Confidence">
               {<Rate value={displayData.confidence} disabled></Rate>}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="completeness"
-                  defaultMessage="Completeness"
-                />
-              }
-            >
+            <PresentationItem label="Completeness">
               {displayData.completeness}
             </PresentationItem>
             {/*             <PresentationItem
@@ -513,14 +426,7 @@ class DatasetMeta extends React.Component {
             >
               {displayData.contributesToDatasets}
             </PresentationItem> */}
-            <PresentationItem
-              label={
-                <FormattedMessage
-                  id="identifiers"
-                  defaultMessage="Identifiers"
-                />
-              }
-            >
+            <PresentationItem label="Identifiers">
               {displayData.identifier && (
                 <ol
                   style={{
@@ -547,11 +453,7 @@ class DatasetMeta extends React.Component {
                 </ol>
               )}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage id="download" defaultMessage="Download" />
-              }
-            >
+            <PresentationItem label="Download">
               {
                 <a
                   href={`${config.dataApi}dataset/${displayData.key}/export`}
@@ -561,18 +463,16 @@ class DatasetMeta extends React.Component {
                 </a>
               }
             </PresentationItem>
-            <PresentationItem
-              label={<FormattedMessage id="created" defaultMessage="Created" />}
-            >
+            <PresentationItem label="Created">
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"
-              )} by ${displayData.createdByUser}`}
+              )}${
+                displayData.createdByUser
+                  ? " by " + displayData.createdByUser
+                  : ""
+              }`}
             </PresentationItem>
-            <PresentationItem
-              label={
-                <FormattedMessage id="modified" defaultMessage="Modified" />
-              }
-            >
+            <PresentationItem label="Modified">
               {`${moment(displayData.modified).format(
                 "MMMM Do YYYY, h:mm:ss a"
               )} by ${displayData.modifiedByUser}`}

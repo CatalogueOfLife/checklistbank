@@ -50,11 +50,9 @@ class CitationtControl extends React.Component {
     };
   }
 
-  handleClose = (removedTag) => {
-    const agents = this.state.agents.filter((tag) => tag !== removedTag);
-    const { array = true } = this.props;
-    this.setState({ agents });
-    this.triggerChange(array ? agents : null);
+  handleClose = (csl) => {
+    this.setState({ csl: null });
+    this.triggerChange(null);
   };
 
   showForm = () => {
@@ -84,9 +82,7 @@ class CitationtControl extends React.Component {
   };
 
   editCsl = (csl) => {
-    this.setState({ CslForEdit: csl, formVisible: true }, () =>
-      this.handleClose(csl)
-    );
+    this.setState({ formVisible: true }, () => this.handleClose(csl));
   };
 
   render() {
@@ -100,6 +96,7 @@ class CitationtControl extends React.Component {
             <Tag
               style={{ height: "100%" }}
               onClick={() => this.editCsl(csl)}
+              closable={true}
               onClose={() => this.handleClose(csl)}
             >
               <CitationPresentation
@@ -120,6 +117,7 @@ class CitationtControl extends React.Component {
         </Row>
 
         <Modal
+          width={1000}
           visible={formVisible}
           footer={null}
           onCancel={() =>

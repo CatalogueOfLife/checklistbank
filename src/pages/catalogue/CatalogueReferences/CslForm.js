@@ -154,9 +154,15 @@ const CslForm = (props) => {
       pages: getPages(values),
       author: getCslPersons(values.author),
       editor: getCslPersons(values.editor),
-      issued: getCslDate(values.issued),
-      accessed: getCslDate(values.accessed),
     };
+    const issued = getCslDate(values.issued);
+    const accessed = getCslDate(values.accessed);
+    if (issued) {
+      csl.issued = issued;
+    }
+    if (accessed) {
+      csl.accessed = accessed;
+    }
 
     console.log(JSON.stringify(csl, null, 2));
     onSubmit(csl);
