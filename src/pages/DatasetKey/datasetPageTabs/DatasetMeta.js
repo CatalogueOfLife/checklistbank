@@ -302,6 +302,14 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Alias">
               {displayData.alias}
             </PresentationItem>
+            <PresentationItem label="Version">
+              {(displayData.version || displayData.issued) &&
+                `${displayData.version ? displayData.version : ""}${
+                  displayData.issued ? displayData.issued : ""
+                }`}
+            </PresentationItem>
+            <PresentationItem label="DOI">{displayData.doi}</PresentationItem>
+
             <PresentationItem label="Description">
               {displayData.description ? (
                 <span
@@ -314,12 +322,6 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
 
-            <PresentationItem label="Version">
-              {(displayData.version || displayData.issued) &&
-                `${displayData.version ? displayData.version : ""}${
-                  displayData.issued ? displayData.issued : ""
-                }`}
-            </PresentationItem>
             <PresentationItem label="Contact">
               {Auth.isAuthorised(user, ["editor", "admin"]) &&
                 displayData.contact && (
@@ -380,33 +382,20 @@ class DatasetMeta extends React.Component {
                 </Row>
               )}
             </PresentationItem>
-            <PresentationItem label="Url (website)">
-              {displayData.url && (
-                <a href={displayData.url} target="_blank">
-                  {displayData.url}
-                </a>
-              )}
-            </PresentationItem>
-            <PresentationItem label="Origin">
-              {displayData.origin}
-            </PresentationItem>
-            <PresentationItem label="Type">{displayData.type}</PresentationItem>
             <PresentationItem label="Taxonomic scope">
               {displayData.taxonomicScope}
-            </PresentationItem>
-            <PresentationItem label="Temporal scope">
-              {displayData.temporalScope}
             </PresentationItem>
             <PresentationItem label="Geographic scope">
               {displayData.geographicScope}
             </PresentationItem>
-            <PresentationItem label="DOI">{displayData.doi}</PresentationItem>
-            <PresentationItem label="ISSN">{displayData.issn}</PresentationItem>
-            <PresentationItem label="Source">
-              {displayData.source && (
-                <CitationPresentation csl={displayData.source} />
-              )}
+            <PresentationItem label="Temporal scope">
+              {displayData.temporalScope}
             </PresentationItem>
+
+            <PresentationItem label="Origin">
+              {displayData.origin}
+            </PresentationItem>
+            <PresentationItem label="Type">{displayData.type}</PresentationItem>
             <PresentationItem label="License">
               {displayData.license}
             </PresentationItem>
@@ -416,16 +405,20 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Completeness">
               {displayData.completeness}
             </PresentationItem>
-            {/*             <PresentationItem
-              label={
-                <FormattedMessage
-                  id="contributesTo"
-                  defaultMessage="Contributes To"
-                />
-              }
-            >
-              {displayData.contributesToDatasets}
-            </PresentationItem> */}
+            <PresentationItem label="Url (website)">
+              {displayData.url && (
+                <a href={displayData.url} target="_blank">
+                  {displayData.url}
+                </a>
+              )}
+            </PresentationItem>
+            <PresentationItem label="ISSN">{displayData.issn}</PresentationItem>
+            <PresentationItem label="GBIF key">
+              {displayData.gbifKey}
+            </PresentationItem>
+            <PresentationItem label="GBIF publisher key">
+              {displayData.gbifPublisherKey}
+            </PresentationItem>
             <PresentationItem label="Identifiers">
               {displayData.identifier && (
                 <ol
@@ -457,16 +450,31 @@ class DatasetMeta extends React.Component {
                 </ol>
               )}
             </PresentationItem>
-            <PresentationItem label="Download">
-              {
-                <a
-                  href={`${config.dataApi}dataset/${displayData.key}/export`}
-                  target="_blank"
-                >
-                  original archive
-                </a>
-              }
+            <PresentationItem label="Derived from (sourceKey)">
+              {displayData.sourceKey}
             </PresentationItem>
+            <PresentationItem label="Source">
+              {displayData.source && (
+                <CitationPresentation csl={displayData.source} />
+              )}
+            </PresentationItem>
+            <PresentationItem label="Notes">
+              {displayData.notes}
+            </PresentationItem>
+            <PresentationItem label="Last successful import attempt">
+              {displayData.attempt}
+            </PresentationItem>
+            {/*             <PresentationItem
+              label={
+                <FormattedMessage
+                  id="contributesTo"
+                  defaultMessage="Contributes To"
+                />
+              }
+            >
+              {displayData.contributesToDatasets}
+            </PresentationItem> */}
+
             <PresentationItem label="Created">
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"

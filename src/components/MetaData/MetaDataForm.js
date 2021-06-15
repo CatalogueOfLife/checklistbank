@@ -209,19 +209,19 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Description"
-          name="description"
+          label="Issued"
+          name="issued"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="description"
+                field="issued"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
           }
         >
-          <TextArea rows={6} />
+          <Input type="text" />
         </FormItem>
       )}
       {data && (
@@ -245,21 +245,40 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Issued"
-          name="issued"
+          label="DOI"
+          name="doi"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="issued"
+                field="doi"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
           }
         >
-          <Input type="text" />
+          <Input />
         </FormItem>
       )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Description"
+          name="description"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="description"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <TextArea rows={6} />
+        </FormItem>
+      )}
+
       {data && (
         <FormItem
           {...formItemLayout}
@@ -375,21 +394,62 @@ const MetaDataForm = (props) => {
       {data && (
         <FormItem
           {...formItemLayout}
-          label="Url (website)"
-          name="url"
+          label="Taxonomic scope"
           help={
             originalData ? (
               <PatchFormOriginalDataHelp
                 data={originalData}
-                field="url"
+                field="taxonomicScope"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "English name of the taxon covered by the dataset"
+            )
+          }
+          name="taxonomicScope"
+        >
+          <Input />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Geographic scope"
+          name="geographicScope"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="geographicScope"
                 transferFn={transferOriginalValueToPatch}
               />
             ) : null
           }
         >
-          <Input type="url" />
+          <Input type="text" />
         </FormItem>
       )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Temporal scope"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="temporalScope"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "Temporal scope of the dataset"
+            )
+          }
+          name="temporalScope"
+        >
+          <Input />
+        </FormItem>
+      )}
+
       {!data && (
         <FormItem
           {...formItemLayout}
@@ -439,173 +499,6 @@ const MetaDataForm = (props) => {
           </Select>
         </FormItem>
       )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Taxonomic scope"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="taxonomicScope"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : (
-              "English name of the taxon covered by the dataset"
-            )
-          }
-          name="taxonomicScope"
-        >
-          <Input />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Temporal scope"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="temporalScope"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : (
-              "Temporal scope of the dataset"
-            )
-          }
-          name="temporalScope"
-        >
-          <Input />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Geographic scope"
-          name="geographicScope"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="geographicScope"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input type="text" />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="ISSN"
-          name="issn"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="issn"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input type="text" />
-        </FormItem>
-      )}
-      KeyValueControl
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Identifiers"
-          name="identifier"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="identifier"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <KeyValueControl label="identifier" />
-        </FormItem>
-      )}
-      {/*       {data && (
-        <FormItem
-          {...formItemLayout}
-          label="COL identifier"
-          name={["identifier", "col"]}
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="identifier.col"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="GBIF identifier"
-          name={["identifier", "gbif"]}
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="identifier.gbif"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="PLAZI identifier"
-          name={["identifier", "plazi"]}
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="identifier.plazi"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="DOI identifier"
-          name={["identifier", "doi"]}
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="identifier.doi"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input />
-        </FormItem>
-      )} */}
       <FormItem
         {...formItemLayout}
         label="License"
@@ -641,91 +534,168 @@ const MetaDataForm = (props) => {
           })}
         </Select>
       </FormItem>
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Checklist Confidence"
+          name="confidence"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="confidence"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              <span>
+                Quality of taxonomic checklist with values 1 to 5; quality is
+                stated by the custodian in agreement with COL editor. Confidence
+                indicators are described at{" "}
+                <a
+                  href="http://www.catalogueoflife.org/col/info/databases"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  http://www.catalogueoflife.org/col/info/databases
+                </a>
+              </span>
+            )
+          }
+        >
+          <Rate />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Completeness"
+          name="completeness"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="completeness"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : (
+              "Percentage of completeness of species list of the taxon provided by the dataset"
+            )
+          }
+        >
+          <Input type="number" min="0" max="100" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Url (website)"
+          name="url"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="url"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="url" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Logo Url"
+          name="logo"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="logo"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="url" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="ISSN"
+          name="issn"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="issn"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="text" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="GBIF key"
+          name="gbifKey"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="gbifKey"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="text" />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Identifiers"
+          name="identifier"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <KeyValueControl label="identifier" />
+        </FormItem>
+      )}
+
       {/* Only to be shown on existing datasets */}
       {data && (
         <React.Fragment>
           <FormItem
             {...formItemLayout}
-            label="Logo Url"
-            name="logo"
+            label="Source"
+            name="source"
             help={
               originalData ? (
                 <PatchFormOriginalDataHelp
                   data={originalData}
-                  field="logo"
+                  field="source"
                   transferFn={transferOriginalValueToPatch}
                 />
               ) : null
             }
           >
-            <Input type="url" />
+            <CitationControl label="Add citation" data={data.source} />
           </FormItem>
 
-          <FormItem
-            {...formItemLayout}
-            label="Checklist Confidence"
-            name="confidence"
-            help={
-              originalData ? (
-                <PatchFormOriginalDataHelp
-                  data={originalData}
-                  field="confidence"
-                  transferFn={transferOriginalValueToPatch}
-                />
-              ) : (
-                <span>
-                  Quality of taxonomic checklist with values 1 to 5; quality is
-                  stated by the custodian in agreement with COL editor.
-                  Confidence indicators are described at{" "}
-                  <a
-                    href="http://www.catalogueoflife.org/col/info/databases"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    http://www.catalogueoflife.org/col/info/databases
-                  </a>
-                </span>
-              )
-            }
-          >
-            <Rate />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="Completeness"
-            name="completeness"
-            help={
-              originalData ? (
-                <PatchFormOriginalDataHelp
-                  data={originalData}
-                  field="completeness"
-                  transferFn={transferOriginalValueToPatch}
-                />
-              ) : (
-                "Percentage of completeness of species list of the taxon provided by the dataset"
-              )
-            }
-          >
-            <Input type="number" min="0" max="100" />
-          </FormItem>
-          {data && (
-            <FormItem
-              {...formItemLayout}
-              label="Source"
-              name="source"
-              help={
-                originalData ? (
-                  <PatchFormOriginalDataHelp
-                    data={originalData}
-                    field="source"
-                    transferFn={transferOriginalValueToPatch}
-                  />
-                ) : null
-              }
-            >
-              <CitationControl label="Add citation" data={data.source} />
-            </FormItem>
-          )}
           <FormItem
             {...formItemLayout}
             label="Notes"
