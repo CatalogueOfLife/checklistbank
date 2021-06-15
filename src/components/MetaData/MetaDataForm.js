@@ -7,6 +7,8 @@ import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
+import KeyValueControl from "./KeyValueControl";
+
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
 
@@ -158,7 +160,6 @@ const MetaDataForm = (props) => {
           />
         </FormItem>
       )}
-
       <FormItem
         {...formItemLayout}
         label="Title"
@@ -185,7 +186,6 @@ const MetaDataForm = (props) => {
       >
         <Input />
       </FormItem>
-
       {data && (
         <FormItem
           {...formItemLayout}
@@ -206,7 +206,6 @@ const MetaDataForm = (props) => {
           <Input />
         </FormItem>
       )}
-
       {data && (
         <FormItem
           {...formItemLayout}
@@ -225,7 +224,6 @@ const MetaDataForm = (props) => {
           <TextArea rows={6} />
         </FormItem>
       )}
-
       {data && (
         <FormItem
           {...formItemLayout}
@@ -418,7 +416,6 @@ const MetaDataForm = (props) => {
           </Select>
         </FormItem>
       )}
-
       {!originalData && (
         <FormItem
           {...formItemLayout}
@@ -442,7 +439,6 @@ const MetaDataForm = (props) => {
           </Select>
         </FormItem>
       )}
-
       {data && (
         <FormItem
           {...formItemLayout}
@@ -519,7 +515,26 @@ const MetaDataForm = (props) => {
           <Input type="text" />
         </FormItem>
       )}
+      KeyValueControl
       {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Identifiers"
+          name="identifier"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="identifier"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <KeyValueControl label="identifier" />
+        </FormItem>
+      )}
+      {/*       {data && (
         <FormItem
           {...formItemLayout}
           label="COL identifier"
@@ -590,8 +605,7 @@ const MetaDataForm = (props) => {
         >
           <Input />
         </FormItem>
-      )}
-
+      )} */}
       <FormItem
         {...formItemLayout}
         label="License"
@@ -627,7 +641,6 @@ const MetaDataForm = (props) => {
           })}
         </Select>
       </FormItem>
-
       {/* Only to be shown on existing datasets */}
       {data && (
         <React.Fragment>
@@ -731,7 +744,6 @@ const MetaDataForm = (props) => {
           </FormItem>
         </React.Fragment>
       )}
-
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
           Save

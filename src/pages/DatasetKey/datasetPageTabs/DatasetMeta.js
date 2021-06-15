@@ -442,12 +442,16 @@ class DatasetMeta extends React.Component {
                       }}
                     >
                       {`${i.toUpperCase()}: `}
-                      <a
-                        href={`${IDENTIFIER_TYPES[i]}${displayData.identifier[i]}`}
-                        target="_blank"
-                      >
-                        {displayData.identifier[i]}
-                      </a>
+                      {IDENTIFIER_TYPES[i] ? (
+                        <a
+                          href={`${IDENTIFIER_TYPES[i]}${displayData.identifier[i]}`}
+                          target="_blank"
+                        >
+                          {displayData.identifier[i]}
+                        </a>
+                      ) : (
+                        displayData.identifier[i]
+                      )}
                     </li>
                   ))}
                 </ol>
