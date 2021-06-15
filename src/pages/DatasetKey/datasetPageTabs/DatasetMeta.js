@@ -412,6 +412,13 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
+            <PresentationItem label="Logo Url">
+              {displayData.url && (
+                <a href={displayData.logoUrl} target="_blank">
+                  {displayData.logoUrl}
+                </a>
+              )}
+            </PresentationItem>
             <PresentationItem label="ISSN">{displayData.issn}</PresentationItem>
             <PresentationItem label="GBIF key">
               {displayData.gbifKey}
