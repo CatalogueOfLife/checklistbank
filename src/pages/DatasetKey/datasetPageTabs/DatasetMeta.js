@@ -461,9 +461,11 @@ class DatasetMeta extends React.Component {
               {displayData.sourceKey}
             </PresentationItem>
             <PresentationItem label="Source">
-              {displayData.source && (
-                <CitationPresentation csl={displayData.source} />
-              )}
+              {displayData.source &&
+                _.isArray(displayData.source) &&
+                displayData.source.map(
+                  (s) => !!s && <CitationPresentation csl={s} />
+                )}
             </PresentationItem>
             <PresentationItem label="Notes">
               {displayData.notes}
