@@ -10,7 +10,7 @@ import _ from "lodash";
 const stringToArray = (value) => {
   if (Array.isArray(value)) {
     return value;
-  } else if (value) {
+  } else if (_.isObject(value)) {
     return [value];
   }
 
