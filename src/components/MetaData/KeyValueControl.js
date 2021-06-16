@@ -33,7 +33,7 @@ class KeyValueControl extends React.Component {
     if ("value" in nextProps) {
       // let value = stringToArray(nextProps.value);
 
-      return { tags: nextProps.value };
+      return { tags: _.isObject(nextProps.value) ? nextProps.value : {} };
     }
     return null;
   }
