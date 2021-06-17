@@ -6,7 +6,7 @@ import config from "../../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
-import CitationControl from "./CitationControl";
+import CitationControl from "./CitationControl2";
 import KeyValueControl from "./KeyValueControl";
 
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
@@ -70,7 +70,6 @@ const MetaDataForm = (props) => {
     let task = key
       ? axios.put(`${config.dataApi}dataset/${key}`, {
           ...values,
-          source: _.isObject(values.source) ? [values.source] : null,
           private: data.private,
         })
       : axios.post(`${config.dataApi}dataset`, values);

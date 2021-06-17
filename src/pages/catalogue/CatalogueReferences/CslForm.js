@@ -127,6 +127,9 @@ const getCslDate = (value) => {
     : null;
 };
 
+const cslPersonsToStrings = (cslpersons) =>
+  cslpersons.map((p) => `${p.family}${p.given ? ", " + p.given : ""}`);
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const openNotification = (title, description) => {
@@ -138,7 +141,11 @@ const openNotification = (title, description) => {
 
 const CslForm = (props) => {
   // const [submissionError, setSubmissionError] = useState(null);
-  const [type, setType] = useState(null);
+  const [type, setType] = useState(
+    _.get(props, "data.type") && _.get(types, props.data.type)
+      ? props.data.type
+      : null
+  );
   const [form] = Form.useForm();
   const { data, datasetKey, onSaveSuccess, onSubmit, submissionError } = props;
 
@@ -212,6 +219,12 @@ const CslForm = (props) => {
     volume: 1,
     ...initialData,
   };
+  if (initialData.author) {
+    initialValues.author = cslPersonsToStrings(initialData.author);
+  }
+  if (initialData.editor) {
+    initialValues.editor = cslPersonsToStrings(initialData.editor);
+  }
   return (
     <Form
       form={form}
@@ -253,6 +266,19 @@ const CslForm = (props) => {
             );
           })}
         </Select>
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label={"ID"}
+        name="id"
+        rules={[
+          {
+            required: true,
+            message: "You must provide an ID",
+          },
+        ]}
+      >
+        <Input />
       </FormItem>
       <FormItem
         {...formItemLayout}

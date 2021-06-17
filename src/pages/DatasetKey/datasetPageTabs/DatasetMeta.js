@@ -463,8 +463,15 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Source">
               {displayData.source &&
                 _.isArray(displayData.source) &&
-                displayData.source.map(
-                  (s) => !!s && <CitationPresentation csl={s} />
+                displayData.source.map((s) =>
+                  !!s && s.citation ? (
+                    <div
+                      style={{ display: "inline-block" }}
+                      dangerouslySetInnerHTML={{ __html: s.citation }}
+                    ></div>
+                  ) : (
+                    <CitationPresentation csl={s} />
+                  )
                 )}
             </PresentationItem>
             <PresentationItem label="Notes">
