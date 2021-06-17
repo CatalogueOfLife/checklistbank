@@ -457,6 +457,14 @@ class DatasetMeta extends React.Component {
                 </ol>
               )}
             </PresentationItem>
+
+            <PresentationItem label="Citation">
+              {displayData.citation && (
+                <span
+                  dangerouslySetInnerHTML={{ __html: displayData.citation }}
+                ></span>
+              )}
+            </PresentationItem>
             <PresentationItem label="Derived from (sourceKey)">
               {displayData.sourceKey}
             </PresentationItem>
