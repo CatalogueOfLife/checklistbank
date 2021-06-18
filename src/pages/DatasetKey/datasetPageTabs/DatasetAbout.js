@@ -9,7 +9,6 @@ import PageContent from "../../../components/PageContent";
 import marked from "marked";
 import DOMPurify from "dompurify";
 import withContext from "../../../components/hoc/withContext";
-import CitationPresentation from "../../../components/MetaData/CitationPresentation";
 
 const IDENTIFIER_TYPES = {
   col: "https://data.catalogueoflife.org/dataset/",
@@ -157,9 +156,20 @@ class DatasetAbout extends React.Component {
               </PresentationItem>
               <PresentationItem label={"DOI"}>{dataset.doi}</PresentationItem>
               <PresentationItem label="Source">
-                {dataset.source && (
-                  <CitationPresentation csl={dataset.source} />
-                )}
+                {dataset.source &&
+                  _.isArray(dataset.source) &&
+                  dataset.source.map(
+                    (s) =>
+                      !!s &&
+                      (s.citation ? (
+                        <div
+                          style={{ display: "inline-block" }}
+                          dangerouslySetInnerHTML={{ __html: s.citation }}
+                        ></div>
+                      ) : (
+                        s.title
+                      ))
+                  )}
               </PresentationItem>
 
               <PresentationItem label="License">

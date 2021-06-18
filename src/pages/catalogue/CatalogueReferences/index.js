@@ -8,7 +8,7 @@ import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import Helmet from "react-helmet";
 import RefTable from "./RefTable";
-import RefForm from "./CslForm";
+import RefForm from "../../../components/MetaData/CslForm";
 import _ from "lodash";
 
 const openNotification = (title, description) => {

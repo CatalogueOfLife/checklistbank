@@ -121,7 +121,7 @@ const AgentForm = (props) => {
         <Button style={{ marginRight: "10px" }} onClick={props.onCancel}>
           Cancel
         </Button>
-        <Button type="primary" htmlType="submit" onClick={() => form.submit()}>
+        <Button type="primary" htmlType="submit">
           {props.data ? "Save" : "Add"}
         </Button>
       </FormItem>

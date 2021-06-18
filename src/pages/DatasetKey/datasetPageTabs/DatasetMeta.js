@@ -15,7 +15,6 @@ import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
-import CitationPresentation from "../../../components/MetaData/CitationPresentation";
 import marked from "marked";
 import DOMPurify from "dompurify";
 
@@ -471,15 +470,17 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Source">
               {displayData.source &&
                 _.isArray(displayData.source) &&
-                displayData.source.map((s) =>
-                  !!s && s.citation ? (
-                    <div
-                      style={{ display: "inline-block" }}
-                      dangerouslySetInnerHTML={{ __html: s.citation }}
-                    ></div>
-                  ) : (
-                    <CitationPresentation csl={s} />
-                  )
+                displayData.source.map(
+                  (s) =>
+                    !!s &&
+                    (s.citation ? (
+                      <div
+                        style={{ display: "inline-block" }}
+                        dangerouslySetInnerHTML={{ __html: s.citation }}
+                      ></div>
+                    ) : (
+                      s.title
+                    ))
                 )}
             </PresentationItem>
             <PresentationItem label="Notes">

@@ -6,7 +6,7 @@ import config from "../../config";
 import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
-import CitationControl from "./CitationControl2";
+import CitationControl from "./CitationControl";
 import KeyValueControl from "./KeyValueControl";
 
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";

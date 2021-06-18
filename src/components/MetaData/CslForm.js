@@ -12,10 +12,9 @@ import {
   Form,
 } from "antd";
 import _ from "lodash";
-import axios from "axios";
-import config from "../../../config";
-import ErrorMsg from "../../../components/ErrorMsg";
-import TagControl from "../../../components/TagControl";
+
+import ErrorMsg from "../ErrorMsg";
+import TagControl from "../TagControl";
 
 const types = {
   book: {
@@ -147,7 +146,7 @@ const CslForm = (props) => {
       : null
   );
   const [form] = Form.useForm();
-  const { data, datasetKey, onSaveSuccess, onSubmit, submissionError } = props;
+  const { data, onSubmit, submissionError } = props;
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
