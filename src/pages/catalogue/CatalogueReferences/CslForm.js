@@ -158,7 +158,7 @@ const CslForm = (props) => {
 
     let csl = {
       ..._.omit(values, ["pagesFrom", "pagesTo"]),
-      pages: getPages(values),
+      page: getPages(values),
       author: getCslPersons(values.author),
       editor: getCslPersons(values.editor),
     };
