@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Input,
@@ -131,12 +131,12 @@ const cslPersonsToStrings = (cslpersons) =>
 
 const FormItem = Form.Item;
 const Option = Select.Option;
-const openNotification = (title, description) => {
+/* const openNotification = (title, description) => {
   notification.open({
     message: title,
     description: description,
   });
-};
+}; */
 
 const CslForm = (props) => {
   // const [submissionError, setSubmissionError] = useState(null);
@@ -146,6 +146,37 @@ const CslForm = (props) => {
       : null
   );
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!props.data) {
+      form.resetFields();
+    }
+    const initialData = props.data || {};
+    const initialValues = {
+      author: [],
+      editor: [],
+
+      ...initialData,
+    };
+    if (initialData.author) {
+      initialValues.author = cslPersonsToStrings(initialData.author);
+    }
+    if (initialData.editor) {
+      initialValues.editor = cslPersonsToStrings(initialData.editor);
+    }
+    if (_.get(initialData, "issued['date-parts'][0]")) {
+      initialValues.issued = _.get(initialData, "issued['date-parts'][0]").join(
+        "-"
+      );
+    }
+    if (_.get(initialData, "accessed['date-parts'][0]")) {
+      initialValues.accessed = _.get(
+        initialData,
+        "accessed['date-parts'][0]"
+      ).join("-");
+    }
+    form.setFieldsValue(initialValues);
+  }, [props.data]);
   const { data, onSubmit, submissionError } = props;
 
   const onFinishFailed = ({ errorFields }) => {
@@ -209,26 +240,13 @@ const CslForm = (props) => {
         setSubmissionError(err);
       });
   }; */
-  const initialData = data || {};
-  const initialValues = {
-    author: [],
-    editor: [],
-    issue: 1,
 
-    ...initialData,
-  };
-  if (initialData.author) {
-    initialValues.author = cslPersonsToStrings(initialData.author);
-  }
-  if (initialData.editor) {
-    initialValues.editor = cslPersonsToStrings(initialData.editor);
-  }
   return (
     <Form
       form={form}
       onFinish={handleSubmit}
       onFinishFailed={onFinishFailed}
-      initialValues={initialValues}
+      // initialValues={initialValues}
       style={{ paddingTop: "12px" }}
     >
       {submissionError && (

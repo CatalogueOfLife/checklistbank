@@ -53,8 +53,12 @@ class AgentControl extends React.Component {
     };
   }
 
-  handleClose = (removedTag) => {
-    const agents = this.state.agents.filter((tag) => tag !== removedTag);
+  handleClose = (e, index) => {
+    if (e) {
+      e.preventDefault();
+    }
+    const agents = [...this.state.agents];
+    agents.splice(index, 1); // this.state.agents.filter((tag) => tag !== removedTag);
     const { array = true } = this.props;
     this.setState({ agents });
     this.triggerChange(array ? agents : null);
@@ -68,7 +72,7 @@ class AgentControl extends React.Component {
     this.setState({ inputValue: event.target.value });
   };
 
-  onFormSubmit = (agent) => {
+  onFormSubmit = async (agent) => {
     const agents = [...this.state.agents, agent];
     const { array = true } = this.props;
     this.setState(
@@ -79,6 +83,7 @@ class AgentControl extends React.Component {
       },
       () => this.triggerChange(array ? agents : agent)
     );
+    return Promise.resolve();
   };
 
   triggerChange = (changedValue) => {
@@ -99,9 +104,9 @@ class AgentControl extends React.Component {
     }
   };
 
-  editAgent = (agent) => {
+  editAgent = (agent, index) => {
     this.setState({ agentForEdit: agent, formVisible: true }, () =>
-      this.handleClose(agent)
+      this.handleClose(null, index)
     );
   };
 
@@ -135,6 +140,7 @@ class AgentControl extends React.Component {
               {agents.map((agent, index) => {
                 const tagElem = (
                   <li
+                    key={index}
                     style={{
                       float: "left",
                       marginBottom: "4px",
@@ -145,9 +151,9 @@ class AgentControl extends React.Component {
                     <Tag
                       key={index}
                       style={{ height: "100%" }}
-                      onClick={() => this.editAgent(agent)}
+                      onClick={() => this.editAgent(agent, index)}
                       closable={removeAll || index !== 0}
-                      onClose={() => this.handleClose(agent)}
+                      onClose={(e) => this.handleClose(e, index)}
                     >
                       <AgentPresentation
                         agent={agent}

@@ -4,8 +4,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Modal } from "antd";
 import injectSheet from "react-jss";
 import CslForm from "./CslForm";
-
+import ReactDragListView from "react-drag-listview";
 import _ from "lodash";
+const { DragColumn } = ReactDragListView;
 
 const stringToArray = (value) => {
   if (Array.isArray(value)) {
@@ -51,7 +52,10 @@ class CitationControl extends React.Component {
     };
   }
 
-  handleClose = (removedTag) => {
+  handleClose = (e, removedTag) => {
+    if (e) {
+      e.preventDefault();
+    }
     const citations = this.state.citations.filter((tag) => tag !== removedTag);
     const { array = true } = this.props;
     this.setState({ citations });
@@ -66,17 +70,28 @@ class CitationControl extends React.Component {
     this.setState({ inputValue: event.target.value });
   };
 
-  onFormSubmit = (citation) => {
-    const citations = [...this.state.citations, citation];
+  onFormSubmit = async (citation) => {
+    const { indexForEdit } = this.state;
+
+    const citations = !_.isNull(indexForEdit)
+      ? [
+          ...this.state.citations.slice(0, indexForEdit),
+          citation,
+          ...this.state.citations.slice(indexForEdit),
+        ]
+      : [...this.state.citations, citation];
     const { array = true } = this.props;
     this.setState(
       {
         citations,
         formVisible: false,
         citationForEdit: null,
+        indexForEdit: null,
       },
       () => this.triggerChange(array ? citations : citation)
     );
+
+    return Promise.resolve();
   };
 
   triggerChange = (changedValue) => {
@@ -97,9 +112,10 @@ class CitationControl extends React.Component {
     }
   };
 
-  editAgent = (citation) => {
-    this.setState({ citationForEdit: citation, formVisible: true }, () =>
-      this.handleClose(citation)
+  editAgent = (index, citation) => {
+    this.setState(
+      { citationForEdit: citation, indexForEdit: index, formVisible: true },
+      () => this.handleClose(null, citation)
     );
   };
 
@@ -134,6 +150,7 @@ class CitationControl extends React.Component {
               .map((citation, index) => {
                 const tagElem = (
                   <li
+                    key={index}
                     style={{
                       marginBottom: "4px",
                       height: "100%",
@@ -143,9 +160,9 @@ class CitationControl extends React.Component {
                     <Tag
                       key={index}
                       style={{ height: "100%" }}
-                      onClick={() => this.editAgent(citation)}
+                      onClick={() => this.editAgent(index, citation)}
                       closable={true}
-                      onClose={() => this.handleClose(citation)}
+                      onClose={(e) => this.handleClose(e, citation)}
                     >
                       {citation.citation ? (
                         <div
@@ -203,7 +220,7 @@ class CitationControl extends React.Component {
           }
         >
           <CslForm
-            data={citationForEdit}
+            data={formVisible ? citationForEdit : null}
             onSubmit={this.onFormSubmit}
             onCancel={() =>
               citationForEdit

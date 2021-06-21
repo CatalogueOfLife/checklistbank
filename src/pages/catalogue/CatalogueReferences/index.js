@@ -30,7 +30,7 @@ class Reference extends React.Component {
     };
   }
 
-  submitData = (values) => {
+  submitData = async (values) => {
     const {
       match: {
         params: { catalogueKey },
@@ -54,7 +54,7 @@ class Reference extends React.Component {
           conf
         );
 
-    task
+    return task
       .then((res) => {
         let title = id ? "Reference updated" : "Reference saved";
         let msg = id

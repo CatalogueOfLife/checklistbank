@@ -61,6 +61,7 @@ const AgentPresentation = ({ agent, countryAlpha2, style, noLinks }) => {
             {agent.email}
           </a>
         ))}
+      {agent.notes && <div>{agent.notes}</div>}
     </span>
   ) : null;
 };

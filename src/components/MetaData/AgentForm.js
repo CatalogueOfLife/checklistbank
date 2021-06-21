@@ -24,7 +24,9 @@ const AgentForm = (props) => {
   };
 
   const submitData = (values) => {
-    props.onSubmit(values);
+    props.onSubmit(values).then(() => {
+      form.resetFields();
+    });
   };
 
   /*  const toggleEdit = () => {
