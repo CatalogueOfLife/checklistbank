@@ -5,7 +5,6 @@ import { Row, Tag, Modal } from "antd";
 import injectSheet from "react-jss";
 import CslForm from "./CslForm";
 
-import ReactDragListView from "react-drag-listview";
 import _ from "lodash";
 
 const stringToArray = (value) => {

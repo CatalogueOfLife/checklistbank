@@ -214,8 +214,7 @@ const CslForm = (props) => {
     author: [],
     editor: [],
     issue: 1,
-    edition: 1,
-    volume: 1,
+
     ...initialData,
   };
   if (initialData.author) {

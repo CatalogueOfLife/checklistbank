@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Input, Button, Alert, Select, Form } from "antd";
 import ErrorMsg from "../ErrorMsg";
@@ -10,6 +10,14 @@ const AgentForm = (props) => {
   // const [addNewMode, setAddNewMode] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (props.data) {
+      form.setFieldsValue(props.data);
+    } else {
+      form.resetFields();
+    }
+  }, [props.data]);
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
@@ -50,7 +58,7 @@ const AgentForm = (props) => {
   return (
     <Form
       form={form}
-      initialValues={props.data}
+      // initialValues={props.data}
       name="AgentForm"
       onFinish={submitData}
       onFinishFailed={onFinishFailed}
