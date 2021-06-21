@@ -600,7 +600,7 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-              {Auth.canEditDataset(selectedDataset, user) && (
+              {/*  {Auth.canEditDataset(selectedDataset, user) && (
                 <Menu.Item key="metadata">
                   <NavLink
                     to={{
@@ -613,7 +613,7 @@ class BasicMenu extends Component {
                     Metadata
                   </NavLink>
                 </Menu.Item>
-              )}
+              )} */}
               <Menu.Item key="about">
                 <NavLink
                   to={{

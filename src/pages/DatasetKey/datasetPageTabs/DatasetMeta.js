@@ -2,7 +2,16 @@ import React from "react";
 import config from "../../../config";
 import _ from "lodash";
 import axios from "axios";
-import { Switch, Rate, Row, Col, notification, Popconfirm } from "antd";
+import {
+  Switch,
+  Rate,
+  Row,
+  Col,
+  notification,
+  Popconfirm,
+  Divider,
+} from "antd";
+import { NavLink } from "react-router-dom";
 import MetaDataForm from "../../../components/MetaData/MetaDataForm";
 import LogoUpload from "../../../components/MetaData/LogoUpload";
 import ArchiveUpload from "../../../components/ArchiveUpload";
@@ -40,6 +49,7 @@ class DatasetMeta extends React.Component {
       sourceError: null,
       confirmPrivatePopupVisible: false,
       privateChangeLoading: false,
+      contributesTo: null,
     };
   }
 
@@ -83,6 +93,20 @@ class DatasetMeta extends React.Component {
         this.setState({ sourceError: err, sourceMeta: null });
       });
   };
+  getContributions = (datasetKey) => {
+    axios(
+      `${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=managed`
+    )
+      .then((res) => {
+        this.setState({
+          contributesTo: res.data.result || null,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: err, contributesTo: null });
+      });
+  };
+
   getData = () => {
     const { id, setDataset } = this.props;
 
@@ -128,6 +152,7 @@ class DatasetMeta extends React.Component {
       .catch((err) => {
         this.setState({ loading: false, error: err, data: {} });
       });
+    this.getContributions(id);
   };
 
   setEditMode = (checked) => {
@@ -179,14 +204,16 @@ class DatasetMeta extends React.Component {
       sourceMeta,
       confirmPrivatePopupVisible,
       privateChangeLoading,
+      contributesTo,
     } = this.state;
     const { user, catalogueKey } = this.props;
     const patchMode = !!catalogueKey;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
+    console.log("Access: " + Auth.canEditDataset(displayData, user));
     return (
       <PageContent>
-        {Auth.isAuthorised(user, ["editor", "admin"]) && (
+        {Auth.canEditDataset(displayData, user) && (
           <React.Fragment>
             <Row>
               <Col flex="auto">
@@ -272,30 +299,31 @@ class DatasetMeta extends React.Component {
                   />
                 )}
               </Col>
-            </Row>{" "}
+            </Row>
+            {editMode && !patchMode && (
+              <MetaDataForm
+                data={data}
+                onSaveSuccess={() => {
+                  this.setEditMode(false);
+                  this.getData();
+                }}
+              />
+            )}
+            {/* The patch form will show the unpatched raw data as a copy with option to transfer to patch*/}
+            {editPatchMode && patchMode && data && (
+              <MetaDataForm
+                data={patch || {}}
+                catalogueKey={catalogueKey}
+                originalData={data}
+                onSaveSuccess={() => {
+                  this.setEditPatchMode(false);
+                  this.getPatch();
+                }}
+              />
+            )}
           </React.Fragment>
         )}
-        {editMode && !patchMode && (
-          <MetaDataForm
-            data={data}
-            onSaveSuccess={() => {
-              this.setEditMode(false);
-              this.getData();
-            }}
-          />
-        )}
-        {/* The patch form will show the unpatched raw data as a copy with option to transfer to patch*/}
-        {editPatchMode && patchMode && data && (
-          <MetaDataForm
-            data={patch || {}}
-            catalogueKey={catalogueKey}
-            originalData={data}
-            onSaveSuccess={() => {
-              this.setEditPatchMode(false);
-              this.getPatch();
-            }}
-          />
-        )}
+
         {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
             <PresentationItem label="Alias">
@@ -422,12 +450,30 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
-            <PresentationItem label="ISSN">{displayData.issn}</PresentationItem>
+            <PresentationItem label="ISSN">
+              {displayData.issn && (
+                <a
+                  href={`https://portal.issn.org/resource/ISSN/${displayData.issn}`}
+                >
+                  {displayData.issn}
+                </a>
+              )}
+            </PresentationItem>
             <PresentationItem label="GBIF key">
-              {displayData.gbifKey}
+              {displayData.gbifKey && (
+                <a href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}>
+                  {displayData.gbifKey}
+                </a>
+              )}
             </PresentationItem>
             <PresentationItem label="GBIF publisher key">
-              {displayData.gbifPublisherKey}
+              {displayData.gbifPublisherKey && (
+                <a
+                  href={`https://www.gbif.org/publisher/${displayData.gbifPublisherKey}`}
+                >
+                  {displayData.gbifPublisherKey}
+                </a>
+              )}
             </PresentationItem>
             <PresentationItem label="Identifiers">
               {displayData.identifier && (
@@ -518,6 +564,23 @@ class DatasetMeta extends React.Component {
                 "MMMM Do YYYY, h:mm:ss a"
               )} by ${displayData.modifiedByUser}`}
             </PresentationItem>
+            {contributesTo && (
+              <React.Fragment>
+                <Divider orientation="left">Contributes</Divider>
+                {contributesTo
+                  .map((c) => (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${c.key}/source/${displayData.key}`,
+                      }}
+                      exact={true}
+                    >
+                      {c.title}
+                    </NavLink>
+                  ))
+                  .reduce((prev, curr) => [prev, " | ", curr])}
+              </React.Fragment>
+            )}
           </React.Fragment>
         )}
       </PageContent>
