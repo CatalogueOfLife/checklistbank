@@ -301,10 +301,14 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Alias">
               {displayData.alias}
             </PresentationItem>
-            <PresentationItem label="Version">
+            <PresentationItem
+              label={`${displayData.version ? "Version" : ""}${
+                displayData.version && displayData.issued ? " / " : ""
+              }${displayData.issued ? "Issued" : ""}`}
+            >
               {(displayData.version || displayData.issued) &&
                 `${displayData.version ? displayData.version : ""}${
-                  displayData.issued ? displayData.issued : ""
+                  displayData.issued ? " / " + displayData.issued : ""
                 }`}
             </PresentationItem>
             <PresentationItem label="DOI">{displayData.doi}</PresentationItem>

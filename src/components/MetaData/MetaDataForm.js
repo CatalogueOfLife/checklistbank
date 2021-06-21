@@ -224,7 +224,7 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <Input type="text" />
+          <Input type="date" />
         </FormItem>
       )}
       {data && (

@@ -64,10 +64,14 @@ class DatasetAbout extends React.Component {
               {/*               <PresentationItem label="Full name">
                 {dataset.title}
               </PresentationItem> */}
-              <PresentationItem label="Version">
+              <PresentationItem
+                label={`${dataset.version ? "Version" : ""}${
+                  dataset.version && dataset.issued ? " / " : ""
+                }${dataset.issued ? "Issued" : ""}`}
+              >
                 {(dataset.version || dataset.issued) &&
                   `${dataset.version ? dataset.version : ""}${
-                    dataset.issued ? " " + dataset.issued : ""
+                    dataset.issued ? " / " + dataset.issued : ""
                   }`}
               </PresentationItem>
               {dataset.creator && _.isArray(dataset.creator) && (
