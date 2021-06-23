@@ -2,7 +2,13 @@ import React from "react";
 import withContext from "../hoc/withContext";
 import _ from "lodash";
 
-const AgentPresentation = ({ agent, countryAlpha2, style, noLinks }) => {
+const AgentPresentation = ({
+  agent,
+  countryAlpha2,
+  style,
+  noLinks,
+  hideEmail,
+}) => {
   const country = _.get(agent, "country")
     ? _.get(
         countryAlpha2,
@@ -54,6 +60,7 @@ const AgentPresentation = ({ agent, countryAlpha2, style, noLinks }) => {
         </span>
       )}
       {agent.email &&
+        !hideEmail &&
         (noLinks ? (
           <div>{agent.email}</div>
         ) : (

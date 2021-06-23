@@ -27,15 +27,12 @@ import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import marked from "marked";
 import DOMPurify from "dompurify";
 
-const IDENTIFIER_TYPES = {
+export const IDENTIFIER_TYPES = {
   col: "https://data.catalogueoflife.org/dataset/",
   gbif: "https://www.gbif.org/dataset/",
   plazi: "http://publication.plazi.org/id/",
   doi: "https://doi.org/",
 };
-
-const readOnlyAgent = (agent) =>
-  [agent.name, agent.address].filter((a) => !!a).join(", ");
 
 class DatasetMeta extends React.Component {
   constructor(props) {
@@ -93,19 +90,6 @@ class DatasetMeta extends React.Component {
         this.setState({ sourceError: err, sourceMeta: null });
       });
   };
-  getContributions = (datasetKey) => {
-    axios(
-      `${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=managed`
-    )
-      .then((res) => {
-        this.setState({
-          contributesTo: res.data.result || null,
-        });
-      })
-      .catch((err) => {
-        this.setState({ error: err, contributesTo: null });
-      });
-  };
 
   getData = () => {
     const { id, setDataset } = this.props;
@@ -152,7 +136,6 @@ class DatasetMeta extends React.Component {
       .catch((err) => {
         this.setState({ loading: false, error: err, data: {} });
       });
-    this.getContributions(id);
   };
 
   setEditMode = (checked) => {
@@ -354,62 +337,60 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
 
             <PresentationItem label="Contact">
-              {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                displayData.contact && (
-                  <AgentPresentation agent={displayData.contact} />
-                )}
-              {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                displayData.contact &&
-                readOnlyAgent(displayData.contact)}
+              {displayData.contact && (
+                <AgentPresentation
+                  hideEmail={!Auth.canEditDataset(displayData, user)}
+                  agent={displayData.contact}
+                />
+              )}
             </PresentationItem>
             <PresentationItem label="Publisher">
-              {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                displayData.contact && (
-                  <AgentPresentation agent={displayData.publisher} />
-                )}
-              {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                displayData.publisher &&
-                readOnlyAgent(displayData.publisher)}
+              {displayData.contact && (
+                <AgentPresentation
+                  hideEmail={!Auth.canEditDataset(displayData, user)}
+                  agent={displayData.publisher}
+                />
+              )}
             </PresentationItem>
             <PresentationItem label="Creator">
               {displayData.creator && _.isArray(displayData.creator) && (
                 <Row gutter={[8, 8]}>
-                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.creator.map((a) => (
-                      <Col>
-                        <AgentPresentation agent={a} />
-                      </Col>
-                    ))}
-                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.creator.map(readOnlyAgent).join(" | ")}
+                  {displayData.creator.map((a) => (
+                    <Col>
+                      <AgentPresentation
+                        hideEmail={!Auth.canEditDataset(displayData, user)}
+                        agent={a}
+                      />
+                    </Col>
+                  ))}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem label="Editor">
               {displayData.editor && _.isArray(displayData.editor) && (
                 <Row gutter={[8, 8]}>
-                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.editor.map((a) => (
-                      <Col>
-                        <AgentPresentation agent={a} />
-                      </Col>
-                    ))}
-                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.editor.map(readOnlyAgent).join(" | ")}
+                  {displayData.editor.map((a) => (
+                    <Col>
+                      <AgentPresentation
+                        hideEmail={!Auth.canEditDataset(displayData, user)}
+                        agent={a}
+                      />
+                    </Col>
+                  ))}
                 </Row>
               )}
             </PresentationItem>
             <PresentationItem label="Contributor">
               {displayData.contributor && _.isArray(displayData.contributor) && (
                 <Row gutter={[8, 8]}>
-                  {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.contributor.map((a) => (
-                      <Col>
-                        <AgentPresentation agent={a} />
-                      </Col>
-                    ))}
-                  {!Auth.isAuthorised(user, ["editor", "admin"]) &&
-                    displayData.contributor.map(readOnlyAgent).join(" | ")}
+                  {displayData.contributor.map((a) => (
+                    <Col>
+                      <AgentPresentation
+                        hideEmail={!Auth.canEditDataset(displayData, user)}
+                        agent={a}
+                      />
+                    </Col>
+                  ))}
                 </Row>
               )}
             </PresentationItem>
