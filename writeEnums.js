@@ -1,6 +1,8 @@
 // import axiosInstance from './util/axiosInstance';
 const axios = require("axios");
-const config = require("./src/env").prod;
+const config = require("./src/env");
+const _ = require("lodash");
+
 const fs = require("fs");
 const enums = [
   "frequency",
@@ -25,12 +27,18 @@ const enums = [
   "entitytype",
 ];
 
+let env;
+try {
+  console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
+  env = _.get(config, process.env.NODE_ENV);
+} catch (err) {
+  env = config.prod;
+}
+
 const writeEnums = () => {
-  console.log(
-    `Retrieving enumerations from ${config.env} API: ${config.dataApi}`
-  );
+  console.log(`Retrieving enumerations from ${env.env} API: ${env.dataApi}`);
   enums.map((e) =>
-    axios(`${config.dataApi}vocab/${e}`).then(({ data }) =>
+    axios(`${env.dataApi}vocab/${e}`).then(({ data }) =>
       fs.writeFile(
         `${__dirname}/src/enumeration/${e}.json`,
         JSON.stringify(data, null, 2),
