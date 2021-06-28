@@ -29,7 +29,7 @@ const enums = [
 
 let env;
 try {
-  console.log(Object.keys(process));
+  console.log(Object.keys(process.env));
   console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
   env = _.get(config, process.env.NODE_ENV);
 } catch (err) {
