@@ -354,16 +354,16 @@ class DatasetList extends React.Component {
     const { data, loading, error, excludeColumns, defaultColumns, params } =
       this.state;
     const { datasetOrigin } = this.props;
-    defaultColumns[6].filters = datasetOrigin.map((i) => ({
+    defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.origin) {
-      defaultColumns[6].filteredValue = _.isArray(params.origin)
+      defaultColumns[7].filteredValue = _.isArray(params.origin)
         ? params.origin
         : [params.origin];
     } else {
-      defaultColumns[6].filteredValue = null;
+      defaultColumns[7].filteredValue = null;
     }
     /*     defaultColumns[6].filters = datasetType.map((i) => ({
       text: _.startCase(i),
