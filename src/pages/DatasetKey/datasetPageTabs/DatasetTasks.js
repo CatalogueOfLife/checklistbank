@@ -74,7 +74,8 @@ class DatasetTasks extends React.Component {
 
   render() {
     const { error, duplicates, manuscriptNames, loading } = this.state;
-    const { getDuplicateWarningColor, datasetKey, catalogueKey } = this.props;
+    const { getDuplicateWarningColor, datasetKey, catalogueKey, assembly } =
+      this.props;
 
     return (
       <PageContent>
@@ -96,7 +97,9 @@ class DatasetTasks extends React.Component {
             .map((d) => (
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
+                  pathname: assembly
+                    ? `/catalogue/${catalogueKey}/duplicates`
+                    : `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
                   search: `?_colCheck=${d.id}`,
                 }}
                 exact={true}
@@ -121,7 +124,9 @@ class DatasetTasks extends React.Component {
           {manuscriptNames && (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+                pathname: assembly
+                  ? `/catalogue/${catalogueKey}/names`
+                  : `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
                 search: `?nomstatus=manuscript&limit=50`,
               }}
               exact={true}

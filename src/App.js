@@ -15,6 +15,8 @@ import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import Assembly from "./pages/catalogue/Assembly";
 import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
+import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
+
 import SectorSync from "./pages/catalogue/SectorSync";
 import CatalogueSectors from "./pages/catalogue/CatalogueSectors";
 import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon";
@@ -132,6 +134,13 @@ class App extends Component {
                   path={`/catalogue/:catalogueKey/duplicates`}
                   roles={["editor"]}
                   component={AssemblyDuplicates}
+                />
+                <PrivateRoute
+                  exact
+                  key="AssemblyTasks"
+                  path={`/catalogue/:catalogueKey/tasks`}
+                  roles={["editor"]}
+                  component={AssemblyTasks}
                 />
                 <PrivateRoute
                   exact
