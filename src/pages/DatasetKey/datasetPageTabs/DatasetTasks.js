@@ -25,19 +25,18 @@ class DatasetTasks extends React.Component {
   }
 
   getData = async () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, catalogueKey, assembly } = this.props;
 
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview(
       datasetKey,
       catalogueKey,
-      false
+      false,
+      assembly ? 501 : null
     );
-    const duplicatesWithdecision = await getDuplicateOverview(
-      datasetKey,
-      catalogueKey,
-      true
-    );
+    const duplicatesWithdecision = assembly
+      ? []
+      : await getDuplicateOverview(datasetKey, catalogueKey, true);
     let completedMap = {};
     duplicatesWithdecision.forEach((c) => {
       completedMap[c.id] = { count: c.count, error: c.error };
@@ -46,8 +45,8 @@ class DatasetTasks extends React.Component {
       id: d.id,
       text: d.text,
       count: d.count,
-      completed: completedMap[d.id].count,
-      error: d.error || completedMap[d.id].error,
+      completed: assembly ? null : completedMap[d.id].count,
+      error: d.error || (assembly ? null : completedMap[d.id].error),
     }));
     this.setState({ duplicates: duplicates, loading: false });
   };
@@ -90,7 +89,12 @@ class DatasetTasks extends React.Component {
             />
           ))}
         <Card>
-          <h1>Duplicates without decision</h1>
+          {assembly ? (
+            <h1>Duplicates</h1>
+          ) : (
+            <h1>Duplicates without decision</h1>
+          )}
+
           {loading && <Spin />}
           {duplicates
             .filter((d) => !d.error)
@@ -110,17 +114,23 @@ class DatasetTasks extends React.Component {
                   color={getDuplicateWarningColor(d.count)}
                 >
                   {d.text}{" "}
-                  {
+                  {assembly ? (
+                    <strong>{`${d.count > 500 ? "> 500" : d.count}`}</strong>
+                  ) : (
                     <strong>{`${d.completed} of ${
                       d.completed + d.count > 50
                         ? "> 50"
                         : d.completed + d.count
                     }`}</strong>
-                  }
+                  )}
                 </Tag>{" "}
               </NavLink>
             ))}
-          <h1>Manuscript names without decision</h1>
+          {assembly ? (
+            <h1>Manuscript names</h1>
+          ) : (
+            <h1>Manuscript names without decision</h1>
+          )}
           {manuscriptNames && (
             <NavLink
               to={{
@@ -136,9 +146,11 @@ class DatasetTasks extends React.Component {
                 color={getDuplicateWarningColor(manuscriptNames.count)}
               >
                 Manuscript names{" "}
-                {
+                {assembly ? (
+                  <strong>{`${manuscriptNames.count}`}</strong>
+                ) : (
                   <strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>
-                }
+                )}
               </Tag>
             </NavLink>
           )}

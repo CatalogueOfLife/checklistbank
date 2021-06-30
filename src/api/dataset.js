@@ -18,7 +18,8 @@ export const getDatasetsBatch = (ids) => {
 export const getDuplicateOverview = (
   datasetKey,
   catalogueKey,
-  withDecision
+  withDecision,
+  limit
 ) => {
   let groups = [
     ...duplicatePresets.map((p) => ({
@@ -33,11 +34,11 @@ export const getDuplicateOverview = (
         `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
           ...g.params,
           catalogueKey: catalogueKey,
-          limit: 51,
+          limit: limit || 51,
         })}`
       )
-        .then(res => g.count = res.data.length)
-        .catch(err => g.error = err)
+        .then((res) => (g.count = res.data.length))
+        .catch((err) => (g.error = err))
     )
   ).then(() => groups);
 };
