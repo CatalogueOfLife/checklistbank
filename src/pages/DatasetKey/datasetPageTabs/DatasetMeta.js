@@ -189,14 +189,14 @@ class DatasetMeta extends React.Component {
       privateChangeLoading,
       contributesTo,
     } = this.state;
-    const { user, catalogueKey } = this.props;
+    const { user, catalogueKey, catalogue } = this.props;
     const patchMode = !!catalogueKey;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
     console.log("Access: " + Auth.canEditDataset(displayData, user));
     return (
       <PageContent>
-        {Auth.canEditDataset(displayData, user) && (
+        {Auth.canEditDataset(displayData, user) && !patchMode && (
           <React.Fragment>
             <Row>
               <Col flex="auto">
@@ -265,7 +265,7 @@ class DatasetMeta extends React.Component {
                     />
                   </Popconfirm>
                 )}
-                {data && !data.deleted && !patchMode && (
+                {data && !data.deleted && (
                   <Switch
                     checked={editMode}
                     onChange={this.setEditMode}
@@ -273,6 +273,26 @@ class DatasetMeta extends React.Component {
                     unCheckedChildren="Edit"
                   />
                 )}
+              </Col>
+            </Row>
+
+            {editMode && (
+              <MetaDataForm
+                data={data}
+                onSaveSuccess={() => {
+                  this.setEditMode(false);
+                  this.getData();
+                }}
+              />
+            )}
+          </React.Fragment>
+        )}
+        {/* The user is allowed to patch if edtor of a project, */}
+        {Auth.canEditDataset(catalogue, user) && (
+          <React.Fragment>
+            <Row>
+              <Col flex="auto"></Col>
+              <Col>
                 {data && !data.deleted && patchMode && (
                   <Switch
                     checked={editPatchMode}
@@ -283,15 +303,6 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
             </Row>
-            {editMode && !patchMode && (
-              <MetaDataForm
-                data={data}
-                onSaveSuccess={() => {
-                  this.setEditMode(false);
-                  this.getData();
-                }}
-              />
-            )}
             {/* The patch form will show the unpatched raw data as a copy with option to transfer to patch*/}
             {editPatchMode && patchMode && data && (
               <MetaDataForm
@@ -575,6 +586,14 @@ const mapContextToProps = ({
   setDataset,
   datasetSettings,
   addError,
-}) => ({ user, datasetoriginEnum, setDataset, datasetSettings, addError });
+  catalogue,
+}) => ({
+  user,
+  datasetoriginEnum,
+  setDataset,
+  datasetSettings,
+  addError,
+  catalogue,
+});
 
 export default withContext(mapContextToProps)(DatasetMeta);
