@@ -13,6 +13,8 @@ import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
+import DatasetDiff from "./datasetPageTabs/DatasetImportDiff";
+
 import DatasetDownload from "../Download";
 
 import DatasetSourceMetrics from "./datasetPageTabs/DatasetSourceMetrics";
@@ -250,6 +252,7 @@ class DatasetPage extends React.Component {
             location={location}
           />
         )}
+        {section === "diff" && <DatasetDiff datasetKey={datasetKey} />}
       </Layout>
     );
   }

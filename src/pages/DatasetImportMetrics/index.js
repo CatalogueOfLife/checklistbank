@@ -29,6 +29,7 @@ class DatasetImportMetrics extends React.Component {
       data: null,
       importHistory: null,
       historyVisible: false,
+      hasImportDiff: false,
     };
   }
 
@@ -139,6 +140,8 @@ class DatasetImportMetrics extends React.Component {
       })
       .then((res) => {
         const lastFinished = res.data.find((e) => e.state === "finished");
+        const hasImportDiff =
+          res.data.filter((e) => e.state === "finished").length > 0;
         if (
           !_.get(this.props, "match.params.taxonOrNameKey") &&
           this.state.data &&
@@ -149,7 +152,7 @@ class DatasetImportMetrics extends React.Component {
             `/dataset/${datasetKey}/imports/${lastFinished.attempt}`
           );
         }
-        this.setState({ importHistory: res.data, err: null });
+        this.setState({ importHistory: res.data, hasImportDiff, err: null });
       })
       .catch((err) => {
         this.setState({ historyError: err, importHistory: null });
@@ -173,7 +176,7 @@ class DatasetImportMetrics extends React.Component {
     } = this.props;
 
     const { dataset, user, origin, importState } = this.props;
-    const { importHistory, loading, data } = this.state;
+    const { importHistory, loading, data, hasImportDiff } = this.state;
 
     return (
       <PageContent>
@@ -254,7 +257,19 @@ class DatasetImportMetrics extends React.Component {
                   onDeleteSuccess={() => this.getData(attempt)}
                 />
               )}
-
+              {hasImportDiff && (
+                <Button
+                  type="primary"
+                  style={{ display: "inline", marginLeft: "8px" }}
+                  onClick={() => {
+                    history.push({
+                      pathname: `/dataset/${dataset.key}/diff`,
+                    });
+                  }}
+                >
+                  Diff
+                </Button>
+              )}
               {importHistory && (
                 <Button
                   type="primary"
