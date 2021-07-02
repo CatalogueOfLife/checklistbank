@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Tag, Row, Col, Select, notification } from "antd";
+import { Alert, Empty, Row, Col, Select, notification, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -25,6 +25,7 @@ class DatasetDiff extends React.Component {
       data: null,
       error: null,
       importHistory: [],
+      loading: true,
       attempt1: this.attemptsParamIsSetAndValid(params.attempts)
         ? Number(params.attempts.split("..")[0])
         : 1,
@@ -149,7 +150,7 @@ class DatasetDiff extends React.Component {
   render() {
     const diff = _.get(this.state, "data");
     const { datasetKey } = this.props;
-    const { error, attempt1, attempt2, importHistory } = this.state;
+    const { error, attempt1, attempt2, importHistory, loading } = this.state;
 
     let html;
     if (diff) {
@@ -233,10 +234,22 @@ class DatasetDiff extends React.Component {
           </Row>
         )}
         {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
-
-        {_.get(this.state, "data.identical") && (
-          <Row style={{ marginBottom: "8px" }}>
-            <Alert message="No diff between sync attempts" />
+        {loading && (
+          <Row style={{ marginTop: "40px" }}>
+            <Col flex="auto"></Col>
+            <Col>
+              <Spin size="large" />
+            </Col>
+            <Col flex="auto"></Col>
+          </Row>
+        )}
+        {_.get(this.state, "data") === "" && (
+          <Row style={{ marginTop: "40px" }}>
+            <Col flex="auto"></Col>
+            <Col>
+              <Empty description="No diff between import attempts" />
+            </Col>
+            <Col flex="auto"></Col>
           </Row>
         )}
       </PageContent>
