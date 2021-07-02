@@ -289,7 +289,15 @@ class DatasetDownload extends React.Component {
                     }}
                   />
                 )}
-                {dataset.citation || this.createCitation()}
+                {dataset.citation ? (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: dataset.citation,
+                    }}
+                  />
+                ) : (
+                  this.createCitation()
+                )}
               </p>
             </CopyToClipboard>
           </Col>
