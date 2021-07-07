@@ -239,7 +239,9 @@ class DatasetImportMetrics extends React.Component {
           </Row>
         )}
         {dataset && (
-          <Row style={{ padding: "10px" }} type="flex" justify="end">
+          <Row style={{ padding: "10px" }} type="flex" >
+           {data &&<Col><h1>{"Imported "}{moment(data.finished).format("lll")}</h1></Col>}
+            <Col flex="auto"></Col>
             <Col style={{ textAlign: "right", marginRight: "8px" }}>
               {Auth.isAuthorised(user, ["editor", "admin"]) && (
                 <ArchiveUpload
