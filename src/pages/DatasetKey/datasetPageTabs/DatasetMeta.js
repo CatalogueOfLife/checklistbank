@@ -47,6 +47,7 @@ class DatasetMeta extends React.Component {
       confirmPrivatePopupVisible: false,
       privateChangeLoading: false,
       contributesTo: null,
+      releasedFrom: null,
     };
   }
 
@@ -91,6 +92,17 @@ class DatasetMeta extends React.Component {
       });
   };
 
+  getReleasedFrom = (key) => {
+    const { addError } = this.props;
+
+    axios(`${config.dataApi}dataset/${key}`)
+      .then((res) => this.setState({ releasedFrom: res.data }))
+      .catch((err) => {
+        addError(err);
+        this.setState({ releasedFrom: null });
+      });
+  };
+
   getData = () => {
     const { id, setDataset } = this.props;
 
@@ -109,6 +121,9 @@ class DatasetMeta extends React.Component {
       .then((res) => {
         const { createdBy, modifiedBy } = res.data;
         setDataset(res.data);
+        if (res.data.sourceKey) {
+          this.getReleasedFrom(res.data.sourceKey);
+        }
         if (!res.data.contributesTo) {
           res.data.contributesTo = [];
         }
@@ -188,6 +203,7 @@ class DatasetMeta extends React.Component {
       confirmPrivatePopupVisible,
       privateChangeLoading,
       contributesTo,
+      releasedFrom,
     } = this.state;
     const { user, catalogueKey, catalogue } = this.props;
     const patchMode = !!catalogueKey;
@@ -506,8 +522,16 @@ class DatasetMeta extends React.Component {
                 ></span>
               )}
             </PresentationItem>
-            <PresentationItem label="Derived from (sourceKey)">
-              {displayData.sourceKey}
+            <PresentationItem label="Released from (sourceKey)">
+              {
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${displayData.sourceKey}`,
+                  }}
+                >
+                  {releasedFrom ? releasedFrom.title : displayData.sourceKey}
+                </NavLink>
+              }
             </PresentationItem>
             <PresentationItem label="Source">
               {displayData.source &&
