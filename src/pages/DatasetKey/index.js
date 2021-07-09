@@ -14,6 +14,7 @@ import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
 import DatasetDiff from "./datasetPageTabs/DatasetImportDiff";
+import ImportTimeline from "../DatasetImportMetrics/ImportTimeline";
 
 import DatasetDownload from "../Download";
 
@@ -116,7 +117,9 @@ class DatasetPage extends React.Component {
 
     const sect = !section ? "about" : section.split("?")[0];
     const openKeys = ["dataset", "datasetKey"];
-    const selectedKeys = [section];
+    const selectedKeys = ["diff", "import-history"].includes(section)
+      ? ["imports"]
+      : [section];
 
     return (
       <Layout
@@ -253,6 +256,9 @@ class DatasetPage extends React.Component {
           />
         )}
         {section === "diff" && <DatasetDiff datasetKey={datasetKey} />}
+        {section === "import-timeline" && (
+          <ImportTimeline datasetKey={datasetKey} />
+        )}
       </Layout>
     );
   }

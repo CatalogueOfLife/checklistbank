@@ -18,7 +18,7 @@ import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";
 import DataLoader from "dataloader";
 import { getUsersBatch } from "../../api/user";
-
+import Menu from "./Menu";
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 class DatasetImportMetrics extends React.Component {
@@ -170,7 +170,7 @@ class DatasetImportMetrics extends React.Component {
   render() {
     const {
       match: {
-        params: { taxonOrNameKey: attempt },
+        params: { taxonOrNameKey: attempt, key: datasetKey },
       },
       catalogueKey,
     } = this.props;
@@ -180,6 +180,7 @@ class DatasetImportMetrics extends React.Component {
 
     return (
       <PageContent>
+        <Menu datasetKey={datasetKey} />
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
@@ -239,19 +240,26 @@ class DatasetImportMetrics extends React.Component {
           </Row>
         )}
         {dataset && (
-          <Row style={{ padding: "10px" }} type="flex" >
-           {data &&<Col><h1>{"Imported "}{moment(data.finished).format("lll")}</h1></Col>}
+          <Row style={{ padding: "10px" }} type="flex">
+            {data && (
+              <Col>
+                <h1>
+                  {"Imported "}
+                  {moment(data.finished).format("lll")}
+                </h1>
+              </Col>
+            )}
             <Col flex="auto"></Col>
-            <Col style={{ textAlign: "right", marginRight: "8px" }}>
+            {/*             <Col style={{ textAlign: "right", marginRight: "8px" }}>
               {Auth.isAuthorised(user, ["editor", "admin"]) && (
                 <ArchiveUpload
                   datasetKey={_.get(dataset, "key")}
                   origin={_.get(dataset, "origin")}
                 />
               )}
-            </Col>
+            </Col> */}
             <Col style={{ textAlign: "right" }}>
-              {Auth.isAuthorised(user, ["editor", "admin"]) && (
+              {/*               {Auth.isAuthorised(user, ["editor", "admin"]) && (
                 <ImportButton
                   style={{ display: "inline" }}
                   record={{ datasetKey: dataset.key }}
@@ -259,6 +267,19 @@ class DatasetImportMetrics extends React.Component {
                   onDeleteSuccess={() => this.getData(attempt)}
                 />
               )}
+
+              <Button
+                type="primary"
+                style={{ display: "inline", marginLeft: "8px" }}
+                onClick={() => {
+                  history.push({
+                    pathname: `/dataset/${dataset.key}/import-timeline`,
+                  });
+                }}
+              >
+                Timeline
+              </Button>
+
               {hasImportDiff && (
                 <Button
                   type="primary"
@@ -271,7 +292,7 @@ class DatasetImportMetrics extends React.Component {
                 >
                   Diff
                 </Button>
-              )}
+              )} */}
               {importHistory && (
                 <Button
                   type="primary"

@@ -11,7 +11,7 @@ import _ from "lodash";
 import moment from "moment";
 import history from "../../../history";
 import qs from "query-string";
-
+import Menu from "../../DatasetImportMetrics/Menu";
 const { Option } = Select;
 class DatasetDiff extends React.Component {
   constructor(props) {
@@ -168,6 +168,7 @@ class DatasetDiff extends React.Component {
 
     return (
       <PageContent>
+        <Menu datasetKey={datasetKey} />
         <Row style={{ marginBottom: "8px" }}>
           <Col span={12}>
             <Select

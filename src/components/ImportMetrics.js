@@ -9,9 +9,9 @@ const ImportMetrics = ({ data }) => {
   const { datasetKey } = data;
   return (
     <React.Fragment>
-      <Row style={{ padding: "10px" }}>
-        <Col span={24}>
-          <Tag key="speciesCount" color="blue">
+      <Row>
+        <Col span={24} style={{ padding: "10px" }}>
+          <Tag key="speciesCount" color="blue" style={{ marginBottom: "8px" }}>
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
           {_.map(
@@ -20,7 +20,7 @@ const ImportMetrics = ({ data }) => {
             ),
             (c) => {
               return _.get(data, `${c}`) ? (
-                <Tag key={c} color="blue">
+                <Tag key={c} color="blue" style={{ marginBottom: "8px" }}>
                   {_.startCase(c)}: {_.get(data, `${c}`)}
                 </Tag>
               ) : (
