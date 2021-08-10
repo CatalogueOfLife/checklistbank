@@ -24,6 +24,8 @@ import Auth from "../../../components/Auth";
 import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
+import DoiPresentation from "../../../components/MetaData/DoiPresentation";
+
 import marked from "marked";
 import DOMPurify from "dompurify";
 
@@ -349,7 +351,9 @@ class DatasetMeta extends React.Component {
                   displayData.issued ? " / " + displayData.issued : ""
                 }`}
             </PresentationItem>
-            <PresentationItem label="DOI">{displayData.doi}</PresentationItem>
+            <PresentationItem label="DOI">
+              {displayData.doi ? <DoiPresentation doi={displayData.doi} /> : ""}
+            </PresentationItem>
 
             <PresentationItem label="Description">
               {displayData.description ? (
