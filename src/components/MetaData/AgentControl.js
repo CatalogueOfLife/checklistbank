@@ -128,7 +128,7 @@ class AgentControl extends React.Component {
 
     return (
       <React.Fragment>
-        <Row>
+        <div>
           <DragColumn {...dragProps}>
             <ol
               style={{
@@ -142,8 +142,10 @@ class AgentControl extends React.Component {
                   <li
                     key={index}
                     style={{
-                      float: "left",
-                      marginBottom: "4px",
+                      //float: "left",
+                      display: "inline-block",
+                      //marginBottom: "4px",
+                      paddingBottom: "4px",
                       height: "100%",
                     }}
                   >
@@ -168,15 +170,25 @@ class AgentControl extends React.Component {
                 );
                 return tagElem;
               })}
+              {!formVisible && (array || agents.length === 0) && (
+                <li
+                  style={{
+                    //float: "left",
+                    display: "inline",
+                    height: "100%",
+                  }}
+                >
+                  <Tag
+                    onClick={() => this.showForm()}
+                    className={classes.newTag}
+                  >
+                    <PlusOutlined /> {label}
+                  </Tag>
+                </li>
+              )}
             </ol>
           </DragColumn>
-
-          {!formVisible && (array || agents.length === 0) && (
-            <Tag onClick={() => this.showForm()} className={classes.newTag}>
-              <PlusOutlined /> {label}
-            </Tag>
-          )}
-        </Row>
+        </div>
 
         <Modal
           visible={formVisible}
