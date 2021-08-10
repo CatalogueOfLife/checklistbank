@@ -74,6 +74,11 @@ class DatasetList extends React.Component {
           sorter: true,
         },
         {
+          title: "Version",
+          dataIndex: "version",
+          key: "version",
+        },
+        {
           title: "Logo",
           dataIndex: "key",
           key: "logo",
@@ -115,11 +120,7 @@ class DatasetList extends React.Component {
               : "";
           },
         },
-        {
-          title: "Version",
-          dataIndex: "version",
-          key: "version",
-        },
+
         {
           title: "Origin",
           dataIndex: "origin",

@@ -372,7 +372,7 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
             <PresentationItem label="Publisher">
-              {displayData.contact && (
+              {displayData.publisher && (
                 <AgentPresentation
                   hideEmail={!Auth.canEditDataset(displayData, user)}
                   agent={displayData.publisher}
