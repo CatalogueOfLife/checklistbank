@@ -50,6 +50,7 @@ class AgentControl extends React.Component {
       agents: stringToArray(props.value),
       formVisible: false,
       agentForEdit: null,
+      editAgentIndex: null,
     };
   }
 
@@ -73,13 +74,20 @@ class AgentControl extends React.Component {
   };
 
   onFormSubmit = async (agent) => {
-    const agents = [...this.state.agents, agent];
+    const { editAgentIndex } = this.state;
+    const agents = !_.isNull(editAgentIndex)
+      ? [...this.state.agents]
+      : [...this.state.agents, agent];
+    if (!_.isNull(editAgentIndex)) {
+      agents.splice(editAgentIndex, 0, agent);
+    }
     const { array = true } = this.props;
     this.setState(
       {
         agents,
         formVisible: false,
         agentForEdit: null,
+        editAgentIndex: null,
       },
       () => this.triggerChange(array ? agents : agent)
     );
@@ -105,8 +113,9 @@ class AgentControl extends React.Component {
   };
 
   editAgent = (agent, index) => {
-    this.setState({ agentForEdit: agent, formVisible: true }, () =>
-      this.handleClose(null, index)
+    this.setState(
+      { agentForEdit: agent, editAgentIndex: index, formVisible: true },
+      () => this.handleClose(null, index)
     );
   };
 
