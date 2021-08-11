@@ -33,7 +33,6 @@ const exceptionIsDataset404 = (error) => {
     )
   );
 };
-// Currently no support for rtl in Ant https://github.com/ant-design/ant-design/issues/4051
 const styles = {
   sider: {
     overflow: "auto",
@@ -175,16 +174,23 @@ class SiteLayout extends Component {
                     style={{ height: "50px", marginRight: "10px" }}
                   />
                   <h1 style={{ display: "inline" }}>
-                    {selectedDataset.title}{" "}
+                    {selectedDataset.title}
                     {selectedDataset.private && (
-                      <Tooltip
-                        placement="bottom"
-                        title={"This dataset is private"}
-                      >
-                        <LockOutlined style={{ color: "red" }} />
-                      </Tooltip>
+                      <React.Fragment>
+                        {" "}
+                        <Tooltip
+                          placement="bottom"
+                          title={"This dataset is private"}
+                        >
+                          <LockOutlined style={{ color: "red" }} />
+                        </Tooltip>
+                      </React.Fragment>
                     )}
                   </h1>
+                  <span>
+                    {" "}
+                    {selectedDataset.version || selectedDataset.issued}
+                  </span>
                 </React.Fragment>
               )}
               {!selectedDataset && title && <h1>{title}</h1>}
