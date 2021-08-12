@@ -25,6 +25,7 @@ import moment from "moment";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
+import BibTex from "../../../components/MetaData/BibTex";
 
 import marked from "marked";
 import DOMPurify from "dompurify";
@@ -335,7 +336,11 @@ class DatasetMeta extends React.Component {
             )}
           </React.Fragment>
         )}
-
+        {displayData && (
+          <div style={{ textAlign: "right" }}>
+            <BibTex datasetKey={displayData.key} />
+          </div>
+        )}
         {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
             <PresentationItem label="Alias">
