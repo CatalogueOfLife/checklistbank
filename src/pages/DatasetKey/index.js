@@ -5,6 +5,7 @@ import axios from "axios";
 import { Alert } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetImportMetrics from "../DatasetImportMetrics";
+
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
 import DatasetProjects from "./datasetPageTabs/DatasetProjects";
 import Auth from "../../components/Auth";
@@ -160,7 +161,7 @@ class DatasetPage extends React.Component {
           />
         )}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {section === "imports" && (
+        {["release-metrics", "imports"].includes(section) && (
           <DatasetImportMetrics
             datasetKey={datasetKey}
             origin={_.get(dataset, "origin")}

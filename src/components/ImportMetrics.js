@@ -5,7 +5,7 @@ import { Tag, Row, Col } from "antd";
 import ImportChart from "./ImportChart";
 import ImportChartNested from "./ImportChartNested";
 
-const ImportMetrics = ({ data }) => {
+const ImportMetrics = ({ data, subtitle }) => {
   const { datasetKey } = data;
   return (
     <React.Fragment>
@@ -39,9 +39,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "taxaByRankCount")}
               title="Accepted Names by Rank"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -53,9 +56,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "usagesByStatusCount")}
               title="Usages by status"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -68,9 +74,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "namesByRankCount")}
               title="Names by rank"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -82,9 +91,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "namesByTypeCount")}
               title="Names by type"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -97,9 +109,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "namesByOriginCount")}
               title="Names by origin"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -112,9 +127,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "synonymsByRankCount")}
               title="Synonyms by rank"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -128,9 +146,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "verbatimByTermCount")}
               title="Verbatim records by rowtype"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -144,9 +165,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               nestedData={_.get(data, "verbatimByRowTypeCount")}
               title="Verbatim records by term"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -158,9 +182,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "extinctTaxaByRankCount")}
               title="Extinct taxa by rank"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -171,9 +198,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "nameRelationsByTypeCount")}
               title="Name relations"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -184,9 +214,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "taxonConceptRelationsByTypeCount")}
               title="Taxon concept relations"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -197,9 +230,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "speciesInteractionsByTypeCount")}
               title="Species interactions"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -211,9 +247,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "distributionsByGazetteerCount")}
               title="Distribution by Gazetteer"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         )}
@@ -226,9 +265,12 @@ const ImportMetrics = ({ data }) => {
               datasetKey={datasetKey}
               data={_.get(data, "vernacularsByLanguageCount")}
               title="Vernacular names by language"
-              subtitle={`Imported ${moment(data.finished).format(
-                "MMMM Do YYYY, h:mm a"
-              )}`}
+              subtitle={
+                subtitle ||
+                `Imported ${moment(data.finished).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`
+              }
             />
           </Col>
         </Row>

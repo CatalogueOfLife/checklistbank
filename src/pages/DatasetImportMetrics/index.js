@@ -180,7 +180,7 @@ class DatasetImportMetrics extends React.Component {
 
     return (
       <PageContent>
-        <Menu datasetKey={datasetKey} />
+        {origin !== "released" && <Menu datasetKey={datasetKey} />}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
@@ -244,7 +244,7 @@ class DatasetImportMetrics extends React.Component {
             {data && (
               <Col>
                 <h1>
-                  {"Imported "}
+                  {origin === "released" ? "Released " : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
               </Col>
@@ -258,56 +258,33 @@ class DatasetImportMetrics extends React.Component {
                 />
               )}
             </Col> */}
-            <Col style={{ textAlign: "right" }}>
-              {/*               {Auth.isAuthorised(user, ["editor", "admin"]) && (
-                <ImportButton
-                  style={{ display: "inline" }}
-                  record={{ datasetKey: dataset.key }}
-                  onStartImportSuccess={() => this.getData(attempt)}
-                  onDeleteSuccess={() => this.getData(attempt)}
-                />
-              )}
-
-              <Button
-                type="primary"
-                style={{ display: "inline", marginLeft: "8px" }}
-                onClick={() => {
-                  history.push({
-                    pathname: `/dataset/${dataset.key}/import-timeline`,
-                  });
-                }}
-              >
-                Timeline
-              </Button>
-
-              {hasImportDiff && (
-                <Button
-                  type="primary"
-                  style={{ display: "inline", marginLeft: "8px" }}
-                  onClick={() => {
-                    history.push({
-                      pathname: `/dataset/${dataset.key}/diff`,
-                    });
-                  }}
-                >
-                  Diff
-                </Button>
-              )} */}
-              {importHistory && (
-                <Button
-                  type="primary"
-                  style={{ display: "inline", marginLeft: "8px" }}
-                  onClick={this.showHistoryDrawer}
-                >
-                  History
-                </Button>
-              )}
-            </Col>
+            {origin !== "released" && (
+              <Col style={{ textAlign: "right" }}>
+                {importHistory && (
+                  <Button
+                    type="primary"
+                    style={{ display: "inline", marginLeft: "8px" }}
+                    onClick={this.showHistoryDrawer}
+                  >
+                    History
+                  </Button>
+                )}
+              </Col>
+            )}
           </Row>
         )}
         {data && (
           <React.Fragment>
-            <ImportMetrics data={data} />
+            <ImportMetrics
+              data={data}
+              subtitle={
+                origin === "released"
+                  ? `Released ${moment(data.finished).format(
+                      "MMMM Do YYYY, h:mm a"
+                    )}`
+                  : null
+              }
+            />
 
             <Row style={{ padding: "10px" }}>
               <Divider orientation="left">Details</Divider>

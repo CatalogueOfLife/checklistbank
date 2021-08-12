@@ -739,6 +739,21 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
               {selectedDataset &&
+                _.get(selectedDataset, "origin") === "released" && (
+                  <Menu.Item key="release-metrics">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/release-metrics`,
+                      }}
+                    >
+                      Metrics
+                    </NavLink>
+                  </Menu.Item>
+                )}
+              {selectedDataset &&
                 _.get(selectedDataset, "origin") !== "released" &&
                 hasData && (
                   <Menu.Item key="issues">
