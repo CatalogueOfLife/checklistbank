@@ -35,9 +35,9 @@ const ClassificationTable = ({
     {_.reverse([...data]).map((t) => (
       <PresentationItem
         md={6}
-        label={_.startCase(t.name.rank)}
+        label={_.startCase(t.rank)}
         classes={{ formItem: { borderBottom: "none" } }}
-        key={t.name.rank}
+        key={t.rank}
       >
         <NavLink
           to={{
@@ -56,7 +56,7 @@ const ClassificationTable = ({
     ))}
     <PresentationItem
       md={6}
-      label={_.get(taxon, "name.rank") ? _.startCase(taxon.name.rank) : ""}
+      label={_.get(taxon, "rank") ? _.startCase(taxon.rank) : ""}
       classes={{ formItem: { borderBottom: "none" } }}
     >
       <NavLink
