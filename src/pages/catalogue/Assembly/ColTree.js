@@ -353,13 +353,8 @@ class ColTree extends React.Component {
     );
   };
   fetchChildPage = async (dataRef, reloadAll, dontUpdateState) => {
-    const {
-      showSourceTaxon,
-      dataset,
-      treeType,
-      catalogueKey,
-      onDeleteSector,
-    } = this.props;
+    const { showSourceTaxon, dataset, treeType, catalogueKey, onDeleteSector } =
+      this.props;
     const { treeData } = this.state;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
@@ -367,7 +362,7 @@ class ColTree extends React.Component {
 
     const res = await axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
-        dataRef.taxon.id //taxonKey
+        encodeURIComponent(dataRef.taxon.id) //taxonKey
       }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${catalogueKey}${this.appendTypeParam(
         treeType
       )}`

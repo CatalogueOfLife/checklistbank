@@ -86,7 +86,9 @@ class ColTreeNode extends React.Component {
     Promise.allSettled(
       taxa.map((taxon) =>
         axios.delete(
-          `${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`
+          `${config.dataApi}dataset/${
+            taxon.datasetKey
+          }/tree/${encodeURIComponent(taxon.id)}`
         )
       )
     ).then((res) => {
@@ -108,7 +110,11 @@ class ColTreeNode extends React.Component {
 
   deleteTaxonRecursive = (taxon) => {
     axios
-      .delete(`${config.dataApi}dataset/${taxon.datasetKey}/tree/${taxon.id}`)
+      .delete(
+        `${config.dataApi}dataset/${taxon.datasetKey}/tree/${encodeURIComponent(
+          taxon.id
+        )}`
+      )
       .then(() => {
         this.props.reloadSelfAndSiblings();
         notification.open({
@@ -173,11 +179,8 @@ class ColTreeNode extends React.Component {
       dataset,
     } = this.props;
 
-    const {
-      childModalVisible,
-      editTaxonModalVisible,
-      estimateModalVisible,
-    } = this.state;
+    const { childModalVisible, editTaxonModalVisible, estimateModalVisible } =
+      this.state;
 
     const releaseKey =
       _.get(dataset, "origin") === "released" ? dataset.key : null;

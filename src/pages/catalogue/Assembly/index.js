@@ -104,10 +104,15 @@ class Assembly extends React.Component {
     } = this.props;
 
     return axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/tree/${target.id}/copy`, {
-        datasetKey: subject.datasetKey,
-        id: subject.id,
-      })
+      .post(
+        `${config.dataApi}dataset/${catalogueKey}/tree/${encodeURIComponent(
+          target.id
+        )}/copy`,
+        {
+          datasetKey: subject.datasetKey,
+          id: subject.id,
+        }
+      )
       .then((res) => {
         return axios(
           `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
@@ -134,7 +139,11 @@ class Assembly extends React.Component {
         const parent = res.data;
         // delete recursive
         return axios
-          .delete(`${config.dataApi}dataset/${catalogueKey}/tree/${target.id}`)
+          .delete(
+            `${config.dataApi}dataset/${catalogueKey}/tree/${encodeURIComponent(
+              target.id
+            )}`
+          )
           .then(() => parent);
       })
       .then((parent) => {
@@ -175,8 +184,9 @@ class Assembly extends React.Component {
     return axios
       .post(`${config.dataApi}dataset/${catalogueKey}/sector`, sector)
       .then((res) => {
-        const msg = `${_.get(target, "name.scientificName") || target.id
-          } attached to ${subject.name || subject.id} `;
+        const msg = `${
+          _.get(target, "name.scientificName") || target.id
+        } attached to ${subject.name || subject.id} `;
         notification.open({
           message: "Sector created",
           description: msg,
@@ -192,8 +202,9 @@ class Assembly extends React.Component {
     const oldDatasetKey = Number(this.state.datasetKey);
     const isPlaceholder = !_.isUndefined(sector.placeholderRank);
     const subjectID = isPlaceholder
-      ? `${sector.subject.id
-      }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+      ? `${
+          sector.subject.id
+        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
       : sector.subject.id;
     const {
       match: {
@@ -500,6 +511,7 @@ class Assembly extends React.Component {
                   )}
                 </h4>
                 <DatasetAutocomplete
+                  minSize={1}
                   onSelectDataset={this.onSelectDataset}
                   defaultDatasetKey={_.get(params, "datasetKey") || null}
                   onResetSearch={() => {
@@ -572,8 +584,9 @@ class Assembly extends React.Component {
                         sector.placeholderRank
                       );
                       const targetID = isPlaceholder
-                        ? `${sector.target.id
-                        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+                        ? `${
+                            sector.target.id
+                          }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
                         : sector.target.id;
                       const params = qs.parse(_.get(location, "search"));
                       const newParams = {
