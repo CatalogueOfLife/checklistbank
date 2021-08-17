@@ -41,6 +41,7 @@ import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataValidator from "./pages/tools/MetaDataValidator";
 import NameMatch from "./pages/tools/NameMatch";
+import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -237,6 +238,12 @@ class App extends Component {
                   key="namematch"
                   path={`/tools/name-match`}
                   component={NameMatch}
+                />
+                <Route
+                  exact
+                  key="namematch"
+                  path={`/tools/taxonomy-review`}
+                  component={GBIFTaxonomyReview}
                 />
                 <Route component={Exception404} />
               </Switch>

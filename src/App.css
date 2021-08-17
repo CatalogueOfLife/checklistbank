@@ -387,3 +387,42 @@ div.csl-entry {
   background-color: lightgray;
   border-radius: 6px;
 }
+
+td > .hasChanged {
+  color: tomato;
+  font-weight: 500;
+}
+td > .hasChanged.smallChange {
+  color: orange;
+  font-weight: 500;
+}
+td > .isSame {
+  color: #999;
+}
+
+span.isSame {
+  color: #999;
+}
+
+td .perfectMatchChanged {
+  color: tomato;
+}
+
+span.hasChanged {
+  color: tomato;
+}
+
+td .changedToPerfectMatch {
+  color: #75ce75;
+}
+
+span.changedToPerfectMatch {
+  color: #75ce75;
+}
+span.small-text {
+  font-size: 11px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
