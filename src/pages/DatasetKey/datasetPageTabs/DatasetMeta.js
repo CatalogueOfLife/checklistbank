@@ -22,7 +22,6 @@ import DeleteDatasetButton from "./DeleteDatasetButton";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
-import ImportButton from "../../Imports/importTabs/ImportButton";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
@@ -222,24 +221,6 @@ class DatasetMeta extends React.Component {
                 {data && !data.deleted && (
                   <LogoUpload datasetKey={this.props.id} />
                 )}
-              </Col>
-
-              <Col style={{ textAlign: "right" }}>
-                {data && !data.deleted && (
-                  <DeleteDatasetButton
-                    style={{ marginBottom: "10px" }}
-                    record={data}
-                  ></DeleteDatasetButton>
-                )}
-                {data && _.get(data, "origin") !== "managed" && (
-                  <ImportButton
-                    style={{ marginLeft: "8px", marginBottom: "10px" }}
-                    record={{ datasetKey: data.key }}
-                  />
-                )}
-                {/*                 {data && !data.deleted && (
-                  <DatasetExport datasetKey={data.key} />
-                )} */}
               </Col>
             </Row>
             <Row>

@@ -13,6 +13,8 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "../../catalogue/Options/DeleteOrphansButton";
+import ImportButton from "../../Imports/importTabs/ImportButton";
+import DeleteDatasetButton from "./DeleteDatasetButton";
 
 class DatasetSettings extends React.Component {
   constructor(props) {
@@ -153,6 +155,15 @@ class DatasetSettings extends React.Component {
             )}
           </Col>
           <Col span={6}>
+            {dataset && _.get(dataset, "origin") !== "managed" && (
+              <React.Fragment>
+                <ImportButton
+                  style={{ marginBottom: "10px" }}
+                  record={{ datasetKey: dataset.key }}
+                />
+                <br />
+              </React.Fragment>
+            )}
             <Button
               type="primary"
               onClick={this.reindexDataset}
@@ -174,6 +185,16 @@ class DatasetSettings extends React.Component {
               type="reference"
               style={{ marginRight: "10px", marginBottom: "10px" }}
             />
+
+            {dataset && !dataset.deleted && (
+              <React.Fragment>
+                <br />
+                <DeleteDatasetButton
+                  style={{ marginBottom: "10px" }}
+                  record={dataset}
+                ></DeleteDatasetButton>
+              </React.Fragment>
+            )}
           </Col>
         </Row>
       </PageContent>
