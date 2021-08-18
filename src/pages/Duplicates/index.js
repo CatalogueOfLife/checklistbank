@@ -74,7 +74,7 @@ class DuplicateSearchPage extends React.Component {
       allButOldestInGroupLoading: false,
       synonymsSelectLoading: false,
       newestInGroupLoading: false,
-      showAtomizedNames: !assembly,
+      showAtomizedNames: false,
     };
   }
 
