@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Tag, Card, Spin } from "antd";
+import { Alert, Tag, Card, Spin, message } from "antd";
 import axios from "axios";
 import config from "../../../../config";
 import { NavLink } from "react-router-dom";
@@ -7,6 +7,8 @@ import PageContent from "../../../../components/PageContent";
 import withContext from "../../../../components/hoc/withContext";
 import { getDuplicateOverview } from "../../../../api/dataset";
 import ErrorMsg from "../../../../components/ErrorMsg";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { CopyOutlined } from "@ant-design/icons";
 const _ = require("lodash");
 
 class DatasetTasks extends React.Component {
@@ -93,13 +95,8 @@ class DatasetTasks extends React.Component {
   };
 
   render() {
-    const {
-      error,
-      duplicates,
-      manuscriptNames,
-      loading,
-      brokenDecisions,
-    } = this.state;
+    const { error, duplicates, manuscriptNames, loading, brokenDecisions } =
+      this.state;
     const { getDuplicateWarningColor, datasetKey, catalogueKey } = this.props;
 
     return (
@@ -120,17 +117,17 @@ class DatasetTasks extends React.Component {
           {duplicates
             .filter((d) => !d.error)
             .map((d) => (
-              <NavLink
-                to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
-                  search: `?_colCheck=${d.id}`,
-                }}
-                exact={true}
+              <Tag
+                key={d.id}
+                style={{ marginBottom: "10px" }}
+                color={getDuplicateWarningColor(d.count)}
               >
-                <Tag
-                  key={d.id}
-                  style={{ marginBottom: "10px" }}
-                  color={getDuplicateWarningColor(d.count)}
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
+                    search: `?_colCheck=${d.id}`,
+                  }}
+                  exact={true}
                 >
                   {d.text}{" "}
                   {
@@ -140,45 +137,52 @@ class DatasetTasks extends React.Component {
                         : d.completed + d.count
                     }`}</strong>
                   }
-                </Tag>{" "}
-              </NavLink>
+                </NavLink>{" "}
+                <CopyToClipboard
+                  text={d.text}
+                  onCopy={() => message.info(`Copied "${d.text}" to clipboard`)}
+                >
+                  <CopyOutlined />
+                </CopyToClipboard>
+              </Tag>
             ))}
+
           <h1>Manuscript names without decision</h1>
           {manuscriptNames && (
-            <NavLink
-              to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
-                search: `?nomstatus=manuscript&limit=50`,
-              }}
-              exact={true}
+            <Tag
+              style={{ marginBottom: "10px" }}
+              color={getDuplicateWarningColor(manuscriptNames.count)}
             >
-              <Tag
-                style={{ marginBottom: "10px" }}
-                color={getDuplicateWarningColor(manuscriptNames.count)}
+              <NavLink
+                to={{
+                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+                  search: `?nomstatus=manuscript&limit=50`,
+                }}
+                exact={true}
               >
                 Manuscript names{" "}
                 {
                   <strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>
                 }
-              </Tag>
-            </NavLink>
+              </NavLink>
+            </Tag>
           )}
           <h1>Broken decisions</h1>
           {brokenDecisions && (
-            <NavLink
-              to={{
-                pathname: `/catalogue/${catalogueKey}/decision`,
-                search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}`,
-              }}
-              exact={true}
+            <Tag
+              style={{ marginBottom: "10px" }}
+              color={getDuplicateWarningColor(brokenDecisions)}
             >
-              <Tag
-                style={{ marginBottom: "10px" }}
-                color={getDuplicateWarningColor(brokenDecisions)}
+              <NavLink
+                to={{
+                  pathname: `/catalogue/${catalogueKey}/decision`,
+                  search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}`,
+                }}
+                exact={true}
               >
                 Broken decisions: {<strong>{`${brokenDecisions}`}</strong>}
-              </Tag>
-            </NavLink>
+              </NavLink>
+            </Tag>
           )}
         </Card>
       </PageContent>
