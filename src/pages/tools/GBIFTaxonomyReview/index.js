@@ -45,9 +45,9 @@ const GBIFTaxonomyReview = ({ location }) => {
 
   return (
     <Layout
-      selectedKeys={["taxonomy-review"]}
+      selectedKeys={["gbif-impact"]}
       openKeys={["tools"]}
-      title="Taxonomy review"
+      title="GBIF impact"
     >
       <PageContent>
         <Row>

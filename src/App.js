@@ -242,7 +242,7 @@ class App extends Component {
                 <Route
                   exact
                   key="namematch"
-                  path={`/tools/taxonomy-review`}
+                  path={`/tools/gbif-impact`}
                   component={GBIFTaxonomyReview}
                 />
                 <Route component={Exception404} />

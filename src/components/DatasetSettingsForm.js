@@ -60,9 +60,7 @@ const SettingsForm = (props) => {
 
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
-  useEffect(() => {
-    console.log(datasetoriginEnum);
-  }, [datasetoriginEnum]);
+  useEffect(() => {}, [datasetoriginEnum]);
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);

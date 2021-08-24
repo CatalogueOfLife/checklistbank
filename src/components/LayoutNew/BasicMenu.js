@@ -170,6 +170,13 @@ class BasicMenu extends Component {
                 <span>Name match</span>
               </NavLink>
             </Menu.Item>
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+              <Menu.Item key="gbif-impact">
+                <NavLink to={{ pathname: "/tools/gbif-impact" }}>
+                  <span>GBIF impact</span>
+                </NavLink>
+              </Menu.Item>
+            )}
           </SubMenu>
 
           {Auth.isAuthorised(user, ["admin"]) && (

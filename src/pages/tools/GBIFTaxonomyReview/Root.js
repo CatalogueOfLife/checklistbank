@@ -231,6 +231,20 @@ class Root extends React.Component {
                       <Tag style={tagStyle}>{tagLabels.verbatim.short}</Tag>
                     </Tooltip>
                     {record[`${verbatimPrefix}${rank}`] || "\u00A0"}
+                    {rank === "scientificName" &&
+                      record[`${verbatimPrefix}${rank}`] !== "null" && (
+                        <React.Fragment>
+                          {" "}
+                          <a
+                            target="_blank"
+                            href={`https://data.catalogueoflife.org/dataset/${colKey}/names?q=${
+                              record[`${verbatimPrefix}${rank}`]
+                            }`}
+                          >
+                            <LinkOutlined />
+                          </a>
+                        </React.Fragment>
+                      )}
                   </div>
                   <div
                     className={perfectMatchChanged ? "perfectMatchChanged" : ""}
