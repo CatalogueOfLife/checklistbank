@@ -167,6 +167,7 @@ class DatasetMeta extends React.Component {
     const { data } = this.state;
     const { addError } = this.props;
     const toggledPrivate = !data.private;
+    this.setState({ privateChangeLoading: true });
     axios
       .put(`${config.dataApi}dataset/${data.key}`, {
         ...data,
