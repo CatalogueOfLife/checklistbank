@@ -39,6 +39,7 @@ class DatasetDownload extends React.Component {
       downloadModalVisible: false,
       rootTaxon: null,
       synonyms: true,
+      bareNames: false,
       excel: false,
       dataAccess: null,
     };
@@ -110,6 +111,7 @@ class DatasetDownload extends React.Component {
       error,
       rootTaxon,
       synonyms,
+      bareNames,
       excel,
       minRank,
       dataAccess,
@@ -170,7 +172,12 @@ class DatasetDownload extends React.Component {
               <Button
                 type="primary"
                 onClick={() => {
-                  let options = { format: selectedDataFormat, synonyms, excel };
+                  let options = {
+                    format: selectedDataFormat,
+                    synonyms,
+                    bareNames,
+                    excel,
+                  };
                   if (rootTaxon) {
                     options.root = {};
                     options.root.id = rootTaxon.id;
@@ -261,6 +268,14 @@ class DatasetDownload extends React.Component {
               onChange={(e) => this.setState({ synonyms: e.target.checked })}
             >
               Include synonyms
+            </Checkbox>
+          </Col>
+          <Col style={{ paddingLeft: "10px" }}>
+            <Checkbox
+              checked={bareNames}
+              onChange={(e) => this.setState({ bareNames: e.target.checked })}
+            >
+              Include bare names
             </Checkbox>
           </Col>
           <Col>

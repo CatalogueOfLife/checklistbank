@@ -650,7 +650,9 @@ class CatalogueDecisions extends React.Component {
               pagination={pagination}
               rowKey="key"
               expandedRowRender={(record) => (
-                <pre>{JSON.stringify(record.subject, null, 4)}</pre>
+                <pre>
+                  {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
+                </pre>
               )}
               onChange={this.handleTableChange}
             />
