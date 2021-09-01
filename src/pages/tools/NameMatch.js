@@ -127,7 +127,7 @@ const NameMatch = () => {
         name.primaryDatasetUsage = _.get(primaryDatasetUsages, "result[0]");
         if (name.primaryDatasetUsage) {
           const { data: classification } = await axios(
-            `${config.dataApi}dataset/${primaryDataset.key}/taxon/${name.primaryDatasetUsage.id}/classification2`
+            `${config.dataApi}dataset/${primaryDataset.key}/taxon/${name.primaryDatasetUsage.id}/classification`
           );
           if (classification) {
             name.primaryDatasetUsage.classification = _.keyBy(
@@ -146,7 +146,7 @@ const NameMatch = () => {
           );
           if (name.secondaryDatasetUsage) {
             const { data: classification } = await axios(
-              `${config.dataApi}dataset/${secondaryDataset.key}/taxon/${name.secondaryDatasetUsage.id}/classification2`
+              `${config.dataApi}dataset/${secondaryDataset.key}/taxon/${name.secondaryDatasetUsage.id}/classification`
             );
             if (classification) {
               name.secondaryDatasetUsage.classification = _.keyBy(
