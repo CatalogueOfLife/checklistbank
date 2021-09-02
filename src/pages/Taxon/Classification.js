@@ -22,6 +22,10 @@ const isAssembly = (location, catalogueKey) => {
   );
 };
 
+const rankStyle = {
+  color: "rgba(0, 0, 0, 0.45)",
+  fontSize: "11px",
+};
 const ClassificationTable = ({
   datasetKey,
   data,
@@ -33,12 +37,8 @@ const ClassificationTable = ({
   <div style={style}>
     {" "}
     {_.reverse([...data]).map((t) => (
-      <PresentationItem
-        md={6}
-        label={_.startCase(t.rank)}
-        classes={{ formItem: { borderBottom: "none" } }}
-        key={t.rank}
-      >
+      <div style={{ float: "left", marginRight: "3px" }} key={t.rank}>
+        <span style={rankStyle}>{t.rank}: </span>
         <NavLink
           to={{
             pathname: isAssembly(location, catalogueKey)
@@ -52,13 +52,13 @@ const ClassificationTable = ({
         >
           <span dangerouslySetInnerHTML={{ __html: t.labelHtml }} />
         </NavLink>
-      </PresentationItem>
+        {" >"}
+      </div>
     ))}
-    <PresentationItem
-      md={6}
-      label={_.get(taxon, "rank") ? _.startCase(taxon.rank) : ""}
-      classes={{ formItem: { borderBottom: "none" } }}
-    >
+    <div style={{ float: "left" }}>
+      {_.get(taxon, "name.rank") && (
+        <span style={rankStyle}>{taxon.name.rank}: </span>
+      )}
       <NavLink
         to={{
           pathname: isAssembly(location, catalogueKey)
@@ -73,7 +73,7 @@ const ClassificationTable = ({
           <span dangerouslySetInnerHTML={{ __html: taxon.labelHtml }} />
         )}
       </NavLink>
-    </PresentationItem>
+    </div>
   </div>
 );
 

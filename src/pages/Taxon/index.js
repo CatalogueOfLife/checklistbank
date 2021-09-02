@@ -20,6 +20,7 @@ import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
+import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
 const md = 5;
 
@@ -248,7 +249,8 @@ class TaxonPage extends React.Component {
   };
 
   render() {
-    const { datasetKey, catalogueKey, getNomStatus } = this.props;
+    const { datasetKey, catalogueKey, getNomStatus, rank } = this.props;
+    const genusRankIndex = rank.indexOf("genus");
     const {
       taxon,
       //   synonyms,
@@ -431,6 +433,11 @@ class TaxonPage extends React.Component {
               />
             </PresentationItem>
           )}
+          {taxon &&
+            rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
+            rank.indexOf(_.get(taxon, "name.rank")) > -1 && (
+              <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
+            )}
           {includes.length > 1 && taxon && (
             <PresentationItem md={md} label="Statistics">
               <IncludesTable
@@ -568,11 +575,13 @@ const mapContextToProps = ({
   dataset,
   catalogueKey,
   getNomStatus,
+  rank,
 }) => ({
   issueMap,
   dataset,
   catalogueKey,
   getNomStatus,
+  rank,
 });
 
 export default withContext(mapContextToProps)(TaxonPage);
