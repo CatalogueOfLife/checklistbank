@@ -11,7 +11,7 @@ import withContext from "../../components/hoc/withContext";
 
 HC_exporting(Highcharts);
 
-const MAX_GRAND_CHILDREN = 200;
+const MAX_GRAND_CHILDREN = 500;
 const canonicalRanks = [
   "kingdom",
   "phylum",
