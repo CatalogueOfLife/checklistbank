@@ -90,7 +90,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
           0
         );
       } else {
-        root = res.data;
+        root = res.data.filter((t) => t.rank === childRank);
       }
       setLoading(false);
       initChart(root);
