@@ -7,6 +7,8 @@ import HighchartsReact from "highcharts-react-official";
 import _ from "lodash";
 import history from "../../history";
 import { Spin, Row, Col } from "antd";
+import withContext from "../../components/hoc/withContext";
+
 HC_exporting(Highcharts);
 
 const MAX_GRAND_CHILDREN = 200;
@@ -24,7 +26,7 @@ const getRanks = (hasSubFamily) =>
       ]
     : ["kingdom", "phylum", "class", "order", "family", "genus", "species"];
 
-const TaxonBreakdown = ({ taxon, datasetKey }) => {
+const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
   const [options, setOptions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,6 @@ const TaxonBreakdown = ({ taxon, datasetKey }) => {
     const res = await axios(
       `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon.id}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
     );
-    console.log(res);
     return _.keyBy(_.get(res, "data.facets.rank", []), "value");
   };
   const getData = async () => {
@@ -45,10 +46,35 @@ const TaxonBreakdown = ({ taxon, datasetKey }) => {
     try {
       const counts = await getOverView();
       const hasSubFamily = !!counts.subfamily;
+
       const ranks = getRanks(hasSubFamily);
-      const childRank = ranks[ranks.indexOf(_.get(taxon, "name.rank")) + 1];
-      const grandChildRank =
-        ranks[ranks.indexOf(_.get(taxon, "name.rank")) + 2];
+      let countBy;
+      if (_.get(counts, "species.count", 0) > 0) {
+        countBy = "species";
+      } else {
+        let i = ranks.length - 1;
+        while (i > 0 && !countBy) {
+          if (_.get(counts, `${ranks[i]}.count`, 0) > 0) {
+            countBy = ranks[i];
+          }
+        }
+      }
+      // Check if the rank is in the canonical ranks
+      let taxonRankIdx = ranks.indexOf(_.get(taxon, "name.rank"));
+      // If not, find it in the full rank enum, and place it within canonical ranks.
+      // This will produce nice charts for e.g. sub- and superfamilies
+      if (taxonRankIdx === -1) {
+        let rankIndex = rank.indexOf(_.get(taxon, "name.rank")) + 1;
+        while (taxonRankIdx === -1 && rankIndex < rank.length - 1) {
+          let canonicalRankIndex = ranks.indexOf(rank[rankIndex]);
+          if (canonicalRankIndex > -1) {
+            taxonRankIdx = canonicalRankIndex - 1;
+          }
+          rankIndex++;
+        }
+      }
+      const childRank = ranks[taxonRankIdx + 1];
+      const grandChildRank = ranks[taxonRankIdx + 2];
       let root;
       if (
         grandChildRank === "species" ||
@@ -60,7 +86,7 @@ const TaxonBreakdown = ({ taxon, datasetKey }) => {
       const res = await axios(
         `${config.dataApi}dataset/${datasetKey}/export.json?rank=${childRank}${
           !root ? "&rank=" + grandChildRank : ""
-        }&countBy=species&taxonID=${taxon.id}`
+        }&countBy=${countBy}&taxonID=${taxon.id}`
       );
       if (_.get(root, "[0]")) {
         root[0].children = res.data;
@@ -235,4 +261,9 @@ const TaxonBreakdown = ({ taxon, datasetKey }) => {
   );
 };
 
-export default TaxonBreakdown;
+const mapContextToProps = ({ dataset, rank }) => ({
+  dataset,
+  rank,
+});
+
+export default withContext(mapContextToProps)(TaxonBreakdown);
