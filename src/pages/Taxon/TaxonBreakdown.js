@@ -12,19 +12,15 @@ import withContext from "../../components/hoc/withContext";
 HC_exporting(Highcharts);
 
 const MAX_GRAND_CHILDREN = 200;
-const getRanks = (hasSubFamily) =>
-  hasSubFamily
-    ? [
-        "kingdom",
-        "phylum",
-        "class",
-        "order",
-        "family",
-        "subfamily",
-        "genus",
-        "species",
-      ]
-    : ["kingdom", "phylum", "class", "order", "family", "genus", "species"];
+const canonicalRanks = [
+  "kingdom",
+  "phylum",
+  "class",
+  "order",
+  "family",
+  "genus",
+  "species",
+];
 
 const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
   const [options, setOptions] = useState(null);
@@ -45,9 +41,8 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
     setLoading(true);
     try {
       const counts = await getOverView();
-      const hasSubFamily = !!counts.subfamily;
 
-      const ranks = getRanks(hasSubFamily);
+      const ranks = canonicalRanks;
       let countBy;
       if (_.get(counts, "species.count", 0) > 0) {
         countBy = "species";
