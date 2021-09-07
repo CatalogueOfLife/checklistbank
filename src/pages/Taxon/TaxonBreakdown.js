@@ -103,7 +103,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
         }&countBy=${countBy}&taxonID=${taxon.id}`
       );
       //Api returns both ranks in the root array
-      const childRankData = res.data.filter((t) => t.rank === childRank);
+      const childRankData = res.data; //.filter((t) => t.rank === childRank);
       if (_.get(root, "[0]")) {
         root[0].children = processChildren(childRankData, countBy);
         root[0][countBy] = root[0].children.reduce(
@@ -138,6 +138,17 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
       categories = root.map((t) => t.name),
       data = root.map((k, idx) => {
         const children = processChildren(k.children, countBy);
+        const sum = k.children.reduce((acc, cur) => acc + cur[countBy], 0);
+        let c =
+          sum < k[countBy]
+            ? [
+                ...children,
+                {
+                  name: `Other / Unknown ${_.get(children, "[0].rank", "")}`,
+                  [countBy]: k[countBy] - sum,
+                },
+              ]
+            : children;
         // test
         /*         const c = k.children.reduce((acc, cur) => acc + cur[countBy], 0);
         if (k[countBy] !== c) {
@@ -150,8 +161,8 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
           _id: k.id,
           drilldown: {
             name: k.name,
-            categories: children.map((c) => c.name),
-            data: children,
+            categories: c.map((c) => c.name),
+            data: c,
           },
         };
       }),
@@ -214,7 +225,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
           point: {
             events: {
               click: (e) => {
-                history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                if (e.point._id) {
+                  history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                }
               },
             },
           },
@@ -227,7 +240,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
           point: {
             events: {
               click: (e) => {
-                history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                if (e.point._id) {
+                  history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                }
               },
             },
           },
