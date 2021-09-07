@@ -133,6 +133,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
   };
 
   const initChart = (root, countBy) => {
+    const DOI = dataset.doi ? "https://doi.org/" + dataset.doi : null;
     const totalCount = root.reduce((acc, cur) => acc + cur[countBy], 0);
     var colors = Highcharts.getOptions().colors,
       categories = root.map((t) => t.name),
@@ -203,8 +204,10 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
       credits: {
         text: `${taxon.name.scientificName} in ${dataset.title} (${
           dataset.version
-        }). ${dataset.doi || dataset.url || ""}`,
-        href: dataset.doi || dataset.url || "",
+        }). ${
+          (dataset.doi ? "DOI:" + dataset.doi : null) || dataset.url || ""
+        }`,
+        href: DOI || dataset.url || "",
       },
       title: {
         text: "",
