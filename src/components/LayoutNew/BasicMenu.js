@@ -711,7 +711,7 @@ class BasicMenu extends Component {
                       )}/classification`,
                     }}
                   >
-                    Classification
+                    Browse
                   </NavLink>
                 </Menu.Item>
               )}
@@ -725,7 +725,7 @@ class BasicMenu extends Component {
                       )}/names`,
                     }}
                   >
-                    Names
+                    Search
                   </NavLink>
                 </Menu.Item>
               )}
