@@ -22,7 +22,7 @@ const canonicalRanks = [
   "species",
 ];
 
-const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
+const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
   const [options, setOptions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -200,7 +200,12 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank }) => {
       chart: {
         type: "pie",
       },
-      credits: false,
+      credits: {
+        text: `${taxon.name.scientificName} in ${dataset.title} (${
+          dataset.version
+        }). ${dataset.doi || dataset.url || ""}`,
+        href: dataset.doi || dataset.url || "",
+      },
       title: {
         text: "",
       },
