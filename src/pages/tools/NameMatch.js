@@ -356,7 +356,7 @@ const NameMatch = () => {
   const getSubjectDataAndMatch = async () => {
     setSubjectDataLoading(true);
     const { data } = await axios(
-      `${config.dataApi}dataset/${subjectDataset.key}/export/${subjectTaxon.key}.json`
+      `${config.dataApi}dataset/${subjectDataset.key}/export/${subjectTaxon.key}.json?flat=true`
     );
     const result = data.map((e) => ({
       providedScientificName: e.label,
