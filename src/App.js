@@ -42,6 +42,7 @@ import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataValidator from "./pages/tools/MetaDataValidator";
 import NameMatch from "./pages/tools/NameMatch";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
+import DiffViewer from "./pages/tools/DiffViewer";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -238,6 +239,12 @@ class App extends Component {
                   key="namematch"
                   path={`/tools/name-match`}
                   component={NameMatch}
+                />
+                <Route
+                  exact
+                  key="diffviewer"
+                  path={`/tools/diff-viewer`}
+                  component={DiffViewer}
                 />
                 <Route
                   exact

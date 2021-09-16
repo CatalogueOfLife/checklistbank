@@ -89,13 +89,15 @@ class NameSearchAutocomplete extends React.Component {
           key: _.get(obj, "data.acceptedUsageId"),
           title: _.get(obj, "data.parentOrAcceptedName"),
         }
-      : { key: _.get(obj, "data.usageId"), title: _.get(obj, "data.name") };
+      : { key: _.get(obj, "data.usageId"), title: _.get(obj, "data.match") };
     this.setState({ value: val });
     this.props.onSelectName(selectedTaxon);
   };
   onReset = () => {
     this.setState({ value: "", names: [] });
-    this.props.onResetSearch();
+    if (typeof this.props.onResetSearch === "function") {
+      this.props.onResetSearch();
+    }
   };
   render = () => {
     const { placeHolder, autoFocus, disabled = false } = this.props;
