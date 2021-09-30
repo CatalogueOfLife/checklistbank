@@ -135,7 +135,7 @@ const MetaDataForm = (props) => {
     : {
         organisations: [],
         authorsAndEditors: [],
-        private: false,
+        private: true,
         confidence: null,
         completeness: 0,
         ...data,
