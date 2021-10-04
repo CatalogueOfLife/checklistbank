@@ -55,6 +55,8 @@ export const AppContext = React.createContext({});
  */
 
 const ISSUE_COLOR = { warning: "orange", error: "red", info: "green" };
+const DUPLICATE_COLOR = { warning: "#FFD700", error: "#f50", info: "#32CD32" };
+
 const ISSUE_ORDER = { error: 1, warning: 2, info: 3 };
 const TAXONOMIC_STATUS_COLOR = {
   accepted: "green",
@@ -145,11 +147,11 @@ class ContextProvider extends React.Component {
     },
     getDuplicateWarningColor: (count) => {
       if (Number(count) === 0) {
-        return ISSUE_COLOR.info;
+        return DUPLICATE_COLOR.info;
       } else if (Number(count) < 51) {
-        return ISSUE_COLOR.warning;
+        return DUPLICATE_COLOR.warning;
       } else if (Number(count) > 50) {
-        return ISSUE_COLOR.error;
+        return DUPLICATE_COLOR.error;
       }
     },
     getTaxonomicStatusColor: (status) => TAXONOMIC_STATUS_COLOR[status],

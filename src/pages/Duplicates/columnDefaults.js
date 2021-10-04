@@ -57,22 +57,6 @@ export default (catalogueKey) => ({
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
-    {
-      title: "Accepted",
-      dataIndex: ["accepted", "labelHtml"],
-      key: "accepted",
-      width: 60,
-      className: "workbench-td",
-      render: (text, record) => {
-        return (
-          <span
-            dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.labelHtml"),
-            }}
-          />
-        );
-      },
-    },
 
     {
       title: "Genus",
@@ -104,6 +88,22 @@ export default (catalogueKey) => ({
       render: (text, record) => (
         <CopyableColumnText text={text} width="230px" />
       ),
+    },
+    {
+      title: "Accepted",
+      dataIndex: ["accepted", "labelHtml"],
+      key: "accepted",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => {
+        return (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(record, "accepted.labelHtml"),
+            }}
+          />
+        );
+      },
     },
 
     {
@@ -167,22 +167,7 @@ export default (catalogueKey) => ({
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
-    {
-      title: "Accepted",
-      dataIndex: ["accepted", "labelHtml"],
-      key: "accepted",
-      width: 60,
-      className: "workbench-td",
-      render: (text, record) => {
-        return (
-          <span
-            dangerouslySetInnerHTML={{
-              __html: _.get(record, "accepted.labelHtml"),
-            }}
-          />
-        );
-      },
-    },
+
     {
       title: "Genus",
       width: 160,
@@ -223,7 +208,22 @@ export default (catalogueKey) => ({
         <CopyableColumnText text={text} width="230px" />
       ),
     },
-
+    {
+      title: "Accepted",
+      dataIndex: ["accepted", "labelHtml"],
+      key: "accepted",
+      width: 60,
+      className: "workbench-td",
+      render: (text, record) => {
+        return (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(record, "accepted.labelHtml"),
+            }}
+          />
+        );
+      },
+    },
     {
       title: "Rank",
       width: 60,
@@ -391,6 +391,22 @@ export default (catalogueKey) => ({
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
+
+    {
+      title: "scientificName",
+      width: 340,
+      dataIndex: ["name", "scientificName"],
+      key: "scientificName",
+      className: "workbench-td",
+    },
+
+    {
+      title: "Authorship",
+      width: 240,
+      dataIndex: ["name", "authorship"],
+      key: "authorship",
+      className: "workbench-td",
+    },
     {
       title: "Accepted",
       dataIndex: ["accepted", "labelHtml"],
@@ -407,22 +423,6 @@ export default (catalogueKey) => ({
         );
       },
     },
-    {
-      title: "scientificName",
-      width: 340,
-      dataIndex: ["name", "scientificName"],
-      key: "scientificName",
-      className: "workbench-td",
-    },
-
-    {
-      title: "Authorship",
-      width: 240,
-      dataIndex: ["name", "authorship"],
-      key: "authorship",
-      className: "workbench-td",
-    },
-
     {
       title: "Rank",
       width: 60,
