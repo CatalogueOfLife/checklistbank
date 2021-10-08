@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { notification, Select, Row, Col } from "antd";
+import { notification, Select, Row, Col, Button, Input } from "antd";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 
 import _ from "lodash";
@@ -12,7 +12,14 @@ import withContext from "../../../components/hoc/withContext";
 
 const { Option } = Select;
 
-const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
+const SectorForm = ({
+  sector,
+  nomCode,
+  entitytype,
+  sectorDatasetRanks,
+  rank,
+  onError,
+}) => {
   const [subjectDisabled, setSubjectDisabled] = useState(true);
   const [targetDisabled, setTargetDisabled] = useState(true);
 
@@ -156,22 +163,27 @@ const SectorForm = ({ sector, nomCode, entitytype, rank, onError }) => {
       <Row style={{ marginTop: "8px" }}>
         <Col span={9}>Ranks</Col>
         <Col span={15} style={{ paddingLeft: "8px" }}>
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            defaultValue={sector.ranks || []}
-            onChange={(value) => updateSectorRank(value)}
-            showSearch
-            allowClear
-          >
-            {rank.map((r) => {
-              return (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              );
-            })}
-          </Select>
+          <Input.Group style={{ width: "100%" }}>
+            <Select
+              style={{ width: "70%" }}
+              mode="multiple"
+              value={sector.ranks || []}
+              onChange={(value) => updateSectorRank(value)}
+              showSearch
+              allowClear
+            >
+              {sectorDatasetRanks.map((r) => {
+                return (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                );
+              })}
+            </Select>
+            <Button onClick={() => updateSectorRank(sectorDatasetRanks)}>
+              All
+            </Button>
+          </Input.Group>
         </Col>
       </Row>
 

@@ -37,6 +37,7 @@ class Sector extends React.Component {
       popOverVisible: false,
       showEditForm: false,
       error: null,
+      sectorDatasetRanks: [],
     };
   }
 
@@ -161,11 +162,29 @@ class Sector extends React.Component {
         });
       });
   };
-
+  getSectorDatasetRanks = () => {
+    const {
+      taxon: { sector },
+    } = this.props;
+    axios
+      .get(
+        `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
+      ) // /assembly/3/sync/
+      .then((res) => {
+        this.setState({
+          sectorDatasetRanks: _.get(res, "data.facets.rank", []).map(
+            (r) => r.value
+          ),
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: err });
+      });
+  };
   render = () => {
     const { taxon, user, catalogueKey, syncState, syncingSector } = this.props;
 
-    const { error, showEditForm } = this.state;
+    const { error, showEditForm, sectorDatasetRanks } = this.state;
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
     const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
@@ -253,7 +272,10 @@ class Sector extends React.Component {
               <Switch
                 style={{ marginTop: "8px" }}
                 checked={showEditForm}
-                onChange={(checked) => this.setState({ showEditForm: checked })}
+                onChange={(checked) => {
+                  this.getSectorDatasetRanks();
+                  this.setState({ showEditForm: checked });
+                }}
                 checkedChildren="Finish edit"
                 unCheckedChildren="Edit sector"
               />
@@ -261,6 +283,7 @@ class Sector extends React.Component {
 
             {isRootSector && showEditForm && (
               <SectorForm
+                sectorDatasetRanks={sectorDatasetRanks}
                 sector={sector}
                 onError={(err) => this.setState({ error: err })}
               />
