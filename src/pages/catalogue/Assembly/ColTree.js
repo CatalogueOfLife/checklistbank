@@ -95,7 +95,8 @@ class ColTree extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (
       prevProps.dataset.key !== this.props.dataset.key ||
-      prevProps.catalogueKey !== this.props.catalogueKey
+      prevProps.catalogueKey !== this.props.catalogueKey ||
+      prevProps.insertPlaceholder !== this.props.insertPlaceholder
     ) {
       this.setState({ treeData: [] }, this.loadRoot);
       this.sectorLoader = new DataLoader((ids) =>
@@ -221,13 +222,14 @@ class ColTree extends React.Component {
       showSourceTaxon,
       catalogueKey,
       onDeleteSector,
+      insertPlaceholder = false,
     } = this.props;
     this.setState({ rootLoading: true });
     let id = key;
     const { data } = await axios(
       `${
         config.dataApi
-      }dataset/${id}/tree/${defaultExpandKey}?catalogueKey=${catalogueKey}&&insertPlaceholder=true${this.appendTypeParam(
+      }dataset/${id}/tree/${defaultExpandKey}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
         treeType
       )}`
     )
@@ -353,8 +355,14 @@ class ColTree extends React.Component {
     );
   };
   fetchChildPage = async (dataRef, reloadAll, dontUpdateState) => {
-    const { showSourceTaxon, dataset, treeType, catalogueKey, onDeleteSector } =
-      this.props;
+    const {
+      showSourceTaxon,
+      dataset,
+      treeType,
+      catalogueKey,
+      onDeleteSector,
+      insertPlaceholder = false,
+    } = this.props;
     const { treeData } = this.state;
     const childcount = _.get(dataRef, "childCount");
     const limit = CHILD_PAGE_SIZE;
@@ -363,7 +371,7 @@ class ColTree extends React.Component {
     const res = await axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         encodeURIComponent(dataRef.taxon.id) //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${catalogueKey}${this.appendTypeParam(
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${catalogueKey}${this.appendTypeParam(
         treeType
       )}`
     );

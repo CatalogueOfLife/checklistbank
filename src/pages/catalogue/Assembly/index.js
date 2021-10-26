@@ -1,6 +1,15 @@
 import React from "react";
 import { EyeOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
-import { Row, Col, notification, Button, Alert, Radio, Slider } from "antd";
+import {
+  Row,
+  Col,
+  notification,
+  Button,
+  Alert,
+  Radio,
+  Slider,
+  Switch,
+} from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../../components/LayoutNew";
@@ -30,6 +39,7 @@ class Assembly extends React.Component {
       assemblyTaxonKey: params.assemblyTaxonKey || null,
       sourceTaxonKey: null,
       childModalVisible: false,
+      insertPlaceholder: false,
       missingTargetKeys: {}, // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
       height: 600,
     };
@@ -294,6 +304,7 @@ class Assembly extends React.Component {
       assemblyColSpan,
       sourceColSpan,
       height,
+      insertPlaceholder,
     } = this.state;
 
     const {
@@ -334,17 +345,29 @@ class Assembly extends React.Component {
             }}
           >
             <Row>
-              <ColTreeContext.Consumer>
-                {({ mode, toggleMode }) => (
-                  <Radio.Group
-                    value={mode}
-                    onChange={(e) => toggleMode(e.target.value)}
-                  >
-                    <Radio.Button value="modify">Modify Tree</Radio.Button>
-                    <Radio.Button value="attach">Attach sectors</Radio.Button>
-                  </Radio.Group>
-                )}
-              </ColTreeContext.Consumer>
+              <Col>
+                <ColTreeContext.Consumer>
+                  {({ mode, toggleMode }) => (
+                    <Radio.Group
+                      value={mode}
+                      onChange={(e) => toggleMode(e.target.value)}
+                    >
+                      <Radio.Button value="modify">Modify Tree</Radio.Button>
+                      <Radio.Button value="attach">Attach sectors</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </ColTreeContext.Consumer>
+              </Col>
+              <Col flex="auto"></Col>
+              <Col>
+                <Switch
+                  onChange={(checked) =>
+                    this.setState({ insertPlaceholder: checked })
+                  }
+                  checkedChildren={"Show placeholder ranks"}
+                  unCheckedChildren={"Show placeholder ranks"}
+                />
+              </Col>
             </Row>
             <Row>
               <div style={{ width: "100%" }}>
@@ -470,6 +493,7 @@ class Assembly extends React.Component {
                   <div ref={this.wrapperRef} style={{ height: "100%" }}>
                     {" "}
                     <ColTree
+                      insertPlaceholder={insertPlaceholder}
                       height={height}
                       treeRef={(ref) => (this.assemblyRef = ref)}
                       location={location}
@@ -567,6 +591,7 @@ class Assembly extends React.Component {
                 )}
                 {this.state.selectedDataset && (
                   <ColTree
+                    insertPlaceholder={insertPlaceholder}
                     height={height}
                     treeRef={(ref) => (this.sourceRef = ref)}
                     location={location}
