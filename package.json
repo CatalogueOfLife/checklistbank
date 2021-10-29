@@ -6,11 +6,13 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.1.0",
+    "@ant-design/icons": "^4.7.0",
     "ajv": "^6.9.1",
-    "antd": "4.8.6",
+    "antd": "4.16.13",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
+    "classnames": "^2.3.1",
+    "col-rc-tree": "https://github.com/CatalogueOfLife/tree.git",
     "csvtojson": "^2.0.10",
     "dataloader": "^1.4.0",
     "dayjs": "^1.8.26",
@@ -22,8 +24,8 @@
     "lodash": ">=4.6.2",
     "marked": "^2.0.3",
     "moment": "^2.24.0",
-    "papaparse": "^5.0.2",
     "p-queue": "^6.6.1",
+    "papaparse": "^5.0.2",
     "query-string": "~5.1.1",
     "react": "^16.9.0",
     "react-copy-to-clipboard": "^5.0.1",
@@ -36,7 +38,7 @@
     "react-jss": "^10.1.1",
     "react-resizable": "^1.7.5",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.5",
+    "react-scripts": "4.0.3",
     "react-width": "^0.1.8"
   },
   "devDependencies": {
@@ -51,5 +53,17 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

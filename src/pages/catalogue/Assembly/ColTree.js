@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Tree,
+  //Tree,
   notification,
   message,
   Alert,
@@ -8,6 +8,7 @@ import {
   Button,
   Skeleton,
 } from "antd";
+import Tree from "../../../components/tree/index";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
