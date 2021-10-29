@@ -49,7 +49,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node gitTag.js; node writeEnums.js; react-scripts build; gzipper compress ./build ; gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json  ./build",
+    "build": "node gitTag.js; node writeEnums.js; (SET INLINE_RUNTIME_CHUNK=false) && react-scripts build; gzipper compress ./build ; gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json  ./build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions"
