@@ -4,7 +4,7 @@ import axios from "axios";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import qs from "query-string";
 import _ from "lodash";
-import { Alert, Row, Col, Pagination } from "antd";
+import { Alert, Row, Col, Pagination, Spin } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import SearchBox from "../DatasetList/SearchBox";
@@ -29,6 +29,7 @@ class VerbatimRecord extends React.Component {
       total: 0,
       limit: lsLimit ? Number(lsLimit) : 10,
       offset: 0,
+      loading: false,
     };
   }
 
@@ -74,6 +75,7 @@ class VerbatimRecord extends React.Component {
         params: { key },
       },
     } = this.props;
+    this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${key}/verbatim?${qs.stringify(params)}`)
       .then((res) => {
         this.setState({
@@ -82,12 +84,14 @@ class VerbatimRecord extends React.Component {
           limit: res.data.limit,
           offset: res.data.offset,
           total: res.data.total,
+          loading: false,
         });
       })
       .catch((err) => {
         this.setState({
           verbatimError: err,
           verbatim: [],
+          loading: false,
         });
       });
   };
@@ -117,80 +121,82 @@ class VerbatimRecord extends React.Component {
       : [];
 
     return (
-      <div
-        style={{
-          background: "#fff",
-          padding: 24,
-          minHeight: 280,
-          margin: "16px 0",
-        }}
-      >
-        {verbatimError && (
-          <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
-        )}
-        <Row style={{ marginBottom: "10px" }}>
-          <Col span={12}>
-            {" "}
-            <SearchBox
-              onSearch={(value) => this.onSearch({ q: value })}
-              defaultValue={_.get(params, "q")}
-            ></SearchBox>
-          </Col>
-          <Col span={12}>
-            <MultiValueFilter
-              defaultValue={_.get(params, "type")}
-              onChange={(value) => this.onSearch({ type: value })}
-              vocab={typeFacets}
-              label="Row type"
-            />
-          </Col>
-          <Col span={24} style={{ textAlign: "right" }}>
-            {" "}
-            {
-              <Pagination
-                hideOnSinglePage={true}
-                style={{ display: "inline" }}
-                current={current}
-                showSizeChanger
-                pageSizeOptions={["10", "50", "100"]}
-                onShowSizeChange={(current, size) => {
-                  localStorage.setItem("col_plus_verbatim_limit", size);
-                  history.push({
-                    pathname: location.pathname,
-                    search: `?${qs.stringify({
-                      ...params,
-                      limit: Number(size),
-                    })}`,
-                  });
-                }}
-                onChange={(page, pageSize) => {
-                  history.push({
-                    pathname: location.pathname,
-                    search: `?${qs.stringify({
-                      ...params,
-                      offset: (page - 1) * Number(limit),
-                    })}`,
-                  });
-                }}
-                pageSize={Number(limit)}
-                total={total}
+      <Spin spinning={this.state.loading}>
+        <div
+          style={{
+            background: "#fff",
+            padding: 24,
+            minHeight: 280,
+            margin: "16px 0",
+          }}
+        >
+          {verbatimError && (
+            <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
+          )}
+          <Row style={{ marginBottom: "10px" }}>
+            <Col span={12}>
+              {" "}
+              <SearchBox
+                onSearch={(value) => this.onSearch({ q: value })}
+                defaultValue={_.get(params, "q")}
+              ></SearchBox>
+            </Col>
+            <Col span={12}>
+              <MultiValueFilter
+                defaultValue={_.get(params, "type")}
+                onChange={(value) => this.onSearch({ type: value })}
+                vocab={typeFacets}
+                label="Row type"
               />
-            }
-          </Col>
-        </Row>
+            </Col>
+            <Col span={24} style={{ textAlign: "right" }}>
+              {" "}
+              {
+                <Pagination
+                  hideOnSinglePage={true}
+                  style={{ display: "inline" }}
+                  current={current}
+                  showSizeChanger
+                  pageSizeOptions={["10", "50", "100"]}
+                  onShowSizeChange={(current, size) => {
+                    localStorage.setItem("col_plus_verbatim_limit", size);
+                    history.push({
+                      pathname: location.pathname,
+                      search: `?${qs.stringify({
+                        ...params,
+                        limit: Number(size),
+                      })}`,
+                    });
+                  }}
+                  onChange={(page, pageSize) => {
+                    history.push({
+                      pathname: location.pathname,
+                      search: `?${qs.stringify({
+                        ...params,
+                        offset: (page - 1) * Number(limit),
+                      })}`,
+                    });
+                  }}
+                  pageSize={Number(limit)}
+                  total={total}
+                />
+              }
+            </Col>
+          </Row>
 
-        {verbatim &&
-          verbatim.length > 0 &&
-          verbatim.map((v) => (
-            <VerbatimPresentation
-              key={v.id}
-              datasetKey={v.datasetKey}
-              verbatimKey={v.id}
-              basicHeader={true}
-              location={location}
-            />
-          ))}
-      </div>
+          {verbatim &&
+            verbatim.length > 0 &&
+            verbatim.map((v) => (
+              <VerbatimPresentation
+                key={v.id}
+                datasetKey={v.datasetKey}
+                verbatimKey={v.id}
+                basicHeader={true}
+                location={location}
+              />
+            ))}
+        </div>
+      </Spin>
     );
   };
 }
