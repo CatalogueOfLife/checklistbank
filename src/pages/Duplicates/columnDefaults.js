@@ -5,7 +5,7 @@ import Classification from "./Classification";
 import { NavLink } from "react-router-dom";
 import CopyableColumnText from "../WorkBench/CopyableColumnText";
 import { Tooltip } from "antd";
-export default (catalogueKey) => ({
+export default (catalogueKey, deleteCallback) => ({
   binomial: [
     {
       title: "ID",
@@ -44,7 +44,7 @@ export default (catalogueKey) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            deleteCallback={this.getData}
+            deleteCallback={deleteCallback}
           />
         );
       },
@@ -154,7 +154,7 @@ export default (catalogueKey) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            deleteCallback={this.getData}
+            deleteCallback={deleteCallback}
           />
         );
       },
@@ -272,7 +272,7 @@ export default (catalogueKey) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            deleteCallback={this.getData}
+            deleteCallback={deleteCallback}
           />
         );
       },
@@ -378,7 +378,7 @@ export default (catalogueKey) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            deleteCallback={this.getData}
+            deleteCallback={deleteCallback}
           />
         );
       },

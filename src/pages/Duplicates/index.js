@@ -64,7 +64,7 @@ class DuplicateSearchPage extends React.Component {
       sectors: [],
       filteredSectors: [],
       advancedMode: false,
-      columns: columnDefaults(catalogueKey).binomial,
+      columns: columnDefaults(catalogueKey, this.getData).binomial,
       params: { limit: limit ? Number(limit) : 50, offset: 0 },
       totalFaked: 0,
       loading: false,
@@ -180,8 +180,8 @@ class DuplicateSearchPage extends React.Component {
           data.length > Number(params.limit) ? data.slice(0, -1) : data;
         const { totalFaked } = this.state;
         const clms = params.category
-          ? columnDefaults(catalogueKey)[params.category]
-          : columnDefaults(catalogueKey).binomial;
+          ? columnDefaults(catalogueKey, this.getData)[params.category]
+          : columnDefaults(catalogueKey, this.getData).binomial;
 
         this.setState({
           loading: false,
@@ -1016,9 +1016,11 @@ class DuplicateSearchPage extends React.Component {
                   : assembly
                   ? [
                       this.getGsdColumn(),
-                      ...columnDefaults(catalogueKey).fullScientificName,
+                      ...columnDefaults(catalogueKey, this.getData)
+                        .fullScientificName,
                     ]
-                  : columnDefaults(catalogueKey).fullScientificName
+                  : columnDefaults(catalogueKey, this.getData)
+                      .fullScientificName
               }
               dataSource={data}
               loading={loading}
