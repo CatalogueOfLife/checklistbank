@@ -380,7 +380,7 @@ class TaxonPage extends React.Component {
           )}
 
           {synonyms && synonyms.length > 0 && (
-            <PresentationItem md={md} label="Synonyms">
+            <PresentationItem md={md} label="Synonyms and combinations">
               <SynonymTable
                 data={synonyms}
                 references={_.get(info, "references")}

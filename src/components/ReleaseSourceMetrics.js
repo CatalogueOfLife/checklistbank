@@ -65,7 +65,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
               )}
             </PresentationItem>
           ))}
-      <PresentationItem label={"Synonyms"} key={"Synonyms"}>
+      <PresentationItem label={"Synonyms and combinations"} key={"Synonyms"}>
         {dataset && pathToSearch ? (
           <NavLink
             to={{
