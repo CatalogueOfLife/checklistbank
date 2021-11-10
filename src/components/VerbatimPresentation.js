@@ -61,19 +61,43 @@ class VerbatimPresentation extends React.Component {
   }
 
   renderTerm = (key, value, type) => {
-    const {
-      termsMap,
-      termsMapReversed,
-      datasetKey,
-      catalogueKey,
-      location,
-    } = this.props;
-    const taxonPath =
-      location.pathname.split(`dataset/${datasetKey}`)[0] +
-      `dataset/${datasetKey}/taxon/`;
+    const { termsMap, termsMapReversed, datasetKey, catalogueKey, location } =
+      this.props;
+    const taxonPath = {
+      pathname:
+        location.pathname.split(`dataset/${datasetKey}`)[0] +
+        `dataset/${datasetKey}/taxon/${value}`,
+    };
+
+    const namePath = {
+      pathname:
+        location.pathname.split(`dataset/${datasetKey}`)[0] +
+        `dataset/${datasetKey}/name/${value}`,
+    };
+
+    const referencePath = {
+      pathname:
+        location.pathname.split(`dataset/${datasetKey}`)[0] +
+        `dataset/${datasetKey}/references/`,
+      search: `?limit=50&offset=0&q=${value}`,
+    };
+
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
+      ((key === "dwc:taxonID" || key === "dwc:acceptedNameUsageID") &&
+        type === "dwc:Taxon") ||
       (key === "col:ID" && type === "col:Taxon");
+
+    const isNameId =
+      ((key === "col:ID" || key === "col:basionymID") && type === "col:Name") ||
+      key === "col:nameID" ||
+      key === "dwc:originalNameUsageID";
+
+    const isReferenceId =
+      key === "col:referenceID" ||
+      (key === "dwca:id" && type === "dwc:Reference") ||
+      key === "acef:ReferenceID" ||
+      (key === "col:ID" && type === "col:Reference");
 
     if (_.get(termsMap, `${type}.${key}`)) {
       const primaryKeys = _.get(termsMap, `${type}.${key}`);
@@ -101,13 +125,18 @@ class VerbatimPresentation extends React.Component {
             {value}
           </NavLink>{" "}
           {isTaxonId && (
-            <NavLink
-              key={`taxonLink:${key}`}
-              to={{
-                pathname: `${taxonPath}${encodeURIComponent(value)}`,
-              }}
-            >
+            <NavLink key={`taxonLink:${key}`} to={taxonPath}>
               taxon page
+            </NavLink>
+          )}
+          {isNameId && (
+            <NavLink key={`nameLink:${key}`} to={namePath}>
+              name page
+            </NavLink>
+          )}
+          {isReferenceId && (
+            <NavLink key={`nameLink:${key}`} to={referencePath}>
+              reference page
             </NavLink>
           )}
         </React.Fragment>
@@ -143,13 +172,18 @@ class VerbatimPresentation extends React.Component {
             <LinkOutlined></LinkOutlined>
           </NavLink>{" "}
           {isTaxonId && (
-            <NavLink
-              key={`taxonLink:${key}`}
-              to={{
-                pathname: `${taxonPath}${encodeURIComponent(value)}`,
-              }}
-            >
+            <NavLink key={`taxonLink:${key}`} to={taxonPath}>
               taxon page
+            </NavLink>
+          )}
+          {isNameId && (
+            <NavLink key={`nameLink:${key}`} to={namePath}>
+              name page
+            </NavLink>
+          )}
+          {isReferenceId && (
+            <NavLink key={`nameLink:${key}`} to={referencePath}>
+              reference page
             </NavLink>
           )}
         </React.Fragment>
