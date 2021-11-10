@@ -12,12 +12,16 @@ import {
   Upload,
   Form,
   Tag,
+  Switch,
+  Divider,
+  Tooltip,
 } from "antd";
 import { CSVLink } from "react-csv";
 import {
   DownloadOutlined,
   UploadOutlined,
   LoadingOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
@@ -102,6 +106,7 @@ const NameMatch = () => {
   const [nameIndexMetrics, setNameIndexMetrics] = useState(null);
   const [primaryUsageMetrics, setPrimaryUsageMetrics] = useState(null);
   const [secondaryUsageMetrics, setSecondaryUsageMetrics] = useState(null);
+  const [showSecondary, setShowSecondary] = useState(false);
   // const [erroredNames, setErroredNames] = useState(null);
   const match = async (name) => {
     try {
@@ -412,67 +417,41 @@ const NameMatch = () => {
         )}
 
         {step !== 1 && (
-          <Row>
-            <Col
-              style={{ paddingRight: "8px" }}
-              span={step === 0 || !secondaryDataset ? 12 : 10}
-            >
-              <DatasetAutocomplete
-                defaultDatasetKey={primaryDataset.key}
-                onResetSearch={() => setPrimaryDataset(COL_LR)}
-                onSelectDataset={setPrimaryDataset}
-                // contributesTo={this.props.catalogueKey}
-                placeHolder="Choose primary dataset"
-              />
-              {step === 2 && (
-                <Row justify="space-between">
-                  <Col>
-                    <Statistic
-                      title={"Usages"}
-                      value={primaryUsageMetrics}
-                      suffix={`/ ${names.length.toLocaleString()}`}
-                    />
-                  </Col>
-                  <Col>
-                    <CSVLink
-                      filename={getDownLoadDataFileName("primary")}
-                      data={getDownLoadData("primary")}
-                    >
-                      <Button type="primary" style={{ marginTop: "10px" }}>
-                        <DownloadOutlined /> Download result
-                      </Button>
-                    </CSVLink>
-                  </Col>
-                </Row>
-              )}
-            </Col>
-            {(step < 1 || secondaryDataset) && (
+          <>
+            {step === 0 && (
+              <Divider
+                orientation="left"
+                style={{ marginTop: "24px", marginBottom: "24px" }}
+              >
+                Data you want to match against
+              </Divider>
+            )}
+            <Row>
               <Col
-                style={{ paddingLeft: "8px", paddingRight: "8px" }}
+                style={{ paddingRight: "8px" }}
                 span={step === 0 || !secondaryDataset ? 12 : 10}
               >
                 <DatasetAutocomplete
-                  defaultDatasetKey={
-                    secondaryDataset ? secondaryDataset.key : null
-                  }
-                  onResetSearch={() => setSecondaryDataset(null)}
-                  onSelectDataset={setSecondaryDataset}
+                  defaultDatasetKey={primaryDataset.key}
+                  onResetSearch={() => setPrimaryDataset(COL_LR)}
+                  onSelectDataset={setPrimaryDataset}
                   // contributesTo={this.props.catalogueKey}
-                  placeHolder="Choose secondary dataset"
+                  placeHolder="Choose primary dataset"
                 />
+
                 {step === 2 && (
                   <Row justify="space-between">
                     <Col>
                       <Statistic
                         title={"Usages"}
-                        value={secondaryUsageMetrics}
-                        suffix={`/ ${names.length}`}
+                        value={primaryUsageMetrics}
+                        suffix={`/ ${names.length.toLocaleString()}`}
                       />
                     </Col>
                     <Col>
                       <CSVLink
-                        filename={getDownLoadDataFileName("secondary")}
-                        data={getDownLoadData("secondary")}
+                        filename={getDownLoadDataFileName("primary")}
+                        data={getDownLoadData("primary")}
                       >
                         <Button type="primary" style={{ marginTop: "10px" }}>
                           <DownloadOutlined /> Download result
@@ -482,99 +461,168 @@ const NameMatch = () => {
                   </Row>
                 )}
               </Col>
-            )}
-            {step === 2 && (
-              <Col
-                span={secondaryDataset ? 4 : 12}
-                style={{ paddingRight: "8px" }}
-              >
-                <Row>
-                  <Col flex="auto"></Col>
-                  <Col style={{ marginTop: "-22px" }}>
-                    <span>Name index matches:</span>
-                    <br />
-                    <Metrics metrics={nameIndexMetrics} total={names.length} />
-                  </Col>
-                </Row>
-              </Col>
-            )}
-          </Row>
+              {(step < 1 || secondaryDataset) && (
+                <Col
+                  style={
+                    showSecondary
+                      ? {
+                          paddingLeft: "8px",
+                          paddingRight: "8px",
+                          marginTop: "-22px",
+                        }
+                      : { paddingLeft: "8px", paddingRight: "8px" }
+                  }
+                  span={step === 0 || !secondaryDataset ? 12 : 10}
+                >
+                  <span>Match against two datasets </span>
+                  <Switch
+                    checked={showSecondary}
+                    onChange={(checked) => {
+                      setShowSecondary(checked);
+                      if (!checked) {
+                        setSecondaryDataset(null);
+                      }
+                    }}
+                  />
+                  {showSecondary && (
+                    <DatasetAutocomplete
+                      defaultDatasetKey={
+                        secondaryDataset ? secondaryDataset.key : null
+                      }
+                      onResetSearch={() => setSecondaryDataset(null)}
+                      onSelectDataset={setSecondaryDataset}
+                      // contributesTo={this.props.catalogueKey}
+                      placeHolder="Choose secondary dataset"
+                    />
+                  )}
+                  {step === 2 && (
+                    <Row justify="space-between">
+                      <Col>
+                        <Statistic
+                          title={"Usages"}
+                          value={secondaryUsageMetrics}
+                          suffix={`/ ${names.length}`}
+                        />
+                      </Col>
+                      <Col>
+                        <CSVLink
+                          filename={getDownLoadDataFileName("secondary")}
+                          data={getDownLoadData("secondary")}
+                        >
+                          <Button type="primary" style={{ marginTop: "10px" }}>
+                            <DownloadOutlined /> Download result
+                          </Button>
+                        </CSVLink>
+                      </Col>
+                    </Row>
+                  )}
+                </Col>
+              )}
+              {step === 2 && (
+                <Col
+                  span={secondaryDataset ? 4 : 12}
+                  style={{ paddingRight: "8px" }}
+                >
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col style={{ marginTop: "-22px" }}>
+                      <span>Name index matches:</span>
+                      <br />
+                      <Metrics
+                        metrics={nameIndexMetrics}
+                        total={names.length}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              )}
+            </Row>
+          </>
         )}
 
         {step === 0 && (
-          <Row style={{ marginTop: "10px" }}>
-            <Col span={12} style={{ paddingRight: "8px" }}>
-              <Dragger {...draggerProps}>
-                <p className="ant-upload-drag-icon">
-                  <UploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag csv file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Your csv must contain a column{" "}
-                  <code className="code">scientificName</code> (which may
-                  include the author) and optional columns{" "}
-                  <code className="code">author</code>,{" "}
-                  <code className="code">rank</code> and{" "}
-                  <code className="code">code</code> (nomenclatural code)
-                </p>
-              </Dragger>
-            </Col>
-            <Col span={12} style={{ paddingRight: "8px", paddingLeft: "8px" }}>
-              Or select a subject dataset:
-              <DatasetAutocomplete
-                onResetSearch={() => {
-                  setSubjectDataset(null);
-                  setSubjectTaxon(null);
-                }}
-                onSelectDataset={(dataset) => {
-                  setSubjectDataset(dataset);
-                  setSubjectTaxon(null);
-                }}
-                placeHolder="Choose subject dataset"
-              />
-              And a root taxon:
-              <NameAutocomplete
-                minRank="GENUS"
-                datasetKey={_.get(subjectDataset, "key")}
-                onError={setError}
-                disabled={!subjectDataset}
-                onSelectName={(name) => {
-                  setSubjectTaxon(name);
-                  testSizeLimit(name);
-                }}
-                onResetSearch={() => {
-                  setSubjectTaxon(null);
-                  setSubjectDataTotal(null);
-                }}
-              />
-              {!_.isNull(subjectDataTotal) &&
-                subjectDataTotal <= MAX_LIST_SIZE && (
-                  <Button
-                    onClick={getSubjectDataAndMatch}
-                    style={{ marginTop: "10px" }}
-                    type="primary"
-                    loading={subjectDataLoading}
-                  >
-                    Match {subjectDataTotal.toLocaleString()} names
-                  </Button>
-                )}
-              {!_.isNull(subjectDataTotal) && subjectDataTotal > MAX_LIST_SIZE && (
-                <Alert
-                  message="Too many names"
-                  description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                  type="error"
-                  style={{ marginTop: "10px" }}
-                  closable
-                  onClose={() => {
+          <>
+            <Divider orientation="left" style={{ marginTop: "48px" }}>
+              Your input data
+            </Divider>
+            <Row style={{ marginTop: "10px" }}>
+              <Col span={12} style={{ paddingRight: "8px" }}>
+                <Dragger {...draggerProps}>
+                  <p className="ant-upload-drag-icon">
+                    <UploadOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Click or drag csv file to this area to upload
+                  </p>
+                  <p className="ant-upload-hint">
+                    Your csv must contain a column{" "}
+                    <code className="code">scientificName</code> (which may
+                    include the author) and optional columns{" "}
+                    <code className="code">author</code>,{" "}
+                    <code className="code">rank</code> and{" "}
+                    <code className="code">code</code> (nomenclatural code)
+                  </p>
+                </Dragger>
+              </Col>
+              <Col
+                span={12}
+                style={{ paddingRight: "8px", paddingLeft: "8px" }}
+              >
+                Or select a subject dataset:
+                <DatasetAutocomplete
+                  onResetSearch={() => {
+                    setSubjectDataset(null);
+                    setSubjectTaxon(null);
+                  }}
+                  onSelectDataset={(dataset) => {
+                    setSubjectDataset(dataset);
+                    setSubjectTaxon(null);
+                  }}
+                  placeHolder="Choose subject dataset"
+                />
+                And a root taxon:
+                <NameAutocomplete
+                  minRank="GENUS"
+                  datasetKey={_.get(subjectDataset, "key")}
+                  onError={setError}
+                  disabled={!subjectDataset}
+                  onSelectName={(name) => {
+                    setSubjectTaxon(name);
+                    testSizeLimit(name);
+                  }}
+                  onResetSearch={() => {
                     setSubjectTaxon(null);
                     setSubjectDataTotal(null);
                   }}
                 />
-              )}
-            </Col>
-          </Row>
+                {!_.isNull(subjectDataTotal) &&
+                  subjectDataTotal <= MAX_LIST_SIZE && (
+                    <Button
+                      onClick={getSubjectDataAndMatch}
+                      style={{ marginTop: "10px" }}
+                      type="primary"
+                      loading={subjectDataLoading}
+                    >
+                      Match {subjectDataTotal.toLocaleString()} names
+                    </Button>
+                  )}
+                {!_.isNull(subjectDataTotal) &&
+                  subjectDataTotal > MAX_LIST_SIZE && (
+                    <Alert
+                      message="Too many names"
+                      description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
+                      type="error"
+                      style={{ marginTop: "10px" }}
+                      closable
+                      onClose={() => {
+                        setSubjectTaxon(null);
+                        setSubjectDataTotal(null);
+                      }}
+                    />
+                  )}
+              </Col>
+            </Row>
+          </>
         )}
         {step === 1 && (
           <MatchProgress total={names.length} matched={numMatchedNames} />
@@ -586,7 +634,16 @@ const NameMatch = () => {
             dataSource={names}
             columns={[
               {
-                title: "Provided Scientific Name",
+                title: (
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      "The name from your uploaded csv or the subject dataset you picked"
+                    }
+                  >
+                    Provided Scientific Name
+                  </Tooltip>
+                ),
                 dataIndex: "providedScientificName",
                 key: "providedScientificName",
               },
@@ -612,7 +669,16 @@ const NameMatch = () => {
               {
                 title: "Scientific Name",
                 dataIndex: ["primaryDatasetUsage", "label"],
-                key: "scientificName",
+                key: (
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      "The name found in the Checklistbank dataset(s) you picked."
+                    }
+                  >
+                    Scientific Name
+                  </Tooltip>
+                ),
                 filters: secondaryDataset
                   ? [
                       {
