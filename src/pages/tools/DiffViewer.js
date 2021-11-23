@@ -222,15 +222,6 @@ const DiffViewer = ({ location, addError, rank }) => {
             <Col flex="auto"></Col>
           </Row>
         )}
-        {_.get(this.state, "data") === "" && (
-          <Row style={{ marginTop: "40px" }}>
-            <Col flex="auto"></Col>
-            <Col>
-              <Empty description="No diff between import attempts" />
-            </Col>
-            <Col flex="auto"></Col>
-          </Row>
-        )}
       </PageContent>
     </Layout>
   );

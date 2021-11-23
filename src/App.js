@@ -43,6 +43,7 @@ import MetaDataValidator from "./pages/tools/MetaDataValidator";
 import NameMatch from "./pages/tools/NameMatch";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
+import NameUsageSearch from "./pages/NameSearch/Search";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -228,6 +229,13 @@ class App extends Component {
                   path="/dataset"
                   render={(props) => <DatasetList location={props.location} />}
                 />
+                <Route
+                  exact
+                  key="nameUsageSearch"
+                  path={`/nameusage/search`}
+                  component={NameUsageSearch}
+                />
+
                 <Route
                   exact
                   key="metadatavalidator"

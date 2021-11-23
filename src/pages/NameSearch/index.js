@@ -199,7 +199,7 @@ class NameSearchPage extends React.Component {
     });
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
-      : `${config.dataApi}name/search`;
+      : `${config.dataApi}nameusage/search`;
     axios(`${url}?${qs.stringify(newParamsWithPaging)}`)
       .then((res) => {
         this.setState({

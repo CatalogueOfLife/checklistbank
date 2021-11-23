@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
-import { Table, Alert, Row, Col, Form, Button } from "antd";
+import { Table, Alert, Row, Col, Form, Button, Tooltip } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -10,7 +10,7 @@ import moment from "moment";
 import history from "../../history";
 import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";
-import ColumnFilter from "./ColumnFilter";
+import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
@@ -92,10 +92,20 @@ class DatasetList extends React.Component {
           dataIndex: "creator",
           key: "creator",
           sorter: true,
+          ellipsis: {
+            showTitle: false,
+          },
           render: (text, record) => {
-            return text && _.isArray(text)
-              ? text.map((t) => t.name).join(", ")
-              : "";
+            return text && _.isArray(text) ? (
+              <Tooltip
+                placement="topLeft"
+                title={text.map((t) => t.name).join(", ")}
+              >
+                {text.map((t) => t.name).join(", ")}
+              </Tooltip>
+            ) : (
+              ""
+            );
           },
         },
         {
@@ -103,10 +113,20 @@ class DatasetList extends React.Component {
           dataIndex: "editor",
           key: "editor",
           sorter: true,
+          ellipsis: {
+            showTitle: false,
+          },
           render: (text, record) => {
-            return text && _.isArray(text)
-              ? text.map((t) => t.name).join(", ")
-              : "";
+            return text && _.isArray(text) ? (
+              <Tooltip
+                placement="topLeft"
+                title={text.map((t) => t.name).join(", ")}
+              >
+                {text.map((t) => t.name).join(", ")}
+              </Tooltip>
+            ) : (
+              ""
+            );
           },
         },
         {
@@ -114,10 +134,20 @@ class DatasetList extends React.Component {
           dataIndex: "contributor",
           key: "contributor",
           sorter: true,
+          ellipsis: {
+            showTitle: false,
+          },
           render: (text, record) => {
-            return text && _.isArray(text)
-              ? text.map((t) => t.name).join(", ")
-              : "";
+            return text && _.isArray(text) ? (
+              <Tooltip
+                placement="topLeft"
+                title={text.map((t) => t.name).join(", ")}
+              >
+                {text.map((t) => t.name).join(", ")}
+              </Tooltip>
+            ) : (
+              ""
+            );
           },
         },
         {
@@ -378,24 +408,24 @@ class DatasetList extends React.Component {
     } */
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
-        ...defaultColumns,
-        {
-          title: "Action",
-          dataIndex: "",
-          width: 60,
-          key: "__actions__",
-          render: (text, record) =>
-            record.origin === "external" &&
+          ...defaultColumns,
+          {
+            title: "Action",
+            dataIndex: "",
+            width: 60,
+            key: "__actions__",
+            render: (text, record) =>
+              record.origin === "external" &&
               canEditDataset(record, this.props.user) ? (
-              <ImportButton
-                key={record.key}
-                record={{ datasetKey: record.key }}
-              />
-            ) : (
-              ""
-            ),
-        },
-      ]
+                <ImportButton
+                  key={record.key}
+                  record={{ datasetKey: record.key }}
+                />
+              ) : (
+                ""
+              ),
+          },
+        ]
       : defaultColumns;
 
     const columns = _.filter(
@@ -450,10 +480,10 @@ class DatasetList extends React.Component {
                 <FormItem
                   style={{ width: "100%" }}
                   {...formItemLayout}
-                  label="Hidden columns"
+                  label="Show columns"
                 >
                   <ColumnFilter
-                    columns={columns}
+                    columns={defaultColumns}
                     onChange={this.handleColumns}
                   />
                 </FormItem>
