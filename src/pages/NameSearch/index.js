@@ -32,7 +32,12 @@ const FACETS = [
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const PAGE_SIZE = 50;
-const getColumns = (baseUri) => [
+const getBaseUri = (catalogueKey, datasetKey) =>
+  catalogueKey === datasetKey
+    ? `/catalogue/${catalogueKey}`
+    : `/dataset/${datasetKey}`;
+
+const getColumns = (catalogueKey) => [
   {
     title: "Scientific Name",
     dataIndex: ["usage", "labelHtml"],
@@ -42,10 +47,14 @@ const getColumns = (baseUri) => [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `${baseUri}/name/${encodeURIComponent(
-              _.get(record, "usage.name.id")
-            )}`
-          : `${baseUri}/taxon/${encodeURIComponent(
+          ? `${getBaseUri(
+              catalogueKey,
+              _.get(record, "usage.datasetKey")
+            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : `${getBaseUri(
+              catalogueKey,
+              _.get(record, "usage.datasetKey")
+            )}/taxon/${encodeURIComponent(
               _.get(record, "usage.accepted.id")
                 ? _.get(record, "usage.accepted.id")
                 : _.get(record, "usage.id")
@@ -107,7 +116,7 @@ const getColumns = (baseUri) => [
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
-          baseUri={baseUri}
+          baseUri={getBaseUri(catalogueKey, _.get(record, "usage.datasetKey"))}
         />
       );
     },
@@ -117,14 +126,11 @@ const getColumns = (baseUri) => [
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-    const baseUri =
-      this.props.catalogueKey === this.props.datasetKey
-        ? `/catalogue/${this.props.catalogueKey}`
-        : `/dataset/${this.props.datasetKey}`;
+    const isCatalogue = this.props.catalogueKey === this.props.datasetKey;
     this.state = {
       data: [],
       advancedFilters: false,
-      columns: getColumns(baseUri),
+      columns: getColumns(isCatalogue ? this.props.catalogueKey : null),
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
@@ -136,13 +142,21 @@ class NameSearchPage extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    if (this.cancel && typeof this.cancel === "function") {
+      this.cancel();
+    }
+  }
   componentDidMount() {
+    const { datasetKey } = this.props;
+    this.FACETS = datasetKey ? FACETS : ["datasetKey", ...FACETS];
     let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
+    const isEmpty = _.isEmpty(params);
+    if (isEmpty) {
       params = {
         limit: PAGE_SIZE,
         offset: 0,
-        facet: FACETS,
+        facet: this.FACETS,
         sortBy: "taxonomic",
       };
       history.push({
@@ -151,7 +165,7 @@ class NameSearchPage extends React.Component {
       });
     }
     if (!params.facet) {
-      params.facet = FACETS;
+      params.facet = this.FACETS;
     }
     if (!params.limit) {
       params.limit = PAGE_SIZE;
@@ -171,48 +185,113 @@ class NameSearchPage extends React.Component {
           pageSizeOptions: [50, 100, 500, 1000],
         },
       },
-      this.getData
+      () => {
+        if (datasetKey || !isEmpty) {
+          this.getData();
+        }
+      }
     );
   }
-
-  getData = () => {
+  get = (url, options) => {
+    let cancel;
+    options = options || {};
+    options.cancelToken = new axios.CancelToken(function executor(c) {
+      cancel = c;
+    });
+    let p = axios.get(url, options);
+    this.cancel = cancel;
+    return p;
+  };
+  getData = async () => {
     const { datasetKey } = this.props;
 
     const {
       params,
+      loading,
       pagination: { pageSize: limit, current },
     } = this.state;
 
-    this.setState({ loading: true });
-    if (!params.q) {
-      delete params.q;
-    }
-    const newParamsWithPaging = {
-      ...params,
-      limit,
-      offset: (current - 1) * limit,
-    };
+    if (loading && this.cancel) {
+      this.cancel("cancelled by user");
+    } else {
+      this.setState({ loading: true });
+      if (!params.q) {
+        delete params.q;
+      }
+      const newParamsWithPaging = {
+        ...params,
+        limit,
+        offset: (current - 1) * limit,
+      };
 
-    history.push({
-      pathname: _.get(this.props, "location.path"),
-      search: `?${qs.stringify(newParamsWithPaging)}`,
-    });
-    const url = datasetKey
-      ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
-      : `${config.dataApi}nameusage/search`;
-    axios(`${url}?${qs.stringify(newParamsWithPaging)}`)
-      .then((res) => {
+      history.push({
+        pathname: _.get(this.props, "location.path"),
+        search: `?${qs.stringify(newParamsWithPaging)}`,
+      });
+      const url = datasetKey
+        ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
+        : `${config.dataApi}nameusage/search`;
+      try {
+        const res = await this.get(
+          `${url}?${qs.stringify(newParamsWithPaging)}`
+        );
+        if (!datasetKey) {
+          // only do this if it is a cross dataset search
+          this.datasetLabelsFromFacets(res.data);
+        }
         this.setState({
           loading: false,
           data: res.data,
           err: null,
           pagination: { ...this.state.pagination, total: res.data.total },
         });
-      })
-      .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
-      });
+        /*         if (!datasetKey && _.get(res, "data.facets.datasetKey")) {
+          const decoratedDatasetKeyFacets = await this.decorateDatasetFacets(
+            _.get(res, "data.facets.datasetKey")
+          );
+          res.data.facets.datasetKey = decoratedDatasetKeyFacets;
+        } */
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          this.setState({ loading: false, data: [] }, this.getData);
+        } else {
+          this.setState({ loading: false, error: err, data: [] });
+        }
+      }
+      /*         .then(res => {
+          if(!datasetKey && _.get(res, 'data.facets.datasetKey')){
+            return 
+          }
+        })
+        .then((res) => {
+          this.setState({
+            loading: false,
+            data: res.data,
+            err: null,
+            pagination: { ...this.state.pagination, total: res.data.total },
+          });
+        })
+        .catch((err) => {
+          if (axios.isCancel(err)) {
+            this.setState({ loading: false, data: [] }, this.getData);
+          } else {
+            this.setState({ loading: false, error: err, data: [] });
+          }
+        }); */
+    }
   };
+
+  datasetLabelsFromFacets = (data) => {
+    if (_.get(data, "facets.datasetKey") && _.get(data, "result[0]")) {
+      const keyMap = _.keyBy(data.facets.datasetKey, "value");
+      data.result.forEach((d) => {
+        if (keyMap[d?.usage?.datasetKey]) {
+          d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
+        }
+      });
+    }
+  };
+
   handleTableChange = (pagination, filters, sorter) => {
     let query = _.merge(this.state.params, {
       ...filters,
@@ -260,7 +339,7 @@ class NameSearchPage extends React.Component {
         params: {
           limit: 50,
           offset: 0,
-          facet: FACETS,
+          facet: this.FACETS,
         },
       },
       this.getData
@@ -357,11 +436,12 @@ class NameSearchPage extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : [];
-
-    const baseUri =
-      catalogueKey === datasetKey
-        ? `/catalogue/${this.props.catalogueKey}`
-        : `/dataset/${this.props.datasetKey}`;
+    const facetDataset = _.get(facets, "datasetKey")
+      ? facets["datasetKey"].map((s) => ({
+          value: s.value,
+          label: `${s.label || s.value} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
 
     return (
       <div
@@ -457,6 +537,14 @@ class NameSearchPage extends React.Component {
             </div>
           </Col>
           <Col span={12}>
+            {!datasetKey && (
+              <MultiValueFilter
+                defaultValue={_.get(params, "datasetKey")}
+                onChange={(value) => this.updateSearch({ datasetKey: value })}
+                vocab={facetDataset}
+                label="Dataset"
+              />
+            )}
             <MultiValueFilter
               defaultValue={_.get(params, "issue")}
               onChange={(value) => this.updateSearch({ issue: value })}
@@ -563,13 +651,20 @@ class NameSearchPage extends React.Component {
             loading={loading}
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
-            rowKey={(record) => record.usage.id || record.usage.name.id}
+            rowKey={(record) =>
+              record.usage.id
+                ? `${record?.usage?.datasetKey}_${record?.usage?.id}`
+                : `${record?.usage?.name?.datasetKey}_${record?.usage?.name?.id}`
+            }
             expandable={{
               expandedRowRender: (record) => (
                 <RowDetail
                   {...record}
                   catalogueKey={catalogueKey}
-                  baseUri={baseUri}
+                  baseUri={getBaseUri(
+                    catalogueKey === datasetKey ? catalogueKey : null,
+                    _.get(record, "usage.datasetKey")
+                  )}
                 />
               ),
               rowExpandable: (record) => !record.usage.bareName,

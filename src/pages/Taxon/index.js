@@ -10,6 +10,7 @@ import VernacularNames from "./VernacularNames";
 import Distributions from "./Distributions";
 import Classification from "./Classification";
 import NameRelations from "./NameRelations";
+import SpeciesInterActions from "./SpeciesInteractions";
 import ErrorMsg from "../../components/ErrorMsg";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
@@ -447,6 +448,14 @@ class TaxonPage extends React.Component {
                 data={includes}
                 taxon={taxon}
                 datasetKey={datasetKey}
+              />
+            </PresentationItem>
+          )}
+          {info && info.speciesInteractions && (
+            <PresentationItem label={`Interacting taxa`} md={md}>
+              <SpeciesInterActions
+                speciesInteractions={info.speciesInteractions}
+                scientificName={_.get(taxon, "name.scientificName")}
               />
             </PresentationItem>
           )}
