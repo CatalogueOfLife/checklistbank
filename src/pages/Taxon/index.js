@@ -454,8 +454,10 @@ class TaxonPage extends React.Component {
           {info && info.speciesInteractions && (
             <PresentationItem label={`Interacting taxa`} md={md}>
               <SpeciesInterActions
+                style={{ marginTop: "-3px", marginLeft: "-10px" }}
                 speciesInteractions={info.speciesInteractions}
-                scientificName={_.get(taxon, "name.scientificName")}
+                references={info?.references || {}}
+                datasetKey={datasetKey}
               />
             </PresentationItem>
           )}
