@@ -105,7 +105,7 @@ class BasicMenu extends Component {
       catalogue,
       selectedSector,
       user,
-      recentDatasets,
+      //   recentDatasets,
       taxonOrNameKey,
       catalogueKey,
       _selectedKeys,
@@ -160,6 +160,11 @@ class BasicMenu extends Component {
               </span>
             }
           >
+            <Menu.Item key="nameUsageSearch">
+              <NavLink to={{ pathname: "/nameusage/search" }}>
+                <span>Nameusage search</span>
+              </NavLink>
+            </Menu.Item>
             <Menu.Item key="metadatavalidator">
               <NavLink to={{ pathname: "/tools/metadata-validator" }}>
                 <span>Metadata validator</span>
@@ -236,7 +241,9 @@ class BasicMenu extends Component {
               title={
                 <span>
                   <ProjectOutlined />
-                  <CatalogueSelect />
+                  <span>
+                    <CatalogueSelect />
+                  </span>
                   <span>
                     {_.get(catalogue, "alias")
                       ? `${catalogue.alias} [${catalogue.key}]`
@@ -574,11 +581,11 @@ class BasicMenu extends Component {
                 }}
               >
                 <TagsOutlined />
-                COL: releases
+                <span>COL: releases</span>
               </NavLink>
             </Menu.Item>
           )}
-          {user && recentDatasets && recentDatasets.length > 1 && (
+          {/*           {user && recentDatasets && recentDatasets.length > 1 && (
             <SubMenu
               key="recentDatasets"
               title={
@@ -600,11 +607,11 @@ class BasicMenu extends Component {
                 </Menu.Item>
               ))}
             </SubMenu>
-          )}
+          )} */}
           <Menu.Item key="/dataset">
             <NavLink to="/dataset">
               <SearchOutlined />
-              Datasets
+              <span>Datasets</span>
             </NavLink>
           </Menu.Item>
 
@@ -850,7 +857,7 @@ class BasicMenu extends Component {
 
 const mapContextToProps = ({
   user,
-  recentDatasets,
+  // recentDatasets,
   catalogueKey,
   dataset,
   catalogue,
@@ -860,7 +867,7 @@ const mapContextToProps = ({
   setOpenKeys,
 }) => ({
   user,
-  recentDatasets,
+  // recentDatasets,
   catalogueKey,
   dataset,
   catalogue,

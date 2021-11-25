@@ -3,39 +3,51 @@
     "name": "any"
   },
   {
-    "name": "name"
+    "name": "name",
+    "coldp": "col:Name"
   },
   {
-    "name": "name relation"
+    "name": "name relation",
+    "coldp": "col:NameRelation"
   },
   {
-    "name": "name usage"
+    "name": "name usage",
+    "coldp": "col:NameUsage"
   },
   {
-    "name": "taxon concept relation"
+    "name": "taxon concept relation",
+    "coldp": "col:TaxonConceptRelation"
   },
   {
-    "name": "type material"
+    "name": "type material",
+    "coldp": "col:TypeMaterial"
   },
   {
-    "name": "treatment"
+    "name": "treatment",
+    "coldp": "col:Treatment"
   },
   {
-    "name": "distribution"
+    "name": "distribution",
+    "coldp": "col:Distribution"
   },
   {
-    "name": "media"
+    "name": "media",
+    "coldp": "col:Media"
   },
   {
-    "name": "vernacular"
+    "name": "vernacular",
+    "coldp": "col:VernacularName"
   },
   {
-    "name": "reference"
+    "name": "reference",
+    "coldp": "col:Reference"
   },
   {
-    "name": "estimate"
+    "name": "estimate",
+    "coldp": "col:SpeciesEstimate"
   },
   {
-    "name": "species interaction"
+    "name": "species interaction",
+    "coldp": "col:SpeciesInteraction"
   }
 ]

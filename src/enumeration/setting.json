@@ -1,8 +1,7 @@
 [
   {
     "origin": [
-      "external",
-      "managed"
+      "external"
     ],
     "multiple": false,
     "name": "csv delimiter",
@@ -10,8 +9,7 @@
   },
   {
     "origin": [
-      "external",
-      "managed"
+      "external"
     ],
     "multiple": false,
     "name": "csv quote",
@@ -19,8 +17,7 @@
   },
   {
     "origin": [
-      "external",
-      "managed"
+      "external"
     ],
     "multiple": false,
     "name": "csv quote escape",
@@ -55,11 +52,12 @@
   },
   {
     "origin": [
+      "external",
       "managed"
     ],
     "multiple": false,
-    "name": "release title template",
-    "type": "String"
+    "name": "lock metadata",
+    "type": "Boolean"
   },
   {
     "origin": [
@@ -74,16 +72,25 @@
       "managed"
     ],
     "multiple": false,
-    "name": "release citation template",
-    "type": "String"
+    "name": "release add source authors",
+    "type": "Boolean"
   },
   {
     "origin": [
       "managed"
     ],
     "multiple": false,
-    "name": "release source citation template",
-    "type": "String"
+    "name": "release add contributors",
+    "type": "Boolean"
+  },
+  {
+    "origin": [
+      "managed",
+      "released"
+    ],
+    "multiple": false,
+    "name": "source max container authors",
+    "type": "Integer"
   },
   {
     "origin": [
@@ -128,8 +135,7 @@
   },
   {
     "origin": [
-      "external",
-      "managed"
+      "external"
     ],
     "multiple": false,
     "name": "gbif sync lock",

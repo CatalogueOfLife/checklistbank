@@ -4,7 +4,7 @@ import { withRouter } from "react-router";
 import NameSearch from "./index";
 const NameUsageSearch = ({ location }) => {
   return (
-    <Layout selectedKeys={"NameUsageSearch"}>
+    <Layout selectedKeys={"nameUsageSearch"}>
       <NameSearch location={location} />
     </Layout>
   );

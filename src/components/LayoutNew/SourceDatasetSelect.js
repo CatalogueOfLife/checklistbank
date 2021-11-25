@@ -94,6 +94,7 @@ class SourceSeelect extends React.Component {
     return (
       <React.Fragment>
         <a
+          style={{ marginRight: "10px" }}
           onClick={(e) => {
             e.stopPropagation();
             this.setState({ visible: true });

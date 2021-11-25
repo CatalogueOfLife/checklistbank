@@ -25,12 +25,13 @@ const enums = [
   "setting",
   "Gazetteer",
   "entitytype",
+  "speciesinteractiontype",
 ];
 
 let env;
 try {
-  console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
-  env = _.get(config, process.env.NODE_ENV);
+  console.log("process.env.NODE_ENV: " + process?.env?.NODE_ENV);
+  env = _.get(config, process?.env?.NODE_ENV, config.prod);
 } catch (err) {
   env = config.prod;
 }

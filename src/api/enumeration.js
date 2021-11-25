@@ -98,3 +98,7 @@ export const getEntitytype = () => {
 export const getDecisionMode = () => {
   return getData(`editorialdecision$mode`).then((res) => res.data);
 };
+
+export const getSpeciesinteractiontype = () => {
+  return getData(`speciesinteractiontype`).then((res) => res.data);
+};

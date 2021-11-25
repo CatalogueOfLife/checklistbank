@@ -33,6 +33,7 @@ import {
   getGazetteer,
   getEntitytype,
   getDecisionMode,
+  getSpeciesinteractiontype,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -209,6 +210,7 @@ class ContextProvider extends React.Component {
       getGazetteer(),
       getEntitytype(),
       getDecisionMode(),
+      getSpeciesinteractiontype(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -279,6 +281,7 @@ class ContextProvider extends React.Component {
           gazetteer: responses[20],
           entitytype: responses[21],
           decisionMode: responses[22],
+          speciesinteractiontype: responses[23],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

@@ -75,6 +75,11 @@
     "name": "infraclass"
   },
   {
+    "plural": "subterclasses",
+    "marker": "subtercl.",
+    "name": "subterclass"
+  },
+  {
     "plural": "parvclasses",
     "marker": "parvcl.",
     "name": "parvclass"

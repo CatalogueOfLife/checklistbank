@@ -127,10 +127,35 @@ class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const isCatalogue = this.props.catalogueKey === this.props.datasetKey;
+    const clms = getColumns(isCatalogue ? this.props.catalogueKey : null);
+    const columns = this.props.datasetKey
+      ? clms
+      : [
+          {
+            title: "Dataset",
+            dataIndex: ["datasetLabel"],
+            key: "datasetLabel",
+            render: (text, record) => (
+              <NavLink
+                key={_.get(record, "usage.id")}
+                to={{
+                  pathname: `/dataset/${_.get(record, "usage.datasetKey")}`,
+                }}
+                exact={true}
+              >
+                <span dangerouslySetInnerHTML={{ __html: text }} />
+              </NavLink>
+            ),
+
+            width: 200,
+            sorter: true,
+          },
+          ...clms,
+        ];
     this.state = {
       data: [],
       advancedFilters: false,
-      columns: getColumns(isCatalogue ? this.props.catalogueKey : null),
+      columns: columns,
       params: {},
       pagination: {
         pageSize: PAGE_SIZE,
@@ -245,12 +270,6 @@ class NameSearchPage extends React.Component {
           err: null,
           pagination: { ...this.state.pagination, total: res.data.total },
         });
-        /*         if (!datasetKey && _.get(res, "data.facets.datasetKey")) {
-          const decoratedDatasetKeyFacets = await this.decorateDatasetFacets(
-            _.get(res, "data.facets.datasetKey")
-          );
-          res.data.facets.datasetKey = decoratedDatasetKeyFacets;
-        } */
       } catch (err) {
         if (axios.isCancel(err)) {
           this.setState({ loading: false, data: [] }, this.getData);
@@ -258,26 +277,6 @@ class NameSearchPage extends React.Component {
           this.setState({ loading: false, error: err, data: [] });
         }
       }
-      /*         .then(res => {
-          if(!datasetKey && _.get(res, 'data.facets.datasetKey')){
-            return 
-          }
-        })
-        .then((res) => {
-          this.setState({
-            loading: false,
-            data: res.data,
-            err: null,
-            pagination: { ...this.state.pagination, total: res.data.total },
-          });
-        })
-        .catch((err) => {
-          if (axios.isCancel(err)) {
-            this.setState({ loading: false, data: [] }, this.getData);
-          } else {
-            this.setState({ loading: false, error: err, data: [] });
-          }
-        }); */
     }
   };
 
@@ -469,21 +468,23 @@ class NameSearchPage extends React.Component {
               onResetSearch={(value) => this.updateSearch({ q: null })}
               style={{ marginBottom: "10px", width: "100%" }}
             />
-            <div style={{ marginTop: "10px" }}>
-              <NameAutocomplete
-                datasetKey={datasetKey}
-                defaultTaxonKey={_.get(params, "TAXON_ID") || null}
-                minRank="GENUS"
-                onSelectName={(value) => {
-                  this.updateSearch({ TAXON_ID: value.key });
-                }}
-                onResetSearch={(value) => {
-                  this.updateSearch({ TAXON_ID: null });
-                }}
-                placeHolder="Filter by higher taxon"
-                autoFocus={false}
-              />
-            </div>
+            {datasetKey && (
+              <div style={{ marginTop: "10px" }}>
+                <NameAutocomplete
+                  datasetKey={datasetKey}
+                  defaultTaxonKey={_.get(params, "TAXON_ID") || null}
+                  minRank="GENUS"
+                  onSelectName={(value) => {
+                    this.updateSearch({ TAXON_ID: value.key });
+                  }}
+                  onResetSearch={(value) => {
+                    this.updateSearch({ TAXON_ID: null });
+                  }}
+                  placeHolder="Filter by higher taxon"
+                  autoFocus={false}
+                />
+              </div>
+            )}
             {(catalogueKey === datasetKey ||
               Number(datasetKey) === catalogueKey ||
               (dataset &&

@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
-import { Table, Alert, Row, Col, Form, Button, Tooltip } from "antd";
+import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -383,7 +383,7 @@ class DatasetList extends React.Component {
   render() {
     const { data, loading, error, excludeColumns, defaultColumns, params } =
       this.state;
-    const { datasetOrigin } = this.props;
+    const { datasetOrigin, recentDatasets } = this.props;
     defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
@@ -467,14 +467,6 @@ class DatasetList extends React.Component {
                     />
                   </div>
                 </FormItem>
-                {isEditorOrAdmin(this.props.user) && (
-                  <NavLink to={{ pathname: `/newdataset` }} exact={true}>
-                    <Button style={{ marginTop: "10px" }} type="primary">
-                      <PlusOutlined />
-                      New Dataset
-                    </Button>
-                  </NavLink>
-                )}
               </Col>
               <Col md={12} sm={24}>
                 <FormItem
@@ -488,6 +480,37 @@ class DatasetList extends React.Component {
                   />
                 </FormItem>
               </Col>
+            </Row>
+            <Row>
+              {isEditorOrAdmin(this.props.user) && (
+                <Col>
+                  {" "}
+                  <NavLink to={{ pathname: `/newdataset` }} exact={true}>
+                    <Button
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                      type="primary"
+                    >
+                      <PlusOutlined />
+                      New Dataset
+                    </Button>
+                  </NavLink>{" "}
+                </Col>
+              )}
+              <Col flex="auto"></Col>
+              {recentDatasets && recentDatasets.length > 0 && (
+                <Col>
+                  Recently visited:{" "}
+                  {recentDatasets.map((d) => (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${d.key}`,
+                      }}
+                    >
+                      <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
+                    </NavLink>
+                  ))}
+                </Col>
+              )}
             </Row>
             {error && <Alert message={error.message} type="error" />}
           </div>
@@ -513,6 +536,7 @@ const mapContextToProps = ({
   datasetType,
   datasetOrigin,
   catalogueKey,
-}) => ({ user, datasetType, datasetOrigin, catalogueKey });
+  recentDatasets,
+}) => ({ user, datasetType, datasetOrigin, catalogueKey, recentDatasets });
 
 export default withContext(mapContextToProps)(DatasetList);
