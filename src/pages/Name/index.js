@@ -156,13 +156,9 @@ class NamePage extends React.Component {
       publishedIn,
     } = this.state;
 
-    const filteredSynonyms = synonyms.filter((s) => s.id !== name.id);
-    const {
-      datasetKey,
-      catalogueKey,
-      getTaxonomicStatusColor,
-      getNomStatus,
-    } = this.props;
+    const filteredSynonyms = synonyms.filter((s) => s?.id !== name?.id);
+    const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus } =
+      this.props;
 
     const taxonUri =
       datasetKey === catalogueKey

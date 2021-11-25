@@ -404,24 +404,16 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
 
-          {_.get(taxon, "name.relations") && taxon.name.relations.length > 0 && (
-            <PresentationItem
-              md={md}
-              label="Relations"
-              helpText={
-                <a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">
-                  Name relations are explained here
-                </a>
-              }
-            >
+          {_.get(taxon, "name.relations") &&
+            taxon.name.relations.length > 0 && (
               <NameRelations
+                md={md}
                 style={{ marginTop: "-3px" }}
                 data={taxon.name.relations}
                 catalogueKey={catalogueKey}
                 datasetKey={datasetKey}
               />
-            </PresentationItem>
-          )}
+            )}
 
           {classification && (
             <PresentationItem md={md} label="Classification">
@@ -452,14 +444,13 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
           {info && info.speciesInteractions && (
-            <PresentationItem label={`Interacting taxa`} md={md}>
-              <SpeciesInterActions
-                style={{ marginTop: "-3px", marginLeft: "-10px" }}
-                speciesInteractions={info.speciesInteractions}
-                references={info?.references || {}}
-                datasetKey={datasetKey}
-              />
-            </PresentationItem>
+            <SpeciesInterActions
+              md={md}
+              style={{ marginTop: "-3px", marginLeft: "-10px" }}
+              speciesInteractions={info.speciesInteractions}
+              references={info?.references || {}}
+              datasetKey={datasetKey}
+            />
           )}
 
           {_.get(info, "vernacularNames") && taxon && (
@@ -484,7 +475,7 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
           {_.get(taxon, "environments") && (
-            <PresentationItem md={md} label="environments">
+            <PresentationItem md={md} label="Environments">
               {_.get(taxon, "environments").join(", ")}
             </PresentationItem>
           )}
@@ -564,11 +555,11 @@ class TaxonPage extends React.Component {
             </Col>
           </Row>
 
-          {/*           {_.get(info, "media") && (
+          {_.get(info, "media") && (
             <PresentationItem md={md} label="Media">
               <TaxonMedia media={_.get(info, "media")} />
             </PresentationItem>
-          )} */}
+          )}
 
           {_.get(taxon, "verbatimKey") && (
             <VerbatimPresentation
