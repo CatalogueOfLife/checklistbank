@@ -1,7 +1,6 @@
 import React from "react";
 import injectSheet from "react-jss";
 import { Row, Col } from "antd";
-import { FormattedMessage } from "react-intl";
 
 import Help from "./Help";
 
@@ -70,11 +69,7 @@ const PresentationItem = ({
   size,
 }) => {
   const getValue = () => {
-    let value = (
-      <dd className={classes.noContent}>
-        <FormattedMessage id="noInformation" defaultMessage="No information" />
-      </dd>
-    );
+    let value = <dd className={classes.noContent}>No information</dd>;
 
     if (Array.isArray(children) && children.length > 0) {
       value = children.map((item, i) => (

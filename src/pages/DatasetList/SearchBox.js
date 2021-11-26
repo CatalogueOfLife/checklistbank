@@ -1,5 +1,5 @@
 import React from "react";
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 // test
 const Search = Input.Search;
@@ -8,7 +8,7 @@ class SearchBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: ""
+      search: "",
     };
   }
   componentDidMount = () => {
@@ -28,21 +28,26 @@ class SearchBox extends React.Component {
     this.setState({ search: "" }, () => {
       this.props.onSearch(this.state.search);
     });
-  }
+  };
   render = () => {
     const suffix = this.state.search ? (
-      <CloseCircleOutlined key="suffix" style={{ marginRight: "6px" }} onClick={this.resetSearch} />
-    ) : null;
+      <CloseCircleOutlined
+        key="suffix"
+        style={{ marginRight: "6px" }}
+        onClick={this.resetSearch}
+      />
+    ) : (
+      <span />
+    );
 
     return (
       <Search
         placeholder="Search"
         value={this.state.search}
-        onSearch={value => this.props.onSearch(this.state.search)}
-        onChange={event => this.setState({ search: event.target.value })}
+        onSearch={(value) => this.props.onSearch(this.state.search)}
+        onChange={(event) => this.setState({ search: event.target.value })}
         autoFocus={true}
         suffix={suffix}
-        
       />
     );
   };

@@ -51,7 +51,7 @@ class ReferenceAutocomplete extends React.Component {
         style={{ marginRight: "6px" }}
       />
     ) : (
-      ""
+      <span />
     );
     return (
       <AutoComplete

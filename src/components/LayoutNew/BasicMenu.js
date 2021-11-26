@@ -573,7 +573,7 @@ class BasicMenu extends Component {
           )}
 
           {!user && (
-            <Menu.Item>
+            <Menu.Item key="colreleases">
               <NavLink
                 to={{
                   pathname: "/dataset",
@@ -704,7 +704,7 @@ class BasicMenu extends Component {
               {selectedDataset &&
                 _.get(selectedDataset, "origin") === "managed" &&
                 hasData && (
-                  <Menu.Item>
+                  <Menu.Item key="released_from">
                     <NavLink
                       to={{
                         pathname: "/dataset",

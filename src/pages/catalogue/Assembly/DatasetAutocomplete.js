@@ -89,7 +89,7 @@ class DatasetAutocomplete extends React.Component {
         style={{ marginRight: "6px" }}
       />
     ) : (
-      ""
+      <span />
     );
     const options = this.state.datasets
       ? this.state.datasets.map((o) => {

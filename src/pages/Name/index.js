@@ -196,8 +196,9 @@ class NamePage extends React.Component {
                 label={usages.length > 1 ? "Usages" : "Usage"}
               >
                 {usages &&
-                  usages.map((u) => (
+                  usages.map((u, i) => (
                     <NavLink
+                      key={i}
                       to={{
                         pathname: `${taxonUri}${encodeURIComponent(
                           _.get(u, "usage.accepted.id") || _.get(u, "usage.id")
