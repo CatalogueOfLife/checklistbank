@@ -89,6 +89,7 @@ class VerbatimPresentation extends React.Component {
         type === "dwc:Taxon") ||
       (key === "col:ID" && type === "col:Taxon") ||
       key === "col:taxonID";
+
     const isNameId =
       ((key === "col:ID" || key === "col:basionymID") && type === "col:Name") ||
       key === "col:nameID" ||

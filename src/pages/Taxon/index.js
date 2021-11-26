@@ -50,10 +50,7 @@ class TaxonPage extends React.Component {
   }
 
   componentDidMount = () => {
-    this.getTaxon();
-    this.getInfo();
-    this.getClassification();
-    this.getIncludes();
+    this.getData();
   };
 
   componentDidUpdate = (prevProps) => {
@@ -67,12 +64,43 @@ class TaxonPage extends React.Component {
       prevProps.datasetKey !== datasetKey ||
       _.get(prevProps, "match.params.taxonOrNameKey") !== taxonOrNameKey
     ) {
-      this.getTaxon();
-      this.getInfo();
-      this.getClassification();
-      this.getIncludes();
+      this.getData();
     }
   };
+
+  getData = async () => {
+    const {
+      match: {
+        params: { taxonOrNameKey: taxonKey },
+      },
+      datasetKey,
+      catalogueKey,
+    } = this.props;
+    try {
+      const nameusage = await axios(
+        `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`
+      );
+      if (
+        ["accepted", "provisionally accepted"].includes(nameusage?.data?.status)
+      ) {
+        this.getTaxon();
+        this.getInfo();
+        this.getClassification();
+        this.getIncludes();
+      } else {
+        history.push(
+          datasetKey === catalogueKey
+            ? `/catalogue/${catalogueKey}/name/${nameusage?.data?.name?.id}`
+            : `/dataset/${datasetKey}/name/${nameusage?.data?.name?.id}`
+        );
+      }
+      console.log(nameusage.data.status);
+    } catch (err) {
+      this.setState({ taxonLoading: false, taxonError: err, taxon: null });
+    }
+  };
+
+  redirectIfSynonym = async () => {};
 
   getTaxon = () => {
     const {
@@ -453,6 +481,11 @@ class TaxonPage extends React.Component {
             />
           )}
 
+          {_.get(info, "media") && (
+            <PresentationItem md={md} label="Media">
+              <TaxonMedia media={_.get(info, "media")} />
+            </PresentationItem>
+          )}
           {_.get(info, "vernacularNames") && taxon && (
             <PresentationItem md={md} label="Vernacular names">
               <VernacularNames
@@ -554,12 +587,6 @@ class TaxonPage extends React.Component {
               )}
             </Col>
           </Row>
-
-          {_.get(info, "media") && (
-            <PresentationItem md={md} label="Media">
-              <TaxonMedia media={_.get(info, "media")} />
-            </PresentationItem>
-          )}
 
           {_.get(taxon, "verbatimKey") && (
             <VerbatimPresentation
