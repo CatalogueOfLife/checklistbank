@@ -9,8 +9,10 @@ import {
   Tag,
   Spin,
   Button,
+  Tooltip,
   Space,
 } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import config from "../../config";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -32,6 +34,7 @@ const { Option } = Select;
 
 const DiffViewer = ({ location, addError, rank }) => {
   const [html, setHTML] = useState(null);
+  const [diff, setDiff] = useState(null);
   const [loading, setLoading] = useState(false);
   const [datasetKey1, setDatasetKey1] = useState(null);
   const [datasetKey2, setDatasetKey2] = useState(null);
@@ -58,6 +61,20 @@ const DiffViewer = ({ location, addError, rank }) => {
     }
   }, [location]);
 
+  const resetAll = () => {
+    setHTML(null);
+    setDiff(null);
+    setDatasetKey1(null);
+    setDatasetKey2(null);
+    setRoot([]);
+    setRoot2([]);
+    setMinRank(null);
+    history.push({
+      ...location,
+      search: "",
+    });
+  };
+
   const getData = async () => {
     let search = "";
     if (root.length > 0) {
@@ -79,10 +96,12 @@ const DiffViewer = ({ location, addError, rank }) => {
     });
     try {
       const { data: diff } = await axios(
-        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}`
+        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${
+          minRank ? "&minRank=" + minRank : ""
+        }`
       );
       let html;
-
+      makeFile(diff);
       html = Diff2Html.getPrettyHtml(diff, {
         inputFormat: "diff",
         showFiles: false,
@@ -97,12 +116,26 @@ const DiffViewer = ({ location, addError, rank }) => {
 
     setLoading(false);
   };
+  const makeFile = function (text) {
+    var data = new Blob([text], { type: "text/plain" });
+
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (diff !== null) {
+      setDiff(null);
+      window.URL.revokeObjectURL(diff);
+    }
+
+    //diff = window.URL.createObjectURL(data);
+
+    // returns a URL you can use as a href
+    return setDiff(window.URL.createObjectURL(data));
+  };
 
   const decorate = async (id, datasetKey_) => {
     const { data } = await axios(
       `${config.dataApi}dataset/${datasetKey_}/taxon/${id}`
     );
-    console.log(data);
     return {
       key: data.id,
       title: _.get(data, "name.scientificName"),
@@ -200,15 +233,54 @@ const DiffViewer = ({ location, addError, rank }) => {
               </React.Fragment>
             )}
           </Col>
-          <Col span={4} style={{ padding: "8px", textAlign: "right" }}>
-            <Button
-              loading={loading}
-              disabled={loading}
-              type="primary"
-              onClick={getData}
-            >
-              Get Diff
-            </Button>
+          <Col span={4} style={{ padding: "8px" }}>
+            <div style={{ marginBottom: "8px" }}>
+              <Select
+                style={{ width: "100%" }}
+                value={minRank}
+                onChange={setMinRank}
+                placeholder="Select min rank"
+                allowClear
+                showSearch
+              >
+                {rank.map((r) => (
+                  <Option key={r} value={r}>
+                    {r}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              {diff && (
+                <Tooltip title="Download unified diff">
+                  <Button
+                    disabled={loading}
+                    type="primary"
+                    href={diff}
+                    download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
+                    style={{ marginRight: "10px" }}
+                  >
+                    <DownloadOutlined />
+                  </Button>
+                </Tooltip>
+              )}
+              {!diff && (
+                <Button
+                  loading={loading}
+                  disabled={loading}
+                  type="primary"
+                  onClick={getData}
+                >
+                  Get Diff
+                </Button>
+              )}
+
+              {diff && (
+                <Button type="danger" onClick={resetAll}>
+                  Reset
+                </Button>
+              )}
+            </div>
           </Col>
         </Row>
 
