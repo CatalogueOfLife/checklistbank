@@ -58,7 +58,7 @@ const steps = [
 ];
 
 const EditTaxonModal = (props) => {
-  const { rank, nomstatus, nametype, onCancel } = props;
+  const { rank, nomstatus, nametype, onCancel, synonym } = props;
 
   const [visible, setVisible] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -79,9 +79,9 @@ const EditTaxonModal = (props) => {
   const getTaxon = () => {
     const { taxon } = props;
     axios(
-      `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(
-        taxon.id
-      )}`
+      `${config.dataApi}dataset/${taxon.datasetKey}/${
+        synonym ? "synonym" : "taxon"
+      }/${encodeURIComponent(taxon.id)}`
     ).then((tx) => {
       setTaxon(tx.data);
       setSuggestedNameValue(

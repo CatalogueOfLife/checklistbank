@@ -6,6 +6,7 @@ import {
   Col,
   Select,
   notification,
+  Checkbox,
   Tag,
   Spin,
   Button,
@@ -41,7 +42,7 @@ const DiffViewer = ({ location, addError, rank }) => {
   const [root, setRoot] = useState([]);
   const [root2, setRoot2] = useState([]);
   const [minRank, setMinRank] = useState(null);
-
+  const [synonyms, setSynonyms] = useState(false);
   useEffect(() => {
     const { search } = location;
 
@@ -98,7 +99,7 @@ const DiffViewer = ({ location, addError, rank }) => {
       const { data: diff } = await axios(
         `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${
           minRank ? "&minRank=" + minRank : ""
-        }`
+        }${synonyms ? "&synonyms=true" : ""}`
       );
       let html;
       makeFile(diff);
@@ -125,10 +126,6 @@ const DiffViewer = ({ location, addError, rank }) => {
       setDiff(null);
       window.URL.revokeObjectURL(diff);
     }
-
-    //diff = window.URL.createObjectURL(data);
-
-    // returns a URL you can use as a href
     return setDiff(window.URL.createObjectURL(data));
   };
 
@@ -158,7 +155,7 @@ const DiffViewer = ({ location, addError, rank }) => {
     >
       <PageContent>
         <Row style={{ marginBottom: "8px" }}>
-          <Col span={10} style={{ padding: "8px" }}>
+          <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey1}
               onResetSearch={() => setDatasetKey1(null)}
@@ -195,7 +192,7 @@ const DiffViewer = ({ location, addError, rank }) => {
               </React.Fragment>
             )}
           </Col>
-          <Col span={10} style={{ padding: "8px" }}>
+          <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey2}
               onResetSearch={() => setDatasetKey2(null)}
@@ -233,23 +230,30 @@ const DiffViewer = ({ location, addError, rank }) => {
               </React.Fragment>
             )}
           </Col>
-          <Col span={4} style={{ padding: "8px" }}>
-            <div style={{ marginBottom: "8px" }}>
-              <Select
-                style={{ width: "100%" }}
-                value={minRank}
-                onChange={setMinRank}
-                placeholder="Select min rank"
-                allowClear
-                showSearch
-              >
-                {rank.map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
-            </div>
+          <Col span={6} style={{ padding: "8px" }}>
+            <Row style={{ marginBottom: "8px" }}>
+              <Col flex="auto">
+                <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
+                  Synonyms
+                </Checkbox>
+              </Col>
+              <Col>
+                <Select
+                  value={minRank}
+                  onChange={setMinRank}
+                  placeholder="Select min rank"
+                  allowClear
+                  showSearch
+                >
+                  {rank.map((r) => (
+                    <Option key={r} value={r}>
+                      {r}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+
             <div style={{ textAlign: "right" }}>
               {diff && (
                 <Tooltip title="Download unified diff">

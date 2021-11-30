@@ -1,22 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
 import BorderedListItem from "./BorderedListItem";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import withContext from "../../components/hoc/withContext";
+import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
+import { Button } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 
 const SynonymsTable = ({
   datasetKey,
   data,
   style,
-  catalogueKey,
+  onEditSuccess,
   getNomStatus,
   references,
+  canEdit,
 }) => {
   const uri = `/dataset/${datasetKey}/name/`;
-
+  const [taxonForEdit, setTaxonForEdit] = useState(null);
+  useEffect(() => {}, [data, canEdit]);
   return (
     <div style={style}>
+      {taxonForEdit && (
+        <EditTaxonModal
+          synonym={true}
+          onCancel={() => setTaxonForEdit(null)}
+          onSuccess={() => {
+            setTaxonForEdit(null);
+            if (typeof onEditSuccess === "function") {
+              onEditSuccess();
+            }
+          }}
+          taxon={taxonForEdit}
+        />
+      )}
       {data
         .map((s) => {
           return s[0] ? s[0] : s;
@@ -53,6 +71,11 @@ const SynonymsTable = ({
                 ? _.get(s, "accordingTo")
                 : ""}
             </NavLink>{" "}
+            {typeof canEdit == "function" && canEdit() && (
+              <Button type="link" onClick={() => setTaxonForEdit(s)}>
+                <EditOutlined />{" "}
+              </Button>
+            )}
             <ReferencePopover
               datasetKey={datasetKey}
               references={references}

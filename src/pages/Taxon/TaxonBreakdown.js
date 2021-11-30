@@ -26,7 +26,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
   const [options, setOptions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [invalid, setInvalid] = useState(false);
   useEffect(() => {
     getData();
   }, [taxon, datasetKey]);
@@ -51,7 +51,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
         while (i > 0 && !countBy) {
           if (_.get(counts, `${ranks[i]}.count`, 0) > 0) {
             countBy = ranks[i];
+            break;
           }
+          i--;
         }
       }
       // Check if the rank is in the canonical ranks
@@ -96,25 +98,31 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
       ) {
         root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
       }
-
-      const res = await axios(
-        `${config.dataApi}dataset/${datasetKey}/export.json?rank=${childRank}${
-          !root ? "&rank=" + grandChildRank : ""
-        }&countBy=${countBy}&taxonID=${taxon.id}`
-      );
-      //Api returns both ranks in the root array
-      const childRankData = res.data; //.filter((t) => t.rank === childRank);
-      if (_.get(root, "[0]")) {
-        root[0].children = processChildren(childRankData, countBy);
-        root[0][countBy] = root[0].children.reduce(
-          (acc, cur) => acc + cur[countBy],
-          0
-        );
+      if (!childRank) {
+        setInvalid(true);
+        setLoading(false);
       } else {
-        root = processChildren(childRankData, countBy);
+        const res = await axios(
+          `${
+            config.dataApi
+          }dataset/${datasetKey}/export.json?rank=${childRank}${
+            !root ? "&rank=" + grandChildRank : ""
+          }&countBy=${countBy}&taxonID=${taxon.id}`
+        );
+        //Api returns both ranks in the root array
+        const childRankData = res.data; //.filter((t) => t.rank === childRank);
+        if (_.get(root, "[0]")) {
+          root[0].children = processChildren(childRankData, countBy);
+          root[0][countBy] = root[0].children.reduce(
+            (acc, cur) => acc + cur[countBy],
+            0
+          );
+        } else {
+          root = processChildren(childRankData, countBy);
+        }
+        setLoading(false);
+        initChart(root, countBy);
       }
-      setLoading(false);
-      initChart(root, countBy);
     } catch (err) {
       setError(err);
       setLoading(false);
@@ -306,7 +314,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
     setOptions(options);
   };
 
-  return loading || !options ? (
+  return invalid ? null : loading || !options ? (
     <Row style={{ padding: "48px" }}>
       <Col flex="auto"></Col>
       <Col>

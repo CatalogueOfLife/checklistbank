@@ -3,7 +3,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { LinkOutlined } from "@ant-design/icons";
+import { LinkOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Tag, Row, Col, Button, Rate, message } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
@@ -15,6 +15,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
+import InlineEdit from "../../components/InlineEdit";
 import moment from "moment";
 import history from "../../history";
 import withContext from "../../components/hoc/withContext";
@@ -23,6 +24,10 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
 import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
+import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
+import Auth from "../../components/Auth";
+
+const { canEditDataset } = Auth;
 const md = 5;
 
 class TaxonPage extends React.Component {
@@ -46,6 +51,7 @@ class TaxonPage extends React.Component {
       sourceDataset: null,
       sourceTaxon: null,
       includes: [],
+      edit: false,
     };
   }
 
@@ -277,8 +283,26 @@ class TaxonPage extends React.Component {
       });
   };
 
+  canEdit = () => {
+    const { dataset, datasetKey, catalogueKey, user } = this.props;
+    const { taxon } = this.state;
+    if (Number(datasetKey) === catalogueKey) {
+      return canEditDataset({ key: datasetKey }, user) && !taxon?.sectorKey;
+    } else if (
+      dataset.key === Number(datasetKey) &&
+      dataset.origin === "managed"
+    ) {
+      return (
+        canEditDataset({ key: Number(datasetKey) }, user) && !taxon?.sectorKey
+      );
+    } else {
+      return false;
+    }
+  };
+
   render() {
-    const { datasetKey, catalogueKey, getNomStatus, rank } = this.props;
+    const { datasetKey, catalogueKey, getNomStatus, rank, user, dataset } =
+      this.props;
     const genusRankIndex = rank.indexOf("genus");
     const {
       taxon,
@@ -292,6 +316,7 @@ class TaxonPage extends React.Component {
       classificationError,
       infoError,
       includes,
+      edit,
     } = this.state;
 
     const synonyms =
@@ -314,12 +339,19 @@ class TaxonPage extends React.Component {
             fontSize: "12px",
           }}
         >
+          {edit && (
+            <EditTaxonModal
+              onCancel={() => this.setState({ edit: false })}
+              onSuccess={() => this.setState({ edit: false }, this.getData)}
+              taxon={taxon}
+            />
+          )}
           {taxonError && (
             <Alert message={<ErrorMsg error={taxonError} />} type="error" />
           )}
           {taxon && (
             <Row>
-              <Col span={this.state.logoUrl ? 18 : 21}>
+              <Col flex="auto">
                 <CopyToClipboard
                   text={taxon.label}
                   onCopy={() =>
@@ -348,12 +380,17 @@ class TaxonPage extends React.Component {
                   </div>
                 )}
               </Col>
-              <Col span={3}>
+              <Col>
+                {this.canEdit() && (
+                  <Button onClick={() => this.setState({ edit: true })}>
+                    <EditOutlined /> Edit taxon
+                  </Button>
+                )}
                 {taxon.provisional && <Tag color="red">Provisional</Tag>}
                 <Button
                   onClick={() => {
                     history.push(
-                      datasetKey === catalogueKey
+                      Number(datasetKey) === catalogueKey
                         ? `/catalogue/${catalogueKey}/name/${taxon.name.id}`
                         : `/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
                     );
@@ -363,8 +400,9 @@ class TaxonPage extends React.Component {
                 </Button>
               </Col>
               {this.state.logoUrl && (
-                <Col span={3}>
+                <Col>
                   <img
+                    style={{ marginLeft: "8px" }}
                     src={this.state.logoUrl}
                     alt={_.get(taxon, "name.scientificName")}
                   />
@@ -411,6 +449,8 @@ class TaxonPage extends React.Component {
           {synonyms && synonyms.length > 0 && (
             <PresentationItem md={md} label="Synonyms and combinations">
               <SynonymTable
+                onEditSuccess={this.getData}
+                canEdit={this.canEdit}
                 data={synonyms}
                 references={_.get(info, "references")}
                 style={{ marginTop: "-3px" }}
@@ -607,12 +647,14 @@ const mapContextToProps = ({
   catalogueKey,
   getNomStatus,
   rank,
+  user,
 }) => ({
   issueMap,
   dataset,
   catalogueKey,
   getNomStatus,
   rank,
+  user,
 });
 
 export default withContext(mapContextToProps)(TaxonPage);
