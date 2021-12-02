@@ -66,32 +66,38 @@ const MetaDataForm = (props) => {
   };
   const submitData = (values) => {
     const key = _.get(data, "key");
+    if (key === -1) {
+      // No dataset attached, we are just building metadata for download
+      if (onSaveSuccess && typeof onSaveSuccess === "function") {
+        onSaveSuccess(values);
+      }
+    } else {
+      let task = key
+        ? axios.put(`${config.dataApi}dataset/${key}`, {
+            ...values,
+            private: data.private,
+            source: _.isArray(values.source)
+              ? values.source.filter((s) => !!s)
+              : [],
+          })
+        : axios.post(`${config.dataApi}dataset`, values);
 
-    let task = key
-      ? axios.put(`${config.dataApi}dataset/${key}`, {
-          ...values,
-          private: data.private,
-          source: _.isArray(values.source)
-            ? values.source.filter((s) => !!s)
-            : [],
+      task
+        .then((res) => {
+          let title = key ? "Meta data updated" : "Dataset registered";
+          let msg = key
+            ? `Meta data updated successfully updated for ${values.title}`
+            : `${values.title} registered and ready for import`;
+          if (onSaveSuccess && typeof onSaveSuccess === "function") {
+            onSaveSuccess(res);
+          }
+          openNotification(title, msg);
+          setSubmissionError(null);
         })
-      : axios.post(`${config.dataApi}dataset`, values);
-
-    task
-      .then((res) => {
-        let title = key ? "Meta data updated" : "Dataset registered";
-        let msg = key
-          ? `Meta data updated successfully updated for ${values.title}`
-          : `${values.title} registered and ready for import`;
-        if (onSaveSuccess && typeof onSaveSuccess === "function") {
-          onSaveSuccess(res);
-        }
-        openNotification(title, msg);
-        setSubmissionError(null);
-      })
-      .catch((err) => {
-        setSubmissionError(err);
-      });
+        .catch((err) => {
+          setSubmissionError(err);
+        });
+    }
   };
 
   const submitPatch = (values) => {
@@ -719,7 +725,7 @@ const MetaDataForm = (props) => {
       )}
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
-          Save
+          {props.saveButtonLabel || "Save"}
         </Button>
       </FormItem>
     </Form>

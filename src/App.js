@@ -40,6 +40,7 @@ import NameIndex from "./pages/NameIndex";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataValidator from "./pages/tools/MetaDataValidator";
+import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import NameMatch from "./pages/tools/NameMatch";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
@@ -241,6 +242,12 @@ class App extends Component {
                   key="metadatavalidator"
                   path={`/tools/metadata-validator`}
                   component={MetaDataValidator}
+                />
+                <Route
+                  exact
+                  key="metadatagenerator"
+                  path={`/tools/metadata-generator`}
+                  component={MetaDataGenerator}
                 />
                 <Route
                   exact
