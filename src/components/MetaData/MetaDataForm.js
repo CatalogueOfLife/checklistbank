@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Input, Select, Button, Alert, Rate, notification, Form } from "antd";
+import {
+  Input,
+  Select,
+  Button,
+  Alert,
+  Rate,
+  notification,
+  Form,
+  Tabs,
+} from "antd";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -11,6 +20,7 @@ import KeyValueControl from "./KeyValueControl";
 
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
+const { TabPane } = Tabs;
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -64,6 +74,7 @@ const MetaDataForm = (props) => {
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
   };
+
   const submitData = (values) => {
     const key = _.get(data, "key");
     if (key === -1) {
@@ -492,7 +503,7 @@ const MetaDataForm = (props) => {
           name="type"
           rules={[
             {
-              required: true,
+              required: _.get(data, "key") === -1 ? false : true,
               message: "Please select a dataset type",
             },
           ]}
