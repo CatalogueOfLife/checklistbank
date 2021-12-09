@@ -22,7 +22,6 @@ import PageContent from "../../components/PageContent";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import Highlight from "react-highlight";
 
 const { TextArea } = Input;
 const Step = Steps.Step;
@@ -222,6 +221,15 @@ const MetaDataValidator = () => {
   const onTypeChange = (e) => {
     setType(e.target.value);
   };
+  const getHighlighted = (text, lang) => {
+    try {
+      const { Prism } = window;
+      const html = Prism.highlight(text, Prism.languages[lang], lang);
+      return html;
+    } catch (error) {
+      return text;
+    }
+  };
   return (
     <Layout
       // selectedKeys={["metadatavalidator"]}
@@ -325,11 +333,11 @@ const MetaDataValidator = () => {
         )}
         {step === 2 && (
           <Tabs
-            defaultActiveKey={activeTab}
+            defaultActiveKey={1}
             activeKey={activeTab}
             onChange={onTabChange}
           >
-            <TabPane tab="YAML" key="1">
+            <TabPane tab="YAML" key={1}>
               <Row style={{ marginBottom: "10px" }}>
                 <Col flex="auto"></Col>
                 <Col>
@@ -343,11 +351,15 @@ const MetaDataValidator = () => {
                   </Button>
                 </Col>
               </Row>
-              <Highlight language="yaml" className="yaml">
-                {validatorResult}
-              </Highlight>
+              <pre>
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: getHighlighted(validatorResult, "yaml"),
+                  }}
+                ></code>
+              </pre>
             </TabPane>
-            <TabPane tab="EML" key="2">
+            <TabPane tab="EML" key={2}>
               {!emlError && (
                 <Row style={{ marginBottom: "10px" }}>
                   <Col flex="auto"></Col>
@@ -376,11 +388,15 @@ const MetaDataValidator = () => {
                   }
                 ></Alert>
               )}
-              <Highlight language="xml" className="xml">
-                {eml}
-              </Highlight>
+              <pre>
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: getHighlighted(eml, "xml"),
+                  }}
+                ></code>
+              </pre>
             </TabPane>
-            <TabPane tab="JSON" key="3">
+            <TabPane tab="JSON" key={3}>
               <Row style={{ marginBottom: "10px" }}>
                 <Col flex="auto"></Col>
                 <Col>
@@ -394,9 +410,16 @@ const MetaDataValidator = () => {
                   </Button>
                 </Col>
               </Row>
-              <Highlight language="json" className="json">
-                {JSON.stringify(_.omit(data, "key"), null, 2)}
-              </Highlight>
+              <pre>
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: getHighlighted(
+                      JSON.stringify(_.omit(data, "key"), null, 2),
+                      "json"
+                    ),
+                  }}
+                ></code>
+              </pre>
             </TabPane>
           </Tabs>
         )}
