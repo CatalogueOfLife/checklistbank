@@ -217,7 +217,16 @@ class SyncTable extends React.Component {
       query = { limit: 25, offset: 0 };
     }
 
-    this.getData(query);
+    this.setState(
+      {
+        pagination: {
+          pageSize: query.limit || PAGE_SIZE,
+          current:
+            Number(query.offset || 0) / Number(query.limit || PAGE_SIZE) + 1,
+        },
+      },
+      () => this.getData(query)
+    );
   }
 
   componentDidUpdate = (prevProps) => {
@@ -294,7 +303,7 @@ class SyncTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
+    const pager = { ...this.state.pagination, ...pagination };
     pager.current = pagination.current;
 
     this.setState({
@@ -381,6 +390,7 @@ class SyncTable extends React.Component {
           <Table
             scroll={{ x: 1000 }}
             size="small"
+            loading={this.state.loading}
             columns={columns}
             dataSource={data}
             pagination={this.state.pagination}
