@@ -11,16 +11,18 @@ import {
   Upload,
   Form,
   Tabs,
+  Modal,
 } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import MetaDataForm from "../../components/MetaData/MetaDataForm";
-import Helmet from "react-helmet";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
+import { withRouter } from "react-router-dom";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
 import _ from "lodash";
 import axios from "axios";
+import qs from "query-string";
 import config from "../../config";
 
 const { TextArea } = Input;
@@ -48,7 +50,7 @@ const tailLayout = {
 
 // http://api.catalogueoflife.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
 
-const MetaDataValidator = () => {
+const MetaDataValidator = ({ location }) => {
   const [validatorResult, setValidatorResult] = useState(null); // YAML
   const [data, setData] = useState({ key: -1 }); // JSON
   const [eml, setEML] = useState(null); // JSON
@@ -62,7 +64,23 @@ const MetaDataValidator = () => {
   const [type, setType] = useState("YAML");
   const [step, setStep] = useState(0);
   const [form] = Form.useForm();
-  const [activeTab, onTabChange] = useState(1);
+  const [activeTab, onTabChange] = useState("1");
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [template, setTemplate] = useState(null);
+  // console.log(location);
+  useEffect(() => {
+    if (location.search) {
+      const params = qs.parse(location.search);
+      if (params.template) {
+        setTemplate(params.template);
+        axios.get(`${config.dataApi}dataset/${params.template}`).then((res) => {
+          const d = { ...res.data, key: -1 };
+          setData(d);
+          setUploadModalVisible(true);
+        });
+      }
+    }
+  }, [location]);
 
   const customRequest = (options) => {
     const reqConfig = {
@@ -123,7 +141,7 @@ const MetaDataValidator = () => {
           },
         }
       );
-      setData({ key: -1, ...jsonRes.data });
+      setData({ ...jsonRes.data, key: -1 });
       makeFiles({
         json: JSON.stringify(_.omit(data, "key")),
       });
@@ -182,17 +200,20 @@ const MetaDataValidator = () => {
     }
   };
 
-  const validateFromUrl = (url) => {
+  const validateFromUrl = (url, cb) => {
     return axios(`${config.dataApi}parser/metadata?url=${url}&format=${type}`)
       .then((res) => {
-        setData({ key: -1, ...res.data });
-        setStep(1);
+        const d = { ...res.data, key: -1 };
+        setData(d);
+        if (typeof cb === "function") {
+          cb(d);
+        }
         // setValidatorResult(res.data);
       })
       .catch((err) => setSubmissionError(err));
   };
 
-  const validateFromYaml = (yaml) => {
+  const validateFromYaml = (yaml, cb) => {
     const bodyFormData = new FormData();
     bodyFormData.append("metadata", yaml);
 
@@ -201,19 +222,24 @@ const MetaDataValidator = () => {
         headers: { "Content-Type": "text/yaml" },
       })
       .then((res) => {
-        setData({ key: -1, ...res.data });
-        setStep(1);
+        const d = { ...res.data, key: -1 };
+        setData(d);
+        if (typeof cb === "function") {
+          cb(d);
+        }
         // setValidatorResult(res.data);
       })
       .catch((err) => setSubmissionError(err));
   };
 
-  const onFinish = (values) => {
+  const onFinish = (values, gotoStep = 1) => {
+    const cb = gotoStep === 2 ? validateFromMetadataForm : null;
     if (values.url) {
-      validateFromUrl(values.url);
+      validateFromUrl(values.url, cb);
     } else if (values.yaml) {
-      validateFromYaml(values.yaml);
+      validateFromYaml(values.yaml, cb);
     }
+    setStep(gotoStep);
   };
   const onFinishFailed = (err) => {
     setSubmissionError(err);
@@ -232,15 +258,10 @@ const MetaDataValidator = () => {
   };
   return (
     <Layout
-      // selectedKeys={["metadatavalidator"]}
-      // openKeys={["tools"]}
+      selectedKeys={["metadatagenerator"]}
+      openKeys={["tools"]}
       title="Metadata Generator"
     >
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>COL Metadata Generator</title>
-        <link rel="canonical" href="http://data.catalogueoflife.org" />
-      </Helmet>
       <PageContent>
         <Steps
           current={step}
@@ -264,6 +285,44 @@ const MetaDataValidator = () => {
             }
           ></Alert>
         )}
+        <Modal
+          title={template ? `Template fetched` : "Upload successful"}
+          visible={uploadModalVisible}
+          onCancel={() => setUploadModalVisible(false)}
+          footer={
+            <>
+              <Button
+                onClick={() => {
+                  setUploadModalVisible(false);
+                  setStep(1);
+                }}
+              >
+                Edit and validate
+              </Button>
+              <Button
+                onClick={() => {
+                  validateFromMetadataForm(data);
+                  setUploadModalVisible(false);
+                  setStep(2);
+                }}
+              >
+                Validate only
+              </Button>
+            </>
+          }
+        >
+          {template && data && (
+            <p>
+              Templating metadata from{" "}
+              {
+                <strong>
+                  {data.title} version {data.version}
+                </strong>
+              }
+            </p>
+          )}
+          <p>Do you want to edit the metadata before validation?</p>
+        </Modal>
         {step === 0 && (
           <React.Fragment>
             <FormItem {...formItemLayout} label={`Data type`}>
@@ -284,13 +343,15 @@ const MetaDataValidator = () => {
                 action={`${config.dataApi}parser/metadata`}
                 customRequest={customRequest}
                 onSuccess={(res) => {
-                  setData({ key: -1, ...res });
-                  setStep(1);
+                  setData({ ...res, key: -1 });
+                  setUploadModalVisible(true);
+                  // setStep(1);
                 }}
               >
                 <Button icon={<UploadOutlined />}>Click to upload</Button>
               </Upload>
             </FormItem>
+
             <Row style={{ marginBottom: "20px" }}>
               <Col offset={4}>OR</Col>
             </Row>
@@ -314,7 +375,16 @@ const MetaDataValidator = () => {
               </FormItem>
               <Form.Item {...tailLayout}>
                 <Button type="primary" htmlType="submit">
-                  Submit
+                  Edit and validate
+                </Button>
+                <Button
+                  style={{ marginLeft: "8px" }}
+                  type="primary"
+                  onClick={() => {
+                    onFinish(form.getFieldsValue(true), 2);
+                  }}
+                >
+                  Validate only
                 </Button>
               </Form.Item>
             </Form>
@@ -325,7 +395,7 @@ const MetaDataValidator = () => {
             saveButtonLabel="Validate"
             data={data}
             onSaveSuccess={(res) => {
-              setData({ key: -1, ...res });
+              setData({ ...res, key: -1 });
               validateFromMetadataForm(cleanformData(res));
               setStep(2);
             }}
@@ -333,11 +403,11 @@ const MetaDataValidator = () => {
         )}
         {step === 2 && (
           <Tabs
-            defaultActiveKey={1}
+            defaultActiveKey="1"
             activeKey={activeTab}
             onChange={onTabChange}
           >
-            <TabPane tab="YAML" key={1}>
+            <TabPane tab="YAML" key="1">
               <Row style={{ marginBottom: "10px" }}>
                 <Col flex="auto"></Col>
                 <Col>
@@ -359,7 +429,7 @@ const MetaDataValidator = () => {
                 ></code>
               </pre>
             </TabPane>
-            <TabPane tab="EML" key={2}>
+            <TabPane tab="EML" key="2">
               {!emlError && (
                 <Row style={{ marginBottom: "10px" }}>
                   <Col flex="auto"></Col>
@@ -396,7 +466,7 @@ const MetaDataValidator = () => {
                 ></code>
               </pre>
             </TabPane>
-            <TabPane tab="JSON" key={3}>
+            <TabPane tab="JSON" key="3">
               <Row style={{ marginBottom: "10px" }}>
                 <Col flex="auto"></Col>
                 <Col>
@@ -428,4 +498,4 @@ const MetaDataValidator = () => {
   );
 };
 
-export default MetaDataValidator;
+export default withRouter(MetaDataValidator);

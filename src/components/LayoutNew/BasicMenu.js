@@ -165,9 +165,9 @@ class BasicMenu extends Component {
                 <span>Nameusage search</span>
               </NavLink>
             </Menu.Item>
-            <Menu.Item key="metadatavalidator">
-              <NavLink to={{ pathname: "/tools/metadata-validator" }}>
-                <span>Metadata validator</span>
+            <Menu.Item key="metadatagenerator">
+              <NavLink to={{ pathname: "/tools/metadata-generator" }}>
+                <span>Metadata generator</span>
               </NavLink>
             </Menu.Item>
             <Menu.Item key="namematch">
