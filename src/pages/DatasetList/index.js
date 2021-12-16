@@ -381,8 +381,15 @@ class DatasetList extends React.Component {
   };
 
   render() {
-    const { data, loading, error, excludeColumns, defaultColumns, params } =
-      this.state;
+    const {
+      data,
+      loading,
+      error,
+      excludeColumns,
+      defaultColumns,
+      params,
+      pagination,
+    } = this.state;
     const { datasetOrigin, recentDatasets } = this.props;
     defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
@@ -512,6 +519,21 @@ class DatasetList extends React.Component {
                 </Col>
               )}
             </Row>
+            <Row>
+              <Col flex="auto"></Col>
+              <Col>
+                {pagination &&
+                  !isNaN(pagination.total) &&
+                  `${(
+                    (pagination.current - 1) * pagination.pageSize +
+                    1
+                  ).toLocaleString("en-GB")} - ${(
+                    pagination.current * pagination.pageSize
+                  ).toLocaleString(
+                    "en-GB"
+                  )} of ${pagination.total.toLocaleString("en-GB")}`}
+              </Col>
+            </Row>
             {error && <Alert message={error.message} type="error" />}
           </div>
           {!error && (
@@ -521,7 +543,7 @@ class DatasetList extends React.Component {
               dataSource={data}
               loading={loading}
               scroll={{ x: `${columns.length * 120}px` }}
-              pagination={this.state.pagination}
+              pagination={pagination}
               onChange={this.handleTableChange}
             />
           )}
