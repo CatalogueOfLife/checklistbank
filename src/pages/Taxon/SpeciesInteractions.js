@@ -24,7 +24,7 @@ const SpeciesInterActions = ({
         <>
           {t.charAt(0).toUpperCase() + t.slice(1)}{" "}
           <Popover
-            placement={"bottom"}
+            placement={"right"}
             title="Species interaction"
             content={
               <>
@@ -67,6 +67,7 @@ const SpeciesInterActions = ({
               />
             </>
           )}
+          {s.remarks && ` ${s.remarks}`}
         </BorderedListItem>
       ))}
     </PresentationItem>
