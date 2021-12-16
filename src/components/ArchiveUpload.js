@@ -34,7 +34,11 @@ class ArchiveUpload extends React.Component {
       config.headers["content-type"] = "text/plain";
     }
     return axios
-      .post(options.action, options.file, config)
+      .post(
+        `${options.action}?filename=${options.file.name}`,
+        options.file,
+        config
+      )
       .then((res) => {
         options.onSuccess(res.data, options.file);
         this.setState({ submissionError: null, confirmPromise: null });
@@ -48,7 +52,7 @@ class ArchiveUpload extends React.Component {
 
   onChange(info) {
     if (info.file.status !== "uploading") {
-      console.log(info.file, info.fileList);
+      // console.log(info.file, info.fileList);
     }
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
