@@ -2,7 +2,12 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 
-import { SearchOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  UpOutlined,
+  DownOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
 import {
   Table,
   Alert,
@@ -526,6 +531,17 @@ class DuplicateSearchPage extends React.Component {
     });
     this.setState({ selectedRowKeys, synonymsSelectLoading: false });
   };
+
+  exportDuplicates = () => {
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
+        ...params,
+        catalogueKey: catalogueKey,
+        limit: Number(params.limit) + 1,
+      })}`
+    );
+  };
+
   render() {
     const {
       data,
@@ -543,7 +559,8 @@ class DuplicateSearchPage extends React.Component {
       synonymsSelectLoading,
       newestInGroupLoading,
     } = this.state;
-    const { rank, taxonomicstatus, user, assembly, catalogueKey } = this.props;
+    const { rank, taxonomicstatus, user, assembly, catalogueKey, datasetKey } =
+      this.props;
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -552,6 +569,8 @@ class DuplicateSearchPage extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px",
     };
+
+    const { offset, ...downloadParams } = params;
 
     return (
       <div
@@ -934,38 +953,60 @@ class DuplicateSearchPage extends React.Component {
         </Row>
         <Row />
         <Row style={{ marginBottom: "8px", marginTop: "8px" }}>
-          {Auth.isAuthorised(user, ["editor"]) && (
-            <Col span={12}>
-              <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
-                <Button
-                  type="primary"
-                  onClick={this.selectNewestInGroup}
-                  style={{ width: 140, marginRight: "10px" }}
-                  loading={newestInGroupLoading}
-                >
-                  Most recent name
-                </Button>
-              </Tooltip>
-              <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
-                <Button
-                  type="primary"
-                  onClick={this.selectAllInGroupExceptOldest}
-                  loading={allButOldestInGroupLoading}
-                  style={{ width: 140, marginRight: "10px" }}
-                >
-                  All except oldest
-                </Button>
-              </Tooltip>
+          <Col span={12}>
+            <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
               <Button
                 type="primary"
-                onClick={this.selectAllSynonymsInGroup}
-                loading={synonymsSelectLoading}
-                style={{ width: 140 }}
+                onClick={this.selectNewestInGroup}
+                style={{ width: 140, marginRight: "10px" }}
+                loading={newestInGroupLoading}
               >
-                All synonyms
+                Most recent name
               </Button>
-            </Col>
-          )}
+            </Tooltip>
+            <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
+              <Button
+                type="primary"
+                onClick={this.selectAllInGroupExceptOldest}
+                loading={allButOldestInGroupLoading}
+                style={{ width: 140, marginRight: "10px" }}
+              >
+                All except oldest
+              </Button>
+            </Tooltip>
+            <Button
+              type="primary"
+              onClick={this.selectAllSynonymsInGroup}
+              loading={synonymsSelectLoading}
+              style={{ width: 140 }}
+            >
+              All synonyms
+            </Button>
+            <Button
+              type="link"
+              download="duplicates.csv"
+              href={`${
+                config.dataApi
+              }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
+                ...downloadParams,
+                catalogueKey: catalogueKey,
+              })}`}
+            >
+              <DownloadOutlined /> CSV
+            </Button>
+            <Button
+              type="link"
+              download="duplicates.tsv"
+              href={`${
+                config.dataApi
+              }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
+                ...downloadParams,
+                catalogueKey: catalogueKey,
+              })}`}
+            >
+              <DownloadOutlined /> TSV
+            </Button>
+          </Col>
           <Col
             span={Auth.isAuthorised(user, ["editor"]) ? 12 : 24}
             style={{ textAlign: "right" }}

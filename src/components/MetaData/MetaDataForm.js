@@ -572,11 +572,11 @@ const MetaDataForm = (props) => {
                 stated by the custodian in agreement with COL editor. Confidence
                 indicators are described at{" "}
                 <a
-                  href="http://www.catalogueoflife.org/col/info/databases"
+                  href="https://www.catalogueoflife.org/about/glossary.html#checklist-confidence"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  http://www.catalogueoflife.org/col/info/databases
+                  https://www.catalogueoflife.org/about/glossary.html#checklist-confidence
                 </a>
               </span>
             )
