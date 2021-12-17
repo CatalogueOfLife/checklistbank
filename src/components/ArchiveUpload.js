@@ -25,6 +25,7 @@ class ArchiveUpload extends React.Component {
     const config = {
       headers: {
         "content-type": options.file.type,
+        "X-File-Name": options.file.name,
       },
     };
     if (
@@ -34,11 +35,7 @@ class ArchiveUpload extends React.Component {
       config.headers["content-type"] = "text/plain";
     }
     return axios
-      .post(
-        `${options.action}?filename=${options.file.name}`,
-        options.file,
-        config
-      )
+      .post(options.action, options.file, config)
       .then((res) => {
         options.onSuccess(res.data, options.file);
         this.setState({ submissionError: null, confirmPromise: null });
