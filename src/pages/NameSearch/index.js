@@ -534,6 +534,19 @@ class NameSearchPage extends React.Component {
                     <Radio value="PREFIX">Partial</Radio>
                   </RadioGroup>
                 </FormItem>
+
+                <FormItem label="Restrict to">
+                  <RadioGroup
+                    onChange={(evt) => {
+                      this.updateSearch({ content: evt.target.value });
+                    }}
+                    value={params.content || null}
+                  >
+                    <Radio value="SCIENTIFIC_NAME">Scientific name</Radio>
+                    <Radio value="AUTHORSHIP">Authorship</Radio>
+                    <Radio value={null}>Any</Radio>
+                  </RadioGroup>
+                </FormItem>
               </Form>
             </div>
           </Col>
