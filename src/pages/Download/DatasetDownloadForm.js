@@ -1,6 +1,10 @@
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { CopyOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  CopyOutlined,
+  DownloadOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import history from "../../history";
 import moment from "moment";
 import _ from "lodash";
@@ -166,6 +170,13 @@ class DatasetDownload extends React.Component {
               }
               optionType="button"
             />
+            <a
+              href="https://www.catalogueoflife.org/about/colusage#data-formats"
+              target="_blank"
+              style={{ marginLeft: "8px" }}
+            >
+              <InfoCircleOutlined />
+            </a>
           </Col>
           <Col span={6} style={{ textAlign: "right" }}>
             {user && (
