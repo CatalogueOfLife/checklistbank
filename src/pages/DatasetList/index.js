@@ -364,6 +364,9 @@ class DatasetList extends React.Component {
       query.sortBy = "created";
       query.reverse = true;
     }
+    if (params.q) {
+      query.q = params.q;
+    }
     if (sorter) {
       query.sortBy = sorter.field;
       if (sorter.order === "descend") {
