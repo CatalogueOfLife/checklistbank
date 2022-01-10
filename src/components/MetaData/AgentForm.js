@@ -101,18 +101,20 @@ const AgentForm = (props) => {
       <FormItem {...formItemLayout} label="Country" name="country">
         <Select
           style={{ width: 300 }}
-          /*           filterOption={(input, option) => {
+          filterOption={(input, option) => {
             return option.children
               .toLowerCase()
               .startsWith(input.toLowerCase());
-          }} */
+          }}
           showSearch
           allowClear
         >
           {props.country.map((c) => {
+            const countryName =
+              c.name.charAt(0).toUpperCase() + c.name.slice(1);
             return (
               <Option key={c.alpha2} value={c.alpha2}>
-                {c.title}
+                {countryName}
               </Option>
             );
           })}
