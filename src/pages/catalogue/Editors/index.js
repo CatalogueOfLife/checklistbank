@@ -9,7 +9,16 @@ import { DeleteOutlined } from "@ant-design/icons";
 import Userautocomplete from "./UserAutocomplete";
 import axios from "axios";
 
-const ProjectEditors = ({ user, catalogueKey, catalogue, addError }) => {
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+
+const ProjectEditors = ({
+  user,
+  catalogueKey,
+  catalogue,
+  addError,
+  countryAlpha2,
+}) => {
   const [editors, setEditors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -28,6 +37,13 @@ const ProjectEditors = ({ user, catalogueKey, catalogue, addError }) => {
       title: "Lastname",
       dataIndex: "lastname",
       key: "lastname",
+    },
+    {
+      title: "Country",
+      dataIndex: "country",
+      key: "Country",
+      render: (text, record) =>
+        record?.country ? capitalize(countryAlpha2[record.country].name) : "",
     },
     {
       title: "Orcid",
@@ -167,11 +183,18 @@ const ProjectEditors = ({ user, catalogueKey, catalogue, addError }) => {
   );
 };
 
-const mapContextToProps = ({ user, catalogueKey, catalogue, addError }) => ({
+const mapContextToProps = ({
   user,
   catalogueKey,
   catalogue,
   addError,
+  countryAlpha2,
+}) => ({
+  user,
+  catalogueKey,
+  catalogue,
+  addError,
+  countryAlpha2,
 });
 
 export default withContext(mapContextToProps)(ProjectEditors);

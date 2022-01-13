@@ -12,8 +12,16 @@ import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 
 const PAGE_SIZE = 10;
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
-const UserAdmin = ({ user, catalogueKey, location, addError }) => {
+const UserAdmin = ({
+  user,
+  catalogueKey,
+  location,
+  addError,
+  countryAlpha2,
+}) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -36,6 +44,13 @@ const UserAdmin = ({ user, catalogueKey, location, addError }) => {
       title: "Lastname",
       dataIndex: "lastname",
       key: "lastname",
+    },
+    {
+      title: "Country",
+      dataIndex: "country",
+      key: "Country",
+      render: (text, record) =>
+        record?.country ? capitalize(countryAlpha2[record.country].name) : "",
     },
     {
       title: "Orcid",
@@ -176,11 +191,18 @@ const UserAdmin = ({ user, catalogueKey, location, addError }) => {
   );
 };
 
-const mapContextToProps = ({ user, catalogueKey, catalogue, addError }) => ({
+const mapContextToProps = ({
   user,
   catalogueKey,
   catalogue,
   addError,
+  countryAlpha2,
+}) => ({
+  user,
+  catalogueKey,
+  catalogue,
+  addError,
+  countryAlpha2,
 });
 
 export default withContext(mapContextToProps)(withRouter(UserAdmin));
