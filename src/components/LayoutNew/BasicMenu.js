@@ -201,6 +201,11 @@ class BasicMenu extends Component {
                 </span>
               }
             >
+              <Menu.Item key="userAdmin">
+                <NavLink to={{ pathname: "/admin/users" }}>
+                  <span>Users</span>
+                </NavLink>
+              </Menu.Item>
               <Menu.Item key="esAdmin">
                 <NavLink to={{ pathname: "/admin/es" }}>
                   <span>Elastic</span>
@@ -268,6 +273,14 @@ class BasicMenu extends Component {
                     <span>Metadata</span>
                   </NavLink>
                 </Menu.Item>
+                <Menu.Item key="projectEditors">
+                  <NavLink
+                    to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
+                  >
+                    <span>Editors</span>
+                  </NavLink>
+                </Menu.Item>
+
                 <Menu.Item key="catalogueNameSearch">
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/names` }}

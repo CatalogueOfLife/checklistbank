@@ -26,8 +26,11 @@ import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
+import ProjectEditors from "./pages/catalogue/Editors";
+
 import Admin from "./pages/Admin";
 import EsAdmin from "./pages/Admin/EsAdmin";
+import UserAdmin from "./pages/Admin/Users";
 import SectorDiff from "./pages/catalogue/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -95,6 +98,13 @@ class App extends Component {
                 />
                 <PrivateRoute
                   exact
+                  key="UserAdmin"
+                  path={`/admin/users`}
+                  roles={["admin"]}
+                  component={UserAdmin}
+                />
+                <PrivateRoute
+                  exact
                   key="EsAdmin"
                   path={`/admin/es`}
                   roles={["editor", "admin"]}
@@ -150,6 +160,12 @@ class App extends Component {
                   key="catalogueMeta"
                   path="/catalogue/:catalogueKey/metadata"
                   component={CatalogueMeta}
+                />
+                <PrivateRoute
+                  exact
+                  key="projectEditors"
+                  path="/catalogue/:catalogueKey/editors"
+                  component={ProjectEditors}
                 />
                 <PrivateRoute
                   exact
