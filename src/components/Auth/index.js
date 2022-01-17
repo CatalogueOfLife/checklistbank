@@ -14,14 +14,25 @@ const Auth = {
     if (!user) {
       return false;
     }
-    const { roles, datasets } = user;
+    const { roles, editor } = user;
     return (
       roles &&
-      dataset &&
       (roles.includes("admin") ||
-        (datasets &&
-          roles.includes("editor") &&
-          datasets.includes(dataset.key)))
+        (editor && roles.includes("editor") && editor.includes(dataset.key)))
+    );
+  },
+  canViewDataset: (dataset, user) => {
+    if (!user) {
+      return false;
+    }
+    const { roles, editor, reviewer } = user;
+    return (
+      roles &&
+      (roles.includes("admin") ||
+        (editor && roles.includes("editor") && editor.includes(dataset.key)) ||
+        (reviewer &&
+          roles.includes("reviewer") &&
+          reviewer.includes(dataset.key)))
     );
   },
   isEditorOrAdmin: (user) => {

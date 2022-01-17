@@ -31,6 +31,11 @@ const UserAdmin = ({
   });
   const columns = [
     {
+      title: "Key",
+      dataIndex: "key",
+      key: "key",
+    },
+    {
       title: "Username",
       dataIndex: "username",
       key: "username",
@@ -72,10 +77,12 @@ const UserAdmin = ({
         ) : null,
     },
     {
-      title: "Admin",
-      dataIndex: "",
-      key: "Admin",
-      render: (text, record) => "Is admin?",
+      title: "Roles",
+      dataIndex: "roles",
+      key: "roles",
+      render: (text, record) => {
+        return record.roles ? record.roles.toString() : "";
+      },
     },
   ];
 
