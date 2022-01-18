@@ -22,6 +22,8 @@ import { ColTreeContext } from "./ColTreeContext";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
+import Auth from "../../../components/Auth";
+const { canEditDataset } = Auth;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
 const IRREGULAR_RANKS = [
@@ -1490,6 +1492,7 @@ class ColTree extends React.Component {
       treeType,
       dataset,
       defaultExpandKey,
+      user,
     } = this.props;
 
     return (
@@ -1543,7 +1546,7 @@ class ColTree extends React.Component {
                 showIcon={false}
                 defaultExpandAll={defaultExpandAll}
                 // defaultExpandedKeys={defaultExpandedKeys}
-                draggable={draggable}
+                draggable={canEditDataset(dataset, user) && draggable}
                 onDrop={(e) => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
                 loadData={this.onLoadData}
@@ -1601,6 +1604,6 @@ class ColTree extends React.Component {
   }
 }
 
-const mapContextToProps = ({ rank }) => ({ rank });
+const mapContextToProps = ({ rank, user }) => ({ rank, user });
 
 export default withContext(mapContextToProps)(ColTree);

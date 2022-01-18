@@ -26,6 +26,7 @@ import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
+import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
 class Assembly extends React.Component {
   constructor(props) {
@@ -346,17 +347,21 @@ class Assembly extends React.Component {
           >
             <Row>
               <Col>
-                <ColTreeContext.Consumer>
-                  {({ mode, toggleMode }) => (
-                    <Radio.Group
-                      value={mode}
-                      onChange={(e) => toggleMode(e.target.value)}
-                    >
-                      <Radio.Button value="modify">Modify Tree</Radio.Button>
-                      <Radio.Button value="attach">Attach sectors</Radio.Button>
-                    </Radio.Group>
-                  )}
-                </ColTreeContext.Consumer>
+                <CanEditDataset dataset={catalogue}>
+                  <ColTreeContext.Consumer>
+                    {({ mode, toggleMode }) => (
+                      <Radio.Group
+                        value={mode}
+                        onChange={(e) => toggleMode(e.target.value)}
+                      >
+                        <Radio.Button value="modify">Modify Tree</Radio.Button>
+                        <Radio.Button value="attach">
+                          Attach sectors
+                        </Radio.Button>
+                      </Radio.Group>
+                    )}
+                  </ColTreeContext.Consumer>
+                </CanEditDataset>
               </Col>
               <Col flex="auto"></Col>
               <Col>
@@ -408,16 +413,18 @@ class Assembly extends React.Component {
                         catalogueKey={catalogueKey}
                       />
                     )}
-                    <Button
-                      icon={<PlusOutlined />}
-                      size="small"
-                      style={{ marginRight: "6px" }}
-                      onClick={(e) => {
-                        this.setState({ childModalVisible: true });
-                      }}
-                    >
-                      Add root
-                    </Button>
+                    <CanEditDataset dataset={catalogue}>
+                      <Button
+                        icon={<PlusOutlined />}
+                        size="small"
+                        style={{ marginRight: "6px" }}
+                        onClick={(e) => {
+                          this.setState({ childModalVisible: true });
+                        }}
+                      >
+                        Add root
+                      </Button>
+                    </CanEditDataset>
                     <Button
                       icon={<SyncOutlined />}
                       size="small"

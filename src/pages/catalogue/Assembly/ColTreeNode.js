@@ -23,6 +23,7 @@ import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import TaxonSources from "./TaxonSources";
 import withContext from "../../../components/hoc/withContext";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
 import history from "../../../history";
 
@@ -237,48 +238,52 @@ class ColTreeNode extends React.Component {
                                 Show taxon
                               </Button>
                               <br />
-                              <Button
-                                style={{ marginTop: "8px", width: "100%" }}
-                                type="primary"
-                                onClick={() =>
-                                  this.setState({
-                                    childModalVisible: true,
-                                    popOverVisible: false,
-                                  })
-                                }
-                              >
-                                Add child
-                              </Button>
-                              <br />
-                              <Button
-                                style={{ marginTop: "8px", width: "100%" }}
-                                type="danger"
-                                onClick={() =>
-                                  this.setState({
-                                    editTaxonModalVisible: true,
-                                    popOverVisible: false,
-                                  })
-                                }
-                              >
-                                Edit taxon
-                              </Button>
-                              <br />
-                              <Button
-                                type="danger"
-                                style={{ marginTop: "8px", width: "100%" }}
-                                onClick={() => this.deleteTaxon(taxon)}
-                              >
-                                Delete taxon
-                              </Button>
-                              <br />
-                              <Button
-                                type="danger"
-                                style={{ marginTop: "8px", width: "100%" }}
-                                onClick={() => this.deleteTaxonRecursive(taxon)}
-                              >
-                                Delete subtree
-                              </Button>
-                              <br />
+                              <CanEditDataset dataset={{ key: catalogueKey }}>
+                                <Button
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  type="primary"
+                                  onClick={() =>
+                                    this.setState({
+                                      childModalVisible: true,
+                                      popOverVisible: false,
+                                    })
+                                  }
+                                >
+                                  Add child
+                                </Button>
+                                <br />
+                                <Button
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  type="danger"
+                                  onClick={() =>
+                                    this.setState({
+                                      editTaxonModalVisible: true,
+                                      popOverVisible: false,
+                                    })
+                                  }
+                                >
+                                  Edit taxon
+                                </Button>
+                                <br />
+                                <Button
+                                  type="danger"
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  onClick={() => this.deleteTaxon(taxon)}
+                                >
+                                  Delete taxon
+                                </Button>
+                                <br />
+                                <Button
+                                  type="danger"
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  onClick={() =>
+                                    this.deleteTaxonRecursive(taxon)
+                                  }
+                                >
+                                  Delete subtree
+                                </Button>
+                                <br />
+                              </CanEditDataset>
                               <Button
                                 style={{ marginTop: "8px", width: "100%" }}
                                 type="primary"

@@ -16,7 +16,7 @@ const PrivateRoute = ({
   <Route
     {...rest}
     render={(props) =>
-      auth.canEditDataset(catalogue, user) ? (
+      auth.canViewDataset(catalogue, user) ? (
         <Component {...props} />
       ) : (
         <Layout openKeys={[]} selectedKeys={[]}>

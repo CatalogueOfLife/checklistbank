@@ -29,6 +29,7 @@ import { debounce } from "lodash";
 import Auth from "../../../components/Auth";
 import SectorForm from "./SectorForm";
 import PresentationItem from "../../../components/PresentationItem";
+import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
 class Sector extends React.Component {
   constructor(props) {
@@ -206,35 +207,37 @@ class Sector extends React.Component {
         content={
           <div>
             {isRootSector && (
-              <React.Fragment>
-                <Tooltip title="Delete sector will delete the sector mapping and all species, but keep the higher classification above species">
-                  <Button
-                    style={{ width: "100%" }}
-                    type="danger"
-                    onClick={() => {
-                      this.deleteSector(sector);
-                    }}
-                  >
-                    Delete sector
-                  </Button>
-                </Tooltip>
-                <br />
-
-                {_.get(syncState, "running.sectorKey") !== sector.id && (
-                  <React.Fragment>
+              <>
+                <CanEditDataset dataset={{ key: catalogueKey }}>
+                  <Tooltip title="Delete sector will delete the sector mapping and all species, but keep the higher classification above species">
                     <Button
-                      style={{ marginTop: "8px", width: "100%" }}
-                      type="primary"
+                      style={{ width: "100%" }}
+                      type="danger"
                       onClick={() => {
-                        this.syncSector(sector, syncState, syncingSector);
+                        this.deleteSector(sector);
                       }}
                     >
-                      Sync sector
-                    </Button>{" "}
-                    <br />
-                  </React.Fragment>
-                )}
-              </React.Fragment>
+                      Delete sector
+                    </Button>
+                  </Tooltip>
+                  <br />
+
+                  {_.get(syncState, "running.sectorKey") !== sector.id && (
+                    <React.Fragment>
+                      <Button
+                        style={{ marginTop: "8px", width: "100%" }}
+                        type="primary"
+                        onClick={() => {
+                          this.syncSector(sector, syncState, syncingSector);
+                        }}
+                      >
+                        Sync sector
+                      </Button>{" "}
+                      <br />
+                    </React.Fragment>
+                  )}
+                </CanEditDataset>
+              </>
             )}
             <Button
               style={{ marginTop: "8px", width: "100%" }}
@@ -269,16 +272,19 @@ class Sector extends React.Component {
             </Button>
 
             {isRootSector && (
-              <Switch
-                style={{ marginTop: "8px" }}
-                checked={showEditForm}
-                onChange={(checked) => {
-                  this.getSectorDatasetRanks();
-                  this.setState({ showEditForm: checked });
-                }}
-                checkedChildren="Finish edit"
-                unCheckedChildren="Edit sector"
-              />
+              <CanEditDataset dataset={{ key: catalogueKey }}>
+                {" "}
+                <Switch
+                  style={{ marginTop: "8px" }}
+                  checked={showEditForm}
+                  onChange={(checked) => {
+                    this.getSectorDatasetRanks();
+                    this.setState({ showEditForm: checked });
+                  }}
+                  checkedChildren="Finish edit"
+                  unCheckedChildren="Edit sector"
+                />
+              </CanEditDataset>
             )}
 
             {isRootSector && showEditForm && (
@@ -389,8 +395,8 @@ class Sector extends React.Component {
                     }
                   ></Alert>
                 )}
-                {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                  isRootSectorInSourceTree && (
+                {isRootSectorInSourceTree && (
+                  <CanEditDataset dataset={{ key: catalogueKey }}>
                     <Button
                       style={{ width: "100%" }}
                       type="danger"
@@ -400,7 +406,8 @@ class Sector extends React.Component {
                     >
                       Delete sector
                     </Button>
-                  )}
+                  </CanEditDataset>
+                )}
                 {missingTargetKeys[_.get(sector, "target.id")] !== true && (
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
@@ -410,25 +417,26 @@ class Sector extends React.Component {
                     Show sector in assembly
                   </Button>
                 )}
-                {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                  isRootSectorInSourceTree &&
+                {isRootSectorInSourceTree &&
                   missingTargetKeys[_.get(sector, "target.id")] !== true &&
                   _.get(syncState, "running.sectorKey") !== sector.id && (
-                    <React.Fragment>
-                      <Button
-                        style={{ marginTop: "8px", width: "100%" }}
-                        type="primary"
-                        onClick={() => {
-                          this.syncSector(sector, syncState, syncingSector);
-                        }}
-                      >
-                        Sync sector
-                      </Button>{" "}
-                      <br />
-                    </React.Fragment>
+                    <>
+                      <CanEditDataset dataset={{ key: catalogueKey }}>
+                        <Button
+                          style={{ marginTop: "8px", width: "100%" }}
+                          type="primary"
+                          onClick={() => {
+                            this.syncSector(sector, syncState, syncingSector);
+                          }}
+                        >
+                          Sync sector
+                        </Button>{" "}
+                        <br />
+                      </CanEditDataset>
+                    </>
                   )}
-                {Auth.isAuthorised(user, ["editor", "admin"]) &&
-                  !isRootSectorInSourceTree && (
+                {!isRootSectorInSourceTree && (
+                  <CanEditDataset dataset={{ key: catalogueKey }}>
                     <Button
                       style={{ marginTop: "8px", width: "100%" }}
                       type="danger"
@@ -436,7 +444,8 @@ class Sector extends React.Component {
                     >
                       Block taxon
                     </Button>
-                  )}
+                  </CanEditDataset>
+                )}
                 {error && (
                   <Alert
                     style={{ marginTop: "8px" }}
