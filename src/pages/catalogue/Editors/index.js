@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import { Table, Row, Col, Tag, Button, notification } from "antd";
+import { Table, Row, Col, Tag, Button, Radio, notification } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import Userautocomplete from "./UserAutocomplete";
 import axios from "axios";
@@ -20,6 +20,7 @@ const ProjectEditors = ({
   countryAlpha2,
 }) => {
   const [editors, setEditors] = useState([]);
+  const [type, setType] = useState("editor");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const columns = [
@@ -76,9 +77,12 @@ const ProjectEditors = ({
     },
   ];
 
-  const getData = async () => {
+  const getData = async (userType) => {
     setLoading(true);
-    const res = await axios(`${config.dataApi}dataset/${catalogueKey}/editor`);
+    setEditors([]);
+    const res = await axios(
+      `${config.dataApi}dataset/${catalogueKey}/${userType || type}`
+    );
     setEditors(res.data);
     setLoading(false);
   };
@@ -86,7 +90,7 @@ const ProjectEditors = ({
   const deleteEditor = async (usr) => {
     try {
       await axios.delete(
-        `${config.dataApi}dataset/${catalogueKey}/editor/${usr.key}`,
+        `${config.dataApi}dataset/${catalogueKey}/${type}/${usr.key}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -94,7 +98,7 @@ const ProjectEditors = ({
         }
       );
       notification.success({
-        message: "Removed editor",
+        message: `Removed ${type}`,
         description: usr.title,
       });
     } catch (err) {
@@ -107,7 +111,7 @@ const ProjectEditors = ({
     for (const usr of users) {
       try {
         await axios.post(
-          `${config.dataApi}dataset/${catalogueKey}/editor`,
+          `${config.dataApi}dataset/${catalogueKey}/${type}`,
           usr.key,
           {
             headers: {
@@ -116,7 +120,7 @@ const ProjectEditors = ({
           }
         );
         notification.success({
-          message: "Added editor",
+          message: `Added ${type}`,
           description: usr.title,
         });
       } catch (err) {
@@ -140,13 +144,24 @@ const ProjectEditors = ({
       <PageContent>
         <Row>
           <Col span={12}>
-            <h1>Editors</h1>
+            <Radio.Group
+              onChange={(t) => {
+                console.log("Type " + t?.target?.value);
+                setType(t?.target?.value);
+                getData(t?.target?.value);
+              }}
+              value={type}
+              style={{ marginBottom: 8 }}
+            >
+              <Radio.Button value="editor">Editors</Radio.Button>
+              <Radio.Button value="reviewer">Reviewers</Radio.Button>
+            </Radio.Group>
           </Col>
           <Col>
             <div style={{ marginBottom: "10px" }}>
               <Userautocomplete
                 style={{ width: "300px" }}
-                placeHolder="Add editor(s)"
+                placeHolder={`Add ${type}(s)`}
                 onSelectUser={(usr) => {
                   setUsers([...users, usr]);
                 }}
@@ -165,7 +180,7 @@ const ProjectEditors = ({
             ))}
             {users.length > 0 && (
               <Button type="primary" size="small" onClick={addEditors}>
-                Make editor(s)
+                {`Make ${type}(s)`}
               </Button>
             )}
           </Col>

@@ -119,91 +119,24 @@ const MetaDataValidator = ({ location }) => {
       return acc;
     }, {});
   };
-  /*   const validateFromMetadataForm = async (values) => {
-    const bodyFormData = new FormData();
-    const json = JSON.stringify(values);
-    bodyFormData.append("metadata", json);
-    let yamlRes, emlRes, jsonRes;
-    try {
-      yamlRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        bodyFormData,
-        {
-          headers: { "Content-Type": "application/json", Accept: "text/yaml" },
-        }
-      );
-      setValidatorResult(yamlRes.data);
-      makeFiles({
-        yaml: validatorResult,
-      });
-
-      jsonRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-      setData({ ...jsonRes.data, key: -1 });
-      makeFiles({
-        json: JSON.stringify(_.omit(data, "key")),
-      });
-    } catch (err) {
-      setSubmissionError(err);
-    }
-    try {
-      emlRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/xml",
-          },
-        }
-      );
-      setEML(emlRes.data);
-      makeFiles({
-        eml: eml,
-      });
-    } catch (err) {
-      setEmlError(err);
-    }
-  }; */
 
   const validateFromMetadataForm = async (values) => {
-    //  const bodyFormData = new FormData();
-    //  const json = JSON.stringify(values);
-    //  bodyFormData.append("metadata", json);
     let yamlRes, emlRes, jsonRes;
     try {
-      yamlRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        // bodyFormData,
-        values,
-        {
-          headers: { "Content-Type": "application/json", Accept: "text/yaml" },
-        }
-      );
+      yamlRes = await axios.post(`${config.dataApi}parser/metadata`, values, {
+        headers: { "Content-Type": "application/json", Accept: "text/yaml" },
+      });
       setValidatorResult(yamlRes.data);
       makeFiles({
         yaml: validatorResult,
       });
 
-      jsonRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        // bodyFormData,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      jsonRes = await axios.post(`${config.dataApi}parser/metadata`, values, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       setData({ ...jsonRes.data, key: -1 });
       makeFiles({
         json: JSON.stringify(_.omit(data, "key")),
@@ -212,17 +145,12 @@ const MetaDataValidator = ({ location }) => {
       setSubmissionError(err);
     }
     try {
-      emlRes = await axios.post(
-        `${config.dataApi}parser/metadata`,
-        // bodyFormData,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/xml",
-          },
-        }
-      );
+      emlRes = await axios.post(`${config.dataApi}parser/metadata`, values, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/xml",
+        },
+      });
       setEML(emlRes.data);
       makeFiles({
         eml: eml,
@@ -278,17 +206,10 @@ const MetaDataValidator = ({ location }) => {
   };
 
   const validateFromYaml = (yaml, cb) => {
-    // const bodyFormData = new FormData();
-    // bodyFormData.append("metadata", yaml);
-
     return axios
-      .post(
-        `${config.dataApi}parser/metadata?format=${type}`,
-        /* bodyFormData */ yaml,
-        {
-          headers: { "Content-Type": "text/yaml" },
-        }
-      )
+      .post(`${config.dataApi}parser/metadata?format=${type}`, yaml, {
+        headers: { "Content-Type": "text/yaml" },
+      })
       .then((res) => {
         const d = { ...res.data, key: -1 };
         setData(d);

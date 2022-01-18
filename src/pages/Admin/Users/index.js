@@ -4,13 +4,14 @@ import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import { Table, Row, Col, Tag, Button, notification } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import UserRoles from "./UserRoles";
+import { Table, Row, Col, Modal, Button, Space } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import history from "../../../history";
 import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
-import { indexOf } from "lodash";
+import { NavLink } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
@@ -25,7 +26,7 @@ const UserAdmin = ({
 }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [userForEdit, setUserForEdit] = useState(null);
   const [pagination, setPagination] = useState({
     pageSize: PAGE_SIZE,
     current: 1,
@@ -81,23 +82,41 @@ const UserAdmin = ({
       title: "Roles",
       dataIndex: "roles",
       key: "roles",
-      render: (text, record) => {
-        if (!record.roles) {
-          return null;
-        } else {
-          let roles = [];
-          if (record.roles.indexOf("admin")) {
-            roles.push("Admin");
-          }
-          if (record.editor) {
-            roles.push(`Editor (${record.editor.length})`);
-          }
-          if (record.reviewer) {
-            roles.push(`Reviewer (${record.reviewer.length})`);
-          }
-          return roles.join(", ");
-        }
-      },
+      render: (text, record) => (
+        <>
+          <Space>
+            <Button
+              style={{ padding: 0 }}
+              type="link"
+              onClick={() => setUserForEdit(record)}
+            >
+              <EditOutlined />
+            </Button>
+
+            {record?.roles?.indexOf("admin") > -1 && <span>{"Admin"}</span>}
+            {record?.roles?.indexOf("editor") > -1 && (
+              <NavLink
+                to={{
+                  pathname: "/dataset",
+                  search: `?editor=${record.key}`,
+                }}
+              >
+                {`Editor (${record?.editor?.length || 0})`}
+              </NavLink>
+            )}
+            {record?.roles?.indexOf("reviewer") > -1 && (
+              <NavLink
+                to={{
+                  pathname: "/dataset",
+                  search: `?reviewer=${record.key}`,
+                }}
+              >
+                {`Reviewer (${record?.reviewer?.length || 0})`}
+              </NavLink>
+            )}
+          </Space>
+        </>
+      ),
     },
   ];
 
@@ -161,6 +180,14 @@ const UserAdmin = ({
       title={"Users & Roles"}
     >
       <PageContent>
+        <Modal
+          title={`Roles for ${userForEdit?.username}`}
+          visible={userForEdit}
+          onCancel={() => setUserForEdit(null)}
+          footer={null}
+        >
+          <UserRoles user={userForEdit} onChangeCallback={getData} />
+        </Modal>
         <Row>
           <Col span={12}>
             <SearchBox
