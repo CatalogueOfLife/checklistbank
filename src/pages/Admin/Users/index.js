@@ -10,6 +10,7 @@ import history from "../../../history";
 import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
+import { indexOf } from "lodash";
 
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
@@ -81,7 +82,21 @@ const UserAdmin = ({
       dataIndex: "roles",
       key: "roles",
       render: (text, record) => {
-        return record.roles ? record.roles.toString() : "";
+        if (!record.roles) {
+          return null;
+        } else {
+          let roles = [];
+          if (record.roles.indexOf("admin")) {
+            roles.push("Admin");
+          }
+          if (record.editor) {
+            roles.push(`Editor (${record.editor.length})`);
+          }
+          if (record.reviewer) {
+            roles.push(`Reviewer (${record.reviewer.length})`);
+          }
+          return roles.join(", ");
+        }
       },
     },
   ];
@@ -103,30 +118,6 @@ const UserAdmin = ({
     setLoading(false);
   };
 
-  const addEditors = async () => {
-    for (const usr of users) {
-      try {
-        await axios.post(
-          `${config.dataApi}dataset/${catalogueKey}/editor`,
-          usr.key,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        notification.success({
-          message: "Added editor",
-          description: usr.title,
-        });
-      } catch (err) {
-        addError(err);
-      }
-    }
-    setUsers([]);
-    getData();
-  };
-
   useEffect(() => {
     getData();
   }, [location]);
@@ -135,16 +126,13 @@ const UserAdmin = ({
     let params = location?.search ? qs.parse(location?.search) : {};
     const { current } = paging;
     const { q } = params;
-    const offset = (paging.current - 1) * params.limit || 0;
+    const offset = (paging.current - 1) * (params?.limit || PAGE_SIZE) || 0;
     const limit = params?.limit || PAGE_SIZE;
     setPagination({ ...pagination, current });
     history.push({
       pathname: location.pathname,
       search: `?${q ? "q=" + q : ""}offset=${offset}&limit=${limit}`,
     });
-
-    console.log(params);
-    console.log(paging);
   };
 
   const updateSearch = (params) => {

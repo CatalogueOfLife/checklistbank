@@ -48,6 +48,12 @@ const tailLayout = {
   },
 };
 
+const CONTENT_TYPES = {
+  JSON: "application/json",
+  YAML: "text/yaml",
+  EML: "application/xml",
+};
+
 // http://api.catalogueoflife.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
 
 const MetaDataValidator = ({ location }) => {
@@ -85,7 +91,7 @@ const MetaDataValidator = ({ location }) => {
   const customRequest = (options) => {
     const reqConfig = {
       headers: {
-        "Content-Type": type === "EML" ? "application/xml" : "text/yaml",
+        "Content-Type": CONTENT_TYPES[type] || CONTENT_TYPES.YAML,
       },
     };
     return axios
@@ -113,7 +119,7 @@ const MetaDataValidator = ({ location }) => {
       return acc;
     }, {});
   };
-  const validateFromMetadataForm = async (values) => {
+  /*   const validateFromMetadataForm = async (values) => {
     const bodyFormData = new FormData();
     const json = JSON.stringify(values);
     bodyFormData.append("metadata", json);
@@ -152,6 +158,64 @@ const MetaDataValidator = ({ location }) => {
       emlRes = await axios.post(
         `${config.dataApi}parser/metadata`,
         bodyFormData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/xml",
+          },
+        }
+      );
+      setEML(emlRes.data);
+      makeFiles({
+        eml: eml,
+      });
+    } catch (err) {
+      setEmlError(err);
+    }
+  }; */
+
+  const validateFromMetadataForm = async (values) => {
+    //  const bodyFormData = new FormData();
+    //  const json = JSON.stringify(values);
+    //  bodyFormData.append("metadata", json);
+    let yamlRes, emlRes, jsonRes;
+    try {
+      yamlRes = await axios.post(
+        `${config.dataApi}parser/metadata`,
+        // bodyFormData,
+        values,
+        {
+          headers: { "Content-Type": "application/json", Accept: "text/yaml" },
+        }
+      );
+      setValidatorResult(yamlRes.data);
+      makeFiles({
+        yaml: validatorResult,
+      });
+
+      jsonRes = await axios.post(
+        `${config.dataApi}parser/metadata`,
+        // bodyFormData,
+        values,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      setData({ ...jsonRes.data, key: -1 });
+      makeFiles({
+        json: JSON.stringify(_.omit(data, "key")),
+      });
+    } catch (err) {
+      setSubmissionError(err);
+    }
+    try {
+      emlRes = await axios.post(
+        `${config.dataApi}parser/metadata`,
+        // bodyFormData,
+        values,
         {
           headers: {
             "Content-Type": "application/json",
@@ -214,13 +278,17 @@ const MetaDataValidator = ({ location }) => {
   };
 
   const validateFromYaml = (yaml, cb) => {
-    const bodyFormData = new FormData();
-    bodyFormData.append("metadata", yaml);
+    // const bodyFormData = new FormData();
+    // bodyFormData.append("metadata", yaml);
 
     return axios
-      .post(`${config.dataApi}parser/metadata?format=${type}`, bodyFormData, {
-        headers: { "Content-Type": "text/yaml" },
-      })
+      .post(
+        `${config.dataApi}parser/metadata?format=${type}`,
+        /* bodyFormData */ yaml,
+        {
+          headers: { "Content-Type": "text/yaml" },
+        }
+      )
       .then((res) => {
         const d = { ...res.data, key: -1 };
         setData(d);
