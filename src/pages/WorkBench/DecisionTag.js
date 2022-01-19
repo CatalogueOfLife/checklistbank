@@ -3,7 +3,10 @@ import _ from "lodash";
 import config from "../../config";
 import axios from "axios";
 import { Tooltip, Tag, notification } from "antd";
+import withContext from "../../components/hoc/withContext";
 
+import Auth from "../../components/Auth";
+const { canEditDataset } = Auth;
 const deleteDecision = (id, deleteCallback, catalogueKey) => {
   return axios
     .delete(`${config.dataApi}dataset/${catalogueKey}/decision/${id}`)
@@ -17,7 +20,7 @@ const deleteDecision = (id, deleteCallback, catalogueKey) => {
     });
 };
 
-const DecisionTag = ({ decision, deleteCallback, catalogueKey }) => {
+const DecisionTag = ({ decision, deleteCallback, catalogueKey, user }) => {
   if (!_.get(decision, "mode")) {
     return "";
   } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {
@@ -25,7 +28,7 @@ const DecisionTag = ({ decision, deleteCallback, catalogueKey }) => {
       <Tooltip title={_.get(decision, "mode")}>
         {" "}
         <Tag
-          closable
+          closable={canEditDataset({ key: catalogueKey }, user)}
           onClose={() =>
             deleteDecision(_.get(decision, "id"), deleteCallback, catalogueKey)
           }
@@ -68,4 +71,8 @@ const DecisionTag = ({ decision, deleteCallback, catalogueKey }) => {
   }
 };
 
-export default DecisionTag;
+const mapContextToProps = ({ user }) => ({
+  user,
+});
+
+export default withContext(mapContextToProps)(DecisionTag);

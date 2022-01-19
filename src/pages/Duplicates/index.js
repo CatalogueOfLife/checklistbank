@@ -36,8 +36,11 @@ import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
 import Auth from "../../components/Auth";
+import { CanEditDataset } from "../../components/Auth/hasAccess";
+
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
+
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const RadioGroup = Radio.Group;
@@ -592,7 +595,9 @@ class DuplicateSearchPage extends React.Component {
         </Row>
 
         <Row gutter={16}>
-          <Col span={18}>
+          <Col
+            span={Auth.canEditDataset({ key: catalogueKey }, user) ? 18 : 24}
+          >
             <Card>
               <div style={{ marginBottom: "10px" }}>
                 <Select
@@ -908,11 +913,15 @@ class DuplicateSearchPage extends React.Component {
               )}{" "}
             </Card>
           </Col>
-          {Auth.isAuthorised(user, ["editor"]) && (
+          <CanEditDataset dataset={{ key: catalogueKey }}>
             <Col span={6}>
               <Card>
                 <Select
-                  style={{ width: 140, marginRight: 10, marginBottom: "10px" }}
+                  style={{
+                    width: 140,
+                    marginRight: 10,
+                    marginBottom: "10px",
+                  }}
                   onChange={this.onDecisionChange}
                   value={decision ? decision : undefined}
                   placeholder="Pick decision"
@@ -949,7 +958,7 @@ class DuplicateSearchPage extends React.Component {
                 )}
               </Card>
             </Col>
-          )}
+          </CanEditDataset>
         </Row>
         <Row />
         <Row style={{ marginBottom: "8px", marginTop: "8px" }}>
@@ -1008,7 +1017,7 @@ class DuplicateSearchPage extends React.Component {
             </Button>
           </Col>
           <Col
-            span={Auth.isAuthorised(user, ["editor"]) ? 12 : 24}
+            span={Auth.canEditDataset({ key: catalogueKey }, user) ? 12 : 24}
             style={{ textAlign: "right" }}
           >
             {data.length + " names on this page"}
@@ -1072,7 +1081,9 @@ class DuplicateSearchPage extends React.Component {
               }
               pagination={false}
               rowSelection={
-                !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection
+                !Auth.canEditDataset({ key: catalogueKey }, user)
+                  ? null
+                  : rowSelection
               }
             />
           </React.Fragment>
