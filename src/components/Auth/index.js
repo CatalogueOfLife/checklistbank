@@ -11,7 +11,7 @@ const Auth = {
     return false;
   },
   canEditDataset: (dataset, user) => {
-    if (!user) {
+    if (!user || !dataset) {
       return false;
     }
     const { roles, editor } = user;
@@ -22,7 +22,7 @@ const Auth = {
     );
   },
   canViewDataset: (dataset, user) => {
-    if (!user) {
+    if (!user || !dataset) {
       return false;
     }
     const { roles, editor, reviewer } = user;
