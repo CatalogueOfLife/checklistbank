@@ -17,7 +17,7 @@ import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
 import KeyValueControl from "./KeyValueControl";
-
+import Auth from "../Auth"
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
 const { TabPane } = Tabs;
@@ -63,6 +63,7 @@ const MetaDataForm = (props) => {
     datasetoriginEnum,
     onSaveSuccess,
     originalData,
+    user
   } = props;
 
   const [submissionError, setSubmissionError] = useState(null);
@@ -674,7 +675,25 @@ const MetaDataForm = (props) => {
             ) : null
           }
         >
-          <Input type="text" />
+          <Input type="text" disabled={!Auth.isAdmin(user)} />
+        </FormItem>
+      )}
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="GBIF publisher key"
+          name="gbifPublisherKey"
+          help={
+            originalData ? (
+              <PatchFormOriginalDataHelp
+                data={originalData}
+                field="gbifPublisherKey"
+                transferFn={transferOriginalValueToPatch}
+              />
+            ) : null
+          }
+        >
+          <Input type="text" disabled={!Auth.isAdmin(user)} />
         </FormItem>
       )}
       {data && (
@@ -754,6 +773,7 @@ const mapContextToProps = ({
   nomCode,
   datasetSettings,
   gazetteer,
+  user
 }) => ({
   addError,
   addInfo,
@@ -765,6 +785,7 @@ const mapContextToProps = ({
   nomCode,
   datasetSettings,
   gazetteer,
+  user
 });
 
 export default withContext(mapContextToProps)(MetaDataForm);

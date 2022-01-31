@@ -42,6 +42,13 @@ const Auth = {
     const { roles } = user;
     return roles && (roles.includes("admin") || roles.includes("editor"));
   },
+  isAdmin: (user) => {
+    if (!user) {
+      return false;
+    }
+    const { roles } = user;
+    return roles && roles.includes("admin");
+  },
 };
 
 export default Auth;
