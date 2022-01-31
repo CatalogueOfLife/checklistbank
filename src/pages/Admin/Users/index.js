@@ -135,6 +135,7 @@ const UserAdmin = ({
     setData(res.data);
     setPagination({ ...pagination, total: res.data.total });
     setLoading(false);
+    return res.data
   };
 
   useEffect(() => {
@@ -186,7 +187,16 @@ const UserAdmin = ({
           onCancel={() => setUserForEdit(null)}
           footer={null}
         >
-          <UserRoles user={userForEdit} onChangeCallback={getData} />
+          <UserRoles 
+            user={userForEdit} 
+            onChangeCallback={async () => { 
+                let newData = await getData(); 
+                let usr = newData?.result.find(u => u.key === userForEdit.key);
+                if(usr){
+                  setUserForEdit(usr)
+                }
+              }
+                } />
         </Modal>
         <Row>
           <Col span={12}>
