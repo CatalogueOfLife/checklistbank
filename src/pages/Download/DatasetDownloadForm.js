@@ -78,7 +78,7 @@ class DatasetDownload extends React.Component {
     const { dataset, addError } = this.props;
 
     axios
-      .post(`${config.dataApi}dataset/${dataset.key}/export`, options)
+      .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
       .then((res) => {
         const uuid = res.data;
         this.setState({
@@ -95,7 +95,7 @@ class DatasetDownload extends React.Component {
     const authors = _.get(dataset, "authors", [])
       .map((a) => a.name)
       .join(", ");
-    return `${dataset.title}. ${authors} ${moment(dataset.modified).format(
+    return `${dataset?.title}. ${authors} ${moment(dataset?.modified).format(
       "LL"
     )}`;
   };
@@ -103,7 +103,7 @@ class DatasetDownload extends React.Component {
   getRootTaxon = (key) => {
     const { dataset, addError } = this.props;
     axios
-      .get(`${config.dataApi}dataset/${dataset.key}/taxon/${key}`)
+      .get(`${config.dataApi}dataset/${dataset?.key}/taxon/${key}`)
       .then(({ data: rootTaxon }) => {
         console.log(rootTaxon);
         this.setState({ rootTaxon });
@@ -129,14 +129,14 @@ class DatasetDownload extends React.Component {
     return (
       <PageContent>
         {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
-        {dataset.origin === "external" && (
+        {dataset?.origin === "external" && (
           <Row style={{ marginBottom: "10px" }}>
             <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
               Prepared downloads
             </Col>
             <Col span={20}>
               <a
-                href={`${config.dataApi}dataset/${dataset.key}/export.zip`}
+                href={`${config.dataApi}dataset/${dataset?.key}/export.zip`}
                 target="_blank"
               >
                 original archive
@@ -205,14 +205,14 @@ class DatasetDownload extends React.Component {
             {!user && `Please login to create downloads`}
           </Col>
         </Row>
-        <Row>
-          <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
+        <Row style={{marginBottom: "10px" }}>
+          <Col span={4} style={{ textAlign: "right", paddingRight: "10px"}}>
             Choose root taxon (optional)
           </Col>
           <Col span={10}>
             <NameAutocomplete
               minRank="GENUS"
-              datasetKey={dataset.key}
+              datasetKey={dataset?.key}
               defaultTaxonKey={
                 _.get(qs.parse(_.get(location, "search")), "taxonID") || null
               }
@@ -303,7 +303,7 @@ class DatasetDownload extends React.Component {
             <Divider plain>Please cite as:</Divider>
             <CopyToClipboard
               text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
-                dataset.citation || this.createCitation()
+                dataset?.citation || this.createCitation()
               }`}
               onCopy={() => message.info(`Copied citation to clipboard`)}
             >
@@ -315,10 +315,10 @@ class DatasetDownload extends React.Component {
                     }}
                   />
                 )}
-                {dataset.citation ? (
+                {dataset?.citation ? (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: dataset.citation,
+                      __html: dataset?.citation,
                     }}
                   />
                 ) : (
