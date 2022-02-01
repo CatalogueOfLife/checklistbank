@@ -55,7 +55,10 @@ class SourceMetrics extends React.Component {
   }
 
   componentDidMount() {
-    this.getData();
+    const {datasetKey } = this.props;
+    if(datasetKey){
+      this.getData();
+    }
   }
 
   componentDidUpdate = (prevProps) => {

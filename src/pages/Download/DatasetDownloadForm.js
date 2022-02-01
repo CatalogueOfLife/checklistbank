@@ -50,14 +50,21 @@ class DatasetDownload extends React.Component {
   }
 
   componentDidMount = () => {
-    const { location } = this.props;
-    this.getSettings();
+    const { location, dataset } = this.props;
+    if(dataset){
+      this.getSettings();
+    }
+    
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
     if (taxonID) {
       this.getRootTaxon(taxonID);
     }
   };
-
+  componentDidUpdate= (prevProps) => {
+    if(prevProps?.dataset?.key !== this.props?.dataset?.key){
+      this.getSettings();
+    }
+  }
   getSettings = () => {
     const {
       dataset: { key },

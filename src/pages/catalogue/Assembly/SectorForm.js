@@ -172,7 +172,7 @@ const SectorForm = ({
               showSearch
               allowClear
             >
-              {sectorDatasetRanks.map((r) => {
+              {(sectorDatasetRanks || []).map((r) => {
                 return (
                   <Option key={r} value={r}>
                     {r}
