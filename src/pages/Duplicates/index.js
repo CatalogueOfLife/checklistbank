@@ -963,6 +963,7 @@ class DuplicateSearchPage extends React.Component {
         <Row />
         <Row style={{ marginBottom: "8px", marginTop: "8px" }}>
           <Col span={12}>
+          {Auth.canEditDataset({ key: catalogueKey }, user) &&  <>
             <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
               <Button
                 type="primary"
@@ -991,6 +992,7 @@ class DuplicateSearchPage extends React.Component {
             >
               All synonyms
             </Button>
+            </>}
             <Button
               type="link"
               download="duplicates.csv"

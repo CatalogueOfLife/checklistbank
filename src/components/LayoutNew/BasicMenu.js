@@ -323,13 +323,13 @@ class BasicMenu extends Component {
                     <span>Metadata</span>
                   </NavLink>
                 </Menu.Item>
-                <Menu.Item key="projectEditors">
+              {Auth.canEditDataset({key: catalogueKey}, user) &&  <Menu.Item key="projectEditors">
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
                   >
                     <span>Editors</span>
                   </NavLink>
-                </Menu.Item>
+                </Menu.Item>}
 
                 <Menu.Item key="catalogueNameSearch">
                   <NavLink

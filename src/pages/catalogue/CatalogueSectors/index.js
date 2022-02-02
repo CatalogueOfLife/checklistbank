@@ -489,7 +489,7 @@ class CatalogueSectors extends React.Component {
                 Reset all
               </Button>
             </Col>
-            <Col span={21} style={{ textAlign: "right" }}>
+          {Auth.canEditDataset({key: catalogueKey}, user) &&  <Col span={21} style={{ textAlign: "right" }}>
               <SyncAllSectorsButton
                 dataset={
                   params.subjectDatasetKey
@@ -541,7 +541,7 @@ class CatalogueSectors extends React.Component {
                   </Button>
                 </Popconfirm>
               )}
-            </Col>
+            </Col>}
           </Row>
           {!error && (
             <SectorTable
@@ -552,7 +552,7 @@ class CatalogueSectors extends React.Component {
               pagination={pagination}
               handleTableChange={this.handleTableChange}
               expandedRowRender={
-                !Auth.isAuthorised(user, ["editor"])
+                !Auth.canEditDataset({key: catalogueKey}, user)
                   ? null
                   : (record) => (
                       <React.Fragment>

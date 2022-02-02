@@ -399,7 +399,7 @@ class CatalogueDecisions extends React.Component {
       },
     ];
 
-    if (Auth.isAuthorised(user, ["admin", "editor"])) {
+    if (Auth.canEditDataset({key: catalogueKey}, user)) {
       columns.push({
         title: "Action",
         key: "action",
@@ -594,7 +594,8 @@ class CatalogueDecisions extends React.Component {
                 Reset all
               </Button>
             </Col>
-            <Col style={{ textAlign: "right" }}>
+            <Col flex="auto"></Col>
+          {Auth.canEditDataset({key: catalogueKey}, user) && <Col style={{ textAlign: "right" }}>
               <Popconfirm
                 placement="rightTop"
                 title={
@@ -639,7 +640,7 @@ class CatalogueDecisions extends React.Component {
                   </Button>
                 </Popconfirm>
               )}
-            </Col>
+            </Col>}
           </Row>
           {!error && (
             <Table

@@ -23,6 +23,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "./DeleteOrphansButton";
+import Auth from "../../../components/Auth";
 
 class CatalogueOptions extends React.Component {
   constructor(props) {
@@ -173,6 +174,7 @@ class CatalogueOptions extends React.Component {
       },
       catalogue,
       datasetSettings,
+      user
     } = this.props;
     return (
       <Layout
@@ -201,7 +203,9 @@ class CatalogueOptions extends React.Component {
             <Col span={4}>
               <h3>Settings</h3>
             </Col>
-            <Col offset={12} span={2}>
+            <Col flex="auto"></Col>
+          {Auth.canEditDataset({key: catalogueKey}, user) && <>
+          <Col  span={2}>
               {data && (
                 <Switch
                   checked={editMode}
@@ -213,7 +217,8 @@ class CatalogueOptions extends React.Component {
             </Col>
             <Col span={6}>
               <h3>Actions</h3>
-            </Col>
+            </Col></>
+            }
           </Row>
           <Row>
             <Col span={18}>
@@ -277,7 +282,7 @@ class CatalogueOptions extends React.Component {
                 </div>
               )}
             </Col>
-            <Col span={6}>
+            {Auth.canEditDataset({key: catalogueKey}, user) &&  <Col span={6}>
               <SyncAllSectorsButton
                 catalogueKey={catalogueKey}
                 onError={(err) => this.setState({ error: err })}
@@ -349,7 +354,7 @@ class CatalogueOptions extends React.Component {
                 type="reference"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               />
-            </Col>
+            </Col>}
           </Row>
         </PageContent>
       </Layout>
@@ -357,8 +362,9 @@ class CatalogueOptions extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogue, datasetSettings }) => ({
+const mapContextToProps = ({ catalogue, datasetSettings, user }) => ({
   catalogue,
   datasetSettings,
+  user
 });
 export default withContext(mapContextToProps)(withRouter(CatalogueOptions));

@@ -318,7 +318,7 @@ class SectorTable extends React.Component {
       },
     ];
 
-    if (Auth.isAuthorised(user, ["admin", "editor"])) {
+    if (Auth.canEditDataset({key: catalogueKey}, user)) {
       columns.push({
         title: "Action",
         key: "action",

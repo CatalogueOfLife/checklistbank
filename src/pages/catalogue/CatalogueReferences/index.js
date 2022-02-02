@@ -10,6 +10,7 @@ import Helmet from "react-helmet";
 import RefTable from "./RefTable";
 import RefForm from "../../../components/MetaData/CslForm";
 import _ from "lodash";
+import Auth from "../../../components/Auth";
 
 const openNotification = (title, description) => {
   notification.open({
@@ -78,6 +79,7 @@ class Reference extends React.Component {
       match: {
         params: { catalogueKey },
       },
+      user
     } = this.props;
 
     return (
@@ -119,13 +121,13 @@ class Reference extends React.Component {
               />
             </Modal>
           )}
-          <Row>
+         {Auth.canEditDataset({key: catalogueKey}, user) && <Row>
             <Col style={{ textAlign: "right", marginBottom: "10px" }}>
               <Button onClick={() => this.setState({ showAddNewModal: true })}>
                 Add new
               </Button>
             </Col>
-          </Row>
+          </Row>}
 
           <RefTable datasetKey={catalogueKey}></RefTable>
         </PageContent>
@@ -134,7 +136,8 @@ class Reference extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogue }) => ({
+const mapContextToProps = ({ catalogue, user }) => ({
   catalogue,
+  user
 });
 export default withContext(mapContextToProps)(withRouter(Reference));

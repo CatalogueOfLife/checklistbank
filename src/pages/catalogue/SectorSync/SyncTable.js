@@ -337,7 +337,7 @@ class SyncTable extends React.Component {
         params: { catalogueKey },
       },
     } = this.props;
-    const columns = Auth.isAuthorised(user, ["editor", "admin"])
+    const columns = Auth.canEditDataset({key: catalogueKey}, user)
       ? [
           ...getColumns(catalogueKey),
           {
@@ -367,7 +367,7 @@ class SyncTable extends React.Component {
           <Alert message={<ErrorMsg error={syncAllError} />} type="error" />
         )}
 
-        {!sectorKey && (
+        {!sectorKey && Auth.canEditDataset({key: catalogueKey}, user) && (
           <SyncAllSectorsButton
             catalogueKey={catalogueKey}
             onError={(err) => this.setState({ syncAllError: err })}
