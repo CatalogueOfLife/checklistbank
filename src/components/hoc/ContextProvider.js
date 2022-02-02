@@ -71,7 +71,7 @@ class ContextProvider extends React.Component {
   state = {
     catalogueKey: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project")).key
-      : MANAGEMENT_CLASSIFICATION.key, //TODO Load from localStorage if changed by user
+      : null, // MANAGEMENT_CLASSIFICATION.key, //TODO Load from localStorage if changed by user
     frequency: [],
     datasetType: [],
     dataFormat: [],
@@ -116,7 +116,7 @@ class ContextProvider extends React.Component {
     setSelectedKeys: (_selectedKeys) => this.setState({ _selectedKeys }),
     catalogue: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project"))
-      : MANAGEMENT_CLASSIFICATION,
+      : null,// MANAGEMENT_CLASSIFICATION,
     setCatalogueKey: (catalogueKey) => {
       this.setState({ catalogueKey });
     },
@@ -323,6 +323,7 @@ class ContextProvider extends React.Component {
         localStorage.setItem(JWT_STORAGE_NAME, jwt);
       }
       this.setState({ user: { ...user } });
+      return user;
       // this.getUserItems(user);
     });
   };

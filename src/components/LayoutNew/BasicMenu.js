@@ -32,7 +32,9 @@ import CatalogueSelect from "./CatalogueSelect";
 import SourceSelect from "./SourceDatasetSelect";
 const SubMenu = Menu.SubMenu;
 const styles = {};
-
+function truncate(str, n){
+  return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
+};
 class BasicMenu extends Component {
   componentDidMount = () => {
     const { selectedKeys, openKeys, _openKeys, setSelectedKeys, setOpenKeys } =
@@ -240,29 +242,77 @@ class BasicMenu extends Component {
               </Menu.Item>
             </SubMenu>
           )}
-          {Auth.isAuthorised(user, ["editor"]) && (
+          {catalogue && (
             <SubMenu
               key="assembly"
               title={
                 <span>
                   <ProjectOutlined />
-                  <span>
-                    <CatalogueSelect />
-                  </span>
-                  <span>
+                 
+                  <span>Project</span>
+                 {/*  <span>
                     {_.get(catalogue, "alias")
                       ? `${catalogue.alias} [${catalogue.key}]`
                       : `Project: ${catalogueKey}`}
-                  </span>
+                  </span> */}
                 </span>
               }
             >
+              <Menu.ItemGroup title={<><CatalogueSelect iconOnly={true}/> {catalogue?.alias || truncate(catalogue?.title, 25)} </>}>
+              {/* <Menu.Item key="catalogueSelector" >
+                   <span><CatalogueSelect style={{color: "white"}}/></span> 
+              </Menu.Item>  */}
+
+              <Menu.Item key="colAssembly">
+                <NavLink
+                  to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
+                >
+                  <CopyOutlined />
+                  <span>Assembly</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueSectors">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
+                  <PartitionOutlined />
+                  <span>Sectors</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueDecisions">
+                <NavLink
+                  to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
+                >
+                  <CheckOutlined />
+                  <span>Decisions</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueSources">
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/sources`,
+                  }}
+                >
+                  {" "}
+                  <TableOutlined />
+                  <span>Source datasets</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="catalogueSourceMetrics">
+                <NavLink
+                  to={{
+                    pathname: `/catalogue/${catalogueKey}/sourcemetrics`,
+                  }}
+                >
+                  {" "}
+                  <LineChartOutlined />
+                  <span>Source metrics</span>
+                </NavLink>
+              </Menu.Item>
               <SubMenu
                 key="projectDetails"
                 title={
                   <span>
                     <MenuOutlined />
-                    <span>Project details</span>
+                    <span>More...</span>
                   </span>
                 }
               >
@@ -358,56 +408,13 @@ class BasicMenu extends Component {
                     </Menu.Item>
                   )}
               </SubMenu>
-              <Menu.Item key="colAssembly">
-                <NavLink
-                  to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
-                >
-                  <CopyOutlined />
-                  <span>Assembly</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="catalogueSectors">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
-                  <PartitionOutlined />
-                  <span>Sectors</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="catalogueDecisions">
-                <NavLink
-                  to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
-                >
-                  <CheckOutlined />
-                  <span>Decisions</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="catalogueSources">
-                <NavLink
-                  to={{
-                    pathname: `/catalogue/${catalogueKey}/sources`,
-                  }}
-                >
-                  {" "}
-                  <TableOutlined />
-                  <span>Source datasets</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="catalogueSourceMetrics">
-                <NavLink
-                  to={{
-                    pathname: `/catalogue/${catalogueKey}/sourcemetrics`,
-                  }}
-                >
-                  {" "}
-                  <LineChartOutlined />
-                  <span>Source metrics</span>
-                </NavLink>
-              </Menu.Item>
               {
                 <SubMenu
                   key="sourceDataset"
                   title={
                     <span>
-                      <SourceSelect catalogueKey={catalogueKey} />
+                      Source
+                      {/* <SourceSelect catalogueKey={catalogueKey} />
                       <span
                         style={{ textOverflow: "ellipsis", maxWidth: "40px" }}
                       >
@@ -419,10 +426,21 @@ class BasicMenu extends Component {
                                 : "Source"
                             } [${selectedDataset.key}]`
                           : "Select source"}
-                      </span>
+                      </span> */}
                     </span>
                   }
                 >
+                { <Menu.ItemGroup title={
+                    <>
+                    <SourceSelect catalogueKey={catalogueKey} />{" "}
+                    {selectedDataset &&
+                    this.isSourceDataset(selectedDataset) &&
+                    hasData ? (selectedDataset?.alias || truncate(selectedDataset?.title, 25)) : "Select" }
+                    
+                    
+                    
+                    
+                    </>}>
                   {selectedDataset &&
                     this.isSourceDataset(selectedDataset) &&
                     hasData && (
@@ -580,8 +598,12 @@ class BasicMenu extends Component {
                         Name: {taxonOrNameKey}
                       </Menu.Item>
                     )}
+                    </Menu.ItemGroup>}
+                    
                 </SubMenu>
               }
+              
+              </Menu.ItemGroup>
             </SubMenu>
           )}
 

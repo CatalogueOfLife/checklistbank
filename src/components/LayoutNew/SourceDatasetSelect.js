@@ -3,13 +3,17 @@ import withContext from "../../components/hoc/withContext";
 import { withRouter } from "react-router-dom";
 import config from "../../config";
 import _ from "lodash";
-import { SearchOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 import { Modal, Select } from "antd";
 import history from "../../history";
 // import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 const { Option } = Select;
+
+function truncate(str, n){
+  return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
+};
 
 class SourceSeelect extends React.Component {
   constructor(props) {
@@ -89,18 +93,19 @@ class SourceSeelect extends React.Component {
     this.setState({ visible: false });
   };
   render = () => {
-    const { dataset } = this.props;
+    const { dataset, style={} } = this.props;
     const { sources, loading } = this.state;
     return (
       <React.Fragment>
         <a
-          style={{ marginRight: "10px" }}
+          style={style}
           onClick={(e) => {
             e.stopPropagation();
             this.setState({ visible: true });
           }}
         >
-          <SearchOutlined />
+          <SettingOutlined />
+          
         </a>
         <Modal
           title="Select source"
@@ -142,7 +147,7 @@ class SourceSeelect extends React.Component {
                   }}
                   value={c.key}
                   key={c.key}
-                >{`${c.alias ? c.alias + " " : ""}[${c.key}]`}</Option>
+                >{`${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`}</Option>
               ))}
             </Select>
           </div>

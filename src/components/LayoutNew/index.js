@@ -21,6 +21,7 @@ import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
 import Sync from "./Sync";
 import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
+import DatasetOriginPill from "./DatasetOriginPill"
 const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
 
@@ -80,6 +81,10 @@ class SiteLayout extends Component {
       error,
       clearError,
       background,
+      catalogue,
+      match: {
+        params: { catalogueKey },
+      }
     } = this.props;
     const collapsed =
       typeof this.state.collapsed === "boolean"
@@ -187,13 +192,14 @@ class SiteLayout extends Component {
                       </React.Fragment>
                     )}
                   </h1>
-                  <span>
+                  <span style={{marginRight: "8px"}}>
                     {" "}
                     {selectedDataset.version || selectedDataset.issued}
                   </span>
+                  <DatasetOriginPill dataset={selectedDataset} />
                 </React.Fragment>
               )}
-              {!selectedDataset && title && <h1>{title}</h1>}
+              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> <DatasetOriginPill dataset={catalogue} /></>}
             </div>
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
               <UserMenu />
@@ -288,11 +294,12 @@ class SiteLayout extends Component {
   }
 }
 
-const mapContextToProps = ({ addError, clearError, error, background }) => ({
+const mapContextToProps = ({ addError, clearError, error, background, catalogue }) => ({
   addError,
   clearError,
   error,
   background,
+  catalogue
 });
 
 export default compose(

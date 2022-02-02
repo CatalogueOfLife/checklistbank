@@ -362,7 +362,7 @@ class CatalogueSectors extends React.Component {
       <Layout
         selectedKeys={["catalogueSectors"]}
         openKeys={["assembly"]}
-        title="Catalogue sectors"
+        title="Project sectors"
       >
         <PageContent>
           {error && (
