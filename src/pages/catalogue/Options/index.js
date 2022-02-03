@@ -23,6 +23,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "./DeleteOrphansButton";
+import DeleteDatasetButton from "../../DatasetKey/datasetPageTabs/DeleteDatasetButton"
 import Auth from "../../../components/Auth";
 
 class CatalogueOptions extends React.Component {
@@ -354,6 +355,12 @@ class CatalogueOptions extends React.Component {
                 type="reference"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               />
+              {catalogue?.key?.toString() === catalogueKey && (
+                <DeleteDatasetButton
+                  style={{  marginRight: "10px", marginBottom: "10px" }}
+                  record={catalogue}
+                ></DeleteDatasetButton>
+            )}
             </Col>}
           </Row>
         </PageContent>
