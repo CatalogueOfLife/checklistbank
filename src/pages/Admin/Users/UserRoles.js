@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox, Popconfirm, Row, Col, Button, Tag , Typography,  notification} from "antd";
+import { MinusCircleOutlined, CheckCircleOutlined} from "@ant-design/icons";
+
 import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
@@ -60,6 +62,23 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
       addError(err);
     }
   };
+
+  const toggleBlock = async () => {
+    const method = user?.blocked ? "delete" : "post";
+    try {
+      await axios[method](`${config.dataApi}user/${user.key}/block`);
+      notification.success({
+        message: method === 'post' ? `User blocked` : `User unblocked`,
+        description: user?.username,
+      });
+      
+      if (typeof onChangeCallback === "function") {
+        onChangeCallback();
+      }
+    } catch (err) {
+      addError(err);
+    }
+  }
 
   const onChange = (checkedValues) => {
     setNewRoles(checkedValues);
@@ -135,12 +154,18 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
       onConfirm={confirm}
       onCancel={() => setConfirmVisible(false)}
     >
+      <Row>
+        <Col>
       <Checkbox.Group
         options={options}
         value={roles}
         visible={confirmVisible}
         onChange={onChange}
       />
+      </Col>
+      <Col flex="auto"></Col>
+      <Col><Button type={user?.blocked ? 'primary' : 'danger'} onClick={toggleBlock}>{user?.blocked ? <CheckCircleOutlined /> : <MinusCircleOutlined />} {user?.blocked ? "Unblock" : "Block"} </Button></Col>
+      </Row>
 
       <h3 style={{ marginTop: "10px" }}>{`Select a dataset to make ${user?.username} editor`}</h3>
       <Row style={{ marginTop: "10px" }}>

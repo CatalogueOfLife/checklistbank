@@ -5,13 +5,14 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import UserRoles from "./UserRoles";
-import { Table, Row, Col, Modal, Button, Space } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Table, Row, Col, Modal, Button, Space, Tooltip } from "antd";
+import { DeleteOutlined, EditOutlined , MinusCircleOutlined} from "@ant-design/icons";
 import history from "../../../history";
 import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 import { NavLink } from "react-router-dom";
+import moment from "moment";
 
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
@@ -82,7 +83,7 @@ const UserAdmin = ({
       title: "Roles",
       dataIndex: "roles",
       key: "roles",
-      render: (text, record) => (
+      render: (text, record) => ( 
         <>
           <Space>
             <Button
@@ -92,7 +93,9 @@ const UserAdmin = ({
             >
               <EditOutlined />
             </Button>
-
+<>{record.blocked ? <Tooltip title={`The user was blocked ${moment(record.blocked).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip>: <>
             {record?.roles?.indexOf("admin") > -1 && <span>{"Admin"}</span>}
             {record?.roles?.indexOf("editor") > -1 && (
               <NavLink
@@ -114,6 +117,8 @@ const UserAdmin = ({
                 {`Reviewer (${record?.reviewer?.length || 0})`}
               </NavLink>
             )}
+            </>}
+            </>
           </Space>
         </>
       ),
@@ -182,7 +187,9 @@ const UserAdmin = ({
     >
       <PageContent>
         <Modal
-          title={`Roles for ${userForEdit?.username}`}
+          title={<>{`Roles and scopes for ${userForEdit?.username}`}{userForEdit?.blocked && <> <Tooltip title={`The user was blocked ${moment(userForEdit.blocked).format(
+            "MMMM Do YYYY, h:mm a"
+          )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip></>}</>}
           visible={userForEdit}
           onCancel={() => setUserForEdit(null)}
           footer={null}
