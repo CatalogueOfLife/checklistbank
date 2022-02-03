@@ -199,7 +199,7 @@ class SiteLayout extends Component {
                   <DatasetOriginPill dataset={selectedDataset} />
                 </React.Fragment>
               )}
-              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> <DatasetOriginPill dataset={catalogue} /></>}
+              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> {catalogueKey && <DatasetOriginPill dataset={{key: catalogueKey, origin: 'managed'}} />}</>}
             </div>
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
               <UserMenu />
