@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
-import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag } from "antd";
+import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag, ConfigProvider, Empty } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -64,11 +64,12 @@ class DatasetList extends React.Component {
           title: "Title",
           dataIndex: "title",
           key: "title",
+          ellipsis: true,
           render: (text, record) => {
             return (
-              <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true}>
+             <Tooltip title={text}> <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true}>
                 {text}
-              </NavLink>
+              </NavLink></Tooltip>
             );
           },
           sorter: true,
@@ -214,7 +215,7 @@ class DatasetList extends React.Component {
           },
         },
         {
-          title: "Private",
+          title: "",
           dataIndex: "private",
           key: "private",
           width: 24,
@@ -241,25 +242,19 @@ class DatasetList extends React.Component {
 
   componentDidMount() {
     let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: PAGE_SIZE, offset: 0 };
-      history.push({
-        pathname: "/dataset",
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
-    }
-
-    this.setState(
-      {
-        params,
-        pagination: {
-          pageSize: params.limit || PAGE_SIZE,
-          current:
-            Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+    if (!_.isEmpty(params)) {
+      this.setState(
+        {
+          params,
+          pagination: {
+            pageSize: params.limit || PAGE_SIZE,
+            current:
+              Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+          },
         },
-      },
-      this.getData
-    );
+        this.getData
+      ); 
+    }
   }
   componentDidUpdate = (prevProps) => {
     const prevParams = qs.parse(_.get(prevProps, "location.search"));
@@ -443,6 +438,9 @@ class DatasetList extends React.Component {
       (v) => !_.includes(excludeColumns, v.key)
     );
 
+    let queryparams = qs.parse(_.get(this.props, "location.search"));
+    const noParams = _.isEmpty(queryparams);
+
     return (
       <Layout
         openKeys={["dataset"]}
@@ -497,7 +495,7 @@ class DatasetList extends React.Component {
                   {" "}
                   <NavLink to={{ pathname: `/newdataset` }} exact={true}>
                     <Button
-                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                      style={{ marginTop: "10px", marginBottom: "10px", marginRight: "10px" }}
                       type="primary"
                     >
                       <PlusOutlined />
@@ -506,6 +504,27 @@ class DatasetList extends React.Component {
                   </NavLink>{" "}
                 </Col>
               )}
+            {!noParams && <Col>
+                <Button type="danger" style={{ marginTop: "10px", marginBottom: "10px" }} onClick={() => {
+                  history.push({
+                    pathname: "/dataset"
+                  });
+                
+            
+                this.setState(
+                  {
+                    params : {},
+                    data: [],
+                    pagination: {
+                      pageSize: PAGE_SIZE,
+                      current: 1
+                    },
+                  }
+                ); 
+                }}>
+                  Reset search
+                </Button>
+              </Col>}
               <Col flex="auto"></Col>
               {recentDatasets && recentDatasets.length > 0 && (
                 <Col>
@@ -540,6 +559,31 @@ class DatasetList extends React.Component {
             {error && <Alert message={error.message} type="error" />}
           </div>
           {!error && (
+            <ConfigProvider renderEmpty={() => noParams ? 
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search filters specified"> 
+                <Button type="primary" onClick={() => {
+                  let  params = { limit: PAGE_SIZE, offset: 0 };
+                    history.push({
+                      pathname: "/dataset",
+                      search: `?limit=${PAGE_SIZE}&offset=0`,
+                    });
+                  
+              
+                  this.setState(
+                    {
+                      params,
+                      pagination: {
+                        pageSize: params.limit || PAGE_SIZE,
+                        current:
+                          Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
+                      },
+                    },
+                    this.getData
+                  ); 
+                }}>Show all datasets</Button>
+                </Empty> : 
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
+
             <Table
               size="middle"
               columns={columns}
@@ -549,6 +593,7 @@ class DatasetList extends React.Component {
               pagination={pagination}
               onChange={this.handleTableChange}
             />
+            </ConfigProvider>
           )}
         </div>
       </Layout>
