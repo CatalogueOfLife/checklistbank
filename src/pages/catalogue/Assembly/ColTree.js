@@ -927,10 +927,10 @@ class ColTree extends React.Component {
       node.title.props
         .reloadSelfAndSiblings()
         .then(() => {
-          const newNodeReference = this.findNode(
+          const newNodeReference = node?.parent?.children ? this.findNode(
             node.taxon.id,
             node.parent.children
-          );
+          ) : node.taxon;
           this.fetchChildPage(newNodeReference, true).then(
             () =>
               (node.title = React.cloneElement(node.title, {
@@ -1494,7 +1494,6 @@ class ColTree extends React.Component {
       defaultExpandKey,
       user,
     } = this.props;
-    console.log(`Can edit: ${canEditDataset(dataset, user)}`)
     return (
       <React.Fragment>
         {error && (
