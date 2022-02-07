@@ -27,7 +27,8 @@ import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
-
+import Auth from "../../../components/Auth";
+const { canEditDataset } = Auth;
 class Assembly extends React.Component {
   constructor(props) {
     super(props);
@@ -314,6 +315,7 @@ class Assembly extends React.Component {
       },
       location,
       catalogue,
+      user
     } = this.props;
     const params = qs.parse(_.get(location, "search"));
 
@@ -514,7 +516,7 @@ class Assembly extends React.Component {
                       selectedSourceTreeNodes={
                         _.get(this.sourceRef, "state.selectedNodes") || []
                       }
-                      draggable={true}
+                      draggable={canEditDataset({key: catalogueKey}, user)}
                       showSourceTaxon={this.showSourceTaxon}
                       defaultExpandKey={assemblyTaxonKey}
                       addMissingTargetKey={this.addMissingTargetKey}
@@ -609,7 +611,7 @@ class Assembly extends React.Component {
                     onDragStart={(e) =>
                       this.onDragStart(e, this.state.selectedDataset)
                     }
-                    draggable={this.state.mode === "attach"}
+                    draggable={canEditDataset({key: catalogueKey}, user) && this.state.mode === "attach"}
                     defaultExpandKey={this.state.sourceTaxonKey}
                     showSourceTaxon={(sector) => {
                       const isPlaceholder = !_.isUndefined(
@@ -646,6 +648,6 @@ class Assembly extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogue }) => ({ catalogue });
+const mapContextToProps = ({ catalogue, user }) => ({ catalogue, user });
 
 export default withContext(mapContextToProps)(Assembly);

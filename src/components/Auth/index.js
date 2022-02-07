@@ -18,7 +18,7 @@ const Auth = {
     return (
       roles &&
       (roles.includes("admin") ||
-        (editor && roles.includes("editor") && editor.includes(dataset.key)))
+        (editor && roles.includes("editor") && editor.includes(Number(dataset.key))))
     );
   },
   canViewDataset: (dataset, user) => {
@@ -29,7 +29,7 @@ const Auth = {
     return (
       roles &&
       (roles.includes("admin") ||
-        (editor && roles.includes("editor") && editor.includes(dataset.key)) ||
+        (editor && roles.includes("editor") && editor.includes(Number(dataset.key))) ||
         (reviewer &&
           roles.includes("reviewer") &&
           reviewer.includes(dataset.key)))

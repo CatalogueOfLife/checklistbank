@@ -1494,7 +1494,7 @@ class ColTree extends React.Component {
       defaultExpandKey,
       user,
     } = this.props;
-
+    console.log(`Can edit: ${canEditDataset(dataset, user)}`)
     return (
       <React.Fragment>
         {error && (
@@ -1546,7 +1546,7 @@ class ColTree extends React.Component {
                 showIcon={false}
                 defaultExpandAll={defaultExpandAll}
                 // defaultExpandedKeys={defaultExpandedKeys}
-                draggable={canEditDataset(dataset, user) && draggable}
+                draggable={draggable}
                 onDrop={(e) => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
                 loadData={this.onLoadData}
