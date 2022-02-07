@@ -143,18 +143,19 @@ class Sector extends React.Component {
         )
       )
       .then((res) => {
-        taxon.decision = res;
+        taxon.decision = res.data;
 
         notification.open({
           message: `Decision applied`,
           description: `${_.get(taxon, "name").replace(
             /(<([^>]+)>)/gi,
             ""
-          )} was blocked from the assembly`,
+          )} was blocked from the project`,
         });
         if (typeof decisionCallback === "function") {
-          decisionCallback();
+          decisionCallback(res.data);
         }
+        this.setState({popOverVisible: false})
       })
       .catch((err) => {
         notification.error({

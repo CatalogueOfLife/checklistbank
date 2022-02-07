@@ -32,6 +32,7 @@ class ColTreeNode extends React.Component {
     super(props);
     this.state = {
       style: {},
+      decision: this.props.taxon.decision,
       provisional: this.props.taxon.status === "provisionally accepted",
       popOverVisible: false,
       childModalVisible: false,
@@ -172,7 +173,7 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sector, decision, datasetSectors },
+      taxon: { sector, datasetSectors },
       treeType,
       isUpdating,
       getTaxonomicStatusColor,
@@ -180,7 +181,7 @@ class ColTreeNode extends React.Component {
       dataset,
     } = this.props;
 
-    const { childModalVisible, editTaxonModalVisible, estimateModalVisible } =
+    const { childModalVisible, editTaxonModalVisible, estimateModalVisible, decision } =
       this.state;
 
     const releaseKey =
@@ -475,7 +476,7 @@ class ColTreeNode extends React.Component {
                           <Sector
                             {...this.props}
                             selectedSourceDatasetKey={selectedSourceDatasetKey}
-                            decisionCallback={this.props.reloadSelfAndSiblings}
+                            decisionCallback={decision => this.setState({decision})}
                           />
                         </span>
                       )}
@@ -485,7 +486,7 @@ class ColTreeNode extends React.Component {
                           <DecisionTag
                             {...this.props}
                             decision={decision}
-                            deleteCallback={this.props.reloadSelfAndSiblings}
+                            deleteCallback={() => this.setState({decision: null})}
                           />
                         </span>
                       )}
