@@ -68,6 +68,7 @@ const TAXONOMIC_STATUS_COLOR = {
 };
 
 class ContextProvider extends React.Component {
+
   state = {
     catalogueKey: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project")).key
@@ -121,8 +122,14 @@ class ContextProvider extends React.Component {
       this.setState({ catalogueKey });
     },
     setCatalogue: (catalogue) => {
-      localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
-      this.setState({ catalogue, catalogueKey: catalogue.key });
+      if(catalogue?.key && catalogue?.title){
+        localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
+        this.setState({ catalogue, catalogueKey: catalogue.key });
+      } else {
+        localStorage.removeItem("col_selected_project")
+        this.setState({ catalogue: null, catalogueKey: null });
+      }
+      
     },
     setDataset: (dataset) => {
       localStorage.setItem("col_selected_dataset", JSON.stringify(dataset));

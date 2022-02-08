@@ -32,9 +32,6 @@ class CatalogueSelect extends React.Component {
   };
 
   getCatalogues = () => {
-    const { user } = this.props;
-    const { roles } = user;
-    roles.includes("admin") || roles.includes("editor");
     this.setState({ loading: true });
     axios(
       `${config.dataApi}dataset?origin=managed&limit=1000`
@@ -101,9 +98,10 @@ class CatalogueSelect extends React.Component {
           }}
         >
           {iconOnly && <SettingOutlined />}
-          {!iconOnly &&
+          {!iconOnly && catalogue &&
             `${catalogue?.alias ? catalogue.alias : truncate(catalogue?.title, 25)} [${catalogue.key}]`
           }
+          {!iconOnly && !catalogue && `Select`}
           
         </a>
         <Modal
