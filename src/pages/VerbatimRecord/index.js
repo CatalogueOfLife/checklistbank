@@ -218,6 +218,7 @@ class VerbatimRecord extends React.Component {
             verbatim.map((v) => (
               <VerbatimPresentation
                 key={v.id}
+                record={v}
                 datasetKey={v.datasetKey}
                 verbatimKey={v.id}
                 basicHeader={true}

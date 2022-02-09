@@ -30,7 +30,7 @@ class VerbatimPresentation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      verbatimLoading: true,
+      verbatimLoading: false,
       verbatim: null,
       verbatimError: null,
       expanded: props.expanded !== false,
@@ -38,32 +38,41 @@ class VerbatimPresentation extends React.Component {
     };
   }
   componentDidMount() {
-    const { verbatimKey, datasetKey } = this.props;
+    const { verbatimKey, datasetKey, record } = this.props;
     this.isMount = true;
-    this.setState({ verbatimLoading: true });
-    axios(
-      `${config.dataApi}dataset/${datasetKey}/verbatim/${encodeURIComponent(
-        verbatimKey
-      )}`
-    )
-      .then((res) => {
-        if(this.isMount){
+    if(record){
+      this.setState({
+        verbatimLoading: false,
+        verbatim: record,
+        verbatimError: null,
+      });
+    } else {
+      this.setState({verbatimLoading: true})
+      axios(
+        `${config.dataApi}dataset/${datasetKey}/verbatim/${encodeURIComponent(
+          verbatimKey
+        )}`
+      )
+        .then((res) => {
+          if(this.isMount){
+            this.setState({
+              verbatimLoading: false,
+              verbatim: res.data,
+              verbatimError: null,
+            });
+          }      
+        })
+        .catch((err) => {
+          if(this.isMount){
           this.setState({
             verbatimLoading: false,
-            verbatim: res.data,
-            verbatimError: null,
+            verbatimError: err,
+            verbatim: null,
           });
-        }      
-      })
-      .catch((err) => {
-        if(this.isMount){
-        this.setState({
-          verbatimLoading: false,
-          verbatimError: err,
-          verbatim: null,
+        }
         });
-      }
-      });
+    }
+
   }
 
   componentWillUnmount = () => {
