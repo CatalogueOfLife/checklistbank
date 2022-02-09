@@ -31,6 +31,7 @@ class VerbatimRecord extends React.Component {
       limit: 50, // lsLimit ? Number(lsLimit) : 10,
       offset: 0,
       loading: false,
+      issues: []
     };
   }
 
@@ -39,7 +40,7 @@ class VerbatimRecord extends React.Component {
     if (!params.limit) {
       params.limit = this.state.limit;
     }
-
+    this.getIssues()
     this.getVerbatimData(params);
   };
 
@@ -69,6 +70,27 @@ class VerbatimRecord extends React.Component {
       this.getVerbatimData(params);
     }
   };
+
+  getIssues = () => {
+    const {
+      match: {
+        params: { key },
+      },
+    } = this.props;
+  
+      axios(
+        `${config.dataApi}dataset/${key}/import?limit=1&state=finished`
+      )
+        .then((res) => {
+          const issuesCount = _.get(res, "data[0].issuesCount", {})    
+          const issues = Object.keys(issuesCount).map((k) => ({label: `${k} (${issuesCount[k]})`, value: k}))
+          this.setState({issues})
+        })
+        .catch((err) => {
+          
+        });
+    
+  }
 
   getVerbatimData = (params) => {
     const {
@@ -100,7 +122,7 @@ class VerbatimRecord extends React.Component {
   onSearch = (search) => {
     const { location } = this.props;
     const params = qs.parse(_.get(location, "search"));
-    let newQuery = { ...params, ...search };
+    let newQuery = { ...params, ...search, offset: 0 };
 
     history.push({
       pathname: location.path,
@@ -110,7 +132,7 @@ class VerbatimRecord extends React.Component {
 
   render = () => {
     const { location, lastSuccesFullImport } = this.props;
-    const { total, limit, offset, verbatim, verbatimError } = this.state;
+    const { total, limit, offset, verbatim, verbatimError, issues } = this.state;
     const current = Number(offset) / Number(limit) + 1;
     const params = qs.parse(_.get(location, "search"));
 
@@ -148,6 +170,12 @@ class VerbatimRecord extends React.Component {
                 onChange={(value) => this.onSearch({ type: value })}
                 vocab={typeFacets}
                 label="Row type"
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "issue")}
+                onChange={(value) => this.onSearch({ issue: value })}
+                vocab={issues}
+                label="Issues"
               />
             </Col>
             <Col span={24} style={{ textAlign: "right" }}>

@@ -10,7 +10,6 @@ import PresentationItem from "./PresentationItem";
 import { NavLink } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import withContext from "./hoc/withContext";
-
 const md = 5;
 
 /* const parentRelations = [
