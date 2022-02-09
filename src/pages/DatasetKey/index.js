@@ -31,6 +31,7 @@ import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
 import Name from "../Name";
 import VerbatimRecord from "../VerbatimRecord";
+import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "moment";
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -228,13 +229,22 @@ class DatasetPage extends React.Component {
             match={this.props.match}
           />
         )}
-        {sect === "verbatim" && (
+        {sect === "verbatim" && !taxonOrNameKey && (
           <VerbatimRecord
             datasetKey={datasetKey}
             lastSuccesFullImport={lastSuccesFullImport}
-            location={this.props.location}
-            match={this.props.match}
+           /*  location={this.props.location}
+            match={this.props.match} */
           />
+        )}
+        {sect === "verbatim" && taxonOrNameKey && (
+        <VerbatimByID
+          key={taxonOrNameKey}
+          datasetKey={datasetKey}
+          verbatimKey={taxonOrNameKey}
+          basicHeader={true}
+          location={location}
+        />
         )}
         {sect === "source" && (
           <ReleaseSource

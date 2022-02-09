@@ -4,11 +4,11 @@ import { withRouter } from "react-router-dom";
 import _ from "lodash";
 import axios from "axios";
 import { LinkOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
-import { Alert, Tag, Spin, Tooltip, Row, Col } from "antd";
+import { Alert, Tag, Skeleton, Tooltip, Row, Col } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import PresentationItem from "./PresentationItem";
 import { NavLink } from "react-router-dom";
-
+import Highlighter from "react-highlight-words";
 import withContext from "./hoc/withContext";
 
 const md = 5;
@@ -35,10 +35,12 @@ class VerbatimPresentation extends React.Component {
       verbatim: null,
       verbatimError: null,
       expanded: props.expanded !== false,
+      homoglyphs: {}
     };
   }
   componentDidMount() {
     const { verbatimKey, datasetKey } = this.props;
+    this.isMount = true;
     this.setState({ verbatimLoading: true });
     axios(
       `${config.dataApi}dataset/${datasetKey}/verbatim/${encodeURIComponent(
@@ -46,24 +48,54 @@ class VerbatimPresentation extends React.Component {
       )}`
     )
       .then((res) => {
-        this.setState({
-          verbatimLoading: false,
-          verbatim: res.data,
-          verbatimError: null,
-        });
+        if(this.isMount){
+          this.setState({
+            verbatimLoading: false,
+            verbatim: res.data,
+            verbatimError: null,
+          });
+        }      
       })
       .catch((err) => {
+        if(this.isMount){
         this.setState({
           verbatimLoading: false,
           verbatimError: err,
           verbatim: null,
         });
+      }
       });
   }
 
-  renderTerm = (key, value, type) => {
+  componentWillUnmount = () => {
+    this.isMount = false;
+
+  }
+
+  getHomoglyphs = async () => {
+    const {terms} = this.state.verbatim;
+    let termsMap = {};
+   // let keys = Object.keys(terms);
+    for(const key of Object.keys(terms)){
+      try{
+      let {data: homoglyphs} = await axios.post(`${config.dataApi}parser/homoglyph`, terms[key], {headers: {'content-type': 'text/plain'}})
+      if(homoglyphs.hasHomoglyphs){
+        console.log(terms[key])
+        termsMap[key] = homoglyphs.positions.map(p => terms[key].charAt(p - 1))
+      }
+    } catch(err){
+      alert(err)
+    }
+    }
+    this.setState({homoglyphs: termsMap})
+    console.log(termsMap)
+ 
+  }
+
+  renderTerm = (key, value, type, homoglyphs) => {
     const { termsMap, termsMapReversed, datasetKey, catalogueKey, location } =
       this.props;
+
     const taxonPath = {
       pathname:
         location.pathname.split(`dataset/${datasetKey}`)[0] +
@@ -82,6 +114,8 @@ class VerbatimPresentation extends React.Component {
         `dataset/${datasetKey}/references/`,
       search: `?limit=50&offset=0&q=${value}`,
     };
+
+
 
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
@@ -124,7 +158,13 @@ class VerbatimPresentation extends React.Component {
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
             }}
           >
-            {value}
+          <Highlighter
+            highlightStyle={{ fontWeight: "bold", padding: 0, backgroundColor: 'yellow' }}
+            searchWords={homoglyphs[key] || []}
+            autoEscape
+            textToHighlight={value}
+          />
+           
           </NavLink>{" "}
           {isTaxonId && (
             <NavLink key={`taxonLink:${key}`} to={taxonPath}>
@@ -159,7 +199,12 @@ class VerbatimPresentation extends React.Component {
       );
       return (
         <React.Fragment>
-          {value}{" "}
+          <Highlighter
+            highlightStyle={{ fontWeight: "bold", padding: 0, backgroundColor: 'yellow' }}
+            searchWords={homoglyphs[key] || []}
+            autoEscape
+            textToHighlight={value}
+          />
           <NavLink
             key={key}
             to={{
@@ -200,16 +245,27 @@ class VerbatimPresentation extends React.Component {
           }
           target="_blank"
         >
-          {value}
+          <Highlighter
+            highlightStyle={{ fontWeight: "bold", padding: 0, backgroundColor: 'yellow' }}
+            searchWords={homoglyphs[key] || []}
+            autoEscape
+            textToHighlight={value}
+          />
         </a>
       ) : (
-        value
+        <Highlighter
+        highlightStyle={{ fontWeight: "bold", padding: 4, color: 'tomato', backgroundColor: 'wheat' }}
+        searchWords={homoglyphs[key] || []}
+        autoEscape
+        textToHighlight={value}
+      />
       );
     }
   };
   render = () => {
-    const { verbatimLoading, verbatimError, verbatim, expanded } = this.state;
-    const { issueMap, basicHeader, terms } = this.props;
+    const { verbatimLoading, verbatimError, verbatim, expanded , homoglyphs} = this.state;
+    const { issueMap, basicHeader, terms, datasetKey,  location, verbatimKey } = this.props;
+
     const title =
       _.get(verbatim, "type") && _.get(verbatim, "key")
         ? `${basicHeader ? "" : "Verbatim"} ${_.get(
@@ -217,6 +273,8 @@ class VerbatimPresentation extends React.Component {
             "type"
           )} - ${_.get(verbatim, "key")}`
         : "Verbatim";
+   const verbatimPath = location.pathname.split(`dataset/${datasetKey}`)[0] + `dataset/${datasetKey}/verbatim/${verbatimKey}`;
+
     return (
       <React.Fragment>
         <Row
@@ -239,7 +297,7 @@ class VerbatimPresentation extends React.Component {
             </h3>
           </Col>
           <Col span={12}>
-            {_.get(verbatim, "file") && (
+            {_.get(verbatim, "file") && <NavLink to={{pathname: verbatimPath}}>
               <p style={{ textAlign: "right", paddingRight: 6 }}>
                 {`${_.get(verbatim, "file")}${
                   _.get(verbatim, "line")
@@ -247,12 +305,13 @@ class VerbatimPresentation extends React.Component {
                     : ""
                 }`}
               </p>
-            )}
+              </NavLink> 
+            }
           </Col>
         </Row>
         {expanded && (
           <React.Fragment>
-            {verbatimLoading && <Spin />}
+            {verbatimLoading && <Skeleton active />}
             {verbatimError && (
               <Alert
                 message={<ErrorMsg error={verbatimError} />}
@@ -261,11 +320,12 @@ class VerbatimPresentation extends React.Component {
             )}
             {_.get(verbatim, "file") && (
               <PresentationItem md={md} key="file" label="File">
-                {`${_.get(verbatim, "file")}${
+              <NavLink to={{pathname: verbatimPath}}> {`${_.get(verbatim, "file")}${
                   _.get(verbatim, "line")
                     ? `, line ${_.get(verbatim, "line")}`
                     : ""
                 }`}
+                </NavLink> 
               </PresentationItem>
             )}
             {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
@@ -276,9 +336,9 @@ class VerbatimPresentation extends React.Component {
                       key={i}
                       title={_.get(issueMap, `[${i}].description`)}
                     >
-                      <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                    {i !== 'homoglyph characters' ?   <Tag key={i} color={_.get(issueMap, `[${i}].color`)} >
                         {i}
-                      </Tag>
+                      </Tag> : <Tag key={i} style={{cursor: 'pointer'}} color={_.get(issueMap, `[${i}].color`)} onClick={this.getHomoglyphs}>{i}</Tag>}
                     </Tooltip>
                   ))}
                 </div>
@@ -292,7 +352,8 @@ class VerbatimPresentation extends React.Component {
                     {this.renderTerm(
                       t,
                       verbatim.terms[t],
-                      _.get(verbatim, "type")
+                      _.get(verbatim, "type"),
+                      homoglyphs
                     )}
                   </PresentationItem>
                 ) : (

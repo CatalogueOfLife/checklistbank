@@ -1,6 +1,7 @@
 import React from "react";
 import config from "../../config";
 import axios from "axios";
+import { withRouter } from "react-router-dom";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import qs from "query-string";
 import _ from "lodash";
@@ -27,7 +28,7 @@ class VerbatimRecord extends React.Component {
       verbatim: [],
       verbatimError: null,
       total: 0,
-      limit: lsLimit ? Number(lsLimit) : 10,
+      limit: 50, // lsLimit ? Number(lsLimit) : 10,
       offset: 0,
       loading: false,
     };
@@ -156,10 +157,10 @@ class VerbatimRecord extends React.Component {
                   hideOnSinglePage={true}
                   style={{ display: "inline" }}
                   current={current}
-                  showSizeChanger
-                  pageSizeOptions={["10", "50", "100"]}
+                  showSizeChanger={false}
+                 /*  showSizeChanger
+                  pageSizeOptions={[10, 50, 100]}
                   onShowSizeChange={(current, size) => {
-                    localStorage.setItem("col_plus_verbatim_limit", size);
                     history.push({
                       pathname: location.pathname,
                       search: `?${qs.stringify({
@@ -167,7 +168,7 @@ class VerbatimRecord extends React.Component {
                         limit: Number(size),
                       })}`,
                     });
-                  }}
+                  }} */
                   onChange={(page, pageSize) => {
                     history.push({
                       pathname: location.pathname,
@@ -177,7 +178,7 @@ class VerbatimRecord extends React.Component {
                       })}`,
                     });
                   }}
-                  pageSize={Number(limit)}
+                  pageSize={limit}
                   total={total}
                 />
               }
@@ -202,4 +203,4 @@ class VerbatimRecord extends React.Component {
 }
 
 const mapContextToProps = ({ dataset }) => ({ dataset });
-export default withContext(mapContextToProps)(VerbatimRecord);
+export default withContext(mapContextToProps)(withRouter(VerbatimRecord));
