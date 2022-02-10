@@ -133,10 +133,10 @@ class TaxonPage extends React.Component {
         if (_.get(res, "data.name")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${datasetKey}/name/${_.get(
+              `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(_.get(
                 res,
                 "data.name.id"
-              )}/relations`
+              ))}/relations`
             ).then((relations) => {
               res.data.name.relations = relations.data;
               return Promise.all(

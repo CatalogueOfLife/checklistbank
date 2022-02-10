@@ -506,7 +506,7 @@ class ColTreeNode extends React.Component {
                         to={{
                           pathname: `${this.getTaxonUrl(
                             selectedSourceDatasetKey
-                          )}${taxon.id}`,
+                          )}${encodeURIComponent(taxon.id)}`,
                         }}
                         exact={true}
                       >

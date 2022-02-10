@@ -242,7 +242,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                  history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
                 }
               },
             },
@@ -257,7 +257,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  history.push(`/dataset/${datasetKey}/taxon/${e.point._id}`);
+                  history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
                 }
               },
             },

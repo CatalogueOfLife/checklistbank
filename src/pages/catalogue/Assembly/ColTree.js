@@ -232,7 +232,7 @@ class ColTree extends React.Component {
     const { data } = await axios(
       `${
         config.dataApi
-      }dataset/${id}/tree/${defaultExpandKey}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
+      }dataset/${id}/tree/${encodeURIComponent(defaultExpandKey)}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
         treeType
       )}`
     )
