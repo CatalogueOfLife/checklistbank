@@ -37,7 +37,6 @@ import {
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 // Helpers
 // import { getUserItems } from '../helpers';
@@ -72,7 +71,7 @@ class ContextProvider extends React.Component {
   state = {
     catalogueKey: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project")).key
-      : null, // MANAGEMENT_CLASSIFICATION.key, //TODO Load from localStorage if changed by user
+      : null,
     frequency: [],
     datasetType: [],
     dataFormat: [],
@@ -117,7 +116,7 @@ class ContextProvider extends React.Component {
     setSelectedKeys: (_selectedKeys) => this.setState({ _selectedKeys }),
     catalogue: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project"))
-      : null,// MANAGEMENT_CLASSIFICATION,
+      : null,
     setCatalogueKey: (catalogueKey) => {
       this.setState({ catalogueKey });
     },

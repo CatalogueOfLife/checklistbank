@@ -9,7 +9,6 @@ import { Row, Col, Statistic, Card } from "antd";
 import withContext from "../../components/hoc/withContext";
 
 import axios from "axios";
-const { MANAGEMENT_CLASSIFICATION } = config;
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -46,7 +45,7 @@ class HomePage extends React.Component {
   getCoLData = () => {
     this.setState({ colSpeciesLoading: true });
     axios(
-      `${config.dataApi}dataset/${MANAGEMENT_CLASSIFICATION.key}/nameusage/search?rank=species&status=accepted&status=provisionally_accepted&limit=0`
+      `${config.dataApi}dataset/3LR/nameusage/search?rank=species&status=accepted&status=provisionally_accepted&limit=0`
     )
       .then((res) => {
         this.setState({
@@ -108,7 +107,7 @@ class HomePage extends React.Component {
               {colSpecies && (
                 <NavLink
                   to={{
-                    pathname: `/dataset/${MANAGEMENT_CLASSIFICATION.key}/names`,
+                    pathname: `/dataset/3LR/names`,
                   }}
                   exact={true}
                 >

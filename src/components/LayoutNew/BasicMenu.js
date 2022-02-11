@@ -118,8 +118,7 @@ class BasicMenu extends Component {
       (_.get(selectedDataset, "size") ||
         _.get(selectedDataset, "origin") === "managed" ||
         _.get(selectedDataset, "origin") === "released");
-    //  const catalogueKey = selectedCatalogue ? selectedCatalogue.key : MANAGEMENT_CLASSIFICATION.key
-    //  const { selectedKeys, openKeys } = this.state;
+
     return (
       <React.Fragment>
         <div className="logo">
