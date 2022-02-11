@@ -104,7 +104,7 @@ class Popconfirm extends React.Component{
               {okText || 'OK'}
             </Button>}
             {actions && actions.map(a =>
-            <Button key={a.text} style={{marginLeft: '4px'}} onClick={(e) => {
+            <Button key={a.text} style={{marginLeft: '4px'}} disabled={a?.disabled} onClick={(e) => {
                 this.setVisible(false, e);
                 if (a.action) {
                     a.action.call(this, e);

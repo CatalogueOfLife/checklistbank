@@ -1143,7 +1143,7 @@ class ColTree extends React.Component {
           {dragNodeIsPlaceholder
             ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `
             : `Ranks are equal. Do you want to ${
-                taxonNameIsEqual ? "replace or " : ""
+                taxonNameIsEqual && node?.taxon?.parentId ? "replace or " : ""
               }union children of `}
           {!dragNodeIsPlaceholder && (
             <span
@@ -1274,6 +1274,7 @@ class ColTree extends React.Component {
           {
             text: "Replace",
             type: "danger",
+            disabled: !node?.taxon?.parentId,
             action: () => this.confirmAttach(node, dragNode, "REPLACE"),
           },
 
