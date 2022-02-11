@@ -204,8 +204,10 @@ class ImportChart extends React.Component {
 
   render = () => {
     const { options, logarithmic, chartType } = this.state;
+    const {simple = false} = this.props;
     return (
-      <Card>
+      simple ? <HighchartsReact highcharts={Highcharts} options={options} />  : <Card>
+        
         <ButtonGroup size="small">
           <Button
             type={!logarithmic ? "primary" : ""}
@@ -240,6 +242,7 @@ class ImportChart extends React.Component {
             }}
           />
         </ButtonGroup>
+        
         {chartType === "pie" && (
           <HighchartsReact highcharts={Highcharts} options={options} />
         )}

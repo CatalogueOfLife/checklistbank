@@ -106,7 +106,7 @@ class DatasetMeta extends React.Component {
   };
 
   getData = () => {
-    const { id, setDataset } = this.props;
+    const { id, setDataset , user} = this.props;
 
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${id}`)
@@ -131,10 +131,10 @@ class DatasetMeta extends React.Component {
         }
         return Promise.all([
           res.data,
-          axios(`${config.dataApi}user/${createdBy}`),
-          axios(`${config.dataApi}user/${modifiedBy}`),
+          user ? axios(`${config.dataApi}user/${createdBy}`) : null,
+          user ? axios(`${config.dataApi}user/${modifiedBy}`) : null,
           Promise.allSettled(
-            res.data.contributesTo.map((c) =>
+            res?.data?.contributesTo?.map((c) =>
               axios(`${config.dataApi}dataset/${c}`)
             )
           ),
@@ -143,7 +143,7 @@ class DatasetMeta extends React.Component {
       .then((res) => {
         res[0].createdByUser = _.get(res[1], "data.username");
         res[0].modifiedByUser = _.get(res[2], "data.username");
-        res[0].contributesToDatasets = res[0].contributesTo.map((d, i) =>
+        res[0].contributesToDatasets = res[0]?.contributesTo?.map((d, i) =>
           res[3][i].status === "fulfilled"
             ? _.get(res[3][i], "value.data.title")
             : d
@@ -212,7 +212,6 @@ class DatasetMeta extends React.Component {
     const patchMode = !!catalogueKey;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
-    console.log("Access: " + Auth.canEditDataset(displayData, user));
     return (
       <PageContent>
         {Auth.canEditDataset(displayData, user) && !patchMode && (
