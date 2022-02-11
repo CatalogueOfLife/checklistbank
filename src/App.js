@@ -47,6 +47,7 @@ import NameMatch from "./pages/tools/NameMatch";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import NameUsageSearch from "./pages/NameSearch/Search";
+import UserProfile from "./pages/UserProfile"
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -275,6 +276,12 @@ class App extends Component {
                   key="namematch"
                   path={`/tools/gbif-impact`}
                   component={GBIFTaxonomyReview}
+                />
+                <Route
+                  exact
+                  key="userprofile"
+                  path={`/user-profile`}
+                  component={UserProfile}
                 />
                 <Route component={Exception404} />
               </Switch>

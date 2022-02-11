@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import injectSheet from "react-jss";
-import { LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, Dropdown, Avatar, Modal, Button, Divider } from "antd";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
@@ -122,6 +122,14 @@ class UserMenu extends PureComponent {
         >
           <LogoutOutlined /> Logout
         </Menu.Item>
+        <Menu.Item key="profile">
+            <NavLink
+                    to={{ pathname: `/user-profile` }}
+                  >
+                    <UserOutlined /> Profile
+                  </NavLink>
+              </Menu.Item>
+        
         {Auth.isEditorOrAdmin(user) && (
           <Menu.ItemGroup title="Project">
             {(Auth.isAdmin(user) ||

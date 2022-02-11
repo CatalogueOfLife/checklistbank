@@ -42,12 +42,12 @@ const ClassificationTable = ({
         <NavLink
           to={{
             pathname: isAssembly(location, catalogueKey)
-              ? `/catalogue/${catalogueKey}/taxon/${_.get(t, "id")}`
+              ? `/catalogue/${catalogueKey}/taxon/${encodeURIComponent(_.get(t, "id"))}`
               : `${getDatasetTaxonRoute(
                   location,
                   datasetKey,
                   catalogueKey
-                )}${_.get(t, "id")}`,
+                )}${encodeURIComponent(_.get(t, "id"))}`,
           }}
         >
           <span dangerouslySetInnerHTML={{ __html: t.labelHtml }} />

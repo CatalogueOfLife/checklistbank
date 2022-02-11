@@ -83,7 +83,7 @@ class UserAutocomplete extends React.Component {
     );
     const options = this.state.users
       ? this.state.users.map((o) => {
-          const text = `${o.firstname} ${o.lastname} (${o.username})`;
+          const text = !o.firstname && !o.lastname ? o.username : `${o.firstname} ${o.lastname} (${o.username})`;
           return {
             key: o.key,
             value: text,

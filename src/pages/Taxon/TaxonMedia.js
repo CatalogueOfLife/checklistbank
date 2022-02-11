@@ -1,14 +1,16 @@
-import React from "react";
-import { Image, Row, Col } from "antd";
+import React, {useState} from "react";
+import { Image, Row, Col, Button } from "antd";
 import _ from "lodash";
 
+const PAGE_SIZE = 10;
 export default ({ media }) => {
   if (!_.isArray(media)) {
     return null;
   }
+  const [limit, setLimit] = useState(PAGE_SIZE)
   return (
     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-      {media
+      {media.slice(0, limit)
         .filter((m) => m.type === "image")
         .map((i) => (
           <Col span={12} style={{ paddingBottom: "12px" }}>
@@ -19,10 +21,16 @@ export default ({ media }) => {
               src={`//api.gbif.org/v1/image/unsafe/x260/${i.url}`}
             />
             <div style={{ marginTop: "-4px" }}>
+              {i.title || ''}
               {i.capturedBy && `©  ${i.capturedBy}`}
+              {i.rightsHolder && `©  ${i.rightsHolder}`}
             </div>
           </Col>
         ))}
+        {media.length > limit && <Col span={24} style={{textAlign: 'right', marginBottom: '8px'}}>
+          {limit > PAGE_SIZE && <Button style={{marginRight: "8px"}} onClick={() => setLimit(PAGE_SIZE)}>Show fewer</Button>}
+          <Button onClick={() => setLimit(limit+PAGE_SIZE)}>Show more</Button>
+          </Col>}
     </Row>
   );
 };
