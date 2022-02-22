@@ -39,7 +39,6 @@ import ExceptionHandler from "./components/exception/ExceptionHandler";
 import Helmet from "react-helmet";
 import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage";
-import NameIndex from "./pages/NameIndex";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
@@ -60,24 +59,13 @@ class App extends Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>ChecklistBank (CLB)</title>
-          <link rel="canonical" href="https://www.checklistbank.org/" />
         </Helmet>
         <Router history={history}>
           <React.Fragment>
             <ThemeProvider theme={theme}>
               <Switch>
                 <Route exact key="HomePage" path="/" component={HomePage} />
-                {/*                 <Route
-                  exact
-                  key="NameIndex"
-                  path="/names"
-                  render={({ match, location }) => (
-                    <NameIndex
-                      section={match.params.section}
-                      location={location}
-                    />
-                  )}
-                /> */}
+
                 <PrivateRoute
                   exact
                   key="catalogueSources"

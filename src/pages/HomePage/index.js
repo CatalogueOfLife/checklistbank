@@ -84,12 +84,6 @@ class HomePage extends React.Component {
               charSet: "utf-8",
             },
           ]}
-          link={[
-            {
-              rel: "canonical",
-              href: "https://www.checklistbank.org",
-            },
-          ]}
         />
 
         <Card
