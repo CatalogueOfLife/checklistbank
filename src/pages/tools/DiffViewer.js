@@ -43,6 +43,9 @@ const DiffViewer = ({ location, addError, rank }) => {
   const [root2, setRoot2] = useState([]);
   const [minRank, setMinRank] = useState(null);
   const [synonyms, setSynonyms] = useState(false);
+  const [showParent, setShowParent] = useState(false);
+  const [parentRank, setParentRank] = useState("");
+  const [authorship, setAuthorship] = useState(true)
   useEffect(() => {
     const { search } = location;
 
@@ -99,7 +102,7 @@ const DiffViewer = ({ location, addError, rank }) => {
       const { data: diff } = await axios(
         `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${
           minRank ? "&minRank=" + minRank : ""
-        }${synonyms ? "&synonyms=true" : ""}`
+        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true":"" }${showParent ? "&parentRank=" + parentRank :"" }${!authorship ? "authorship=false":""}`
       );
       let html;
       makeFile(diff);
@@ -232,11 +235,47 @@ const DiffViewer = ({ location, addError, rank }) => {
           </Col>
           <Col span={6} style={{ padding: "8px" }}>
             <Row style={{ marginBottom: "8px" }}>
+            <Col >
+                <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
+                  Authorship
+                </Checkbox>
+              </Col>
               <Col flex="auto">
                 <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
                   Synonyms
                 </Checkbox>
               </Col>
+              </Row>
+            
+            <Row style={{ marginBottom: "8px" }}>
+            <Col flex="auto">
+                <Checkbox onChange={(e) => setShowParent(e.target.checked)}>
+                  Show parent
+                </Checkbox>
+              </Col>
+              <Col >
+              <Select
+                  value={parentRank}
+                  onChange={setParentRank}
+                  placeholder="Select parent rank"
+                  allowClear
+                  showSearch
+                  disabled={!showParent}
+                  style={{width: '140px'}}
+                >
+                  <Option key="" value="">
+                      Direct parent
+                    </Option>
+                  {rank.map((r) => (
+                    <Option key={r} value={r}>
+                      {r}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "8px" }}>
+              <Col flex="auto"></Col>
               <Col>
                 <Select
                   value={minRank}
@@ -244,6 +283,8 @@ const DiffViewer = ({ location, addError, rank }) => {
                   placeholder="Select min rank"
                   allowClear
                   showSearch
+                  style={{width: '140px'}}
+
                 >
                   {rank.map((r) => (
                     <Option key={r} value={r}>
