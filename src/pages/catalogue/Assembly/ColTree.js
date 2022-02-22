@@ -101,7 +101,9 @@ class ColTree extends React.Component {
       prevProps.catalogueKey !== this.props.catalogueKey ||
       prevProps.insertPlaceholder !== this.props.insertPlaceholder
     ) {
-      this.setState({ treeData: [] }, this.loadRoot);
+      this.setState({ treeData: [], loadedKeys: [],
+        expandedKeys: [],
+        selectedKeys: [] }, this.loadRoot);
       this.sectorLoader = new DataLoader((ids) =>
         getSectorsBatch(ids, this.props.catalogueKey)
       );
@@ -131,6 +133,7 @@ class ColTree extends React.Component {
       catalogueKey,
       onDeleteSector,
       defaultExpandKey,
+      insertPlaceholder = false
     } = this.props;
     this.setState({ rootLoading: true, treeData: [] });
     let id = key;
@@ -139,7 +142,7 @@ class ColTree extends React.Component {
         config.dataApi
       }dataset/${id}/tree?catalogueKey=${catalogueKey}${this.appendTypeParam(
         treeType
-      )}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}`
+      )}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}&insertPlaceholder=${insertPlaceholder}`
     )
       .then(this.decorateWithSectorsAndDataset)
       .then((res) => {
