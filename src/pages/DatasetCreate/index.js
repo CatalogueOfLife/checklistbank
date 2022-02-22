@@ -4,7 +4,8 @@ import MetaDataForm from "../../components/MetaData/MetaDataForm";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
-
+import Exception403 from "../../components/exception/403";
+import Auth from "../../components/Auth";
 class DatasetCreate extends React.Component {
   render() {
     return (
@@ -13,18 +14,18 @@ class DatasetCreate extends React.Component {
         selectedKeys={["datasetCreate"]}
         title="New Dataset"
       >
-        <PageContent>
+       {Auth.isEditorOrAdmin(this.props.user) ? <PageContent>
           <MetaDataForm
             onSaveSuccess={(res) => {
               history.push(`/dataset/${res.data}/about`);
             }}
           />
-        </PageContent>
+        </PageContent> : <Exception403 />}
       </Layout>
     );
   }
 }
 
-const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
+const mapContextToProps = ({  user }) => ({  user });
 
 export default withContext(mapContextToProps)(DatasetCreate);

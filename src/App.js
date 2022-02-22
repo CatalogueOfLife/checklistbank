@@ -214,11 +214,10 @@ class App extends Component {
                   component={CatalogueName}
                 />
 
-                <PrivateRoute
+                <Route
                   exact
                   key="datasetCreate"
                   path={`/newdataset`}
-                  roles={["editor", "admin"]}
                   component={DatasetCreate}
                 />
 
