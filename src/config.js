@@ -5,7 +5,7 @@ const domain = window.location.hostname;
 let env = environments.dev;
 if (
   domain.endsWith("data.catalogueoflife.org") ||
-  domain.endsWith("data.catalogue.life")
+  domain.endsWith("www.checklistbank.org")
 ) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
