@@ -19,7 +19,7 @@ import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
 import qs from "query-string";
 
-const DOWNLOADS_URL = "https://download.catalogueoflife.org/taxreview/";
+const DOWNLOADS_URL = "https://download.checklistbank.org/taxreview/";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -237,7 +237,7 @@ class Root extends React.Component {
                           {" "}
                           <a
                             target="_blank"
-                            href={`https://data.catalogueoflife.org/dataset/${colKey}/names?q=${
+                            href={`https://www.checklistbank.org/dataset/${colKey}/names?q=${
                               record[`${verbatimPrefix}${rank}`]
                             }`}
                           >
@@ -279,7 +279,7 @@ class Root extends React.Component {
                           {" "}
                           <a
                             target="_blank"
-                            href={`https://data.catalogueoflife.org/dataset/${colKey}/names?q=${
+                            href={`https://www.checklistbank.org/dataset/${colKey}/names?q=${
                               record[`${proposedPrefix}${rank}`]
                             }`}
                           >

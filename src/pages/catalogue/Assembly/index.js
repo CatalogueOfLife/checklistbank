@@ -329,7 +329,7 @@ class Assembly extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>COL Assembly</title>
-          <link rel="canonical" href="http://data.catalogueoflife.org" />
+          <link rel="canonical" href="https://www.checklistbank.org" />
         </Helmet>
         <PageContent style={{ padding: 12, marginBottom: 0, height: "100%" }}>
           <ColTreeContext.Provider

@@ -93,7 +93,7 @@ class Reference extends React.Component {
           <title>
             {catalogue ? `References - ${catalogue.title}` : "COL references"}
           </title>
-          <link rel="canonical" href="http://data.catalogueoflife.org" />
+          <link rel="canonical" href="https://www.checklistbank.org" />
         </Helmet>
         <PageContent>
           {showAddNewModal && (

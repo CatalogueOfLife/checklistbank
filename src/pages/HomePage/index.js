@@ -76,7 +76,7 @@ class HomePage extends React.Component {
   render() {
     const { nameUsages, colSpecies, datasets } = this.state;
     return (
-      <Layout openKeys={[]} selectedKeys={[]} title="COL ChecklistBank">
+      <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank (CLB)">
         <Helmet
           title="ChecklistBank"
           meta={[
@@ -87,7 +87,7 @@ class HomePage extends React.Component {
           link={[
             {
               rel: "canonical",
-              href: "http://data.catalogueoflife.org",
+              href: "https://www.checklistbank.org",
             },
           ]}
         />
@@ -144,20 +144,17 @@ class HomePage extends React.Component {
             <Col style={{ paddingRight: "30px" }} span={16}>
               <p>
                 The{" "}
-                <a href="http://www.catalogueoflife.org">
+                <a href="https://www.catalogueoflife.org">
                   Catalogue of Life (COL)
                 </a>{" "}
                 aims to support the publication and curation of checklists and
                 to provide a platform for their consistent discovery, use and
-                citation.
-                <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">
-                  GBIF
-                </a>{" "}
-                has for some time maintained ChecklistBank as a repository for
+                citation.                 
+                GBIF has for some time maintained ChecklistBank as a repository for
                 its community to share checklist data. COL and GBIF have united
                 their capabilities to make ChecklistBank a consistent foundation
                 and repository for all COL datasets and any other publicly
-                published species lists.
+                published species lists, inluding those registered with <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
               </p>
               <p>
                 The taxonomic community can publish a checklist to ChecklistBank
@@ -173,7 +170,7 @@ class HomePage extends React.Component {
                 Regardless of the original data format, ChecklistBank generates
                 a standardised interpretation. All datasets can be searched,
                 browsed, downloaded or accessed programmatically via the{" "}
-                <a href="https://api.catalogueoflife.org">COL API</a>.
+                <a href="https://api.checklistbank.org">COL API</a>.
               </p>
             </Col>
             {datasets && (

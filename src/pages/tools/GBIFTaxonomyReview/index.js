@@ -87,7 +87,7 @@ const GBIFTaxonomyReview = ({ location }) => {
           <Col span={8} style={{ textAlign: "right" }}>
             {filesByFileName[selectedFile] && (
               <a
-                href={`https://data.catalogueoflife.org/dataset/${filesByFileName[selectedFile].colKey}/names`}
+                href={`https://www.checklistbank.org/dataset/${filesByFileName[selectedFile].colKey}/names`}
               >
                 Browse COL: {filesByFileName[selectedFile].colVersion}
               </a>

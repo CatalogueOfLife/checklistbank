@@ -30,7 +30,7 @@ import marked from "marked";
 import DOMPurify from "dompurify";
 
 export const IDENTIFIER_TYPES = {
-  col: "https://data.catalogueoflife.org/dataset/",
+  col: "https://www.checklistbank.org/dataset/",
   gbif: "https://www.gbif.org/dataset/",
   plazi: "http://publication.plazi.org/id/",
   doi: "https://doi.org/",

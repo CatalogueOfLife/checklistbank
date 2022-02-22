@@ -59,8 +59,8 @@ class App extends Component {
       <ContextProvider>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>COL Checklistbank</title>
-          <link rel="canonical" href="https://data.catalogueoflife.org/" />
+          <title>ChecklistBank (CLB)</title>
+          <link rel="canonical" href="https://www.checklistbank.org/" />
         </Helmet>
         <Router history={history}>
           <React.Fragment>

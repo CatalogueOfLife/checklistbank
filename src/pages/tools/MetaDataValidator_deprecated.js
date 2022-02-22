@@ -45,7 +45,7 @@ const tailLayout = {
   },
 };
 
-// http://api.catalogueoflife.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
+// http://api.checklistbank.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
 
 const MetaDataValidator = () => {
   const [validatorResult, setValidatorResult] = useState(null);
@@ -112,7 +112,7 @@ const MetaDataValidator = () => {
       <Helmet>
         <meta charSet="utf-8" />
         <title>COL Metadata Validator</title>
-        <link rel="canonical" href="http://data.catalogueoflife.org" />
+        <link rel="canonical" href="https://www.checklistbank.org" />
       </Helmet>
       <PageContent>
         <Steps

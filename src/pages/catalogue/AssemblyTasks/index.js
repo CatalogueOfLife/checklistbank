@@ -15,7 +15,7 @@ const AssemblyTasks = ({ location, catalogueKey, catalogue }) => {
       <Helmet>
         <meta charSet="utf-8" />
         <title>{catalogue.title}</title>
-        <link rel="canonical" href="http://data.catalogueoflife.org" />
+        <link rel="canonical" href="https://www.checklistbank.org" />
       </Helmet>
       <PageContent>
         <Tasks datasetKey={catalogueKey} location={location} assembly={true} />

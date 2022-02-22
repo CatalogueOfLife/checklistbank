@@ -195,7 +195,7 @@ class AdminPage extends React.Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>COL Admin</title>
-          <link rel="canonical" href="http://data.catalogueoflife.org" />
+          <link rel="canonical" href="https://www.checklistbank.org" />
         </Helmet>
         <PageContent>
           {error && (
