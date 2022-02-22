@@ -256,7 +256,7 @@ class SiteLayout extends Component {
             )}
           </Content>
           <Footer>
-            <Row style={{ textAlign: "center" }}>Catalogue of Life</Row>
+            <Row style={{ textAlign: "center" }}>Developed by GBIF & Catalogue of Life</Row>
             <Row style={{ textAlign: "center", marginTop: "8px" }}>
               <Tag>
                 <a
