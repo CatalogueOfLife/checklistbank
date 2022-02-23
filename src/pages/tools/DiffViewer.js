@@ -294,8 +294,10 @@ const DiffViewer = ({ location, addError, rank }) => {
                 </Select>
               </Col>
             </Row>
-
-            <div style={{ textAlign: "right" }}>
+            <Row>
+              <Col flex="auto"></Col>
+              <Col>
+              
               {diff && (
                 <Tooltip title="Download unified diff">
                   <Button
@@ -309,8 +311,18 @@ const DiffViewer = ({ location, addError, rank }) => {
                   </Button>
                 </Tooltip>
               )}
-              {!diff && (
-                <Button
+              
+                
+            
+
+              {diff && (
+                <Button                   
+                style={{ marginRight: "10px" }}
+                type="danger" onClick={resetAll}>
+                  Reset
+                </Button>
+              )}
+              <Button
                   loading={loading}
                   disabled={loading}
                   type="primary"
@@ -318,14 +330,10 @@ const DiffViewer = ({ location, addError, rank }) => {
                 >
                   Get Diff
                 </Button>
-              )}
-
-              {diff && (
-                <Button type="danger" onClick={resetAll}>
-                  Reset
-                </Button>
-              )}
-            </div>
+              </Col>
+              
+            </Row>
+            
           </Col>
         </Row>
 
