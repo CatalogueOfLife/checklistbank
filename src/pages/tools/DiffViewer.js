@@ -102,7 +102,7 @@ const DiffViewer = ({ location, addError, rank }) => {
       const { data: diff } = await axios(
         `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${
           minRank ? "&minRank=" + minRank : ""
-        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true":"" }${showParent ? "&parentRank=" + parentRank :"" }${!authorship ? "authorship=false":""}`
+        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true":"" }${showParent ? "&parentRank=" + parentRank :"" }${!authorship ? "&authorship=false":""}`
       );
       let html;
       makeFile(diff);
