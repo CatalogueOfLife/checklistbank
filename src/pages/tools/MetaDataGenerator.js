@@ -54,7 +54,7 @@ const CONTENT_TYPES = {
   EML: "application/xml",
 };
 
-// http://api.catalogueoflife.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
+// http://api.checklistbank.org/parser/metadata?url=https://raw.githubusercontent.com/CatalogueOfLife/coldp/master/metadata.yaml
 
 const MetaDataValidator = ({ location }) => {
   const [validatorResult, setValidatorResult] = useState(null); // YAML
