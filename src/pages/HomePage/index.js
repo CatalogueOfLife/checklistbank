@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import config from "../../config";
 import moment from "moment";
 import Helmet from "react-helmet";
-import { Row, Col, Statistic, Card } from "antd";
+import { Row, Col, Statistic, Card, View, Image } from "antd";
 import withContext from "../../components/hoc/withContext";
 
 import axios from "axios";
@@ -88,11 +88,9 @@ class HomePage extends React.Component {
 
         <Card
           style={{ marginTop: 20 }}
-          hoverable
           cover={
             <img
-              alt="ChecklistBank"
-              src="//api.gbif.org/v1/image/unsafe/1170x422/http%3A%2F%2Fmycoportal.org%2Fimglib%2Fmycology%2FTENN_TENN-F%2FTENN-F-074%2FCoccomyces_triangularis_1_1529521643_lg.jpg"
+              src="/images/Pultenaea_procumbens.jpg"
             />
           }
         >
