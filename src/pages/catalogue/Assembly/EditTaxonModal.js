@@ -84,6 +84,7 @@ const EditTaxonModal = (props) => {
       }/${encodeURIComponent(taxon.id)}`
     ).then((tx) => {
       setTaxon(tx.data);
+      form.setFieldsValue(_.get(tx, "data.name"));
       setSuggestedNameValue(
         `${_.get(tx, "data.name.scientificName")}${
           _.get(tx, "data.name.authorship")
@@ -91,6 +92,7 @@ const EditTaxonModal = (props) => {
             : ""
         }`
       );
+      next()
     });
   };
 
@@ -184,29 +186,11 @@ const EditTaxonModal = (props) => {
       onCancel={onCancel}
       destroyOnClose={true}
       footer={
-        current === 0
-          ? [
-              <Button key="back" onClick={onCancel}>
-                Cancel
-              </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                onClick={() => {
-                  parseName();
-                  next();
-                }}
-              >
-                Parse name
-              </Button>,
-            ]
-          : [
+        [
               <Button key="cancel" onClick={onCancel}>
                 Cancel
               </Button>,
-              <Button key="back" onClick={prev}>
-                Previous
-              </Button>,
+             
               <Button
                 key="submit"
                 type="primary"
@@ -224,19 +208,8 @@ const EditTaxonModal = (props) => {
             ]
       }
     >
-      <Steps current={current} style={{ marginBottom: "10px" }}>
-        {steps.map((item) => (
-          <Step key={item.title} title={item.title} />
-        ))}
-      </Steps>
-      {current === 0 && (
-        <Input
-          value={suggestedNameValue}
-          onChange={(e) => setSuggestedNameValue(e.target.value)}
-          allowClear
-        />
-      )}
-      {current === 1 && (
+ 
+    
         <Form form={form} initialValues={parsedName}>
           <FormItem
             {...formItemLayout}
@@ -337,7 +310,7 @@ const EditTaxonModal = (props) => {
             </Select>
           </FormItem>
         </Form>
-      )}
+   
       {submissionError && (
         <Alert
           closable

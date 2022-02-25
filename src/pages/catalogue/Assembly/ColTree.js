@@ -165,18 +165,19 @@ class ColTree extends React.Component {
               onDeleteSector={onDeleteSector}
               treeType={this.props.treeType}
               showSourceTaxon={showSourceTaxon}
-              reloadSelfAndSiblings={() => {
+              reloadSelfAndSiblings={this.reloadRoot}
+              /* reloadSelfAndSiblings={() => {
                 const loadedChildIds = dataRef.children
                   ? dataRef.children
                       .filter((c) => c.children && c.children.length > 0)
                       .map((c) => c.key)
-                  : null;
+                  : [];
                 return this.loadRoot().then(() =>
                   loadedChildIds
                     ? this.reloadLoadedKeys(loadedChildIds, false)
                     : false
                 );
-              }}
+              }} */
               reloadChildren={() => {
                 return this.fetchChildPage(dataRef, true);
               }}

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Input,
   Modal,
   Select,
   Alert,
+  Steps,
+  Button,
   Checkbox,
   notification,
   Form,
@@ -16,42 +19,72 @@ import config from "../../../config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
+const Step = Steps.Step;
 
+const removeEmptyValues = (myObj) => {
+  Object.keys(myObj).forEach((key) => {
+    (typeof myObj[key] === "undefined" ||
+      myObj[key] === "" ||
+      myObj[key] === null) &&
+      delete myObj[key];
+  });
+};
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 5 },
+    sm: { span: 7 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 19 },
+    sm: { span: 17 },
   },
 };
 
+const steps = [
+  {
+    title: "Enter name",
+    okText: "Parse name",
+    cancelText: "Cancel",
+  },
+  {
+    title: "Review parsed",
+    okText: "Submit",
+    cancelText: "Previous",
+  },
+  {
+    title: "Submit",
+    okText: "Submit",
+    cancelText: "Previous",
+  },
+];
+
 const AddChildModal = (props) => {
-  const { parent, rank, onCancel } = props;
+  const { rank, nomstatus, nametype, onCancel, synonym, parent } = props;
+
   const [visible, setVisible] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [taxon, setTaxon] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [selectedRank, setSelectedRank] = useState(null);
+  const [suggestedNameValue, setSuggestedNameValue] = useState(null);
+  const [parsedName, setParsedName] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (props.taxon) {
+      getTaxon();
+    }
+  }, [props.taxon]);
 
   const isGenusOrAbove = (rank) => {
     return props.rank.indexOf(rank) <= props.rank.indexOf("genus");
   };
   const handleSubmit = (values) => {
     const { parent } = props;
-
+    removeEmptyValues(values);
     let taxon = {
-      status: values.provisional ? "provisionally accepted" : "accepted",
-      name: isGenusOrAbove(values.rank)
-        ? {
-            uninomial: values.name,
-            rank: values.rank,
-          }
-        : {
-            scientificName: values.name,
-            rank: values.rank,
-          },
+      ...values
     };
 
     if (_.get(parent, "id")) {
@@ -95,71 +128,258 @@ const AddChildModal = (props) => {
       });
   };
   const initialRank = _.get(parent, "firstChildRank") || null;
+
+  const isAboveSpeciesAggregate = (rank) => {
+    return props.rank.indexOf(rank) < props.rank.indexOf("species aggregate");
+  };
+  const isInfraSpecific = (rank) => {
+    return props.rank.indexOf(rank) > props.rank.indexOf("species");
+  };
+
+  const parseName = () => {
+    axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
+      (res) => {
+        /*         if (_.get(res, "data[0]")) {
+          form.setFieldsValue(_.get(res, "data[0].name"));
+          setParsedName(_.get(res, "data[0].name"));
+          setSelectedRank(_.get(res, "data[0].name.rank"));
+        } */
+        if (res?.data) {
+            let vals = { name: res?.data};
+            if(res?.data?.rank === "unranked" && initialRank) {
+                vals.name.rank = initialRank
+            }
+          form.setFieldsValue(vals);
+          setParsedName(res?.data);
+          setSelectedRank(res?.data?.rank);
+        }
+      }
+    );
+  };
+
+  const next = () => {
+    setCurrent(current + 1);
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+/* 
+  const handleSubmit = (values) => {
+    removeEmptyValues(values);
+    //  const updatedName = { ...name, ...values };
+    submitData({ ...values, origin: "user" });
+  };
+
+  const submitData = (updatedName) => {
+    const { name } = taxon;
+
+    if (_.get(parent, "id")) {
+        taxon.parentId = parent.id;
+      }
+
+    axios
+      .put(
+        `${config.dataApi}dataset/${name.datasetKey}/name/${name.id}`,
+        updatedName
+      )
+      .then((res) => {
+        setSubmissionError(null);
+        setConfirmLoading(false);
+        notification.open({
+          message: "Name updated",
+          description: `${updatedName.scientificName} was updated`,
+        });
+        if (props.onSuccess && typeof props.onSuccess === "function") {
+          props.onSuccess();
+        }
+      })
+      .catch((err) => {
+        setCurrent(1);
+        setSubmissionError(err);
+        setConfirmLoading(false);
+      });
+  }; */
   return (
     <Modal
       style={{ width: "650px" }}
       title={
-        _.get(parent, "id") ? (
-          <span>
-            Add child to{" "}
-            <span dangerouslySetInnerHTML={{ __html: parent.name }} />
-          </span>
-        ) : (
-          <span>Create root taxon</span>
-        )
+        <span>
+          Edit{" "}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: _.get(taxon, "name.scientificName"),
+            }}
+          />
+        </span>
       }
       visible={visible}
+      okText={steps[current].okText}
       onOk={() => {
         setConfirmLoading(true);
         form.validateFields().then((values) => {
-          form.resetFields();
           handleSubmit(values);
+          next();
         });
       }}
       confirmLoading={confirmLoading}
-      onCancel={() => {
-        setVisible(false);
-        if (onCancel && typeof onCancel === "function") {
-          onCancel();
-        }
-      }}
+      cancelText={steps[current].cancelText}
+      onCancel={onCancel}
       destroyOnClose={true}
+      footer={
+        current === 0
+          ? [
+              <Button key="back" onClick={onCancel}>
+                Cancel
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={() => {
+                  parseName();
+                  next();
+                }}
+              >
+                Parse name
+              </Button>,
+            ]
+          : [
+              <Button key="cancel" onClick={onCancel}>
+                Cancel
+              </Button>,
+              <Button key="back" onClick={prev}>
+                Previous
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                loading={confirmLoading}
+                onClick={() => {
+                  setConfirmLoading(true);
+                  form.validateFields().then((values) => {
+                    handleSubmit(values);
+                    next();
+                  });
+                }}
+              >
+                Submit
+              </Button>,
+            ]
+      }
     >
-      <Form form={form}>
-        <FormItem
-          {...formItemLayout}
-          label="Taxon name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please input Taxon name",
-            },
-          ]}
-        >
-          <Input autoFocus />
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          initialValue={initialRank || null}
-          label="Rank"
-          name="rank"
-          rules={[
-            {
-              required: true,
-              message: "Please select Taxon rank",
-            },
-          ]}
-        >
-          <Select style={{ width: 200 }} showSearch>
-            {rank.map((r) => (
-              <Option key={r} value={r}>
-                {r}
-              </Option>
-            ))}
-          </Select>
-        </FormItem>
-        {
+      <Steps current={current} style={{ marginBottom: "10px" }}>
+        {steps.map((item) => (
+          <Step key={item.title} title={item.title} />
+        ))}
+      </Steps>
+      {current === 0 && (
+        <Input
+          value={suggestedNameValue}
+          onChange={(e) => setSuggestedNameValue(e.target.value)}
+          allowClear
+        />
+      )}
+      {current === 1 && (
+        <Form form={form} initialValues={parsedName}>
+          <FormItem
+            {...formItemLayout}
+            label="Scientific name"
+            name={["name", "scientificName"]}
+            rules={[
+              {
+                required: true,
+                message: "Please input Full Taxon name",
+              },
+            ]}
+          >
+            <Input />
+          </FormItem>
+          {isAboveSpeciesAggregate(selectedRank) && (
+            <FormItem {...formItemLayout} label="Uninomial" name={["name","uninomial"]}>
+              <Input />
+            </FormItem>
+          )}
+          {!isAboveSpeciesAggregate(selectedRank) && (
+            <FormItem {...formItemLayout} label="Genus" name={["name", "genus"]}>
+              <Input />
+            </FormItem>
+          )}
+          {!isAboveSpeciesAggregate(selectedRank) && (
+            <FormItem
+              {...formItemLayout}
+              label="Specific Epithet"
+              name={["name", "specificEpithet"]}
+            >
+              <Input />
+            </FormItem>
+          )}
+          {isInfraSpecific(selectedRank) && (
+            <FormItem
+              {...formItemLayout}
+              label="Infrasp. Epithet"
+              name={["name", "infraspecificEpithet"]}
+            >
+              <Input />
+            </FormItem>
+          )}
+          <FormItem {...formItemLayout} label="Authorship" name={["name","authorship"]}>
+            <Input />
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="Rank"
+            name={["name", "rank"]}
+            initialValue={initialRank}
+            rules={[
+              {
+                required: true,
+                message: "Please select Taxon rank",
+              },
+            ]}
+          >
+            <Select
+              style={{ width: 200 }}
+              onChange={(value) => {
+                setSelectedRank(value);
+                form.setFieldsValue({ rank: value });
+              }}
+              showSearch
+            >
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
+          <FormItem {...formItemLayout} label="Nom. status" name={["name", "nomstatus"]}>
+            <Select style={{ width: 200 }} showSearch>
+              {nomstatus.map((r) => (
+                <Option key={r.name} value={r.name}>
+                  {r.name}
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="Name type"
+            name={["name", "type"]}
+            rules={[
+              {
+                required: true,
+                message: "Please select Name Type",
+              },
+            ]}
+          >
+            <Select style={{ width: 200 }} showSearch>
+              {nametype.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label="Provisional"
@@ -169,22 +389,24 @@ const AddChildModal = (props) => {
           >
             <Checkbox />
           </FormItem>
-        }
-        {submissionError && (
-          <FormItem>
-            <Alert
-              closable
-              onClose={() => setSubmissionError(null)}
-              message={<ErrorMsg error={submissionError}></ErrorMsg>}
-              type="error"
-            />
-          </FormItem>
-        )}
-      </Form>
+        </Form>
+      )}
+      {submissionError && (
+        <Alert
+          closable
+          onClose={() => setSubmissionError(null)}
+          message={<ErrorMsg error={submissionError} />}
+          type="error"
+        />
+      )}
     </Modal>
   );
 };
 
-const mapContextToProps = ({ rank }) => ({ rank });
+const mapContextToProps = ({ rank, nomstatus, nametype }) => ({
+  rank,
+  nomstatus,
+  nametype,
+});
 
 export default withContext(mapContextToProps)(AddChildModal);
