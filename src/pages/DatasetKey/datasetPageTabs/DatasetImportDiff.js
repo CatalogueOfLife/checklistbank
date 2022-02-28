@@ -138,6 +138,9 @@ class DatasetDiff extends React.Component {
           importHistory,
           err: null,
         });
+        if(importHistory.length === 1){
+          this.setState({loading: false, onlyOneImport: true})
+        }
         return importHistory;
       })
       .catch((err) => {
@@ -150,7 +153,7 @@ class DatasetDiff extends React.Component {
   render() {
     const diff = _.get(this.state, "data");
     const { datasetKey } = this.props;
-    const { error, attempt1, attempt2, importHistory, loading } = this.state;
+    const { error, attempt1, attempt2, importHistory, loading, onlyOneImport } = this.state;
 
     let html;
     if (diff) {
@@ -229,6 +232,7 @@ class DatasetDiff extends React.Component {
             </Select>
           </Col>
         </Row>
+        {onlyOneImport && <Empty description="No diff available" />}
         {error && (
           <Row style={{ marginBottom: "8px" }}>
             <Alert type="error" message={<ErrorMsg error={error} />} />

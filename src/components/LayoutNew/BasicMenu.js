@@ -129,7 +129,7 @@ class BasicMenu extends Component {
             exact={true}
           >
             <Logo  />{" "}
-            <h1 style={{ color: "#F9CB6E", display: "inline" }}>ChecklistBank</h1>
+            <h1 style={{ color: "#F9CB6E",  display: "inline" }}>ChecklistBank</h1>
           </NavLink>
         </div>
 

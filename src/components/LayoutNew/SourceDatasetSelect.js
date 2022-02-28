@@ -147,7 +147,7 @@ class SourceSeelect extends React.Component {
                   }}
                   value={c.key}
                   key={c.key}
-                >{`${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`}</Option>
+                >{`${c.alias ? c.alias : truncate(c.title, 50)} ${c.version || ""} [${c.key}]`}</Option>
               ))}
             </Select>
           </div>
