@@ -164,10 +164,15 @@ class HomePage extends React.Component {
                 browsed, downloaded or accessed programmatically via the{" "}
                 <a href="https://api.checklistbank.org">COL API</a>.
               </p>
+              <p>
+                In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
+                This includes a continously improved <a href="/tools/diff-viewer">diff tool</a> for comparing datasets 
+                as well as downloading custom exports.
+              </p>
             </Col>
             {datasets && (
               <Col span={8}>
-                <h3>Latest datasets registered</h3>
+                <h3>Latest datasets added</h3>
                 <ul>
                   {datasets.result.map((d) => (
                     <li key={d.key}>
