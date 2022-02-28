@@ -266,7 +266,7 @@ class Sector extends React.Component {
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
               onClick={() => {
-                history.push(`dataset/${sectorSourceDataset.key}/about`);
+                history.push(`dataset/${sectorSourceDataset.key}/metadata`);
               }}
             >
               Source Dataset Metadata
