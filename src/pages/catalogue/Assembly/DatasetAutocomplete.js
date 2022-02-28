@@ -7,6 +7,10 @@ import _ from "lodash";
 import { debounce } from "lodash";
 import Highlighter from "react-highlight-words";
 
+function truncate(str, n){
+  return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
+};
+
 class DatasetAutocomplete extends React.Component {
   constructor(props) {
     super(props);
@@ -93,7 +97,7 @@ class DatasetAutocomplete extends React.Component {
     );
     const options = this.state.datasets
       ? this.state.datasets.map((o) => {
-          const text = `${o.alias || o.title} [${o.key}]`;
+          const text = `${o.alias || truncate(o.title, 25)} ${o.version || ""} [${o.key}]`;
           return {
             key: o.key,
             value: text,
