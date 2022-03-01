@@ -7,7 +7,7 @@ import moment from "moment";
 import Helmet from "react-helmet";
 import { Row, Col, Statistic, Card, View, Image } from "antd";
 import withContext from "../../components/hoc/withContext";
-
+import Hero from "./Hero"
 import axios from "axios";
 
 class HomePage extends React.Component {
@@ -76,7 +76,7 @@ class HomePage extends React.Component {
   render() {
     const { nameUsages, colSpecies, datasets } = this.state;
     return (
-      <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank (CLB)">
+      <Layout openKeys={[]} selectedKeys={[]} title="">
         <Helmet
           title="ChecklistBank"
           meta={[
@@ -88,10 +88,8 @@ class HomePage extends React.Component {
 
         <Card
           style={{ marginTop: 20 }}
-          cover={
-            <img
-              src="/images/Pultenaea_procumbens.jpg"
-            />
+          cover={<Hero image={"/images/Pultenaea_procumbens.jpg"}/>
+           
           }
         >
           <Row>
@@ -162,7 +160,7 @@ class HomePage extends React.Component {
                 Regardless of the original data format, ChecklistBank generates
                 a standardised interpretation. All datasets can be searched,
                 browsed, downloaded or accessed programmatically via the{" "}
-                <a href="https://api.checklistbank.org">COL API</a>.
+                <a href="https://api.checklistbank.org">ChecklistBank API</a>.
               </p>
               <p>
                 In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
