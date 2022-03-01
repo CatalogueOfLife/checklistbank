@@ -149,7 +149,7 @@ class SiteLayout extends Component {
       <Layout style={{ minHeight: "100vh" }}>
         {sideMenu}
         <Layout style={{ marginLeft: contentMargin + "px" }}>
-          <Header style={{ background: "#fff", display: "flex" }}>
+          <Header style={config.env === 'dev' ? { backgroundImage: `url("/images/test-env.svg")`, backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "45%", backgroundColor: "#fff",  display: "flex" } : { background: "#fff", display: "flex" }}>
             {collapsed ? (
               <MenuUnfoldOutlined
                 style={{

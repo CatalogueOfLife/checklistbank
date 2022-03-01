@@ -129,7 +129,7 @@ class BasicMenu extends Component {
             exact={true}
           >
             <Logo  />{" "}
-            <h1 style={{ color: "#1DB5E9",  display: "inline" }}>ChecklistBank</h1>
+            <h1 style={{   display: "inline" }}>ChecklistBank</h1>
           </NavLink>
         </div>
 
@@ -142,7 +142,7 @@ class BasicMenu extends Component {
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
         >
-          {config.env === "dev" && (
+{/*           {config.env === "dev" && (
             <Alert
               type="warning"
               style={{ margin: "6px" }}
@@ -150,7 +150,7 @@ class BasicMenu extends Component {
                 <div style={{ textAlign: "center" }}>Test enviroment</div>
               }
             />
-          )}
+          )} */}
 
           <SubMenu
             key="tools"
