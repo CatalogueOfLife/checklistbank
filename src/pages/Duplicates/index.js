@@ -370,7 +370,10 @@ class DuplicateSearchPage extends React.Component {
           subjectDatasetKey: datasetKey,
           subject: {
             id: _.get(d, "id"),
-
+            parent:
+            d.classification && d.classification.length > 1
+              ? d.classification[d.classification.length - 2].name
+              : "",      
             name: _.get(d, "name.scientificName"),
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
