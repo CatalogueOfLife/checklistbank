@@ -9,7 +9,7 @@ import config from "../../config";
 import axios from "axios";
 import _ from "lodash";
 import { DownloadOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip } from "antd";
+import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card } from "antd";
 import moment from "moment";
 const { TabPane } = Tabs;
 const UserProfile = ({ user, countryAlpha2 }) => {
@@ -65,40 +65,35 @@ const UserProfile = ({ user, countryAlpha2 }) => {
   );
   const renderDownload = (item) => (
     <List.Item>
-      <List.Item.Meta
-        avatar={
-          item?.error ? (
-            <div style={{ width: "95px" }}>
+      <Card title={<>
+        {item?.error ? (
               <Tooltip title={item?.error}>
                 <Tag color="error">Failed</Tag>
               </Tooltip>
-            </div>
           ) : (
-            <Button type="link" href={item?.download}>
+            <Button type="link" href={item?.download} style={{color: "#1890ff"}}>
               <DownloadOutlined /> {item?.sizeWithUnit}
             </Button>
-          )
-        }
-        title={moment(item?.created).format("MMM Do YYYY")}
-        description={
-            <>
-             <PresentationItem md={4} label="Request">
+          )}<span>{moment(item?.created).format("MMM Do YYYY")}</span> 
+        </>}>
+        <>
+            <div> <PresentationItem md={4} label="Request">
              {item.request && <div>{Object.keys(item.request).map((key) => (
                 <Tag>{`${key}: ${item.request[key]}`}</Tag>
               ))}</div>}
                 </PresentationItem>
+                </div>
+                <div style={{marginTop: "10px"}}>
                 <PresentationItem  md={4} label="Taxa By Rank">
                 {item.taxaByRankCount && <div>{Object.keys(item.taxaByRankCount).map((key) => (
                 <Tag>{`${key}: ${item.taxaByRankCount[key]}`}</Tag>
               ))}</div>}
-                </PresentationItem>
-              
-              
+                </PresentationItem>   
+                </div>      
             
               </>
-          
-        }
-      />
+        </Card>
+      
     </List.Item>
   );
   return (
@@ -159,8 +154,13 @@ const UserProfile = ({ user, countryAlpha2 }) => {
             <TabPane tab={`Reviewer (${reviewerDatasets.length})`} key="3">
               <List dataSource={reviewerDatasets} renderItem={renderItem} />
             </TabPane>
-            <TabPane tab={`Downloads (${downloads.length})`} key="4">
-              <List dataSource={downloads} renderItem={renderDownload} />
+            <TabPane tab={`Downloads (${downloads.length})`} key="4" >
+              <Row>
+                <Col flex="auto"></Col>
+                <Col><List dataSource={downloads} renderItem={renderDownload} split={false} /></Col>
+                <Col flex="auto"></Col>
+              </Row>
+              
             </TabPane>
           </Tabs>
 
