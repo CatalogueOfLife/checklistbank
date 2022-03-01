@@ -11,7 +11,6 @@ import {
   Spin,
   Button,
   Tooltip,
-  Space,
 } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -37,6 +36,7 @@ const DiffViewer = ({ location, addError, rank }) => {
   const [html, setHTML] = useState(null);
   const [diff, setDiff] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [empty, setEmpty] = useState(false)
   const [datasetKey1, setDatasetKey1] = useState(null);
   const [datasetKey2, setDatasetKey2] = useState(null);
   const [root, setRoot] = useState([]);
@@ -51,16 +51,18 @@ const DiffViewer = ({ location, addError, rank }) => {
 
     const params = qs.parse(search);
     console.log(params);
+    if(params.dataset &&  params.dataset2 ){
+      setDatasetKey1(params.dataset);
+      setDatasetKey2(params.dataset2);
+    }
     if (params.dataset && params.root) {
       decorateRootsFromQuery(params.root, params.dataset).then((r) => {
         setRoot(r);
-        setDatasetKey1(params.dataset);
       });
     }
     if (params.dataset2 && params.root2) {
       decorateRootsFromQuery(params.root2, params.dataset2).then((r) => {
         setRoot2(r);
-        setDatasetKey2(params.dataset2);
       });
     }
   }, [location]);
@@ -68,6 +70,7 @@ const DiffViewer = ({ location, addError, rank }) => {
   const resetAll = () => {
     setHTML(null);
     setDiff(null);
+    setEmpty(false);
     setDatasetKey1(null);
     setDatasetKey2(null);
     setRoot([]);
@@ -93,7 +96,8 @@ const DiffViewer = ({ location, addError, rank }) => {
     if (search) {
       search = "?" + search;
     }
-    setLoading(true);
+    setEmpty(false)
+    setLoading(true); 
     history.push({
       ...location,
       search: search + `&dataset=${datasetKey1}&dataset2=${datasetKey2}`,
@@ -105,6 +109,9 @@ const DiffViewer = ({ location, addError, rank }) => {
         }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true":"" }${showParent ? "&parentRank=" + parentRank :"" }${!authorship ? "&authorship=false":""}`
       );
       let html;
+      if(!diff){
+        setEmpty(true)
+      }
       makeFile(diff);
       html = Diff2Html.getPrettyHtml(diff, {
         inputFormat: "diff",
@@ -298,7 +305,7 @@ const DiffViewer = ({ location, addError, rank }) => {
               <Col flex="auto"></Col>
               <Col>
               
-              {diff && (
+              {diff && !empty && (
                 <Tooltip title="Download unified diff">
                   <Button
                     disabled={loading}
@@ -338,6 +345,7 @@ const DiffViewer = ({ location, addError, rank }) => {
         </Row>
 
         {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
+        {empty && <Empty description="No diff"/>}
         {loading && (
           <Row style={{ marginTop: "40px" }}>
             <Col flex="auto"></Col>
