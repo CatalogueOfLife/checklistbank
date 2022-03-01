@@ -377,6 +377,7 @@ class DuplicateSearchPage extends React.Component {
             name: _.get(d, "name.scientificName"),
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
+            status:  _.get(d, "name.status")
           },
           mode: mode,
           status: mode !== "update" ? _.get(d, "status") : decision,
