@@ -26,6 +26,7 @@ import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
+import Linkify from 'react-linkify';
 
 const { canEditDataset } = Auth;
 const md = 5;
@@ -427,7 +428,7 @@ class TaxonPage extends React.Component {
 
           {_.get(info, "taxon.name.publishedIn.citation") && (
             <PresentationItem md={md} label="Published in">
-              {_.get(info, "taxon.name.publishedIn.citation")}
+              <Linkify>{_.get(info, "taxon.name.publishedIn.citation", "")}</Linkify>
             </PresentationItem>
           )}
           <Row style={{ borderBottom: "1px solid #eee" }}>

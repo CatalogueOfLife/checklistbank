@@ -28,6 +28,7 @@ import BibTex from "../../../components/MetaData/BibTex";
 
 import marked from "marked";
 import DOMPurify from "dompurify";
+import linkify from 'linkify-html';
 
 export const IDENTIFIER_TYPES = {
   col: "https://www.checklistbank.org/dataset/",
@@ -507,8 +508,8 @@ class DatasetMeta extends React.Component {
 
             <PresentationItem label="Citation">
               {displayData.citation && (
-                <span
-                  dangerouslySetInnerHTML={{ __html: displayData.citation }}
+               <span
+                  dangerouslySetInnerHTML={{ __html: linkify(displayData.citation)}}
                 ></span>
               )}
             </PresentationItem>
@@ -532,7 +533,7 @@ class DatasetMeta extends React.Component {
                     (s.citation ? (
                       <div
                         style={{ display: "inline-block" }}
-                        dangerouslySetInnerHTML={{ __html: s.citation }}
+                        dangerouslySetInnerHTML={{ __html: linkify(s.citation) }}
                       ></div>
                     ) : (
                       s.title
