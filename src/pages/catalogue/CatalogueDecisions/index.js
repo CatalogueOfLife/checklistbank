@@ -197,7 +197,9 @@ class CatalogueDecisions extends React.Component {
   };
 
   resetAllFilters = () => {
-    this.nameRef.current.input.state.value = "";
+    if(this?.nameRef?.current?.input?.state?.value){
+      this.nameRef.current.input.state.value = ""
+    } ;
 
     history.push({
       pathname: _.get(this.props, "location.pathname"),

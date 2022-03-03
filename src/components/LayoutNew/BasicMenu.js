@@ -241,7 +241,7 @@ class BasicMenu extends Component {
               </Menu.Item>
             </SubMenu>
           )}
-          {catalogue && (
+          {catalogue && user && (
             <SubMenu
               key="assembly"
               title={

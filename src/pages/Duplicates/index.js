@@ -377,7 +377,7 @@ class DuplicateSearchPage extends React.Component {
             name: _.get(d, "name.scientificName"),
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
-            status:  _.get(d, "name.status")
+            status:  _.get(d, "status")
           },
           mode: mode,
           status: mode !== "update" ? _.get(d, "status") : decision,
@@ -602,7 +602,6 @@ class DuplicateSearchPage extends React.Component {
           <Col
             span={Auth.canEditDataset({ key: catalogueKey }, user) ? 18 : 24}
           >
-            <Card>
               <div style={{ marginBottom: "10px" }}>
                 <Select
                   placeholder="COL Check"
@@ -915,11 +914,10 @@ class DuplicateSearchPage extends React.Component {
                   </FormItem>
                 </Form>
               )}{" "}
-            </Card>
           </Col>
           <CanEditDataset dataset={{ key: catalogueKey }}>
-            <Col span={6}>
-              <Card>
+            <Col flex="auto"></Col>
+            <Col >
                 <Select
                   style={{
                     width: 140,
@@ -944,7 +942,7 @@ class DuplicateSearchPage extends React.Component {
                     <Option value="ignore">Ignore</Option>
                   </OptGroup>
                 </Select>
-
+                <br />
                 <Button
                   type="primary"
                   onClick={this.applyDecision}
@@ -960,12 +958,10 @@ class DuplicateSearchPage extends React.Component {
                     {selectedRowKeys.length > 1 ? "taxa" : "taxon"}
                   </div>
                 )}
-              </Card>
             </Col>
           </CanEditDataset>
         </Row>
-        <Row />
-        <Row style={{ marginBottom: "8px", marginTop: "8px" }}>
+        <Row style={{ marginBottom: "8px", marginTop: "12px" }}>
           <Col span={12}>
           {Auth.canEditDataset({ key: catalogueKey }, user) &&  <>
             <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">

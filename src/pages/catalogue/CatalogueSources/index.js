@@ -317,6 +317,7 @@ class GSDIssuesMatrix extends React.Component {
           </div>
           {!error && (
             <Table
+              showSorterTooltip={false}
               size="small"
               columns={columns}
               dataSource={data.filter((d) => d.issues)}
