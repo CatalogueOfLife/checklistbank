@@ -241,7 +241,7 @@ class BasicMenu extends Component {
               </Menu.Item>
             </SubMenu>
           )}
-          {catalogue && user && (
+          {user && user?.roles?.length > 0 && (
             <SubMenu
               key="assembly"
               title={
@@ -257,11 +257,11 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-              <Menu.ItemGroup title={<><CatalogueSelect iconOnly={true}/> {catalogue?.alias || truncate(catalogue?.title, 25)} </>}>
+              <Menu.ItemGroup title={<><CatalogueSelect iconOnly={true}/> {catalogue ? (catalogue?.alias || truncate(catalogue?.title, 25)) : "Select"} </>}>
               {/* <Menu.Item key="catalogueSelector" >
                    <span><CatalogueSelect style={{color: "white"}}/></span> 
               </Menu.Item>  */}
-
+             {catalogue && <>
               <Menu.Item key="colAssembly">
                 <NavLink
                   to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
@@ -601,7 +601,7 @@ class BasicMenu extends Component {
                     
                 </SubMenu>
               }
-              
+              </>}
               </Menu.ItemGroup>
             </SubMenu>
           )}

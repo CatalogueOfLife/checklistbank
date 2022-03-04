@@ -19,11 +19,20 @@ class RealeaseSelect extends React.Component {
   }
 
   componentDidMount = () => {
-    this.getReleases();
-    const { defaultReleaseKey } = this.props;
+    this.getReleases().then(() => {
+      const { defaultReleaseKey } = this.props;
     if (defaultReleaseKey) {
-      this.setState({ selectedRelease: defaultReleaseKey });
+      // this.setState({ selectedRelease: defaultReleaseKey });
+      this.setDefaultValue(defaultReleaseKey)
     }
+    });
+    
+  };
+
+  setDefaultValue = (defaultReleaseKey) => {
+    axios(`${config.dataApi}dataset/${defaultReleaseKey}`).then((res) => {
+      this.setState({ selectedRelease: `${res?.data?.alias || ""} [${res?.data?.version}]`});
+    });
   };
 
   componentDidUpdate = (prevProps) => {
@@ -36,7 +45,7 @@ class RealeaseSelect extends React.Component {
   getReleases = () => {
     const { catalogueKey } = this.props;
     this.setState({ loading: true });
-    axios(
+   return axios(
       `${config.dataApi}dataset?releasedFrom=${catalogueKey}&limit=1000`
     ).then((res) =>
       this.setState({
@@ -77,7 +86,7 @@ class RealeaseSelect extends React.Component {
           .map((c) => (
             <Option value={c.key} key={c.key}>{`${
               c.alias ? c.alias + " " : ""
-            }[${c.key}]`}</Option>
+            }[${c.version}]`}</Option>
           ))}
       </Select>
     );
