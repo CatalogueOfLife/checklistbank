@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../config";
-
+import _ from "lodash"
 const getDecisionObject = (data) => {
     const {datasetKey, subjectDatasetKey, taxon, parent, mode, updatedTaxon, updatedName} = data;
     const body = {
@@ -20,7 +20,7 @@ const getDecisionObject = (data) => {
         body.name = {...taxon.name, ...updatedName}
       }
       if(mode === "update" && updatedTaxon){
-          if(updatedTaxon.hasOwnProperty('environment')){
+          if(updatedTaxon.hasOwnProperty('environment') && _.isArray(updatedTaxon.environment)){
               body.environment = updatedTaxon.environment
           }
           if(updatedName.hasOwnProperty('extinct')){
