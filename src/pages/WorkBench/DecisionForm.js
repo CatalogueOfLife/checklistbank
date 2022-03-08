@@ -73,13 +73,13 @@ const DecisionForm = (props) => {
   const handleSubmit = (next, cb) => {
     setConfirmLoading(true);
     form.validateFields().then((values) => {
-      console.log("Received values of form: ", values);
+     // console.log("Received values of form: ", values);
       const decision = {
         name: {
           scientificName: values.scientificName,
           authorship: values.authorship,
           rank: values.rank,
-          nomstatus: values.nomstatus,
+          status: values.nomstatus,
           code: values.nomCode,
           type: values.nametype,
         },
@@ -129,7 +129,7 @@ const DecisionForm = (props) => {
     decisionObject.mode = "update";
     decisionObject.subjectDatasetKey = Number(subjectDatasetKey);
     decisionObject.datasetKey = Number(datasetKey);
-    decisionObject.subject = {
+    decisionObject.subject = (currentDecision && !_.get(currentRow, "usage.id") && currentDecision?.subject) ? currentDecision.subject : {
       id: _.get(currentRow, "usage.id"),
 
       name: _.get(currentRow, "usage.name.scientificName"),
@@ -139,7 +139,7 @@ const DecisionForm = (props) => {
       parent:
         currentRow.classification && currentRow.classification.length > 1
           ? currentRow.classification[currentRow.classification.length - 2].name
-          : "",
+          : currentRow?.parent ? currentRow.parent : "",
       code: _.get(currentRow, "usage.name.code"),
     };
 

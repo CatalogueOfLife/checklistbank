@@ -108,6 +108,7 @@ class ColTree extends React.Component {
         getSectorsBatch(ids, this.props.catalogueKey)
       );
     }
+     
   };
 
   reloadRoot = () =>
@@ -120,6 +121,8 @@ class ColTree extends React.Component {
         error: null,
         mode: "attach",
         nodeNotFoundErr: null,
+        selectedNodes: [],
+        selectedKeys: []
       },
       this.loadRoot
     );

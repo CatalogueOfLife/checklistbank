@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { DeleteOutlined, WarningOutlined } from "@ant-design/icons";
+import { DeleteOutlined, WarningOutlined, EditOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
 
 import {
@@ -32,7 +32,7 @@ import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import RematchResult from "../CatalogueSectors/RematchResult";
-
+import DecisionForm from "../../WorkBench/DecisionForm"
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
@@ -55,6 +55,8 @@ class CatalogueDecisions extends React.Component {
         current: 1,
         showQuickJumper: true,
       },
+      decisionFormVisible: false,
+      rowsForEdit: []
     };
   }
   nameRef = React.createRef();
@@ -283,6 +285,8 @@ class CatalogueDecisions extends React.Component {
       rematchDecisionsLoading,
       deleteBrokenDecisionsLoading,
       rematchInfo,
+      decisionFormVisible,
+      rowsForEdit
     } = this.state;
     const {
       match: {
@@ -340,13 +344,13 @@ class CatalogueDecisions extends React.Component {
           return (
             <React.Fragment>
               <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {record.subject.rank}:{" "}
+                {record?.subject?.rank}:{" "}
               </div>
-              {!record.subject.id && (
+              {!record?.subject?.id && (
                 <NavLink
                   to={{
                     pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                    search: `?q=${record.subject.name}`,
+                    search: `?q=${record?.subject?.name}`,
                   }}
                   exact={true}
                 >
@@ -354,14 +358,14 @@ class CatalogueDecisions extends React.Component {
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
                     searchWords={[params.name]}
                     autoEscape
-                    textToHighlight={record.subject.name.toString()}
+                    textToHighlight={record?.subject?.name?.toString()}
                   />
                 </NavLink>
               )}
-              {record.subject.id && (
+              {record?.subject?.id && (
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record.subject.id}`,
+                    pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`,
                   }}
                   exact={true}
                 >
@@ -371,13 +375,13 @@ class CatalogueDecisions extends React.Component {
                     autoEscape
                     textToHighlight={
                       _.get(record, "subject.name")
-                        ? record.subject.name.toString()
+                        ? record?.subject?.name.toString()
                         : ""
                     }
                   />
                 </NavLink>
               )}
-              {record.subject.broken && (
+              {record?.subject?.broken && (
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>
@@ -513,6 +517,31 @@ class CatalogueDecisions extends React.Component {
               style={{ marginBottom: "10px" }}
             />
           )}
+          {decisionFormVisible && (
+          <DecisionForm
+            rowsForEdit={rowsForEdit}
+            onCancel={() => {
+              this.setState({
+                decisionFormVisible: false,
+                rowsForEdit: [],
+              });
+            }}
+            onOk={() => {
+              this.setState({
+                decisionFormVisible: false,
+                rowsForEdit: [],
+              });
+            }}
+            onSaveDecision={(name) => {
+              this.setState({
+                decisionFormVisible: false,
+                rowsForEdit: [],
+              }, this.getData)
+            }}
+            datasetKey={catalogueKey}
+            subjectDatasetKey={_.get(rowsForEdit, '[0].decisions[0].subjectDatasetKey', null)}
+          />
+        )}
 
           <Form layout="inline">
             <FormItem>
@@ -651,12 +680,36 @@ class CatalogueDecisions extends React.Component {
               dataSource={data}
               loading={loading}
               pagination={pagination}
-              rowKey="key"
-              expandedRowRender={(record) => (
+              rowKey="id"
+             /*  expandedRowRender={(record) => (
                 <pre>
                   {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
                 </pre>
-              )}
+              )} */
+              expandedRowRender={
+                !Auth.canEditDataset({key: catalogueKey}, user) 
+                  ? null
+                  : (record) =>
+                      
+                        <React.Fragment>
+                          {record.mode === "update" && (
+                            <a
+                              onClick={() => {
+                                this.setState({
+                                  rowsForEdit: [{ decisions: [_.omit(record, ["dataset", "user"])]}],
+                                  decisionFormVisible: true,
+                                });
+                              }}
+                            >
+                              Edit <EditOutlined />
+                            </a>
+                          )}
+                          <pre>
+                            {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
+                          </pre>
+                        </React.Fragment>
+                      
+              }
               onChange={this.handleTableChange}
             />
           )}

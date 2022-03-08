@@ -34,7 +34,6 @@ import DecisionForm from "./DecisionForm";
 import Auth from "../../components/Auth";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;

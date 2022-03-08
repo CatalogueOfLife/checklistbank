@@ -1,5 +1,5 @@
 import React from "react";
-import { EyeOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
+import { EyeOutlined, PlusOutlined, SyncOutlined , SettingOutlined} from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -9,19 +9,21 @@ import {
   Radio,
   Slider,
   Switch,
+  Popover
 } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
 import Layout from "../../../components/LayoutNew";
 import axios from "axios";
 import config from "../../../config";
-import { ColTreeContext } from "./ColTreeContext";
+import { ColTreeContext, applyDecision } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
 import ColTree from "./ColTree";
 import DatasetAutocomplete from "./DatasetAutocomplete";
 import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../../components/PageContent";
 import AddChildModal from "./AddChildModal";
+import DecisionForm from "../../WorkBench/DecisionForm";
 import Helmet from "react-helmet";
 import qs from "query-string";
 import history from "../../../history";
@@ -39,11 +41,14 @@ class Assembly extends React.Component {
       assemblyColSpan: 12,
       sourceColSpan: 12,
       assemblyTaxonKey: params.assemblyTaxonKey || null,
-      sourceTaxonKey: null,
+      sourceTaxonKey:  params.sourceTaxonKey || null,
+      datasetKey: params.datasetKey || null,
+      selectedDataset: null,
       childModalVisible: false,
       insertPlaceholder: false,
       missingTargetKeys: {}, // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
       height: 600,
+      decisionFormVisible: false
     };
 
     // this.assemblyRef = React.createRef();
@@ -58,6 +63,7 @@ class Assembly extends React.Component {
         { subject: { id: params.sourceTaxonKey } },
         { key: params.datasetKey }
       );
+      
     }
 
     this.resizeHandler();
@@ -211,7 +217,6 @@ class Assembly extends React.Component {
   };
 
   showSourceTaxon = (sector, source) => {
-    const oldDatasetKey = Number(this.state.datasetKey);
     const isPlaceholder = !_.isUndefined(sector.placeholderRank);
     const subjectID = isPlaceholder
       ? `${
@@ -238,20 +243,15 @@ class Assembly extends React.Component {
         this.setState(
           {
             sourceTaxonKey: subjectID,
-            datasetKey: source.key,
+            datasetKey: res.data.key,
             datasetName: res.data.title,
             selectedDataset: {
               key: res.data.key,
               title: res.data.alias || res.data.title,
             },
-          },
-          () => {
-            // If the datasetKey is new, refresh, otherwise its is done by the the tree in componentDidUpdate
-            if (oldDatasetKey === source.key) {
-              this.sourceRef.reloadRoot();
-            }
           }
         );
+        
       })
       .catch((err) => {
         console.log(err);
@@ -271,22 +271,30 @@ class Assembly extends React.Component {
         params: { catalogueKey },
       },
     } = this.props;
-    this.setState({
-      datasetKey: Number(dataset.key),
-      datasetName: dataset.title,
-      selectedDataset: dataset,
-      sourceTaxonKey: null,
-    });
-    const params = qs.parse(_.get(location, "search"));
-
-    const newParams = {
-      ...params,
-      datasetKey: _.get(dataset, "key"),
-    };
-    history.push({
-      pathname: `/catalogue/${catalogueKey}/assembly`,
-      search: `?${qs.stringify(_.omit(newParams, ["sourceTaxonKey"]))}`,
-    });
+    const { datasetKey} = this.state;
+    const shouldUpdate = Number(datasetKey) !== Number(dataset.key);
+    if(shouldUpdate){
+      this.setState({
+        datasetKey: Number(dataset.key),
+        datasetName: dataset.title,
+        selectedDataset: dataset,
+        sourceTaxonKey: null,
+      });
+      const params = qs.parse(_.get(location, "search"));
+  
+      const newParams = {
+        ...params,
+        datasetKey: _.get(dataset, "key"),
+      };
+      history.push({
+        pathname: `/catalogue/${catalogueKey}/assembly`,
+        search: `?${qs.stringify(_.omit(newParams, ["sourceTaxonKey"]))}`,
+      });
+    } else {
+      // If it is the initial load, the title of the dataset comes from the dataset select component
+      this.setState({selectedDataset: dataset})
+    }
+    
   };
 
   onDragStart = (e, dataset) => {
@@ -307,6 +315,8 @@ class Assembly extends React.Component {
       sourceColSpan,
       height,
       insertPlaceholder,
+      decisionFormVisible,
+      datasetKey
     } = this.state;
 
     const {
@@ -344,8 +354,40 @@ class Assembly extends React.Component {
                 _.get(this.sourceRef, "state.selectedNodes") || [],
               selectedAssemblyTreeNodes:
                 _.get(this.assemblyRef, "state.selectedNodes") || [],
+                applyDecision: applyDecision
             }}
           >
+          {decisionFormVisible && (
+            <ColTreeContext.Consumer>
+            {({selectedSourceTreeNodes}) => <DecisionForm
+            destroyOnClose={true}
+            rowsForEdit={selectedSourceTreeNodes.map(n => (
+              {usage: {
+                name: {
+                  scientificName: n?.ref?.taxon?.name,
+                  authorship: n?.ref?.taxon?.authorship,
+                  rank: n?.ref?.taxon?.rank
+                },
+                id: n?.ref?.taxon?.id,
+                status: n?.ref?.taxon?.status
+              },
+            parent: n?.parent?.name,
+            decisions: n?.ref?.taxon?.decision ? [n?.ref?.taxon?.decision] : null
+          }
+              ) )}
+            onCancel={() => this.setState({decisionFormVisible: false}, this.sourceRef.reloadRoot)}
+            onOk={() => {
+              this.setState({decisionFormVisible: false}, this.sourceRef.reloadRoot);
+            }}
+            onSaveDecision={(name) => {
+              console.log(name)
+            }}
+            datasetKey={catalogueKey}
+            subjectDatasetKey={datasetKey}
+          />}
+            </ColTreeContext.Consumer>
+          
+        )}
             <Row>
               <Col>
                 <CanEditDataset dataset={catalogue}>
@@ -525,7 +567,7 @@ class Assembly extends React.Component {
               </Col>
 
               <Col span={sourceColSpan} style={{ paddingLeft: "8px" }}>
-                <h4>
+                <Row><Col><h4>
                   {this.state.selectedDataset ? (
                     <React.Fragment>
                       {" "}
@@ -541,7 +583,47 @@ class Assembly extends React.Component {
                   ) : (
                     "No dataset selected"
                   )}
-                </h4>
+                </h4></Col><Col flex="auto"></Col ><Col>
+                <CanEditDataset dataset={{ key: catalogueKey }}>
+                <ColTreeContext.Consumer>
+                    {({ selectedSourceTreeNodes }) => (
+                      selectedSourceTreeNodes.length > 0 && <>
+                      <span>{selectedSourceTreeNodes.length} selected</span>
+                      <Popover
+                        trigger="click"
+                        placement="bottomRight"
+                        content={<>
+                          <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="danger"
+                      onClick={() => {
+                        Promise.allSettled(selectedSourceTreeNodes.map(n =>  applyDecision(n.taxon, catalogueKey)))
+                          .then(() => {
+                            this.sourceRef.reloadRoot()
+                          })
+                      }}
+                    >
+                       {`Block ${selectedSourceTreeNodes.length} taxa`}
+                    </Button>
+                    <Button
+                    style={{ marginTop: "8px", width: "100%" }}
+                    type="primary"
+                    onClick={() => this.setState({decisionFormVisible: true})}
+                  >
+                     {`Apply decisions`}
+                  </Button></>
+                        }
+                      >
+                      <Button type="link" style={{padding: "0px 3px"}}><SettingOutlined /></Button>
+                      </Popover>
+                      </>
+                      
+                   
+                    )}
+                   </ColTreeContext.Consumer>
+                   </CanEditDataset>
+                </Col></Row>
+                
                 <DatasetAutocomplete
                   minSize={1}
                   onSelectDataset={this.onSelectDataset}

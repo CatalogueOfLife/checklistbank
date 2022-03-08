@@ -98,8 +98,8 @@ class Sector extends React.Component {
       });
   };
 
-  applyDecision = () => {
-    const { taxon, decisionCallback, catalogueKey } = this.props;
+  applyDecision = (taxon) => {
+    const { decisionCallback, catalogueKey } = this.props;
 
     const { datasetKey } = taxon;
     this.setState({ postingDecisions: true });
@@ -184,7 +184,7 @@ class Sector extends React.Component {
       });
   };
   render = () => {
-    const { taxon, user, catalogueKey, syncState, syncingSector } = this.props;
+    const { taxon, user, catalogueKey, syncState, syncingSector, decisionCallback } = this.props;
 
     const { error, showEditForm, sectorDatasetRanks } = this.state;
     const { sector } = taxon;
@@ -266,7 +266,7 @@ class Sector extends React.Component {
               style={{ marginTop: "8px", width: "100%" }}
               type="primary"
               onClick={() => {
-                history.push(`dataset/${sectorSourceDataset.key}/metadata`);
+                history.push(`dataset/${sectorSourceDataset.key}/about`);
               }}
             >
               Source Dataset Metadata
@@ -370,7 +370,7 @@ class Sector extends React.Component {
       </Popover>
     ) : (
       <ColTreeContext.Consumer>
-        {({ missingTargetKeys }) => (
+        {({ missingTargetKeys, applyDecision }) => (
           <Popover
             content={
               <div>
@@ -441,7 +441,10 @@ class Sector extends React.Component {
                     <Button
                       style={{ marginTop: "8px", width: "100%" }}
                       type="danger"
-                      onClick={this.applyDecision}
+                      onClick={() => {                     
+                          applyDecision(taxon, catalogueKey, decisionCallback)
+                          this.setState({popOverVisible: false})                      
+                      }}
                     >
                       Block taxon
                     </Button>
