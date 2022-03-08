@@ -153,8 +153,8 @@ class SectorTable extends React.Component {
             value: "attach",
           },
           {
-            text: "Merge",
-            value: "merge",
+            text: "Union",
+            value: "union",
           },
         ],
         onFilter: (value, record) => record.mode === value,
