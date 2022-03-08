@@ -611,7 +611,32 @@ class Assembly extends React.Component {
                     onClick={() => this.setState({decisionFormVisible: true})}
                   >
                      {`Apply decisions`}
-                  </Button></>
+                  </Button>
+                  <Button
+                      style={{ marginTop: "8px", width: "100%" }}
+                      type="danger"
+                      onClick={() => {
+                        const taxaWithdecisions = selectedSourceTreeNodes.filter(n => !!n?.taxon?.decision);
+                        Promise.allSettled(taxaWithdecisions.map(n =>  {
+                          return axios
+                          .delete(
+                            `${config.dataApi}dataset/${catalogueKey}/decision/${n.taxon.decision.id}`
+                          )
+                        }))
+                          .then(() => {
+                            this.sourceRef.reloadRoot()
+                            notification.open({
+                              message: "Decisions deleted for:",
+                              description: <ul>
+                                {taxaWithdecisions.map(n => <li>{n?.taxon?.name}</li>)}
+                              </ul>,
+                            });
+                          })
+                      }}
+                    >
+                       {`Delete decisions`}
+                    </Button>
+                  </>
                         }
                       >
                       <Button type="link" style={{padding: "0px 3px"}}><SettingOutlined /></Button>
