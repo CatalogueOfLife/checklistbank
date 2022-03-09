@@ -6,15 +6,17 @@ import _ from "lodash";
 import { SettingOutlined } from "@ant-design/icons";
 import { Modal, Select, Typography } from "antd";
 import history from "../../history";
+import { truncate } from "../../components/util";
+
 // import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 const { Option } = Select;
 const {Text, Link} = Typography;
 
-function truncate(str, n){
+/* function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
-};
+}; */
 
 class CatalogueSelect extends React.Component {
   constructor(props) {

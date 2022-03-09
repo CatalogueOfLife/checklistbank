@@ -30,11 +30,12 @@ import withContext from "../hoc/withContext";
 import config from "../../config";
 import CatalogueSelect from "./CatalogueSelect";
 import SourceSelect from "./SourceDatasetSelect";
+import { truncate } from "../util";
 const SubMenu = Menu.SubMenu;
 const styles = {};
-function truncate(str, n){
+/* function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
-};
+}; */
 class BasicMenu extends Component {
   componentDidMount = () => {
     const { selectedKeys, openKeys, _openKeys, setSelectedKeys, setOpenKeys } =

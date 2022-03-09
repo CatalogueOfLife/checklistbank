@@ -22,8 +22,10 @@ import Sync from "./Sync";
 import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill"
+import { truncate } from "../util";
 const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
+const titeMaxLength = 120;
 
 const exceptionIsDataset404 = (error) => {
   return (
@@ -179,7 +181,7 @@ class SiteLayout extends Component {
                     style={{ height: "50px", marginRight: "10px" }}
                   />
                   <h1 style={{ display: "inline" }}>
-                    {selectedDataset.title}
+                    {selectedDataset?.title?.length < titeMaxLength ? selectedDataset?.title : <Tooltip title={selectedDataset?.title}>{truncate(selectedDataset?.title, titeMaxLength)}</Tooltip>}
                     {selectedDataset.private && (
                       <React.Fragment>
                         {" "}

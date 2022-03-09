@@ -6,10 +6,11 @@ import { AutoComplete, Input } from "antd";
 import _ from "lodash";
 import { debounce } from "lodash";
 import Highlighter from "react-highlight-words";
+import { truncate } from "../../../components/util";
 
-function truncate(str, n){
+/* function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
-};
+}; */
 
 class DatasetAutocomplete extends React.Component {
   constructor(props) {
