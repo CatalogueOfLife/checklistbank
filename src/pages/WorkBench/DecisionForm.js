@@ -60,6 +60,7 @@ const DecisionForm = (props) => {
     datasetKey,
     subjectDatasetKey,
     onSaveDecision,
+    destroyOnClose = false
   } = props;
 
   const [visible, setVisible] = useState(true);
@@ -210,6 +211,7 @@ const DecisionForm = (props) => {
       width="90%"
       title={<span>Decision</span>}
       visible={visible}
+      destroyOnClose={destroyOnClose}
       onOk={() => {
         handleSubmit(current, onOk);
       }}

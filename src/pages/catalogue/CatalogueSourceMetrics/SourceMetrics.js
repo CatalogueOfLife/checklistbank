@@ -100,7 +100,7 @@ class SourceMetrics extends React.Component {
             default: Object.keys(columns).filter(
               (c) =>
                 typeof columns[c] !== "object" &&
-                !["attempt", "datasetKey"].includes(c)
+                ![ "latestAttempt", "latestUsagesCount", "datasetKey"].includes(c)
             ),
             ...Object.keys(columns)
               .filter((c) => typeof columns[c] === "object")
@@ -156,24 +156,35 @@ class SourceMetrics extends React.Component {
     ).then((res) => res.data);
   };
 
-  refreshReleaseMetrics = (releaseKey) => {
+  refreshReleaseMetrics = (newReleaseKey, releaseLabel) => {
     const { location } = this.props;
+    const {releaseKey} = this.state;
     const params = qs.parse(_.get(location, "search"));
     history.push({
       pathname: location.path,
-      search: `?${qs.stringify({ ...params, releaseKey: releaseKey })}`,
+      search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
     });
-    this.setState({ loading: true, releaseKey });
-    if (releaseKey) {
-      Promise.all(
-        this.state.data.map((r) => {
-          return this.getMetrics(releaseKey, r.key).then((metrics) => {
-            r.selectedReleaseMetrics = metrics;
-          });
-        })
-      ).then(() =>
-        this.setState({ loading: false, data: [...this.state.data] })
-      );
+    this.setState({ loading: true, newReleaseKey , releaseLabel});
+    if (newReleaseKey) {
+      if(releaseKey !== newReleaseKey){
+        this.setState({ loading: true, newReleaseKey , releaseLabel});
+        history.push({
+          pathname: location.path,
+          search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
+        });
+        Promise.all(
+          this.state.data.map((r) => {
+            return this.getMetrics(newReleaseKey, r.key).then((metrics) => {
+              r.selectedReleaseMetrics = metrics;
+            });
+          })
+        ).then(() =>
+          this.setState({ loading: false, data: [...this.state.data] })
+        );
+      } else {
+        this.setState({releaseLabel})
+      }
+      
     } else {
       this.state.data.forEach((r) => {
         delete r.selectedReleaseMetrics;
@@ -219,6 +230,7 @@ class SourceMetrics extends React.Component {
       hideUnchanged,
       releaseKey,
       filteredData,
+      releaseLabel
     } = this.state;
     const { catalogueKey, datasetKey, location, rank, basePath, isProject } =
       this.props;
@@ -255,12 +267,12 @@ class SourceMetrics extends React.Component {
               selectedGroup === "default" ? column : selectedGroup;
             return (
               <React.Fragment>
-                {typeof Links[linkKey] === "function" && (
+                {typeof Links[linkKey] === "function" && <>
                   <NavLink
                     to={{
-                      pathname: Links[linkKey](column, record.key, basePath)
+                      pathname: Links[linkKey](column, text, record.key, basePath)
                         .pathname,
-                      search: Links[linkKey](column, record.key, basePath)
+                      search: Links[linkKey](column, text, record.key, basePath)
                         .search,
                     }}
                     exact={true}
@@ -268,11 +280,16 @@ class SourceMetrics extends React.Component {
                     {Number(text || 0).toLocaleString()}{" "}
                     {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                   </NavLink>
-                )}
+                  {isProject && column === "attempt" && Number(text || 0) < record?.metrics?.latestAttempt && 
+                  <NavLink to={{
+                    pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
+                  {` (${record?.metrics?.latestAttempt})`}
+                  </NavLink>}
+                  </>}
                 {typeof Links[linkKey] !== "function" && (
                   <React.Fragment>
                     {Number(text || 0).toLocaleString()}{" "}
-                    {getIconForDiff(text || 0, selectedRelaseValue || 0)}
+                    {getIconForDiff(text || 0, selectedRelaseValue || 0)} 
                   </React.Fragment>
                 )}
 
@@ -308,11 +325,16 @@ class SourceMetrics extends React.Component {
                 }}
                 exact={true}
               >
-                {record.alias
-                  ? `${record.alias}${isProject ? " [" + record.key + "]" : ""}`
-                  : record.key}
+                 {`${record.alias || record.key}${isProject ? " [" + record.version + "]" : ""}`}
+                  
               </NavLink>
-              {record.selectedReleaseMetrics && <div>Selected release:</div>}
+              {record.selectedReleaseMetrics &&
+             <div>Release: <NavLink
+              to={{
+                pathname: `/dataset/${releaseKey}/source/${record.key}`
+              }}
+              exact={true}
+            >{releaseLabel} </NavLink></div>  }
             </React.Fragment>
           );
         },

@@ -34,6 +34,7 @@ import {
   getEntitytype,
   getDecisionMode,
   getSpeciesinteractiontype,
+  getUserRole
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -95,6 +96,7 @@ class ContextProvider extends React.Component {
     sectorImportState: [],
     country: [],
     decisionMode: [],
+    userRole: [],
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
@@ -217,6 +219,7 @@ class ContextProvider extends React.Component {
       getEntitytype(),
       getDecisionMode(),
       getSpeciesinteractiontype(),
+      getUserRole()
     ])
       .then((responses) => {
         const issueMap = {};
@@ -288,6 +291,7 @@ class ContextProvider extends React.Component {
           entitytype: responses[21],
           decisionMode: responses[22],
           speciesinteractiontype: responses[23],
+          userRole: responses[24],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

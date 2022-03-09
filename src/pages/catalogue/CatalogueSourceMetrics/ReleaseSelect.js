@@ -30,8 +30,11 @@ class RealeaseSelect extends React.Component {
   };
 
   setDefaultValue = (defaultReleaseKey) => {
+    const {onReleaseChange} = this.props;
     axios(`${config.dataApi}dataset/${defaultReleaseKey}`).then((res) => {
-      this.setState({ selectedRelease: `${res?.data?.alias || ""} [${res?.data?.version}]`});
+      const releaseLabel = `${res?.data?.alias || res?.data?.key} [${res?.data?.version}]`;
+      onReleaseChange(defaultReleaseKey, releaseLabel);
+      this.setState({ selectedRelease: { value:res?.data?.key, label:releaseLabel}});
     });
   };
 
@@ -59,10 +62,11 @@ class RealeaseSelect extends React.Component {
     this.setState({ visible });
   };
 
-  onReleaseChange = (releaseKey) => {
+  onReleaseChange = (release) => {
+    const releaseKey = release.value;
     const { onReleaseChange } = this.props;
-    onReleaseChange(releaseKey);
-    this.setState({ selectedRelease: releaseKey });
+    onReleaseChange(releaseKey, release.label);
+    this.setState({ selectedRelease: release });
   };
   render = () => {
     const { releases, selectedRelease, loading } = this.state;
@@ -70,6 +74,7 @@ class RealeaseSelect extends React.Component {
     return (
       <Select
         showSearch
+        labelInValue
         allowClear
         loading={loading}
         style={{ width: "100%" }}
@@ -85,8 +90,8 @@ class RealeaseSelect extends React.Component {
           .filter((c) => !omitList.includes(c.key))
           .map((c) => (
             <Option value={c.key} key={c.key}>{`${
-              c.alias ? c.alias + " " : ""
-            }[${c.version}]`}</Option>
+              c.alias ? c.alias : c.key
+            } [${c.version}]`}</Option>
           ))}
       </Select>
     );

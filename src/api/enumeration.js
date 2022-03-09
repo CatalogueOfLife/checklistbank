@@ -102,3 +102,7 @@ export const getDecisionMode = () => {
 export const getSpeciesinteractiontype = () => {
   return getData(`speciesinteractiontype`).then((res) => res.data);
 };
+
+export const getUserRole = () => {
+  return getData(`user$role`).then((res) => res.data.map((e) => e.name));
+};

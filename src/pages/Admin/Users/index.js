@@ -13,7 +13,7 @@ import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
-
+import _ from "lodash"
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
@@ -24,6 +24,7 @@ const UserAdmin = ({
   location,
   addError,
   countryAlpha2,
+  userRole
 }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,8 @@ const UserAdmin = ({
     pageSize: PAGE_SIZE,
     current: 1,
   });
+  let params = location?.search ? qs.parse(location?.search) : {};
+
   const columns = [
     {
       title: "Key",
@@ -83,6 +86,13 @@ const UserAdmin = ({
       title: "Roles",
       dataIndex: "roles",
       key: "roles",
+      filters: userRole.map((i) => ({
+        text: _.startCase(i),
+        value: i,
+      })),
+      filteredValue: params.role ? _.isArray(params.role)
+      ? params.role
+      : [params.role] : null,
       render: (text, record) => ( 
         <>
           <Space>
@@ -128,13 +138,19 @@ const UserAdmin = ({
   const getData = async () => {
     let params = location?.search ? qs.parse(location?.search) : {};
     const { q } = params;
-    const limit = params?.limit || PAGE_SIZE;
-    const offset = params?.offset || 0;
+    let query = {
+      limit: params?.limit || PAGE_SIZE,
+      offset: params?.offset || 0,
+      q
+    }
+    if (params.role) {
+    query.role = params.role;
+    
+    } 
+   
     setLoading(true);
     const res = await axios(
-      `${config.dataApi}user?${
-        q ? "q=" + encodeURIComponent(q) : ""
-      }&offset=${offset}&limit=${limit}`
+      `${config.dataApi}user?${qs.stringify(query)}`
     );
 
     setData(res.data);
@@ -151,12 +167,19 @@ const UserAdmin = ({
     let params = location?.search ? qs.parse(location?.search) : {};
     const { current } = paging;
     const { q } = params;
-    const offset = (paging.current - 1) * (params?.limit || PAGE_SIZE) || 0;
-    const limit = params?.limit || PAGE_SIZE;
+    
+    let query = {
+      offset: (paging.current - 1) * (params?.limit || PAGE_SIZE) || 0,
+      limit: params?.limit || PAGE_SIZE,
+      q
+    }
+    if(filters.roles && filters.roles.length > 0){
+      query.role = filters.roles 
+    }
     setPagination({ ...pagination, current });
     history.push({
       pathname: location.pathname,
-      search: `?${q ? "q=" + q : ""}offset=${offset}&limit=${limit}`,
+      search: `?${qs.stringify(query)}`,
     });
   };
 
@@ -236,12 +259,14 @@ const mapContextToProps = ({
   catalogue,
   addError,
   countryAlpha2,
+  userRole
 }) => ({
   user,
   catalogueKey,
   catalogue,
   addError,
   countryAlpha2,
+  userRole
 });
 
 export default withContext(mapContextToProps)(withRouter(UserAdmin));
