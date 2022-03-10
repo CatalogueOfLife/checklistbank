@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
-import { Table, Alert, Row, Col, Form, Select, Switch } from "antd";
+import { Table, Alert, Row, Col, Form, Select, Switch, Tooltip } from "antd";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import config from "../../../config";
 import ReleaseSelect from "./ReleaseSelect";
@@ -281,10 +281,15 @@ class SourceMetrics extends React.Component {
                     {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                   </NavLink>
                   {isProject && column === "attempt" && Number(text || 0) < record?.metrics?.latestAttempt && 
-                  <NavLink to={{
+                 <Tooltip title="Latest Attempt"> <NavLink to={{
                     pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
                   {` (${record?.metrics?.latestAttempt})`}
-                  </NavLink>}
+                  </NavLink></Tooltip>}
+                  {isProject && column === "usagesCount" && Number(text || 0) < record?.metrics?.latestUsagesCount && 
+                  <Tooltip title="Latest Usages"><NavLink to={{
+                    pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
+                  {` (${Number(record?.metrics?.latestUsagesCount || 0).toLocaleString()})`}
+                  </NavLink></Tooltip>}
                   </>}
                 {typeof Links[linkKey] !== "function" && (
                   <React.Fragment>
@@ -325,7 +330,7 @@ class SourceMetrics extends React.Component {
                 }}
                 exact={true}
               >
-                 {`${record.alias || record.key}${isProject ? " [" + record.version + "]" : ""}`}
+                 {`${record.alias || record.key}${isProject && record.version ? " [" + record.version + "]" : ""}`}
                   
               </NavLink>
               {record.selectedReleaseMetrics &&
