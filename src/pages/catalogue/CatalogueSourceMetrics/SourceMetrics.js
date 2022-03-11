@@ -270,9 +270,9 @@ class SourceMetrics extends React.Component {
                 {typeof Links[linkKey] === "function" && <>
                   <NavLink
                     to={{
-                      pathname: Links[linkKey](column, text, record.key, basePath)
+                      pathname: Links[linkKey](column, text, record.key, basePath, isProject)
                         .pathname,
-                      search: Links[linkKey](column, text, record.key, basePath)
+                      search: Links[linkKey](column, text, record.key, basePath, isProject)
                         .search,
                     }}
                     exact={true}
@@ -283,7 +283,7 @@ class SourceMetrics extends React.Component {
                   {isProject && column === "attempt" && Number(text || 0) < record?.metrics?.latestAttempt && 
                  <Tooltip title="Latest Attempt"> <NavLink to={{
                     pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
-                  {` (${record?.metrics?.latestAttempt})`}
+                  {` (${record?.metrics?.latestAttempt}${record?.selectedReleaseMetrics?.md5 !== record?.metrics?.md5 ? " *": ""})`}
                   </NavLink></Tooltip>}
                   {isProject && column === "usagesCount" && Number(text || 0) < record?.metrics?.latestUsagesCount && 
                   <Tooltip title="Latest Usages"><NavLink to={{
@@ -339,7 +339,7 @@ class SourceMetrics extends React.Component {
                 pathname: `/dataset/${releaseKey}/source/${record.key}`
               }}
               exact={true}
-            >{releaseLabel} </NavLink></div>  }
+            >{releaseLabel && releaseLabel.split(" [")[0] } </NavLink></div>  }
             </React.Fragment>
           );
         },
