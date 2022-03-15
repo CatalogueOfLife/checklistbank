@@ -13,13 +13,19 @@ export default ({ media }) => {
       {media.slice(0, limit)
         .filter((m) => m.type === "image")
         .map((i) => (
-          <Col span={12} style={{ paddingBottom: "12px" }}>
-            <Image
+          <Col key={i.url} span={12} style={{ paddingBottom: "12px" }}>
+           {i.url.indexOf('zenodo.org') === -1 ? <Image
               preview={{
                 src: i.url,
               }}
               src={`//api.gbif.org/v1/image/unsafe/x260/${i.url}`}
-            />
+            /> : <Image
+            preview={{
+              src: i.url,
+            }}
+            height={260}
+            src={i.url}
+          /> }
             <div style={{ marginTop: "-4px" }}>
               {i.title || ''}
               {i.capturedBy && `©  ${i.capturedBy}`}
