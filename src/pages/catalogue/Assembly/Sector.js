@@ -16,6 +16,7 @@ import {
   Popover,
   Alert,
   Switch,
+  Modal
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -48,7 +49,11 @@ class Sector extends React.Component {
     });
   };
   handleVisibleChange = (popOverVisible) => {
-    this.setState({ popOverVisible, error: null });
+    const {showEditForm} = this.state;
+    if(!showEditForm){
+      this.setState({ popOverVisible, error: null });
+    }
+    
   };
 
   syncSector = (sector, syncState, syncingSector) => {
@@ -183,6 +188,11 @@ class Sector extends React.Component {
         this.setState({ error: err });
       });
   };
+
+  finishEditForm = () => {
+    this.getSectorDatasetRanks();
+    this.setState({showEditForm: false})
+  }
   render = () => {
     const { taxon, user, catalogueKey, syncState, syncingSector, decisionCallback } = this.props;
 
@@ -204,7 +214,33 @@ class Sector extends React.Component {
       return "";
     }
     return !isSourceTree ? (
+     <>
+     <Modal 
+      title="Edit sector" 
+      visible={isRootSector && showEditForm} 
+      onOk={this.finishEditForm} 
+      onCancel={this.finishEditForm}
+      style={{ top: 150, marginRight:20 }}
+      destroyOnClose={true}
+      maskClosable={false}
+      footer={[<Button
+        key="link"
+        type="primary"
+        onClick={this.finishEditForm}
+      >
+        OK
+      </Button>]}
+      >
+     
+              <SectorForm
+                sectorDatasetRanks={sectorDatasetRanks}
+                sector={sector}
+                onError={(err) => this.setState({ error: err })}
+              />
+          
+      </Modal>
       <Popover
+        zIndex={999}
         content={
           <div>
             {isRootSector && (
@@ -274,27 +310,22 @@ class Sector extends React.Component {
 
             {isRootSector && (
               <CanEditDataset dataset={{ key: catalogueKey }}>
-                {" "}
-                <Switch
-                  style={{ marginTop: "8px" }}
-                  checked={showEditForm}
-                  onChange={(checked) => {
-                    this.getSectorDatasetRanks();
-                    this.setState({ showEditForm: checked });
-                  }}
-                  checkedChildren="Finish edit"
-                  unCheckedChildren="Edit sector"
-                />
+                <Button
+              style={{ marginTop: "8px", width: "100%" }}
+              type="primary"
+              disabled={showEditForm}
+              onClick={() => {
+                this.getSectorDatasetRanks();
+                this.setState({ showEditForm: true })
+              }}
+            >
+              Edit sector
+            </Button>
+              
               </CanEditDataset>
             )}
 
-            {isRootSector && showEditForm && (
-              <SectorForm
-                sectorDatasetRanks={sectorDatasetRanks}
-                sector={sector}
-                onError={(err) => this.setState({ error: err })}
-              />
-            )}
+            
             {isRootSector && !showEditForm && (
               <React.Fragment>
                 {sector.code && (
@@ -367,7 +398,7 @@ class Sector extends React.Component {
             (e) => e.sectorKey === sector.id
           ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
         </Tag>
-      </Popover>
+      </Popover></>
     ) : (
       <ColTreeContext.Consumer>
         {({ missingTargetKeys, applyDecision }) => (

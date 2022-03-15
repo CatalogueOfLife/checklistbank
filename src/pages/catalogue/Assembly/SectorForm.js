@@ -227,6 +227,7 @@ const SectorForm = ({
           <NameAutocomplete
             disabled={targetDisabled}
             minRank="genus"
+            accepted={true}
             datasetKey={sector.datasetKey}
             defaultTaxonKey={_.get(sector, "target.id") || null}
             onSelectName={(name) => updateTargetOrSubject(name, "target")}
