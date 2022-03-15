@@ -60,7 +60,7 @@ class NameSearchAutocomplete extends React.Component {
     if (!q) {
       return;
     }
-    const { datasetKey, minRank } = this.props;
+    const { datasetKey, minRank, accepted } = this.props;
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest`
       : `${config.dataApi}name/search`;
@@ -68,7 +68,7 @@ class NameSearchAutocomplete extends React.Component {
     axios(
       `${url}?fuzzy=false&limit=25&q=${encodeURIComponent(q)}${
         minRank ? `&minRank=${minRank}` : ""
-      }`
+      }${accepted ? "&accepted=true":""}`
     )
       .then((res) => {
         this.setState({
