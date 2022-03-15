@@ -221,7 +221,7 @@ class NamePage extends React.Component {
 
         {nameLoading && <Spin />}
         {nameError && (
-          <Alert message={<ErrorMsg error={nameError} />} type="error" />
+          <Alert description={<ErrorMsg error={nameError} />} type="error" />
         )}
         {name && (
           <React.Fragment>

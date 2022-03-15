@@ -154,7 +154,7 @@ class VerbatimRecord extends React.Component {
           }}
         >
           {verbatimError && (
-            <Alert message={<ErrorMsg error={verbatimError} />} type="error" />
+            <Alert description={<ErrorMsg error={verbatimError} />} type="error" />
           )}
           <Row style={{ marginBottom: "10px" }}>
             <Col span={12}>

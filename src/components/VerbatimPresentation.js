@@ -322,7 +322,7 @@ class VerbatimPresentation extends React.Component {
             {verbatimLoading && <Skeleton active />}
             {verbatimError && (
               <Alert
-                message={<ErrorMsg error={verbatimError} />}
+              description={<ErrorMsg error={verbatimError} />}
                 type="error"
               />
             )}

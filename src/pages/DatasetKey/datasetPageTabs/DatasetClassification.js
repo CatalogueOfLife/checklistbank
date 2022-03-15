@@ -28,7 +28,7 @@ class DatasetClassification extends React.Component {
             closable
             onClose={() => this.setState({ error: null })}
             style={{ marginBottom: "8px" }}
-            message={<ErrorMsg error={error} />}
+            description={<ErrorMsg error={error} />}
             type="error"
           />
         )}

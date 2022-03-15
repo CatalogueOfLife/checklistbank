@@ -228,7 +228,7 @@ const DecisionForm = (props) => {
         {error && (
           <Alert
             style={{ marginBottom: "10px" }}
-            message={<ErrorMsg error={error} />}
+            description={<ErrorMsg error={error} />}
             closable
             type="error"
           />

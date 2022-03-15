@@ -151,9 +151,9 @@ class DatasetSectors extends React.Component {
     const { catalogueKey } = this.props;
     return (
       <PageContent>
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
         {syncAllError && (
-          <Alert message={<ErrorMsg error={syncAllError} />} type="error" />
+          <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
         {!loading && data.length === 0 ? (
           <h4>No sectors configured</h4>

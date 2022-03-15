@@ -878,7 +878,7 @@ class ColTree extends React.Component {
   };
 
   confirmAttach = (node, dragNode, mode) => {
-    const { attachFn } = this.props;
+    const { attachFn, addError } = this.props;
     /*
        This is where sector mapping should be posted to the server
        */
@@ -903,16 +903,13 @@ class ColTree extends React.Component {
               }))
           );
         })
-        .catch((err) => {
-          console.log(err);
-          alert(err);
-        });
+        .catch(addError);
       //  .catch((err)=> alert(err));
     });
   };
 
   confirmMultiAttach = (node, dragNodes) => {
-    const { attachFn } = this.props;
+    const { attachFn, addError } = this.props;
     /*
        This is where sector mapping should be posted to the server
        */
@@ -945,10 +942,7 @@ class ColTree extends React.Component {
               }))
           );
         })
-        .catch((err) => {
-          console.log(err);
-          alert(err);
-        });
+        .catch(addError);
       //  .catch((err)=> alert(err));
     });
   };
@@ -957,6 +951,7 @@ class ColTree extends React.Component {
     const {
       taxon: { sector },
     } = dragNode;
+    const {addError} = this.props;
     const target = {
       id: _.get(node, "taxon.id"),
       name: _.get(node, "taxon.name"),
@@ -1004,10 +999,7 @@ class ColTree extends React.Component {
               message: `Sector target updated`,
             });
           })
-          .catch((err) => {
-            console.log(err);
-            alert(err);
-          });
+          .catch(addError);
         //  .catch((err)=> alert(err));
       });
   };
@@ -1365,6 +1357,7 @@ class ColTree extends React.Component {
   };
 
   confirmModify = (e, nodeTitle) => {
+    const {addError} = this.props;
     const dragNode = this.props.dragNode.ref;
     const node = e.node.ref;
     const parent = e.node.ref.taxon;
@@ -1428,9 +1421,7 @@ class ColTree extends React.Component {
           }
         );
       })
-      .catch((err) => {
-        alert(err);
-      });
+      .catch(addError);
   };
   handleModify = (e) => {
     if (e.dragNode.name === "Not assigned") {
@@ -1511,7 +1502,7 @@ class ColTree extends React.Component {
                 closable
                 onClose={() => this.setState({ error: null })}
                 style={{ marginTop: "8px" }}
-                message={<ErrorMsg error={error} />}
+                description={<ErrorMsg error={error} />}
                 type="error"
               />
             ) : (
@@ -1611,6 +1602,6 @@ class ColTree extends React.Component {
   }
 }
 
-const mapContextToProps = ({ rank, user }) => ({ rank, user });
+const mapContextToProps = ({ rank, user, addError }) => ({ rank, user , addError});
 
 export default withContext(mapContextToProps)(ColTree);

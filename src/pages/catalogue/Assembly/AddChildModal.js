@@ -395,7 +395,7 @@ const AddChildModal = (props) => {
         <Alert
           closable
           onClose={() => setSubmissionError(null)}
-          message={<ErrorMsg error={submissionError} />}
+          description={<ErrorMsg error={submissionError} />}
           type="error"
         />
       )}

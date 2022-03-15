@@ -348,7 +348,7 @@ class ImportTable extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
         {!error && (
           <Table
             scroll={{ x: 1000 }}

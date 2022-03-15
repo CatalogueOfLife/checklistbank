@@ -235,7 +235,7 @@ class DatasetDiff extends React.Component {
         {onlyOneImport && <Empty description="No diff available" />}
         {error && (
           <Row style={{ marginBottom: "8px" }}>
-            <Alert type="error" message={<ErrorMsg error={error} />} />
+            <Alert type="error" description={<ErrorMsg error={error} />} />
           </Row>
         )}
         {html && <div dangerouslySetInnerHTML={{ __html: html }} />}

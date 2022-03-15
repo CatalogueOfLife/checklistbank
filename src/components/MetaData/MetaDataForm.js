@@ -176,7 +176,7 @@ const MetaDataForm = (props) => {
           <Alert
             closable
             onClose={() => setSubmissionError(null)}
-            message={<ErrorMsg error={submissionError}></ErrorMsg>}
+            description={<ErrorMsg error={submissionError}></ErrorMsg>}
             type="error"
           />
         </FormItem>

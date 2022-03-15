@@ -171,7 +171,7 @@ class SectorDiff extends React.Component {
           </Row>
           {error && (
             <Row style={{marginBottom: '8px'}}>
-              <Alert type="error" message={<ErrorMsg error={error} />} />
+              <Alert type="error" description={<ErrorMsg error={error} />} />
             </Row>
           )}
           {html && <div dangerouslySetInnerHTML={{ __html: html }} />}

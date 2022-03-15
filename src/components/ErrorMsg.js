@@ -5,7 +5,7 @@ class ErrorMsg extends React.Component {
   render() {
     const { error } = this.props;
     return (
-      <div>
+      <>
         {error.message && <h3>{error.message}</h3>}
         {_.get(error, "response.data.message") && (
           <p>{_.get(error, "response.data.message")}</p>
@@ -31,12 +31,12 @@ class ErrorMsg extends React.Component {
         )}
         {_.get(error, "config.data") &&
           typeof _.get(error, "config.data") === "string" && (
-            <div>
+            <>
               <h4>Body:</h4>
               <p>{_.get(error, "config.data")}</p>
-            </div>
+            </>
           )}
-      </div>
+      </>
     );
   }
 }

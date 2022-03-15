@@ -30,7 +30,7 @@ class DatasetDownload extends React.Component {
     const { error } = this.state;
     return (
       <PageContent>
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
         Download Key here
       </PageContent>
     );

@@ -237,7 +237,7 @@ class SiteLayout extends Component {
               !exceptionIsDataset404(error) && (
                 <Alert
                   style={{ marginTop: "10px" }}
-                  message={<ErrorMsg error={error} />}
+                  description={<ErrorMsg error={error} />}
                   type="error"
                   closable
                   onClose={clearError}

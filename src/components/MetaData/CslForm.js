@@ -252,7 +252,7 @@ const CslForm = (props) => {
       {submissionError && (
         <FormItem>
           <Alert
-            message={<ErrorMsg error={submissionError}></ErrorMsg>}
+            description={<ErrorMsg error={submissionError}></ErrorMsg>}
             type="error"
           />
         </FormItem>

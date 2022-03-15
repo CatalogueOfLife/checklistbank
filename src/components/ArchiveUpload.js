@@ -75,7 +75,7 @@ class ArchiveUpload extends React.Component {
             style={{ marginBottom: "8px" }}
             closable
             onClose={() => this.setState({ submissionError: null })}
-            message={<ErrorMsg error={submissionError} />}
+            description={<ErrorMsg error={submissionError} />}
             type="error"
           />
         )}

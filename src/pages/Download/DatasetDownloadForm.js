@@ -135,7 +135,7 @@ class DatasetDownload extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
         {dataset?.origin === "external" && (
           <Row style={{ marginBottom: "10px" }}>
             <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>

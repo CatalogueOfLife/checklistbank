@@ -592,7 +592,7 @@ class DuplicateSearchPage extends React.Component {
           {error && (
             <Alert
               style={{ marginBottom: "10px" }}
-              message={<ErrorMsg error={error} />}
+              description={<ErrorMsg error={error} />}
               type="error"
             />
           )}

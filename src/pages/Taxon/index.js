@@ -348,7 +348,7 @@ class TaxonPage extends React.Component {
             />
           )}
           {taxonError && (
-            <Alert message={<ErrorMsg error={taxonError} />} type="error" />
+            <Alert description={<ErrorMsg error={taxonError} />} type="error" />
           )}
           {taxon && (
             <Row>
@@ -412,16 +412,16 @@ class TaxonPage extends React.Component {
             </Row>
           )}
           {infoError && (
-            <Alert message={<ErrorMsg error={infoError} />} type="error" />
+            <Alert description={<ErrorMsg error={infoError} />} type="error" />
           )}
 
           {synonymsError && (
-            <Alert message={<ErrorMsg error={synonymsError} />} type="error" />
+            <Alert description={<ErrorMsg error={synonymsError} />} type="error" />
           )}
 
           {classificationError && (
             <Alert
-              message={<ErrorMsg error={classificationError} />}
+              description={<ErrorMsg error={classificationError} />}
               type="error"
             />
           )}

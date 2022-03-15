@@ -61,7 +61,7 @@ class ReleaseSource extends React.Component {
         >
           {datasetError &&
             _.get(datasetError, "response.data.code") !== 404 && (
-              <Alert message={<ErrorMsg error={datasetError} />} type="error" />
+              <Alert description={<ErrorMsg error={datasetError} />} type="error" />
             )}
           {datasetError &&
             _.get(datasetError, "response.data.code") === 404 && (

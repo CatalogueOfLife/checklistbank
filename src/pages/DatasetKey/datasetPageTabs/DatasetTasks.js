@@ -78,13 +78,13 @@ class DatasetTasks extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={<ErrorMsg error={error} />} type="error" />}
+        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
         {duplicates
           .filter((d) => d.error)
           .map((d) => (
             <Alert
               style={{ marginTop: "8px" }}
-              message={<ErrorMsg error={d.error} />}
+              description={<ErrorMsg error={d.error} />}
               type="error"
             />
           ))}

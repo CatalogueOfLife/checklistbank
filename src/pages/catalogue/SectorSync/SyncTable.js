@@ -364,7 +364,7 @@ class SyncTable extends React.Component {
       <PageContent>
         {error && <Alert message={error.message} type="error" />}
         {syncAllError && (
-          <Alert message={<ErrorMsg error={syncAllError} />} type="error" />
+          <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
 
         {!sectorKey && Auth.canEditDataset({key: catalogueKey}, user) && (
