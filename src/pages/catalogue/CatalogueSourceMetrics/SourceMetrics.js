@@ -100,7 +100,7 @@ class SourceMetrics extends React.Component {
             default: Object.keys(columns).filter(
               (c) =>
                 typeof columns[c] !== "object" &&
-                ![ "latestAttempt", "latestUsagesCount", "datasetKey"].includes(c)
+                ![ "latestAttempt", "latestUsagesCount", "datasetKey", "sourceKey", "latestMd5"].includes(c)
             ),
             ...Object.keys(columns)
               .filter((c) => typeof columns[c] === "object")
@@ -118,14 +118,17 @@ class SourceMetrics extends React.Component {
       })
       .then(({ res, groups }) => {
         if (releaseKey) {
-          return Promise.all(
+          return Promise.allSettled(
             res.map((r) => {
               return this.getMetrics(releaseKey, r.key).then((metrics) => ({
                 ...r,
                 selectedReleaseMetrics: metrics,
-              }));
+              }))
+              .catch(err => ({
+                ...r,
+                selectedReleaseMetrics: {},}));
             })
-          ).then((result) => ({ res: result, groups }));
+          ).then((result) => ({ res: result.map(r => r?.value), groups }));
         } else {
           return { res, groups };
         }
@@ -324,19 +327,19 @@ class SourceMetrics extends React.Component {
               <NavLink
                 to={{
                   pathname: isProject
-                    ? `/catalogue/${datasetKey}/dataset/${record.key}/metadata`
-                    : `/dataset/${datasetKey}/source/${record.key}`,
+                    ? `/catalogue/${datasetKey}/dataset/${record?.key}/metadata`
+                    : `/dataset/${datasetKey}/source/${record?.key}`,
                   //  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
                 exact={true}
               >
-                 {`${record.alias || record.key}${isProject && record.version ? " [" + record.version + "]" : ""}`}
+                 {`${record?.alias || record?.key}${isProject && record?.version ? " [" + record?.version + "]" : ""}`}
                   
               </NavLink>
               {record.selectedReleaseMetrics &&
              <div>Release: <NavLink
               to={{
-                pathname: `/dataset/${releaseKey}/source/${record.key}`
+                pathname: `/dataset/${releaseKey}/source/${record?.key}`
               }}
               exact={true}
             >{releaseLabel && releaseLabel.split(" [")[0] } </NavLink></div>  }

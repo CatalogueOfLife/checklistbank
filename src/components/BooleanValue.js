@@ -13,11 +13,7 @@ const BooleanValue = ({ value }) =>
     <Badge
       status={value ? "success" : "error"}
       text={
-        value ? (
-          <FormattedMessage id="yes" defaultMessage="Yes" />
-        ) : (
-          <FormattedMessage id="no" defaultMessage="No" />
-        )
+        value ? "Yes" : "No" 
       }
     />
   ) : null;

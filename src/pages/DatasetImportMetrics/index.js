@@ -306,6 +306,9 @@ class DatasetImportMetrics extends React.Component {
               <PresentationItem label="Upload">
                 <BooleanValue value={_.get(data, "upload")}></BooleanValue>
               </PresentationItem>
+              <PresentationItem label="MD5">
+                {_.get(data, "md5")}
+              </PresentationItem>
             </Row>
           </React.Fragment>
         )}

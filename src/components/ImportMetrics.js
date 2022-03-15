@@ -15,7 +15,7 @@ const ImportMetrics = ({ data, subtitle }) => {
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
           {_.map(
-            "nameCount taxonCount synonymCount bareNameCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(
+            "nameCount taxonCount synonymCount bareNameCount verbatimCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(
               " "
             ),
             (c) => {
