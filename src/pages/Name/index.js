@@ -3,7 +3,7 @@ import config from "../../config";
 import { NavLink } from "react-router-dom";
 
 import axios from "axios";
-import { Alert, Spin, Row, Col, Tag } from "antd";
+import { Alert, Spin, Row, Col, Tag, Tabs } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
 
 import _ from "lodash";
@@ -12,8 +12,11 @@ import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 
 import VerbatimPresentation from "../../components/VerbatimPresentation";
+import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
+const {TabPane} = Tabs;
+
 const md = 5;
 
 class NamePage extends React.Component {
@@ -223,7 +226,9 @@ class NamePage extends React.Component {
         {nameError && (
           <Alert description={<ErrorMsg error={nameError} />} type="error" />
         )}
-        {name && (
+        <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
+    <TabPane tab="About" key="1">
+    {name && (
           <React.Fragment>
             <PresentationItem md={md} label="Scientific Name">
               {name.scientificName}
@@ -388,14 +393,15 @@ class NamePage extends React.Component {
             </PresentationItem>
           </React.Fragment>
         )}
+      </TabPane>
+      {_.get(name, "verbatimKey") && <TabPane tab="Verbatim" key="2">
+        <Verbatim verbatimKey={name.verbatimKey}/>
+      
+      </TabPane>}
+    </Tabs>
+        
 
-        {_.get(name, "verbatimKey") && (
-          <VerbatimPresentation
-            verbatimKey={name.verbatimKey}
-            datasetKey={name.datasetKey}
-            expanded={false}
-          />
-        )}
+      
       </div>
     );
   }

@@ -4,7 +4,7 @@ import config from "../../config";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LinkOutlined, EditOutlined } from "@ant-design/icons";
-import { Alert, Tag, Row, Col, Button, Rate, message } from "antd";
+import { Alert, Tag, Row, Col, Button, Rate, Tabs, message } from "antd";
 import SynonymTable from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import Distributions from "./Distributions";
@@ -15,6 +15,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
+import Verbatim from "./Verbatim";
 import InlineEdit from "../../components/InlineEdit";
 import moment from "moment";
 import history from "../../history";
@@ -27,6 +28,7 @@ import TaxonMedia from "./TaxonMedia";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
 import Linkify from 'react-linkify';
+const { TabPane } = Tabs;
 
 const { canEditDataset } = Auth;
 const md = 5;
@@ -388,7 +390,7 @@ class TaxonPage extends React.Component {
                   </Button>
                 )}
                 {taxon.provisional && <Tag color="red">Provisional</Tag>}
-                <Button
+                 <Button
                   onClick={() => {
                     history.push(
                       Number(datasetKey) === catalogueKey
@@ -398,7 +400,7 @@ class TaxonPage extends React.Component {
                   }}
                 >
                   Name details
-                </Button>
+                </Button> 
               </Col>
               {this.state.logoUrl && (
                 <Col>
@@ -426,7 +428,9 @@ class TaxonPage extends React.Component {
             />
           )}
 
-          {_.get(info, "taxon.name.publishedIn.citation") && (
+<Tabs defaultActiveKey="1" tabBarExtraContent={null}>
+    <TabPane tab="About" key="1">
+    {_.get(info, "taxon.name.publishedIn.citation") && (
             <PresentationItem md={md} label="Published in">
               <Linkify>{_.get(info, "taxon.name.publishedIn.citation", "")}</Linkify>
             </PresentationItem>
@@ -628,14 +632,17 @@ class TaxonPage extends React.Component {
               )}
             </Col>
           </Row>
+    </TabPane>
+   {_.get(taxon, "verbatimKey") &&  
+    <TabPane tab="Verbatim" key="2">
+       <Verbatim verbatimKey={taxon.verbatimKey} />
+      </TabPane>}
+    
+  </Tabs>
 
-          {_.get(taxon, "verbatimKey") && (
-            <VerbatimPresentation
-              verbatimKey={taxon.verbatimKey}
-              datasetKey={taxon.datasetKey}
-              expanded={false}
-            />
-          )}
+        
+
+          
         </div>
       </React.Fragment>
     );
