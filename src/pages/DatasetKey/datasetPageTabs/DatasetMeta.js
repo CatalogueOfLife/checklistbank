@@ -504,7 +504,7 @@ class DatasetMeta extends React.Component {
                 ></span>
               )}
             </PresentationItem>
-            <PresentationItem label="Released from (sourceKey)">
+            <PresentationItem label="Released from">
               {
                 <NavLink
                   to={{
