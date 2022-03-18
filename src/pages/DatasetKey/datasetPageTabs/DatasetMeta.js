@@ -116,7 +116,8 @@ class DatasetMeta extends React.Component {
           `${config.dataApi}dataset?limit=1000&hasSourceDataset=${id}&origin=MANAGED`
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
-            res.data.contributesTo = projects.data.result.map((r) => r.key);
+            //res.data.contributesTo = projects.data.result.map((r) => r.key);
+            this.setState({contributesTo: _.get(projects, "data.result")})
           }
           return res;
         });
@@ -127,28 +128,18 @@ class DatasetMeta extends React.Component {
         if (res.data.sourceKey) {
           this.getReleasedFrom(res.data.sourceKey);
         }
-        if (!res.data.contributesTo) {
-          res.data.contributesTo = [];
-        }
+        
         return Promise.all([
           res.data,
           user ? axios(`${config.dataApi}user/${createdBy}`) : null,
           user ? axios(`${config.dataApi}user/${modifiedBy}`) : null,
-          Promise.allSettled(
-            res?.data?.contributesTo?.map((c) =>
-              axios(`${config.dataApi}dataset/${c}`)
-            )
-          ),
+          
         ]);
       })
       .then((res) => {
         res[0].createdByUser = _.get(res[1], "data.username");
         res[0].modifiedByUser = _.get(res[2], "data.username");
-        res[0].contributesToDatasets = res[0]?.contributesTo?.map((d, i) =>
-          res[3][i].status === "fulfilled"
-            ? _.get(res[3][i], "value.data.title")
-            : d
-        );
+        
         this.setState({ loading: false, data: res[0], err: null });
       })
       .catch((err) => {
@@ -573,7 +564,7 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
             {contributesTo && (
               <React.Fragment>
-                <Divider orientation="left">Contributes</Divider>
+                <Divider orientation="left">Contributes to</Divider>
                 {contributesTo
                   .map((c) => (
                     <NavLink
