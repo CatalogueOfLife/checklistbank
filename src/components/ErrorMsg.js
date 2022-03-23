@@ -1,8 +1,11 @@
 import React from "react";
 import _ from "lodash";
-
+import newGithubIssueUrl from 'new-github-issue-url';
+import {Row, Col, Button} from "antd"
+import { GithubOutlined} from "@ant-design/icons"
 class ErrorMsg extends React.Component {
   render() {
+    
     const { error } = this.props;
     return (
       <>
@@ -36,6 +39,17 @@ class ErrorMsg extends React.Component {
               <p>{_.get(error, "config.data")}</p>
             </>
           )}
+
+          {_.get(error, "response.status", 0) > 499 && <Row><Col flex="auto"></Col><Col><Button type="link"  target="_blank" href={
+            newGithubIssueUrl({
+              user: 'CatalogueOfLife',
+              repo: 'backend',
+              title: error.message,
+              body: _.get(error, "response.data.message")
+            })
+
+          }><GithubOutlined /></Button></Col></Row>}
+
       </>
     );
   }

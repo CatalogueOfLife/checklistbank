@@ -26,6 +26,7 @@
     "lodash": ">=4.6.2",
     "marked": "^2.0.3",
     "moment": "^2.24.0",
+    "new-github-issue-url": "^1.0.0",
     "p-queue": "^6.6.1",
     "papaparse": "^5.0.2",
     "query-string": "~5.1.1",
