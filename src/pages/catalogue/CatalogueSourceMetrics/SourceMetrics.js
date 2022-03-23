@@ -3,7 +3,7 @@ import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
 import { Table, Alert, Row, Col, Form, Select, Switch, Tooltip } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined, WarningOutlined } from "@ant-design/icons";
 import config from "../../../config";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
@@ -73,7 +73,7 @@ class SourceMetrics extends React.Component {
   };
 
   getData = () => {
-    const { datasetKey, location } = this.props;
+    const { datasetKey, location , addError} = this.props;
     const params = qs.parse(_.get(location, "search"));
     const { releaseKey, hideUnchanged } = params;
     this.setState({ loading: true, releaseKey });
@@ -124,11 +124,17 @@ class SourceMetrics extends React.Component {
                 ...r,
                 selectedReleaseMetrics: metrics,
               }))
-              .catch(err => ({
+              .catch(err => {
+                addError(err)
+                return {
                 ...r,
-                selectedReleaseMetrics: {},}));
+                selectedReleaseMetrics: {},
+                releaseError: err}
+              });
             })
-          ).then((result) => ({ res: result.map(r => r?.value), groups }));
+          ).then((result) => {
+            
+            return { res: result.map(r => r?.value), groups }});
         } else {
           return { res, groups };
         }
@@ -160,7 +166,7 @@ class SourceMetrics extends React.Component {
   };
 
   refreshReleaseMetrics = (newReleaseKey, releaseLabel) => {
-    const { location } = this.props;
+    const { location, addError } = this.props;
     const {releaseKey} = this.state;
     const params = qs.parse(_.get(location, "search"));
     history.push({
@@ -175,14 +181,22 @@ class SourceMetrics extends React.Component {
           pathname: location.path,
           search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
         });
-        Promise.all(
+        Promise.allSettled(
           this.state.data.map((r) => {
-            return this.getMetrics(newReleaseKey, r.key).then((metrics) => {
+            return this.getMetrics(newReleaseKey, r.key)
+            .then((metrics) => {
               r.selectedReleaseMetrics = metrics;
+            })
+            .catch(err => {
+              addError(err)
+              r.selectedReleaseMetrics = {};
+              r.releaseError = err;
             });
           })
-        ).then(() =>
+        ).then((results) => {
+          
           this.setState({ loading: false, data: [...this.state.data] })
+        }       
         );
       } else {
         this.setState({releaseLabel})
@@ -235,7 +249,7 @@ class SourceMetrics extends React.Component {
       filteredData,
       releaseLabel
     } = this.state;
-    const { catalogueKey, datasetKey, location, rank, basePath, isProject } =
+    const { catalogueKey, datasetKey, location, rank, basePath, isProject, addError } =
       this.props;
 
     const columnsSorter =
@@ -300,8 +314,8 @@ class SourceMetrics extends React.Component {
                     {getIconForDiff(text || 0, selectedRelaseValue || 0)} 
                   </React.Fragment>
                 )}
-
-                {record.selectedReleaseMetrics && (
+                {record?.releaseError && <div><WarningOutlined onClick={() => addError(record?.releaseError)} style={{color: "red"}} /></div>}
+                {record.selectedReleaseMetrics && !record?.releaseError && (
                   <div>{Number(selectedRelaseValue || 0).toLocaleString()}</div>
                 )}
               </React.Fragment>
@@ -342,7 +356,7 @@ class SourceMetrics extends React.Component {
                 pathname: `/dataset/${releaseKey}/source/${record?.key}`
               }}
               exact={true}
-            >{releaseLabel && releaseLabel.split(" [")[0] } </NavLink></div>  }
+            >{releaseLabel && releaseLabel.split(" [")[0] } </NavLink> {record?.releaseError && <WarningOutlined onClick={() => addError(record?.releaseError)} style={{color: "red"}} />}</div>  }
             </React.Fragment>
           );
         },
@@ -473,9 +487,10 @@ class SourceMetrics extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, rank }) => ({
+const mapContextToProps = ({ user, rank, addError }) => ({
   user,
   rank,
+  addError
 });
 
 export default withContext(mapContextToProps)(withRouter(SourceMetrics));
