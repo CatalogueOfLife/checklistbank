@@ -47,6 +47,7 @@ import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import NameUsageSearch from "./pages/NameSearch/Search";
 import UserProfile from "./pages/UserProfile"
+import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -269,6 +270,12 @@ class App extends Component {
                   key="userprofile"
                   path={`/user-profile`}
                   component={UserProfile}
+                />
+                <Route
+                  exact
+                  key="nameIndexKey"
+                  path={`/namesindex/:key`}
+                  component={NameIndexKey}
                 />
                 <Route component={Exception404} />
               </Switch>

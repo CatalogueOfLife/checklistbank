@@ -191,6 +191,14 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
+            {_selectedKeys.includes("nameIndexKey") &&
+                  taxonOrNameKey && (
+                    <Menu.Item key="nameIndexKey">
+                      Nidx: {taxonOrNameKey}
+                    </Menu.Item>
+                  )}
+            
+            
           </SubMenu>
 
           {Auth.isAuthorised(user, ["admin"]) && (
