@@ -3,7 +3,11 @@ import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
 import { Table, Alert, Row, Col, Form, Select, Switch, Tooltip } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined, WarningOutlined } from "@ant-design/icons";
+import {
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import config from "../../../config";
 import ReleaseSelect from "./ReleaseSelect";
 import history from "../../../history";
@@ -55,8 +59,8 @@ class SourceMetrics extends React.Component {
   }
 
   componentDidMount() {
-    const {datasetKey } = this.props;
-    if(datasetKey){
+    const { datasetKey } = this.props;
+    if (datasetKey) {
       this.getData();
     }
   }
@@ -73,7 +77,7 @@ class SourceMetrics extends React.Component {
   };
 
   getData = () => {
-    const { datasetKey, location , addError} = this.props;
+    const { datasetKey, location, addError } = this.props;
     const params = qs.parse(_.get(location, "search"));
     const { releaseKey, hideUnchanged } = params;
     this.setState({ loading: true, releaseKey });
@@ -99,8 +103,15 @@ class SourceMetrics extends React.Component {
           const groups = {
             default: Object.keys(columns).filter(
               (c) =>
-                typeof columns[c] !== "object" &&
-                ![ "latestAttempt", "latestUsagesCount", "datasetKey", "sourceKey", "latestMd5"].includes(c)
+              ['datasetAttempt'].includes(c) || 
+              (typeof columns[c] !== "object" &&
+                ![
+                  "latestAttempt",
+                  "latestUsagesCount",
+                  "datasetKey",
+                  "sourceKey",
+                  "latestMd5",
+                ].includes(c))
             ),
             ...Object.keys(columns)
               .filter((c) => typeof columns[c] === "object")
@@ -120,21 +131,23 @@ class SourceMetrics extends React.Component {
         if (releaseKey) {
           return Promise.allSettled(
             res.map((r) => {
-              return this.getMetrics(releaseKey, r.key).then((metrics) => ({
-                ...r,
-                selectedReleaseMetrics: metrics,
-              }))
-              .catch(err => {
-                addError(err)
-                return {
-                ...r,
-                selectedReleaseMetrics: {},
-                releaseError: err}
-              });
+              return this.getMetrics(releaseKey, r.key)
+                .then((metrics) => ({
+                  ...r,
+                  selectedReleaseMetrics: metrics,
+                }))
+                .catch((err) => {
+                  addError(err);
+                  return {
+                    ...r,
+                    selectedReleaseMetrics: {},
+                    releaseError: err,
+                  };
+                });
             })
           ).then((result) => {
-            
-            return { res: result.map(r => r?.value), groups }});
+            return { res: result.map((r) => r?.value), groups };
+          });
         } else {
           return { res, groups };
         }
@@ -167,16 +180,16 @@ class SourceMetrics extends React.Component {
 
   refreshReleaseMetrics = (newReleaseKey, releaseLabel) => {
     const { location, addError } = this.props;
-    const {releaseKey} = this.state;
+    const { releaseKey } = this.state;
     const params = qs.parse(_.get(location, "search"));
     history.push({
       pathname: location.path,
       search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
     });
-    this.setState({ loading: true, newReleaseKey , releaseLabel});
+    this.setState({ loading: true, newReleaseKey, releaseLabel });
     if (newReleaseKey) {
-      if(releaseKey !== newReleaseKey){
-        this.setState({ loading: true, newReleaseKey , releaseLabel});
+      if (releaseKey !== newReleaseKey) {
+        this.setState({ loading: true, newReleaseKey, releaseLabel });
         history.push({
           pathname: location.path,
           search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
@@ -184,24 +197,21 @@ class SourceMetrics extends React.Component {
         Promise.allSettled(
           this.state.data.map((r) => {
             return this.getMetrics(newReleaseKey, r.key)
-            .then((metrics) => {
-              r.selectedReleaseMetrics = metrics;
-            })
-            .catch(err => {
-              addError(err)
-              r.selectedReleaseMetrics = {};
-              r.releaseError = err;
-            });
+              .then((metrics) => {
+                r.selectedReleaseMetrics = metrics;
+              })
+              .catch((err) => {
+                addError(err);
+                r.selectedReleaseMetrics = {};
+                r.releaseError = err;
+              });
           })
         ).then((results) => {
-          
-          this.setState({ loading: false, data: [...this.state.data] })
-        }       
-        );
+          this.setState({ loading: false, data: [...this.state.data] });
+        });
       } else {
-        this.setState({releaseLabel})
+        this.setState({ releaseLabel });
       }
-      
     } else {
       this.state.data.forEach((r) => {
         delete r.selectedReleaseMetrics;
@@ -247,10 +257,17 @@ class SourceMetrics extends React.Component {
       hideUnchanged,
       releaseKey,
       filteredData,
-      releaseLabel
+      releaseLabel,
     } = this.state;
-    const { catalogueKey, datasetKey, location, rank, basePath, isProject, addError } =
-      this.props;
+    const {
+      catalogueKey,
+      datasetKey,
+      location,
+      rank,
+      basePath,
+      isProject,
+      addError,
+    } = this.props;
 
     const columnsSorter =
       selectedGroup && selectedGroup.indexOf("Rank") > -1
@@ -284,37 +301,82 @@ class SourceMetrics extends React.Component {
               selectedGroup === "default" ? column : selectedGroup;
             return (
               <React.Fragment>
-                {typeof Links[linkKey] === "function" && <>
-                  <NavLink
-                    to={{
-                      pathname: Links[linkKey](column, text, record.key, basePath, isProject)
-                        .pathname,
-                      search: Links[linkKey](column, text, record.key, basePath, isProject)
-                        .search,
-                    }}
-                    exact={true}
-                  >
-                    {Number(text || 0).toLocaleString()}{" "}
-                    {getIconForDiff(text || 0, selectedRelaseValue || 0)}
-                  </NavLink>
-                  {isProject && column === "attempt" && Number(text || 0) < record?.metrics?.latestAttempt && 
-                 <Tooltip title="Latest Attempt"> <NavLink to={{
-                    pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
-                  {` (${record?.metrics?.latestAttempt}${record?.selectedReleaseMetrics?.md5 !== record?.metrics?.md5 ? " *": ""})`}
-                  </NavLink></Tooltip>}
-                  {isProject && column === "usagesCount" && Number(text || 0) < record?.metrics?.latestUsagesCount && 
-                  <Tooltip title="Latest Usages"><NavLink to={{
-                    pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`}}>
-                  {` (${Number(record?.metrics?.latestUsagesCount || 0).toLocaleString()})`}
-                  </NavLink></Tooltip>}
-                  </>}
+                {typeof Links[linkKey] === "function" && (
+                  <>
+                    <NavLink
+                      to={{
+                        pathname: Links[linkKey](
+                          column,
+                          text,
+                          record.key,
+                          basePath,
+                          isProject
+                        ).pathname,
+                        search: Links[linkKey](
+                          column,
+                          text,
+                          record.key,
+                          basePath,
+                          isProject
+                        ).search,
+                      }}
+                      exact={true}
+                    >
+                      {Number(text || 0).toLocaleString()}{" "}
+                      {getIconForDiff(text || 0, selectedRelaseValue || 0)}
+                    </NavLink>
+                    {isProject &&
+                      column === "datasetAttempt" && (_.get( record, 'metrics.datasetAttempt.length', 0) > 1 ||
+                     (_.get( record, 'metrics.datasetAttempt[0]') !== record?.metrics?.latestAttempt))  &&  (
+                        <Tooltip title="Latest Attempt">
+                          {" "}
+                          <NavLink
+                            to={{
+                              pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
+                            }}
+                          >
+                            {` (${record?.metrics?.latestAttempt}${
+                              record?.metrics?.datasetMd5?.length > 1 ||
+                              _.get(record, "metrics.datasetMd5[0]") !==
+                                record?.metrics?.latestMd5
+                                ? " *"
+                                : ""
+                            })`}
+                          </NavLink>
+                        </Tooltip>
+                      )}
+                    {isProject &&
+                      column === "usagesCount" &&
+                      Number(text || 0) <
+                        record?.metrics?.latestUsagesCount && (
+                        <Tooltip title="Latest Usages">
+                          <NavLink
+                            to={{
+                              pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
+                            }}
+                          >
+                            {` (${Number(
+                              record?.metrics?.latestUsagesCount || 0
+                            ).toLocaleString()})`}
+                          </NavLink>
+                        </Tooltip>
+                      )}
+                  </>
+                )}
                 {typeof Links[linkKey] !== "function" && (
                   <React.Fragment>
                     {Number(text || 0).toLocaleString()}{" "}
-                    {getIconForDiff(text || 0, selectedRelaseValue || 0)} 
+                    {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                   </React.Fragment>
                 )}
-                {record?.releaseError && <div><WarningOutlined onClick={() => addError(record?.releaseError)} style={{color: "red"}} /></div>}
+                {record?.releaseError && (
+                  <div>
+                    <WarningOutlined
+                      onClick={() => addError(record?.releaseError)}
+                      style={{ color: "red" }}
+                    />
+                  </div>
+                )}
                 {record.selectedReleaseMetrics && !record?.releaseError && (
                   <div>{Number(selectedRelaseValue || 0).toLocaleString()}</div>
                 )}
@@ -347,16 +409,31 @@ class SourceMetrics extends React.Component {
                 }}
                 exact={true}
               >
-                 {`${record?.alias || record?.key}${isProject && record?.version ? " [" + record?.version + "]" : ""}`}
-                  
+                {`${record?.alias || record?.key}${
+                  isProject && record?.version
+                    ? " [" + record?.version + "]"
+                    : ""
+                }`}
               </NavLink>
-              {record.selectedReleaseMetrics &&
-             <div>Release: <NavLink
-              to={{
-                pathname: `/dataset/${releaseKey}/source/${record?.key}`
-              }}
-              exact={true}
-            >{releaseLabel && releaseLabel.split(" [")[0] } </NavLink> {record?.releaseError && <WarningOutlined onClick={() => addError(record?.releaseError)} style={{color: "red"}} />}</div>  }
+              {record.selectedReleaseMetrics && (
+                <div>
+                  Release:{" "}
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${releaseKey}/source/${record?.key}`,
+                    }}
+                    exact={true}
+                  >
+                    {releaseLabel && releaseLabel.split(" [")[0]}{" "}
+                  </NavLink>{" "}
+                  {record?.releaseError && (
+                    <WarningOutlined
+                      onClick={() => addError(record?.releaseError)}
+                      style={{ color: "red" }}
+                    />
+                  )}
+                </div>
+              )}
             </React.Fragment>
           );
         },
@@ -490,7 +567,7 @@ class SourceMetrics extends React.Component {
 const mapContextToProps = ({ user, rank, addError }) => ({
   user,
   rank,
-  addError
+  addError,
 });
 
 export default withContext(mapContextToProps)(withRouter(SourceMetrics));

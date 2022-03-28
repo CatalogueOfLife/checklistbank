@@ -47,10 +47,7 @@ const SynonymsTable = ({
               }}
               exact={true}
             >
-              {_.get(s, "name.homotypicNameId") &&
-              _.get(s, "accepted.name.homotypicNameId") &&
-              _.get(s, "accepted.name.homotypicNameId") ===
-                _.get(s, "name.homotypicNameId")
+              {s.__homotypic === true
                 ? "≡ "
                 : "= "}{" "}
               <span

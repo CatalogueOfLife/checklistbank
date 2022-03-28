@@ -322,14 +322,18 @@ class TaxonPage extends React.Component {
       edit,
     } = this.state;
 
-    const synonyms =
+/*     const synonyms =
       info && info.synonyms && info.synonyms.length > 0
         ? info.synonyms.filter((s) => s.status !== "misapplied")
         : [];
     const misapplied =
       info && info.synonyms && info.synonyms.length > 0
         ? info.synonyms.filter((s) => s.status === "misapplied")
-        : [];
+        : []; */
+        const homotypic = _.get(info, 'synonyms.homotypic',[])
+        const heterotypic = _.get(info, 'synonyms.heterotypic',[])
+        const misapplied = _.get(info, 'synonyms.misapplied',[])
+        const synonyms = [...homotypic.map(h => ({...h, __homotypic: true})), ...heterotypic]
 
     return (
       <React.Fragment>

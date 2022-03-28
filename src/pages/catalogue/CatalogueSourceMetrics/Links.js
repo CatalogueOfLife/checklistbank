@@ -46,7 +46,7 @@ export default {
     pathname: `/dataset/${SECTOR_DATASET_KEY}/references`,
     search: ``,
   }),
-  attempt: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
+  datasetAttempt: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
     pathname: `/dataset/${SECTOR_DATASET_KEY}/imports/${value}`,
     search: ``,
   })
