@@ -313,7 +313,7 @@ class ColTree extends React.Component {
         reloadChildren={() => this.fetchChildPage(root, true)}
       />
     );
-
+    root.ref = root;
     const root_ = root;
     for (let i = data.length - 2; i >= 0; i--) {
       const tx = data[i];

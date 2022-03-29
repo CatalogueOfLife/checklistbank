@@ -191,6 +191,14 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+              <Menu.Item key="nameIndexSearch">
+                <NavLink to={{ pathname: "/namesindex" }}>
+                  <span>Names index search</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+            
             {_selectedKeys.includes("nameIndexKey") &&
                   taxonOrNameKey && (
                     <Menu.Item key="nameIndexKey">
