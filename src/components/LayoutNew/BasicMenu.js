@@ -199,7 +199,7 @@ class BasicMenu extends Component {
               </Menu.Item>
             )}
             
-            {_selectedKeys.includes("nameIndexKey") &&
+            {_.isArray(_selectedKeys) && _selectedKeys.includes("nameIndexKey") &&
                   taxonOrNameKey && (
                     <Menu.Item key="nameIndexKey">
                       Nidx: {taxonOrNameKey}
