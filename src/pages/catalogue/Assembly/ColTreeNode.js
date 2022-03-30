@@ -1,5 +1,5 @@
 import React from "react";
-import { SyncOutlined, WarningFilled } from "@ant-design/icons";
+import { SyncOutlined, WarningFilled, CopyOutlined } from "@ant-design/icons";
 import {
   notification,
   Tag,
@@ -411,17 +411,18 @@ class ColTreeNode extends React.Component {
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
+                        <span
+                            dangerouslySetInnerHTML={{
+                              __html: taxon.labelHtml,
+                            }}
+                          />
                         <CopyToClipboard
                           text={taxon.name}
                           onCopy={() =>
                             message.info(`Copied "${taxon.name}" to clipboard`)
                           }
                         >
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: taxon.labelHtml,
-                            }}
-                          />
+                          <CopyOutlined style={{fontSize: "10px", marginLeft: "4px"}}/>
                         </CopyToClipboard>
                       </span>
 
