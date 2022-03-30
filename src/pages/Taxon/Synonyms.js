@@ -62,12 +62,13 @@ const SynonymsTable = ({
                     )}`
                   ),
                 }}
-              />{" "}
-              {_.get(s, "name.nomStatus") && `(${getNomStatus(s.name)})`}{" "}
+              />
+            </NavLink>{" "}
+            <>{" "}
+              {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
               {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
                 ? _.get(s, "accordingTo")
-                : ""}
-            </NavLink>{" "}
+                : ""}</>
             {typeof canEdit == "function" && canEdit() && (
               <Button type="link" onClick={() => setTaxonForEdit(s)}>
                 <EditOutlined />{" "}
