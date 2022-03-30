@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/Auth/PrivateRoute";
-
+import AdminRoute from "./components/Auth/AdminRoute";
 import history from "./history";
 import "./App.css";
 import DatasetList from "./pages/DatasetList";
@@ -80,21 +80,21 @@ class App extends Component {
                   path="/catalogue/:catalogueKey/sourcemetrics"
                   component={CatalogueSourceMetrics}
                 />
-                <PrivateRoute
+                <AdminRoute
                   exact
                   key="Admin"
                   path={`/admin/settings`}
                   roles={["editor", "admin"]}
                   component={Admin}
                 />
-                <PrivateRoute
+                <AdminRoute
                   exact
                   key="UserAdmin"
                   path={`/admin/users`}
                   roles={["admin"]}
                   component={UserAdmin}
                 />
-                <PrivateRoute
+                <AdminRoute
                   exact
                   key="EsAdmin"
                   path={`/admin/es`}
