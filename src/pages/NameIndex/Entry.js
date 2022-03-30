@@ -23,8 +23,7 @@ const Authorship = ({author}) => {
             {author?.year && <>Year: <Tag>{author?.year}</Tag></> }
         </>
 
-    }
-    
+    }   
 }
 
 const Entry = ({record}) => {
@@ -90,3 +89,4 @@ const Entry = ({record}) => {
 }
 
 export default Entry;
+export {Authorship};

@@ -2,62 +2,95 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { withRouter } from "react-router-dom";
-import { Card, Tabs, Badge } from "antd";
+import { Card, Tabs, Table } from "antd";
 import withContext from "../../components/hoc/withContext";
-import Entry from "./Entry";
+import Entry, { Authorship } from "./Entry";
 import RelatedNames from "./RelatedNames";
 import axios from "axios";
 import config from "../../config";
 
 const { TabPane } = Tabs;
 
+const columns = [
+  {
+    title: "Scientific Name",
+    dataIndex: ["scientificName"],
+    key: "scientificName",
+
+    width: 200,
+  },
+  {
+    title: "Basionym Authorship",
+    dataIndex: ["basionymAuthorship"],
+    key: "basionymAuthorship",
+    render: (text, record) =>
+      record?.basionymAuthorship ? (
+        <Authorship author={record?.basionymAuthorship} />
+      ) : (
+        ""
+      ),
+    width: 200,
+  },
+  {
+    title: "Combination Authorship",
+    dataIndex: ["combinationAuthorship"],
+    key: "combinationAuthorship",
+    render: (text, record) =>
+      record?.combinationAuthorship ? (
+        <Authorship author={record?.combinationAuthorship} />
+      ) : (
+        ""
+      ),
+    width: 200,
+  },
+];
+
 const NameIndexKey = ({ match, addError }) => {
   const [record, setRecord] = useState(null);
   const [group, setGroup] = useState(null);
-  const [count, updateCount] = useState(0)
+  const [count, updateCount] = useState(0);
+  const [activeKey, setActiveKey] = useState("1");
   useEffect(() => {
     const init = async () => {
-        setRecord(null)
-        setGroup(null)
+      setRecord(null);
+      setGroup(null);
       const {
         params: { key },
       } = match;
+      setActiveKey("1")
       try {
         const res = await axios(`${config.dataApi}nidx/${key}`);
         if (res?.data) {
           setRecord(res?.data);
         }
-        
       } catch (err) {
         addError(err);
       }
       try {
         const groupres = await axios(`${config.dataApi}nidx/${key}/group`);
-        
+
         if (groupres?.data) {
           setGroup(groupres?.data);
         }
       } catch (err) {
-          if(err?.response?.status > 499){
-            addError(err);
-          }
+        if (err?.response?.status > 499) {
+          addError(err);
+        }
       }
       try {
-        const relatedres = await axios(`${config.dataApi}nameusage?nidx=${key}`);
+        const relatedres = await axios(
+          `${config.dataApi}nameusage?nidx=${key}`
+        );
         if (relatedres?.data) {
-          if(typeof updateCount === "function"){
-            updateCount(relatedres?.data?.total)
+          if (typeof updateCount === "function") {
+            updateCount(relatedres?.data?.total);
           }
         }
-        
       } catch (err) {
-        if(err?.response?.status > 499){
-            addError(err);
-          }
+        if (err?.response?.status > 499) {
+          addError(err);
+        }
       }
-
-     
-
     };
     init();
   }, [match]);
@@ -76,16 +109,27 @@ const NameIndexKey = ({ match, addError }) => {
       taxonOrNameKey={record?.id}
     >
       <PageContent>
-        <Tabs defaultActiveKey="1">
+        <Tabs activeKey={activeKey} onChange={setActiveKey} defaultActiveKey="1">
           <TabPane tab="Entry" key="1">
             {record && <Entry record={record} />}
           </TabPane>
-          {group && <TabPane tab="Group" key="2">
-            {group.map(e => <Card style={{marginBottom: "10px"}}>
-                <Entry record={e} />
-            </Card>)}
-          </TabPane>}
-         <TabPane tab={<span>Related ({count})</span>} key="3">
+          {group && (
+            <TabPane tab={`Group (${group.length})`} key="2">
+              <Table
+                size="small"
+                columns={columns}
+                dataSource={group}
+                /*  pagination={this.state.pagination}
+      onChange={this.handleTableChange} */
+                rowKey="id"
+                pagination={false}
+                expandable={{
+                  expandedRowRender: (record) => <Entry record={record} />,
+                }}
+              />
+            </TabPane>
+          )}
+          <TabPane tab={<span>Related ({count})</span>} key="3">
             <RelatedNames updateCount={updateCount} />
           </TabPane>
         </Tabs>
