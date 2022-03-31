@@ -66,7 +66,7 @@ const NameIndexKey = ({ nameIndexRank, addError }) => {
               <Input.Search  loading={loading} />
             </AutoComplete>
             <br/>
-            <Select showSearch allowClear placeholder="Rank" style={{width: "200px", marginTop: "10px"}} onChange={setRank}>
+            <Select showSearch allowClear placeholder="Rank" style={{width: "300px", marginTop: "10px"}} onChange={setRank}>
             <Option value={null}>Any</Option>
               {nameIndexRank.map(r => <Option value={r.name}>{r.label}</Option>)}
 
