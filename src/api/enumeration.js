@@ -106,3 +106,7 @@ export const getSpeciesinteractiontype = () => {
 export const getUserRole = () => {
   return getData(`user$role`).then((res) => res.data.map((e) => e.name));
 };
+
+export const getNameIndexRank = () => {
+  return Promise.resolve(require(`../enumeration/nameIndexRank`))
+}

@@ -34,7 +34,8 @@ import {
   getEntitytype,
   getDecisionMode,
   getSpeciesinteractiontype,
-  getUserRole
+  getUserRole,
+  getNameIndexRank
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -79,6 +80,7 @@ class ContextProvider extends React.Component {
     datasetOrigin: [],
     issue: [],
     rank: [],
+    nameIndexRank: [],
     taxonomicstatus: [],
     nomstatus: [],
     nomStatusMap: null,
@@ -219,7 +221,8 @@ class ContextProvider extends React.Component {
       getEntitytype(),
       getDecisionMode(),
       getSpeciesinteractiontype(),
-      getUserRole()
+      getUserRole(),
+      getNameIndexRank()
     ])
       .then((responses) => {
         const issueMap = {};
@@ -292,6 +295,7 @@ class ContextProvider extends React.Component {
           decisionMode: responses[22],
           speciesinteractiontype: responses[23],
           userRole: responses[24],
+          nameIndexRank: responses[25],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

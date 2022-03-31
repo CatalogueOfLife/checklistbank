@@ -12,7 +12,7 @@ import history from "../../history";
 
 const {Option} = Select;
 
-const NameIndexKey = ({ rank, addError }) => {
+const NameIndexKey = ({ nameIndexRank, addError }) => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selctedRank, setRank] = useState("species");
@@ -68,7 +68,7 @@ const NameIndexKey = ({ rank, addError }) => {
             <br/>
             <Select showSearch allowClear placeholder="Rank" style={{width: "200px", marginTop: "10px"}} onChange={setRank}>
             <Option value={null}>Any</Option>
-              {rank.map(r => <Option value={r}>{r}</Option>)}
+              {nameIndexRank.map(r => <Option value={r.name}>{r.label}</Option>)}
 
             </Select>
             
@@ -87,5 +87,5 @@ const NameIndexKey = ({ rank, addError }) => {
   );
 };
 
-const mapContextToProps = ({ addError, rank }) => ({ addError, rank });
+const mapContextToProps = ({ addError, nameIndexRank }) => ({ addError, nameIndexRank });
 export default withContext(mapContextToProps)(withRouter(NameIndexKey));
