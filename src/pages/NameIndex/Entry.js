@@ -13,14 +13,15 @@ const Authorship = ({author}) => {
         return null;
     } else {
         return <>
-        {author?.exAuthors && author.exAuthors.length > 0 && <>
-                exAuthors: {author.exAuthors.map(a => <Tag>{a}</Tag>)}
-            </>}
+        
             {author?.authors && author.authors.length > 0 && <>
-                Authors: {author.authors.map(a => <Tag>{a}</Tag>)}
+                {author.authors.map(a => <Tag>{a}</Tag>)}
+            </>}
+            {author?.exAuthors && author.exAuthors.length > 0 && <>
+                ex {author.exAuthors.map(a => <Tag>{a}</Tag>)}
             </>}
 
-            {author?.year && <>Year: <Tag>{author?.year}</Tag></> }
+            {author?.year && <>, <Tag>{author?.year}</Tag></> }
         </>
 
     }   
