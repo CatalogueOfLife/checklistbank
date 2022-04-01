@@ -177,6 +177,10 @@ class DatasetImportMetrics extends React.Component {
 
     const { dataset, user, origin, importState } = this.props;
     const { importHistory, loading, data, hasImportDiff } = this.state;
+    const isRunning = this.state.data && importState
+      .filter((i) => i.running)
+      .map((i) => i.name)
+      .includes(this.state.data.state);
 
     return (
       <PageContent>
@@ -212,10 +216,7 @@ class DatasetImportMetrics extends React.Component {
           </Drawer>
         )}
         {this.state.data &&
-          importState
-            .filter((i) => i.running === "true")
-            .map((i) => i.name)
-            .includes(this.state.data.state) && (
+          isRunning && (
             <Spin>
               <Alert
                 message={_.startCase(this.state.data.state)}
@@ -241,7 +242,7 @@ class DatasetImportMetrics extends React.Component {
         )}
         {dataset && (
           <Row style={{ padding: "10px" }} type="flex">
-            {data && (
+            {data && !isRunning && (
               <Col>
                 <h1>
                   {origin === "released" ? "Released " : "Imported "}
@@ -273,9 +274,9 @@ class DatasetImportMetrics extends React.Component {
             )}
           </Row>
         )}
-        {data && (
+        {data &&  (
           <React.Fragment>
-            <ImportMetrics
+           {!isRunning && <ImportMetrics
               data={data}
               subtitle={
                 origin === "released"
@@ -284,7 +285,7 @@ class DatasetImportMetrics extends React.Component {
                     )}`
                   : null
               }
-            />
+            />}
 
             <Row style={{ padding: "10px" }}>
               <Divider orientation="left">Details</Divider>
