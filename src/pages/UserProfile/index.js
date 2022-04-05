@@ -39,7 +39,9 @@ const UserProfile = ({ user, countryAlpha2 }) => {
         setDownloads(downloads_?.data?.result);
       }
     };
-    init();
+    if(user){
+      init();
+    }
   }, [user]);
 
   const renderItem = (item) => (
