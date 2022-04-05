@@ -170,6 +170,8 @@ class ContextProvider extends React.Component {
       const {nomStatusMap} = this.state;
       if (!nomStatusMap) {
         return name.nomStatus;
+      } else if(!name.nomStatus) {
+        return ""
       } else {
         return nomStatusMap[name.nomStatus] &&
           nomStatusMap[name.nomStatus][name.code]
