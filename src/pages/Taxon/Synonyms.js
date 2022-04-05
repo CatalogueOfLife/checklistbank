@@ -68,7 +68,9 @@ const SynonymsTable = ({
               {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
               {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
                 ? _.get(s, "accordingTo")
-                : ""}</>
+                : ""}
+                {_.get(s, "status") === "ambiguous synonym" && "(Ambiguous)"}
+                </>
             {typeof canEdit == "function" && canEdit() && (
               <Button type="link" onClick={() => setTaxonForEdit(s)}>
                 <EditOutlined />{" "}

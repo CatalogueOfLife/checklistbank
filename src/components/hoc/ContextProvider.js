@@ -167,13 +167,14 @@ class ContextProvider extends React.Component {
     },
     getTaxonomicStatusColor: (status) => TAXONOMIC_STATUS_COLOR[status],
     getNomStatus: (name) => {
-      if (!this.nomStatusMap) {
+      const {nomStatusMap} = this.state;
+      if (!nomStatusMap) {
         return name.nomStatus;
       } else {
-        return this.nomStatusMap[name.nomStatus] &&
-          this.nomStatusMap[name.nomStatus][name.code]
-          ? this.nomStatusMap[name.nomStatus][name.code]
-          : this.nomStatusMap[name.nomStatus]["zoological"];
+        return nomStatusMap[name.nomStatus] &&
+          nomStatusMap[name.nomStatus][name.code]
+          ? nomStatusMap[name.nomStatus][name.code]
+          : nomStatusMap[name.nomStatus]["zoological"];
       }
     },
 
