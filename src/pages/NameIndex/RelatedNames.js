@@ -58,8 +58,8 @@ const columns = [
           !_.get(record, "id") ||
           record?.bareName ||
           !_.get(record, "status")
-            ? `/dataset/name/${encodeURIComponent(_.get(record, "name.id"))}`
-            : `/dataset//taxon/${encodeURIComponent(
+            ? `/dataset/${_.get(record, "datasetKey")}/name/${encodeURIComponent(_.get(record, "name.id"))}`
+            : `/dataset/${_.get(record, "datasetKey")}/taxon/${encodeURIComponent(
                 _.get(record, "accepted.id")
                   ? _.get(record, "accepted.id")
                   : _.get(record, "id")

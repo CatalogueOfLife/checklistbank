@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { Alert, Spin, Row, Col, Tag, Tabs } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
-
+import { LinkOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
@@ -391,6 +391,18 @@ class NamePage extends React.Component {
             <PresentationItem md={md} label="Published In Page">
               {name.publishedInPage}
             </PresentationItem>
+            {_.get(name, "namesIndexId") && (
+            <PresentationItem md={md} label="Related names">
+              <NavLink
+              to={{
+                pathname: `/namesindex/${name.namesIndexId}/related`
+              }}
+              >
+                <LinkOutlined />
+              </NavLink>
+             
+            </PresentationItem>
+          )}
           </React.Fragment>
         )}
       </TabPane>
