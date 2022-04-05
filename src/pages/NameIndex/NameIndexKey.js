@@ -8,6 +8,7 @@ import Entry, { Authorship } from "./Entry";
 import RelatedNames from "./RelatedNames";
 import axios from "axios";
 import config from "../../config";
+import history from "../../history";
 
 const { TabPane } = Tabs;
 
@@ -50,14 +51,18 @@ const NameIndexKey = ({ match, addError }) => {
   const [group, setGroup] = useState(null);
   const [count, updateCount] = useState(0);
   const [activeKey, setActiveKey] = useState("1");
+  const sections = {
+    "2": "group",
+    "3": "related"
+  };
   useEffect(() => {
     const init = async () => {
       setRecord(null);
       setGroup(null);
       const {
-        params: { key },
+        params: { key, section },
       } = match;
-      setActiveKey("1")
+      setActiveKey(section === "related" ? "3": section === "group" ? "2": "1")
       try {
         const res = await axios(`${config.dataApi}nidx/${key}`);
         if (res?.data) {
@@ -93,7 +98,23 @@ const NameIndexKey = ({ match, addError }) => {
       }
     };
     init();
-  }, [match]);
+  }, [match?.params?.key]);
+
+  const onTabChange = (activeKey) => {
+    setActiveKey(activeKey);
+    const {
+      params: { key },
+    } = match;
+    if(sections[activeKey]){
+      history.replace({
+        pathname: `/namesindex/${key}/${sections[activeKey]}`
+      });
+    } else {
+      history.replace({
+        pathname: `/namesindex/${key}`
+      });
+    }
+  }
 
   return (
     <Layout
@@ -109,7 +130,7 @@ const NameIndexKey = ({ match, addError }) => {
       taxonOrNameKey={record?.id}
     >
       <PageContent>
-        <Tabs activeKey={activeKey} onChange={setActiveKey} defaultActiveKey="1">
+        <Tabs activeKey={activeKey} onChange={onTabChange} defaultActiveKey="1">
           <TabPane tab="Entry" key="1">
             {record && <Entry record={record} />}
           </TabPane>

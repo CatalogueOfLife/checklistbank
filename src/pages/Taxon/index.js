@@ -613,7 +613,18 @@ class TaxonPage extends React.Component {
               <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
             </PresentationItem>
           )}
-
+          {_.get(info, "taxon.name.namesIndexId") && (
+            <PresentationItem md={md} label="Related names">
+              <NavLink
+              to={{
+                pathname: `/namesindex/${_.get(info, "taxon.name.namesIndexId")}/related`
+              }}
+              >
+                <LinkOutlined />
+              </NavLink>
+             
+            </PresentationItem>
+          )}
           <Row>
             {_.get(taxon, "scrutinizer") && (
               <Col span={12}>
