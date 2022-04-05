@@ -184,7 +184,7 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
-            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+            {user && (
               <Menu.Item key="diffviewer">
                 <NavLink to={{ pathname: "/tools/diff-viewer" }}>
                   <span>Diff viewer</span>

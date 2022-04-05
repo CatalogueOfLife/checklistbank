@@ -449,14 +449,14 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
-            <PresentationItem label="GBIF key">
+          {Auth.isAuthorised(user, ["admin"]) &&  <PresentationItem label="GBIF key">
               {displayData.gbifKey && (
                 <a href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}>
                   {displayData.gbifKey}
                 </a>
               )}
-            </PresentationItem>
-            <PresentationItem label="GBIF publisher key">
+            </PresentationItem>}
+            {Auth.isAuthorised(user, ["admin"]) &&  <PresentationItem label="GBIF publisher key">
               {displayData.gbifPublisherKey && (
                 <a
                   href={`https://www.gbif.org/publisher/${displayData.gbifPublisherKey}`}
@@ -464,7 +464,7 @@ class DatasetMeta extends React.Component {
                   {displayData.gbifPublisherKey}
                 </a>
               )}
-            </PresentationItem>
+            </PresentationItem>}
             <PresentationItem label="Identifiers">
               {displayData.identifier && (
                 <ol
