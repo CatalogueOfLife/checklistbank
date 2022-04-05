@@ -64,7 +64,7 @@ const Verbatim = ({
               "&"
             )}&${terms.join("&")}&termOp=OR&limit=1000`
           );
-          setVerbatimRecords(_.groupBy([record, ...(linkedRecordsRes?.data?.result || [])], 'type'));
+          setVerbatimRecords(_.groupBy([record, ...(linkedRecordsRes?.data?.result.filter(r => r.id !== record.id && r.file !== record.file) || [])], 'type'));
           setLoading(false);
         }
       } catch (err) {

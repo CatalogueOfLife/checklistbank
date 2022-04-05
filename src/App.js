@@ -281,7 +281,7 @@ class App extends Component {
                 <Route
                   exact
                   key="nameIndexKey"
-                  path={`/namesindex/:key`}
+                  path={`/namesindex/:key/:section?`}
                   component={NameIndexKey}
                 />
                 
