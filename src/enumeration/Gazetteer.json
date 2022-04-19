@@ -1,48 +1,48 @@
 [
   {
+    "description": "World Geographical Scheme for Recording Plant Distributions published by TDWG at level 1, 2, 3 or 4.  Level 1 = Continents, Level 2 = Regions, Level 3 = Botanical countries, Level 4 = Basic recording units.",
     "link": "http://www.tdwg.org/standards/109",
     "name": "tdwg",
-    "description": "World Geographical Scheme for Recording Plant Distributions published by TDWG at level 1, 2, 3 or 4.  Level 1 = Continents, Level 2 = Regions, Level 3 = Botanical countries, Level 4 = Basic recording units.",
     "title": "World Geographical Scheme for Recording Plant Distributions"
   },
   {
+    "description": "ISO 3166 codes for the representation of names of countries and their subdivisions. Codes for current countries (ISO 3166-1), country subdivisions (ISO 3166-2) and formerly used names of countries (ISO 3166-3). Country codes can be given either as alpha-2, alpha-3 or numeric codes.",
     "link": "https://en.wikipedia.org/wiki/ISO_3166",
     "name": "iso",
-    "description": "ISO 3166 codes for the representation of names of countries and their subdivisions. Codes for current countries (ISO 3166-1), country subdivisions (ISO 3166-2) and formerly used names of countries (ISO 3166-3). Country codes can be given either as alpha-2, alpha-3 or numeric codes.",
     "title": "ISO 3166 Country Codes"
   },
   {
+    "description": "FAO Major Fishing Areas",
     "link": "http://www.fao.org/fishery/cwp/handbook/H/en",
     "name": "fao",
-    "description": "FAO Major Fishing Areas",
     "title": "FAO Major Fishing Areas"
   },
   {
+    "description": "Longhurst Biogeographical Provinces, a partition of the world oceans into provinces as defined by Longhurst, A.R. (2006). Ecological Geography of the Sea. 2nd Edition.",
     "link": "http://www.marineregions.org/sources.php#longhurst",
     "name": "longhurst",
-    "description": "Longhurst Biogeographical Provinces, a partition of the world oceans into provinces as defined by Longhurst, A.R. (2006). Ecological Geography of the Sea. 2nd Edition.",
     "title": "Longhurst Biogeographical Provinces"
   },
   {
+    "description": "Terrestrial Ecoregions of the World is a biogeographic regionalization of the Earth's terrestrial biodiversity. See Olson et al. 2001. Terrestrial ecoregions of the world: a new map of life on Earth. Bioscience 51(11):933-938.",
     "link": "https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world",
     "name": "teow",
-    "description": "Terrestrial Ecoregions of the World is a biogeographic regionalization of the Earth's terrestrial biodiversity. See Olson et al. 2001. Terrestrial ecoregions of the world: a new map of life on Earth. Bioscience 51(11):933-938.",
     "title": "Terrestrial Ecoregions of the World"
   },
   {
-    "name": "iho",
     "description": "Sea areas published by the International Hydrographic Organization as boundaries of the major oceans and seas of the world. See Limits of Oceans & Seas, Special Publication No. 23 published by the International Hydrographic Organization in 1953.",
+    "name": "iho",
     "title": "International Hydrographic Organization See Areas"
   },
   {
+    "description": "Standard, relational list of geographic names developed by VLIZ covering mainly marine names such as seas, sandbanks, ridges, bays or even standard sampling stations used in marine research.The geographic cover is global; however the gazetteer is focused on the Belgian Continental Shelf, the Scheldt Estuary and the Southern Bight of the North Sea.",
     "link": "https://www.marineregions.org/gazetteer.php",
     "name": "mrgid",
-    "description": "Standard, relational list of geographic names developed by VLIZ covering mainly marine names such as seas, sandbanks, ridges, bays or even standard sampling stations used in marine research.The geographic cover is global; however the gazetteer is focused on the Belgian Continental Shelf, the Scheldt Estuary and the Southern Bight of the North Sea.",
     "title": "Marine Regions Geographic Identifier"
   },
   {
-    "name": "text",
     "description": "Free text not following any standard",
+    "name": "text",
     "title": "Free Text"
   }
 ]

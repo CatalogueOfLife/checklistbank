@@ -1,23 +1,30 @@
 [
   {
-    "name": "scientific"
+    "name": "scientific",
+    "parsable": true
   },
   {
-    "name": "virus"
+    "name": "virus",
+    "parsable": false
   },
   {
-    "name": "hybrid formula"
+    "name": "hybrid formula",
+    "parsable": false
   },
   {
-    "name": "informal"
+    "name": "informal",
+    "parsable": true
   },
   {
-    "name": "otu"
+    "name": "otu",
+    "parsable": false
   },
   {
-    "name": "placeholder"
+    "name": "placeholder",
+    "parsable": false
   },
   {
-    "name": "no name"
+    "name": "no name",
+    "parsable": false
   }
 ]

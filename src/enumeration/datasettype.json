@@ -6,13 +6,13 @@
     "name": "taxonomic"
   },
   {
+    "name": "phylogenetic"
+  },
+  {
     "name": "article"
   },
   {
-    "name": "personal"
-  },
-  {
-    "name": "otu"
+    "name": "legal"
   },
   {
     "name": "thematic"

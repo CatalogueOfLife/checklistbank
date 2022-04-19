@@ -1,11 +1,14 @@
 [
   {
+    "managedOrRelease": false,
     "name": "external"
   },
   {
+    "managedOrRelease": true,
     "name": "managed"
   },
   {
+    "managedOrRelease": true,
     "name": "released"
   }
 ]

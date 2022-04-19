@@ -1,144 +1,179 @@
 [
   {
-    "origin": [
-      "external"
-    ],
+    "enum": false,
     "multiple": false,
     "name": "csv delimiter",
-    "type": "String"
-  },
-  {
     "origin": [
       "external"
     ],
+    "type": "String"
+  },
+  {
+    "enum": false,
     "multiple": false,
     "name": "csv quote",
-    "type": "String"
-  },
-  {
     "origin": [
       "external"
     ],
-    "multiple": false,
-    "name": "csv quote escape",
     "type": "String"
   },
   {
+    "enum": false,
+    "multiple": false,
+    "name": "csv quote escape",
+    "origin": [
+      "external"
+    ],
+    "type": "String"
+  },
+  {
+    "enum": true,
+    "multiple": false,
+    "name": "distribution gazetteer",
     "origin": [
       "external",
       "managed"
     ],
-    "multiple": false,
-    "name": "distribution gazetteer",
     "type": "Gazetteer"
   },
   {
+    "enum": true,
+    "multiple": false,
+    "name": "nomenclatural code",
     "origin": [
       "external",
       "managed"
     ],
-    "multiple": false,
-    "name": "nomenclatural code",
     "type": "NomCode"
   },
   {
-    "origin": [
-      "external",
-      "managed"
-    ],
+    "enum": false,
     "multiple": false,
     "name": "rematch decisions",
-    "type": "Boolean"
-  },
-  {
     "origin": [
       "external",
       "managed"
     ],
-    "multiple": false,
-    "name": "lock metadata",
     "type": "Boolean"
   },
   {
+    "enum": false,
+    "multiple": false,
+    "name": "lock metadata",
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "release alias template",
     "origin": [
       "managed"
     ],
-    "multiple": false,
-    "name": "release alias template",
     "type": "String"
   },
   {
-    "origin": [
-      "managed"
-    ],
+    "enum": false,
     "multiple": false,
     "name": "release add source authors",
-    "type": "Boolean"
-  },
-  {
     "origin": [
       "managed"
     ],
-    "multiple": false,
-    "name": "release add contributors",
     "type": "Boolean"
   },
   {
+    "enum": false,
+    "multiple": false,
+    "name": "release add contributors",
+    "origin": [
+      "managed"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "release remove bare names",
+    "origin": [
+      "managed"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "release prepare downloads",
+    "origin": [
+      "managed"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "source max container authors",
     "origin": [
       "managed",
       "released"
     ],
-    "multiple": false,
-    "name": "source max container authors",
     "type": "Integer"
   },
   {
+    "enum": true,
+    "multiple": false,
+    "name": "import frequency",
+    "origin": [
+      "external"
+    ],
+    "type": "Frequency"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "data access",
+    "origin": [
+      "external"
+    ],
+    "type": "URI"
+  },
+  {
+    "enum": true,
+    "multiple": false,
+    "name": "data format",
     "origin": [
       "external",
       "managed"
     ],
-    "multiple": false,
-    "name": "data format",
     "type": "DataFormat"
   },
   {
-    "origin": [
-      "external"
-    ],
-    "multiple": false,
-    "name": "import frequency",
-    "type": "Frequency"
-  },
-  {
-    "origin": [
-      "external"
-    ],
-    "multiple": false,
-    "name": "data access",
-    "type": "URI"
-  },
-  {
+    "enum": true,
+    "multiple": true,
+    "name": "sector entities",
     "origin": [
       "managed"
     ],
-    "multiple": true,
-    "name": "sector entities",
     "type": "EntityType"
   },
   {
+    "enum": true,
+    "multiple": true,
+    "name": "sector ranks",
     "origin": [
       "managed"
     ],
-    "multiple": true,
-    "name": "sector ranks",
     "type": "Rank"
   },
   {
+    "enum": false,
+    "multiple": false,
+    "name": "gbif sync lock",
     "origin": [
       "external"
     ],
-    "multiple": false,
-    "name": "gbif sync lock",
     "type": "Boolean"
   }
 ]

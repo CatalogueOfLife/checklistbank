@@ -26,6 +26,7 @@ const enums = [
   "Gazetteer",
   "entitytype",
   "speciesinteractiontype",
+  "doiresolution"
 ];
 
 let env;
@@ -48,7 +49,12 @@ const writeEnums = () => {
           console.log(`Writing ${e}.json`);
         }
       )
-    )
+    ).catch(error => {
+      
+      console.log(`Error retrieving ${e}`)
+      console.log(`Status ${error?.response?.status} ${error?.response?.statusText}`)
+
+    })
   );
 };
 

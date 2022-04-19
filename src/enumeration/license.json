@@ -1,43 +1,79 @@
 [
   {
+    "creativeCommons": true,
     "name": "cc0",
+    "noDerivatives": false,
+    "nonCommercial": false,
+    "shareAlike": false,
     "title": "Public Domain (CC0 1.0)",
     "url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by",
+    "noDerivatives": false,
+    "nonCommercial": false,
+    "shareAlike": false,
     "title": "Creative Commons Attribution (CC BY) 4.0",
     "url": "http://creativecommons.org/licenses/by/4.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by sa",
+    "noDerivatives": false,
+    "nonCommercial": false,
+    "shareAlike": true,
     "title": "Creative Commons Attribution Share Alike (CC BY-SA) 4.0",
     "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by nc",
+    "noDerivatives": false,
+    "nonCommercial": true,
+    "shareAlike": false,
     "title": "Creative Commons Attribution Non Commercial (CC BY-NC) 4.0",
     "url": "http://creativecommons.org/licenses/by-nc/4.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by nd",
+    "noDerivatives": true,
+    "nonCommercial": false,
+    "shareAlike": false,
     "title": "Creative Commons Attribution No Derivatives (CC BY-ND) 4.0",
     "url": "https://creativecommons.org/licenses/by-nd/4.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by nc sa",
+    "noDerivatives": false,
+    "nonCommercial": true,
+    "shareAlike": true,
     "title": "Creative Commons Attribution Non Commercial Share Alike (CC BY-NC-SA) 4.0",
     "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode"
   },
   {
+    "creativeCommons": true,
     "name": "cc by nc nd",
+    "noDerivatives": true,
+    "nonCommercial": true,
+    "shareAlike": false,
     "title": "Creative Commons Attribution Non Commercial No Derivatives (CC BY-NC-ND) 4.0",
     "url": "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode"
   },
   {
-    "name": "unspecified"
+    "creativeCommons": false,
+    "name": "unspecified",
+    "noDerivatives": false,
+    "nonCommercial": false,
+    "shareAlike": false
   },
   {
-    "name": "other"
+    "creativeCommons": false,
+    "name": "other",
+    "noDerivatives": false,
+    "nonCommercial": false,
+    "shareAlike": false
   }
 ]

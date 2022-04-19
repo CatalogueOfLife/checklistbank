@@ -104,7 +104,7 @@ const SettingsForm = (props) => {
       )}
 
       {datasetSettings
-        .filter((s) => s.origin.indexOf(dataset?.origin) > -1)
+        .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset?.origin) > -1)
         .filter((s) => s.type === "Boolean")
         .map((s) => (
           <FormItem
@@ -126,7 +126,7 @@ const SettingsForm = (props) => {
         <CsvDelimiterInput />
       </FormItem>
       {datasetSettings
-        .filter((s) => s.origin.indexOf(dataset?.origin) > -1)
+        .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
           (s) =>
             (s.type === "String" || s.type === "Integer" || s.type === "URI") &&
@@ -148,7 +148,7 @@ const SettingsForm = (props) => {
         ))}
 
       {datasetSettings
-        .filter((s) => s.origin.indexOf(dataset?.origin) > -1)
+        .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
           (s) => !["String", "Integer", "Boolean", "URI"].includes(s.type)
         )
@@ -215,6 +215,7 @@ const mapContextToProps = ({
   rank,
   datasetSettings,
   gazetteer,
+  doiResolution
 }) => ({
   addError,
   addInfo,
@@ -228,6 +229,7 @@ const mapContextToProps = ({
   rank,
   datasetSettings,
   gazetteer,
+  doiResolution
 });
 
 export default withContext(mapContextToProps)(SettingsForm);

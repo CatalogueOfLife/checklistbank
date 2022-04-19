@@ -1,44 +1,44 @@
 [
   {
+    "abbrev": "P",
     "acronym": "ICNP",
     "link": "https://doi.org/10.1099/ijsem.0.000778",
     "name": "bacterial",
-    "abbrev": "P",
     "title": "International Code of Nomenclature of Prokaryotes"
   },
   {
+    "abbrev": "B",
     "acronym": "ICN",
     "link": "https://www.iapt-taxon.org/nomen/main.php",
     "name": "botanical",
-    "abbrev": "B",
     "title": "International Code of Nomenclature for algae, fungi, and plants"
   },
   {
+    "abbrev": "C",
     "acronym": "ICNCP",
     "link": "https://www.ishs.org/scripta-horticulturae/international-code-nomenclature-cultivated-plants-ninth-edition",
     "name": "cultivars",
-    "abbrev": "C",
     "title": "International Code of Nomenclature for Cultivated Plants"
   },
   {
+    "abbrev": "S",
     "acronym": "ICPN",
     "link": "https://doi.org/10.2307/3236580",
     "name": "phytosociological",
-    "abbrev": "S",
     "title": "International Code of Phytosociological Nomenclature"
   },
   {
+    "abbrev": "V",
     "acronym": "ICVCN",
     "link": "https://talk.ictvonline.org/information/w/ictv-information/383/ictv-code",
     "name": "virus",
-    "abbrev": "V",
     "title": "International Code of Virus Classifications and Nomenclature"
   },
   {
+    "abbrev": "Z",
     "acronym": "ICZN",
     "link": "http://www.iczn.org/code",
     "name": "zoological",
-    "abbrev": "Z",
     "title": "International Code of Zoological Nomenclature"
   }
 ]

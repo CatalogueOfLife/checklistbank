@@ -1,58 +1,100 @@
 [
   {
+    "available": true,
     "botanical": "nomen validum",
+    "botanicalLabel": "nomen validum",
+    "legitimate": false,
     "name": "established",
-    "zoological": "available"
+    "zoological": "available",
+    "zoologicalLabel": "available"
   },
   {
+    "abbreviated": "nom. inval.",
+    "abbreviatedLabel": "nom. inval.",
+    "available": false,
     "botanical": "nomen invalidum",
+    "botanicalLabel": "nomen invalidum",
+    "legitimate": false,
     "name": "not established",
     "zoological": "unavailable",
-    "abbreviated": "nom. inval."
+    "zoologicalLabel": "unavailable"
   },
   {
-    "parent": "established",
+    "available": true,
     "botanical": "nomen legitimum",
+    "botanicalLabel": "nomen legitimum",
+    "legitimate": true,
     "name": "acceptable",
-    "zoological": "potentially valid"
-  },
-  {
     "parent": "established",
+    "zoological": "potentially valid",
+    "zoologicalLabel": "potentially valid"
+  },
+  {
+    "abbreviated": "nom. illeg.",
+    "abbreviatedLabel": "nom. illeg.",
+    "available": true,
     "botanical": "nomen illegitimum",
+    "botanicalLabel": "nomen illegitimum",
+    "legitimate": false,
     "name": "unacceptable",
+    "parent": "established",
     "zoological": "objectively invalid",
-    "abbreviated": "nom. illeg."
+    "zoologicalLabel": "objectively invalid"
   },
   {
-    "parent": "acceptable",
+    "abbreviated": "nom. cons.",
+    "abbreviatedLabel": "nom. cons.",
+    "available": true,
     "botanical": "nomen conservandum",
+    "botanicalLabel": "nomen conservandum",
+    "legitimate": true,
     "name": "conserved",
+    "parent": "acceptable",
     "zoological": "conserved name",
-    "abbreviated": "nom. cons."
+    "zoologicalLabel": "conserved name"
   },
   {
-    "parent": "unacceptable",
+    "abbreviated": "nom. rej.",
+    "abbreviatedLabel": "nom. rej.",
+    "available": true,
     "botanical": "nomen rejiciendum",
+    "botanicalLabel": "nomen rejiciendum",
+    "legitimate": false,
     "name": "rejected",
+    "parent": "unacceptable",
     "zoological": "rejected",
-    "abbreviated": "nom. rej."
+    "zoologicalLabel": "rejected"
   },
   {
+    "abbreviated": "nom. dub.",
+    "abbreviatedLabel": "nom. dub.",
+    "available": true,
     "botanical": "nomen dubium",
+    "botanicalLabel": "nomen dubium",
+    "legitimate": false,
     "name": "doubtful",
     "zoological": "doubtful",
-    "abbreviated": "nom. dub."
+    "zoologicalLabel": "doubtful"
   },
   {
-    "parent": "not established",
+    "abbreviated": "ms.",
+    "abbreviatedLabel": "ms.",
+    "available": false,
     "botanical": "manuscript name",
+    "botanicalLabel": "manuscript name",
+    "legitimate": false,
     "name": "manuscript",
+    "parent": "not established",
     "zoological": "manuscript name",
-    "abbreviated": "ms."
+    "zoologicalLabel": "manuscript name"
   },
   {
+    "available": false,
     "botanical": "chresonym",
+    "botanicalLabel": "chresonym",
+    "legitimate": false,
     "name": "chresonym",
-    "zoological": "chresonym"
+    "zoological": "chresonym",
+    "zoologicalLabel": "chresonym"
   }
 ]

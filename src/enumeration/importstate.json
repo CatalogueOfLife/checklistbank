@@ -1,62 +1,92 @@
 [
   {
-    "running": false,
-    "name": "waiting"
+    "finished": false,
+    "name": "waiting",
+    "queued": true,
+    "running": false
   },
   {
-    "running": true,
-    "name": "preparing"
+    "finished": false,
+    "name": "preparing",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "downloading"
+    "finished": false,
+    "name": "downloading",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "processing"
+    "finished": false,
+    "name": "processing",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "deleting"
+    "finished": false,
+    "name": "deleting",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "inserting"
+    "finished": false,
+    "name": "inserting",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "matching"
+    "finished": false,
+    "name": "matching",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "indexing"
+    "finished": false,
+    "name": "indexing",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "analyzing"
+    "finished": false,
+    "name": "analyzing",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "archiving"
+    "finished": false,
+    "name": "archiving",
+    "queued": false,
+    "running": true
   },
   {
-    "running": true,
-    "name": "exporting"
+    "finished": false,
+    "name": "exporting",
+    "queued": false,
+    "running": true
   },
   {
-    "running": false,
-    "name": "unchanged"
+    "finished": true,
+    "name": "unchanged",
+    "queued": false,
+    "running": false
   },
   {
-    "running": false,
-    "name": "finished"
+    "finished": true,
+    "name": "finished",
+    "queued": false,
+    "running": false
   },
   {
-    "running": false,
-    "name": "canceled"
+    "finished": true,
+    "name": "canceled",
+    "queued": false,
+    "running": false
   },
   {
-    "running": false,
-    "name": "failed"
+    "finished": true,
+    "name": "failed",
+    "queued": false,
+    "running": false
   }
 ]

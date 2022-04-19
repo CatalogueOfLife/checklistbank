@@ -1,36 +1,36 @@
 [
   {
-    "exportable": true,
+    "filename": "dwca",
     "name": "dwca",
     "title": "Darwin Core Archive"
   },
   {
-    "exportable": true,
+    "filename": "acef",
     "name": "acef",
     "title": "Annual Checklist Exchange Format"
   },
   {
-    "exportable": true,
+    "filename": "txtree",
     "name": "text tree",
-    "title": "Text Tree"
+    "title": "TextTree"
   },
   {
-    "exportable": true,
+    "filename": "coldp",
     "name": "coldp",
     "title": "Catalogue of Life Data Package"
   },
   {
-    "exportable": false,
+    "filename": "proxy",
     "name": "proxy",
     "title": "Proxy"
   },
   {
-    "exportable": true,
+    "filename": "newick",
     "name": "newick",
     "title": "New Hampshire X"
   },
   {
-    "exportable": true,
+    "filename": "dot",
     "name": "dot",
     "title": "Graphviz DOT"
   }
