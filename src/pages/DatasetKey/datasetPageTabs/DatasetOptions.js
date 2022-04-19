@@ -132,7 +132,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter((s) => s.origin.indexOf(dataset.origin) > -1)
+                  .filter((s) => _.get(s.origin, ["external", "managed"]).indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "String" || s.type === "Integer")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
