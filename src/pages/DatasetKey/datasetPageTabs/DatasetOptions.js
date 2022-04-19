@@ -142,7 +142,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter((s) => s.origin.indexOf(dataset.origin) > -1)
+                  .filter((s) =>  _.get(s.origin, ["external", "managed"]).indexOf(dataset.origin) > -1)
                   .filter(
                     (s) => !["String", "Integer", "Boolean"].includes(s.type)
                   )
