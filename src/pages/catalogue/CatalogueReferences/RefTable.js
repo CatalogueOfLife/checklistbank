@@ -8,6 +8,7 @@ import history from "../../../history";
 import SearchBox from "../../DatasetList/SearchBox";
 
 import _ from "lodash";
+import { NavLink } from "react-router-dom";
 
 class RefTable extends React.Component {
   constructor(props) {
@@ -26,6 +27,9 @@ class RefTable extends React.Component {
           title: "ID",
           dataIndex: "id",
           key: "id",
+          render: (text, record) => {
+            return record?.verbatimKey ? <NavLink to={{pathname: `/dataset/${record.datasetKey}/verbatim/${record.verbatimKey}`}}>{text}</NavLink> : text;
+          }
         },
         {
           title: "Citation",
