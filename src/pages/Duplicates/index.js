@@ -398,7 +398,8 @@ class DuplicateSearchPage extends React.Component {
           )
           .then((res) => {
             d.decision = res.data;
-            const statusMsg = `Status changed to ${decision} for ${_.get(
+            if(selectedRowKeys.length <= 10){
+                const statusMsg = `Status changed to ${decision} for ${_.get(
               d,
               "name.scientificName"
             )}`;
@@ -411,7 +412,8 @@ class DuplicateSearchPage extends React.Component {
               description: ["block", "ignore"].includes(decision)
                 ? decisionMsg
                 : statusMsg,
-            });
+            }); 
+            }
           })
           .catch((err) => {
             notification.error({
@@ -423,6 +425,10 @@ class DuplicateSearchPage extends React.Component {
 
     return Promise.all(promises)
       .then((res) => {
+        notification.open({
+          message: `${promises.length > 1 ? 'Decisions' : 'Decision' } applied`,
+          description: `${promises.length } ${promises.length > 1 ? 'names' : 'name'} affected`,
+        });
         this.setState({
           data: [...this.state.data],
           selectedRowKeys: [],
