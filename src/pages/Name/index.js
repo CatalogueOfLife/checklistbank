@@ -84,7 +84,7 @@ class NamePage extends React.Component {
         this.setState({
           referenceLoading: false,
           referenceErrorError: err,
-          name: null,
+          reference: null,
         });
       });
   };
