@@ -131,8 +131,8 @@ class DatasetMeta extends React.Component {
         
         return Promise.all([
           res.data,
-          user ? axios(`${config.dataApi}user/${createdBy}`) : null,
-          user ? axios(`${config.dataApi}user/${modifiedBy}`) : null,
+          axios(`${config.dataApi}user/${createdBy}`) ,
+          axios(`${config.dataApi}user/${modifiedBy}`) ,
           
         ]);
       })
