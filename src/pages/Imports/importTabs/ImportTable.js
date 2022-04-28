@@ -293,7 +293,7 @@ class ImportTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
+    const pager = { ...this.state.pagination, pageSize: pagination.pageSize };
     pager.current = pagination.current;
 
     this.setState({
@@ -356,6 +356,9 @@ class ImportTable extends React.Component {
             columns={columns}
             dataSource={data}
             pagination={this.state.pagination}
+            onShowSizeChange={(current, size) => {
+              console.log(`${current} ${size}`)
+            }}
             onChange={this.handleTableChange}
             rowKey="_id"
             expandedRowRender={
