@@ -27,7 +27,7 @@ class DeleteDatasetButton extends React.Component {
           message: "Deletion succeeded",
           description: `The dataset "${record.title}" was deleted`,
         });
-        this.setState({ importTriggered: false, deleteSuccess: true });
+        this.setState({ deletionTriggered: false, deleteSuccess: true });
       })
       .catch((err) => {
         this.setState({
@@ -65,7 +65,8 @@ class DeleteDatasetButton extends React.Component {
           <Button
             style={style}
             type={"danger"}
-            loading={this.state.importTriggered}
+            loading={this.state.deletionTriggered}
+            disabled={this.state.deletionTriggered}
           >
             Delete
           </Button>
