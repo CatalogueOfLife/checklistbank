@@ -15,7 +15,7 @@
         "dwc:Description.dwca:id": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
         "dwc:Distribution.dwca:id": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
         "dwc:Multimedia.dwca:id":  ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
-        "dwc:Reference.dwca:id": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
+        "dwc:Reference.dwca:id": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID", "gbif:Multimedia.dwca:ID"],
         "coldwc:NameRelations.dwca:id": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
         "coldwc:NameRelations.coldwc:relatedNameUsageID": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
    

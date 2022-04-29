@@ -15,7 +15,8 @@ const TYPES = {
   "acef:AcceptedInfraSpecificTaxa": "acef:AcceptedTaxonID",
   "dwc:Taxon": "dwca:ID",
   "col:Name": "col:ID",
-  "col:Reference": "col:ID"
+  "col:Reference": "col:ID",
+  "gbif:Multimedia": "dwca:ID"
 };
 
 const Verbatim = ({
