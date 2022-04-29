@@ -439,6 +439,11 @@ class TaxonPage extends React.Component {
               <Linkify>{_.get(info, "taxon.name.publishedIn.citation", "")}</Linkify>
             </PresentationItem>
           )}
+          {_.get(info, "taxon.accordingTo") &&  <PresentationItem md={md} label="According to">
+          { _.get(info, "taxon.accordingToId") ? <NavLink to={{pathname: `/dataset/${datasetKey}/reference/${_.get(info, "taxon.accordingToId")}`}}>{_.get(info, "taxon.accordingTo") }</NavLink>
+        : _.get(info, "taxon.accordingTo")   
+        }
+           </PresentationItem>}
           <Row style={{ borderBottom: "1px solid #eee" }}>
             <Col span={12}>
               {_.get(taxon, "status") && (
