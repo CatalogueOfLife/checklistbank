@@ -122,8 +122,8 @@ class VerbatimPresentation extends React.Component {
     const referencePath = {
       pathname:
         location.pathname.split(`dataset/${datasetKey}`)[0] +
-        `dataset/${datasetKey}/references/`,
-      search: `?limit=50&offset=0&q=${value}`,
+        `dataset/${datasetKey}/reference/${value}`,
+      //search: `?limit=50&offset=0&q=${value}`,
     };
 
     const isTaxonId =

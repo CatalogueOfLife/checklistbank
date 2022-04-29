@@ -28,7 +28,7 @@ class RefTable extends React.Component {
           dataIndex: "id",
           key: "id",
           render: (text, record) => {
-            return record?.verbatimKey ? <NavLink to={{pathname: `/dataset/${record.datasetKey}/verbatim/${record.verbatimKey}`}}>{text}</NavLink> : text;
+            return <NavLink to={{pathname: `/dataset/${record.datasetKey}/reference/${text}`}}>{text}</NavLink>;
           }
         },
         {

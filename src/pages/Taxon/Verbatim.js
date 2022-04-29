@@ -14,7 +14,8 @@ const TYPES = {
   "acef:AcceptedSpecies": "acef:AcceptedTaxonID",
   "acef:AcceptedInfraSpecificTaxa": "acef:AcceptedTaxonID",
   "dwc:Taxon": "dwca:ID",
-  "col:Name": "col:ID"
+  "col:Name": "col:ID",
+  "col:Reference": "col:ID"
 };
 
 const Verbatim = ({

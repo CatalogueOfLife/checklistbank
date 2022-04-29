@@ -30,6 +30,7 @@ import Helmet from "react-helmet";
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
 import Name from "../Name";
+import Reference from "../Reference"
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "moment";
@@ -206,6 +207,12 @@ class DatasetPage extends React.Component {
           <DatasetReferences
             datasetKey={datasetKey}
             location={this.props.location}
+          />
+        )}
+         {sect === "reference" && (
+          <Reference
+            datasetKey={datasetKey}
+            id={taxonOrNameKey}
           />
         )}
         {sect === "tasks" && (

@@ -855,6 +855,11 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
+              {_.isArray(_selectedKeys) &&
+                _selectedKeys.includes("reference") &&
+                taxonOrNameKey && (
+                  <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
+                )}
               {selectedDataset &&
                 !["managed", "released"].includes(
                   _.get(selectedDataset, "origin")
@@ -898,6 +903,7 @@ class BasicMenu extends Component {
                 taxonOrNameKey && (
                   <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
                 )}
+              
             </SubMenu>
           )}
         </Menu>
