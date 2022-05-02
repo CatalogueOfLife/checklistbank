@@ -9,12 +9,18 @@ import ErrorMsg from "../../components/ErrorMsg";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import BooleanValue from "../../components/BooleanValue";
+import AgentPresentation from "../../components/MetaData/AgentPresentation";
 import linkify from 'linkify-html';
+import _ from 'lodash';
 
 const {TabPane} = Tabs;
 const md = 5;
 
-
+const isCslPerson = (entity) => {
+ return !!(_.get(entity, '[0].family') || _.get(entity, '[0].isInstitution'));
+}
+const cslPersonsToStrings = (cslpersons) =>
+  cslpersons.map((p) => `${p.family}${p.given ? ", " + p.given : ""}`);
 
 const Reference = ({dataset, id, addError}) => {
     const [loading, setLoading] = useState(false)
@@ -77,10 +83,40 @@ const Reference = ({dataset, id, addError}) => {
               {reference?.remarks}
          </PresentationItem>
 
-         {reference?.csl && <> <Divider orientation="left">CSL</Divider>
+         {reference?.csl && <>
+            <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
+            <TabPane tab="CSL" key="1">
+                {Object.keys(reference.csl).map(key => {
+                    if(key === 'URL' && reference.csl[key]){
+                        return <PresentationItem md={md} label={key}>
+                        {
+                        <span
+                        dangerouslySetInnerHTML={{ __html: linkify(reference.csl[key])}}
+                      ></span>}
+                   </PresentationItem>
+                    }
+                    if(typeof reference.csl[key] === 'string'){
+                        return <PresentationItem md={md} label={key}>
+                        {reference.csl[key]}
+                   </PresentationItem>
+                    } else if(reference.csl[key] && _.get(reference, `csl[${key}]["date-parts"]`)){
+                        return <PresentationItem md={md} label={key}>
+                                {reference.csl[key]["date-parts"].map(part => _.get(part, '[0]', '')).join('-')}
+                            </PresentationItem>
+                    } else if(isCslPerson(reference.csl[key])){
+                        return <PresentationItem md={md} label={key}>
+                                <Row>
+                                {reference.csl[key].map(person => <Col style={{paddingRight: "6px"}}> <AgentPresentation agent={person} /></Col>)}
+                                </Row>
+                            </PresentationItem>
+                    }
+                })}
+            </TabPane>
+    <TabPane tab="JSON" key="2">
         <pre>
             {JSON.stringify(reference.csl, null, 2)}
-        </pre>
+        </pre> </TabPane>
+        </Tabs>
         </>}
             </TabPane>
             {reference?.verbatimKey &&  
