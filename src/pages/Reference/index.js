@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import PresentationItem from "../../components/PresentationItem";
 import PageContent from "../../components/PageContent";
 import Verbatim from "../Taxon/Verbatim";
-
+import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { Spin, Row, Col, Divider, Tabs } from "antd";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -57,18 +57,20 @@ const Reference = ({dataset, id, addError}) => {
     return  <PageContent>
         {loading && <Row><Col flex="auto"></Col><Col><Spin /></Col><Col flex="auto"></Col></Row>}
    {reference && <>
+    {reference?.citation &&   <h1 dangerouslySetInnerHTML={{ __html: linkify(reference?.citation)}}></h1>}
+
     <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
     <TabPane tab="Reference" key="1">
-        <PresentationItem md={md} label="ID">
+        <PresentationItem md={md} label="id">
               {reference?.id}
          </PresentationItem>
-         <PresentationItem md={md} label="citation">
+{/*          <PresentationItem md={md} label="citation">
          {reference?.citation && (
                <span
                   dangerouslySetInnerHTML={{ __html: linkify(reference?.citation)}}
                 ></span>
               )}
-         </PresentationItem>
+         </PresentationItem> */}
          <PresentationItem md={md} label="year">
               {reference?.year}
          </PresentationItem>
@@ -79,14 +81,11 @@ const Reference = ({dataset, id, addError}) => {
              <BooleanValue value={reference.parsed}/>
 
          </PresentationItem>
-         <PresentationItem md={md} label="remarks">
-              {reference?.remarks}
-         </PresentationItem>
+         
 
          {reference?.csl && <>
-            <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
-            <TabPane tab="CSL" key="1">
-                {Object.keys(reference.csl).map(key => {
+           
+                {Object.keys(reference.csl).filter(key => !['id'].includes(key)).map(key => {
                     if(key === 'URL' && reference.csl[key]){
                         return <PresentationItem md={md} label={key}>
                         {
@@ -111,13 +110,16 @@ const Reference = ({dataset, id, addError}) => {
                             </PresentationItem>
                     }
                 })}
-            </TabPane>
-    <TabPane tab="JSON" key="2">
-        <pre>
-            {JSON.stringify(reference.csl, null, 2)}
-        </pre> </TabPane>
-        </Tabs>
+            
         </>}
+        <PresentationItem md={md} label="remarks">
+              {reference?.remarks}
+         </PresentationItem>
+         <PresentationItem md={md} label="">
+              <NavLink to={{pathname: `/dataset/${dataset?.key}/names`, search: `?PUBLISHED_IN_ID=${reference?.id}`}}>
+              Names associated with this reference
+              </NavLink>
+         </PresentationItem>
             </TabPane>
             {reference?.verbatimKey &&  
     <TabPane tab="Verbatim" key="2">
