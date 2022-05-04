@@ -22,12 +22,14 @@ class HomePage extends React.Component {
       colSpeciesLoading: false,
       datasets: null,
       datasetsLoading: false,
+      latestCol: null
     };
   }
   componentDidMount = () => {
     this.getNameUsages();
     this.getCoLData();
     this.getDatasets();
+    this.getLatestCol();
   };
   getNameUsages = () => {
     this.setState({ nameUsagesLoading: true });
@@ -73,8 +75,22 @@ class HomePage extends React.Component {
       });
   };
 
+  getLatestCol = () => {
+    axios(`${config.dataApi}dataset/3LR`)
+      .then((res) => {
+        this.setState({
+          latestCol: res.data,
+          err: null,
+        });
+      })
+
+      .catch((err) => {
+        this.setState({  error: err, latestCol: null });
+      });
+  }
+
   render() {
-    const { nameUsages, colSpecies, datasets } = this.state;
+    const { nameUsages, colSpecies, datasets , latestCol} = this.state;
     return (
       <Layout openKeys={[]} selectedKeys={[]} title="">
         <Helmet
@@ -93,7 +109,7 @@ class HomePage extends React.Component {
           }
         >
           <Row>
-            <Col span={8}>
+            <Col span={6}>
               {colSpecies && (
                 <NavLink
                   to={{
@@ -108,7 +124,7 @@ class HomePage extends React.Component {
                 </NavLink>
               )}
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               {nameUsages && (
                 <NavLink to={{ pathname: `/` }} exact={true}>
                   <Statistic
@@ -118,12 +134,22 @@ class HomePage extends React.Component {
                 </NavLink>
               )}
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               {datasets && (
                 <NavLink to={{ pathname: `/dataset` }} exact={true}>
                   <Statistic
                     title="Datasets in ChecklistBank"
                     value={datasets.total}
+                  />
+                </NavLink>
+              )}
+            </Col>
+            <Col span={6}>
+              {latestCol && (
+                <NavLink to={{ pathname: `/dataset/${latestCol?.key}` }} exact={true}>
+                  <Statistic
+                    title="Latest COL Checklist"
+                    value={latestCol?.version}
                   />
                 </NavLink>
               )}
