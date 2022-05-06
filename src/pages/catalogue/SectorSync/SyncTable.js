@@ -16,6 +16,7 @@ import kibanaQuery from "./kibanaQuery";
 
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
+import DatasetAutocomplete from "../Assembly/DatasetAutocomplete"
 
 const PAGE_SIZE = 25;
 
@@ -230,10 +231,16 @@ class SyncTable extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    const params = qs.parse(_.get(this.props, "location.search"));
+    const prevParams = qs.parse(_.get(prevProps, "location.search"));
+
     if (
       _.get(prevProps, "match.params.catalogueKey") !==
-      _.get(this.props, "match.params.catalogueKey")
+      _.get(this.props, "match.params.catalogueKey") || 
+      _.get(prevParams, "datasetKey") !==  _.get(params, "datasetKey")
     ) {
+      
+
       this.setState(
         {
           pagination: {
@@ -241,7 +248,7 @@ class SyncTable extends React.Component {
             current: 1,
           },
         },
-        () => this.getData({ limit: 25, offset: 0 })
+        () => this.getData({...params, limit: 25, offset: 0 })
       );
     }
   };
@@ -323,6 +330,25 @@ class SyncTable extends React.Component {
 
     this.getData(query);
   };
+  updateSearch = (params) => {
+    let newParams = {
+      ...qs.parse(_.get(this.props, "location.search")),
+      ...params,
+      offset: 0,
+    };
+    Object.keys(params).forEach((param) => {
+      if (!params[param]) {
+        delete newParams[param];
+      }
+    });
+    history.push({
+      pathname: _.get(this.props, "location.pathname"),
+      search: qs.stringify(newParams),
+    });
+  };
+  onSelectDataset = (dataset) => {
+    this.updateSearch({ datasetKey: dataset.key });
+  };
 
   render() {
     const {
@@ -366,16 +392,15 @@ class SyncTable extends React.Component {
         {syncAllError && (
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
-
+        <Row>
         {!sectorKey && Auth.canEditDataset({key: catalogueKey}, user) && (
-          <SyncAllSectorsButton
+         <Col> <SyncAllSectorsButton
             catalogueKey={catalogueKey}
             onError={(err) => this.setState({ syncAllError: err })}
             onSuccess={() => this.setState({ syncAllError: null })}
-          />
+          /></Col>
         )}
         {sectorKey && (
-          <Row>
             <Col>
               <h1>Imports for sector {sectorKey}</h1>{" "}
               <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
@@ -383,9 +408,15 @@ class SyncTable extends React.Component {
                 Show imports for all sectors
               </a>
             </Col>
-            <Col></Col>
-          </Row>
         )}
+        <Col flex="auto"></Col>
+        <Col>
+        <DatasetAutocomplete contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
+        </Col>
+
+        </Row>
+        
+        
         {!error && (
           <Table
             scroll={{ x: 1000 }}
