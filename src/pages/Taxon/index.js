@@ -22,6 +22,8 @@ import history from "../../history";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import References from "./References";
+import TypeMaterial from "./TypeMaterial";
+
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
 import TaxonBreakdown from "./TaxonBreakdown";
@@ -628,6 +630,12 @@ class TaxonPage extends React.Component {
               >
                 <LinkOutlined />
               </NavLink>
+             
+            </PresentationItem>
+          )}
+          {_.get(info, "typeMaterial") && (
+            <PresentationItem md={md} label="Type material">
+              <TypeMaterial data={_.get(info, "typeMaterial")} />
              
             </PresentationItem>
           )}
