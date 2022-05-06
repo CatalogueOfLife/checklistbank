@@ -161,7 +161,11 @@ class DatasetList extends React.Component {
           dataIndex: ["contact", "name"],
           key: "contact",
         },
-
+        {
+          title: "Type",
+          dataIndex: "type",
+          key: "type",
+        },
         {
           title: "License",
           dataIndex: "license",
@@ -388,7 +392,7 @@ class DatasetList extends React.Component {
       params,
       pagination,
     } = this.state;
-    const { datasetOrigin, recentDatasets } = this.props;
+    const { datasetOrigin, recentDatasets, datasetType } = this.props;
     defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
@@ -400,17 +404,17 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[7].filteredValue = null;
     }
-    /*     defaultColumns[6].filters = datasetType.map((i) => ({
+        defaultColumns[9].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.type) {
-      defaultColumns[6].filteredValue = _.isArray(params.type)
+      defaultColumns[9].filteredValue = _.isArray(params.type)
         ? params.type
         : [params.type];
     } else {
-      defaultColumns[6].filteredValue = null;
-    } */
+      defaultColumns[9].filteredValue = null;
+    } 
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
           ...defaultColumns,
