@@ -21,6 +21,7 @@ import moment from "moment";
 import history from "../../history";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
+import References from "./References";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
 import TaxonBreakdown from "./TaxonBreakdown";
@@ -630,7 +631,7 @@ class TaxonPage extends React.Component {
              
             </PresentationItem>
           )}
-          <Row>
+          <Row style={{borderBottom: "1px solid #eee"}}>
             {_.get(taxon, "scrutinizer") && (
               <Col span={12}>
                 <PresentationItem md={md * 2} label="Taxonomic scrutiny">
@@ -652,6 +653,12 @@ class TaxonPage extends React.Component {
               )}
             </Col>
           </Row>
+          {_.get(info, "references") && (
+            <PresentationItem md={md} label="References">
+              <References data={_.get(info, "references")} />
+             
+            </PresentationItem>
+          )}
     </TabPane>
    {_.get(taxon, "verbatimKey") &&  
     <TabPane tab="Verbatim" key="2">

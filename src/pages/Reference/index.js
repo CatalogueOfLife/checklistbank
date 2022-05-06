@@ -19,8 +19,7 @@ const md = 5;
 const isCslPerson = (entity) => {
  return !!(_.get(entity, '[0].family') || _.get(entity, '[0].isInstitution'));
 }
-const cslPersonsToStrings = (cslpersons) =>
-  cslpersons.map((p) => `${p.family}${p.given ? ", " + p.given : ""}`);
+
 
 const Reference = ({dataset, id, addError}) => {
     const [loading, setLoading] = useState(false)
@@ -47,13 +46,6 @@ const Reference = ({dataset, id, addError}) => {
         }
       }, [id, dataset]);
 
-      /*
-      "citation": "string",
-  "year": 0,
-  "remarks": "string",
-  "page": "string",
-  "parsed": true
-      */
     return  <PageContent>
         {loading && <Row><Col flex="auto"></Col><Col><Spin /></Col><Col flex="auto"></Col></Row>}
    {reference && <>
