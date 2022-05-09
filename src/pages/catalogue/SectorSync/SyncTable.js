@@ -157,7 +157,7 @@ const getColumns = (catalogueKey) => [
     key: "finished",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("MMMM Do, h:mm a") : "";
+      return date ? moment(date).format("MMMM Do YYYY, h:mm a") : "";
     },
   },
   {
