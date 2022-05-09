@@ -7,6 +7,7 @@ import withContext from "../../components/hoc/withContext";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import { Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
+import TypeMaterialPopover from "./TypeMaterialPopover";
 
 const SynonymsTable = ({
   datasetKey,
@@ -15,6 +16,7 @@ const SynonymsTable = ({
   onEditSuccess,
   getNomStatus,
   references,
+  typeMaterial,
   canEdit,
 }) => {
   const uri = `/dataset/${datasetKey}/name/`;
@@ -85,6 +87,12 @@ const SynonymsTable = ({
                   : s.referenceIds
               }
               placement="bottom"
+            />
+            <TypeMaterialPopover 
+            datasetKey={datasetKey}
+            typeMaterial={typeMaterial}
+            nameId={_.get(s, "name.id")}
+            placement="bottom"
             />
           </BorderedListItem>
         ))}

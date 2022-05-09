@@ -10,8 +10,7 @@ import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
-
-import VerbatimPresentation from "../../components/VerbatimPresentation";
+import TypeMaterial from "../Taxon/TypeMaterial";
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
@@ -29,6 +28,7 @@ class NamePage extends React.Component {
       usages: [],
       relations: [],
       synonyms: [],
+      typeMaterial: [],
       publishedIn: null,
       verbatim: null,
       nameLoading: true,
@@ -51,6 +51,7 @@ class NamePage extends React.Component {
     this.getUsages(datasetKey, nameKey);
     this.getRelations(datasetKey, nameKey);
     this.getSynonyms(datasetKey, nameKey);
+    this.getTypeMaterial(datasetKey, nameKey);
   }
   componentDidUpdate = (prevProps) => {
     if (
@@ -67,6 +68,8 @@ class NamePage extends React.Component {
       this.getUsages(datasetKey, nameKey);
       this.getRelations(datasetKey, nameKey);
       this.getSynonyms(datasetKey, nameKey);
+      this.getTypeMaterial(datasetKey, nameKey);
+
     }
   };
   getReference = (referenceKey) => {
@@ -103,6 +106,14 @@ class NamePage extends React.Component {
         ).then(() => {
           this.setState({ relations: relations.data });
         });
+      }
+    );
+  };
+
+  getTypeMaterial = (key, nameKey) => {
+    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/types`).then(
+      (types) => {
+        this.setState({ typeMaterial: types.data });
       }
     );
   };
@@ -153,6 +164,7 @@ class NamePage extends React.Component {
       usages,
       name,
       reference,
+      typeMaterial,
       nameError,
       relations,
       synonyms,
@@ -306,6 +318,12 @@ class NamePage extends React.Component {
                 {publishedIn.citation}
               </PresentationItem>
             )}
+            {typeMaterial && typeMaterial.length > 0 && (
+            <PresentationItem md={md} label="Type material">
+              <TypeMaterial data={{[name.id]: typeMaterial}} nameID={_.get(name, 'id')} />
+             
+            </PresentationItem>
+          )}
             {relations && relations.length > 0 && (
               <PresentationItem
                 md={md}

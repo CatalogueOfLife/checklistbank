@@ -447,6 +447,12 @@ class TaxonPage extends React.Component {
         : _.get(info, "taxon.accordingTo")   
         }
            </PresentationItem>}
+           {_.get(info, "typeMaterial") && _.get(info, `typeMaterial[${_.get(taxon, 'name.id')}]`) && (
+            <PresentationItem md={md} label="Type material">
+              <TypeMaterial data={_.get(info, "typeMaterial")} nameID={_.get(taxon, 'name.id')} />
+             
+            </PresentationItem>
+          )}
           <Row style={{ borderBottom: "1px solid #eee" }}>
             <Col span={12}>
               {_.get(taxon, "status") && (
@@ -470,6 +476,7 @@ class TaxonPage extends React.Component {
                 canEdit={this.canEdit}
                 data={synonyms}
                 references={_.get(info, "references")}
+                typeMaterial={_.get(info, "typeMaterial")}
                 style={{ marginTop: "-3px" }}
                 datasetKey={datasetKey}
                 catalogueKey={catalogueKey}
@@ -482,6 +489,7 @@ class TaxonPage extends React.Component {
               <SynonymTable
                 data={misapplied}
                 references={_.get(info, "references")}
+                typeMaterial={_.get(info, "typeMaterial")}
                 style={{ marginBottom: 16, marginTop: "-3px" }}
                 datasetKey={datasetKey}
                 catalogueKey={catalogueKey}
@@ -633,12 +641,6 @@ class TaxonPage extends React.Component {
              
             </PresentationItem>
           )}
-          {_.get(info, "typeMaterial") && (
-            <PresentationItem md={md} label="Type material">
-              <TypeMaterial data={_.get(info, "typeMaterial")} />
-             
-            </PresentationItem>
-          )}
           <Row style={{borderBottom: "1px solid #eee"}}>
             {_.get(taxon, "scrutinizer") && (
               <Col span={12}>
@@ -674,9 +676,6 @@ class TaxonPage extends React.Component {
       </TabPane>}
     
   </Tabs>
-
-        
-
           
         </div>
       </React.Fragment>
