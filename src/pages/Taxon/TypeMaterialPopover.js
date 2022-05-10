@@ -44,9 +44,9 @@ class TypeMaterialPopover extends React.Component {
       return (
         <ul>
           {typeMaterial.map((s) => (
-           <> <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag> <span
+           <> <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag>{s?.citation && <span
             dangerouslySetInnerHTML={{ __html: linkify(s?.citation)}}
-          ></span></>
+          ></span>}</>
           ))}
         </ul>
       );

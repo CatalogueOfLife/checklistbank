@@ -24,9 +24,9 @@ const TypeMaterial = ({ data, nameID, style }) => {
   return (
     data[nameID] ? <div style={style}>
       {data[nameID].map(s => <BorderedListItem key={s.id}>
-            <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag> <span
+            <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag> {s?.citation && <span
                   dangerouslySetInnerHTML={{ __html: linkify(s?.citation)}}
-                ></span>
+                ></span>}
           </BorderedListItem>)
         }
     </div> : null
