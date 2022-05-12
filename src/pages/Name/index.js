@@ -409,6 +409,13 @@ class NamePage extends React.Component {
             <PresentationItem md={md} label="Published In Page">
               {name.publishedInPage}
             </PresentationItem>
+            <PresentationItem md={md} label="Published In Page Link">
+              {name.publishedInPageLink && (
+                <a href={name.publishedInPageLink} target="_blank">
+                  {name.publishedInPageLink}
+                </a>
+              )}
+            </PresentationItem>
             {_.get(name, "namesIndexId") && (
             <PresentationItem md={md} label="Related names">
               <NavLink

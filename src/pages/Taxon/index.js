@@ -447,6 +447,13 @@ class TaxonPage extends React.Component {
         : _.get(info, "taxon.accordingTo")   
         }
            </PresentationItem>}
+           {_.get(info, "taxon.name.publishedInPageLink") &&   <PresentationItem md={md} label="Published In Page Link">
+           
+                <a href={_.get(info, "taxon.name.publishedInPageLink") } target="_blank">
+                  {_.get(info, "taxon.name.publishedInPageLink") }
+                </a>
+              
+            </PresentationItem>}
            {_.get(info, "typeMaterial") && _.get(info, `typeMaterial[${_.get(taxon, 'name.id')}]`) && (
             <PresentationItem md={md} label="Type material">
               <TypeMaterial data={_.get(info, "typeMaterial")} nameID={_.get(taxon, 'name.id')} />
