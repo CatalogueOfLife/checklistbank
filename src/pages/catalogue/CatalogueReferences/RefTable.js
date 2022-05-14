@@ -28,7 +28,7 @@ class RefTable extends React.Component {
           dataIndex: "id",
           key: "id",
           render: (text, record) => {
-            return <NavLink to={{pathname: `/dataset/${record.datasetKey}/reference/${text}`}}>{text}</NavLink>;
+            return <NavLink to={{pathname: `/dataset/${record.datasetKey}/reference/${encodeURIComponent(text)}`}}>{text}</NavLink>;
           }
         },
         {

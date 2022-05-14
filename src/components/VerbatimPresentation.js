@@ -22,8 +22,8 @@ const isValidURL = (string) => {
     /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
   // const exp = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
   var res = string.match(exp);
-  if (res == null) return false;
-  else return true;
+  if (res === null) return false;
+  else return string.trim().startsWith(res);
 };
 
 class VerbatimPresentation extends React.Component {
@@ -368,8 +368,8 @@ class VerbatimPresentation extends React.Component {
           )}
 
           {_.get(verbatim, "terms") &&
-            terms.map((t) =>
-              verbatim.terms[t] ? (
+             Object.keys(verbatim.terms).map((t) =>
+               (
                 <PresentationItem md={md} label={t} key={t}>
                   {this.renderTerm(
                     t,
@@ -378,9 +378,7 @@ class VerbatimPresentation extends React.Component {
                     homoglyphs
                   )}
                 </PresentationItem>
-              ) : (
-                ""
-              )
+              ) 
             )}
         </React.Fragment>
       </Card>
@@ -469,8 +467,9 @@ class VerbatimPresentation extends React.Component {
             )}
 
             {_.get(verbatim, "terms") &&
-              terms.map((t) =>
-                verbatim.terms[t] ? (
+              /* terms.map((t) => */
+              Object.keys(verbatim.terms).map((t) =>
+                 (
                   <PresentationItem md={md} label={t} key={t}>
                     {this.renderTerm(
                       t,
@@ -479,9 +478,7 @@ class VerbatimPresentation extends React.Component {
                       homoglyphs
                     )}
                   </PresentationItem>
-                ) : (
-                  ""
-                )
+                ) 
               )}
           </React.Fragment>
         )}
