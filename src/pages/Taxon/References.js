@@ -12,7 +12,7 @@ const ReferencesTable = ({ data, style }) => {
         
         .map(s => (
           <BorderedListItem key={s.id}>
-            <NavLink to={{pathname: `/dataset/${s?.datasetKey}/reference/${s?.id}`}}>
+            <NavLink to={{pathname: `/dataset/${s?.datasetKey}/reference/${encodeURIComponent(s?.id)}`}}>
               <LinkOutlined />
               </NavLink> <span
                   dangerouslySetInnerHTML={{ __html: linkify(s?.citation)}}
