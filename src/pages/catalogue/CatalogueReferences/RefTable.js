@@ -121,8 +121,8 @@ class RefTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
+    const pager = { ...this.state.pagination, ...pagination };
+    // pager.current = pagination.current;
 
     this.setState({
       pagination: pager,

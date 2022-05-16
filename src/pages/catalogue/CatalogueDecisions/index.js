@@ -153,8 +153,8 @@ class CatalogueDecisions extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
+    const pager = { ...this.state.pagination, ...pagination };
+    //pager.current = pagination.current;
 
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
@@ -680,6 +680,7 @@ class CatalogueDecisions extends React.Component {
               dataSource={data}
               loading={loading}
               pagination={pagination}
+             
               rowKey="id"
              /*  expandedRowRender={(record) => (
                 <pre>

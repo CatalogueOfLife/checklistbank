@@ -293,8 +293,8 @@ class ImportTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, pageSize: pagination.pageSize };
-    pager.current = pagination.current;
+    const pager = { ...this.state.pagination, ...pagination };
+    //pager.current = pagination.current;
 
     this.setState({
       pagination: pager,

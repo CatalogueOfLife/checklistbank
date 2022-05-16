@@ -131,8 +131,8 @@ class DatasetSectors extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
+    const pager = { ...this.state.pagination, ...pagination };
+    // pager.current = pagination.current;
 
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
