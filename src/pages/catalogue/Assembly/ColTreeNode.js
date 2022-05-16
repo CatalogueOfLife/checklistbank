@@ -180,6 +180,7 @@ class ColTreeNode extends React.Component {
       catalogueKey,
       dataset,
     } = this.props;
+    const hasDatasetSectors = datasetSectors && ( sector && sector.subjectDatasetKey ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey])).length > 0 : true)
 
     const { childModalVisible, editTaxonModalVisible, estimateModalVisible, decision } =
       this.state;
@@ -536,24 +537,7 @@ class ColTreeNode extends React.Component {
                           : ""}
                       </span>
                     )}
-                    {sector && (
-                      <span>
-                        <span> • </span>
-                        <NavLink
-                          to={{
-                            pathname: releaseKey
-                              ? `/dataset/${releaseKey}/source/${sector.dataset.key}`
-                              : `/dataset/${sector.dataset.key}/about`,
-                          }}
-                          exact={true}
-                        >
-                          {" "}
-                          <span style={{ fontSize: "11px" }}>
-                            {sector.dataset.alias || sector.dataset.key}{" "}
-                          </span>
-                        </NavLink>
-                      </span>
-                    )}
+                    
 
                     {taxon.status === "provisionally accepted" && (
                       <React.Fragment>
@@ -567,10 +551,27 @@ class ColTreeNode extends React.Component {
                         </Tag>
                       </React.Fragment>
                     )}
-
-                    {datasetSectors && !_.isEmpty(datasetSectors) && (
+                    {(sector || hasDatasetSectors) && <span> • </span>}
+                    {sector && (
+                      <span>
+                        <NavLink
+                          to={{
+                            pathname: releaseKey
+                              ? `/dataset/${releaseKey}/source/${sector.dataset.key}`
+                              : `/dataset/${sector.dataset.key}/about`,
+                          }}
+                          exact={true}
+                        >
+                          {" "}
+                          <span style={hasDatasetSectors ? {fontWeight: 'bold', fontSize: "11px"} : { fontSize: "11px" }} >
+                            {sector.dataset.alias || sector.dataset.key}{hasDatasetSectors && ", "}
+                          </span>
+                        </NavLink>
+                      </span>
+                    )}
+                    {hasDatasetSectors && (
                       <TaxonSources
-                        datasetSectors={datasetSectors}
+                        datasetSectors={sector && sector.subjectDatasetKey ? _.omit(datasetSectors, [sector.subjectDatasetKey]) : datasetSectors}
                         taxon={taxon}
                         releaseKey={releaseKey}
                         catalogueKey={catalogueKey}

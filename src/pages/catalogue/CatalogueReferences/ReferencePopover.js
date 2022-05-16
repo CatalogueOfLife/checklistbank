@@ -19,7 +19,7 @@ class ReferencePopover extends React.Component {
   getData = () => {
     const { referenceId, datasetKey, references } = this.props;
     if (referenceId) {
-      const refIds = !_.isArray(referenceId) ? [referenceId] : referenceId;
+      const refIds = !_.isArray(referenceId) ? [referenceId] : [...new Set(referenceId)];
       const reference = [];
       this.setState({ loading: true });
       Promise.all(

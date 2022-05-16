@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Popover, Spin } from "antd";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
-
+import _ from 'lodash'
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 class TaxonSources extends React.Component {
@@ -32,7 +32,7 @@ class TaxonSources extends React.Component {
     );
 
     Promise.all(promises).then((data) => {
-      this.setState({ data, loading: false });
+      this.setState({ data:_.sortBy(data, ['alias']), loading: false });
     });
   };
 
@@ -42,7 +42,6 @@ class TaxonSources extends React.Component {
 
     return showInNode ? (
       <React.Fragment>
-        {" •"}{" "}
         {data.map((d, index) => (
           <span key={index} style={{ fontSize: "11px" }}>
             <NavLink
@@ -92,7 +91,6 @@ class TaxonSources extends React.Component {
           trigger="click"
           placement="rightTop"
         >
-          {" •"}{" "}
           <a
             style={{ fontSize: "11px" }}
             href=""
