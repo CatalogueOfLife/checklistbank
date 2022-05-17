@@ -15,7 +15,7 @@ import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-
+import  Releases  from "./Releases";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
@@ -92,7 +92,7 @@ class DatasetList extends React.Component {
           title: "Creator",
           dataIndex: "creator",
           key: "creator",
-          sorter: true,
+         // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -113,7 +113,7 @@ class DatasetList extends React.Component {
           title: "Editor",
           dataIndex: "editor",
           key: "editor",
-          sorter: true,
+         // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -134,7 +134,7 @@ class DatasetList extends React.Component {
           title: "Contributor",
           dataIndex: "contributor",
           key: "contributor",
-          sorter: true,
+         // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -265,6 +265,9 @@ class DatasetList extends React.Component {
     const params = qs.parse(_.get(this.props, "location.search"));
     if (params.releasedFrom !== prevParams.releasedFrom) {
       let params = qs.parse(_.get(this.props, "location.search"));
+      if(!params.releasedFrom){
+        params.origin = ['managed', 'external'] 
+      }
       this.setState(
         {
           params,
@@ -566,7 +569,7 @@ class DatasetList extends React.Component {
             <ConfigProvider renderEmpty={() => noParams ? 
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search filters specified"> 
                 <Button type="primary" onClick={() => {
-                  let  params = { limit: PAGE_SIZE, offset: 0 };
+                  let  params = { limit: PAGE_SIZE, offset: 0, origin: ['managed', 'external'] };
                     history.push({
                       pathname: "/dataset",
                       search: `?limit=${PAGE_SIZE}&offset=0`,
@@ -596,6 +599,10 @@ class DatasetList extends React.Component {
               scroll={{ x: `${columns.length * 120}px` }}
               pagination={pagination}
               onChange={this.handleTableChange}
+              expandable={{
+                expandedRowRender: record => <Releases dataset={record} />,
+                rowExpandable: record => record.origin === 'managed',
+              }}
             />
             </ConfigProvider>
           )}

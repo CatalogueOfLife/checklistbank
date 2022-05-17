@@ -452,3 +452,14 @@ span.small-text {
   border-bottom: 1px solid #666666;
   text-align: left;
 }
+
+
+.ant-table-wrapper.releases .ant-table-container::after {
+  
+  box-shadow: none !important;
+}
+
+
+
+
+
