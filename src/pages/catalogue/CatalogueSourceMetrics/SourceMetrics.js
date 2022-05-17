@@ -111,6 +111,7 @@ class SourceMetrics extends React.Component {
                   "datasetKey",
                   "sourceKey",
                   "latestMd5",
+                  "datasetMd5"
                 ].includes(c))
             ),
             ...Object.keys(columns)
