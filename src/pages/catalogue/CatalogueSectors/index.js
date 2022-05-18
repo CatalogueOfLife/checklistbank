@@ -554,7 +554,20 @@ class CatalogueSectors extends React.Component {
               onDeleteSector={this.onDeleteSector}
               pagination={pagination}
               handleTableChange={this.handleTableChange}
-              expandedRowRender={
+              expandable={{
+                expandedRowRender: (record) => (
+                  <React.Fragment>
+                    <SectorForm
+                      sector={record}
+                      onError={(err) => this.setState({ error: err })}
+                    />
+
+                    {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
+                  </React.Fragment>
+                ),
+                rowExpandable: Auth.canEditDataset({key: catalogueKey}, user)
+              }}
+              /* expandedRowRender={
                 !Auth.canEditDataset({key: catalogueKey}, user)
                   ? null
                   : (record) => (
@@ -564,10 +577,9 @@ class CatalogueSectors extends React.Component {
                           onError={(err) => this.setState({ error: err })}
                         />
 
-                        {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
                       </React.Fragment>
                     )
-              }
+              } */
             ></SectorTable>
           )}
         </PageContent>

@@ -407,7 +407,10 @@ class SectorTable extends React.Component {
           loading={loading}
           pagination={pagination}
           rowKey="id"
-          expandedRowRender={expandedRowRender}
+          expandable={{
+            expandedRowRender: expandedRowRender
+          }}
+          /* expandedRowRender={expandedRowRender} */
         />
       </React.Fragment>
     );

@@ -427,7 +427,40 @@ class SyncTable extends React.Component {
             pagination={this.state.pagination}
             onChange={this.handleTableChange}
             rowKey="_id"
-            expandedRowRender={(record) => {
+            expandable={{
+              rowExpandable: ["failed", "finished"].includes(record.state),
+              expandedRowRender: (record) => {
+                if (record.state === "failed") {
+                  return <Alert message={record.error} type="error" />;
+                } else if (record.state === "finished") {
+                  return (
+                    <React.Fragment>
+                      <Tag key="speciesCount" color="blue">
+                        Species Count: {_.get(record, `taxaByRankCount.species`)}
+                      </Tag>
+                      {[
+                        "taxonCount",
+                        "synonymCount",
+                        "referenceCount",
+                        "distributionCount",
+                        "descriptionCount",
+                        "vernacularCount",
+                        "mediaCount",
+                      ].map((c) =>
+                        !isNaN(_.get(record, `${c}`)) ? (
+                          <Tag key={c} color="blue">
+                            {_.startCase(c)}: {_.get(record, `${c}`)}
+                          </Tag>
+                        ) : (
+                          ""
+                        )
+                      )}
+                    </React.Fragment>
+                  );
+                };
+              }
+            }}
+           /*  expandedRowRender={(record) => {
               if (record.state === "failed") {
                 return <Alert message={record.error} type="error" />;
               } else if (record.state === "finished") {
@@ -456,7 +489,7 @@ class SyncTable extends React.Component {
                   </React.Fragment>
                 );
               } else return null;
-            }}
+            }} */
           />
         )}
       </PageContent>

@@ -1012,7 +1012,32 @@ class WorkBench extends React.Component {
             rowSelection={
               !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection
             }
-            expandedRowRender={
+            expandable={{
+              rowExpandable: Auth.isAuthorised(user, ["editor"]),
+              expandedRowRender: (record) =>
+              _.get(record, "decisions[0]") ? (
+                <React.Fragment>
+                  {record.decisions[0].mode === "update" && (
+                    <a
+                      onClick={() => {
+                        this.setState({
+                          rowsForEdit: [record],
+                          decisionFormVisible: true,
+                        });
+                      }}
+                    >
+                      Edit <EditOutlined />
+                    </a>
+                  )}
+                  <pre>
+                    {JSON.stringify(record.decisions[0], null, 4)}
+                  </pre>
+                </React.Fragment>
+              ) : (
+                ""
+              )
+            }}
+           /*  expandedRowRender={
               !Auth.isAuthorised(user, ["editor"])
                 ? null
                 : (record) =>
@@ -1037,7 +1062,7 @@ class WorkBench extends React.Component {
                     ) : (
                       ""
                     )
-            }
+            } */
           />
         )}
       </div>

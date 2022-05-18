@@ -361,7 +361,17 @@ class ImportTable extends React.Component {
             }}
             onChange={this.handleTableChange}
             rowKey="_id"
-            expandedRowRender={
+            expandable={{
+              expandedRowRender: (record) => {
+                if (record.state === "failed") {
+                  return <Alert message={record.error} type="error" />;
+                } else {
+                  return <ImportMetrics data={record}></ImportMetrics>;
+                }
+              },
+              rowExpandable: section === "finished"
+            }}
+           /*  expandedRowRender={
               section === "finished"
                 ? (record) => {
                     if (record.state === "failed") {
@@ -371,7 +381,7 @@ class ImportTable extends React.Component {
                     }
                   }
                 : null
-            }
+            } */
           />
         )}
       </PageContent>

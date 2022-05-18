@@ -483,7 +483,10 @@ class Root extends React.Component {
                 pageSizeOptions: [10, 20, 50, 100, 250, 500],
               }}
               size="middle"
-              expandedRowRender={this.expandedRowRender}
+              expandable={{
+                expandedRowRender: this.expandedRowRender
+              }}
+
               rowKey="_key"
             />
           </div>
