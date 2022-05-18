@@ -565,7 +565,7 @@ class CatalogueSectors extends React.Component {
                     {/* <pre>{JSON.stringify(_.omit(record, ['dataset']),  null, 4)}</pre>  */}
                   </React.Fragment>
                 ),
-                rowExpandable: Auth.canEditDataset({key: catalogueKey}, user)
+                rowExpandable: () => Auth.canEditDataset({key: catalogueKey}, user)
               }}
               /* expandedRowRender={
                 !Auth.canEditDataset({key: catalogueKey}, user)

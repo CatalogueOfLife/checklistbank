@@ -1013,7 +1013,7 @@ class WorkBench extends React.Component {
               !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection
             }
             expandable={{
-              rowExpandable: Auth.isAuthorised(user, ["editor"]),
+              rowExpandable: () => Auth.isAuthorised(user, ["editor"]),
               expandedRowRender: (record) =>
               _.get(record, "decisions[0]") ? (
                 <React.Fragment>

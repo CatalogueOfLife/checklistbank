@@ -428,7 +428,7 @@ class SyncTable extends React.Component {
             onChange={this.handleTableChange}
             rowKey="_id"
             expandable={{
-              rowExpandable: ["failed", "finished"].includes(record.state),
+              rowExpandable: (record) => ["failed", "finished"].includes(record.state),
               expandedRowRender: (record) => {
                 if (record.state === "failed") {
                   return <Alert message={record.error} type="error" />;
