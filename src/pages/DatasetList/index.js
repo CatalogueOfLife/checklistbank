@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
-import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag, ConfigProvider, Empty } from "antd";
+import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag, ConfigProvider, Empty, Popconfirm, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -38,6 +38,8 @@ class DatasetList extends React.Component {
     super(props);
 
     this.state = {
+      selectedRowKeys: [],
+      selectedRows: [],
       data: [],
       excludeColumns:
         JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
@@ -385,6 +387,67 @@ class DatasetList extends React.Component {
     this.setState({ excludeColumns });
   };
 
+  importDatasets = async (rows) => {
+    const {addError} = this.props;
+    for (const dataset of rows.filter(d => d.origin === 'external')) {
+      try {
+        await axios
+        .post(`${config.dataApi}importer`, {
+          datasetKey: dataset.Key,
+          priority: true,
+          force: true,
+        })
+        notification.open({
+          message: `Import started`,
+          description: `Dataset: ${dataset?.alias || dataset.key}`,
+        })
+      } catch (error) {
+        addError(error)
+        notification.error({
+          message: `Error`,
+          description: `It was not possible to import ${dataset?.alias || dataset.key}`,
+        })
+      }
+    }
+
+    this.setState({selectedRows: [], selectedRowKeys: []})
+  }
+
+  deleteDatasets = async (rows) => {
+    const {addError} = this.props;
+    for (const dataset of rows) {
+      try {
+        await axios
+        .delete(`${config.dataApi}dataset/${dataset.key}`)
+        notification.open({
+          message: `Deletion triggered`,
+          description: `Dataset: ${dataset?.alias || dataset.key}`,
+        })
+      } catch (error) {
+        addError(error)
+        notification.error({
+          message: `Error`,
+          description: `It was not possible to delete ${dataset?.alias || dataset.key}`,
+        })
+      }
+    }
+    this.setState({selectedRows: [], selectedRowKeys: []})
+  }
+
+  getConfirmText = (action) => {
+    const maxDatasets = 5;
+    const {selectedRows} = this.state;
+    return <>Do you want to {action}<ul>
+            {selectedRows.slice(0, maxDatasets).map((d) => (
+              <li>{d?.alias || d.key}</li>
+            ))}
+          </ul>
+          {selectedRows.length > maxDatasets && <span>and {selectedRows.length - maxDatasets} more datasets? </span>}
+          </>
+          
+
+  }
+
   render() {
     const {
       data,
@@ -395,7 +458,7 @@ class DatasetList extends React.Component {
       params,
       pagination,
     } = this.state;
-    const { datasetOrigin, recentDatasets, datasetType } = this.props;
+    const { datasetOrigin, recentDatasets, datasetType, user } = this.props;
     defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
@@ -603,6 +666,37 @@ class DatasetList extends React.Component {
                 expandedRowRender: record => <Releases dataset={record} />,
                 rowExpandable: record => record.origin === 'managed',
               }}
+              rowSelection={
+                !Auth.isAuthorised(user, ["admin"]) ? null : {
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    this.setState({selectedRowKeys, selectedRows})
+                   // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                  },
+                  selections: [
+                    {
+                      key: 'import',
+                      text: <Popconfirm
+                      placement="topLeft"
+                      title={this.getConfirmText('import')}
+                      onConfirm={() => this.importDatasets(this.state.selectedRows)}
+                      okText="Yes"
+                      cancelText="No"
+                    ><Button onClick={e => e.stopPropagation()} type="primary">Import {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
+                      
+                    },
+                    {
+                      key: 'delete',
+                      text: <Popconfirm
+                      placement="topLeft"
+                      title={this.getConfirmText('delete')}
+                      onConfirm={() => this.deleteDatasets(this.state.selectedRows)}
+                      okText="Yes"
+                      cancelText="No"
+                    ><Button onClick={e => e.stopPropagation()} type="danger">Delete {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
+                     
+                    }]
+                }
+              }
             />
             </ConfigProvider>
           )}
@@ -618,6 +712,7 @@ const mapContextToProps = ({
   datasetOrigin,
   catalogueKey,
   recentDatasets,
-}) => ({ user, datasetType, datasetOrigin, catalogueKey, recentDatasets });
+  addError
+}) => ({ user, datasetType, datasetOrigin, catalogueKey, recentDatasets, addError });
 
 export default withContext(mapContextToProps)(DatasetList);
