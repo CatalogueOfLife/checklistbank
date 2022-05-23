@@ -369,7 +369,7 @@ class ImportTable extends React.Component {
                   return <ImportMetrics data={record}></ImportMetrics>;
                 }
               },
-              rowExpandable: () => section === "finished"
+              rowExpandable: (record) => section === "finished" && record.state !== "canceled"
             }}
            /*  expandedRowRender={
               section === "finished"
