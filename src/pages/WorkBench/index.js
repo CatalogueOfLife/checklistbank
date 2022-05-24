@@ -18,6 +18,7 @@ import {
   notification,
   Switch,
   Form,
+  Tabs
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -34,6 +35,10 @@ import DecisionForm from "./DecisionForm";
 import Auth from "../../components/Auth";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import RegExSearch from "./RegExSearch";
+
+const {TabPane} = Tabs;
+
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -422,6 +427,16 @@ class WorkBench extends React.Component {
     _.forEach(params, (v, k) => {
       newParams[k] = v;
     });
+    Object.keys(params).forEach((param) => {
+      if (!params[param]) {
+        delete newParams[param];
+      }
+    });
+    if(newParams?.USAGE_ID){
+      newParams.unsafe=true
+    } else {
+      delete newParams.unsafe;
+    }
     this.setState(
       {
         params: newParams,
@@ -702,7 +717,9 @@ class WorkBench extends React.Component {
             />
           )}
         </Row>
-        <Row style={{ marginBottom: "10px" }}>
+        <Tabs defaultActiveKey="1" >
+    <TabPane tab="Seach" key="1">
+    <Row style={{ marginBottom: "10px" }}>
           <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
             <SearchBox
               defaultValue={_.get(params, "q")}
@@ -875,10 +892,17 @@ class WorkBench extends React.Component {
                 {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
               </a>
 
-              {/* <Switch checkedChildren="Advanced" unCheckedChildren="Advanced" onChange={this.toggleAdvancedFilters} /> */}
             </div>
           </Col>
         </Row>
+    </TabPane>
+    <TabPane tab="RegEx Search" key="2">
+    <RegExSearch style={{marginBottom: "10px"}} datasetKey={datasetKey} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
+
+    </TabPane>
+   
+  </Tabs>
+
         <Row>
           <Col span={14}>
             {" "}

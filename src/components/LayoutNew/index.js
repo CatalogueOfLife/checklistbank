@@ -234,7 +234,7 @@ class SiteLayout extends Component {
             )}
             {error &&
               ![401, 403].includes(_.get(error, "response.status")) &&
-              !exceptionIsDataset404(error) && (
+              !exceptionIsDataset404(error) && error?.message !== 'Network Error' && (
                 <Alert
                   style={{ marginTop: "10px" }}
                   description={<ErrorMsg error={error} />}
@@ -243,6 +243,17 @@ class SiteLayout extends Component {
                   onClose={clearError}
                 />
               )}
+             {error &&
+              error?.message === 'Network Error' && (
+                <Alert
+                  style={{ marginTop: "10px" }}
+                  description={"The network connection was interupted. Check your internet connection and reload the page."}
+                  type="warning"
+                  showIcon
+                  closable
+                  onClose={clearError}
+                />
+              )} 
             {(error && [401, 403].includes(_.get(error, "response.status"))) ||
             exceptionIsDataset404(error) ? (
               <Exception

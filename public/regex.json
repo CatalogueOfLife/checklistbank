@@ -1,0 +1,11 @@
+[
+    {
+        "value": "\\[[A-Za-z]",
+        "description": "Starts with \"[\" folowed by a letter"
+
+    },
+    {
+        "value": "\\[[A-Za-z]+\\]",
+        "description": "[*] - all letters in square brackets"
+    }
+]
