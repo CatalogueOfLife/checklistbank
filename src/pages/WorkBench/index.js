@@ -718,7 +718,7 @@ class WorkBench extends React.Component {
           )}
         </Row>
         <Tabs defaultActiveKey="1" >
-    <TabPane tab="Seach" key="1">
+    <TabPane tab="Search" key="1">
     <Row style={{ marginBottom: "10px" }}>
           <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
             <SearchBox
