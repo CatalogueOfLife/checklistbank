@@ -23,7 +23,6 @@ import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import Auth from "../../../components/Auth";
-const { canEditDataset } = Auth;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
 const IRREGULAR_RANKS = [
@@ -111,21 +110,26 @@ class ColTree extends React.Component {
      
   };
 
-  reloadRoot = () =>
-    this.setState(
-      {
-        rootLoading: true,
-        treeData: [],
-        loadedKeys: [],
-        rootTotal: 0,
-        error: null,
-        mode: "attach",
-        nodeNotFoundErr: null,
-        selectedNodes: [],
-        selectedKeys: []
-      },
-      this.loadRoot
-    );
+  reloadRoot = () => {
+    return new Promise((resolve, reject) => {
+      this.setState(
+        {
+          rootLoading: true,
+          treeData: [],
+          loadedKeys: [],
+          rootTotal: 0,
+          error: null,
+          mode: "attach",
+          nodeNotFoundErr: null,
+          selectedNodes: [],
+          selectedKeys: []
+        },
+        () => resolve(this.loadRoot())
+      );
+
+    })
+  }
+    
 
   loadRoot = async () => {
     const {

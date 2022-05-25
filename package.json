@@ -8,7 +8,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "ajv": "^6.9.1",
-    "antd": "4.16.13",
+    "antd": "4.20.6",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
     "classnames": "^2.3.1",
@@ -41,7 +41,7 @@
     "react-jss": "^10.1.1",
     "react-linkify": "^1.0.0-alpha",
     "react-resizable": "^1.7.5",
-    "react-router-dom": "^4.3.1",
+    "react-router-dom": "^5.3.3",
     "react-scripts": "4.0.3",
     "react-width": "^0.1.8"
   },
