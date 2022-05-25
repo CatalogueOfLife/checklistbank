@@ -61,14 +61,14 @@ const SyncState = ({ syncState, dataset, sector }) => (
         </a>
       </Tooltip></Col></Row>
         </React.Fragment>}
-        <Row>
+        <Row style={{marginTop: "10px"}}>
           <Col span={6}>
             <Statistic
               title="Taxa created"
               value={syncState.running.taxonCount}
             />
           </Col>
-          <Col span={6}>
+          <Col span={8}>
           {syncState.running.synonymCount && 
             <Statistic
             title="Synonyms created"
@@ -76,7 +76,7 @@ const SyncState = ({ syncState, dataset, sector }) => (
           />
           }
           </Col>
-          <Col span={12}>
+          <Col span={10}>
             <Statistic
               title="Sync started"
               value={moment.utc(syncState.running.started).fromNow()}
