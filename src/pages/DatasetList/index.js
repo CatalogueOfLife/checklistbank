@@ -393,7 +393,7 @@ class DatasetList extends React.Component {
       try {
         await axios
         .post(`${config.dataApi}importer`, {
-          datasetKey: dataset.Key,
+          datasetKey: dataset.key,
           priority: true,
           force: true,
         })
