@@ -16,8 +16,13 @@ class DatasetCreate extends React.Component {
       >
        {Auth.isEditorOrAdmin(this.props.user) ? <PageContent>
           <MetaDataForm
-            onSaveSuccess={(res) => {
-              history.push(`/dataset/${res.data}/about`);
+            onSaveSuccess={(res, origin) => {
+              if(origin === "external"){
+                history.push(`/dataset/${res.data}/options`)
+              } else {
+                history.push(`/dataset/${res.data}/about`)
+              }
+              ;
             }}
           />
         </PageContent> : <Exception403 />}

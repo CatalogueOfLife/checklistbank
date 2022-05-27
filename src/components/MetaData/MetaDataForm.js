@@ -101,7 +101,11 @@ const MetaDataForm = (props) => {
             ? `Meta data updated successfully updated for ${values.title}`
             : `${values.title} registered and ready for import`;
           if (onSaveSuccess && typeof onSaveSuccess === "function") {
-            onSaveSuccess(res);
+            if(key){
+              onSaveSuccess(res);
+            } else {
+              onSaveSuccess(res, values.origin);
+            }         
           }
           openNotification(title, msg);
           setSubmissionError(null);
