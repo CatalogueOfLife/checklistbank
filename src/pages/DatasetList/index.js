@@ -203,6 +203,15 @@ class DatasetList extends React.Component {
           },
         },
         {
+          title: "Imported",
+          dataIndex: "imported",
+          key: "imported",
+          sorter: true,
+          render: (date) => {
+            return date ? moment(date).format("MMM Do YYYY") : "";
+          },
+        },
+        {
           title: "Created",
           dataIndex: "created",
           key: "created",

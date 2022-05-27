@@ -5,7 +5,7 @@ import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
-
+import moment from "moment";
 import withContext from "../../../components/hoc/withContext";
 
 const _ = require("lodash");
@@ -187,6 +187,17 @@ class GSDIssuesMatrix extends React.Component {
         },
         sorter: (a, b) => {
           return ("" + a.alias).localeCompare(b.alias);
+        },
+      },
+      {
+        title: "Imported",
+        dataIndex: "imported",
+        key: "imported",
+        sorter: (a, b) => {
+          return ("" + a.imported).localeCompare(b.imported);
+        },
+        render: (date) => {
+          return date ? moment(date).format("MMM Do YYYY") : "";
         },
       },
 
