@@ -458,11 +458,13 @@ class DatasetMeta extends React.Component {
             </PresentationItem>}
             {Auth.isAuthorised(user, ["admin"]) &&  <PresentationItem label="GBIF publisher key">
               {displayData.gbifPublisherKey && (
-                <a
-                  href={`https://www.gbif.org/publisher/${displayData.gbifPublisherKey}`}
-                >
+                <NavLink to={{
+                  pathname: `/dataset`,
+                  search:`?gbifPublisherKey=${displayData.gbifPublisherKey}`
+                }}>
                   {displayData.gbifPublisherKey}
-                </a>
+                </NavLink>
+                
               )}
             </PresentationItem>}
             <PresentationItem label="Identifiers">

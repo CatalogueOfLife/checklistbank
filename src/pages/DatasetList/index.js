@@ -367,6 +367,7 @@ class DatasetList extends React.Component {
     let params = qs.parse(_.get(this.props, "location.search"));
 
     let query = {
+      ...params,
       ...Object.keys(filters).reduce(
         (acc, cur) => (filters[cur] !== null && (acc[cur] = filters[cur]), acc),
         {}
