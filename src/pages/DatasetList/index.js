@@ -678,6 +678,7 @@ class DatasetList extends React.Component {
               }}
               rowSelection={
                 !Auth.isAuthorised(user, ["admin"]) ? null : {
+                  selectedRowKeys: this.state.selectedRowKeys,
                   onChange: (selectedRowKeys, selectedRows) => {
                     this.setState({selectedRowKeys, selectedRows})
                    // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
