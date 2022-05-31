@@ -164,7 +164,7 @@ class BasicMenu extends Component {
           >
             <Menu.Item key="nameUsageSearch">
               <NavLink to={{ pathname: "/nameusage/search" }}>
-                <span>Nameusage search</span>
+                <span>Cross dataset search</span>
               </NavLink>
             </Menu.Item>
             <Menu.Item key="metadatagenerator">

@@ -443,7 +443,7 @@ const NameMatch = () => {
                   <Row justify="space-between">
                     <Col>
                       <Statistic
-                        title={"Usages"}
+                        title={"Matches"}
                         value={primaryUsageMetrics}
                         suffix={`/ ${names.length.toLocaleString()}`}
                       />
@@ -499,7 +499,7 @@ const NameMatch = () => {
                     <Row justify="space-between">
                       <Col>
                         <Statistic
-                          title={"Usages"}
+                          title={"Matches"}
                           value={secondaryUsageMetrics}
                           suffix={`/ ${names.length}`}
                         />
@@ -518,7 +518,7 @@ const NameMatch = () => {
                   )}
                 </Col>
               )}
-              {step === 2 && (
+              {/* {step === 2 && (
                 <Col
                   span={secondaryDataset ? 4 : 12}
                   style={{ paddingRight: "8px" }}
@@ -535,7 +535,7 @@ const NameMatch = () => {
                     </Col>
                   </Row>
                 </Col>
-              )}
+              )} */}
             </Row>
           </>
         )}
@@ -647,7 +647,7 @@ const NameMatch = () => {
                 dataIndex: "providedScientificName",
                 key: "providedScientificName",
               },
-              {
+/*               {
                 title: "Match type",
                 dataIndex: "matchType",
                 key: "matchType",
@@ -665,7 +665,7 @@ const NameMatch = () => {
                     {text}
                   </Tag>
                 ),
-              },
+              }, */
               {
                 title: "Scientific Name",
                 dataIndex: ["primaryDatasetUsage", "label"],
