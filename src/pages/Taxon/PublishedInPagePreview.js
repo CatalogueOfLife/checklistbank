@@ -8,7 +8,7 @@ const PublishedInPagePreview = ({publishedInPageLink, style={}}) => {
 
     return ['jpg', 'jpeg', 'png'].includes(fileExt.toLowerCase()) ? <div style={style}><Image  
     preview={{
-    src: publishedInPageLink,
+    src: `//api.gbif.org/v1/image/unsafe/${publishedInPageLink}`,
     }}
   src={`//api.gbif.org/v1/image/unsafe/60x/${publishedInPageLink}`}
 /></div> : null
