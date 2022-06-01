@@ -250,6 +250,7 @@ class WorkBench extends React.Component {
     const { catalogueKey } = this.props;
     const { user } = this.props;
     this.state = {
+      activeTab : "1",
       data: { result: [] },
       decision: null,
       columns: getColumns(catalogueKey, user),
@@ -339,7 +340,7 @@ class WorkBench extends React.Component {
 
     this.setState({ loading: true });
 
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, catalogueKey, addError } = this.props;
     if (!params.q) {
       delete params.q;
     }
@@ -353,13 +354,28 @@ class WorkBench extends React.Component {
       search: `?${qs.stringify(newParamsWithPaging)}`,
     });
     // This would be cleaner with pathparam like:  /catalogue/3/dataset/1700/nameusage/search
-    axios(
+    let task = params.USAGE_ID ? 
+    axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
+        "facet": params.facet,
+        
+        "filter": {
+          "USAGE_ID": params.USAGE_ID,
+          "catalogueKey": [catalogueKey],
+          "unsafe": [true]
+        },
+        "page": {
+          "offset": Number((current - 1) * limit), "limit":  Number(limit)
+        }
+      })
+    : axios(
       `${config.dataApi}dataset/${datasetKey}/nameusage/search?${qs.stringify({
         ...newParamsWithPaging,
         catalogueKey: catalogueKey,
       })}`
-    )
-      .then((res) => this.getDecisions(res))
+    );
+
+
+      task.then((res) => this.getDecisions(res))
       .then((res) => {
         this.setState({
           loading: false,
@@ -369,7 +385,8 @@ class WorkBench extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        addError(err)
+        this.setState({ loading: false, data: [] });
       });
   };
 
@@ -598,6 +615,7 @@ class WorkBench extends React.Component {
       decisionFormVisible,
       rowsForEdit,
       advancedFilters,
+      activeTab
     } = this.state;
     const { taxonomicstatus, user, datasetKey, catalogueKey } = this.props;
     const facetRanks = _.get(facets, "rank")
@@ -717,7 +735,7 @@ class WorkBench extends React.Component {
             />
           )}
         </Row>
-        <Tabs defaultActiveKey="1" >
+        <Tabs activeKey={this.state.activeTab} onChange={activeKey => this.setState({activeTab: activeKey})} >
     <TabPane tab="Search" key="1">
     <Row style={{ marginBottom: "10px" }}>
           <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
@@ -897,7 +915,7 @@ class WorkBench extends React.Component {
         </Row>
     </TabPane>
     <TabPane tab="RegEx Search" key="2">
-    <RegExSearch style={{marginBottom: "10px"}} datasetKey={datasetKey} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
+    <RegExSearch limit={pagination.pageSize} style={{marginBottom: "10px"}} datasetKey={datasetKey} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
 
     </TabPane>
    
@@ -934,10 +952,10 @@ class WorkBench extends React.Component {
                     this.updateSearch({ decisionMode: evt.target.value });
                   }
                 }}
-                value={params.decisionMode}
+                value={activeTab === "2" ? undefined : params.decisionMode}
               >
-                <Radio value="_NOT_NULL">With decision</Radio>
-                <Radio value="_NULL">Without decision</Radio>
+                <Radio value="_NOT_NULL" disabled={activeTab === "2"}>With decision</Radio>
+                <Radio value="_NULL" disabled={activeTab === "2"}>Without decision</Radio>
                 <Radio value={undefined}>All</Radio>
               </RadioGroup>
             </FormItem>
@@ -1103,6 +1121,7 @@ const mapContextToProps = ({
   namefield,
   user,
   catalogueKey,
+  addError
 }) => ({
   rank,
   taxonomicstatus,
@@ -1112,6 +1131,7 @@ const mapContextToProps = ({
   namefield,
   user,
   catalogueKey,
+  addError
 });
 
 export default withContext(mapContextToProps)(WorkBench);

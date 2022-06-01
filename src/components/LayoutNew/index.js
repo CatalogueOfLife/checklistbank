@@ -27,13 +27,13 @@ const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
 const titeMaxLength = 120;
 
-const exceptionIsDataset404 = (error) => {
+const exceptionIsDataset404 = (error, location) => {
   return (
     _.get(error, "response.status") === 404 &&
     _.get(error, "response.request.responseURL") &&
     _.get(error, "response.request.responseURL").startsWith(
       `${config.dataApi}dataset/`
-    )
+    ) && location?.pathname.startsWith("/dataset")
   );
 };
 const styles = {
@@ -86,8 +86,10 @@ class SiteLayout extends Component {
       catalogue,
       match: {
         params: { catalogueKey },
-      }
+      },
+      location
     } = this.props;
+    console.log("Status "+_.get(error, "response.status"))
     const collapsed =
       typeof this.state.collapsed === "boolean"
         ? this.state.collapsed
@@ -234,7 +236,7 @@ class SiteLayout extends Component {
             )}
             {error &&
               ![401, 403].includes(_.get(error, "response.status")) &&
-              !exceptionIsDataset404(error) && error?.message !== 'Network Error' && (
+              !exceptionIsDataset404(error, location) && ( [431, 413].includes(_.get(error, "response.status")) || error?.message !== 'Network Error') && (
                 <Alert
                   style={{ marginTop: "10px" }}
                   description={<ErrorMsg error={error} />}
@@ -255,11 +257,11 @@ class SiteLayout extends Component {
                 />
               )} 
             {(error && [401, 403].includes(_.get(error, "response.status"))) ||
-            exceptionIsDataset404(error) ? (
+            exceptionIsDataset404(error, location) ? (
               <Exception
                 type={_.get(error, "response.status").toString()}
                 desc={
-                  exceptionIsDataset404(error)
+                  exceptionIsDataset404(error, location)
                     ? _.get(error, "response.data.message")
                     : null
                 }

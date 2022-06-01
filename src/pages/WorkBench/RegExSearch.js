@@ -3,20 +3,25 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
-import { Select, Input, Pagination, Row, Col, Form, Typography, Popover, Divider } from "antd";
+import qs from "query-string";
+import { Select, Input, Pagination, Row, Col, Form, Typography, Popover, notification, Button } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { getRegEx } from "../../api/regex";
+import MultiValueFilter from "../NameSearch/MultiValueFilter";
+
 const { Option } = Select;
 const { Search } = Input;
 
-const limit = 50;
 
-const RegExSearch = ({ onSearch, onReset, datasetKey, style = {} }) => {
+const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
   const [regEx, setRegEx] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(limit);
   const [error, setError] = useState(null);
   const [options, setOptions] = useState([]);
+  const [rank, setRank] = useState(null)
+  const [status, setStatus] = useState(null)
+
   useEffect(() => {
     getRegEx().then(setOptions);
   }, []);
@@ -27,19 +32,35 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {} }) => {
 
     const offset = (page_ - 1) * limit;
     if (regEx_) {
+        let params = {}
+        if(status){
+            params.status = status
+        }
+        if(rank){
+            params.rank=rank
+        }
+
+        let query = rank || status ? `&${qs.stringify(params)}` : "";
+        
+
       try {
         //pagination?.pageSize || 50;
         const res = await axios(
-          `${config.dataApi}dataset/${datasetKey}/nameusage/pattern?regex=${encodeURIComponent(regEx_)}&limit=${limit}&offset=${offset}`
+          `${config.dataApi}dataset/${datasetKey}/nameusage/pattern?regex=${encodeURIComponent(regEx_)}&limit=${limit}&offset=${offset}${query}`
         );
         setTotal(offset + 1 + res?.data?.length);
-        console.log(
+        /* console.log(
           `Data length ${res?.data?.length} total ${
             offset + 1 + res?.data?.length
           }`
-        );
+        ); */
         if (res?.data) {
           onSearch(res?.data.map((v) => v.id));
+        }
+        if(res?.data?.length === 0){
+            notification.warn({
+                message: "No results from RegEx search"
+            })
         }
       } catch (err) {
         console.log(err);
@@ -98,7 +119,23 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {} }) => {
            
           </Form>
         </Col>
-        <Col flex="auto"></Col>
+        <Col flex="auto">
+      <MultiValueFilter
+              onChange={setRank}
+              vocab={rankEnum}
+              label="Ranks"
+            />
+            <MultiValueFilter
+              onChange={setStatus}
+              vocab={taxonomicstatus}
+              label="Status"
+            />
+      </Col>
+       
+      </Row>
+      <Row>
+    <Col><Button onClick={() => getData(regEx)} type="primary">Run RegEx search</Button></Col>
+      <Col flex="auto"></Col>
         <Col>
           {regEx && (
             <>
@@ -120,8 +157,10 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {} }) => {
   );
 };
 
-const mapContextToProps = ({ addError }) => ({
+const mapContextToProps = ({ addError , rank: rankEnum, taxonomicstatus}) => ({
   addError,
+  rankEnum ,
+  taxonomicstatus,
 });
 
 export default withContext(mapContextToProps)(RegExSearch);

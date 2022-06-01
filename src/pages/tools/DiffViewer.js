@@ -5,7 +5,7 @@ import {
   Row,
   Col,
   Select,
-  notification,
+  Popconfirm,
   Checkbox,
   Tag,
   Spin,
@@ -51,19 +51,29 @@ const DiffViewer = ({ location, addError, rank }) => {
 
     const params = qs.parse(search);
     console.log(params);
-    if(params.dataset &&  params.dataset2 ){
-      setDatasetKey1(params.dataset);
+    if(params.dataset2 ){
       setDatasetKey2(params.dataset2);
+    } else {
+      setDatasetKey2(null);
+    }
+    if(params.dataset  ){
+      setDatasetKey1(params.dataset);
+    }else {
+      setDatasetKey1(null);
     }
     if (params.dataset && params.root) {
       decorateRootsFromQuery(params.root, params.dataset).then((r) => {
         setRoot(r);
       });
+    } else {
+      setRoot([]);
     }
     if (params.dataset2 && params.root2) {
       decorateRootsFromQuery(params.root2, params.dataset2).then((r) => {
         setRoot2(r);
       });
+    } else {
+      setRoot2([]);
     }
   }, [location]);
 
@@ -143,9 +153,14 @@ const DiffViewer = ({ location, addError, rank }) => {
     const { data } = await axios(
       `${config.dataApi}dataset/${datasetKey_}/taxon/${id}`
     );
+    const {data: {total}}  = await axios(
+      // `${config.dataApi}dataset/${datasetKey_}/taxon/${id}`
+      `${config.dataApi}dataset/${datasetKey_}/nameusage/search?TAXON_ID=${id}&limit=0`
+     );
     return {
       key: data.id,
       title: _.get(data, "name.scientificName"),
+      total
     };
   };
   const decorateRootsFromQuery = async (roots, datasetKey_) => {
@@ -155,6 +170,22 @@ const DiffViewer = ({ location, addError, rank }) => {
     } else if (_.isArray(roots)) {
       return Promise.all(roots.map((r) => decorate(r, datasetKey_)));
     }
+  };
+
+ const updateSearch = (params) => {
+    let newParams = {
+      ...qs.parse(location.search),
+      ...params
+    };
+    Object.keys(params).forEach((param) => {
+      if (!params[param]) {
+        delete newParams[param];
+      }
+    });
+    history.push({
+      pathname: _.get(location.pathname),
+      search: qs.stringify(newParams),
+    });
   };
 
   return (
@@ -168,8 +199,12 @@ const DiffViewer = ({ location, addError, rank }) => {
           <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey1}
-              onResetSearch={() => setDatasetKey1(null)}
-              onSelectDataset={(dataset) => setDatasetKey1(dataset.key)}
+              onResetSearch={() => { updateSearch({dataset: null, root: []})}}
+              onSelectDataset={(dataset) => {
+                if(Number(datasetKey1) !== dataset.key){
+                  updateSearch({dataset: dataset.key, root: null})
+                  // setDatasetKey1(dataset.key), setRoot([])
+                }}}
               // contributesTo={this.props.catalogueKey}
               placeHolder="Choose 1st dataset"
             />
@@ -180,7 +215,8 @@ const DiffViewer = ({ location, addError, rank }) => {
                 onError={addError}
                 disabled={!datasetKey1}
                 onSelectName={(name) => {
-                  setRoot([...root, name]);
+                  updateSearch({root: [...root, name].map(tx => tx.key)})
+                  // setRoot([...root, name]);
                 }}
                 onResetSearch={() => {}}
               />
@@ -193,10 +229,11 @@ const DiffViewer = ({ location, addError, rank }) => {
                     key={t.key}
                     closable
                     onClose={() => {
-                      setRoot([...root.filter((tx) => tx.key !== t.key)]);
+                      updateSearch({root: [...root.filter((tx) => tx.key !== t.key)].map(tx => tx.key)})
+                      //setRoot([...root.filter((tx) => tx.key !== t.key)]);
                     }}
                   >
-                    {t.title}
+                    {t.title} {t?.total ? `(${t?.total?.toLocaleString()})` : ""}
                   </Tag>
                 ))}
               </React.Fragment>
@@ -205,8 +242,14 @@ const DiffViewer = ({ location, addError, rank }) => {
           <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey2}
-              onResetSearch={() => setDatasetKey2(null)}
-              onSelectDataset={(dataset) => setDatasetKey2(dataset.key)}
+              onResetSearch={() => {
+                updateSearch({dataset2: null, root2: []})
+              }}
+              onSelectDataset={(dataset) => {
+                if(Number(datasetKey2) !== dataset.key){
+                  updateSearch({dataset2: dataset.key, root2: null})
+                 // setDatasetKey2(dataset.key), setRoot2([])
+                }}}
               // contributesTo={this.props.catalogueKey}
               placeHolder="Choose 2nd dataset"
             />
@@ -217,7 +260,8 @@ const DiffViewer = ({ location, addError, rank }) => {
                 onError={addError}
                 disabled={!datasetKey2}
                 onSelectName={(name) => {
-                  setRoot2([...root2, name]);
+                  updateSearch({root2: [...root2, name].map(tx => tx.key)})
+                  // setRoot2([...root2, name]);
                 }}
                 onResetSearch={() => {}}
               />
@@ -231,10 +275,11 @@ const DiffViewer = ({ location, addError, rank }) => {
                     key={t.key}
                     closable
                     onClose={() => {
-                      setRoot2([...root2.filter((tx) => tx.key !== t.key)]);
+                      updateSearch({root2: [...root2.filter((tx) => tx.key !== t.key)].map(tx => tx.key)})
+                     // setRoot2([...root2.filter((tx) => tx.key !== t.key)]);
                     }}
                   >
-                    {t.title}
+                    {t.title} {t?.total ? `(${t?.total?.toLocaleString()})` : ""}
                   </Tag>
                 ))}
               </React.Fragment>
@@ -322,21 +367,30 @@ const DiffViewer = ({ location, addError, rank }) => {
                 
             
 
-              {diff && (
+              
                 <Button                   
                 style={{ marginRight: "10px" }}
                 type="danger" onClick={resetAll}>
                   Reset
                 </Button>
-              )}
+            <Popconfirm
+            disabled={root.length > 0 && root2.length > 0}
+            title={<>You have not selected root taxa for both datasets, proceed anyways?<br /> This may produce very large diffs or the server may be overloaded.</>}
+            onConfirm={getData}
+            placement="leftTop"
+            >
+
               <Button
                   loading={loading}
-                  disabled={loading}
+                  disabled={loading || !datasetKey1 || !datasetKey2}
                   type="primary"
-                  onClick={getData}
+                  onClick={() => { if(root.length > 0 && root2.length > 0){
+                    getData()
+                  }}}
                 >
                   Get Diff
                 </Button>
+                </Popconfirm>
               </Col>
               
             </Row>
