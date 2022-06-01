@@ -11,6 +11,8 @@ import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 import TypeMaterial from "../Taxon/TypeMaterial";
+import PublishedInPagePreview from "../Taxon/PublishedInPagePreview"
+
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
@@ -410,11 +412,15 @@ class NamePage extends React.Component {
               {name.publishedInPage}
             </PresentationItem>
             <PresentationItem md={md} label="Published In Page Link">
-              {name.publishedInPageLink && (
-                <a href={name.publishedInPageLink} target="_blank">
-                  {name.publishedInPageLink}
-                </a>
-              )}
+              {name.publishedInPageLink && <Row>
+                  <Col><a href={name.publishedInPageLink } target="_blank" >
+                  {name.publishedInPageLink }
+                </a></Col>
+                  <Col>
+                  <PublishedInPagePreview publishedInPageLink={name.publishedInPageLink} style={{boxShadow: "6px 6px 6px lightgrey", marginLeft: "10px"}}/>
+                  </Col>
+                  <Col flex="auto"></Col>
+                </Row>}
             </PresentationItem>
             {_.get(name, "namesIndexId") && (
             <PresentationItem md={md} label="Related names">

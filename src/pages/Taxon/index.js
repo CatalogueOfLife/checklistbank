@@ -23,7 +23,7 @@ import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import References from "./References";
 import TypeMaterial from "./TypeMaterial";
-
+import PublishedInPagePreview from "./PublishedInPagePreview"
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
 import TaxonBreakdown from "./TaxonBreakdown";
@@ -448,10 +448,18 @@ class TaxonPage extends React.Component {
         }
            </PresentationItem>}
            {_.get(info, "taxon.name.publishedInPageLink") &&   <PresentationItem md={md} label="Published In Page Link">
-           
-                <a href={_.get(info, "taxon.name.publishedInPageLink") } target="_blank">
+                <Row>
+                  <Col><a href={_.get(info, "taxon.name.publishedInPageLink") } target="_blank" >
                   {_.get(info, "taxon.name.publishedInPageLink") }
-                </a>
+                </a></Col>
+                  <Col>
+                  <PublishedInPagePreview publishedInPageLink={_.get(info, "taxon.name.publishedInPageLink")} style={{boxShadow: "6px 6px 6px lightgrey", marginLeft: "10px"}}/>
+                  </Col>
+                  <Col flex="auto"></Col>
+                </Row>
+                
+
+                
               
             </PresentationItem>}
            {_.get(info, "typeMaterial") && _.get(info, `typeMaterial[${_.get(taxon, 'name.id')}]`) && (
