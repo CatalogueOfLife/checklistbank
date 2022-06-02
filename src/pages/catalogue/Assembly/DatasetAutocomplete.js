@@ -51,6 +51,10 @@ class DatasetAutocomplete extends React.Component {
     axios(`${config.dataApi}dataset/${defaultDatasetKey}`).then((res) => {
       this.setState({ value: _.get(res, "data.title") || "" });
       this.props.onSelectDataset(res.data);
+    }).catch(error => {
+      if(typeof this.props.onError === "function"){
+        this.props.onError(error)
+      }
     });
   };
 
@@ -67,6 +71,9 @@ class DatasetAutocomplete extends React.Component {
         this.setState({ datasets: res.data.result });
       })
       .catch((err) => {
+        if(typeof this.props.onError === "function"){
+          this.props.onError(er)
+        }
         this.setState({ datasets: [], err });
       });
   };

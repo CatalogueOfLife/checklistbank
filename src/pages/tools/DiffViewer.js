@@ -93,24 +93,23 @@ const DiffViewer = ({ location, addError, rank }) => {
   };
 
   const getData = async () => {
-    let search = "";
+
+    let params = {
+      dataset: datasetKey1,
+      dataset2: datasetKey2
+    }
     if (root.length > 0) {
-      search += root.map((t) => `root=${t.key}`).join("&");
+      params.root = root.map((t) => t.key);
     }
     if (root2.length > 0) {
-      if (search) {
-        search += "&";
-      }
-      search += root2.map((t) => `root2=${t.key}`).join("&");
+      params.root2 = root2.map((t) => t.key);
     }
-    if (search) {
-      search = "?" + search;
-    }
+    const search = `?${qs.stringify(params)}`;
     setEmpty(false)
     setLoading(true); 
     history.push({
       ...location,
-      search: search + `&dataset=${datasetKey1}&dataset2=${datasetKey2}`,
+      search // search + `&dataset=${datasetKey1}&dataset2=${datasetKey2}`,
     });
     try {
       const { data: diff } = await axios(
@@ -199,6 +198,7 @@ const DiffViewer = ({ location, addError, rank }) => {
           <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey1}
+              onError={addError}
               onResetSearch={() => { updateSearch({dataset: null, root: []})}}
               onSelectDataset={(dataset) => {
                 if(Number(datasetKey1) !== dataset.key){
@@ -242,6 +242,7 @@ const DiffViewer = ({ location, addError, rank }) => {
           <Col span={9} style={{ padding: "8px" }}>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey2}
+              onError={addError}
               onResetSearch={() => {
                 updateSearch({dataset2: null, root2: []})
               }}
