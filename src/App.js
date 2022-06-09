@@ -45,6 +45,7 @@ import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import NameMatch from "./pages/tools/NameMatch";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
+import TaxonComparer from "./pages/tools/TaxonComparer"
 import NameUsageSearch from "./pages/NameSearch/Search";
 import UserProfile from "./pages/UserProfile"
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
@@ -259,6 +260,12 @@ class App extends Component {
                   key="diffviewer"
                   path={`/tools/diff-viewer`}
                   component={DiffViewer}
+                />
+                <Route
+                  exact
+                  key="diffviewer"
+                  path={`/tools/taxon-comparer`}
+                  component={TaxonComparer}
                 />
                 <Route
                   exact

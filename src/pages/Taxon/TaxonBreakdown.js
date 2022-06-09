@@ -22,13 +22,17 @@ const canonicalRanks = [
   "species",
 ];
 
-const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
+const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   const [options, setOptions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [invalid, setInvalid] = useState(false);
+  const [taxonID, setTaxonID] = useState(null);
   useEffect(() => {
-    getData();
+    if(taxon?.id !== taxonID){
+      getData();
+      setTaxonID(taxon?.id)
+    } 
   }, [taxon, datasetKey]);
 
   const getOverView = async () => {
@@ -210,9 +214,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
         type: "pie",
       },
       credits: {
-        text: `${taxon.name.scientificName} in ${dataset.title} (${
-          dataset.version
-        }). ${
+        text: `${taxon.name.scientificName} in ${dataset.title}${
+          dataset.version ? " ("+dataset.version+")":""
+        }. ${
           (dataset.doi ? "DOI:" + dataset.doi : null) || dataset.url || ""
         }`,
         href: DOI || dataset.url || "",
@@ -242,7 +246,12 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                  if(typeof onTaxonClick === "function"){
+                    onTaxonClick(e.point._id)
+                  } else {
+                    history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                  }
+                  
                 }
               },
             },
@@ -257,7 +266,11 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                  if(typeof onTaxonClick === "function"){
+                    onTaxonClick(e.point._id)
+                  } else {
+                    history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                  }
                 }
               },
             },

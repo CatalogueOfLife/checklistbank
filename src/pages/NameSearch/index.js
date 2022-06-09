@@ -16,6 +16,9 @@ import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
+import { getDatasetsBatch } from "../../api/dataset";
+import DataLoader from "dataloader";
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const FACETS = [
   "rank",
   "issue",
@@ -262,7 +265,7 @@ class NameSearchPage extends React.Component {
         );
         if (!datasetKey) {
           // only do this if it is a cross dataset search
-          this.datasetLabelsFromFacets(res.data);
+          await this.datasetLabelsFromFacets(res.data);
         }
         this.setState({
           loading: false,
@@ -280,14 +283,30 @@ class NameSearchPage extends React.Component {
     }
   };
 
-  datasetLabelsFromFacets = (data) => {
+  datasetLabelsFromFacets = async (data) => {
     if (_.get(data, "facets.datasetKey") && _.get(data, "result[0]")) {
       const keyMap = _.keyBy(data.facets.datasetKey, "value");
-      data.result.forEach((d) => {
+      console.log("DS facet length "+ data?.facets?.datasetKey?.length)
+      for await (const d of data.result) {
         if (keyMap[d?.usage?.datasetKey]) {
           d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
+        } else {
+        const dataset = await datasetLoader.load(d?.usage?.datasetKey);
+        d.datasetLabel = dataset?.title
+       
         }
-      });
+      }
+
+     /*  return data.result.forEach(async (d) => {
+        if (keyMap[d?.usage?.datasetKey]) {
+          d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
+        } else {
+        const dataset = await datasetLoader.load(d?.usage?.datasetKey);
+        d.datasetLabel = dataset?.title
+       // .then((dataset) => (d.datasetLabel = dataset?.title))
+         // console.log(d)
+        }
+      }); */
     }
   };
 
