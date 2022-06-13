@@ -89,7 +89,7 @@ class SiteLayout extends Component {
       },
       location
     } = this.props;
-    console.log("Status "+_.get(error, "response.status"))
+    // console.log("Status "+_.get(error, "response.status"))
     const collapsed =
       typeof this.state.collapsed === "boolean"
         ? this.state.collapsed

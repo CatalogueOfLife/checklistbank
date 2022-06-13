@@ -35,6 +35,8 @@ const TaxonComparer = ({ location, addError, rank }) => {
   const [loading, setLoading] = useState(false);
   const [datasetKey1, setDatasetKey1] = useState(null);
   const [datasetKey2, setDatasetKey2] = useState(null);
+  const [dataset1, setDataset1] = useState(null);
+  const [dataset2, setDataset2] = useState(null);
   const [root, setRoot] = useState(null);
   const [root2, setRoot2] = useState(null);
   const [suggestedDataset2Taxon, setSuggestedDataset2Taxon] = useState(null)
@@ -47,11 +49,17 @@ const TaxonComparer = ({ location, addError, rank }) => {
     console.log(params);
     if (params.dataset2) {
       setDatasetKey2(params.dataset2);
+      getDataset(params.dataset2).then((dataset)=> {
+        setDataset2(dataset)
+      })
     } else {
       setDatasetKey2(null);
     }
     if (params.dataset) {
       setDatasetKey1(params.dataset);
+      getDataset(params.dataset).then((dataset)=> {
+        setDataset1(dataset)
+      })
     } else {
       setDatasetKey1(null);
     }
@@ -105,9 +113,9 @@ const TaxonComparer = ({ location, addError, rank }) => {
   };
 
   const getSuggestedTaxonInOtherDataset = async (tx, datasetKey_) => {
-    const nameId = tx?.name?.id;
+    const Id = tx?.id;
     try {
-      const relatedres = await axios(`${config.dataApi}dataset/${tx?.datasetKey}/nameusage/${nameId}/related?datasetKey=${datasetKey_}`);
+      const relatedres = await axios(`${config.dataApi}dataset/${tx?.datasetKey}/nameusage/${Id}/related?datasetKey=${datasetKey_}`);
       if (_.get(relatedres, 'data[0]')) {
         return  _.get(relatedres, 'data[0]') 
       }
@@ -116,8 +124,13 @@ const TaxonComparer = ({ location, addError, rank }) => {
 
       addError(err);
     }
+  }
 
-
+  const getDataset = async (key) => {
+    const { data } = await axios(
+      `${config.dataApi}dataset/${key}`
+    );  
+    return data;
   }
 
   return (
@@ -127,13 +140,23 @@ const TaxonComparer = ({ location, addError, rank }) => {
       title="Taxon comparer"
     >
       <PageContent>
-  
+        <Row style={{marginBottom: "12px"}}><Col flex="auto"></Col>
+        <Col>
+        <Button type="primary" onClick={() => {
+          history.push({
+            pathname: "/tools/diff-viewer",
+            search: location.search
+          })
+        }} disabled={!root || !root2 || !datasetKey1 || !datasetKey2}>Show diff</Button>
+        </Col>
+        </Row>
         <Row>
           <Col span={12}>
             <Row>
-              <Col>
+            <Col span={12}>
                 <DatasetAutocomplete
                   defaultDatasetKey={datasetKey1}
+                  style={{width: "100%"}}
                   onError={addError}
                   onResetSearch={() => {
                     updateSearch({ dataset: null, root: [] });
@@ -148,7 +171,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                   placeHolder="Choose 1st dataset"
                 />
               </Col>
-              <Col style={{paddingLeft: "12px"}}>
+              <Col  span={12} style={{paddingLeft: "8px" , paddingRight: "12px"}}>
                 <NameAutocomplete
                   minRank="GENUS"
                   defaultTaxonKey={root?.id}
@@ -157,23 +180,23 @@ const TaxonComparer = ({ location, addError, rank }) => {
                   disabled={!datasetKey1}
                   onSelectName={(name) => {
                     updateSearch({ root: name.key });
-                    // setRoot2([...root2, name]);
                   }}
-                  onResetSearch={() => {}}
+                  onResetSearch={() => updateSearch({ root: null })}
                 />
-                {suggestedDataset1Taxon && suggestedDataset1Taxon?.id !== root?.id && <Button type="link" onClick={() => updateSearch({ root: suggestedDataset1Taxon.id })}>Go to  <span dangerouslySetInnerHTML={{__html: suggestedDataset1Taxon.labelHtml}}></span></Button>}
+                {suggestedDataset1Taxon && suggestedDataset1Taxon?.id !== root?.id && <Button type="link" onClick={() => updateSearch({ root: suggestedDataset1Taxon.id })}><span style={{marginRight: "5px"}}>Go to</span> <span dangerouslySetInnerHTML={{__html: suggestedDataset1Taxon.labelHtml}}></span></Button>}
 
               </Col>
             </Row>
             <Row>
-              {datasetKey1 && root && <TaxonSummary datasetKey={datasetKey1} taxon={root} onTaxonClick={id => updateSearch({ root: id })} />}
+              {datasetKey1 && root && <TaxonSummary datasetKey={datasetKey1} dataset={dataset1} taxon={root} onTaxonClick={id => updateSearch({ root: id })} />}
             </Row>
           </Col>
           <Col span={12} style={{ paddingLeft: "8px" }}>
             <Row>
-              <Col>
+              <Col span={12}>
                 <DatasetAutocomplete
                   defaultDatasetKey={datasetKey2}
+                  style={{width: "100%"}}
                   onError={addError}
                   onResetSearch={() => {
                     updateSearch({ dataset2: null, root2: null });
@@ -199,13 +222,13 @@ const TaxonComparer = ({ location, addError, rank }) => {
                     updateSearch({ root2: name.key });
                     // setRoot2([...root2, name]);
                   }}
-                  onResetSearch={() => {}}
+                  onResetSearch={() => updateSearch({ root2: null })}
                 />
-                {suggestedDataset2Taxon && suggestedDataset2Taxon?.id !== root2?.id && <Button type="link" onClick={() => updateSearch({ root2: suggestedDataset2Taxon.id })}>Go to  <span dangerouslySetInnerHTML={{__html: suggestedDataset2Taxon.labelHtml}}></span></Button>}
+                {suggestedDataset2Taxon && suggestedDataset2Taxon?.id !== root2?.id && <Button type="link" onClick={() => updateSearch({ root2: suggestedDataset2Taxon.id })}><span style={{marginRight: "5px"}}>Go to</span> <span dangerouslySetInnerHTML={{__html: suggestedDataset2Taxon.labelHtml}}></span></Button>}
               </Col>
             </Row>
             <Row>
-            {datasetKey2 && root2 && <TaxonSummary datasetKey={datasetKey2} taxon={root2}/>}
+            {datasetKey2 && root2 && <TaxonSummary datasetKey={datasetKey2} dataset={dataset2} taxon={root2} onTaxonClick={id => updateSearch({ root2: id })}/>}
 
             </Row>
           </Col>

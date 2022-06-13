@@ -6,7 +6,7 @@ import withContext from "../../components/hoc/withContext";
 
 
 
-const IncludesTable = ({ data, style, rank, datasetKey, taxon }) => (
+const IncludesTable = ({ data, style, rank, datasetKey, taxon, md }) => (
   <div style={style}>
     {" "}
     {data
@@ -14,7 +14,7 @@ const IncludesTable = ({ data, style, rank, datasetKey, taxon }) => (
       .sort((a, b) => rank.indexOf(a.value) - rank.indexOf(b.value))
       .map((t) => (
         <PresentationItem
-          md={6}
+          md={md || 6}
           label={_.startCase(t.value)}
           classes={{ formItem: { borderBottom: "none" } }}
           key={t.value}
