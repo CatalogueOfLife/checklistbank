@@ -485,7 +485,7 @@ class SectorTable extends React.Component {
     return (
       <React.Fragment>
         <Row>
-          {!loading && pagination && (
+          {!loading && pagination && data && (
             <Col style={{ textAlign: "right" }}>
               Results: {offset} - {offset + data.length} of {pagination.total}
             </Col>
