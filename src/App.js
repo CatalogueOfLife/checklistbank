@@ -263,8 +263,8 @@ class App extends Component {
                 />
                 <Route
                   exact
-                  key="diffviewer"
-                  path={`/tools/taxon-comparer`}
+                  key="datasetComparison"
+                  path={`/tools/dataset-comparison`}
                   component={TaxonComparer}
                 />
                 <Route

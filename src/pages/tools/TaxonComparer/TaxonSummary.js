@@ -61,7 +61,7 @@ const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError}) => {
         <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} onTaxonClick={onTaxonClick}  dataset={dataset}/>
         </Row>
         <Row style={{width: "100%", marginTop: "12px"}}>
-            <Col span={24}>
+            <Col span={24} style={{paddingRight: "12px"}}>
             <h4>Accepted taxa</h4>
             <Includes
                 md={12}

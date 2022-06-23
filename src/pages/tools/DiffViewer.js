@@ -11,6 +11,7 @@ import {
   Spin,
   Button,
   Tooltip,
+  Divider
 } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -194,8 +195,115 @@ const DiffViewer = ({ location, addError, rank }) => {
       title="Diff Viewer"
     >
       <PageContent>
+      
+            <Row style={{ marginBottom: "8px" }}>
+            <Col style={{marginLeft: "12px"}}>
+                <Checkbox onChange={(e) => setShowParent(e.target.checked)}>
+                  Show parent
+                </Checkbox>
+              </Col>
+              <Col >
+              <Select
+                  value={parentRank}
+                  onChange={setParentRank}
+                  placeholder="Select parent rank"
+                  allowClear
+                  showSearch
+                  disabled={!showParent}
+                  style={{width: '140px'}}
+                >
+                  <Option key="" value="">
+                      Direct parent
+                    </Option>
+                  {rank.map((r) => (
+                    <Option key={r} value={r}>
+                      {r}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            
+              <Col style={{marginLeft: "12px"}}>
+                <Select
+                  value={minRank}
+                  onChange={setMinRank}
+                  placeholder="Select min rank"
+                  allowClear
+                  showSearch
+                  style={{width: '200px'}}
+
+                >
+                  {rank.map((r) => (
+                    <Option key={r} value={r}>
+                      {r}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            <Col  style={{marginLeft: "12px"}}>
+                Include: {" "}
+                <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
+                  Authorship
+                </Checkbox>
+             
+                <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
+                  Synonyms
+                </Checkbox>
+              </Col>
+            
+
+          
+              <Col flex="auto"></Col>
+
+              {diff && !empty && (
+              <Col>  <Tooltip title="Download unified diff">
+                  <Button
+                    disabled={loading}
+                    type="primary"
+                    href={diff}
+                    download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
+                    style={{ marginRight: "10px" }}
+                  >
+                    <DownloadOutlined />
+                  </Button>
+                </Tooltip></Col>
+              )}
+              
+                
+            
+
+              
+                <Button                   
+                style={{ marginRight: "10px" }}
+                type="danger" onClick={resetAll}>
+                  Reset
+                </Button>
+            <Popconfirm
+            disabled={root.length > 0 && root2.length > 0}
+            title={<>You have not selected root taxa for both datasets, proceed anyways?<br /> This may produce very large diffs or the server may be overloaded.</>}
+            onConfirm={getData}
+            placement="leftTop"
+            >
+
+              <Button
+                  loading={loading}
+                  disabled={loading || !datasetKey1 || !datasetKey2}
+                  type="primary"
+                  onClick={() => { if(root.length > 0 && root2.length > 0){
+                    getData()
+                  }}}
+                >
+                  Get Diff
+                </Button>
+                </Popconfirm>
+              
+            </Row>
+          
         <Row style={{ marginBottom: "8px" }}>
-          <Col span={9} style={{ padding: "8px" }}>
+          <Col span={12} style={{padding: "8px", borderRightStyle: 'solid', borderRightColor: 'rgba(0, 0, 0, 0.06)', borderRightWidth: "1px"}}>
+          <Divider orientation="left" plain>
+      Dataset 1
+    </Divider>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey1}
               onError={addError}
@@ -239,7 +347,10 @@ const DiffViewer = ({ location, addError, rank }) => {
               </React.Fragment>
             )}
           </Col>
-          <Col span={9} style={{ padding: "8px" }}>
+          <Col span={12} style={{ padding: "8px" }}>
+          <Divider orientation="left" plain>
+      Dataset 2
+    </Divider>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey2}
               onError={addError}
@@ -286,117 +397,7 @@ const DiffViewer = ({ location, addError, rank }) => {
               </React.Fragment>
             )}
           </Col>
-          <Col span={6} style={{ padding: "8px" }}>
-            <Row style={{ marginBottom: "8px" }}>
-            <Col >
-                <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
-                  Authorship
-                </Checkbox>
-              </Col>
-              <Col flex="auto">
-                <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
-                  Synonyms
-                </Checkbox>
-              </Col>
-              </Row>
-            
-            <Row style={{ marginBottom: "8px" }}>
-            <Col flex="auto">
-                <Checkbox onChange={(e) => setShowParent(e.target.checked)}>
-                  Show parent
-                </Checkbox>
-              </Col>
-              <Col >
-              <Select
-                  value={parentRank}
-                  onChange={setParentRank}
-                  placeholder="Select parent rank"
-                  allowClear
-                  showSearch
-                  disabled={!showParent}
-                  style={{width: '140px'}}
-                >
-                  <Option key="" value="">
-                      Direct parent
-                    </Option>
-                  {rank.map((r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            </Row>
-            <Row style={{ marginBottom: "8px" }}>
-              <Col flex="auto"></Col>
-              <Col>
-                <Select
-                  value={minRank}
-                  onChange={setMinRank}
-                  placeholder="Select min rank"
-                  allowClear
-                  showSearch
-                  style={{width: '140px'}}
 
-                >
-                  {rank.map((r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            </Row>
-            <Row>
-              <Col flex="auto"></Col>
-              <Col>
-              
-              {diff && !empty && (
-                <Tooltip title="Download unified diff">
-                  <Button
-                    disabled={loading}
-                    type="primary"
-                    href={diff}
-                    download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <DownloadOutlined />
-                  </Button>
-                </Tooltip>
-              )}
-              
-                
-            
-
-              
-                <Button                   
-                style={{ marginRight: "10px" }}
-                type="danger" onClick={resetAll}>
-                  Reset
-                </Button>
-            <Popconfirm
-            disabled={root.length > 0 && root2.length > 0}
-            title={<>You have not selected root taxa for both datasets, proceed anyways?<br /> This may produce very large diffs or the server may be overloaded.</>}
-            onConfirm={getData}
-            placement="leftTop"
-            >
-
-              <Button
-                  loading={loading}
-                  disabled={loading || !datasetKey1 || !datasetKey2}
-                  type="primary"
-                  onClick={() => { if(root.length > 0 && root2.length > 0){
-                    getData()
-                  }}}
-                >
-                  Get Diff
-                </Button>
-                </Popconfirm>
-              </Col>
-              
-            </Row>
-            
-          </Col>
         </Row>
 
         {html && <div dangerouslySetInnerHTML={{ __html: html }} />}

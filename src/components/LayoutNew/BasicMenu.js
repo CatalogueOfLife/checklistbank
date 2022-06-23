@@ -184,13 +184,21 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
-            {user && (
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
               <Menu.Item key="diffviewer">
                 <NavLink to={{ pathname: "/tools/diff-viewer" }}>
                   <span>Diff viewer</span>
                 </NavLink>
               </Menu.Item>
             )}
+            {user && (
+              <Menu.Item key="datasetComparison">
+                <NavLink to={{ pathname: "/tools/dataset-comparison" }}>
+                  <span>Dataset comparison</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+            
             {Auth.isAuthorised(user, ["admin", "editor"]) && (
               <Menu.Item key="nameIndexSearch">
                 <NavLink to={{ pathname: "/namesindex" }}>

@@ -135,12 +135,19 @@ const TaxonComparer = ({ location, addError, rank }) => {
 
   return (
     <Layout
-      selectedKeys={["taxonComparer"]}
+      selectedKeys={["datasetComparison"]}
       openKeys={["tools"]}
-      title="Taxon comparer"
+      title="Dataset comparison (taxon to taxon)"
     >
       <PageContent>
-        <Row style={{marginBottom: "12px"}}><Col flex="auto"></Col>
+        <Row style={{marginBottom: "12px"}}>
+          <Col span={12} style={{ paddingLeft: "8px" }}>
+            <h4>Dataset 1</h4>
+          </Col>
+          <Col span={6} style={{ paddingLeft: "8px" }}>
+            <h4>Dataset 2</h4>
+          </Col>
+          <Col flex="auto"></Col>
         <Col>
         <Button type="primary" onClick={() => {
           history.push({
@@ -151,7 +158,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
         </Col>
         </Row>
         <Row>
-          <Col span={12}>
+          <Col span={12} style={{borderRightStyle: 'solid', borderRightColor: 'rgba(0, 0, 0, 0.06)', borderRightWidth: "1px"}}>
             <Row>
             <Col span={12}>
                 <DatasetAutocomplete
@@ -187,7 +194,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
 
               </Col>
             </Row>
-            <Row>
+            <Row >
               {datasetKey1 && root && <TaxonSummary datasetKey={datasetKey1} dataset={dataset1} taxon={root} onTaxonClick={id => updateSearch({ root: id })} />}
             </Row>
           </Col>
@@ -227,7 +234,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                 {suggestedDataset2Taxon && suggestedDataset2Taxon?.id !== root2?.id && <Button type="link" onClick={() => updateSearch({ root2: suggestedDataset2Taxon.id })}><span style={{marginRight: "5px"}}>Go to</span> <span dangerouslySetInnerHTML={{__html: suggestedDataset2Taxon.labelHtml}}></span></Button>}
               </Col>
             </Row>
-            <Row>
+            <Row style={{ paddingLeft: "8px" }}>
             {datasetKey2 && root2 && <TaxonSummary datasetKey={datasetKey2} dataset={dataset2} taxon={root2} onTaxonClick={id => updateSearch({ root2: id })}/>}
 
             </Row>
