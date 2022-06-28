@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
@@ -50,13 +50,14 @@ import NameUsageSearch from "./pages/NameSearch/Search";
 import UserProfile from "./pages/UserProfile"
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
+import Analytics from "./Analytics";
 
 const theme = {
   colorPrimary: "deepskyblue",
 };
 
-class App extends Component {
-  render() {
+const App = () => {
+
     return (
       <ContextProvider>
         <Helmet>
@@ -64,6 +65,7 @@ class App extends Component {
           <title>ChecklistBank (CLB)</title>
         </Helmet>
         <Router history={history}>
+          <Analytics />
           <React.Fragment>
             <ThemeProvider theme={theme}>
               <Switch>
@@ -329,7 +331,7 @@ class App extends Component {
         </Router>
       </ContextProvider>
     );
-  }
+  
 }
 
 export default App;
