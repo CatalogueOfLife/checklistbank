@@ -47,7 +47,6 @@ const columns = [
           </NavLink>
         ),
         
-        width: 200,
       },
     {
       title: "Scientific Name",
@@ -77,7 +76,6 @@ const columns = [
           </NavLink>
         );
       },
-      width: 200,
     },
     {
       title: "Status",

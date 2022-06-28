@@ -129,8 +129,8 @@ class BasicMenu extends Component {
             }}
             exact={true}
           >
-            <Logo  />{" "}
-            <h1 style={{   display: "inline" }}>ChecklistBank</h1>
+            <Logo  />
+            {/* <h1 style={{   display: "inline" }}>ChecklistBank</h1> */}
           </NavLink>
         </div>
 

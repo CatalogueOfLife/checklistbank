@@ -48,10 +48,9 @@ body,
   padding: 14px 0;
 }
 .logo {
-  height: 64px;
+  height: 90px;
   position: relative;
-  line-height: 64px;
-  padding-left: 14px;
+  margin-left: -4px;
   transition: all 0.3s;
   background: #002140;
   overflow: hidden;
