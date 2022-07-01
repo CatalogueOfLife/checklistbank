@@ -13,7 +13,7 @@ import DataLoader from "dataloader";
 import { truncate } from "../../components/util";
 
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
-
+const limit = 500;
 
 import _ from "lodash";
 
@@ -28,84 +28,9 @@ const decorateWithDataset = (res) => {
     ]).then(() => res);
   };
 
-const columns = [
-    {
-        title: "Dataset",
-        dataIndex: ["dataset", "title"],
-        key: "datasetLabel",
-        render: (text, record) => (
-          <NavLink
-            key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}`,
-            }}
-            exact={true}
-          >
-              <Tooltip title={text}>
-            {truncate(text, 25)} {record?.dataset?.version ? `[${record?.dataset?.version}]` : ""}
-            </Tooltip>
-          </NavLink>
-        ),
-        
-      },
-    {
-      title: "Scientific Name",
-      dataIndex: ["labelHtml"],
-      key: "scientificName",
-      render: (text, record) => {
-        const uri =
-          !_.get(record, "id") ||
-          record?.bareName ||
-          !_.get(record, "status")
-            ? `/dataset/${_.get(record, "datasetKey")}/name/${encodeURIComponent(_.get(record, "name.id"))}`
-            : `/dataset/${_.get(record, "datasetKey")}/taxon/${encodeURIComponent(
-                _.get(record, "accepted.id")
-                  ? _.get(record, "accepted.id")
-                  : _.get(record, "id")
-              )}`;
-  
-        return (
-          <NavLink
-            key={_.get(record, "id")}
-            to={{
-              pathname: uri,
-            }}
-            exact={true}
-          >
-            <span dangerouslySetInnerHTML={{ __html: text }} />
-          </NavLink>
-        );
-      },
-    },
-    {
-      title: "Status",
-      dataIndex: [ "status"],
-      key: "status",
-      width: 200,
-      render: (text, record) => {
-        return !["synonym", "ambiguous synonym", "misapplied"].includes(text) ? (
-          text
-        ) : (
-          <React.Fragment key={_.get(record, "id")}>
-            {text} {text === "misapplied" ? "to " : "of "}
-            <span
-              dangerouslySetInnerHTML={{
-                __html: _.get(record, "accepted.labelHtml"),
-              }}
-            />
-          </React.Fragment>
-        );
-      },
-    },
-    {
-      title: "Rank",
-      dataIndex: ["name", "rank"],
-      key: "rank",
-      width: 60,
-    }
-  ];
 
-const RelatedNames = ({ match, addError }) => {
+
+const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
     const [related, setRelated] = useState({result: []})
     const [loading, setLoading] = useState(false)
     useEffect(() => {
@@ -117,7 +42,7 @@ const RelatedNames = ({ match, addError }) => {
           } = match;
           
           try {
-            const relatedres = await axios(`${config.dataApi}nameusage?nidx=${key}`);
+            const relatedres = await axios(`${config.dataApi}nameusage?nidx=${key}&limit=${limit}`);
             await decorateWithDataset(relatedres)
             if (relatedres?.data) {
               setRelated(relatedres?.data);
@@ -144,7 +69,7 @@ const RelatedNames = ({ match, addError }) => {
       
       try {
         const offset = related.offset+related.limit;
-        const relatedres = await axios(`${config.dataApi}nameusage?nidx=${key}&offset=${offset}`);
+        const relatedres = await axios(`${config.dataApi}nameusage?nidx=${key}&offset=${offset}&limit=${limit}`);
         await decorateWithDataset(relatedres)
         if (relatedres?.data) {
           setRelated(
@@ -160,6 +85,88 @@ const RelatedNames = ({ match, addError }) => {
         addError(err);
       }
       }
+      const columns = [
+        {
+            title: "Dataset",
+            dataIndex: ["dataset", "title"],
+            key: "datasetLabel",
+            render: (text, record) => (
+              <NavLink
+                key={_.get(record, "id")}
+                to={{
+                  pathname: `/dataset/${_.get(record, "datasetKey")}`,
+                }}
+                exact={true}
+              >
+                  <Tooltip title={text}>
+                {truncate(text, 25)} {record?.dataset?.version ? `[${record?.dataset?.version}]` : ""}
+                </Tooltip>
+              </NavLink>
+            ),
+            
+          },
+        {
+          title: "Scientific Name",
+          dataIndex: ["labelHtml"],
+          key: "scientificName",
+          filters: group ? group.map(name => ({text: <span dangerouslySetInnerHTML={{ __html: name.labelHtml }} />, value: name.id})) : null,
+          onFilter: (value, record) => record.name.namesIndexId === value,
+          sorter: {
+            compare: (a, b) => a.name.namesIndexId - b.name.namesIndexId,
+            
+          },
+          render: (text, record) => {
+            const uri =
+              !_.get(record, "id") ||
+              record?.bareName ||
+              !_.get(record, "status")
+                ? `/dataset/${_.get(record, "datasetKey")}/name/${encodeURIComponent(_.get(record, "name.id"))}`
+                : `/dataset/${_.get(record, "datasetKey")}/taxon/${encodeURIComponent(
+                    _.get(record, "accepted.id")
+                      ? _.get(record, "accepted.id")
+                      : _.get(record, "id")
+                  )}`;
+      
+            return (
+              <NavLink
+                key={_.get(record, "id")}
+                to={{
+                  pathname: uri,
+                }}
+                exact={true}
+              >
+                <span dangerouslySetInnerHTML={{ __html: text }} />
+              </NavLink>
+            );
+          },
+        },
+        {
+          title: "Status",
+          dataIndex: [ "status"],
+          key: "status",
+          width: 200,
+          render: (text, record) => {
+            return !["synonym", "ambiguous synonym", "misapplied"].includes(text) ? (
+              text
+            ) : (
+              <React.Fragment key={_.get(record, "id")}>
+                {text} {text === "misapplied" ? "to " : "of "}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: _.get(record, "accepted.labelHtml"),
+                  }}
+                />
+              </React.Fragment>
+            );
+          },
+        },
+        {
+          title: "Rank",
+          dataIndex: ["name", "rank"],
+          key: "rank",
+          width: 60,
+        }
+      ];
 
       return <><Table
       size="small"

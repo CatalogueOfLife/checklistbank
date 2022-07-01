@@ -318,7 +318,7 @@ const NameMatch = () => {
     return names.map((n) => {
       let row = {
         providedScientificName: n.providedScientificName,
-        matchType: n.matchType,
+       // matchType: n.matchType,
         nameIndexId: _.get(n, `nidx.name.id`, ""),
         taxonId: _.get(n, `${usage}.id`, ""),
         parentTaxonId: _.get(n, `${usage}.parentId`, ""),

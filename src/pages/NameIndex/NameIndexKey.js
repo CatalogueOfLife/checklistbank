@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { withRouter } from "react-router-dom";
-import { Card, Tabs, Table } from "antd";
+import { Card, Tabs, Table, Button } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Entry, { Authorship } from "./Entry";
 import RelatedNames from "./RelatedNames";
@@ -12,49 +12,56 @@ import history from "../../history";
 
 const { TabPane } = Tabs;
 
-const columns = [
-  {
-    title: "Scientific Name",
-    dataIndex: ["scientificName"],
-    key: "scientificName",
 
-    width: 200,
-  },
-  {
-    title: "Basionym Authorship",
-    dataIndex: ["basionymAuthorship"],
-    key: "basionymAuthorship",
-    render: (text, record) =>
-      record?.basionymAuthorship ? (
-        <Authorship author={record?.basionymAuthorship} />
-      ) : (
-        ""
-      ),
-    width: 200,
-  },
-  {
-    title: "Combination Authorship",
-    dataIndex: ["combinationAuthorship"],
-    key: "combinationAuthorship",
-    render: (text, record) =>
-      record?.combinationAuthorship ? (
-        <Authorship author={record?.combinationAuthorship} />
-      ) : (
-        ""
-      ),
-    width: 200,
-  },
-];
 
 const NameIndexKey = ({ match, addError }) => {
   const [record, setRecord] = useState(null);
   const [group, setGroup] = useState(null);
   const [count, updateCount] = useState(0);
   const [activeKey, setActiveKey] = useState("1");
+  const [defaultFilteredValue, setDefaultFilteredValue] = useState(null)
   const sections = {
     "2": "group",
     "3": "related"
   };
+
+  const columns = [
+    {
+      title: "Scientific Name",
+      dataIndex: ["scientificName"],
+      key: "scientificName",
+      /* render: (text, record) => <Button type="link" onClick={() => {
+        setDefaultFilteredValue(record.id)
+        setActiveKey("3")
+      }}>{text}</Button>, */
+      width: 200,
+    },
+    {
+      title: "Basionym Authorship",
+      dataIndex: ["basionymAuthorship"],
+      key: "basionymAuthorship",
+      render: (text, record) =>
+        record?.basionymAuthorship ? (
+          <Authorship author={record?.basionymAuthorship} />
+        ) : (
+          ""
+        ),
+      width: 200,
+    },
+    {
+      title: "Combination Authorship",
+      dataIndex: ["combinationAuthorship"],
+      key: "combinationAuthorship",
+      render: (text, record) =>
+        record?.combinationAuthorship ? (
+          <Authorship author={record?.combinationAuthorship} />
+        ) : (
+          ""
+        ),
+      width: 200,
+    },
+  ];
+
   useEffect(() => {
     const init = async () => {
       setRecord(null);
@@ -151,7 +158,7 @@ const NameIndexKey = ({ match, addError }) => {
             </TabPane>
           )}
           <TabPane tab={<span>Related ({count})</span>} key="3">
-            <RelatedNames updateCount={updateCount} />
+            <RelatedNames updateCount={updateCount} group={group ? [record, ...group] : []} defaultFilteredValue={defaultFilteredValue} />
           </TabPane>
         </Tabs>
       </PageContent>

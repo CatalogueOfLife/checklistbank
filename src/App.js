@@ -65,8 +65,8 @@ const App = () => {
           <title>ChecklistBank (CLB)</title>
         </Helmet>
         <Router history={history}>
-          <Analytics />
-          <React.Fragment>
+{/*           <Analytics />
+ */}          <React.Fragment>
             <ThemeProvider theme={theme}>
               <Switch>
                 <Route exact key="HomePage" path="/" component={HomePage} />
