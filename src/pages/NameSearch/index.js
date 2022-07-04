@@ -480,7 +480,7 @@ class NameSearchPage extends React.Component {
           )}
         </Row>
         <Row>
-          <Col span={12} style={{ display: "flex", flexFlow: "column" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ display: "flex", flexFlow: "column" }}>
             <SearchBox
               defaultValue={_.get(params, "q") || null}
               onSearch={(value) => this.updateSearch({ q: value })}
@@ -569,7 +569,7 @@ class NameSearchPage extends React.Component {
               </Form>
             </div>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             {!datasetKey && (
               <MultiValueFilter
                 defaultValue={_.get(params, "datasetKey")}
