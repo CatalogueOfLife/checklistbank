@@ -108,8 +108,13 @@ class HomePage extends React.Component {
            
           }
         >
-          <Row>
-            <Col span={6}>
+          <Row gutter={{
+        xs: 8,
+        sm: 16,
+        md: 24,
+        lg: 32,
+      }}>
+            <Col xs={12} sm={12} md={6}  lg={6}>
               {colSpecies && (
                 <NavLink
                   to={{
@@ -124,7 +129,7 @@ class HomePage extends React.Component {
                 </NavLink>
               )}
             </Col>
-            <Col span={6}>
+            <Col xs={12} sm={12} md={6} lg={6}>
               {nameUsages && (
                 <NavLink to={{ pathname: `/` }} exact={true}>
                   <Statistic
@@ -134,7 +139,7 @@ class HomePage extends React.Component {
                 </NavLink>
               )}
             </Col>
-            <Col span={6}>
+            <Col xs={12}sm={12} md={6} lg={6}>
               {datasets && (
                 <NavLink to={{ pathname: `/dataset` }} exact={true}>
                   <Statistic
@@ -144,7 +149,7 @@ class HomePage extends React.Component {
                 </NavLink>
               )}
             </Col>
-            <Col span={6}>
+            <Col xs={12} sm={12}  md={6} lg={6}>
               {latestCol && (
                 <NavLink to={{ pathname: `/dataset/${latestCol?.key}` }} exact={true}>
                   <Statistic
@@ -157,7 +162,7 @@ class HomePage extends React.Component {
           </Row>
 
           <Row style={{ marginTop: 20 }}>
-            <Col style={{ paddingRight: "30px" }} span={16}>
+            <Col style={{ paddingRight: "30px" }} xs={24} sm={24} md={16} lg={16}>
               <p>
                 The{" "}
                 <a href="https://www.catalogueoflife.org">
@@ -195,7 +200,7 @@ class HomePage extends React.Component {
               </p>
             </Col>
             {datasets && (
-              <Col span={8}>
+              <Col xs={24} sm={24} md={8} lg={8}>
                 <h3>Latest datasets added</h3>
                 <ul>
                   {datasets.result.map((d) => (
