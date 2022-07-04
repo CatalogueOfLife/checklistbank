@@ -51,6 +51,7 @@ import UserProfile from "./pages/UserProfile"
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import Analytics from "./Analytics";
+import config from "./config";
 
 const theme = {
   colorPrimary: "deepskyblue",
@@ -65,8 +66,8 @@ const App = () => {
           <title>ChecklistBank (CLB)</title>
         </Helmet>
         <Router history={history}>
-{/*           <Analytics />
- */}          <React.Fragment>
+          {config.env === "dev" &&<Analytics />}
+          <React.Fragment>
             <ThemeProvider theme={theme}>
               <Switch>
                 <Route exact key="HomePage" path="/" component={HomePage} />

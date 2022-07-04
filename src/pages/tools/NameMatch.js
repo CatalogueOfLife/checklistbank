@@ -353,8 +353,9 @@ const NameMatch = () => {
     const {
       data: { total },
     } = await axios(
-      `${config.dataApi}dataset/${subjectDataset.key}/nameusage/search?TAXON_ID=${tx.key}&limit=0`
+      `${config.dataApi}dataset/${subjectDataset.key}/nameusage/search?TAXON_ID=${tx.id}&limit=0`
     );
+    console.log("Data estimated "+total)
     setSubjectDataTotal(total);
   };
 
@@ -363,6 +364,7 @@ const NameMatch = () => {
     const { data } = await axios(
       `${config.dataApi}dataset/${subjectDataset.key}/export.json?taxonID=${subjectTaxon.key}&flat=true`
     );
+    console.log("Data retrieved "+data.length)
     const result = data.map((e) => ({
       providedScientificName: e.label,
       code: e.code || defaultCode,

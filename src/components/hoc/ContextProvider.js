@@ -158,6 +158,9 @@ class ContextProvider extends React.Component {
     logout: () => {
       this.logout();
     },
+    loadTokenUser: () => {
+      this.loadTokenUser();
+    },
     getDuplicateWarningColor: (count) => {
       if (Number(count) === 0) {
         return DUPLICATE_COLOR.info;
