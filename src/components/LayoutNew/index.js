@@ -23,6 +23,8 @@ import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill"
 import { truncate } from "../util";
+// import withWidth, { MEDIUM } from "./hoc/Width";
+
 const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
 const titeMaxLength = 120;
@@ -214,7 +216,7 @@ class SiteLayout extends Component {
           <Content
             style={{
               overflow: "initial",
-              margin: "0 16px 24px 16px",
+              margin: isMobile ? "0 0px 24px 0px" : "0 16px 24px 16px",
               minHeight: 280,
             }}
           >

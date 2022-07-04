@@ -680,6 +680,7 @@ class NameSearchPage extends React.Component {
           <Table
             size="small"
             columns={this.state.columns}
+            scroll={{ x: `${this.state.columns.length * 120}px` }}
             dataSource={result}
             loading={loading}
             pagination={this.state.pagination}
