@@ -65,8 +65,14 @@ class SiteLayout extends Component {
   };
 
   toggle = () => {
+    const {width} = this.props;
+    console.log(this.state.collapsed)
+    const collapsed =
+      typeof this.state.collapsed === "boolean"
+        ? this.state.collapsed
+        : width < LARGE;
     this.setState({
-      collapsed: !this.state.collapsed,
+      collapsed: !collapsed,
     });
   };
 
@@ -138,6 +144,7 @@ class SiteLayout extends Component {
         {isMobile && (
           <Drawer
             placement="left"
+            width={menuWidth}
             closable={false}
             onClose={() => {
               this.setState({ collapsed: true });

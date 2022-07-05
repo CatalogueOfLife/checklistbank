@@ -31,7 +31,7 @@ const ImportMetrics = ({ data, subtitle }) => {
         </Col>
 
         {_.get(data, "taxaByRankCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="rank"
               additionalParams={{ status: "accepted" }}
@@ -49,7 +49,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "usagesByStatusCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="status"
               defaultType="pie"
@@ -67,7 +67,7 @@ const ImportMetrics = ({ data, subtitle }) => {
         )}
 
         {_.get(data, "namesByRankCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="rank"
               defaultType="pie"
@@ -84,7 +84,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "namesByTypeCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="nameType"
               defaultType="pie"
@@ -102,7 +102,7 @@ const ImportMetrics = ({ data, subtitle }) => {
         )}
 
         {_.get(data, "namesByOriginCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="origin"
               defaultType="pie"
@@ -119,7 +119,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "synonymsByRankCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               nameSearchParam="rank"
               additionalParams={{ status: "synonym" }}
@@ -138,7 +138,7 @@ const ImportMetrics = ({ data, subtitle }) => {
         )}
 
         {_.get(data, "verbatimByTermCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               verbatim={true}
               nameSearchParam="type"
@@ -157,7 +157,7 @@ const ImportMetrics = ({ data, subtitle }) => {
         )}
 
         {_.get(data, "verbatimByRowTypeCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChartNested
               verbatim={true}
               nameSearchParam={["type", "term"]}
@@ -175,7 +175,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "extinctTaxaByRankCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               defaultType="pie"
               nameSearchParam="rank"
@@ -192,7 +192,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "nameRelationsByTypeCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               defaultType="pie"
               datasetKey={datasetKey}
@@ -208,7 +208,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "taxonConceptRelationsByTypeCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               defaultType="pie"
               datasetKey={datasetKey}
@@ -224,7 +224,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "speciesInteractionsByTypeCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               defaultType="pie"
               datasetKey={datasetKey}
@@ -240,7 +240,7 @@ const ImportMetrics = ({ data, subtitle }) => {
           </Col>
         )}
         {_.get(data, "distributionsByGazetteerCount") && (
-          <Col span={12} style={{ padding: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
             <ImportChart
               verbatim={true}
               defaultType="pie"
