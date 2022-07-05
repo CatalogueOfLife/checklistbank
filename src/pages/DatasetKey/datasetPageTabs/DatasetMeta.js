@@ -188,6 +188,11 @@ class DatasetMeta extends React.Component {
         addError(err);
       });
   };
+
+  getAgentSpan = (agents) => {
+    return agents.length === 1 ? 24 : agents.length === 2 ? 12: 8 
+  }
+
   render() {
     const {
       data,
@@ -365,7 +370,7 @@ class DatasetMeta extends React.Component {
               {displayData.creator && _.isArray(displayData.creator) && (
                 <Row gutter={[8, 8]}>
                   {displayData.creator.map((a) => (
-                    <Col span={8}>
+                    <Col span={this.getAgentSpan(displayData.creator)}>
                       <AgentPresentation
                         hideEmail={!Auth.canEditDataset(displayData, user)}
                         agent={a}
@@ -379,7 +384,7 @@ class DatasetMeta extends React.Component {
               {displayData.editor && _.isArray(displayData.editor) && (
                 <Row gutter={[8, 8]}>
                   {displayData.editor.map((a) => (
-                    <Col span={8}>
+                    <Col span={this.getAgentSpan(displayData.editor)}>
                       <AgentPresentation
                         hideEmail={!Auth.canEditDataset(displayData, user)}
                         agent={a}
@@ -393,7 +398,7 @@ class DatasetMeta extends React.Component {
               {displayData.contributor && _.isArray(displayData.contributor) && (
                 <Row gutter={[8, 8]}>
                   {displayData.contributor.map((a) => (
-                    <Col span={8}>
+                    <Col span={this.getAgentSpan(displayData.contributor)}>
                       <AgentPresentation
                         hideEmail={!Auth.canEditDataset(displayData, user)}
                         agent={a}
