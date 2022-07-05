@@ -537,7 +537,7 @@ class DatasetList extends React.Component {
         >
           <div>
             <Row>
-              <Col md={12} sm={24}>
+              <Col xs={24} sm={24} md={12} lg={12}>
                 <SearchBox
                   defaultValue={_.get(this.state, "params.q")}
                   style={{ marginBottom: "10px", width: "50%" }}
@@ -556,7 +556,7 @@ class DatasetList extends React.Component {
                   </div>
                 </FormItem>
               </Col>
-              <Col md={12} sm={24}>
+              <Col xs={24} sm={24} md={12} lg={12}>
                 <FormItem
                   style={{ width: "100%" }}
                   {...formItemLayout}
@@ -609,7 +609,7 @@ class DatasetList extends React.Component {
               {recentDatasets && recentDatasets.length > 0 && (
                 <Col>
                   Recently visited:{" "}
-                  {recentDatasets.map((d) => (
+                 <div>{recentDatasets.map((d) => (
                     <NavLink
                       to={{
                         pathname: `/dataset/${d.key}`,
@@ -617,7 +617,7 @@ class DatasetList extends React.Component {
                     >
                       <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
                     </NavLink>
-                  ))}
+                  ))}</div> 
                 </Col>
               )}
             </Row>
