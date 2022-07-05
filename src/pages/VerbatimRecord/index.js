@@ -157,14 +157,14 @@ class VerbatimRecord extends React.Component {
             <Alert description={<ErrorMsg error={verbatimError} />} type="error" />
           )}
           <Row style={{ marginBottom: "10px" }}>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12} lg={12}>
               {" "}
               <SearchBox
                 onSearch={(value) => this.onSearch({ q: value })}
                 defaultValue={_.get(params, "q")}
               ></SearchBox>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12} lg={12}>
               <MultiValueFilter
                 defaultValue={_.get(params, "type")}
                 onChange={(value) => this.onSearch({ type: value })}
