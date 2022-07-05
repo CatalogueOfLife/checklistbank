@@ -150,14 +150,14 @@ class RefTable extends React.Component {
     return (
       <React.Fragment>
         <Row style={{ marginBottom: "10px" }}>
-          <Col md={12} sm={24}>
+          <Col xs={24} sm={24} md={12} lg={12}>
             <SearchBox
               defaultValue={_.get(this.state, "params.q")}
               style={{ width: "50%" }}
               onSearch={(value) => this.updateSearch({ q: value })}
             />
           </Col>
-          <Col md={12} sm={24} style={{ textAlign: "right" }}>
+          <Col xs={24} sm={24} md={12} lg={12} style={{ textAlign: "right" }}>
             {pagination &&
               !isNaN(pagination.total) &&
               `results: ${pagination.total}`}
