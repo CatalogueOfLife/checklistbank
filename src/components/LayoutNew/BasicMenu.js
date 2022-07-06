@@ -709,7 +709,7 @@ class BasicMenu extends Component {
                   About
                 </NavLink>
               </Menu.Item>
-              {Auth.canEditDataset(selectedDataset, user) && (
+              {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
                 <Menu.Item key="options">
                   <NavLink
                     to={{
@@ -724,7 +724,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
 
-              <Menu.Item key="download">
+            {!selectedDataset.deleted &&   <Menu.Item key="download">
                 <NavLink
                   to={{
                     pathname: `/dataset/${_.get(
@@ -735,7 +735,7 @@ class BasicMenu extends Component {
                 >
                   Download
                 </NavLink>
-              </Menu.Item>
+              </Menu.Item>}
 
               {selectedDataset &&
                 ["released", "managed"].includes(
@@ -802,7 +802,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset &&
+              {selectedDataset &&   
                 _.get(selectedDataset, "origin") !== "released" &&
                 _.get(selectedDataset, "origin") !== "managed" && (
                   <Menu.Item key="imports">
@@ -818,7 +818,7 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset &&
+              {selectedDataset && !selectedDataset.deleted &&
                 _.get(selectedDataset, "origin") === "released" && (
                   <Menu.Item key="release-metrics">
                     <NavLink

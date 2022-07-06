@@ -2,7 +2,7 @@ import React from "react";
 import config from "../../config";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import { Alert } from "antd";
+import { Alert, Row, Col, Button } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 
@@ -138,9 +138,11 @@ class DatasetPage extends React.Component {
         {dataset && _.get(dataset, "deleted") && (
           <Alert
             style={{ marginTop: "16px" }}
-            message={`This dataset was deleted ${moment(dataset.deleted).format(
+            message={<Row><Col>{`This dataset was deleted ${moment(dataset.deleted).format(
               "LLL"
-            )}`}
+            )}`}</Col><Col flex="auto"></Col>{dataset.origin === "released" && dataset.sourceKey === 3 && <Col>
+            <a href="https://download.checklistbank.org/col/monthly/" target="_blank">Archived releases</a>
+            </Col>}</Row>}
             type="error"
           />
         )}
