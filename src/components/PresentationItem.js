@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef, useState, useEffect} from "react";
 import injectSheet from "react-jss";
 import { Row, Col } from "antd";
 
@@ -6,6 +6,20 @@ import Help from "./Help";
 
 // Wrappers
 import withWidth, { MEDIUM } from "./hoc/Width";
+
+function isOverflowing(el)
+{
+   var curOverflow = el.style.overflow;
+
+   if ( !curOverflow || curOverflow === "visible" )
+      el.style.overflow = "hidden";
+
+   var isOverflowing = el.clientWidth < el.scrollWidth;
+
+   el.style.overflow = curOverflow;
+
+   return isOverflowing;
+}
 
 const styles = () => ({
   formItem: {
@@ -24,6 +38,8 @@ const styles = () => ({
   label: {
     display: "block",
     color: "rgba(0, 0, 0, 0.85)",
+    overflow: "hidden",
+    textOverflow: "ellipsis"
   },
   content: {
     wordBreak: "break-word",
@@ -68,6 +84,26 @@ const PresentationItem = ({
   md,
   size,
 }) => {
+
+  const labelRef = useRef();
+  const [overflowHelp, setOverFlowHelp] = useState(null);
+  const [formattedLabel, setFormattedLabel] = useState(label)
+  useEffect(()=> {
+
+    let overflow = labelRef.current && isOverflowing(labelRef.current);
+    if(!overflow){
+      setFormattedLabel(label)
+    } else if(label && (label.startsWith('http://') || label.startsWith('https://'))) {
+      setOverFlowHelp(label);
+      const splitted = label.replace(/^https?:\/\//, '').split("/");
+      setFormattedLabel(`${splitted[0]}...${splitted[splitted.length-1]}`)
+    } else {
+      setOverFlowHelp(label)
+      setFormattedLabel(label)
+    }
+
+  }, [label, labelRef.current])
+
   const getValue = () => {
     let value = <dd className={classes.noContent}>No information</dd>;
 
@@ -97,9 +133,9 @@ const PresentationItem = ({
         className={marginSize}
       >
         <div>
-          <dt className={classes.label}>
-            {label}
-            <Help title={helpText} />
+          <dt className={classes.label} ref={labelRef} >
+            {formattedLabel}
+            <Help title={helpText || overflowHelp} />
           </dt>
         </div>
       </Col>

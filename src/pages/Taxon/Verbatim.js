@@ -6,6 +6,9 @@ import config from "../../config";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import { Skeleton, Space , Tabs} from "antd";
 import _ from "lodash"
+import withWidth, { SMALL } from "../../components/hoc/Width";
+
+const compose = _.flowRight
 const { TabPane } = Tabs;
 
 const TYPES = {
@@ -27,6 +30,7 @@ const Verbatim = ({
     params: { key: datasetKey },
   },
   termsMapReversed,
+  width
 }) => {
   const [loading, setLoading] = useState(false);
   const [verbatimRecords, setVerbatimRecords] = useState({});
@@ -84,7 +88,7 @@ const Verbatim = ({
 
       {unknownTypeErrMsg
         ? unknownTypeErrMsg
-        : <Tabs defaultActiveKey="1" tabPosition="right">
+        : <Tabs defaultActiveKey="1" tabPosition={width <= SMALL ? "top" : "right"}>
             {Object.keys(verbatimRecords).map(key => 
                 <TabPane tab={key} key={key}>
                   {verbatimRecords[key].map((v) => (
@@ -111,4 +115,11 @@ const mapContextToProps = ({ addError, termsMapReversed }) => ({
   addError,
   termsMapReversed,
 });
-export default withContext(mapContextToProps)(withRouter(Verbatim));
+
+export default compose(
+  withWidth(),
+  withContext(mapContextToProps),
+  withRouter
+)(Verbatim);
+
+//export default withContext(mapContextToProps)(withRouter(Verbatim));
