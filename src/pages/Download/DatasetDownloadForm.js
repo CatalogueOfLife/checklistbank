@@ -91,8 +91,11 @@ class DatasetDownload extends React.Component {
         this.setState({
           error: null,
           exportUrl: `${config.dataApi}export/${uuid}`,
-          downloadModalVisible: true,
+          /* downloadModalVisible: true, */
         });
+        history.push({
+          pathname: `/download/${uuid}` //"/user-profile/downloads"
+        })
       })
       .catch((err) => addError(err));
   };

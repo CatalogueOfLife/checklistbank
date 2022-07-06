@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/LayoutNew";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import PresentationItem from "../../components/PresentationItem";
 import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
@@ -8,15 +8,18 @@ import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
 import _ from "lodash";
-import { DownloadOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card } from "antd";
+import { DownloadOutlined, HistoryOutlined, SyncOutlined } from "@ant-design/icons";
+import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin } from "antd";
 import moment from "moment";
+import history from "../../history";
 const { TabPane } = Tabs;
-const UserProfile = ({ user, countryAlpha2 }) => {
+const UserProfile = ({ user, countryAlpha2, match }) => {
   const [editorDatasets, setEditorDatasets] = useState([]);
   const [reviewerDatasets, setReviewerDatasets] = useState([]);
   const [downloads, setDownloads] = useState([]);
-
+  const [hasRunningDownload, setHasRunningDownload] = useState(false)
+  const [activeTab, setActiveTab] = useState('profile')
+  const [intervalHandle, setIntervalHandle] = useState(null)
   useEffect(() => {
     const init = async () => {
       const editorDatasets_ = await axios(
@@ -37,6 +40,10 @@ const UserProfile = ({ user, countryAlpha2 }) => {
       }
       if (downloads_?.data?.result) {
         setDownloads(downloads_?.data?.result);
+        const running = downloads_?.data?.result.find(e => e.status === "running");
+        if(running){
+          setHasRunningDownload(true)
+        }
       }
     };
     if(user){
@@ -44,8 +51,41 @@ const UserProfile = ({ user, countryAlpha2 }) => {
     }
   }, [user]);
 
+  useEffect(()=>{
+    setActiveTab(match.params.tab)
+  },[match.params.tab])
+
+  useEffect(() => {
+    if(hasRunningDownload && !intervalHandle){
+     let hdl = setInterval(async () => {
+        const downloads_ = await axios(
+          `${config.dataApi}export?createdBy=${user?.key}`
+        );
+        if (downloads_?.data?.result) {
+          setDownloads(downloads_?.data?.result);
+          const running = downloads_?.data?.result.find(e => e.status === "running");
+          if(running){
+            setHasRunningDownload(true)
+          }
+        }
+      }, 5000)
+      setIntervalHandle(hdl)
+    };
+    if(!hasRunningDownload && intervalHandle){
+      clearInterval(intervalHandle)
+    }
+  }, [hasRunningDownload])
+
+  useEffect(() => {
+    return () => {
+        if(intervalHandle){
+          clearInterval(intervalHandle)
+        }
+    }
+}, [])
+
   const renderItem = (item) => (
-    <List.Item>
+    <List.Item key={item?.key}>
       <List.Item.Meta
         avatar={
           <Tag>{item?.origin === "managed" ? "project" : item?.origin}</Tag>
@@ -66,29 +106,33 @@ const UserProfile = ({ user, countryAlpha2 }) => {
     </List.Item>
   );
   const renderDownload = (item) => (
-    <List.Item>
+    <List.Item key={item?.key}>
       <Card title={<>
         {item?.error ? (
               <Tooltip title={item?.error}>
                 <Tag color="error">Failed</Tag>
               </Tooltip>
-          ) : (
+          ) : item?.status === "finished" ? (
             <Button type="link" href={item?.download} style={{color: "#1890ff"}}>
               <DownloadOutlined /> {item?.sizeWithUnit}
             </Button>
-          )}<span>{moment(item?.created).format("MMM Do YYYY")}</span> 
+          ) : item?.status === "waiting" ? (
+            <HistoryOutlined style={{ marginRight: "10px", marginLeft: "10px" }} />
+          ) : <SyncOutlined style={{ marginRight: "10px", marginLeft: "10px" }} spin />}
+          
+          <span>{moment(item?.created).format("MMM Do YYYY")}</span> 
         </>}>
         <>
             <div> <PresentationItem md={4} label="Request">
              {item.request && <div>{Object.keys(item.request).map((key) => (
-                <Tag>{`${key}: ${item.request[key]}`}</Tag>
+                <Tag key={key}>{`${key}: ${item.request[key]}`}</Tag>
               ))}</div>}
                 </PresentationItem>
                 </div>
                 <div style={{marginTop: "10px"}}>
                 <PresentationItem  md={4} label="Taxa By Rank">
                 {item.taxaByRankCount && <div>{Object.keys(item.taxaByRankCount).map((key) => (
-                <Tag>{`${key}: ${item.taxaByRankCount[key]}`}</Tag>
+                <Tag key={key}>{`${key}: ${item.taxaByRankCount[key]}`}</Tag>
               ))}</div>}
                 </PresentationItem>   
                 </div>      
@@ -102,8 +146,12 @@ const UserProfile = ({ user, countryAlpha2 }) => {
     <Layout title={user?.username ? `User profile: ${user?.username}` : ""}>
       {user ? (
         <PageContent>
-          <Tabs defaultActiveKey="1">
-            <TabPane tab="Profile" key="1">
+          <Tabs activeKey={activeTab} onChange={tb => {
+            history.push({
+              pathname: tb === "profile" ? "/user-profile" : `/user-profile/${tb}`
+            })
+          }} >
+            <TabPane tab="Profile" key="profile">
               <Row>
                 <Col flex="auto"></Col>
                 <Col>
@@ -143,20 +191,20 @@ const UserProfile = ({ user, countryAlpha2 }) => {
                   {user?.roles?.length && (
                     <div>
                       {user.roles.map((r) => (
-                        <Tag>{r}</Tag>
+                        <Tag key={r}>{r}</Tag>
                       ))}{" "}
                     </div>
                   )}
                 </PresentationItem>
               </Row>
             </TabPane>
-            <TabPane tab={`Editor (${editorDatasets.length})`} key="2">
+            <TabPane tab={`Editor (${editorDatasets.length})`} key="editor">
               <List dataSource={editorDatasets} renderItem={renderItem} />
             </TabPane>
-            <TabPane tab={`Reviewer (${reviewerDatasets.length})`} key="3">
+            <TabPane tab={`Reviewer (${reviewerDatasets.length})`} key="reviewer">
               <List dataSource={reviewerDatasets} renderItem={renderItem} />
             </TabPane>
-            <TabPane tab={`Downloads (${downloads.length})`} key="4" >
+            <TabPane tab={`Downloads (${downloads.length})`} key="downloads" >
               <Row>
                 <Col flex="auto"></Col>
                 <Col><List dataSource={downloads} renderItem={renderDownload} split={false} /></Col>
@@ -184,7 +232,7 @@ const UserProfile = ({ user, countryAlpha2 }) => {
         </Row> */}
         </PageContent>
       ) : (
-        <Exception type={401}></Exception>
+        <Exception type="401"></Exception>
       )}
     </Layout>
   );
@@ -195,4 +243,4 @@ const mapContextToProps = ({ user, countryAlpha2 }) => ({
   countryAlpha2,
 });
 
-export default withContext(mapContextToProps)(UserProfile);
+export default withContext(mapContextToProps)(withRouter(UserProfile));

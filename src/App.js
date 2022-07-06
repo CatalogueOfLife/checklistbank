@@ -50,6 +50,7 @@ import NameUsageSearch from "./pages/NameSearch/Search";
 import UserProfile from "./pages/UserProfile"
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
+import DownloadKey from "./pages/Download/DatasetDownloadKey";
 import Analytics from "./Analytics";
 import config from "./config";
 
@@ -279,8 +280,14 @@ const App = () => {
                 <Route
                   exact
                   key="userprofile"
-                  path={`/user-profile`}
+                  path={`/user-profile/:tab?`}
                   component={UserProfile}
+                />
+                <Route
+                  exact
+                  key="download"
+                  path={`/download/:key`}
+                  component={DownloadKey}
                 />
                 <Route
                   exact
