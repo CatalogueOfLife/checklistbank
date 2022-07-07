@@ -87,7 +87,9 @@ const MetaDataValidator = ({ location }) => {
       }
     }
   }, [location]);
+  /* useEffect(() =>{
 
+  }, [data]) */
   const customRequest = (options) => {
     const reqConfig = {
       headers: {
@@ -222,13 +224,17 @@ const MetaDataValidator = ({ location }) => {
   };
 
   const onFinish = (values, gotoStep = 1) => {
-    const cb = gotoStep === 2 ? validateFromMetadataForm : null;
+    let cb = () => {
+      if(gotoStep === 2){
+        validateFromMetadataForm()
+      }
+      setStep(gotoStep);
+    }
     if (values.url) {
       validateFromUrl(values.url, cb);
     } else if (values.yaml) {
       validateFromYaml(values.yaml, cb);
     }
-    setStep(gotoStep);
   };
   const onFinishFailed = (err) => {
     setSubmissionError(err);
