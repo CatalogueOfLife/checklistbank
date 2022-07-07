@@ -391,9 +391,9 @@ class NamePage extends React.Component {
               )}
             </PresentationItem> */}
             <PresentationItem md={md} label="Link">
-              {name.Link && (
-                <a href={name.Link} target="_blank">
-                  {name.Link}
+              {name.link && (
+                <a href={name.link} target="_blank">
+                  {name.link}
                 </a>
               )}
             </PresentationItem>
