@@ -4,6 +4,7 @@ import { Popover, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
+import linkify from 'linkify-html';
 
 class ReferencePopover extends React.Component {
   constructor(props) {
@@ -39,12 +40,12 @@ class ReferencePopover extends React.Component {
     if (loading) {
       return <Spin />;
     } else if (reference.length === 1) {
-      return reference[0].citation;
+      return <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation)}}></span>;
     } else {
       return (
         <ul>
           {reference.map((r) => (
-            <li>{r.citation}</li>
+            <li><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation)}}></span></li>
           ))}
         </ul>
       );
