@@ -458,6 +458,11 @@ span.small-text {
   box-shadow: none !important;
 }
 
+.col-reference-link {
+  vertical-align: super;
+  font-size: 9px;
+  font-weight: 400;
+}
 
 
 

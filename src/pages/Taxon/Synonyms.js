@@ -18,6 +18,7 @@ const SynonymsTable = ({
   references,
   typeMaterial,
   canEdit,
+  referenceIndexMap
 }) => {
   const uri = `/dataset/${datasetKey}/name/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
@@ -81,18 +82,19 @@ const SynonymsTable = ({
             <ReferencePopover
               datasetKey={datasetKey}
               references={references}
+              referenceIndexMap={referenceIndexMap}
               referenceId={
                 _.get(s, "name.publishedInId")
                   ? [_.get(s, "name.publishedInId"), ...(s.referenceIds || [])]
                   : s.referenceIds
               }
-              placement="bottom"
+              placement="top"
             />
             <TypeMaterialPopover 
             datasetKey={datasetKey}
             typeMaterial={typeMaterial}
             nameId={_.get(s, "name.id")}
-            placement="bottom"
+            placement="top"
             />
           </BorderedListItem>
         ))}

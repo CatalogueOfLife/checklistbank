@@ -43,6 +43,7 @@ class TaxonPage extends React.Component {
     this.state = {
       taxon: null,
       info: null,
+      referenceIndexMap: {},
       taxonLoading: true,
       datasetLoading: true,
       infoLoading: true,
@@ -230,7 +231,13 @@ class TaxonPage extends React.Component {
             `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
           );
         }
-        this.setState({ infoLoading: false, info: res.data, infoError: null });
+        let referenceIndexMap = {};
+        if(_.get(res, 'data.references')){
+          Object.keys(res.data.references).forEach((k,i) => {
+            referenceIndexMap[k] = (i+1).toString();
+          })
+        }
+        this.setState({ infoLoading: false, info: res.data, infoError: null, referenceIndexMap });
       })
       .catch((err) => {
         this.setState({ infoLoading: false, infoError: err, info: null });
@@ -323,6 +330,7 @@ class TaxonPage extends React.Component {
       infoError,
       includes,
       edit,
+      referenceIndexMap
     } = this.state;
 
 /*     const synonyms =
@@ -491,6 +499,7 @@ class TaxonPage extends React.Component {
                 canEdit={this.canEdit}
                 data={synonyms}
                 references={_.get(info, "references")}
+                referenceIndexMap={referenceIndexMap}
                 typeMaterial={_.get(info, "typeMaterial")}
                 style={{ marginTop: "-3px" }}
                 datasetKey={datasetKey}
@@ -504,6 +513,7 @@ class TaxonPage extends React.Component {
               <SynonymTable
                 data={misapplied}
                 references={_.get(info, "references")}
+                referenceIndexMap={referenceIndexMap}
                 typeMaterial={_.get(info, "typeMaterial")}
                 style={{ marginBottom: 16, marginTop: "-3px" }}
                 datasetKey={datasetKey}
@@ -557,6 +567,7 @@ class TaxonPage extends React.Component {
               style={{ marginTop: "-3px", marginLeft: "-10px" }}
               speciesInteractions={info.speciesInteractions}
               references={info?.references || {}}
+              referenceIndexMap={referenceIndexMap}
               datasetKey={datasetKey}
             />
           )}
@@ -680,7 +691,7 @@ class TaxonPage extends React.Component {
           </Row>
           {_.get(info, "references") && (
             <PresentationItem md={md} label="References">
-              <References data={_.get(info, "references")} />
+              <References data={_.get(info, "references")} referenceIndexMap={referenceIndexMap}/>
              
             </PresentationItem>
           )}
