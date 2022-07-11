@@ -388,7 +388,7 @@ class TaxonPage extends React.Component {
                     }}
                   />
                 </CopyToClipboard>
-                {taxon.referenceIds && (
+                {/* {taxon.referenceIds && (
                   <div style={{ display: "inline-block", paddingLeft: "10px" }}>
                     <ReferencePopover
                       datasetKey={datasetKey}
@@ -396,7 +396,7 @@ class TaxonPage extends React.Component {
                       placement="bottom"
                     />
                   </div>
-                )}
+                )} */}
               </Col>
               <Col>
                 {this.canEdit() && (
