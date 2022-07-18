@@ -22,7 +22,7 @@ import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 
 
-const DatasetDownload = ({ match, addError}) => {
+const DatasetDownload = ({ match, addError }) => {
   const [download, setDownload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [intervalHandle, setIntervalHandle] = useState(null);
@@ -104,11 +104,14 @@ const DatasetDownload = ({ match, addError}) => {
                   <PresentationItem md={4} label="Request">
                     {download.request && (
                       <div>
-                        {Object.keys(download.request).map((key) => (
-                          <Tag
-                            key={key}
-                          >{`${key}: ${download.request[key]}`}</Tag>
-                        ))}
+                        {Object.keys(download.request).map((key) => {
+                          const value = download.request[key];
+                          return (
+                            <Tag
+                              key={key}
+                            >{`${key}: ${value?.label || value}`}</Tag>
+                          );
+                        })}
                       </div>
                     )}
                   </PresentationItem>
