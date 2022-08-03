@@ -243,7 +243,7 @@ class DuplicateSearchPage extends React.Component {
             }}
             exact={true}
           >
-            {_.get(record, "sector.dataset.alias")}
+            {_.get(record, "sector.dataset.alias") || _.get(record, "sector.dataset.title")}
           </NavLink>
         );
       },
@@ -269,7 +269,7 @@ class DuplicateSearchPage extends React.Component {
       });
   };
   getDecisions = (data) => {
-    const { catalogueKey } = this.props;
+    const { catalogueKey, assembly } = this.props;
 
     const promises = data.usages.map((d) =>
       d.decision
@@ -356,7 +356,7 @@ class DuplicateSearchPage extends React.Component {
   };
   applyDecision = () => {
     const { selectedRowKeys, data, decision } = this.state;
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, catalogueKey, assembly } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
@@ -367,7 +367,7 @@ class DuplicateSearchPage extends React.Component {
           : "update";
         const body = {
           datasetKey: catalogueKey,
-          subjectDatasetKey: datasetKey,
+          subjectDatasetKey: assembly ? d?.sector?.dataset?.key : datasetKey,
           subject: {
             id: _.get(d, "id"),
             parent:

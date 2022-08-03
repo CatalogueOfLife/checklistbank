@@ -44,6 +44,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
+            catalogueKey={catalogueKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -154,6 +155,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
+            catalogueKey={catalogueKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -272,6 +274,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
+            catalogueKey={catalogueKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -378,6 +381,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
+            catalogueKey={catalogueKey}
             deleteCallback={deleteCallback}
           />
         );
