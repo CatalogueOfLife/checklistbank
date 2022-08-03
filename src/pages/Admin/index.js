@@ -37,11 +37,18 @@ class AdminPage extends React.Component {
   }
 
   componentDidMount = () => {
-    this.props.getBackground();
+    this.getBackground();
   };
-
+  getBackground = () => {
+    // admin/settings
+    axios
+      .get(`${config.dataApi}admin/settings`)
+      .then(res => {
+        this.setState({background: res.data})
+      });
+  }
   updateBackground = (param, checked) => {
-    const { background, getBackground } = this.props;
+    const { background, getBackground } = this.state;
     axios
       .put(`${config.dataApi}admin/settings`, {
         ...background,
@@ -183,9 +190,9 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
+      background
     } = this.state;
 
-    const { background } = this.props;
     return (
       <Layout
         openKeys={["admin"]}
@@ -376,14 +383,10 @@ class AdminPage extends React.Component {
 const mapContextToProps = ({
   catalogueKey,
   catalogue,
-  setCatalogue,
-  getBackground,
-  background,
+  setCatalogue
 }) => ({
   catalogueKey,
   catalogue,
-  setCatalogue,
-  getBackground,
-  background,
+  setCatalogue
 });
 export default withContext(mapContextToProps)(AdminPage);
