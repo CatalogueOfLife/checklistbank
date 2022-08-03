@@ -134,12 +134,12 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   };
 
   const processChildren = (children, countBy) => {
+    children.sort(function compareFn(a, b) {
+      return b[countBy] - a[countBy];
+    });
     if (children.length < 100) {
       return children;
     } else {
-      children.sort(function compareFn(a, b) {
-        return b[countBy] - a[countBy];
-      });
       return children.slice(0, 100);
     }
   };
