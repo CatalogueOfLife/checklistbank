@@ -33,6 +33,7 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading: false,
       background: {},
       backgroundError: null,
+      backgroundLoading: false
     };
   }
 
@@ -44,17 +45,18 @@ class AdminPage extends React.Component {
     axios
       .get(`${config.dataApi}admin/settings`)
       .then(res => {
-        this.setState({background: res.data})
+        this.setState({background: res.data, backgroundLoading: false})
       });
   }
   updateBackground = (param, checked) => {
-    const { background, getBackground } = this.state;
+    const { background } = this.state;
+    this.setState({backgroundLoading: true})
     axios
       .put(`${config.dataApi}admin/settings`, {
         ...background,
         [param]: checked,
       })
-      .then(getBackground);
+      .then(this.getBackground);
   };
 
   updateAllLogos = () => {
@@ -190,7 +192,8 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
-      background
+      background,
+      backgroundLoading
     } = this.state;
 
     return (
@@ -231,6 +234,7 @@ class AdminPage extends React.Component {
               <Form layout="inline">
                 <FormItem label="GBIF Registry Sync">
                   <Switch
+                  loading={backgroundLoading}
                     onChange={(checked) => {
                       this.updateBackground("gbifSync", checked);
                     }}
@@ -239,6 +243,7 @@ class AdminPage extends React.Component {
                 </FormItem>
                 <FormItem label="Dataset importer">
                   <Switch
+                    loading={backgroundLoading}
                     onChange={(checked) => {
                       this.updateBackground("importer", checked);
                     }}
@@ -247,6 +252,7 @@ class AdminPage extends React.Component {
                 </FormItem>
                 <FormItem label="Import scheduler">
                   <Switch
+                    loading={backgroundLoading}
                     onChange={(checked) => {
                       this.updateBackground("scheduler", checked);
                     }}
@@ -255,6 +261,7 @@ class AdminPage extends React.Component {
                 </FormItem>
                 <FormItem label="Maintenance">
                   <Switch
+                    loading={backgroundLoading}
                     onChange={(checked) => {
                       this.updateBackground("maintenance", checked);
                     }}
