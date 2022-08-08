@@ -67,7 +67,7 @@ const App = () => {
           <title>ChecklistBank (CLB)</title>
         </Helmet>
         <Router history={history}>
-          {config.env === "dev" &&<Analytics />}
+          <Analytics />
           <React.Fragment>
             <ThemeProvider theme={theme}>
               <Switch>

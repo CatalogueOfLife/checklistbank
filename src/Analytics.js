@@ -9,9 +9,7 @@ import ReactGA from "react-ga4";
 
 const { termsIssued } = config;
 
-if (config.env === "dev") {
-  ReactGA.initialize(config.ga4);
-}
+
 
 const Analytics = ({ location, user, loadTokenUser }) => {
   const sessionAccepted = sessionStorage.getItem("clb_terms_consent_accepted");
@@ -79,6 +77,8 @@ const Analytics = ({ location, user, loadTokenUser }) => {
         settings.termsConsentAccepted &&
         Number(settings.termsConsentAccepted) > termsIssued
       ) {
+        ReactGA.initialize(config.ga4);
+        ReactGA.send({ hitType: "pageview", page: location.pathname });
         sessionStorage.setItem(
           "clb_terms_consent_accepted",
           settings.termsConsentAccepted
@@ -122,6 +122,8 @@ const Analytics = ({ location, user, loadTokenUser }) => {
         sessionStorage.removeItem("clb_terms_consent_rejected");
         setAccepted(true);
         setRejected(false);
+        ReactGA.initialize(config.ga4);
+        ReactGA.send({ hitType: "pageview", page: location.pathname });
       }
       if (!consent) {
         sessionStorage.setItem("clb_terms_consent_rejected", time);
@@ -137,6 +139,8 @@ const Analytics = ({ location, user, loadTokenUser }) => {
     let settings = user?.settings ? { ...user.settings } : {};
     let time = Date.now();
     if (consent) {
+      ReactGA.initialize(config.ga4);
+      ReactGA.send({ hitType: "pageview", page: location.pathname });
       delete settings.termsConsentRejected;
       settings.termsConsentAccepted = time;
     }
