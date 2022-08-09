@@ -132,9 +132,7 @@ class DatasetTasks extends React.Component {
                   {d.text}{" "}
                   {
                     <strong>{`${d.completed} of ${
-                      d.completed + d.count > 50
-                        ? "> 50"
-                        : d.completed + d.count
+                       d.completed + d.count
                     }`}</strong>
                   }
                 </NavLink>{" "}

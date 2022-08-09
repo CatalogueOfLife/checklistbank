@@ -74,6 +74,7 @@ class DuplicateSearchPage extends React.Component {
       advancedMode: false,
       columns: columnDefaults(catalogueKey, this.getData).binomial,
       params: { limit: limit ? Number(limit) : 50, offset: 0 },
+      page: 1,
       totalFaked: 0,
       loading: false,
       postingDecisions: false,
@@ -157,7 +158,7 @@ class DuplicateSearchPage extends React.Component {
     ).then(() => res);
   };
 
-  getData = () => {
+  getData = async () => {
     const { params } = this.state;
     const {
       location: { pathname },
@@ -170,59 +171,74 @@ class DuplicateSearchPage extends React.Component {
       pathname: pathname,
       search: `?${qs.stringify({ ...params, limit: Number(params.limit) })}`,
     });
-    axios(
-      `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-        ...params,
-        catalogueKey: catalogueKey,
-        limit: Number(params.limit) + 1,
-      })}`
-    )
-      .then((res) => Promise.all(res.data.map((e) => this.getDecisions(e))))
-      .then((res) => {
-        return assembly
-          ? Promise.all(res.map((e) => this.decorateWithSectorsAndDataset(e)))
-          : res;
-      })
-      .then((data) => {
-        const dataArr =
-          data.length > Number(params.limit) ? data.slice(0, -1) : data;
-        const { totalFaked } = this.state;
-        const clms = params.category
-          ? columnDefaults(catalogueKey, this.getData)[params.category]
-          : columnDefaults(catalogueKey, this.getData).binomial;
+    try {
+      const res = await  axios(
+        `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
+          ...params,
+          catalogueKey: catalogueKey,
+          limit: Number(params.limit),
+        })}`
+      )
+      
+      const netxtRes  = res.data?.result ? await Promise.all(res.data.result.map((e) => this.getDecisions(e))) : []
+      const total = res.data?.total || 0;
+     const data = assembly
+     ? await Promise.all(netxtRes.map((e) => this.decorateWithSectorsAndDataset(e)))
+     : netxtRes
+       // .then((res) => Promise.all(res.data.result.map((e) => this.getDecisions(e))))
+        /* .then((res) => {
+          return assembly
+            ? Promise.all(res.map((e) => this.decorateWithSectorsAndDataset(e)))
+            : res;
+        })
+        .then((data) => { */
+          const dataArr = data;
+          const { totalFaked } = this.state;
+          const clms = params.category
+            ? columnDefaults(catalogueKey, this.getData)[params.category]
+            : columnDefaults(catalogueKey, this.getData).binomial;
+  
+          this.setState({
+            loading: false,
+            data: dataArr
+              .map((e, i) =>
+                e.usages.map((u, id) => ({
+                  ...u.usage,
+                  sector: u.sector,
+                  dupID: i,
+                  dubKey: e.key,
+                  classification: u.classification,
+                  isFirstInGroup: id === 0, // not used ... keep?
+                }))
+              )
+              .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for holding dupes together
+            rawData: dataArr,
+            columns: assembly ? [this.getGsdColumn(), ...clms] : clms,
+            duplicateCount: dataArr.length,
+            totalFaked: total
+              /* totalFaked > data.length + Number(params.offset)
+                ? totalFaked
+                : data.length + Number(params.offset) */,
+            error: null,
+          });
+    } catch (err) {
+      this.setState({
+        loading: false,
+        error: err,
+        data: [],
+        duplicateCount: 0,
+      });
+    }
 
-        this.setState({
-          loading: false,
-          data: dataArr
-            .map((e, i) =>
-              e.usages.map((u, id) => ({
-                ...u.usage,
-                sector: u.sector,
-                dupID: i,
-                dubKey: e.key,
-                classification: u.classification,
-                isFirstInGroup: id === 0, // not used ... keep?
-              }))
-            )
-            .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for holding dupes together
-          rawData: dataArr,
-          columns: assembly ? [this.getGsdColumn(), ...clms] : clms,
-          duplicateCount: dataArr.length,
-          totalFaked:
-            totalFaked > data.length + Number(params.offset)
-              ? totalFaked
-              : data.length + Number(params.offset),
-          error: null,
-        });
-      })
-      .catch((err) => {
+      /* }) */
+     /*  .catch((err) => {
         this.setState({
           loading: false,
           error: err,
           data: [],
           duplicateCount: 0,
         });
-      });
+      }); */
   };
 
   getGsdColumn = () => {
@@ -561,6 +577,7 @@ class DuplicateSearchPage extends React.Component {
       loading,
       error,
       params,
+      page,
       selectedRowKeys,
       decision,
       postingDecisions,
@@ -1033,12 +1050,14 @@ class DuplicateSearchPage extends React.Component {
               <Pagination
                 style={{ display: "inline" }}
                 showSizeChanger
+                current={page}
                 pageSizeOptions={["50", "100", "250", "500"]}
                 onShowSizeChange={(current, size) => {
                   localStorage.setItem("col_plus_duplicates_limit", size);
                   this.setState(
                     {
                       params: { ...this.state.params, limit: size, offset: 0 },
+                      page: 1
                     },
                     this.getData
                   );
@@ -1051,6 +1070,7 @@ class DuplicateSearchPage extends React.Component {
                         offset: page === 0 ? page : (page - 1) * pageSize,
                         limit: pageSize,
                       },
+                      page
                     },
                     this.getData
                   );

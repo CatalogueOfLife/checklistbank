@@ -31,13 +31,13 @@ export const getDuplicateOverview = (
   return Promise.all(
     groups.map((g) =>
       axios(
-        `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
+        `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify({
           ...g.params,
           catalogueKey: catalogueKey,
-          limit: limit || 51,
+         // limit: limit || 51,
         })}`
       )
-        .then((res) => (g.count = res.data.length))
+        .then((res) => (g.count = res.data))
         .catch((err) => (g.error = err))
     )
   ).then(() => groups);
