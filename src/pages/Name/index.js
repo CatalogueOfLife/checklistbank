@@ -326,19 +326,15 @@ class NamePage extends React.Component {
              
             </PresentationItem>
           )}
-            {relations && relations.length > 0 && (
-              <PresentationItem
-                md={md}
-                label="Relations"
-                helpText={
-                  <a href="https://github.com/Sp2000/colplus/blob/master/docs/NAMES.md#name-relations">
-                    Name relations are explained here
-                  </a>
-                }
-              >
-                <NameRelations style={{ marginTop: "-3px" }} data={relations} />
-              </PresentationItem>
-            )}
+            {relations && relations.length > 0 && 
+                <NameRelations 
+                  md={md}
+                  style={{ marginTop: "-3px" }} 
+                  data={relations}
+                  datasetKey={datasetKey}
+                  catalogueKey={catalogueKey} />
+             
+            }
             {filteredSynonyms && filteredSynonyms.length > 0 && (
               <PresentationItem md={md} label="Homotypic names">
                 <SynonymTable
