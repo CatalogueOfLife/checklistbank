@@ -146,7 +146,7 @@ class DatasetDownload extends React.Component {
             </Col>
             <Col span={20}>
               <a
-                href={`${config.dataApi}dataset/${dataset?.key}/export.zip`}
+                href={`${config.dataApi}dataset/${dataset?.key}/archive.zip`}
                 target="_blank"
               >
                 original archive
