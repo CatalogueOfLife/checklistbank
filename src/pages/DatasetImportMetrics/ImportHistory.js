@@ -10,7 +10,6 @@ import {
 } from "@ant-design/icons";
 import { Timeline, Tooltip } from "antd";
 import moment from "moment";
-import config from "../../config";
 import { NavLink } from "react-router-dom";
 import kibanaQuery from "../Imports/importTabs/kibanaQuery";
 import _ from "lodash";
@@ -116,13 +115,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                       </NavLink>
                     </Tooltip>
                   </React.Fragment>
-                )}
-                {(_.get(h, "attempt") && _.get(h, "datasetKey")) && 
-                  <Tooltip title="Download archive" placement="right">
-                    <a style={{marginLeft: "4px"}} href={`${config.dataApi}dataset/${_.get(h, "datasetKey")}/archive?attempt=${_.get(h, "attempt")}`}><DownloadOutlined /></a>
-                  </Tooltip>
-                  }
-                  
+                )}    
 
             </p>
           </React.Fragment>
