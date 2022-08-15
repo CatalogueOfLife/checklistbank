@@ -128,6 +128,11 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
             >
               <strong>{`${h.state}`}</strong>
             </NavLink>{" "}
+            <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
+              <a href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`} target="_blank">
+                <FileZipOutlined />
+              </a>{" "}
+            </Tooltip>
             <Tooltip title="Kibana logs" placement="right">
               <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                 <CodeOutlined />
