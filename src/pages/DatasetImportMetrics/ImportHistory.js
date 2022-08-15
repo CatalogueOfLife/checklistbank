@@ -4,11 +4,13 @@ import config from "../../config";
 import {
   ArrowRightOutlined,
   CodeOutlined,
+  FileZipOutlined,
   LoadingOutlined,
   DiffOutlined,
 } from "@ant-design/icons";
 import { Timeline, Tooltip } from "antd";
 import moment from "moment";
+import config from "../../config";
 import { NavLink } from "react-router-dom";
 import kibanaQuery from "../Imports/importTabs/kibanaQuery";
 import _ from "lodash";
@@ -82,6 +84,11 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
               <span style={{ fontSize: "10px" }}>
                 {`${moment(h.started).format("lll")}`}{" "}
               </span>{" "}
+              <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
+                <a href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`} target="_blank">
+                  <FileZipOutlined />
+                </a>{" "}
+              </Tooltip>
               <Tooltip title="Kibana logs" placement="right">
                 <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                   <CodeOutlined />
@@ -130,6 +137,11 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
             >
               <strong>{`${h.state}`}</strong>
             </NavLink>{" "}
+            <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
+              <a href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`} target="_blank">
+                <FileZipOutlined />
+              </a>{" "}
+            </Tooltip>
             <Tooltip title="Kibana logs" placement="right">
               <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                 <CodeOutlined />
