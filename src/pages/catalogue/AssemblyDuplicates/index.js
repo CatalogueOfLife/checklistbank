@@ -19,6 +19,7 @@ const AssemblyDuplicates = ({ location, catalogueKey, catalogue }) => {
       <PageContent>
         <Duplicates
           datasetKey={catalogueKey}
+          catalogueKey={catalogueKey}
           location={location}
           assembly={true}
         />

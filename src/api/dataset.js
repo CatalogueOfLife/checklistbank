@@ -19,26 +19,32 @@ export const getDuplicateOverview = (
   datasetKey,
   catalogueKey,
   withDecision,
-  limit
 ) => {
   let groups = [
-    ...duplicatePresets.map((p) => ({
+    ...duplicatePresets.map((p) => {
+      let params = { ...p.params};
+      if('boolean' === typeof withDecision) {
+        params.withDecision = withDecision;
+      } else {
+        delete params.withDecision
+      }
+      return {
       ...p,
-      params: { ...p.params, withDecision: withDecision },
-    })),
+      params,
+    }
+  }),
   ];
 
   return Promise.all(
-    groups.map((g) =>
-      axios(
-        `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify({
-          ...g.params,
-          catalogueKey: catalogueKey,
-         // limit: limit || 51,
-        })}`
+    groups.map((g) => {
+      let params = catalogueKey ? {...g.params, catalogueKey} : {...g.params};
+      return axios(
+        `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify(params)}`
       )
         .then((res) => (g.count = res.data))
         .catch((err) => (g.error = err))
+    }
+      
     )
   ).then(() => groups);
 };

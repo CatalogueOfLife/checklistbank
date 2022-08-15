@@ -1,4 +1,6 @@
 import React from "react";
+import config from "../../config";
+
 import {
   ArrowRightOutlined,
   CodeOutlined,
@@ -108,6 +110,13 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                     </Tooltip>
                   </React.Fragment>
                 )}
+                {(_.get(h, "attempt") && _.get(h, "datasetKey")) && 
+                  <Tooltip title="Download archive" placement="right">
+                    <a style={{marginLeft: "4px"}} href={`${config.dataApi}dataset/${_.get(h, "datasetKey")}/archive?attempt=${_.get(h, "attempt")}`}><DownloadOutlined /></a>
+                  </Tooltip>
+                  }
+                  
+
             </p>
           </React.Fragment>
         )}

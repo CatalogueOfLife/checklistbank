@@ -166,18 +166,22 @@ class DuplicateSearchPage extends React.Component {
     } = this.props;
     this.setState({ loading: true });
     const { datasetKey, assembly } = this.props;
-
+    let prms = {
+      ...params,
+      limit: Number(params.limit),
+    };
+    if(catalogueKey){
+      prms.catalogueKey = catalogueKey;
+    } else {
+      delete prms.withDecision
+    }
     history.push({
       pathname: pathname,
-      search: `?${qs.stringify({ ...params, limit: Number(params.limit) })}`,
+      search: `?${qs.stringify({ ...prms, limit: Number(params.limit) })}`,
     });
     try {
       const res = await  axios(
-        `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
-          ...params,
-          catalogueKey: catalogueKey,
-          limit: Number(params.limit),
-        })}`
+        `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify(prms)}`
       )
       
       const netxtRes  = res.data?.result ? await Promise.all(res.data.result.map((e) => this.getDecisions(e))) : []
@@ -337,6 +341,7 @@ class DuplicateSearchPage extends React.Component {
   };
 
   onPresetSelect = (value, option) => {
+    const {catalogueKey} = this.props;
     if (!value) {
       this.resetSearch();
     } else {
@@ -599,7 +604,7 @@ class DuplicateSearchPage extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px",
     };
-
+    console.log(`CatalogueKey ${catalogueKey}`)
     const { offset, ...downloadParams } = params;
 
     return (
@@ -623,7 +628,7 @@ class DuplicateSearchPage extends React.Component {
 
         <Row gutter={16}>
           <Col
-            span={Auth.canEditDataset({ key: catalogueKey }, user) ? 18 : 24}
+            span={(Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey) ? 18 : 24}
           >
               <div style={{ marginBottom: "10px" }}>
                 <Select
@@ -873,7 +878,7 @@ class DuplicateSearchPage extends React.Component {
                     </RadioGroup>
                   </FormItem>
 
-                  <FormItem label="With decision">
+                {catalogueKey &&  <FormItem label="With decision">
                     <RadioGroup
                       onChange={(evt) => {
                         if (typeof evt.target.value === "undefined") {
@@ -895,7 +900,7 @@ class DuplicateSearchPage extends React.Component {
                       <Radio value={false}>No</Radio>
                       <Radio value={undefined}>Ignore</Radio>
                     </RadioGroup>
-                  </FormItem>
+                  </FormItem> }
 
                   <FormItem label="Entity">
                     <RadioGroup
@@ -938,7 +943,7 @@ class DuplicateSearchPage extends React.Component {
                 </Form>
               )}{" "}
           </Col>
-          <CanEditDataset dataset={{ key: catalogueKey }}>
+         {catalogueKey && <CanEditDataset dataset={{ key: catalogueKey }}>
             <Col flex="auto"></Col>
             <Col >
                 <Select
@@ -982,11 +987,11 @@ class DuplicateSearchPage extends React.Component {
                   </div>
                 )}
             </Col>
-          </CanEditDataset>
+          </CanEditDataset>}
         </Row>
         <Row style={{ marginBottom: "8px", marginTop: "12px" }}>
           <Col span={12}>
-          {Auth.canEditDataset({ key: catalogueKey }, user) &&  <>
+          {(Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey ) &&  <>
             <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
               <Button
                 type="primary"
@@ -1109,7 +1114,7 @@ class DuplicateSearchPage extends React.Component {
               }
               pagination={false}
               rowSelection={
-                !Auth.canEditDataset({ key: catalogueKey }, user)
+                (!Auth.canEditDataset({ key: catalogueKey }, user) || !catalogueKey)
                   ? null
                   : rowSelection
               }
@@ -1129,7 +1134,6 @@ const mapContextToProps = ({
   nametype,
   namefield,
   user,
-  catalogueKey,
 }) => ({
   rank,
   taxonomicstatus,
@@ -1138,7 +1142,6 @@ const mapContextToProps = ({
   nametype,
   namefield,
   user,
-  catalogueKey,
 });
 
 export default withContext(mapContextToProps)(DuplicateSearchPage);

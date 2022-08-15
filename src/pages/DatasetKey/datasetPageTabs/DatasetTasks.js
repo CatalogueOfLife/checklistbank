@@ -25,55 +25,37 @@ class DatasetTasks extends React.Component {
   }
 
   getData = async () => {
-    const { datasetKey, catalogueKey, assembly } = this.props;
+    const { datasetKey} = this.props;
 
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview(
-      datasetKey,
-      catalogueKey,
-      false,
-      assembly ? 501 : null
+      datasetKey
     );
-    const duplicatesWithdecision = assembly
-      ? []
-      : await getDuplicateOverview(datasetKey, catalogueKey, true);
-    let completedMap = {};
-    duplicatesWithdecision.forEach((c) => {
-      completedMap[c.id] = { count: c.count, error: c.error };
-    });
+  
+   
     const duplicates = duplicatesWithNodecision.map((d) => ({
       id: d.id,
       text: d.text,
       count: d.count,
-      completed: assembly ? null : completedMap[d.id].count,
-      error: d.error || (assembly ? null : completedMap[d.id].error),
+      error: d.error ,
     }));
     this.setState({ duplicates: duplicates, loading: false });
   };
 
   getManusciptNames = () => {
-    const { datasetKey, catalogueKey } = this.props;
-    Promise.all([
-      axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0`
-      ).then((res) => {
-        return res.data.total;
-      }),
-      axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`
-      ).then((res) => {
-        return res.data.total;
-      }),
-    ]).then((values) =>
+    const { datasetKey } = this.props;
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/nameusage/search?nomstatus=manuscript&limit=0`
+    ).then((res) => {
       this.setState({
-        manuscriptNames: { count: values[0], completed: values[1] },
+        manuscriptNames: { count: res.data.total },
       })
-    );
+    });
   };
 
   render() {
     const { error, duplicates, manuscriptNames, loading } = this.state;
-    const { getDuplicateWarningColor, datasetKey, catalogueKey, assembly } =
+    const { getDuplicateWarningColor, datasetKey, assembly } =
       this.props;
 
     return (
@@ -89,11 +71,7 @@ class DatasetTasks extends React.Component {
             />
           ))}
         <Card>
-          {assembly ? (
-            <h1>Duplicates</h1>
-          ) : (
-            <h1>Duplicates without decision</h1>
-          )}
+        <h1>Duplicates</h1>
 
           {loading && <Spin />}
           {duplicates
@@ -101,9 +79,7 @@ class DatasetTasks extends React.Component {
             .map((d) => (
               <NavLink
                 to={{
-                  pathname: assembly
-                    ? `/catalogue/${catalogueKey}/duplicates`
-                    : `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
+                  pathname:  `/dataset/${datasetKey}/duplicates`,
                   search: `?_colCheck=${d.id}`,
                 }}
                 exact={true}
@@ -114,29 +90,17 @@ class DatasetTasks extends React.Component {
                   color={getDuplicateWarningColor(d.count)}
                 >
                   {d.text}{" "}
-                  {assembly ? (
-                    <strong>{`${d.count > 500 ? "> 500" : d.count}`}</strong>
-                  ) : (
-                    <strong>{`${d.completed} of ${
-                      d.completed + d.count > 50
-                        ? "> 50"
-                        : d.completed + d.count
-                    }`}</strong>
-                  )}
+                  
+                    <strong>{d.count}</strong>
+                  
                 </Tag>{" "}
               </NavLink>
             ))}
-          {assembly ? (
-            <h1>Manuscript names</h1>
-          ) : (
-            <h1>Manuscript names without decision</h1>
-          )}
+          <h1>Manuscript names</h1>
           {manuscriptNames && (
             <NavLink
               to={{
-                pathname: assembly
-                  ? `/catalogue/${catalogueKey}/names`
-                  : `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+                pathname:  `/dataset/${datasetKey}/workbench`,
                 search: `?nomstatus=manuscript&limit=50`,
               }}
               exact={true}

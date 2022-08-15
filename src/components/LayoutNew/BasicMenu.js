@@ -723,7 +723,20 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-
+            {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
+                <Menu.Item key="datasetDuplicateTasks">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/duplicates/overview`,
+                    }}
+                  >
+                    Duplicates
+                  </NavLink>
+                </Menu.Item>
+              )}
             {!selectedDataset.deleted &&   <Menu.Item key="download">
                 <NavLink
                   to={{

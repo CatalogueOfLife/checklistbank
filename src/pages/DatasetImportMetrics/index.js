@@ -7,6 +7,7 @@ import moment from "moment";
 import history from "../../history";
 import { Drawer, Row, Col, Alert, Button, Spin, Divider } from "antd";
 import ImportMetrics from "../../components/ImportMetrics";
+import { DownloadOutlined } from "@ant-design/icons";
 
 import PageContent from "../../components/PageContent";
 import ImportButton from "../Imports/importTabs/ImportButton";
@@ -302,7 +303,10 @@ class DatasetImportMetrics extends React.Component {
                 {moment(data.finished).format("lll")}
               </PresentationItem>
               <PresentationItem label="Download uri">
-                {_.get(data, "downloadUri")}
+                {_.get(data, "downloadUri") && <a href={_.get(data, "downloadUri")}>{_.get(data, "downloadUri")}</a>}
+              </PresentationItem>
+              <PresentationItem label="Archive">
+                {_.get(data, "attempt") && <a href={`${config.dataApi}dataset/${datasetKey}/archive?attempt=${_.get(data, "attempt")}`}><DownloadOutlined /></a>}
               </PresentationItem>
               <PresentationItem label="Upload">
                 <BooleanValue value={_.get(data, "upload")}></BooleanValue>
