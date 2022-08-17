@@ -242,6 +242,12 @@ class BasicMenu extends Component {
                   <span>Settings</span>
                 </NavLink>
               </Menu.Item>
+              <Menu.Item key="backgroundJobs">
+                <NavLink to={{ pathname: "/admin/jobs" }}>
+                  <span>Background jobs</span>
+                </NavLink>
+              </Menu.Item>
+              
             </SubMenu>
           )}
 

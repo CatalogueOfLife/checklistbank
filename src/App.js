@@ -31,6 +31,7 @@ import ProjectEditors from "./pages/catalogue/Editors";
 import Admin from "./pages/Admin";
 import EsAdmin from "./pages/Admin/EsAdmin";
 import UserAdmin from "./pages/Admin/Users";
+import AdminJobs from "./pages/Admin/Jobs"
 import SectorDiff from "./pages/catalogue/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -91,6 +92,13 @@ const App = () => {
                   path={`/admin/settings`}
                   roles={["editor", "admin"]}
                   component={Admin}
+                />
+                <AdminRoute
+                  exact
+                  key="UserJobs"
+                  path={`/admin/jobs`}
+                  roles={["admin"]}
+                  component={AdminJobs}
                 />
                 <AdminRoute
                   exact

@@ -1,0 +1,32 @@
+[
+    {
+     "UUID": "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "datasetKey": 3,
+     "job": "ProjectRelease",
+     "priority": "high",
+     "userKey": 100,
+     "created": "2022-08-16T11:07:46.123046",
+     "started": "2022-08-17T11:07:46.123046",
+     "status": "running"
+    },
+    {
+     "UUID": "5fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "datasetKey": 1010,
+     "job": "IndexJob" ,
+     "priority": "low",
+     "userKey": 101,
+     "created": "2022-08-16T11:07:46.123046",
+     "started": "2022-08-17T11:07:46.123046",
+     "status": "queued"
+    },
+    {
+     "UUID": "6fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "datasetKey": 1010,
+     "job": "DwcaExport" ,
+     "priority": "low",
+     "userKey": 101,
+     "created": "2022-08-16T11:07:46.123046",
+     "started": "2022-08-17T11:07:46.123046",
+     "status": "queued"
+    }
+]
