@@ -123,10 +123,9 @@ const App = () => {
                 <Route
                   exact
                   key="imports"
-                  path="/imports/:section?"
+                  path="/imports"
                   render={({ match, location }) => (
                     <Imports
-                      section={match.params.section}
                       location={location}
                     />
                   )}

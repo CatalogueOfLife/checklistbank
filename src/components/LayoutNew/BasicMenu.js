@@ -251,7 +251,7 @@ class BasicMenu extends Component {
             </SubMenu>
           )}
 
-          {Auth.isAuthorised(user, ["editor", "admin"]) && (
+          {/* {Auth.isAuthorised(user, ["editor", "admin"]) && (
             <SubMenu
               key="imports"
               title={
@@ -271,6 +271,16 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             </SubMenu>
+          )} */}
+          {Auth.isAuthorised(user, ["editor", "admin"]) && (
+            
+              <Menu.Item key="backgroundImports">
+                <NavLink to={{ pathname: "/imports" }}>
+                <ApiOutlined />
+                  <span>Imports</span></NavLink>
+              </Menu.Item>
+
+             
           )}
           {user && user?.roles?.length > 0 && (
             <SubMenu

@@ -1,6 +1,7 @@
 import React from "react";
 
 import Layout from "../../components/LayoutNew";
+import PageContent from "../../components/PageContent";
 import ImportTable from "./importTabs/ImportTable";
 import withContext from "../../components/hoc/withContext";
 
@@ -12,18 +13,43 @@ class Imports extends React.Component {
 
     return (
       <Layout
-        openKeys={["imports"]}
-        selectedKeys={[section]}
-        title={`${_.startCase(section)} imports`}
+        openKeys={[]}
+        selectedKeys={["backgroundImports"]}
+        title={`Imports`}
       >
-        {section === "running" && (
+        <PageContent>
+        <ImportTable
+            importState={importState
+              .filter(
+                (i) =>
+                  i.running === true ||
+                  i.queued === true
+              )
+              .map((i) => i.name)}
+            section={"running"}
+            location={location}
+          />
+        
           <ImportTable
             importState={importState
               .filter(
                 (i) =>
-                  i.running === "true" ||
+                  i.finished === true
+              )
+              .map((i) => i.name)}
+            section={"finished"}
+            location={location}
+          />
+        </PageContent>
+          
+       
+        {/* {section === "running" && (
+          <ImportTable
+            importState={importState
+              .filter(
+                (i) =>
                   i.running === true ||
-                  i.name === "waiting"
+                  i.queued === true
               )
               .map((i) => i.name)}
             section={section}
@@ -35,14 +61,13 @@ class Imports extends React.Component {
             importState={importState
               .filter(
                 (i) =>
-                  i.running === "false" ||
-                  (i.running === false && i.name !== "waiting")
+                  i.finished === true
               )
               .map((i) => i.name)}
             section={section}
             location={location}
           />
-        )}
+        )} */}
       </Layout>
     );
   }

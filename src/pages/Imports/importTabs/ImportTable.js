@@ -3,7 +3,7 @@ import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { CodeOutlined, DiffOutlined } from "@ant-design/icons";
 
-import { Table, Alert, Tag, Tooltip } from "antd";
+import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
 import moment from "moment";
@@ -56,6 +56,7 @@ class ImportTable extends React.Component {
             </NavLink>
           ),
           width: 150,
+          ellipsis: true
         },
         {
           title: "State",
@@ -83,12 +84,12 @@ class ImportTable extends React.Component {
           ),
           width: 50,
         },
-        {
+        /* {
           title: "Data Format",
           dataIndex: "format",
           key: "dataFormat",
           width: 50,
-        },
+        }, */
         {
           title: "Attempt",
           dataIndex: "attempt",
@@ -155,12 +156,12 @@ class ImportTable extends React.Component {
   componentDidMount() {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(query)) {
+    if (_.isEmpty(query) || section === "running" ) {
       query = {
         limit: 10,
         offset: 0,
-        state:
-          importState.length > 0 || section === "finished"
+        state: importState
+          /* importState.length > 0 || section === "finished"
             ? importState
             : [
                 "downloading",
@@ -168,7 +169,7 @@ class ImportTable extends React.Component {
                 "inserting",
                 "indexing",
                 "analyzing",
-              ],
+              ], */
       };
     }
     if (query.state) {
@@ -199,7 +200,7 @@ class ImportTable extends React.Component {
     }
   }
 
-  refresh = () => {
+/*   refresh = () => {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(query)) {
@@ -233,10 +234,10 @@ class ImportTable extends React.Component {
       this.getData
     );
     // this.getData(query);
-  };
+  }; */
 
   getData = () => {
-    const { section } = this.props;
+    const { section, addError } = this.props;
     const { params } = this.state;
     this.setState({ loading: true });
 
@@ -271,15 +272,19 @@ class ImportTable extends React.Component {
             pagination,
           },
           () => {
-            history.push({
-              pathname: `/imports/${section}`,
-              search: `?${qs.stringify(params)}`,
-            });
+            if(section !== "running"){
+              history.push({
+                pathname: `/imports`,
+                search: `?${qs.stringify(params)}`,
+              });
+            }
+            
           }
         );
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        addError(err)
+        this.setState({ loading: false, data: [] });
       });
   };
 
@@ -293,6 +298,7 @@ class ImportTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
+    const {section} = this.props
     const pager = { ...this.state.pagination, ...pagination };
     //pager.current = pagination.current;
 
@@ -300,11 +306,16 @@ class ImportTable extends React.Component {
       pagination: pager,
     });
 
-    let query = _.merge(this.state.params, {
+    let query = section === "finished" ? _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
-    });
+    }) : {
+      limit: pager.pageSize,
+      offset: (pager.current - 1) * pager.pageSize,
+      ...filters,
+    };
+
     if (filters.state && _.get(filters, "state.length")) {
       query.state = filters.state;
     } else {
@@ -316,7 +327,7 @@ class ImportTable extends React.Component {
   };
 
   render() {
-    const { data, error, defaultColumns } = this.state;
+    const { data, defaultColumns } = this.state;
     const { section, importState, user } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
@@ -347,9 +358,12 @@ class ImportTable extends React.Component {
     }
 
     return (
-      <PageContent>
-        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
-        {!error && (
+      <>
+        {(section === 'running' && data.length ===0) && <Row><Col flex="auto"></Col><Col><h1>No running imports.</h1></Col><Col flex="auto"></Col></Row>}
+        {(section === 'running' && data.length > 0) && <h1>Running imports:</h1>}
+        {(section === 'finished') && <h1>Completed imports:</h1>}
+
+        {!(section === 'running' && data.length ===0) && (
           <Table
             scroll={{ x: 1000 }}
             size="small"
@@ -384,11 +398,11 @@ class ImportTable extends React.Component {
             } */
           />
         )}
-      </PageContent>
+      </>
     );
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
+const mapContextToProps = ({ user, catalogueKey, addError }) => ({ user, catalogueKey, addError });
 
 export default withContext(mapContextToProps)(ImportTable);
