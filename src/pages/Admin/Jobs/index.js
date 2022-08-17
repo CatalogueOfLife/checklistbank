@@ -20,7 +20,6 @@ const _ = require("lodash");
 
 const Jobs = ({addError}) => {
     const [jobs, setJobs] = useState([]);
-    const [timerHandle, setTimerhandle] = useState(null)
     const [killedJobs, setKilledJobs] = useState(new Set())
     const [userFilter, setUserFilter] = useState(null)
     const [priorityFilter, setPriorityFilter] = useState(null)
@@ -106,12 +105,12 @@ const Jobs = ({addError}) => {
     } 
     useEffect(()=>{
         getJobs()
-        let hdl = setInterval(getJobs, 3000);
-        setTimerhandle(hdl)
+        const hdl = setInterval(getJobs, 3000);
+       // setTimerhandle(hdl)
 
         return () => {
-            if(timerHandle){
-              clearInterval(timerHandle)
+            if(hdl){
+              clearInterval(hdl)
             }
         }
     },[])
