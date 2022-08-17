@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import { Table, Tooltip, Button } from "antd";
+import { Table, Tooltip, Button, Spin } from "antd";
 import moment from "moment";
 import axios from "axios";
 import config from "../../../config";
@@ -12,11 +12,14 @@ import { getUsersBatch } from "../../../api/user";
 import { getDatasetsBatch } from "../../../api/dataset";
 import kibanaQuery from "./kibanaQuery";
 import {CodeOutlined} from '@ant-design/icons'
+import ExpandedRow from "./ExpandedRow";
 import MockData from './mockData.json'
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const _ = require("lodash");
+
+
 
 const Jobs = ({addError}) => {
     const [jobs, setJobs] = useState([]);
@@ -217,6 +220,9 @@ const Jobs = ({addError}) => {
               <Table 
                 columns={columns}
                 dataSource={jobs}
+                expandable={{
+                    expandedRowRender: (record) =>  <ExpandedRow uuid={record?.UUID} />,
+                  }}
               />
           </PageContent>
       </Layout>
