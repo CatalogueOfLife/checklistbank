@@ -383,7 +383,7 @@ class DuplicateSearchPage extends React.Component {
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
       .map((d) => {
         const method = d.decision ? "put" : "post";
-        const mode = ["block", "ignore"].includes(decision)
+        const mode = ["block", "ignore", "reviewed"].includes(decision)
           ? decision
           : "update";
         const body = {
@@ -426,11 +426,11 @@ class DuplicateSearchPage extends React.Component {
             )}`;
             const decisionMsg = `${_.get(d, "name.scientificName")} was ${
               decision === "block" ? "blocked from the assembly" : ""
-            }${decision === "ignore" ? "ignored" : ""}`;
+            }${decision === "ignore" ? "ignored (Taxon blocked, but children kept and attached to parent)" : ""}${decision === "reviewed" ? "marked as reviewed": ""}`;
 
             notification.open({
               message: `Decision ${method === "post" ? "applied" : "changed"}`,
-              description: ["block", "ignore"].includes(decision)
+              description: ["block", "ignore", "reviewed"].includes(decision)
                 ? decisionMsg
                 : statusMsg,
             }); 
@@ -968,6 +968,7 @@ class DuplicateSearchPage extends React.Component {
                   <OptGroup label="Other">
                     <Option value="block">Block</Option>
                     <Option value="ignore">Ignore</Option>
+                    <Option value="reviewed">Reviewed</Option>
                   </OptGroup>
                 </Select>
                 <br />
