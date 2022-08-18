@@ -606,7 +606,6 @@ class DuplicateSearchPage extends React.Component {
       onChange: this.onSelectChange,
       columnWidth: "30px",
     };
-    console.log(`CatalogueKey ${catalogueKey}`)
     const { offset, ...downloadParams } = params;
 
     return (
