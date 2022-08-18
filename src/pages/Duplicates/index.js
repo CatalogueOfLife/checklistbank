@@ -315,11 +315,13 @@ class DuplicateSearchPage extends React.Component {
   };
 
   updateSearch = (params) => {
+
+  
     this.setState(
       {
         params: _.pickBy(
           { ...this.state.params, ...params, offset: 0 },
-          (val) => val !== null
+          (val) => !!val
         ),
         totalFaked: 0,
         selectedPreset: undefined,
@@ -671,6 +673,16 @@ class DuplicateSearchPage extends React.Component {
                       }
                     />
                   )}
+                  <Input.Search
+                    placeholder="Search names"
+                    style={{marginBottom: "10px"}}
+                    onSearch={(value) =>
+                      this.updateSearch({ q: value })
+                    }
+                    onReset={() =>
+                      this.updateSearch({ q: null })
+                    }
+                    allowClear />
                   <Select
                     placeholder="Name category"
                     value={params.category}
