@@ -117,7 +117,7 @@ class DatasetSettings extends React.Component {
             {!editMode && data && dataset && (
               <div style={{ marginRight: "28px" }}>
                 {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset.origin) > -1)
+                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "Boolean")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -132,7 +132,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset.origin) > -1)
+                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
                   .filter((s) => s.type === "String" || s.type === "Integer")
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -142,7 +142,7 @@ class DatasetSettings extends React.Component {
                     </PresentationItem>
                   ))}
                 {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset.origin) > -1)
+                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
                   .filter(
                     (s) => !["String", "Integer", "Boolean"].includes(s.type)
                   )
@@ -155,7 +155,7 @@ class DatasetSettings extends React.Component {
             )}
           </Col>
           <Col span={6}>
-            {dataset && _.get(dataset, "origin") !== "managed" && (
+            {dataset && _.get(dataset, "origin") !== "project" && (
               <React.Fragment>
                 <ImportButton
                   style={{ marginBottom: "10px" }}

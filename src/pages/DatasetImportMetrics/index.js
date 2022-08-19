@@ -190,7 +190,7 @@ class DatasetImportMetrics extends React.Component {
           <Alert
             style={{ marginTop: "16px" }}
             message={
-              dataset.origin === "managed"
+              dataset.origin === "project"
                 ? "This dataset has never been released."
                 : `This dataset has never been imported.${
                     Auth.isAuthorised(user, ["editor", "admin"])

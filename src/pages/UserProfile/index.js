@@ -88,13 +88,13 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
     <List.Item key={item?.key}>
       <List.Item.Meta
         avatar={
-          <Tag>{item?.origin === "managed" ? "project" : item?.origin}</Tag>
+          <Tag>{item?.origin === "project" ? "project" : item?.origin}</Tag>
         }
         description={
           <NavLink
             to={{
               pathname:
-                item?.origin === "managed"
+                item?.origin === "project"
                   ? `/catalogue/${item?.key}/assembly`
                   : `/dataset/${item?.key}/about`,
             }}

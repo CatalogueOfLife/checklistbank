@@ -7,7 +7,7 @@ import withContext from "../../components/hoc/withContext";
 const { canViewDataset } = Auth;
 
 const DatasetOriginPill = ({ user, dataset }) => {
-  if (dataset?.origin === "managed") {
+  if (dataset?.origin === "project") {
     return canViewDataset(dataset, user) ? (
       <NavLink to={{ pathname: `/catalogue/${dataset?.key}/assembly` }}>
         <Tag>Project</Tag>

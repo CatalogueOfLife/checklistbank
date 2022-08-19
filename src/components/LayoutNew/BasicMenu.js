@@ -117,7 +117,7 @@ class BasicMenu extends Component {
     const hasData =
       !_.get(selectedDataset, "deleted") &&
       (_.get(selectedDataset, "size") ||
-        _.get(selectedDataset, "origin") === "managed" ||
+        _.get(selectedDataset, "origin") === "project" ||
         _.get(selectedDataset, "origin") === "released");
 
     return (
@@ -767,7 +767,7 @@ class BasicMenu extends Component {
               </Menu.Item>}
 
               {selectedDataset &&
-                ["released", "managed"].includes(
+                ["released", "project"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 hasData && (
@@ -790,7 +790,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                _.get(selectedDataset, "origin") === "managed" &&
+                _.get(selectedDataset, "origin") === "project" &&
                 hasData && (
                   <Menu.Item key="released_from">
                     <NavLink
@@ -833,7 +833,7 @@ class BasicMenu extends Component {
               )}
               {selectedDataset &&   
                 _.get(selectedDataset, "origin") !== "released" &&
-                _.get(selectedDataset, "origin") !== "managed" && (
+                _.get(selectedDataset, "origin") !== "project" && (
                   <Menu.Item key="imports">
                     <NavLink
                       to={{
@@ -898,7 +898,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                !["managed", "released"].includes(
+                !["project", "released"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 selectedDataset.size && (

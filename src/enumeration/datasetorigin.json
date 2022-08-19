@@ -5,10 +5,14 @@
   },
   {
     "managedOrRelease": true,
-    "name": "managed"
+    "name": "project"
   },
   {
     "managedOrRelease": true,
-    "name": "released"
+    "name": "release"
+  },
+  {
+    "managedOrRelease": true,
+    "name": "xrelease"
   }
 ]
