@@ -140,7 +140,7 @@ class DatasetPage extends React.Component {
             style={{ marginTop: "16px" }}
             message={<Row><Col>{`This dataset was deleted ${moment(dataset.deleted).format(
               "LLL"
-            )}`}</Col><Col flex="auto"></Col>{dataset.origin === "released" && dataset.sourceKey === 3 && <Col>
+            )}`}</Col><Col flex="auto"></Col>{dataset.origin === "release" && dataset.sourceKey === 3 && <Col>
             <a href="https://download.checklistbank.org/col/monthly/" target="_blank">Archived releases</a>
             </Col>}</Row>}
             type="error"

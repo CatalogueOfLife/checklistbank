@@ -490,7 +490,7 @@ const MetaDataForm = (props) => {
         >
           <Select style={{ width: 200 }} showSearch>
             {datasetoriginEnum
-              .filter((f) => f !== "released")
+              .filter((f) => f !== "release")
               .map((f) => {
                 return (
                   <Option key={f} value={f}>

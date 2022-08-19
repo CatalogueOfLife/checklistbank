@@ -118,7 +118,7 @@ class BasicMenu extends Component {
       !_.get(selectedDataset, "deleted") &&
       (_.get(selectedDataset, "size") ||
         _.get(selectedDataset, "origin") === "project" ||
-        _.get(selectedDataset, "origin") === "released");
+        _.get(selectedDataset, "origin") === "release");
 
     return (
       <React.Fragment>
@@ -767,7 +767,7 @@ class BasicMenu extends Component {
               </Menu.Item>}
 
               {selectedDataset &&
-                ["released", "project"].includes(
+                ["release", "project"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 hasData && (
@@ -832,7 +832,7 @@ class BasicMenu extends Component {
                 </Menu.Item>
               )}
               {selectedDataset &&   
-                _.get(selectedDataset, "origin") !== "released" &&
+                _.get(selectedDataset, "origin") !== "release" &&
                 _.get(selectedDataset, "origin") !== "project" && (
                   <Menu.Item key="imports">
                     <NavLink
@@ -848,7 +848,7 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
               {selectedDataset && !selectedDataset.deleted &&
-                _.get(selectedDataset, "origin") === "released" && (
+                _.get(selectedDataset, "origin") === "release" && (
                   <Menu.Item key="release-metrics">
                     <NavLink
                       to={{
@@ -863,7 +863,7 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
               {selectedDataset &&
-                _.get(selectedDataset, "origin") !== "released" &&
+                _.get(selectedDataset, "origin") !== "release" &&
                 hasData && (
                   <Menu.Item key="issues">
                     <NavLink
@@ -898,7 +898,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                !["project", "released"].includes(
+                !["project", "release"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 selectedDataset.size && (

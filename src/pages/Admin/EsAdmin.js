@@ -107,7 +107,7 @@ class DatasetList extends React.Component {
               >
                 Re-index
               </Button>
-              {record.origin !== "project" && record.origin !== "released" && (
+              {record.origin !== "project" && record.origin !== "release" && (
                 <Button
                   type="primary"
                   onClick={() => this.reimportDataset(record.key)}

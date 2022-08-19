@@ -186,7 +186,7 @@ class ColTreeNode extends React.Component {
       this.state;
 
     const releaseKey =
-      _.get(dataset, "origin") === "released" ? dataset.key : null;
+      _.get(dataset, "origin") === "release" ? dataset.key : null;
     return (
       <div>
         {childModalVisible && (
