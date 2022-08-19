@@ -598,6 +598,7 @@ class DuplicateSearchPage extends React.Component {
     } = this.state;
     const { rank, taxonomicstatus, user, assembly, catalogueKey, datasetKey } =
       this.props;
+      let queryParams = qs.parse(_.get(this.props, "location.search"));
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
 
@@ -674,6 +675,7 @@ class DuplicateSearchPage extends React.Component {
                   )}
                   <Input.Search
                     placeholder="Search names"
+                    defaultValue={queryParams?.q || null}
                     style={{marginBottom: "10px"}}
                     onSearch={(value) =>
                       this.updateSearch({ q: value })
