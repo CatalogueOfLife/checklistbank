@@ -197,13 +197,14 @@ class DatasetPage extends React.Component {
             catalogueKey={catalogueKey}
           />
         )}
-        {/* catalogueKeys are used to scope decisions and tasks */}
-        {sect === "duplicates" && (
+        
+        
+       {sect === "duplicates" && !taxonOrNameKey && (
           <Duplicates
             datasetKey={datasetKey}
             location={this.props.location}
           />
-        )}
+        )} 
         {sect === "references" && (
           <DatasetReferences
             datasetKey={datasetKey}
@@ -216,7 +217,7 @@ class DatasetPage extends React.Component {
             id={taxonOrNameKey}
           />
         )}
-        {sect === "tasks" && (
+        {sect === "duplicates" && taxonOrNameKey && (
           <DatasetTasks
             datasetKey={datasetKey}
             location={this.props.location}
