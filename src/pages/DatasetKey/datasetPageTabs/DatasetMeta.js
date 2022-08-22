@@ -113,7 +113,7 @@ class DatasetMeta extends React.Component {
     axios(`${config.dataApi}dataset/${id}`)
       .then((res) => {
         return axios(
-          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${id}&origin=MANAGED`
+          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${id}&origin=PROJECT`
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             //res.data.contributesTo = projects.data.result.map((r) => r.key);

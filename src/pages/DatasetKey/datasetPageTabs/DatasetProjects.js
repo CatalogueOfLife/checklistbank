@@ -42,7 +42,7 @@ class DatasetProjects extends React.Component {
     this.setState({ loading: true });
 
     axios(
-      `${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=MANAGED`
+      `${config.dataApi}dataset?limit=1000&hasSourceDataset=${datasetKey}&origin=PROJECT`
     )
       .then((res) => {
         return Promise.all(
