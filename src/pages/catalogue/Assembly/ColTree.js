@@ -1050,7 +1050,12 @@ class ColTree extends React.Component {
     const dragNodeIsAlreadySectorSubject =
       _.get(dragNode, "taxon.sector") &&
       _.get(dragNode, "taxon.id") ===
-        _.get(dragNode, "taxon.sector.subject.id");
+        _.get(dragNode, "taxon.sector.subject.id") &&
+        _.get(node, 'taxon.id') !==  _.get(dragNode, "taxon.sector.target.id");
+    const sectorAlreadyExists = _.get(dragNode, "taxon.sector") &&
+    _.get(dragNode, "taxon.id") ===
+      _.get(dragNode, "taxon.sector.subject.id") &&
+      _.get(node, 'taxon.id') ===   _.get(dragNode, "taxon.sector.target.id");
 
     if (dragNode.taxon.datasetKey === node.taxon.datasetKey) {
       message.warn("You cannot modify the Tree in attachment mode");
@@ -1260,6 +1265,29 @@ class ColTree extends React.Component {
       );
     }
 
+    if (sectorAlreadyExists) {
+      msg = (
+        <span>
+          
+            <Alert
+              style={{ marginTop: "6px" }}
+              type="error"
+              message={
+                <div>
+                  This target taxon already has a sector based on{" "}
+                  <span
+                    dangerouslySetInnerHTML={{ __html: dragNode.taxon.name }}
+                  />{" "} (taxonID {dragNode.taxon.id})
+                </div>
+              }
+            />
+          
+        </span>
+      );
+    }
+
+    // sectorAlreadyExists
+
     const unionOptions = dragNodeIsPlaceholder
       ? [
           {
@@ -1324,6 +1352,8 @@ class ColTree extends React.Component {
           action: () => this.replaceSectorTarget(node, dragNode),
         },
       ];
+    } else if(sectorAlreadyExists){
+      actions = [];
     } else if (mode === "ATTACH") {
       actions = [
         {
