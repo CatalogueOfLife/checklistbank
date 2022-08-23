@@ -3,7 +3,8 @@ import { CodeOutlined } from '@ant-design/icons';
 import { Col, Row, Tag, Statistic, Tooltip } from "antd";
 import _ from "lodash";
 import moment from "moment";
-import kibanaQuery from "../SectorSync/kibanaQuery"
+import kibanaQuery from "../SectorSync/kibanaQuery";
+import SyncButton from "../SectorSync/SyncButton"
 
 const SyncState = ({ syncState, dataset, sector }) => (
   <React.Fragment>
@@ -81,6 +82,11 @@ const SyncState = ({ syncState, dataset, sector }) => (
               title="Sync started"
               value={moment.utc(syncState.running.started).fromNow()}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{marginTop: "10px"}}>
+          <SyncButton record={{state: syncState.running.state, sector: sector}}/>
           </Col>
         </Row>
       </React.Fragment>
