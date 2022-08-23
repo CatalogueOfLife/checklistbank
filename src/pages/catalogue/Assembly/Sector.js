@@ -6,6 +6,7 @@ import {
   ExclamationCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  NodeCollapseOutlined
 } from "@ant-design/icons";
 
 import {
@@ -365,14 +366,13 @@ class Sector extends React.Component {
         title={
           <React.Fragment>
             Sector {sector.id} mode:{" "}
-            {sector.mode === "attach" ? (
-              <CaretRightOutlined />
-            ) : (
-              <BranchesOutlined
+            {sector.mode === "attach" &&  <CaretRightOutlined />}
+            {sector.mode === "union" &&  <BranchesOutlined
                 rotate={90}
                 style={{ fontSize: "16px", marginRight: "4px" }}
-              />
-            )}{" "}
+              />}
+              {sector.mode === "merge" &&  <NodeCollapseOutlined />}
+            {" "}
             {sector.mode}
           </React.Fragment>
         }
@@ -386,6 +386,11 @@ class Sector extends React.Component {
           {isRootSector && sector.mode === "union" && (
             <BranchesOutlined
               rotate={90}
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
+          {isRootSector && sector.mode === "merge" && (
+            <NodeCollapseOutlined 
               style={{ fontSize: "16px", marginRight: "4px" }}
             />
           )}
@@ -524,6 +529,11 @@ class Sector extends React.Component {
                 <BranchesOutlined
                   style={{ fontSize: "16px", marginRight: "4px" }}
                   rotate={90}
+                />
+              )}
+              {isRootSectorInSourceTree && sector.mode === "merge" && (
+                <NodeCollapseOutlined
+                  style={{ fontSize: "16px", marginRight: "4px" }}
                 />
               )}
               {sectorSourceDataset.alias || sectorSourceDataset.key}

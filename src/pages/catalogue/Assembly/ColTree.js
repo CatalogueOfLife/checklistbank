@@ -1121,7 +1121,7 @@ class ColTree extends React.Component {
           />{" "}
           in this project?
           <br />
-          You may also choose to UNION.
+          You may also choose to UNION or MERGE.
           {willProduceDuplicateChild && (
             <Alert
               style={{ marginTop: "6px" }}
@@ -1303,6 +1303,11 @@ class ColTree extends React.Component {
             action: () => this.confirmAttach(node, dragNode, "ATTACH"),
           },
           {
+            text: "Merge",
+            type: "dashed",
+            action: () => this.confirmAttach(node, dragNode, "MERGE"),
+          },
+          {
             text: "Replace",
             type: "danger",
             disabled: !node?.taxon?.parentId,
@@ -1320,6 +1325,11 @@ class ColTree extends React.Component {
             text: "Attach",
             type: "dashed",
             action: () => this.confirmAttach(e.node, dragNode, "ATTACH"),
+          },
+          {
+            text: "Merge",
+            type: "dashed",
+            action: () => this.confirmAttach(node, dragNode, "MERGE"),
           },
           {
             text: "Union",
@@ -1360,6 +1370,11 @@ class ColTree extends React.Component {
           text: "Union",
           type: "dashed",
           action: () => this.confirmAttach(node, dragNode, "UNION"),
+        },
+        {
+          text: "Merge",
+          type: "dashed",
+          action: () => this.confirmAttach(node, dragNode, "MERGE"),
         },
         {
           text: "Attach",
