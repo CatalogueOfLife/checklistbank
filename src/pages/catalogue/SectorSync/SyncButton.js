@@ -4,6 +4,8 @@ import { Button, Popover, notification } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
+import withContext from "../../../components/hoc/withContext";
+
 import _ from "lodash"
 
 class SyncButton extends React.Component {
@@ -17,7 +19,7 @@ class SyncButton extends React.Component {
   }
 
   startSync = () => {
-    const {record} = this.props;  
+    const {record, addError} = this.props;  
     this.setState({ importTriggered: true });
     axios
       .post(
@@ -38,19 +40,21 @@ class SyncButton extends React.Component {
         }
       })
       .catch(err => {
+        addError(err)
         this.setState({ importTriggered: false, error: err });
       });
   };
 
   stopSync = () => {
-    const {record} = this.props;  
+    const {record, addError} = this.props;  
     this.setState({ importTriggered: true });
     axios
-      .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync/${_.get(record, 'sector.id')}`)
+      .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/${_.get(record, 'sector.id')}/sync`)
       .then(res => {
         this.setState({ importTriggered: false });
         notification.open({
-          title: 'Sync canceled'
+          message: 'Sync canceled'
+          //title: 'Sync canceled'
         })
         
         if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
@@ -59,6 +63,7 @@ class SyncButton extends React.Component {
         
       })
       .catch(err => {
+        addError(err)
         this.setState({ importTriggered: false, error: err });
       });
   };
@@ -94,4 +99,9 @@ class SyncButton extends React.Component {
   };
 }
 
-export default SyncButton;
+const mapContextToProps = ({ addError }) => ({
+  addError
+});
+
+export default withContext(mapContextToProps)(SyncButton);
+// export default SyncButton;
