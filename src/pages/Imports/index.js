@@ -18,7 +18,7 @@ class Imports extends React.Component {
         title={`Imports`}
       >
         <PageContent>
-        <ImportTable
+       {importState.length > 0 && <ImportTable
             importState={importState
               .filter(
                 (i) =>
@@ -28,9 +28,9 @@ class Imports extends React.Component {
               .map((i) => i.name)}
             section={"running"}
             location={location}
-          />
+          />}
         
-          <ImportTable
+        {importState.length > 0 &&  <ImportTable
             importState={importState
               .filter(
                 (i) =>
@@ -39,7 +39,7 @@ class Imports extends React.Component {
               .map((i) => i.name)}
             section={"finished"}
             location={location}
-          />
+          />}
         </PageContent>
           
        
