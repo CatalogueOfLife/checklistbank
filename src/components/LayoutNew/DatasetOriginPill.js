@@ -15,7 +15,7 @@ const DatasetOriginPill = ({ user, dataset }) => {
     ) : (
       <Tag>Project</Tag>
     );
-  } else if (dataset?.origin === "release") {
+  } else if (["xrelease","release"].includes(dataset?.origin)) {
     return (
       <NavLink to={{ pathname: `/dataset/${dataset?.key}` }}>
         <Tag>Release</Tag>

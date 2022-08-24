@@ -185,7 +185,7 @@ class DatasetImportMetrics extends React.Component {
 
     return (
       <PageContent>
-        {origin !== "release" && <Menu datasetKey={datasetKey} />}
+        {!["xrelease","release"].includes(origin) && <Menu datasetKey={datasetKey} />}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
@@ -246,7 +246,7 @@ class DatasetImportMetrics extends React.Component {
             {data && !isRunning && (
               <Col>
                 <h1>
-                  {origin === "release" ? "Released " : "Imported "}
+                  {[ "xrelease", "release"].includes(origin) ? "Released " : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
               </Col>
@@ -260,7 +260,7 @@ class DatasetImportMetrics extends React.Component {
                 />
               )}
             </Col> */}
-            {origin !== "release" && (
+            {![ "xrelease", "release"].includes(origin) && (
               <Col style={{ textAlign: "right" }}>
                 {importHistory && (
                   <Button
@@ -280,7 +280,7 @@ class DatasetImportMetrics extends React.Component {
            {!isRunning && <ImportMetrics
               data={data}
               subtitle={
-                origin === "release"
+                [ "xrelease", "release"].includes(origin)
                   ? `Released ${moment(data.finished).format(
                       "MMMM Do YYYY, h:mm a"
                     )}`

@@ -116,9 +116,7 @@ class BasicMenu extends Component {
     } = this.props;
     const hasData =
       !_.get(selectedDataset, "deleted") &&
-      (_.get(selectedDataset, "size") ||
-        _.get(selectedDataset, "origin") === "project" ||
-        _.get(selectedDataset, "origin") === "release");
+      (_.get(selectedDataset, "size") || ["xrelease","release","project"].includes( _.get(selectedDataset, "origin")));
 
     return (
       <React.Fragment>
@@ -767,7 +765,7 @@ class BasicMenu extends Component {
               </Menu.Item>}
 
               {selectedDataset &&
-                ["release", "project"].includes(
+                ["xrelease", "release", "project"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 hasData && (
@@ -831,9 +829,8 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset &&   
-                _.get(selectedDataset, "origin") !== "release" &&
-                _.get(selectedDataset, "origin") !== "project" && (
+              {selectedDataset &&  !["release" ,"release" ,"project"].includes(_.get(selectedDataset, "origin")) 
+                 && (
                   <Menu.Item key="imports">
                     <NavLink
                       to={{
@@ -847,8 +844,8 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset && !selectedDataset.deleted &&
-                _.get(selectedDataset, "origin") === "release" && (
+              {selectedDataset && !selectedDataset.deleted && ["xrelease","release"].includes(_.get(selectedDataset, "origin"))
+                && (
                   <Menu.Item key="release-metrics">
                     <NavLink
                       to={{
@@ -862,8 +859,8 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset &&
-                _.get(selectedDataset, "origin") !== "release" &&
+              {selectedDataset && !["xrelease","release"].includes(_.get(selectedDataset, "origin"))
+                &&
                 hasData && (
                   <Menu.Item key="issues">
                     <NavLink
@@ -898,7 +895,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                !["project", "release"].includes(
+                !["xrelease","project", "release"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 selectedDataset.size && (
