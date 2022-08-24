@@ -465,12 +465,15 @@ class ColTreeNode extends React.Component {
                           </Tooltip>
                         )}
                       {datasetSectors && !_.isEmpty(datasetSectors) && (
+                        <span>
+                        <span> • </span>
                         <TaxonSources
                           datasetSectors={datasetSectors}
                           taxon={taxon}
                           releaseKey={releaseKey}
                           catalogueKey={catalogueKey}
                         />
+                        </span>
                       )}
                       {sector && mode !== "modify" && (
                         <span>
