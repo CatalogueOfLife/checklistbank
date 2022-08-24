@@ -12,8 +12,8 @@ const { termsIssued } = config;
 
 
 const Analytics = ({ location, user, loadTokenUser }) => {
-  const sessionAccepted = sessionStorage.getItem("clb_terms_consent_accepted");
-  const sessionRejected = sessionStorage.getItem("clb_terms_consent_rejected");
+  const sessionAccepted = localStorage.getItem("clb_terms_consent_accepted");
+  const sessionRejected = localStorage.getItem("clb_terms_consent_rejected");
 
   const [accepted, setAccepted] = useState(
     sessionAccepted && Number(sessionAccepted) > termsIssued ? true : false
@@ -79,7 +79,7 @@ const Analytics = ({ location, user, loadTokenUser }) => {
       ) {
         ReactGA.initialize(config.ga4);
         ReactGA.send({ hitType: "pageview", page: location.pathname });
-        sessionStorage.setItem(
+        localStorage.setItem(
           "clb_terms_consent_accepted",
           settings.termsConsentAccepted
         );
@@ -90,7 +90,7 @@ const Analytics = ({ location, user, loadTokenUser }) => {
         settings.termsConsentRejected &&
         Number(settings.termsConsentRejected) > termsIssued
       ) {
-        sessionStorage.setItem(
+        localStorage.setItem(
           "clb_terms_consent_rejected",
           settings.termsConsentRejected
         );
@@ -118,16 +118,16 @@ const Analytics = ({ location, user, loadTokenUser }) => {
     } else {
       let time = Date.now();
       if (consent) {
-        sessionStorage.setItem("clb_terms_consent_accepted", time);
-        sessionStorage.removeItem("clb_terms_consent_rejected");
+        localStorage.setItem("clb_terms_consent_accepted", time);
+        localStorage.removeItem("clb_terms_consent_rejected");
         setAccepted(true);
         setRejected(false);
         ReactGA.initialize(config.ga4);
         ReactGA.send({ hitType: "pageview", page: location.pathname });
       }
       if (!consent) {
-        sessionStorage.setItem("clb_terms_consent_rejected", time);
-        sessionStorage.removeItem("clb_terms_consent_accepted");
+        localStorage.setItem("clb_terms_consent_rejected", time);
+        localStorage.removeItem("clb_terms_consent_accepted");
         setRejected(true);
         setAccepted(false);
       }
