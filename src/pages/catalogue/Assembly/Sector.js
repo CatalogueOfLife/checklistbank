@@ -29,7 +29,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
 import Auth from "../../../components/Auth";
-import SectorForm from "./SectorForm";
+import SectorForm from "./SectorForm2";
 import PresentationItem from "../../../components/PresentationItem";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
@@ -39,8 +39,7 @@ class Sector extends React.Component {
     this.state = {
       popOverVisible: false,
       showEditForm: false,
-      error: null,
-      sectorDatasetRanks: [],
+      error: null
     };
   }
 
@@ -170,25 +169,7 @@ class Sector extends React.Component {
         });
       });
   };
-  getSectorDatasetRanks = () => {
-    const {
-      taxon: { sector },
-    } = this.props;
-    axios
-      .get(
-        `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
-      ) // /assembly/3/sync/
-      .then((res) => {
-        this.setState({
-          sectorDatasetRanks: _.get(res, "data.facets.rank", []).map(
-            (r) => r.value
-          ),
-        });
-      })
-      .catch((err) => {
-        this.setState({ error: err });
-      });
-  };
+
 
   finishEditForm = () => {
     this.getSectorDatasetRanks();
@@ -197,7 +178,7 @@ class Sector extends React.Component {
   render = () => {
     const { taxon, user, catalogueKey, syncState, syncingSector, decisionCallback } = this.props;
 
-    const { error, showEditForm, sectorDatasetRanks } = this.state;
+    const { error, showEditForm } = this.state;
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
     const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
@@ -219,24 +200,17 @@ class Sector extends React.Component {
      <Modal 
       title="Edit sector" 
       visible={isRootSector && showEditForm} 
-      onOk={this.finishEditForm} 
-      onCancel={this.finishEditForm}
+     // onOk={this.finishEditForm} 
+      onCancel={() => this.setState({showEditForm: false})}
       style={{ top: 150, marginRight:20 }}
       destroyOnClose={true}
       maskClosable={false}
-      footer={[<Button
-        key="link"
-        type="primary"
-        onClick={this.finishEditForm}
-      >
-        OK
-      </Button>]}
+      footer={null}
       >
      
               <SectorForm
-                sectorDatasetRanks={sectorDatasetRanks}
                 sector={sector}
-                onError={(err) => this.setState({ error: err })}
+                onSubmit={() => this.setState({showEditForm: false})}
               />
           
       </Modal>
