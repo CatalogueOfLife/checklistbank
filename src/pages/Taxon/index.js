@@ -167,14 +167,14 @@ class TaxonPage extends React.Component {
             )}`
           ).then((sector) => {
             axios(
-              `${config.dataApi}image/${_.get(
+              `${config.dataApi}dataset/${_.get(
                 sector,
                 "data.subjectDatasetKey"
               )}/logo`
             )
               .then(() => {
                 this.setState({
-                  logoUrl: `${config.dataApi}image/${_.get(
+                  logoUrl: `${config.dataApi}dataset/${_.get(
                     sector,
                     "data.subjectDatasetKey"
                   )}/logo`,

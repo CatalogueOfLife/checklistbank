@@ -102,7 +102,7 @@ class ReleaseSource extends React.Component {
 
               <Col>
                 <img
-                  src={`${config.dataApi}image/${datasetKey}/source/${data.key}/logo?size=MEDIUM`}
+                  src={`${config.dataApi}dataset/${datasetKey}/logo/source/${data.key}?size=MEDIUM`}
                   alt={_.get(data, "title")}
                 />
               </Col>

@@ -26,7 +26,7 @@ class LogoUpload extends React.Component {
   getData = () => {
     this.setState({ loading: true });
     const { datasetKey } = this.props;
-    axios(`${config.dataApi}image/${datasetKey}/logo?size=large`)
+    axios(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
       .then((res) => {
         this.setState({
           loading: false,
@@ -35,7 +35,7 @@ class LogoUpload extends React.Component {
               uid: "-1",
               name: "logo.png",
               status: "done",
-              url: `${config.dataApi}image/${datasetKey}/logo?size=large`,
+              url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`,
             },
           ],
         });
@@ -62,7 +62,7 @@ class LogoUpload extends React.Component {
     const { datasetKey } = this.props;
 
     axios
-      .delete(`${config.dataApi}image/${datasetKey}/logo`)
+      .delete(`${config.dataApi}dataset/${datasetKey}/logo`)
       .then(() => {
         console.log("logo deleted");
       })
@@ -101,7 +101,7 @@ class LogoUpload extends React.Component {
         style={fileList.length >= 1 ? { height: "220px" } : null}
       >
         <Upload
-          action={`${config.dataApi}image/${datasetKey}/logo`}
+          action={`${config.dataApi}dataset/${datasetKey}/logo`}
           customRequest={this.customRequest}
           listType="picture-card"
           fileList={fileList}
