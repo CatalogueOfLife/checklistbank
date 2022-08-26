@@ -187,7 +187,7 @@ const SectorForm = ({
 
       <FormItem
         {...formItemLayout}
-        label="entities"
+        label="Entities"
         key="entities"
         name="entities"
       >

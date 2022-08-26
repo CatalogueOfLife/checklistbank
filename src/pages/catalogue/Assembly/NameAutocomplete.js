@@ -15,6 +15,7 @@ class NameSearchAutocomplete extends React.Component {
     this.state = {
       names: [],
       value: "",
+      notFoundText: null
     };
   }
 
@@ -44,9 +45,9 @@ class NameSearchAutocomplete extends React.Component {
       )}&DATASET_KEY=${datasetKey}`
     )
       .then((res) => {
-        this.setState({
-          value: _.get(res, "data.result[0].usage.label") || "",
-        });
+        let val = _.get(res, "data.result[0].usage.label");
+        let newState = val ? {value: val} : {notFoundText: `Not found: ${usageId}`} 
+        this.setState(newState);
       })
       .catch((err) => {
         this.setState({ value: "" }, () => {
@@ -101,7 +102,7 @@ class NameSearchAutocomplete extends React.Component {
   };
   render = () => {
     const { placeHolder, autoFocus, disabled = false } = this.props;
-    const { value } = this.state;
+    const { value, notFoundText } = this.state;
 
     const options = this.state.names.map((o) => {
       return {
@@ -134,13 +135,13 @@ class NameSearchAutocomplete extends React.Component {
         style={{ width: "100%" }}
         onSelect={this.onSelectName}
         onSearch={this.getNames}
-        placeholder={placeHolder || "Find taxon"}
-        onChange={(value) => this.setState({ value })}
+        placeholder={!value && notFoundText ? notFoundText : placeHolder || "Find taxon"}
+        onChange={(value) => this.setState({ value, notFoundText: null })}
         value={value}
         autoFocus={autoFocus === false ? false : true}
         disabled={disabled}
       >
-        <Input.Search suffix={suffix} />
+        <Input.Search status={!value && notFoundText ? "error" : null} suffix={suffix} />
       </AutoComplete>
     );
   };
