@@ -32,7 +32,7 @@ const ExpandedRow = ({uuid, addError}) => {
     },[])
     return <>
        {loading && <Spin></Spin>}
-       {data && Object.keys(data).map((key) => <PresentationItem label={key} >
+       {data && Object.keys(data).filter(key => typeof data[key] !== 'object').map((key) => <PresentationItem label={key} >
                 {data[key]}
        </PresentationItem>)}
     </>

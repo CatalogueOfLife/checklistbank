@@ -244,7 +244,7 @@ const Jobs = ({ user, addError }) => {
           columns={columns}
           dataSource={jobs}
           expandable={{
-            expandedRowRender: (record) => <ExpandedRow uuid={record?.UUID} />,
+            expandedRowRender: (record) => <ExpandedRow uuid={record?.key} />,
           }}
         />
       </PageContent>
