@@ -666,7 +666,7 @@ const NameMatch = ({ addError }) => {
             <Row justify="space-between">
               <Col span={12}>
                 <Row>
-                  <Col span={24}>{primaryDataset?.title}</Col>
+                  <Col span={24}>{secondaryDataset && <span className="col-reference-link">[1] </span>}{primaryDataset?.title}</Col>
                   <Col span={12}>
                     <Statistic
                       title={"Matches"}
@@ -689,7 +689,7 @@ const NameMatch = ({ addError }) => {
               {secondaryDataset && (
                 <Col span={12}>
                   <Row>
-                    <Col span={24}>{secondaryDataset?.title}</Col>
+                    <Col span={24}><span className="col-reference-link">[2] </span>{secondaryDataset?.title}</Col>
                     <Col span={12}>
                       <Statistic
                         title={"Matches"}
@@ -840,31 +840,31 @@ const NameMatch = ({ addError }) => {
                       key={_.get(record, "primaryDatasetUsage.id")}
                     >
                       {_.get(record, "primaryDatasetUsage.labelHtml") ? (
-                        <span
+                       <> {secondaryDataset && <span className="col-reference-link">[1]</span>} <span
                           dangerouslySetInnerHTML={{
                             __html: _.get(
                               record,
                               "primaryDatasetUsage.labelHtml"
                             ),
                           }}
-                        />
+                        /></>
                       ) : (
-                        <Tag color="red">None</Tag>
+                       <>{secondaryDataset && <span className="col-reference-link">[1]</span>} <Tag color="red">None</Tag></>
                       )}
                       {secondaryDataset && (
                         <React.Fragment>
                           <br />
                           {_.get(record, "secondaryDatasetUsage.labelHtml") ? (
-                            <span
+                         <> <span className="col-reference-link">[2]</span> <span
                               dangerouslySetInnerHTML={{
                                 __html: _.get(
                                   record,
                                   "secondaryDatasetUsage.labelHtml"
                                 ),
                               }}
-                            />
+                            /></> 
                           ) : (
-                            <Tag color="red">None</Tag>
+                            <> <span className="col-reference-link">[2]</span> <Tag color="red">None</Tag></>
                           )}
                         </React.Fragment>
                       )}

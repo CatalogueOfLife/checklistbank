@@ -30,6 +30,7 @@ export default ({ media }) => {
               {i.title || ''}
               {i.capturedBy && `©  ${i.capturedBy}`}
               {i.rightsHolder && `©  ${i.rightsHolder}`}
+              {i.link && <><br /><a href={i.link}>{i.link} </a></>}
             </div>
           </Col>
         ))}
