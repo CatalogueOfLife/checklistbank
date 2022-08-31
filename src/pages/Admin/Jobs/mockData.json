@@ -1,6 +1,6 @@
 [
     {
-     "UUID": "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "key": "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
      "datasetKey": 3,
      "job": "ProjectRelease",
      "priority": "high",
@@ -10,7 +10,7 @@
      "status": "running"
     },
     {
-     "UUID": "5fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "key": "5fa7b334-ce0d-4e88-aaae-2e0c138d049e",
      "datasetKey": 1010,
      "job": "IndexJob" ,
      "priority": "low",
@@ -20,7 +20,7 @@
      "status": "queued"
     },
     {
-     "UUID": "6fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+     "key": "6fa7b334-ce0d-4e88-aaae-2e0c138d049e",
      "datasetKey": 1010,
      "job": "DwcaExport" ,
      "priority": "low",
