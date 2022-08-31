@@ -14,8 +14,8 @@ import {
   Form,
   Tag,
   Switch,
-  Divider,
   Tooltip,
+  Typography,
 } from "antd";
 import { CSVLink } from "react-csv";
 import {
@@ -36,6 +36,8 @@ import withContext from "../../components/hoc/withContext";
 import { Converter } from "csvtojson/v1";
 import PQueue from "p-queue";
 const { Panel } = Collapse;
+const { TextArea } = Input;
+const { Paragraph} = Typography;
 
 const MAX_LIST_SIZE = 6000;
 
@@ -79,7 +81,7 @@ const MatchProgress = ({ matched, total }) => {
   );
 };
 const getPercent = (num, total) => Math.round((num / total) * 100);
-const Metrics = ({ metrics, total }) =>
+/* const Metrics = ({ metrics, total }) =>
   Object.keys(metrics).map((m) => (
     <React.Fragment key="m">
       <Tag color={matchTypeTypeMap[m]} style={{ marginBottom: "6px" }}>
@@ -87,12 +89,12 @@ const Metrics = ({ metrics, total }) =>
       </Tag>
       <br />
     </React.Fragment>
-  ));
+  )); */
 const COL_LR = {
   key: "3LR",
   alias: "COL LR",
 };
-const NameMatch = () => {
+const NameMatch = ({ addError }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
   const [defaultCode, setDefaultCode] = useState(null);
@@ -110,6 +112,7 @@ const NameMatch = () => {
   const [secondaryUsageMetrics, setSecondaryUsageMetrics] = useState(null);
   const [showSecondary, setShowSecondary] = useState(false);
   const [inputType, setInputType] = useState("1");
+  const [textAreaVal, setTextAreaVal] = useState("")
   // const [erroredNames, setErroredNames] = useState(null);
   const match = async (name) => {
     try {
@@ -185,8 +188,9 @@ const NameMatch = () => {
     );
   };
   const matchResult = async (/* result */) => {
-    let result = names;     //setNames(result);
-    setStep(3);
+    setNumMatchedNames(0)
+    let result = names; //setNames(result);
+    setStep(2);
     let matchedNames = 0;
     const queue = new PQueue({ concurrency: 10 });
 
@@ -268,7 +272,7 @@ const NameMatch = () => {
               });
               setNames(result);
               // setStep(1);
-             // matchResult(result);
+              // matchResult(result);
             } else {
               setError(
                 "all rows must have a scientificName - see example file for the required format"
@@ -323,7 +327,7 @@ const NameMatch = () => {
     return names.map((n) => {
       let row = {
         providedScientificName: n.providedScientificName,
-       // matchType: n.matchType,
+        // matchType: n.matchType,
         nameIndexId: _.get(n, `nidx.name.id`, ""),
         taxonId: _.get(n, `${usage}.id`, ""),
         parentTaxonId: _.get(n, `${usage}.parentId`, ""),
@@ -360,26 +364,33 @@ const NameMatch = () => {
     } = await axios(
       `${config.dataApi}dataset/${subjectDataset.key}/nameusage/search?TAXON_ID=${tx.key}&limit=0`
     );
-    console.log("Data estimated "+total)
+    console.log("Data estimated " + total);
     setSubjectDataTotal(total);
   };
 
   const getSubjectDataAndMatch = async () => {
     setSubjectDataLoading(true);
-    const { data } = await axios(
-      `${config.dataApi}dataset/${subjectDataset.key}/export.json?taxonID=${subjectTaxon.key}&flat=true&synonyms=true`
-    );
-    console.log("Data retrieved "+data.length)
-    const result = data.map((e) => ({
-      providedScientificName: e.label,
-      code: e.code || defaultCode,
-      scientificName: undefined,
-    }));
-    setSubjectDataLoading(false);
+    try {
+      const { data } = await axios(
+        `${config.dataApi}dataset/${subjectDataset.key}/export.json?taxonID=${subjectTaxon.key}&flat=true&synonyms=true`
+      );
+      console.log("Data retrieved " + data.length);
+      const result = data.map((e) => ({
+        providedScientificName: e?.label,
+        code: e?.code || defaultCode,
+        scientificName: undefined,
+      }));
+      setSubjectDataLoading(false);
 
-    setNames(result);
-    setStep(1);
-   // matchResult(result);
+      setNames(result);
+      setStep(1);
+    } catch (error) {
+      if (typeof addError === "function") {
+        addError(error);
+      }
+    }
+
+    // matchResult(result);
     // console.log(data[0]);
   };
 
@@ -425,19 +436,60 @@ const NameMatch = () => {
             message={error}
           ></Alert>
         )}
-{names && <Row style={{marginBottom: "10px"}}><Col flex="auto"></Col>
-        <Col><span>{`${names.length} names uploaded `}</span><Button type="primary" onClick={() => setStep(1)}>Next</Button></Col>
-        </Row>}
-        
-        {step === 0 &&
+        {names && step === 0 && (
+          <Row style={{ marginBottom: "10px" }}>
+            <Col flex="auto"></Col>
+            <Col>
+              <span>{`${names.length} name${names.length === 1 ? "":"s"} provided for matching `}</span>
+              <Button type="primary" onClick={() => setStep(1)}>
+                Next
+              </Button>
+            </Col>
+          </Row>
+        )}
+        {names && step === 1 && (
+          <Row style={{ marginBottom: "10px" }}>
+            <Col flex="auto"></Col>
+            <Col>
+              <span>{`${names.length} name${names.length === 1 ? "":"s"} provided for matching `}</span>
+              <Button type="primary" onClick={matchResult}>
+                Next
+              </Button>
+            </Col>
+          </Row>
+        )}
+
+        {step === 0 && (
           <>
-            <Collapse activeKey={inputType} onChange={key => setInputType(key)} accordion>
-    <Panel header="Simple data entry" key="1">
-      <p>Form here</p>
-    </Panel>
-    <Panel header="Upload CSV" key="2">
-        
-        <Dragger {...draggerProps}>
+            <Collapse
+              activeKey={inputType}
+              onChange={(key) => setInputType(key)}
+              accordion
+            >
+              <Panel header="Simple data entry" key="1">
+                <Row gutter={[16, 16]}>
+                  <Col span={16}>
+                    <TextArea value={textAreaVal} onChange={(e) => {
+                        setTextAreaVal(e?.currentTarget?.value || "")
+                        if(e?.currentTarget?.value){
+                            
+                            setNames(e?.currentTarget?.value?.split('\n').filter(e => !!e).map(e => ({providedScientificName : e})))
+                        } else {
+                            setNames(null)
+                        }
+                    }} rows={10} />
+                  </Col>
+                  <Col span={8}>
+                    <Typography>
+                      <Paragraph>
+                       Paste or write names - one name pr row. Names may include the author string. 
+                      </Paragraph>
+                    </Typography>
+                  </Col>
+                </Row>
+              </Panel>
+              <Panel header="Upload CSV" key="2">
+                <Dragger {...draggerProps}>
                   <p className="ant-upload-drag-icon">
                     <UploadOutlined />
                   </p>
@@ -453,78 +505,84 @@ const NameMatch = () => {
                     <code className="code">code</code> (nomenclatural code)
                   </p>
                 </Dragger>
-    </Panel>
-    <Panel header="Choose dataset in ChecklistBank" key="3">
-      <Row>
-      <Col
-                span={12}
-                style={{ paddingRight: "8px", paddingLeft: "8px" }}
-              >
-                Select a subject dataset:
-                <DatasetAutocomplete
-                  onResetSearch={() => {
-                    setSubjectDataset(null);
-                    setSubjectTaxon(null);
-                  }}
-                  onSelectDataset={(dataset) => {
-                    setSubjectDataset(dataset);
-                    setSubjectTaxon(null);
-                  }}
-                  placeHolder="Choose subject dataset"
-                />
-                And a root taxon:
-                <NameAutocomplete
-                  minRank="GENUS"
-                  datasetKey={_.get(subjectDataset, "key")}
-                  onError={setError}
-                  disabled={!subjectDataset}
-                  onSelectName={(name) => {
-                    setSubjectTaxon(name);
-                    testSizeLimit(name);
-                  }}
-                  onResetSearch={() => {
-                    setSubjectTaxon(null);
-                    setSubjectDataTotal(null);
-                  }}
-                />
-                {!_.isNull(subjectDataTotal) &&
-                  subjectDataTotal <= MAX_LIST_SIZE && (
-                    <Button
-                      onClick={getSubjectDataAndMatch}
-                      style={{ marginTop: "10px" }}
-                      type="primary"
-                      loading={subjectDataLoading}
-                    >
-                      Match {subjectDataTotal.toLocaleString()} names
-                    </Button>
-                  )}
-                {!_.isNull(subjectDataTotal) &&
-                  subjectDataTotal > MAX_LIST_SIZE && (
-                    <Alert
-                      message="Too many names"
-                      description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                      type="error"
-                      style={{ marginTop: "10px" }}
-                      closable
-                      onClose={() => {
+              </Panel>
+              <Panel header="Choose dataset in ChecklistBank" key="3">
+                <Row>
+                  <Col
+                    span={12}
+                    style={{ paddingRight: "8px", paddingLeft: "8px" }}
+                  >
+                    Select a subject dataset:
+                    <DatasetAutocomplete
+                      defaultDatasetKey={_.get(subjectDataset, "key", null)}
+                      onResetSearch={() => {
+                        setSubjectDataset(null);
+                        setSubjectTaxon(null);
+                      }}
+                      onSelectDataset={(dataset) => {
+                        setSubjectDataset(dataset);
+                        if (dataset?.key !== subjectDataset?.key) {
+                          setSubjectTaxon(null);
+                        }
+                      }}
+                      placeHolder="Choose subject dataset"
+                    />
+                    And a root taxon:
+                    <NameAutocomplete
+                      minRank="GENUS"
+                      defaultTaxonKey={_.get(subjectTaxon, "key", null)}
+                      datasetKey={_.get(subjectDataset, "key")}
+                      onError={setError}
+                      disabled={!subjectDataset}
+                      onSelectName={(name) => {
+                        setSubjectTaxon(name);
+                        testSizeLimit(name);
+                      }}
+                      onResetSearch={() => {
                         setSubjectTaxon(null);
                         setSubjectDataTotal(null);
                       }}
                     />
-                  )}
-              </Col>
-              
-            
-      </Row>
-    </Panel>
-  </Collapse>
-            
-
+                    {!_.isNull(subjectDataTotal) &&
+                      subjectDataTotal <= MAX_LIST_SIZE && (
+                        <Button
+                          onClick={getSubjectDataAndMatch}
+                          style={{ marginTop: "10px" }}
+                          type="primary"
+                          loading={subjectDataLoading}
+                        >
+                          Fetch {subjectDataTotal.toLocaleString()} names
+                        </Button>
+                      )}
+                    {!_.isNull(subjectDataTotal) &&
+                      subjectDataTotal > MAX_LIST_SIZE && (
+                        <Alert
+                          message="Too many names"
+                          description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
+                          type="error"
+                          style={{ marginTop: "10px" }}
+                          closable
+                          onClose={() => {
+                            setSubjectTaxon(null);
+                            setSubjectDataTotal(null);
+                          }}
+                        />
+                      )}
+                  </Col>
+                </Row>
+              </Panel>
+            </Collapse>
           </>
-        
-        }
-        {step === 1 &&<>
-        
+        )}
+        {step === 1 && (
+          <>
+          <Row><Col>
+          <Typography>
+                      <Paragraph>
+                       Which dataset do you want to match against?
+                      </Paragraph>
+                    </Typography>
+          </Col></Row>
             <Row>
               <Col
                 style={{ paddingRight: "8px" }}
@@ -537,28 +595,6 @@ const NameMatch = () => {
                   // contributesTo={this.props.catalogueKey}
                   placeHolder="Choose primary dataset"
                 />
-
-                {step === 2 && (
-                  <Row justify="space-between">
-                    <Col>
-                      <Statistic
-                        title={"Matches"}
-                        value={primaryUsageMetrics}
-                        suffix={`/ ${names.length.toLocaleString()}`}
-                      />
-                    </Col>
-                    <Col>
-                      <CSVLink
-                        filename={getDownLoadDataFileName("primary")}
-                        data={getDownLoadData("primary")}
-                      >
-                        <Button type="primary" style={{ marginTop: "10px" }}>
-                          <DownloadOutlined /> Download result
-                        </Button>
-                      </CSVLink>
-                    </Col>
-                  </Row>
-                )}
               </Col>
               {(step === 1 || secondaryDataset) && (
                 <Col
@@ -617,12 +653,66 @@ const NameMatch = () => {
                   )}
                 </Col>
               )}
-              </Row>
-        </>}
-        {step === 2 &&<>
+            </Row>
+          </>
+        )}
+        {step === 2 && (
+          <>
             <MatchProgress total={names.length} matched={numMatchedNames} />
-        </>}
-        {step === 3 &&<>3</>}
+          </>
+        )}
+        {step === 3 && (
+          <>
+            <Row justify="space-between">
+              <Col span={12}>
+                <Row>
+                  <Col span={24}>{primaryDataset?.title}</Col>
+                  <Col span={12}>
+                    <Statistic
+                      title={"Matches"}
+                      value={primaryUsageMetrics}
+                      suffix={`/ ${names.length.toLocaleString()}`}
+                    />
+                  </Col>
+                  <Col>
+                    <CSVLink
+                      filename={getDownLoadDataFileName("primary")}
+                      data={getDownLoadData("primary")}
+                    >
+                      <Button type="primary" style={{ marginTop: "10px" }}>
+                        <DownloadOutlined /> Download result
+                      </Button>
+                    </CSVLink>
+                  </Col>
+                </Row>
+              </Col>
+              {secondaryDataset && (
+                <Col span={12}>
+                  <Row>
+                    <Col span={24}>{secondaryDataset?.title}</Col>
+                    <Col span={12}>
+                      <Statistic
+                        title={"Matches"}
+                        value={secondaryUsageMetrics}
+                        suffix={`/ ${names.length}`}
+                      />
+                    </Col>
+                    <Col>
+                      <CSVLink
+                        filename={getDownLoadDataFileName("secondary")}
+                        data={getDownLoadData("secondary")}
+                      >
+                        <Button type="primary" style={{ marginTop: "10px" }}>
+                          <DownloadOutlined /> Download result
+                        </Button>
+                      </CSVLink>
+                    </Col>
+                  </Row>
+                </Col>
+              )}
+            </Row>
+          </>
+        )}
 
         {(step === 2 || step === 3) && (
           <Table
@@ -784,9 +874,10 @@ const NameMatch = () => {
               },
               ...getClassificationColumns(),
             ]}
-          />)}
+          />
+        )}
 
-{/*         {step !== 1 && (
+        {/*         {step !== 1 && (
           <>
             {step === 0 && (
               <Divider
@@ -1148,7 +1239,8 @@ const NameMatch = () => {
   );
 };
 
-const mapContextToProps = ({ nomCode }) => ({
+const mapContextToProps = ({ nomCode, addError }) => ({
   nomCode,
+  addError,
 });
 export default withContext(mapContextToProps)(NameMatch);
