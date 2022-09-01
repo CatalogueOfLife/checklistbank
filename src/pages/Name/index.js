@@ -12,7 +12,7 @@ import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 import TypeMaterial from "../Taxon/TypeMaterial";
 import PublishedInPagePreview from "../Taxon/PublishedInPagePreview"
-
+import Linkify from 'react-linkify';
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
@@ -191,7 +191,7 @@ class NamePage extends React.Component {
         }}
       >
         <Row>
-          <Col span={18}>
+          <Col span={20}>
             {name && (
               <h1
                 style={{
@@ -205,13 +205,11 @@ class NamePage extends React.Component {
               </h1>
             )}
           </Col>
-          <Col span={6}>
+          <Col flex="auto"></Col>
+          <Col>
             {!usages && <Tag color="warning">No usages</Tag>}
-            {usages && usages.length > 0 && (
-              <PresentationItem
-                md={md}
-                label={usages.length > 1 ? "Usages" : "Usage"}
-              >
+            {usages && usages.length > 0 && (<>
+              <span>{usages.length > 1 ? "Usages " : "Usage "}</span>
                 {usages &&
                   usages.map((u, i) => (
                     <NavLink
@@ -231,7 +229,7 @@ class NamePage extends React.Component {
                       </Tag>
                     </NavLink>
                   ))}
-              </PresentationItem>
+                  </>
             )}
           </Col>
         </Row>
@@ -315,11 +313,11 @@ class NamePage extends React.Component {
                 }`}
               </PresentationItem>
             )}
-            {publishedIn && publishedIn.citation && (
-              <PresentationItem md={md} label="Published in">
-                {publishedIn.citation}
-              </PresentationItem>
-            )}
+            {publishedIn && publishedIn.citation &&  (
+            <PresentationItem md={md} label="Published in">
+              <Linkify>{publishedIn.citation}</Linkify>
+            </PresentationItem>
+          )}
             {typeMaterial && typeMaterial.length > 0 && (
             <PresentationItem md={md} label="Type material">
               <TypeMaterial data={{[name.id]: typeMaterial}} nameID={_.get(name, 'id')} />
