@@ -19,6 +19,8 @@
         "coldwc:NameRelation.dwc:taxonID": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
         "coldwc:NameRelation.coldwc:relatedNameUsageID": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
         "gbif:Multimedia.dwca:ID":  ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
+        "dwc:Occurrence.dwca:ID": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
+        "dwc:Occurrence.dwc:taxonID": ["dwc:Taxon.dwc:taxonID", "dwc:Taxon.dwca:ID"],
    
         "col:Taxon.col:nameID": ["col:Name.col:ID"],
         "col:Taxon.col:parentID": ["col:Taxon.col:ID"],
