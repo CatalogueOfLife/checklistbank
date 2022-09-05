@@ -118,12 +118,20 @@ const getColumns = (catalogueKey) => [
     },
   },
   {
-    title: "Type",
-    dataIndex: "type",
-    key: "type",
+    title: "Mode",
+    dataIndex: ["sector","mode"],
+    key: "mode",
     render: (text, record) => {
-      return record.type;
+      return record?.sector?.mode;
     },
+    width: 50,
+  },
+  {
+    title: "Taxa",
+    dataIndex: "taxonCount",
+    key: "taxonCount",
+    render: (text, record) => (record?.taxonCount || 0).toLocaleString("en-GB")
+     ,
     width: 50,
   },
   {
