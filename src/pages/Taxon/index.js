@@ -470,7 +470,7 @@ class TaxonPage extends React.Component {
                 
               
             </PresentationItem>}
-           {_.get(info, "typeMaterial") && _.get(info, `typeMaterial[${_.get(taxon, 'name.id')}]`) && (
+           {_.get(info, "typeMaterial") && info.typeMaterial[info?.taxon?.name?.id]  && (
             <PresentationItem md={md} label="Type material">
               <TypeMaterial data={_.get(info, "typeMaterial")} nameID={_.get(taxon, 'name.id')} />
              
