@@ -280,11 +280,11 @@ class SectorTable extends React.Component {
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
                     searchWords={[this.state.searchText]}
                     autoEscape
-                    textToHighlight={record.subject.name.toString()}
+                    textToHighlight={record?.subject?.name?.toString() || ""}
                   />
                 </NavLink>
               )}
-              {record.subject.id && (
+              {record?.subject?.id && (
                 <NavLink
                   to={{
                     pathname: `/catalogue/${catalogueKey}/assembly`,
@@ -303,13 +303,13 @@ class SectorTable extends React.Component {
                     autoEscape
                     textToHighlight={
                       _.get(record, "subject.name")
-                        ? record.subject.name.toString()
+                        ? record?.subject?.name?.toString()
                         : ""
                     }
                   />
                 </NavLink>
               )}
-              {record.subject.broken && (
+              {record?.subject?.broken && (
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>

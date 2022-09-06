@@ -4,9 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Modal } from "antd";
 import injectSheet from "react-jss";
 import CslForm from "./CslForm";
-import ReactDragListView from "react-drag-listview";
 import _ from "lodash";
-const { DragColumn } = ReactDragListView;
 
 const stringToArray = (value) => {
   if (Array.isArray(value)) {
