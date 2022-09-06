@@ -21,7 +21,7 @@ import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth";
 import RematchResult from "./RematchResult";
-
+import getColumns from "./columns"
 class SectorTable extends React.Component {
   constructor(props) {
     super(props);
@@ -210,8 +210,8 @@ class SectorTable extends React.Component {
     const offset = pagination
       ? (pagination.current - 1) * pagination.pageSize
       : 0;
-
-    const columns = [
+    const columns = getColumns(catalogueKey, this.state.searchText, this.getColumnSearchProps)
+    /* const columns = [
       {
         title: "Dataset",
         dataIndex: ["dataset", "alias"],
@@ -414,7 +414,7 @@ class SectorTable extends React.Component {
         ),
         width: 50,
       },
-    ];
+    ]; */
 
     if (Auth.canEditDataset({key: catalogueKey}, user)) {
       columns.push({

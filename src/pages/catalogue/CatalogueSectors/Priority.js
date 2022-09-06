@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from "react";
-
 import { Table } from 'antd';
 import ReactDragListView from "react-drag-listview";
 import config from "../../../config";
 import qs from "query-string";
 import axios from "axios";
+import Auth from "../../../components/Auth";
 
+import getColumns from "./columns"
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
@@ -15,76 +16,11 @@ import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 import _ from "lodash"
-const PAGE_SIZE = 250;
-const  data_ = [
-    {
-        key: "1",
-        name: "Boran",
-        gender: "male",
-        age: "12",
-        address: "New York"
-    },
-    {
-        key: "2",
-        name: "JayChou",
-        gender: "male",
-        age: "38",
-        address: "TaiWan"
-    },
-    {
-        key: "3",
-        name: "Lee",
-        gender: "female",
-        age: "22",
-        address: "BeiJing"
-    },
-    {
-        key: "4",
-        name: "ChouTan",
-        gender: "male",
-        age: "31",
-        address: "HangZhou"
-    },
-    {
-        key: "5",
-        name: "AiTing",
-        gender: "female",
-        age: "22",
-        address: "Xi’An"
-    }
-]
+const PAGE_SIZE = 500;
 
-const columns = [
-    {
-        title: "Key",
-        dataIndex: "key"
-    },
-    {
-        title: "Name",
-        dataIndex: "name"
-    },
-    {
-        title: "Gender",
-        dataIndex: "gender"
-    },
-    {
-        title: "Age",
-        dataIndex: "age"
-    },
-    {
-        title: "Address",
-        dataIndex: "address"
-    },
-    {
-        title: "Operates",
-        key: "operate",
-        render: (text, record, index) =>
-            <a className="drag-handle" href="#">Drag</a>
-    }
-]
 
-const SectorPriority = ({catalogueKey, location, addError}) => {
-    const [data, setData] = useState(data_)
+const SectorPriority = ({catalogueKey, location, addError, user}) => {
+    const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [pagination, setPagination] = useState({
         pageSize: PAGE_SIZE,
@@ -94,22 +30,49 @@ const SectorPriority = ({catalogueKey, location, addError}) => {
     useEffect(() => {
         getData()
     },[])
+    const columns =  [{
+        title: "Priority",
+        dataIndex: "priority",
+        key: "priority",
+        width: 75}, ...getColumns(catalogueKey).filter(c => c?.title !== "Mode")];
 
+    const updatePriority = async (sector, priority) => {
+        await axios.put(
+            `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`, {...sector, priority}
+          )
+    }
     const dragProps = {
-        onDragEnd(fromIndex, toIndex) {
-            const newData = [...data];
-            const item = newData.splice(fromIndex, 1)[0];
-            newData.splice(toIndex, 0, item);
-            setData(newData)
+       async onDragEnd(fromIndex, toIndex) {
+            let priority = 0;
+            if(toIndex > 0){
+                for(let i = toIndex; i >= 0; i--){
+                    if(!isNaN(data[i]?.priority)){
+                        priority = toIndex === data.length -1 ? Number(data[i]?.priority) +1 : Number(data[i]?.priority);
+                        break;
+                    }
+                }
+            }
+            
+            const sector =  data[fromIndex]
+            try {
+                await updatePriority(sector, priority)
+                sector.priority = priority;
+                getData()
+             
+            } catch (error) {
+                addError(error)
+                getData()
+            } 
             
         },
-        handleSelector: "a",
+        handleSelector: "tr",
     };
 
 
     const  getData = () => {
        setLoading(true)
         const params = {
+          mode: "merge",
           ...qs.parse(_.get(location, "search", {})),
           datasetKey: catalogueKey,
         };
@@ -148,18 +111,20 @@ const SectorPriority = ({catalogueKey, location, addError}) => {
  
         return (
             <Layout
-              selectedKeys={["catalogueSectors"]}
+              selectedKeys={["catalogueSectorPriority"]}
               openKeys={["assembly"]}
-              title="Project sectors"
+              title="Project sector priority"
             >
-              <PageContent>
-            <h2>Table row with dragging</h2>
+            <PageContent>
+            {Auth.canEditDataset({key: catalogueKey}, user) && <h2>Change sector priority by dragging rows in this table</h2> }
+            {!Auth.canEditDataset({key: catalogueKey}, user) && <h2>Prioritazation of merge sectors</h2> }
             <ReactDragListView {...dragProps}>
                 <Table
                     size="small"
                     columns={columns}
-                    pagination={false}
+                    pagination={pagination}
                     dataSource={data}
+                    loading={loading}
                 />
             </ReactDragListView>
             </PageContent>
@@ -176,4 +141,3 @@ const mapContextToProps = ({ user, rank, catalogueKey, addError }) => ({
   });
   
   export default withContext(mapContextToProps)(withRouter(SectorPriority));
-// export default SectorPriority;
