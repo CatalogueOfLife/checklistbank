@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { notification, Select, Alert, Button, Input, Form } from "antd";
+import { notification, Select, Alert, Button, InputNumber, Form } from "antd";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import TaxonFormControl from "../../../components/TaxonFormControl";
 import DatasetFormControl from "../../../components/DatasetFormControl";
@@ -51,6 +51,8 @@ const SectorForm = ({
   const [error, setError] = useState(null)
   const [form] = Form.useForm();
   const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);
+  const mode = Form.useWatch('mode', form);
+
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
   useEffect(() => {}, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
   useEffect(() =>{
@@ -150,6 +152,11 @@ const SectorForm = ({
           </Option>
         </Select>
       </FormItem>
+      {mode === "merge" && 
+        <FormItem {...formItemLayout} label="Priority" key="priority" name="priority">
+        
+        <InputNumber />
+        </FormItem>}
       {!sector && (
         <FormItem
           {...formItemLayout}

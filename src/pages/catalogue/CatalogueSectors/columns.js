@@ -180,7 +180,7 @@ export default (catalogueKey, searchText, getColumnSearchProps = () =>({})) =>  
       key: "created",
       //  sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("lll") : "";
+        return date ? moment(date).format("l LT") : "";
       },
     },
 

@@ -156,7 +156,7 @@ const getColumns = (catalogueKey) => [
     key: "started",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("MMMM Do, h:mm a") : "";
+      return date ? moment(date).format("l LT") : "";
     },
   },
   {
@@ -165,7 +165,7 @@ const getColumns = (catalogueKey) => [
     key: "finished",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("MMMM Do YYYY, h:mm a") : "";
+      return date ? moment(date).format("l LT") : "";
     },
   },
   {
@@ -381,7 +381,7 @@ class SyncTable extends React.Component {
             width: 50,
             render: (record) =>
               record.job === "SectorSync" ? (
-                <SyncButton key={record.datasetKey} record={record} />
+                <SyncButton size="small" key={record.datasetKey} record={record} />
               ) : (
                 ""
               ),
@@ -410,10 +410,10 @@ class SyncTable extends React.Component {
         )}
         {sectorKey && (
             <Col>
-              <h1>Imports for sector {sectorKey}</h1>{" "}
+              <h1>Syncs for sector {sectorKey}</h1>{" "}
               <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
                 {" "}
-                Show imports for all sectors
+                Show syncs for all sectors
               </a>
             </Col>
         )}

@@ -14,11 +14,9 @@ import {
   LineChartOutlined,
   PartitionOutlined,
   CheckOutlined,
-  PlusOutlined,
+  OrderedListOutlined,
   SearchOutlined,
-  HistoryOutlined,
   TagsOutlined,
-  TagOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
 
@@ -317,7 +315,7 @@ class BasicMenu extends Component {
               </Menu.Item>
               <Menu.Item key="catalogueSectorPriority">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}>
-                  <PartitionOutlined />
+                  <OrderedListOutlined />
                   <span>Sector priority</span>
                 </NavLink>
               </Menu.Item>

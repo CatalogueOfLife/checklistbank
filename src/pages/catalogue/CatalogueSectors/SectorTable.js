@@ -426,11 +426,13 @@ class SectorTable extends React.Component {
             {!_.get(record, "target.broken") && (record?.mode === "merge" || !record?.subject?.broken)
               && (
                 <SyncButton
+                  size="small"
                   style={{ display: "inline", marginRight: "8px" }}
                   record={{ sector: record }}
                 />
               )}
             <Button
+              size="small"
               style={{ display: "inline", marginRight: "8px" }}
               type={"primary"}
               onClick={() => {
@@ -476,6 +478,7 @@ class SectorTable extends React.Component {
             </Button>
             {onDeleteSector && typeof onDeleteSector === "function" && (
               <Button
+                size="small"
                 style={{ display: "inline" }}
                 type="danger"
                 onClick={() => onDeleteSector(record)}
