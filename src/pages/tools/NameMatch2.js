@@ -589,8 +589,8 @@ const NameMatch = ({ addError }) => {
                 span={step === 0 || !secondaryDataset ? 12 : 10}
               >
                 <DatasetAutocomplete
-                  defaultDatasetKey={primaryDataset.key}
-                  onResetSearch={() => setPrimaryDataset(COL_LR)}
+                  defaultDatasetKey={primaryDataset?.key}
+                  onResetSearch={() => setPrimaryDataset(null)}
                   onSelectDataset={setPrimaryDataset}
                   // contributesTo={this.props.catalogueKey}
                   placeHolder="Choose primary dataset"
