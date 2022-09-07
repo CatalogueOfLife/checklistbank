@@ -66,14 +66,14 @@ export default (catalogueKey, searchText, getColumnSearchProps = () =>({})) =>  
       render: (text, record) => {
         return (
           <React.Fragment>
-            <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-              {record.subject.rank}:{" "}
-            </div>
-            {!record.subject.id && (
+           {record?.subject?.rank && <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {record?.subject?.rank}:{" "}
+            </div>}
+            {!record?.subject?.id && (
               <NavLink
                 to={{
                   pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                  search: `?q=${record.subject.name}`,
+                  search: `?q=${record?.subject?.name}`,
                 }}
                 exact={true}
               >
@@ -90,10 +90,10 @@ export default (catalogueKey, searchText, getColumnSearchProps = () =>({})) =>  
                 to={{
                   pathname: `/catalogue/${catalogueKey}/assembly`,
                   search: `?sourceTaxonKey=${record.placeholderRank
-                      ? record.subject.id +
+                      ? record?.subject?.id +
                       "--incertae-sedis--" +
                       record.placeholderRank.toUpperCase()
-                      : record.subject.id
+                      : record?.subject?.id
                     }&datasetKey=${record.subjectDatasetKey}`,
                 }}
                 exact={true}
