@@ -423,8 +423,8 @@ class SectorTable extends React.Component {
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            {!_.get(record, "target.broken") &&
-              !_.get(record, "subject.broken") && (
+            {!_.get(record, "target.broken") && (record?.mode === "merge" || !record?.subject?.broken)
+              && (
                 <SyncButton
                   style={{ display: "inline", marginRight: "8px" }}
                   record={{ sector: record }}
