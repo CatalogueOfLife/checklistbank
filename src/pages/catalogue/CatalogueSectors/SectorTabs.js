@@ -1,7 +1,7 @@
 import { Menu } from 'antd';
 import React from 'react';
 import {
-  ApiOutlined,
+  PartitionOutlined,
   SyncOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";import { withRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ const SectorTabs = ({location, catalogueKey}) => {
       Sectors
     </NavLink>,
       key: `/catalogue/${catalogueKey}/sector`,
-      icon: <ApiOutlined />,
+      icon: <PartitionOutlined />,
     },
     {
       label:  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority`}}>
