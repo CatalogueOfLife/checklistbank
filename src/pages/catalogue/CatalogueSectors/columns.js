@@ -129,14 +129,14 @@ export default (catalogueKey, searchText, getColumnSearchProps = () =>({})) =>  
       render: (text, record) => {
         return (
           <React.Fragment>
-            <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-              {record.target.rank}:{" "}
-            </div>
+          {record?.target &&  <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {record?.target?.rank}:{" "}
+            </div>}
             {!_.get(record, "target.broken") && (
               <NavLink
                 to={{
                   pathname: `/catalogue/${catalogueKey}/assembly`,
-                  search: `?assemblyTaxonKey=${record.target.id}`,
+                  search: `?assemblyTaxonKey=${record?.target?.id}`,
                 }}
                 exact={true}
               >
