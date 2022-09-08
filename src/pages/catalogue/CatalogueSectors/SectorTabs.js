@@ -1,5 +1,5 @@
 import { Menu } from 'antd';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   PartitionOutlined,
   SyncOutlined,
@@ -12,6 +12,7 @@ import { NavLink } from 'react-router-dom';
 
 const SectorTabs = ({location, catalogueKey}) => {
   
+  useEffect(()=>{}, [catalogueKey])
   const items = [
     {
       label: <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`}}>
