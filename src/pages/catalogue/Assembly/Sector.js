@@ -64,7 +64,7 @@ class Sector extends React.Component {
         sectorKey: sector.id,
         key: sector.id,
         target: sector.target,
-        subject: sector.subject,
+        subject: sector?.subject,
       })
       .then(() => {
         // If there is no sync jobs running, try to give the backend a chance to insert the root node again
@@ -189,7 +189,7 @@ class Sector extends React.Component {
         sector.target &&
         taxon.parentId === sector.target.id);
 
-    const isRootSectorInSourceTree = taxon.id === sector.subject.id;
+    const isRootSectorInSourceTree = taxon.id === sector?.subject?.id;
     const isSourceTree = catalogueKey !== _.get(taxon, "datasetKey");
 
     if (!sectorSourceDataset) {
