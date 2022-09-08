@@ -8,7 +8,7 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 
 import SectorPageContent from "./SectorPageContent";
-
+import SectorTabs from "./SectorTabs"
 const CatalogueSectors = () => {
   return (
     <Layout
@@ -17,6 +17,7 @@ const CatalogueSectors = () => {
       title="Project sectors"
     >
       <PageContent>
+        <SectorTabs />
           <SectorPageContent />
       </PageContent>
     </Layout>

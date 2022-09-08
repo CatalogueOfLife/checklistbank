@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Table, notification, Button } from 'antd';
+import SectorTabs from "./SectorTabs";
 import {EditableCell, EditableRow} from "./EditableTableComponents";
 import ReactDragListView from "react-drag-listview";
 import config from "../../../config";
@@ -191,11 +192,12 @@ const SectorPriority = ({catalogueKey, location, addError, user}) => {
  
         return (
             <Layout
-              selectedKeys={["catalogueSectorPriority"]}
+              selectedKeys={["catalogueSectors"]}
               openKeys={["assembly"]}
               title="Project sector priority"
             >
             <PageContent>
+            <SectorTabs />
             {Auth.canEditDataset({key: catalogueKey}, user) && <h2>Change sector priority by dragging rows in this table</h2> }
             {!Auth.canEditDataset({key: catalogueKey}, user) && <h2>Prioritazation of merge sectors</h2> }
             <ReactDragListView {...dragProps}>

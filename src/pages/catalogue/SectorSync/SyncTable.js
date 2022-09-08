@@ -35,6 +35,7 @@ const getColumns = (catalogueKey) => [
     title: "Source",
     dataIndex: ["sector", "dataset", "alias"],
     key: "alias",
+    ellipsis: true,
     width: 150,
     render: (text, record) => (
       <NavLink
@@ -56,9 +57,9 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+        {_.get(record, "sector.subject") &&  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.subject.rank")}:{" "}
-          </span>
+          </span>}
           <NavLink
             to={{
               pathname: `/catalogue/${catalogueKey}/names`,
@@ -90,9 +91,9 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+         {_.get(record, "sector.target.rank") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.target.rank")}:{" "}
-          </span>
+          </span>}
           {_.get(record, "sector.target.id") && (
             <NavLink
               to={{
@@ -395,7 +396,7 @@ class SyncTable extends React.Component {
     }));
 
     return (
-      <PageContent>
+      <>
         {error && <Alert message={error.message} type="error" />}
         {syncAllError && (
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
@@ -500,7 +501,7 @@ class SyncTable extends React.Component {
             }} */
           />
         )}
-      </PageContent>
+      </>
     );
   }
 }

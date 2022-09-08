@@ -313,12 +313,12 @@ class BasicMenu extends Component {
                   <span>Sectors</span>
                 </NavLink>
               </Menu.Item>
-              <Menu.Item key="catalogueSectorPriority">
+              {/* <Menu.Item key="catalogueSectorPriority">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}>
                   <OrderedListOutlined />
                   <span>Sector priority</span>
                 </NavLink>
-              </Menu.Item>
+              </Menu.Item> */}
               
               <Menu.Item key="catalogueDecisions">
                 <NavLink
@@ -395,13 +395,13 @@ class BasicMenu extends Component {
                     <span>Tasks</span>
                   </NavLink>
                 </Menu.Item>
-                <Menu.Item key="sectorSync">
+               {/*  <Menu.Item key="sectorSync">
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/sector/sync` }}
                   >
                     <span>Sector sync</span>
                   </NavLink>
-                </Menu.Item>
+                </Menu.Item> */}
 
                 {selectedSector && (
                   <Menu.Item key="sectorDiff">
