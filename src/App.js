@@ -244,7 +244,7 @@ const App = () => {
                 <Route
                   exact
                   key="datasetKey2"
-                  path={`/dataset/:key/:section?/:taxonOrNameKey?`}
+                  path={`/dataset/:key/:section?/:taxonOrNameKey?/:subsection?`}
                   component={DatasetPage}
                 />
                 <Route

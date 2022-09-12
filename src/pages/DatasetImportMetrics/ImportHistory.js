@@ -8,6 +8,8 @@ import {
   LoadingOutlined,
   DiffOutlined,
 } from "@ant-design/icons";
+import { RiNodeTree } from "react-icons/ri";
+
 import { Timeline, Tooltip } from "antd";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
@@ -115,7 +117,25 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                       </NavLink>
                     </Tooltip>
                   </React.Fragment>
-                )}    
+                )}
+                {h.state === "finished" &&
+                  <React.Fragment>
+                    {" "}
+                    <Tooltip
+                      title="Browse archived tree"
+                      placement="right"
+                    >
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`
+                        }}
+                        exact={true}
+                      >
+                        <RiNodeTree />
+                      </NavLink>
+                    </Tooltip>
+                  </React.Fragment>
+                } 
 
             </p>
           </React.Fragment>

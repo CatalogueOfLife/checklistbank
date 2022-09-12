@@ -151,7 +151,7 @@ class NameSearchPage extends React.Component {
             ),
 
             width: 200,
-            sorter: true,
+            sorter: false,
           },
           ...clms,
         ];

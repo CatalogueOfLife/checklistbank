@@ -93,7 +93,7 @@ const PresentationItem = ({
     let overflow = labelRef.current && isOverflowing(labelRef.current);
     if(!overflow){
       setFormattedLabel(label)
-    } else if(label && (label.startsWith('http://') || label.startsWith('https://'))) {
+    } else if(typeof label === 'string' && (label.startsWith('http://') || label.startsWith('https://'))) {
       setOverFlowHelp(label);
       const splitted = label.replace(/^https?:\/\//, '').split("/");
       setFormattedLabel(`${splitted[0]}...${splitted[splitted.length-1]}`)
