@@ -5,9 +5,11 @@ import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { parse } from "../../../components/util/textTree";
-
-const ImportTree = ({ datasetKey, attempt, addError }) => {
+import Menu from "../../DatasetImportMetrics/Menu";
+import moment from "moment";
+const ImportTree = ({ datasetKey, dataset, attempt, addError }) => {
   const [loading, setLoading] = useState(false);
+  const [importDate, setImportDate] = useState(null)
   const [treeData, setTreeData] = useState([]);
   const [dataList, setDataList] = useState([]);
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -30,6 +32,9 @@ const ImportTree = ({ datasetKey, attempt, addError }) => {
       setDataList(lines.map((l, i) => ({ value: i, label: l.trim() })));
       const tree = parse(lines, "  ");
       setTreeData(tree.root);
+      const data = await axios(`${config.dataApi}dataset/${datasetKey}/import/${attempt}`);
+      setImportDate(data?.data?.finished)
+      console.log(data)
       setLoading(false);
     } catch (error) {
       addError(error);
@@ -59,6 +64,12 @@ const ImportTree = ({ datasetKey, attempt, addError }) => {
 
   return (
     <PageContent>
+              <Menu datasetKey={datasetKey} attempt={attempt} />
+            {importDate &&  <h1>
+                  {dataset?.origin === "released" ? "Released " : "Imported "}
+                  {moment(importDate).format("lll")}
+                </h1>}
+
       <Row>
         <Col>
         <AutoComplete
@@ -98,7 +109,7 @@ const ImportTree = ({ datasetKey, attempt, addError }) => {
 
       {loading && <Skeleton paragraph={{ rows: 10 }} active />}
 
-      <Tree
+     {!loading && <Tree
         ref={treeRef}
         onExpand={onExpand}
         expandedKeys={expandedKeys}
@@ -109,10 +120,10 @@ const ImportTree = ({ datasetKey, attempt, addError }) => {
         treeData={treeData}
         height={700}
         virtual={true}
-      />
+      />}
     </PageContent>
   );
 };
 
-const mapContextToProps = ({ addError }) => ({ addError });
+const mapContextToProps = ({ addError, dataset }) => ({ addError, dataset });
 export default withContext(mapContextToProps)(ImportTree);

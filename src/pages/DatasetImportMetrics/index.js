@@ -185,7 +185,7 @@ class DatasetImportMetrics extends React.Component {
 
     return (
       <PageContent>
-        {origin !== "released" && <Menu datasetKey={datasetKey} />}
+        {origin !== "released" && <Menu datasetKey={datasetKey} attempt={attempt} />}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
