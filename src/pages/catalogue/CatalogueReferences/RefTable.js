@@ -1,14 +1,17 @@
 import React from "react";
 import axios from "axios";
-import { Table, Row, Col } from "antd";
+import {SearchOutlined} from "@ant-design/icons"
+import { Table, Row, Col, Input, Space, Button } from "antd";
 import config from "../../../config";
 import moment from "moment";
 import qs from "query-string";
 import history from "../../../history";
 import SearchBox from "../../DatasetList/SearchBox";
+import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
+
 
 class RefTable extends React.Component {
   constructor(props) {
@@ -36,7 +39,13 @@ class RefTable extends React.Component {
           dataIndex: "citation",
           key: "citation",
         },
-
+        {
+          title: "Year",
+          dataIndex: "year",
+          key: "year",
+          sorter: true,
+          ...this.getColumnSearchProps('year')
+        },
         {
           title: "Created",
           dataIndex: "created",
@@ -68,6 +77,8 @@ class RefTable extends React.Component {
     };
   }
 
+  searchInput = React.createRef()
+
   componentDidMount() {
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
@@ -89,11 +100,96 @@ class RefTable extends React.Component {
       this.getData();
     }
   };
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  //  setSearchText(selectedKeys[0]);
+   // setSearchedColumn(dataIndex);
+  };
+  
+  handleReset = (clearFilters, confirm) => {
+    clearFilters();
+    confirm()
+    this.setState({params: {
+      limit: 50,
+      offset: 0,
+    }},  this.getData)
+   // setSearchText('');
+  };
+  getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+      >
+        <Input
+          defaultValue={this.state?.params?.year}
+          ref={this.searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block',
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && this.handleReset(clearFilters, confirm)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          {/* <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              //setSearchText(selectedKeys[0]);
+            }}
+          >
+            Filter
+          </Button> */}
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    }
+  });
 
   getData = () => {
     const { params } = this.state;
     this.setState({ loading: true });
-    const { datasetKey } = this.props;
+    const { datasetKey, addError } = this.props;
     if (!params.q) {
       delete params.q;
     }
@@ -116,11 +212,12 @@ class RefTable extends React.Component {
         });
       })
       .catch((err) => {
+        addError(err)
         this.setState({ loading: false, error: err, data: [] });
       });
   };
 
-  handleTableChange = (pagination, filters) => {
+  handleTableChange = (pagination, filters, sorter) => {
     const pager = { ...this.state.pagination, ...pagination };
     // pager.current = pagination.current;
 
@@ -130,8 +227,19 @@ class RefTable extends React.Component {
     let query = _.merge(this.state.params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
-      ...filters,
+      ...Object.keys(filters).reduce(
+        (acc, cur) => (filters[cur] !== null && (acc[cur] = filters[cur]), acc),
+        {}
+      )
     });
+    if (sorter) {
+      query.sortBy = sorter.field;
+      if (sorter.order === "descend") {
+        query.reverse = true;
+      } else {
+        query.reverse = false;
+      }
+    }
 
     this.setState({ params: query }, this.getData);
   };
@@ -178,4 +286,7 @@ class RefTable extends React.Component {
   }
 }
 
-export default RefTable;
+const mapContextToProps = ({ addError }) => ({
+  addError
+});
+export default withContext(mapContextToProps)(RefTable);
