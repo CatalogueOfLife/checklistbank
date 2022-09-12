@@ -15,6 +15,7 @@ import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
 import DatasetDiff from "./datasetPageTabs/DatasetImportDiff";
+import DatasetImportTree from "./datasetPageTabs/DatasetImportTree";
 import ImportTimeline from "../DatasetImportMetrics/ImportTimeline";
 
 import DatasetDownload from "../Download";
@@ -91,14 +92,14 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey },
+        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey, subsection },
       },
       location,
       dataset,
       importStateMap,
       user,
     } = this.props;
-
+    console.log(subsection)
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
         <Redirect
@@ -165,7 +166,7 @@ class DatasetPage extends React.Component {
           />
         )}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {["release-metrics", "imports"].includes(section) && (
+        {["release-metrics", "imports"].includes(section) && subsection !== "tree" && (
           <DatasetImportMetrics
             datasetKey={datasetKey}
             origin={_.get(dataset, "origin")}
@@ -173,6 +174,7 @@ class DatasetPage extends React.Component {
             updateImportState={() => this.getData(datasetKey)}
           />
         )}
+        {subsection === "tree" && section === "imports" && <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey}/>}
         {(!section || section === "metadata" || section === "about") && (
           <DatasetMeta id={datasetKey} />
         )}
