@@ -364,7 +364,7 @@ class SyncTable extends React.Component {
       data,
       error,
       syncAllError,
-      params: { sectorKey },
+      params: { sectorKey, datasetKey },
     } = this.state;
     const { user, sectorImportState } = this.props;
     const {
@@ -420,7 +420,7 @@ class SyncTable extends React.Component {
         )}
         <Col flex="auto"></Col>
         <Col>
-        <DatasetAutocomplete contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
+        <DatasetAutocomplete defaultDatasetKey={datasetKey} contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
         </Col>
 
         </Row>

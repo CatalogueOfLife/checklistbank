@@ -1,5 +1,6 @@
 import { Menu } from 'antd';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import qs from 'query-string'
 import {
   PartitionOutlined,
   SyncOutlined,
@@ -11,11 +12,19 @@ import { NavLink } from 'react-router-dom';
 
 
 const SectorTabs = ({location, catalogueKey}) => {
-  
-  useEffect(()=>{}, [catalogueKey])
+  const [subjectDatasetKey, setSubjectDatasetKey] = useState(null)
+  useEffect(()=>{
+    const params = qs.parse(location?.search)
+    // On sectors its subjectDatasetKey, on syncs its datasetKey
+    if(params.subjectDatasetKey || params.datasetKey){
+      setSubjectDatasetKey(params.subjectDatasetKey || params.datasetKey)
+    } else {
+      setSubjectDatasetKey(null)
+    }
+  }, [catalogueKey, location])
   const items = [
     {
-      label: <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`}}>
+      label: <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`, search: subjectDatasetKey ? `?subjectDatasetKey=${subjectDatasetKey}`: null}}>
       Sectors
     </NavLink>,
       key: `/catalogue/${catalogueKey}/sector`,
@@ -29,7 +38,7 @@ const SectorTabs = ({location, catalogueKey}) => {
       icon: <OrderedListOutlined />,
     },
     {
-      label:  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/sync`}}>
+      label:  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/sync`, search: subjectDatasetKey ? `?datasetKey=${subjectDatasetKey}`: null}}>
       Syncs
     </NavLink>,
       key: `/catalogue/${catalogueKey}/sector/sync`,

@@ -25,10 +25,10 @@ export default (catalogueKey, searchText, getColumnSearchProps = () =>({})) =>  
       render: (text, record) => {
         return (
           <NavLink
-            to={{ pathname: `/dataset/${record.dataset.key}/about` }}
+            to={{ pathname: `/dataset/${record?.dataset?.key}/about` }}
             exact={true}
           >
-            {text ? text.toString() : record.dataset.title}
+            {text ? text.toString() : record?.dataset?.title}
           </NavLink>
         );
       },

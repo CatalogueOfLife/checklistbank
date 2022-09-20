@@ -86,19 +86,22 @@ class CatalogueSectors extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    const params = qs.parse(_.get(this.props, "location.search"));
+    const prevParams = qs.parse(_.get(prevProps, "location.search"));
     if (
       _.get(prevProps, "location.search") !==
         _.get(this.props, "location.search") ||
       _.get(prevProps, "match.params.catalogueKey") !==
-        _.get(this.props, "match.params.catalogueKey")
+        _.get(this.props, "match.params.catalogueKey") ||
+         _.get(params, "subjectDatasetKey") !==
+        _.get(prevParams, "subjectDatasetKey")
     ) {
-      const params = qs.parse(_.get(this.props, "location.search"));
 
       this.setState(
         {
           pagination: {
             pageSize: params.limit || PAGE_SIZE,
-            current: Number(params.offset) / Number(params.limit) + 1,
+            current: Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
           },
         },
         this.getData
@@ -125,7 +128,7 @@ class CatalogueSectors extends React.Component {
         this.setState({
           loading: false,
           error: null,
-          data: _.get(res, "data.result") || [],
+          data: [..._.get(res, "data.result", [])],
           pagination: {
             ...this.state.pagination,
             total: _.get(res, "data.total"),

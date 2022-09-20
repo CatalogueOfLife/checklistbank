@@ -35,6 +35,7 @@ class SectorTable extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
+      
       this.props.data &&
       this.props.data.length > 0 &&
       this.props.data.length !== prevProps.data.length
@@ -492,31 +493,28 @@ class SectorTable extends React.Component {
     }
     return (
       <React.Fragment>
-        <Row>
-          {!loading && pagination && data && (
+       {/*  <Row>
+          {!loading && !isNaN(offset) && pagination?.total && data && (
             <Col style={{ textAlign: "right" }}>
               Results: {offset} - {offset + data.length} of {pagination.total}
             </Col>
           )}
-        </Row>
-
-        <Table
+        </Row> */}
+      
+       <Table
           size="small"
           onChange={handleTableChange}
-          columns={columns}
+          columns={[...columns]}
           dataSource={data}
           loading={loading}
           pagination={pagination}
           rowKey="id"
-          expandable={expandable/* {
-            expandedRowRender: expandedRowRender
-          } */}
+          expandable={expandable}
           rowSelection={
             !(Auth.canEditDataset({key: catalogueKey}, user)) ? null : {
               selectedRowKeys: this.state.selectedRowKeys,
               onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({selectedRowKeys, selectedRows})
-               // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
               },
               selections: [
                 {
@@ -531,7 +529,6 @@ class SectorTable extends React.Component {
                 }]
             }
           }
-          /* expandedRowRender={expandedRowRender} */
         />
       </React.Fragment>
     );

@@ -563,6 +563,14 @@ class BasicMenu extends Component {
                       </NavLink>
                     </Menu.Item>
                   )}
+
+              {selectedDataset &&
+                    this.isSourceDataset(selectedDataset) &&  <Menu.Item key="sourceSectors">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`, search: `?subjectDatasetKey=${selectedDataset.key}` }}>
+                  Sectors
+                </NavLink>
+              </Menu.Item>}
+
                   {selectedDataset &&
                     this.isSourceDataset(selectedDataset) &&
                     hasData && (
