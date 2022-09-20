@@ -27,7 +27,7 @@ const getLinks = (dataset, s) => {
   const gbifOccLink = dataset?.gbifKey && dataset?.gbifPublisherKey === config?.plaziGbifPublisherKey ? `https://www.gbif.org/occurrence/${dataset?.gbifKey}/${s.id}` : '';
   const ncbiLink = s?.associatedSequences && s?.associatedSequences.indexOf('ncbi.') > -1 ? s?.associatedSequences : '';
   return (gbifOccLink || ncbiLink) && <span>
-    <Space>{gbifOccLink && <Tooltip title="Occurrence in GBIF"><a  href={gbifOccLink}><IconContext.Provider value={{ color: "green"}}><GbifLogoIcon /></IconContext.Provider></a></Tooltip>}{ncbiLink && <Tooltip title="DNA sequence in GenBank"><a href={ncbiLink}>GenBank <IconContext.Provider value={{ color: "black", size: "16"}}><GiDna1 /></IconContext.Provider></a></Tooltip>}</Space>
+    <Space>{gbifOccLink && <Tooltip title="Occurrence in GBIF"><a  href={gbifOccLink}><IconContext.Provider value={{ color: "green"}}><GbifLogoIcon /></IconContext.Provider></a></Tooltip>}{ncbiLink && <Tooltip title="DNA sequence in GenBank"><a href={ncbiLink}><IconContext.Provider value={{ color: "black", size: "16"}}><GiDna1 /></IconContext.Provider></a></Tooltip>}</Space>
     </span>
 
     
