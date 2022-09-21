@@ -330,8 +330,11 @@ const NameMatch = ({ addError }) => {
         // matchType: n.matchType,
         nameIndexId: _.get(n, `nidx.name.id`, ""),
         taxonId: _.get(n, `${usage}.id`, ""),
+        acceptedTaxonId: _.get(n, `${usage}.accepted.id`, _.get(n, `${usage}.id`, "")),
         parentTaxonId: _.get(n, `${usage}.parentId`, ""),
         scientificName: _.get(n, `${usage}.label`, ""),
+        status: _.get(n, `${usage}.status`, ""),
+        acceptedScientificName: _.get(n, `${usage}.accepted.label`, _.get(n, `${usage}.label`, ""))
       };
       defaultRanks.forEach((r) => {
         row[r] = _.get(n, `${usage}.classification.${r}.label`, "");
@@ -870,6 +873,45 @@ const NameMatch = ({ addError }) => {
                       )}
                     </React.Fragment>
                   );
+                },
+              },
+              {
+                title: "Status",
+                dataIndex: ["usage", "status"],
+                key: "status",
+                render: (text, record) => {
+
+                return  <>
+                 <span className="col-reference-link">[1]</span> {!["synonym", "ambiguous synonym", "misapplied"].includes(_.get(record, 'primaryDatasetUsage.status')) ? (
+                    _.get(record, 'primaryDatasetUsage.status')
+                  ) : (
+                    <React.Fragment key={_.get(record, "usage.id")}>
+                      {_.get(record, 'primaryDatasetUsage.status')} {_.get(record, 'primaryDatasetUsage.status') === "misapplied" ? "to " : "of "}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: _.get(record, "primaryDatasetUsage.accepted.labelHtml"),
+                        }}
+                      />
+                    </React.Fragment>
+                  )}
+                  {secondaryDataset && <>
+                    <br />
+                    <span className="col-reference-link">[2]</span> {!["synonym", "ambiguous synonym", "misapplied"].includes(_.get(record, 'secondaryDatasetUsage.status')) ? (
+                    _.get(record, 'secondaryDatasetUsage.status')
+                  ) : (
+                    <React.Fragment key={_.get(record, "usage.id")}>
+                      {_.get(record, 'secondaryDatasetUsage.status')} {_.get(record, 'secondaryDatasetUsage.status') === "misapplied" ? "to " : "of "}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: _.get(record, "secondaryDatasetUsage.accepted.labelHtml"),
+                        }}
+                      />
+                    </React.Fragment>
+                  )}
+                  
+                  </>}
+                  </>
+                 
                 },
               },
               ...getClassificationColumns(),
