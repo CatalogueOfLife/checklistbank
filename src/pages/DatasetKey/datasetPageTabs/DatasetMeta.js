@@ -25,6 +25,8 @@ import moment from "moment";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
+import Eml from "../../../components/MetaData/Eml";
+import Yaml from "../../../components/MetaData/Yaml";
 
 import marked from "marked";
 import DOMPurify from "dompurify";
@@ -107,7 +109,7 @@ class DatasetMeta extends React.Component {
   };
 
   getData = () => {
-    const { id, setDataset , user} = this.props;
+    const { id, setDataset, user } = this.props;
 
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${id}`)
@@ -117,7 +119,7 @@ class DatasetMeta extends React.Component {
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             //res.data.contributesTo = projects.data.result.map((r) => r.key);
-            this.setState({contributesTo: _.get(projects, "data.result")})
+            this.setState({ contributesTo: _.get(projects, "data.result") })
           }
           return res;
         });
@@ -128,18 +130,18 @@ class DatasetMeta extends React.Component {
         if (res.data.sourceKey) {
           this.getReleasedFrom(res.data.sourceKey);
         }
-        
+
         return Promise.all([
           res.data,
-          axios(`${config.dataApi}user/${createdBy}`) ,
-          axios(`${config.dataApi}user/${modifiedBy}`) ,
-          
+          axios(`${config.dataApi}user/${createdBy}`),
+          axios(`${config.dataApi}user/${modifiedBy}`),
+
         ]);
       })
       .then((res) => {
         res[0].createdByUser = _.get(res[1], "data.username");
         res[0].modifiedByUser = _.get(res[2], "data.username");
-        
+
         this.setState({ loading: false, data: res[0], err: null });
       })
       .catch((err) => {
@@ -168,9 +170,8 @@ class DatasetMeta extends React.Component {
       .then(() => {
         notification.open({
           message: "Updated",
-          description: `The dataset is now ${
-            toggledPrivate ? "private" : "public"
-          }`,
+          description: `The dataset is now ${toggledPrivate ? "private" : "public"
+            }`,
         });
         this.setState(
           {
@@ -190,7 +191,7 @@ class DatasetMeta extends React.Component {
   };
 
   getAgentSpan = (agents) => {
-    return agents.length === 1 ? 24 : agents.length === 2 ? 12: 8 
+    return agents.length === 1 ? 24 : agents.length === 2 ? 12 : 8
   }
 
   render() {
@@ -241,9 +242,8 @@ class DatasetMeta extends React.Component {
               <Col>
                 {!catalogueKey && data && !data.deleted && (
                   <Popconfirm
-                    title={`Make dataset ${
-                      data.private ? "public" : "private"
-                    }`}
+                    title={`Make dataset ${data.private ? "public" : "private"
+                      }`}
                     visible={confirmPrivatePopupVisible}
                     onConfirm={this.setPrivate}
                     okButtonProps={{ loading: privateChangeLoading }}
@@ -316,6 +316,8 @@ class DatasetMeta extends React.Component {
         )}
         {displayData && (
           <div style={{ textAlign: "right" }}>
+            <Yaml datasetKey={displayData.key} />
+            <Eml datasetKey={displayData.key} />
             <BibTex datasetKey={displayData.key} />
           </div>
         )}
@@ -325,13 +327,11 @@ class DatasetMeta extends React.Component {
               {displayData.alias}
             </PresentationItem>
             <PresentationItem
-              label={`${displayData.version ? "Version" : ""}${
-                displayData.version && displayData.issued ? " / " : ""
-              }${displayData.issued ? "Issued" : ""}`}
+              label={`${displayData.version ? "Version" : ""}${displayData.version && displayData.issued ? " / " : ""
+                }${displayData.issued ? "Issued" : ""}`}
             >
               {(displayData.version || displayData.issued) &&
-                `${displayData.version ? displayData.version : ""}${
-                  displayData.issued ? " / " + displayData.issued : ""
+                `${displayData.version ? displayData.version : ""}${displayData.issued ? " / " + displayData.issued : ""
                 }`}
             </PresentationItem>
             <PresentationItem label="DOI">
@@ -454,22 +454,22 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
-          {Auth.isAuthorised(user, ["admin"]) &&  <PresentationItem label="GBIF key">
+            {Auth.isAuthorised(user, ["admin"]) && <PresentationItem label="GBIF key">
               {displayData.gbifKey && (
                 <a href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}>
                   {displayData.gbifKey}
                 </a>
               )}
             </PresentationItem>}
-            {Auth.isAuthorised(user, ["admin"]) &&  <PresentationItem label="GBIF publisher key">
+            {Auth.isAuthorised(user, ["admin"]) && <PresentationItem label="GBIF publisher key">
               {displayData.gbifPublisherKey && (
                 <NavLink to={{
                   pathname: `/dataset`,
-                  search:`?gbifPublisherKey=${displayData.gbifPublisherKey}`
+                  search: `?gbifPublisherKey=${displayData.gbifPublisherKey}`
                 }}>
                   {displayData.gbifPublisherKey}
                 </NavLink>
-                
+
               )}
             </PresentationItem>}
             <PresentationItem label="Identifiers">
@@ -506,8 +506,8 @@ class DatasetMeta extends React.Component {
 
             <PresentationItem label="Citation">
               {displayData.citation && (
-               <span
-                  dangerouslySetInnerHTML={{ __html: linkify(displayData.citation)}}
+                <span
+                  dangerouslySetInnerHTML={{ __html: linkify(displayData.citation) }}
                 ></span>
               )}
             </PresentationItem>
@@ -558,11 +558,10 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Created">
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"
-              )}${
-                displayData.createdByUser
+              )}${displayData.createdByUser
                   ? " by " + displayData.createdByUser
                   : ""
-              }`}
+                }`}
             </PresentationItem>
             <PresentationItem label="Modified">
               {`${moment(displayData.modified).format(
