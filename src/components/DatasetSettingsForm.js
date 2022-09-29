@@ -150,7 +150,7 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => !["String", "Integer", "Boolean", "URI"].includes(s.type)
+          (s) => !["String", "Integer", "Boolean", "URI", "UUID"].includes(s.type)
         )
         .map((s) => (
           <FormItem
