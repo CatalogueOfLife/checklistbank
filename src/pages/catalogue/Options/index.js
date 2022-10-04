@@ -317,11 +317,6 @@ class CatalogueOptions extends React.Component {
               )}
             </Col>
             {Auth.canEditDataset({ key: catalogueKey }, user) && <Col span={6}>
-              <SyncAllSectorsButton
-                catalogueKey={catalogueKey}
-                onError={(err) => this.setState({ error: err })}
-              ></SyncAllSectorsButton>
-
               <Popconfirm
                 placement="rightTop"
                 title={`Do you want to release ${catalogue.title}?`}
@@ -356,7 +351,7 @@ class CatalogueOptions extends React.Component {
 
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch sectors?"
+                title="Do you want to rematch all sectors?"
                 onConfirm={() => this.rematchSectorsOrDecisions("sectors")}
                 okText="Yes"
                 cancelText="No"
@@ -372,7 +367,7 @@ class CatalogueOptions extends React.Component {
 
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch sectors?"
+                title="Do you want to rematch all decisions?"
                 onConfirm={() => this.rematchSectorsOrDecisions("decisions")}
                 okText="Yes"
                 cancelText="No"
@@ -385,6 +380,10 @@ class CatalogueOptions extends React.Component {
                   Rematch all decisions
                 </Button>
               </Popconfirm>
+
+              <SyncAllSectorsButton catalogueKey={catalogueKey} 
+                onError={(err) => this.setState({ error: err })}>
+              </SyncAllSectorsButton>
 
               <Button
                 type="primary"
