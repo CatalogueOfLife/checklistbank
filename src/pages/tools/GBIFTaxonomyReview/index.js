@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../../../config"
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
@@ -11,7 +12,7 @@ import qs from "query-string";
 import moment from "moment";
 import _ from "lodash";
 const { Option } = Select;
-const DOWNLOADS_URL = "https://download.catalogueoflife.org/taxreview/";
+
 const GBIFTaxonomyReview = ({ location }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [availableFiles, setAvailableFiles] = useState([]);
@@ -27,7 +28,7 @@ const GBIFTaxonomyReview = ({ location }) => {
 
   const getAvailableDataFiles = () => {
     axios
-      .get("https://download.catalogueoflife.org/taxreview/index.json", {
+      .get(`${config.downloadApi}taxreview/index.json`, {
         transformRequest: (data, headers) => {
           delete headers.common["Authorization"];
           return data;
