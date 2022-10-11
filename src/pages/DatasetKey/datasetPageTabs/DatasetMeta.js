@@ -262,7 +262,7 @@ class DatasetMeta extends React.Component {
                     />
                   </Popconfirm>
                 )}
-                {data && !data.deleted && data.createdBy !== config.gbifSyncUser && (
+                {data && !data.deleted && /* data.createdBy !== config.gbifSyncUser && */ (
                   <Switch
                     checked={editMode}
                     onChange={this.setEditMode}
