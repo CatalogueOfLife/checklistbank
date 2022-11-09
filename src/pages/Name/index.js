@@ -336,7 +336,7 @@ class NamePage extends React.Component {
             {filteredSynonyms && filteredSynonyms.length > 0 && (
               <PresentationItem md={md} label="Homotypic names">
                 <SynonymTable
-                  data={filteredSynonyms.map((s) => ({ name: s }))}
+                  data={filteredSynonyms.map((s) => ({ name: s, __homotypic: true }))}
                   style={{ marginTop: "-3px" }}
                   datasetKey={datasetKey}
                   catalogueKey={catalogueKey}
