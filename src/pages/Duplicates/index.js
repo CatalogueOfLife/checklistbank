@@ -321,7 +321,7 @@ class DuplicateSearchPage extends React.Component {
       {
         params: _.pickBy(
           { ...this.state.params, ...params, offset: 0 },
-          (val) => !!val
+          (val) =>  val === false || !!val
         ),
         totalFaked: 0,
         selectedPreset: undefined,
@@ -791,7 +791,13 @@ class DuplicateSearchPage extends React.Component {
                   <FormItem label="Authorship different">
                     <RadioGroup
                       onChange={(evt) => {
-                        if (typeof evt.target.value === "undefined") {
+                        
+                        if (evt.target.value === true || evt.target.value === false) {
+                          this.updateSearch({
+                            authorshipDifferent: evt.target.value,
+                          });
+                          
+                        } else {
                           this.setState(
                             {
                               params: _.omit(this.state.params, [
@@ -800,10 +806,6 @@ class DuplicateSearchPage extends React.Component {
                             },
                             this.getData
                           );
-                        } else {
-                          this.updateSearch({
-                            authorshipDifferent: evt.target.value,
-                          });
                         }
                       }}
                       value={params.authorshipDifferent}

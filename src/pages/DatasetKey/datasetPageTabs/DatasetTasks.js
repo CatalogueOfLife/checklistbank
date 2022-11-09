@@ -110,7 +110,7 @@ class DatasetTasks extends React.Component {
                 color={getDuplicateWarningColor(manuscriptNames.count)}
               >
                 Manuscript names{" "}
-                {assembly ? (
+                {!assembly ? (
                   <strong>{`${manuscriptNames.count}`}</strong>
                 ) : (
                   <strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>

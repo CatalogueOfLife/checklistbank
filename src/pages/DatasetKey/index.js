@@ -123,6 +123,8 @@ class DatasetPage extends React.Component {
     const openKeys = ["dataset", "datasetKey"];
     const selectedKeys = ["diff", "import-history"].includes(section)
       ? ["imports"]
+      : sect === "duplicates" && !taxonOrNameKey ? ["datasetDuplicateSearch"]
+      : sect === "duplicates" && taxonOrNameKey ? ["datasetDuplicateTasks"]
       : [section];
 
     return (
@@ -223,7 +225,7 @@ class DatasetPage extends React.Component {
           <DatasetTasks
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            assembly={false}
           />
         )}
         {sect === "taxon" && (

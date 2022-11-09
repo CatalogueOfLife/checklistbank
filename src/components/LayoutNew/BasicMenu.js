@@ -739,6 +739,20 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
+               {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
+                <Menu.Item key="datasetDuplicateSearch">
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${_.get(
+                        selectedDataset,
+                        "key"
+                      )}/duplicates`,
+                    }}
+                  >
+                    Duplicate search
+                  </NavLink>
+                </Menu.Item>
+              )}
             {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
                 <Menu.Item key="datasetDuplicateTasks">
                   <NavLink
@@ -749,10 +763,11 @@ class BasicMenu extends Component {
                       )}/duplicates/overview`,
                     }}
                   >
-                    Duplicates
+                    Duplicate overview
                   </NavLink>
                 </Menu.Item>
               )}
+
             {!selectedDataset.deleted &&   <Menu.Item key="download">
                 <NavLink
                   to={{
