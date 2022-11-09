@@ -25,9 +25,9 @@ export default (catalogueKey, deleteCallback) => ({
             }}
             exact={true}
           >
-            <Tooltip title={text}>
+            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
               <div style={{ width: "50px" }} className="truncate">
-                {text}
+                {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
           </NavLink>
@@ -135,9 +135,9 @@ export default (catalogueKey, deleteCallback) => ({
             }}
             exact={true}
           >
-            <Tooltip title={text}>
+            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
               <div style={{ width: "50px" }} className="truncate">
-                {text}
+              {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
           </NavLink>
@@ -254,9 +254,9 @@ export default (catalogueKey, deleteCallback) => ({
             }}
             exact={true}
           >
-            <Tooltip title={text}>
+            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
               <div style={{ width: "50px" }} className="truncate">
-                {text}
+              {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
           </NavLink>
@@ -361,9 +361,9 @@ export default (catalogueKey, deleteCallback) => ({
             }}
             exact={true}
           >
-            <Tooltip title={text}>
+            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
               <div style={{ width: "50px" }} className="truncate">
-                {text}
+              {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
           </NavLink>
