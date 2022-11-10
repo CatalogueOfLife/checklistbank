@@ -6,7 +6,7 @@
     "origin": [
       "external"
     ],
-    "type": "String"
+    "type": "Character"
   },
   {
     "enum": false,
@@ -15,7 +15,7 @@
     "origin": [
       "external"
     ],
-    "type": "String"
+    "type": "Character"
   },
   {
     "enum": false,
@@ -24,7 +24,7 @@
     "origin": [
       "external"
     ],
-    "type": "String"
+    "type": "Character"
   },
   {
     "enum": true,
@@ -69,7 +69,26 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "merge metadata",
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "release alias template",
+    "origin": [
+      "managed"
+    ],
+    "type": "String"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "release version template",
     "origin": [
       "managed"
     ],
@@ -171,6 +190,25 @@
     "enum": false,
     "multiple": false,
     "name": "gbif sync lock",
+    "origin": [
+      "external"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": true,
+    "multiple": false,
+    "name": "doi resolution",
+    "origin": [
+      "external",
+      "managed"
+    ],
+    "type": "DoiResolution"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "epithet add hyphen",
     "origin": [
       "external"
     ],
