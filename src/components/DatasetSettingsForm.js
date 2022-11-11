@@ -128,8 +128,8 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) =>
-            (s.type === "String" || s.type === "Integer" || s.type === "URI") &&
+          (s) => ["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type )
+            /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ &&
             s.name !== "csv delimiter"
         )
         .map((s) => (
@@ -150,7 +150,7 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => !["String", "Integer", "Boolean", "URI", "UUID"].includes(s.type)
+          (s) => !["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type)
         )
         .map((s) => (
           <FormItem

@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { Alert, Row, Col, Button } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
+import Editors from "../catalogue/Editors/Editors";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
@@ -283,6 +284,7 @@ class DatasetPage extends React.Component {
         {section === "import-timeline" && (
           <ImportTimeline datasetKey={datasetKey} />
         )}
+        {section === "editors" && <Editors datasetKey={datasetKey} />}
       </Layout>
     );
   }

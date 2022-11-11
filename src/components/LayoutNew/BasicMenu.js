@@ -750,6 +750,13 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
+              {Auth.canEditDataset(selectedDataset, user) &&  <Menu.Item key="editors">
+                  <NavLink
+                    to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
+                  >
+                    <span>Editors</span>
+                  </NavLink>
+                </Menu.Item>}
                {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
                 <Menu.Item key="datasetDuplicateSearch">
                   <NavLink
