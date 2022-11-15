@@ -49,7 +49,14 @@ const matchTypeTypeMap = {
   exact: "green",
   none: "red",
   ambiguous: "gold",
+  canonical: "gold"
 };
+const matchRemark = ['ambiguous', 'canonical', 'none'];
+const matchRemarkTooltip = {
+  ambiguous: "The name has more than one match in the names index",
+  none: "There is no match for this name",
+  canonical: "Only the name matches (without author string)"
+}
 
 const getLowerKeysObj = (obj) => {
   var key,
@@ -327,7 +334,7 @@ const NameMatch = ({ addError }) => {
     return names.map((n) => {
       let row = {
         providedScientificName: n.providedScientificName,
-        // matchType: n.matchType,
+        matchRemark: matchRemark.includes(n.matchType) ? n.matchType : "",
         nameIndexId: _.get(n, `nidx.name.id`, ""),
         taxonId: _.get(n, `${usage}.id`, ""),
         acceptedTaxonId: _.get(n, `${usage}.accepted.id`, _.get(n, `${usage}.id`, "")),
@@ -736,6 +743,30 @@ const NameMatch = ({ addError }) => {
                 dataIndex: "providedScientificName",
                 key: "providedScientificName",
               },
+                             {
+                title: "Match remark",
+                dataIndex: "matchType",
+                key: "matchType",
+                filters: nameIndexMetrics
+                  ? Object.keys(nameIndexMetrics).filter(k => matchRemark.includes(k)).map((m) => ({
+                      text: m,
+                      value: m,
+                    }))
+                  : null,
+                onFilter: (value, record) => {
+                  return record.matchType === value;
+                },
+                render: (text, record) => matchRemark.includes(text) ?
+                <Tooltip
+                placement="topLeft"
+                title={
+                  matchRemarkTooltip[text]
+                }
+              > <Tag color={_.get(matchTypeTypeMap, `${text}`, "")}>
+                    {text}
+                  </Tag> </Tooltip>: ""
+                ,
+              }, 
 
               {
                 title: "Scientific Name",

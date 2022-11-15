@@ -89,7 +89,12 @@ class UserMenu extends PureComponent {
         
       })
       .catch((err) => {
-        this.setState({ invalid: err.message });
+        if(err?.response?.status === 401){
+          this.setState({ invalid: `Invalid Username or password`});
+        } else {
+          this.setState({ invalid: err.message });
+        }
+        
       });
   };
 
