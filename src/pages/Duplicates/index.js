@@ -377,22 +377,26 @@ class DuplicateSearchPage extends React.Component {
   onDecisionChange = (decision) => {
     this.setState({ decision });
   };
-  applyDecision = () => {
+  applyDecision = async () => {
     const { selectedRowKeys, data, decision } = this.state;
     const { datasetKey, catalogueKey, assembly } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
-      .map((d) => {
+      .map(async (d) => {
         const method = d.decision ? "put" : "post";
         const mode = ["block", "ignore", "reviewed"].includes(decision)
           ? decision
           : "update";
+        const sourceSubject = assembly ? await axios(`${config.dataApi}dataset/${catalogueKey}/nameusage/${_.get(d, "id")}/source`) : null;
+        const sourceId = sourceSubject?.data?.sourceId || null;
+        
+        
         const body = {
           datasetKey: catalogueKey,
           subjectDatasetKey: assembly ? d?.sector?.dataset?.key : datasetKey,
           subject: {
-            id: _.get(d, "id"),
+            id: sourceId || _.get(d, "id"),
             parent:
             d.classification && d.classification.length > 1
               ? d.classification[d.classification.length - 2].name
