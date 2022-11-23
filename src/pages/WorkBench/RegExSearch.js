@@ -13,7 +13,7 @@ const { Option } = Select;
 const { Search } = Input;
 
 
-const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
+const RegExSearch = ({ onSearch, onReset, datasetKey, decisionMode, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
   const [regEx, setRegEx] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(limit);
@@ -38,6 +38,9 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxo
         }
         if(rank){
             params.rank=rank
+        }
+        if(decisionMode){
+          params.decisionMode=decisionMode
         }
 
         let query = rank || status ? `&${qs.stringify(params)}` : "";

@@ -915,7 +915,7 @@ class WorkBench extends React.Component {
         </Row>
     </TabPane>
     <TabPane tab="RegEx Search" key="2">
-    <RegExSearch limit={pagination.pageSize} style={{marginBottom: "10px"}} datasetKey={datasetKey} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
+    <RegExSearch decisionMode={_.get(this.state?.params?.decisionMode)} limit={pagination.pageSize} style={{marginBottom: "10px"}} datasetKey={datasetKey} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
 
     </TabPane>
    
@@ -954,8 +954,8 @@ class WorkBench extends React.Component {
                 }}
                 value={activeTab === "2" ? undefined : params.decisionMode}
               >
-                <Radio value="_NOT_NULL" disabled={activeTab === "2"}>With decision</Radio>
-                <Radio value="_NULL" disabled={activeTab === "2"}>Without decision</Radio>
+                <Radio value="_NOT_NULL" /* disabled={activeTab === "2"} */>With decision</Radio>
+                <Radio value="_NULL" /* disabled={activeTab === "2"} */>Without decision</Radio>
                 <Radio value={undefined}>All</Radio>
               </RadioGroup>
             </FormItem>
