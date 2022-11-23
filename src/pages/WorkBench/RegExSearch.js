@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
+import { useLocation } from "react-router-dom";
+
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
 import qs from "query-string";
@@ -13,16 +15,27 @@ const { Option } = Select;
 const { Search } = Input;
 
 
-const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
+const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
   const [regEx, setRegEx] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(limit);
   const [error, setError] = useState(null);
   const [options, setOptions] = useState([]);
-  const [rank, setRank] = useState(null)
-  const [status, setStatus] = useState(null)
+  //const [rank, setRank] = useState(null)
+  //const [status, setStatus] = useState(null)
+  const [params, setParams] = useState({})
+  const location = useLocation();
+  
+  useEffect(()=> {
 
+    if(location?.search){
+      setParams(qs.parse(location?.search))
+    }
+  }, [location?.search])
+ 
+ 
   useEffect(() => {
+
     getRegEx().then(setOptions);
   }, []);
   const getData = async (regEx_, page_ = 1) => {
@@ -32,15 +45,18 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxo
 
     const offset = (page_ - 1) * limit;
     if (regEx_) {
-        let params = {}
-        if(status){
-            params.status = status
+        let params_ = {}
+        if(params.status){
+            params_.status = status
         }
-        if(rank){
-            params.rank=rank
+        if(params.rank){
+            params_.rank=rank
+        }
+        if(params.decisionMode){
+          params_.decisionMode=decisionMode
         }
 
-        let query = rank || status ? `&${qs.stringify(params)}` : "";
+        let query = rank || status || decisionMode ? `&${qs.stringify(params_)}` : "";
         
 
       try {
@@ -121,12 +137,15 @@ const RegExSearch = ({ onSearch, onReset, datasetKey, style = {}, rankEnum, taxo
         </Col>
         <Col flex="auto">
       <MultiValueFilter
-              onChange={setRank}
+              defaultValue={_.get(params, "rank")}
+              //onChange={setRank}
+              onChange={(value) => updateSearch({ rank: value })}
               vocab={rankEnum}
               label="Ranks"
             />
             <MultiValueFilter
-              onChange={setStatus}
+              defaultValue={_.get(params, "status")}
+              onChange={(value) => updateSearch({ status: value })}
               vocab={taxonomicstatus}
               label="Status"
             />

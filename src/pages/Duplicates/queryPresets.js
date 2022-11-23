@@ -238,7 +238,8 @@ export default [
       mode: "STRICT",
       category: "uninomial",
       withDecision: false,
-      rank: "order"
+      rank: "order",
+      status: "accepted"
     }
   },
   {
@@ -249,7 +250,8 @@ export default [
       mode: "STRICT",
       category: "uninomial",
       withDecision: false,
-      rank: "superfamily"
+      rank: "superfamily",
+      status: "accepted"
     }
   },
   {
@@ -260,7 +262,8 @@ export default [
       mode: "STRICT",
       category: "uninomial",
       withDecision: false,
-      rank: "family"
+      rank: "family",
+      status: "accepted"
     }
   },
   {
@@ -271,7 +274,8 @@ export default [
       mode: "STRICT",
       category: "uninomial",
       withDecision: false,
-      rank: "genus"
+      rank: "genus",
+      status: "accepted"
     }
   },
   {
@@ -282,7 +286,20 @@ export default [
       mode: "STRICT",
       category: "uninomial",
       withDecision: false,
-      rank: "subgenus"
+      rank: "subgenus",
+      status: "accepted"
+    }
+  },
+  {
+    id: "b6",
+    text: "Identical tribe",
+    params: {
+      minSize: "2",
+      mode: "STRICT",
+      category: "uninomial",
+      withDecision: false,
+      rank: "tribe",
+      status: "accepted"
     }
   },
   {
@@ -291,7 +308,8 @@ export default [
     params: {
       minSize: "2",
       mode: "STRICT",
-      category: "uninomial"
+      category: "uninomial",
+      status: "accepted"
     }
   } 
 ];
