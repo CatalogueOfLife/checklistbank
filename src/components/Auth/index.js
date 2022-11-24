@@ -3,8 +3,7 @@ const Auth = {
     if (!roles && user) {
       return true;
     }
-
-    if (user && user.roles && roles.some((r) => user.roles.includes(r))) {
+    if (user && user.roles && ( typeof roles === "string" ? user.roles.includes(roles) : roles.some((r) => user.roles.includes(r)) )) {
       return true;
     }
 
