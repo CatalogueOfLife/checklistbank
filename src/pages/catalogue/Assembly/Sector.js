@@ -6,6 +6,7 @@ import {
   ExclamationCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  WarningOutlined
 } from "@ant-design/icons";
 
 import {
@@ -243,6 +244,12 @@ class Sector extends React.Component {
         zIndex={999}
         content={
           <div>
+            {isRootSector && sector?.subject?.broken === true && <Alert
+                style={{marginBottom: "8px"}}
+                message="The sector subject is broken"
+                type="warning"
+                showIcon
+              />}
             {isRootSector && (
               <>
                 <CanEditDataset dataset={{ key: catalogueKey }}>
@@ -397,6 +404,11 @@ class Sector extends React.Component {
             _.get(syncState, "queued"),
             (e) => e.sectorKey === sector.id
           ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
+          {sector?.subject?.broken === true && (
+            <WarningOutlined
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
         </Tag>
       </Popover></>
     ) : (
@@ -534,6 +546,11 @@ class Sector extends React.Component {
                 _.get(syncState, "queued"),
                 (e) => e.sectorKey === sector.id
               ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
+              {sector?.subject?.broken === true && (
+              <WarningOutlined
+                style={{ fontSize: "16px", marginRight: "4px" }}
+                />
+              )}
             </Tag>
           </Popover>
         )}
