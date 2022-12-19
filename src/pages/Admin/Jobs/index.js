@@ -197,7 +197,7 @@ const Jobs = ({ user, addError }) => {
       key: "logs",
       render: (text, record) => (
         <Tooltip title="Logs">
-          <a href={kibanaQuery(record.UUID)} target="_blank">
+          <a href={kibanaQuery(record.key)} target="_blank">
             <CodeOutlined style={{ fontSize: "20px" }} />
           </a>
         </Tooltip>
@@ -212,8 +212,8 @@ const Jobs = ({ user, addError }) => {
           {record?.dataset && (
             <CanEditDataset>
               <Button
-                loading={killedJobs.has(record.UUID)}
-                onClick={() => killJob(record.UUID)}
+                loading={killedJobs.has(record.key)}
+                onClick={() => killJob(record.key)}
               >
                 Stop
               </Button>
@@ -221,8 +221,8 @@ const Jobs = ({ user, addError }) => {
           )}
           {!record?.dataset && Auth.isAuthorised(user, "admin") && (
             <Button
-              loading={killedJobs.has(record.UUID)}
-              onClick={() => killJob(record.UUID)}
+              loading={killedJobs.has(record.key)}
+              onClick={() => killJob(record.key)}
             >
               Stop
             </Button>
