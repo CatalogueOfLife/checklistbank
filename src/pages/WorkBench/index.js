@@ -524,6 +524,9 @@ class WorkBench extends React.Component {
         const mode = ["block", "ignore", "reviewed"].includes(decision)
           ? decision
           : "update";
+          const parent = ['accepted', 'provisionally accepted'].includes(d?.usage?.status) ? (d.classification && d.classification.length > 1
+            ? d.classification[d.classification.length - 2].name
+            : "") : _.get(d, "usage.accepted.name.scientificName", "");
         let decisionObject = {
           subjectDatasetKey: datasetKey,
           subject: {
@@ -532,10 +535,7 @@ class WorkBench extends React.Component {
             authorship: _.get(d, "usage.name.authorship"),
             rank: _.get(d, "usage.name.rank"),
             status: _.get(d, "usage.status"),
-            parent:
-              d.classification && d.classification.length > 1
-                ? d.classification[d.classification.length - 2].name
-                : "",
+            parent: parent,
             code: _.get(d, "usage.name.code"),
           },
           mode: mode,

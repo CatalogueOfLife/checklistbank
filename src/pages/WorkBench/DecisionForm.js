@@ -222,7 +222,6 @@ const DecisionForm = (props) => {
           onCancel();
         }
       }}
-      destroyOnClose={true}
     >
       <Row>
         {error && (

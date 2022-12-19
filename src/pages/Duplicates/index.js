@@ -391,16 +391,15 @@ class DuplicateSearchPage extends React.Component {
         const sourceSubject = assembly ? await axios(`${config.dataApi}dataset/${catalogueKey}/nameusage/${_.get(d, "id")}/source`) : null;
         const sourceId = sourceSubject?.data?.sourceId || null;
         
-        
+        const parent = ['accepted', 'provisionally accepted'].includes(d?.usage?.status) ? (d.classification && d.classification.length > 1
+          ? d.classification[d.classification.length - 2].name
+          : "") : _.get(d, "usage.accepted.name.scientificName", "");
         const body = {
           datasetKey: catalogueKey,
           subjectDatasetKey: assembly ? d?.sector?.dataset?.key : datasetKey,
           subject: {
             id: sourceId || _.get(d, "id"),
-            parent:
-            d.classification && d.classification.length > 1
-              ? d.classification[d.classification.length - 2].name
-              : "",      
+            parent: parent,      
             name: _.get(d, "name.scientificName"),
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
