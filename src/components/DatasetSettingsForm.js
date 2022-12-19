@@ -128,7 +128,7 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['managed', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => ["String", "Integer", "Boolean", "URI", "Character"].includes(s.type )
+          (s) => ["String", "Integer", "URI", "Character"].includes(s.type )
             /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ &&
             s.name !== "csv delimiter"
         )
