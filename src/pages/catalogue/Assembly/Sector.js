@@ -6,11 +6,8 @@ import {
   ExclamationCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
-<<<<<<< HEAD
-  NodeCollapseOutlined
-=======
+  NodeCollapseOutlined,
   WarningOutlined
->>>>>>> master
 } from "@ant-design/icons";
 
 import {
