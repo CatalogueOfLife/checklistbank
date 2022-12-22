@@ -423,7 +423,7 @@ class ContextProvider extends React.Component {
   getBackground = async () => {
     try {
       const { data: background } = await axios.get(
-        `${config.downloadApi}.status.json`
+        `${config.downloadApi}.status.json?cachebust=${Math.random()}`
       );
       this.setState({ background });
     } catch (err) {
