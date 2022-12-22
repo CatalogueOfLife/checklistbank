@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import { LinkOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Tag, Row, Col, Button, Rate, Tabs, message } from "antd";
 import SynonymTable from "./Synonyms";
+import Synonyms from "./Synonyms2";
 import VernacularNames from "./VernacularNames";
 import Distributions from "./Distributions";
 import Classification from "./Classification";
@@ -492,12 +493,28 @@ class TaxonPage extends React.Component {
             </PresentationItem>
           )}
 
-          {synonyms && synonyms.length > 0 && (
+{/*           {synonyms && synonyms.length > 0 && (
             <PresentationItem md={md} label="Synonyms and combinations">
               <SynonymTable
                 onEditSuccess={this.getData}
                 canEdit={this.canEdit}
                 data={synonyms}
+                references={_.get(info, "references")}
+                referenceIndexMap={referenceIndexMap}
+                typeMaterial={_.get(info, "typeMaterial")}
+                style={{ marginTop: "-3px" }}
+                datasetKey={datasetKey}
+                catalogueKey={catalogueKey}
+              />
+            </PresentationItem>
+          )} */}
+
+          {_.get(info, "synonyms") && (
+            <PresentationItem md={md} label="Synonyms and combinations">
+              <Synonyms
+                onEditSuccess={this.getData}
+                canEdit={this.canEdit}
+                data={_.get(info, "synonyms")}
                 references={_.get(info, "references")}
                 referenceIndexMap={referenceIndexMap}
                 typeMaterial={_.get(info, "typeMaterial")}
