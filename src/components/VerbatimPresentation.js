@@ -128,11 +128,10 @@ class VerbatimPresentation extends React.Component {
 
     const isTaxonId =
       key === "acef:AcceptedTaxonID" ||
-      ((key === "dwc:taxonID" || key === "dwc:acceptedNameUsageID") /* &&
-        type === "dwc:Taxon" */) ||
+      ((key === "dwc:taxonID" || key === "dwc:acceptedNameUsageID") /* && type === "dwc:Taxon" */) ||
       (key === "col:ID" && type === "col:Taxon") ||
       key === "col:taxonID" || 
-      key === "coldwc:relatedNameUsageID";
+      key === "col:relatedNameUsageID";
 
     const isNameId =
       ((key === "col:ID" || key === "col:basionymID") && type === "col:Name") ||
