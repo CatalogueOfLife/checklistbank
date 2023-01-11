@@ -171,6 +171,25 @@ class Sector extends React.Component {
       });
   };
 
+  getSectorDatasetRanks = () => {
+    const {
+      taxon: { sector },
+    } = this.props;
+    axios
+      .get(
+        `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
+      ) // /assembly/3/sync/
+      .then((res) => {
+        this.setState({
+          sectorDatasetRanks: _.get(res, "data.facets.rank", []).map(
+            (r) => r.value
+          ),
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: err });
+      });
+  };
 
   finishEditForm = () => {
     this.getSectorDatasetRanks();
