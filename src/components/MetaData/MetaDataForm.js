@@ -17,6 +17,7 @@ import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
 import KeyValueControl from "./KeyValueControl";
+import TagControl from "../TagControl";
 import Auth from "../Auth"
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
@@ -474,17 +475,16 @@ const MetaDataForm = (props) => {
           <Input />
         </FormItem>
       )}
-      {/*
+
       {data && (
         <FormItem
           {...formItemLayout}
           label="Keywords"
           name="keyword"
         >
-          <Input />
+          <TagControl label="Add keyword" removeAll={true} />
         </FormItem>
       )}
-*/}
 
       {!data && (
         <FormItem
