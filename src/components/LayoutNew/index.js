@@ -237,9 +237,6 @@ class SiteLayout extends Component {
                     </Col>
                     <Col style={{ paddingLeft: "10px" }}>
                       The system is under maintenance - please expect errors.
-                      <br />
-                      We will reset the test environment on January 16th, wiping all data.
-                      If you need to preserve data please download it as we do not keep any backups.
                     </Col>
                   </Row>
                 }
