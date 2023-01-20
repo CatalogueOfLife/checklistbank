@@ -6,7 +6,35 @@ import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 import Exception403 from "../../components/exception/403";
 import Auth from "../../components/Auth";
-class DatasetCreate extends React.Component {
+
+const DatasetCreate = ({ user, loadTokenUser, addError }) => (
+  <Layout
+    openKeys={["dataset"]}
+    selectedKeys={["datasetCreate"]}
+    title="New Dataset"
+  >
+    {Auth.isEditorOrAdmin(user) ? <PageContent>
+      <MetaDataForm
+        onSaveSuccess={async (res, origin) => {
+          try {
+            await loadTokenUser()
+            if (origin === "external") {
+              history.push(`/dataset/${res.data}/options`)
+            } else {
+              history.push(`/dataset/${res.data}/about`)
+            }
+          } catch (error) {
+            addError(error)
+          }
+
+          ;
+        }}
+      />
+    </PageContent> : <Exception403 />}
+  </Layout>
+)
+
+/* class DatasetCreate extends React.Component {
   render() {
     return (
       <Layout
@@ -14,14 +42,20 @@ class DatasetCreate extends React.Component {
         selectedKeys={["datasetCreate"]}
         title="New Dataset"
       >
-       {Auth.isEditorOrAdmin(this.props.user) ? <PageContent>
+        {Auth.isEditorOrAdmin(this.props.user) ? <PageContent>
           <MetaDataForm
-            onSaveSuccess={(res, origin) => {
-              if(origin === "external"){
-                history.push(`/dataset/${res.data}/options`)
-              } else {
-                history.push(`/dataset/${res.data}/about`)
+            onSaveSuccess={async (res, origin) => {
+              try {
+                await loadTokenUser()
+                if (origin === "external") {
+                  history.push(`/dataset/${res.data}/options`)
+                } else {
+                  history.push(`/dataset/${res.data}/about`)
+                }
+              } catch (error) {
+                addError(error)
               }
+
               ;
             }}
           />
@@ -29,8 +63,8 @@ class DatasetCreate extends React.Component {
       </Layout>
     );
   }
-}
+} */
 
-const mapContextToProps = ({  user }) => ({  user });
+const mapContextToProps = ({ user, loadTokenUser, addError }) => ({ user, loadTokenUser, addError });
 
 export default withContext(mapContextToProps)(DatasetCreate);
