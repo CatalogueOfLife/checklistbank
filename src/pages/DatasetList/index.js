@@ -277,7 +277,7 @@ class DatasetList extends React.Component {
     if (params.releasedFrom !== prevParams.releasedFrom) {
       let params = qs.parse(_.get(this.props, "location.search"));
       if(!params.releasedFrom){
-        params.origin = ['managed', 'external'] 
+        params.origin = ['project', 'external'] 
       }
       this.setState(
         {
@@ -550,7 +550,7 @@ class DatasetList extends React.Component {
                       onResetSearch={this.onResetReleasedFrom}
                       onSelectDataset={this.onSelectReleasedFrom}
                       placeHolder="Released from"
-                      origin="managed"
+                      origin="project"
                       autoFocus={false}
                     />
                   </div>
@@ -642,7 +642,7 @@ class DatasetList extends React.Component {
             <ConfigProvider renderEmpty={() => noParams ? 
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search filters specified"> 
                 <Button type="primary" onClick={() => {
-                  let  params = { limit: PAGE_SIZE, offset: 0, origin: ['managed', 'external'] };
+                  let  params = { limit: PAGE_SIZE, offset: 0, origin: ['project', 'external'] };
                     history.push({
                       pathname: "/dataset",
                       search: `?limit=${PAGE_SIZE}&offset=0`,
@@ -674,7 +674,7 @@ class DatasetList extends React.Component {
               onChange={this.handleTableChange}
               expandable={{
                 expandedRowRender: record => <Releases dataset={record} />,
-                rowExpandable: record => record.origin === 'managed',
+                rowExpandable: record => record.origin === 'project',
               }}
               rowSelection={
                 !Auth.isAuthorised(user, ["admin"]) ? null : {

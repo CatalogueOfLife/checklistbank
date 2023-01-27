@@ -36,7 +36,7 @@ class CatalogueSelect extends React.Component {
   getCatalogues = () => {
     this.setState({ loading: true });
     axios(
-      `${config.dataApi}dataset?origin=managed&limit=1000`
+      `${config.dataApi}dataset?origin=project&limit=1000`
     ).then((res) =>
       this.setState({
         catalogues: _.get(res, "data.result") ? _.get(res, "data.result") : [],

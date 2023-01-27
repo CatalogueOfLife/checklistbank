@@ -185,12 +185,12 @@ class DatasetImportMetrics extends React.Component {
 
     return (
       <PageContent>
-        {origin !== "released" && <Menu datasetKey={datasetKey} attempt={attempt} />}
+        {!["xrelease","release"].includes(origin) && <Menu datasetKey={datasetKey} attempt={attempt} />}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
             message={
-              dataset.origin === "managed"
+              dataset.origin === "project"
                 ? "This dataset has never been released."
                 : `This dataset has never been imported.${
                     Auth.isAuthorised(user, ["editor", "admin"])
@@ -246,7 +246,7 @@ class DatasetImportMetrics extends React.Component {
             {data && !isRunning && (
               <Col>
                 <h1>
-                  {origin === "released" ? "Released " : "Imported "}
+                  {[ "xrelease", "release"].includes(origin) ? "Released " : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
               </Col>
@@ -260,7 +260,7 @@ class DatasetImportMetrics extends React.Component {
                 />
               )}
             </Col> */}
-            {origin !== "released" && (
+            {![ "xrelease", "release"].includes(origin) && (
               <Col style={{ textAlign: "right" }}>
                 {importHistory && (
                   <Button
@@ -280,7 +280,7 @@ class DatasetImportMetrics extends React.Component {
            {!isRunning && <ImportMetrics
               data={data}
               subtitle={
-                origin === "released"
+                [ "xrelease", "release"].includes(origin)
                   ? `Released ${moment(data.finished).format(
                       "MMMM Do YYYY, h:mm a"
                     )}`

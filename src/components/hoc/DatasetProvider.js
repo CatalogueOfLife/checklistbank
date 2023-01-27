@@ -58,7 +58,7 @@ class DatasetProvider extends React.Component {
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
         return axios(
-          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${key}&origin=MANAGED`
+          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${key}&origin=PROJECT`
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             res.data.contributesTo = projects.data.result.map((r) => r.key);

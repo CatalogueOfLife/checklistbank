@@ -168,14 +168,14 @@ class TaxonPage extends React.Component {
             )}`
           ).then((sector) => {
             axios(
-              `${config.dataApi}image/${_.get(
+              `${config.dataApi}dataset/${_.get(
                 sector,
                 "data.subjectDatasetKey"
               )}/logo`
             )
               .then(() => {
                 this.setState({
-                  logoUrl: `${config.dataApi}image/${_.get(
+                  logoUrl: `${config.dataApi}dataset/${_.get(
                     sector,
                     "data.subjectDatasetKey"
                   )}/logo`,
@@ -303,8 +303,8 @@ class TaxonPage extends React.Component {
     if (Number(datasetKey) === catalogueKey) {
       return canEditDataset({ key: datasetKey }, user) && !taxon?.sectorKey;
     } else if (
-      dataset?.key === Number(datasetKey) &&
-      dataset.origin === "managed"
+      dataset.key === Number(datasetKey) &&
+      dataset.origin === "project"
     ) {
       return (
         canEditDataset({ key: Number(datasetKey) }, user) && !taxon?.sectorKey

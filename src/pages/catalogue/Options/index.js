@@ -134,6 +134,40 @@ class CatalogueOptions extends React.Component {
       );
   };
 
+  xrelease = () => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+
+    this.setState({ releaseColLoading: true });
+    axios
+      .post(`${config.dataApi}dataset/${catalogueKey}/xrelease`)
+      .then((res) => {
+        this.setState(
+          {
+            releaseColLoading: false,
+            error: null,
+            exportResponse: res.data,
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "extended release of selected project (might take long)",
+            });
+          }
+        );
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          releaseColLoading: false,
+          exportResponse: null,
+        })
+      );
+  };
+
   recalculateSectorCounts = () => {
     const {
       match: {
@@ -204,20 +238,20 @@ class CatalogueOptions extends React.Component {
               <h3>Settings</h3>
             </Col>
             <Col flex="auto"></Col>
-          {Auth.canEditDataset({key: catalogueKey}, user) && <>
-          <Col  span={2}>
-              {data && (
-                <Switch
-                  checked={editMode}
-                  onChange={this.setEditMode}
-                  checkedChildren="Cancel"
-                  unCheckedChildren="Edit"
-                />
-              )}
-            </Col>
-            <Col span={6}>
-              <h3>Actions</h3>
-            </Col></>
+            {Auth.canEditDataset({ key: catalogueKey }, user) && <>
+              <Col span={2}>
+                {data && (
+                  <Switch
+                    checked={editMode}
+                    onChange={this.setEditMode}
+                    checkedChildren="Cancel"
+                    unCheckedChildren="Edit"
+                  />
+                )}
+              </Col>
+              <Col span={6}>
+                <h3>Actions</h3>
+              </Col></>
             }
           </Row>
           <Row>
@@ -244,7 +278,7 @@ class CatalogueOptions extends React.Component {
                         key={s.name}
                       >
                         {_.get(data, s.name) === true ||
-                        _.get(data, s.name) === false ? (
+                          _.get(data, s.name) === false ? (
                           <BooleanValue
                             value={_.get(data, s.name)}
                           ></BooleanValue>
@@ -282,12 +316,7 @@ class CatalogueOptions extends React.Component {
                 </div>
               )}
             </Col>
-            {Auth.canEditDataset({key: catalogueKey}, user) &&  <Col span={6}>
-              <SyncAllSectorsButton
-                catalogueKey={catalogueKey}
-                onError={(err) => this.setState({ error: err })}
-              ></SyncAllSectorsButton>
-
+            {Auth.canEditDataset({ key: catalogueKey }, user) && <Col span={6}>
               <Popconfirm
                 placement="rightTop"
                 title={`Do you want to release ${catalogue.title}?`}
@@ -300,13 +329,29 @@ class CatalogueOptions extends React.Component {
                   loading={releaseColLoading}
                   style={{ marginRight: "10px", marginBottom: "10px" }}
                 >
-                  Release project
+                  Release
                 </Button>
               </Popconfirm>
 
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch sectors?"
+                title={`Do you want to create an extended release of ${catalogue.title}?`}
+                onConfirm={this.xrelease}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={releaseColLoading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Extended release
+                </Button>
+              </Popconfirm>
+
+              <Popconfirm
+                placement="rightTop"
+                title="Do you want to rematch all sectors?"
                 onConfirm={() => this.rematchSectorsOrDecisions("sectors")}
                 okText="Yes"
                 cancelText="No"
@@ -322,7 +367,7 @@ class CatalogueOptions extends React.Component {
 
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch sectors?"
+                title="Do you want to rematch all decisions?"
                 onConfirm={() => this.rematchSectorsOrDecisions("decisions")}
                 okText="Yes"
                 cancelText="No"
@@ -335,6 +380,10 @@ class CatalogueOptions extends React.Component {
                   Rematch all decisions
                 </Button>
               </Popconfirm>
+
+              <SyncAllSectorsButton catalogueKey={catalogueKey} 
+                onError={(err) => this.setState({ error: err })}>
+              </SyncAllSectorsButton>
 
               <Button
                 type="primary"
@@ -356,10 +405,10 @@ class CatalogueOptions extends React.Component {
               />
               {catalogue?.key?.toString() === catalogueKey && (
                 <DeleteDatasetButton
-                  style={{  marginRight: "10px", marginBottom: "10px" }}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
                   record={catalogue}
                 ></DeleteDatasetButton>
-            )}
+              )}
             </Col>}
           </Row>
         </PageContent>

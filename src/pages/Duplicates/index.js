@@ -217,7 +217,7 @@ class DuplicateSearchPage extends React.Component {
               )
               .flat(), // create a flat array of all duplicate sets, use index in the original response as dupID for holding dupes together
             rawData: dataArr,
-            columns: assembly ? [this.getGsdColumn(), ...clms] : clms,
+            columns: assembly ? [this.getSourceColumn(), ...clms] : clms,
             duplicateCount: dataArr.length,
             totalFaked: total
               /* totalFaked > data.length + Number(params.offset)
@@ -245,9 +245,9 @@ class DuplicateSearchPage extends React.Component {
       }); */
   };
 
-  getGsdColumn = () => {
+  getSourceColumn = () => {
     return {
-      title: "gsd",
+      title: "source",
       dataIndex: ["sector", "dataset", "alias"],
       width: 60,
       className: "workbench-td",
@@ -1117,7 +1117,7 @@ class DuplicateSearchPage extends React.Component {
                   ? columns.filter(this.columnFilter)
                   : assembly
                   ? [
-                      this.getGsdColumn(),
+                      this.getSourceColumn(),
                       ...columnDefaults(catalogueKey, this.getData)
                         .fullScientificName,
                     ]

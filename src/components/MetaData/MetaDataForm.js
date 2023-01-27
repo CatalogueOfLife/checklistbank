@@ -17,6 +17,7 @@ import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
 import KeyValueControl from "./KeyValueControl";
+import TagControl from "../TagControl";
 import Auth from "../Auth"
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
@@ -86,12 +87,12 @@ const MetaDataForm = (props) => {
     } else {
       let task = key
         ? axios.put(`${config.dataApi}dataset/${key}`, {
-            ...values,
-            private: data.private,
-            source: _.isArray(values.source)
-              ? values.source.filter((s) => !!s)
-              : [],
-          })
+          ...values,
+          private: data.private,
+          source: _.isArray(values.source)
+            ? values.source.filter((s) => !!s)
+            : [],
+        })
         : axios.post(`${config.dataApi}dataset`, values);
 
       task
@@ -101,11 +102,11 @@ const MetaDataForm = (props) => {
             ? `Meta data updated successfully updated for ${values.title}`
             : `${values.title} registered and ready for import`;
           if (onSaveSuccess && typeof onSaveSuccess === "function") {
-            if(key){
+            if (key) {
               onSaveSuccess(res);
             } else {
               onSaveSuccess(res, values.origin);
-            }         
+            }
           }
           openNotification(title, msg);
           setSubmissionError(null);
@@ -131,9 +132,9 @@ const MetaDataForm = (props) => {
 
     const task = _.get(data, "key") // there was already a patch
       ? axios.put(
-          `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
-          sanitised
-        )
+        `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
+        sanitised
+      )
       : axios.post(`${config.dataApi}dataset/${catalogueKey}/patch`, sanitised);
 
     task
@@ -155,13 +156,13 @@ const MetaDataForm = (props) => {
   const initialValues = originalData
     ? data
     : {
-        organisations: [],
-        authorsAndEditors: [],
-        private: true,
-        confidence: null,
-        completeness: 0,
-        ...data,
-      };
+      organisations: [],
+      authorsAndEditors: [],
+      private: true,
+      confidence: null,
+      completeness: 0,
+      ...data,
+    };
 
   const transferOriginalValueToPatch = (value, field) => {
     form.setFieldsValue({ [field]: value });
@@ -202,11 +203,11 @@ const MetaDataForm = (props) => {
           originalData
             ? null
             : [
-                {
-                  required: true,
-                  message: "Please input dataset title",
-                },
-              ]
+              {
+                required: true,
+                message: "Please input dataset title",
+              },
+            ]
         }
       >
         <Input />
@@ -475,6 +476,16 @@ const MetaDataForm = (props) => {
         </FormItem>
       )}
 
+      {data && (
+        <FormItem
+          {...formItemLayout}
+          label="Keywords"
+          name="keyword"
+        >
+          <TagControl label="Add keyword" removeAll={true} />
+        </FormItem>
+      )}
+
       {!data && (
         <FormItem
           {...formItemLayout}
@@ -490,7 +501,7 @@ const MetaDataForm = (props) => {
         >
           <Select style={{ width: 200 }} showSearch>
             {datasetoriginEnum
-              .filter((f) => f !== "released")
+              .filter((f) => !["xrelease", "release"].includes(f))
               .map((f) => {
                 return (
                   <Option key={f} value={f}>
@@ -532,11 +543,11 @@ const MetaDataForm = (props) => {
           originalData
             ? null
             : [
-                {
-                  required: true,
-                  message: "Please select a license",
-                },
-              ]
+              {
+                required: true,
+                message: "Please select a license",
+              },
+            ]
         }
         help={
           originalData ? (

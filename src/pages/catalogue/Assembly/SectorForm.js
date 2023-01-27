@@ -22,6 +22,25 @@ const SectorForm = ({
 }) => {
   const [subjectDisabled, setSubjectDisabled] = useState(true);
   const [targetDisabled, setTargetDisabled] = useState(true);
+  const updateSectorMode = (mode) => {
+    axios
+      .put(
+        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
+        { ...sector, mode: mode }
+      )
+      .then(() => {
+        sector.mode = mode;
+        notification.open({
+          message: "Mode for sector updated",
+          description: `New mode is ${mode}`,
+        });
+      })
+      .catch((err) => {
+        if (typeof onError === "function") {
+          onError(err);
+        }
+      });
+  };
 
   const updateSectorCode = (code) => {
     axios
@@ -140,6 +159,28 @@ const SectorForm = ({
 
   return (
     <React.Fragment>
+      <Row style={{ marginTop: "8px" }}>
+        <Col span={9}>Sector mode</Col>
+        <Col span={15} style={{ paddingLeft: "8px" }}>
+          <Select
+            style={{ width: "100%" }}
+            defaultValue={sector.mode}
+            onChange={(value) => updateSectorMode(value)}
+            showSearch
+            allowClear
+          >
+            <Option key="attach" value="attach">
+                  attach
+                </Option>
+                <Option key="union" value="union">
+                union
+                </Option>
+                <Option key="merge" value="merge">
+                merge
+                </Option>
+          </Select>
+        </Col>
+      </Row>
       <Row style={{ marginTop: "8px" }}>
         <Col span={9}>Nom. code</Col>
         <Col span={15} style={{ paddingLeft: "8px" }}>

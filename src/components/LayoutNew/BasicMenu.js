@@ -14,11 +14,9 @@ import {
   LineChartOutlined,
   PartitionOutlined,
   CheckOutlined,
-  PlusOutlined,
+  OrderedListOutlined,
   SearchOutlined,
-  HistoryOutlined,
   TagsOutlined,
-  TagOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
 
@@ -116,9 +114,7 @@ class BasicMenu extends Component {
     } = this.props;
     const hasData =
       !_.get(selectedDataset, "deleted") &&
-      (_.get(selectedDataset, "size") ||
-        _.get(selectedDataset, "origin") === "managed" ||
-        _.get(selectedDataset, "origin") === "released");
+      (_.get(selectedDataset, "size") || ["xrelease","release","project"].includes( _.get(selectedDataset, "origin")));
 
     return (
       <React.Fragment>
@@ -317,6 +313,13 @@ class BasicMenu extends Component {
                   <span>Sectors</span>
                 </NavLink>
               </Menu.Item>
+              {/* <Menu.Item key="catalogueSectorPriority">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}>
+                  <OrderedListOutlined />
+                  <span>Sector priority</span>
+                </NavLink>
+              </Menu.Item> */}
+              
               <Menu.Item key="catalogueDecisions">
                 <NavLink
                   to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
@@ -392,13 +395,13 @@ class BasicMenu extends Component {
                     <span>Tasks</span>
                   </NavLink>
                 </Menu.Item>
-                <Menu.Item key="sectorSync">
+               {/*  <Menu.Item key="sectorSync">
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/sector/sync` }}
                   >
                     <span>Sector sync</span>
                   </NavLink>
-                </Menu.Item>
+                </Menu.Item> */}
 
                 {selectedSector && (
                   <Menu.Item key="sectorDiff">
@@ -560,6 +563,14 @@ class BasicMenu extends Component {
                       </NavLink>
                     </Menu.Item>
                   )}
+
+              {selectedDataset &&
+                    this.isSourceDataset(selectedDataset) &&  <Menu.Item key="sourceSectors">
+                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`, search: `?subjectDatasetKey=${selectedDataset.key}` }}>
+                  Sectors
+                </NavLink>
+              </Menu.Item>}
+
                   {selectedDataset &&
                     this.isSourceDataset(selectedDataset) &&
                     hasData && (
@@ -789,7 +800,7 @@ class BasicMenu extends Component {
               </Menu.Item>}
 
               {selectedDataset &&
-                ["released", "managed"].includes(
+                ["xrelease", "release", "project"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 hasData && (
@@ -812,7 +823,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                _.get(selectedDataset, "origin") === "managed" &&
+                _.get(selectedDataset, "origin") === "project" &&
                 hasData && (
                   <Menu.Item key="released_from">
                     <NavLink
@@ -853,9 +864,8 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset &&   
-                _.get(selectedDataset, "origin") !== "released" &&
-                _.get(selectedDataset, "origin") !== "managed" && (
+              {selectedDataset &&  !["release" ,"release" ,"project"].includes(_.get(selectedDataset, "origin")) 
+                 && (
                   <Menu.Item key="imports">
                     <NavLink
                       to={{
@@ -869,8 +879,8 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset && !selectedDataset.deleted &&
-                _.get(selectedDataset, "origin") === "released" && (
+              {selectedDataset && !selectedDataset.deleted && ["xrelease","release"].includes(_.get(selectedDataset, "origin"))
+                && (
                   <Menu.Item key="release-metrics">
                     <NavLink
                       to={{
@@ -884,8 +894,8 @@ class BasicMenu extends Component {
                     </NavLink>
                   </Menu.Item>
                 )}
-              {selectedDataset &&
-                _.get(selectedDataset, "origin") !== "released" &&
+              {selectedDataset && !["xrelease","release"].includes(_.get(selectedDataset, "origin"))
+                &&
                 hasData && (
                   <Menu.Item key="issues">
                     <NavLink
@@ -920,7 +930,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
                 )}
               {selectedDataset &&
-                !["managed", "released"].includes(
+                !["xrelease","project", "release"].includes(
                   _.get(selectedDataset, "origin")
                 ) &&
                 selectedDataset.size && (

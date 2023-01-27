@@ -32,7 +32,7 @@
     "name": "distribution gazetteer",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "Gazetteer"
   },
@@ -42,7 +42,7 @@
     "name": "nomenclatural code",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "NomCode"
   },
@@ -52,7 +52,7 @@
     "name": "rematch decisions",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -62,7 +62,7 @@
     "name": "lock metadata",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -81,7 +81,16 @@
     "multiple": false,
     "name": "release alias template",
     "origin": [
-      "managed"
+      "project"
+    ],
+    "type": "String"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "release version template",
+    "origin": [
+      "project"
     ],
     "type": "String"
   },
@@ -99,7 +108,7 @@
     "multiple": false,
     "name": "release add source authors",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -108,7 +117,7 @@
     "multiple": false,
     "name": "release add contributors",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -117,7 +126,7 @@
     "multiple": false,
     "name": "release remove bare names",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -126,17 +135,44 @@
     "multiple": false,
     "name": "release prepare downloads",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
   {
     "enum": false,
     "multiple": false,
+    "name": "xrelease alias template",
+    "origin": [
+      "project"
+    ],
+    "type": "String"
+  },
+  {
+    "enum": false,
+    "multiple": true,
+    "name": "xrelease source publisher",
+    "origin": [
+      "project"
+    ],
+    "type": "UUID"
+  },
+  {
+    "enum": false,
+    "multiple": true,
+    "name": "xrelease exclude source dataset",
+    "origin": [
+      "project"
+    ],
+    "type": "Integer"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "source max container authors",
     "origin": [
-      "managed",
-      "released"
+      "project",
+      "release"
     ],
     "type": "Integer"
   },
@@ -164,7 +200,7 @@
     "name": "data format",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "DataFormat"
   },
@@ -173,7 +209,7 @@
     "multiple": true,
     "name": "sector entities",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "EntityType"
   },
@@ -182,7 +218,7 @@
     "multiple": true,
     "name": "sector ranks",
     "origin": [
-      "managed"
+      "project"
     ],
     "type": "Rank"
   },
@@ -201,7 +237,7 @@
     "name": "doi resolution",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "DoiResolution"
   },

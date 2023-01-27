@@ -21,7 +21,7 @@ import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth";
 import RematchResult from "./RematchResult";
-
+import getColumns from "./columns"
 class SectorTable extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +35,7 @@ class SectorTable extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
+      
       this.props.data &&
       this.props.data.length > 0 &&
       this.props.data.length !== prevProps.data.length
@@ -205,12 +206,13 @@ class SectorTable extends React.Component {
       catalogueKey,
       handleTableChange,
       expandedRowRender,
+      expandable
     } = this.props;
     const offset = pagination
       ? (pagination.current - 1) * pagination.pageSize
       : 0;
-
-    const columns = [
+    const columns = getColumns(catalogueKey, this.state.searchText, this.getColumnSearchProps)
+    /* const columns = [
       {
         title: "Dataset",
         dataIndex: ["dataset", "alias"],
@@ -249,6 +251,10 @@ class SectorTable extends React.Component {
             text: "Union",
             value: "union",
           },
+          {
+            text: "Merge",
+            value: "merge",
+          },
         ],
         onFilter: (value, record) => record.mode === value,
       },
@@ -275,11 +281,11 @@ class SectorTable extends React.Component {
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
                     searchWords={[this.state.searchText]}
                     autoEscape
-                    textToHighlight={record.subject.name.toString()}
+                    textToHighlight={record?.subject?.name?.toString() || ""}
                   />
                 </NavLink>
               )}
-              {record.subject.id && (
+              {record?.subject?.id && (
                 <NavLink
                   to={{
                     pathname: `/catalogue/${catalogueKey}/assembly`,
@@ -298,13 +304,13 @@ class SectorTable extends React.Component {
                     autoEscape
                     textToHighlight={
                       _.get(record, "subject.name")
-                        ? record.subject.name.toString()
+                        ? record?.subject?.name?.toString()
                         : ""
                     }
                   />
                 </NavLink>
               )}
-              {record.subject.broken && (
+              {record?.subject?.broken && (
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               )}
             </React.Fragment>
@@ -409,7 +415,7 @@ class SectorTable extends React.Component {
         ),
         width: 50,
       },
-    ];
+    ]; */
 
     if (Auth.canEditDataset({key: catalogueKey}, user)) {
       columns.push({
@@ -418,14 +424,16 @@ class SectorTable extends React.Component {
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            {!_.get(record, "target.broken") &&
-              !_.get(record, "subject.broken") && (
+            {!_.get(record, "target.broken") && (record?.mode === "merge" || !record?.subject?.broken)
+              && (
                 <SyncButton
+                  size="small"
                   style={{ display: "inline", marginRight: "8px" }}
                   record={{ sector: record }}
                 />
               )}
             <Button
+              size="small"
               style={{ display: "inline", marginRight: "8px" }}
               type={"primary"}
               onClick={() => {
@@ -471,6 +479,7 @@ class SectorTable extends React.Component {
             </Button>
             {onDeleteSector && typeof onDeleteSector === "function" && (
               <Button
+                size="small"
                 style={{ display: "inline" }}
                 type="danger"
                 onClick={() => onDeleteSector(record)}
@@ -484,31 +493,28 @@ class SectorTable extends React.Component {
     }
     return (
       <React.Fragment>
-        <Row>
-          {!loading && pagination && data && (
+       {/*  <Row>
+          {!loading && !isNaN(offset) && pagination?.total && data && (
             <Col style={{ textAlign: "right" }}>
               Results: {offset} - {offset + data.length} of {pagination.total}
             </Col>
           )}
-        </Row>
-
-        <Table
+        </Row> */}
+      
+       <Table
           size="small"
           onChange={handleTableChange}
-          columns={columns}
+          columns={[...columns]}
           dataSource={data}
           loading={loading}
           pagination={pagination}
           rowKey="id"
-          expandable={{
-            expandedRowRender: expandedRowRender
-          }}
+          expandable={expandable}
           rowSelection={
             !(Auth.canEditDataset({key: catalogueKey}, user)) ? null : {
               selectedRowKeys: this.state.selectedRowKeys,
               onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({selectedRowKeys, selectedRows})
-               // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
               },
               selections: [
                 {
@@ -523,7 +529,6 @@ class SectorTable extends React.Component {
                 }]
             }
           }
-          /* expandedRowRender={expandedRowRender} */
         />
       </React.Fragment>
     );

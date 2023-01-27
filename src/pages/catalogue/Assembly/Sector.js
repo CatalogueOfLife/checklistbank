@@ -6,6 +6,7 @@ import {
   ExclamationCircleOutlined,
   HistoryOutlined,
   SyncOutlined,
+  NodeCollapseOutlined,
   WarningOutlined
 } from "@ant-design/icons";
 
@@ -29,7 +30,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
 import Auth from "../../../components/Auth";
-import SectorForm from "./SectorForm";
+import SectorForm from "./SectorForm2";
 import PresentationItem from "../../../components/PresentationItem";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
@@ -39,8 +40,7 @@ class Sector extends React.Component {
     this.state = {
       popOverVisible: false,
       showEditForm: false,
-      error: null,
-      sectorDatasetRanks: [],
+      error: null
     };
   }
 
@@ -65,7 +65,7 @@ class Sector extends React.Component {
         sectorKey: sector.id,
         key: sector.id,
         target: sector.target,
-        subject: sector.subject,
+        subject: sector?.subject,
       })
       .then(() => {
         // If there is no sync jobs running, try to give the backend a chance to insert the root node again
@@ -170,6 +170,7 @@ class Sector extends React.Component {
         });
       });
   };
+
   getSectorDatasetRanks = () => {
     const {
       taxon: { sector },
@@ -197,7 +198,7 @@ class Sector extends React.Component {
   render = () => {
     const { taxon, user, catalogueKey, syncState, syncingSector, decisionCallback } = this.props;
 
-    const { error, showEditForm, sectorDatasetRanks } = this.state;
+    const { error, showEditForm } = this.state;
     const { sector } = taxon;
     const { dataset: sectorSourceDataset } = sector;
     const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
@@ -208,7 +209,7 @@ class Sector extends React.Component {
         sector.target &&
         taxon.parentId === sector.target.id);
 
-    const isRootSectorInSourceTree = taxon.id === sector.subject.id;
+    const isRootSectorInSourceTree = taxon.id === sector?.subject?.id;
     const isSourceTree = catalogueKey !== _.get(taxon, "datasetKey");
 
     if (!sectorSourceDataset) {
@@ -219,24 +220,17 @@ class Sector extends React.Component {
      <Modal 
       title="Edit sector" 
       visible={isRootSector && showEditForm} 
-      onOk={this.finishEditForm} 
-      onCancel={this.finishEditForm}
+     // onOk={this.finishEditForm} 
+      onCancel={() => this.setState({showEditForm: false})}
       style={{ top: 150, marginRight:20 }}
       destroyOnClose={true}
       maskClosable={false}
-      footer={[<Button
-        key="link"
-        type="primary"
-        onClick={this.finishEditForm}
-      >
-        OK
-      </Button>]}
+      footer={null}
       >
      
               <SectorForm
-                sectorDatasetRanks={sectorDatasetRanks}
                 sector={sector}
-                onError={(err) => this.setState({ error: err })}
+                onSubmit={() => this.setState({showEditForm: false})}
               />
           
       </Modal>
@@ -372,14 +366,13 @@ class Sector extends React.Component {
         title={
           <React.Fragment>
             Sector {sector.id} mode:{" "}
-            {sector.mode === "attach" ? (
-              <CaretRightOutlined />
-            ) : (
-              <BranchesOutlined
+            {sector.mode === "attach" &&  <CaretRightOutlined />}
+            {sector.mode === "union" &&  <BranchesOutlined
                 rotate={90}
                 style={{ fontSize: "16px", marginRight: "4px" }}
-              />
-            )}{" "}
+              />}
+              {sector.mode === "merge" &&  <NodeCollapseOutlined />}
+            {" "}
             {sector.mode}
           </React.Fragment>
         }
@@ -393,6 +386,11 @@ class Sector extends React.Component {
           {isRootSector && sector.mode === "union" && (
             <BranchesOutlined
               rotate={90}
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
+          {isRootSector && sector.mode === "merge" && (
+            <NodeCollapseOutlined 
               style={{ fontSize: "16px", marginRight: "4px" }}
             />
           )}
@@ -536,6 +534,11 @@ class Sector extends React.Component {
                 <BranchesOutlined
                   style={{ fontSize: "16px", marginRight: "4px" }}
                   rotate={90}
+                />
+              )}
+              {isRootSectorInSourceTree && sector.mode === "merge" && (
+                <NodeCollapseOutlined
+                  style={{ fontSize: "16px", marginRight: "4px" }}
                 />
               )}
               {sectorSourceDataset.alias || sectorSourceDataset.key}

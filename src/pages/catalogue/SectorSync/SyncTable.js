@@ -35,6 +35,7 @@ const getColumns = (catalogueKey) => [
     title: "Source",
     dataIndex: ["sector", "dataset", "alias"],
     key: "alias",
+    ellipsis: true,
     width: 150,
     render: (text, record) => (
       <NavLink
@@ -56,9 +57,9 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+        {_.get(record, "sector.subject") &&  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.subject.rank")}:{" "}
-          </span>
+          </span>}
           <NavLink
             to={{
               pathname: `/catalogue/${catalogueKey}/names`,
@@ -90,9 +91,9 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+         {_.get(record, "sector.target.rank") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.target.rank")}:{" "}
-          </span>
+          </span>}
           {_.get(record, "sector.target.id") && (
             <NavLink
               to={{
@@ -118,12 +119,20 @@ const getColumns = (catalogueKey) => [
     },
   },
   {
-    title: "Type",
-    dataIndex: "type",
-    key: "type",
+    title: "Mode",
+    dataIndex: ["sector","mode"],
+    key: "mode",
     render: (text, record) => {
-      return record.type;
+      return record?.sector?.mode;
     },
+    width: 50,
+  },
+  {
+    title: "Taxa",
+    dataIndex: "taxonCount",
+    key: "taxonCount",
+    render: (text, record) => (record?.taxonCount || 0).toLocaleString("en-GB")
+     ,
     width: 50,
   },
   {
@@ -148,7 +157,7 @@ const getColumns = (catalogueKey) => [
     key: "started",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("MMMM Do, h:mm a") : "";
+      return date ? moment(date).format("l LT") : "";
     },
   },
   {
@@ -157,7 +166,7 @@ const getColumns = (catalogueKey) => [
     key: "finished",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("MMMM Do YYYY, h:mm a") : "";
+      return date ? moment(date).format("l LT") : "";
     },
   },
   {
@@ -355,7 +364,7 @@ class SyncTable extends React.Component {
       data,
       error,
       syncAllError,
-      params: { sectorKey },
+      params: { sectorKey, datasetKey },
     } = this.state;
     const { user, sectorImportState } = this.props;
     const {
@@ -373,7 +382,7 @@ class SyncTable extends React.Component {
             width: 50,
             render: (record) =>
               record.job === "SectorSync" ? (
-                <SyncButton key={record.datasetKey} record={record} />
+                <SyncButton size="small" key={record.datasetKey} record={record} />
               ) : (
                 ""
               ),
@@ -381,13 +390,13 @@ class SyncTable extends React.Component {
         ]
       : getColumns(catalogueKey);
 
-    columns[4].filters = sectorImportState.map((i) => ({
+    columns[5].filters = sectorImportState.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
 
     return (
-      <PageContent>
+      <>
         {error && <Alert message={error.message} type="error" />}
         {syncAllError && (
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
@@ -402,16 +411,16 @@ class SyncTable extends React.Component {
         )}
         {sectorKey && (
             <Col>
-              <h1>Imports for sector {sectorKey}</h1>{" "}
+              <h1>Syncs for sector {sectorKey}</h1>{" "}
               <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
                 {" "}
-                Show imports for all sectors
+                Show syncs for all sectors
               </a>
             </Col>
         )}
         <Col flex="auto"></Col>
         <Col>
-        <DatasetAutocomplete contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
+        <DatasetAutocomplete defaultDatasetKey={datasetKey} contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
         </Col>
 
         </Row>
@@ -492,7 +501,7 @@ class SyncTable extends React.Component {
             }} */
           />
         )}
-      </PageContent>
+      </>
     );
   }
 }

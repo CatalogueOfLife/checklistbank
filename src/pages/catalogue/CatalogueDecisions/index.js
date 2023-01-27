@@ -398,9 +398,9 @@ class CatalogueDecisions extends React.Component {
         title: "Created",
         dataIndex: "created",
         key: "created",
-        width: 50,
+        width: 100,
         render: (date) => {
-          return date ? moment(date).format("lll") : "";
+          return date ? moment(date).format("l LT") : "";
         },
       },
     ];
@@ -414,6 +414,7 @@ class CatalogueDecisions extends React.Component {
           <React.Fragment>
             {
               <Button
+              size="small"
                 style={{ display: "inline", marginRight: "8px" }}
                 type={"primary"}
                 onClick={() => {
@@ -462,6 +463,7 @@ class CatalogueDecisions extends React.Component {
             }
             {
               <Button
+                size="small"
                 style={{ display: "inline" }}
                 type="danger"
                 onClick={() => {

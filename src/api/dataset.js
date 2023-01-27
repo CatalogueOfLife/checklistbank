@@ -50,7 +50,7 @@ export const getDuplicateOverview = (
 };
 
 export const getCatalogues = () => {
-  return axios(`${config.dataApi}dataset?origin=managed`);
+  return axios(`${config.dataApi}dataset?origin=project`);
 };
 
 export const getDataset = (datasetKey) =>

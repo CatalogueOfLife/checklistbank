@@ -76,6 +76,7 @@ class SyncButton extends React.Component {
     return (
       <div style={this.props.style || {}}>
         <Button
+          size={this.props.size || 'default'}
           type={isStopButton ? 'danger' : 'primary'}
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopSync : this.startSync}

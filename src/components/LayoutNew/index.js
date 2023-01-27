@@ -65,7 +65,7 @@ class SiteLayout extends Component {
   };
 
   toggle = () => {
-    const {width} = this.props;
+    const { width } = this.props;
     console.log(this.state.collapsed)
     const collapsed =
       typeof this.state.collapsed === "boolean"
@@ -162,7 +162,7 @@ class SiteLayout extends Component {
       <Layout style={{ minHeight: "100vh" }}>
         {sideMenu}
         <Layout style={{ marginLeft: contentMargin + "px" }}>
-          <Header style={config.env === 'dev' ? { backgroundImage: `url("/images/test-env.svg")`, backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "45%", backgroundColor: "#fff",  display: "flex" } : { background: "#fff", display: "flex" }}>
+          <Header style={config.env === 'dev' ? { backgroundImage: `url("/images/test-env.svg")`, backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "45%", backgroundColor: "#fff", display: "flex" } : { background: "#fff", display: "flex" }}>
             {collapsed ? (
               <MenuUnfoldOutlined
                 style={{
@@ -205,14 +205,14 @@ class SiteLayout extends Component {
                       </React.Fragment>
                     )}
                   </h1>
-                  <span style={{marginRight: "8px"}}>
+                  <span style={{ marginRight: "8px" }}>
                     {" "}
                     {selectedDataset.version || selectedDataset.issued}
                   </span>
                   <DatasetOriginPill dataset={selectedDataset} />
                 </React.Fragment>
               )}
-              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> {catalogueKey && <DatasetOriginPill dataset={{key: catalogueKey, origin: 'managed'}} />}</>}
+              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> {catalogueKey && <DatasetOriginPill dataset={{ key: catalogueKey, origin: 'project' }} />}</>}
             </div>
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
               <UserMenu />
@@ -245,7 +245,7 @@ class SiteLayout extends Component {
             )}
             {error &&
               ![401, 403].includes(_.get(error, "response.status")) &&
-              !exceptionIsDataset404(error, location) && ( [431, 413].includes(_.get(error, "response.status")) || error?.message !== 'Network Error') && (
+              !exceptionIsDataset404(error, location) && ([431, 413].includes(_.get(error, "response.status")) || error?.message !== 'Network Error') && (
                 <Alert
                   style={{ marginTop: "10px" }}
                   description={<ErrorMsg error={error} />}
@@ -254,7 +254,7 @@ class SiteLayout extends Component {
                   onClose={clearError}
                 />
               )}
-             {error &&
+            {error &&
               error?.message === 'Network Error' && (
                 <Alert
                   style={{ marginTop: "10px" }}
@@ -264,9 +264,9 @@ class SiteLayout extends Component {
                   closable
                   onClose={clearError}
                 />
-              )} 
+              )}
             {(error && [401, 403].includes(_.get(error, "response.status"))) ||
-            exceptionIsDataset404(error, location) ? (
+              exceptionIsDataset404(error, location) ? (
               <Exception
                 type={_.get(error, "response.status").toString()}
                 desc={

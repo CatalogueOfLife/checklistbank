@@ -1,6 +1,8 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
+import PageContent from "../../../components/PageContent";
+import SectorTabs from "../CatalogueSectors/SectorTabs";
 import SyncTable from "./SyncTable";
 import withContext from "../../../components/hoc/withContext";
 
@@ -9,11 +11,14 @@ class SectorSync extends React.Component {
     const { catalogue } = this.props;
     return (
       <Layout
-        selectedKeys={["sectorSync"]}
-        openKeys={["assembly", "projectDetails"]}
+        selectedKeys={["catalogueSectors"]}
+        openKeys={["assembly"]}
         title={catalogue ? catalogue.title : ""}
       >
+        <PageContent>
+          <SectorTabs />
         <SyncTable location={this.props.location} match={this.props.match} />
+        </PageContent>
       </Layout>
     );
   }

@@ -18,6 +18,7 @@ import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
 import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
 
 import SectorSync from "./pages/catalogue/SectorSync";
+import SectorPriority from "./pages/catalogue/CatalogueSectors/Priority"
 import CatalogueSectors from "./pages/catalogue/CatalogueSectors";
 import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon";
 import CatalogueName from "./pages/catalogue/CatalogueName";
@@ -176,7 +177,12 @@ const App = () => {
                   path="/catalogue/:catalogueKey/names"
                   component={CatalogueNameSearch}
                 />
-
+                <PrivateRoute
+                  exact
+                  key="sectorPriority"
+                  path="/catalogue/:catalogueKey/sector/priority"
+                  component={SectorPriority}
+                />
                 <PrivateRoute
                   exact
                   key="sectorSync"

@@ -115,7 +115,7 @@ class DatasetMeta extends React.Component {
     axios(`${config.dataApi}dataset/${id}`)
       .then((res) => {
         return axios(
-          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${id}&origin=MANAGED`
+          `${config.dataApi}dataset?limit=1000&hasSourceDataset=${id}&origin=PROJECT`
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             //res.data.contributesTo = projects.data.result.map((r) => r.key);
@@ -418,6 +418,10 @@ class DatasetMeta extends React.Component {
               {displayData.temporalScope}
             </PresentationItem>
 
+            <PresentationItem label="Keywords">
+              {displayData.keyword && _.isArray(displayData.keyword) && (displayData.keyword.join(", "))}
+            </PresentationItem>
+
             <PresentationItem label="Origin">
               {displayData.origin}
             </PresentationItem>
@@ -559,8 +563,8 @@ class DatasetMeta extends React.Component {
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"
               )}${displayData.createdByUser
-                  ? " by " + displayData.createdByUser
-                  : ""
+                ? " by " + displayData.createdByUser
+                : ""
                 }`}
             </PresentationItem>
             <PresentationItem label="Modified">

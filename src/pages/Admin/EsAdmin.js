@@ -80,7 +80,7 @@ class DatasetList extends React.Component {
           key: "size",
           sorter: true,
           render: (text, record) =>
-            record.origin !== "managed"
+            record.origin !== "project"
               ? getWarningHighlightedNumber(record.size, record.nameUsageTotal)
               : record.size,
         },
@@ -90,7 +90,7 @@ class DatasetList extends React.Component {
           key: "nameUsageTotal",
           sorter: false,
           render: (text, record) =>
-            record.origin !== "managed"
+            record.origin !== "project"
               ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
               : record.nameUsageTotal,
         },
@@ -107,7 +107,7 @@ class DatasetList extends React.Component {
               >
                 Re-index
               </Button>
-              {record.origin !== "managed" && record.origin !== "released" && (
+              {!["xrelease","release","project"].includes(record.origin) && (
                 <Button
                   type="primary"
                   onClick={() => this.reimportDataset(record.key)}
