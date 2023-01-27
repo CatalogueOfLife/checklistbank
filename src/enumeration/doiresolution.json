@@ -1,11 +1,11 @@
 [
-    {
+  {
     "name": "never"
-    },
-    {
+  },
+  {
     "name": "missing"
-    },
-    {
+  },
+  {
     "name": "always"
-    }
-    ]
+  }
+]

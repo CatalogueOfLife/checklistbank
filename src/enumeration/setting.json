@@ -72,7 +72,7 @@
     "name": "merge metadata",
     "origin": [
       "external",
-      "managed"
+      "project"
     ],
     "type": "Boolean"
   },
@@ -91,15 +91,6 @@
     "name": "release version template",
     "origin": [
       "project"
-    ],
-    "type": "String"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release version template",
-    "origin": [
-      "managed"
     ],
     "type": "String"
   },

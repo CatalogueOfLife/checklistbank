@@ -640,5 +640,29 @@
     "group": "name",
     "level": "warning",
     "name": "authorship removed"
+  },
+  {
+    "description": "The given DOI does not exist in Crossref.",
+    "group": "reference",
+    "level": "warning",
+    "name": "doi not found"
+  },
+  {
+    "description": "The given DOI could not be resolved by Crossref. This might be a temporary problem.",
+    "group": "reference",
+    "level": "warning",
+    "name": "doi unresolved"
+  },
+  {
+    "description": "A type material record attached to this name has an unparsable sex.",
+    "group": "type material",
+    "level": "warning",
+    "name": "type material sex invalid"
+  },
+  {
+    "description": "The alternative identifier for a taxon, name or reference is lacking an identifier scope.",
+    "group": "any",
+    "level": "warning",
+    "name": "identifier without scope"
   }
 ]

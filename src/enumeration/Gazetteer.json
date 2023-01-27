@@ -6,12 +6,14 @@
     "title": "World Geographical Scheme for Recording Plant Distributions"
   },
   {
+    "areaLinkTemplate": "https://www.iso.org/obp/ui/#iso:code:3166:",
     "description": "ISO 3166 codes for the representation of names of countries and their subdivisions. Codes for current countries (ISO 3166-1), country subdivisions (ISO 3166-2) and formerly used names of countries (ISO 3166-3). Country codes can be given either as alpha-2, alpha-3 or numeric codes.",
     "link": "https://en.wikipedia.org/wiki/ISO_3166",
     "name": "iso",
     "title": "ISO 3166 Country Codes"
   },
   {
+    "areaLinkTemplate": "https://www.fao.org/fishery/en/area/",
     "description": "FAO Major Fishing Areas",
     "link": "http://www.fao.org/fishery/cwp/handbook/H/en",
     "name": "fao",
@@ -35,6 +37,7 @@
     "title": "International Hydrographic Organization See Areas"
   },
   {
+    "areaLinkTemplate": "http://marineregions.org/mrgid/",
     "description": "Standard, relational list of geographic names developed by VLIZ covering mainly marine names such as seas, sandbanks, ridges, bays or even standard sampling stations used in marine research.The geographic cover is global; however the gazetteer is focused on the Belgian Continental Shelf, the Scheldt Estuary and the Southern Bight of the North Sea.",
     "link": "https://www.marineregions.org/gazetteer.php",
     "name": "mrgid",

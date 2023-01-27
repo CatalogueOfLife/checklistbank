@@ -20,6 +20,10 @@
     "name": "monthly"
   },
   {
+    "days": 91,
+    "name": "quarterly"
+  },
+  {
     "days": 365,
     "name": "yearly"
   }
