@@ -14,7 +14,7 @@ import config from "../config";
 import ErrorMsg from "../components/ErrorMsg";
 import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
-
+import TagControl from "./TagControl"
 const FormItem = Form.Item;
 const Option = Select.Option;
 const openNotification = (title, description) => {
@@ -60,7 +60,7 @@ const SettingsForm = (props) => {
 
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
-  useEffect(() => {}, [datasetoriginEnum]);
+  useEffect(() => { }, [datasetoriginEnum]);
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
@@ -128,7 +128,7 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => ["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type )
+          (s) => ["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type)
             /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ &&
             s.name !== "csv delimiter"
         )
@@ -139,8 +139,8 @@ const SettingsForm = (props) => {
             key={s.name}
             name={s.name}
           >
-            {s.type === "String" || s.type === "URI" ? (
-              <Input type="text" />
+            {s.type === "String" || s.type === "URI" || s.type === "UUID" ? (
+              s.multiple ? <TagControl /> : <Input type="text" />
             ) : (
               <InputNumber />
             )}
