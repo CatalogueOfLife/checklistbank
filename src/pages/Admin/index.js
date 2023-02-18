@@ -4,11 +4,13 @@ import Layout from "../../components/LayoutNew";
 
 import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
+import BackgroundProvider from "../../components/hoc/BackgroundProvider";
 import config from "../../config";
 import Helmet from "react-helmet";
 import {
   Row,
   Col,
+  Space,
   Switch,
   Badge,
   Button,
@@ -31,32 +33,35 @@ class AdminPage extends React.Component {
       updateAllLogosloading: false,
       updateAllMetricsloading: false,
       recalculateSectorCountsLoading: false,
-      background: {},
-      backgroundError: null,
-      backgroundLoading: false
+      components: { "foo": true, "bar": false },
+      componentsError: null,
+      componentsLoading: false
     };
   }
 
   componentDidMount = () => {
-    this.getBackground();
+    this.getComponents();
   };
-  getBackground = () => {
-    // admin/settings
+  getComponents = () => {
     axios
-      .get(`${config.dataApi}admin/settings`)
+      .get(`${config.dataApi}admin/component`)
       .then(res => {
-        this.setState({background: res.data, backgroundLoading: false})
+        this.setState({ components: res.data, componentsLoading: false })
       });
   }
-  updateBackground = (param, checked) => {
-    const { background } = this.state;
-    this.setState({backgroundLoading: true})
+
+  toggleMaintenance = (checked) => {
     axios
-      .put(`${config.dataApi}admin/settings`, {
-        ...background,
-        [param]: checked,
-      })
-      .then(this.getBackground);
+      .post(`${config.dataApi}admin/maintenance`)
+      .then(BackgroundProvider.getBackground);
+  };
+
+  updateComponent = (comp, checked) => {
+    const method = checked ? "start" : "stop";
+    this.setState({ componentsLoading: true })
+    axios
+      .post(`${config.dataApi}admin/component/${comp}/${method}`)
+      .then(this.getComponents);
   };
 
   updateAllLogos = () => {
@@ -171,13 +176,13 @@ class AdminPage extends React.Component {
       );
   };
 
-  restartImporter = () => {
+  restartAll = () => {
     axios
-      .post(`${config.dataApi}importer/restart`)
+      .post(`${config.dataApi}admin/component/restart-all`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
-            message: "Importer restarted",
+            message: "All components restarted",
           });
         });
       })
@@ -192,8 +197,9 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
-      background,
-      backgroundLoading
+      background: background,
+      components: components,
+      componentsLoading: componentsLoading
     } = this.state;
 
     return (
@@ -219,57 +225,44 @@ class AdminPage extends React.Component {
           )}
 
           <Row>
-            <FormItem label="Background jobs">
-              {background.idle && (
-                <Badge count={"idle"} style={{ backgroundColor: '#52c41a' }} />
-              )}
-              {background.idle || (
-                <Badge count={"active"} style={{ backgroundColor: 'red' }} />
-              )}
-            </FormItem>
+            <Space direction="horizontal" size={[50, 0]} wrap>
+              <FormItem label="Background jobs">
+                {components.idle && (
+                  <Badge count={"idle"} style={{ backgroundColor: '#52c41a' }} />
+                )}
+                {components.idle || (
+                  <Badge count={"active"} style={{ backgroundColor: 'red' }} />
+                )}
+              </FormItem>
+
+              <FormItem label="Maintenance">
+                <Switch
+                  loading={componentsLoading}
+                  onChange={(checked) => {
+                    this.toggleMaintenance(checked);
+                  }}
+                  checked={background && background.maintenance}
+                />
+              </FormItem>
+            </Space>
           </Row>
 
           <Row>
-            <Col span={24}>
-              <Form layout="inline">
-                <FormItem label="GBIF Registry Sync">
-                  <Switch
-                  loading={backgroundLoading}
-                    onChange={(checked) => {
-                      this.updateBackground("gbifSync", checked);
-                    }}
-                    checked={background.gbifSync}
-                  />
-                </FormItem>
-                <FormItem label="Dataset importer">
-                  <Switch
-                    loading={backgroundLoading}
-                    onChange={(checked) => {
-                      this.updateBackground("importer", checked);
-                    }}
-                    checked={background.importer}
-                  />
-                </FormItem>
-                <FormItem label="Import scheduler">
-                  <Switch
-                    loading={backgroundLoading}
-                    onChange={(checked) => {
-                      this.updateBackground("scheduler", checked);
-                    }}
-                    checked={background.scheduler}
-                  />
-                </FormItem>
-                <FormItem label="Maintenance">
-                  <Switch
-                    loading={backgroundLoading}
-                    onChange={(checked) => {
-                      this.updateBackground("maintenance", checked);
-                    }}
-                    checked={background.maintenance}
-                  />
-                </FormItem>
-              </Form>
-            </Col>
+            <Space direction="horizontal" size={[50, 0]} wrap>
+              {
+                Object.keys(components).filter(c => c != "idle").map(comp => (
+                  <FormItem label={comp}>
+                    <Switch
+                      loading={componentsLoading}
+                      onChange={(checked) => {
+                        this.updateComponent(comp, checked);
+                      }}
+                      checked={components[comp]}
+                    />
+                  </FormItem>
+                ))
+              }
+            </Space>
           </Row>
 
           <Row>
@@ -355,8 +348,8 @@ class AdminPage extends React.Component {
 
             <Popconfirm
               placement="rightTop"
-              title="Do you want to restart the importer?"
-              onConfirm={this.restartImporter}
+              title="Do you want to restart all components?"
+              onConfirm={this.restartAll}
               okText="Yes"
               cancelText="No"
             >
@@ -364,7 +357,7 @@ class AdminPage extends React.Component {
                 type="primary"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               >
-                Restart importer
+                Restart all components
               </Button>
             </Popconfirm>
           </Row>
@@ -390,10 +383,12 @@ class AdminPage extends React.Component {
 const mapContextToProps = ({
   catalogueKey,
   catalogue,
-  setCatalogue
+  setCatalogue,
+  background
 }) => ({
   catalogueKey,
   catalogue,
-  setCatalogue
+  setCatalogue,
+  background
 });
 export default withContext(mapContextToProps)(AdminPage);
