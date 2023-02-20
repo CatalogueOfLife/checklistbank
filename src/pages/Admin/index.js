@@ -47,7 +47,11 @@ class AdminPage extends React.Component {
       .get(`${config.dataApi}admin/component`)
       .then(res => {
         this.setState({ components: res.data, componentsLoading: false })
-      });
+      })
+      .catch((err) => {
+        this.props.addError(err)
+        this.setState({ componentsLoading: false })
+      });;
   }
 
   toggleMaintenance = (checked) => {
@@ -61,7 +65,11 @@ class AdminPage extends React.Component {
     this.setState({ componentsLoading: true })
     axios
       .post(`${config.dataApi}admin/component/${comp}/${method}`)
-      .then(this.getComponents);
+      .then(this.getComponents)
+      .catch((err) => {
+        this.props.addError(err)
+        this.setState({ componentsLoading: false })
+      });
   };
 
   updateAllLogos = () => {
@@ -384,11 +392,13 @@ const mapContextToProps = ({
   catalogueKey,
   catalogue,
   setCatalogue,
-  background
+  background,
+  addError
 }) => ({
   catalogueKey,
   catalogue,
   setCatalogue,
-  background
+  background,
+  addError
 });
 export default withContext(mapContextToProps)(AdminPage);
