@@ -64,7 +64,7 @@ class AdminPage extends React.Component {
     const method = checked ? "start" : "stop";
     this.setState({ componentsLoading: true })
     axios
-      .post(`${config.dataApi}admin/component/${comp}/${method}`)
+      .post(`${config.dataApi}admin/component/${method}?component=${comp}`)
       .then(this.getComponents)
       .catch((err) => {
         this.props.addError(err)
