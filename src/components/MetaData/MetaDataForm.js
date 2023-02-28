@@ -69,6 +69,7 @@ const MetaDataForm = (props) => {
 
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     console.log(datasetoriginEnum);
   }, [datasetoriginEnum]);
@@ -79,6 +80,7 @@ const MetaDataForm = (props) => {
 
   const submitData = (values) => {
     const key = _.get(data, "key");
+    setLoading(true)
     if (key === -1) {
       // No dataset attached, we are just building metadata for download
       if (onSaveSuccess && typeof onSaveSuccess === "function") {
@@ -97,6 +99,7 @@ const MetaDataForm = (props) => {
 
       task
         .then((res) => {
+
           let title = key ? "Meta data updated" : "Dataset registered";
           let msg = key
             ? `Meta data updated successfully updated for ${values.title}`
@@ -108,10 +111,12 @@ const MetaDataForm = (props) => {
               onSaveSuccess(res, values.origin);
             }
           }
+          setLoading(false)
           openNotification(title, msg);
           setSubmissionError(null);
         })
         .catch((err) => {
+          setLoading(false)
           setSubmissionError(err);
         });
     }
@@ -119,6 +124,7 @@ const MetaDataForm = (props) => {
 
   const submitPatch = (values) => {
     const key = _.get(originalData, "key");
+    setLoading(true)
 
     const sanitised = Object.keys(values).reduce(
       (acc, cur) => {
@@ -145,10 +151,14 @@ const MetaDataForm = (props) => {
         if (onSaveSuccess && typeof onSaveSuccess === "function") {
           onSaveSuccess(res);
         }
+        setLoading(false)
+
         openNotification(title, msg);
         setSubmissionError(null);
       })
       .catch((err) => {
+        setLoading(false)
+
         setSubmissionError(err);
       });
   };
@@ -769,7 +779,7 @@ const MetaDataForm = (props) => {
         </React.Fragment>
       )}
       <FormItem {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
           {props.saveButtonLabel || "Save"}
         </Button>
       </FormItem>
