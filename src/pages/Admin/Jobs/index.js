@@ -32,7 +32,7 @@ const Jobs = ({ user, addError }) => {
 
   const getJobs = async () => {
     try {
-      const res = await axios(`${config.dataApi}admin/job`);
+      const res = await axios(`${config.dataApi}job`);
       // const data = MockData  //
       const data = res.data || [];
       for (let d of data) {
@@ -106,7 +106,7 @@ const Jobs = ({ user, addError }) => {
   const killJob = async (key) => {
     killedJobs.add(key);
     try {
-      await axios.delete(`${config.dataApi}admin/job/${key}`);
+      await axios.delete(`${config.dataApi}job/${key}`);
       killedJobs.delete(key);
       getJobs();
     } catch (error) {
