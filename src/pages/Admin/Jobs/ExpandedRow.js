@@ -25,7 +25,7 @@ const ExpandedRow = ({ uuid, addError }) => {
     const init = async () => {
       try {
         setLoading(true);
-        const res = await axios(`${config.dataApi}admin/job/${uuid}`);
+        const res = await axios(`${config.dataApi}job/${uuid}`);
         // const res = {data: MockData[0]};
         setData(res?.data);
         setLoading(false);
@@ -42,11 +42,11 @@ const ExpandedRow = ({ uuid, addError }) => {
 
       {/* {data && <ReactJsonPrint objectKey={"data"} dataObject={data} />} */}
 
-       {data && Object.keys(data)
-          .filter((key) => typeof data[key] === "object")
-          .map((key) => (
-              <ReactJsonPrint objectKey={key} dataObject={data[key]} />
-          ))}
+      {data && Object.keys(data)
+        .filter((key) => typeof data[key] === "object")
+        .map((key) => (
+          <ReactJsonPrint objectKey={key} dataObject={data[key]} />
+        ))}
       {data &&
         Object.keys(data)
           .filter((key) => typeof data[key] !== "object")
