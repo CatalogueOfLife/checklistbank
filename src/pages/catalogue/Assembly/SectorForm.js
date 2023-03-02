@@ -19,9 +19,53 @@ const SectorForm = ({
   sectorDatasetRanks,
   rank,
   onError,
+  nametype,
+  nomstatus
 }) => {
   const [subjectDisabled, setSubjectDisabled] = useState(true);
   const [targetDisabled, setTargetDisabled] = useState(true);
+
+  const updateNameTypes = (nameTypes) => {
+    axios
+      .put(
+        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
+        { ...sector, nameTypes: nameTypes }
+      )
+      .then(() => {
+        sector.nameTypes = nameTypes;
+        notification.open({
+          message: "Nametypes for sector updated",
+          description: `New value is ${nameTypes?.toString()}`,
+        });
+      })
+      .catch((err) => {
+        if (typeof onError === "function") {
+          onError(err);
+        }
+      });
+  };
+
+  const updateNameStatusExclusion = (nameStatusExclusion) => {
+    axios
+      .put(
+        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
+        { ...sector, nameStatusExclusion: nameStatusExclusion }
+      )
+      .then(() => {
+        sector.nameStatusExclusion = nameStatusExclusion;
+        notification.open({
+          message: "NameStatusExclusion for sector updated",
+          description: `New value is ${nameStatusExclusion?.toString()}`,
+        });
+      })
+      .catch((err) => {
+        if (typeof onError === "function") {
+          onError(err);
+        }
+      });
+  };
+
+
   const updateSectorMode = (mode) => {
     axios
       .put(
@@ -170,14 +214,14 @@ const SectorForm = ({
             allowClear
           >
             <Option key="attach" value="attach">
-                  attach
-                </Option>
-                <Option key="union" value="union">
-                union
-                </Option>
-                <Option key="merge" value="merge">
-                merge
-                </Option>
+              attach
+            </Option>
+            <Option key="union" value="union">
+              union
+            </Option>
+            <Option key="merge" value="merge">
+              merge
+            </Option>
           </Select>
         </Col>
       </Row>
@@ -251,6 +295,50 @@ const SectorForm = ({
       </Row>
 
       <Row style={{ marginTop: "8px" }}>
+        <Col span={9}>Name Types</Col>
+        <Col span={15} style={{ paddingLeft: "8px" }}>
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            defaultValue={sector.nameTypes || []}
+            onChange={(value) => updateNameTypes(value)}
+            showSearch
+            allowClear
+          >
+            {nametype.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+      </Row>
+
+      <Row style={{ marginTop: "8px" }}>
+        <Col span={9}>Name Status Exclusion</Col>
+        <Col span={15} style={{ paddingLeft: "8px" }}>
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            defaultValue={sector.nameStatusExclusion || []}
+            onChange={(value) => updateNameStatusExclusion(value)}
+            showSearch
+            allowClear
+          >
+            {nomstatus.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+      </Row>
+
+      <Row style={{ marginTop: "8px" }}>
         <Col span={8}>Target</Col>
         <Col span={1} style={{ textAlign: "right" }}>
           {targetDisabled && (
@@ -272,7 +360,7 @@ const SectorForm = ({
             datasetKey={sector.datasetKey}
             defaultTaxonKey={_.get(sector, "target.id") || null}
             onSelectName={(name) => updateTargetOrSubject(name, "target")}
-            onResetSearch={() => {}}
+            onResetSearch={() => { }}
           />
           {/*           <Input.Search 
             enterButton={<SaveOutlined />} 
@@ -300,7 +388,7 @@ const SectorForm = ({
             datasetKey={sector.subjectDatasetKey}
             defaultTaxonKey={_.get(sector, "subject.id") || null}
             onSelectName={(name) => updateTargetOrSubject(name, "subject")}
-            onResetSearch={() => {}}
+            onResetSearch={() => { }}
           />
           {/*           <Input.Search 
             enterButton={<SaveOutlined />} 
@@ -338,9 +426,9 @@ const SectorForm = ({
   );
 };
 
-const mapContextToProps = ({ nomCode, entitytype, rank }) => ({
+const mapContextToProps = ({ nomCode, entitytype, rank, nametype, nomstatus }) => ({
   nomCode,
   entitytype,
-  rank,
+  rank, nametype, nomstatus
 });
 export default withContext(mapContextToProps)(SectorForm);

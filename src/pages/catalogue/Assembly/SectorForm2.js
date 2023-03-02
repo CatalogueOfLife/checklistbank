@@ -42,11 +42,13 @@ const SectorForm = ({
   sector,
   nomCode,
   entitytype,
- // sectorDatasetRanks,
+  // sectorDatasetRanks,
   rank,
   onError,
   catalogueKey,
   onSubmit,
+  nametype,
+  nomstatus
 }) => {
   const [error, setError] = useState(null)
   const [form] = Form.useForm();
@@ -54,23 +56,23 @@ const SectorForm = ({
   const mode = Form.useWatch('mode', form);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
-  useEffect(() => {}, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
-  useEffect(() =>{
-      if(subjectDatasetKey || sector?.subjectDatasetKey){
-        axios
+  useEffect(() => { }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
+  useEffect(() => {
+    if (subjectDatasetKey || sector?.subjectDatasetKey) {
+      axios
         .get(
           `${config.dataApi}dataset/${subjectDatasetKey || sector?.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
         ) // /assembly/3/sync/
         .then((res) => {
           setSectorDatasetRanks(_.get(res, "data.facets.rank", []).map(
-              (r) => r.value
-            ))
+            (r) => r.value
+          ))
         })
         .catch((err) => {
           setError(err)
         });
-      }
-    }, [subjectDatasetKey])
+    }
+  }, [subjectDatasetKey])
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
   };
@@ -92,7 +94,7 @@ const SectorForm = ({
           }
         })
         .catch((err) => {
-            setError(err)
+          setError(err)
           if (typeof onError === "function") {
             onError(err);
           }
@@ -110,7 +112,7 @@ const SectorForm = ({
           }
         })
         .catch((err) => {
-            setError(err)
+          setError(err)
           if (typeof onError === "function") {
             onError(err);
           }
@@ -118,15 +120,15 @@ const SectorForm = ({
     }
   };
 
-  const initialValues = { ranks: [], entities: [], ...sector };
+  const initialValues = { ranks: [], entities: [], nameTypes: [], nameStatusExclusion: [], ...sector };
   return (<>
-   {error && <Alert
-                  style={{ marginBottom: "10px" }}
-                  description={<ErrorMsg error={error} />}
-                  type="error"
-                  closable
-                  onClose={() => setError(null)}
-                />}
+    {error && <Alert
+      style={{ marginBottom: "10px" }}
+      description={<ErrorMsg error={error} />}
+      type="error"
+      closable
+      onClose={() => setError(null)}
+    />}
     <Form
       form={form}
       initialValues={initialValues}
@@ -152,10 +154,10 @@ const SectorForm = ({
           </Option>
         </Select>
       </FormItem>
-      {mode === "merge" && 
+      {mode === "merge" &&
         <FormItem {...formItemLayout} label="Priority" key="priority" name="priority">
-        
-        <InputNumber />
+
+          <InputNumber />
         </FormItem>}
       {!sector && (
         <FormItem
@@ -200,6 +202,40 @@ const SectorForm = ({
       >
         <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
           {entitytype.map((f) => {
+            return (
+              <Option key={f.name} value={f.name}>
+                {f.name}
+              </Option>
+            );
+          })}
+        </Select>
+      </FormItem>
+
+      <FormItem
+        {...formItemLayout}
+        label="Name Types"
+        key="nameTypes"
+        name="nameTypes"
+      >
+        <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
+          {nametype.map((f) => {
+            return (
+              <Option key={f} value={f}>
+                {f}
+              </Option>
+            );
+          })}
+        </Select>
+      </FormItem>
+
+      <FormItem
+        {...formItemLayout}
+        label="Name Status Exclusion"
+        key="nameStatusExclusion"
+        name="nameStatusExclusion"
+      >
+        <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
+          {nomstatus.map((f) => {
             return (
               <Option key={f.name} value={f.name}>
                 {f.name}
@@ -256,13 +292,16 @@ const SectorForm = ({
         </Button>
       </FormItem>
     </Form>
-    </>);
+  </>);
 };
 
-const mapContextToProps = ({ nomCode, entitytype, rank, catalogueKey }) => ({
-  catalogueKey,
-  nomCode,
-  entitytype,
-  rank,
-});
+const mapContextToProps = ({ nomCode, entitytype, rank, catalogueKey, nametype,
+  nomstatus }) => ({
+    catalogueKey,
+    nomCode,
+    entitytype,
+    rank,
+    nametype,
+    nomstatus
+  });
 export default withContext(mapContextToProps)(SectorForm);
