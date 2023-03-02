@@ -215,7 +215,9 @@ const mapContextToProps = ({
   rank,
   datasetSettings,
   gazetteer,
-  doiResolution
+  doiResolution,
+  nametype,
+  nomStatus
 }) => ({
   addError,
   addInfo,
@@ -229,7 +231,9 @@ const mapContextToProps = ({
   rank,
   datasetSettings,
   gazetteer,
-  doiResolution
+  doiResolution,
+  nametype,
+  nomStatus
 });
 
 export default withContext(mapContextToProps)(SettingsForm);
