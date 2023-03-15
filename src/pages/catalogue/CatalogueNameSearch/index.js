@@ -11,8 +11,8 @@ const CatalogueNameSearch = ({ catalogueKey, catalogue, location }) =>
     <Exception404 />
   ) : (
     <Layout
-    openKeys={["assembly", "projectDetails"]}
-    selectedKeys={["catalogueNameSearch"]}
+      openKeys={["assembly"]}
+      selectedKeys={["catalogueNameSearch"]}
       title={catalogue ? catalogue.title : ""}
     >
       {_.get(catalogue, "title") && (

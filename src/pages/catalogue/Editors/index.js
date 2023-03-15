@@ -16,10 +16,10 @@ const ProjectEditors = ({
   return (
     <Layout
       selectedKeys={["projectEditors"]}
-      openKeys={["assembly", "projectDetails"]}
+      openKeys={["assembly"]}
       title={catalogue ? catalogue.title : ""}
     >
-        <Editors datasetKey={catalogueKey} />
+      <Editors datasetKey={catalogueKey} />
     </Layout>
   );
 };

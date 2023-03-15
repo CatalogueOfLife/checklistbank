@@ -8,7 +8,7 @@ import withContext from "../../../components/hoc/withContext";
 const AssemblyTasks = ({ location, catalogueKey, catalogue }) => {
   return (
     <Layout
-      openKeys={["assembly", "projectDetails"]}
+      openKeys={["assembly"]}
       selectedKeys={["assemblyTasks"]}
       title={catalogue.title}
     >

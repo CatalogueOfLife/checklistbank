@@ -214,7 +214,7 @@ class CatalogueOptions extends React.Component {
     return (
       <Layout
         selectedKeys={["catalogueOptions"]}
-        openKeys={["assembly", "projectDetails"]}
+        openKeys={["assembly"]}
         title={catalogue ? catalogue.title : ""}
       >
         <Helmet>
@@ -381,7 +381,7 @@ class CatalogueOptions extends React.Component {
                 </Button>
               </Popconfirm>
 
-              <SyncAllSectorsButton catalogueKey={catalogueKey} 
+              <SyncAllSectorsButton catalogueKey={catalogueKey}
                 onError={(err) => this.setState({ error: err })}>
               </SyncAllSectorsButton>
 

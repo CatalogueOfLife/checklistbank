@@ -32,17 +32,17 @@ class SectorDiff extends React.Component {
   componentDidMount = () => {
     let query = _.get(this.props, "location.search");
     const {
-        match: {
-          params: { sectorKey, catalogueKey }
-        }
-      } = this.props;
+      match: {
+        params: { sectorKey, catalogueKey }
+      }
+    } = this.props;
 
     axios(
       `${config.dataApi}dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
     )
-    .then(res => {
-        this.setState({maxAttempt: _.get(res, 'data.result[0].attempt') })
-    })
+      .then(res => {
+        this.setState({ maxAttempt: _.get(res, 'data.result[0].attempt') })
+      })
     this.getData(query);
   };
 
@@ -62,12 +62,11 @@ class SectorDiff extends React.Component {
       }
     } = this.props;
     const params = qs.parse(_.get(this.props, "location.search"));
-    const splittedAttempts =  params.attempts ? params.attempts.split('..') : null;
-    const selectedAttempt1 = splittedAttempts ? splittedAttempts[0]: null;
-    const selectedAttempt2 = splittedAttempts ? splittedAttempts[1]: null;
+    const splittedAttempts = params.attempts ? params.attempts.split('..') : null;
+    const selectedAttempt1 = splittedAttempts ? splittedAttempts[0] : null;
+    const selectedAttempt2 = splittedAttempts ? splittedAttempts[1] : null;
     axios(
-      `${
-        config.dataApi
+      `${config.dataApi
       }dataset/${catalogueKey}/sector/${sectorKey}/diff/tree${query}`
     )
       .then(res => {
@@ -88,9 +87,9 @@ class SectorDiff extends React.Component {
       });
   };
 
-  changeAttempt = () => {};
+  changeAttempt = () => { };
 
-  render = () =>  {
+  render = () => {
     //const diff = _.get(this.state, "data.diff");
     const diff = _.get(this.state, "data");
     const {
@@ -120,13 +119,13 @@ class SectorDiff extends React.Component {
     return (
       <Layout
         selectedKeys={["sectorDiff"]}
-        openKeys={["assembly", "projectDetails"]}
+        openKeys={["assembly"]}
         selectedSector={sectorKey}
         title={catalogue.title}
       >
         <PageContent>
-          
-          <Row style={{marginBottom: '8px'}}>
+
+          <Row style={{ marginBottom: '8px' }}>
             <Col span={12}>
               <Select
                 value={_.get(this.state, "selectedAttempt1")}
@@ -159,26 +158,26 @@ class SectorDiff extends React.Component {
                 }}
                 showSearch
               >
-                {[...Array(maxAttempt +1).keys()].reverse().filter(i => i > selectedAttempt1).map(i => (
+                {[...Array(maxAttempt + 1).keys()].reverse().filter(i => i > selectedAttempt1).map(i => (
                   <Option value={i}>Attempt: {i}</Option>
                 ))}
               </Select>
             </Col>
-            { _.get(this.state, 'data.summary') && <Col span={6}>
-                  { !isNaN( _.get(this.state, 'data.summary.DELETE')) && <Tag color="red">Deleted: { _.get(this.state, 'data.summary.DELETE')}</Tag> }
-                  { !isNaN( _.get(this.state, 'data.summary.INSERT')) && <Tag color="green">Inserted: { _.get(this.state, 'data.summary.INSERT')}</Tag>}
+            {_.get(this.state, 'data.summary') && <Col span={6}>
+              {!isNaN(_.get(this.state, 'data.summary.DELETE')) && <Tag color="red">Deleted: {_.get(this.state, 'data.summary.DELETE')}</Tag>}
+              {!isNaN(_.get(this.state, 'data.summary.INSERT')) && <Tag color="green">Inserted: {_.get(this.state, 'data.summary.INSERT')}</Tag>}
             </Col>}
           </Row>
           {error && (
-            <Row style={{marginBottom: '8px'}}>
+            <Row style={{ marginBottom: '8px' }}>
               <Alert type="error" description={<ErrorMsg error={error} />} />
             </Row>
           )}
           {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
 
-            {_.get(this.state, 'data.identical') && <Row style={{marginBottom: '8px'}}>
-              <Alert message="No diff between sync attempts" />
-            </Row>}
+          {_.get(this.state, 'data.identical') && <Row style={{ marginBottom: '8px' }}>
+            <Alert message="No diff between sync attempts" />
+          </Row>}
 
         </PageContent>
       </Layout>

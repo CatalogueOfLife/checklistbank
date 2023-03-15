@@ -6,13 +6,13 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import Helmet from "react-helmet";
 
-const CatalogueName = ({  catalogue, match, location }) =>
+const CatalogueName = ({ catalogue, match, location }) =>
   !catalogue ? (
     <Exception404 />
   ) : (
     <Layout
-    openKeys={["assembly", "projectDetails"]}
-    selectedKeys={["catalogueName"]}
+      openKeys={["assembly"]}
+      selectedKeys={["catalogueName"]}
       title={catalogue ? catalogue.title : ""}
       taxonOrNameKey={match.params.taxonOrNameKey}
     >
@@ -24,8 +24,8 @@ const CatalogueName = ({  catalogue, match, location }) =>
     </Layout>
   );
 
-const mapContextToProps = ({  catalogue }) => ({
-  
+const mapContextToProps = ({ catalogue }) => ({
+
   catalogue
 });
 export default withContext(mapContextToProps)(CatalogueName);

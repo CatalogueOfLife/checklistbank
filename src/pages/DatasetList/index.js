@@ -15,7 +15,7 @@ import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-import  Releases  from "./Releases";
+import Releases from "./Releases";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
@@ -36,6 +36,7 @@ const formItemLayout = {
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
+    const { user } = this.props;
 
     this.state = {
       selectedRowKeys: [],
@@ -53,7 +54,7 @@ class DatasetList extends React.Component {
           render: (text, record) => {
             return (
               <NavLink
-                to={{ pathname: `/dataset/${record.key}/about` }}
+                to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}/about` }}
                 exact={true}
               >
                 {text}
@@ -69,7 +70,7 @@ class DatasetList extends React.Component {
           ellipsis: true,
           render: (text, record) => {
             return (
-             <Tooltip title={text}> <NavLink to={{ pathname: `/dataset/${record.key}` }} exact={true}>
+              <Tooltip title={text}> <NavLink to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}` }} exact={true}>
                 {text}
               </NavLink></Tooltip>
             );
@@ -94,7 +95,7 @@ class DatasetList extends React.Component {
           title: "Creator",
           dataIndex: "creator",
           key: "creator",
-         // sorter: true,
+          // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -115,7 +116,7 @@ class DatasetList extends React.Component {
           title: "Editor",
           dataIndex: "editor",
           key: "editor",
-         // sorter: true,
+          // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -136,7 +137,7 @@ class DatasetList extends React.Component {
           title: "Contributor",
           dataIndex: "contributor",
           key: "contributor",
-         // sorter: true,
+          // sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -268,7 +269,7 @@ class DatasetList extends React.Component {
           },
         },
         this.getData
-      ); 
+      );
     }
   }
   componentDidUpdate = (prevProps) => {
@@ -276,8 +277,8 @@ class DatasetList extends React.Component {
     const params = qs.parse(_.get(this.props, "location.search"));
     if (params.releasedFrom !== prevParams.releasedFrom) {
       let params = qs.parse(_.get(this.props, "location.search"));
-      if(!params.releasedFrom){
-        params.origin = ['project', 'external'] 
+      if (!params.releasedFrom) {
+        params.origin = ['project', 'external']
       }
       this.setState(
         {
@@ -398,15 +399,15 @@ class DatasetList extends React.Component {
   };
 
   importDatasets = async (rows) => {
-    const {addError} = this.props;
+    const { addError } = this.props;
     for (const dataset of rows.filter(d => d.origin === 'external')) {
       try {
         await axios
-        .post(`${config.dataApi}importer`, {
-          datasetKey: dataset.key,
-          priority: true,
-          force: true,
-        })
+          .post(`${config.dataApi}importer`, {
+            datasetKey: dataset.key,
+            priority: true,
+            force: true,
+          })
         notification.open({
           message: `Import started`,
           description: `Dataset: ${dataset?.alias || dataset.key}`,
@@ -420,15 +421,15 @@ class DatasetList extends React.Component {
       }
     }
 
-    this.setState({selectedRows: [], selectedRowKeys: []})
+    this.setState({ selectedRows: [], selectedRowKeys: [] })
   }
 
   deleteDatasets = async (rows) => {
-    const {addError} = this.props;
+    const { addError } = this.props;
     for (const dataset of rows) {
       try {
         await axios
-        .delete(`${config.dataApi}dataset/${dataset.key}`)
+          .delete(`${config.dataApi}dataset/${dataset.key}`)
         notification.open({
           message: `Deletion triggered`,
           description: `Dataset: ${dataset?.alias || dataset.key}`,
@@ -441,20 +442,20 @@ class DatasetList extends React.Component {
         })
       }
     }
-    this.setState({selectedRows: [], selectedRowKeys: []})
+    this.setState({ selectedRows: [], selectedRowKeys: [] })
   }
 
   getConfirmText = (action) => {
     const maxDatasets = 5;
-    const {selectedRows} = this.state;
+    const { selectedRows } = this.state;
     return <>Do you want to {action}<ul>
-            {selectedRows.slice(0, maxDatasets).map((d) => (
-              <li>{d?.alias || d.key}</li>
-            ))}
-          </ul>
-          {selectedRows.length > maxDatasets && <span>and {selectedRows.length - maxDatasets} more datasets? </span>}
-          </>
-          
+      {selectedRows.slice(0, maxDatasets).map((d) => (
+        <li>{d?.alias || d.key}</li>
+      ))}
+    </ul>
+      {selectedRows.length > maxDatasets && <span>and {selectedRows.length - maxDatasets} more datasets? </span>}
+    </>
+
 
   }
 
@@ -480,7 +481,7 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[7].filteredValue = null;
     }
-        defaultColumns[9].filters = datasetType.map((i) => ({
+    defaultColumns[9].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
@@ -490,27 +491,27 @@ class DatasetList extends React.Component {
         : [params.type];
     } else {
       defaultColumns[9].filteredValue = null;
-    } 
+    }
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
-          ...defaultColumns,
-          {
-            title: "Action",
-            dataIndex: "",
-            width: 60,
-            key: "__actions__",
-            render: (text, record) =>
-              record.origin === "external" &&
+        ...defaultColumns,
+        {
+          title: "Action",
+          dataIndex: "",
+          width: 60,
+          key: "__actions__",
+          render: (text, record) =>
+            record.origin === "external" &&
               canEditDataset(record, this.props.user) ? (
-                <ImportButton
-                  key={record.key}
-                  record={{ datasetKey: record.key }}
-                />
-              ) : (
-                ""
-              ),
-          },
-        ]
+              <ImportButton
+                key={record.key}
+                record={{ datasetKey: record.key }}
+              />
+            ) : (
+              ""
+            ),
+        },
+      ]
       : defaultColumns;
 
     const columns = _.filter(
@@ -584,23 +585,23 @@ class DatasetList extends React.Component {
                   </NavLink>{" "}
                 </Col>
               )}
-            {!noParams && <Col>
+              {!noParams && <Col>
                 <Button type="danger" style={{ marginTop: "10px", marginBottom: "10px" }} onClick={() => {
                   history.push({
                     pathname: "/dataset"
                   });
-                
-            
-                this.setState(
-                  {
-                    params : {},
-                    data: [],
-                    pagination: {
-                      pageSize: PAGE_SIZE,
-                      current: 1
-                    },
-                  }
-                ); 
+
+
+                  this.setState(
+                    {
+                      params: {},
+                      data: [],
+                      pagination: {
+                        pageSize: PAGE_SIZE,
+                        current: 1
+                      },
+                    }
+                  );
                 }}>
                   Reset search
                 </Button>
@@ -609,7 +610,7 @@ class DatasetList extends React.Component {
               {recentDatasets && recentDatasets.length > 0 && (
                 <Col>
                   Recently visited:{" "}
-                 <div>{recentDatasets.map((d) => (
+                  <div>{recentDatasets.map((d) => (
                     <NavLink
                       to={{
                         pathname: `/dataset/${d.key}`,
@@ -617,7 +618,7 @@ class DatasetList extends React.Component {
                     >
                       <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
                     </NavLink>
-                  ))}</div> 
+                  ))}</div>
                 </Col>
               )}
             </Row>
@@ -639,16 +640,16 @@ class DatasetList extends React.Component {
             {error && <Alert message={error.message} type="error" />}
           </div>
           {!error && (
-            <ConfigProvider renderEmpty={() => noParams ? 
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search filters specified"> 
+            <ConfigProvider renderEmpty={() => noParams ?
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No search filters specified">
                 <Button type="primary" onClick={() => {
-                  let  params = { limit: PAGE_SIZE, offset: 0, origin: ['project', 'external'] };
-                    history.push({
-                      pathname: "/dataset",
-                      search: `?limit=${PAGE_SIZE}&offset=0`,
-                    });
-                  
-              
+                  let params = { limit: PAGE_SIZE, offset: 0, origin: ['project', 'external'] };
+                  history.push({
+                    pathname: "/dataset",
+                    search: `?limit=${PAGE_SIZE}&offset=0`,
+                  });
+
+
                   this.setState(
                     {
                       params,
@@ -659,56 +660,56 @@ class DatasetList extends React.Component {
                       },
                     },
                     this.getData
-                  ); 
+                  );
                 }}>Show all datasets</Button>
-                </Empty> : 
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
+              </Empty> :
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
 
-            <Table
-              size="middle"
-              columns={columns}
-              dataSource={data}
-              loading={loading}
-              scroll={{ x: `${columns.length * 120}px` }}
-              pagination={pagination}
-              onChange={this.handleTableChange}
-              expandable={{
-                expandedRowRender: record => <Releases dataset={record} />,
-                rowExpandable: record => record.origin === 'project',
-              }}
-              rowSelection={
-                !Auth.isAuthorised(user, ["admin"]) ? null : {
-                  selectedRowKeys: this.state.selectedRowKeys,
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    this.setState({selectedRowKeys, selectedRows})
-                   // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-                  },
-                  selections: [
-                    {
-                      key: 'import',
-                      text: <Popconfirm
-                      placement="topLeft"
-                      title={this.getConfirmText('import')}
-                      onConfirm={() => this.importDatasets(this.state.selectedRows)}
-                      okText="Yes"
-                      cancelText="No"
-                    ><Button onClick={e => e.stopPropagation()} type="primary">Import {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
-                      
+              <Table
+                size="middle"
+                columns={columns}
+                dataSource={data}
+                loading={loading}
+                scroll={{ x: `${columns.length * 120}px` }}
+                pagination={pagination}
+                onChange={this.handleTableChange}
+                expandable={{
+                  expandedRowRender: record => <Releases dataset={record} />,
+                  rowExpandable: record => record.origin === 'project',
+                }}
+                rowSelection={
+                  !Auth.isAuthorised(user, ["admin"]) ? null : {
+                    selectedRowKeys: this.state.selectedRowKeys,
+                    onChange: (selectedRowKeys, selectedRows) => {
+                      this.setState({ selectedRowKeys, selectedRows })
+                      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
                     },
-                    {
-                      key: 'delete',
-                      text: <Popconfirm
-                      placement="topLeft"
-                      title={this.getConfirmText('delete')}
-                      onConfirm={() => this.deleteDatasets(this.state.selectedRows)}
-                      okText="Yes"
-                      cancelText="No"
-                    ><Button onClick={e => e.stopPropagation()} type="danger">Delete {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
-                     
-                    }]
+                    selections: [
+                      {
+                        key: 'import',
+                        text: <Popconfirm
+                          placement="topLeft"
+                          title={this.getConfirmText('import')}
+                          onConfirm={() => this.importDatasets(this.state.selectedRows)}
+                          okText="Yes"
+                          cancelText="No"
+                        ><Button onClick={e => e.stopPropagation()} type="primary">Import {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
+
+                      },
+                      {
+                        key: 'delete',
+                        text: <Popconfirm
+                          placement="topLeft"
+                          title={this.getConfirmText('delete')}
+                          onConfirm={() => this.deleteDatasets(this.state.selectedRows)}
+                          okText="Yes"
+                          cancelText="No"
+                        ><Button onClick={e => e.stopPropagation()} type="danger">Delete {this.state.selectedRowKeys.length} datasets</Button></Popconfirm>,
+
+                      }]
+                  }
                 }
-              }
-            />
+              />
             </ConfigProvider>
           )}
         </div>

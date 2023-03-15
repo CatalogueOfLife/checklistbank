@@ -8,7 +8,7 @@ import withContext from "../../../components/hoc/withContext";
 const AssemblyDuplicates = ({ location, catalogueKey, catalogue }) => {
   return (
     <Layout
-      openKeys={["assembly", "projectDetails"]}
+      openKeys={["assembly"]}
       selectedKeys={["assemblyDuplicates"]}
       title={catalogue.title}
     >

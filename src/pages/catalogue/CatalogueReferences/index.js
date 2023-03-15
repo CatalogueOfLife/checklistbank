@@ -45,15 +45,15 @@ class Reference extends React.Component {
     };
     const task = id
       ? axios.put(
-          `${config.dataApi}dataset/${catalogueKey}/reference/${id}`,
-          values,
-          conf
-        )
+        `${config.dataApi}dataset/${catalogueKey}/reference/${id}`,
+        values,
+        conf
+      )
       : axios.post(
-          `${config.dataApi}dataset/${catalogueKey}/reference`,
-          values,
-          conf
-        );
+        `${config.dataApi}dataset/${catalogueKey}/reference`,
+        values,
+        conf
+      );
 
     return task
       .then((res) => {
@@ -86,7 +86,7 @@ class Reference extends React.Component {
       <Layout
         title={catalogue ? catalogue.title : ""}
         selectedKeys={["assemblyReferences"]}
-        openKeys={["assembly", "projectDetails"]}
+        openKeys={["assembly"]}
       >
         <Helmet>
           <meta charSet="utf-8" />
@@ -120,7 +120,7 @@ class Reference extends React.Component {
               />
             </Modal>
           )}
-         {Auth.canEditDataset({key: catalogueKey}, user) && <Row>
+          {Auth.canEditDataset({ key: catalogueKey }, user) && <Row>
             <Col style={{ textAlign: "right", marginBottom: "10px" }}>
               <Button onClick={() => this.setState({ showAddNewModal: true })}>
                 Add new

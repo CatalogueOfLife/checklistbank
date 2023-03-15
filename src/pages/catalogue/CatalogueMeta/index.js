@@ -11,27 +11,27 @@ import _ from 'lodash'
 import Helmet from 'react-helmet'
 
 
-const CatalogueMeta = ({catalogueKey, catalogue}) =>  (
-      !catalogue ? <Exception404 /> :
-      <Layout
-      openKeys={["assembly", "projectDetails"]}
+const CatalogueMeta = ({ catalogueKey, catalogue }) => (
+  !catalogue ? <Exception404 /> :
+    <Layout
+      openKeys={["assembly"]}
       selectedKeys={["catalogueMeta"]}
       title={catalogue ? catalogue.title : ''}
-      >
-     {_.get(catalogue, 'title') && <Helmet 
-      title={`${_.get(catalogue, 'title')} in COL`}
-     />}
-      
-    
-       <DatasetMeta id={catalogueKey} />
+    >
+      {_.get(catalogue, 'title') && <Helmet
+        title={`${_.get(catalogue, 'title')} in COL`}
+      />}
 
 
-      </Layout>
-    );
-  
+      <DatasetMeta id={catalogueKey} />
+
+
+    </Layout>
+);
 
 
 
 
-const mapContextToProps = ({catalogueKey, catalogue}) => ({catalogueKey, catalogue})
+
+const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue })
 export default withContext(mapContextToProps)(CatalogueMeta);
