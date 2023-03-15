@@ -128,7 +128,7 @@ const SettingsForm = (props) => {
       {datasetSettings
         .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => ["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type)
+          (s) => ["String", "Integer", "URI", "UUID", "Character"].includes(s.type)
             /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ &&
             s.name !== "csv delimiter"
         )
@@ -139,7 +139,7 @@ const SettingsForm = (props) => {
             key={s.name}
             name={s.name}
           >
-            {s.type === "String" || s.type === "URI" || s.type === "UUID" ? (
+            {s.type === "String" || s.type === "URI" || s.type === "UUID" || s.type === "Character" ? (
               s.multiple ? <TagControl /> : <Input type="text" />
             ) : (
               <InputNumber />
