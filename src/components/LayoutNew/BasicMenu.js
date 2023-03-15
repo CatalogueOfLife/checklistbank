@@ -81,6 +81,12 @@ class BasicMenu extends Component {
     } */
   };
 
+  isProjectRoute = () => {
+    const { location } = this.props;
+    return !!location && location.pathname.startsWith("/catalogue")
+
+  }
+
   onOpenChange = (openKeys) => {
     const { setOpenKeys } = this.props;
     setOpenKeys(openKeys);
@@ -284,7 +290,7 @@ class BasicMenu extends Component {
               <span>Datasets</span>
             </NavLink>
           </Menu.Item>
-          {user && user?.roles?.length > 0 && (
+          {user && user?.roles?.length > 0 && this.isProjectRoute() && (
             <SubMenu
               key="assembly"
               title={
@@ -694,7 +700,7 @@ class BasicMenu extends Component {
           )} */}
 
 
-          {selectedDataset && (
+          {selectedDataset && !this.isProjectRoute() && (
             <SubMenu
               key="datasetKey"
               title={

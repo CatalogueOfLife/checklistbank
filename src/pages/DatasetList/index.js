@@ -302,6 +302,10 @@ class DatasetList extends React.Component {
     if (!params.q) {
       delete params.q;
     }
+    if (!params.origin && !params.releasedFrom) {
+      params.origin = ['external', 'project']
+    }
+
     const newParamsWithPaging = {
       ...params,
       limit,
@@ -613,7 +617,7 @@ class DatasetList extends React.Component {
                   <div>{recentDatasets.map((d) => (
                     <NavLink
                       to={{
-                        pathname: `/dataset/${d.key}`,
+                        pathname: (d.origin === 'project' && Auth.canViewDataset(d, user)) ? `/catalogue/${d.key}/metadata` : `/dataset/${d.key}`,
                       }}
                     >
                       <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
