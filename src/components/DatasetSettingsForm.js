@@ -84,7 +84,6 @@ const SettingsForm = (props) => {
   };
 
   const initialValues = data;
-
   return (
     <Form
       initialValues={initialValues}
@@ -152,46 +151,55 @@ const SettingsForm = (props) => {
         .filter(
           (s) => !["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type)
         )
-        .map((s) => (
-          <FormItem
-            {...formItemLayout}
-            label={_.startCase(s.name)}
-            key={s.name}
-            name={s.name}
-          >
-            {s.type === "NomCode" ? (
-              <Select style={{ width: 200 }} showSearch allowClear>
-                {nomCode.map((c) => {
-                  return (
-                    <Option
-                      key={c.name}
-                      value={c.name}
-                    >{`${c.name} (${c.acronym})`}</Option>
-                  );
-                })}
-              </Select>
-            ) : (
-              <Select
-                style={{ width: 200 }}
-                mode={s.multiple ? "multiple" : null}
-                showSearch
-                allowClear
-              >
-                {props[_.camelCase(s.type)].map((e) => {
-                  return typeof e === "string" ? (
-                    <Option key={e} value={e}>
-                      {e}
-                    </Option>
-                  ) : (
-                    <Option key={e.name} value={e.name}>
-                      {e.name}
-                    </Option>
-                  );
-                })}
-              </Select>
-            )}
-          </FormItem>
-        ))}
+        .map((s) => {
+          try {
+            return <FormItem
+              {...formItemLayout}
+              label={_.startCase(s.name)}
+              key={s.name}
+              name={s.name}
+            >
+              {s.type === "NomCode" ? (
+                <Select style={{ width: 200 }} showSearch allowClear>
+                  {nomCode.map((c) => {
+                    return (
+                      <Option
+                        key={c.name}
+                        value={c.name}
+                      >{`${c.name} (${c.acronym})`}</Option>
+                    );
+                  })}
+                </Select>
+              ) : (
+                <Select
+                  style={{ width: 200 }}
+                  mode={s.multiple ? "multiple" : null}
+                  showSearch
+                  allowClear
+                >
+                  {props[_.camelCase(s.type)].map((e) => {
+                    return typeof e === "string" ? (
+                      <Option key={e} value={e}>
+                        {e}
+                      </Option>
+                    ) : (
+                      <Option key={e.name} value={e.name}>
+                        {e.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              )}
+            </FormItem>
+          } catch (error) {
+            if (!props[_.camelCase(s.type)]) {
+              console.log(`Error: Missing enum injection ${_.camelCase(s.type)}`)
+            }
+            console.log(error)
+            return null
+          }
+
+        })}
 
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
@@ -217,7 +225,7 @@ const mapContextToProps = ({
   gazetteer,
   doiResolution,
   nametype: nameType,
-  nomStatus
+  nomstatus: nomStatus
 }) => ({
   addError,
   addInfo,

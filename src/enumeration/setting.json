@@ -133,29 +133,11 @@
   {
     "enum": false,
     "multiple": false,
-    "name": "xrelease alias template",
+    "name": "xrelease config",
     "origin": [
       "project"
     ],
-    "type": "String"
-  },
-  {
-    "enum": false,
-    "multiple": true,
-    "name": "xrelease source publisher",
-    "origin": [
-      "project"
-    ],
-    "type": "UUID"
-  },
-  {
-    "enum": false,
-    "multiple": true,
-    "name": "xrelease exclude source dataset",
-    "origin": [
-      "project"
-    ],
-    "type": "Integer"
+    "type": "URI"
   },
   {
     "enum": false,
@@ -212,6 +194,24 @@
       "project"
     ],
     "type": "Rank"
+  },
+  {
+    "enum": true,
+    "multiple": true,
+    "name": "sector name types",
+    "origin": [
+      "project"
+    ],
+    "type": "NameType"
+  },
+  {
+    "enum": true,
+    "multiple": true,
+    "name": "sector name status exclusion",
+    "origin": [
+      "project"
+    ],
+    "type": "NomStatus"
   },
   {
     "enum": false,

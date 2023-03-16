@@ -198,7 +198,7 @@
     "name": "basionym author mismatch"
   },
   {
-    "description": "Record has a original name (basionym) relationship which was derived from name & authorship comparison, but did not exist explicitly in the data. Provisional catalogue specific issue.",
+    "description": "Record has a original name (basionym) relationship which was derived from name & authorship comparison, but did not exist explicitly in the data. Extended release specific issue.",
     "group": "name",
     "level": "info",
     "name": "basionym derived"
@@ -664,5 +664,11 @@
     "group": "any",
     "level": "warning",
     "name": "identifier without scope"
+  },
+  {
+    "description": "Several accepted names exist which are considered homotypic names.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "homotypic multi accepted"
   }
 ]
