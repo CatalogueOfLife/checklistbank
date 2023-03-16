@@ -52,14 +52,14 @@ const DiffViewer = ({ location, addError, rank }) => {
 
     const params = qs.parse(search);
     console.log(params);
-    if(params.dataset2 ){
+    if (params.dataset2) {
       setDatasetKey2(params.dataset2);
     } else {
       setDatasetKey2(null);
     }
-    if(params.dataset  ){
+    if (params.dataset) {
       setDatasetKey1(params.dataset);
-    }else {
+    } else {
       setDatasetKey1(null);
     }
     if (params.dataset && params.root) {
@@ -107,19 +107,18 @@ const DiffViewer = ({ location, addError, rank }) => {
     }
     const search = `?${qs.stringify(params)}`;
     setEmpty(false)
-    setLoading(true); 
+    setLoading(true);
     history.push({
       ...location,
       search // search + `&dataset=${datasetKey1}&dataset2=${datasetKey2}`,
     });
     try {
       const { data: diff } = await axios(
-        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${
-          minRank ? "&minRank=" + minRank : ""
-        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true":"" }${showParent ? "&parentRank=" + parentRank :"" }${!authorship ? "&authorship=false":""}`
+        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${minRank ? "&minRank=" + minRank : ""
+        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true" : ""}${showParent ? "&parentRank=" + parentRank : ""}${!authorship ? "&authorship=false" : ""}`
       );
       let html;
-      if(!diff){
+      if (!diff) {
         setEmpty(true)
       }
       makeFile(diff);
@@ -151,12 +150,12 @@ const DiffViewer = ({ location, addError, rank }) => {
 
   const decorate = async (id, datasetKey_) => {
     const { data } = await axios(
-      `${config.dataApi}dataset/${datasetKey_}/taxon/${id}`
+      `${config.dataApi}dataset/${datasetKey_}/taxon/${encodeURIComponent(id)}`
     );
-    const {data: {total}}  = await axios(
+    const { data: { total } } = await axios(
       // `${config.dataApi}dataset/${datasetKey_}/taxon/${id}`
-      `${config.dataApi}dataset/${datasetKey_}/nameusage/search?TAXON_ID=${id}&limit=0`
-     );
+      `${config.dataApi}dataset/${datasetKey_}/nameusage/search?TAXON_ID=${encodeURIComponent(id)}&limit=0`
+    );
     return {
       key: data.id,
       title: _.get(data, "name.scientificName"),
@@ -172,7 +171,7 @@ const DiffViewer = ({ location, addError, rank }) => {
     }
   };
 
- const updateSearch = (params) => {
+  const updateSearch = (params) => {
     let newParams = {
       ...qs.parse(location.search),
       ...params
@@ -195,124 +194,127 @@ const DiffViewer = ({ location, addError, rank }) => {
       title="Diff Viewer"
     >
       <PageContent>
-      
-            <Row style={{ marginBottom: "8px" }}>
-            <Col style={{marginLeft: "12px"}}>
-                <Checkbox onChange={(e) => setShowParent(e.target.checked)}>
-                  Show parent
-                </Checkbox>
-              </Col>
-              <Col >
-              <Select
-                  value={parentRank}
-                  onChange={setParentRank}
-                  placeholder="Select parent rank"
-                  allowClear
-                  showSearch
-                  disabled={!showParent}
-                  style={{width: '140px'}}
-                >
-                  <Option key="" value="">
-                      Direct parent
-                    </Option>
-                  {rank.map((r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            
-              <Col style={{marginLeft: "12px"}}>
-                <Select
-                  value={minRank}
-                  onChange={setMinRank}
-                  placeholder="Select min rank"
-                  allowClear
-                  showSearch
-                  style={{width: '200px'}}
 
-                >
-                  {rank.map((r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-            <Col  style={{marginLeft: "12px"}}>
-                Include: {" "}
-                <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
-                  Authorship
-                </Checkbox>
-             
-                <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
-                  Synonyms
-                </Checkbox>
-              </Col>
-            
+        <Row style={{ marginBottom: "8px" }}>
+          <Col style={{ marginLeft: "12px" }}>
+            <Checkbox onChange={(e) => setShowParent(e.target.checked)}>
+              Show parent
+            </Checkbox>
+          </Col>
+          <Col >
+            <Select
+              value={parentRank}
+              onChange={setParentRank}
+              placeholder="Select parent rank"
+              allowClear
+              showSearch
+              disabled={!showParent}
+              style={{ width: '140px' }}
+            >
+              <Option key="" value="">
+                Direct parent
+              </Option>
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </Col>
 
-          
-              <Col flex="auto"></Col>
+          <Col style={{ marginLeft: "12px" }}>
+            <Select
+              value={minRank}
+              onChange={setMinRank}
+              placeholder="Select min rank"
+              allowClear
+              showSearch
+              style={{ width: '200px' }}
 
-              {diff && !empty && (
-              <Col>  <Tooltip title="Download unified diff">
-                  <Button
-                    disabled={loading}
-                    type="primary"
-                    href={diff}
-                    download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <DownloadOutlined />
-                  </Button>
-                </Tooltip></Col>
-              )}
-              
-                
-            
+            >
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col style={{ marginLeft: "12px" }}>
+            Include: {" "}
+            <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
+              Authorship
+            </Checkbox>
 
-              
-                <Button                   
+            <Checkbox onChange={(e) => setSynonyms(e.target.checked)}>
+              Synonyms
+            </Checkbox>
+          </Col>
+
+
+
+          <Col flex="auto"></Col>
+
+          {diff && !empty && (
+            <Col>  <Tooltip title="Download unified diff">
+              <Button
+                disabled={loading}
+                type="primary"
+                href={diff}
+                download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
                 style={{ marginRight: "10px" }}
-                type="danger" onClick={resetAll}>
-                  Reset
-                </Button>
-            <Popconfirm
+              >
+                <DownloadOutlined />
+              </Button>
+            </Tooltip></Col>
+          )}
+
+
+
+
+
+          <Button
+            style={{ marginRight: "10px" }}
+            type="danger" onClick={resetAll}>
+            Reset
+          </Button>
+          <Popconfirm
             disabled={root.length > 0 && root2.length > 0}
             title={<>You have not selected root taxa for both datasets, proceed anyways?<br /> This may produce very large diffs or the server may be overloaded.</>}
             onConfirm={getData}
             placement="leftTop"
-            >
+          >
 
-              <Button
-                  loading={loading}
-                  disabled={loading || !datasetKey1 || !datasetKey2}
-                  type="primary"
-                  onClick={() => { if(root.length > 0 && root2.length > 0){
-                    getData()
-                  }}}
-                >
-                  Get Diff
-                </Button>
-                </Popconfirm>
-              
-            </Row>
-          
+            <Button
+              loading={loading}
+              disabled={loading || !datasetKey1 || !datasetKey2}
+              type="primary"
+              onClick={() => {
+                if (root.length > 0 && root2.length > 0) {
+                  getData()
+                }
+              }}
+            >
+              Get Diff
+            </Button>
+          </Popconfirm>
+
+        </Row>
+
         <Row style={{ marginBottom: "8px" }}>
-          <Col span={12} style={{padding: "8px", borderRightStyle: 'solid', borderRightColor: 'rgba(0, 0, 0, 0.06)', borderRightWidth: "1px"}}>
-          <Divider orientation="left" plain>
-      Dataset 1
-    </Divider>
+          <Col span={12} style={{ padding: "8px", borderRightStyle: 'solid', borderRightColor: 'rgba(0, 0, 0, 0.06)', borderRightWidth: "1px" }}>
+            <Divider orientation="left" plain>
+              Dataset 1
+            </Divider>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey1}
               onError={addError}
-              onResetSearch={() => { updateSearch({dataset: null, root: []})}}
+              onResetSearch={() => { updateSearch({ dataset: null, root: [] }) }}
               onSelectDataset={(dataset) => {
-                if(Number(datasetKey1) !== dataset.key){
-                  updateSearch({dataset: dataset.key, root: null})
+                if (Number(datasetKey1) !== dataset.key) {
+                  updateSearch({ dataset: dataset.key, root: null })
                   // setDatasetKey1(dataset.key), setRoot([])
-                }}}
+                }
+              }}
               // contributesTo={this.props.catalogueKey}
               placeHolder="Choose 1st dataset"
             />
@@ -323,10 +325,10 @@ const DiffViewer = ({ location, addError, rank }) => {
                 onError={addError}
                 disabled={!datasetKey1}
                 onSelectName={(name) => {
-                  updateSearch({root: [...root, name].map(tx => tx.key)})
+                  updateSearch({ root: [...root, name].map(tx => tx.key) })
                   // setRoot([...root, name]);
                 }}
-                onResetSearch={() => {}}
+                onResetSearch={() => { }}
               />
             </div>
             {root.length > 0 && (
@@ -337,7 +339,7 @@ const DiffViewer = ({ location, addError, rank }) => {
                     key={t.key}
                     closable
                     onClose={() => {
-                      updateSearch({root: [...root.filter((tx) => tx.key !== t.key)].map(tx => tx.key)})
+                      updateSearch({ root: [...root.filter((tx) => tx.key !== t.key)].map(tx => tx.key) })
                       //setRoot([...root.filter((tx) => tx.key !== t.key)]);
                     }}
                   >
@@ -348,20 +350,21 @@ const DiffViewer = ({ location, addError, rank }) => {
             )}
           </Col>
           <Col span={12} style={{ padding: "8px" }}>
-          <Divider orientation="left" plain>
-      Dataset 2
-    </Divider>
+            <Divider orientation="left" plain>
+              Dataset 2
+            </Divider>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey2}
               onError={addError}
               onResetSearch={() => {
-                updateSearch({dataset2: null, root2: []})
+                updateSearch({ dataset2: null, root2: [] })
               }}
               onSelectDataset={(dataset) => {
-                if(Number(datasetKey2) !== dataset.key){
-                  updateSearch({dataset2: dataset.key, root2: null})
-                 // setDatasetKey2(dataset.key), setRoot2([])
-                }}}
+                if (Number(datasetKey2) !== dataset.key) {
+                  updateSearch({ dataset2: dataset.key, root2: null })
+                  // setDatasetKey2(dataset.key), setRoot2([])
+                }
+              }}
               // contributesTo={this.props.catalogueKey}
               placeHolder="Choose 2nd dataset"
             />
@@ -372,10 +375,10 @@ const DiffViewer = ({ location, addError, rank }) => {
                 onError={addError}
                 disabled={!datasetKey2}
                 onSelectName={(name) => {
-                  updateSearch({root2: [...root2, name].map(tx => tx.key)})
+                  updateSearch({ root2: [...root2, name].map(tx => tx.key) })
                   // setRoot2([...root2, name]);
                 }}
-                onResetSearch={() => {}}
+                onResetSearch={() => { }}
               />
             </div>
             {root2.length > 0 && (
@@ -387,8 +390,8 @@ const DiffViewer = ({ location, addError, rank }) => {
                     key={t.key}
                     closable
                     onClose={() => {
-                      updateSearch({root2: [...root2.filter((tx) => tx.key !== t.key)].map(tx => tx.key)})
-                     // setRoot2([...root2.filter((tx) => tx.key !== t.key)]);
+                      updateSearch({ root2: [...root2.filter((tx) => tx.key !== t.key)].map(tx => tx.key) })
+                      // setRoot2([...root2.filter((tx) => tx.key !== t.key)]);
                     }}
                   >
                     {t.title} {t?.total ? `(${t?.total?.toLocaleString()})` : ""}
@@ -401,7 +404,7 @@ const DiffViewer = ({ location, addError, rank }) => {
         </Row>
 
         {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
-        {empty && <Empty description="No diff"/>}
+        {empty && <Empty description="No diff" />}
         {loading && (
           <Row style={{ marginTop: "40px" }}>
             <Col flex="auto"></Col>
