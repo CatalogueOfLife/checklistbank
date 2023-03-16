@@ -519,7 +519,7 @@ class DatasetMeta extends React.Component {
               {
                 <NavLink
                   to={{
-                    pathname: `/dataset/${displayData.sourceKey}`,
+                    pathname: Auth.canViewDataset(catalogue, user) ? `/catalogue/${displayData.sourceKey}/metadata` : `/dataset/${displayData.sourceKey}`,
                   }}
                 >
                   {releasedFrom ? releasedFrom.title : displayData.sourceKey}

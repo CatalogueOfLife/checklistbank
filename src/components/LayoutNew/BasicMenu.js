@@ -308,13 +308,13 @@ class BasicMenu extends Component {
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
                   >
-                    <CopyOutlined />
+                    {/* <CopyOutlined /> */}
                     <span>Assembly</span>
                   </NavLink>
                 </Menu.Item>
                 <Menu.Item key="catalogueSectors">
                   <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
-                    <PartitionOutlined />
+                    {/* <PartitionOutlined /> */}
                     <span>Sectors</span>
                   </NavLink>
                 </Menu.Item>
@@ -329,7 +329,7 @@ class BasicMenu extends Component {
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
                   >
-                    <CheckOutlined />
+                    {/*  <CheckOutlined /> */}
                     <span>Decisions</span>
                   </NavLink>
                 </Menu.Item>
@@ -340,7 +340,7 @@ class BasicMenu extends Component {
                     }}
                   >
                     {" "}
-                    <TableOutlined />
+                    {/*  <TableOutlined /> */}
                     <span>Source datasets</span>
                   </NavLink>
                 </Menu.Item>
@@ -351,7 +351,7 @@ class BasicMenu extends Component {
                     }}
                   >
                     {" "}
-                    <LineChartOutlined />
+                    {/* <LineChartOutlined /> */}
                     <span>Source metrics</span>
                   </NavLink>
                 </Menu.Item>
