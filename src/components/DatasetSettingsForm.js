@@ -216,7 +216,7 @@ const mapContextToProps = ({
   datasetSettings,
   gazetteer,
   doiResolution,
-  nametype,
+  nametype: nameType,
   nomStatus
 }) => ({
   addError,
@@ -232,7 +232,7 @@ const mapContextToProps = ({
   datasetSettings,
   gazetteer,
   doiResolution,
-  nametype,
+  nameType,
   nomStatus
 });
 
