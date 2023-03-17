@@ -77,9 +77,8 @@ class ColTreeNode extends React.Component {
       this.props.reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
-        description: `${
-          taxa.length - errors.length
-        } were deleted from the assembly`,
+        description: `${taxa.length - errors.length
+          } were deleted from the assembly`,
       });
     });
   };
@@ -88,8 +87,7 @@ class ColTreeNode extends React.Component {
     Promise.allSettled(
       taxa.map((taxon) =>
         axios.delete(
-          `${config.dataApi}dataset/${
-            taxon.datasetKey
+          `${config.dataApi}dataset/${taxon.datasetKey
           }/tree/${encodeURIComponent(taxon.id)}`
         )
       )
@@ -103,9 +101,8 @@ class ColTreeNode extends React.Component {
       this.props.reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
-        description: `${
-          taxa.length - errors.length
-        } were deleted recursively from the assembly`,
+        description: `${taxa.length - errors.length
+          } were deleted recursively from the assembly`,
       });
     });
   };
@@ -147,6 +144,25 @@ class ColTreeNode extends React.Component {
       });
   };
 
+  consolidateHomotypicNames = (taxon) => {
+    axios
+      .post(
+        `${config.dataApi}dataset/${taxon.datasetKey}/consolidate-homotypic?taxonID=${encodeURIComponent(
+          taxon.id
+        )}`
+      )
+      .then(() => {
+        this.props.reloadSelfAndSiblings();
+        notification.open({
+          message: "Homotypic grouping",
+          description: `Consolidating homotypic names under ${taxon.name}`,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: err });
+      });
+  }
+
   cancelChildModal = () => {
     const { reloadChildren } = this.props;
     reloadChildren().then(() => this.setState({ childModalVisible: false }));
@@ -180,13 +196,13 @@ class ColTreeNode extends React.Component {
       catalogueKey,
       dataset,
     } = this.props;
-    const hasDatasetSectors = datasetSectors && ( sector && sector.subjectDatasetKey ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey])).length > 0 : true)
+    const hasDatasetSectors = datasetSectors && (sector && sector.subjectDatasetKey ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey])).length > 0 : true)
 
     const { childModalVisible, editTaxonModalVisible, estimateModalVisible, decision } =
       this.state;
 
-    const releaseKey = 
-      ["xrelease", "release"].includes(_.get(dataset, "origin") ) ? dataset.key : null;
+    const releaseKey =
+      ["xrelease", "release"].includes(_.get(dataset, "origin")) ? dataset.key : null;
     return (
       <div>
         {childModalVisible && (
@@ -285,6 +301,16 @@ class ColTreeNode extends React.Component {
                                   Delete subtree
                                 </Button>
                                 <br />
+                                <Button
+                                  type="primary"
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  onClick={() =>
+                                    this.consolidateHomotypicNames(taxon)
+                                  }
+                                >
+                                  Consolidate Homotypic Names
+                                </Button>
+                                <br />
                               </CanEditDataset>
                               <Button
                                 style={{ marginTop: "8px", width: "100%" }}
@@ -367,12 +393,11 @@ class ColTreeNode extends React.Component {
                           • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
                           {taxon.estimates.length
                             ? `(${taxon.estimates.length.toLocaleString(
-                                "en-GB"
-                              )} ${
-                                taxon.estimates.length > 1
-                                  ? "estimates"
-                                  : "estimate"
-                              })`
+                              "en-GB"
+                            )} ${taxon.estimates.length > 1
+                              ? "estimates"
+                              : "estimate"
+                            })`
                             : ""}
                         </span>
                       )}
@@ -400,104 +425,104 @@ class ColTreeNode extends React.Component {
 
                 {((mode !== "modify" && treeType === "CATALOGUE") ||
                   treeType === "SOURCE") && (
-                  <PopconfirmMultiOption
-                    visible={this.props.confirmVisible}
-                    title={this.props.confirmTitle}
-                    onConfirm={this.props.onConfirm}
-                    actions={this.props.actions}
-                    onCancel={this.props.onCancel}
-                  >
-                    <div>
-                      <span>
-                        <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                          {taxon.rank}:{" "}
-                        </span>
-                        <span
+                    <PopconfirmMultiOption
+                      visible={this.props.confirmVisible}
+                      title={this.props.confirmTitle}
+                      onConfirm={this.props.onConfirm}
+                      actions={this.props.actions}
+                      onCancel={this.props.onCancel}
+                    >
+                      <div>
+                        <span>
+                          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                            {taxon.rank}:{" "}
+                          </span>
+                          <span
                             dangerouslySetInnerHTML={{
                               __html: taxon.labelHtml,
                             }}
                           />
-                        <CopyToClipboard
-                          text={taxon.name}
-                          onCopy={() =>
-                            message.info(`Copied "${taxon.name}" to clipboard`)
-                          }
-                        >
-                          <CopyOutlined style={{fontSize: "10px", marginLeft: "4px"}}/>
-                        </CopyToClipboard>
-                      </span>
-
-                      {!_.isUndefined(taxon.speciesCount) && (
-                        <span>
-                          {" "}
-                          • {taxon.speciesCount}{" "}
-                          {!_.isUndefined(taxon.speciesEstimate) && (
-                            <span> of {taxon.speciesEstimate} est. </span>
-                          )}
-                          living species
-                        </span>
-                      )}
-                      {isUpdating && (
-                        <span>
-                          {" "}
-                          <SyncOutlined spin />
-                        </span>
-                      )}
-                      {taxon.status === "provisionally accepted" && (
-                        <React.Fragment>
-                          {" "}
-                          •{" "}
-                          <Tag
-                            color={getTaxonomicStatusColor(taxon.status)}
-                            style={{ marginRight: 0 }}
+                          <CopyToClipboard
+                            text={taxon.name}
+                            onCopy={() =>
+                              message.info(`Copied "${taxon.name}" to clipboard`)
+                            }
                           >
-                            prov.
-                          </Tag>
-                        </React.Fragment>
-                      )}
-                      {taxon.datasetKey === catalogueKey &&
-                        (!datasetSectors || _.isEmpty(datasetSectors)) &&
-                        !sector && (
-                          <Tooltip title="No sectors">
-                            <WarningFilled
-                              style={{ marginLeft: "6px", color: "wheat" }}
-                            />
-                          </Tooltip>
+                            <CopyOutlined style={{ fontSize: "10px", marginLeft: "4px" }} />
+                          </CopyToClipboard>
+                        </span>
+
+                        {!_.isUndefined(taxon.speciesCount) && (
+                          <span>
+                            {" "}
+                            • {taxon.speciesCount}{" "}
+                            {!_.isUndefined(taxon.speciesEstimate) && (
+                              <span> of {taxon.speciesEstimate} est. </span>
+                            )}
+                            living species
+                          </span>
                         )}
-                      {datasetSectors && !_.isEmpty(datasetSectors) && (
-                        <span>
-                        <span> • </span>
-                        <TaxonSources
-                          datasetSectors={datasetSectors}
-                          taxon={taxon}
-                          releaseKey={releaseKey}
-                          catalogueKey={catalogueKey}
-                        />
-                        </span>
-                      )}
-                      {sector && mode !== "modify" && (
-                        <span>
-                          <span> • </span>
-                          <Sector
-                            {...this.props}
-                            selectedSourceDatasetKey={selectedSourceDatasetKey}
-                            decisionCallback={decision => this.setState({decision})}
-                          />
-                        </span>
-                      )}
-                      {decision && (
-                        <span>
-                          <span> • </span>
-                          <DecisionTag
-                            {...this.props}
-                            decision={decision}
-                            deleteCallback={() => this.setState({decision: null})}
-                          />
-                        </span>
-                      )}
-                    </div>
-                  </PopconfirmMultiOption>
-                )}
+                        {isUpdating && (
+                          <span>
+                            {" "}
+                            <SyncOutlined spin />
+                          </span>
+                        )}
+                        {taxon.status === "provisionally accepted" && (
+                          <React.Fragment>
+                            {" "}
+                            •{" "}
+                            <Tag
+                              color={getTaxonomicStatusColor(taxon.status)}
+                              style={{ marginRight: 0 }}
+                            >
+                              prov.
+                            </Tag>
+                          </React.Fragment>
+                        )}
+                        {taxon.datasetKey === catalogueKey &&
+                          (!datasetSectors || _.isEmpty(datasetSectors)) &&
+                          !sector && (
+                            <Tooltip title="No sectors">
+                              <WarningFilled
+                                style={{ marginLeft: "6px", color: "wheat" }}
+                              />
+                            </Tooltip>
+                          )}
+                        {datasetSectors && !_.isEmpty(datasetSectors) && (
+                          <span>
+                            <span> • </span>
+                            <TaxonSources
+                              datasetSectors={datasetSectors}
+                              taxon={taxon}
+                              releaseKey={releaseKey}
+                              catalogueKey={catalogueKey}
+                            />
+                          </span>
+                        )}
+                        {sector && mode !== "modify" && (
+                          <span>
+                            <span> • </span>
+                            <Sector
+                              {...this.props}
+                              selectedSourceDatasetKey={selectedSourceDatasetKey}
+                              decisionCallback={decision => this.setState({ decision })}
+                            />
+                          </span>
+                        )}
+                        {decision && (
+                          <span>
+                            <span> • </span>
+                            <DecisionTag
+                              {...this.props}
+                              decision={decision}
+                              deleteCallback={() => this.setState({ decision: null })}
+                            />
+                          </span>
+                        )}
+                      </div>
+                    </PopconfirmMultiOption>
+                  )}
                 {treeType === "readOnly" && (
                   <div>
                     <span
@@ -531,16 +556,15 @@ class ColTreeNode extends React.Component {
                         • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
                         {taxon.estimates.length
                           ? `(${taxon.estimates.length.toLocaleString(
-                              "en-GB"
-                            )} ${
-                              taxon.estimates.length > 1
-                                ? "estimates"
-                                : "estimate"
-                            })`
+                            "en-GB"
+                          )} ${taxon.estimates.length > 1
+                            ? "estimates"
+                            : "estimate"
+                          })`
                           : ""}
                       </span>
                     )}
-                    
+
 
                     {taxon.status === "provisionally accepted" && (
                       <React.Fragment>
@@ -566,7 +590,7 @@ class ColTreeNode extends React.Component {
                           exact={true}
                         >
                           {" "}
-                          <span style={hasDatasetSectors ? {fontWeight: 'bold', fontSize: "11px"} : { fontSize: "11px" }} >
+                          <span style={hasDatasetSectors ? { fontWeight: 'bold', fontSize: "11px" } : { fontSize: "11px" }} >
                             {sector.dataset.alias || sector.dataset.key}{hasDatasetSectors && ", "}
                           </span>
                         </NavLink>

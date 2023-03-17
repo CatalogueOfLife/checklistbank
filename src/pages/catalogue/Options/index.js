@@ -190,6 +190,27 @@ class CatalogueOptions extends React.Component {
         });
       });
   };
+
+  consolidateHomotypicNames = () => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    axios
+      .post(
+        `${config.dataApi}dataset/${catalogueKey}/consolidate-homotypic`
+      )
+      .then(() => {
+        notification.open({
+          message: "Homotypic grouping",
+          description: `Consolidating homotypic names for all families`,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: err });
+      });
+  }
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   };
@@ -392,6 +413,15 @@ class CatalogueOptions extends React.Component {
               >
                 Recalculate sector counts
               </Button>
+              <Button
+                type="primary"
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+                onClick={() =>
+                  this.consolidateHomotypicNames()
+                }
+              >
+                Consolidate Homotypic Names
+              </Button>
 
               <DeleteOrphansButton
                 datasetKey={catalogueKey}
@@ -409,6 +439,7 @@ class CatalogueOptions extends React.Component {
                   record={catalogue}
                 ></DeleteDatasetButton>
               )}
+
             </Col>}
           </Row>
         </PageContent>
