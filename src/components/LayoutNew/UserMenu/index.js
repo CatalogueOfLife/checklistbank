@@ -59,42 +59,42 @@ class UserMenu extends PureComponent {
   }
 
   handleLogin = (values) => {
-    const {setCatalogue} = this.props;
+    const { setCatalogue } = this.props;
     this.props
       .login(values)
       .then((user) => {
-        if(!Auth.isAdmin(user) && user?.roles?.length && !localStorage.getItem("col_selected_project")){
-          if(user?.editor?.length > 0){
+        if (!Auth.isAdmin(user) && user?.roles?.length && !localStorage.getItem("col_selected_project")) {
+          if (user?.editor?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.editor[0]}`)
-            .then(project => {
-              setCatalogue(project?.data)
-              this.reset()
-            })
-            .catch(err => {
-              console.log(err)
-            });
-          } else if(!user.editor && user?.reviewer?.length > 0){
+              .then(project => {
+                setCatalogue(project?.data)
+                this.reset()
+              })
+              .catch(err => {
+                console.log(err)
+              });
+          } else if (!user.editor && user?.reviewer?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.reviewer[0]}`)
-            .then(project => {
-              setCatalogue(project?.data)
-              this.reset()
-            })
-            .catch(err => {
-              console.log(err)
-            });
+              .then(project => {
+                setCatalogue(project?.data)
+                this.reset()
+              })
+              .catch(err => {
+                console.log(err)
+              });
           }
         } else {
           this.reset()
-        }      
-        
+        }
+
       })
       .catch((err) => {
-        if(err?.response?.status === 401){
-          this.setState({ invalid: `Invalid Username or password`});
+        if (err?.response?.status === 401) {
+          this.setState({ invalid: `Invalid Username or password` });
         } else {
           this.setState({ invalid: err.message });
         }
-        
+
       });
   };
 
@@ -128,14 +128,14 @@ class UserMenu extends PureComponent {
           <LogoutOutlined /> Logout
         </Menu.Item>
         <Menu.Item key="profile">
-            <NavLink
-                    to={{ pathname: `/user-profile` }}
-                  >
-                    <UserOutlined /> Profile
-                  </NavLink>
-              </Menu.Item>
-        
-        {Auth.isEditorOrAdmin(user) && (
+          <NavLink
+            to={{ pathname: `/user-profile` }}
+          >
+            <UserOutlined /> Profile
+          </NavLink>
+        </Menu.Item>
+
+        {/*         {Auth.isEditorOrAdmin(user) && (
           <Menu.ItemGroup title="Project">
             {(Auth.isAdmin(user) ||
               user?.editor?.length > 0 ||
@@ -152,7 +152,7 @@ class UserMenu extends PureComponent {
                   </NavLink>
               </Menu.Item>
           </Menu.ItemGroup>
-        )}
+        )} */}
       </Menu>
     );
 
