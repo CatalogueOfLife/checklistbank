@@ -511,7 +511,7 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Citation">
               {displayData.citation && (
                 <span
-                  dangerouslySetInnerHTML={{ __html: linkify(displayData.citation) }}
+                  dangerouslySetInnerHTML={{ __html: linkify(displayData?.citation || "") }}
                 ></span>
               )}
             </PresentationItem>
@@ -535,7 +535,7 @@ class DatasetMeta extends React.Component {
                     (s.citation ? (
                       <div
                         style={{ display: "inline-block" }}
-                        dangerouslySetInnerHTML={{ __html: linkify(s.citation) }}
+                        dangerouslySetInnerHTML={{ __html: linkify(s?.citation || "") }}
                       ></div>
                     ) : (
                       s.title

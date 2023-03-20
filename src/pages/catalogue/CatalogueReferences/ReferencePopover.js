@@ -28,8 +28,8 @@ class ReferencePopover extends React.Component {
           _.get(references, id)
             ? Promise.resolve(reference.push(references[id]))
             : axios(
-                `${config.dataApi}dataset/${datasetKey}/reference/${id}`
-              ).then((res) => reference.push(res.data))
+              `${config.dataApi}dataset/${datasetKey}/reference/${id}`
+            ).then((res) => reference.push(res.data))
         )
       ).then(() => this.setState({ reference, loading: false }));
     }
@@ -40,12 +40,12 @@ class ReferencePopover extends React.Component {
     if (loading) {
       return <Spin />;
     } else if (reference.length === 1) {
-      return <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation)}}></span>;
+      return <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation || "") }}></span>;
     } else {
       return (
         <ul>
           {reference.map((r) => (
-            <li><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation)}}></span></li>
+            <li><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation || "") }}></span></li>
           ))}
         </ul>
       );
