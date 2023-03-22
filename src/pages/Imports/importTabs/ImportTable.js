@@ -156,20 +156,20 @@ class ImportTable extends React.Component {
   componentDidMount() {
     const { importState, section } = this.props;
     let query = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(query) ) {
+    if (_.isEmpty(query) || section === "running") {
       query = {
         limit: 10,
         offset: 0,
         state: importState
-          /* importState.length > 0 || section === "finished"
-            ? importState
-            : [
-                "downloading",
-                "processing",
-                "inserting",
-                "indexing",
-                "analyzing",
-              ], */
+        /* importState.length > 0 || section === "finished"
+          ? importState
+          : [
+              "downloading",
+              "processing",
+              "inserting",
+              "indexing",
+              "analyzing",
+            ], */
       };
     }
     if (query.state) {
@@ -200,41 +200,41 @@ class ImportTable extends React.Component {
     }
   }
 
-/*   refresh = () => {
-    const { importState, section } = this.props;
-    let query = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(query)) {
-      query = {
-        limit: 10,
-        offset: 0,
-        state:
-          importState.length > 0 || section === "finished"
-            ? importState
-            : [
-                "downloading",
-                "processing",
-                "inserting",
-                "indexing",
-                "analyzing",
-              ],
-      };
-    }
-    if (query.state) {
-      this.updateStatusQuery(query);
-    }
-
-    this.setState(
-      {
-        params: query,
-        pagination: {
-          pageSize: query.limit,
-          current: Number(query.offset) / Number(query.limit) + 1,
+  /*   refresh = () => {
+      const { importState, section } = this.props;
+      let query = qs.parse(_.get(this.props, "location.search"));
+      if (_.isEmpty(query)) {
+        query = {
+          limit: 10,
+          offset: 0,
+          state:
+            importState.length > 0 || section === "finished"
+              ? importState
+              : [
+                  "downloading",
+                  "processing",
+                  "inserting",
+                  "indexing",
+                  "analyzing",
+                ],
+        };
+      }
+      if (query.state) {
+        this.updateStatusQuery(query);
+      }
+  
+      this.setState(
+        {
+          params: query,
+          pagination: {
+            pageSize: query.limit,
+            current: Number(query.offset) / Number(query.limit) + 1,
+          },
         },
-      },
-      this.getData
-    );
-    // this.getData(query);
-  }; */
+        this.getData
+      );
+      // this.getData(query);
+    }; */
 
   getData = () => {
     const { section, addError } = this.props;
@@ -246,13 +246,13 @@ class ImportTable extends React.Component {
         const promises =
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map((imp) =>
-                axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
-                  (dataset) => {
-                    imp.dataset = dataset.data;
-                    imp._id = `${imp.datasetKey}_${imp.attempt}`;
-                  }
-                )
+              axios(`${config.dataApi}dataset/${imp.datasetKey}`).then(
+                (dataset) => {
+                  imp.dataset = dataset.data;
+                  imp._id = `${imp.datasetKey}_${imp.attempt}`;
+                }
               )
+            )
             : [];
 
         return Promise.allSettled(promises).then(() => res);
@@ -272,13 +272,13 @@ class ImportTable extends React.Component {
             pagination,
           },
           () => {
-            if(section !== "running"){
+            if (section !== "running") {
               history.push({
                 pathname: `/imports`,
                 search: `?${qs.stringify(params)}`,
               });
             }
-            
+
           }
         );
       })
@@ -298,7 +298,7 @@ class ImportTable extends React.Component {
   };
 
   handleTableChange = (pagination, filters, sorter) => {
-    const {section} = this.props
+    const { section } = this.props
     const pager = { ...this.state.pagination, ...pagination };
     //pager.current = pagination.current;
 
@@ -331,23 +331,23 @@ class ImportTable extends React.Component {
     const { section, importState, user } = this.props;
     const columns = Auth.isAuthorised(user, ["editor", "admin"])
       ? [
-          ...defaultColumns,
-          {
-            title: "Action",
-            dataIndex: "",
-            key: "x",
-            width: 50,
-            render: (record) =>
-              _.get(record, "dataset.origin") === "external" ? (
-                <ImportButton
-                  key={record.datasetKey}
-                  record={record}
-                ></ImportButton>
-              ) : (
-                ""
-              ),
-          },
-        ]
+        ...defaultColumns,
+        {
+          title: "Action",
+          dataIndex: "",
+          key: "x",
+          width: 50,
+          render: (record) =>
+            _.get(record, "dataset.origin") === "external" ? (
+              <ImportButton
+                key={record.datasetKey}
+                record={record}
+              ></ImportButton>
+            ) : (
+              ""
+            ),
+        },
+      ]
       : defaultColumns;
 
     if (section === "finished") {
@@ -359,11 +359,11 @@ class ImportTable extends React.Component {
 
     return (
       <>
-        {(section === 'running' && data.length ===0) && <Row><Col flex="auto"></Col><Col><h1>No running imports.</h1></Col><Col flex="auto"></Col></Row>}
+        {(section === 'running' && data.length === 0) && <Row><Col flex="auto"></Col><Col><h1>No running imports.</h1></Col><Col flex="auto"></Col></Row>}
         {(section === 'running' && data.length > 0) && <h1>Running imports:</h1>}
         {(section === 'finished') && <h1>Completed imports:</h1>}
 
-        {!(section === 'running' && data.length ===0) && (
+        {!(section === 'running' && data.length === 0) && (
           <Table
             scroll={{ x: 1000 }}
             size="small"
@@ -385,17 +385,17 @@ class ImportTable extends React.Component {
               },
               rowExpandable: (record) => section === "finished" && !['unchanged', 'canceled'].includes(record.state)
             }}
-           /*  expandedRowRender={
-              section === "finished"
-                ? (record) => {
-                    if (record.state === "failed") {
-                      return <Alert message={record.error} type="error" />;
-                    } else {
-                      return <ImportMetrics data={record}></ImportMetrics>;
-                    }
-                  }
-                : null
-            } */
+          /*  expandedRowRender={
+             section === "finished"
+               ? (record) => {
+                   if (record.state === "failed") {
+                     return <Alert message={record.error} type="error" />;
+                   } else {
+                     return <ImportMetrics data={record}></ImportMetrics>;
+                   }
+                 }
+               : null
+           } */
           />
         )}
       </>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
@@ -7,43 +7,42 @@ import withContext from "../../components/hoc/withContext";
 
 const _ = require("lodash");
 
-class Imports extends React.Component {
-  render() {
-    const { section, importState, location } = this.props;
+const Imports = ({ section, importState, location }) => {
 
-    return (
-      <Layout
-        openKeys={[]}
-        selectedKeys={["backgroundImports"]}
-        title={`Imports`}
-      >
-        <PageContent>
-       {importState.length > 0 && <ImportTable
-            importState={importState
-              .filter(
-                (i) =>
-                  i.running === true ||
-                  i.queued === true
-              )
-              .map((i) => i.name)}
-            section={"running"}
-            location={location}
-          />}
-        
-        {importState.length > 0 &&  <ImportTable
-            importState={importState
-              .filter(
-                (i) =>
-                  i.finished === true
-              )
-              .map((i) => i.name)}
-            section={"finished"}
-            location={location}
-          />}
-        </PageContent>
-          
-       
-        {/* {section === "running" && (
+  useEffect(() => { }, [importState])
+  return (
+    <Layout
+      openKeys={[]}
+      selectedKeys={["backgroundImports"]}
+      title={`Imports`}
+    >
+      <PageContent>
+        {importState.length > 0 && <ImportTable
+          importState={importState
+            .filter(
+              (i) =>
+                i.running === true ||
+                i.queued === true
+            )
+            .map((i) => i.name)}
+          section={"running"}
+          location={location}
+        />}
+
+        {importState.length > 0 && <ImportTable
+          importState={importState
+            .filter(
+              (i) =>
+                i.finished === true
+            )
+            .map((i) => i.name)}
+          section={"finished"}
+          location={location}
+        />}
+      </PageContent>
+
+
+      {/* {section === "running" && (
           <ImportTable
             importState={importState
               .filter(
@@ -68,10 +67,10 @@ class Imports extends React.Component {
             location={location}
           />
         )} */}
-      </Layout>
-    );
-  }
+    </Layout>
+  );
 }
+
 
 const mapContextToProps = ({ user, importState }) => ({ user, importState });
 export default withContext(mapContextToProps)(Imports);
