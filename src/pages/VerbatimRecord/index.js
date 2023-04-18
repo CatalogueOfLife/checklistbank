@@ -74,30 +74,31 @@ class VerbatimRecord extends React.Component {
   getIssues = () => {
     const {
       match: {
-        params: { key },
+        params: { key: key_, sourceKey },
       },
     } = this.props;
-  
-      axios(
-        `${config.dataApi}dataset/${key}/import?limit=1&state=finished`
-      )
-        .then((res) => {
-          const issuesCount = _.get(res, "data[0].issuesCount", {})    
-          const issues = Object.keys(issuesCount).map((k) => ({label: `${k} (${issuesCount[k]})`, value: k}))
-          this.setState({issues})
-        })
-        .catch((err) => {
-          
-        });
-    
+    const key = key_ || sourceKey;
+    axios(
+      `${config.dataApi}dataset/${key}/import?limit=1&state=finished`
+    )
+      .then((res) => {
+        const issuesCount = _.get(res, "data[0].issuesCount", {})
+        const issues = Object.keys(issuesCount).map((k) => ({ label: `${k} (${issuesCount[k]})`, value: k }))
+        this.setState({ issues })
+      })
+      .catch((err) => {
+
+      });
+
   }
 
   getVerbatimData = (params) => {
     const {
       match: {
-        params: { key },
+        params: { key: key_, sourceKey },
       },
     } = this.props;
+    const key = key_ || sourceKey;
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${key}/verbatim?${qs.stringify(params)}`)
       .then((res) => {
@@ -138,9 +139,9 @@ class VerbatimRecord extends React.Component {
 
     const typeFacets = _.get(lastSuccesFullImport, "verbatimByTermCount")
       ? Object.keys(lastSuccesFullImport.verbatimByTermCount).map((t) => ({
-          value: t,
-          label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`,
-        }))
+        value: t,
+        label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`,
+      }))
       : [];
 
     return (
@@ -186,17 +187,17 @@ class VerbatimRecord extends React.Component {
                   style={{ display: "inline" }}
                   current={current}
                   showSizeChanger={false}
-                 /*  showSizeChanger
-                  pageSizeOptions={[10, 50, 100]}
-                  onShowSizeChange={(current, size) => {
-                    history.push({
-                      pathname: location.pathname,
-                      search: `?${qs.stringify({
-                        ...params,
-                        limit: Number(size),
-                      })}`,
-                    });
-                  }} */
+                  /*  showSizeChanger
+                   pageSizeOptions={[10, 50, 100]}
+                   onShowSizeChange={(current, size) => {
+                     history.push({
+                       pathname: location.pathname,
+                       search: `?${qs.stringify({
+                         ...params,
+                         limit: Number(size),
+                       })}`,
+                     });
+                   }} */
                   onChange={(page, pageSize) => {
                     history.push({
                       pathname: location.pathname,
@@ -217,7 +218,7 @@ class VerbatimRecord extends React.Component {
             verbatim.length > 0 &&
             verbatim.map((v) => (
               <VerbatimPresentation
-                style={{marginBottom: "10px"}}
+                style={{ marginBottom: "10px" }}
                 key={v.id}
                 record={v}
                 datasetKey={v.datasetKey}

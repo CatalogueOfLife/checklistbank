@@ -109,7 +109,7 @@ class DatasetMeta extends React.Component {
   };
 
   getData = () => {
-    const { id, setDataset, user } = this.props;
+    const { id, isSourceInCatalogueView, setDataset, user } = this.props;
 
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${id}`)
@@ -126,7 +126,9 @@ class DatasetMeta extends React.Component {
       })
       .then((res) => {
         const { createdBy, modifiedBy } = res.data;
-        setDataset(res.data);
+        if (!isSourceInCatalogueView) {
+          setDataset(res.data);
+        }
         if (res.data.sourceKey) {
           this.getReleasedFrom(res.data.sourceKey);
         }

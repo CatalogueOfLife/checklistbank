@@ -107,6 +107,9 @@ class ContextProvider extends React.Component {
     dataset: localStorage.getItem("col_selected_dataset")
       ? JSON.parse(localStorage.getItem("col_selected_dataset"))
       : null,
+    sourceDataset: localStorage.getItem("col_selected_source_dataset")
+      ? JSON.parse(localStorage.getItem("col_selected_source_dataset"))
+      : null,
     recentDatasets: [],
     estimateType: [],
     datasetSettings: [],
@@ -127,18 +130,22 @@ class ContextProvider extends React.Component {
       this.setState({ catalogueKey });
     },
     setCatalogue: (catalogue) => {
-      if(catalogue?.key && catalogue?.title){
+      if (catalogue?.key && catalogue?.title) {
         localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
         this.setState({ catalogue, catalogueKey: catalogue.key });
       } else {
         localStorage.removeItem("col_selected_project")
         this.setState({ catalogue: null, catalogueKey: null });
       }
-      
+
     },
     setDataset: (dataset) => {
       localStorage.setItem("col_selected_dataset", JSON.stringify(dataset));
       this.setState({ dataset });
+    },
+    setSourceDataset: (sourceDataset) => {
+      localStorage.setItem("col_selected_source_dataset", JSON.stringify(sourceDataset));
+      this.setState({ sourceDataset });
     },
     setRecentDatasets: (recentDatasets) => {
       this.setState({ recentDatasets });
@@ -172,10 +179,10 @@ class ContextProvider extends React.Component {
     },
     getTaxonomicStatusColor: (status) => TAXONOMIC_STATUS_COLOR[status],
     getNomStatus: (name) => {
-      const {nomStatusMap} = this.state;
+      const { nomStatusMap } = this.state;
       if (!nomStatusMap) {
         return name.nomStatus;
-      } else if(!name.nomStatus) {
+      } else if (!name.nomStatus) {
         return ""
       } else {
         return nomStatusMap[name.nomStatus] &&
@@ -390,7 +397,7 @@ class ContextProvider extends React.Component {
       if (
         _.get(syncState, "running") &&
         _.get(syncState, "running.sectorKey") !==
-          _.get(this.state, "syncState.running.sectorKey")
+        _.get(this.state, "syncState.running.sectorKey")
       ) {
         const { data: sector } = await axios(
           `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(

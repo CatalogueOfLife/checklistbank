@@ -38,7 +38,7 @@ class DatasetPage extends React.Component {
   componentDidMount() {
     const {
       match: {
-        params: { key: datasetKey },
+        params: { sourceKey: datasetKey },
       },
     } = this.props;
     this.getData(datasetKey);
@@ -46,10 +46,10 @@ class DatasetPage extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
-      _.get(this.props, "match.params.key") !==
-      _.get(prevProps, "match.params.key")
+      _.get(this.props, "match.params.sourceKey") !==
+      _.get(prevProps, "match.params.sourceKey")
     ) {
-      this.getData(_.get(this.props, "match.params.key"));
+      this.getData(_.get(this.props, "match.params.sourceKey"));
     }
   };
 
@@ -79,13 +79,13 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey },
+        params: { sourceKey: datasetKey, section, taxonOrNameKey, catalogueKey },
       },
       location,
-      dataset,
+      sourceDataset,
       importStateMap,
     } = this.props;
-
+    const dataset = sourceDataset;
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
         <Redirect
@@ -170,7 +170,7 @@ class DatasetPage extends React.Component {
         )}
         {!section ||
           (section === "metadata" && (
-            <DatasetMeta id={datasetKey} catalogueKey={catalogueKey} />
+            <DatasetMeta isSourceInCatalogueView={true} id={datasetKey} catalogueKey={catalogueKey} />
           ))}
         {section === "classification" && (
           <DatasetClassification dataset={dataset} location={location} />
@@ -216,8 +216,8 @@ class DatasetPage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ dataset, importStateMap }) => ({
-  dataset,
+const mapContextToProps = ({ sourceDataset, importStateMap }) => ({
+  sourceDataset,
   importStateMap,
 });
 export default withContext(mapContextToProps)(DatasetPage);

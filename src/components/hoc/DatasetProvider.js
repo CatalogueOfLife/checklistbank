@@ -34,6 +34,10 @@ class DatasetProvider extends React.Component {
   componentDidUpdate = (prevProps) => {
     const nextKey = _.get(this.props, "match.params.key");
     const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
+
+    if (nextKey === "1008") {
+      console.log("test")
+    }
     const {
       match: {
         params: { key, catalogueKey },
@@ -105,12 +109,13 @@ class DatasetProvider extends React.Component {
   };
 
   fetchCatalogue = (key) => {
-    const { setCatalogue, addError } = this.props;
+    const { setCatalogue, setSourceDataset, addError } = this.props;
     this.setState({ catalogueLoading: true });
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
         this.setState({ catalogueLoading: false });
         setCatalogue(res.data);
+        setSourceDataset(null)
       })
       .catch((err) => {
         this.setState({ catalogueLoading: false });
@@ -127,11 +132,13 @@ const mapContextToProps = ({
   setCatalogue,
   dataset,
   setDataset,
+  setSourceDataset,
   setRecentDatasets,
   addError,
 }) => ({
   dataset,
   setDataset,
+  setSourceDataset,
   addError,
   setRecentDatasets,
   catalogue,

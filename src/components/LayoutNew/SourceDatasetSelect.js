@@ -62,10 +62,10 @@ class SourceSeelect extends React.Component {
   };
 
   onSourceChange = (newDatasetKey) => {
-    const { setDataset } = this.props;
+    const { setSourceDataset } = this.props;
     const {
       match: {
-        params: { key },
+        params: { sourceKey: key },
       },
       catalogueKey,
     } = this.props;
@@ -86,7 +86,7 @@ class SourceSeelect extends React.Component {
         pathname: newPath,
       });
     } else if (catalogueKey) {
-      setDataset(selectedSource);
+      setSourceDataset(selectedSource);
       history.push({
         pathname: `/catalogue/${catalogueKey}/dataset/${newDatasetKey}/issues`,
       });
@@ -95,7 +95,7 @@ class SourceSeelect extends React.Component {
     this.setState({ visible: false });
   };
   render = () => {
-    const { dataset, style={} } = this.props;
+    const { dataset, style = {} } = this.props;
     const { sources, loading } = this.state;
     return (
       <React.Fragment>
@@ -107,7 +107,7 @@ class SourceSeelect extends React.Component {
           }}
         >
           <SettingOutlined />
-          
+
         </a>
         <Modal
           title="Select source"
@@ -161,13 +161,13 @@ class SourceSeelect extends React.Component {
 const mapContextToProps = ({
   catalogueKey,
   catalogue,
-  setDataset,
+  setSourceDataset,
   user,
   dataset,
 }) => ({
   catalogueKey,
   catalogue,
-  setDataset,
+  setSourceDataset,
   user,
   dataset,
 });
