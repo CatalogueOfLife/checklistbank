@@ -16,6 +16,7 @@ import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import Releases from "./Releases";
+import DatasetNavLink from "./DatasetNavLink";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
@@ -51,16 +52,7 @@ class DatasetList extends React.Component {
           title: "Alias",
           dataIndex: "alias",
           key: "alias",
-          render: (text, record) => {
-            return (
-              <NavLink
-                to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}/about` }}
-                exact={true}
-              >
-                {text}
-              </NavLink>
-            );
-          },
+          render: (text, record) => <DatasetNavLink text={text} record={record} />
           // sorter: true
         },
         {
@@ -70,9 +62,7 @@ class DatasetList extends React.Component {
           ellipsis: true,
           render: (text, record) => {
             return (
-              <Tooltip title={text}> <NavLink to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}` }} exact={true}>
-                {text}
-              </NavLink></Tooltip>
+              <Tooltip title={text}> <DatasetNavLink text={text} record={record} /></Tooltip>
             );
           },
           sorter: true,
@@ -614,14 +604,14 @@ class DatasetList extends React.Component {
               {recentDatasets && recentDatasets.length > 0 && (
                 <Col>
                   Recently visited:{" "}
-                  <div>{recentDatasets.map((d) => (
-                    <NavLink
-                      to={{
-                        pathname: (d.origin === 'project' && Auth.canViewDataset(d, user)) ? `/catalogue/${d.key}/metadata` : `/dataset/${d.key}`,
-                      }}
-                    >
-                      <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
-                    </NavLink>
+                  <div>{recentDatasets.map((d) => (<DatasetNavLink key={d.key} record={d} text={<Tag size="small">{d.alias ? d.alias : d.key}</Tag>} />
+                    /*  <NavLink
+                       to={{
+                         pathname: (d.origin === 'project' && Auth.canViewDataset(d, user)) ? `/catalogue/${d.key}/metadata` : `/dataset/${d.key}`,
+                       }}
+                     >
+                       <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
+                     </NavLink> */
                   ))}</div>
                 </Col>
               )}
