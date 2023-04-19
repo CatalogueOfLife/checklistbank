@@ -88,7 +88,7 @@ class BasicMenu extends Component {
     } */
 
   selectedDatasetIsProjectAndUserHasAccess = (catalogue, dataset, user) => {
-    return catalogue?.key === dataset?.key && Auth.canViewDataset(dataset, user)
+    return (!dataset || catalogue?.key === dataset?.key) && Auth.canViewDataset(catalogue, user)
   }
 
   onOpenChange = (openKeys) => {

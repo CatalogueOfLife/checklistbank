@@ -390,41 +390,44 @@ class ContextProvider extends React.Component {
 
   getSyncState = async () => {
     const { catalogueKey } = this.state;
-    try {
-      const { data: syncState } = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/assembly`
-      );
-      if (
-        _.get(syncState, "running") &&
-        _.get(syncState, "running.sectorKey") !==
-        _.get(this.state, "syncState.running.sectorKey")
-      ) {
-        const { data: sector } = await axios(
-          `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
+    if (catalogueKey) {
+      try {
+        const { data: syncState } = await axios(
+          `${config.dataApi}dataset/${catalogueKey}/assembly`
+        );
+        if (
+          _.get(syncState, "running") &&
+          _.get(syncState, "running.sectorKey") !==
+          _.get(this.state, "syncState.running.sectorKey")
+        ) {
+          const { data: sector } = await axios(
+            `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
+              syncState,
+              "running.sectorKey"
+            )}`
+          );
+          const { data: sectorDataset } = await axios(
+            `${config.dataApi}dataset/${sector.subjectDatasetKey}`
+          );
+          this.setState({
             syncState,
-            "running.sectorKey"
-          )}`
-        );
-        const { data: sectorDataset } = await axios(
-          `${config.dataApi}dataset/${sector.subjectDatasetKey}`
-        );
-        this.setState({
-          syncState,
-          syncingSector: sector,
-          syncingDataset: sectorDataset,
-        });
-      } else if (!_.get(syncState, "running")) {
-        this.setState({
-          syncState,
-        });
-      } else {
-        this.setState({
-          syncState,
-        });
+            syncingSector: sector,
+            syncingDataset: sectorDataset,
+          });
+        } else if (!_.get(syncState, "running")) {
+          this.setState({
+            syncState,
+          });
+        } else {
+          this.setState({
+            syncState,
+          });
+        }
+      } catch (err) {
+        this.state.addError(err);
       }
-    } catch (err) {
-      this.state.addError(err);
     }
+
   };
 
   getBackground = async () => {

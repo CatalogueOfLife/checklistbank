@@ -21,7 +21,7 @@ const DatasetCreate = ({ user, loadTokenUser, addError }) => (
             if (origin === "external") {
               history.push(`/dataset/${res.data}/options`)
             } else {
-              history.push(`/dataset/${res.data}/about`)
+              history.push(`/catalogue/${res.data}/metadata`)
             }
           } catch (error) {
             addError(error)

@@ -57,7 +57,7 @@ class DatasetProvider extends React.Component {
   };
 
   fetchDataset = (key) => {
-    const { setDataset, setRecentDatasets, addError } = this.props;
+    const { setCatalogue, setDataset, setRecentDatasets, addError } = this.props;
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
@@ -87,6 +87,11 @@ class DatasetProvider extends React.Component {
         );
         setRecentDatasets(recentDatasets);
         setDataset(res.data);
+        if (res?.data?.origin === "project") {
+          setCatalogue(res.data);
+        } else {
+          setCatalogue(null)
+        }
       })
       .catch((err) => {
         this.setState({ loading: false });
@@ -109,13 +114,14 @@ class DatasetProvider extends React.Component {
   };
 
   fetchCatalogue = (key) => {
-    const { setCatalogue, setSourceDataset, addError } = this.props;
+    const { setDataset, setCatalogue, setSourceDataset, addError } = this.props;
     this.setState({ catalogueLoading: true });
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
         this.setState({ catalogueLoading: false });
         setCatalogue(res.data);
         setSourceDataset(null)
+        setDataset(null)
       })
       .catch((err) => {
         this.setState({ catalogueLoading: false });
