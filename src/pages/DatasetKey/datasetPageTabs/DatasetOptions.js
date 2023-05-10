@@ -122,7 +122,7 @@ class DatasetSettings extends React.Component {
                   .map((s) => (
                     <PresentationItem label={_.startCase(s.name)} key={s.name}>
                       {_.get(data, s.name) === true ||
-                      _.get(data, s.name) === false ? (
+                        _.get(data, s.name) === false ? (
                         <BooleanValue
                           value={_.get(data, s.name)}
                         ></BooleanValue>
@@ -160,6 +160,7 @@ class DatasetSettings extends React.Component {
                 <ImportButton
                   style={{ marginBottom: "10px" }}
                   record={{ datasetKey: dataset.key }}
+                  reImport={data && !(data['data access'])}
                 />
                 <br />
               </React.Fragment>

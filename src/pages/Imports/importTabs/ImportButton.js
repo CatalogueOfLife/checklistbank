@@ -15,6 +15,29 @@ class ImportButton extends React.Component {
     };
   }
 
+  reImport = () => {
+    const { record } = this.props;
+    this.setState({ importTriggered: true });
+    axios
+      .post(`${config.dataApi}importer/${record.datasetKey}/reimport`, {
+        datasetKey: record.datasetKey,
+        priority: true,
+        force: true,
+      })
+      .then((res) => {
+        this.setState({ importTriggered: false });
+        if (
+          this.props.onStartImportSuccess &&
+          typeof this.props.onStartImportSuccess === "function"
+        ) {
+          this.props.onStartImportSuccess();
+        }
+      })
+      .catch((err) => {
+        this.setState({ importTriggered: false, error: err });
+      });
+  };
+
   startImport = () => {
     const { record } = this.props;
     this.setState({ importTriggered: true });
@@ -71,7 +94,7 @@ class ImportButton extends React.Component {
 
   render = () => {
     const { error } = this.state;
-    const { record, style, importState } = this.props;
+    const { record, style, importState, reImport } = this.props;
     const isStopButton =
       [
         "waiting",
@@ -85,9 +108,9 @@ class ImportButton extends React.Component {
           style={style}
           type={isStopButton ? "danger" : "primary"}
           loading={this.state.importTriggered}
-          onClick={isStopButton ? this.stopImport : this.startImport}
+          onClick={isStopButton ? this.stopImport : reImport ? this.reImport : this.startImport}
         >
-          {!isStopButton && "Import"}
+          {!isStopButton && (reImport ? "Re-import" : "Import")}
           {isStopButton && record.state !== "waiting" && "Stop import"}
           {isStopButton && record.state === "waiting" && "Cancel"}
         </Button>
