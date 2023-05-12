@@ -38,9 +38,8 @@ import columnDefaults from "./columnDefaults";
 import Auth from "../../components/Auth";
 import { CanEditDataset } from "../../components/Auth/hasAccess";
 
-import { getSectorsBatch } from "../../api/sector";
+// import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
-import { getSourceTaxaBatch } from "../../api/sourceTaxa";
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
@@ -104,11 +103,11 @@ class DuplicateSearchPage extends React.Component {
 
   initOrUpdate = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
-    this.sectorLoader = new DataLoader((ids) =>
-      getSectorsBatch(ids, this.props.catalogueKey)
-    );
+    /*  this.sectorLoader = new DataLoader((ids) =>
+       getSectorsBatch(ids, this.props.catalogueKey)
+     ); */
 
-    this.sourceLoader = new DataLoader((ids) => getSourceTaxaBatch(ids, this.props.catalogueKey))
+    //this.sourceLoader = new DataLoader((ids) => getSourceTaxaBatch(ids, this.props.catalogueKey))
 
     this.getSectors();
     let booleans = {};
@@ -148,24 +147,34 @@ class DuplicateSearchPage extends React.Component {
     const { catalogueKey, assembly } = this.props;
     return Promise.all(
       res.usages
-        .filter((tx) => _.get(tx, "usage.sectorKey"))
-        .map((tx) =>
-          this.sectorLoader
-            .load(_.get(tx, "usage.sectorKey"), catalogueKey)
-            .then((r) => {
-              tx.sector = r;
-              return datasetLoader
-                .load(r.subjectDatasetKey)
-                .then((dataset) => (tx.sector.dataset = dataset));
-            })
-            .then(() => {
-              if (assembly) {
-                return this.sourceLoader
-                  .load(_.get(tx, "usage.id"), catalogueKey)
-                  .then((source) => (tx.usage.sourceId = source?.sourceId));
-              }
-            })
-        )
+        .filter((tx) => _.get(tx, "sourceDatasetKey"))
+        .map((tx) => {
+          if (tx?.sourceId && tx?.usage) {
+            tx.usage.sourceId = tx?.sourceId
+          }
+          if (tx?.sourceDatasetKey && tx?.usage) {
+            tx.usage.sourceDatasetKey = tx?.sourceDatasetKey
+          }
+          return datasetLoader
+            .load(tx.sourceDatasetKey)
+            .then((dataset) => (tx.usage.dataset = dataset));
+        })
+      /*  this.sectorLoader
+         .load(_.get(tx, "usage.sectorKey"), catalogueKey)
+         .then((r) => {
+           tx.sector = r;
+           return datasetLoader
+             .load(r.subjectDatasetKey)
+             .then((dataset) => (tx.sector.dataset = dataset));
+         })
+         .then(() => {
+           if (assembly) {
+             return this.sourceLoader
+               .load(_.get(tx, "usage.id"), catalogueKey)
+               .then((source) => (tx.usage.sourceId = source?.sourceId));
+           }
+         })
+     ) */
     ).then(() => res);
   };
 
@@ -219,7 +228,7 @@ class DuplicateSearchPage extends React.Component {
           .map((e, i) =>
             e.usages.map((u, id) => ({
               ...u.usage,
-              sector: u.sector,
+              //  sector: u.sector,
               dupID: i,
               dubKey: e.key,
               classification: u.classification,
@@ -259,7 +268,7 @@ class DuplicateSearchPage extends React.Component {
   getSourceColumn = () => {
     return {
       title: "source",
-      dataIndex: ["sector", "dataset", "alias"],
+      dataIndex: ["dataset", "alias"],
       width: 60,
       className: "workbench-td",
       render: (text, record) => {
@@ -269,12 +278,12 @@ class DuplicateSearchPage extends React.Component {
             to={{
               pathname: `/dataset/${_.get(
                 record,
-                "sector.subjectDatasetKey"
+                "subjectDatasetKey"
               )}/taxon/${_.get(record, "sourceId")}`,
             }}
             exact={true}
           >
-            {_.get(record, "sector.dataset.alias") || _.get(record, "sector.dataset.title")}
+            {_.get(record, "dataset.alias") || _.get(record, "dataset.title")}
           </NavLink>
         );
       },
@@ -407,7 +416,7 @@ class DuplicateSearchPage extends React.Component {
           : "") : _.get(d, "usage.accepted.name.scientificName", "");
         const body = {
           datasetKey: catalogueKey,
-          subjectDatasetKey: assembly ? d?.sector?.dataset?.key : datasetKey,
+          subjectDatasetKey: assembly ? d?.sourceDatasetKey : datasetKey,
           subject: {
             id: d?.sourceId || d?.id,
             parent: parent,
@@ -617,6 +626,10 @@ class DuplicateSearchPage extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange,
       columnWidth: "30px",
+      getCheckboxProps: (record) => ({
+        disabled: assembly && !record?.sourceId,
+
+      }),
     };
     const { offset, ...downloadParams } = params;
 
