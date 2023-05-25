@@ -10,19 +10,18 @@ import axios from "axios";
 import config from "../../config";
 import history from "../../history";
 
-const {Option} = Select;
+const { Option } = Select;
 
 const NameIndexKey = ({ nameIndexRank, addError }) => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selctedRank, setRank] = useState("species");
+  const [selectedRank, setRank] = useState(null);
   const onSearch = async (q) => {
     if (q.length > 2) {
-
       try {
         setLoading(true)
         const res = await axios(
-          `${config.dataApi}nidx/pattern?q=${q}&limit=20${selctedRank ? "&rank="+selctedRank : ""}`
+          `${config.dataApi}nidx/pattern?q=${q}&limit=20${selectedRank ? "&rank=" + selectedRank : ""}`
         );
         if (res?.data) {
           setOptions(
@@ -63,22 +62,22 @@ const NameIndexKey = ({ nameIndexRank, addError }) => {
               onSearch={onSearch}
               placeholder="Search the names index"
             >
-              <Input.Search  loading={loading} />
+              <Input.Search loading={loading} />
             </AutoComplete>
-            <br/>
-            <Select showSearch allowClear placeholder="Rank" style={{width: "300px", marginTop: "10px"}} onChange={setRank}>
-            <Option value={null}>Any</Option>
+            <br />
+            <Select showSearch allowClear placeholder="Rank" style={{ width: "300px", marginTop: "10px" }} onChange={setRank}>
+              <Option value={null}>Any</Option>
               {nameIndexRank.map(r => <Option value={r.name}>{r.label}</Option>)}
 
             </Select>
-            
+
           </Col>
           <Col flex="auto"></Col>
         </Row>
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto"></Col>
           <Col>
-         
+
           </Col>
           <Col flex="auto"></Col>
         </Row>

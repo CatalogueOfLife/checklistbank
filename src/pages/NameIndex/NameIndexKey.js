@@ -37,6 +37,13 @@ const NameIndexKey = ({ match, addError }) => {
       width: 200,
     },
     {
+      title: "Rank",
+      dataIndex: ["rank"],
+      key: "rank",
+
+      width: 100,
+    },
+    {
       title: "Basionym Authorship",
       dataIndex: ["basionymAuthorship"],
       key: "basionymAuthorship",
@@ -48,6 +55,7 @@ const NameIndexKey = ({ match, addError }) => {
         ),
       width: 200,
     },
+
     {
       title: "Combination Authorship",
       dataIndex: ["combinationAuthorship"],
@@ -69,7 +77,7 @@ const NameIndexKey = ({ match, addError }) => {
       const {
         params: { key, section },
       } = match;
-      setActiveKey(section === "related" ? "3": section === "group" ? "2": "1")
+      setActiveKey(section === "related" ? "3" : section === "group" ? "2" : "1")
       try {
         const res = await axios(`${config.dataApi}nidx/${key}`);
         if (res?.data) {
@@ -112,7 +120,7 @@ const NameIndexKey = ({ match, addError }) => {
     const {
       params: { key },
     } = match;
-    if(sections[activeKey]){
+    if (sections[activeKey]) {
       history.replace({
         pathname: `/namesindex/${key}/${sections[activeKey]}`
       });
