@@ -9,6 +9,7 @@ import RelatedNames from "./RelatedNames";
 import axios from "axios";
 import config from "../../config";
 import history from "../../history";
+import { debounce } from "lodash";
 
 const { Option } = Select;
 
@@ -59,7 +60,7 @@ const NameIndexKey = ({ nameIndexRank, addError }) => {
                 width: 300,
               }}
               onSelect={onSelect}
-              onSearch={onSearch}
+              onSearch={debounce(onSearch, 500)}
               placeholder="Search the names index"
             >
               <Input.Search loading={loading} />
