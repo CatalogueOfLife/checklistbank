@@ -8,6 +8,8 @@ if (
   domain.endsWith("www.checklistbank.org")
 ) {
   env = environments.prod;
+} else if (domain.endsWith("coltest-vh.catalogueoflife.org")) {
+  env = environments.scrap;
 } else if (domain.endsWith("localhost")) {
   env = environments.prod;
 } else {
