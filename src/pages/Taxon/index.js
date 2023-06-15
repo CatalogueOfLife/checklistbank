@@ -18,6 +18,7 @@ import PresentationItem from "../../components/PresentationItem";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import Verbatim from "./Verbatim";
 import InlineEdit from "../../components/InlineEdit";
+import SecondarySources from "./SecondarySources";
 import moment from "moment";
 import history from "../../history";
 import withContext from "../../components/hoc/withContext";
@@ -639,7 +640,7 @@ class TaxonPage extends React.Component {
                 </PresentationItem>
               )}
               {_.get(sourceDataset, "title") && (
-                <PresentationItem md={md} label="Source database">
+                <PresentationItem md={md} label="Source">
                   <div style={{ display: "inline-block" }}>
                     {" "}
                     <NavLink
@@ -653,6 +654,16 @@ class TaxonPage extends React.Component {
                     >
                       {_.get(sourceDataset, "title")}
                     </NavLink>
+                    {sourceTaxon && (
+                      <>: <NavLink
+                        to={{
+                          pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
+                        }}
+                        exact={true}
+                      >
+                        {sourceTaxon.sourceId}
+                      </NavLink></>
+                    )}
                     <span style={{ marginLeft: "10px" }}>
                       {_.get(sourceDataset, "completeness") &&
                         _.get(sourceDataset, "completeness") + "%"}
@@ -667,7 +678,7 @@ class TaxonPage extends React.Component {
                   </div>
                 </PresentationItem>
               )}
-              {sourceTaxon && (
+              {/*  {sourceTaxon && (
                 <PresentationItem md={md} label="Source taxon">
                   <NavLink
                     to={{
@@ -678,7 +689,12 @@ class TaxonPage extends React.Component {
                     {sourceTaxon.sourceId}
                   </NavLink>
                 </PresentationItem>
-              )}
+              )} */}
+              {
+                info?.source?.secondarySources && <PresentationItem md={md} label="Secondary Sources">
+                  <SecondarySources info={info} />
+                </PresentationItem>
+              }
               {_.get(taxon, "link") && (
                 <PresentationItem md={md} label="Online resource">
                   <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
@@ -701,9 +717,9 @@ class TaxonPage extends React.Component {
                   <Col span={12}>
                     <PresentationItem md={md * 2} label="Taxonomic scrutiny">
                       {`${_.get(taxon, "scrutinizer")}${_.get(taxon, "scrutinizerDate")
-                          ? ", " +
-                          moment(_.get(taxon, "scrutinizerDate")).format("LL")
-                          : ""
+                        ? ", " +
+                        moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                        : ""
                         }`}
                     </PresentationItem>
                   </Col>
