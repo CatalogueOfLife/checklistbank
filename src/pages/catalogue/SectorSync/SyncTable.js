@@ -38,14 +38,17 @@ const getColumns = (catalogueKey) => [
     ellipsis: true,
     width: 150,
     render: (text, record) => (
-      <NavLink
-        to={{
-          pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/metadata`,
-        }}
-      >
-        {_.get(record, "sector.dataset.alias") ||
-          _.get(record, "sector.dataset.title")}
-      </NavLink>
+      <>{record?.warnings?.length > 0 && <WarningOutlined style={{ color: "red", marginRight: "6px" }} />}
+        <NavLink
+          to={{
+            pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/metadata`,
+          }}
+        >
+          {_.get(record, "sector.dataset.alias") ||
+            _.get(record, "sector.dataset.title")}
+        </NavLink>
+      </>
+
     ),
   },
   {
@@ -57,7 +60,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-        {_.get(record, "sector.subject") &&  <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+          {_.get(record, "sector.subject") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.subject.rank")}:{" "}
           </span>}
           <NavLink
@@ -91,7 +94,7 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-         {_.get(record, "sector.target.rank") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+          {_.get(record, "sector.target.rank") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
             {_.get(record, "sector.target.rank")}:{" "}
           </span>}
           {_.get(record, "sector.target.id") && (
@@ -120,7 +123,7 @@ const getColumns = (catalogueKey) => [
   },
   {
     title: "Mode",
-    dataIndex: ["sector","mode"],
+    dataIndex: ["sector", "mode"],
     key: "mode",
     render: (text, record) => {
       return record?.sector?.mode;
@@ -132,7 +135,7 @@ const getColumns = (catalogueKey) => [
     dataIndex: "taxonCount",
     key: "taxonCount",
     render: (text, record) => (record?.taxonCount || 0).toLocaleString("en-GB")
-     ,
+    ,
     width: 50,
   },
   {
@@ -245,10 +248,10 @@ class SyncTable extends React.Component {
 
     if (
       _.get(prevProps, "match.params.catalogueKey") !==
-      _.get(this.props, "match.params.catalogueKey") || 
-      _.get(prevParams, "datasetKey") !==  _.get(params, "datasetKey")
+      _.get(this.props, "match.params.catalogueKey") ||
+      _.get(prevParams, "datasetKey") !== _.get(params, "datasetKey")
     ) {
-      
+
 
       this.setState(
         {
@@ -257,7 +260,7 @@ class SyncTable extends React.Component {
             current: 1,
           },
         },
-        () => this.getData({...params, limit: 25, offset: 0 })
+        () => this.getData({ ...params, limit: 25, offset: 0 })
       );
     }
   };
@@ -282,22 +285,22 @@ class SyncTable extends React.Component {
         const promises =
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map((sync) =>
-                axios(
-                  `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
-                )
-                  .then((sector) => {
-                    sync.sector = sector.data;
-                    sync._id = `${sync.sectorKey}_${sync.attempt}`;
-                  })
-                  .then(() =>
-                    axios(
-                      `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
-                    )
-                  )
-                  .then((res) => {
-                    sync.sector.dataset = res.data;
-                  })
+              axios(
+                `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
               )
+                .then((sector) => {
+                  sync.sector = sector.data;
+                  sync._id = `${sync.sectorKey}_${sync.attempt}`;
+                })
+                .then(() =>
+                  axios(
+                    `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
+                  )
+                )
+                .then((res) => {
+                  sync.sector.dataset = res.data;
+                })
+            )
             : [];
 
         return Promise.all(promises).then(() => res);
@@ -372,22 +375,22 @@ class SyncTable extends React.Component {
         params: { catalogueKey },
       },
     } = this.props;
-    const columns = Auth.canEditDataset({key: catalogueKey}, user)
+    const columns = Auth.canEditDataset({ key: catalogueKey }, user)
       ? [
-          ...getColumns(catalogueKey),
-          {
-            title: "Action",
-            dataIndex: "",
-            key: "x",
-            width: 50,
-            render: (record) =>
-              record.job === "SectorSync" ? (
-                <SyncButton size="small" key={record.datasetKey} record={record} />
-              ) : (
-                ""
-              ),
-          },
-        ]
+        ...getColumns(catalogueKey),
+        {
+          title: "Action",
+          dataIndex: "",
+          key: "x",
+          width: 50,
+          render: (record) =>
+            record.job === "SectorSync" ? (
+              <SyncButton size="small" key={record.datasetKey} record={record} />
+            ) : (
+              ""
+            ),
+        },
+      ]
       : getColumns(catalogueKey);
 
     columns[5].filters = sectorImportState.map((i) => ({
@@ -402,14 +405,14 @@ class SyncTable extends React.Component {
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
         <Row>
-        {!sectorKey && Auth.canEditDataset({key: catalogueKey}, user) && (
-         <Col> <SyncAllSectorsButton
-            catalogueKey={catalogueKey}
-            onError={(err) => this.setState({ syncAllError: err })}
-            onSuccess={() => this.setState({ syncAllError: null })}
-          /></Col>
-        )}
-        {sectorKey && (
+          {!sectorKey && Auth.canEditDataset({ key: catalogueKey }, user) && (
+            <Col> <SyncAllSectorsButton
+              catalogueKey={catalogueKey}
+              onError={(err) => this.setState({ syncAllError: err })}
+              onSuccess={() => this.setState({ syncAllError: null })}
+            /></Col>
+          )}
+          {sectorKey && (
             <Col>
               <h1>Syncs for sector {sectorKey}</h1>{" "}
               <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
@@ -417,15 +420,15 @@ class SyncTable extends React.Component {
                 Show syncs for all sectors
               </a>
             </Col>
-        )}
-        <Col flex="auto"></Col>
-        <Col>
-        <DatasetAutocomplete defaultDatasetKey={datasetKey} contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null})} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset"/>
-        </Col>
+          )}
+          <Col flex="auto"></Col>
+          <Col>
+            <DatasetAutocomplete defaultDatasetKey={datasetKey} contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null })} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset" />
+          </Col>
 
         </Row>
-        
-        
+
+
         {!error && (
           <Table
             scroll={{ x: 1000 }}
@@ -443,7 +446,7 @@ class SyncTable extends React.Component {
                   return <Alert message={record.error} type="error" />;
                 } else if (record.state === "finished") {
                   return (
-                    <React.Fragment>
+                    <>
                       <Tag key="speciesCount" color="blue">
                         Species Count: {_.get(record, `taxaByRankCount.species`)}
                       </Tag>
@@ -464,41 +467,46 @@ class SyncTable extends React.Component {
                           ""
                         )
                       )}
-                    </React.Fragment>
+                      {record?.warnings?.length > 0 &&
+                        <Alert style={{ marginTop: "10px" }} message={<ul>
+                          {record?.warnings.map(w => <li>{w}</li>)}
+                        </ul>} type="error" />}
+
+                    </>
                   );
                 };
               }
             }}
-           /*  expandedRowRender={(record) => {
-              if (record.state === "failed") {
-                return <Alert message={record.error} type="error" />;
-              } else if (record.state === "finished") {
-                return (
-                  <React.Fragment>
-                    <Tag key="speciesCount" color="blue">
-                      Species Count: {_.get(record, `taxaByRankCount.species`)}
-                    </Tag>
-                    {[
-                      "taxonCount",
-                      "synonymCount",
-                      "referenceCount",
-                      "distributionCount",
-                      "descriptionCount",
-                      "vernacularCount",
-                      "mediaCount",
-                    ].map((c) =>
-                      !isNaN(_.get(record, `${c}`)) ? (
-                        <Tag key={c} color="blue">
-                          {_.startCase(c)}: {_.get(record, `${c}`)}
-                        </Tag>
-                      ) : (
-                        ""
-                      )
-                    )}
-                  </React.Fragment>
-                );
-              } else return null;
-            }} */
+          /*  expandedRowRender={(record) => {
+             if (record.state === "failed") {
+               return <Alert message={record.error} type="error" />;
+             } else if (record.state === "finished") {
+               return (
+                 <React.Fragment>
+                   <Tag key="speciesCount" color="blue">
+                     Species Count: {_.get(record, `taxaByRankCount.species`)}
+                   </Tag>
+                   {[
+                     "taxonCount",
+                     "synonymCount",
+                     "referenceCount",
+                     "distributionCount",
+                     "descriptionCount",
+                     "vernacularCount",
+                     "mediaCount",
+                   ].map((c) =>
+                     !isNaN(_.get(record, `${c}`)) ? (
+                       <Tag key={c} color="blue">
+                         {_.startCase(c)}: {_.get(record, `${c}`)}
+                       </Tag>
+                     ) : (
+                       ""
+                     )
+                   )}
+                 </React.Fragment>
+               );
+             } else return null;
+           }} */
           />
         )}
       </>
