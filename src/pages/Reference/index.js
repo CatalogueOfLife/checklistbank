@@ -49,7 +49,7 @@ const Reference = ({dataset, id, addError}) => {
     return  <PageContent>
         {loading && <Row><Col flex="auto"></Col><Col><Spin /></Col><Col flex="auto"></Col></Row>}
    {reference && <>
-    {reference?.citation &&   <h1 dangerouslySetInnerHTML={{ __html: linkify(reference?.citation)}}></h1>}
+    {reference?.citation &&   <h1 dangerouslySetInnerHTML={{ __html: linkify(reference?.citation || "")}}></h1>}
 
     <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
     <TabPane tab="Reference" key="1">
@@ -82,7 +82,7 @@ const Reference = ({dataset, id, addError}) => {
                         return <PresentationItem md={md} label={key}>
                         {
                         <span
-                        dangerouslySetInnerHTML={{ __html: linkify(reference.csl[key])}}
+                        dangerouslySetInnerHTML={{ __html: linkify(reference.csl[key] || "")}}
                       ></span>}
                    </PresentationItem>
                     }
