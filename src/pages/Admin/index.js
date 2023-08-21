@@ -205,11 +205,10 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       error,
-      background: background,
       components: components,
       componentsLoading: componentsLoading
     } = this.state;
-
+    const { background } = this.props;
     return (
       <Layout
         openKeys={["admin"]}
