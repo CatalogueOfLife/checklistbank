@@ -872,7 +872,7 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )}
-              {selectedDataset && !["release", "release", "project"].includes(_.get(selectedDataset, "origin"))
+              {selectedDataset && !["xrelease", "release", "release", "project"].includes(_.get(selectedDataset, "origin"))
                 && (
                   <Menu.Item key="imports">
                     <NavLink
