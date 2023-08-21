@@ -236,7 +236,7 @@ class SiteLayout extends Component {
                       <PulsatingDot />
                     </Col>
                     <Col style={{ paddingLeft: "10px" }}>
-                      The system is under maintenance - please expect errors.
+                      The system is in read-only mode. Any changes including downloads, editorial work, new dataset or user registrations will be discarded!
                     </Col>
                   </Row>
                 }
