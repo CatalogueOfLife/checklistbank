@@ -56,7 +56,10 @@ const SectorForm = ({
   const mode = Form.useWatch('mode', form);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
-  useEffect(() => { }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
+  useEffect(() => {
+
+    console.log(sector?.nameTypes)
+  }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
   useEffect(() => {
     if (subjectDatasetKey || sector?.subjectDatasetKey) {
       axios

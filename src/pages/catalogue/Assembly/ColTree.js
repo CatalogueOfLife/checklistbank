@@ -87,9 +87,7 @@ class ColTree extends React.Component {
 
   componentDidMount = () => {
     this.loadRoot();
-    this.sectorLoader = new DataLoader((ids) =>
-      getSectorsBatch(ids, this.props.catalogueKey)
-    );
+
     const { treeRef } = this.props;
     treeRef(this);
   };
@@ -105,9 +103,7 @@ class ColTree extends React.Component {
         expandedKeys: [],
         selectedKeys: []
       }, this.loadRoot);
-      this.sectorLoader = new DataLoader((ids) =>
-        getSectorsBatch(ids, this.props.catalogueKey)
-      );
+
     }
 
   };
@@ -678,11 +674,14 @@ class ColTree extends React.Component {
   decorateWithSectorsAndDataset = (res) => {
     if (!res.data.result) return res;
     const { catalogueKey } = this.props;
+    const sectorLoader = new DataLoader((ids) =>
+      getSectorsBatch(ids, catalogueKey)
+    );
     return Promise.allSettled(
       res.data.result
         .filter((tx) => !!tx.sectorKey)
         .map((tx) =>
-          this.sectorLoader.load(tx.sectorKey, catalogueKey).then((r) => {
+          sectorLoader.load(tx.sectorKey, catalogueKey).then((r) => {
             if (!r) {
               return this.setState({
                 error: { message: `Sector ${tx.sectorKey} was not found` },
