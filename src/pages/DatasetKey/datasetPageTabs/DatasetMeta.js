@@ -242,7 +242,7 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
               <Col>
-                {!catalogueKey && data && !data.deleted && (
+                {/* !catalogueKey &&  */data && !data.deleted && (
                   <Popconfirm
                     title={`Make dataset ${data.private ? "public" : "private"
                       }`}
