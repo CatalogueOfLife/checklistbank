@@ -181,10 +181,17 @@ class ColTreeNode extends React.Component {
   };
   getTaxonUrl = (selectedSourceDatasetKey) => {
     const { location } = this.props;
+    const urlAfterDatasetRoute = location.pathname?.split(`dataset/`)[1];
+    // console.log("### " + urlAfterDatasetRoute)
+    const datasetKey = urlAfterDatasetRoute?.split("/")[0]
     return (
+      location.pathname.split(`dataset/${datasetKey}`)[0] +
+      `dataset/${datasetKey}/taxon/`
+    );
+    /* return (
       location.pathname.split(`dataset/${selectedSourceDatasetKey}`)[0] +
       `dataset/${selectedSourceDatasetKey}/taxon/`
-    );
+    ); */
   };
   render = () => {
     const {
