@@ -22,6 +22,7 @@
     "highcharts-react-official": "^3.0.0",
     "history": "^4.7.2",
     "install": "^0.13.0",
+    "js-base64": "^3.7.5",
     "linkify-html": "^3.0.5",
     "linkifyjs": "^3.0.5",
     "lodash": ">=4.6.2",
