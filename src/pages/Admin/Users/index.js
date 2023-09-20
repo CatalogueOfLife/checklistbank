@@ -210,6 +210,7 @@ const UserAdmin = ({
     >
       <PageContent>
         <Modal
+          width={800}
           title={<>{`Roles and scopes for ${userForEdit?.username}`}{userForEdit?.blocked && <> <Tooltip title={`The user was blocked ${moment(userForEdit.blocked).format(
             "MMMM Do YYYY, h:mm a"
           )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip></>}</>}

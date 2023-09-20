@@ -15,9 +15,9 @@ const Auth = {
     }
     const { roles, editor } = user;
     return (
-      roles &&
-      (roles.includes("admin") ||
-        (editor && roles.includes("editor") && editor.includes(Number(dataset.key))))
+      (roles &&
+      (roles.includes("admin") || roles.includes("editor"))) ||
+      (editor  && editor.includes(Number(dataset.key)))
     );
   },
   canViewDataset: (dataset, user) => {
@@ -26,12 +26,10 @@ const Auth = {
     }
     const { roles, editor, reviewer } = user;
     return (
-      roles &&
-      (roles.includes("admin") ||
-        (editor && roles.includes("editor") && editor.includes(Number(dataset.key))) ||
-        (reviewer &&
-          roles.includes("reviewer") &&
-          reviewer.includes(dataset.key)))
+      // if any role is present, the user can view a dataset
+      (roles && roles.length > 0) ||
+      (editor && editor.includes(Number(dataset.key))) ||
+      (reviewer && reviewer.includes(Number(dataset.key)))
     );
   },
   isEditorOrAdmin: (user) => {
