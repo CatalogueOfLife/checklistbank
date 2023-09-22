@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { NavLink, withRouter } from "react-router-dom";
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption";
+import TextTreeUpload from "../../../components/TextTreeUpload";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -20,6 +21,7 @@ import DecisionTag from "../../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
+import UploadTextTreeModal from "./UploadTextTreeModal"
 import TaxonSources from "./TaxonSources";
 import withContext from "../../../components/hoc/withContext";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -38,6 +40,8 @@ class ColTreeNode extends React.Component {
       childModalVisible: false,
       editTaxonModalVisible: false,
       estimateModalVisible: false,
+      uploadTextTreeModalVisible: false,
+      subtreeDownloadPending: false
     };
   }
 
@@ -179,6 +183,11 @@ class ColTreeNode extends React.Component {
 
     this.setState({ estimateModalVisible: false }, reloadSelfAndSiblings);
   };
+  cancelUploadTextTreeModal = () => {
+    const { reloadSelfAndSiblings } = this.props;
+
+    this.setState({ uploadTextTreeVisible: false }, reloadSelfAndSiblings);
+  };
   getTaxonUrl = (selectedSourceDatasetKey) => {
     const { location } = this.props;
     const urlAfterDatasetRoute = location.pathname?.split(`dataset/`)[1];
@@ -193,6 +202,39 @@ class ColTreeNode extends React.Component {
       `dataset/${selectedSourceDatasetKey}/taxon/`
     ); */
   };
+ 
+  downloadSubtree =  () => {
+    try {
+      const {taxon} = this.props
+      this.setState({subtreeDownloadPending: true})
+      axios({
+        url: `${config.dataApi}dataset/${taxon.datasetKey}/nameusage/${encodeURIComponent(
+          taxon.id
+        )}/tree`, //your url
+        method: 'GET',
+        responseType: 'blob', // important
+    }).then((response) => {
+        // create file link in browser's memory
+        const href = URL.createObjectURL(response.data);
+    
+        // create "a" HTML element with href to file & click
+        const link = document.createElement('a');
+        link.href = href;
+        link.setAttribute('download', `${taxon.id}_tree.txt`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+    
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+        this.setState({subtreeDownloadPending: false})
+    });
+    } catch (error) {
+      alert(error)
+      this.setState({subtreeDownloadPending: false})
+    }
+  }
+
   render = () => {
     const {
       taxon,
@@ -205,7 +247,7 @@ class ColTreeNode extends React.Component {
     } = this.props;
     const hasDatasetSectors = datasetSectors && (sector && sector.subjectDatasetKey ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey])).length > 0 : true)
 
-    const { childModalVisible, editTaxonModalVisible, estimateModalVisible, decision } =
+    const { childModalVisible, editTaxonModalVisible, estimateModalVisible, uploadTextTreeModalVisible, decision } =
       this.state;
 
     const releaseKey =
@@ -234,7 +276,13 @@ class ColTreeNode extends React.Component {
             catalogueKey={catalogueKey}
           />
         )}
-
+        {uploadTextTreeModalVisible && (
+          <UploadTextTreeModal
+            onCancel={this.cancelUploadTextTreeModal}
+            onSuccess={this.cancelUploadTextTreeModal}
+            taxon={taxon}
+          />
+        )}
         <ColTreeContext.Consumer>
           {({ mode, selectedSourceDatasetKey, selectedAssemblyTreeNodes }) => {
             const taxonIsInSelectedNodes =
@@ -263,7 +311,28 @@ class ColTreeNode extends React.Component {
                                 Show taxon
                               </Button>
                               <br />
+                              <Button
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  type="primary"
+                                  onClick={this.downloadSubtree}
+                                  loading={this.state.subtreeDownloadPending}
+                                >
+                                  Download subtree as text
+                                </Button>
                               <CanEditDataset dataset={{ key: catalogueKey }}>
+                              <br />
+                              <Button
+                                  style={{ marginTop: "8px", width: "100%" }}
+                                  type="primary"
+                                  onClick={() =>
+                                    this.setState({
+                                      uploadTextTreeModalVisible: true,
+                                    })
+                                  }
+                                >
+                                  Upload Trext Tree
+                                </Button>
+                                <br />
                                 <Button
                                   style={{ marginTop: "8px", width: "100%" }}
                                   type="primary"
