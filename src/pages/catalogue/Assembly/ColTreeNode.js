@@ -330,7 +330,7 @@ class ColTreeNode extends React.Component {
                                     })
                                   }
                                 >
-                                  Upload Trext Tree
+                                  Upload text tree
                                 </Button>
                                 <br />
                                 <Button
