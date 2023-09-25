@@ -8,12 +8,12 @@ import { UploadOutlined } from "@ant-design/icons";
 // const { confirm } = Modal;
 
 const readFile = (file) => {
-    const reader = new FileReader();
-    return new Promise((resolve, reject) => {
-      reader.onload = event => resolve(event.target.result)
-      reader.onerror = error => reject(error)
-      reader.readAsText(file)
-    })
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = event => resolve(event.target.result)
+    reader.onerror = error => reject(error)
+    reader.readAsText(file)
+  })
 }
 
 class TextTreeUpload extends React.Component {
@@ -32,14 +32,14 @@ class TextTreeUpload extends React.Component {
   }
 
   customRequest = async (options) => {
-    this.setState({loading: true})
-    const {replace} = this.state;
+    this.setState({ loading: true })
+    const { replace } = this.state;
     const config = {
       headers: {
         "content-type": "text/plain"
       },
     };
-    
+
     const text = await readFile(options.file)
     const url = replace ? `${options.action}?replace=true` : options.action;
     return axios
@@ -47,13 +47,13 @@ class TextTreeUpload extends React.Component {
       .then((res) => {
         options.onSuccess(res.data, options.file);
         this.setState({ submissionError: null, confirmPromise: null });
-        this.setState({loading: false})
+        this.setState({ loading: false })
       })
       .catch((err) => {
         options.onError(err);
         this.setState({ submissionError: err, confirmPromise: null });
         console.log(err);
-        this.setState({loading: false})
+        this.setState({ loading: false })
       });
   };
 
@@ -81,7 +81,7 @@ class TextTreeUpload extends React.Component {
     const { taxon } = this.props;
     const { submissionError, fileList, replace } = this.state;
     return (
-        <>
+      <>
         {submissionError && (
           <Alert
             style={{ marginBottom: "8px" }}
@@ -93,28 +93,28 @@ class TextTreeUpload extends React.Component {
         )}
 
         <Upload
-          action={`${config.dataApi}dataset/${taxon.datasetKey}/nameusage/${taxon.id}/tree`}
+          action={`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}/tree`}
           customRequest={this.customRequest}
           onChange={this.onChange}
           fileList={fileList}
           beforeUpload={this.confirmUpload}
           showUploadList={false}
         >
-          <Button 
+          <Button
             loading={this.state.loading}
-            style={{ marginTop: "8px",  marginRight: "12px" }}
+            style={{ marginTop: "8px", marginRight: "12px" }}
             type="primary">
             <UploadOutlined /> Upload text tree
           </Button>
-            <Checkbox
-             disabled={this.state.loading}
-              checked={replace}
-              onChange={(e) => this.setState({ replace: e.target.checked })}
-            >
-              Replace
-            </Checkbox>
+          <Checkbox
+            disabled={this.state.loading}
+            checked={replace}
+            onChange={(e) => this.setState({ replace: e.target.checked })}
+          >
+            Replace
+          </Checkbox>
         </Upload>
-        </>
+      </>
     );
   }
 }

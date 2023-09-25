@@ -202,36 +202,36 @@ class ColTreeNode extends React.Component {
       `dataset/${selectedSourceDatasetKey}/taxon/`
     ); */
   };
- 
-  downloadSubtree =  () => {
+
+  downloadSubtree = () => {
     try {
-      const {taxon} = this.props
-      this.setState({subtreeDownloadPending: true})
+      const { taxon } = this.props
+      this.setState({ subtreeDownloadPending: true })
       axios({
-        url: `${config.dataApi}dataset/${taxon.datasetKey}/nameusage/${encodeURIComponent(
+        url: `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(
           taxon.id
         )}/tree`, //your url
         method: 'GET',
         responseType: 'blob', // important
-    }).then((response) => {
+      }).then((response) => {
         // create file link in browser's memory
         const href = URL.createObjectURL(response.data);
-    
+
         // create "a" HTML element with href to file & click
         const link = document.createElement('a');
         link.href = href;
         link.setAttribute('download', `${taxon.id}_tree.txt`); //or any other extension
         document.body.appendChild(link);
         link.click();
-    
+
         // clean up "a" element & remove ObjectURL
         document.body.removeChild(link);
         URL.revokeObjectURL(href);
-        this.setState({subtreeDownloadPending: false})
-    });
+        this.setState({ subtreeDownloadPending: false })
+      });
     } catch (error) {
       alert(error)
-      this.setState({subtreeDownloadPending: false})
+      this.setState({ subtreeDownloadPending: false })
     }
   }
 
@@ -312,16 +312,16 @@ class ColTreeNode extends React.Component {
                               </Button>
                               <br />
                               <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="primary"
-                                  onClick={this.downloadSubtree}
-                                  loading={this.state.subtreeDownloadPending}
-                                >
-                                  Download subtree as text
-                                </Button>
+                                style={{ marginTop: "8px", width: "100%" }}
+                                type="primary"
+                                onClick={this.downloadSubtree}
+                                loading={this.state.subtreeDownloadPending}
+                              >
+                                Download subtree as text
+                              </Button>
                               <CanEditDataset dataset={{ key: catalogueKey }}>
-                              <br />
-                              <Button
+                                <br />
+                                <Button
                                   style={{ marginTop: "8px", width: "100%" }}
                                   type="primary"
                                   onClick={() =>
