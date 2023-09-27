@@ -112,8 +112,9 @@ class DatasetDownload extends React.Component {
 
   getRootTaxon = (key) => {
     const { dataset, addError } = this.props;
+    
     axios
-      .get(`${config.dataApi}dataset/${dataset?.key}/taxon/${key}`)
+      .get(`${config.dataApi}dataset/${dataset?.key}/taxon/${encodeURIComponent(key)}`)
       .then(({ data: rootTaxon }) => {
         console.log(rootTaxon);
         this.setState({ rootTaxon });
