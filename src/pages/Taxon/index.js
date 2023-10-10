@@ -25,14 +25,14 @@ import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import References from "./References";
 import TypeMaterial from "./TypeMaterial";
-import PublishedInPagePreview from "./PublishedInPagePreview"
+import PublishedInPagePreview from "./PublishedInPagePreview";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
 import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
-import Linkify from 'react-linkify';
+import Linkify from "react-linkify";
 import marked from "marked";
 import DOMPurify from "dompurify";
 
@@ -118,7 +118,7 @@ class TaxonPage extends React.Component {
     }
   };
 
-  redirectIfSynonym = async () => { };
+  redirectIfSynonym = async () => {};
 
   getTaxon = () => {
     const {
@@ -145,10 +145,9 @@ class TaxonPage extends React.Component {
         if (_.get(res, "data.name")) {
           promises.push(
             axios(
-              `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(_.get(
-                res,
-                "data.name.id"
-              ))}/relations`
+              `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(
+                _.get(res, "data.name.id")
+              )}/relations`
             ).then((relations) => {
               res.data.name.relations = relations.data;
               return Promise.all(
@@ -171,18 +170,16 @@ class TaxonPage extends React.Component {
               "data.sectorKey"
             )}`
           ).then((sector) => {
-            axios(
-              `${config.dataApi}dataset/${_.get(
-                sector,
-                "data.subjectDatasetKey"
-              )}/logo`
-            )
+            const logoUrl = `${
+              config.dataApi
+            }dataset/${datasetKey}/logo/source/${_.get(
+              sector,
+              "data.subjectDatasetKey"
+            )}`;
+            axios(logoUrl)
               .then(() => {
                 this.setState({
-                  logoUrl: `${config.dataApi}dataset/${_.get(
-                    sector,
-                    "data.subjectDatasetKey"
-                  )}/logo`,
+                  logoUrl: logoUrl,
                 });
               })
               .catch(() => {
@@ -237,12 +234,17 @@ class TaxonPage extends React.Component {
           );
         }
         let referenceIndexMap = {};
-        if (_.get(res, 'data.references')) {
+        if (_.get(res, "data.references")) {
           Object.keys(res.data.references).forEach((k, i) => {
             referenceIndexMap[k] = (i + 1).toString();
-          })
+          });
         }
-        this.setState({ infoLoading: false, info: res.data, infoError: null, referenceIndexMap });
+        this.setState({
+          infoLoading: false,
+          info: res.data,
+          infoError: null,
+          referenceIndexMap,
+        });
       })
       .catch((err) => {
         this.setState({ infoLoading: false, infoError: err, info: null });
@@ -335,7 +337,7 @@ class TaxonPage extends React.Component {
       infoError,
       includes,
       edit,
-      referenceIndexMap
+      referenceIndexMap,
     } = this.state;
 
     /*     const synonyms =
@@ -346,10 +348,13 @@ class TaxonPage extends React.Component {
           info && info.synonyms && info.synonyms.length > 0
             ? info.synonyms.filter((s) => s.status === "misapplied")
             : []; */
-    const homotypic = _.get(info, 'synonyms.homotypic', [])
-    const heterotypic = _.get(info, 'synonyms.heterotypic', [])
-    const misapplied = _.get(info, 'synonyms.misapplied', [])
-    const synonyms = [...homotypic.map(h => ({ ...h, __homotypic: true })), ...heterotypic]
+    const homotypic = _.get(info, "synonyms.homotypic", []);
+    const heterotypic = _.get(info, "synonyms.heterotypic", []);
+    const misapplied = _.get(info, "synonyms.misapplied", []);
+    const synonyms = [
+      ...homotypic.map((h) => ({ ...h, __homotypic: true })),
+      ...heterotypic,
+    ];
 
     return (
       <React.Fragment>
@@ -438,7 +443,10 @@ class TaxonPage extends React.Component {
           )}
 
           {synonymsError && (
-            <Alert description={<ErrorMsg error={synonymsError} />} type="error" />
+            <Alert
+              description={<ErrorMsg error={synonymsError} />}
+              type="error"
+            />
           )}
 
           {classificationError && (
@@ -452,35 +460,65 @@ class TaxonPage extends React.Component {
             <TabPane tab="About" key="1">
               {_.get(info, "taxon.name.publishedIn.citation") && (
                 <PresentationItem md={md} label="Published in">
-                  <Linkify>{_.get(info, "taxon.name.publishedIn.citation", "")}</Linkify>
+                  <Linkify>
+                    {_.get(info, "taxon.name.publishedIn.citation", "")}
+                  </Linkify>
                 </PresentationItem>
               )}
-              {_.get(info, "taxon.accordingTo") && <PresentationItem md={md} label="According to">
-                {_.get(info, "taxon.accordingToId") ? <NavLink to={{ pathname: `/dataset/${datasetKey}/reference/${_.get(info, "taxon.accordingToId")}` }}>{_.get(info, "taxon.accordingTo")}</NavLink>
-                  : _.get(info, "taxon.accordingTo")
-                }
-              </PresentationItem>}
-              {_.get(info, "taxon.name.publishedInPageLink") && <PresentationItem md={md} label="Published In Page Link">
-                <Row>
-                  <Col><a href={_.get(info, "taxon.name.publishedInPageLink")} target="_blank" >
-                    {_.get(info, "taxon.name.publishedInPageLink")}
-                  </a></Col>
-                  <Col>
-                    <PublishedInPagePreview publishedInPageLink={_.get(info, "taxon.name.publishedInPageLink")} style={{ boxShadow: "6px 6px 6px lightgrey", marginLeft: "10px" }} />
-                  </Col>
-                  <Col flex="auto"></Col>
-                </Row>
-
-
-
-
-              </PresentationItem>}
-              {_.get(info, "typeMaterial") && info.typeMaterial[info?.taxon?.name?.id] && (
-                <PresentationItem md={md} label="Type material">
-                  <TypeMaterial data={_.get(info, "typeMaterial")} nameID={_.get(taxon, 'name.id')} />
-
+              {_.get(info, "taxon.accordingTo") && (
+                <PresentationItem md={md} label="According to">
+                  {_.get(info, "taxon.accordingToId") ? (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${datasetKey}/reference/${_.get(
+                          info,
+                          "taxon.accordingToId"
+                        )}`,
+                      }}
+                    >
+                      {_.get(info, "taxon.accordingTo")}
+                    </NavLink>
+                  ) : (
+                    _.get(info, "taxon.accordingTo")
+                  )}
                 </PresentationItem>
               )}
+              {_.get(info, "taxon.name.publishedInPageLink") && (
+                <PresentationItem md={md} label="Published In Page Link">
+                  <Row>
+                    <Col>
+                      <a
+                        href={_.get(info, "taxon.name.publishedInPageLink")}
+                        target="_blank"
+                      >
+                        {_.get(info, "taxon.name.publishedInPageLink")}
+                      </a>
+                    </Col>
+                    <Col>
+                      <PublishedInPagePreview
+                        publishedInPageLink={_.get(
+                          info,
+                          "taxon.name.publishedInPageLink"
+                        )}
+                        style={{
+                          boxShadow: "6px 6px 6px lightgrey",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </Col>
+                    <Col flex="auto"></Col>
+                  </Row>
+                </PresentationItem>
+              )}
+              {_.get(info, "typeMaterial") &&
+                info.typeMaterial[info?.taxon?.name?.id] && (
+                  <PresentationItem md={md} label="Type material">
+                    <TypeMaterial
+                      data={_.get(info, "typeMaterial")}
+                      nameID={_.get(taxon, "name.id")}
+                    />
+                  </PresentationItem>
+                )}
               <Row style={{ borderBottom: "1px solid #eee" }}>
                 <Col span={12}>
                   {_.get(taxon, "status") && (
@@ -570,8 +608,8 @@ class TaxonPage extends React.Component {
                 rank.indexOf(_.get(taxon, "name.rank")) > -1) ||
                 (_.get(taxon, "name.rank") === "unranked" &&
                   _.get(taxon, "name.scientificName") === "Biota")) && (
-                  <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
-                )}
+                <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
+              )}
               {includes.length > 1 && taxon && (
                 <PresentationItem md={md} label="Statistics">
                   <IncludesTable
@@ -627,7 +665,6 @@ class TaxonPage extends React.Component {
 
               {_.get(taxon, "remarks") && (
                 <PresentationItem md={md} label="Remarks">
-
                   {taxon?.remarks ? (
                     <span
                       dangerouslySetInnerHTML={{
@@ -655,14 +692,17 @@ class TaxonPage extends React.Component {
                       {_.get(sourceDataset, "title")}
                     </NavLink>
                     {sourceTaxon && (
-                      <>: <NavLink
-                        to={{
-                          pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
-                        }}
-                        exact={true}
-                      >
-                        {sourceTaxon.sourceId}
-                      </NavLink></>
+                      <>
+                        :{" "}
+                        <NavLink
+                          to={{
+                            pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
+                          }}
+                          exact={true}
+                        >
+                          {sourceTaxon.sourceId}
+                        </NavLink>
+                      </>
                     )}
                     <span style={{ marginLeft: "10px" }}>
                       {_.get(sourceDataset, "completeness") &&
@@ -690,11 +730,11 @@ class TaxonPage extends React.Component {
                   </NavLink>
                 </PresentationItem>
               )} */}
-              {
-                info?.source?.secondarySources && <PresentationItem md={md} label="Secondary Sources">
+              {info?.source?.secondarySources && (
+                <PresentationItem md={md} label="Secondary Sources">
                   <SecondarySources info={info} />
                 </PresentationItem>
-              }
+              )}
               {_.get(taxon, "link") && (
                 <PresentationItem md={md} label="Online resource">
                   <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
@@ -704,23 +744,26 @@ class TaxonPage extends React.Component {
                 <PresentationItem md={md} label="Related names">
                   <NavLink
                     to={{
-                      pathname: `/namesindex/${_.get(info, "taxon.name.namesIndexId")}/related`
+                      pathname: `/namesindex/${_.get(
+                        info,
+                        "taxon.name.namesIndexId"
+                      )}/related`,
                     }}
                   >
                     <LinkOutlined />
                   </NavLink>
-
                 </PresentationItem>
               )}
               <Row style={{ borderBottom: "1px solid #eee" }}>
                 {_.get(taxon, "scrutinizer") && (
                   <Col span={12}>
                     <PresentationItem md={md * 2} label="Taxonomic scrutiny">
-                      {`${_.get(taxon, "scrutinizer")}${_.get(taxon, "scrutinizerDate")
-                        ? ", " +
-                        moment(_.get(taxon, "scrutinizerDate")).format("LL")
-                        : ""
-                        }`}
+                      {`${_.get(taxon, "scrutinizer")}${
+                        _.get(taxon, "scrutinizerDate")
+                          ? ", " +
+                            moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                          : ""
+                      }`}
                     </PresentationItem>
                   </Col>
                 )}
@@ -735,18 +778,19 @@ class TaxonPage extends React.Component {
               </Row>
               {_.get(info, "references") && (
                 <PresentationItem md={md} label="References">
-                  <References data={_.get(info, "references")} referenceIndexMap={referenceIndexMap} />
-
+                  <References
+                    data={_.get(info, "references")}
+                    referenceIndexMap={referenceIndexMap}
+                  />
                 </PresentationItem>
               )}
             </TabPane>
-            {_.get(taxon, "verbatimKey") &&
+            {_.get(taxon, "verbatimKey") && (
               <TabPane tab="Verbatim" key="2">
                 <Verbatim verbatimKey={taxon.verbatimKey} />
-              </TabPane>}
-
+              </TabPane>
+            )}
           </Tabs>
-
         </div>
       </React.Fragment>
     );

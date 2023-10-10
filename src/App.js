@@ -18,7 +18,7 @@ import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
 import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
 
 import SectorSync from "./pages/catalogue/SectorSync";
-import SectorPriority from "./pages/catalogue/CatalogueSectors/Priority"
+import SectorPriority from "./pages/catalogue/CatalogueSectors/Priority";
 import CatalogueSectors from "./pages/catalogue/CatalogueSectors";
 import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon";
 import CatalogueName from "./pages/catalogue/CatalogueName";
@@ -32,7 +32,7 @@ import ProjectEditors from "./pages/catalogue/Editors";
 import Admin from "./pages/Admin";
 import EsAdmin from "./pages/Admin/EsAdmin";
 import UserAdmin from "./pages/Admin/Users";
-import AdminJobs from "./pages/Admin/Jobs"
+import AdminJobs from "./pages/Admin/Jobs";
 import SectorDiff from "./pages/catalogue/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -47,9 +47,9 @@ import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import NameMatch from "./pages/tools/NameMatch2";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
-import TaxonComparer from "./pages/tools/TaxonComparer"
+import TaxonComparer from "./pages/tools/TaxonComparer";
 import NameUsageSearch from "./pages/NameSearch/Search";
-import UserProfile from "./pages/UserProfile"
+import UserProfile from "./pages/UserProfile";
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
@@ -61,7 +61,6 @@ const theme = {
 };
 
 const App = () => {
-
   return (
     <ContextProvider>
       <Helmet>
@@ -69,7 +68,7 @@ const App = () => {
         <title>ChecklistBank (CLB)</title>
       </Helmet>
       <Router history={history}>
-        {['dev', 'prod'].includes(config.env) && <Analytics />}
+        {["dev", "prod"].includes(config.env) && <Analytics />}
         <React.Fragment>
           <ThemeProvider theme={theme}>
             <Switch>
@@ -126,9 +125,7 @@ const App = () => {
                 key="imports"
                 path="/imports"
                 render={({ match, location }) => (
-                  <Imports
-                    location={location}
-                  />
+                  <Imports location={location} />
                 )}
               />
               <PrivateRoute
@@ -352,7 +349,6 @@ const App = () => {
       </Router>
     </ContextProvider>
   );
-
-}
+};
 
 export default App;
