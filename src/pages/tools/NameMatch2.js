@@ -37,7 +37,7 @@ import { Converter } from "csvtojson/v1";
 import PQueue from "p-queue";
 const { Panel } = Collapse;
 const { TextArea } = Input;
-const { Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 const MAX_LIST_SIZE = 6000;
 
@@ -49,14 +49,14 @@ const matchTypeTypeMap = {
   exact: "green",
   none: "red",
   ambiguous: "gold",
-  canonical: "gold"
+  canonical: "gold",
 };
-const matchRemark = ['ambiguous', 'canonical', 'none'];
+const matchRemark = ["ambiguous", "canonical", "none"];
 const matchRemarkTooltip = {
   ambiguous: "The name has more than one match in the names index",
   none: "There is no match for this name",
-  canonical: "Only the name matches (without author string)"
-}
+  canonical: "Only the name matches (without author string)",
+};
 
 const getLowerKeysObj = (obj) => {
   var key,
@@ -119,11 +119,11 @@ const NameMatch = ({ addError }) => {
   const [secondaryUsageMetrics, setSecondaryUsageMetrics] = useState(null);
   const [showSecondary, setShowSecondary] = useState(false);
   const [inputType, setInputType] = useState("1");
-  const [textAreaVal, setTextAreaVal] = useState("")
+  const [textAreaVal, setTextAreaVal] = useState("");
   // const [erroredNames, setErroredNames] = useState(null);
   const match = async (name) => {
     try {
-      let nidxParams = `?q=${name.providedScientificName}`;
+      let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
       if (name.code) {
         nidxParams += `&code=${name.code}`;
       }
@@ -131,7 +131,7 @@ const NameMatch = ({ addError }) => {
         nidxParams += `&rank=${name.rank}`;
       }
       if (name.author) {
-        nidxParams += `&author=${name.author}`;
+        nidxParams += `&author=${encodeURIComponent(name.author)}`;
       }
       const { data: indexMatch } = await axios(
         `${config.dataApi}nidx/match${nidxParams}`
@@ -195,7 +195,7 @@ const NameMatch = ({ addError }) => {
     );
   };
   const matchResult = async (/* result */) => {
-    setNumMatchedNames(0)
+    setNumMatchedNames(0);
     let result = names; //setNames(result);
     setStep(2);
     let matchedNames = 0;
@@ -337,11 +337,19 @@ const NameMatch = ({ addError }) => {
         matchRemark: matchRemark.includes(n.matchType) ? n.matchType : "",
         nameIndexId: _.get(n, `nidx.name.id`, ""),
         taxonId: _.get(n, `${usage}.id`, ""),
-        acceptedTaxonId: _.get(n, `${usage}.accepted.id`, _.get(n, `${usage}.id`, "")),
+        acceptedTaxonId: _.get(
+          n,
+          `${usage}.accepted.id`,
+          _.get(n, `${usage}.id`, "")
+        ),
         parentTaxonId: _.get(n, `${usage}.parentId`, ""),
         scientificName: _.get(n, `${usage}.label`, ""),
         status: _.get(n, `${usage}.status`, ""),
-        acceptedScientificName: _.get(n, `${usage}.accepted.label`, _.get(n, `${usage}.label`, ""))
+        acceptedScientificName: _.get(
+          n,
+          `${usage}.accepted.label`,
+          _.get(n, `${usage}.label`, "")
+        ),
       };
       defaultRanks.forEach((r) => {
         row[r] = _.get(n, `${usage}.classification.${r}.label`, "");
@@ -450,7 +458,9 @@ const NameMatch = ({ addError }) => {
           <Row style={{ marginBottom: "10px" }}>
             <Col flex="auto"></Col>
             <Col>
-              <span>{`${names.length} name${names.length === 1 ? "":"s"} provided for matching `}</span>
+              <span>{`${names.length} name${
+                names.length === 1 ? "" : "s"
+              } provided for matching `}</span>
               <Button type="primary" onClick={() => setStep(1)}>
                 Next
               </Button>
@@ -461,7 +471,9 @@ const NameMatch = ({ addError }) => {
           <Row style={{ marginBottom: "10px" }}>
             <Col flex="auto"></Col>
             <Col>
-              <span>{`${names.length} name${names.length === 1 ? "":"s"} provided for matching `}</span>
+              <span>{`${names.length} name${
+                names.length === 1 ? "" : "s"
+              } provided for matching `}</span>
               <Button type="primary" onClick={matchResult}>
                 Next
               </Button>
@@ -479,20 +491,29 @@ const NameMatch = ({ addError }) => {
               <Panel header="Simple data entry" key="1">
                 <Row gutter={[16, 16]}>
                   <Col span={16}>
-                    <TextArea value={textAreaVal} onChange={(e) => {
-                        setTextAreaVal(e?.currentTarget?.value || "")
-                        if(e?.currentTarget?.value){
-                            
-                            setNames(e?.currentTarget?.value?.split('\n').filter(e => !!e).map(e => ({providedScientificName : e})))
+                    <TextArea
+                      value={textAreaVal}
+                      onChange={(e) => {
+                        setTextAreaVal(e?.currentTarget?.value || "");
+                        if (e?.currentTarget?.value) {
+                          setNames(
+                            e?.currentTarget?.value
+                              ?.split("\n")
+                              .filter((e) => !!e)
+                              .map((e) => ({ providedScientificName: e }))
+                          );
                         } else {
-                            setNames(null)
+                          setNames(null);
                         }
-                    }} rows={10} />
+                      }}
+                      rows={10}
+                    />
                   </Col>
                   <Col span={8}>
                     <Typography>
                       <Paragraph>
-                       Paste or write names - one name pr row. Names may include the author string. 
+                        Paste or write names - one name pr row. Names may
+                        include the author string.
                       </Paragraph>
                     </Typography>
                   </Col>
@@ -586,13 +607,15 @@ const NameMatch = ({ addError }) => {
         )}
         {step === 1 && (
           <>
-          <Row><Col>
-          <Typography>
-                      <Paragraph>
-                       Which dataset do you want to match against?
-                      </Paragraph>
-                    </Typography>
-          </Col></Row>
+            <Row>
+              <Col>
+                <Typography>
+                  <Paragraph>
+                    Which dataset do you want to match against?
+                  </Paragraph>
+                </Typography>
+              </Col>
+            </Row>
             <Row>
               <Col
                 style={{ paddingRight: "8px" }}
@@ -676,7 +699,12 @@ const NameMatch = ({ addError }) => {
             <Row justify="space-between">
               <Col span={12}>
                 <Row>
-                  <Col span={24}>{secondaryDataset && <span className="col-reference-link">[1] </span>}{primaryDataset?.title}</Col>
+                  <Col span={24}>
+                    {secondaryDataset && (
+                      <span className="col-reference-link">[1] </span>
+                    )}
+                    {primaryDataset?.title}
+                  </Col>
                   <Col span={12}>
                     <Statistic
                       title={"Matches"}
@@ -699,7 +727,10 @@ const NameMatch = ({ addError }) => {
               {secondaryDataset && (
                 <Col span={12}>
                   <Row>
-                    <Col span={24}><span className="col-reference-link">[2] </span>{secondaryDataset?.title}</Col>
+                    <Col span={24}>
+                      <span className="col-reference-link">[2] </span>
+                      {secondaryDataset?.title}
+                    </Col>
                     <Col span={12}>
                       <Statistic
                         title={"Matches"}
@@ -743,30 +774,36 @@ const NameMatch = ({ addError }) => {
                 dataIndex: "providedScientificName",
                 key: "providedScientificName",
               },
-                             {
+              {
                 title: "Match remark",
                 dataIndex: "matchType",
                 key: "matchType",
                 filters: nameIndexMetrics
-                  ? Object.keys(nameIndexMetrics).filter(k => matchRemark.includes(k)).map((m) => ({
-                      text: m,
-                      value: m,
-                    }))
+                  ? Object.keys(nameIndexMetrics)
+                      .filter((k) => matchRemark.includes(k))
+                      .map((m) => ({
+                        text: m,
+                        value: m,
+                      }))
                   : null,
                 onFilter: (value, record) => {
                   return record.matchType === value;
                 },
-                render: (text, record) => matchRemark.includes(text) ?
-                <Tooltip
-                placement="topLeft"
-                title={
-                  matchRemarkTooltip[text]
-                }
-              > <Tag color={_.get(matchTypeTypeMap, `${text}`, "")}>
-                    {text}
-                  </Tag> </Tooltip>: ""
-                ,
-              }, 
+                render: (text, record) =>
+                  matchRemark.includes(text) ? (
+                    <Tooltip
+                      placement="topLeft"
+                      title={matchRemarkTooltip[text]}
+                    >
+                      {" "}
+                      <Tag color={_.get(matchTypeTypeMap, `${text}`, "")}>
+                        {text}
+                      </Tag>{" "}
+                    </Tooltip>
+                  ) : (
+                    ""
+                  ),
+              },
 
               {
                 title: "Scientific Name",
@@ -874,31 +911,54 @@ const NameMatch = ({ addError }) => {
                       key={_.get(record, "primaryDatasetUsage.id")}
                     >
                       {_.get(record, "primaryDatasetUsage.labelHtml") ? (
-                       <> {secondaryDataset && <span className="col-reference-link">[1]</span>} <span
-                          dangerouslySetInnerHTML={{
-                            __html: _.get(
-                              record,
-                              "primaryDatasetUsage.labelHtml"
-                            ),
-                          }}
-                        /></>
+                        <>
+                          {" "}
+                          {secondaryDataset && (
+                            <span className="col-reference-link">[1]</span>
+                          )}{" "}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: _.get(
+                                record,
+                                "primaryDatasetUsage.labelHtml"
+                              ),
+                            }}
+                          />
+                        </>
                       ) : (
-                       <>{secondaryDataset && <span className="col-reference-link">[1]</span>} <Tag color="red">None</Tag></>
+                        <>
+                          {secondaryDataset && (
+                            <span className="col-reference-link">[1]</span>
+                          )}{" "}
+                          <Tag color="red">None</Tag>
+                        </>
                       )}
                       {secondaryDataset && (
                         <React.Fragment>
                           <br />
                           {_.get(record, "secondaryDatasetUsage.labelHtml") ? (
-                         <> <span className="col-reference-link">[2]</span> <span
-                              dangerouslySetInnerHTML={{
-                                __html: _.get(
-                                  record,
-                                  "secondaryDatasetUsage.labelHtml"
-                                ),
-                              }}
-                            /></> 
+                            <>
+                              {" "}
+                              <span className="col-reference-link">
+                                [2]
+                              </span>{" "}
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: _.get(
+                                    record,
+                                    "secondaryDatasetUsage.labelHtml"
+                                  ),
+                                }}
+                              />
+                            </>
                           ) : (
-                            <> <span className="col-reference-link">[2]</span> <Tag color="red">None</Tag></>
+                            <>
+                              {" "}
+                              <span className="col-reference-link">
+                                [2]
+                              </span>{" "}
+                              <Tag color="red">None</Tag>
+                            </>
                           )}
                         </React.Fragment>
                       )}
@@ -911,38 +971,63 @@ const NameMatch = ({ addError }) => {
                 dataIndex: ["usage", "status"],
                 key: "status",
                 render: (text, record) => {
-
-                return  <>
-                 <span className="col-reference-link">[1]</span> {!["synonym", "ambiguous synonym", "misapplied"].includes(_.get(record, 'primaryDatasetUsage.status')) ? (
-                    _.get(record, 'primaryDatasetUsage.status')
-                  ) : (
-                    <React.Fragment key={_.get(record, "usage.id")}>
-                      {_.get(record, 'primaryDatasetUsage.status')} {_.get(record, 'primaryDatasetUsage.status') === "misapplied" ? "to " : "of "}
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: _.get(record, "primaryDatasetUsage.accepted.labelHtml"),
-                        }}
-                      />
-                    </React.Fragment>
-                  )}
-                  {secondaryDataset && <>
-                    <br />
-                    <span className="col-reference-link">[2]</span> {!["synonym", "ambiguous synonym", "misapplied"].includes(_.get(record, 'secondaryDatasetUsage.status')) ? (
-                    _.get(record, 'secondaryDatasetUsage.status')
-                  ) : (
-                    <React.Fragment key={_.get(record, "usage.id")}>
-                      {_.get(record, 'secondaryDatasetUsage.status')} {_.get(record, 'secondaryDatasetUsage.status') === "misapplied" ? "to " : "of "}
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: _.get(record, "secondaryDatasetUsage.accepted.labelHtml"),
-                        }}
-                      />
-                    </React.Fragment>
-                  )}
-                  
-                  </>}
-                  </>
-                 
+                  return (
+                    <>
+                      <span className="col-reference-link">[1]</span>{" "}
+                      {!["synonym", "ambiguous synonym", "misapplied"].includes(
+                        _.get(record, "primaryDatasetUsage.status")
+                      ) ? (
+                        _.get(record, "primaryDatasetUsage.status")
+                      ) : (
+                        <React.Fragment key={_.get(record, "usage.id")}>
+                          {_.get(record, "primaryDatasetUsage.status")}{" "}
+                          {_.get(record, "primaryDatasetUsage.status") ===
+                          "misapplied"
+                            ? "to "
+                            : "of "}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: _.get(
+                                record,
+                                "primaryDatasetUsage.accepted.labelHtml"
+                              ),
+                            }}
+                          />
+                        </React.Fragment>
+                      )}
+                      {secondaryDataset && (
+                        <>
+                          <br />
+                          <span className="col-reference-link">[2]</span>{" "}
+                          {![
+                            "synonym",
+                            "ambiguous synonym",
+                            "misapplied",
+                          ].includes(
+                            _.get(record, "secondaryDatasetUsage.status")
+                          ) ? (
+                            _.get(record, "secondaryDatasetUsage.status")
+                          ) : (
+                            <React.Fragment key={_.get(record, "usage.id")}>
+                              {_.get(record, "secondaryDatasetUsage.status")}{" "}
+                              {_.get(record, "secondaryDatasetUsage.status") ===
+                              "misapplied"
+                                ? "to "
+                                : "of "}
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: _.get(
+                                    record,
+                                    "secondaryDatasetUsage.accepted.labelHtml"
+                                  ),
+                                }}
+                              />
+                            </React.Fragment>
+                          )}
+                        </>
+                      )}
+                    </>
+                  );
                 },
               },
               ...getClassificationColumns(),
