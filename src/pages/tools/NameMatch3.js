@@ -545,9 +545,10 @@ const NameMatch = ({ addError, rank }) => {
                     include the author) and optional columns{" "}
                     <code className="code">author</code>,{" "}
                     <code className="code">status</code>,{" "}
-                    <code className="code">rank</code>
+                    <code className="code">rank</code>,{" "}
                     <code className="code">code</code> (nomenclatural code), and
-                    any higher taxon (like kingom: Animalia)
+                    any higher taxon (like <code className="code">kingom</code>:
+                    Animalia or <code className="code">domain</code>: Bacteria)
                   </p>
                 </Dragger>
               </Panel>
