@@ -44,7 +44,7 @@ import HomePage from "./pages/HomePage";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
-import NameMatch from "./pages/tools/NameMatch2";
+import NameMatch from "./pages/tools/NameMatch3";
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import TaxonComparer from "./pages/tools/TaxonComparer";

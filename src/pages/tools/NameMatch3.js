@@ -101,7 +101,7 @@ const COL_LR = {
   key: "3LR",
   alias: "COL LR",
 };
-const NameMatch = ({ addError }) => {
+const NameMatch = ({ addError, rank }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
   const [defaultCode, setDefaultCode] = useState(null);
@@ -121,6 +121,24 @@ const NameMatch = ({ addError }) => {
   const [inputType, setInputType] = useState("1");
   const [textAreaVal, setTextAreaVal] = useState("");
   // const [erroredNames, setErroredNames] = useState(null);
+
+  const formatUsageClassification = (usage) => {
+    let result = {};
+    if (usage?.classification) {
+      result.keyedClassification = _.keyBy(usage?.classification, "rank");
+      result.fullClassification = usage?.classification
+        .map((tx) => `${tx.rank.toUpperCase()}:${tx.label}`)
+        .join("|");
+    }
+    if (
+      ["synonym", "ambiguous synonym", "misapplied"].includes(usage?.status) &&
+      usage?.classification?.[0]
+    ) {
+      result.accepted = usage?.classification[0];
+    }
+    return result;
+  };
+
   const match = async (name) => {
     try {
       let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
@@ -131,43 +149,41 @@ const NameMatch = ({ addError }) => {
         nidxParams += `&rank=${name.rank}`;
       }
       if (name.author) {
-        nidxParams += `&author=${encodeURIComponent(name.author)}`;
+        nidxParams += `&authorship=${encodeURIComponent(name.author)}`;
       }
-      /* const { data: indexMatch } = await axios(
-        `${config.dataApi}nidx/match${nidxParams}`
-      ); */
-      const { data: primaryDatasetUsages } = await axios(
+      if (name.code) {
+        nidxParams += `&code=${encodeURIComponent(name.code)}`;
+      }
+      if (name.status) {
+        nidxParams += `&status=${encodeURIComponent(name.status)}`;
+      }
+
+      rank.forEach((r) => {
+        if (name[r]) {
+          nidxParams += `&${r}=${encodeURIComponent(name[r])}`;
+        }
+      });
+
+      const { data: primaryDatasetMatch } = await axios(
         `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${nidxParams}`
       );
-      name.primaryDatasetUsage = _.get(primaryDatasetUsages, "result[0]");
+      const { usage: primaryDatasetUsage } = primaryDatasetMatch;
+      name.primaryDatasetUsage = {
+        ...primaryDatasetUsage,
+        ...formatUsageClassification(primaryDatasetUsage),
+        matchType: primaryDatasetMatch?.type,
+      };
 
-      if (name.primaryDatasetUsage) {
-        const { data: classification } = await axios(
-          `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${nidxParams}`
-        );
-        if (classification) {
-          name.primaryDatasetUsage.classification = _.keyBy(
-            classification,
-            "rank"
-          );
-        }
-      }
       if (secondaryDataset) {
-        const { data: secondaryDatasetUsages } = await axios(
+        const { data: secondaryDatasetMatch } = await axios(
           `${config.dataApi}dataset/${secondaryDataset.key}/match/nameusage${nidxParams}`
         );
-        name.secondaryDatasetUsage = _.get(secondaryDatasetUsages, "result[0]");
-        if (name.secondaryDatasetUsage) {
-          const { data: classification } = await axios(
-            `${config.dataApi}dataset/${secondaryDataset.key}/taxon/${name.secondaryDatasetUsage.id}/classification`
-          );
-          if (classification) {
-            name.secondaryDatasetUsage.classification = _.keyBy(
-              classification,
-              "rank"
-            );
-          }
-        }
+        const { usage: secondaryDatasetUsage } = secondaryDatasetMatch;
+        name.secondaryDatasetUsage = {
+          ...secondaryDatasetUsage,
+          ...formatUsageClassification(secondaryDatasetUsage),
+          matchType: secondaryDatasetMatch?.type,
+        };
       }
     } catch (error) {
       name.matchType = "none";
@@ -289,7 +305,7 @@ const NameMatch = ({ addError }) => {
   const getClassificationColumns = () =>
     defaultRanks.map((rank) => ({
       title: rank,
-      dataIndex: ["primaryDatasetUsage", "classification", rank, "name"],
+      dataIndex: ["primaryDatasetUsage", "keyedClassification", rank, "name"],
       key: rank,
       render: (text, record) => (
         <React.Fragment key={_.get(record, "primaryDatasetUsage.id")}>
@@ -297,7 +313,7 @@ const NameMatch = ({ addError }) => {
             dangerouslySetInnerHTML={{
               __html: _.get(
                 record,
-                `primaryDatasetUsage.classification.${rank}.labelHtml`
+                `primaryDatasetUsage.keyedClassification.${rank}.labelHtml`
               ),
             }}
           />
@@ -308,7 +324,7 @@ const NameMatch = ({ addError }) => {
                 dangerouslySetInnerHTML={{
                   __html: _.get(
                     record,
-                    `secondaryDatasetUsage.classification.${rank}.labelHtml`
+                    `secondaryDatasetUsage.keyedClassification.${rank}.labelHtml`
                   ),
                 }}
               />
@@ -326,8 +342,9 @@ const NameMatch = ({ addError }) => {
     return names.map((n) => {
       let row = {
         providedScientificName: n.providedScientificName,
-        matchRemark: matchRemark.includes(n.matchType) ? n.matchType : "",
-        nameIndexId: _.get(n, `nidx.name.id`, ""),
+        matchRemark: matchRemark.includes(n.usage?.matchType)
+          ? n?.usage?.matchType
+          : "",
         taxonId: _.get(n, `${usage}.id`, ""),
         acceptedTaxonId: _.get(
           n,
@@ -336,15 +353,18 @@ const NameMatch = ({ addError }) => {
         ),
         parentTaxonId: _.get(n, `${usage}.parentId`, ""),
         scientificName: _.get(n, `${usage}.label`, ""),
+        canonicalName: _.get(n, `${usage}.name`, ""),
+        authorship: _.get(n, `${usage}.authorship`, ""),
         status: _.get(n, `${usage}.status`, ""),
         acceptedScientificName: _.get(
           n,
           `${usage}.accepted.label`,
           _.get(n, `${usage}.label`, "")
         ),
+        classification: _.get(n, `${usage}.fullClassification`),
       };
       defaultRanks.forEach((r) => {
-        row[r] = _.get(n, `${usage}.classification.${r}.label`, "");
+        row[r] = _.get(n, `${usage}.keyedClassification.${r}.label`, "");
       });
       return row;
     });
@@ -524,8 +544,10 @@ const NameMatch = ({ addError }) => {
                     <code className="code">scientificName</code> (which may
                     include the author) and optional columns{" "}
                     <code className="code">author</code>,{" "}
-                    <code className="code">rank</code> and{" "}
-                    <code className="code">code</code> (nomenclatural code)
+                    <code className="code">status</code>,{" "}
+                    <code className="code">rank</code>
+                    <code className="code">code</code> (nomenclatural code), and
+                    any higher taxon (like kingom: Animalia)
                   </p>
                 </Dragger>
               </Panel>
@@ -767,10 +789,10 @@ const NameMatch = ({ addError }) => {
                 key: "providedScientificName",
               },
               {
-                title: "Match remark",
-                dataIndex: "matchType",
+                title: "Match type",
+                dataIndex: ["primaryDatasetUsage", "matchType"],
                 key: "matchType",
-                filters: nameIndexMetrics
+                /*  filters: nameIndexMetrics
                   ? Object.keys(nameIndexMetrics)
                       .filter((k) => matchRemark.includes(k))
                       .map((m) => ({
@@ -780,8 +802,8 @@ const NameMatch = ({ addError }) => {
                   : null,
                 onFilter: (value, record) => {
                   return record.matchType === value;
-                },
-                render: (text, record) =>
+                }, */
+                /*  render: (text, record) =>
                   matchRemark.includes(text) ? (
                     <Tooltip
                       placement="topLeft"
@@ -794,7 +816,32 @@ const NameMatch = ({ addError }) => {
                     </Tooltip>
                   ) : (
                     ""
-                  ),
+                  ), */
+                render: (text, record) => (
+                  <React.Fragment key={_.get(record, "primaryDatasetUsage.id")}>
+                    {_.get(record, "primaryDatasetUsage.matchType") && (
+                      <>
+                        {" "}
+                        {secondaryDataset && (
+                          <span className="col-reference-link">[1]</span>
+                        )}{" "}
+                        {_.get(record, "primaryDatasetUsage.matchType")}
+                      </>
+                    )}
+                    {secondaryDataset && (
+                      <React.Fragment>
+                        <br />
+                        {_.get(record, "secondaryDatasetUsage.matchType") && (
+                          <>
+                            {" "}
+                            <span className="col-reference-link">[2]</span>{" "}
+                            {_.get(record, "secondaryDatasetUsage.matchType")}
+                          </>
+                        )}
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
+                ),
               },
 
               {
@@ -1389,8 +1436,9 @@ const NameMatch = ({ addError }) => {
   );
 };
 
-const mapContextToProps = ({ nomCode, addError }) => ({
+const mapContextToProps = ({ nomCode, addError, rank }) => ({
   nomCode,
   addError,
+  rank,
 });
 export default withContext(mapContextToProps)(NameMatch);
