@@ -195,7 +195,7 @@ class HomePage extends React.Component {
               </p>
               <p>
                 In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
-                This includes a continously improved <a href="/tools/diff-viewer">diff tool</a> for comparing datasets 
+                This includes a continuously improved <a href="/tools/diff-viewer">diff tool</a> for comparing datasets 
                 as well as downloading custom exports.
               </p>
             </Col>
