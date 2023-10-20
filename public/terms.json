@@ -168,6 +168,13 @@
                 "col:Taxon.col:ID",
                 "col:NameUsage.col:ID"
         ],
+        "col:TaxonProperty.col:referenceID": [
+                "col:Reference.col:ID"
+        ],
+        "col:TaxonProperty.col:taxonID": [
+                "col:Taxon.col:ID",
+                "col:NameUsage.col:ID"
+        ],
         "col:SpeciesEstimate.col:referenceID": [
                 "col:Reference.col:ID"
         ],
