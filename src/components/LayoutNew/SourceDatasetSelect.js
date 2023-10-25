@@ -82,6 +82,7 @@ class SourceSeelect extends React.Component {
         `catalogue/${catalogueKey}/dataset/${key}/`,
         `catalogue/${catalogueKey}/dataset/${newDatasetKey}/`
       );
+      setSourceDataset(selectedSource);
       history.push({
         pathname: newPath,
       });
@@ -107,7 +108,6 @@ class SourceSeelect extends React.Component {
           }}
         >
           <SettingOutlined />
-
         </a>
         <Modal
           title="Select source"
@@ -149,7 +149,9 @@ class SourceSeelect extends React.Component {
                   }}
                   value={c.key}
                   key={c.key}
-                >{`${c.alias ? c.alias : truncate(c.title, 50)} ${c.version || ""} [${c.key}]`}</Option>
+                >{`${c.alias ? c.alias : truncate(c.title, 50)} ${
+                  c.version || ""
+                } [${c.key}]`}</Option>
               ))}
             </Select>
           </div>

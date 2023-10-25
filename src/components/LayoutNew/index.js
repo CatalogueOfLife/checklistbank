@@ -21,7 +21,7 @@ import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
 import Sync from "./Sync";
 import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
-import DatasetOriginPill from "./DatasetOriginPill"
+import DatasetOriginPill from "./DatasetOriginPill";
 import { truncate } from "../util";
 // import withWidth, { MEDIUM } from "./hoc/Width";
 
@@ -35,7 +35,8 @@ const exceptionIsDataset404 = (error, location) => {
     _.get(error, "response.request.responseURL") &&
     _.get(error, "response.request.responseURL").startsWith(
       `${config.dataApi}dataset/`
-    ) && location?.pathname.startsWith("/dataset")
+    ) &&
+    location?.pathname.startsWith("/dataset")
   );
 };
 const styles = {
@@ -66,7 +67,7 @@ class SiteLayout extends Component {
 
   toggle = () => {
     const { width } = this.props;
-    console.log(this.state.collapsed)
+    console.log(this.state.collapsed);
     const collapsed =
       typeof this.state.collapsed === "boolean"
         ? this.state.collapsed
@@ -95,7 +96,7 @@ class SiteLayout extends Component {
       match: {
         params: { catalogueKey },
       },
-      location
+      location,
     } = this.props;
     // console.log("Status "+_.get(error, "response.status"))
     const collapsed =
@@ -162,7 +163,20 @@ class SiteLayout extends Component {
       <Layout style={{ minHeight: "100vh" }}>
         {sideMenu}
         <Layout style={{ marginLeft: contentMargin + "px" }}>
-          <Header style={config.env === 'dev' ? { backgroundImage: `url("/images/test-env.svg")`, backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "45%", backgroundColor: "#fff", display: "flex" } : { background: "#fff", display: "flex" }}>
+          <Header
+            style={
+              config.env === "dev"
+                ? {
+                    backgroundImage: `url("/images/test-env.svg")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "45%",
+                    backgroundColor: "#fff",
+                    display: "flex",
+                  }
+                : { background: "#fff", display: "flex" }
+            }
+          >
             {collapsed ? (
               <MenuUnfoldOutlined
                 style={{
@@ -187,32 +201,63 @@ class SiteLayout extends Component {
             <div style={{ flex: "1 1 auto", textAlign: "center" }}>
               {selectedDataset && (
                 <React.Fragment>
-                  <DatasetLogo
-                    datasetKey={selectedDataset.key}
-                    style={{ height: "50px", marginRight: "10px" }}
-                  />
-                  <h1 style={{ display: "inline" }}>
-                    {selectedDataset?.title?.length < titeMaxLength ? selectedDataset?.title : <Tooltip title={selectedDataset?.title}>{truncate(selectedDataset?.title, titeMaxLength)}</Tooltip>}
-                    {selectedDataset.private && (
-                      <React.Fragment>
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col>
+                      <DatasetLogo
+                        datasetKey={selectedDataset.key}
+                        style={{ height: "50px", marginRight: "10px" }}
+                      />
+                    </Col>
+                    <Col>
+                      <h1 style={{ display: "inline" }}>
+                        {selectedDataset?.title?.length < titeMaxLength ? (
+                          selectedDataset?.title
+                        ) : (
+                          <Tooltip title={selectedDataset?.title}>
+                            {truncate(selectedDataset?.title, titeMaxLength)}
+                          </Tooltip>
+                        )}
+                        {selectedDataset.private && (
+                          <React.Fragment>
+                            {" "}
+                            <Tooltip
+                              placement="bottom"
+                              title={"This dataset is private"}
+                            >
+                              <LockOutlined style={{ color: "red" }} />
+                            </Tooltip>
+                          </React.Fragment>
+                        )}
+                      </h1>
+                      {catalogue &&
+                        selectedDataset &&
+                        catalogue?.key !== selectedDataset?.key && (
+                          <h5
+                            style={{ marginTop: "-48px" }}
+                          >{`in ${catalogue.title}`}</h5>
+                        )}
+                      <span style={{ marginRight: "8px" }}>
                         {" "}
-                        <Tooltip
-                          placement="bottom"
-                          title={"This dataset is private"}
-                        >
-                          <LockOutlined style={{ color: "red" }} />
-                        </Tooltip>
-                      </React.Fragment>
-                    )}
-                  </h1>
-                  <span style={{ marginRight: "8px" }}>
-                    {" "}
-                    {selectedDataset.version || selectedDataset.issued}
-                  </span>
-                  <DatasetOriginPill dataset={selectedDataset} />
+                        {selectedDataset.version || selectedDataset.issued}
+                      </span>
+                      <DatasetOriginPill dataset={selectedDataset} />
+                    </Col>
+                    <Col flex="auto"></Col>
+                  </Row>
                 </React.Fragment>
               )}
-              {!selectedDataset && title && <><h1 style={{ display: "inline" }}>{title}</h1> {catalogueKey && <DatasetOriginPill dataset={{ key: catalogueKey, origin: 'project' }} />}</>}
+
+              {!selectedDataset && title && (
+                <>
+                  <h1 style={{ display: "inline" }}>{title}</h1>{" "}
+                  {catalogueKey && (
+                    <DatasetOriginPill
+                      dataset={{ key: catalogueKey, origin: "project" }}
+                    />
+                  )}
+                </>
+              )}
             </div>
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
               <UserMenu />
@@ -245,7 +290,9 @@ class SiteLayout extends Component {
             )}
             {error &&
               ![401, 403].includes(_.get(error, "response.status")) &&
-              !exceptionIsDataset404(error, location) && ([431, 413].includes(_.get(error, "response.status")) || error?.message !== 'Network Error') && (
+              !exceptionIsDataset404(error, location) &&
+              ([431, 413].includes(_.get(error, "response.status")) ||
+                error?.message !== "Network Error") && (
                 <Alert
                   style={{ marginTop: "10px" }}
                   description={<ErrorMsg error={error} />}
@@ -254,19 +301,20 @@ class SiteLayout extends Component {
                   onClose={clearError}
                 />
               )}
-            {error &&
-              error?.message === 'Network Error' && (
-                <Alert
-                  style={{ marginTop: "10px" }}
-                  description={"The network connection was interupted. Check your internet connection and reload the page."}
-                  type="warning"
-                  showIcon
-                  closable
-                  onClose={clearError}
-                />
-              )}
+            {error && error?.message === "Network Error" && (
+              <Alert
+                style={{ marginTop: "10px" }}
+                description={
+                  "The network connection was interupted. Check your internet connection and reload the page."
+                }
+                type="warning"
+                showIcon
+                closable
+                onClose={clearError}
+              />
+            )}
             {(error && [401, 403].includes(_.get(error, "response.status"))) ||
-              exceptionIsDataset404(error, location) ? (
+            exceptionIsDataset404(error, location) ? (
               <Exception
                 type={_.get(error, "response.status").toString()}
                 desc={
@@ -280,7 +328,9 @@ class SiteLayout extends Component {
             )}
           </Content>
           <Footer>
-            <Row style={{ textAlign: "center" }}>Developed by GBIF & Catalogue of Life</Row>
+            <Row style={{ textAlign: "center" }}>
+              Developed by GBIF & Catalogue of Life
+            </Row>
             <Row style={{ textAlign: "center", marginTop: "8px" }}>
               <Tag>
                 <a
@@ -318,12 +368,18 @@ class SiteLayout extends Component {
   }
 }
 
-const mapContextToProps = ({ addError, clearError, error, background, catalogue }) => ({
+const mapContextToProps = ({
   addError,
   clearError,
   error,
   background,
-  catalogue
+  catalogue,
+}) => ({
+  addError,
+  clearError,
+  error,
+  background,
+  catalogue,
 });
 
 export default compose(
