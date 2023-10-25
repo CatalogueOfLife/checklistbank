@@ -88,8 +88,11 @@ class BasicMenu extends Component {
     } */
 
   selectedDatasetIsProjectAndUserHasAccess = (catalogue, dataset, user) => {
-    return (!dataset || catalogue?.key === dataset?.key) && Auth.canViewDataset(catalogue, user)
-  }
+    return (
+      (!dataset || catalogue?.key === dataset?.key) &&
+      Auth.canViewDataset(catalogue, user)
+    );
+  };
 
   onOpenChange = (openKeys) => {
     const { setOpenKeys } = this.props;
@@ -126,10 +129,16 @@ class BasicMenu extends Component {
     } = this.props;
     const hasData =
       !_.get(selectedDataset, "deleted") &&
-      (_.get(selectedDataset, "size") || ["xrelease", "release", "project"].includes(_.get(selectedDataset, "origin")));
+      (_.get(selectedDataset, "size") ||
+        ["xrelease", "release", "project"].includes(
+          _.get(selectedDataset, "origin")
+        ));
     const sourceHasData =
       !_.get(sourceDataset, "deleted") &&
-      (_.get(sourceDataset, "size") || ["xrelease", "release", "project"].includes(_.get(sourceDataset, "origin")));
+      (_.get(sourceDataset, "size") ||
+        ["xrelease", "release", "project"].includes(
+          _.get(sourceDataset, "origin")
+        ));
 
     return (
       <React.Fragment>
@@ -218,14 +227,11 @@ class BasicMenu extends Component {
               </Menu.Item>
             )}
 
-            {_.isArray(_selectedKeys) && _selectedKeys.includes("nameIndexKey") &&
+            {_.isArray(_selectedKeys) &&
+              _selectedKeys.includes("nameIndexKey") &&
               taxonOrNameKey && (
-                <Menu.Item key="nameIndexKey">
-                  Nidx: {taxonOrNameKey}
-                </Menu.Item>
+                <Menu.Item key="nameIndexKey">Nidx: {taxonOrNameKey}</Menu.Item>
               )}
-
-
           </SubMenu>
 
           {Auth.isAuthorised(user, ["admin"]) && (
@@ -258,7 +264,6 @@ class BasicMenu extends Component {
                   <span>Background jobs</span>
                 </NavLink>
               </Menu.Item>
-
             </SubMenu>
           )}
 
@@ -284,14 +289,12 @@ class BasicMenu extends Component {
             </SubMenu>
           )} */}
           {Auth.isAuthorised(user, ["editor", "admin"]) && (
-
             <Menu.Item key="backgroundImports">
               <NavLink to={{ pathname: "/imports" }}>
                 <ApiOutlined />
-                <span>Imports</span></NavLink>
+                <span>Imports</span>
+              </NavLink>
             </Menu.Item>
-
-
           )}
           <Menu.Item key="/dataset">
             <NavLink to="/dataset">
@@ -299,7 +302,11 @@ class BasicMenu extends Component {
               <span>Datasets</span>
             </NavLink>
           </Menu.Item>
-          {this.selectedDatasetIsProjectAndUserHasAccess(catalogue, selectedDataset, user) && (
+          {this.selectedDatasetIsProjectAndUserHasAccess(
+            catalogue,
+            selectedDataset,
+            user
+          ) && (
             <SubMenu
               key="assembly"
               title={
@@ -311,60 +318,61 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-
-              {catalogue && <>
-                <Menu.Item key="colAssembly">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
-                  >
-                    {/* <CopyOutlined /> */}
-                    <span>Assembly</span>
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="catalogueSectors">
-                  <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector` }}>
-                    {/* <PartitionOutlined /> */}
-                    <span>Sectors</span>
-                  </NavLink>
-                </Menu.Item>
-                {/* <Menu.Item key="catalogueSectorPriority">
+              {catalogue && (
+                <>
+                  <Menu.Item key="colAssembly">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
+                    >
+                      {/* <CopyOutlined /> */}
+                      <span>Assembly</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="catalogueSectors">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/sector` }}
+                    >
+                      {/* <PartitionOutlined /> */}
+                      <span>Sectors</span>
+                    </NavLink>
+                  </Menu.Item>
+                  {/* <Menu.Item key="catalogueSectorPriority">
                 <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}>
                   <OrderedListOutlined />
                   <span>Sector priority</span>
                 </NavLink>
               </Menu.Item> */}
-
-                <Menu.Item key="catalogueDecisions">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
-                  >
-                    {/*  <CheckOutlined /> */}
-                    <span>Decisions</span>
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="catalogueSources">
-                  <NavLink
-                    to={{
-                      pathname: `/catalogue/${catalogueKey}/sources`,
-                    }}
-                  >
-                    {" "}
-                    {/*  <TableOutlined /> */}
-                    <span>Source datasets</span>
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="catalogueSourceMetrics">
-                  <NavLink
-                    to={{
-                      pathname: `/catalogue/${catalogueKey}/sourcemetrics`,
-                    }}
-                  >
-                    {" "}
-                    {/* <LineChartOutlined /> */}
-                    <span>Source metrics</span>
-                  </NavLink>
-                </Menu.Item>
-                {/*               <SubMenu
+                  <Menu.Item key="catalogueDecisions">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
+                    >
+                      {/*  <CheckOutlined /> */}
+                      <span>Decisions</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="catalogueSources">
+                    <NavLink
+                      to={{
+                        pathname: `/catalogue/${catalogueKey}/sources`,
+                      }}
+                    >
+                      {" "}
+                      {/*  <TableOutlined /> */}
+                      <span>Source datasets</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="catalogueSourceMetrics">
+                    <NavLink
+                      to={{
+                        pathname: `/catalogue/${catalogueKey}/sourcemetrics`,
+                      }}
+                    >
+                      {" "}
+                      {/* <LineChartOutlined /> */}
+                      <span>Source metrics</span>
+                    </NavLink>
+                  </Menu.Item>
+                  {/*               <SubMenu
                 key="projectDetails"
                 title={
                   <span>
@@ -373,105 +381,102 @@ class BasicMenu extends Component {
                   </span>
                 }
               > */}
-                <Menu.Item key="catalogueMeta">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/metadata` }}
-                  >
-                    <span>Metadata</span>
-                  </NavLink>
-                </Menu.Item>
-                {Auth.canEditDataset({ key: catalogueKey }, user) && <Menu.Item key="projectEditors">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
-                  >
-                    <span>Editors</span>
-                  </NavLink>
-                </Menu.Item>}
-
-                <Menu.Item key="catalogueNameSearch">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/names` }}
-                  >
-                    <span>Names</span>
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="assemblyDuplicates">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/duplicates` }}
-                  >
-                    <span>Duplicates</span>
-                  </NavLink>
-                </Menu.Item>
-                <Menu.Item key="assemblyTasks">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/tasks` }}
-                  >
-                    <span>Tasks</span>
-                  </NavLink>
-                </Menu.Item>
-                {/*  <Menu.Item key="sectorSync">
+                  <Menu.Item key="catalogueMeta">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/metadata` }}
+                    >
+                      <span>Metadata</span>
+                    </NavLink>
+                  </Menu.Item>
+                  {Auth.canEditDataset({ key: catalogueKey }, user) && (
+                    <Menu.Item key="projectEditors">
+                      <NavLink
+                        to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
+                      >
+                        <span>Editors</span>
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                  <Menu.Item key="catalogueNameSearch">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/names` }}
+                    >
+                      <span>Names</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="assemblyDuplicates">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/duplicates` }}
+                    >
+                      <span>Duplicates</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="assemblyTasks">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/tasks` }}
+                    >
+                      <span>Tasks</span>
+                    </NavLink>
+                  </Menu.Item>
+                  {/*  <Menu.Item key="sectorSync">
                   <NavLink
                     to={{ pathname: `/catalogue/${catalogueKey}/sector/sync` }}
                   >
                     <span>Sector sync</span>
                   </NavLink>
                 </Menu.Item> */}
-
-                {selectedSector && (
-                  <Menu.Item key="sectorDiff">
-                    Sector diff: {selectedSector}
+                  {selectedSector && (
+                    <Menu.Item key="sectorDiff">
+                      Sector diff: {selectedSector}
+                    </Menu.Item>
+                  )}
+                  <Menu.Item key="assemblyReferences">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/references` }}
+                    >
+                      <span>References</span>
+                    </NavLink>
                   </Menu.Item>
-                )}
-
-                <Menu.Item key="assemblyReferences">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/references` }}
-                  >
-                    <span>References</span>
-                  </NavLink>
-                </Menu.Item>
-
-                <Menu.Item key="releases">
-                  <NavLink
-                    to={{
-                      pathname: "/dataset",
-                      search: `?releasedFrom=${catalogueKey}`,
-                    }}
-                  >
-                    <span>Releases</span>
-                  </NavLink>
-                </Menu.Item>
-
-                <Menu.Item key="catalogueOptions">
-                  <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/options` }}
-                  >
-                    <span>Project options</span>
-                  </NavLink>
-                </Menu.Item>
-
-                {_selectedKeys &&
-                  _selectedKeys.includes("catalogueTaxon") &&
-                  taxonOrNameKey && (
-                    <Menu.Item key="catalogueTaxon">
-                      Taxon: {taxonOrNameKey}
-                    </Menu.Item>
-                  )}
-                {_selectedKeys &&
-                  _selectedKeys.includes("catalogueName") &&
-                  taxonOrNameKey && (
-                    <Menu.Item key="catalogueName">
-                      Name: {taxonOrNameKey}
-                    </Menu.Item>
-                  )}
-                {/*               </SubMenu>
- */}              {
-                  <SubMenu
-                    key="sourceDataset"
-                    title={
-                      <span>
-                        Source
-                        {/* <SourceSelect catalogueKey={catalogueKey} />
+                  <Menu.Item key="releases">
+                    <NavLink
+                      to={{
+                        pathname: "/dataset",
+                        search: `?releasedFrom=${catalogueKey}`,
+                      }}
+                    >
+                      <span>Releases</span>
+                    </NavLink>
+                  </Menu.Item>
+                  <Menu.Item key="catalogueOptions">
+                    <NavLink
+                      to={{ pathname: `/catalogue/${catalogueKey}/options` }}
+                    >
+                      <span>Project options</span>
+                    </NavLink>
+                  </Menu.Item>
+                  {_selectedKeys &&
+                    _selectedKeys.includes("catalogueTaxon") &&
+                    taxonOrNameKey && (
+                      <Menu.Item key="catalogueTaxon">
+                        Taxon: {taxonOrNameKey}
+                      </Menu.Item>
+                    )}
+                  {_selectedKeys &&
+                    _selectedKeys.includes("catalogueName") &&
+                    taxonOrNameKey && (
+                      <Menu.Item key="catalogueName">
+                        Name: {taxonOrNameKey}
+                      </Menu.Item>
+                    )}
+                  {/*               </SubMenu>
+                   */}{" "}
+                  {
+                    <SubMenu
+                      key="sourceDataset"
+                      title={
+                        <span>
+                          Source
+                          {/* <SourceSelect catalogueKey={catalogueKey} />
                       <span
                         style={{ textOverflow: "ellipsis", maxWidth: "40px" }}
                       >
@@ -484,190 +489,182 @@ class BasicMenu extends Component {
                             } [${selectedDataset.key}]`
                           : "Select source"}
                       </span> */}
-                      </span>
-                    }
-                  >
-                    {<Menu.ItemGroup title={
-                      <>
-                        <SourceSelect catalogueKey={catalogueKey} />{" "}
-                        {sourceDataset &&
+                        </span>
+                      }
+                    >
+                      {
+                        <Menu.ItemGroup
+                          title={
+                            <>
+                              <SourceSelect catalogueKey={catalogueKey} />{" "}
+                              {sourceDataset && sourceHasData
+                                ? sourceDataset?.alias ||
+                                  truncate(sourceDataset?.title, 25)
+                                : "Select"}
+                            </>
+                          }
+                        >
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_issues">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/issues`,
+                                }}
+                              >
+                                Issues
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_tasks">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/tasks`,
+                                }}
+                              >
+                                Tasks
+                              </NavLink>
+                            </Menu.Item>
+                          )}
 
-                          sourceHasData ? (sourceDataset?.alias || truncate(sourceDataset?.title, 25)) : "Select"}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_workbench">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/workbench`,
+                                }}
+                              >
+                                Workbench
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_duplicates">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/duplicates`,
+                                }}
+                              >
+                                Duplicates
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && (
+                            <Menu.Item key="source_metadata">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/metadata`,
+                                }}
+                              >
+                                Metadata
+                              </NavLink>
+                            </Menu.Item>
+                          )}
 
+                          {sourceDataset && (
+                            <Menu.Item key="sourceSectors">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/sector`,
+                                  search: `?subjectDatasetKey=${sourceDataset.key}`,
+                                }}
+                              >
+                                Sectors
+                              </NavLink>
+                            </Menu.Item>
+                          )}
 
-
-
-                      </>}>
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_issues">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/issues`,
-                              }}
-                            >
-                              Issues
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_tasks">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/tasks`,
-                              }}
-                            >
-                              Tasks
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_workbench">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/workbench`,
-                              }}
-                            >
-                              Workbench
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_duplicates">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/duplicates`,
-                              }}
-                            >
-                              Duplicates
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset && (
-                        <Menu.Item key="source_metadata">
-                          <NavLink
-                            to={{
-                              pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                sourceDataset,
-                                "key"
-                              )}/metadata`,
-                            }}
-                          >
-                            Metadata
-                          </NavLink>
-                        </Menu.Item>
-                      )}
-
-                      {sourceDataset &&
-                        <Menu.Item key="sourceSectors">
-                          <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector`, search: `?subjectDatasetKey=${sourceDataset.key}` }}>
-                            Sectors
-                          </NavLink>
-                        </Menu.Item>}
-
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_classification">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/classification`,
-                              }}
-                            >
-                              Classification
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_references">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/references`,
-                              }}
-                            >
-                              References
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_verbatim">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/verbatim`,
-                              }}
-                            >
-                              Verbatim
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {sourceDataset &&
-
-                        sourceHasData && (
-                          <Menu.Item key="source_imports">
-                            <NavLink
-                              to={{
-                                pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
-                                  sourceDataset,
-                                  "key"
-                                )}/imports`,
-                              }}
-                            >
-                              Imports
-                            </NavLink>
-                          </Menu.Item>
-                        )}
-                      {_.isArray(_selectedKeys) &&
-                        _selectedKeys.includes("source_taxon") &&
-                        taxonOrNameKey && (
-                          <Menu.Item key="source_taxon">
-                            Taxon: {taxonOrNameKey}
-                          </Menu.Item>
-                        )}
-                      {_.isArray(_selectedKeys) &&
-                        _selectedKeys.includes("source_name") &&
-                        taxonOrNameKey && (
-                          <Menu.Item key="source_name">
-                            Name: {taxonOrNameKey}
-                          </Menu.Item>
-                        )}
-                    </Menu.ItemGroup>}
-
-                  </SubMenu>
-                }
-              </>}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_classification">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/classification`,
+                                }}
+                              >
+                                Classification
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_references">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/references`,
+                                }}
+                              >
+                                References
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_verbatim">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/verbatim`,
+                                }}
+                              >
+                                Verbatim
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {sourceDataset && sourceHasData && (
+                            <Menu.Item key="source_imports">
+                              <NavLink
+                                to={{
+                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                    sourceDataset,
+                                    "key"
+                                  )}/imports`,
+                                }}
+                              >
+                                Imports
+                              </NavLink>
+                            </Menu.Item>
+                          )}
+                          {_.isArray(_selectedKeys) &&
+                            _selectedKeys.includes("source_taxon") &&
+                            taxonOrNameKey && (
+                              <Menu.Item key="source_taxon">
+                                Taxon: {taxonOrNameKey}
+                              </Menu.Item>
+                            )}
+                          {_.isArray(_selectedKeys) &&
+                            _selectedKeys.includes("source_name") &&
+                            taxonOrNameKey && (
+                              <Menu.Item key="source_name">
+                                Name: {taxonOrNameKey}
+                              </Menu.Item>
+                            )}
+                        </Menu.ItemGroup>
+                      }
+                    </SubMenu>
+                  }
+                </>
+              )}
             </SubMenu>
           )}
 
@@ -708,20 +705,25 @@ class BasicMenu extends Component {
             </SubMenu>
           )} */}
 
-
-          {selectedDataset && !this.selectedDatasetIsProjectAndUserHasAccess(catalogue, selectedDataset, user) && (
-            <SubMenu
-              key="datasetKey"
-              title={
-                <span>
-                  <BarsOutlined />
+          {selectedDataset &&
+            !this.selectedDatasetIsProjectAndUserHasAccess(
+              catalogue,
+              selectedDataset,
+              user
+            ) && (
+              <SubMenu
+                key="datasetKey"
+                title={
                   <span>
-                    {selectedDataset.alias || `Dataset: ${selectedDataset.key}`}
+                    <BarsOutlined />
+                    <span>
+                      {selectedDataset.alias ||
+                        `Dataset: ${selectedDataset.key}`}
+                    </span>
                   </span>
-                </span>
-              }
-            >
-              {/*  {Auth.canEditDataset(selectedDataset, user) && (
+                }
+              >
+                {/*  {Auth.canEditDataset(selectedDataset, user) && (
                 <Menu.Item key="metadata">
                   <NavLink
                     to={{
@@ -735,228 +737,252 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )} */}
-              <Menu.Item key="about">
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${_.get(selectedDataset, "key")}/about`,
-                  }}
-                >
-                  About
-                </NavLink>
-              </Menu.Item>
-              {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
-                <Menu.Item key="options">
+                <Menu.Item key="about">
                   <NavLink
                     to={{
                       pathname: `/dataset/${_.get(
                         selectedDataset,
                         "key"
-                      )}/options`,
+                      )}/about`,
                     }}
                   >
-                    Options
+                    About
                   </NavLink>
                 </Menu.Item>
-              )}
-              {Auth.canEditDataset(selectedDataset, user) && <Menu.Item key="editors">
-                <NavLink
-                  to={{ pathname: `/dataset/${selectedDataset?.key}/editors` }}
-                >
-                  <span>Editors</span>
-                </NavLink>
-              </Menu.Item>}
-              {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
-                <Menu.Item key="datasetDuplicateSearch">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/duplicates`,
-                    }}
-                  >
-                    Duplicate search
-                  </NavLink>
-                </Menu.Item>
-              )}
-              {Auth.canEditDataset(selectedDataset, user) && !selectedDataset.deleted && (
-                <Menu.Item key="datasetDuplicateTasks">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/duplicates/overview`,
-                    }}
-                  >
-                    Duplicate overview
-                  </NavLink>
-                </Menu.Item>
-              )}
+                {Auth.canEditDataset(selectedDataset, user) &&
+                  !selectedDataset.deleted && (
+                    <Menu.Item key="options">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/options`,
+                        }}
+                      >
+                        Options
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {Auth.canEditDataset(selectedDataset, user) &&
+                  !["xrelease", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) && (
+                    <Menu.Item key="editors">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${selectedDataset?.key}/editors`,
+                        }}
+                      >
+                        <span>Editors</span>
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {Auth.canEditDataset(selectedDataset, user) &&
+                  !selectedDataset.deleted && (
+                    <Menu.Item key="datasetDuplicateSearch">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/duplicates`,
+                        }}
+                      >
+                        Duplicate search
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {Auth.canEditDataset(selectedDataset, user) &&
+                  !selectedDataset.deleted && (
+                    <Menu.Item key="datasetDuplicateTasks">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/duplicates/overview`,
+                        }}
+                      >
+                        Duplicate overview
+                      </NavLink>
+                    </Menu.Item>
+                  )}
 
-              {!selectedDataset.deleted && <Menu.Item key="download">
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${_.get(
-                      selectedDataset,
-                      "key"
-                    )}/download`,
-                  }}
-                >
-                  Download
-                </NavLink>
-              </Menu.Item>}
-
-              {selectedDataset &&
-                ["xrelease", "release", "project"].includes(
-                  _.get(selectedDataset, "origin")
-                ) &&
-                hasData && (
-                  <Menu.Item key="sourcemetrics">
+                {!selectedDataset.deleted && (
+                  <Menu.Item key="download">
                     <NavLink
                       to={{
                         pathname: `/dataset/${_.get(
                           selectedDataset,
                           "key"
-                        )}/sourcemetrics`,
+                        )}/download`,
                       }}
                     >
-                      Sources
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {_.isArray(_selectedKeys) &&
-                _selectedKeys.includes("source") &&
-                taxonOrNameKey && (
-                  <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
-                )}
-              {selectedDataset &&
-                _.get(selectedDataset, "origin") === "project" &&
-                hasData && (
-                  <Menu.Item key="released_from">
-                    <NavLink
-                      to={{
-                        pathname: "/dataset",
-                        search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
-                      }}
-                    >
-                      Releases
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {selectedDataset && hasData && (
-                <Menu.Item key="classification">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/classification`,
-                    }}
-                  >
-                    Browse
-                  </NavLink>
-                </Menu.Item>
-              )}
-              {selectedDataset && !selectedDataset.deleted && (
-                <Menu.Item key="names">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/names`,
-                    }}
-                  >
-                    Search
-                  </NavLink>
-                </Menu.Item>
-              )}
-              {selectedDataset && !["xrelease", "release", "release", "project"].includes(_.get(selectedDataset, "origin"))
-                && (
-                  <Menu.Item key="imports">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          selectedDataset,
-                          "key"
-                        )}/imports`,
-                      }}
-                    >
-                      Imports
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {selectedDataset && !selectedDataset.deleted && ["xrelease", "release"].includes(_.get(selectedDataset, "origin"))
-                && (
-                  <Menu.Item key="release-metrics">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          selectedDataset,
-                          "key"
-                        )}/release-metrics`,
-                      }}
-                    >
-                      Metrics
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {selectedDataset && !["xrelease", "release"].includes(_.get(selectedDataset, "origin"))
-                &&
-                hasData && (
-                  <Menu.Item key="issues">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          selectedDataset,
-                          "key"
-                        )}/issues`,
-                      }}
-                    >
-                      Issues
-                    </NavLink>
-                  </Menu.Item>
-                )}
-              {selectedDataset && hasData && (
-                <Menu.Item key="references">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/references`,
-                    }}
-                  >
-                    References
-                  </NavLink>
-                </Menu.Item>
-              )}
-              {_.isArray(_selectedKeys) &&
-                _selectedKeys.includes("reference") &&
-                taxonOrNameKey && (
-                  <Menu.Item key="reference">Reference: {taxonOrNameKey}</Menu.Item>
-                )}
-              {selectedDataset &&
-                !["xrelease", "project", "release"].includes(
-                  _.get(selectedDataset, "origin")
-                ) &&
-                selectedDataset.size && (
-                  <Menu.Item key="verbatim">
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${_.get(
-                          selectedDataset,
-                          "key"
-                        )}/verbatim`,
-                      }}
-                    >
-                      Verbatim
+                      Download
                     </NavLink>
                   </Menu.Item>
                 )}
 
-              {/*               {selectedDataset && (
+                {selectedDataset &&
+                  ["xrelease", "release", "project"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) &&
+                  hasData && (
+                    <Menu.Item key="sourcemetrics">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/sourcemetrics`,
+                        }}
+                      >
+                        Sources
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {_.isArray(_selectedKeys) &&
+                  _selectedKeys.includes("source") &&
+                  taxonOrNameKey && (
+                    <Menu.Item key="source">Source: {taxonOrNameKey}</Menu.Item>
+                  )}
+                {selectedDataset &&
+                  _.get(selectedDataset, "origin") === "project" &&
+                  hasData && (
+                    <Menu.Item key="released_from">
+                      <NavLink
+                        to={{
+                          pathname: "/dataset",
+                          search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
+                        }}
+                      >
+                        Releases
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {selectedDataset && hasData && (
+                  <Menu.Item key="classification">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/classification`,
+                      }}
+                    >
+                      Browse
+                    </NavLink>
+                  </Menu.Item>
+                )}
+                {selectedDataset && !selectedDataset.deleted && (
+                  <Menu.Item key="names">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/names`,
+                      }}
+                    >
+                      Search
+                    </NavLink>
+                  </Menu.Item>
+                )}
+                {selectedDataset &&
+                  !["xrelease", "release", "release", "project"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) && (
+                    <Menu.Item key="imports">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/imports`,
+                        }}
+                      >
+                        Imports
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {selectedDataset &&
+                  !selectedDataset.deleted &&
+                  ["xrelease", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) && (
+                    <Menu.Item key="release-metrics">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/release-metrics`,
+                        }}
+                      >
+                        Metrics
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {selectedDataset &&
+                  !["xrelease", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) &&
+                  hasData && (
+                    <Menu.Item key="issues">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/issues`,
+                        }}
+                      >
+                        Issues
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {selectedDataset && hasData && (
+                  <Menu.Item key="references">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${_.get(
+                          selectedDataset,
+                          "key"
+                        )}/references`,
+                      }}
+                    >
+                      References
+                    </NavLink>
+                  </Menu.Item>
+                )}
+                {_.isArray(_selectedKeys) &&
+                  _selectedKeys.includes("reference") &&
+                  taxonOrNameKey && (
+                    <Menu.Item key="reference">
+                      Reference: {taxonOrNameKey}
+                    </Menu.Item>
+                  )}
+                {selectedDataset &&
+                  !["xrelease", "project", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) &&
+                  selectedDataset.size && (
+                    <Menu.Item key="verbatim">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${_.get(
+                            selectedDataset,
+                            "key"
+                          )}/verbatim`,
+                        }}
+                      >
+                        Verbatim
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+
+                {/*               {selectedDataset && (
                 <Menu.Item key="projects">
                   <NavLink
                     to={{
@@ -970,19 +996,18 @@ class BasicMenu extends Component {
                   </NavLink>
                 </Menu.Item>
               )} */}
-              {_.isArray(_selectedKeys) &&
-                _selectedKeys.includes("taxon") &&
-                taxonOrNameKey && (
-                  <Menu.Item key="taxon">Taxon: {taxonOrNameKey}</Menu.Item>
-                )}
-              {_.isArray(_selectedKeys) &&
-                _selectedKeys.includes("name") &&
-                taxonOrNameKey && (
-                  <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
-                )}
-
-            </SubMenu>
-          )}
+                {_.isArray(_selectedKeys) &&
+                  _selectedKeys.includes("taxon") &&
+                  taxonOrNameKey && (
+                    <Menu.Item key="taxon">Taxon: {taxonOrNameKey}</Menu.Item>
+                  )}
+                {_.isArray(_selectedKeys) &&
+                  _selectedKeys.includes("name") &&
+                  taxonOrNameKey && (
+                    <Menu.Item key="name">Name: {taxonOrNameKey}</Menu.Item>
+                  )}
+              </SubMenu>
+            )}
         </Menu>
       </React.Fragment>
     );
