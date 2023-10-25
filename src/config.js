@@ -11,7 +11,7 @@ if (
 } else if (domain.endsWith("coltest-vh.catalogueoflife.org")) {
   env = environments.scrap;
 } else if (domain.endsWith("localhost")) {
-  env = environments.prod;
+  env = environments.dev;
 } else {
   env = environments.dev;
 }
