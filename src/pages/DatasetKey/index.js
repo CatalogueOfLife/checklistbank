@@ -32,7 +32,7 @@ import Helmet from "react-helmet";
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
 import Name from "../Name";
-import Reference from "../Reference"
+import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "moment";
@@ -93,14 +93,20 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { key: datasetKey, section, taxonOrNameKey, catalogueKey, subsection },
+        params: {
+          key: datasetKey,
+          section,
+          taxonOrNameKey,
+          catalogueKey,
+          subsection,
+        },
       },
       location,
       dataset,
       importStateMap,
       user,
     } = this.props;
-    console.log(subsection)
+    console.log(subsection);
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
         <Redirect
@@ -124,8 +130,10 @@ class DatasetPage extends React.Component {
     const openKeys = ["dataset", "datasetKey"];
     const selectedKeys = ["diff", "import-history"].includes(section)
       ? ["imports"]
-      : sect === "duplicates" && !taxonOrNameKey ? ["datasetDuplicateSearch"]
-      : sect === "duplicates" && taxonOrNameKey ? ["datasetDuplicateTasks"]
+      : sect === "duplicates" && !taxonOrNameKey
+      ? ["datasetDuplicateSearch"]
+      : sect === "duplicates" && taxonOrNameKey
+      ? ["datasetDuplicateTasks"]
       : [section];
 
     return (
@@ -142,11 +150,24 @@ class DatasetPage extends React.Component {
         {dataset && _.get(dataset, "deleted") && (
           <Alert
             style={{ marginTop: "16px" }}
-            message={<Row><Col>{`This dataset was deleted ${moment(dataset.deleted).format(
-              "LLL"
-            )}`}</Col><Col flex="auto"></Col>{dataset.origin === "release" && dataset.sourceKey === 3 && <Col>
-            <a href="https://download.checklistbank.org/col/monthly/" target="_blank">Archived releases</a>
-            </Col>}</Row>}
+            message={
+              <Row>
+                <Col>{`This dataset was deleted ${moment(
+                  dataset.deleted
+                ).format("LLL")}`}</Col>
+                <Col flex="auto"></Col>
+                {dataset.origin === "release" && dataset.sourceKey === 3 && (
+                  <Col>
+                    <a
+                      href="https://download.checklistbank.org/col/monthly/"
+                      target="_blank"
+                    >
+                      Archived releases
+                    </a>
+                  </Col>
+                )}
+              </Row>
+            }
             type="error"
           />
         )}
@@ -158,26 +179,31 @@ class DatasetPage extends React.Component {
               type="warning"
             />
           )}
-        {importState && importState.state === "failed" && (
-          <Alert
-            style={{ marginTop: "16px" }}
-            message={`Last ${_.startCase(
-              importState.job
-            )} of this dataset failed.`}
-            description={importState.error}
-            type="error"
-          />
-        )}
+        {importState &&
+          importState.state === "failed" &&
+          section === "imports" && (
+            <Alert
+              style={{ marginTop: "16px" }}
+              message={`Last ${_.startCase(
+                importState.job
+              )} of this dataset failed.`}
+              description={importState.error}
+              type="error"
+            />
+          )}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {["release-metrics", "imports"].includes(section) && subsection !== "tree" && (
-          <DatasetImportMetrics
-            datasetKey={datasetKey}
-            origin={_.get(dataset, "origin")}
-            match={this.props.match}
-            updateImportState={() => this.getData(datasetKey)}
-          />
+        {["release-metrics", "imports"].includes(section) &&
+          subsection !== "tree" && (
+            <DatasetImportMetrics
+              datasetKey={datasetKey}
+              origin={_.get(dataset, "origin")}
+              match={this.props.match}
+              updateImportState={() => this.getData(datasetKey)}
+            />
+          )}
+        {subsection === "tree" && section === "imports" && (
+          <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey} />
         )}
-        {subsection === "tree" && section === "imports" && <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey}/>}
         {(!section || section === "metadata" || section === "about") && (
           <DatasetMeta id={datasetKey} />
         )}
@@ -202,25 +228,18 @@ class DatasetPage extends React.Component {
             catalogueKey={catalogueKey}
           />
         )}
-        
-        
-       {sect === "duplicates" && !taxonOrNameKey && (
-          <Duplicates
-            datasetKey={datasetKey}
-            location={this.props.location}
-          />
-        )} 
+
+        {sect === "duplicates" && !taxonOrNameKey && (
+          <Duplicates datasetKey={datasetKey} location={this.props.location} />
+        )}
         {sect === "references" && (
           <DatasetReferences
             datasetKey={datasetKey}
             location={this.props.location}
           />
         )}
-         {sect === "reference" && (
-          <Reference
-            datasetKey={datasetKey}
-            id={taxonOrNameKey}
-          />
+        {sect === "reference" && (
+          <Reference datasetKey={datasetKey} id={taxonOrNameKey} />
         )}
         {sect === "duplicates" && taxonOrNameKey && (
           <DatasetTasks
@@ -247,18 +266,18 @@ class DatasetPage extends React.Component {
           <VerbatimRecord
             datasetKey={datasetKey}
             lastSuccesFullImport={lastSuccesFullImport}
-           /*  location={this.props.location}
+            /*  location={this.props.location}
             match={this.props.match} */
           />
         )}
         {sect === "verbatim" && taxonOrNameKey && (
-        <VerbatimByID
-          key={taxonOrNameKey}
-          datasetKey={datasetKey}
-          verbatimKey={taxonOrNameKey}
-          basicHeader={true}
-          location={location}
-        />
+          <VerbatimByID
+            key={taxonOrNameKey}
+            datasetKey={datasetKey}
+            verbatimKey={taxonOrNameKey}
+            basicHeader={true}
+            location={location}
+          />
         )}
         {sect === "source" && (
           <ReleaseSource

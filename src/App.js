@@ -45,6 +45,9 @@ import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import NameMatch from "./pages/tools/NameMatch3";
+import NameMatchAsync from "./pages/tools/NameMatchAsync";
+import NameMatchJob from "./pages/tools/NameMatchJob";
+
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import TaxonComparer from "./pages/tools/TaxonComparer";
@@ -268,6 +271,19 @@ const App = () => {
                 key="namematch"
                 path={`/tools/name-match`}
                 component={NameMatch}
+              />
+
+              <Route
+                exact
+                key="namematchasynckey"
+                path={`/tools/name-match-async/job/:key`}
+                component={NameMatchJob}
+              />
+              <Route
+                exact
+                key="namematchasync"
+                path={`/tools/name-match-async`}
+                component={NameMatchAsync}
               />
               <Route
                 exact

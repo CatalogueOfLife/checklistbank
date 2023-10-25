@@ -83,7 +83,7 @@ class DatasetImportMetrics extends React.Component {
     this.setState({ loading: true });
     const uri = attempt
       ? `${config.dataApi}dataset/${datasetKey}/import/${attempt}`
-      : `${config.dataApi}dataset/${datasetKey}/import?limit=1`;
+      : `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=finished`;
     axios(uri)
       .then((res) => {
         const data = attempt ? res.data : res.data[0];
@@ -131,7 +131,14 @@ class DatasetImportMetrics extends React.Component {
       },
     } = this.props;
 
-    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
+    return axios(
+      `${
+        config.dataApi
+      }dataset/${datasetKey}/import?limit=50${"WAITING, PREPARING, DOWNLOADING, PROCESSING, DELETING, INSERTING, MATCHING, INDEXING, ANALYZING, ARCHIVING, EXPORTING, FINISHED, CANCELED, FAILED"
+        .split(", ")
+        .map((st) => "&state=" + st)
+        .join("")}`
+    )
       .then((res) => {
         return Promise.all(
           res.data.map((hist) =>
@@ -179,24 +186,29 @@ class DatasetImportMetrics extends React.Component {
 
     const { dataset, user, origin, importState } = this.props;
     const { importHistory, loading, data, hasImportDiff } = this.state;
-    const isRunning = this.state.data && importState
-      .filter((i) => i.running)
-      .map((i) => i.name)
-      .includes(this.state.data.state);
+    const isRunning =
+      this.state.data &&
+      importState
+        .filter((i) => i.running)
+        .map((i) => i.name)
+        .includes(this.state.data.state);
 
     return (
       <PageContent>
-        {!["xrelease", "release"].includes(origin) && <Menu datasetKey={datasetKey} attempt={attempt} />}
+        {!["xrelease", "release"].includes(origin) && (
+          <Menu datasetKey={datasetKey} attempt={attempt} />
+        )}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
             message={
               dataset.origin === "project"
                 ? "This dataset has never been released."
-                : `This dataset has never been imported.${Auth.isAuthorised(user, ["editor", "admin"])
-                  ? " Press the import button to import it"
-                  : ""
-                }`
+                : `This dataset has never been imported.${
+                    Auth.isAuthorised(user, ["editor", "admin"])
+                      ? " Press the import button to import it"
+                      : ""
+                  }`
             }
             type="warning"
           />
@@ -216,16 +228,15 @@ class DatasetImportMetrics extends React.Component {
             />
           </Drawer>
         )}
-        {this.state.data &&
-          isRunning && (
-            <Spin>
-              <Alert
-                message={_.startCase(this.state.data.state)}
-                description="The import is not finished"
-                type="info"
-              />
-            </Spin>
-          )}
+        {this.state.data && isRunning && (
+          <Spin>
+            <Alert
+              message={_.startCase(this.state.data.state)}
+              description="The import is not finished"
+              type="info"
+            />
+          </Spin>
+        )}
         {this.state.data && this.state.data.state === "failed" && (
           <Row style={{ padding: "10px" }}>
             <Alert type="error" message={this.state.data.error} />
@@ -246,7 +257,9 @@ class DatasetImportMetrics extends React.Component {
             {data && !isRunning && (
               <Col>
                 <h1>
-                  {["xrelease", "release"].includes(origin) ? "Released " : "Imported "}
+                  {["xrelease", "release"].includes(origin)
+                    ? "Released "
+                    : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
               </Col>
@@ -277,16 +290,18 @@ class DatasetImportMetrics extends React.Component {
         )}
         {data && (
           <React.Fragment>
-            {!isRunning && <ImportMetrics
-              data={data}
-              subtitle={
-                ["xrelease", "release"].includes(origin)
-                  ? `Released ${moment(data.finished).format(
-                    "MMMM Do YYYY, h:mm a"
-                  )}`
-                  : null
-              }
-            />}
+            {!isRunning && (
+              <ImportMetrics
+                data={data}
+                subtitle={
+                  ["xrelease", "release"].includes(origin)
+                    ? `Released ${moment(data.finished).format(
+                        "MMMM Do YYYY, h:mm a"
+                      )}`
+                    : null
+                }
+              />
+            )}
 
             <Row style={{ padding: "10px" }}>
               <Divider orientation="left">Details</Divider>
@@ -303,10 +318,25 @@ class DatasetImportMetrics extends React.Component {
                 {moment(data.finished).format("lll")}
               </PresentationItem>
               <PresentationItem label="Download uri">
-                {_.get(data, "downloadUri") && <a href={_.get(data, "downloadUri")}>{_.get(data, "downloadUri")}</a>}
+                {_.get(data, "downloadUri") && (
+                  <a href={_.get(data, "downloadUri")}>
+                    {_.get(data, "downloadUri")}
+                  </a>
+                )}
               </PresentationItem>
               <PresentationItem label="Archive">
-                {_.get(data, "attempt") && <a href={`${config.dataApi}dataset/${datasetKey}/archive?attempt=${_.get(data, "attempt")}`}><DownloadOutlined /></a>}
+                {_.get(data, "attempt") && (
+                  <a
+                    href={`${
+                      config.dataApi
+                    }dataset/${datasetKey}/archive?attempt=${_.get(
+                      data,
+                      "attempt"
+                    )}`}
+                  >
+                    <DownloadOutlined />
+                  </a>
+                )}
               </PresentationItem>
               <PresentationItem label="Upload">
                 <BooleanValue value={_.get(data, "upload")}></BooleanValue>
