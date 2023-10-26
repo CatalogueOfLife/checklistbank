@@ -18,6 +18,7 @@ import PresentationItem from "../../components/PresentationItem";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import Verbatim from "./Verbatim";
 import InlineEdit from "../../components/InlineEdit";
+import TaxonProperties from "./TaxonProperties";
 import SecondarySources from "./SecondarySources";
 import moment from "moment";
 import history from "../../history";
@@ -661,6 +662,14 @@ class TaxonPage extends React.Component {
                 <PresentationItem md={md} label="Environments">
                   {_.get(taxon, "environments").join(", ")}
                 </PresentationItem>
+              )}
+              {_.get(info, "properties") && (
+                <TaxonProperties
+                  md={md}
+                  references={_.get(info, "references")}
+                  referenceIndexMap={referenceIndexMap}
+                  properties={info.properties}
+                />
               )}
 
               {_.get(taxon, "remarks") && (
