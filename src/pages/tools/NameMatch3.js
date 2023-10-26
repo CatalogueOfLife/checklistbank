@@ -24,6 +24,8 @@ import {
   LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import history from "../../history";
+
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -37,7 +39,7 @@ import { Converter } from "csvtojson/v1";
 import PQueue from "p-queue";
 const { Panel } = Collapse;
 const { TextArea } = Input;
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 const MAX_LIST_SIZE = 6000;
 
@@ -466,9 +468,25 @@ const NameMatch = ({ addError, rank }) => {
             message={error}
           ></Alert>
         )}
-        {names && step === 0 && (
-          <Row style={{ marginBottom: "10px" }}>
-            <Col flex="auto"></Col>
+
+        <Row style={{ marginBottom: "10px" }}>
+          <Col>
+            If your list contains more than 5000 names, you should{" "}
+            <Button
+              type="link"
+              style={{ padding: 0 }}
+              onClick={() => {
+                history.push({
+                  pathname: `/tools/name-match-async`,
+                });
+              }}
+            >
+              submit it here
+            </Button>{" "}
+            for asynchronous processing.{" "}
+          </Col>
+          <Col flex="auto"></Col>
+          {names && step === 0 && (
             <Col>
               <span>{`${names.length} name${
                 names.length === 1 ? "" : "s"
@@ -477,8 +495,9 @@ const NameMatch = ({ addError, rank }) => {
                 Next
               </Button>
             </Col>
-          </Row>
-        )}
+          )}
+        </Row>
+
         {names && step === 1 && (
           <Row style={{ marginBottom: "10px" }}>
             <Col flex="auto"></Col>

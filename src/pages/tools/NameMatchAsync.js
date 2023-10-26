@@ -34,7 +34,7 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import history from "../../history";
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 const { Dragger } = Upload;
 
@@ -46,7 +46,6 @@ const NameMatchAsync = ({ addError, rank }) => {
   const [error, setError] = useState(null);
 
   const [submissionError, setSubmissionError] = useState(null);
-  const [step, setStep] = useState(0);
   const [primaryDataset, setPrimaryDataset] = useState(COL_LR);
 
   const isValidFile = (file) => {
@@ -79,7 +78,6 @@ const NameMatchAsync = ({ addError, rank }) => {
     action: `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
     customRequest: customRequest,
     onSuccess: (res) => {
-      console.log(res);
       history.push({
         pathname: `/tools/name-match-async/job/${res.key}`,
       });
@@ -115,56 +113,66 @@ const NameMatchAsync = ({ addError, rank }) => {
             message={error}
           ></Alert>
         )}
-
-        {step === 0 && (
-          <>
-            <Dragger {...draggerProps}>
-              <p className="ant-upload-drag-icon">
-                <UploadOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag csv/tsv file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Your csv/tsv must contain a column{" "}
-                <code className="code">scientificName</code> (which may include
-                the author) and optional columns{" "}
-                <code className="code">author</code>,{" "}
-                <code className="code">status</code>,{" "}
-                <code className="code">rank</code>,{" "}
-                <code className="code">code</code> (nomenclatural code), and any
-                higher taxon (like <code className="code">kingom</code>:
-                Animalia or <code className="code">domain</code>: Bacteria)
-              </p>
-            </Dragger>
-          </>
-        )}
-
-        <>
-          <Row>
-            <Col>
-              <Typography>
-                <Paragraph>
-                  Which dataset do you want to match against?
-                </Paragraph>
-              </Typography>
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              style={{ paddingRight: "8px" }}
-              span={step === 0 || !secondaryDataset ? 12 : 10}
+        <Row style={{ marginBottom: "10px" }}>
+          <Col>
+            <Text>
+              Here you can upload csv or tsv files for larger name matching
+              jobs. You will recieve an email when the result is ready.
+            </Text>
+          </Col>
+          <Col flex="auto"></Col>
+          <Col>
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push({
+                  pathname: `/tools/name-match`,
+                });
+              }}
             >
-              <DatasetAutocomplete
-                defaultDatasetKey={primaryDataset?.key}
-                onResetSearch={() => setPrimaryDataset(null)}
-                onSelectDataset={setPrimaryDataset}
-                // contributesTo={this.props.catalogueKey}
-                placeHolder="Choose primary dataset"
-              />
-            </Col>
-          </Row>
-        </>
+              {" "}
+              Back{" "}
+            </Button>
+          </Col>
+        </Row>
+
+        <Dragger {...draggerProps}>
+          <p className="ant-upload-drag-icon">
+            <UploadOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag csv/tsv file to this area to upload
+          </p>
+          <p className="ant-upload-hint">
+            Your csv/tsv must contain a column{" "}
+            <code className="code">scientificName</code> (which may include the
+            author) and optional columns <code className="code">author</code>,{" "}
+            <code className="code">status</code>,{" "}
+            <code className="code">rank</code>,{" "}
+            <code className="code">code</code> (nomenclatural code), and any
+            higher taxon (like <code className="code">kingom</code>: Animalia or{" "}
+            <code className="code">domain</code>: Bacteria)
+          </p>
+        </Dragger>
+
+        <Row>
+          <Col>
+            <Typography>
+              <Paragraph>Which dataset do you want to match against?</Paragraph>
+            </Typography>
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{ paddingRight: "8px" }} span={12}>
+            <DatasetAutocomplete
+              defaultDatasetKey={primaryDataset?.key}
+              onResetSearch={() => setPrimaryDataset(null)}
+              onSelectDataset={setPrimaryDataset}
+              // contributesTo={this.props.catalogueKey}
+              placeHolder="Choose primary dataset"
+            />
+          </Col>
+        </Row>
       </PageContent>
     </Layout>
   );

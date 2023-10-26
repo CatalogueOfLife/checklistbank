@@ -1,37 +1,60 @@
 import React, { useState, useEffect } from "react";
 import {
   SyncOutlined,
-  DownloadOutlined,
+  jobOutlined,
   HistoryOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import PresentationItem from "../../components/PresentationItem";
+import Exception from "../../components/exception/Exception";
+import history from "../../history";
 import moment from "moment";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import config from "../../config";
 import _ from "lodash";
-import { Button, Card, Tag, Spin } from "antd";
+import { Button, Card, Tag, Spin, Row, Col } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 
 const NameMatchJob = ({ match, addError }) => {
-  const [download, setDownload] = useState(null);
+  const [job, setjob] = useState(null);
   const [loading, setLoading] = useState(false);
   const [intervalHandle, setIntervalHandle] = useState(null);
-
+  const [resultUrl, setResultUrl] = useState(null);
+  const [resultUrlHasBeenChecked, setResultUrlHasBeenChecked] = useState(false);
   const init = async () => {
     setLoading(true);
     try {
-      const dl = await axios(`${config.dataApi}job/${match.params.key}`);
-      setDownload(dl.data);
+      const res = await axios(`${config.dataApi}job/${match.params.key}`);
+      setjob(res.data);
       setLoading(false);
     } catch (error) {
-      addError(error);
-      setDownload(null);
+      if (error.response.status === 404) {
+        getResultUrl();
+      } else {
+        addError(error);
+      }
+      setjob(null);
       setLoading(false);
     }
   };
+
+  const getResultUrl = async () => {
+    setResultUrlHasBeenChecked(true);
+    try {
+      const res = await axios.head(
+        `${config.dataApi}job/${match.params.key}.zip`
+      );
+      console.log(res);
+
+      setResultUrl(`${config.dataApi}job/${match.params.key}.zip`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (match?.params?.key) {
       init();
@@ -39,7 +62,7 @@ const NameMatchJob = ({ match, addError }) => {
   }, [match.params.key]);
 
   useEffect(() => {
-    if (["running", "waiting"].includes(download?.status)) {
+    if (["running", "waiting"].includes(job?.status)) {
       if (!intervalHandle) {
         let hdl = setTimeout(init, 5000);
         setIntervalHandle(hdl);
@@ -47,7 +70,7 @@ const NameMatchJob = ({ match, addError }) => {
     } else if (intervalHandle) {
       clearInterval(intervalHandle);
     }
-  }, [download]);
+  }, [job]);
 
   useEffect(() => {
     return () => {
@@ -57,26 +80,52 @@ const NameMatchJob = ({ match, addError }) => {
     };
   }, []);
   return (
-    <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank Download">
+    <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank Name Matching">
       <PageContent>
+        {resultUrl && (
+          <Row>
+            <Col flex="auto"></Col>
+            <Col>
+              <Button type="primary" size="large" href={resultUrl}>
+                Download matching result <DownloadOutlined />
+              </Button>
+            </Col>
+            <Col flex="auto"></Col>
+            <Col>
+              <Button
+                type="primary"
+                onClick={() => {
+                  history.push({
+                    pathname: `/tools/name-match-async`,
+                  });
+                }}
+              >
+                New upload
+              </Button>
+            </Col>
+          </Row>
+        )}
+        {!job && !resultUrl && resultUrlHasBeenChecked && (
+          <Exception type="404" />
+        )}
         <Spin spinning={loading}>
-          {download && (
+          {job && (
             <Card
               title={
                 <>
-                  {download?.error ? (
-                    <Tooltip title={download?.error}>
+                  {job?.error ? (
+                    <Tooltip title={job?.error}>
                       <Tag color="error">Failed</Tag>
                     </Tooltip>
-                  ) : download?.status === "finished" ? (
+                  ) : job?.status === "finished" ? (
                     <Button
                       type="link"
-                      href={download?.download}
+                      href={job?.job}
                       style={{ color: "#1890ff" }}
                     >
-                      <DownloadOutlined /> {download?.sizeWithUnit}
+                      <jobOutlined /> {job?.sizeWithUnit}
                     </Button>
-                  ) : download?.status === "waiting" ? (
+                  ) : job?.status === "waiting" ? (
                     <HistoryOutlined
                       style={{ marginRight: "10px", marginLeft: "10px" }}
                     />
@@ -87,7 +136,7 @@ const NameMatchJob = ({ match, addError }) => {
                     />
                   )}
 
-                  <span>{moment(download?.created).format("MMM Do YYYY")}</span>
+                  <span>{moment(job?.created).format("MMM Do YYYY")}</span>
                 </>
               }
             >
@@ -95,29 +144,16 @@ const NameMatchJob = ({ match, addError }) => {
                 <div>
                   {" "}
                   <PresentationItem md={4} label="Request">
-                    {download.request && (
+                    {job.request && (
                       <div>
-                        {Object.keys(download.request).map((key) => {
-                          const value = download.request[key];
+                        {Object.keys(job.request).map((key) => {
+                          const value = job.request[key];
                           return (
                             <Tag key={key}>{`${key}: ${
                               value?.label || value
                             }`}</Tag>
                           );
                         })}
-                      </div>
-                    )}
-                  </PresentationItem>
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <PresentationItem md={4} label="Taxa By Rank">
-                    {download.taxaByRankCount && (
-                      <div>
-                        {Object.keys(download.taxaByRankCount).map((key) => (
-                          <Tag
-                            key={key}
-                          >{`${key}: ${download.taxaByRankCount[key]}`}</Tag>
-                        ))}
                       </div>
                     )}
                   </PresentationItem>
