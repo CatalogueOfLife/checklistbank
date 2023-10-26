@@ -43,7 +43,6 @@ import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
-
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
@@ -150,10 +149,10 @@ class DuplicateSearchPage extends React.Component {
         .filter((tx) => _.get(tx, "sourceDatasetKey"))
         .map((tx) => {
           if (tx?.sourceId && tx?.usage) {
-            tx.usage.sourceId = tx?.sourceId
+            tx.usage.sourceId = tx?.sourceId;
           }
           if (tx?.sourceDatasetKey && tx?.usage) {
-            tx.usage.sourceDatasetKey = tx?.sourceDatasetKey
+            tx.usage.sourceDatasetKey = tx?.sourceDatasetKey;
           }
           return datasetLoader
             .load(tx.sourceDatasetKey)
@@ -193,7 +192,7 @@ class DuplicateSearchPage extends React.Component {
     if (catalogueKey) {
       prms.catalogueKey = catalogueKey;
     } else {
-      delete prms.withDecision
+      delete prms.withDecision;
     }
     history.push({
       pathname: pathname,
@@ -202,13 +201,17 @@ class DuplicateSearchPage extends React.Component {
     try {
       const res = await axios(
         `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify(prms)}`
-      )
+      );
 
-      const netxtRes = res.data?.result ? await Promise.all(res.data.result.map((e) => this.getDecisions(e))) : []
+      const netxtRes = res.data?.result
+        ? await Promise.all(res.data.result.map((e) => this.getDecisions(e)))
+        : [];
       const total = res.data?.total || 0;
       const data = assembly
-        ? await Promise.all(netxtRes.map((e) => this.decorateWithSectorsAndDataset(e)))
-        : netxtRes
+        ? await Promise.all(
+            netxtRes.map((e) => this.decorateWithSectorsAndDataset(e))
+          )
+        : netxtRes;
       // .then((res) => Promise.all(res.data.result.map((e) => this.getDecisions(e))))
       /* .then((res) => {
         return assembly
@@ -239,11 +242,10 @@ class DuplicateSearchPage extends React.Component {
         rawData: dataArr,
         columns: assembly ? [this.getSourceColumn(), ...clms] : clms,
         duplicateCount: dataArr.length,
-        totalFaked: total
-              /* totalFaked > data.length + Number(params.offset)
+        totalFaked: total,
+        /* totalFaked > data.length + Number(params.offset)
                 ? totalFaked
-                : data.length + Number(params.offset) */,
-        error: null,
+                : data.length + Number(params.offset) */ error: null,
       });
     } catch (err) {
       this.setState({
@@ -292,21 +294,23 @@ class DuplicateSearchPage extends React.Component {
 
   getSectors = () => {
     const { datasetKey, catalogueKey } = this.props;
-    axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`
-    )
-      .then((res) => {
-        this.setState({
-          sectors: res.data,
-          filteredSectors: res.data.map((o) => ({
-            value: o.key,
-            text: _.get(o, "subject.name"),
-          })),
+    if (catalogueKey) {
+      axios(
+        `${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`
+      )
+        .then((res) => {
+          this.setState({
+            sectors: res.data,
+            filteredSectors: res.data.map((o) => ({
+              value: o.key,
+              text: _.get(o, "subject.name"),
+            })),
+          });
+        })
+        .catch((err) => {
+          this.setState({ sectors: [] });
         });
-      })
-      .catch((err) => {
-        this.setState({ sectors: [] });
-      });
+    }
   };
   getDecisions = (data) => {
     const { catalogueKey, assembly } = this.props;
@@ -314,13 +318,13 @@ class DuplicateSearchPage extends React.Component {
     const promises = data.usages.map((d) =>
       d.decision
         ? axios(
-          `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
-            d,
-            "decision.id"
-          )}`
-        ).then((decision) => {
-          d.usage.decision = decision.data;
-        })
+            `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
+              d,
+              "decision.id"
+            )}`
+          ).then((decision) => {
+            d.usage.decision = decision.data;
+          })
         : Promise.resolve()
     );
     return Promise.all(promises).then(() => data);
@@ -335,8 +339,6 @@ class DuplicateSearchPage extends React.Component {
   };
 
   updateSearch = (params) => {
-
-
     this.setState(
       {
         params: _.pickBy(
@@ -411,9 +413,13 @@ class DuplicateSearchPage extends React.Component {
         // const sourceSubject = assembly ? await axios(`${config.dataApi}dataset/${catalogueKey}/nameusage/${_.get(d, "id")}/source`) : null;
         // const sourceId = sourceSubject?.data?.sourceId || null;
 
-        const parent = ['accepted', 'provisionally accepted'].includes(d?.usage?.status) ? (d.classification && d.classification.length > 1
-          ? d.classification[d.classification.length - 2].name
-          : "") : _.get(d, "usage.accepted.name.scientificName", "");
+        const parent = ["accepted", "provisionally accepted"].includes(
+          d?.usage?.status
+        )
+          ? d.classification && d.classification.length > 1
+            ? d.classification[d.classification.length - 2].name
+            : ""
+          : _.get(d, "usage.accepted.name.scientificName", "");
         const body = {
           datasetKey: catalogueKey,
           subjectDatasetKey: assembly ? d?.sourceDatasetKey : datasetKey,
@@ -423,20 +429,22 @@ class DuplicateSearchPage extends React.Component {
             name: _.get(d, "name.scientificName"),
             authorship: _.get(d, "name.authorship"),
             rank: _.get(d, "name.rank"),
-            status: _.get(d, "status")
+            status: _.get(d, "status"),
           },
           mode: mode,
           status: mode !== "update" ? _.get(d, "status") : decision,
         };
 
         return axios[method](
-          `${config.dataApi}dataset/${catalogueKey}/decision${method === "put" ? `/${d.decision.id}` : ""
+          `${config.dataApi}dataset/${catalogueKey}/decision${
+            method === "put" ? `/${d.decision.id}` : ""
           }`,
           body
         )
           .then((decisionId) =>
             axios(
-              `${config.dataApi}dataset/${catalogueKey}/decision/${method === "post" ? decisionId.data : d.decision.id
+              `${config.dataApi}dataset/${catalogueKey}/decision/${
+                method === "post" ? decisionId.data : d.decision.id
               }`
             )
           )
@@ -447,11 +455,18 @@ class DuplicateSearchPage extends React.Component {
                 d,
                 "name.scientificName"
               )}`;
-              const decisionMsg = `${_.get(d, "name.scientificName")} was ${decision === "block" ? "blocked from the assembly" : ""
-                }${decision === "ignore" ? "ignored (Taxon blocked, but children kept and attached to parent)" : ""}${decision === "reviewed" ? "marked as reviewed" : ""}`;
+              const decisionMsg = `${_.get(d, "name.scientificName")} was ${
+                decision === "block" ? "blocked from the assembly" : ""
+              }${
+                decision === "ignore"
+                  ? "ignored (Taxon blocked, but children kept and attached to parent)"
+                  : ""
+              }${decision === "reviewed" ? "marked as reviewed" : ""}`;
 
               notification.open({
-                message: `Decision ${method === "post" ? "applied" : "changed"}`,
+                message: `Decision ${
+                  method === "post" ? "applied" : "changed"
+                }`,
                 description: ["block", "ignore", "reviewed"].includes(decision)
                   ? decisionMsg
                   : statusMsg,
@@ -469,8 +484,10 @@ class DuplicateSearchPage extends React.Component {
     return Promise.all(promises)
       .then((res) => {
         notification.open({
-          message: `${promises.length > 1 ? 'Decisions' : 'Decision'} applied`,
-          description: `${promises.length} ${promises.length > 1 ? 'names' : 'name'} affected`,
+          message: `${promises.length > 1 ? "Decisions" : "Decision"} applied`,
+          description: `${promises.length} ${
+            promises.length > 1 ? "names" : "name"
+          } affected`,
         });
         this.setState({
           data: [...this.state.data],
@@ -503,16 +520,16 @@ class DuplicateSearchPage extends React.Component {
 
   handleResize =
     (index) =>
-      (e, { size }) => {
-        this.setState(({ columns }) => {
-          const nextColumns = [...columns];
-          nextColumns[index] = {
-            ...nextColumns[index],
-            width: size.width,
-          };
-          return { columns: nextColumns };
-        });
-      };
+    (e, { size }) => {
+      this.setState(({ columns }) => {
+        const nextColumns = [...columns];
+        nextColumns[index] = {
+          ...nextColumns[index],
+          width: size.width,
+        };
+        return { columns: nextColumns };
+      });
+    };
 
   columnFilter = (c) => {
     const { params } = this.state;
@@ -628,7 +645,6 @@ class DuplicateSearchPage extends React.Component {
       columnWidth: "30px",
       getCheckboxProps: (record) => ({
         disabled: assembly && !record?.sourceId,
-
       }),
     };
     const { offset, ...downloadParams } = params;
@@ -654,7 +670,11 @@ class DuplicateSearchPage extends React.Component {
 
         <Row gutter={16}>
           <Col
-            span={(Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey) ? 18 : 24}
+            span={
+              Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey
+                ? 18
+                : 24
+            }
           >
             <div style={{ marginBottom: "10px" }}>
               <Select
@@ -701,13 +721,10 @@ class DuplicateSearchPage extends React.Component {
                   placeholder="Search names"
                   defaultValue={queryParams?.q || null}
                   style={{ marginBottom: "10px" }}
-                  onSearch={(value) =>
-                    this.updateSearch({ q: value })
-                  }
-                  onReset={() =>
-                    this.updateSearch({ q: null })
-                  }
-                  allowClear />
+                  onSearch={(value) => this.updateSearch({ q: value })}
+                  onReset={() => this.updateSearch({ q: null })}
+                  allowClear
+                />
                 <Select
                   placeholder="Name category"
                   value={params.category}
@@ -792,9 +809,7 @@ class DuplicateSearchPage extends React.Component {
                 </Select>
 
                 <AutoComplete
-                  onSelect={(value) =>
-                    this.updateSearch({ sectorKey: value })
-                  }
+                  onSelect={(value) => this.updateSearch({ sectorKey: value })}
                   dataSource={this.state.filteredSectors}
                   onSearch={this.onSectorSearch}
                   placeholder={
@@ -815,12 +830,13 @@ class DuplicateSearchPage extends React.Component {
                 <FormItem label="Authorship different">
                   <RadioGroup
                     onChange={(evt) => {
-
-                      if (evt.target.value === true || evt.target.value === false) {
+                      if (
+                        evt.target.value === true ||
+                        evt.target.value === false
+                      ) {
                         this.updateSearch({
                           authorshipDifferent: evt.target.value,
                         });
-
                       } else {
                         this.setState(
                           {
@@ -917,29 +933,31 @@ class DuplicateSearchPage extends React.Component {
                   </RadioGroup>
                 </FormItem>
 
-                {catalogueKey && <FormItem label="With decision">
-                  <RadioGroup
-                    onChange={(evt) => {
-                      if (typeof evt.target.value === "undefined") {
-                        this.setState(
-                          {
-                            params: _.omit(this.state.params, [
-                              "withDecision",
-                            ]),
-                          },
-                          this.getData
-                        );
-                      } else {
-                        this.updateSearch({ withDecision: evt.target.value });
-                      }
-                    }}
-                    value={params.withDecision}
-                  >
-                    <Radio value={true}>Yes</Radio>
-                    <Radio value={false}>No</Radio>
-                    <Radio value={undefined}>Ignore</Radio>
-                  </RadioGroup>
-                </FormItem>}
+                {catalogueKey && (
+                  <FormItem label="With decision">
+                    <RadioGroup
+                      onChange={(evt) => {
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, [
+                                "withDecision",
+                              ]),
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ withDecision: evt.target.value });
+                        }
+                      }}
+                      value={params.withDecision}
+                    >
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                      <Radio value={undefined}>Ignore</Radio>
+                    </RadioGroup>
+                  </FormItem>
+                )}
 
                 <FormItem label="Entity">
                   <RadioGroup
@@ -982,104 +1000,111 @@ class DuplicateSearchPage extends React.Component {
               </Form>
             )}{" "}
           </Col>
-          {catalogueKey && <CanEditDataset dataset={{ key: catalogueKey }}>
-            <Col flex="auto"></Col>
-            <Col >
-              <Select
-                style={{
-                  width: 140,
-                  marginRight: 10,
-                  marginBottom: "10px",
-                }}
-                onChange={this.onDecisionChange}
-                value={decision ? decision : undefined}
-                placeholder="Pick decision"
-                showSearch
-                allowClear
-              >
-                <OptGroup label="Status">
-                  {taxonomicstatus.map((s) => (
-                    <Option value={s} key={s}>
-                      {_.startCase(s)}
-                    </Option>
-                  ))}
-                </OptGroup>
-                <OptGroup label="Other">
-                  <Option value="block">Block</Option>
-                  <Option value="ignore">Ignore</Option>
-                  <Option value="reviewed">Reviewed</Option>
-                </OptGroup>
-              </Select>
-              <br />
-              <Button
-                type="primary"
-                onClick={this.applyDecision}
-                disabled={!hasSelected}
-                style={{ width: 140 }}
-                loading={postingDecisions}
-              >
-                Apply decision
-              </Button>
-              {selectedRowKeys && selectedRowKeys.length > 0 && (
-                <div>
-                  Selected {selectedRowKeys.length}{" "}
-                  {selectedRowKeys.length > 1 ? "taxa" : "taxon"}
-                </div>
-              )}
-            </Col>
-          </CanEditDataset>}
+          {catalogueKey && (
+            <CanEditDataset dataset={{ key: catalogueKey }}>
+              <Col flex="auto"></Col>
+              <Col>
+                <Select
+                  style={{
+                    width: 140,
+                    marginRight: 10,
+                    marginBottom: "10px",
+                  }}
+                  onChange={this.onDecisionChange}
+                  value={decision ? decision : undefined}
+                  placeholder="Pick decision"
+                  showSearch
+                  allowClear
+                >
+                  <OptGroup label="Status">
+                    {taxonomicstatus.map((s) => (
+                      <Option value={s} key={s}>
+                        {_.startCase(s)}
+                      </Option>
+                    ))}
+                  </OptGroup>
+                  <OptGroup label="Other">
+                    <Option value="block">Block</Option>
+                    <Option value="ignore">Ignore</Option>
+                    <Option value="reviewed">Reviewed</Option>
+                  </OptGroup>
+                </Select>
+                <br />
+                <Button
+                  type="primary"
+                  onClick={this.applyDecision}
+                  disabled={!hasSelected}
+                  style={{ width: 140 }}
+                  loading={postingDecisions}
+                >
+                  Apply decision
+                </Button>
+                {selectedRowKeys && selectedRowKeys.length > 0 && (
+                  <div>
+                    Selected {selectedRowKeys.length}{" "}
+                    {selectedRowKeys.length > 1 ? "taxa" : "taxon"}
+                  </div>
+                )}
+              </Col>
+            </CanEditDataset>
+          )}
         </Row>
         <Row style={{ marginBottom: "8px", marginTop: "12px" }}>
           <Col span={12}>
-            {(Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey) && <>
-              <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
-                <Button
-                  type="primary"
-                  onClick={this.selectNewestInGroup}
-                  style={{ width: 140, marginRight: "10px" }}
-                  loading={newestInGroupLoading}
-                >
-                  Most recent name
-                </Button>
-              </Tooltip>
-              <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
-                <Button
-                  type="primary"
-                  onClick={this.selectAllInGroupExceptOldest}
-                  loading={allButOldestInGroupLoading}
-                  style={{ width: 140, marginRight: "10px" }}
-                >
-                  All except oldest
-                </Button>
-              </Tooltip>
-              <Button
-                type="primary"
-                onClick={this.selectAllSynonymsInGroup}
-                loading={synonymsSelectLoading}
-                style={{ width: 140 }}
-              >
-                All synonyms
-              </Button>
-            </>}
+            {Auth.canEditDataset({ key: catalogueKey }, user) &&
+              catalogueKey && (
+                <>
+                  <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
+                    <Button
+                      type="primary"
+                      onClick={this.selectNewestInGroup}
+                      style={{ width: 140, marginRight: "10px" }}
+                      loading={newestInGroupLoading}
+                    >
+                      Most recent name
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
+                    <Button
+                      type="primary"
+                      onClick={this.selectAllInGroupExceptOldest}
+                      loading={allButOldestInGroupLoading}
+                      style={{ width: 140, marginRight: "10px" }}
+                    >
+                      All except oldest
+                    </Button>
+                  </Tooltip>
+                  <Button
+                    type="primary"
+                    onClick={this.selectAllSynonymsInGroup}
+                    loading={synonymsSelectLoading}
+                    style={{ width: 140 }}
+                  >
+                    All synonyms
+                  </Button>
+                </>
+              )}
             <Button
               type="link"
               download="duplicates.csv"
-              href={`${config.dataApi
-                }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
-                  ...downloadParams,
-                  catalogueKey: catalogueKey,
-                })}`}
+              href={`${
+                config.dataApi
+              }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
+                ...downloadParams,
+                catalogueKey: catalogueKey,
+              })}`}
             >
               <DownloadOutlined /> CSV
             </Button>
             <Button
               type="link"
               download="duplicates.tsv"
-              href={`${config.dataApi
-                }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
-                  ...downloadParams,
-                  catalogueKey: catalogueKey,
-                })}`}
+              href={`${
+                config.dataApi
+              }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
+                ...downloadParams,
+                catalogueKey: catalogueKey,
+              })}`}
             >
               <DownloadOutlined /> TSV
             </Button>
@@ -1100,7 +1125,7 @@ class DuplicateSearchPage extends React.Component {
                   this.setState(
                     {
                       params: { ...this.state.params, limit: size, offset: 0 },
-                      page: 1
+                      page: 1,
                     },
                     this.getData
                   );
@@ -1113,7 +1138,7 @@ class DuplicateSearchPage extends React.Component {
                         offset: page === 0 ? page : (page - 1) * pageSize,
                         limit: pageSize,
                       },
-                      page
+                      page,
                     },
                     this.getData
                   );
@@ -1135,12 +1160,12 @@ class DuplicateSearchPage extends React.Component {
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
                   : assembly
-                    ? [
+                  ? [
                       this.getSourceColumn(),
                       ...columnDefaults(catalogueKey, this.getData)
                         .fullScientificName,
                     ]
-                    : columnDefaults(catalogueKey, this.getData)
+                  : columnDefaults(catalogueKey, this.getData)
                       .fullScientificName
               }
               dataSource={data}
@@ -1152,7 +1177,8 @@ class DuplicateSearchPage extends React.Component {
               }
               pagination={false}
               rowSelection={
-                (!Auth.canEditDataset({ key: catalogueKey }, user) || !catalogueKey)
+                !Auth.canEditDataset({ key: catalogueKey }, user) ||
+                !catalogueKey
                   ? null
                   : rowSelection
               }
