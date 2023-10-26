@@ -14,6 +14,7 @@ import {
   DatePicker,
   Popconfirm,
   Modal,
+  Typography,
   notification,
 } from "antd";
 import { withRouter } from "react-router-dom";
@@ -23,6 +24,8 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
+import { getUsersBatch } from "../../../api/user";
+
 import DataLoader from "dataloader";
 import SectorTable from "./SectorTable";
 import _ from "lodash";
@@ -32,11 +35,14 @@ import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import moment from "moment";
 import RematchResult from "./RematchResult";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
+
 // import SectorForm from "../Assembly/SectorForm";
+const { Text } = Typography;
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
+const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 const PAGE_SIZE = 100;
 
@@ -56,7 +62,7 @@ class CatalogueSectors extends React.Component {
         current: 1,
         showQuickJumper: true,
       },
-      showSectorForm: false
+      showSectorForm: false,
     };
   }
 
@@ -93,15 +99,15 @@ class CatalogueSectors extends React.Component {
         _.get(this.props, "location.search") ||
       _.get(prevProps, "match.params.catalogueKey") !==
         _.get(this.props, "match.params.catalogueKey") ||
-         _.get(params, "subjectDatasetKey") !==
+      _.get(params, "subjectDatasetKey") !==
         _.get(prevParams, "subjectDatasetKey")
     ) {
-
       this.setState(
         {
           pagination: {
             pageSize: params.limit || PAGE_SIZE,
-            current: Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
+            current:
+              Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
           },
         },
         this.getData
@@ -140,7 +146,7 @@ class CatalogueSectors extends React.Component {
       });
   };
 
-  decorateWithDataset = (res) => {
+  /*   decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
       res.data.result.map((sector) =>
@@ -149,6 +155,20 @@ class CatalogueSectors extends React.Component {
           .then((dataset) => (sector.dataset = dataset))
       )
     ).then(() => res);
+  }; */
+
+  decorateWithDataset = (res) => {
+    if (!res.data.result) return res;
+    return Promise.all([
+      ...res.data.result.map((sector) =>
+        datasetLoader
+          .load(sector.subjectDatasetKey)
+          .then((dataset) => (sector.dataset = dataset))
+      ),
+      ...res.data.result.map((sector) =>
+        userLoader.load(sector.createdBy).then((user) => (sector.user = user))
+      ),
+    ]).then(() => res);
   };
 
   getColumnSearchProps = (dataIndex) => ({
@@ -239,7 +259,7 @@ class CatalogueSectors extends React.Component {
   };
 
   handleTableChange = (pagination) => {
-    const pager = { ...this.state.pagination , ...pagination};
+    const pager = { ...this.state.pagination, ...pagination };
     // pager.current = pagination.current;
 
     const params = {
@@ -283,10 +303,10 @@ class CatalogueSectors extends React.Component {
   };
 
   resetAllFilters = () => {
-    if(this.nameRef?.current?.input?.state?.value){
+    if (this.nameRef?.current?.input?.state?.value) {
       this.nameRef.current.input.state.value = "";
     }
-    
+
     history.push({
       pathname: _.get(this.props, "location.pathname"),
       search: `?limit=${PAGE_SIZE}&offset=0`,
@@ -357,7 +377,7 @@ class CatalogueSectors extends React.Component {
       rematchSectorsLoading,
       deleteSectorsLoading,
       rematchInfo,
-      showSectorForm
+      showSectorForm,
     } = this.state;
     const {
       match: {
@@ -371,152 +391,157 @@ class CatalogueSectors extends React.Component {
 
     return (
       <>
-           <Modal 
-      title="Create sector" 
-      visible={showSectorForm} 
-      onOk={this.finishEditForm} 
-      onCancel={() => this.setState({showSectorForm: false})}
-     // style={{ top: 150, marginRight:20 }}
-      destroyOnClose={true}
-      maskClosable={false}
-      footer={null}
-      >
-     
-              <SectorForm
-                onSubmit={() => this.setState({showSectorForm: false}, this.getData)}
-               // sectorDatasetRanks={sectorDatasetRanks}
-                sector={null}
-                // onError={(err) => this.setState({ error: err })}
+        <Modal
+          title="Create sector"
+          visible={showSectorForm}
+          onOk={this.finishEditForm}
+          onCancel={() => this.setState({ showSectorForm: false })}
+          // style={{ top: 150, marginRight:20 }}
+          destroyOnClose={true}
+          maskClosable={false}
+          footer={null}
+        >
+          <SectorForm
+            onSubmit={() =>
+              this.setState({ showSectorForm: false }, this.getData)
+            }
+            // sectorDatasetRanks={sectorDatasetRanks}
+            sector={null}
+            // onError={(err) => this.setState({ error: err })}
+          />
+        </Modal>
+        {error && (
+          <Alert
+            closable
+            onClose={() => this.setState({ error: null })}
+            message={error.message}
+            type="error"
+          />
+        )}
+        {rematchInfo && (
+          <Alert
+            closable
+            onClose={() => this.setState({ rematchInfo: null })}
+            message="Rematch succeded"
+            description={<RematchResult rematchInfo={rematchInfo} />}
+            type="success"
+            style={{ marginBottom: "10px" }}
+          />
+        )}
+
+        <Form layout="inline">
+          <FormItem>
+            <div style={{ marginBottom: "8px", marginRight: "8px" }}>
+              <DatasetAutocomplete
+                defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
+                onResetSearch={this.onResetDataset}
+                onSelectDataset={this.onSelectDataset}
+                contributesTo={this.props.catalogueKey}
+                placeHolder="Source dataset"
               />
-          
-      </Modal>
-          {error && (
-            <Alert
-              closable
-              onClose={() => this.setState({ error: null })}
-              message={error.message}
-              type="error"
+            </div>
+          </FormItem>
+
+          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <Search
+              placeholder="Taxon name"
+              ref={this.nameRef}
+              defaultValue={params.name}
+              allowClear
+              onSearch={(name) => {
+                this.setState({ name }, () => this.updateSearch({ name }));
+              }}
+              style={{ width: 200 }}
             />
-          )}
-          {rematchInfo && (
-            <Alert
-              closable
-              onClose={() => this.setState({ rematchInfo: null })}
-              message="Rematch succeded"
-              description={<RematchResult rematchInfo={rematchInfo} />}
-              type="success"
-              style={{ marginBottom: "10px" }}
+          </FormItem>
+          <FormItem
+            label="Only broken"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={params.broken === true || params.broken === "true"}
+              onChange={(value) => this.updateSearch({ broken: value })}
             />
-          )}
+          </FormItem>
+          <FormItem
+            label="Without data"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={
+                params.withoutData === true || params.withoutData === "true"
+              }
+              onChange={(value) => this.updateSearch({ withoutData: value })}
+            />
+          </FormItem>
+          <FormItem
+            label="Created by me"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={user && Number(params.modifiedBy) === user.key}
+              onChange={(value) =>
+                this.updateSearch({ modifiedBy: value ? user.key : null })
+              }
+            />
+          </FormItem>
 
-          <Form layout="inline">
-            <FormItem>
-              <div style={{ marginBottom: "8px", marginRight: "8px" }}>
-                <DatasetAutocomplete
-                  defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
-                  onResetSearch={this.onResetDataset}
-                  onSelectDataset={this.onSelectDataset}
-                  contributesTo={this.props.catalogueKey}
-                  placeHolder="Source dataset"
-                />
-              </div>
-            </FormItem>
-
-            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <Search
-                placeholder="Taxon name"
-                ref={this.nameRef}
-                defaultValue={params.name}
-                allowClear
-                onSearch={(name) => {
-                  this.setState({ name }, () => this.updateSearch({ name }));
-                }}
-                style={{ width: 200 }}
-              />
-            </FormItem>
-            <FormItem
-              label="Only broken"
-              style={{ marginBottom: "8px", marginRight: "8px" }}
+          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <Select
+              placeholder="Subject rank"
+              style={{ width: 160 }}
+              value={params.rank}
+              showSearch
+              allowClear
+              onChange={(value) => this.updateSearch({ rank: value })}
             >
-              <Switch
-                checked={params.broken === true || params.broken === "true"}
-                onChange={(value) => this.updateSearch({ broken: value })}
-              />
-            </FormItem>
-            <FormItem
-              label="Without data"
-              style={{ marginBottom: "8px", marginRight: "8px" }}
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
+          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <Select
+              placeholder="Sector mode"
+              style={{ width: 160 }}
+              value={params.mode}
+              showSearch
+              allowClear
+              onChange={(value) => this.updateSearch({ mode: value })}
             >
-              <Switch
-                checked={
-                  params.withoutData === true || params.withoutData === "true"
-                }
-                onChange={(value) => this.updateSearch({ withoutData: value })}
-              />
-            </FormItem>
-            <FormItem
-              label="Created by me"
-              style={{ marginBottom: "8px", marginRight: "8px" }}
-            >
-              <Switch
-                checked={user && Number(params.modifiedBy) === user.key}
-                onChange={(value) =>
-                  this.updateSearch({ modifiedBy: value ? user.key : null })
-                }
-              />
-            </FormItem>
-
-            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <Select
-                placeholder="Subject rank"
-                style={{ width: 160 }}
-                value={params.rank}
-                showSearch
-                allowClear
-                onChange={(value) => this.updateSearch({ rank: value })}
+              {["attach", "union", "merge"].map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
+          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <DatePicker
+              placeholder="Last sync"
+              defaultValue={params.lastSync ? moment(params.lastSync) : null}
+              onChange={(date, dateString) =>
+                this.updateSearch({ lastSync: dateString })
+              }
+            />
+          </FormItem>
+        </Form>
+        <Row style={{ marginTop: "10px" }}>
+          <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
+            <Button type="danger" onClick={this.resetAllFilters}>
+              Reset all
+            </Button>
+          </Col>
+          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+            <Col span={21} style={{ textAlign: "right" }}>
+              <Button
+                type="primary"
+                style={{ marginRight: "10px" }}
+                onClick={() => this.setState({ showSectorForm: true })}
               >
-                {rank.map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
-            </FormItem>
-            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <Select
-                placeholder="Sector mode"
-                style={{ width: 160 }}
-                value={params.mode}
-                showSearch
-                allowClear
-                onChange={(value) => this.updateSearch({ mode: value })}
-              >
-                {["attach", "union", "merge"].map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
-            </FormItem>
-            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <DatePicker
-                placeholder="Last sync"
-                defaultValue={params.lastSync ? moment(params.lastSync) : null}
-                onChange={(date, dateString) =>
-                  this.updateSearch({ lastSync: dateString })
-                }
-              />
-            </FormItem>
-          </Form>
-          <Row style={{ marginTop: "10px" }}>
-            <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
-              <Button type="danger" onClick={this.resetAllFilters}>
-                Reset all
-              </Button>
-            </Col>
-          {Auth.canEditDataset({key: catalogueKey}, user) &&  <Col span={21} style={{ textAlign: "right" }}>
-              <Button type="primary" style={{marginRight: "10px"}} onClick={() => this.setState({showSectorForm: true})}>
-                  Add sector
+                Add sector
               </Button>
               <SyncAllSectorsButton
                 dataset={
@@ -569,31 +594,44 @@ class CatalogueSectors extends React.Component {
                   </Button>
                 </Popconfirm>
               )}
-            </Col>}
-          </Row>
-          {!error && (
-            <SectorTable
-              data={data}
-              loading={loading}
-              onSectorRematch={this.getData}
-              onDeleteSector={this.onDeleteSector}
-              pagination={pagination}
-              handleTableChange={this.handleTableChange}
-              expandable={{
-                expandedRowRender: (record) => (
-                    <Row>
-                        <Col flex="auto"></Col>
-                        <Col style={{width: "500px"}}><SectorForm
-                      sector={record}
-                     // onError={(err) => this.setState({ error: err })}
-                    /></Col>
-                        <Col flex="auto"></Col>
-                    </Row>
-                  
-                ),
-                rowExpandable: () => true//() => Auth.canEditDataset({key: catalogueKey}, user)
-              }}
-              /* expandedRowRender={
+            </Col>
+          )}
+        </Row>
+        {!error && (
+          <SectorTable
+            data={data}
+            loading={loading}
+            onSectorRematch={this.getData}
+            onDeleteSector={this.onDeleteSector}
+            pagination={pagination}
+            handleTableChange={this.handleTableChange}
+            expandable={{
+              expandedRowRender: (record) => (
+                <>
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col>
+                      <Text style={{ marginRight: "10px", marginTop: "10px" }}>
+                        Created by {record?.user?.username}
+                      </Text>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col style={{ width: "500px" }}>
+                      <SectorForm
+                        sector={record}
+                        // onError={(err) => this.setState({ error: err })}
+                      />
+                    </Col>
+                    <Col flex="auto"></Col>
+                  </Row>
+                </>
+              ),
+              rowExpandable: () => true, //() => Auth.canEditDataset({key: catalogueKey}, user)
+            }}
+            /* expandedRowRender={
                 !Auth.canEditDataset({key: catalogueKey}, user)
                   ? null
                   : (record) => (
@@ -606,9 +644,9 @@ class CatalogueSectors extends React.Component {
                       </React.Fragment>
                     )
               } */
-            ></SectorTable>
-          )}
-        </>
+          ></SectorTable>
+        )}
+      </>
     );
   }
 }

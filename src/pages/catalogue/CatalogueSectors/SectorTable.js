@@ -9,11 +9,18 @@ import {
   SearchOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-
-import { Table, Tooltip, Input, Button, Row, Col, Tag, notification } from "antd";
+import {
+  Table,
+  Tooltip,
+  Input,
+  Button,
+  Row,
+  Col,
+  Tag,
+  notification,
+} from "antd";
 import config from "../../../config";
 import moment from "moment";
-
 import withContext from "../../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
@@ -21,7 +28,8 @@ import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth";
 import RematchResult from "./RematchResult";
-import getColumns from "./columns"
+import getColumns from "./columns";
+
 class SectorTable extends React.Component {
   constructor(props) {
     super(props);
@@ -29,13 +37,12 @@ class SectorTable extends React.Component {
       currentDataSourceLength: 0,
       searchText: "",
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
     };
   }
 
   componentDidUpdate = (prevProps) => {
     if (
-      
       this.props.data &&
       this.props.data.length > 0 &&
       this.props.data.length !== prevProps.data.length
@@ -107,94 +114,98 @@ class SectorTable extends React.Component {
   };
 
   syncSelected = async () => {
-    const {addError} = this.props;
-    const {selectedRows} = this.state;
+    const { addError } = this.props;
+    const { selectedRows } = this.state;
     let errors = 0;
     notification.open({
       title: "",
-      message: `Triggering sync for ${selectedRows.length} sectors`
-    })
+      message: `Triggering sync for ${selectedRows.length} sectors`,
+    });
     for (const record of selectedRows) {
       try {
         await axios.post(
-        `${config.dataApi}dataset/${_.get(record, 'datasetKey')}/sector/sync`,
-        {
-          'sectorKey': _.get(record, 'id'),
-          'datasetKey': _.get(record, 'datasetKey')
-        }
-      )   
+          `${config.dataApi}dataset/${_.get(record, "datasetKey")}/sector/sync`,
+          {
+            sectorKey: _.get(record, "id"),
+            datasetKey: _.get(record, "datasetKey"),
+          }
+        );
       } catch (error) {
-        addError(error)
-        errors ++;
+        addError(error);
+        errors++;
         notification.error({
           message: `Error`,
           description: `It was not possible to sync sector ${record?.id}`,
-        })
+        });
       }
     }
-      notification.open({
-        title: "Sync triggered",
-        message: `Now syncing ${selectedRows.length - errors} sectors`
-      })
-      if(errors.length > 0){
-        notification.error({
-          title: "Sync failed",
-          message: `It was not possible to start sync for ${errors} sectors`
-        })
-      }
-    this.setState({selectedRows: [], selectedRowKeys: []})
-  }
+    notification.open({
+      title: "Sync triggered",
+      message: `Now syncing ${selectedRows.length - errors} sectors`,
+    });
+    if (errors.length > 0) {
+      notification.error({
+        title: "Sync failed",
+        message: `It was not possible to start sync for ${errors} sectors`,
+      });
+    }
+    this.setState({ selectedRows: [], selectedRowKeys: [] });
+  };
 
   rematchSelected = async () => {
-    
-
-    const {addError, catalogueKey} = this.props;
-    const {selectedRows} = this.state;
+    const { addError, catalogueKey } = this.props;
+    const { selectedRows } = this.state;
     let errors = 0,
-        
-        rematchInfo= {
-          broken: 0,
+      rematchInfo = {
+        broken: 0,
         unchanged: 0,
         updated: 0,
-        total: selectedRows.length 
-        }
+        total: selectedRows.length,
+      };
     notification.open({
       title: "",
-      message: `Triggering rematch for ${selectedRows.length} sectors`
-    })
+      message: `Triggering rematch for ${selectedRows.length} sectors`,
+    });
     for (const record of selectedRows) {
       try {
-        let res =await axios.post(
+        let res = await axios.post(
           `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
           { id: record.id }
-        )   
+        );
         rematchInfo.broken += res?.data?.broken;
         rematchInfo.unchanged += res?.data?.unchanged;
         rematchInfo.updated += res?.data?.updated;
       } catch (error) {
-        addError(error)
-        errors ++;
+        addError(error);
+        errors++;
         notification.error({
           message: `Error`,
           description: `It was not possible to rematch sector ${record?.id}`,
-        })
+        });
       }
     }
-      notification.open({
-        title: "",
-        message: <><div>{`Rematched ${selectedRows.length - errors} sectors.`}</div>{Object.keys(rematchInfo).map(category => <Tag  key={category}>
-        {_.startCase(category)}: {_.get(rematchInfo, `[${category}]`) || 0}
-      </Tag>)}</>
-      })
-      if(errors.length > 0){
-        notification.error({
-          title: "Rematch failed",
-          message: `It was not possible to rematch ${errors} sectors`
-        })
-      }
-    this.setState({selectedRows: [], selectedRowKeys: []})
-    
-  }
+    notification.open({
+      title: "",
+      message: (
+        <>
+          <div>{`Rematched ${selectedRows.length - errors} sectors.`}</div>
+          {Object.keys(rematchInfo).map((category) => (
+            <Tag key={category}>
+              {_.startCase(category)}:{" "}
+              {_.get(rematchInfo, `[${category}]`) || 0}
+            </Tag>
+          ))}
+        </>
+      ),
+    });
+    if (errors.length > 0) {
+      notification.error({
+        title: "Rematch failed",
+        message: `It was not possible to rematch ${errors} sectors`,
+      });
+    }
+    this.setState({ selectedRows: [], selectedRowKeys: [] });
+  };
 
   render() {
     const {
@@ -206,12 +217,16 @@ class SectorTable extends React.Component {
       catalogueKey,
       handleTableChange,
       expandedRowRender,
-      expandable
+      expandable,
     } = this.props;
     const offset = pagination
       ? (pagination.current - 1) * pagination.pageSize
       : 0;
-    const columns = getColumns(catalogueKey, this.state.searchText, this.getColumnSearchProps)
+    const columns = getColumns(
+      catalogueKey,
+      this.state.searchText,
+      this.getColumnSearchProps
+    );
     /* const columns = [
       {
         title: "Dataset",
@@ -417,15 +432,15 @@ class SectorTable extends React.Component {
       },
     ]; */
 
-    if (Auth.canEditDataset({key: catalogueKey}, user)) {
+    if (Auth.canEditDataset({ key: catalogueKey }, user)) {
       columns.push({
         title: "Action",
         key: "action",
         width: 250,
         render: (text, record) => (
           <React.Fragment>
-            {!_.get(record, "target.broken") && (record?.mode === "merge" || !record?.subject?.broken)
-              && (
+            {!_.get(record, "target.broken") &&
+              (record?.mode === "merge" || !record?.subject?.broken) && (
                 <SyncButton
                   size="small"
                   style={{ display: "inline", marginRight: "8px" }}
@@ -493,15 +508,15 @@ class SectorTable extends React.Component {
     }
     return (
       <React.Fragment>
-       {/*  <Row>
+        {/*  <Row>
           {!loading && !isNaN(offset) && pagination?.total && data && (
             <Col style={{ textAlign: "right" }}>
               Results: {offset} - {offset + data.length} of {pagination.total}
             </Col>
           )}
         </Row> */}
-      
-       <Table
+
+        <Table
           size="small"
           onChange={handleTableChange}
           columns={[...columns]}
@@ -511,23 +526,40 @@ class SectorTable extends React.Component {
           rowKey="id"
           expandable={expandable}
           rowSelection={
-            !(Auth.canEditDataset({key: catalogueKey}, user)) ? null : {
-              selectedRowKeys: this.state.selectedRowKeys,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({selectedRowKeys, selectedRows})
-              },
-              selections: [
-                {
-                  key: 'sync',
-                  text: <Button style={{width: "100%"}} onClick={e => this.syncSelected()} type="primary">Sync {this.state.selectedRowKeys.length} sectors</Button>,
-                  
-                },
-                {
-                  key: 'rematch',
-                  text: <Button style={{width: "100%"}}  onClick={e => this.rematchSelected()} type="primary">Rematch {this.state.selectedRowKeys.length} sectors</Button>,
-                 
-                }]
-            }
+            !Auth.canEditDataset({ key: catalogueKey }, user)
+              ? null
+              : {
+                  selectedRowKeys: this.state.selectedRowKeys,
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    this.setState({ selectedRowKeys, selectedRows });
+                  },
+                  selections: [
+                    {
+                      key: "sync",
+                      text: (
+                        <Button
+                          style={{ width: "100%" }}
+                          onClick={(e) => this.syncSelected()}
+                          type="primary"
+                        >
+                          Sync {this.state.selectedRowKeys.length} sectors
+                        </Button>
+                      ),
+                    },
+                    {
+                      key: "rematch",
+                      text: (
+                        <Button
+                          style={{ width: "100%" }}
+                          onClick={(e) => this.rematchSelected()}
+                          type="primary"
+                        >
+                          Rematch {this.state.selectedRowKeys.length} sectors
+                        </Button>
+                      ),
+                    },
+                  ],
+                }
           }
         />
       </React.Fragment>
@@ -535,6 +567,10 @@ class SectorTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey, addError }) => ({ user, catalogueKey, addError });
+const mapContextToProps = ({ user, catalogueKey, addError }) => ({
+  user,
+  catalogueKey,
+  addError,
+});
 
 export default withContext(mapContextToProps)(SectorTable);
