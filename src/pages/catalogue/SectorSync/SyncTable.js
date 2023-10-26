@@ -16,7 +16,7 @@ import kibanaQuery from "./kibanaQuery";
 
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
-import DatasetAutocomplete from "../Assembly/DatasetAutocomplete"
+import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 
 const PAGE_SIZE = 25;
 
@@ -38,7 +38,10 @@ const getColumns = (catalogueKey) => [
     ellipsis: true,
     width: 150,
     render: (text, record) => (
-      <>{record?.warnings?.length > 0 && <WarningOutlined style={{ color: "red", marginRight: "6px" }} />}
+      <>
+        {record?.warnings?.length > 0 && (
+          <WarningOutlined style={{ color: "red", marginRight: "6px" }} />
+        )}
         <NavLink
           to={{
             pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/metadata`,
@@ -48,7 +51,6 @@ const getColumns = (catalogueKey) => [
             _.get(record, "sector.dataset.title")}
         </NavLink>
       </>
-
     ),
   },
   {
@@ -60,9 +62,11 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          {_.get(record, "sector.subject") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-            {_.get(record, "sector.subject.rank")}:{" "}
-          </span>}
+          {_.get(record, "sector.subject") && (
+            <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {_.get(record, "sector.subject.rank")}:{" "}
+            </span>
+          )}
           <NavLink
             to={{
               pathname: `/catalogue/${catalogueKey}/names`,
@@ -94,9 +98,11 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       return (
         <React.Fragment>
-          {_.get(record, "sector.target.rank") && <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-            {_.get(record, "sector.target.rank")}:{" "}
-          </span>}
+          {_.get(record, "sector.target.rank") && (
+            <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {_.get(record, "sector.target.rank")}:{" "}
+            </span>
+          )}
           {_.get(record, "sector.target.id") && (
             <NavLink
               to={{
@@ -134,8 +140,7 @@ const getColumns = (catalogueKey) => [
     title: "Taxa",
     dataIndex: "taxonCount",
     key: "taxonCount",
-    render: (text, record) => (record?.taxonCount || 0).toLocaleString("en-GB")
-    ,
+    render: (text, record) => (record?.taxonCount || 0).toLocaleString("en-GB"),
     width: 50,
   },
   {
@@ -248,11 +253,9 @@ class SyncTable extends React.Component {
 
     if (
       _.get(prevProps, "match.params.catalogueKey") !==
-      _.get(this.props, "match.params.catalogueKey") ||
+        _.get(this.props, "match.params.catalogueKey") ||
       _.get(prevParams, "datasetKey") !== _.get(params, "datasetKey")
     ) {
-
-
       this.setState(
         {
           pagination: {
@@ -285,22 +288,22 @@ class SyncTable extends React.Component {
         const promises =
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map((sync) =>
-              axios(
-                `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
-              )
-                .then((sector) => {
-                  sync.sector = sector.data;
-                  sync._id = `${sync.sectorKey}_${sync.attempt}`;
-                })
-                .then(() =>
-                  axios(
-                    `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
-                  )
+                axios(
+                  `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
                 )
-                .then((res) => {
-                  sync.sector.dataset = res.data;
-                })
-            )
+                  .then((sector) => {
+                    sync.sector = sector.data;
+                    sync._id = `${sync.sectorKey}_${sync.attempt}`;
+                  })
+                  .then(() =>
+                    axios(
+                      `${config.dataApi}dataset/${sync.sector.subjectDatasetKey}`
+                    )
+                  )
+                  .then((res) => {
+                    sync.sector.dataset = res.data;
+                  })
+              )
             : [];
 
         return Promise.all(promises).then(() => res);
@@ -377,20 +380,24 @@ class SyncTable extends React.Component {
     } = this.props;
     const columns = Auth.canEditDataset({ key: catalogueKey }, user)
       ? [
-        ...getColumns(catalogueKey),
-        {
-          title: "Action",
-          dataIndex: "",
-          key: "x",
-          width: 50,
-          render: (record) =>
-            record.job === "SectorSync" ? (
-              <SyncButton size="small" key={record.datasetKey} record={record} />
-            ) : (
-              ""
-            ),
-        },
-      ]
+          ...getColumns(catalogueKey),
+          {
+            title: "Action",
+            dataIndex: "",
+            key: "x",
+            width: 50,
+            render: (record) =>
+              record.job === "SectorSync" ? (
+                <SyncButton
+                  size="small"
+                  key={record.datasetKey}
+                  record={record}
+                />
+              ) : (
+                ""
+              ),
+          },
+        ]
       : getColumns(catalogueKey);
 
     columns[5].filters = sectorImportState.map((i) => ({
@@ -406,11 +413,14 @@ class SyncTable extends React.Component {
         )}
         <Row>
           {!sectorKey && Auth.canEditDataset({ key: catalogueKey }, user) && (
-            <Col> <SyncAllSectorsButton
-              catalogueKey={catalogueKey}
-              onError={(err) => this.setState({ syncAllError: err })}
-              onSuccess={() => this.setState({ syncAllError: null })}
-            /></Col>
+            <Col>
+              {" "}
+              <SyncAllSectorsButton
+                catalogueKey={catalogueKey}
+                onError={(err) => this.setState({ syncAllError: err })}
+                onSuccess={() => this.setState({ syncAllError: null })}
+              />
+            </Col>
           )}
           {sectorKey && (
             <Col>
@@ -423,11 +433,15 @@ class SyncTable extends React.Component {
           )}
           <Col flex="auto"></Col>
           <Col>
-            <DatasetAutocomplete defaultDatasetKey={datasetKey} contributesTo={catalogueKey} onResetSearch={() => this.updateSearch({ datasetKey: null })} onSelectDataset={this.onSelectDataset} placeHolder="Source dataset" />
+            <DatasetAutocomplete
+              defaultDatasetKey={datasetKey}
+              contributesTo={catalogueKey}
+              onResetSearch={() => this.updateSearch({ datasetKey: null })}
+              onSelectDataset={this.onSelectDataset}
+              placeHolder="Source dataset"
+            />
           </Col>
-
         </Row>
-
 
         {!error && (
           <Table
@@ -440,44 +454,91 @@ class SyncTable extends React.Component {
             onChange={this.handleTableChange}
             rowKey="_id"
             expandable={{
-              rowExpandable: (record) => ["failed", "finished"].includes(record.state),
+              rowExpandable: (record) =>
+                ["failed", "finished"].includes(record.state),
               expandedRowRender: (record) => {
                 if (record.state === "failed") {
                   return <Alert message={record.error} type="error" />;
                 } else if (record.state === "finished") {
                   return (
                     <>
-                      <Tag key="speciesCount" color="blue">
-                        Species Count: {_.get(record, `taxaByRankCount.species`)}
-                      </Tag>
-                      {[
-                        "taxonCount",
-                        "synonymCount",
-                        "referenceCount",
-                        "distributionCount",
-                        "descriptionCount",
-                        "vernacularCount",
-                        "mediaCount",
-                      ].map((c) =>
-                        !isNaN(_.get(record, `${c}`)) ? (
-                          <Tag key={c} color="blue">
-                            {_.startCase(c)}: {_.get(record, `${c}`)}
-                          </Tag>
-                        ) : (
-                          ""
+                      {Object.keys(record)
+                        .filter(
+                          (k) =>
+                            typeof record[k] === "object" &&
+                            !["sector"].includes(k)
                         )
-                      )}
-                      {record?.warnings?.length > 0 &&
-                        <Alert style={{ marginTop: "10px" }} message={<ul>
-                          {record?.warnings.map(w => <li>{w}</li>)}
-                        </ul>} type="error" />}
+                        .map((k) => (
+                          <Row style={{ marginBottom: "10px" }}>
+                            <Col span={4}>{_.startCase(k)}: </Col>
+                            <Col>
+                              {Object.keys(record[k]).map((c) =>
+                                !isNaN(_.get(record, `[${k}]${c}`)) ? (
+                                  <Tag
+                                    key={c}
+                                    color="blue"
+                                    style={{ marginBottom: "10px" }}
+                                  >
+                                    {_.startCase(c)}:{" "}
+                                    {_.get(record, `[${k}]${c}`)}
+                                  </Tag>
+                                ) : (
+                                  ""
+                                )
+                              )}
+                            </Col>
+                          </Row>
+                        ))}
+                      <Row>
+                        <Col span={4}>Other: </Col>
+                        <Col span={20}>
+                          {Object.keys(record)
+                            .filter(
+                              (r) =>
+                                ![
+                                  "datasetKey",
+                                  "attempt",
+                                  "createdBy",
+                                  "started",
+                                  "finished",
+                                  "datasetAttempt",
+                                ].includes(r)
+                            )
+                            .map((c) =>
+                              !isNaN(_.get(record, `${c}`)) ? (
+                                <Tag
+                                  key={c}
+                                  color="blue"
+                                  style={{ marginBottom: "10px" }}
+                                >
+                                  {_.startCase(c)}: {_.get(record, `${c}`)}
+                                </Tag>
+                              ) : (
+                                ""
+                              )
+                            )}
+                        </Col>
+                      </Row>
 
+                      {record?.warnings?.length > 0 && (
+                        <Alert
+                          style={{ marginTop: "10px" }}
+                          message={
+                            <ul>
+                              {record?.warnings.map((w) => (
+                                <li>{w}</li>
+                              ))}
+                            </ul>
+                          }
+                          type="error"
+                        />
+                      )}
                     </>
                   );
-                };
-              }
+                }
+              },
             }}
-          /*  expandedRowRender={(record) => {
+            /*  expandedRowRender={(record) => {
              if (record.state === "failed") {
                return <Alert message={record.error} type="error" />;
              } else if (record.state === "finished") {
