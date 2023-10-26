@@ -60,7 +60,7 @@ const DecisionForm = (props) => {
     datasetKey,
     subjectDatasetKey,
     onSaveDecision,
-    destroyOnClose = false
+    destroyOnClose = false,
   } = props;
 
   const [visible, setVisible] = useState(true);
@@ -74,7 +74,7 @@ const DecisionForm = (props) => {
   const handleSubmit = (next, cb) => {
     setConfirmLoading(true);
     form.validateFields().then((values) => {
-     // console.log("Received values of form: ", values);
+      // console.log("Received values of form: ", values);
       const decision = {
         name: {
           scientificName: values.scientificName,
@@ -84,6 +84,7 @@ const DecisionForm = (props) => {
           code: values.nomCode,
           type: values.nametype,
         },
+        extinct: values.extinct,
         environments: values.environments,
         status: values.status,
         fossil: values.fossil,
@@ -130,19 +131,28 @@ const DecisionForm = (props) => {
     decisionObject.mode = "update";
     decisionObject.subjectDatasetKey = Number(subjectDatasetKey);
     decisionObject.datasetKey = Number(datasetKey);
-    decisionObject.subject = (currentDecision && !_.get(currentRow, "usage.id") && currentDecision?.subject) ? currentDecision.subject : {
-      id: _.get(currentRow, "usage.id"),
+    decisionObject.subject =
+      currentDecision &&
+      !_.get(currentRow, "usage.id") &&
+      currentDecision?.subject
+        ? currentDecision.subject
+        : {
+            id: _.get(currentRow, "usage.id"),
 
-      name: _.get(currentRow, "usage.name.scientificName"),
-      authorship: _.get(currentRow, "usage.name.authorship"),
-      rank: _.get(currentRow, "usage.name.rank"),
-      status: _.get(currentRow, "usage.status"),
-      parent:
-        currentRow.classification && currentRow.classification.length > 1
-          ? currentRow.classification[currentRow.classification.length - 2].name
-          : currentRow?.parent ? currentRow.parent : "",
-      code: _.get(currentRow, "usage.name.code"),
-    };
+            name: _.get(currentRow, "usage.name.scientificName"),
+            authorship: _.get(currentRow, "usage.name.authorship"),
+            rank: _.get(currentRow, "usage.name.rank"),
+            status: _.get(currentRow, "usage.status"),
+            parent:
+              currentRow.classification && currentRow.classification.length > 1
+                ? currentRow.classification[
+                    currentRow.classification.length - 2
+                  ].name
+                : currentRow?.parent
+                ? currentRow.parent
+                : "",
+            code: _.get(currentRow, "usage.name.code"),
+          };
 
     const method = currentDecision ? "put" : "post";
     return axios[method](
