@@ -97,7 +97,9 @@ class TaxonPage extends React.Component {
     } = this.props;
     try {
       const nameusage = await axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/${encodeURIComponent(
+          taxonKey
+        )}`
       );
       if (
         ["accepted", "provisionally accepted"].includes(nameusage?.data?.status)
@@ -109,8 +111,12 @@ class TaxonPage extends React.Component {
       } else {
         history.push(
           datasetKey === catalogueKey
-            ? `/catalogue/${catalogueKey}/name/${nameusage?.data?.name?.id}`
-            : `/dataset/${datasetKey}/name/${nameusage?.data?.name?.id}`
+            ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
+                nameusage?.data?.name?.id
+              )}`
+            : `/dataset/${datasetKey}/name/${encodeURIComponent(
+                nameusage?.data?.name?.id
+              )}`
         );
       }
       console.log(nameusage.data.status);
@@ -154,7 +160,11 @@ class TaxonPage extends React.Component {
               return Promise.all(
                 relations.data.map((r) => {
                   return axios(
-                    `${config.dataApi}dataset/${datasetKey}/name/${r.relatedNameId}`
+                    `${
+                      config.dataApi
+                    }dataset/${datasetKey}/name/${encodeURIComponent(
+                      r.relatedNameId
+                    )}`
                   ).then((n) => {
                     r.relatedName = n.data;
                   });

@@ -11,8 +11,8 @@ import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 import TypeMaterial from "../Taxon/TypeMaterial";
-import PublishedInPagePreview from "../Taxon/PublishedInPagePreview"
-import Linkify from 'react-linkify';
+import PublishedInPagePreview from "../Taxon/PublishedInPagePreview";
+import Linkify from "react-linkify";
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
@@ -71,7 +71,6 @@ class NamePage extends React.Component {
       this.getRelations(datasetKey, nameKey);
       this.getSynonyms(datasetKey, nameKey);
       this.getTypeMaterial(datasetKey, nameKey);
-
     }
   };
   getReference = (referenceKey) => {
@@ -95,42 +94,54 @@ class NamePage extends React.Component {
   };
 
   getRelations = (key, nameKey) => {
-    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/relations`).then(
-      (relations) => {
-        return Promise.all(
-          relations.data.map((r) => {
-            return axios(
-              `${config.dataApi}dataset/${key}/name/${r.relatedNameId}`
-            ).then((n) => {
-              r.relatedName = n.data;
-            });
-          })
-        ).then(() => {
-          this.setState({ relations: relations.data });
-        });
-      }
-    );
+    axios(
+      `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+        nameKey
+      )}/relations`
+    ).then((relations) => {
+      return Promise.all(
+        relations.data.map((r) => {
+          return axios(
+            `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+              r.relatedNameId
+            )}`
+          ).then((n) => {
+            r.relatedName = n.data;
+          });
+        })
+      ).then(() => {
+        this.setState({ relations: relations.data });
+      });
+    });
   };
 
   getTypeMaterial = (key, nameKey) => {
-    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/types`).then(
-      (types) => {
-        this.setState({ typeMaterial: types.data });
-      }
-    );
+    axios(
+      `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+        nameKey
+      )}/types`
+    ).then((types) => {
+      this.setState({ typeMaterial: types.data });
+    });
   };
 
   getSynonyms = (key, nameKey) => {
-    axios(`${config.dataApi}dataset/${key}/name/${nameKey}/synonyms`).then(
-      (synonyms) => {
-        this.setState({ synonyms: synonyms.data });
-      }
-    );
+    axios(
+      `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
+        nameKey
+      )}/synonyms`
+    ).then((synonyms) => {
+      this.setState({ synonyms: synonyms.data });
+    });
   };
 
   getUsages = (key, nameKey) => {
     this.setState({ usageLoading: true });
-    axios(`${config.dataApi}dataset/${key}/nameusage/search?NAME_ID=${nameKey}`)
+    axios(
+      `${
+        config.dataApi
+      }dataset/${key}/nameusage/search?NAME_ID=${encodeURIComponent(nameKey)}`
+    )
       .then((res) => {
         this.setState({
           usageLoading: false,
@@ -144,7 +155,7 @@ class NamePage extends React.Component {
   };
   getName = (key, nameKey) => {
     this.setState({ nameLoading: true });
-    axios(`${config.dataApi}dataset/${key}/name/${nameKey}`)
+    axios(`${config.dataApi}dataset/${key}/name/${encodeURIComponent(nameKey)}`)
       .then((res) => {
         this.setState(
           { nameLoading: false, name: res.data, nameError: null },
@@ -208,28 +219,29 @@ class NamePage extends React.Component {
           <Col flex="auto"></Col>
           <Col>
             {!usages && <Tag color="warning">No usages</Tag>}
-            {usages && usages.length > 0 && (<>
-              <span>{usages.length > 1 ? "Usages " : "Usage "}</span>
-              {usages &&
-                usages.map((u, i) => (
-                  <NavLink
-                    key={i}
-                    to={{
-                      pathname: `${taxonUri}${encodeURIComponent(
-                        _.get(u, "usage.accepted.id") || _.get(u, "usage.id")
-                      )}`,
-                    }}
-                    exact={true}
-                  >
-                    <Tag
-                      color={getTaxonomicStatusColor(u.usage.status)}
-                      style={{ marginRight: "6px", cursor: "pointer" }}
+            {usages && usages.length > 0 && (
+              <>
+                <span>{usages.length > 1 ? "Usages " : "Usage "}</span>
+                {usages &&
+                  usages.map((u, i) => (
+                    <NavLink
+                      key={i}
+                      to={{
+                        pathname: `${taxonUri}${encodeURIComponent(
+                          _.get(u, "usage.accepted.id") || _.get(u, "usage.id")
+                        )}`,
+                      }}
+                      exact={true}
                     >
-                      {u.usage.status}
-                    </Tag>
-                  </NavLink>
-                ))}
-            </>
+                      <Tag
+                        color={getTaxonomicStatusColor(u.usage.status)}
+                        style={{ marginRight: "6px", cursor: "pointer" }}
+                      >
+                        {u.usage.status}
+                      </Tag>
+                    </NavLink>
+                  ))}
+              </>
             )}
           </Col>
         </Row>
@@ -274,36 +286,47 @@ class NamePage extends React.Component {
                 </PresentationItem>
                 {name.combinationAuthorship && (
                   <PresentationItem md={md} label="Combination Authorship">
-                    {`${name.combinationAuthorship.authors
+                    {`${
+                      name.combinationAuthorship.authors
                         ? name.combinationAuthorship.authors.join(", ")
                         : ""
-                      } ${name.combinationAuthorship.exAuthors
-                        ? `ex ${name.combinationAuthorship.exAuthors.join(", ")}`
+                    } ${
+                      name.combinationAuthorship.exAuthors
+                        ? `ex ${name.combinationAuthorship.exAuthors.join(
+                            ", "
+                          )}`
                         : ""
-                      } ${name.combinationAuthorship.year
+                    } ${
+                      name.combinationAuthorship.year
                         ? name.combinationAuthorship.year
                         : ""
-                      }`}
+                    }`}
                   </PresentationItem>
                 )}
                 {name.basionymAuthorship && (
                   <PresentationItem md={md} label="Basionym Authorship">
-                    {`${name.basionymAuthorship.authors.join(", ")} ${name.basionymAuthorship.exAuthors
+                    {`${name.basionymAuthorship.authors.join(", ")} ${
+                      name.basionymAuthorship.exAuthors
                         ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
                         : ""
-                      } ${name.basionymAuthorship.year
+                    } ${
+                      name.basionymAuthorship.year
                         ? name.basionymAuthorship.year
                         : ""
-                      }`}
+                    }`}
                   </PresentationItem>
                 )}
                 {name.sanctioningAuthor && (
                   <PresentationItem md={md} label="Sanctioning Author">
-                    {`${name.sanctioningAuthor.authors.join(", ")} ${name.sanctioningAuthor.exAuthors
+                    {`${name.sanctioningAuthor.authors.join(", ")} ${
+                      name.sanctioningAuthor.exAuthors
                         ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
                         : ""
-                      } ${name.sanctioningAuthor.year ? name.sanctioningAuthor.year : ""
-                      }`}
+                    } ${
+                      name.sanctioningAuthor.year
+                        ? name.sanctioningAuthor.year
+                        : ""
+                    }`}
                   </PresentationItem>
                 )}
                 {publishedIn && publishedIn.citation && (
@@ -313,23 +336,28 @@ class NamePage extends React.Component {
                 )}
                 {typeMaterial && typeMaterial.length > 0 && (
                   <PresentationItem md={md} label="Type material">
-                    <TypeMaterial data={{ [name.id]: typeMaterial }} nameID={_.get(name, 'id')} />
-
+                    <TypeMaterial
+                      data={{ [name.id]: typeMaterial }}
+                      nameID={_.get(name, "id")}
+                    />
                   </PresentationItem>
                 )}
-                {relations && relations.length > 0 &&
+                {relations && relations.length > 0 && (
                   <NameRelations
                     md={md}
                     style={{ marginTop: "-3px" }}
                     data={relations}
                     datasetKey={datasetKey}
-                    catalogueKey={catalogueKey} />
-
-                }
+                    catalogueKey={catalogueKey}
+                  />
+                )}
                 {filteredSynonyms && filteredSynonyms.length > 0 && (
                   <PresentationItem md={md} label="Homotypic names">
                     <SynonymTable
-                      data={filteredSynonyms.map((s) => ({ name: s, __homotypic: true }))}
+                      data={filteredSynonyms.map((s) => ({
+                        name: s,
+                        __homotypic: true,
+                      }))}
                       style={{ marginTop: "-3px" }}
                       datasetKey={datasetKey}
                       catalogueKey={catalogueKey}
@@ -408,39 +436,46 @@ class NamePage extends React.Component {
                   {name.publishedInPage}
                 </PresentationItem>
                 <PresentationItem md={md} label="Published In Page Link">
-                  {name.publishedInPageLink && <Row>
-                    <Col><a href={name.publishedInPageLink} target="_blank" >
-                      {name.publishedInPageLink}
-                    </a></Col>
-                    <Col>
-                      <PublishedInPagePreview publishedInPageLink={name.publishedInPageLink} style={{ boxShadow: "6px 6px 6px lightgrey", marginLeft: "10px" }} />
-                    </Col>
-                    <Col flex="auto"></Col>
-                  </Row>}
+                  {name.publishedInPageLink && (
+                    <Row>
+                      <Col>
+                        <a href={name.publishedInPageLink} target="_blank">
+                          {name.publishedInPageLink}
+                        </a>
+                      </Col>
+                      <Col>
+                        <PublishedInPagePreview
+                          publishedInPageLink={name.publishedInPageLink}
+                          style={{
+                            boxShadow: "6px 6px 6px lightgrey",
+                            marginLeft: "10px",
+                          }}
+                        />
+                      </Col>
+                      <Col flex="auto"></Col>
+                    </Row>
+                  )}
                 </PresentationItem>
                 {_.get(name, "namesIndexId") && (
                   <PresentationItem md={md} label="Related names">
                     <NavLink
                       to={{
-                        pathname: `/namesindex/${name.namesIndexId}/related`
+                        pathname: `/namesindex/${name.namesIndexId}/related`,
                       }}
                     >
                       <LinkOutlined />
                     </NavLink>
-
                   </PresentationItem>
                 )}
               </React.Fragment>
             )}
           </TabPane>
-          {_.get(name, "verbatimKey") && <TabPane tab="Verbatim" key="2">
-            <Verbatim verbatimKey={name.verbatimKey} />
-
-          </TabPane>}
+          {_.get(name, "verbatimKey") && (
+            <TabPane tab="Verbatim" key="2">
+              <Verbatim verbatimKey={name.verbatimKey} />
+            </TabPane>
+          )}
         </Tabs>
-
-
-
       </div>
     );
   }

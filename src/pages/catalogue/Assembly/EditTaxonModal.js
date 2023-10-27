@@ -92,7 +92,7 @@ const EditTaxonModal = (props) => {
             : ""
         }`
       );
-      next()
+      next();
     });
   };
 
@@ -139,7 +139,9 @@ const EditTaxonModal = (props) => {
 
     axios
       .put(
-        `${config.dataApi}dataset/${name.datasetKey}/name/${name.id}`,
+        `${config.dataApi}dataset/${name.datasetKey}/name/${encodeURIComponent(
+          name.id
+        )}`,
         updatedName
       )
       .then((res) => {
@@ -185,132 +187,128 @@ const EditTaxonModal = (props) => {
       cancelText={steps[current].cancelText}
       onCancel={onCancel}
       destroyOnClose={true}
-      footer={
-        [
-              <Button key="cancel" onClick={onCancel}>
-                Cancel
-              </Button>,
-             
-              <Button
-                key="submit"
-                type="primary"
-                loading={confirmLoading}
-                onClick={() => {
-                  setConfirmLoading(true);
-                  form.validateFields().then((values) => {
-                    handleSubmit(values);
-                    next();
-                  });
-                }}
-              >
-                Submit
-              </Button>,
-            ]
-      }
+      footer={[
+        <Button key="cancel" onClick={onCancel}>
+          Cancel
+        </Button>,
+
+        <Button
+          key="submit"
+          type="primary"
+          loading={confirmLoading}
+          onClick={() => {
+            setConfirmLoading(true);
+            form.validateFields().then((values) => {
+              handleSubmit(values);
+              next();
+            });
+          }}
+        >
+          Submit
+        </Button>,
+      ]}
     >
- 
-    
-        <Form form={form} initialValues={parsedName}>
+      <Form form={form} initialValues={parsedName}>
+        <FormItem
+          {...formItemLayout}
+          label="Scientific name"
+          name="scientificName"
+          rules={[
+            {
+              required: true,
+              message: "Please input Full Taxon name",
+            },
+          ]}
+        >
+          <Input />
+        </FormItem>
+        {isAboveSpeciesAggregate(selectedRank) && (
+          <FormItem {...formItemLayout} label="Uninomial" name="uninomial">
+            <Input />
+          </FormItem>
+        )}
+        {!isAboveSpeciesAggregate(selectedRank) && (
+          <FormItem {...formItemLayout} label="Genus" name="genus">
+            <Input />
+          </FormItem>
+        )}
+        {!isAboveSpeciesAggregate(selectedRank) && (
           <FormItem
             {...formItemLayout}
-            label="Scientific name"
-            name="scientificName"
-            rules={[
-              {
-                required: true,
-                message: "Please input Full Taxon name",
-              },
-            ]}
+            label="Specific Epithet"
+            name="specificEpithet"
           >
             <Input />
           </FormItem>
-          {isAboveSpeciesAggregate(selectedRank) && (
-            <FormItem {...formItemLayout} label="Uninomial" name="uninomial">
-              <Input />
-            </FormItem>
-          )}
-          {!isAboveSpeciesAggregate(selectedRank) && (
-            <FormItem {...formItemLayout} label="Genus" name="genus">
-              <Input />
-            </FormItem>
-          )}
-          {!isAboveSpeciesAggregate(selectedRank) && (
-            <FormItem
-              {...formItemLayout}
-              label="Specific Epithet"
-              name="specificEpithet"
-            >
-              <Input />
-            </FormItem>
-          )}
-          {isInfraSpecific(selectedRank) && (
-            <FormItem
-              {...formItemLayout}
-              label="Infrasp. Epithet"
-              name="infraspecificEpithet"
-            >
-              <Input />
-            </FormItem>
-          )}
-          <FormItem {...formItemLayout} label="Authorship" name="authorship">
+        )}
+        {isInfraSpecific(selectedRank) && (
+          <FormItem
+            {...formItemLayout}
+            label="Infrasp. Epithet"
+            name="infraspecificEpithet"
+          >
             <Input />
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="Rank"
-            name="rank"
-            rules={[
-              {
-                required: true,
-                message: "Please select Taxon rank",
-              },
-            ]}
+        )}
+        <FormItem {...formItemLayout} label="Authorship" name="authorship">
+          <Input />
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Rank"
+          name="rank"
+          rules={[
+            {
+              required: true,
+              message: "Please select Taxon rank",
+            },
+          ]}
+        >
+          <Select
+            style={{ width: 200 }}
+            onChange={(value) => {
+              setSelectedRank(value);
+              form.setFieldsValue({ rank: value });
+            }}
+            showSearch
           >
-            <Select
-              style={{ width: 200 }}
-              onChange={(value) => {
-                setSelectedRank(value);
-                form.setFieldsValue({ rank: value });
-              }}
-              showSearch
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
-          </FormItem>
-          <FormItem {...formItemLayout} label="Nom. status" name="nomstatus">
-            <Select style={{ width: 200 }} showSearch>
-              {nomstatus.map((r) => (
-                <Option key={r.name} value={r.name}>
-                  {r.name}
-                </Option>
-              ))}
-            </Select>
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="Name type"
-            name="type"
-            rules={[
-              {
-                required: true,
-                message: "Please select Name Type",
-              },
-            ]}
-          >
-            <Select style={{ width: 200 }} showSearch>
-              {nametype.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
-          </FormItem>
-        </Form>
-   
+            {rank.map((r) => (
+              <Option key={r} value={r}>
+                {r}
+              </Option>
+            ))}
+          </Select>
+        </FormItem>
+        <FormItem {...formItemLayout} label="Nom. status" name="nomstatus">
+          <Select style={{ width: 200 }} showSearch>
+            {nomstatus.map((r) => (
+              <Option key={r.name} value={r.name}>
+                {r.name}
+              </Option>
+            ))}
+          </Select>
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Name type"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: "Please select Name Type",
+            },
+          ]}
+        >
+          <Select style={{ width: 200 }} showSearch>
+            {nametype.map((r) => (
+              <Option key={r} value={r}>
+                {r}
+              </Option>
+            ))}
+          </Select>
+        </FormItem>
+      </Form>
+
       {submissionError && (
         <Alert
           closable
