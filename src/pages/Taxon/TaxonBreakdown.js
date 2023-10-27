@@ -29,15 +29,19 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   const [invalid, setInvalid] = useState(false);
   const [taxonID, setTaxonID] = useState(null);
   useEffect(() => {
-    if(taxon?.id !== taxonID){
+    if (taxon?.id !== taxonID) {
       getData();
-      setTaxonID(taxon?.id)
-    } 
+      setTaxonID(taxon?.id);
+    }
   }, [taxon, datasetKey]);
 
   const getOverView = async () => {
     const res = await axios(
-      `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon.id}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+      `${
+        config.dataApi
+      }dataset/${datasetKey}/nameusage/search?TAXON_ID=${encodeURIComponent(
+        taxon.id
+      )}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
     );
     return _.keyBy(_.get(res, "data.facets.rank", []), "value");
   };
@@ -215,10 +219,8 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       },
       credits: {
         text: `${taxon.name.scientificName} in ${dataset.title}${
-          dataset.version ? " ("+dataset.version+")":""
-        }. ${
-          (dataset.doi ? "DOI:" + dataset.doi : null) || dataset.url || ""
-        }`,
+          dataset.version ? " (" + dataset.version + ")" : ""
+        }. ${(dataset.doi ? "DOI:" + dataset.doi : null) || dataset.url || ""}`,
         href: DOI || dataset.url || "",
       },
       title: {
@@ -246,12 +248,15 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  if(typeof onTaxonClick === "function"){
-                    onTaxonClick(e.point._id)
+                  if (typeof onTaxonClick === "function") {
+                    onTaxonClick(e.point._id);
                   } else {
-                    history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                    history.push(
+                      `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                        e.point._id
+                      )}`
+                    );
                   }
-                  
                 }
               },
             },
@@ -266,10 +271,14 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
             events: {
               click: (e) => {
                 if (e.point._id) {
-                  if(typeof onTaxonClick === "function"){
-                    onTaxonClick(e.point._id)
+                  if (typeof onTaxonClick === "function") {
+                    onTaxonClick(e.point._id);
                   } else {
-                    history.push(`/dataset/${datasetKey}/taxon/${encodeURIComponent(e.point._id)}`);
+                    history.push(
+                      `/dataset/${datasetKey}/taxon/${encodeURIComponent(
+                        e.point._id
+                      )}`
+                    );
                   }
                 }
               },
