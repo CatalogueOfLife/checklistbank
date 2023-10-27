@@ -28,7 +28,7 @@ const GBIFTaxonomyReview = ({ location }) => {
 
   const getAvailableDataFiles = () => {
     axios
-      .get(`${config.gbifTaxReview}/index.json`, {
+      .get(`${config.gbifTaxReview}index.json`, {
         transformRequest: (data, headers) => {
           delete headers.common["Authorization"];
           return data;
