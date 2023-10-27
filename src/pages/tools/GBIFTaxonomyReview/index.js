@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../../../config"
+import config from "../../../config";
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
@@ -28,7 +28,7 @@ const GBIFTaxonomyReview = ({ location }) => {
 
   const getAvailableDataFiles = () => {
     axios
-      .get(`${config.downloadApi}taxreview/index.json`, {
+      .get(`${config.gbifTaxReview}/index.json`, {
         transformRequest: (data, headers) => {
           delete headers.common["Authorization"];
           return data;

@@ -18,8 +18,9 @@ import { QuestionCircleOutlined, LinkOutlined } from "@ant-design/icons";
 import withContext from "../../../components/hoc/withContext";
 import _ from "lodash";
 import qs from "query-string";
+import config from "../../../config";
 
-const DOWNLOADS_URL = "https://download.checklistbank.org/taxreview/";
+const DOWNLOADS_URL = config.gbifTaxReview; //"https://download.checklistbank.org/taxreview/";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -484,9 +485,8 @@ class Root extends React.Component {
               }}
               size="middle"
               expandable={{
-                expandedRowRender: this.expandedRowRender
+                expandedRowRender: this.expandedRowRender,
               }}
-
               rowKey="_key"
             />
           </div>
