@@ -420,8 +420,12 @@ class TaxonPage extends React.Component {
                   onClick={() => {
                     history.push(
                       Number(datasetKey) === catalogueKey
-                        ? `/catalogue/${catalogueKey}/name/${taxon.name.id}`
-                        : `/dataset/${taxon.datasetKey}/name/${taxon.name.id}`
+                        ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
+                            taxon.name.id
+                          )}`
+                        : `/dataset/${
+                            taxon.datasetKey
+                          }/name/${encodeURIComponent(taxon.name.id)}`
                     );
                   }}
                 >
