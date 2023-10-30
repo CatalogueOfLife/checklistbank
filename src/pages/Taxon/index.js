@@ -34,8 +34,14 @@ import TaxonMedia from "./TaxonMedia";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
 import Linkify from "react-linkify";
+import SourceDatasets from "./SourceDatasets";
 import marked from "marked";
 import DOMPurify from "dompurify";
+import { getSectorsBatch } from "../../api/sector";
+import { getDatasetsBatch } from "../../api/dataset";
+
+import DataLoader from "dataloader";
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const { TabPane } = Tabs;
 
@@ -62,6 +68,7 @@ class TaxonPage extends React.Component {
       verbatim: null,
       logoUrl: null,
       sourceDataset: null,
+      sourceDatasetKeyMap: null,
       sourceTaxon: null,
       includes: [],
       edit: false,
@@ -123,7 +130,53 @@ class TaxonPage extends React.Component {
     }
   };
 
-  redirectIfSynonym = async () => {};
+  decorateWithSectorsAndDataset = async (synonyms) => {
+    const { datasetKey } = this.props;
+    const sectorLoader = new DataLoader((ids) =>
+      getSectorsBatch(ids, datasetKey)
+    );
+    const sourceDatasetsMap = {};
+    for (const type of ["misapplied", "heterotypic", "homotypic"].filter(
+      (t) => !!synonyms[t]
+    )) {
+      await Promise.allSettled(
+        synonyms[type]
+          .filter((tx) => !!tx.sectorKey)
+          .map((tx) =>
+            sectorLoader.load(tx.sectorKey, datasetKey).then((r) => {
+              tx.sector = r;
+              return datasetLoader.load(r.subjectDatasetKey).then((dataset) => {
+                // tx.sector.dataset = dataset
+                tx.sourceDatasetKey = dataset.key;
+                sourceDatasetsMap[dataset.key] = dataset;
+              });
+            })
+          )
+      );
+    }
+    if (synonyms?.heterotypicGroups) {
+      for (const arr of synonyms?.heterotypicGroups) {
+        await Promise.allSettled(
+          arr
+            .filter((tx) => !!tx.sectorKey)
+            .map((tx) =>
+              sectorLoader.load(tx.sectorKey, datasetKey).then((r) => {
+                tx.sector = r;
+                return datasetLoader
+                  .load(r.subjectDatasetKey)
+                  .then((dataset) => {
+                    // tx.sector.dataset = dataset
+                    tx.sourceDatasetKey = dataset.key;
+                    sourceDatasetsMap[dataset.key] = dataset;
+                  });
+              })
+            )
+        );
+      }
+    }
+
+    return Object.keys(sourceDatasetsMap).length > 0 ? sourceDatasetsMap : null;
+  };
 
   getTaxon = () => {
     const {
@@ -220,44 +273,51 @@ class TaxonPage extends React.Component {
       });
   };
 
-  getInfo = () => {
+  getInfo = async () => {
     const {
       match: {
         params: { taxonOrNameKey: taxonKey },
       },
       datasetKey,
     } = this.props;
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/info`
+      );
 
-    axios(`${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/info`)
-      .then((res) => {
-        if (
-          _.get(res, "data.taxon.name.publishedInId") &&
-          _.get(
-            res,
-            `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
-          )
-        ) {
-          res.data.taxon.name.publishedIn = _.get(
-            res,
-            `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
-          );
-        }
-        let referenceIndexMap = {};
-        if (_.get(res, "data.references")) {
-          Object.keys(res.data.references).forEach((k, i) => {
-            referenceIndexMap[k] = (i + 1).toString();
-          });
-        }
-        this.setState({
-          infoLoading: false,
-          info: res.data,
-          infoError: null,
-          referenceIndexMap,
+      if (
+        _.get(res, "data.taxon.name.publishedInId") &&
+        _.get(
+          res,
+          `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+        )
+      ) {
+        res.data.taxon.name.publishedIn = _.get(
+          res,
+          `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+        );
+      }
+      let referenceIndexMap = {};
+      if (_.get(res, "data.references")) {
+        Object.keys(res.data.references).forEach((k, i) => {
+          referenceIndexMap[k] = (i + 1).toString();
         });
-      })
-      .catch((err) => {
-        this.setState({ infoLoading: false, infoError: err, info: null });
+      }
+
+      let sourceDatasetKeyMap = _.get(res, "data.synonyms")
+        ? await this.decorateWithSectorsAndDataset(_.get(res, "data.synonyms"))
+        : null;
+
+      this.setState({
+        infoLoading: false,
+        info: res.data,
+        infoError: null,
+        referenceIndexMap,
+        sourceDatasetKeyMap,
       });
+    } catch (err) {
+      this.setState({ infoLoading: false, infoError: err, info: null });
+    }
   };
 
   getClassification = () => {
@@ -357,13 +417,13 @@ class TaxonPage extends React.Component {
           info && info.synonyms && info.synonyms.length > 0
             ? info.synonyms.filter((s) => s.status === "misapplied")
             : []; */
-    const homotypic = _.get(info, "synonyms.homotypic", []);
-    const heterotypic = _.get(info, "synonyms.heterotypic", []);
+    /*  const homotypic = _.get(info, "synonyms.homotypic", []);
+    const heterotypic = _.get(info, "synonyms.heterotypic", []); */
     const misapplied = _.get(info, "synonyms.misapplied", []);
-    const synonyms = [
+    /* const synonyms = [
       ...homotypic.map((h) => ({ ...h, __homotypic: true })),
       ...heterotypic,
-    ];
+    ]; */
 
     return (
       <React.Fragment>
@@ -541,13 +601,11 @@ class TaxonPage extends React.Component {
                   )}
                 </Col>
               </Row>
-
               {_.get(taxon, "name.nomStatus") && (
                 <PresentationItem md={md} label="Nomenclatural Status">
                   {getNomStatus(_.get(taxon, "name"))}
                 </PresentationItem>
               )}
-
               {/*           {synonyms && synonyms.length > 0 && (
             <PresentationItem md={md} label="Synonyms and combinations">
               <SynonymTable
@@ -563,7 +621,6 @@ class TaxonPage extends React.Component {
               />
             </PresentationItem>
           )} */}
-
               {_.get(info, "synonyms") && (
                 <PresentationItem md={md} label="Synonyms and combinations">
                   <Synonyms
@@ -579,7 +636,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
-
               {misapplied && misapplied.length > 0 && (
                 <PresentationItem md={md} label="Misapplied names">
                   <SynonymTable
@@ -593,7 +649,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
-
               {_.get(taxon, "name.relations") &&
                 taxon.name.relations.length > 0 && (
                   <NameRelations
@@ -604,7 +659,6 @@ class TaxonPage extends React.Component {
                     datasetKey={datasetKey}
                   />
                 )}
-
               {classification && (
                 <PresentationItem md={md} label="Classification">
                   <Classification
@@ -643,7 +697,6 @@ class TaxonPage extends React.Component {
                   datasetKey={datasetKey}
                 />
               )}
-
               {_.get(info, "media") && (
                 <PresentationItem md={md} label="Media">
                   <TaxonMedia media={_.get(info, "media")} />
@@ -659,7 +712,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
-
               {_.get(info, "distributions") && (
                 <PresentationItem md={md} label="Distributions">
                   <Distributions
@@ -683,7 +735,6 @@ class TaxonPage extends React.Component {
                   properties={info.properties}
                 />
               )}
-
               {_.get(taxon, "remarks") && (
                 <PresentationItem md={md} label="Remarks">
                   {taxon?.remarks ? (
@@ -739,6 +790,14 @@ class TaxonPage extends React.Component {
                   </div>
                 </PresentationItem>
               )}
+              {this.state?.sourceDatasetKeyMap && (
+                <PresentationItem md={md} label="Sources">
+                  <SourceDatasets
+                    datasetKey={this.props.datasetKey}
+                    sourceDatasetKeyMap={this.state.sourceDatasetKeyMap}
+                  />
+                </PresentationItem>
+              )}{" "}
               {/*  {sourceTaxon && (
                 <PresentationItem md={md} label="Source taxon">
                   <NavLink
