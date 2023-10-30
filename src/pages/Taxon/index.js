@@ -158,7 +158,11 @@ class TaxonPage extends React.Component {
               return Promise.all(
                 relations.data.map((r) => {
                   return axios(
-                    `${config.dataApi}dataset/${datasetKey}/name/${r.relatedNameId}`
+                    `${
+                      config.dataApi
+                    }dataset/${datasetKey}/name/${encodeURIComponent(
+                      r.relatedNameId
+                    )}`
                   ).then((n) => {
                     r.relatedName = n.data;
                   });
