@@ -33,6 +33,8 @@ class AdminPage extends React.Component {
       updateAllLogosloading: false,
       updateAllMetricsloading: false,
       recalculateSectorCountsLoading: false,
+      reindexSchedulerLoading: false,
+      rematchSchedulerLoading: false,
       components: { "foo": true, "bar": false },
       componentsError: null,
       componentsLoading: false
@@ -184,6 +186,58 @@ class AdminPage extends React.Component {
       );
   };
 
+  reindexScheduler = () => {
+    this.setState({ reindexSchedulerLoading: true });
+    axios
+      .post(`${config.dataApi}admin/reindex/scheduler`)
+      .then((res) => {
+        this.setState(
+          {
+            reindexSchedulerLoading: false,
+            error: null,
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "Run reindex scheduler",
+            });
+          }
+        );
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          reindexSchedulerLoading: false,
+        })
+      );
+  };
+
+  rematchScheduler = () => {
+    this.setState({ rematchSchedulerLoading: true });
+    axios
+      .post(`${config.dataApi}admin/rematch/scheduler`)
+      .then((res) => {
+        this.setState(
+          {
+            rematchSchedulerLoading: false,
+            error: null,
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "Run rematch scheduler",
+            });
+          }
+        );
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          rematchSchedulerLoading: false,
+        })
+      );
+  };
+
   restartAll = () => {
     axios
       .post(`${config.dataApi}admin/component/restart-all`)
@@ -204,6 +258,8 @@ class AdminPage extends React.Component {
       updateUsageCountsLoading,
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
+      reindexSchedulerLoading,
+      rematchSchedulerLoading,
       error,
       components: components,
       componentsLoading: componentsLoading
@@ -350,6 +406,38 @@ class AdminPage extends React.Component {
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               >
                 Reindex all datasets
+              </Button>
+            </Popconfirm>
+
+            <Popconfirm
+              placement="rightTop"
+              title="Do you want to schedule reindexing incomplete datasets?"
+              onConfirm={this.reindexScheduler}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                loading={reindexSchedulerLoading}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+              >
+                Reindex scheduler
+              </Button>
+            </Popconfirm>
+
+            <Popconfirm
+              placement="rightTop"
+              title="Do you want to schedule rematching incomplete datasets?"
+              onConfirm={this.rematchScheduler}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                loading={rematchSchedulerLoading}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+              >
+                Rematch scheduler
               </Button>
             </Popconfirm>
 
