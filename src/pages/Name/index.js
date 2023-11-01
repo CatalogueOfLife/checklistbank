@@ -138,8 +138,7 @@ class NamePage extends React.Component {
   getUsages = (key, nameKey) => {
     this.setState({ usageLoading: true });
     axios(
-      `${
-        config.dataApi
+      `${config.dataApi
       }dataset/${key}/nameusage/search?NAME_ID=${encodeURIComponent(nameKey)}`
     )
       .then((res) => {
@@ -286,47 +285,40 @@ class NamePage extends React.Component {
                 </PresentationItem>
                 {name.combinationAuthorship && (
                   <PresentationItem md={md} label="Combination Authorship">
-                    {`${
-                      name.combinationAuthorship.authors
-                        ? name.combinationAuthorship.authors.join(", ")
-                        : ""
-                    } ${
-                      name.combinationAuthorship.exAuthors
+                    {`${name.combinationAuthorship.authors
+                      ? name.combinationAuthorship.authors.join(", ")
+                      : ""
+                      } ${name.combinationAuthorship.exAuthors
                         ? `ex ${name.combinationAuthorship.exAuthors.join(
-                            ", "
-                          )}`
+                          ", "
+                        )}`
                         : ""
-                    } ${
-                      name.combinationAuthorship.year
+                      } ${name.combinationAuthorship.year
                         ? name.combinationAuthorship.year
                         : ""
-                    }`}
+                      }`}
                   </PresentationItem>
                 )}
                 {name.basionymAuthorship && (
                   <PresentationItem md={md} label="Basionym Authorship">
-                    {`${name.basionymAuthorship.authors.join(", ")} ${
-                      name.basionymAuthorship.exAuthors
-                        ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                        : ""
-                    } ${
-                      name.basionymAuthorship.year
+                    {`${name.basionymAuthorship.authors.join(", ")} ${name.basionymAuthorship.exAuthors
+                      ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
+                      : ""
+                      } ${name.basionymAuthorship.year
                         ? name.basionymAuthorship.year
                         : ""
-                    }`}
+                      }`}
                   </PresentationItem>
                 )}
                 {name.sanctioningAuthor && (
                   <PresentationItem md={md} label="Sanctioning Author">
-                    {`${name.sanctioningAuthor.authors.join(", ")} ${
-                      name.sanctioningAuthor.exAuthors
-                        ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                        : ""
-                    } ${
-                      name.sanctioningAuthor.year
+                    {`${name.sanctioningAuthor.authors.join(", ")} ${name.sanctioningAuthor.exAuthors
+                      ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
+                      : ""
+                      } ${name.sanctioningAuthor.year
                         ? name.sanctioningAuthor.year
                         : ""
-                    }`}
+                      }`}
                   </PresentationItem>
                 )}
                 {publishedIn && publishedIn.citation && (
@@ -398,22 +390,15 @@ class NamePage extends React.Component {
                 <PresentationItem md={md} label="Nomenclatural Status">
                   {getNomStatus(name)}
                 </PresentationItem>
+                <PresentationItem md={md} label="Etymology">
+                  {name.etymology}
+                </PresentationItem>
                 <PresentationItem md={md} label="Origin">
                   {name.origin}
                 </PresentationItem>
                 <PresentationItem md={md} label="Type">
                   {name.type}
                 </PresentationItem>
-                <PresentationItem md={md} label="Fossil">
-                  <BooleanValue value={name.fossil} />
-                </PresentationItem>
-                {/* <PresentationItem md={md} label="Source Url">
-              {name.sourceUrl && (
-                <a href={name.sourceUrl} target="_blank">
-                  {name.sourceUrl}
-                </a>
-              )}
-            </PresentationItem> */}
                 <PresentationItem md={md} label="Link">
                   {name.link && (
                     <a href={name.link} target="_blank">

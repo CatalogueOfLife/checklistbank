@@ -113,6 +113,30 @@
         "col:Name.col:basionymID": [
                 "col:Name.col:ID"
         ],
+        "col:Name.col:combinationAuthorshipID": [
+                "col:Author.col:ID"
+        ],
+        "col:Name.col:combinationExAuthorshipID": [
+                "col:Author.col:ID"
+        ],
+        "col:Name.col:basionymAuthorshipID": [
+                "col:Author.col:ID"
+        ],
+        "col:Name.col:basionymExAuthorshipID": [
+                "col:Author.col:ID"
+        ],
+        "col:Reference.col:authorID": [
+                "col:Author.col:ID"
+        ],
+        "col:Reference.col:editorID": [
+                "col:Author.col:ID"
+        ],
+        "col:Reference.col:containerAuthorID": [
+                "col:Author.col:ID"
+        ],
+        "col:Reference.col:collectionEditorID": [
+                "col:Author.col:ID"
+        ],
         "col:NameRelation.col:nameID": [
                 "col:Name.col:ID",
                 "col:NameUsage.col:ID",
