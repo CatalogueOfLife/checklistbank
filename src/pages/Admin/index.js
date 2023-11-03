@@ -35,9 +35,11 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading: false,
       reindexSchedulerLoading: false,
       rematchSchedulerLoading: false,
-      components: { "foo": true, "bar": false },
+      components: { foo: true, bar: false },
       componentsError: null,
-      componentsLoading: false
+      componentsLoading: false,
+      rematchSchedulerLoading: false,
+      reindexSchedulerLoading: false,
     };
   }
 
@@ -47,14 +49,14 @@ class AdminPage extends React.Component {
   getComponents = () => {
     axios
       .get(`${config.dataApi}admin/component`)
-      .then(res => {
-        this.setState({ components: res.data, componentsLoading: false })
+      .then((res) => {
+        this.setState({ components: res.data, componentsLoading: false });
       })
       .catch((err) => {
-        this.props.addError(err)
-        this.setState({ componentsLoading: false })
-      });;
-  }
+        this.props.addError(err);
+        this.setState({ componentsLoading: false });
+      });
+  };
 
   toggleMaintenance = (checked) => {
     axios
@@ -64,13 +66,13 @@ class AdminPage extends React.Component {
 
   updateComponent = (comp, checked) => {
     const method = checked ? "start" : "stop";
-    this.setState({ componentsLoading: true })
+    this.setState({ componentsLoading: true });
     axios
       .post(`${config.dataApi}admin/component/${method}?comp=${comp}`)
       .then(this.getComponents)
       .catch((err) => {
-        this.props.addError(err)
-        this.setState({ componentsLoading: false })
+        this.props.addError(err);
+        this.setState({ componentsLoading: false });
       });
   };
 
@@ -251,6 +253,40 @@ class AdminPage extends React.Component {
       .catch((err) => this.setState({ error: err }));
   };
 
+  reindexScheduler = () => {
+    this.setState({ reindexSchedulerLoading: true });
+    axios
+      .post(`${config.dataApi}admin/reindex/scheduler`)
+      .then((res) => {
+        this.setState({ error: null, reindexSchedulerLoading: false }, () => {
+          notification.open({
+            message: "Scheduler reindexed",
+          });
+        });
+      })
+      .catch((err) =>
+        this.setState({ error: err, reindexSchedulerLoading: false })
+      );
+    // /admin/reindex/scheduler
+  };
+
+  rematchScheduler = () => {
+    this.setState({ rematchSchedulerLoading: true });
+    axios
+      .post(`${config.dataApi}admin/rematch/scheduler`)
+      .then((res) => {
+        this.setState({ error: null, rematchSchedulerLoading: false }, () => {
+          notification.open({
+            message: "Scheduler rematched",
+          });
+        });
+      })
+      .catch((err) =>
+        this.setState({ error: err, rematchSchedulerLoading: false })
+      );
+    // /admin/reindex/scheduler
+  };
+
   render() {
     const {
       updateAllLogosloading,
@@ -262,7 +298,7 @@ class AdminPage extends React.Component {
       rematchSchedulerLoading,
       error,
       components: components,
-      componentsLoading: componentsLoading
+      componentsLoading: componentsLoading,
     } = this.state;
     const { background } = this.props;
     return (
@@ -291,10 +327,13 @@ class AdminPage extends React.Component {
             <Space direction="horizontal" size={[50, 0]} wrap>
               <FormItem label="Background jobs">
                 {components.idle && (
-                  <Badge count={"idle"} style={{ backgroundColor: '#52c41a' }} />
+                  <Badge
+                    count={"idle"}
+                    style={{ backgroundColor: "#52c41a" }}
+                  />
                 )}
                 {components.idle || (
-                  <Badge count={"active"} style={{ backgroundColor: 'red' }} />
+                  <Badge count={"active"} style={{ backgroundColor: "red" }} />
                 )}
               </FormItem>
 
@@ -312,8 +351,9 @@ class AdminPage extends React.Component {
 
           <Row>
             <Space direction="horizontal" size={[50, 0]} wrap>
-              {
-                Object.keys(components).filter(c => c != "idle").map(comp => (
+              {Object.keys(components)
+                .filter((c) => c != "idle")
+                .map((comp) => (
                   <FormItem label={comp}>
                     <Switch
                       loading={componentsLoading}
@@ -323,8 +363,7 @@ class AdminPage extends React.Component {
                       checked={components[comp]}
                     />
                   </FormItem>
-                ))
-              }
+                ))}
             </Space>
           </Row>
 
@@ -440,7 +479,6 @@ class AdminPage extends React.Component {
                 Rematch scheduler
               </Button>
             </Popconfirm>
-
             <Popconfirm
               placement="rightTop"
               title="Do you want to restart all components?"
@@ -480,12 +518,12 @@ const mapContextToProps = ({
   catalogue,
   setCatalogue,
   background,
-  addError
+  addError,
 }) => ({
   catalogueKey,
   catalogue,
   setCatalogue,
   background,
-  addError
+  addError,
 });
 export default withContext(mapContextToProps)(AdminPage);

@@ -95,6 +95,12 @@ class DatasetList extends React.Component {
               : record.nameUsageTotal,
         },
         {
+          title: "Dataset monitor",
+          dataIndex: "matchesCount",
+          key: "matchesCount",
+          sorter: false,
+        },
+        {
           title: "Action",
           dataIndex: "",
           width: 60,
@@ -107,7 +113,7 @@ class DatasetList extends React.Component {
               >
                 Re-index
               </Button>
-              {!["xrelease","release","project"].includes(record.origin) && (
+              {!["xrelease", "release", "project"].includes(record.origin) && (
                 <Button
                   type="primary"
                   onClick={() => this.reimportDataset(record.key)}
@@ -168,16 +174,23 @@ class DatasetList extends React.Component {
     });
     axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
       .then((res) => {
-        return Promise.all(
+        return Promise.allSettled(
           !res.data.result
             ? []
-            : res.data.result.map((r) =>
-                axios(
-                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
-                ).then(
-                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
-                )
-              )
+            : [
+                ...res.data.result.map((r) =>
+                  axios(
+                    `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                  ).then(
+                    (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                  )
+                ),
+                ...res.data.result.map((r) =>
+                  axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
+                    (count) => (r.matchesCount = count)
+                  )
+                ),
+              ]
         ).then(() => res);
       })
       .then((res) => {
