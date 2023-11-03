@@ -38,8 +38,6 @@ class AdminPage extends React.Component {
       components: { foo: true, bar: false },
       componentsError: null,
       componentsLoading: false,
-      rematchSchedulerLoading: false,
-      reindexSchedulerLoading: false,
     };
   }
 
@@ -251,40 +249,6 @@ class AdminPage extends React.Component {
         });
       })
       .catch((err) => this.setState({ error: err }));
-  };
-
-  reindexScheduler = () => {
-    this.setState({ reindexSchedulerLoading: true });
-    axios
-      .post(`${config.dataApi}admin/reindex/scheduler`)
-      .then((res) => {
-        this.setState({ error: null, reindexSchedulerLoading: false }, () => {
-          notification.open({
-            message: "Scheduler reindexed",
-          });
-        });
-      })
-      .catch((err) =>
-        this.setState({ error: err, reindexSchedulerLoading: false })
-      );
-    // /admin/reindex/scheduler
-  };
-
-  rematchScheduler = () => {
-    this.setState({ rematchSchedulerLoading: true });
-    axios
-      .post(`${config.dataApi}admin/rematch/scheduler`)
-      .then((res) => {
-        this.setState({ error: null, rematchSchedulerLoading: false }, () => {
-          notification.open({
-            message: "Scheduler rematched",
-          });
-        });
-      })
-      .catch((err) =>
-        this.setState({ error: err, rematchSchedulerLoading: false })
-      );
-    // /admin/reindex/scheduler
   };
 
   render() {
