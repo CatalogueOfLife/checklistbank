@@ -95,7 +95,7 @@ class DatasetList extends React.Component {
               : record.nameUsageTotal,
         },
         {
-          title: "Dataset monitor",
+          title: "Matched",
           dataIndex: "matchesCount",
           key: "matchesCount",
           sorter: false,
@@ -111,7 +111,13 @@ class DatasetList extends React.Component {
                 type="primary"
                 onClick={() => this.reindexDataset(record.key)}
               >
-                Re-index
+                Reindex
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => this.rematchDataset(record.key)}
+              >
+                Rematch
               </Button>
               {!["xrelease", "release", "project"].includes(record.origin) && (
                 <Button
@@ -119,7 +125,7 @@ class DatasetList extends React.Component {
                   onClick={() => this.reimportDataset(record.key)}
                   style={{ marginTop: "6px" }}
                 >
-                  Re-import
+                  Reimport
                 </Button>
               )}
             </React.Fragment>
@@ -169,7 +175,7 @@ class DatasetList extends React.Component {
       delete params.q;
     }
     history.push({
-      pathname: "/admin/es",
+      pathname: "/admin/datasets",
       search: `?${qs.stringify(params)}`,
     });
     axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
@@ -178,19 +184,19 @@ class DatasetList extends React.Component {
           !res.data.result
             ? []
             : [
-                ...res.data.result.map((r) =>
-                  axios(
-                    `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
-                  ).then(
-                    (nameusages) => (r.nameUsageTotal = nameusages.data.total)
-                  )
-                ),
-                ...res.data.result.map((r) =>
-                  axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
-                    (count) => (r.matchesCount = count)
-                  )
-                ),
-              ]
+              ...res.data.result.map((r) =>
+                axios(
+                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                ).then(
+                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                )
+              ),
+              ...res.data.result.map((r) =>
+                axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
+                  (count) => (r.matchesCount = count)
+                )
+              ),
+            ]
         ).then(() => res);
       })
       .then((res) => {
@@ -268,6 +274,20 @@ class DatasetList extends React.Component {
       .catch((err) => this.setState({ error: err }));
   };
 
+  rematchDataset = (datasetKey) => {
+    axios
+      .post(`${config.dataApi}admin/rematch`, { datasetKey })
+      .then((res) => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Rematching started",
+            description: `Dataset ${datasetKey} is being rematched`,
+          });
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
+
   reimportDataset = (datasetKey) => {
     axios
       .post(`${config.dataApi}importer/${datasetKey}/reimport`)
@@ -291,7 +311,7 @@ class DatasetList extends React.Component {
     }));
 
     return (
-      <Layout openKeys={["admin"]} selectedKeys={["esAdmin"]} title="Admin">
+      <Layout openKeys={["admin"]} selectedKeys={["adminDatasets"]} title="Dataset Admin">
         <div
           style={{
             background: "#fff",

@@ -30,7 +30,7 @@ import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
 import ProjectEditors from "./pages/catalogue/Editors";
 
 import Admin from "./pages/Admin";
-import EsAdmin from "./pages/Admin/EsAdmin";
+import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import AdminJobs from "./pages/Admin/Jobs";
 import SectorDiff from "./pages/catalogue/SectorDiff";
@@ -112,10 +112,10 @@ const App = () => {
               />
               <AdminRoute
                 exact
-                key="EsAdmin"
-                path={`/admin/es`}
+                key="DatasetAdmin"
+                path={`/admin/datasets`}
                 roles={["editor", "admin"]}
-                component={EsAdmin}
+                component={DatasetAdmin}
               />
               <PrivateRoute
                 exact
