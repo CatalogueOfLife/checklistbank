@@ -20,7 +20,7 @@ const SynonymsTable = ({
   canEdit,
   referenceIndexMap,
 }) => {
-  const uri = `/dataset/${datasetKey}/name/`;
+  const uri = `/dataset/${datasetKey}/nameusage/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
   useEffect(() => {}, [data, canEdit]);
 
@@ -50,7 +50,7 @@ const SynonymsTable = ({
         <BorderedListItem key={_.get(s, "name.id")}>
           <NavLink
             to={{
-              pathname: `${uri}${encodeURIComponent(_.get(s, "name.id"))}`,
+              pathname: `${uri}${encodeURIComponent(_.get(s, "id"))}`,
             }}
             exact={true}
           >

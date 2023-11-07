@@ -4,17 +4,7 @@ import config from "../../config";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { LinkOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Tag,
-  Row,
-  Col,
-  Button,
-  Rate,
-  Tabs,
-  Typography,
-  message,
-} from "antd";
+import { Alert, Tag, Row, Col, Button, Rate, Tabs, message } from "antd";
 import SynonymTable from "./Synonyms";
 import Synonyms from "./Synonyms2";
 import VernacularNames from "./VernacularNames";
@@ -52,7 +42,7 @@ import { getDatasetsBatch } from "../../api/dataset";
 
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
-const { Title } = Typography;
+
 const { TabPane } = Tabs;
 
 const { canEditDataset } = Auth;
@@ -116,13 +106,7 @@ class TaxonPage extends React.Component {
       const nameusage = await axios(
         `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`
       );
-
-      this.getTaxon();
-      this.getInfo();
-      this.getClassification();
-      this.getIncludes();
-
-      /*  if (
+      if (
         ["accepted", "provisionally accepted"].includes(nameusage?.data?.status)
       ) {
         this.getTaxon();
@@ -139,7 +123,7 @@ class TaxonPage extends React.Component {
                 nameusage?.data?.name?.id
               )}`
         );
-      } */
+      }
       console.log(nameusage.data.status);
     } catch (err) {
       this.setState({ taxonLoading: false, taxonError: err, taxon: null });
@@ -202,13 +186,13 @@ class TaxonPage extends React.Component {
       datasetKey,
     } = this.props;
     this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`)
+    axios(`${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}`)
       .then((res) => {
         let promises = [res];
 
         promises.push(
           axios(
-            `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}/source`
+            `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/source`
           )
             .then((sourceTaxon) => {
               this.setState({ sourceTaxon: sourceTaxon.data });
@@ -471,36 +455,18 @@ class TaxonPage extends React.Component {
                     message.info(`Copied "${taxon.label}" to clipboard`)
                   }
                 >
-                  <Title level={3}>
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: taxon.labelHtml,
-                      }}
-                    />
-                  </Title>
+                  <h1
+                    style={{
+                      fontSize: "30px",
+                      fontWeight: "400",
+                      paddingLeft: "10px",
+                      display: "inline-block",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: taxon.labelHtml,
+                    }}
+                  />
                 </CopyToClipboard>
-                {["synonym", "ambiguous synonym", "misapplied"].includes(
-                  taxon?.status
-                ) && (
-                  <Title level={5} style={{ marginTop: "-12px" }}>
-                    {taxon?.status}{" "}
-                    {taxon?.status === "misapplied" ? "to " : "of "}{" "}
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${datasetKey}/taxon/${encodeURIComponent(
-                          taxon?.accepted?.id
-                        )}`,
-                      }}
-                    >
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: taxon?.accepted?.labelHtml,
-                        }}
-                      ></span>
-                    </NavLink>
-                  </Title>
-                )}
-
                 {/* {taxon.referenceIds && (
                   <div style={{ display: "inline-block", paddingLeft: "10px" }}>
                     <ReferencePopover

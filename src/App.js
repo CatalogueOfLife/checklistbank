@@ -217,6 +217,12 @@ const App = () => {
               />
               <PrivateRoute
                 exact
+                key="catalogueNameUsage"
+                path="/catalogue/:catalogueKey/nameusage/:taxonOrNameKey"
+                component={CatalogueTaxon}
+              />
+              <PrivateRoute
+                exact
                 key="catalogueName"
                 path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
                 component={CatalogueName}

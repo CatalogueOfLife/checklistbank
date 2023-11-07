@@ -48,19 +48,24 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       const uri =
         !_.get(record, "usage.id") ||
-        record.usage.bareName ||
+        record?.usage?.status === "bare name" ||
         !_.get(record, "usage.status")
           ? `${getBaseUri(
               catalogueKey,
               _.get(record, "usage.datasetKey")
             )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+          : _.get(record, "usage.accepted")
+          ? `${getBaseUri(
+              catalogueKey,
+              _.get(record, "usage.datasetKey")
+            )}/nameusage/${encodeURIComponent(_.get(record, "usage.id"))}`
           : `${getBaseUri(
               catalogueKey,
               _.get(record, "usage.datasetKey")
             )}/taxon/${encodeURIComponent(
-              _.get(record, "usage.accepted.id")
-                ? _.get(record, "usage.accepted.id")
-                : _.get(record, "usage.id")
+              _.get(record, "usage.id")
+              /* ? _.get(record, "usage.accepted.id")
+                : _.get(record, "usage.id") */
             )}`;
 
       return (
@@ -286,18 +291,17 @@ class NameSearchPage extends React.Component {
   datasetLabelsFromFacets = async (data) => {
     if (_.get(data, "facets.datasetKey") && _.get(data, "result[0]")) {
       const keyMap = _.keyBy(data.facets.datasetKey, "value");
-      console.log("DS facet length "+ data?.facets?.datasetKey?.length)
+      console.log("DS facet length " + data?.facets?.datasetKey?.length);
       for await (const d of data.result) {
         if (keyMap[d?.usage?.datasetKey]) {
           d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
         } else {
-        const dataset = await datasetLoader.load(d?.usage?.datasetKey);
-        d.datasetLabel = dataset?.title
-       
+          const dataset = await datasetLoader.load(d?.usage?.datasetKey);
+          d.datasetLabel = dataset?.title;
         }
       }
 
-     /*  return data.result.forEach(async (d) => {
+      /*  return data.result.forEach(async (d) => {
         if (keyMap[d?.usage?.datasetKey]) {
           d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
         } else {
@@ -480,7 +484,13 @@ class NameSearchPage extends React.Component {
           )}
         </Row>
         <Row>
-          <Col xs={24} sm={24} md={12} lg={12} style={{ display: "flex", flexFlow: "column" }}>
+          <Col
+            xs={24}
+            sm={24}
+            md={12}
+            lg={12}
+            style={{ display: "flex", flexFlow: "column" }}
+          >
             <SearchBox
               defaultValue={_.get(params, "q") || null}
               onSearch={(value) => this.updateSearch({ q: value })}
@@ -507,7 +517,9 @@ class NameSearchPage extends React.Component {
             {(catalogueKey === datasetKey ||
               Number(datasetKey) === catalogueKey ||
               (dataset &&
-                ["project", "release", "xrelease"].includes(dataset.origin))) && (
+                ["project", "release", "xrelease"].includes(
+                  dataset.origin
+                ))) && (
               <div style={{ marginTop: "10px" }}>
                 <DatasetAutocomplete
                   contributesTo={Number(datasetKey)}

@@ -248,7 +248,7 @@ class DatasetPage extends React.Component {
             assembly={false}
           />
         )}
-        {sect === "taxon" && (
+        {(sect === "taxon" || sect === "nameusage") && (
           <Taxon
             datasetKey={datasetKey}
             location={this.props.location}

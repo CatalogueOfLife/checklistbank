@@ -18,9 +18,9 @@ const SynonymsTable = ({
   references,
   typeMaterial,
   canEdit,
-  referenceIndexMap
+  referenceIndexMap,
 }) => {
-  const uri = `/dataset/${datasetKey}/name/`;
+  const uri = `/dataset/${datasetKey}/nameusage/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
   useEffect(() => {}, [data, canEdit]);
   return (
@@ -46,13 +46,11 @@ const SynonymsTable = ({
           <BorderedListItem key={_.get(s, "name.id")}>
             <NavLink
               to={{
-                pathname: `${uri}${encodeURIComponent(_.get(s, "name.id"))}`,
+                pathname: `${uri}${encodeURIComponent(_.get(s, "id"))}`,
               }}
               exact={true}
             >
-              {s.__homotypic === true
-                ? "≡ "
-                : "= "}{" "}
+              {s.__homotypic === true ? "≡ " : "= "}{" "}
               <span
                 dangerouslySetInnerHTML={{
                   __html: _.get(
@@ -67,13 +65,16 @@ const SynonymsTable = ({
                 }}
               />
             </NavLink>{" "}
-            <>{" "}
-              {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
+            <>
+              {" "}
+              {_.get(s, "name.nomStatus")
+                ? `(${getNomStatus(s.name)})`
+                : ""}{" "}
               {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
                 ? _.get(s, "accordingTo")
                 : ""}
-                {_.get(s, "status") === "ambiguous synonym" && "(Ambiguous)"}
-                </>
+              {_.get(s, "status") === "ambiguous synonym" && "(Ambiguous)"}
+            </>
             {typeof canEdit == "function" && canEdit() && (
               <Button type="link" onClick={() => setTaxonForEdit(s)}>
                 <EditOutlined />{" "}
@@ -90,11 +91,11 @@ const SynonymsTable = ({
               }
               placement="top"
             />
-            <TypeMaterialPopover 
-            datasetKey={datasetKey}
-            typeMaterial={typeMaterial}
-            nameId={_.get(s, "name.id")}
-            placement="top"
+            <TypeMaterialPopover
+              datasetKey={datasetKey}
+              typeMaterial={typeMaterial}
+              nameId={_.get(s, "name.id")}
+              placement="top"
             />
           </BorderedListItem>
         ))}
