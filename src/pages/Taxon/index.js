@@ -658,6 +658,7 @@ class TaxonPage extends React.Component {
               {_.get(info, "synonyms") && (
                 <PresentationItem md={md} label="Synonyms and combinations">
                   <Synonyms
+                    primarySource={sourceDataset}
                     onEditSuccess={this.getData}
                     canEdit={this.canEdit}
                     data={_.get(info, "synonyms")}

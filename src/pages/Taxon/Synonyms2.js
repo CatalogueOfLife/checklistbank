@@ -19,10 +19,11 @@ const SynonymsTable = ({
   typeMaterial,
   canEdit,
   referenceIndexMap,
+  primarySource,
 }) => {
   const uri = `/dataset/${datasetKey}/nameusage/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
-  useEffect(() => {}, [data, canEdit]);
+  useEffect(() => {}, [data, canEdit, primarySource]);
 
   const sorter = (a, b) => {
     if (
@@ -101,12 +102,16 @@ const SynonymsTable = ({
             nameId={_.get(s, "name.id")}
             placement="top"
           />
-          {s?.sourceDatasetKey && (
-            <a
-              className="col-reference-link"
-              href={`#col-sourcedataset-${s?.sourceDatasetKey}`}
-            >{`[source: ${s?.sourceDatasetKey}]`}</a>
-          )}
+          {s?.sourceDatasetKey &&
+            _.get(primarySource, "key") !== s?.sourceDatasetKey && (
+              <>
+                {" "}
+                <a
+                  className="col-reference-link"
+                  href={`#col-sourcedataset-${s?.sourceDatasetKey}`}
+                >{`[source: ${s?.sourceDatasetKey}]`}</a>
+              </>
+            )}
         </BorderedListItem>
         {isGroup &&
           syn.length > 1 &&
