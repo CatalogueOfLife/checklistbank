@@ -255,7 +255,7 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
               <Menu.Item key="esAdmin">
-                <NavLink to={{ pathname: "/admin/es" }}>
+                <NavLink to={{ pathname: "/admin/datasets" }}>
                   <span>Datasets</span>
                 </NavLink>
               </Menu.Item>

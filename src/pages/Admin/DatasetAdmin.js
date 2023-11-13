@@ -150,7 +150,7 @@ class DatasetList extends React.Component {
     if (_.isEmpty(params)) {
       params = { limit: PAGE_SIZE, offset: 0 };
       history.push({
-        pathname: "/admin/es",
+        pathname: "/admin/datasets",
         search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
