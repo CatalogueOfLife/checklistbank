@@ -394,8 +394,8 @@ class TaxonPage extends React.Component {
     if (Number(datasetKey) === catalogueKey) {
       return canEditDataset({ key: datasetKey }, user) && !taxon?.sectorKey;
     } else if (
-      dataset.key === Number(datasetKey) &&
-      dataset.origin === "project"
+      dataset?.key === Number(datasetKey) &&
+      dataset?.origin === "project"
     ) {
       return (
         canEditDataset({ key: Number(datasetKey) }, user) && !taxon?.sectorKey
