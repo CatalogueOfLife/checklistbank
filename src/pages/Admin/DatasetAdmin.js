@@ -262,7 +262,7 @@ class DatasetList extends React.Component {
 
   reindexDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/reindex`, { datasetKey })
+      .post(`${config.dataApi}admin/reindex?datasetKey=${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
@@ -276,7 +276,7 @@ class DatasetList extends React.Component {
 
   rematchDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/rematch`, { datasetKey })
+      .post(`${config.dataApi}admin/rematch?datasetKey=${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
