@@ -14,7 +14,7 @@ import config from "../config";
 import ErrorMsg from "../components/ErrorMsg";
 import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
-import TagControl from "./TagControl"
+import TagControl from "./TagControl";
 const FormItem = Form.Item;
 const Option = Select.Option;
 const openNotification = (title, description) => {
@@ -56,11 +56,12 @@ const SettingsForm = (props) => {
     onSaveSuccess,
     datasetKey,
     dataset,
+    environment,
   } = props;
 
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
-  useEffect(() => { }, [datasetoriginEnum]);
+  useEffect(() => {}, [datasetoriginEnum]);
 
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
@@ -103,7 +104,12 @@ const SettingsForm = (props) => {
       )}
 
       {datasetSettings
-        .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
+        .filter(
+          (s) =>
+            _.get(s, "origin", ["project", "external"]).indexOf(
+              dataset?.origin
+            ) > -1
+        )
         .filter((s) => s.type === "Boolean")
         .map((s) => (
           <FormItem
@@ -125,11 +131,19 @@ const SettingsForm = (props) => {
         <CsvDelimiterInput />
       </FormItem>
       {datasetSettings
-        .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => ["String", "Integer", "URI", "UUID", "Character"].includes(s.type)
-            /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ &&
-            s.name !== "csv delimiter"
+          (s) =>
+            _.get(s, "origin", ["project", "external"]).indexOf(
+              dataset?.origin
+            ) > -1
+        )
+        .filter(
+          (s) =>
+            ["String", "Integer", "URI", "UUID", "Character"].includes(
+              s.type
+            ) &&
+            /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ s.name !==
+              "csv delimiter"
         )
         .map((s) => (
           <FormItem
@@ -138,8 +152,15 @@ const SettingsForm = (props) => {
             key={s.name}
             name={s.name}
           >
-            {s.type === "String" || s.type === "URI" || s.type === "UUID" || s.type === "Character" ? (
-              s.multiple ? <TagControl /> : <Input type="text" />
+            {s.type === "String" ||
+            s.type === "URI" ||
+            s.type === "UUID" ||
+            s.type === "Character" ? (
+              s.multiple ? (
+                <TagControl />
+              ) : (
+                <Input type="text" />
+              )
             ) : (
               <InputNumber />
             )}
@@ -147,58 +168,74 @@ const SettingsForm = (props) => {
         ))}
 
       {datasetSettings
-        .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset?.origin) > -1)
         .filter(
-          (s) => !["String", "Integer", "Boolean", "URI", "UUID", "Character"].includes(s.type)
+          (s) =>
+            _.get(s, "origin", ["project", "external"]).indexOf(
+              dataset?.origin
+            ) > -1
+        )
+        .filter(
+          (s) =>
+            ![
+              "String",
+              "Integer",
+              "Boolean",
+              "URI",
+              "UUID",
+              "Character",
+            ].includes(s.type)
         )
         .map((s) => {
           try {
-            return <FormItem
-              {...formItemLayout}
-              label={_.startCase(s.name)}
-              key={s.name}
-              name={s.name}
-            >
-              {s.type === "NomCode" ? (
-                <Select style={{ width: 200 }} showSearch allowClear>
-                  {nomCode.map((c) => {
-                    return (
-                      <Option
-                        key={c.name}
-                        value={c.name}
-                      >{`${c.name} (${c.acronym})`}</Option>
-                    );
-                  })}
-                </Select>
-              ) : (
-                <Select
-                  style={{ width: 200 }}
-                  mode={s.multiple ? "multiple" : null}
-                  showSearch
-                  allowClear
-                >
-                  {props[_.camelCase(s.type)].map((e) => {
-                    return typeof e === "string" ? (
-                      <Option key={e} value={e}>
-                        {e}
-                      </Option>
-                    ) : (
-                      <Option key={e.name} value={e.name}>
-                        {e.name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              )}
-            </FormItem>
+            return (
+              <FormItem
+                {...formItemLayout}
+                label={_.startCase(s.name)}
+                key={s.name}
+                name={s.name}
+              >
+                {s.type === "NomCode" ? (
+                  <Select style={{ width: 200 }} showSearch allowClear>
+                    {nomCode.map((c) => {
+                      return (
+                        <Option
+                          key={c.name}
+                          value={c.name}
+                        >{`${c.name} (${c.acronym})`}</Option>
+                      );
+                    })}
+                  </Select>
+                ) : (
+                  <Select
+                    style={{ width: 200 }}
+                    mode={s.multiple ? "multiple" : null}
+                    showSearch
+                    allowClear
+                  >
+                    {props[_.camelCase(s.type)].map((e) => {
+                      return typeof e === "string" ? (
+                        <Option key={e} value={e}>
+                          {e}
+                        </Option>
+                      ) : (
+                        <Option key={e.name} value={e.name}>
+                          {e.name}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                )}
+              </FormItem>
+            );
           } catch (error) {
             if (!props[_.camelCase(s.type)]) {
-              console.log(`Error: Missing enum injection ${_.camelCase(s.type)}`)
+              console.log(
+                `Error: Missing enum injection ${_.camelCase(s.type)}`
+              );
             }
-            console.log(error)
-            return null
+            console.log(error);
+            return null;
           }
-
         })}
 
       <FormItem {...tailFormItemLayout}>
@@ -225,7 +262,8 @@ const mapContextToProps = ({
   gazetteer,
   doiResolution,
   nametype: nameType,
-  nomstatus: nomStatus
+  nomstatus: nomStatus,
+  environment,
 }) => ({
   addError,
   addInfo,
@@ -241,7 +279,8 @@ const mapContextToProps = ({
   gazetteer,
   doiResolution,
   nameType,
-  nomStatus
+  nomStatus,
+  environment,
 });
 
 export default withContext(mapContextToProps)(SettingsForm);

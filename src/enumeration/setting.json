@@ -49,6 +49,26 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "extinct",
+    "origin": [
+      "external",
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": true,
+    "multiple": false,
+    "name": "environment",
+    "origin": [
+      "external",
+      "project"
+    ],
+    "type": "Environment"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "rematch decisions",
     "origin": [
       "external",
@@ -216,6 +236,15 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "sector copy according to",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "gbif sync lock",
     "origin": [
       "external"
@@ -236,6 +265,15 @@
     "enum": false,
     "multiple": false,
     "name": "epithet add hyphen",
+    "origin": [
+      "external"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "prefer name atoms",
     "origin": [
       "external"
     ],

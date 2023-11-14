@@ -1,18 +1,22 @@
 [
   {
-    "managedOrRelease": false,
-    "name": "external"
+    "name": "external",
+    "projectOrRelease": false,
+    "release": false
   },
   {
-    "managedOrRelease": true,
-    "name": "project"
+    "name": "project",
+    "projectOrRelease": true,
+    "release": false
   },
   {
-    "managedOrRelease": true,
-    "name": "release"
+    "name": "release",
+    "projectOrRelease": true,
+    "release": true
   },
   {
-    "managedOrRelease": true,
-    "name": "xrelease"
+    "name": "xrelease",
+    "projectOrRelease": true,
+    "release": true
   }
 ]

@@ -3,6 +3,10 @@
     "name": "any"
   },
   {
+    "coldp": "col:Author",
+    "name": "author"
+  },
+  {
     "coldp": "col:Name",
     "name": "name"
   },
@@ -17,6 +21,10 @@
   {
     "coldp": "col:TaxonConceptRelation",
     "name": "taxon concept relation"
+  },
+  {
+    "coldp": "col:TaxonProperty",
+    "name": "taxon property"
   },
   {
     "coldp": "col:TypeMaterial",

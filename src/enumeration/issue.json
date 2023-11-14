@@ -84,7 +84,7 @@
     "name": "inconsistent name"
   },
   {
-    "description": "The parsed scientific name string results in a different name then was given as already atomized parts.",
+    "description": "The parsed scientific name string results in a different name then was given as the preferred atomized parts.",
     "group": "name",
     "level": "warning",
     "name": "parsed name differs"
@@ -204,13 +204,13 @@
     "name": "basionym derived"
   },
   {
-    "description": "There have been more than one accepted name in a homotypical basionym group of names. Provisional catalogue specific issue.",
+    "description": "There have been more than one accepted name in a homotypic group of names which could not be resolved.",
     "group": "name",
-    "level": "error",
-    "name": "conflicting basionym combination"
+    "level": "warning",
+    "name": "homotypic consolidation unresolved"
   },
   {
-    "description": "A basionym that claims to have itself another basionym.",
+    "description": "A basionym that claims itself to have another basionym.",
     "group": "name",
     "level": "error",
     "name": "chained basionym"
@@ -516,14 +516,14 @@
     "name": "media created date invalid"
   },
   {
-    "description": "The given year of publication cannot be parsed into a sensible integer year.",
-    "group": "reference",
+    "description": "The given year of publication of the name cannot be parsed into a sensible integer year.",
+    "group": "name",
     "level": "warning",
     "name": "unparsable year"
   },
   {
-    "description": "The given year of publication is unlikely to be real.",
-    "group": "reference",
+    "description": "The given year of publication of the name is impossible, i.e. either before Linnean times or after today.",
+    "group": "name",
     "level": "warning",
     "name": "unlikely year"
   },
@@ -666,9 +666,93 @@
     "name": "identifier without scope"
   },
   {
-    "description": "Several accepted names exist which are considered homotypic names.",
+    "description": "Several accepted names existed which are considered homotypic names and which have been resolved into a single one.",
+    "group": "name usage",
+    "level": "info",
+    "name": "homotypic consolidation"
+  },
+  {
+    "description": "Names from a sector sync have been placed outside of the configured target taxon of the project.",
     "group": "name usage",
     "level": "warning",
-    "name": "homotypic multi accepted"
+    "name": "sync outside target"
+  },
+  {
+    "description": "There have been more than one name that appears to be the basionym / original combination. No homotypic consolidation can be performed.",
+    "group": "name",
+    "level": "warning",
+    "name": "multiple basionyms"
+  },
+  {
+    "description": "The given year of publication of the name conflicts with year of the authorship.",
+    "group": "name",
+    "level": "warning",
+    "name": "published year conflict"
+  },
+  {
+    "description": "The verbatim record spans multiple lines without escaping or quoting. It has been processed, but should be taken with caution as it does not correspond with the specifications.",
+    "group": "any",
+    "level": "warning",
+    "name": "multiline record"
+  },
+  {
+    "description": "The notho name property could not be interpreted",
+    "group": "name",
+    "level": "warning",
+    "name": "notho invalid"
+  },
+  {
+    "description": "The original spelling name property could not be interpreted as a boolean",
+    "group": "name",
+    "level": "warning",
+    "name": "original spelling invalid"
+  },
+  {
+    "description": "The name of a uninomial is misplaced in the wrong field, e.g. genus.",
+    "group": "name",
+    "level": "info",
+    "name": "uninomial field misplaced"
+  },
+  {
+    "description": "The name of an infrageneric name is misplaced in the wrong field, e.g. uninomial.",
+    "group": "name",
+    "level": "info",
+    "name": "infrageneric field misplaced"
+  },
+  {
+    "description": "The ordinal to sort taxon children or taxon properties is not a valid integer number.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "ordinal invalid"
+  },
+  {
+    "description": "The gender valid of the name could not be interpreted.",
+    "group": "name",
+    "level": "warning",
+    "name": "gender invalid"
+  },
+  {
+    "description": "The gender agreement flag can only be given to bi- or trinomials with a terminal epithet",
+    "group": "name",
+    "level": "warning",
+    "name": "gender agreement not applicable"
+  },
+  {
+    "description": "The notho name property refers to a non existing part of the name",
+    "group": "name",
+    "level": "warning",
+    "name": "notho not applicable"
+  },
+  {
+    "description": "The vernacular name preferred property could not be interpreted as a boolean",
+    "group": "vernacular",
+    "level": "warning",
+    "name": "vernacular preferred"
+  },
+  {
+    "description": "The given DOI is syntactically invalid.",
+    "group": "any",
+    "level": "warning",
+    "name": "doi invalid"
   }
 ]

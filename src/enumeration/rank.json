@@ -1,6 +1,6 @@
 [
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -15,7 +15,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -30,7 +30,53 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "domain",
+    "marker": "subdom.",
+    "name": "subdomain",
+    "plural": "subdomains",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "domain",
+    "marker": "infradom.",
+    "name": "infradomain",
+    "plural": "infradomains",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "empire",
+    "marker": "imp.",
+    "name": "empire",
+    "plural": "empires",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
+    "code": "virus",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -46,7 +92,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "virus",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -62,7 +109,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -77,7 +124,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -92,7 +139,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -107,7 +154,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -122,7 +169,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -137,7 +184,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -152,7 +199,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -167,7 +214,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -182,7 +229,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -198,7 +246,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -214,7 +263,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -230,7 +280,25 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "claudius",
+    "marker": "claud.",
+    "name": "claudius",
+    "plural": "claudius",
+    "restrictedToCode": "zoological",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -246,7 +314,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -262,7 +331,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -277,7 +346,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -292,7 +361,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -307,7 +376,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -322,7 +391,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -338,7 +408,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -354,7 +425,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -370,7 +442,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -386,7 +459,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -402,7 +476,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -418,7 +493,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -434,7 +510,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -450,7 +527,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -466,7 +544,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -482,7 +561,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -498,7 +578,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -514,7 +595,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -530,7 +612,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -546,7 +629,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -562,7 +646,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -578,7 +663,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -594,7 +680,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -610,7 +697,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -626,7 +714,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -641,7 +729,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -656,13 +744,14 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
     "legacy": false,
     "linnean": false,
-    "majorRank": "nanorder",
+    "majorRank": "order",
     "marker": "nanord.",
     "name": "nanorder",
     "plural": "nanorders",
@@ -672,7 +761,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -688,7 +778,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -704,7 +795,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -719,7 +810,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -734,7 +825,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -750,7 +842,58 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": true,
+    "code": "zoological",
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "section zoology",
+    "marker": "supersect.",
+    "name": "supersection zoology",
+    "plural": "supersection_zoologys",
+    "restrictedToCode": "zoological",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": true,
+    "code": "zoological",
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "section zoology",
+    "marker": "sect.",
+    "name": "section zoology",
+    "plural": "section_zoologys",
+    "restrictedToCode": "zoological",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": true,
+    "code": "zoological",
+    "familyGroup": false,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "section zoology",
+    "marker": "subsect.",
+    "name": "subsection zoology",
+    "plural": "subsection_zoologys",
+    "restrictedToCode": "zoological",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -765,7 +908,25 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
+    "familyGroup": true,
+    "genusGroup": false,
+    "infraspecific": false,
+    "legacy": false,
+    "linnean": false,
+    "majorRank": "family",
+    "marker": "gigafam.",
+    "name": "gigafamily",
+    "plural": "gigafamilies",
+    "restrictedToCode": "zoological",
+    "suprageneric": true,
+    "supraspecific": true,
+    "uncomparable": false
+  },
+  {
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -781,7 +942,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -797,7 +959,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -812,7 +974,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -828,7 +991,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -843,7 +1006,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -858,7 +1021,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -873,7 +1036,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -888,7 +1051,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -903,7 +1066,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -918,7 +1081,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": true,
     "genusGroup": false,
     "infraspecific": false,
@@ -933,7 +1096,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -948,9 +1111,9 @@
     "uncomparable": true
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
-    "genusGroup": false,
+    "genusGroup": true,
     "infraspecific": false,
     "legacy": false,
     "linnean": false,
@@ -963,7 +1126,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -978,7 +1141,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -993,7 +1156,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -1008,55 +1171,59 @@
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": true,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
     "legacy": false,
     "linnean": false,
-    "majorRank": "section",
+    "majorRank": "section botany",
     "marker": "supersect.",
-    "name": "supersection",
-    "plural": "supersections",
+    "name": "supersection botany",
+    "plural": "supersection_botanys",
     "restrictedToCode": "botanical",
     "suprageneric": false,
     "supraspecific": true,
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": true,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
     "legacy": false,
     "linnean": false,
-    "majorRank": "section",
+    "majorRank": "section botany",
     "marker": "sect.",
-    "name": "section",
-    "plural": "sections",
+    "name": "section botany",
+    "plural": "section_botanys",
     "restrictedToCode": "botanical",
     "suprageneric": false,
     "supraspecific": true,
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": true,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
     "legacy": false,
     "linnean": false,
-    "majorRank": "section",
+    "majorRank": "section botany",
     "marker": "subsect.",
-    "name": "subsection",
-    "plural": "subsections",
+    "name": "subsection botany",
+    "plural": "subsection_botanys",
     "restrictedToCode": "botanical",
     "suprageneric": false,
     "supraspecific": true,
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": false,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -1072,7 +1239,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": false,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -1088,7 +1256,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": false,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -1104,7 +1273,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": true,
     "infraspecific": false,
@@ -1119,7 +1288,7 @@
     "uncomparable": true
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -1134,7 +1303,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -1149,7 +1318,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1164,7 +1333,8 @@
     "uncomparable": true
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "cultivars",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1180,7 +1350,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1196,7 +1367,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1211,7 +1382,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "cultivars",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1219,14 +1391,14 @@
     "linnean": false,
     "majorRank": "infraspecific name",
     "name": "cultivar group",
-    "plural": "cultivar_groups",
     "restrictedToCode": "cultivars",
     "suprageneric": false,
     "supraspecific": false,
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "cultivars",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1242,7 +1414,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1257,7 +1429,8 @@
     "uncomparable": true
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1273,7 +1446,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1289,7 +1463,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1305,7 +1480,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1321,7 +1497,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1336,7 +1512,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1351,7 +1527,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1366,7 +1542,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1381,7 +1557,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1396,7 +1572,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1411,7 +1587,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1427,7 +1604,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1443,7 +1621,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1459,7 +1638,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1475,7 +1655,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1491,7 +1672,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1507,7 +1689,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1523,7 +1706,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "bacterial",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1539,7 +1723,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "botanical",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1555,7 +1740,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "cultivars",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1571,7 +1757,8 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
+    "code": "zoological",
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1587,7 +1774,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": false,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": true,
@@ -1602,7 +1789,7 @@
     "uncomparable": false
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -1610,13 +1797,12 @@
     "linnean": false,
     "majorRank": "other",
     "name": "other",
-    "plural": "others",
     "suprageneric": false,
     "supraspecific": false,
     "uncomparable": true
   },
   {
-    "ambiguous": true,
+    "ambiguousMarker": false,
     "familyGroup": false,
     "genusGroup": false,
     "infraspecific": false,
@@ -1624,7 +1810,6 @@
     "linnean": false,
     "majorRank": "unranked",
     "name": "unranked",
-    "plural": "unrankeds",
     "suprageneric": false,
     "supraspecific": false,
     "uncomparable": true
