@@ -49,11 +49,12 @@ class NamePage extends React.Component {
       },
       datasetKey,
     } = this.props;
-    this.getName(datasetKey, nameKey);
-    this.getUsages(datasetKey, nameKey);
-    this.getRelations(datasetKey, nameKey);
-    this.getSynonyms(datasetKey, nameKey);
-    this.getTypeMaterial(datasetKey, nameKey);
+    const nameKey_ = decodeURIComponent(nameKey);
+    this.getName(datasetKey, nameKey_);
+    this.getUsages(datasetKey, nameKey_);
+    this.getRelations(datasetKey, nameKey_);
+    this.getSynonyms(datasetKey, nameKey_);
+    this.getTypeMaterial(datasetKey, nameKey_);
   }
   componentDidUpdate = (prevProps) => {
     if (
@@ -66,12 +67,13 @@ class NamePage extends React.Component {
         },
         datasetKey,
       } = this.props;
+      const nameKey_ = decodeURIComponent(nameKey);
 
-      this.getName(datasetKey, nameKey);
-      this.getUsages(datasetKey, nameKey);
-      this.getRelations(datasetKey, nameKey);
-      this.getSynonyms(datasetKey, nameKey);
-      this.getTypeMaterial(datasetKey, nameKey);
+      this.getName(datasetKey, nameKey_);
+      this.getUsages(datasetKey, nameKey_);
+      this.getRelations(datasetKey, nameKey_);
+      this.getSynonyms(datasetKey, nameKey_);
+      this.getTypeMaterial(datasetKey, nameKey_);
     }
   };
   getReference = (referenceKey) => {
