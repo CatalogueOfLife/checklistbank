@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import withContext from "../../components/hoc/withContext";
 import { withRouter } from "react-router-dom";
 import config from "../../config";
@@ -17,68 +17,65 @@ function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
 }; */
 
-class SourceSeelect extends React.Component {
-  constructor(props) {
-    super(props);
+const SourceSeelect = ({
+  catalogueKey,
+  catalogue,
+  setSourceDataset,
+  sourceDataset,
+  user,
+  dataset,
+  match,
+  location,
+  style = {},
+}) => {
+  const [sources, setSources] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    this.state = {
-      sources: [],
-      visible: false,
-      loading: false,
-    };
-  }
+  useEffect(() => {
+    getSources();
+  }, [catalogueKey]);
 
-  componentDidMount = () => {
-    this.getSources();
-  };
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
-    ) {
-      this.getSources();
+  useEffect(() => {
+    if (match?.params?.sourceKey && sources?.length > 0) {
+      const selectedSource = sources.find(
+        (c) => c.key == match?.params?.sourceKey
+      );
+      setSourceDataset(selectedSource);
     }
-  };
-  getSources = () => {
-    const { catalogueKey } = this.props;
-    this.setState({ loading: true });
+  }, [match?.params?.sourceKey, sources]);
+
+  const getSources = () => {
+    setLoading(true);
     axios(
       `${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`
-    ).then((res) =>
-      this.setState({
-        sources: _.get(res, "data.result") ? _.get(res, "data.result") : [],
-        loading: false,
-      })
-    );
-  };
-  hide = () => {
-    this.setState({
-      visible: false,
+    ).then((res) => {
+      setLoading(false);
+      setSources(_.get(res, "data.result") ? _.get(res, "data.result") : []);
     });
   };
-
-  handleVisibleChange = (visible) => {
-    this.setState({ visible });
+  const hide = () => {
+    setVisible(false);
   };
 
-  onSourceChange = (newDatasetKey) => {
-    const { setSourceDataset } = this.props;
+  const handleVisibleChange = (visible) => {
+    setVisible(visible);
+  };
+
+  const onSourceChange = (newDatasetKey) => {
     const {
-      match: {
-        params: { sourceKey: key },
-      },
-      catalogueKey,
-    } = this.props;
-    const { sources } = this.state;
+      params: { sourceKey: key },
+    } = match;
+
     const selectedSource = sources.find((c) => c.key === newDatasetKey);
     if (
       catalogueKey &&
       selectedSource &&
-      _.get(this.props, "location.pathname").indexOf(
+      _.get(location, "pathname").indexOf(
         `catalogue/${catalogueKey}/dataset/`
       ) > -1
     ) {
-      const newPath = _.get(this.props, "location.pathname").replace(
+      const newPath = _.get(location, "pathname").replace(
         `catalogue/${catalogueKey}/dataset/${key}/`,
         `catalogue/${catalogueKey}/dataset/${newDatasetKey}/`
       );
@@ -92,84 +89,83 @@ class SourceSeelect extends React.Component {
         pathname: `/catalogue/${catalogueKey}/dataset/${newDatasetKey}/issues`,
       });
     }
-
-    this.setState({ visible: false });
+    setVisible(false);
   };
-  render = () => {
-    const { dataset, style = {} } = this.props;
-    const { sources, loading } = this.state;
-    return (
-      <React.Fragment>
-        <a
-          style={style}
+
+  return (
+    <React.Fragment>
+      <a
+        style={style}
+        onClick={(e) => {
+          e.stopPropagation();
+          setVisible(true);
+        }}
+      >
+        <SettingOutlined />
+      </a>
+      <Modal
+        title="Select source"
+        visible={visible}
+        maskClosable={true}
+        onCancel={hide}
+        footer={null}
+      >
+        <div
           onClick={(e) => {
             e.stopPropagation();
-            this.setState({ visible: true });
+            e.nativeEvent.stopImmediatePropagation();
           }}
         >
-          <SettingOutlined />
-        </a>
-        <Modal
-          title="Select source"
-          visible={this.state.visible}
-          maskClosable={true}
-          onCancel={this.hide}
-          footer={null}
-        >
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
+          <Select
+            showSearch
+            loading={loading}
+            style={{ width: "100%" }}
+            value={match?.params?.sourceKey}
+            placeholder="Select source"
+            optionFilterProp="children"
+            onChange={onSourceChange}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+            onDropdownVisibleChange={(open) => {
+              if (open) {
+                getSources();
+              }
             }}
           >
-            <Select
-              showSearch
-              loading={loading}
-              style={{ width: "100%" }}
-              value={dataset ? dataset.key : null}
-              placeholder="Select source"
-              optionFilterProp="children"
-              onChange={this.onSourceChange}
-              filterOption={(input, option) =>
-                option.props.children
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              onDropdownVisibleChange={(open) => {
-                if (open) {
-                  this.getSources();
-                }
-              }}
-            >
-              {sources.map((c) => (
-                <Option
-                  onClick={(e) => {
-                    e.domEvent.stopPropagation();
-                    e.domEvent.nativeEvent.stopImmediatePropagation();
-                  }}
-                  value={c.key}
-                  key={c.key}
-                >{`${c.alias ? c.alias : truncate(c.title, 50)} ${
-                  c.version || ""
-                } [${c.key}]`}</Option>
-              ))}
-            </Select>
-          </div>
-        </Modal>
-      </React.Fragment>
-    );
-  };
-}
+            {sources.map((c) => (
+              <Option
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
+                  e.domEvent.nativeEvent.stopImmediatePropagation();
+                }}
+                value={c.key}
+                key={c.key}
+              >{`${c.alias ? c.alias : truncate(c.title, 50)} ${
+                c.version || ""
+              } [${c.key}]`}</Option>
+            ))}
+          </Select>
+        </div>
+      </Modal>
+    </React.Fragment>
+  );
+};
+
 const mapContextToProps = ({
   catalogueKey,
   catalogue,
   setSourceDataset,
+  sourceDataset,
   user,
   dataset,
 }) => ({
   catalogueKey,
   catalogue,
   setSourceDataset,
+  sourceDataset,
   user,
   dataset,
 });

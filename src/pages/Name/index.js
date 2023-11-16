@@ -66,6 +66,7 @@ class NamePage extends React.Component {
         },
         datasetKey,
       } = this.props;
+
       this.getName(datasetKey, nameKey);
       this.getUsages(datasetKey, nameKey);
       this.getRelations(datasetKey, nameKey);
@@ -138,7 +139,8 @@ class NamePage extends React.Component {
   getUsages = (key, nameKey) => {
     this.setState({ usageLoading: true });
     axios(
-      `${config.dataApi
+      `${
+        config.dataApi
       }dataset/${key}/nameusage/search?NAME_ID=${encodeURIComponent(nameKey)}`
     )
       .then((res) => {
@@ -227,7 +229,7 @@ class NamePage extends React.Component {
                       key={i}
                       to={{
                         pathname: `${taxonUri}${encodeURIComponent(
-                          _.get(u, "usage.accepted.id") || _.get(u, "usage.id")
+                          _.get(u, "usage.id")
                         )}`,
                       }}
                       exact={true}
@@ -285,40 +287,47 @@ class NamePage extends React.Component {
                 </PresentationItem>
                 {name.combinationAuthorship && (
                   <PresentationItem md={md} label="Combination Authorship">
-                    {`${name.combinationAuthorship.authors
-                      ? name.combinationAuthorship.authors.join(", ")
-                      : ""
-                      } ${name.combinationAuthorship.exAuthors
-                        ? `ex ${name.combinationAuthorship.exAuthors.join(
-                          ", "
-                        )}`
+                    {`${
+                      name.combinationAuthorship.authors
+                        ? name.combinationAuthorship.authors.join(", ")
                         : ""
-                      } ${name.combinationAuthorship.year
+                    } ${
+                      name.combinationAuthorship.exAuthors
+                        ? `ex ${name.combinationAuthorship.exAuthors.join(
+                            ", "
+                          )}`
+                        : ""
+                    } ${
+                      name.combinationAuthorship.year
                         ? name.combinationAuthorship.year
                         : ""
-                      }`}
+                    }`}
                   </PresentationItem>
                 )}
                 {name.basionymAuthorship && (
                   <PresentationItem md={md} label="Basionym Authorship">
-                    {`${name.basionymAuthorship.authors.join(", ")} ${name.basionymAuthorship.exAuthors
-                      ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                      : ""
-                      } ${name.basionymAuthorship.year
+                    {`${name.basionymAuthorship.authors.join(", ")} ${
+                      name.basionymAuthorship.exAuthors
+                        ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
+                        : ""
+                    } ${
+                      name.basionymAuthorship.year
                         ? name.basionymAuthorship.year
                         : ""
-                      }`}
+                    }`}
                   </PresentationItem>
                 )}
                 {name.sanctioningAuthor && (
                   <PresentationItem md={md} label="Sanctioning Author">
-                    {`${name.sanctioningAuthor.authors.join(", ")} ${name.sanctioningAuthor.exAuthors
-                      ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                      : ""
-                      } ${name.sanctioningAuthor.year
+                    {`${name.sanctioningAuthor.authors.join(", ")} ${
+                      name.sanctioningAuthor.exAuthors
+                        ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
+                        : ""
+                    } ${
+                      name.sanctioningAuthor.year
                         ? name.sanctioningAuthor.year
                         : ""
-                      }`}
+                    }`}
                   </PresentationItem>
                 )}
                 {publishedIn && publishedIn.citation && (
