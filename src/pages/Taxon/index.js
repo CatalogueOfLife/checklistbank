@@ -902,7 +902,10 @@ class TaxonPage extends React.Component {
             </TabPane>
             {_.get(taxon, "verbatimKey") && (
               <TabPane tab="Verbatim" key="2">
-                <Verbatim verbatimKey={taxon.verbatimKey} />
+                <Verbatim
+                  sourceDatasetKey={datasetKey}
+                  verbatimKey={taxon.verbatimKey}
+                />
               </TabPane>
             )}
           </Tabs>
