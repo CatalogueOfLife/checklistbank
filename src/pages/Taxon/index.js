@@ -216,7 +216,7 @@ class TaxonPage extends React.Component {
             .catch((e) => this.setState({ sourceTaxon: null }))
         );
 
-        if (_.get(res, "data.name")) {
+        /*   if (_.get(res, "data.name")) {
           promises.push(
             axios(
               `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(
@@ -239,7 +239,7 @@ class TaxonPage extends React.Component {
               );
             })
           );
-        }
+        } */
         // sector keys are only present if its a catalogue
         if (_.get(res, "data.sectorKey")) {
           axios(
@@ -324,6 +324,12 @@ class TaxonPage extends React.Component {
         ? await this.decorateWithSectorsAndDataset(_.get(res, "data.synonyms"))
         : null;
 
+      if (res?.data?.nameRelations && res?.data?.names) {
+        res?.data?.nameRelations.forEach((rel) => {
+          rel.relatedName = res?.data?.names?.[rel?.relatedNameId];
+          rel.name = res?.data?.names?.[rel?.nameId];
+        });
+      }
       this.setState({
         infoLoading: false,
         info: res.data,
@@ -671,7 +677,7 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
-              {misapplied && misapplied.length > 0 && (
+              {/* {misapplied && misapplied.length > 0 && (
                 <PresentationItem md={md} label="Misapplied names">
                   <SynonymTable
                     data={misapplied}
@@ -683,13 +689,40 @@ class TaxonPage extends React.Component {
                     catalogueKey={catalogueKey}
                   />
                 </PresentationItem>
-              )}
-              {_.get(taxon, "name.relations") &&
+              )} */}
+              {/*  {_.get(taxon, "name.relations") &&
                 taxon.name.relations.length > 0 && (
                   <NameRelations
                     md={md}
                     style={{ marginTop: "-3px" }}
                     data={taxon.name.relations}
+                    catalogueKey={catalogueKey}
+                    datasetKey={datasetKey}
+                  />
+                )} */}
+              {_.get(info, "nameRelations") &&
+                info.nameRelations.filter((rel) => rel?.usageId === taxon?.id)
+                  .length > 0 && (
+                  <NameRelations
+                    md={md}
+                    style={{ marginTop: "-3px" }}
+                    data={info.nameRelations.filter(
+                      (rel) => rel?.usageId === taxon?.id
+                    )}
+                    catalogueKey={catalogueKey}
+                    datasetKey={datasetKey}
+                  />
+                )}
+              {_.get(info, "nameRelations") &&
+                info.nameRelations.filter((rel) => rel?.usageId !== taxon?.id)
+                  .length > 0 && (
+                  <NameRelations
+                    md={md}
+                    reverse={true}
+                    style={{ marginTop: "-3px" }}
+                    data={info.nameRelations.filter(
+                      (rel) => rel?.usageId !== taxon?.id
+                    )}
                     catalogueKey={catalogueKey}
                     datasetKey={datasetKey}
                   />
