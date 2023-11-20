@@ -12,7 +12,7 @@ import withContext from "../../components/hoc/withContext";
 
 const _ = require("lodash");
 
-const PAGE_SIZE = 1000;
+const PAGE_SIZE = 100;
 
 const getWarningHighlightedNumber = (a, b) => {
   const numA = isNaN(a) ? 0 : Number(a);
@@ -184,19 +184,19 @@ class DatasetList extends React.Component {
           !res.data.result
             ? []
             : [
-              ...res.data.result.map((r) =>
-                axios(
-                  `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
-                ).then(
-                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
-                )
-              ),
-              ...res.data.result.map((r) =>
-                axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
-                  (count) => (r.matchesCount = count)
-                )
-              ),
-            ]
+                ...res.data.result.map((r) =>
+                  axios(
+                    `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                  ).then(
+                    (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                  )
+                ),
+                ...res.data.result.map((r) =>
+                  axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
+                    (count) => (r.matchesCount = count?.data)
+                  )
+                ),
+              ]
         ).then(() => res);
       })
       .then((res) => {
@@ -311,7 +311,11 @@ class DatasetList extends React.Component {
     }));
 
     return (
-      <Layout openKeys={["admin"]} selectedKeys={["adminDatasets"]} title="Dataset Admin">
+      <Layout
+        openKeys={["admin"]}
+        selectedKeys={["adminDatasets"]}
+        title="Dataset Admin"
+      >
         <div
           style={{
             background: "#fff",
