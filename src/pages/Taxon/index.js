@@ -57,7 +57,7 @@ const { TabPane } = Tabs;
 
 const { canEditDataset } = Auth;
 const md = 5;
-
+const urlSafe = (str) => encodeURI(decodeURI(str));
 class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
@@ -114,7 +114,7 @@ class TaxonPage extends React.Component {
     } = this.props;
     try {
       const nameusage = await axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/${urlSafe(taxonKey)}`
       );
 
       this.getTaxon();
@@ -202,13 +202,17 @@ class TaxonPage extends React.Component {
       datasetKey,
     } = this.props;
     this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}`)
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/nameusage/${urlSafe(taxonKey)}`
+    )
       .then((res) => {
         let promises = [res];
 
         promises.push(
           axios(
-            `${config.dataApi}dataset/${datasetKey}/nameusage/${taxonKey}/source`
+            `${config.dataApi}dataset/${datasetKey}/nameusage/${urlSafe(
+              taxonKey
+            )}/source`
           )
             .then((sourceTaxon) => {
               this.setState({ sourceTaxon: sourceTaxon.data });
@@ -298,7 +302,7 @@ class TaxonPage extends React.Component {
     } = this.props;
     try {
       const res = await axios(
-        `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/info`
+        `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(taxonKey)}/info`
       );
 
       if (
@@ -351,7 +355,9 @@ class TaxonPage extends React.Component {
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${datasetKey}/taxon/${taxonKey}/classification`
+      `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(
+        taxonKey
+      )}/classification`
     )
       .then((res) => {
         this.setState({
@@ -378,7 +384,11 @@ class TaxonPage extends React.Component {
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxonKey}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+      `${
+        config.dataApi
+      }dataset/${datasetKey}/nameusage/search?TAXON_ID=${urlSafe(
+        taxonKey
+      )}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
     )
       .then((res) => {
         this.setState({
