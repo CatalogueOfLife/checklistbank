@@ -34,6 +34,8 @@ const getLabel = (r, reverse) => {
         return "Superfluous name for";
       case "basionym":
         return "Basionym";
+      case "type":
+        return "Type";
       default:
         return _.capitalize(r.type);
     }
@@ -51,6 +53,8 @@ const getLabel = (r, reverse) => {
         return "Has superfluous name";
       case "basionym":
         return "Basionym of";
+      case "type":
+        return "Type of";
       default:
         return _.capitalize(r.type);
     }
