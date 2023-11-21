@@ -1,5 +1,10 @@
 import React from "react";
-import { EyeOutlined, PlusOutlined, SyncOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  PlusOutlined,
+  SyncOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -9,7 +14,7 @@ import {
   Radio,
   Slider,
   Switch,
-  Popover
+  Popover,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
@@ -48,7 +53,7 @@ class Assembly extends React.Component {
       insertPlaceholder: false,
       missingTargetKeys: {}, // A map of keys that could not be found in the assembly. If a sectors target key is missing, flag that the sector is broken and may be deleted
       height: 600,
-      decisionFormVisible: false
+      decisionFormVisible: false,
     };
 
     // this.assemblyRef = React.createRef();
@@ -63,7 +68,6 @@ class Assembly extends React.Component {
         { subject: { id: params.sourceTaxonKey } },
         { key: params.datasetKey }
       );
-
     }
 
     this.resizeHandler();
@@ -202,8 +206,9 @@ class Assembly extends React.Component {
     return axios
       .post(`${config.dataApi}dataset/${catalogueKey}/sector`, sector)
       .then((res) => {
-        const msg = `${_.get(target, "name.scientificName") || target.id
-          } attached to ${subject.name || subject.id} `;
+        const msg = `${
+          _.get(target, "name.scientificName") || target.id
+        } attached to ${subject.name || subject.id} `;
         notification.open({
           message: "Sector created",
           description: msg,
@@ -218,8 +223,9 @@ class Assembly extends React.Component {
   showSourceTaxon = (sector, source) => {
     const isPlaceholder = !_.isUndefined(sector.placeholderRank);
     const subjectID = isPlaceholder
-      ? `${sector.subject.id
-      }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+      ? `${
+          sector.subject.id
+        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
       : sector.subject.id;
     const {
       match: {
@@ -238,18 +244,15 @@ class Assembly extends React.Component {
           pathname: `/catalogue/${catalogueKey}/assembly`,
           search: `?${qs.stringify(newParams)}`,
         });
-        this.setState(
-          {
-            sourceTaxonKey: subjectID,
-            datasetKey: res.data.key,
-            datasetName: res.data.title,
-            selectedDataset: {
-              key: res.data.key,
-              title: res.data.alias || res.data.title,
-            },
-          }
-        );
-
+        this.setState({
+          sourceTaxonKey: subjectID,
+          datasetKey: res.data.key,
+          datasetName: res.data.title,
+          selectedDataset: {
+            key: res.data.key,
+            title: res.data.alias || res.data.title,
+          },
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -290,9 +293,8 @@ class Assembly extends React.Component {
       });
     } else {
       // If it is the initial load, the title of the dataset comes from the dataset select component
-      this.setState({ selectedDataset: dataset })
+      this.setState({ selectedDataset: dataset });
     }
-
   };
 
   onDragStart = (e, dataset) => {
@@ -314,7 +316,7 @@ class Assembly extends React.Component {
       height,
       insertPlaceholder,
       decisionFormVisible,
-      datasetKey
+      datasetKey,
     } = this.state;
 
     const {
@@ -323,7 +325,7 @@ class Assembly extends React.Component {
       },
       location,
       catalogue,
-      user
+      user,
     } = this.props;
     const params = qs.parse(_.get(location, "search"));
 
@@ -352,40 +354,49 @@ class Assembly extends React.Component {
                 _.get(this.sourceRef, "state.selectedNodes") || [],
               selectedAssemblyTreeNodes:
                 _.get(this.assemblyRef, "state.selectedNodes") || [],
-              applyDecision: applyDecision
+              applyDecision: applyDecision,
             }}
           >
             {decisionFormVisible && (
               <ColTreeContext.Consumer>
-                {({ selectedSourceTreeNodes }) => <DecisionForm
-                  destroyOnClose={true}
-                  rowsForEdit={selectedSourceTreeNodes.map(n => (
-                    {
+                {({ selectedSourceTreeNodes }) => (
+                  <DecisionForm
+                    destroyOnClose={true}
+                    rowsForEdit={selectedSourceTreeNodes.map((n) => ({
                       usage: {
                         name: {
                           scientificName: n?.ref?.taxon?.name,
                           authorship: n?.ref?.taxon?.authorship,
-                          rank: n?.ref?.taxon?.rank
+                          rank: n?.ref?.taxon?.rank,
                         },
                         id: n?.ref?.taxon?.id,
-                        status: n?.ref?.taxon?.status
+                        status: n?.ref?.taxon?.status,
                       },
                       parent: n?.parent?.name,
-                      decisions: n?.ref?.taxon?.decision ? [n?.ref?.taxon?.decision] : null
+                      decisions: n?.ref?.taxon?.decision
+                        ? [n?.ref?.taxon?.decision]
+                        : null,
+                    }))}
+                    onCancel={() =>
+                      this.setState(
+                        { decisionFormVisible: false },
+                        this.sourceRef.reloadRoot
+                      )
                     }
-                  ))}
-                  onCancel={() => this.setState({ decisionFormVisible: false }, this.sourceRef.reloadRoot)}
-                  onOk={() => {
-                    this.setState({ decisionFormVisible: false }, this.sourceRef.reloadRoot);
-                  }}
-                  onSaveDecision={(name) => {
-                    console.log(name)
-                  }}
-                  datasetKey={catalogueKey}
-                  subjectDatasetKey={datasetKey}
-                />}
+                    onOk={() => {
+                      this.setState(
+                        { decisionFormVisible: false },
+                        this.sourceRef.reloadRoot
+                      );
+                    }}
+                    onSaveDecision={(name) => {
+                      console.log(name);
+                    }}
+                    datasetKey={catalogueKey}
+                    subjectDatasetKey={datasetKey}
+                  />
+                )}
               </ColTreeContext.Consumer>
-
             )}
             <Row>
               <Col>
@@ -397,9 +408,7 @@ class Assembly extends React.Component {
                         onChange={(e) => toggleMode(e.target.value)}
                       >
                         <Radio.Button value="modify">Modify Tree</Radio.Button>
-                        <Radio.Button value="attach">
-                          Attach sectors
-                        </Radio.Button>
+                        <Radio.Button value="attach">Add sectors</Radio.Button>
                       </Radio.Group>
                     )}
                   </ColTreeContext.Consumer>
@@ -566,87 +575,124 @@ class Assembly extends React.Component {
               </Col>
 
               <Col span={sourceColSpan} style={{ paddingLeft: "8px" }}>
-                <Row><Col><h4>
-                  {this.state.selectedDataset ? (
-                    <React.Fragment>
-                      {" "}
-                      {this.state.selectedDataset.alias ||
-                        this.state.selectedDataset.title}
-                      <NavLink
-                        to={`/dataset/${this.state.selectedDataset.key}/about`}
-                      >
-                        {" "}
-                        <EyeOutlined /> source
-                      </NavLink>
-                    </React.Fragment>
-                  ) : (
-                    "No dataset selected"
-                  )}
-                </h4></Col><Col flex="auto"></Col ><Col>
+                <Row>
+                  <Col>
+                    <h4>
+                      {this.state.selectedDataset ? (
+                        <React.Fragment>
+                          {" "}
+                          {this.state.selectedDataset.alias ||
+                            this.state.selectedDataset.title}
+                          <NavLink
+                            to={`/dataset/${this.state.selectedDataset.key}/about`}
+                          >
+                            {" "}
+                            <EyeOutlined /> source
+                          </NavLink>
+                        </React.Fragment>
+                      ) : (
+                        "No dataset selected"
+                      )}
+                    </h4>
+                  </Col>
+                  <Col flex="auto"></Col>
+                  <Col>
                     <CanEditDataset dataset={{ key: catalogueKey }}>
                       <ColTreeContext.Consumer>
-                        {({ selectedSourceTreeNodes }) => (
-                          selectedSourceTreeNodes.length > 0 && <>
-                            <span>{selectedSourceTreeNodes.length} selected</span>
-                            <Popover
-                              trigger="click"
-                              placement="bottomRight"
-                              content={<>
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="danger"
-                                  onClick={() => {
-                                    Promise.allSettled(selectedSourceTreeNodes.map(n => applyDecision(n.taxon, catalogueKey)))
-                                      .then(() => {
-                                        this.sourceRef.reloadRoot()
-                                      })
-                                  }}
-                                >
-                                  {`Block ${selectedSourceTreeNodes.length} taxa`}
-                                </Button>
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="primary"
-                                  onClick={() => this.setState({ decisionFormVisible: true })}
-                                >
-                                  {`Apply decisions`}
-                                </Button>
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="danger"
-                                  onClick={() => {
-                                    const taxaWithdecisions = selectedSourceTreeNodes.filter(n => !!n?.taxon?.decision);
-                                    Promise.allSettled(taxaWithdecisions.map(n => {
-                                      return axios
-                                        .delete(
-                                          `${config.dataApi}dataset/${catalogueKey}/decision/${n.taxon.decision.id}`
-                                        )
-                                    }))
-                                      .then(() => {
-                                        this.sourceRef.reloadRoot()
-                                        notification.open({
-                                          message: "Decisions deleted for:",
-                                          description: <ul>
-                                            {taxaWithdecisions.map(n => <li>{n?.taxon?.name}</li>)}
-                                          </ul>,
+                        {({ selectedSourceTreeNodes }) =>
+                          selectedSourceTreeNodes.length > 0 && (
+                            <>
+                              <span>
+                                {selectedSourceTreeNodes.length} selected
+                              </span>
+                              <Popover
+                                trigger="click"
+                                placement="bottomRight"
+                                content={
+                                  <>
+                                    <Button
+                                      style={{
+                                        marginTop: "8px",
+                                        width: "100%",
+                                      }}
+                                      type="danger"
+                                      onClick={() => {
+                                        Promise.allSettled(
+                                          selectedSourceTreeNodes.map((n) =>
+                                            applyDecision(n.taxon, catalogueKey)
+                                          )
+                                        ).then(() => {
+                                          this.sourceRef.reloadRoot();
                                         });
-                                      })
-                                  }}
+                                      }}
+                                    >
+                                      {`Block ${selectedSourceTreeNodes.length} taxa`}
+                                    </Button>
+                                    <Button
+                                      style={{
+                                        marginTop: "8px",
+                                        width: "100%",
+                                      }}
+                                      type="primary"
+                                      onClick={() =>
+                                        this.setState({
+                                          decisionFormVisible: true,
+                                        })
+                                      }
+                                    >
+                                      {`Apply decisions`}
+                                    </Button>
+                                    <Button
+                                      style={{
+                                        marginTop: "8px",
+                                        width: "100%",
+                                      }}
+                                      type="danger"
+                                      onClick={() => {
+                                        const taxaWithdecisions =
+                                          selectedSourceTreeNodes.filter(
+                                            (n) => !!n?.taxon?.decision
+                                          );
+                                        Promise.allSettled(
+                                          taxaWithdecisions.map((n) => {
+                                            return axios.delete(
+                                              `${config.dataApi}dataset/${catalogueKey}/decision/${n.taxon.decision.id}`
+                                            );
+                                          })
+                                        ).then(() => {
+                                          this.sourceRef.reloadRoot();
+                                          notification.open({
+                                            message: "Decisions deleted for:",
+                                            description: (
+                                              <ul>
+                                                {taxaWithdecisions.map((n) => (
+                                                  <li>{n?.taxon?.name}</li>
+                                                ))}
+                                              </ul>
+                                            ),
+                                          });
+                                        });
+                                      }}
+                                    >
+                                      {`Delete decisions`}
+                                    </Button>
+                                  </>
+                                }
+                              >
+                                <Button
+                                  type="link"
+                                  style={{ padding: "0px 3px" }}
                                 >
-                                  {`Delete decisions`}
+                                  <SettingOutlined />
                                 </Button>
-                              </>
-                              }
-                            >
-                              <Button type="link" style={{ padding: "0px 3px" }}><SettingOutlined /></Button>
-                            </Popover>
-                          </>
-
-
-                        )}
+                              </Popover>
+                            </>
+                          )
+                        }
                       </ColTreeContext.Consumer>
                     </CanEditDataset>
-                  </Col></Row>
+                  </Col>
+                </Row>
 
                 <DatasetAutocomplete
                   minSize={1}
@@ -716,15 +762,19 @@ class Assembly extends React.Component {
                     onDragStart={(e) =>
                       this.onDragStart(e, this.state.selectedDataset)
                     }
-                    draggable={canEditDataset({ key: catalogueKey }, user) && this.state.mode === "attach"}
+                    draggable={
+                      canEditDataset({ key: catalogueKey }, user) &&
+                      this.state.mode === "attach"
+                    }
                     defaultExpandKey={this.state.sourceTaxonKey}
                     showSourceTaxon={(sector) => {
                       const isPlaceholder = !_.isUndefined(
                         sector.placeholderRank
                       );
                       const targetID = isPlaceholder
-                        ? `${sector.target.id
-                        }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
+                        ? `${
+                            sector.target.id
+                          }--incertae-sedis--${sector.placeholderRank.toUpperCase()}`
                         : sector.target.id;
                       const params = qs.parse(_.get(location, "search"));
                       const newParams = {
