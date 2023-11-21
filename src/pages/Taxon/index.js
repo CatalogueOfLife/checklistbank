@@ -57,7 +57,7 @@ const { TabPane } = Tabs;
 
 const { canEditDataset } = Auth;
 const md = 5;
-const urlSafe = (str) => encodeURI(decodeURI(str));
+const urlSafe = (str) => encodeURIComponent(decodeURIComponent(str));
 class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
