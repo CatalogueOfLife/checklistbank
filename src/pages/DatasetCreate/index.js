@@ -13,26 +13,28 @@ const DatasetCreate = ({ user, loadTokenUser, addError }) => (
     selectedKeys={["datasetCreate"]}
     title="New Dataset"
   >
-    {Auth.isEditorOrAdmin(user) ? <PageContent>
-      <MetaDataForm
-        onSaveSuccess={async (res, origin) => {
-          try {
-            await loadTokenUser()
-            if (origin === "external") {
-              history.push(`/dataset/${res.data}/options`)
-            } else {
-              history.push(`/catalogue/${res.data}/metadata`)
+    {Auth.isEditorOrAdmin(user) || user?.editor?.length > 0 ? (
+      <PageContent>
+        <MetaDataForm
+          onSaveSuccess={async (res, origin) => {
+            try {
+              await loadTokenUser();
+              if (origin === "external") {
+                history.push(`/dataset/${res.data}/options`);
+              } else {
+                history.push(`/catalogue/${res.data}/metadata`);
+              }
+            } catch (error) {
+              addError(error);
             }
-          } catch (error) {
-            addError(error)
-          }
-
-          ;
-        }}
-      />
-    </PageContent> : <Exception403 />}
+          }}
+        />
+      </PageContent>
+    ) : (
+      <Exception403 />
+    )}
   </Layout>
-)
+);
 
 /* class DatasetCreate extends React.Component {
   render() {
@@ -65,6 +67,10 @@ const DatasetCreate = ({ user, loadTokenUser, addError }) => (
   }
 } */
 
-const mapContextToProps = ({ user, loadTokenUser, addError }) => ({ user, loadTokenUser, addError });
+const mapContextToProps = ({ user, loadTokenUser, addError }) => ({
+  user,
+  loadTokenUser,
+  addError,
+});
 
 export default withContext(mapContextToProps)(DatasetCreate);
