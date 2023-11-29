@@ -518,14 +518,21 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
             <PresentationItem label="Released from">
-              {
-                <NavLink
-                  to={{
-                    pathname: Auth.canViewDataset(catalogue, user) ? `/catalogue/${displayData.sourceKey}/metadata` : `/dataset/${displayData.sourceKey}`,
-                  }}
+              {<span>
+                <NavLink to={{
+                  pathname: Auth.canViewDataset(catalogue, user) ? `/catalogue/${displayData.sourceKey}/metadata` : `/dataset/${displayData.sourceKey}`,
+                }}
                 >
                   {releasedFrom ? releasedFrom.title : displayData.sourceKey}
                 </NavLink>
+
+                [<NavLink to={{
+                  pathname: `${config.downloadApi}releases/${displayData.sourceKey}/${displayData.attempt}`
+                }}
+                >
+                  logs
+                </NavLink>]
+              </span>
               }
             </PresentationItem>
             <PresentationItem label="Source">

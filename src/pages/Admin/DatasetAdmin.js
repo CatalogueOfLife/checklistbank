@@ -88,7 +88,7 @@ class DatasetList extends React.Component {
           title: "Indexed",
           dataIndex: "nameUsageTotal",
           key: "nameUsageTotal",
-          sorter: false,
+          sorter: true,
           render: (text, record) =>
             record.origin !== "project"
               ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
@@ -98,7 +98,7 @@ class DatasetList extends React.Component {
           title: "Matched",
           dataIndex: "matchesCount",
           key: "matchesCount",
-          sorter: false,
+          sorter: true,
         },
         {
           title: "Action",
@@ -192,7 +192,9 @@ class DatasetList extends React.Component {
                 )
               ),
               ...res.data.result.map((r) =>
-                axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
+                axios(
+                  `${config.dataApi}dataset/${r.key}/matches/count`
+                ).then(
                   (count) => (r.matchesCount = count)
                 )
               ),
