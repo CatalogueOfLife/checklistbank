@@ -525,13 +525,12 @@ class DatasetMeta extends React.Component {
                 >
                   {releasedFrom ? releasedFrom.title : displayData.sourceKey}
                 </NavLink>
-
-                [<NavLink to={{
+                &nbsp; - &nbsp; &lpar;<NavLink to={{
                   pathname: `${config.downloadApi}releases/${displayData.sourceKey}/${displayData.attempt}`
                 }}
                 >
                   logs
-                </NavLink>]
+                </NavLink>&rpar;
               </span>
               }
             </PresentationItem>
