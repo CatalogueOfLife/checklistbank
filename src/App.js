@@ -55,6 +55,9 @@ import NameUsageSearch from "./pages/NameSearch/Search";
 import UserProfile from "./pages/UserProfile";
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
+import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
+import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
+
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 import Analytics from "./Analytics";
 import config from "./config";
@@ -333,7 +336,18 @@ const App = () => {
                 path={`/namesindex/:key/:section?`}
                 component={NameIndexKey}
               />
-
+              <Route
+                exact
+                key="vocabIndex"
+                path={`/vocabulary`}
+                component={VocabularyIndex}
+              />
+              <Route
+                exact
+                key="vocabIndexKey"
+                path={`/vocabulary/:key`}
+                component={VocabularyKey}
+              />
               <Route component={Exception404} />
             </Switch>
           </ThemeProvider>
