@@ -57,7 +57,6 @@ import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
-
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 import Analytics from "./Analytics";
 import config from "./config";
@@ -220,12 +219,6 @@ const App = () => {
               />
               <PrivateRoute
                 exact
-                key="catalogueNameUsage"
-                path="/catalogue/:catalogueKey/nameusage/:taxonOrNameKey"
-                component={CatalogueTaxon}
-              />
-              <PrivateRoute
-                exact
                 key="catalogueName"
                 path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
                 component={CatalogueName}
@@ -348,6 +341,7 @@ const App = () => {
                 path={`/vocabulary/:key`}
                 component={VocabularyKey}
               />
+
               <Route component={Exception404} />
             </Switch>
           </ThemeProvider>
