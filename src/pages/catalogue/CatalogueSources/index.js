@@ -44,16 +44,16 @@ class GSDIssuesMatrix extends React.Component {
           !res.data.result
             ? []
             : res.data.result.map((r) => {
-                return axios(
-                  `${config.dataApi}dataset/${r.key}/import?limit=1`
-                ).then((imp) => ({
-                  ...r,
-                  issues: _.get(imp, "data[0].issuesCount"),
-                  /*                   ,
-                  usagesCount:  _.get(imp, "data[0].usagesCount"),
-                  referenceCount: _.get(imp, "data[0].referenceCount") */
-                }));
-              })
+              return axios(
+                `${config.dataApi}dataset/${r.key}/import?limit=1`
+              ).then((imp) => ({
+                ...r,
+                issues: _.get(imp, "data[0].issuesCount"),
+                /*                   ,
+                usagesCount:  _.get(imp, "data[0].usagesCount"),
+                referenceCount: _.get(imp, "data[0].referenceCount") */
+              }));
+            })
         );
       })
       /*       .then(res => {
@@ -120,7 +120,7 @@ class GSDIssuesMatrix extends React.Component {
       },
     } = this.props;
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision?limit=0&subjectDatasetKey=${sourceDatasetKey}&limit=0`
+      `${config.dataApi}dataset/${catalogueKey}/decision?broken=true&subjectDatasetKey=${sourceDatasetKey}&limit=0`
     ).then((res) => _.get(res, "data.total"));
   };
 
@@ -148,18 +148,18 @@ class GSDIssuesMatrix extends React.Component {
     } = this.props;
     const groups = issue
       ? issue
-          .filter(
-            (e, i) => issue.findIndex((a) => a["group"] === e["group"]) === i
-          )
-          .map((a) => a.group)
+        .filter(
+          (e, i) => issue.findIndex((a) => a["group"] === e["group"]) === i
+        )
+        .map((a) => a.group)
       : [];
 
     const selectedGroups = localStorage.getItem(
       "col_plus_matrix_selected_issue_groups"
     )
       ? JSON.parse(
-          localStorage.getItem("col_plus_matrix_selected_issue_groups")
-        )
+        localStorage.getItem("col_plus_matrix_selected_issue_groups")
+      )
       : [...groups];
     let groupMap = {};
     if (issue) {
@@ -200,26 +200,6 @@ class GSDIssuesMatrix extends React.Component {
           return date ? moment(date).format("MMM Do YYYY") : "";
         },
       },
-
-      /*   
-{
-        title: <Tooltip title={`Species contributed to catalogue ${catalogueKey}`}>Species count</Tooltip>,
-        dataIndex: "contributedSpecies",
-        key: "contributedSpecies",
-        render: (text, record) => {
-          return (
-            <NavLink
-              to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench` }}
-              exact={true}
-            >
-              {record.contributedSpecies}
-            </NavLink>
-          );
-        },
-        sorter: (a, b) => {
-          return Number(_.get(a, `contributedSpecies`) || 0 ) - Number(_.get(b, `contributedSpecies`) || 0 ) ;
-      }
-      }, */
 
       {
         // brokenDecisions
