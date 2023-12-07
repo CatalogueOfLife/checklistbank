@@ -4,14 +4,10 @@ import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
-import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 import moment from "moment";
 import withContext from "../../../components/hoc/withContext";
 
 const _ = require("lodash");
-
-const getIssuesAbbrev = (issue) =>
-  issue.split(" ").map((s) => s.charAt(0).toUpperCase());
 
 class GSDIssuesMatrix2 extends React.Component {
   constructor(props) {
@@ -47,8 +43,7 @@ class GSDIssuesMatrix2 extends React.Component {
                 `${config.dataApi}dataset/${r.key}/import?limit=1`
               ).then((imp) => ({
                 ...r,
-                attempt: _.get(imp, "data[0].attempt"),
-                usagesCount: _.get(imp, "data[0].usagesCount"),
+                usagesCount: _.get(imp, "data[0].usagesCount")
               }));
             })
         );
@@ -98,6 +93,7 @@ class GSDIssuesMatrix2 extends React.Component {
         );
       })
       .then((res) => {
+        console.log(res);
         this.setState({
           loading: false,
           data: res,
@@ -196,7 +192,7 @@ class GSDIssuesMatrix2 extends React.Component {
       {
         title: (
           <Tooltip title={`Number of name usages`}>
-            Name Usages
+            Names
           </Tooltip>
         ),
         dataIndex: "usagesCount",
@@ -253,7 +249,7 @@ class GSDIssuesMatrix2 extends React.Component {
       {
         title: (
           <Tooltip title={`Number of broken sectors`}>
-            Decisions
+            Broken Sectors
           </Tooltip>
         ),
         dataIndex: "brokenSectors",
@@ -310,7 +306,7 @@ class GSDIssuesMatrix2 extends React.Component {
       {
         title: (
           <Tooltip title={`Number of broken decisions`}>
-            Decisions
+            Broken Decisions
           </Tooltip>
         ),
         dataIndex: "brokenDecisions",
@@ -353,19 +349,6 @@ class GSDIssuesMatrix2 extends React.Component {
           }}
         >
           <div>
-            <Row>
-              <Col md={12} sm={24}>
-                <NavLink
-                  to={{
-                    pathname: `/dataset`,
-                    search: `?contributesTo=${catalogueKey}`,
-                  }}
-                  exact={true}
-                >
-                  View metadata of all sources
-                </NavLink>
-              </Col>
-            </Row>
             {error && <Alert message={error.message} type="error" />}
           </div>
           {!error && (
@@ -373,7 +356,7 @@ class GSDIssuesMatrix2 extends React.Component {
               showSorterTooltip={false}
               size="small"
               columns={columns}
-              dataSource={data.filter((d) => d.issues)}
+              dataSource={data}
               loading={loading}
               scroll={{ x: "2000px" }}
               pagination={{ pageSize: 100 }}
@@ -385,10 +368,8 @@ class GSDIssuesMatrix2 extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
+const mapContextToProps = ({ user, catalogue }) => ({
   user,
-  issue,
-  issueMap,
   catalogue,
 });
 
