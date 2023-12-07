@@ -42,6 +42,7 @@ import Helmet from "react-helmet";
 import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
+import CatalogueSources2 from "./pages/catalogue/CatalogueSources2";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import NameMatch from "./pages/tools/NameMatch3";
@@ -84,6 +85,12 @@ const App = () => {
                 key="catalogueSources"
                 path="/catalogue/:catalogueKey/sources"
                 component={CatalogueSources}
+              />
+              <PrivateRoute
+                exact
+                key="catalogueSources2"
+                path="/catalogue/:catalogueKey/sources2"
+                component={CatalogueSources2}
               />
               <PrivateRoute
                 exact
