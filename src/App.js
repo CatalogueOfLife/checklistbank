@@ -53,6 +53,7 @@ import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import TaxonComparer from "./pages/tools/TaxonComparer";
 import NameUsageSearch from "./pages/NameSearch/Search";
+import GlobalRedirect from "./pages/GlobalRedirect";
 import UserProfile from "./pages/UserProfile";
 import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
@@ -79,7 +80,6 @@ const App = () => {
           <ThemeProvider theme={theme}>
             <Switch>
               <Route exact key="HomePage" path="/" component={HomePage} />
-
               <PrivateRoute
                 exact
                 key="catalogueSources"
@@ -267,6 +267,12 @@ const App = () => {
                 key="nameUsageSearch"
                 path={`/nameusage/search`}
                 component={NameUsageSearch}
+              />
+              <Route
+                exact
+                key="nameUsageID"
+                path="/nameusage/:id"
+                component={GlobalRedirect}
               />
 
               <Route
