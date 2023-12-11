@@ -28,8 +28,6 @@ const GlobalRedirect = ({
         if (res.data.result && res.data.result.length == 1) {
           const dkey = res?.data?.result?.[0]?.datasetKey;
           setRedirctUrl(`/dataset/${dkey}/nameusage/${id}`);
-          /*  const url = `${config.url}dataset/${dkey}/nameusage/${id}`;
-                window.location.assign(url); */
         }
         setRequestFinished(true);
       })
