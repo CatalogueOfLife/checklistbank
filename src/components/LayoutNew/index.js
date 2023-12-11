@@ -328,38 +328,52 @@ class SiteLayout extends Component {
             )}
           </Content>
           <Footer>
-            <Row style={{ textAlign: "center" }}>
-              Developed by GBIF & Catalogue of Life
-            </Row>
-            <Row style={{ textAlign: "center", marginTop: "8px" }}>
-              <Tag>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://github.com/CatalogueOfLife/checklistbank/issues/new"
-                >
-                  Leave Feedback
-                </a>
-              </Tag>
-              {gitVersion && (
-                <Tag>
-                  <a target="_blank" href={`${gitFrontend}${gitVersion.short}`}>
-                    Frontend version: <strong>{gitVersion.short}</strong>{" "}
-                    {moment(gitVersion.created).format("LLL")}
-                  </a>
-                </Tag>
-              )}
-              {gitBackendVersion && (
-                <Tag>
-                  <a
-                    target="_blank"
-                    href={`${gitBackend}${gitBackendVersion.short}`}
-                  >
-                    Backend version: <strong>{gitBackendVersion.short}</strong>{" "}
-                    {moment(gitBackendVersion.created).format("LLL")}
-                  </a>
-                </Tag>
-              )}
+            <Row>
+              <Col>
+                <Row style={{ textAlign: "center" }}>
+                  Developed by GBIF & Catalogue of Life
+                </Row>
+                <Row style={{ textAlign: "center", marginTop: "8px" }}>
+                  <Tag>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://github.com/CatalogueOfLife/checklistbank/issues/new"
+                    >
+                      Leave Feedback
+                    </a>
+                  </Tag>
+                  {gitVersion && (
+                    <Tag>
+                      <a
+                        target="_blank"
+                        href={`${gitFrontend}${gitVersion.short}`}
+                      >
+                        Frontend version: <strong>{gitVersion.short}</strong>{" "}
+                        {moment(gitVersion.created).format("LLL")}
+                      </a>
+                    </Tag>
+                  )}
+                  {gitBackendVersion && (
+                    <Tag>
+                      <a
+                        target="_blank"
+                        href={`${gitBackend}${gitBackendVersion.short}`}
+                      >
+                        Backend version:{" "}
+                        <strong>{gitBackendVersion.short}</strong>{" "}
+                        {moment(gitBackendVersion.created).format("LLL")}
+                      </a>
+                    </Tag>
+                  )}
+                </Row>
+              </Col>
+              <Col flex="auto"></Col>
+              <Col>
+                <Row>
+                  <img src="/images/GCBR-Logo-RGB.svg" height={48} />
+                </Row>
+              </Col>
             </Row>
           </Footer>
         </Layout>
