@@ -274,7 +274,7 @@ class DatasetList extends React.Component {
 
   rematchDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/rematch?datasetKey=${datasetKey}`)
+      .post(`${config.dataApi}admin/rematch?missingOnly=true&datasetKey=${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
