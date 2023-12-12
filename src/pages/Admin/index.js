@@ -34,7 +34,7 @@ class AdminPage extends React.Component {
       updateAllMetricsloading: false,
       recalculateSectorCountsLoading: false,
       reindexSchedulerLoading: false,
-      rematchSchedulerLoading: false,
+      rematchMissingLoading: false,
       components: { foo: true, bar: false },
       componentsError: null,
       componentsLoading: false,
@@ -212,20 +212,20 @@ class AdminPage extends React.Component {
       );
   };
 
-  rematchScheduler = () => {
-    this.setState({ rematchSchedulerLoading: true });
+  rematchMissing = () => {
+    this.setState({ rematchMissingLoading: true });
     axios
-      .post(`${config.dataApi}admin/rematch/scheduler`)
+      .post(`${config.dataApi}admin/rematch/missing`)
       .then((res) => {
         this.setState(
           {
-            rematchSchedulerLoading: false,
+            rematchMissingLoading: false,
             error: null,
           },
           () => {
             notification.open({
               message: "Action triggered",
-              description: "Run rematch scheduler",
+              description: "Run rematch missing",
             });
           }
         );
@@ -233,7 +233,7 @@ class AdminPage extends React.Component {
       .catch((err) =>
         this.setState({
           error: err,
-          rematchSchedulerLoading: false,
+          rematchMissingLoading: false,
         })
       );
   };
@@ -259,7 +259,7 @@ class AdminPage extends React.Component {
       recalculateSectorCountsLoading,
       reindexAllDatasetsLoading,
       reindexSchedulerLoading,
-      rematchSchedulerLoading,
+      rematchMissingLoading,
       error,
       components: components,
       componentsLoading: componentsLoading,
@@ -430,17 +430,17 @@ class AdminPage extends React.Component {
 
             <Popconfirm
               placement="rightTop"
-              title="Do you want to schedule rematching incomplete datasets?"
-              onConfirm={this.rematchScheduler}
+              title="Do you want to match all names without a match?"
+              onConfirm={this.rematchMissing}
               okText="Yes"
               cancelText="No"
             >
               <Button
                 type="primary"
-                loading={rematchSchedulerLoading}
+                loading={rematchMissingLoading}
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               >
-                Rematch scheduler
+                Rematch missing
               </Button>
             </Popconfirm>
             <Popconfirm
