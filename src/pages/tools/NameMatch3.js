@@ -376,10 +376,11 @@ const NameMatch = ({ addError, rank }) => {
       !whichDataset || whichDataset === "primary"
         ? primaryDataset
         : secondaryDataset;
-    return `${dataset.alias
+    return `${
+      dataset.alias
         ? "Namematch_result_" + dataset.alias
         : "Namematch_result_dataset_" + dataset.key
-      }.csv`.replace(" ", "_");
+    }.csv`.replace(" ", "_");
   };
   const draggerProps = {
     name: "file",
@@ -487,8 +488,9 @@ const NameMatch = ({ addError, rank }) => {
           <Col flex="auto"></Col>
           {names && step === 0 && (
             <Col>
-              <span>{`${names.length} name${names.length === 1 ? "" : "s"
-                } provided for matching `}</span>
+              <span>{`${names.length} name${
+                names.length === 1 ? "" : "s"
+              } provided for matching `}</span>
               <Button type="primary" onClick={() => setStep(1)}>
                 Next
               </Button>
@@ -500,8 +502,9 @@ const NameMatch = ({ addError, rank }) => {
           <Row style={{ marginBottom: "10px" }}>
             <Col flex="auto"></Col>
             <Col>
-              <span>{`${names.length} name${names.length === 1 ? "" : "s"
-                } provided for matching `}</span>
+              <span>{`${names.length} name${
+                names.length === 1 ? "" : "s"
+              } provided for matching `}</span>
               <Button type="primary" onClick={matchResult}>
                 Next
               </Button>
@@ -557,17 +560,17 @@ const NameMatch = ({ addError, rank }) => {
                   </p>
                   <p className="ant-upload-hint">
                     Your csv must contain a column{" "}
-                    <code className="code">scientificName</code> (which may include the author)
-                    and optional but recommended columns{" "}
+                    <code className="code">scientificName</code> (which may
+                    include the author) and optional but recommended columns{" "}
                     <code className="code">author</code>,{" "}
                     <code className="code">rank</code>,{" "}
                     <code className="code">status</code>,{" "}
-                    <code className="code">code</code> (nomenclatural code),
-                    and any higher taxon (like
+                    <code className="code">code</code> (nomenclatural code), and
+                    any higher taxon (like
                     <code className="code">kingom</code>: Animalia,
                     <code className="code">domain</code>: Bacteria,
-                    <code className="code">order</code>: Lepidoptera
-                    or <code className="code">family</code>: Fabaceae)
+                    <code className="code">order</code>: Lepidoptera or{" "}
+                    <code className="code">family</code>: Fabaceae)
                   </p>
                 </Dragger>
               </Panel>
@@ -668,10 +671,10 @@ const NameMatch = ({ addError, rank }) => {
                   style={
                     showSecondary
                       ? {
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
-                        marginTop: "-22px",
-                      }
+                          paddingLeft: "8px",
+                          paddingRight: "8px",
+                          marginTop: "-22px",
+                        }
                       : { paddingLeft: "8px", paddingRight: "8px" }
                   }
                   span={step === 1 || !secondaryDataset ? 12 : 10}
@@ -879,81 +882,89 @@ const NameMatch = ({ addError, rank }) => {
                 ),
                 filters: secondaryDataset
                   ? [
-                    {
-                      text: `Only usage in ${primaryDataset.alias ||
-                        "Dataset " + primaryDataset.key
+                      {
+                        text: `Only usage in ${
+                          primaryDataset.alias ||
+                          "Dataset " + primaryDataset.key
                         }`,
-                      value: "only_primary_usage",
-                    },
-                    {
-                      text: `Only usage in ${secondaryDataset.alias ||
-                        "Dataset " + secondaryDataset.key
+                        value: "only_primary_usage",
+                      },
+                      {
+                        text: `Only usage in ${
+                          secondaryDataset.alias ||
+                          "Dataset " + secondaryDataset.key
                         }`,
-                      value: "only_secondary_usage",
-                    },
-                    {
-                      text: `Usage in ${primaryDataset.alias ||
-                        "Dataset " + primaryDataset.key
+                        value: "only_secondary_usage",
+                      },
+                      {
+                        text: `Usage in ${
+                          primaryDataset.alias ||
+                          "Dataset " + primaryDataset.key
                         }`,
-                      value: "primary_usage",
-                    },
-                    {
-                      text: `NO usage in ${primaryDataset.alias ||
-                        "Dataset " + primaryDataset.key
+                        value: "primary_usage",
+                      },
+                      {
+                        text: `NO usage in ${
+                          primaryDataset.alias ||
+                          "Dataset " + primaryDataset.key
                         }`,
-                      value: "no_primary_usage",
-                    },
-                    {
-                      text: `Usage in ${secondaryDataset.alias ||
-                        "Dataset " + secondaryDataset.key
+                        value: "no_primary_usage",
+                      },
+                      {
+                        text: `Usage in ${
+                          secondaryDataset.alias ||
+                          "Dataset " + secondaryDataset.key
                         }`,
-                      value: "secondary_usage",
-                    },
-                    {
-                      text: `NO usage in ${secondaryDataset.alias ||
-                        "Dataset " + secondaryDataset.key
+                        value: "secondary_usage",
+                      },
+                      {
+                        text: `NO usage in ${
+                          secondaryDataset.alias ||
+                          "Dataset " + secondaryDataset.key
                         }`,
-                      value: "no_secondary_usage",
-                    },
-                  ]
+                        value: "no_secondary_usage",
+                      },
+                    ]
                   : [
-                    {
-                      text: `Usage in ${primaryDataset.alias ||
-                        "Dataset " + primaryDataset.key
+                      {
+                        text: `Usage in ${
+                          primaryDataset.alias ||
+                          "Dataset " + primaryDataset.key
                         }`,
-                      value: "primary_usage",
-                    },
-                    {
-                      text: ` NO usage in ${primaryDataset.alias ||
-                        "Dataset " + primaryDataset.key
+                        value: "primary_usage",
+                      },
+                      {
+                        text: ` NO usage in ${
+                          primaryDataset.alias ||
+                          "Dataset " + primaryDataset.key
                         }`,
-                      value: "no_primary_usage",
-                    },
-                  ],
+                        value: "no_primary_usage",
+                      },
+                    ],
                 onFilter: (value, record) => {
                   if (value === "only_primary_usage") {
                     return !!(
-                      _.get(record, "primaryDatasetUsage") &&
-                      !_.get(record, "secondaryDatasetUsage")
+                      _.get(record, "primaryDatasetUsage.id") &&
+                      !_.get(record, "secondaryDatasetUsage.id")
                     );
                   }
                   if (value === "only_secondary_usage") {
                     return !!(
-                      !_.get(record, "primaryDatasetUsage") &&
-                      _.get(record, "secondaryDatasetUsage")
+                      !_.get(record, "primaryDatasetUsage.id") &&
+                      _.get(record, "secondaryDatasetUsage.id")
                     );
                   }
                   if (value === "primary_usage") {
-                    return !!_.get(record, "primaryDatasetUsage");
+                    return !!_.get(record, "primaryDatasetUsage.id");
                   }
                   if (value === "no_primary_usage") {
-                    return !_.get(record, "primaryDatasetUsage");
+                    return !_.get(record, "primaryDatasetUsage.id");
                   }
                   if (value === "secondary_usage") {
-                    return !!_.get(record, "secondaryDatasetUsage");
+                    return !!_.get(record, "secondaryDatasetUsage.id");
                   }
                   if (value === "no_secondary_usage") {
-                    return !_.get(record, "secondaryDatasetUsage");
+                    return !_.get(record, "secondaryDatasetUsage.id");
                   }
                 },
                 render: (text, record) => {
@@ -1024,7 +1035,9 @@ const NameMatch = ({ addError, rank }) => {
                 render: (text, record) => {
                   return (
                     <>
-                      <span className="col-reference-link">[1]</span>{" "}
+                      {_.get(record, "primaryDatasetUsage.id") && (
+                        <span className="col-reference-link">[1] </span>
+                      )}
                       {!["synonym", "ambiguous synonym", "misapplied"].includes(
                         _.get(record, "primaryDatasetUsage.status")
                       ) ? (
@@ -1033,7 +1046,7 @@ const NameMatch = ({ addError, rank }) => {
                         <React.Fragment key={_.get(record, "usage.id")}>
                           {_.get(record, "primaryDatasetUsage.status")}{" "}
                           {_.get(record, "primaryDatasetUsage.status") ===
-                            "misapplied"
+                          "misapplied"
                             ? "to "
                             : "of "}
                           <span
@@ -1049,7 +1062,9 @@ const NameMatch = ({ addError, rank }) => {
                       {secondaryDataset && (
                         <>
                           <br />
-                          <span className="col-reference-link">[2]</span>{" "}
+                          {_.get(record, "secondaryDatasetUsage.id") && (
+                            <span className="col-reference-link">[2] </span>
+                          )}
                           {![
                             "synonym",
                             "ambiguous synonym",
@@ -1062,7 +1077,7 @@ const NameMatch = ({ addError, rank }) => {
                             <React.Fragment key={_.get(record, "usage.id")}>
                               {_.get(record, "secondaryDatasetUsage.status")}{" "}
                               {_.get(record, "secondaryDatasetUsage.status") ===
-                                "misapplied"
+                              "misapplied"
                                 ? "to "
                                 : "of "}
                               <span
