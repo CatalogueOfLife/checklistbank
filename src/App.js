@@ -27,6 +27,7 @@ import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
+import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
 import ProjectEditors from "./pages/catalogue/Editors";
 
 import Admin from "./pages/Admin";
@@ -209,6 +210,12 @@ const App = () => {
                 key="decisions"
                 path="/catalogue/:catalogueKey/decision"
                 component={CatalogueDecisions}
+              />
+              <PrivateRoute
+                exact
+                key="decisions"
+                path="/catalogue/:catalogueKey/issues"
+                component={CatalogueIssues}
               />
 
               <PrivateRoute
