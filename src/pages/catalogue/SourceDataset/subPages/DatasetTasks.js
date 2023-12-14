@@ -18,6 +18,7 @@ class DatasetTasks extends React.Component {
       duplicates: [],
       duplicatesWithdecision: [],
       manuscriptNames: null,
+      staleDecisions: null,
       loading: false,
     };
   }
@@ -26,6 +27,7 @@ class DatasetTasks extends React.Component {
     this.getData();
     this.getManusciptNames();
     this.getBrokenDecisions();
+    this.getStaleDecisions();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -36,6 +38,7 @@ class DatasetTasks extends React.Component {
       this.getData();
       this.getManusciptNames();
       this.getBrokenDecisions();
+      this.getStaleDecisions();
     }
   };
 
@@ -94,14 +97,33 @@ class DatasetTasks extends React.Component {
     ).then((res) => this.setState({ brokenDecisions: res.data.total }));
   };
 
+  getStaleDecisions = () => {
+    const { datasetKey, catalogueKey } = this.props;
+    axios(
+      `${config.dataApi}dataset/${catalogueKey}/decision/stale?subjectDatasetKey=${datasetKey}`
+    ).then((res) => {
+      this.setState({
+        staleDecisions: { count: res.data.total },
+      });
+    });
+  };
+
   render() {
-    const { error, duplicates, manuscriptNames, loading, brokenDecisions } =
-      this.state;
+    const {
+      error,
+      duplicates,
+      manuscriptNames,
+      loading,
+      brokenDecisions,
+      staleDecisions,
+    } = this.state;
     const { getDuplicateWarningColor, datasetKey, catalogueKey } = this.props;
 
     return (
       <PageContent>
-        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
+        {error && (
+          <Alert description={<ErrorMsg error={error} />} type="error" />
+        )}
         {duplicates
           .filter((d) => d.error)
           .map((d) => (
@@ -132,7 +154,7 @@ class DatasetTasks extends React.Component {
                   {d.text}{" "}
                   {
                     <strong>{`${d.completed} of ${
-                       d.completed + d.count
+                      d.completed + d.count
                     }`}</strong>
                   }
                 </NavLink>{" "}
@@ -181,6 +203,24 @@ class DatasetTasks extends React.Component {
                 Broken decisions: {<strong>{`${brokenDecisions}`}</strong>}
               </NavLink>
             </Tag>
+          )}
+          <h1>Outdated decisions</h1>
+          {staleDecisions && (
+            <NavLink
+              to={{
+                pathname: `/catalogue/${catalogueKey}/decision`,
+                search: `?stale=true&subjectDatasetKey=${datasetKey}`,
+              }}
+              exact={true}
+            >
+              <Tag
+                style={{ marginBottom: "10px" }}
+                color={getDuplicateWarningColor(staleDecisions.count)}
+              >
+                Outdated decisions (<strong>{`${staleDecisions.count}`}</strong>
+                )
+              </Tag>
+            </NavLink>
           )}
         </Card>
       </PageContent>

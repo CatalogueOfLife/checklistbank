@@ -81,7 +81,8 @@ class CatalogueDecisions extends React.Component {
         params,
         pagination: {
           pageSize: params.limit || PAGE_SIZE,
-          current: Number(params.offset) / Number(params.limit) + 1,
+          current:
+            Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
         },
       },
       this.getData
@@ -100,7 +101,8 @@ class CatalogueDecisions extends React.Component {
         {
           pagination: {
             pageSize: params.limit || PAGE_SIZE,
-            current: Number(params.offset) / Number(params.limit) + 1,
+            current:
+              Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
           },
         },
         this.getData
@@ -119,7 +121,11 @@ class CatalogueDecisions extends React.Component {
       ...qs.parse(_.get(this.props, "location.search")),
     };
     const url = !!params.stale
-      ? `${config.dataApi}dataset/${catalogueKey}/decision/stale`
+      ? `${config.dataApi}dataset/${catalogueKey}/decision/stale${
+          !!params.subjectDatasetKey
+            ? "?subjectDatasetKey=" + params.subjectDatasetKey
+            : ""
+        }`
       : `${config.dataApi}dataset/${catalogueKey}/decision?${qs.stringify(
           params
         )}`;

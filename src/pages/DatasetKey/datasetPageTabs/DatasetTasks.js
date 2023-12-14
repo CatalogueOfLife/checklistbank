@@ -134,7 +134,8 @@ class DatasetTasks extends React.Component {
                 style={{ marginBottom: "10px" }}
                 color={getDuplicateWarningColor(staleDecisions.count)}
               >
-                Stale decisions (<strong>{`${staleDecisions.count}`}</strong>)
+                Outdated decisions (<strong>{`${staleDecisions.count}`}</strong>
+                )
               </Tag>
             </NavLink>
           )}
