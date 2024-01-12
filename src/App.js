@@ -45,6 +45,7 @@ import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSources2 from "./pages/catalogue/CatalogueSources2";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
+import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch3";
 import NameMatchAsync from "./pages/tools/NameMatchAsync";
 import NameMatchJob from "./pages/tools/NameMatchJob";
@@ -280,6 +281,12 @@ const App = () => {
                 key="metadatagenerator"
                 path={`/tools/metadata-generator`}
                 component={MetaDataGenerator}
+              />
+              <Route
+                exact
+                key="validator"
+                path={`/tools/validator`}
+                component={ArchiveValidator}
               />
               <Route
                 exact

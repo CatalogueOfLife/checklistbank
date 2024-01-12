@@ -36,36 +36,6 @@ const DatasetCreate = ({ user, loadTokenUser, addError }) => (
   </Layout>
 );
 
-/* class DatasetCreate extends React.Component {
-  render() {
-    return (
-      <Layout
-        openKeys={["dataset"]}
-        selectedKeys={["datasetCreate"]}
-        title="New Dataset"
-      >
-        {Auth.isEditorOrAdmin(this.props.user) ? <PageContent>
-          <MetaDataForm
-            onSaveSuccess={async (res, origin) => {
-              try {
-                await loadTokenUser()
-                if (origin === "external") {
-                  history.push(`/dataset/${res.data}/options`)
-                } else {
-                  history.push(`/dataset/${res.data}/about`)
-                }
-              } catch (error) {
-                addError(error)
-              }
-
-              ;
-            }}
-          />
-        </PageContent> : <Exception403 />}
-      </Layout>
-    );
-  }
-} */
 
 const mapContextToProps = ({ user, loadTokenUser, addError }) => ({
   user,

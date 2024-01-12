@@ -192,6 +192,13 @@ class BasicMenu extends Component {
                 <span>Metadata generator</span>
               </NavLink>
             </Menu.Item>
+            {user && (
+              <Menu.Item key="validator">
+                <NavLink to={{ pathname: "/tools/validator" }}>
+                  <span>Archive validator</span>
+                </NavLink>
+              </Menu.Item>
+            )}
             <Menu.Item key="namematch">
               <NavLink to={{ pathname: "/tools/name-match" }}>
                 <span>Name match</span>
