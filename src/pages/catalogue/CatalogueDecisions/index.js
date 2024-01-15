@@ -326,7 +326,7 @@ class CatalogueDecisions extends React.Component {
                 highlightStyle={{ fontWeight: "bold", padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
-                textToHighlight={text.toString()}
+                textToHighlight={record?.alias?.toString() || text.toString()}
               />
             </NavLink>
           );
