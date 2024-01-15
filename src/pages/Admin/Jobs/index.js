@@ -15,6 +15,7 @@ import { CodeOutlined } from "@ant-design/icons";
 import ExpandedRow from "./ExpandedRow";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 import Auth from "../../../components/Auth";
+import { NavLink } from "react-router-dom";
 
 import MockData from "./mockData.json";
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
@@ -132,6 +133,11 @@ const Jobs = ({ user, addError }) => {
       key: "dataset",
       width: 50,
       ellipsis: true,
+      render: (text, record) => (
+        <NavLink to={{ pathname: `/dataset/${record.key}/about` }} exact={true}>
+          {text}
+        </NavLink>
+      ),
     },
     {
       title: "Job",

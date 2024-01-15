@@ -230,7 +230,11 @@ class DatasetPage extends React.Component {
         )}
 
         {sect === "duplicates" && !taxonOrNameKey && (
-          <Duplicates datasetKey={datasetKey} location={this.props.location} />
+          <Duplicates
+            datasetKey={datasetKey}
+            dataset={dataset}
+            location={this.props.location}
+          />
         )}
         {sect === "references" && (
           <DatasetReferences

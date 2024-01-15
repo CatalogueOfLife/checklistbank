@@ -45,26 +45,27 @@ class DatasetDownload extends React.Component {
       synonyms: true,
       bareNames: false,
       excel: false,
+      extended: false,
       dataAccess: null,
     };
   }
 
   componentDidMount = () => {
     const { location, dataset } = this.props;
-    if(dataset){
+    if (dataset) {
       this.getSettings();
     }
-    
+
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
     if (taxonID) {
       this.getRootTaxon(taxonID);
     }
   };
-  componentDidUpdate= (prevProps) => {
-    if(prevProps?.dataset?.key !== this.props?.dataset?.key){
+  componentDidUpdate = (prevProps) => {
+    if (prevProps?.dataset?.key !== this.props?.dataset?.key) {
       this.getSettings();
     }
-  }
+  };
   getSettings = () => {
     const {
       dataset: { key },
@@ -94,8 +95,8 @@ class DatasetDownload extends React.Component {
           /* downloadModalVisible: true, */
         });
         history.push({
-          pathname: `/download/${uuid}` //"/user-profile/downloads"
-        })
+          pathname: `/download/${uuid}`, //"/user-profile/downloads"
+        });
       })
       .catch((err) => addError(err));
   };
@@ -112,9 +113,13 @@ class DatasetDownload extends React.Component {
 
   getRootTaxon = (key) => {
     const { dataset, addError } = this.props;
-    
+
     axios
-      .get(`${config.dataApi}dataset/${dataset?.key}/taxon/${encodeURIComponent(key)}`)
+      .get(
+        `${config.dataApi}dataset/${dataset?.key}/taxon/${encodeURIComponent(
+          key
+        )}`
+      )
       .then(({ data: rootTaxon }) => {
         console.log(rootTaxon);
         this.setState({ rootTaxon });
@@ -133,13 +138,16 @@ class DatasetDownload extends React.Component {
       selectedDataFormat,
       downloadModalVisible,
       exportUrl,
+      extended,
     } = this.state;
 
     const { dataFormat, dataset, location, user, rank } = this.props;
 
     return (
       <PageContent>
-        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
+        {error && (
+          <Alert description={<ErrorMsg error={error} />} type="error" />
+        )}
         {dataset?.origin === "external" && (
           <Row style={{ marginBottom: "10px" }}>
             <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
@@ -170,7 +178,7 @@ class DatasetDownload extends React.Component {
           <Col span={14}>
             <Radio.Group
               options={dataFormat
-                .filter((f) => f.name != "proxy")
+                .filter((f) => !["proxy", "acef"].includes(f.name))
                 .map((f) => ({
                   label: f.name,
                   value: f.name,
@@ -207,6 +215,12 @@ class DatasetDownload extends React.Component {
                   if (minRank) {
                     options.minRank = minRank;
                   }
+                  if (
+                    extended &&
+                    ["dwca", "coldp"].includes(selectedDataFormat)
+                  ) {
+                    options.extended = true;
+                  }
                   this.exportDataset(options);
                 }}
               >
@@ -216,8 +230,8 @@ class DatasetDownload extends React.Component {
             {!user && `Please login to create downloads`}
           </Col>
         </Row>
-        <Row style={{marginBottom: "10px" }}>
-          <Col span={4} style={{ textAlign: "right", paddingRight: "10px"}}>
+        <Row style={{ marginBottom: "10px" }}>
+          <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose root taxon (optional)
           </Col>
           <Col span={10}>
@@ -283,6 +297,16 @@ class DatasetDownload extends React.Component {
                 </Option>
               ))}
             </Select>
+          </Col>
+          <Col style={{ paddingLeft: "10px" }}>
+            {["dwca", "coldp"].includes(selectedDataFormat) && (
+              <Checkbox
+                checked={extended}
+                onChange={(e) => this.setState({ extended: e.target.checked })}
+              >
+                Extended
+              </Checkbox>
+            )}
           </Col>
           <Col style={{ paddingLeft: "10px" }}>
             <Checkbox

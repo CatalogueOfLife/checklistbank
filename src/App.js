@@ -27,6 +27,7 @@ import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
+import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
 import ProjectEditors from "./pages/catalogue/Editors";
 
 import Admin from "./pages/Admin";
@@ -46,7 +47,7 @@ import CatalogueSources2 from "./pages/catalogue/CatalogueSources2";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
-import NameMatch from "./pages/tools/NameMatch3";
+import NameMatch from "./pages/tools/NameMatch4";
 import NameMatchAsync from "./pages/tools/NameMatchAsync";
 import NameMatchJob from "./pages/tools/NameMatchJob";
 
@@ -210,6 +211,12 @@ const App = () => {
                 key="decisions"
                 path="/catalogue/:catalogueKey/decision"
                 component={CatalogueDecisions}
+              />
+              <PrivateRoute
+                exact
+                key="decisions"
+                path="/catalogue/:catalogueKey/issues"
+                component={CatalogueIssues}
               />
 
               <PrivateRoute

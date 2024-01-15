@@ -15,6 +15,7 @@ class DatasetTasks extends React.Component {
       duplicates: [],
       duplicatesWithdecision: [],
       manuscriptNames: null,
+      staleDecisions: null,
       loading: false,
     };
   }
@@ -22,22 +23,20 @@ class DatasetTasks extends React.Component {
   componentDidMount() {
     this.getData();
     this.getManusciptNames();
+    this.getStaleDecisions();
   }
 
   getData = async () => {
-    const { datasetKey} = this.props;
+    const { datasetKey } = this.props;
 
     this.setState({ loading: true });
-    const duplicatesWithNodecision = await getDuplicateOverview(
-      datasetKey
-    );
-  
-   
+    const duplicatesWithNodecision = await getDuplicateOverview(datasetKey);
+
     const duplicates = duplicatesWithNodecision.map((d) => ({
       id: d.id,
       text: d.text,
       count: d.count,
-      error: d.error ,
+      error: d.error,
     }));
     this.setState({ duplicates: duplicates, loading: false });
   };
@@ -49,18 +48,31 @@ class DatasetTasks extends React.Component {
     ).then((res) => {
       this.setState({
         manuscriptNames: { count: res.data.total },
-      })
+      });
     });
   };
 
+  getStaleDecisions = () => {
+    const { datasetKey } = this.props;
+    axios(`${config.dataApi}dataset/${datasetKey}/decision/stale`).then(
+      (res) => {
+        this.setState({
+          staleDecisions: { count: res.data.total },
+        });
+      }
+    );
+  };
+
   render() {
-    const { error, duplicates, manuscriptNames, loading } = this.state;
-    const { getDuplicateWarningColor, datasetKey, assembly } =
-      this.props;
+    const { error, duplicates, manuscriptNames, staleDecisions, loading } =
+      this.state;
+    const { getDuplicateWarningColor, datasetKey, assembly } = this.props;
 
     return (
       <PageContent>
-        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
+        {error && (
+          <Alert description={<ErrorMsg error={error} />} type="error" />
+        )}
         {duplicates
           .filter((d) => d.error)
           .map((d) => (
@@ -71,7 +83,7 @@ class DatasetTasks extends React.Component {
             />
           ))}
         <Card>
-        <h1>Duplicates</h1>
+          <h1>Duplicates</h1>
 
           {loading && <Spin />}
           {duplicates
@@ -79,7 +91,7 @@ class DatasetTasks extends React.Component {
             .map((d) => (
               <NavLink
                 to={{
-                  pathname:  `/dataset/${datasetKey}/duplicates`,
+                  pathname: `/dataset/${datasetKey}/duplicates`,
                   search: `?_colCheck=${d.id}`,
                 }}
                 exact={true}
@@ -89,10 +101,7 @@ class DatasetTasks extends React.Component {
                   style={{ marginBottom: "10px" }}
                   color={getDuplicateWarningColor(d.count)}
                 >
-                  {d.text}{" "}
-                  
-                    <strong>{d.count}</strong>
-                  
+                  {d.text} <strong>{d.count}</strong>
                 </Tag>{" "}
               </NavLink>
             ))}
@@ -100,7 +109,7 @@ class DatasetTasks extends React.Component {
           {manuscriptNames && (
             <NavLink
               to={{
-                pathname:  `/dataset/${datasetKey}/workbench`,
+                pathname: `/dataset/${datasetKey}/workbench`,
                 search: `?nomstatus=manuscript&limit=50`,
               }}
               exact={true}
@@ -109,12 +118,24 @@ class DatasetTasks extends React.Component {
                 style={{ marginBottom: "10px" }}
                 color={getDuplicateWarningColor(manuscriptNames.count)}
               >
-                Manuscript names{" "}
-                {!assembly ? (
-                  <strong>{`${manuscriptNames.count}`}</strong>
-                ) : (
-                  <strong>{`${manuscriptNames.completed} of ${manuscriptNames.count}`}</strong>
-                )}
+                Manuscript names <strong>{`${manuscriptNames.count}`}</strong>
+              </Tag>
+            </NavLink>
+          )}
+          {staleDecisions && (
+            <NavLink
+              to={{
+                pathname: `/catalogue/${datasetKey}/decision`,
+                search: `?stale=true`,
+              }}
+              exact={true}
+            >
+              <Tag
+                style={{ marginBottom: "10px" }}
+                color={getDuplicateWarningColor(staleDecisions.count)}
+              >
+                Outdated decisions (<strong>{`${staleDecisions.count}`}</strong>
+                )
               </Tag>
             </NavLink>
           )}

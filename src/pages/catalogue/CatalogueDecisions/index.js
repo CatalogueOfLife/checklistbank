@@ -1,7 +1,11 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { DeleteOutlined, WarningOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  WarningOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import Auth from "../../../components/Auth";
 
 import {
@@ -32,7 +36,7 @@ import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import RematchResult from "../CatalogueSectors/RematchResult";
-import DecisionForm from "../../WorkBench/DecisionForm"
+import DecisionForm from "../../WorkBench/DecisionForm";
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
@@ -56,7 +60,7 @@ class CatalogueDecisions extends React.Component {
         showQuickJumper: true,
       },
       decisionFormVisible: false,
-      rowsForEdit: []
+      rowsForEdit: [],
     };
   }
   nameRef = React.createRef();
@@ -77,7 +81,8 @@ class CatalogueDecisions extends React.Component {
         params,
         pagination: {
           pageSize: params.limit || PAGE_SIZE,
-          current: Number(params.offset) / Number(params.limit) + 1,
+          current:
+            Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
         },
       },
       this.getData
@@ -96,7 +101,8 @@ class CatalogueDecisions extends React.Component {
         {
           pagination: {
             pageSize: params.limit || PAGE_SIZE,
-            current: Number(params.offset) / Number(params.limit) + 1,
+            current:
+              Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
           },
         },
         this.getData
@@ -114,11 +120,16 @@ class CatalogueDecisions extends React.Component {
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
     };
-    axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision?${qs.stringify(
-        params
-      )}`
-    )
+    const url = !!params.stale
+      ? `${config.dataApi}dataset/${catalogueKey}/decision/stale${
+          !!params.subjectDatasetKey
+            ? "?subjectDatasetKey=" + params.subjectDatasetKey
+            : ""
+        }`
+      : `${config.dataApi}dataset/${catalogueKey}/decision?${qs.stringify(
+          params
+        )}`;
+    axios(url)
       .then(this.decorateWithDataset)
       .then((res) =>
         this.setState({
@@ -199,9 +210,9 @@ class CatalogueDecisions extends React.Component {
   };
 
   resetAllFilters = () => {
-    if(this?.nameRef?.current?.input?.state?.value){
-      this.nameRef.current.input.state.value = ""
-    } ;
+    if (this?.nameRef?.current?.input?.state?.value) {
+      this.nameRef.current.input.state.value = "";
+    }
 
     history.push({
       pathname: _.get(this.props, "location.pathname"),
@@ -286,7 +297,7 @@ class CatalogueDecisions extends React.Component {
       deleteBrokenDecisionsLoading,
       rematchInfo,
       decisionFormVisible,
-      rowsForEdit
+      rowsForEdit,
     } = this.state;
     const {
       match: {
@@ -405,7 +416,7 @@ class CatalogueDecisions extends React.Component {
       },
     ];
 
-    if (Auth.canEditDataset({key: catalogueKey}, user)) {
+    if (Auth.canEditDataset({ key: catalogueKey }, user)) {
       columns.push({
         title: "Action",
         key: "action",
@@ -414,7 +425,7 @@ class CatalogueDecisions extends React.Component {
           <React.Fragment>
             {
               <Button
-              size="small"
+                size="small"
                 style={{ display: "inline", marginRight: "8px" }}
                 type={"primary"}
                 onClick={() => {
@@ -520,30 +531,37 @@ class CatalogueDecisions extends React.Component {
             />
           )}
           {decisionFormVisible && (
-          <DecisionForm
-            rowsForEdit={rowsForEdit}
-            onCancel={() => {
-              this.setState({
-                decisionFormVisible: false,
-                rowsForEdit: [],
-              });
-            }}
-            onOk={() => {
-              this.setState({
-                decisionFormVisible: false,
-                rowsForEdit: [],
-              });
-            }}
-            onSaveDecision={(name) => {
-              this.setState({
-                decisionFormVisible: false,
-                rowsForEdit: [],
-              }, this.getData)
-            }}
-            datasetKey={catalogueKey}
-            subjectDatasetKey={_.get(rowsForEdit, '[0].decisions[0].subjectDatasetKey', null)}
-          />
-        )}
+            <DecisionForm
+              rowsForEdit={rowsForEdit}
+              onCancel={() => {
+                this.setState({
+                  decisionFormVisible: false,
+                  rowsForEdit: [],
+                });
+              }}
+              onOk={() => {
+                this.setState({
+                  decisionFormVisible: false,
+                  rowsForEdit: [],
+                });
+              }}
+              onSaveDecision={(name) => {
+                this.setState(
+                  {
+                    decisionFormVisible: false,
+                    rowsForEdit: [],
+                  },
+                  this.getData
+                );
+              }}
+              datasetKey={catalogueKey}
+              subjectDatasetKey={_.get(
+                rowsForEdit,
+                "[0].decisions[0].subjectDatasetKey",
+                null
+              )}
+            />
+          )}
 
           <Form layout="inline">
             <FormItem>
@@ -567,12 +585,21 @@ class CatalogueDecisions extends React.Component {
                 allowClear
               />
             </FormItem>
-
+            <FormItem
+              label="Stale"
+              style={{ marginBottom: "8px", marginRight: "8px" }}
+            >
+              <Switch
+                checked={params.stale === true || params.stale === "true"}
+                onChange={(value) => this.updateSearch({ stale: value })}
+              />
+            </FormItem>
             <FormItem
               label="Only broken"
               style={{ marginBottom: "8px", marginRight: "8px" }}
             >
               <Switch
+                disabled={params.stale === true || params.stale === "true"}
                 checked={params.broken === true || params.broken === "true"}
                 onChange={(value) => this.updateSearch({ broken: value })}
               />
@@ -582,6 +609,7 @@ class CatalogueDecisions extends React.Component {
               style={{ marginBottom: "8px", marginRight: "8px" }}
             >
               <Switch
+                disabled={params.stale === true || params.stale === "true"}
                 checked={user && Number(params.modifiedBy) === user.key}
                 onChange={(value) =>
                   this.updateSearch({ modifiedBy: value ? user.key : null })
@@ -590,6 +618,7 @@ class CatalogueDecisions extends React.Component {
             </FormItem>
             <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
+                disabled={params.stale === true || params.stale === "true"}
                 placeholder="Subject rank"
                 style={{ width: 160 }}
                 value={params.rank}
@@ -606,6 +635,7 @@ class CatalogueDecisions extends React.Component {
             </FormItem>
             <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
+                disabled={params.stale === true || params.stale === "true"}
                 placeholder="Decision mode"
                 style={{ width: 160 }}
                 value={params.mode}
@@ -628,52 +658,54 @@ class CatalogueDecisions extends React.Component {
               </Button>
             </Col>
             <Col flex="auto"></Col>
-          {Auth.canEditDataset({key: catalogueKey}, user) && <Col style={{ textAlign: "right" }}>
-              <Popconfirm
-                placement="rightTop"
-                title={
-                  params.subjectDatasetKey
-                    ? `Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`
-                    : `Do you want to rematch all decisions?`
-                }
-                onConfirm={() =>
-                  this.rematchDecisions(params.subjectDatasetKey)
-                }
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button
-                  type="primary"
-                  loading={rematchDecisionsLoading}
-                  style={{ marginLeft: "10px", marginBottom: "10px" }}
-                >
-                  Rematch all decisions{" "}
-                  {params.subjectDatasetKey
-                    ? ` from dataset ${params.subjectDatasetKey}`
-                    : ""}
-                </Button>
-              </Popconfirm>
-
-              {params.subjectDatasetKey && (
+            {Auth.canEditDataset({ key: catalogueKey }, user) && (
+              <Col style={{ textAlign: "right" }}>
                 <Popconfirm
                   placement="rightTop"
-                  title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
+                  title={
+                    params.subjectDatasetKey
+                      ? `Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`
+                      : `Do you want to rematch all decisions?`
+                  }
                   onConfirm={() =>
-                    this.deleteBrokenDecisions(params.subjectDatasetKey)
+                    this.rematchDecisions(params.subjectDatasetKey)
                   }
                   okText="Yes"
                   cancelText="No"
                 >
                   <Button
                     type="primary"
-                    loading={deleteBrokenDecisionsLoading}
+                    loading={rematchDecisionsLoading}
                     style={{ marginLeft: "10px", marginBottom: "10px" }}
                   >
-                    {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
+                    Rematch all decisions{" "}
+                    {params.subjectDatasetKey
+                      ? ` from dataset ${params.subjectDatasetKey}`
+                      : ""}
                   </Button>
                 </Popconfirm>
-              )}
-            </Col>}
+
+                {params.subjectDatasetKey && (
+                  <Popconfirm
+                    placement="rightTop"
+                    title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
+                    onConfirm={() =>
+                      this.deleteBrokenDecisions(params.subjectDatasetKey)
+                    }
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button
+                      type="primary"
+                      loading={deleteBrokenDecisionsLoading}
+                      style={{ marginLeft: "10px", marginBottom: "10px" }}
+                    >
+                      {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
+                    </Button>
+                  </Popconfirm>
+                )}
+              </Col>
+            )}
           </Row>
           {!error && (
             <Table
@@ -682,36 +714,44 @@ class CatalogueDecisions extends React.Component {
               dataSource={data}
               loading={loading}
               pagination={pagination}
-             
               rowKey="id"
-             /*  expandedRowRender={(record) => (
+              /*  expandedRowRender={(record) => (
                 <pre>
                   {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
                 </pre>
               )} */
               expandedRowRender={
-                !Auth.canEditDataset({key: catalogueKey}, user) 
+                !Auth.canEditDataset({ key: catalogueKey }, user)
                   ? null
-                  : (record) =>
-                      
-                        <React.Fragment>
-                          {record.mode === "update" && (
-                            <a
-                              onClick={() => {
-                                this.setState({
-                                  rowsForEdit: [{ decisions: [_.omit(record, ["dataset", "user"])]}],
-                                  decisionFormVisible: true,
-                                });
-                              }}
-                            >
-                              Edit <EditOutlined />
-                            </a>
+                  : (record) => (
+                      <React.Fragment>
+                        {record.mode === "update" && (
+                          <a
+                            onClick={() => {
+                              this.setState({
+                                rowsForEdit: [
+                                  {
+                                    decisions: [
+                                      _.omit(record, ["dataset", "user"]),
+                                    ],
+                                  },
+                                ],
+                                decisionFormVisible: true,
+                              });
+                            }}
+                          >
+                            Edit <EditOutlined />
+                          </a>
+                        )}
+                        <pre>
+                          {JSON.stringify(
+                            _.omit(record, ["dataset", "user"]),
+                            null,
+                            4
                           )}
-                          <pre>
-                            {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
-                          </pre>
-                        </React.Fragment>
-                      
+                        </pre>
+                      </React.Fragment>
+                    )
               }
               onChange={this.handleTableChange}
             />

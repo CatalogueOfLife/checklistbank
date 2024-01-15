@@ -35,7 +35,7 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
-import { Converter } from "csvtojson/v1";
+import csv from "csvtojson/v2";
 import PQueue from "p-queue";
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -257,16 +257,14 @@ const NameMatch = ({ addError, rank }) => {
     }
     var reader = new FileReader();
     reader.onload = function () {
-      var converter = new Converter({
-        delimiter: [",", ";", "$", "|", "\t"],
-      });
       var csvString = reader.result;
       setError(null);
-      converter.fromString(csvString, function (err, result) {
-        try {
-          if (err) {
-            setError(err);
-          } else if (result.length == 0) {
+      csv({
+        delimiter: [",", ";", "$", "|", "\t"],
+      })
+        .fromString(csvString)
+        .then((result) => {
+          if (result.length == 0) {
             setError("There are no rows in the data.");
           } else if (result.length > 6000) {
             setError(
@@ -296,10 +294,8 @@ const NameMatch = ({ addError, rank }) => {
               );
             }
           }
-        } catch (err) {
-          console.log(err);
-        }
-      });
+        })
+        .catch((err) => console.log(err));
     };
     reader.readAsText(file);
     return false;

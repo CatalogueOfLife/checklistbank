@@ -93,7 +93,7 @@ class DuplicateSearchPage extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
-      _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey") ||
+      _.get(prevProps, "dataset.key") !== _.get(this.props, "dataset.key") ||
       _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
     ) {
       this.initOrUpdate();
@@ -182,9 +182,13 @@ class DuplicateSearchPage extends React.Component {
     const {
       location: { pathname },
       catalogueKey,
+      dataset,
+      datasetKey,
+      assembly,
     } = this.props;
+    const showSourceFeatures =
+      assembly || ["release", "xrelease", "project"].includes(dataset?.origin);
     this.setState({ loading: true });
-    const { datasetKey, assembly } = this.props;
     let prms = {
       ...params,
       limit: Number(params.limit),
@@ -207,7 +211,7 @@ class DuplicateSearchPage extends React.Component {
         ? await Promise.all(res.data.result.map((e) => this.getDecisions(e)))
         : [];
       const total = res.data?.total || 0;
-      const data = assembly
+      const data = showSourceFeatures
         ? await Promise.all(
             netxtRes.map((e) => this.decorateWithSectorsAndDataset(e))
           )
@@ -280,7 +284,7 @@ class DuplicateSearchPage extends React.Component {
             to={{
               pathname: `/dataset/${_.get(
                 record,
-                "subjectDatasetKey"
+                "sourceDatasetKey"
               )}/taxon/${_.get(record, "sourceId")}`,
             }}
             exact={true}
@@ -633,8 +637,17 @@ class DuplicateSearchPage extends React.Component {
       synonymsSelectLoading,
       newestInGroupLoading,
     } = this.state;
-    const { rank, taxonomicstatus, user, assembly, catalogueKey, datasetKey } =
-      this.props;
+    const {
+      rank,
+      taxonomicstatus,
+      user,
+      assembly,
+      catalogueKey,
+      datasetKey,
+      dataset,
+    } = this.props;
+    const showSourceFeatures =
+      assembly || ["release", "xrelease", "project"].includes(dataset?.origin);
     let queryParams = qs.parse(_.get(this.props, "location.search"));
     const hasSelected =
       selectedRowKeys && selectedRowKeys.length > 0 && decision;
@@ -702,7 +715,7 @@ class DuplicateSearchPage extends React.Component {
             </div>
             {advancedMode && (
               <Form layout="inline">
-                {assembly && (
+                {showSourceFeatures && (
                   <DatasetAutocomplete
                     placeHolder="Source dataset"
                     style={{ marginBottom: "10px", width: "100%" }}
@@ -1159,7 +1172,7 @@ class DuplicateSearchPage extends React.Component {
               columns={
                 showAtomizedNames === true
                   ? columns.filter(this.columnFilter)
-                  : assembly
+                  : showSourceFeatures
                   ? [
                       this.getSourceColumn(),
                       ...columnDefaults(catalogueKey, this.getData)
