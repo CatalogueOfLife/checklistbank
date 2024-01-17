@@ -28,6 +28,8 @@ import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
 import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
+import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
+
 import ProjectEditors from "./pages/catalogue/Editors";
 
 import Admin from "./pages/Admin";
@@ -43,7 +45,6 @@ import Helmet from "react-helmet";
 import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
-import CatalogueSources2 from "./pages/catalogue/CatalogueSources2";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
@@ -85,15 +86,10 @@ const App = () => {
               <PrivateRoute
                 exact
                 key="catalogueSources"
-                path="/catalogue/:catalogueKey/sources"
+                path="/catalogue/:catalogueKey/sources/:issues?"
                 component={CatalogueSources}
               />
-              <PrivateRoute
-                exact
-                key="catalogueSources2"
-                path="/catalogue/:catalogueKey/sources2"
-                component={CatalogueSources2}
-              />
+
               <PrivateRoute
                 exact
                 key="catalogueSourceMetrics"
@@ -155,6 +151,12 @@ const App = () => {
                 path={`/catalogue/:catalogueKey/assembly`}
                 roles={["editor"]}
                 component={Assembly}
+              />
+              <PrivateRoute
+                exact
+                key="catalogueDownload"
+                path="/catalogue/:catalogueKey/download/:key?"
+                component={CatalogueDownload}
               />
               <PrivateRoute
                 exact
