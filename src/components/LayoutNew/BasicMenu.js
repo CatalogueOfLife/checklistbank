@@ -420,7 +420,7 @@ class BasicMenu extends Component {
                       <span>Decisions</span>
                     </NavLink>
                   </Menu.Item>
-                  <Menu.Item key="catalogue_issues">
+                  {/* <Menu.Item key="catalogue_issues">
                     <NavLink
                       to={{
                         pathname: `/catalogue/${catalogueKey}/issues`,
@@ -428,7 +428,7 @@ class BasicMenu extends Component {
                     >
                       Issues
                     </NavLink>
-                  </Menu.Item>
+                  </Menu.Item> */}
                   {/* <Menu.Item key="catalogueSourceMetrics">
                     <NavLink
                       to={{
