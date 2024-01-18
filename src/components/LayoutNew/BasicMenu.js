@@ -856,6 +856,21 @@ class BasicMenu extends Component {
                       </NavLink>
                     </Menu.Item>
                   )}
+                {selectedDataset &&
+                  ["xrelease", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) && (
+                    <Menu.Item key="decisions">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${selectedDataset?.key}/decisions`,
+                        }}
+                      >
+                        {/*  <CheckOutlined /> */}
+                        <span>Decisions</span>
+                      </NavLink>
+                    </Menu.Item>
+                  )}
                 {Auth.canEditDataset(selectedDataset, user) &&
                   !selectedDataset.deleted && (
                     <Menu.Item key="datasetDuplicateSearch">
