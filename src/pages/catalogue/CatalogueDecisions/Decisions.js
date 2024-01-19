@@ -301,7 +301,7 @@ class CatalogueDecisions extends React.Component {
               to={{
                 pathname: `/catalogue/${
                   type === "project" ? datasetKey : releasedFrom
-                }/dataset/${record.datasetKey}/imports`,
+                }/dataset/${record.subjectDatasetKey}/imports`,
               }}
               exact={true}
             >
