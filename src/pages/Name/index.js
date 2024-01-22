@@ -453,16 +453,21 @@ class NamePage extends React.Component {
                 </PresentationItem>
 
                 <PresentationItem md={md} label="Names Index Match">
-                  {name.namesIndexType}
-                  {name.namesIndexId && (
-                    <NavLink
-                      to={{
-                        pathname: `/namesindex/${name.namesIndexId}/related`,
-                      }}
-                    >
-                      {name.namesIndexId} ()
-                    </NavLink>
-                  )}
+                  <Row>
+                    <Col>{name.namesIndexType}</Col>
+                    {name.namesIndexId && (
+                      <Col>
+                        : &nbsp;
+                        <NavLink
+                          to={{
+                            pathname: `/namesindex/${name.namesIndexId}`,
+                          }}
+                        >
+                          {name.namesIndexId}
+                        </NavLink>
+                      </Col>
+                    )}
+                  </Row>
                 </PresentationItem>
               </React.Fragment>
             )}
