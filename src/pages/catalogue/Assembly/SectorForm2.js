@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 
-import { notification, Select, Alert, Button, InputNumber, Form } from "antd";
+import {
+  notification,
+  Select,
+  Checkbox,
+  Input,
+  Alert,
+  Button,
+  InputNumber,
+  Form,
+} from "antd";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import TaxonFormControl from "../../../components/TaxonFormControl";
 import DatasetFormControl from "../../../components/DatasetFormControl";
@@ -14,6 +23,7 @@ import withContext from "../../../components/hoc/withContext";
 const FormItem = Form.Item;
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const formItemLayout = {
   labelCol: {
@@ -48,34 +58,35 @@ const SectorForm = ({
   catalogueKey,
   onSubmit,
   nametype,
-  nomstatus
+  nomstatus,
 }) => {
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(null);
   const [form] = Form.useForm();
   const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);
-  const mode = Form.useWatch('mode', form);
+  const mode = Form.useWatch("mode", form);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
   useEffect(() => {
-
-    console.log(sector?.nameTypes)
+    console.log(sector?.nameTypes);
   }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
   useEffect(() => {
     if (subjectDatasetKey || sector?.subjectDatasetKey) {
       axios
         .get(
-          `${config.dataApi}dataset/${subjectDatasetKey || sector?.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
+          `${config.dataApi}dataset/${
+            subjectDatasetKey || sector?.subjectDatasetKey
+          }/nameusage/search?facet=rank&limit=0`
         ) // /assembly/3/sync/
         .then((res) => {
-          setSectorDatasetRanks(_.get(res, "data.facets.rank", []).map(
-            (r) => r.value
-          ))
+          setSectorDatasetRanks(
+            _.get(res, "data.facets.rank", []).map((r) => r.value)
+          );
         })
         .catch((err) => {
-          setError(err)
+          setError(err);
         });
     }
-  }, [subjectDatasetKey])
+  }, [subjectDatasetKey]);
   const onFinishFailed = ({ errorFields }) => {
     form.scrollToField(errorFields[0].name);
   };
@@ -97,7 +108,7 @@ const SectorForm = ({
           }
         })
         .catch((err) => {
-          setError(err)
+          setError(err);
           if (typeof onError === "function") {
             onError(err);
           }
@@ -115,7 +126,7 @@ const SectorForm = ({
           }
         })
         .catch((err) => {
-          setError(err)
+          setError(err);
           if (typeof onError === "function") {
             onError(err);
           }
@@ -123,188 +134,265 @@ const SectorForm = ({
     }
   };
 
-  const initialValues = { ranks: [], entities: [], nameTypes: [], nameStatusExclusion: [], ...sector };
-  return (<>
-    {error && <Alert
-      style={{ marginBottom: "10px" }}
-      description={<ErrorMsg error={error} />}
-      type="error"
-      closable
-      onClose={() => setError(null)}
-    />}
-    <Form
-      form={form}
-      initialValues={initialValues}
-      onFinish={submitData}
-      onFinishFailed={onFinishFailed}
-    >
-      <FormItem {...formItemLayout} label="Mode" key="mode" name="mode" required>
-        <Select
-          style={{ width: "100%" }}
-          // defaultValue={sector.mode}
-          // onChange={(value) => updateSectorMode(value)}
-          showSearch
-          allowClear
-        >
-          <Option key="attach" value="attach">
-            attach
-          </Option>
-          <Option key="union" value="union">
-            union
-          </Option>
-          <Option key="merge" value="merge">
-            merge
-          </Option>
-        </Select>
-      </FormItem>
-      {mode === "merge" &&
-        <FormItem {...formItemLayout} label="Priority" key="priority" name="priority">
-
-          <InputNumber />
-        </FormItem>}
-      {!sector && (
+  const initialValues = {
+    ranks: [],
+    entities: [],
+    nameTypes: [],
+    nameStatusExclusion: [],
+    ...sector,
+  };
+  return (
+    <>
+      {error && (
+        <Alert
+          style={{ marginBottom: "10px" }}
+          description={<ErrorMsg error={error} />}
+          type="error"
+          closable
+          onClose={() => setError(null)}
+        />
+      )}
+      <Form
+        form={form}
+        initialValues={initialValues}
+        onFinish={submitData}
+        onFinishFailed={onFinishFailed}
+      >
         <FormItem
           {...formItemLayout}
-          label="Subject Dataset"
-          key="subjectDatasetKey"
-          name="subjectDatasetKey"
+          label="Mode"
+          key="mode"
+          name="mode"
           required
         >
-          <DatasetFormControl />
+          <Select
+            style={{ width: "100%" }}
+            // defaultValue={sector.mode}
+            // onChange={(value) => updateSectorMode(value)}
+            showSearch
+            allowClear
+          >
+            <Option key="attach" value="attach">
+              attach
+            </Option>
+            <Option key="union" value="union">
+              union
+            </Option>
+            <Option key="merge" value="merge">
+              merge
+            </Option>
+          </Select>
         </FormItem>
-      )}
-      <FormItem {...formItemLayout} label="Code" key="code" name="code">
-        <Select style={{ width: "100%" }} showSearch allowClear>
-          {nomCode.map((f) => {
-            return (
-              <Option key={f.name} value={f.name}>
-                {f.name}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        {mode === "merge" && (
+          <FormItem
+            {...formItemLayout}
+            label="Priority"
+            key="priority"
+            name="priority"
+          >
+            <InputNumber />
+          </FormItem>
+        )}
+        {!sector && (
+          <FormItem
+            {...formItemLayout}
+            label="Subject Dataset"
+            key="subjectDatasetKey"
+            name="subjectDatasetKey"
+            required
+          >
+            <DatasetFormControl />
+          </FormItem>
+        )}
+        <FormItem {...formItemLayout} label="Code" key="code" name="code">
+          <Select style={{ width: "100%" }} showSearch allowClear>
+            {nomCode.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem {...formItemLayout} label="Ranks" key="ranks" name="ranks">
-        <Select style={{ width: "100%" }} mode="multiple" showSearch allowClear disabled={sectorDatasetRanks.length === 0}>
-          {(sectorDatasetRanks || []).map((r) => {
-            return (
-              <Option key={r} value={r}>
-                {r}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        <FormItem {...formItemLayout} label="Ranks" key="ranks" name="ranks">
+          <Select
+            style={{ width: "100%" }}
+            mode="multiple"
+            showSearch
+            allowClear
+            disabled={sectorDatasetRanks.length === 0}
+          >
+            {(sectorDatasetRanks || []).map((r) => {
+              return (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="Entities"
-        key="entities"
-        name="entities"
-      >
-        <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
-          {entitytype.map((f) => {
-            return (
-              <Option key={f.name} value={f.name}>
-                {f.name}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Entities"
+          key="entities"
+          name="entities"
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+          >
+            {entitytype.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="Name Types"
-        key="nameTypes"
-        name="nameTypes"
-      >
-        <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
-          {nametype.map((f) => {
-            return (
-              <Option key={f} value={f}>
-                {f}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Name Types"
+          key="nameTypes"
+          name="nameTypes"
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+          >
+            {nametype.map((f) => {
+              return (
+                <Option key={f} value={f}>
+                  {f}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="Name Status Exclusion"
-        key="nameStatusExclusion"
-        name="nameStatusExclusion"
-      >
-        <Select mode="multiple" style={{ width: "100%" }} showSearch allowClear>
-          {nomstatus.map((f) => {
-            return (
-              <Option key={f.name} value={f.name}>
-                {f.name}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Name Status Exclusion"
+          key="nameStatusExclusion"
+          name="nameStatusExclusion"
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+          >
+            {nomstatus.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem {...formItemLayout} label="Target" key="target" name="target">
-        <TaxonFormControl
-          minRank="genus"
-          accepted={true}
-          datasetKey={sector?.datasetKey || catalogueKey}
-          defaultTaxonKey={_.get(sector, "target.id") || null}
-        />
-      </FormItem>
+        <FormItem {...formItemLayout} label="Target" key="target" name="target">
+          <TaxonFormControl
+            minRank="genus"
+            accepted={true}
+            datasetKey={sector?.datasetKey || catalogueKey}
+            defaultTaxonKey={_.get(sector, "target.id") || null}
+          />
+        </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="Subject"
-        key="subject"
-        name="subject"
-      >
-        <TaxonFormControl
-          disabled={!sector && !subjectDatasetKey}
-          minRank="genus"
-          accepted={true}
-          datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
-          defaultTaxonKey={_.get(sector, "subject.id") || null}
-        />
-      </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Subject"
+          key="subject"
+          name="subject"
+        >
+          <TaxonFormControl
+            disabled={!sector && !subjectDatasetKey}
+            minRank="genus"
+            accepted={true}
+            datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
+            defaultTaxonKey={_.get(sector, "subject.id") || null}
+          />
+        </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="Placeholder Rank"
-        key="placeholderRank"
-        name="placeholderRank"
-      >
-        <Select style={{ width: "100%" }} showSearch allowClear>
-          {rank.map((r) => {
-            return (
-              <Option key={r} value={r}>
-                {r}
-              </Option>
-            );
-          })}
-        </Select>
-      </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Placeholder Rank"
+          key="placeholderRank"
+          name="placeholderRank"
+        >
+          <Select style={{ width: "100%" }} showSearch allowClear>
+            {rank.map((r) => {
+              return (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
 
-      <FormItem {...tailFormItemLayout}>
-        <Button type="primary" onClick={form.submit}>
-          Save
-        </Button>
-      </FormItem>
-    </Form>
-  </>);
+        <FormItem
+          {...formItemLayout}
+          label="Copy AccordingTo"
+          key="copyAccordingTo"
+          name="copyAccordingTo"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label="Remove Ordinals"
+          key="removeOrdinals"
+          name="removeOrdinals"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label="Editorial note"
+          key="note"
+          name="note"
+        >
+          <TextArea />
+        </FormItem>
+
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" onClick={form.submit}>
+            Save
+          </Button>
+        </FormItem>
+      </Form>
+    </>
+  );
 };
 
-const mapContextToProps = ({ nomCode, entitytype, rank, catalogueKey, nametype,
-  nomstatus }) => ({
-    catalogueKey,
-    nomCode,
-    entitytype,
-    rank,
-    nametype,
-    nomstatus
-  });
+const mapContextToProps = ({
+  nomCode,
+  entitytype,
+  rank,
+  catalogueKey,
+  nametype,
+  nomstatus,
+}) => ({
+  catalogueKey,
+  nomCode,
+  entitytype,
+  rank,
+  nametype,
+  nomstatus,
+});
 export default withContext(mapContextToProps)(SectorForm);

@@ -18,7 +18,7 @@ import {
   notification,
   Switch,
   Form,
-  Tabs
+  Tabs,
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -37,7 +37,7 @@ import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import RegExSearch from "./RegExSearch";
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
@@ -60,7 +60,9 @@ const PAGE_SIZE = 50;
 const getDecisionText = (decision) => {
   if (!_.get(decision, "mode")) {
     return "";
-  } else if (["block", "ignore", "reviewed"].includes(_.get(decision, "mode"))) {
+  } else if (
+    ["block", "ignore", "reviewed"].includes(_.get(decision, "mode"))
+  ) {
     return _.get(decision, "mode");
   } else if (_.get(decision, "status")) {
     return _.get(decision, "status");
@@ -77,7 +79,7 @@ const getColumns = (catalogueKey, user) => [
     width: 60,
     className: "workbench-td",
     render: (text, record) =>
-      !Auth.isAuthorised(user, ["editor"]) ? (
+      !Auth.canEditDataset({ key: catalogueKey }, user) ? (
         getDecisionText(_.get(record, "decisions[0]"))
       ) : (
         <DecisionTag
@@ -250,7 +252,7 @@ class WorkBench extends React.Component {
     const { catalogueKey } = this.props;
     const { user } = this.props;
     this.state = {
-      activeTab : "1",
+      activeTab: "1",
       data: { result: [] },
       decision: null,
       columns: getColumns(catalogueKey, user),
@@ -354,28 +356,31 @@ class WorkBench extends React.Component {
       search: `?${qs.stringify(newParamsWithPaging)}`,
     });
     // This would be cleaner with pathparam like:  /catalogue/3/dataset/1700/nameusage/search
-    let task = params.USAGE_ID ? 
-    axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
-        "facet": params.facet,
-        
-        "filter": {
-          "USAGE_ID": params.USAGE_ID,
-          "catalogueKey": [catalogueKey],
-          "unsafe": [true]
-        },
-        "page": {
-          "offset": Number((current - 1) * limit), "limit":  Number(limit)
-        }
-      })
-    : axios(
-      `${config.dataApi}dataset/${datasetKey}/nameusage/search?${qs.stringify({
-        ...newParamsWithPaging,
-        catalogueKey: catalogueKey,
-      })}`
-    );
+    let task = params.USAGE_ID
+      ? axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
+          facet: params.facet,
 
+          filter: {
+            USAGE_ID: params.USAGE_ID,
+            catalogueKey: [catalogueKey],
+            unsafe: [true],
+          },
+          page: {
+            offset: Number((current - 1) * limit),
+            limit: Number(limit),
+          },
+        })
+      : axios(
+          `${
+            config.dataApi
+          }dataset/${datasetKey}/nameusage/search?${qs.stringify({
+            ...newParamsWithPaging,
+            catalogueKey: catalogueKey,
+          })}`
+        );
 
-      task.then((res) => this.getDecisions(res))
+    task
+      .then((res) => this.getDecisions(res))
       .then((res) => {
         this.setState({
           loading: false,
@@ -385,7 +390,7 @@ class WorkBench extends React.Component {
         });
       })
       .catch((err) => {
-        addError(err)
+        addError(err);
         this.setState({ loading: false, data: [] });
       });
   };
@@ -449,8 +454,8 @@ class WorkBench extends React.Component {
         delete newParams[param];
       }
     });
-    if(newParams?.USAGE_ID){
-      newParams.unsafe=true
+    if (newParams?.USAGE_ID) {
+      newParams.unsafe = true;
     } else {
       delete newParams.unsafe;
     }
@@ -524,9 +529,13 @@ class WorkBench extends React.Component {
         const mode = ["block", "ignore", "reviewed"].includes(decision)
           ? decision
           : "update";
-          const parent = ['accepted', 'provisionally accepted'].includes(d?.usage?.status) ? (d.classification && d.classification.length > 1
+        const parent = ["accepted", "provisionally accepted"].includes(
+          d?.usage?.status
+        )
+          ? d.classification && d.classification.length > 1
             ? d.classification[d.classification.length - 2].name
-            : "") : _.get(d, "usage.accepted.name.scientificName", "");
+            : ""
+          : _.get(d, "usage.accepted.name.scientificName", "");
         let decisionObject = {
           subjectDatasetKey: datasetKey,
           subject: {
@@ -565,7 +574,11 @@ class WorkBench extends React.Component {
             )}`;
             const decisionMsg = `${_.get(d, "usage.name.scientificName")} was ${
               decision === "block" ? "blocked from the assembly" : ""
-            }${decision === "ignore" ? "ignored (Taxon blocked, but children kept under parent)" : ""}${decision === "reviewed" ? "marked as reviewed" : ""}`;
+            }${
+              decision === "ignore"
+                ? "ignored (Taxon blocked, but children kept under parent)"
+                : ""
+            }${decision === "reviewed" ? "marked as reviewed" : ""}`;
 
             notification.open({
               message: "Decision applied",
@@ -615,7 +628,7 @@ class WorkBench extends React.Component {
       decisionFormVisible,
       rowsForEdit,
       advancedFilters,
-      activeTab
+      activeTab,
     } = this.state;
     const { taxonomicstatus, user, datasetKey, catalogueKey } = this.props;
     const facetRanks = _.get(facets, "rank")
@@ -735,69 +748,74 @@ class WorkBench extends React.Component {
             />
           )}
         </Row>
-        <Tabs activeKey={this.state.activeTab} onChange={activeKey => this.setState({activeTab: activeKey})} >
-    <TabPane tab="Search" key="1">
-    <Row style={{ marginBottom: "10px" }}>
-          <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
-            <SearchBox
-              defaultValue={_.get(params, "q")}
-              onSearch={(value) => this.updateSearch({ q: value })}
-              style={{ marginBottom: "10px", width: "100%" }}
-            />
-            <div style={{ marginTop: "10px" }}>
-              {" "}
-              <NameAutocomplete
-                datasetKey={datasetKey}
-                minRank="GENUS"
-                onSelectName={(value) => {
-                  this.updateSearch({ TAXON_ID: value.key });
-                }}
-                onResetSearch={this.resetSearch}
-                placeHolder="Filter by higher taxon"
-                defaultTaxonKey={params.TAXON_ID || null}
-                autoFocus={false}
-              />{" "}
-            </div>
-            {catalogueKey === datasetKey && (
-              <div style={{ marginTop: "10px" }}>
-                <DatasetAutocomplete
-                  contributesTo={Number(datasetKey)}
-                  onSelectDataset={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
-                  }}
-                  defaultDatasetKey={
-                    _.get(params, "SECTOR_DATASET_KEY") || null
-                  }
-                  onResetSearch={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: null });
-                  }}
-                  placeHolder="Filter by source dataset"
-                  autoFocus={false}
+        <Tabs
+          activeKey={this.state.activeTab}
+          onChange={(activeKey) => this.setState({ activeTab: activeKey })}
+        >
+          <TabPane tab="Search" key="1">
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
+                <SearchBox
+                  defaultValue={_.get(params, "q")}
+                  onSearch={(value) => this.updateSearch({ q: value })}
+                  style={{ marginBottom: "10px", width: "100%" }}
                 />
-              </div>
-            )}
-            <div style={{ marginTop: "10px" }}>
-              <Form layout="inline">
-                <FormItem label="Fuzzy">
-                  <Switch
-                    checked={params.fuzzy === true}
-                    onChange={(value) => this.updateSearch({ fuzzy: value })}
-                  />
-                </FormItem>
-                <FormItem label="Matching">
-                  <RadioGroup
-                    onChange={(evt) => {
-                      this.updateSearch({ type: evt.target.value });
+                <div style={{ marginTop: "10px" }}>
+                  {" "}
+                  <NameAutocomplete
+                    datasetKey={datasetKey}
+                    minRank="GENUS"
+                    onSelectName={(value) => {
+                      this.updateSearch({ TAXON_ID: value.key });
                     }}
-                    value={params.type || "WHOLE_WORDS"}
-                  >
-                    <Radio value="EXACT">Exact</Radio>
-                    <Radio value="WHOLE_WORDS">Words</Radio>
-                    <Radio value="PREFIX">Partial</Radio>
-                  </RadioGroup>
-                </FormItem>
+                    onResetSearch={this.resetSearch}
+                    placeHolder="Filter by higher taxon"
+                    defaultTaxonKey={params.TAXON_ID || null}
+                    autoFocus={false}
+                  />{" "}
+                </div>
+                {catalogueKey === datasetKey && (
+                  <div style={{ marginTop: "10px" }}>
+                    <DatasetAutocomplete
+                      contributesTo={Number(datasetKey)}
+                      onSelectDataset={(value) => {
+                        this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                      }}
+                      defaultDatasetKey={
+                        _.get(params, "SECTOR_DATASET_KEY") || null
+                      }
+                      onResetSearch={(value) => {
+                        this.updateSearch({ SECTOR_DATASET_KEY: null });
+                      }}
+                      placeHolder="Filter by source dataset"
+                      autoFocus={false}
+                    />
+                  </div>
+                )}
+                <div style={{ marginTop: "10px" }}>
+                  <Form layout="inline">
+                    <FormItem label="Fuzzy">
+                      <Switch
+                        checked={params.fuzzy === true}
+                        onChange={(value) =>
+                          this.updateSearch({ fuzzy: value })
+                        }
+                      />
+                    </FormItem>
+                    <FormItem label="Matching">
+                      <RadioGroup
+                        onChange={(evt) => {
+                          this.updateSearch({ type: evt.target.value });
+                        }}
+                        value={params.type || "WHOLE_WORDS"}
+                      >
+                        <Radio value="EXACT">Exact</Radio>
+                        <Radio value="WHOLE_WORDS">Words</Radio>
+                        <Radio value="PREFIX">Partial</Radio>
+                      </RadioGroup>
+                    </FormItem>
 
-                {/*                 <FormItem
+                    {/*                 <FormItem
                   style={{
                     marginBottom: "10px",
                   }}
@@ -822,104 +840,120 @@ class WorkBench extends React.Component {
                     <Radio value={undefined}>All</Radio>
                   </RadioGroup>
                 </FormItem> */}
-              </Form>
-            </div>
-          </Col>
-          <Col span={10}>
-            <MultiValueFilter
-              defaultValue={_.get(params, "issue")}
-              onChange={(value) => this.updateSearch({ issue: value })}
-              vocab={facetIssues}
-              label="Issues"
-            />
+                  </Form>
+                </div>
+              </Col>
+              <Col span={10}>
+                <MultiValueFilter
+                  defaultValue={_.get(params, "issue")}
+                  onChange={(value) => this.updateSearch({ issue: value })}
+                  vocab={facetIssues}
+                  label="Issues"
+                />
 
-            <MultiValueFilter
-              defaultValue={_.get(params, "rank")}
-              onChange={(value) => this.updateSearch({ rank: value })}
-              vocab={facetRanks}
-              label="Ranks"
+                <MultiValueFilter
+                  defaultValue={_.get(params, "rank")}
+                  onChange={(value) => this.updateSearch({ rank: value })}
+                  vocab={facetRanks}
+                  label="Ranks"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "status")}
+                  onChange={(value) => this.updateSearch({ status: value })}
+                  vocab={facetTaxonomicStatus}
+                  label="Status"
+                />
+                {advancedFilters && (
+                  <React.Fragment>
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "nomStatus")}
+                      onChange={(value) =>
+                        this.updateSearch({ nomstatus: value })
+                      }
+                      vocab={facetNomStatus}
+                      label="Nomenclatural status"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "nameType")}
+                      onChange={(value) => this.updateSearch({ type: value })}
+                      vocab={facetNomType}
+                      label="Name type"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "field")}
+                      onChange={(value) => this.updateSearch({ field: value })}
+                      vocab={facetNomField}
+                      label="Name field"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "authorship")}
+                      onChange={(value) =>
+                        this.updateSearch({ authorship: value })
+                      }
+                      vocab={facetAuthorship}
+                      label="Authorship"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "authorshipYear")}
+                      onChange={(value) =>
+                        this.updateSearch({ authorshipYear: value })
+                      }
+                      vocab={facetAuthorshipYear}
+                      label="Authorship Year"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "environment")}
+                      onChange={(value) =>
+                        this.updateSearch({ environment: value })
+                      }
+                      vocab={facetEnvironment}
+                      label="Environment"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "extinct")}
+                      onChange={(value) =>
+                        this.updateSearch({ extinct: value })
+                      }
+                      vocab={facetExtinct}
+                      label="Extinct"
+                    />
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "origin")}
+                      onChange={(value) => this.updateSearch({ origin: value })}
+                      vocab={facetOrigin}
+                      label="Origin"
+                    />
+                  </React.Fragment>
+                )}
+                <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                  <a
+                    style={{ marginLeft: 8, fontSize: 12 }}
+                    onClick={this.toggleAdvancedFilters}
+                  >
+                    Advanced{" "}
+                    {this.state.advancedFilters ? (
+                      <UpOutlined />
+                    ) : (
+                      <DownOutlined />
+                    )}
+                  </a>
+                </div>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tab="RegEx Search" key="2">
+            <RegExSearch
+              decisionMode={_.get(this.state?.params?.decisionMode)}
+              limit={pagination.pageSize}
+              style={{ marginBottom: "10px" }}
+              datasetKey={datasetKey}
+              updateSearch={this.updateSearch}
+              onReset={() => this.updateSearch({ USAGE_ID: null })}
+              onSearch={(val) => this.updateSearch({ USAGE_ID: val })}
+              pagination={pagination}
             />
-            <MultiValueFilter
-              defaultValue={_.get(params, "status")}
-              onChange={(value) => this.updateSearch({ status: value })}
-              vocab={facetTaxonomicStatus}
-              label="Status"
-            />
-            {advancedFilters && (
-              <React.Fragment>
-                <MultiValueFilter
-                  defaultValue={_.get(params, "nomStatus")}
-                  onChange={(value) => this.updateSearch({ nomstatus: value })}
-                  vocab={facetNomStatus}
-                  label="Nomenclatural status"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "nameType")}
-                  onChange={(value) => this.updateSearch({ type: value })}
-                  vocab={facetNomType}
-                  label="Name type"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "field")}
-                  onChange={(value) => this.updateSearch({ field: value })}
-                  vocab={facetNomField}
-                  label="Name field"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "authorship")}
-                  onChange={(value) => this.updateSearch({ authorship: value })}
-                  vocab={facetAuthorship}
-                  label="Authorship"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "authorshipYear")}
-                  onChange={(value) =>
-                    this.updateSearch({ authorshipYear: value })
-                  }
-                  vocab={facetAuthorshipYear}
-                  label="Authorship Year"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "environment")}
-                  onChange={(value) =>
-                    this.updateSearch({ environment: value })
-                  }
-                  vocab={facetEnvironment}
-                  label="Environment"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "extinct")}
-                  onChange={(value) => this.updateSearch({ extinct: value })}
-                  vocab={facetExtinct}
-                  label="Extinct"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "origin")}
-                  onChange={(value) => this.updateSearch({ origin: value })}
-                  vocab={facetOrigin}
-                  label="Origin"
-                />
-              </React.Fragment>
-            )}
-            <div style={{ textAlign: "right", marginBottom: "8px" }}>
-              <a
-                style={{ marginLeft: 8, fontSize: 12 }}
-                onClick={this.toggleAdvancedFilters}
-              >
-                Advanced{" "}
-                {this.state.advancedFilters ? <UpOutlined /> : <DownOutlined />}
-              </a>
-
-            </div>
-          </Col>
-        </Row>
-    </TabPane>
-    <TabPane tab="RegEx Search" key="2">
-    <RegExSearch decisionMode={_.get(this.state?.params?.decisionMode)} limit={pagination.pageSize} style={{marginBottom: "10px"}} datasetKey={datasetKey} updateSearch={this.updateSearch} onReset={() => this.updateSearch({USAGE_ID: null})} onSearch={val => this.updateSearch({USAGE_ID: val})} pagination={pagination}/>
-
-    </TabPane>
-   
-  </Tabs>
+          </TabPane>
+        </Tabs>
 
         <Row>
           <Col span={14}>
@@ -954,15 +988,19 @@ class WorkBench extends React.Component {
                 }}
                 value={params.decisionMode}
               >
-                <Radio value="_NOT_NULL" /* disabled={activeTab === "2"} */>With decision</Radio>
-                <Radio value="_NULL" /* disabled={activeTab === "2"} */>Without decision</Radio>
+                <Radio value="_NOT_NULL" /* disabled={activeTab === "2"} */>
+                  With decision
+                </Radio>
+                <Radio value="_NULL" /* disabled={activeTab === "2"} */>
+                  Without decision
+                </Radio>
                 <Radio value={undefined}>All</Radio>
               </RadioGroup>
             </FormItem>
           </Col>
         </Row>
         <Row>
-          {Auth.isAuthorised(this.props.user, ["editor"]) && (
+          {Auth.canEditDataset({ key: catalogueKey }, user) && (
             <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Select
                 style={{ width: 200, marginRight: 10 }}
@@ -1025,7 +1063,7 @@ class WorkBench extends React.Component {
             </Col>
           )}
           <Col
-            span={!Auth.isAuthorised(this.props.user, ["editor"]) ? 24 : 8}
+            span={!Auth.canEditDataset({ key: catalogueKey }, user) ? 24 : 8}
             style={{ textAlign: "right", marginBottom: "8px" }}
           >
             {pagination &&
@@ -1053,59 +1091,34 @@ class WorkBench extends React.Component {
             onChange={this.handleTableChange}
             rowKey={(record) => _.get(record, "usage.id")}
             rowSelection={
-              !Auth.isAuthorised(user, ["editor"]) ? null : rowSelection
+              !Auth.canEditDataset({ key: catalogueKey }, user)
+                ? null
+                : rowSelection
             }
             expandable={{
-              rowExpandable: () => Auth.isAuthorised(user, ["editor"]),
+              rowExpandable: () =>
+                Auth.canEditDataset({ key: catalogueKey }, user),
               expandedRowRender: (record) =>
-              _.get(record, "decisions[0]") ? (
-                <React.Fragment>
-                  {record.decisions[0].mode === "update" && (
-                    <a
-                      onClick={() => {
-                        this.setState({
-                          rowsForEdit: [record],
-                          decisionFormVisible: true,
-                        });
-                      }}
-                    >
-                      Edit <EditOutlined />
-                    </a>
-                  )}
-                  <pre>
-                    {JSON.stringify(record.decisions[0], null, 4)}
-                  </pre>
-                </React.Fragment>
-              ) : (
-                ""
-              )
+                _.get(record, "decisions[0]") ? (
+                  <React.Fragment>
+                    {record.decisions[0].mode === "update" && (
+                      <a
+                        onClick={() => {
+                          this.setState({
+                            rowsForEdit: [record],
+                            decisionFormVisible: true,
+                          });
+                        }}
+                      >
+                        Edit <EditOutlined />
+                      </a>
+                    )}
+                    <pre>{JSON.stringify(record.decisions[0], null, 4)}</pre>
+                  </React.Fragment>
+                ) : (
+                  ""
+                ),
             }}
-           /*  expandedRowRender={
-              !Auth.isAuthorised(user, ["editor"])
-                ? null
-                : (record) =>
-                    _.get(record, "decisions[0]") ? (
-                      <React.Fragment>
-                        {record.decisions[0].mode === "update" && (
-                          <a
-                            onClick={() => {
-                              this.setState({
-                                rowsForEdit: [record],
-                                decisionFormVisible: true,
-                              });
-                            }}
-                          >
-                            Edit <EditOutlined />
-                          </a>
-                        )}
-                        <pre>
-                          {JSON.stringify(record.decisions[0], null, 4)}
-                        </pre>
-                      </React.Fragment>
-                    ) : (
-                      ""
-                    )
-            } */
           />
         )}
       </div>
@@ -1122,7 +1135,7 @@ const mapContextToProps = ({
   namefield,
   user,
   catalogueKey,
-  addError
+  addError,
 }) => ({
   rank,
   taxonomicstatus,
@@ -1132,7 +1145,7 @@ const mapContextToProps = ({
   namefield,
   user,
   catalogueKey,
-  addError
+  addError,
 });
 
 export default withContext(mapContextToProps)(WorkBench);
