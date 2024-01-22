@@ -447,7 +447,18 @@ class BasicMenu extends Component {
                     <span>More...</span>
                   </span>
                 }
+                
               > */}
+                  <Menu.Item key="releases">
+                    <NavLink
+                      to={{
+                        pathname: "/dataset",
+                        search: `?releasedFrom=${catalogueKey}`,
+                      }}
+                    >
+                      <span>Releases</span>
+                    </NavLink>
+                  </Menu.Item>
                   {Auth.canEditDataset({ key: catalogueKey }, user) && (
                     <Menu.Item key="projectEditors">
                       <NavLink
@@ -476,16 +487,6 @@ class BasicMenu extends Component {
                       Sector diff: {selectedSector}
                     </Menu.Item>
                   )}
-                  {/*  <Menu.Item key="releases">
-                    <NavLink
-                      to={{
-                        pathname: "/dataset",
-                        search: `?releasedFrom=${catalogueKey}`,
-                      }}
-                    >
-                      <span>Releases</span>
-                    </NavLink>
-                  </Menu.Item> */}
                   {_selectedKeys &&
                     _selectedKeys.includes("catalogueTaxon") &&
                     taxonOrNameKey && (
