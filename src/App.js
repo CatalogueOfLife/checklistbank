@@ -26,6 +26,8 @@ import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
 import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
+import CataloguePublishers from "./pages/catalogue/Options/Publishers";
+
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
 import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
 import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
@@ -144,6 +146,13 @@ const App = () => {
                 path={`/catalogue/:catalogueKey/options`}
                 roles={["editor"]}
                 component={CatalogueOptions}
+              />
+              <PrivateRoute
+                exact
+                key="CataloguePublishers"
+                path={`/catalogue/:catalogueKey/publishers`}
+                roles={["editor"]}
+                component={CataloguePublishers}
               />
               <PrivateRoute
                 exact
