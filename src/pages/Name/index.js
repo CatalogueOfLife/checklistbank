@@ -141,8 +141,7 @@ class NamePage extends React.Component {
   getUsages = (key, nameKey) => {
     this.setState({ usageLoading: true });
     axios(
-      `${
-        config.dataApi
+      `${config.dataApi
       }dataset/${key}/nameusage/search?NAME_ID=${encodeURIComponent(nameKey)}`
     )
       .then((res) => {
@@ -257,12 +256,32 @@ class NamePage extends React.Component {
           <TabPane tab="About" key="1">
             {name && (
               <React.Fragment>
+                <PresentationItem md={md} label="ID">
+                  {name.id}
+                </PresentationItem>
                 <PresentationItem md={md} label="Scientific Name">
                   {name.scientificName}
                 </PresentationItem>
+                <PresentationItem md={md} label="Authorship">
+                  {name.authorship}
+                </PresentationItem>
+                {publishedIn && publishedIn.citation && (
+                  <PresentationItem md={md} label="Published in">
+                    <Linkify>{publishedIn.citation}</Linkify>
+                  </PresentationItem>
+                )}
+                {reference && (
+                  <PresentationItem md={md} label="Published In">
+                    {reference.citation}
+                  </PresentationItem>
+                )}
                 <PresentationItem md={md} label="Rank">
                   {name.rank}
                 </PresentationItem>
+                <PresentationItem md={md} label="Code">
+                  {name.code}
+                </PresentationItem>
+
                 <PresentationItem md={md} label="Uninomial">
                   {name.uninomial}
                 </PresentationItem>
@@ -284,145 +303,49 @@ class NamePage extends React.Component {
                 <PresentationItem md={md} label="Strain">
                   {name.strain}
                 </PresentationItem>
-                <PresentationItem md={md} label="Authorship">
-                  {name.authorship}
-                </PresentationItem>
-                {name.combinationAuthorship && (
-                  <PresentationItem md={md} label="Combination Authorship">
-                    {`${
-                      name.combinationAuthorship.authors
-                        ? name.combinationAuthorship.authors.join(", ")
-                        : ""
-                    } ${
-                      name.combinationAuthorship.exAuthors
-                        ? `ex ${name.combinationAuthorship.exAuthors.join(
-                            ", "
-                          )}`
-                        : ""
-                    } ${
-                      name.combinationAuthorship.year
-                        ? name.combinationAuthorship.year
-                        : ""
-                    }`}
-                  </PresentationItem>
-                )}
-                {name.basionymAuthorship && (
-                  <PresentationItem md={md} label="Basionym Authorship">
-                    {`${name.basionymAuthorship.authors.join(", ")} ${
-                      name.basionymAuthorship.exAuthors
-                        ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                        : ""
-                    } ${
-                      name.basionymAuthorship.year
-                        ? name.basionymAuthorship.year
-                        : ""
-                    }`}
-                  </PresentationItem>
-                )}
-                {name.sanctioningAuthor && (
-                  <PresentationItem md={md} label="Sanctioning Author">
-                    {`${name.sanctioningAuthor.authors.join(", ")} ${
-                      name.sanctioningAuthor.exAuthors
-                        ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                        : ""
-                    } ${
-                      name.sanctioningAuthor.year
-                        ? name.sanctioningAuthor.year
-                        : ""
-                    }`}
-                  </PresentationItem>
-                )}
-                {publishedIn && publishedIn.citation && (
-                  <PresentationItem md={md} label="Published in">
-                    <Linkify>{publishedIn.citation}</Linkify>
-                  </PresentationItem>
-                )}
-                {typeMaterial && typeMaterial.length > 0 && (
-                  <PresentationItem md={md} label="Type material">
-                    <TypeMaterial
-                      data={{ [name.id]: typeMaterial }}
-                      nameID={_.get(name, "id")}
-                    />
-                  </PresentationItem>
-                )}
-                {relations && relations.length > 0 && (
-                  <NameRelations
-                    md={md}
-                    style={{ marginTop: "-3px" }}
-                    data={relations}
-                    datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
-                  />
-                )}
-                {filteredSynonyms && filteredSynonyms.length > 0 && (
-                  <PresentationItem md={md} label="Homotypic names">
-                    <SynonymTable
-                      data={filteredSynonyms.map((s) => ({
-                        name: s,
-                        __homotypic: true,
-                      }))}
-                      style={{ marginTop: "-3px" }}
-                      datasetKey={datasetKey}
-                      catalogueKey={catalogueKey}
-                    />
-                  </PresentationItem>
-                )}
-                <PresentationItem md={md} label="Nomenclatural Note">
-                  {name.nomenclaturalNote}
-                </PresentationItem>
-
-                <PresentationItem md={md} label="ID">
-                  {name.id}
-                </PresentationItem>
-                <PresentationItem md={md} label="Homotypic Name Id">
-                  {name.homotypicNameId}
-                </PresentationItem>
-                <PresentationItem md={md} label="Name Index Id">
-                  {name.nameIndexId}
-                </PresentationItem>
                 <PresentationItem md={md} label="Candidatus">
                   <BooleanValue value={name.candidatus} />
                 </PresentationItem>
                 <PresentationItem md={md} label="Notho">
                   {name.notho}
                 </PresentationItem>
-                <PresentationItem md={md} label="Gender">
-                  {name.gender}
-                </PresentationItem>
-                <PresentationItem md={md} label="Gender Agreement">
-                  <BooleanValue value={name.genderAgreement} />
-                </PresentationItem>
-                <PresentationItem md={md} label="Original Spelling">
-                  <BooleanValue value={name.originaSpelling} />
-                </PresentationItem>
-                <PresentationItem md={md} label="Code">
-                  {name.code}
-                </PresentationItem>
-                <PresentationItem md={md} label="Nomenclatural Status">
-                  {getNomStatus(name)}
-                </PresentationItem>
-                <PresentationItem md={md} label="Etymology">
-                  {name.etymology}
-                </PresentationItem>
-                <PresentationItem md={md} label="Origin">
-                  {name.origin}
-                </PresentationItem>
-                <PresentationItem md={md} label="Type">
-                  {name.type}
-                </PresentationItem>
-                <PresentationItem md={md} label="Link">
-                  {name.link && (
-                    <a href={name.link} target="_blank">
-                      {name.link}
-                    </a>
-                  )}
-                </PresentationItem>
-                <PresentationItem md={md} label="Remarks">
-                  {name.remarks}
-                </PresentationItem>
-                {reference && (
-                  <PresentationItem md={md} label="Published In">
-                    {reference.citation}
+
+                {name.combinationAuthorship && (
+                  <PresentationItem md={md} label="Combination Authorship">
+                    {`${name.combinationAuthorship.authors
+                      ? name.combinationAuthorship.authors.join(", ")
+                      : ""
+                      } ${name.combinationAuthorship.exAuthors
+                        ? `ex ${name.combinationAuthorship.exAuthors.join(
+                          ", "
+                        )}`
+                        : ""
+                      } ${name.combinationAuthorship.year
+                        ? name.combinationAuthorship.year
+                        : ""
+                      }`}
+                  </PresentationItem>
+                )}
+                {name.basionymAuthorship && (
+                  <PresentationItem md={md} label="Basionym Authorship">
+                    {`${name.basionymAuthorship.authors.join(", ")} ${name.basionymAuthorship.exAuthors
+                      ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
+                      : ""
+                      } ${name.basionymAuthorship.year
+                        ? name.basionymAuthorship.year
+                        : ""
+                      }`}
+                  </PresentationItem>
+                )}
+                {name.sanctioningAuthor && (
+                  <PresentationItem md={md} label="Sanctioning Author">
+                    {`${name.sanctioningAuthor.authors.join(", ")} ${name.sanctioningAuthor.exAuthors
+                      ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
+                      : ""
+                      } ${name.sanctioningAuthor.year
+                        ? name.sanctioningAuthor.year
+                        : ""
+                      }`}
                   </PresentationItem>
                 )}
                 <PresentationItem md={md} label="Published In ID">
@@ -452,17 +375,95 @@ class NamePage extends React.Component {
                     </Row>
                   )}
                 </PresentationItem>
-                {_.get(name, "namesIndexId") && (
-                  <PresentationItem md={md} label="Related names">
+
+                <PresentationItem md={md} label="Gender">
+                  {name.gender}
+                </PresentationItem>
+                <PresentationItem md={md} label="Gender Agreement">
+                  <BooleanValue value={name.genderAgreement} />
+                </PresentationItem>
+                <PresentationItem md={md} label="Original Spelling">
+                  <BooleanValue value={name.originaSpelling} />
+                </PresentationItem>
+
+                <PresentationItem md={md} label="Etymology">
+                  {name.etymology}
+                </PresentationItem>
+                <PresentationItem md={md} label="Nomenclatural Status">
+                  {getNomStatus(name)}
+                </PresentationItem>
+                <PresentationItem md={md} label="Nomenclatural Note">
+                  {name.nomenclaturalNote}
+                </PresentationItem>
+                <PresentationItem md={md} label="Remarks">
+                  {name.remarks}
+                </PresentationItem>
+
+                {typeMaterial && typeMaterial.length > 0 && (
+                  <PresentationItem md={md} label="Type material">
+                    <TypeMaterial
+                      data={{ [name.id]: typeMaterial }}
+                      nameID={_.get(name, "id")}
+                    />
+                  </PresentationItem>
+                )}
+
+                {relations && relations.length > 0 && (
+                  <NameRelations
+                    md={md}
+                    style={{ marginTop: "-3px" }}
+                    data={relations}
+                    datasetKey={datasetKey}
+                    catalogueKey={catalogueKey}
+                  />
+                )}
+                {filteredSynonyms && filteredSynonyms.length > 0 && (
+                  <PresentationItem md={md} label="Homotypic names">
+                    <SynonymTable
+                      data={filteredSynonyms.map((s) => ({
+                        name: s,
+                        __homotypic: true,
+                      }))}
+                      style={{ marginTop: "-3px" }}
+                      datasetKey={datasetKey}
+                      catalogueKey={catalogueKey}
+                    />
+                  </PresentationItem>
+                )}
+                {name.homotypicNameId && (
+                  <PresentationItem md={md} label="Homotypic Name Id">
+                    {name.homotypicNameId}
+                  </PresentationItem>
+                )}
+
+                <PresentationItem md={md} label="Origin">
+                  {name.origin}
+                </PresentationItem>
+                <PresentationItem md={md} label="Type">
+                  {name.type}
+                </PresentationItem>
+
+
+                <PresentationItem md={md} label="Link">
+                  {name.link && (
+                    <a href={name.link} target="_blank">
+                      {name.link}
+                    </a>
+                  )}
+                </PresentationItem>
+
+                <PresentationItem md={md} label="Names Index Match">
+                  {name.namesIndexType}
+                  {name.namesIndexId && (
                     <NavLink
                       to={{
                         pathname: `/namesindex/${name.namesIndexId}/related`,
                       }}
                     >
-                      <LinkOutlined />
+                      {name.namesIndexId} ()
                     </NavLink>
-                  </PresentationItem>
-                )}
+                  )}
+                </PresentationItem>
               </React.Fragment>
             )}
           </TabPane>
