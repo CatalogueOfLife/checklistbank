@@ -210,7 +210,7 @@ class TaxonPage extends React.Component {
       .then((res) => {
         let promises = [res];
 
-        promises.push(
+        /* promises.push(
           axios(
             `${config.dataApi}dataset/${datasetKey}/nameusage/${urlSafe(
               taxonKey
@@ -220,7 +220,7 @@ class TaxonPage extends React.Component {
               this.setState({ sourceTaxon: sourceTaxon.data });
             })
             .catch((e) => this.setState({ sourceTaxon: null }))
-        );
+        ); */
 
         /*   if (_.get(res, "data.name")) {
           promises.push(
@@ -306,6 +306,10 @@ class TaxonPage extends React.Component {
       const res = await axios(
         `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(taxonKey)}/info`
       );
+
+      if (_.get(res, "data.source")) {
+        this.setState({ sourceTaxon: _.get(res, "data.source") });
+      }
 
       if (
         _.get(res, "data.taxon.name.publishedInId") &&
@@ -880,10 +884,16 @@ class TaxonPage extends React.Component {
                   </div>
                 </PresentationItem>
               )}
+              {_.get(taxon, "link") && (
+                <PresentationItem md={md} label="Online resource">
+                  <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
+                </PresentationItem>
+              )}
               {this.state?.sourceDatasetKeyMap && (
-                <PresentationItem md={md} label="Sources">
+                <PresentationItem md={md} label="Secondary Sources">
                   <SourceDatasets
                     datasetKey={this.props.datasetKey}
+                    primarySourceDatasetKey={info?.source?.sourceDatasetKey}
                     sourceDatasetKeyMap={this.state.sourceDatasetKeyMap}
                   />
                 </PresentationItem>
@@ -900,16 +910,11 @@ class TaxonPage extends React.Component {
                   </NavLink>
                 </PresentationItem>
               )} */}
-              {info?.source?.secondarySources && (
+              {/* {info?.source?.secondarySources && (
                 <PresentationItem md={md} label="Secondary Sources">
                   <SecondarySources info={info} />
                 </PresentationItem>
-              )}
-              {_.get(taxon, "link") && (
-                <PresentationItem md={md} label="Online resource">
-                  <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
-                </PresentationItem>
-              )}
+              )} */}
               {_.get(info, "taxon.name.namesIndexId") && (
                 <PresentationItem md={md} label="Related names">
                   <NavLink
