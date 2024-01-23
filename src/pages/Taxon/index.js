@@ -889,8 +889,13 @@ class TaxonPage extends React.Component {
                   <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
                 </PresentationItem>
               )}
-              {this.state?.sourceDatasetKeyMap && (
+              {info?.source?.secondarySources && (
                 <PresentationItem md={md} label="Secondary Sources">
+                  <SecondarySources info={info} />
+                </PresentationItem>
+              )}
+              {this.state?.sourceDatasetKeyMap && (
+                <PresentationItem md={md} label="Synonym Sources">
                   <SourceDatasets
                     datasetKey={this.props.datasetKey}
                     primarySourceDatasetKey={info?.source?.sourceDatasetKey}
@@ -908,11 +913,6 @@ class TaxonPage extends React.Component {
                   >
                     {sourceTaxon.sourceId}
                   </NavLink>
-                </PresentationItem>
-              )} */}
-              {/* {info?.source?.secondarySources && (
-                <PresentationItem md={md} label="Secondary Sources">
-                  <SecondarySources info={info} />
                 </PresentationItem>
               )} */}
               {_.get(info, "taxon.name.namesIndexId") && (
