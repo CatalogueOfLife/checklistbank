@@ -590,7 +590,7 @@ class DatasetList extends React.Component {
             <Row>
               <Col>
                 {" "}
-                <NavLink to={{ pathname: `/dataset?releasedFrom=3&sortBy=created` }} exact={true}>
+                <NavLink to={{ pathname: `/dataset`, search: `?releasedFrom=3&sortBy=created` }} exact={true}>
                   <Button
                     style={{
                       marginTop: "10px",
