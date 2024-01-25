@@ -67,12 +67,6 @@
   },
   {
     "finished": true,
-    "name": "unchanged",
-    "queued": false,
-    "running": false
-  },
-  {
-    "finished": true,
     "name": "finished",
     "queued": false,
     "running": false
