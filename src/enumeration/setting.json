@@ -135,6 +135,15 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "release issue source dois",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "release remove bare names",
     "origin": [
       "project"

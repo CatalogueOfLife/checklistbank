@@ -732,19 +732,19 @@
     "name": "gender invalid"
   },
   {
-    "description": "The gender agreement flag can only be given to bi- or trinomials with a terminal epithet",
+    "description": "The gender agreement flag can only be given to bi- or trinomials with a terminal epithet.",
     "group": "name",
     "level": "warning",
     "name": "gender agreement not applicable"
   },
   {
-    "description": "The notho name property refers to a non existing part of the name",
+    "description": "The notho name property refers to a non existing part of the name.",
     "group": "name",
     "level": "warning",
     "name": "notho not applicable"
   },
   {
-    "description": "The vernacular name preferred property could not be interpreted as a boolean",
+    "description": "The vernacular name preferred property could not be interpreted as a boolean.",
     "group": "vernacular",
     "level": "warning",
     "name": "vernacular preferred"
@@ -754,5 +754,11 @@
     "group": "any",
     "level": "warning",
     "name": "doi invalid"
+  },
+  {
+    "description": "The name ending does suggest a different rank than given for the name.",
+    "group": "name",
+    "level": "warning",
+    "name": "rank name suffix conflict"
   }
 ]

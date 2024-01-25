@@ -219,7 +219,7 @@ class DatasetImportMetrics extends React.Component {
             placement="right"
             closable={false}
             onClose={this.hideHistoryDrawer}
-            visible={this.state.historyVisible}
+            open={this.state.historyVisible}
           >
             <ImportHistory
               importHistory={importHistory}
@@ -242,7 +242,7 @@ class DatasetImportMetrics extends React.Component {
             <Alert type="error" message={this.state.data.error} />
           </Row>
         )}
-        {this.state.data && this.state.data.state === "unchanged" && (
+        {/* {this.state.data && this.state.data.state === "unchanged" && (
           <Row style={{ padding: "10px" }}>
             <Alert
               type="info"
@@ -251,7 +251,7 @@ class DatasetImportMetrics extends React.Component {
               )} unchanged from last import`}
             />
           </Row>
-        )}
+        )} */}
         {dataset && (
           <Row style={{ padding: "10px" }} type="flex">
             {data && !isRunning && (
@@ -262,6 +262,12 @@ class DatasetImportMetrics extends React.Component {
                     : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
+                {dataset?.lastImportAttempt && (
+                  <span>
+                    Last import attempt:{" "}
+                    {moment(dataset?.lastImportAttempt).format("lll")}
+                  </span>
+                )}
               </Col>
             )}
             <Col flex="auto"></Col>
