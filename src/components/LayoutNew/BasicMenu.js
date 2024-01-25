@@ -265,7 +265,6 @@ class BasicMenu extends Component {
             >
               <Menu.Item key="backgroundImports">
                 <NavLink to={{ pathname: "/imports" }}>
-                  <ApiOutlined />
                   <span>Imports</span>
                 </NavLink>
               </Menu.Item>
