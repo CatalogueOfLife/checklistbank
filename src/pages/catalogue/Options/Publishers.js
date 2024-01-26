@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Auth from "../../../components/Auth";
 import config from "../../../config";
-import { withRouter } from "react-router-dom";
+import { withRouter, NavLink } from "react-router-dom";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
@@ -36,58 +36,71 @@ const { Title } = Typography;
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
-const defaltColumns = [
-  {
-    title: "id",
-    dataIndex: "id",
-    key: "id",
-    width: 200,
-    ellipsis: true,
-  },
-  {
-    title: "Alias",
-    dataIndex: "alias",
-    key: "alias",
-    width: 200,
-  },
-  {
-    title: "Title",
-    dataIndex: "title",
-    key: "title",
-    render: (text, record) => (
-      <a href={`https://www.gbif.org/publisher/${record?.id}`} target="_blank">
-        {text}
-      </a>
-    ),
-  },
-  {
-    title: "Created by",
-    dataIndex: ["createdByUser", "username"],
-    key: "createdByUser",
-    ellipsis: true,
-    //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
-    //  ...this.getColumnSearchProps("dataset.alias")
-  },
-  {
-    title: "Created",
-    dataIndex: "created",
-    key: "created",
-    //  sorter: (a, b) => a.created < b.created,
-    render: (date) => {
-      return date ? moment(date).format("l LT") : "";
-    },
-  },
-  {
-    title: "Modified",
-    dataIndex: "modified",
-    key: "modified",
-    //  sorter: (a, b) => a.created < b.created,
-    render: (date) => {
-      return date ? moment(date).format("l LT") : "";
-    },
-  },
-];
+
 const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
+  const defaltColumns = [
+    {
+      title: "id",
+      dataIndex: "id",
+      key: "id",
+      width: 200,
+      ellipsis: true,
+      render: (text, record) => (
+        <NavLink
+          to={{
+            pathname: `/catalogue/${catalogueKey}/publisher/${record?.id}`,
+          }}
+        >
+          {text}
+        </NavLink>
+      ),
+    },
+    {
+      title: "Alias",
+      dataIndex: "alias",
+      key: "alias",
+      width: 200,
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <a
+          href={`https://www.gbif.org/publisher/${record?.id}`}
+          target="_blank"
+        >
+          {text}
+        </a>
+      ),
+    },
+    {
+      title: "Created by",
+      dataIndex: ["createdByUser", "username"],
+      key: "createdByUser",
+      ellipsis: true,
+      //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
+      //  ...this.getColumnSearchProps("dataset.alias")
+    },
+    {
+      title: "Created",
+      dataIndex: "created",
+      key: "created",
+      //  sorter: (a, b) => a.created < b.created,
+      render: (date) => {
+        return date ? moment(date).format("l LT") : "";
+      },
+    },
+    {
+      title: "Modified",
+      dataIndex: "modified",
+      key: "modified",
+      //  sorter: (a, b) => a.created < b.created,
+      render: (date) => {
+        return date ? moment(date).format("l LT") : "";
+      },
+    },
+  ];
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [publisherForEdit, setPublisherForEdit] = useState(null);

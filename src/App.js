@@ -27,7 +27,7 @@ import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
 import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
 import CatalogueOptions from "./pages/catalogue/Options";
 import CataloguePublishers from "./pages/catalogue/Options/Publishers";
-
+import CataloguePublisherKey from "./pages/catalogue/CataloguePublisherKey";
 import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
 import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
 import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
@@ -216,6 +216,12 @@ const App = () => {
                 key="sector"
                 path="/catalogue/:catalogueKey/sector"
                 component={CatalogueSectors}
+              />
+              <PrivateRoute
+                exact
+                key="cataloguePublisherKey"
+                path="/catalogue/:catalogueKey/publisher/:key?"
+                component={CataloguePublisherKey}
               />
               <PrivateRoute
                 exact
