@@ -57,6 +57,7 @@ class CatalogueSectors extends React.Component {
       deleteSectorsLoading: false,
       rematchInfo: null,
       defaultTaxonKey: null,
+      publishers: [],
       pagination: {
         pageSize: PAGE_SIZE,
         current: 1,
@@ -89,6 +90,7 @@ class CatalogueSectors extends React.Component {
       },
       this.getData
     );
+    this.getPublishers();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -146,6 +148,19 @@ class CatalogueSectors extends React.Component {
       });
   };
 
+  getPublishers = async () => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${catalogueKey}/sector/publisher`
+      );
+      this.setState({ publishers: res?.data?.result });
+    } catch (error) {}
+  };
   /*   decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
@@ -507,6 +522,7 @@ class CatalogueSectors extends React.Component {
               placeholder="Sector mode"
               style={{ width: 160 }}
               value={params.mode}
+              mode="multiple"
               showSearch
               allowClear
               onChange={(value) => this.updateSearch({ mode: value })}
@@ -527,6 +543,24 @@ class CatalogueSectors extends React.Component {
               }
             />
           </FormItem>
+          {this?.state?.publishers.length > 0 && (
+            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+              <Select
+                placeholder="Publisher"
+                style={{ width: 160 }}
+                value={params.publisherKey}
+                showSearch
+                allowClear
+                onChange={(value) => this.updateSearch({ publisherKey: value })}
+              >
+                {this.state.publishers.map((p) => (
+                  <Option key={p?.id} value={p?.id}>
+                    {p?.alias}
+                  </Option>
+                ))}
+              </Select>
+            </FormItem>
+          )}
         </Form>
         <Row style={{ marginTop: "10px" }}>
           <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
