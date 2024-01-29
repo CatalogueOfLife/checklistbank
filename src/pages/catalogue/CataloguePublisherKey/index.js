@@ -29,7 +29,7 @@ const DatasetDownload = ({ catalogueKey, match, addError }) => {
       );
       setDatasetCount(datasetRes?.data?.total);
       const sectorRes = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/sector?limit=0&gbifPublisherKey=${match?.params?.key}`
+        `${config.dataApi}dataset/${catalogueKey}/sector?limit=0&publisherKey=${match?.params?.key}`
       );
       setSectorCount(sectorRes?.data?.total);
       setLoading(false);
