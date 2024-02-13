@@ -55,6 +55,8 @@ const FACETS = [
   "extinct",
   "environment",
   "origin",
+  /*   "sectorMode",
+   */
 ];
 const PAGE_SIZE = 50;
 const getDecisionText = (decision) => {
@@ -643,6 +645,12 @@ class WorkBench extends React.Component {
           label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
         }))
       : [];
+    /*    const facetSectorMode = _.get(facets, "sectorMode")
+      ? facets.sectorMode.map((i) => ({
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+        }))
+      : []; */
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map((s) => ({
           value: s.value,
@@ -850,6 +858,12 @@ class WorkBench extends React.Component {
                   vocab={facetIssues}
                   label="Issues"
                 />
+                {/*                 <MultiValueFilter
+                  defaultValue={_.get(params, "sectorMode")}
+                  onChange={(value) => this.updateSearch({ sectorMode: value })}
+                  vocab={facetSectorMode}
+                  label="Sector Mode"
+                /> */}
 
                 <MultiValueFilter
                   defaultValue={_.get(params, "rank")}

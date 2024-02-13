@@ -31,6 +31,7 @@ const FACETS = [
   "extinct",
   "environment",
   "origin",
+  "sectorMode",
 ];
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -409,6 +410,12 @@ class NameSearchPage extends React.Component {
           label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
         }))
       : null;
+    const facetSectorMode = _.get(facets, "sectorMode")
+      ? facets.sectorMode.map((i) => ({
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+        }))
+      : null;
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map((s) => ({
           value: s.value,
@@ -601,6 +608,14 @@ class NameSearchPage extends React.Component {
               vocab={facetIssues || issue.map((i) => i.name)}
               label="Issues"
             />
+            {dataset?.origin !== "external" && (
+              <MultiValueFilter
+                defaultValue={_.get(params, "sectorMode")}
+                onChange={(value) => this.updateSearch({ sectorMode: value })}
+                vocab={facetSectorMode || ["attach", "union", "merge"]}
+                label="Sector Mode"
+              />
+            )}
 
             <MultiValueFilter
               defaultValue={_.get(params, "rank")}
