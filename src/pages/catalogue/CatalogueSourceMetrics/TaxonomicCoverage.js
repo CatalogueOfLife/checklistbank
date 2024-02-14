@@ -29,7 +29,13 @@ class TaxonomicCoverage extends React.Component {
       return Promise.all(
         res.data.result.map((t) =>
           axios(
-            `${config.dataApi}dataset/${catalogueKey}/nameusage/search?TAXON_ID=${t.target ? t.target.id : ""}&rank=${t.subject ? t.subject.rank : ""}&q=${t.subject ? t.subject.name : ""}&limit=2`
+            `${
+              config.dataApi
+            }dataset/${catalogueKey}/nameusage/search?TAXON_ID=${
+              t.target ? t.target.id : ""
+            }&rank=${t.subject ? t.subject.rank : ""}&q=${
+              t.subject ? t.subject.name : ""
+            }&limit=2`
           ).then((usages) => {
             const taxon = _.get(usages, "data.result[0]");
             if (taxon) {
@@ -58,27 +64,27 @@ class TaxonomicCoverage extends React.Component {
     const { catalogueKey, style, isProject } = this.props;
     return taxonMap
       ? Object.keys(taxonMap).map((k) => (
-        <div style={style}>
-          <span>{k}:</span>{" "}
-          {taxonMap[k].map((tx, idx) => (
-            <React.Fragment>
-              <NavLink
-                to={{
-                  pathname: isProject
-                    ? `/catalogue/${catalogueKey}/assembly`
-                    : `/dataset/${catalogueKey}/classification`,
-                  search: isProject
-                    ? `?assemblyTaxonKey=${tx.id}`
-                    : `?taxonKey=${tx.id}`,
-                }}
-              >
-                {tx.name}
-              </NavLink>
-              {idx !== taxonMap[k].length - 1 ? ", " : ""}
-            </React.Fragment>
-          ))}
-        </div>
-      ))
+          <div style={style}>
+            <span>{k}:</span>{" "}
+            {taxonMap[k].map((tx, idx) => (
+              <React.Fragment>
+                <NavLink
+                  to={{
+                    pathname: isProject
+                      ? `/catalogue/${catalogueKey}/assembly`
+                      : `/dataset/${catalogueKey}/classification`,
+                    search: isProject
+                      ? `?assemblyTaxonKey=${tx.id}`
+                      : `?taxonKey=${tx.id}`,
+                  }}
+                >
+                  {tx.name}
+                </NavLink>
+                {idx !== taxonMap[k].length - 1 ? ", " : ""}
+              </React.Fragment>
+            ))}
+          </div>
+        ))
       : null;
   };
 }

@@ -75,32 +75,51 @@ class SourceMetrics extends React.Component {
       this.getData();
     }
   };
-
+  getPublisherData = async () => {
+    const { datasetKey, location, addError } = this.props;
+    const publisherRes = await axios(
+      `${config.dataApi}dataset/${datasetKey}/sector/publisher`
+    );
+  };
   getData = () => {
     const { datasetKey, location, addError } = this.props;
     const params = qs.parse(_.get(location, "search"));
     const { releaseKey, hideUnchanged } = params;
     this.setState({ loading: true, releaseKey });
 
-    axios(
-      /* `${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}&sortBy=alias` */
-      `${config.dataApi}dataset/${datasetKey}/source`
-    )
-      .then((res) => {
+    Promise.all([
+      axios(
+        /* `${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}&sortBy=alias` */
+        `${config.dataApi}dataset/${datasetKey}/source`
+      ),
+      axios(`${config.dataApi}dataset/${datasetKey}/sector/publisher`),
+    ])
+      .then(([res, publisherRes]) => {
         let columns = {};
-        return Promise.all(
-          !res.data
-            ? []
-            : res.data.map((r) => {
-                return this.getMetrics(datasetKey, r.key).then((metrics) => {
-                  columns = _.merge(columns, metrics);
-                  return {
-                    ...r,
-                    metrics: metrics,
-                  };
-                });
-              })
-        ).then((res) => {
+        const datasetData = res.data || [];
+        const publisherData = publisherRes?.data?.result || [];
+        return Promise.all([
+          ...publisherData.map((r) => {
+            return this.getPublisherMetrics(datasetKey, r.id).then(
+              (metrics) => {
+                // columns = _.merge(columns, metrics);
+                return {
+                  ...r,
+                  metrics: metrics,
+                };
+              }
+            );
+          }),
+          ...datasetData.map((r) => {
+            return this.getMetrics(datasetKey, r.key).then((metrics) => {
+              columns = _.merge(columns, metrics);
+              return {
+                ...r,
+                metrics: metrics,
+              };
+            });
+          }),
+        ]).then((res) => {
           const groups = {
             default: Object.keys(columns).filter(
               (c) =>
@@ -188,7 +207,11 @@ class SourceMetrics extends React.Component {
       `${config.dataApi}dataset/${datasetKey}/source/${sourceDatasetKey}/metrics`
     ).then((res) => res.data);
   };
-
+  getPublisherMetrics = (datasetKey, publisherId) => {
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/sector/publisher/${publisherId}/metrics`
+    ).then((res) => res.data);
+  };
   refreshReleaseMetrics = (newReleaseKey, releaseLabel) => {
     const { location, addError } = this.props;
     const { releaseKey } = this.state;
@@ -422,9 +445,12 @@ class SourceMetrics extends React.Component {
         render: (text, record) => {
           return (
             <React.Fragment>
+              {record?.id && "Publisher: "}
               <NavLink
                 to={{
-                  pathname: isProject
+                  pathname: record?.id
+                    ? `/catalogue/${datasetKey}/publisher/${record?.id}`
+                    : isProject
                     ? `/catalogue/${datasetKey}/dataset/${record?.key}/metadata`
                     : `/dataset/${datasetKey}/source/${record?.key}`,
                   //  search: `?SECTOR_DATASET_KEY=${record.key}`,
@@ -559,6 +585,7 @@ class SourceMetrics extends React.Component {
         {!error && (
           <Table
             size="small"
+            rowKey={(record) => record?.key || record?.id}
             columns={columns}
             dataSource={hideUnchanged ? filteredData : data}
             loading={loading}
@@ -574,6 +601,7 @@ class SourceMetrics extends React.Component {
                   />
                 </div>
               ),
+              rowExpandable: (row) => !!row?.key,
             }}
             pagination={{
               pageSize: 1000,
