@@ -442,6 +442,7 @@ class SourceMetrics extends React.Component {
         title: "Title",
         dataIndex: "title",
         key: "title",
+        fixed: "left",
         render: (text, record) => {
           return (
             <React.Fragment>
@@ -495,7 +496,7 @@ class SourceMetrics extends React.Component {
     const scroll =
       columns.length < 8
         ? null
-        : { x: `${800 + (columns.length - 7) * 200}px` };
+        : { y: 240, x: `${800 + (columns.length - 7) * 200}px` };
 
     return (
       <React.Fragment>
