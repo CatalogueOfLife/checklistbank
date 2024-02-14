@@ -248,12 +248,12 @@ class SiteLayout extends Component {
                 </React.Fragment>
               )}
 
-              {!selectedDataset && title && (
+              {!selectedDataset && catalogue && title && (
                 <>
                   <h1 style={{ display: "inline" }}>{title}</h1>{" "}
                   {catalogueKey && (
                     <DatasetOriginPill
-                      dataset={{ key: catalogueKey, origin: "project" }}
+                      dataset={{ key: catalogueKey, origin: catalogue?.origin }}
                     />
                   )}
                 </>
