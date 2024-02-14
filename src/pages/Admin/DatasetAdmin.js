@@ -88,7 +88,7 @@ class DatasetList extends React.Component {
           title: "Indexed",
           dataIndex: "nameUsageTotal",
           key: "nameUsageTotal",
-          sorter: true,
+          sorter: false,
           render: (text, record) =>
             record.origin !== "project"
               ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
@@ -98,7 +98,7 @@ class DatasetList extends React.Component {
           title: "Matched",
           dataIndex: "matchesCount",
           key: "matchesCount",
-          sorter: true,
+          sorter: false,
         },
         {
           title: "Action",
@@ -184,17 +184,19 @@ class DatasetList extends React.Component {
           !res.data.result
             ? []
             : [
-              ...res.data.result.map((r) =>
-                axios(`${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`).then(
-                  (nameusages) => (r.nameUsageTotal = nameusages.data.total)
-                )
-              ),
-              ...res.data.result.map((r) =>
-                axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
-                  (count) => (r.matchesCount = count?.data)
-                )
-              ),
-            ]
+                ...res.data.result.map((r) =>
+                  axios(
+                    `${config.dataApi}dataset/${r.key}/nameusage/search?limit=0`
+                  ).then(
+                    (nameusages) => (r.nameUsageTotal = nameusages.data.total)
+                  )
+                ),
+                ...res.data.result.map((r) =>
+                  axios(`${config.dataApi}dataset/${r.key}/matches/count`).then(
+                    (count) => (r.matchesCount = count?.data)
+                  )
+                ),
+              ]
         ).then(() => res);
       })
       .then((res) => {
@@ -274,7 +276,9 @@ class DatasetList extends React.Component {
 
   rematchDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/rematch?missingOnly=true&datasetKey=${datasetKey}`)
+      .post(
+        `${config.dataApi}admin/rematch?missingOnly=true&datasetKey=${datasetKey}`
+      )
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
