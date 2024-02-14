@@ -323,6 +323,7 @@ class SourceMetrics extends React.Component {
               : ["metrics", selectedGroup, column],
           key: column,
           render: (text, record) => {
+            const isPublisher = !!record?.id;
             const selectedRelaseValue =
               selectedGroup === "default"
                 ? _.get(record, `selectedReleaseMetrics[${column}]`)
@@ -342,16 +343,18 @@ class SourceMetrics extends React.Component {
                         pathname: Links[linkKey](
                           column,
                           text,
-                          record.key,
+                          record.key || record.id,
                           basePath,
-                          isProject
+                          isProject,
+                          isPublisher
                         ).pathname,
                         search: Links[linkKey](
                           column,
                           text,
-                          record.key,
+                          record.key || record.id,
                           basePath,
-                          isProject
+                          isProject,
+                          isPublisher
                         ).search,
                       }}
                       exact={true}

@@ -3,51 +3,155 @@ basePath will be either /dataset/:key (release source metrics) or catalogue/:key
 */
 
 export default {
-  sectorCount: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => (project ? {
-    pathname: `${basePath}/sector`,
-    search: `?limit=100&offset=0&subjectDatasetKey=${SECTOR_DATASET_KEY}`,
-  }: {
+  sectorCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) =>
+    project
+      ? {
+          pathname: `${basePath}/sector`,
+          search: `?limit=100&offset=0&${
+            publisher ? "publisherKey" : "subjectDatasetKey"
+          }=${KEY}`,
+        }
+      : {
+          pathname: `${basePath}/names`,
+          search: `?${
+            publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+          }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
+        },
+  synonymCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
   }),
-  synonymCount: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
+  taxonCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=accepted&status=provisionally%20accepted`,
   }),
-  taxonCount: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
+  bareNameCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=accepted&status=provisionally%20accepted`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=bare%20name`,
   }),
-  bareNameCount: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
+  taxaByRankCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=bare%20name`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=accepted&status=provisionally%20accepted&rank=${key}`,
   }),
-  taxaByRankCount: (key,value,  SECTOR_DATASET_KEY, basePath, project = false) => ({
+  synonymsByRankCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=accepted&status=provisionally%20accepted&rank=${key}`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied&rank=${key}`,
   }),
-  synonymsByRankCount: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
+  usagesByStatusCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied&rank=${key}`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}&status=${key}`,
   }),
-  usagesByStatusCount: (key,value,  SECTOR_DATASET_KEY, basePath, project = false) => ({
+  usagesCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}&status=${key}`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}`,
   }),
-  usagesCount: (key,value,  SECTOR_DATASET_KEY, basePath, project = false) => ({
+  nameCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
     pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}`,
+    search: `?${
+      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+    }=${KEY}`,
   }),
-  nameCount: (key,value,  SECTOR_DATASET_KEY, basePath, project = false) => ({
-    pathname: `${basePath}/names`,
-    search: `?SECTOR_DATASET_KEY=${SECTOR_DATASET_KEY}`,
-  }),
-  referenceCount: (key,value,  SECTOR_DATASET_KEY, basePath, project = false) => ({
-    pathname: `/dataset/${SECTOR_DATASET_KEY}/references`,
+  referenceCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
+    pathname: publisher
+      ? `${basePath}/publisher/${KEY}`
+      : `/dataset/${KEY}/references`,
     search: ``,
   }),
-  datasetAttempt: (key, value, SECTOR_DATASET_KEY, basePath, project = false) => ({
-    pathname: `/dataset/${SECTOR_DATASET_KEY}/imports/${value}`,
+  datasetAttempt: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
+    pathname: publisher
+      ? `${basePath}/publisher/${KEY}`
+      : `/dataset/${KEY}/imports/${value}`,
     search: ``,
-  })
+  }),
 };
