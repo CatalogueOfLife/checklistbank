@@ -59,31 +59,36 @@ const { TabPane } = Tabs;
 const { canEditDataset } = Auth;
 const md = 5;
 const urlSafe = (str) => encodeURIComponent(decodeURIComponent(str));
+
+const initialState = {
+  taxon: null,
+  info: null,
+  referenceIndexMap: {},
+  taxonLoading: true,
+  datasetLoading: true,
+  infoLoading: true,
+  classificationLoading: true,
+  infoError: null,
+  taxonError: null,
+  classificationError: null,
+  verbatimLoading: true,
+  verbatimError: null,
+  verbatim: null,
+  logoUrl: null,
+  sourceDataset: null,
+  sourceDatasetKeyMap: null,
+  sourceTaxon: null,
+  includes: [],
+  issues: [],
+  edit: false,
+};
+
 class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      taxon: null,
-      info: null,
-      referenceIndexMap: {},
-      taxonLoading: true,
-      datasetLoading: true,
-      infoLoading: true,
-      classificationLoading: true,
-      infoError: null,
-      taxonError: null,
-      classificationError: null,
-      verbatimLoading: true,
-      verbatimError: null,
-      verbatim: null,
-      logoUrl: null,
-      sourceDataset: null,
-      sourceDatasetKeyMap: null,
-      sourceTaxon: null,
-      includes: [],
-      issues: [],
-      edit: false,
+      ...initialState,
     };
   }
 
@@ -102,7 +107,7 @@ class TaxonPage extends React.Component {
       prevProps.datasetKey !== datasetKey ||
       _.get(prevProps, "match.params.taxonOrNameKey") !== taxonOrNameKey
     ) {
-      this.getData();
+      this.setState({ ...initialState }, this.getData);
     }
   };
 
