@@ -78,6 +78,7 @@ class DatasetImportMetrics extends React.Component {
         params: { key: datasetKey_, sourceKey },
       },
       updateImportState,
+      importState,
     } = this.props;
     const datasetKey = datasetKey_ || sourceKey;
     this.setState({ loading: true });
@@ -95,9 +96,10 @@ class DatasetImportMetrics extends React.Component {
       .then((data) => {
         if (
           data &&
-          ["processing", "downloading", "inserting", "analyzing"].includes(
-            data.state
-          )
+          importState
+            .filter((i) => i.running)
+            .map((i) => i.name)
+            .includes(data.state)
         ) {
           if (!this.timer) {
             this.timer = setInterval(() => {
