@@ -515,7 +515,21 @@ class SectorTable extends React.Component {
             </Col>
           )}
         </Row> */}
-
+        <Row>
+          <Col flex="auto"></Col>
+          <Col>
+            {pagination &&
+              !isNaN(pagination.total) &&
+              `${(
+                (pagination.current - 1) * pagination.pageSize +
+                1
+              ).toLocaleString("en-GB")} - ${(
+                pagination.current * pagination.pageSize
+              ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
+                "en-GB"
+              )}`}
+          </Col>
+        </Row>
         <Table
           size="small"
           onChange={handleTableChange}
