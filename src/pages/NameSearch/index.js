@@ -24,6 +24,7 @@ const FACETS = [
   "issue",
   "status",
   "nomStatus",
+  "nomCode",
   "nameType",
   "field",
   "authorship",
@@ -392,6 +393,7 @@ class NameSearchPage extends React.Component {
       taxonomicstatus,
       issue,
       nomstatus,
+      nomCode,
       nametype,
       namefield,
       datasetKey,
@@ -430,6 +432,12 @@ class NameSearchPage extends React.Component {
       : null;
     const facetNomType = _.get(facets, "nameType")
       ? facets["nameType"].map((s) => ({
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : null;
+    const facetNomCode = _.get(facets, "nameType")
+      ? facets["nomCode"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
@@ -644,6 +652,12 @@ class NameSearchPage extends React.Component {
                   label="Name type"
                 />
                 <MultiValueFilter
+                  defaultValue={_.get(params, "nomCode")}
+                  onChange={(value) => this.updateSearch({ nomCode: value })}
+                  vocab={facetNomCode || nomCode}
+                  label="Nomenclatural code"
+                />
+                <MultiValueFilter
                   defaultValue={_.get(params, "field")}
                   onChange={(value) => this.updateSearch({ field: value })}
                   vocab={facetNomField || namefield}
@@ -751,6 +765,7 @@ const mapContextToProps = ({
   namefield,
   catalogueKey,
   dataset,
+  nomCode,
 }) => ({
   rank,
   taxonomicstatus,
@@ -760,6 +775,7 @@ const mapContextToProps = ({
   namefield,
   catalogueKey,
   dataset,
+  nomCode,
 });
 
 export default withContext(mapContextToProps)(NameSearchPage);
