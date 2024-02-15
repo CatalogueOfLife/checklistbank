@@ -84,7 +84,7 @@ class DatasetImportMetrics extends React.Component {
     this.setState({ loading: true });
     const uri = attempt
       ? `${config.dataApi}dataset/${datasetKey}/import/${attempt}`
-      : `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=finished`;
+      : `${config.dataApi}dataset/${datasetKey}/import?limit=1`;
     axios(uri)
       .then((res) => {
         const data = attempt ? res.data : res.data[0];
