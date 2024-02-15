@@ -543,7 +543,7 @@ class CatalogueSectors extends React.Component {
               }
             />
           </FormItem>
-          {this?.state?.publishers.length > 0 && (
+          {this?.state?.publishers?.length > 0 && (
             <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
               <Select
                 placeholder="Publisher"
