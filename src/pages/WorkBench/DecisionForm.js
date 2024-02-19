@@ -85,6 +85,7 @@ const DecisionForm = (props) => {
           type: values.nametype,
         },
         extinct: values.extinct,
+        keepOriginalName: values.keepOriginalName,
         environments: values.environments,
         status: values.status,
         fossil: values.fossil,
@@ -133,31 +134,30 @@ const DecisionForm = (props) => {
     decisionObject.datasetKey = Number(datasetKey);
     decisionObject.subject =
       currentDecision &&
-      !_.get(currentRow, "usage.id") &&
-      currentDecision?.subject
+        !_.get(currentRow, "usage.id") &&
+        currentDecision?.subject
         ? currentDecision.subject
         : {
-            id: _.get(currentRow, "usage.id"),
+          id: _.get(currentRow, "usage.id"),
 
-            name: _.get(currentRow, "usage.name.scientificName"),
-            authorship: _.get(currentRow, "usage.name.authorship"),
-            rank: _.get(currentRow, "usage.name.rank"),
-            status: _.get(currentRow, "usage.status"),
-            parent:
-              currentRow.classification && currentRow.classification.length > 1
-                ? currentRow.classification[
-                    currentRow.classification.length - 2
-                  ].name
-                : currentRow?.parent
+          name: _.get(currentRow, "usage.name.scientificName"),
+          authorship: _.get(currentRow, "usage.name.authorship"),
+          rank: _.get(currentRow, "usage.name.rank"),
+          status: _.get(currentRow, "usage.status"),
+          parent:
+            currentRow.classification && currentRow.classification.length > 1
+              ? currentRow.classification[
+                currentRow.classification.length - 2
+              ].name
+              : currentRow?.parent
                 ? currentRow.parent
                 : "",
-            code: _.get(currentRow, "usage.name.code"),
-          };
+          code: _.get(currentRow, "usage.name.code"),
+        };
 
     const method = currentDecision ? "put" : "post";
     return axios[method](
-      `${config.dataApi}dataset/${datasetKey}/decision${
-        currentDecision ? "/" + currentDecision.id : ""
+      `${config.dataApi}dataset/${datasetKey}/decision${currentDecision ? "/" + currentDecision.id : ""
       }`,
       decisionObject
     )
@@ -210,6 +210,7 @@ const DecisionForm = (props) => {
         ? _.get(currentDecision, "environments")
         : [],
       extinct: _.get(currentDecision, "extinct") === true ? true : false,
+      keepOriginalName: _.get(currentDecision, "keepOriginalName") === true ? true : false,
       note: _.get(currentDecision, "note")
         ? _.get(currentDecision, "note")
         : "",
@@ -353,7 +354,14 @@ const DecisionForm = (props) => {
             >
               <Checkbox />
             </FormItem>
-
+            <FormItem
+              {...formItemLayout}
+              label="keepOriginalName"
+              valuePropName="checked"
+              name="keepOriginalName"
+            >
+              <Checkbox />
+            </FormItem>
             <FormItem {...formItemLayout} label="Note" name="note">
               <TextArea />
             </FormItem>
