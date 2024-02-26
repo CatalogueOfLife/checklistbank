@@ -80,6 +80,9 @@
         "col:Taxon.col:accordingToID": [
                 "col:Reference.col:ID"
         ],
+        "col:Taxon.col:ID": [
+                "col:Synonym.col:taxonID" 
+        ],
         "col:Synonym.col:taxonID": [
                 "col:Taxon.col:ID"
         ],

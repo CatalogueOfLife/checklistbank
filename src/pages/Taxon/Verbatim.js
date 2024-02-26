@@ -13,6 +13,7 @@ const { TabPane } = Tabs;
 
 const TYPES = {
   "col:Taxon": "col:ID",
+  "col:Synonym": "col:taxonID",
   "col:NameUsage": "col:ID",
   "acef:AcceptedSpecies": "acef:AcceptedTaxonID",
   "acef:AcceptedInfraSpecificTaxa": "acef:AcceptedTaxonID",
@@ -54,6 +55,7 @@ const Verbatim = ({
         const primaryKey = TYPES[res?.data?.type] || null;
         if (!primaryKey) {
           setUnknownTypeErrMsg(`Unknown verbatim Taxon type: ${type}`);
+          setLoading(false);
         } else if (_.get(termsMapReversed, `${type}.${primaryKey}`)) {
           const foreignKeys = _.get(termsMapReversed, `${type}.${primaryKey}`);
 
