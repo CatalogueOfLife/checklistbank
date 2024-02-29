@@ -436,7 +436,7 @@ class NameSearchPage extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
-    const facetNomCode = _.get(facets, "nameType")
+    const facetNomCode = _.get(facets, "nomCode")
       ? facets["nomCode"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
