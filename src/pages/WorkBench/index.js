@@ -605,6 +605,7 @@ class WorkBench extends React.Component {
         });
       })
       .catch((err) => {
+        this.props.addError(err);
         this.setState({
           data: this.state.data,
           selectedRowKeys: [],
