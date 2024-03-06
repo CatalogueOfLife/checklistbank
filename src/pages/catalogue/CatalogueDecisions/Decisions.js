@@ -756,4 +756,4 @@ const mapContextToProps = ({ user, rank, decisionMode }) => ({
   decisionMode,
 });
 
-export default withContext(mapContextToProps)(CatalogueDecisions);
+export default withContext(mapContextToProps)(withRouter(CatalogueDecisions));
