@@ -60,6 +60,7 @@ class ColTreeNode extends React.Component {
         });
       })
       .catch((err) => {
+        this?.props?.addError(err);
         this.setState({ error: err });
       });
   };
@@ -129,6 +130,7 @@ class ColTreeNode extends React.Component {
         });
       })
       .catch((err) => {
+        this?.props?.addError(err);
         this.setState({ error: err });
       });
   };
@@ -725,9 +727,14 @@ class ColTreeNode extends React.Component {
   };
 }
 
-const mapContextToProps = ({ getTaxonomicStatusColor, catalogueKey }) => ({
+const mapContextToProps = ({
   getTaxonomicStatusColor,
   catalogueKey,
+  addError,
+}) => ({
+  getTaxonomicStatusColor,
+  catalogueKey,
+  addError,
 });
 
 export default withContext(mapContextToProps)(withRouter(ColTreeNode));
