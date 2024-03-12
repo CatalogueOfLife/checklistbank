@@ -102,9 +102,20 @@ const NameRelations = ({ data, catalogueKey, datasetKey, md, reverse }) =>
           exact={true}
         >
           {/*<span dangerouslySetInnerHTML={{ __html: r.relatedName.labelHtml }}></span> */}
-          {!reverse &&
-            `${r.relatedName.scientificName} ${r.relatedName.authorship}`}
-          {reverse && `${r.name.scientificName} ${r.name.authorship}`}
+          {!reverse && (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: r.relatedName.labelHtml,
+              }}
+            />
+          )}
+          {reverse && (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: r.name.labelHtml,
+              }}
+            />
+          )}
         </NavLink>
       </PresentationItem>
     );
