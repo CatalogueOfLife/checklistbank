@@ -1,7 +1,15 @@
 import React from "react";
-import { SyncOutlined } from '@ant-design/icons';
-import { notification, Tag, Popconfirm, Button, Popover, Tooltip, Checkbox } from "antd";
-import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption"
+import { SyncOutlined } from "@ant-design/icons";
+import {
+  notification,
+  Tag,
+  Popconfirm,
+  Button,
+  Popover,
+  Tooltip,
+  Checkbox,
+} from "antd";
+import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -11,25 +19,22 @@ import DecisionTag from "../../WorkBench/DecisionTag";
 import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
-import TaxonSources from "./TaxonSources"
+import TaxonSources from "./TaxonSources";
 import withContext from "../../../components/hoc/withContext";
 
 import history from "../../../history";
 
-
-export const AssemblyNodeContent = ({mode}) => {
-    mode === "modify" && 
-     (
-      <Popover
-        content={
-          taxon.name !== "Not assigned" ?  <React.Fragment>
+export const AssemblyNodeContent = ({ mode }) => {
+  mode === "modify" && (
+    <Popover
+      content={
+        taxon.name !== "Not assigned" ? (
+          <React.Fragment>
             <Button
               style={{ width: "100%" }}
               type="primary"
               onClick={() => {
-                history.push(
-                  `/catalogue/${catalogueKey}/taxon/${taxon.id}`
-                );
+                history.push(`/catalogue/${catalogueKey}/taxon/${taxon.id}`);
               }}
             >
               Show taxon
@@ -42,7 +47,7 @@ export const AssemblyNodeContent = ({mode}) => {
               onClick={() =>
                 this.setState({
                   childModalVisible: true,
-                  popOverVisible: false
+                  popOverVisible: false,
                 })
               }
             >
@@ -55,7 +60,7 @@ export const AssemblyNodeContent = ({mode}) => {
               onClick={() =>
                 this.setState({
                   editTaxonModalVisible: true,
-                  popOverVisible: false
+                  popOverVisible: false,
                 })
               }
             >
@@ -84,65 +89,69 @@ export const AssemblyNodeContent = ({mode}) => {
               onClick={() =>
                 this.setState({
                   estimateModalVisible: true,
-                  popOverVisible: false
+                  popOverVisible: false,
                 })
               }
             >
               Estimates
             </Button>
-         
-          </React.Fragment> : 
+          </React.Fragment>
+        ) : (
           <p>
-            This is a placeholder node for taxa that are not assigned to any <strong>{taxon.rank}</strong>.
+            This is a placeholder node for taxa that are not assigned to any{" "}
+            <strong>{taxon.rank}</strong>.
           </p>
-        }
-        title="Options"
-        visible={this.state.popOverVisible}
-        onVisibleChange={() =>
-          this.setState({ popOverVisible: !this.state.popOverVisible })
-        }
-        trigger="click"
-        placement="bottom"
+        )
+      }
+      title="Options"
+      visible={this.state.popOverVisible}
+      onVisibleChange={() =>
+        this.setState({ popOverVisible: !this.state.popOverVisible })
+      }
+      trigger="click"
+      placement="bottom"
+    >
+      <Popconfirm
+        visible={this.props.confirmVisible}
+        title={this.props.confirmTitle}
+        onConfirm={this.props.onConfirm}
+        onCancel={this.props.onCancel}
       >
-        <Popconfirm
-          visible={this.props.confirmVisible}
-          title={this.props.confirmTitle}
-          onConfirm={this.props.onConfirm}
-          onCancel={this.props.onCancel}
-        >
-          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-            {taxon.rank}:{" "}
+        <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>{taxon.rank}: </span>
+        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+          {taxon?.merged && "* "}
+        </span>
+        <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
+        {mode === "modify" && taxon.estimate && (
+          <span>
+            {" "}
+            • {taxon.estimate.toLocaleString("en-GB")} est. described species{" "}
+            {taxon.estimates.length
+              ? `(${taxon.estimates.length.toLocaleString("en-GB")} ${
+                  taxon.estimates.length > 1 ? "estimates" : "estimate"
+                })`
+              : ""}
           </span>
-          <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
-          {mode === "modify" && taxon.estimate && (
-            <span>
-             {" "}
-              • 
-              {" "}
-              {taxon.estimate.toLocaleString('en-GB')} est. described species {taxon.estimates.length ? `(${taxon.estimates.length.toLocaleString('en-GB')} ${taxon.estimates.length > 1 ? "estimates": "estimate"})`: ""}
-            </span>
-          )}
-          {isUpdating && (
-            <span>
-              {" "}
-              <SyncOutlined spin />
-            </span>
-          )}
-          {taxon.status !== "accepted" && (
-            <Tag color={getTaxonomicStatusColor(taxon.status)} style={{ marginLeft: "6px" }}>
-              {taxon.status}
-            </Tag>
-          )}
-        </Popconfirm>
-      </Popover>
-    )
+        )}
+        {isUpdating && (
+          <span>
+            {" "}
+            <SyncOutlined spin />
+          </span>
+        )}
+        {taxon.status !== "accepted" && (
+          <Tag
+            color={getTaxonomicStatusColor(taxon.status)}
+            style={{ marginLeft: "6px" }}
+          >
+            {taxon.status}
+          </Tag>
+        )}
+      </Popconfirm>
+    </Popover>
+  );
+};
 
-}
+export const SourceNodeContent = ({}) => {};
 
-export const SourceNodeContent = ({}) => {
-    
-}
-
-export const ReadOnlyNodeContent = ({}) => {
-    
-}
+export const ReadOnlyNodeContent = ({}) => {};

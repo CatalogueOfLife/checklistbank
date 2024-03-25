@@ -76,15 +76,21 @@ const getColumns = (catalogueKey) => [
             )}`;
 
       return (
-        <NavLink
-          key={_.get(record, "usage.id")}
-          to={{
-            pathname: uri,
-          }}
-          exact={true}
-        >
-          <span dangerouslySetInnerHTML={{ __html: text }} />
-        </NavLink>
+        <>
+          {" "}
+          <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+            {record?.usage?.merged && "* "}
+          </span>
+          <NavLink
+            key={_.get(record, "usage.id")}
+            to={{
+              pathname: uri,
+            }}
+            exact={true}
+          >
+            <span dangerouslySetInnerHTML={{ __html: text }} />
+          </NavLink>
+        </>
       );
     },
     width: 200,

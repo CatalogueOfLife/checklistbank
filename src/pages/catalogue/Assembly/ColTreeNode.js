@@ -478,6 +478,9 @@ class ColTreeNode extends React.Component {
                       <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                         {taxon.rank}:{" "}
                       </span>
+                      <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                        {taxon?.merged && "* "}
+                      </span>
                       <span
                         dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
                       />
@@ -531,6 +534,9 @@ class ColTreeNode extends React.Component {
                       <span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
+                        </span>
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && "* "}
                         </span>
                         <span
                           dangerouslySetInnerHTML={{
@@ -643,6 +649,9 @@ class ColTreeNode extends React.Component {
                       >
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
+                        </span>
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && "* "}
                         </span>
                         <span
                           dangerouslySetInnerHTML={{
