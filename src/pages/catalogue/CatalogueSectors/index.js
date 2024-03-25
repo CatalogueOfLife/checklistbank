@@ -14,11 +14,11 @@ const CatalogueSectors = () => {
     <Layout
       selectedKeys={["catalogueSectors"]}
       openKeys={["assembly"]}
-      title="Project sectors"
+      title="Source sectors"
     >
       <PageContent>
         <SectorTabs />
-          <SectorPageContent />
+        <SectorPageContent />
       </PageContent>
     </Layout>
   );
