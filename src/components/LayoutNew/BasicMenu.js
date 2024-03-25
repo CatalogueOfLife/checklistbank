@@ -856,6 +856,21 @@ class BasicMenu extends Component {
                   </Menu.Item>
                 )}
                 {selectedDataset &&
+                  ["xrelease", "release"].includes(
+                    _.get(selectedDataset, "origin")
+                  ) && (
+                    <Menu.Item key="sector">
+                      <NavLink
+                        to={{
+                          pathname: `/dataset/${selectedDataset?.key}/sector`,
+                        }}
+                      >
+                        {/*  <CheckOutlined /> */}
+                        <span>Sectors</span>
+                      </NavLink>
+                    </Menu.Item>
+                  )}
+                {selectedDataset &&
                   ["xrelease", "release", "project"].includes(
                     _.get(selectedDataset, "origin")
                   ) &&
@@ -1000,6 +1015,7 @@ class BasicMenu extends Component {
                       Reference: {taxonOrNameKey}
                     </Menu.Item>
                   )}
+
                 {selectedDataset &&
                   !["xrelease", "project", "release"].includes(
                     _.get(selectedDataset, "origin")

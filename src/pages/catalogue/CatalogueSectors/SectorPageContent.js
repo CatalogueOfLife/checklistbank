@@ -122,15 +122,15 @@ class CatalogueSectors extends React.Component {
       match: {
         params: { catalogueKey },
       },
+      datasetKey,
     } = this.props;
+    const key = catalogueKey || datasetKey;
     this.setState({ loading: true });
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
-      datasetKey: catalogueKey,
+      datasetKey: key,
     };
-    axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector?${qs.stringify(params)}`
-    )
+    axios(`${config.dataApi}dataset/${key}/sector?${qs.stringify(params)}`)
       .then(this.decorateWithDataset)
       .then((res) =>
         this.setState({
@@ -153,10 +153,12 @@ class CatalogueSectors extends React.Component {
       match: {
         params: { catalogueKey },
       },
+      datasetKey,
     } = this.props;
+    const key = catalogueKey || datasetKey;
     try {
       const res = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/sector/publisher`
+        `${config.dataApi}dataset/${key}/sector/publisher`
       );
       this.setState({ publishers: res?.data?.result });
     } catch (error) {}
@@ -398,10 +400,12 @@ class CatalogueSectors extends React.Component {
       match: {
         params: { catalogueKey },
       },
+      datasetKey,
       user,
       rank,
     } = this.props;
 
+    const isRelease = !!datasetKey && !catalogueKey;
     const params = qs.parse(_.get(this.props, "location.search"));
 
     return (
@@ -568,7 +572,7 @@ class CatalogueSectors extends React.Component {
               Reset all
             </Button>
           </Col>
-          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {!isRelease && Auth.canEditDataset({ key: catalogueKey }, user) && (
             <Col span={21} style={{ textAlign: "right" }}>
               <Button
                 type="primary"
@@ -633,6 +637,7 @@ class CatalogueSectors extends React.Component {
         </Row>
         {!error && (
           <SectorTable
+            isRelease={isRelease}
             data={data}
             loading={loading}
             onSectorRematch={this.getData}
@@ -663,7 +668,7 @@ class CatalogueSectors extends React.Component {
                   </Row>
                 </>
               ),
-              rowExpandable: () => true, //() => Auth.canEditDataset({key: catalogueKey}, user)
+              rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: catalogueKey}, user)
             }}
             /* expandedRowRender={
                 !Auth.canEditDataset({key: catalogueKey}, user)

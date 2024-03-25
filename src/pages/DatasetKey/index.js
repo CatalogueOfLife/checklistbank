@@ -15,7 +15,7 @@ import Layout from "../../components/LayoutNew";
 import DatasetIssues from "./datasetPageTabs/DatasetIssues";
 import DatasetTasks from "./datasetPageTabs/DatasetTasks";
 import DatasetDecisions from "./datasetPageTabs/DatasetDecisions";
-
+import ReleaseSectors from "./datasetPageTabs/ReleaseSectors";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
 import DatasetDiff from "./datasetPageTabs/DatasetImportDiff";
 import DatasetImportTree from "./datasetPageTabs/DatasetImportTree";
@@ -314,6 +314,9 @@ class DatasetPage extends React.Component {
           section === "decisions" && (
             <DatasetDecisions datasetKey={datasetKey} />
           )}
+
+        {["release", "xrelease"].includes(dataset?.origin) &&
+          section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
       </Layout>
     );
   }

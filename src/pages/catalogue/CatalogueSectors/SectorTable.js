@@ -217,6 +217,7 @@ class SectorTable extends React.Component {
       catalogueKey,
       handleTableChange,
       expandedRowRender,
+      isRelease,
       expandable,
     } = this.props;
     const offset = pagination
@@ -432,7 +433,7 @@ class SectorTable extends React.Component {
       },
     ]; */
 
-    if (Auth.canEditDataset({ key: catalogueKey }, user)) {
+    if (!isRelease && Auth.canEditDataset({ key: catalogueKey }, user)) {
       columns.push({
         title: "Action",
         key: "action",
@@ -540,7 +541,7 @@ class SectorTable extends React.Component {
           rowKey="id"
           expandable={expandable}
           rowSelection={
-            !Auth.canEditDataset({ key: catalogueKey }, user)
+            !Auth.canEditDataset({ key: catalogueKey }, user) || isRelease
               ? null
               : {
                   selectedRowKeys: this.state.selectedRowKeys,
