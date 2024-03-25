@@ -216,17 +216,14 @@ const Jobs = ({ user, addError }) => {
       render: (text, record) => (
         <>
           {(record?.dataset && Auth.canEditDataset(record?.dataset, user)) ||
-            Auth.isAuthorised(
-              user,
-              "admin"
-            )(
+            (Auth.isAuthorised(user, "admin") && (
               <Button
                 loading={killedJobs.has(record.key)}
                 onClick={() => killJob(record.key)}
               >
                 Stop
               </Button>
-            )}
+            ))}
           {!record?.dataset && Auth.isAuthorised(user, "admin") && (
             <Button
               loading={killedJobs.has(record.key)}
