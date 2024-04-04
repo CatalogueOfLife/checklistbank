@@ -117,10 +117,11 @@ export const AssemblyNodeContent = ({ mode }) => {
         onConfirm={this.props.onConfirm}
         onCancel={this.props.onCancel}
       >
-        <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>{taxon.rank}: </span>
         <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-          {taxon?.merged && "* "}
+          {taxon?.merged && <MergedDataBadge />}
         </span>
+        <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>{taxon.rank}: </span>
+
         <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
         {mode === "modify" && taxon.estimate && (
           <span>

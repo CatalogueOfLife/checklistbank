@@ -5,6 +5,7 @@ import linkify from "linkify-html";
 import { NavLink } from "react-router-dom";
 import { LinkOutlined } from "@ant-design/icons";
 import { Row, Col } from "antd";
+import MergedDataBadge from "../../components/MergedDataBadge";
 
 const ReferencesTable = ({
   data,
@@ -43,7 +44,8 @@ const ReferencesTable = ({
           </Row>
           {s?.sourceDataset?.key !== primarySourceDatasetKey && (
             <Row>
-              <Col style={{ paddingLeft: "22px" }}>
+              <Col style={{ paddingLeft: "32px" }}>
+                <MergedDataBadge />
                 Source:{" "}
                 <NavLink
                   to={{

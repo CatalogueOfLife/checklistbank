@@ -1,5 +1,6 @@
 import React from "react";
 import { SyncOutlined, WarningFilled, CopyOutlined } from "@ant-design/icons";
+import MergedDataBadge from "../../../components/MergedDataBadge";
 import {
   notification,
   Tag,
@@ -475,12 +476,11 @@ class ColTreeNode extends React.Component {
                       onConfirm={this.props.onConfirm}
                       onCancel={this.props.onCancel}
                     >
+                      <span>{taxon?.merged && <MergedDataBadge />}</span>
                       <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                         {taxon.rank}:{" "}
                       </span>
-                      <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                        {taxon?.merged && "* "}
-                      </span>
+
                       <span
                         dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
                       />
@@ -532,12 +532,13 @@ class ColTreeNode extends React.Component {
                   >
                     <div>
                       <span>
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && <MergedDataBadge />}
+                        </span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
-                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                          {taxon?.merged && "* "}
-                        </span>
+
                         <span
                           dangerouslySetInnerHTML={{
                             __html: taxon.labelHtml,
@@ -647,12 +648,13 @@ class ColTreeNode extends React.Component {
                         }}
                         exact={true}
                       >
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && <MergedDataBadge />}
+                        </span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
-                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                          {taxon?.merged && "* "}
-                        </span>
+
                         <span
                           dangerouslySetInnerHTML={{
                             __html: taxon.labelHtml,

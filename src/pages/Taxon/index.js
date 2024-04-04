@@ -16,6 +16,8 @@ import {
   Tooltip,
   message,
 } from "antd";
+import MergedDataBadge from "../../components/MergedDataBadge";
+
 import SynonymTable from "./Synonyms";
 import Synonyms from "./Synonyms2";
 import VernacularNames from "./VernacularNames";
@@ -869,7 +871,7 @@ class TaxonPage extends React.Component {
               {_.get(sourceDataset, "title") && (
                 <PresentationItem md={md} label="Source">
                   <div style={{ display: "inline-block" }}>
-                    {info?.usage?.merged && <span>* </span>}{" "}
+                    {info?.usage?.merged && <MergedDataBadge />}{" "}
                     {sourceTaxon && sourceTaxon.sourceId && (
                       <>
                         <NavLink

@@ -1,9 +1,9 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Form, Switch } from "antd";
+import { Table, Alert, Radio, Row, Col, Form, Switch, Tag } from "antd";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
-
+import MergedDataBadge from "../../components/MergedDataBadge";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -49,6 +49,14 @@ console.log(
 
 const getColumns = (catalogueKey) => [
   {
+    title: "",
+    dataIndex: ["usage", "merged"],
+    key: "merged",
+    width: 30,
+    render: (text, record) =>
+      record?.usage?.merged ? <MergedDataBadge /> : "",
+  },
+  {
     title: "Scientific Name",
     dataIndex: ["usage", "labelHtml"],
     key: "scientificName",
@@ -77,10 +85,6 @@ const getColumns = (catalogueKey) => [
 
       return (
         <>
-          {" "}
-          <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-            {record?.usage?.merged && "* "}
-          </span>
           <NavLink
             key={_.get(record, "usage.id")}
             to={{

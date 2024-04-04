@@ -8,6 +8,7 @@ import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
 import { Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import TypeMaterialPopover from "./TypeMaterialPopover";
+import MergedDataBadge from "../../components/MergedDataBadge";
 
 const SynonymsTable = ({
   datasetKey,
@@ -73,7 +74,10 @@ const SynonymsTable = ({
             </span>
           </NavLink>{" "}
           <>
-            {" "}
+            {s?.sourceDatasetKey &&
+              _.get(primarySource, "key") !== s?.sourceDatasetKey && (
+                <MergedDataBadge />
+              )}{" "}
             {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
             {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
               ? _.get(s, "accordingTo")
