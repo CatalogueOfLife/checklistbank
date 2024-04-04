@@ -1,7 +1,7 @@
 import React from "react";
 import { Tag } from "antd";
 
-const MergedDataBadge = () => (
+const MergedDataBadge = ({ style = {} }) => (
   <Tag
     color="warning"
     style={{
@@ -12,6 +12,7 @@ const MergedDataBadge = () => (
       lineHeight: "8px",
       verticalAlign: "middle",
       marginRight: "2px",
+      ...style,
     }}
   >
     m

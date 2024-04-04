@@ -52,7 +52,7 @@ const getColumns = (catalogueKey) => [
     title: "",
     dataIndex: ["usage", "merged"],
     key: "merged",
-    width: 30,
+    width: 12,
     render: (text, record) =>
       record?.usage?.merged ? <MergedDataBadge /> : "",
   },

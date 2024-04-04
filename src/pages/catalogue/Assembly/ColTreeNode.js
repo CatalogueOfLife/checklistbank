@@ -476,7 +476,6 @@ class ColTreeNode extends React.Component {
                       onConfirm={this.props.onConfirm}
                       onCancel={this.props.onCancel}
                     >
-                      <span>{taxon?.merged && <MergedDataBadge />}</span>
                       <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                         {taxon.rank}:{" "}
                       </span>
@@ -484,6 +483,11 @@ class ColTreeNode extends React.Component {
                       <span
                         dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
                       />
+                      <span>
+                        {taxon?.merged && (
+                          <MergedDataBadge style={{ marginLeft: "4px" }} />
+                        )}
+                      </span>
                       {mode === "modify" && taxon.estimate && (
                         <span>
                           {" "}
@@ -532,9 +536,6 @@ class ColTreeNode extends React.Component {
                   >
                     <div>
                       <span>
-                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                          {taxon?.merged && <MergedDataBadge />}
-                        </span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
@@ -544,6 +545,11 @@ class ColTreeNode extends React.Component {
                             __html: taxon.labelHtml,
                           }}
                         />
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && (
+                            <MergedDataBadge style={{ marginLeft: "4px" }} />
+                          )}
+                        </span>
                         <CopyToClipboard
                           text={taxon.name}
                           onCopy={() =>
@@ -648,9 +654,6 @@ class ColTreeNode extends React.Component {
                         }}
                         exact={true}
                       >
-                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                          {taxon?.merged && <MergedDataBadge />}
-                        </span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
@@ -660,6 +663,11 @@ class ColTreeNode extends React.Component {
                             __html: taxon.labelHtml,
                           }}
                         />
+                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                          {taxon?.merged && (
+                            <MergedDataBadge style={{ marginLeft: "4px" }} />
+                          )}
+                        </span>
                       </NavLink>
                     </span>
                     {taxon.estimate && (
