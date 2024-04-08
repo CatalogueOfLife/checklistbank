@@ -647,23 +647,23 @@ class NameSearchPage extends React.Component {
               label="Status"
             />
             {dataset?.origin !== "external" && (
-              <>
-                <MultiValueFilter
-                  defaultValue={_.get(params, "sectorMode")}
-                  onChange={(value) => this.updateSearch({ sectorMode: value })}
-                  vocab={facetSectorMode || ["attach", "union", "merge"]}
-                  label="Sector Mode"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "secondarySourceGroup")}
-                  onChange={(value) => this.updateSearch({ secondarySourceGroup: value })}
-                  vocab={facetSecondarySourceGroup || infoGroup}
-                  label="Secondary Source"
-                />
-              </>
+              <MultiValueFilter
+                defaultValue={_.get(params, "sectorMode")}
+                onChange={(value) => this.updateSearch({ sectorMode: value })}
+                vocab={facetSectorMode || ["attach", "union", "merge"]}
+                label="Sector Mode"
+              />
             )}
             {advancedFilters && (
               <React.Fragment>
+                {dataset?.origin !== "external" && (
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "secondarySourceGroup")}
+                    onChange={(value) => this.updateSearch({ secondarySourceGroup: value })}
+                    vocab={facetSecondarySourceGroup || infoGroup}
+                    label="Secondary Source"
+                  />
+                )}
                 <MultiValueFilter
                   defaultValue={_.get(params, "nomStatus")}
                   onChange={(value) => this.updateSearch({ nomStatus: value })}
