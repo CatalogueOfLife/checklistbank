@@ -14,7 +14,7 @@ const SecondarySources = ({ info }) => {
     }
   }, [info]);
 
-  useEffect(() => {}, [datasets]);
+  useEffect(() => { }, [datasets]);
 
   const getDatasets = async () => {
     let data = {};
@@ -30,8 +30,8 @@ const SecondarySources = ({ info }) => {
 
   return info?.source?.secondarySources
     ? Object.keys(info?.source?.secondarySources || {}).map((key, index) => (
-        <>
-          {index ? ", " : ""}
+      <>
+        <div>
           <NavLink
             key={key}
             to={{
@@ -42,8 +42,9 @@ const SecondarySources = ({ info }) => {
               ?.title + " "}
           </NavLink>
           : {_.startCase(key)}
-        </>
-      ))
+        </div>
+      </>
+    ))
     : null;
 };
 
