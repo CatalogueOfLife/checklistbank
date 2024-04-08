@@ -171,7 +171,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
     );
 
     await Promise.all([
-      ...res.data.result.map((publisher) =>
+      ...(res?.data?.result || []).map((publisher) =>
         userLoader
           .load(publisher.createdBy)
           .then((user) => (publisher.createdByUser = user))
@@ -235,62 +235,55 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
   };
 
   return (
-    <Layout
-      selectedKeys={["catalogueOptions"]}
-      openKeys={["assembly"]}
-      title={catalogue ? catalogue.title : ""}
-    >
-      <PageContent>
-        <OptionTabs />
-        <Modal
-          destroyOnClose={true}
-          width={800}
-          title={
-            publisherForEdit?.id
-              ? `Edit ${publisherForEdit?.title}`
-              : `Add publisher`
-          }
-          open={publisherForEdit}
-          onCancel={() => setPublisherForEdit(null)}
-          footer={null}
-        >
-          <PublisherForm
-            onSubmit={() => {
-              getData();
-              setPublisherForEdit(null);
-            }}
-            publisher={publisherForEdit}
-          />
-        </Modal>
-        <Row>
-          <Col flex="auto">
-            <Title level={4}>Publishers </Title>
-            {/* <SearchBox
+    <>
+      <Modal
+        destroyOnClose={true}
+        width={800}
+        title={
+          publisherForEdit?.id
+            ? `Edit ${publisherForEdit?.title}`
+            : `Add publisher`
+        }
+        open={publisherForEdit}
+        onCancel={() => setPublisherForEdit(null)}
+        footer={null}
+      >
+        <PublisherForm
+          onSubmit={() => {
+            getData();
+            setPublisherForEdit(null);
+          }}
+          publisher={publisherForEdit}
+        />
+      </Modal>
+      <Row>
+        <Col flex="auto">
+          <Title level={4}>Publishers </Title>
+          {/* <SearchBox
               defaultValue={location?.search?.q || null}
               style={{ marginBottom: "10px", width: "50%" }}
               onSearch={(value) => updateSearch({ q: value })}
             /> */}
-          </Col>
-          <Col>
-            {Auth.canEditDataset({ key: catalogueKey }, user) && (
-              <Button type="primary" onClick={() => setPublisherForEdit({})}>
-                Add publisher
-              </Button>
-            )}
-          </Col>
-        </Row>
+        </Col>
+        <Col>
+          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+            <Button type="primary" onClick={() => setPublisherForEdit({})}>
+              Add publisher
+            </Button>
+          )}
+        </Col>
+      </Row>
 
-        <Table
-          style={{ marginTop: "10px" }}
-          size="middle"
-          columns={columns}
-          dataSource={data?.result || []}
-          loading={loading}
-          onChange={handleTableChange}
-          pagination={pagination}
-        />
-      </PageContent>
-    </Layout>
+      <Table
+        style={{ marginTop: "10px" }}
+        size="middle"
+        columns={columns}
+        dataSource={data?.result || []}
+        loading={loading}
+        onChange={handleTableChange}
+        pagination={pagination}
+      />
+    </>
   );
 };
 

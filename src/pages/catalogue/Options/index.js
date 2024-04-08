@@ -41,7 +41,8 @@ const CatalogueOptions = ({ catalogue, location }) => {
         <title>Options</title>
       </Helmet>
       <PageContent>
-        <OptionTabs />
+        {/*         <OptionTabs />
+         */}{" "}
         {location?.pathname.endsWith("options") && <Options />}
         {location?.pathname.endsWith("publishers") && <Publishers />}
       </PageContent>

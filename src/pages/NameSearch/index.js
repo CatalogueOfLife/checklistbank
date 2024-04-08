@@ -41,11 +41,11 @@ const getBaseUri = (catalogueKey, datasetKey) =>
   catalogueKey === datasetKey
     ? `/catalogue/${catalogueKey}`
     : `/dataset/${datasetKey}`;
-console.log(
+/* console.log(
   encodeURIComponent(
     "Limoniidae-Eriopterinae-Rhypholophus-\\\\n-simulans-28a397a9d"
   )
-);
+); */
 
 const getColumns = (catalogueKey) => [
   {

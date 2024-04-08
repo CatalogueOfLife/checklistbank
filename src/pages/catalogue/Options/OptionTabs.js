@@ -28,7 +28,7 @@ const SectorTabs = ({ location, catalogueKey }) => {
       key: `/catalogue/${catalogueKey}/options`,
       icon: <SettingOutlined />,
     },
-    {
+    /* {
       label: (
         <NavLink to={{ pathname: `/catalogue/${catalogueKey}/publishers` }}>
           Publishers
@@ -36,7 +36,7 @@ const SectorTabs = ({ location, catalogueKey }) => {
       ),
       key: `/catalogue/${catalogueKey}/publishers`,
       icon: <TeamOutlined />,
-    },
+    }, */
   ];
 
   return (
