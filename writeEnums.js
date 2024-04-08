@@ -11,6 +11,7 @@ const enums = [
   "datasetorigin",
   "rank",
   "taxonomicstatus",
+  "infoGroup",
   "issue",
   "nametype",
   "namefield",
@@ -50,7 +51,7 @@ const writeEnums = () => {
         }
       )
     ).catch(error => {
-      
+
       console.log(`Error retrieving ${e}`)
       console.log(`Status ${error?.response?.status} ${error?.response?.statusText}`)
 

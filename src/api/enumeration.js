@@ -111,6 +111,10 @@ export const getDoiResolution = () => {
   return getData(`doiresolution`).then((res) => res.data.map((e) => e.name));
 };
 
+export const getInfoGroup = () => {
+  return getData(`infoGroup`).then((res) => res.data.map((e) => e.name));
+};
+
 export const getNameIndexRank = () => {
   return Promise.resolve(require(`../enumeration/nameIndexRank`))
 }
