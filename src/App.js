@@ -51,7 +51,7 @@ import CatalogueSources from "./pages/catalogue/CatalogueSources";
 import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
-import NameMatch from "./pages/tools/NameMatch";
+import NameMatch from "./pages/tools/NameMatch4";
 import NameMatchAsync from "./pages/tools/NameMatchAsync";
 import NameMatchJob from "./pages/tools/NameMatchJob";
 
