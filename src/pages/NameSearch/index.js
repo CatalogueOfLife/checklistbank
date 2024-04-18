@@ -34,6 +34,7 @@ const FACETS = [
   "origin",
   "sectorMode",
   "secondarySourceGroup",
+  "sectorDatasetKey",
 ];
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -64,18 +65,18 @@ const getColumns = (catalogueKey) => [
     render: (text, record) => {
       const uri =
         !_.get(record, "usage.id") ||
-          record?.usage?.status === "bare name" ||
-          !_.get(record, "usage.status")
+        record?.usage?.status === "bare name" ||
+        !_.get(record, "usage.status")
           ? `${getBaseUri(
-            catalogueKey,
-            _.get(record, "usage.datasetKey")
-          )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
+              catalogueKey,
+              _.get(record, "usage.datasetKey")
+            )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
           : _.get(record, "usage.accepted")
-            ? `${getBaseUri(
+          ? `${getBaseUri(
               catalogueKey,
               _.get(record, "usage.datasetKey")
             )}/nameusage/${encodeURIComponent(_.get(record, "usage.id"))}`
-            : `${getBaseUri(
+          : `${getBaseUri(
               catalogueKey,
               _.get(record, "usage.datasetKey")
             )}/taxon/${encodeURIComponent(
@@ -157,29 +158,30 @@ class NameSearchPage extends React.Component {
     const columns = this.props.datasetKey
       ? clms
       : [
-        {
-          title: "Dataset",
-          dataIndex: ["datasetLabel"],
-          key: "datasetLabel",
-          render: (text, record) => (
-            <NavLink
-              key={_.get(record, "usage.id")}
-              to={{
-                pathname: `/dataset/${_.get(record, "usage.datasetKey")}`,
-              }}
-              exact={true}
-            >
-              <span dangerouslySetInnerHTML={{ __html: text }} />
-            </NavLink>
-          ),
+          {
+            title: "Dataset",
+            dataIndex: ["datasetLabel"],
+            key: "datasetLabel",
+            render: (text, record) => (
+              <NavLink
+                key={_.get(record, "usage.id")}
+                to={{
+                  pathname: `/dataset/${_.get(record, "usage.datasetKey")}`,
+                }}
+                exact={true}
+              >
+                <span dangerouslySetInnerHTML={{ __html: text }} />
+              </NavLink>
+            ),
 
-          width: 200,
-          sorter: false,
-        },
-        ...clms,
-      ];
+            width: 200,
+            sorter: false,
+          },
+          ...clms,
+        ];
     this.state = {
       data: [],
+      sectorDatasetKeyMap: {},
       advancedFilters: false,
       columns: columns,
       params: {},
@@ -290,7 +292,13 @@ class NameSearchPage extends React.Component {
           // only do this if it is a cross dataset search
           await this.datasetLabelsFromFacets(res.data);
         }
+
+        const sectorDatasetKeyMap = await this.sectorDatasetLabelsFromFacets(
+          res.data
+        );
+
         this.setState({
+          sectorDatasetKeyMap,
           loading: false,
           data: res.data,
           err: null,
@@ -318,17 +326,29 @@ class NameSearchPage extends React.Component {
           d.datasetLabel = dataset?.title;
         }
       }
+    }
+  };
 
-      /*  return data.result.forEach(async (d) => {
-        if (keyMap[d?.usage?.datasetKey]) {
-          d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
-        } else {
-        const dataset = await datasetLoader.load(d?.usage?.datasetKey);
-        d.datasetLabel = dataset?.title
-       // .then((dataset) => (d.datasetLabel = dataset?.title))
-         // console.log(d)
-        }
-      }); */
+  sectorDatasetLabelsFromFacets = async (data) => {
+    if (_.get(data, "facets.sectorDatasetKey") && _.get(data, "result[0]")) {
+      console.log(
+        "sectorDatasetKey facet length " +
+          data?.facets?.sectorDatasetKey?.length
+      );
+      try {
+        const sectorDatasets = await Promise.all(
+          data.facets.sectorDatasetKey.map((elm) =>
+            datasetLoader.load(elm?.value)
+          )
+        );
+        const keyMap = _.keyBy(sectorDatasets, "key");
+        //this.setState({sectorDatasetKeyMap: keyMap})
+        console.log(keyMap);
+        return keyMap;
+      } catch (error) {
+        console.log("Could not load sectorDatasets");
+        return {};
+      }
     }
   };
 
@@ -414,93 +434,101 @@ class NameSearchPage extends React.Component {
     } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map((r) => ({
-        value: r.value,
-        label: `${_.startCase(r.value)} (${r.count.toLocaleString("en-GB")})`,
-      }))
+          value: r.value,
+          label: `${_.startCase(r.value)} (${r.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetIssues = _.get(facets, "issue")
       ? facets.issue.map((i) => ({
-        value: i.value,
-        label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
-      }))
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetSectorMode = _.get(facets, "sectorMode")
       ? facets.sectorMode.map((i) => ({
-        value: i.value,
-        label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
-      }))
+          value: i.value,
+          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetSecondarySourceGroup = _.get(facets, "secondarySourceGroup")
       ? facets.secondarySourceGroup.map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : null;
+    const facetSectorDatasetKey = _.get(facets, "sectorDatasetKey")
+      ? facets.sectorDatasetKey.map((s) => ({
+          value: s.value,
+          label: `${
+            this.state.sectorDatasetKeyMap[s.value]?.title || s.value
+          } (${s.count.toLocaleString("en-GB")})`, //`${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetTaxonomicStatus = _.get(facets, "status")
       ? facets.status.map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetNomStatus = _.get(facets, "nomStatus")
       ? facets["nomStatus"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetNomType = _.get(facets, "nameType")
       ? facets["nameType"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetNomCode = _.get(facets, "nomCode")
       ? facets["nomCode"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetNomField = _.get(facets, "field")
       ? facets.field.map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : null;
     const facetAuthorship = _.get(facets, "authorship")
       ? facets["authorship"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
     const facetAuthorshipYear = _.get(facets, "authorshipYear")
       ? facets["authorshipYear"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
     const facetExtinct = _.get(facets, "extinct")
       ? facets["extinct"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
     const facetEnvironment = _.get(facets, "environment")
       ? facets["environment"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
     const facetOrigin = _.get(facets, "origin")
       ? facets["origin"].map((s) => ({
-        value: s.value,
-        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
     const facetDataset = _.get(facets, "datasetKey")
       ? facets["datasetKey"].map((s) => ({
-        value: s.value,
-        label: `${s.label || s.value} (${s.count.toLocaleString("en-GB")})`,
-      }))
+          value: s.value,
+          label: `${s.label || s.value} (${s.count.toLocaleString("en-GB")})`,
+        }))
       : [];
 
     return (
@@ -552,29 +580,29 @@ class NameSearchPage extends React.Component {
                 />
               </div>
             )}
-            {(catalogueKey === datasetKey ||
+            {/*  {(catalogueKey === datasetKey ||
               Number(datasetKey) === catalogueKey ||
               (dataset &&
                 ["project", "release", "xrelease"].includes(
                   dataset.origin
                 ))) && (
-                <div style={{ marginTop: "10px" }}>
-                  <DatasetAutocomplete
-                    contributesTo={Number(datasetKey)}
-                    onSelectDataset={(value) => {
-                      this.updateSearch({ SECTOR_DATASET_KEY: value.key });
-                    }}
-                    defaultDatasetKey={
-                      _.get(params, "SECTOR_DATASET_KEY") || null
-                    }
-                    onResetSearch={(value) => {
-                      this.updateSearch({ SECTOR_DATASET_KEY: null });
-                    }}
-                    placeHolder="Filter by source dataset"
-                    autoFocus={false}
-                  />
-                </div>
-              )}
+              <div style={{ marginTop: "10px" }}>
+                <DatasetAutocomplete
+                  contributesTo={Number(datasetKey)}
+                  onSelectDataset={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                  }}
+                  defaultDatasetKey={
+                    _.get(params, "SECTOR_DATASET_KEY") || null
+                  }
+                  onResetSearch={(value) => {
+                    this.updateSearch({ SECTOR_DATASET_KEY: null });
+                  }}
+                  placeHolder="Filter by source dataset"
+                  autoFocus={false}
+                />
+              </div>
+            )} */}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
                 <FormItem label="Fuzzy">
@@ -654,16 +682,29 @@ class NameSearchPage extends React.Component {
                 label="Sector Mode"
               />
             )}
+            {dataset?.origin !== "external" && (
+              <MultiValueFilter
+                defaultValue={_.get(params, "sectorDatasetKey")}
+                onChange={(value) =>
+                  this.updateSearch({ sectorDatasetKey: value })
+                }
+                vocab={facetSectorDatasetKey || []}
+                label="Source dataset"
+              />
+            )}
             {advancedFilters && (
               <React.Fragment>
                 {dataset?.origin !== "external" && (
                   <MultiValueFilter
                     defaultValue={_.get(params, "secondarySourceGroup")}
-                    onChange={(value) => this.updateSearch({ secondarySourceGroup: value })}
+                    onChange={(value) =>
+                      this.updateSearch({ secondarySourceGroup: value })
+                    }
                     vocab={facetSecondarySourceGroup || infoGroup}
                     label="Secondary Source"
                   />
                 )}
+
                 <MultiValueFilter
                   defaultValue={_.get(params, "nomStatus")}
                   onChange={(value) => this.updateSearch({ nomStatus: value })}
