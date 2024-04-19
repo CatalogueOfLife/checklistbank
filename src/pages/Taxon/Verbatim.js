@@ -21,6 +21,8 @@ const TYPES = {
   "col:Name": "col:ID",
   "col:Reference": "col:ID",
   "gbif:Multimedia": "dwca:ID",
+  /*   "tt:Tree": "tt:content",
+   */
 };
 
 const Verbatim = ({
@@ -53,7 +55,10 @@ const Verbatim = ({
         const type = res?.data?.type;
         setType(type);
         const primaryKey = TYPES[res?.data?.type] || null;
-        if (!primaryKey) {
+        if (type === "tt:Tree") {
+          setVerbatimRecords({ "tt:Tree": [res?.data] });
+          setLoading(false);
+        } else if (!primaryKey) {
           setUnknownTypeErrMsg(`Unknown verbatim Taxon type: ${type}`);
           setLoading(false);
         } else if (_.get(termsMapReversed, `${type}.${primaryKey}`)) {

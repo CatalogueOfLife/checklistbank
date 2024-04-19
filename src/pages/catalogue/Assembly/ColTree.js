@@ -98,14 +98,22 @@ class ColTree extends React.Component {
       prevProps.catalogueKey !== this.props.catalogueKey ||
       prevProps.insertPlaceholder !== this.props.insertPlaceholder
     ) {
-      this.setState({
-        treeData: [], loadedKeys: [],
-        expandedKeys: [],
-        selectedKeys: []
-      }, this.loadRoot);
-
+      this.setState(
+        {
+          treeData: [],
+          loadedKeys: [],
+          expandedKeys: [],
+          selectedKeys: [],
+        },
+        this.loadRoot
+      );
     }
-
+    if (
+      this.props.defaultExpandKey &&
+      this.props.defaultExpandKey !== prevProps.defaultExpandKey
+    ) {
+      this.expandToTaxon(this.props.defaultExpandKey);
+    }
   };
 
   reloadRoot = () => {
@@ -120,14 +128,12 @@ class ColTree extends React.Component {
           mode: "attach",
           nodeNotFoundErr: null,
           selectedNodes: [],
-          selectedKeys: []
+          selectedKeys: [],
         },
         () => resolve(this.loadRoot())
       );
-
-    })
-  }
-
+    });
+  };
 
   loadRoot = async () => {
     const {
@@ -138,15 +144,18 @@ class ColTree extends React.Component {
       catalogueKey,
       onDeleteSector,
       defaultExpandKey,
-      insertPlaceholder = false
+      insertPlaceholder = false,
     } = this.props;
     this.setState({ rootLoading: true, treeData: [] });
     let id = key;
     return axios(
-      `${config.dataApi
+      `${
+        config.dataApi
       }dataset/${id}/tree?catalogueKey=${catalogueKey}${this.appendTypeParam(
         treeType
-      )}&limit=${CHILD_PAGE_SIZE}&offset=${this.state.treeData.length}&insertPlaceholder=${insertPlaceholder}`
+      )}&limit=${CHILD_PAGE_SIZE}&offset=${
+        this.state.treeData.length
+      }&insertPlaceholder=${insertPlaceholder}`
     )
       .then(this.decorateWithSectorsAndDataset)
       .then((res) => {
@@ -222,8 +231,8 @@ class ColTree extends React.Component {
     return treeType === "readOnly"
       ? `&type=CATALOGUE`
       : ["CATALOGUE", "SOURCE"].includes(treeType)
-        ? `&type=${treeType}`
-        : "";
+      ? `&type=${treeType}`
+      : "";
   };
   expandToTaxon = async (defaultExpandKey) => {
     const {
@@ -238,8 +247,9 @@ class ColTree extends React.Component {
     this.setState({ rootLoading: true });
     let id = key;
     const { data } = await axios(
-      `${config.dataApi
-      }dataset/${id}/tree/${encodeURIComponent(defaultExpandKey)}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
+      `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
+        defaultExpandKey
+      )}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
         treeType
       )}`
     )
@@ -301,8 +311,8 @@ class ColTree extends React.Component {
         reloadSelfAndSiblings={() => {
           const loadedChildIds = root.children
             ? root.children
-              .filter((c) => c.children && c.children.length > 0)
-              .map((c) => c.key)
+                .filter((c) => c.children && c.children.length > 0)
+                .map((c) => c.key)
             : null;
           return this.loadRoot().then(() =>
             loadedChildIds
@@ -337,8 +347,8 @@ class ColTree extends React.Component {
           reloadSelfAndSiblings={() => {
             const loadedChildIds = root.children
               ? root.children
-                .filter((c) => c.children && c.children.length > 0)
-                .map((c) => c.key)
+                  .filter((c) => c.children && c.children.length > 0)
+                  .map((c) => c.key)
               : null;
             return this.fetchChildPage(root, true).then(() =>
               loadedChildIds
@@ -379,7 +389,8 @@ class ColTree extends React.Component {
     const offset = _.get(dataRef, "childOffset");
 
     const res = await axios(
-      `${config.dataApi}dataset/${dataset.key}/tree/${encodeURIComponent(dataRef.taxon.id) //taxonKey
+      `${config.dataApi}dataset/${dataset.key}/tree/${
+        encodeURIComponent(dataRef.taxon.id) //taxonKey
       }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${catalogueKey}${this.appendTypeParam(
         treeType
       )}`
@@ -429,44 +440,44 @@ class ColTree extends React.Component {
     );
     const data = decoratedRes.data.result
       ? decoratedRes.data.result.map((tx) => {
-        let childDataRef = {
-          taxon: tx,
-          key: tx.id,
-          datasetKey: dataset.key,
-          childCount: tx.childCount,
-          isLeaf: tx.childCount === 0,
-          childOffset: 0,
-          parent: dataRef,
-          name: tx.name,
-        };
+          let childDataRef = {
+            taxon: tx,
+            key: tx.id,
+            datasetKey: dataset.key,
+            childCount: tx.childCount,
+            isLeaf: tx.childCount === 0,
+            childOffset: 0,
+            parent: dataRef,
+            name: tx.name,
+          };
 
-        childDataRef.title = (
-          <ColTreeNode
-            confirmVisible={false}
-            taxon={tx}
-            dataset={dataset}
-            onDeleteSector={onDeleteSector}
-            treeType={this.props.treeType}
-            reloadSelfAndSiblings={() => {
-              const loadedChildIds = dataRef.children
-                ? dataRef.children
-                  .filter((c) => c.children && c.children.length > 0)
-                  .map((c) => c.key)
-                : null;
-              return this.fetchChildPage(dataRef, true).then(() =>
-                loadedChildIds
-                  ? this.reloadLoadedKeys(loadedChildIds, false)
-                  : false
-              );
-            }}
-            reloadChildren={() => this.fetchChildPage(childDataRef, true)}
-            showSourceTaxon={showSourceTaxon}
-          />
-        );
-        childDataRef.ref = childDataRef;
+          childDataRef.title = (
+            <ColTreeNode
+              confirmVisible={false}
+              taxon={tx}
+              dataset={dataset}
+              onDeleteSector={onDeleteSector}
+              treeType={this.props.treeType}
+              reloadSelfAndSiblings={() => {
+                const loadedChildIds = dataRef.children
+                  ? dataRef.children
+                      .filter((c) => c.children && c.children.length > 0)
+                      .map((c) => c.key)
+                  : null;
+                return this.fetchChildPage(dataRef, true).then(() =>
+                  loadedChildIds
+                    ? this.reloadLoadedKeys(loadedChildIds, false)
+                    : false
+                );
+              }}
+              reloadChildren={() => this.fetchChildPage(childDataRef, true)}
+              showSourceTaxon={showSourceTaxon}
+            />
+          );
+          childDataRef.ref = childDataRef;
 
-        return childDataRef;
-      })
+          return childDataRef;
+        })
       : [];
 
     // reloadAll is used to force reload all children from offset 0 - used when new children have been posted
@@ -900,9 +911,9 @@ class ColTree extends React.Component {
               : this.findNode(node.taxon.id, children);
           this.fetchChildPage(newNodeReference, true).then(
             () =>
-            (node.title = React.cloneElement(node.title, {
-              isUpdating: false,
-            }))
+              (node.title = React.cloneElement(node.title, {
+                isUpdating: false,
+              }))
           );
         })
         .catch(addError);
@@ -933,15 +944,14 @@ class ColTree extends React.Component {
       node.title.props
         .reloadSelfAndSiblings()
         .then(() => {
-          const newNodeReference = node?.parent?.children ? this.findNode(
-            node.taxon.id,
-            node.parent.children
-          ) : node.taxon;
+          const newNodeReference = node?.parent?.children
+            ? this.findNode(node.taxon.id, node.parent.children)
+            : node.taxon;
           this.fetchChildPage(newNodeReference, true).then(
             () =>
-            (node.title = React.cloneElement(node.title, {
-              isUpdating: false,
-            }))
+              (node.title = React.cloneElement(node.title, {
+                isUpdating: false,
+              }))
           );
         })
         .catch(addError);
@@ -993,9 +1003,9 @@ class ColTree extends React.Component {
             const newNodeReference = this.findNode(node.taxon.id, children);
             this.fetchChildPage(newNodeReference, true).then(
               () =>
-              (node.title = React.cloneElement(node.title, {
-                isUpdating: false,
-              }))
+                (node.title = React.cloneElement(node.title, {
+                  isUpdating: false,
+                }))
             );
             notification.open({
               message: `Sector target updated`,
@@ -1026,10 +1036,10 @@ class ColTree extends React.Component {
       selectedSourceTreeNodes.length === 0
         ? []
         : rankGroupedSelectedNodes[highestDraggedRank].filter(
-          (n) =>
-            n.taxon.id.indexOf("incertae-sedis") === -1 &&
-            n.taxon.id !== dragNode.taxon.id
-        );
+            (n) =>
+              n.taxon.id.indexOf("incertae-sedis") === -1 &&
+              n.taxon.id !== dragNode.taxon.id
+          );
     // Only do multiselect if the dragged taxon is actually among selected nodes
     const taxonIsInSelectedNodes = selectedSourceTreeNodes.find(
       (n) => n.taxon.id === dragNode.taxon.id
@@ -1048,12 +1058,13 @@ class ColTree extends React.Component {
     const dragNodeIsAlreadySectorSubject =
       _.get(dragNode, "taxon.sector") &&
       _.get(dragNode, "taxon.id") ===
-      _.get(dragNode, "taxon.sector.subject.id") &&
-      _.get(node, 'taxon.id') !== _.get(dragNode, "taxon.sector.target.id");
-    const sectorAlreadyExists = _.get(dragNode, "taxon.sector") &&
+        _.get(dragNode, "taxon.sector.subject.id") &&
+      _.get(node, "taxon.id") !== _.get(dragNode, "taxon.sector.target.id");
+    const sectorAlreadyExists =
+      _.get(dragNode, "taxon.sector") &&
       _.get(dragNode, "taxon.id") ===
-      _.get(dragNode, "taxon.sector.subject.id") &&
-      _.get(node, 'taxon.id') === _.get(dragNode, "taxon.sector.target.id");
+        _.get(dragNode, "taxon.sector.subject.id") &&
+      _.get(node, "taxon.id") === _.get(dragNode, "taxon.sector.target.id");
 
     if (dragNode.taxon.datasetKey === node.taxon.datasetKey) {
       message.warn("You cannot modify the Tree in attachment mode");
@@ -1148,8 +1159,9 @@ class ColTree extends React.Component {
           )}
           {dragNodeIsPlaceholder
             ? `Insert all taxa with no ${dragNode.taxon.rank} assigned `
-            : `Ranks are equal. Do you want to ${taxonNameIsEqual && node?.taxon?.parentId ? "replace or " : ""
-            }union children of `}
+            : `Ranks are equal. Do you want to ${
+                taxonNameIsEqual && node?.taxon?.parentId ? "replace or " : ""
+              }union children of `}
           {!dragNodeIsPlaceholder && (
             <span
               dangerouslySetInnerHTML={{
@@ -1183,12 +1195,14 @@ class ColTree extends React.Component {
           )}
           {draggedNodeRanksAreMixed && (
             <Alert
-              message={`You selected nodes of ${sortedDraggedRanks.length
-                } different ranks! Only ${rankGroupedSelectedNodes[highestDraggedRank].length
-                } taxa of rank ${highestDraggedRank} will be attached. Ignoring ${sortedDraggedRanks
-                  .slice(1)
-                  .map((e) => `${e} (${rankGroupedSelectedNodes[e].length}) `)
-                  .join(", ")}`}
+              message={`You selected nodes of ${
+                sortedDraggedRanks.length
+              } different ranks! Only ${
+                rankGroupedSelectedNodes[highestDraggedRank].length
+              } taxa of rank ${highestDraggedRank} will be attached. Ignoring ${sortedDraggedRanks
+                .slice(1)
+                .map((e) => `${e} (${rankGroupedSelectedNodes[e].length}) `)
+                .join(", ")}`}
               type="warning"
             />
           )}
@@ -1263,7 +1277,6 @@ class ColTree extends React.Component {
     if (sectorAlreadyExists) {
       msg = (
         <span>
-
           <Alert
             style={{ marginTop: "6px" }}
             type="error"
@@ -1272,11 +1285,11 @@ class ColTree extends React.Component {
                 This target taxon already has a sector based on{" "}
                 <span
                   dangerouslySetInnerHTML={{ __html: dragNode.taxon.name }}
-                />{" "} (taxonID {dragNode.taxon.id})
+                />{" "}
+                (taxonID {dragNode.taxon.id})
               </div>
             }
           />
-
         </span>
       );
     }
@@ -1285,13 +1298,13 @@ class ColTree extends React.Component {
 
     const unionOptions = dragNodeIsPlaceholder
       ? [
-        {
-          text: "Union",
-          action: () => this.confirmAttach(node, dragNode, "UNION"),
-        },
-      ]
+          {
+            text: "Union",
+            action: () => this.confirmAttach(node, dragNode, "UNION"),
+          },
+        ]
       : taxonNameIsEqual
-        ? [
+      ? [
           {
             text: "Attach",
             type: "dashed",
@@ -1315,7 +1328,7 @@ class ColTree extends React.Component {
             action: () => this.confirmAttach(node, dragNode, "UNION"),
           },
         ]
-        : [
+      : [
           {
             text: "Attach",
             type: "dashed",
@@ -1394,8 +1407,8 @@ class ColTree extends React.Component {
 
     console.log(
       dragNode.title.props.taxon.name +
-      " --> " +
-      node.ref.title.props.taxon.name
+        " --> " +
+        node.ref.title.props.taxon.name
     );
     this.setState({ treeData: [...this.state.treeData] });
   };
@@ -1646,6 +1659,10 @@ class ColTree extends React.Component {
   }
 }
 
-const mapContextToProps = ({ rank, user, addError }) => ({ rank, user, addError });
+const mapContextToProps = ({ rank, user, addError }) => ({
+  rank,
+  user,
+  addError,
+});
 
 export default withContext(mapContextToProps)(ColTree);

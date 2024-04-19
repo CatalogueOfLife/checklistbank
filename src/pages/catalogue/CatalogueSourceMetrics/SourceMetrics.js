@@ -133,6 +133,8 @@ class SourceMetrics extends React.Component {
                     "latestMd5",
                     "datasetMd5",
                     "nameMatchesMissingCount",
+                    "nameMatchesCount",
+                    "bareNameCount",
                   ].includes(c))
             ),
             ...Object.keys(columns)
@@ -359,7 +361,9 @@ class SourceMetrics extends React.Component {
                       }}
                       exact={true}
                     >
-                      {Number(text || 0).toLocaleString()}{" "}
+                      {isPublisher && column === "datasetAttempt"
+                        ? ""
+                        : Number(text || 0).toLocaleString()}{" "}
                       {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                     </NavLink>
                     {isProject &&

@@ -62,13 +62,13 @@ class Assembly extends React.Component {
   }
 
   componentDidMount() {
-    const params = qs.parse(_.get(this.props, "location.search"));
+    /* const params = qs.parse(_.get(this.props, "location.search"));
     if (params.sourceTaxonKey && params.datasetKey) {
       this.showSourceTaxon(
-        { subject: { id: params.sourceTaxonKey } },
-        { key: params.datasetKey }
+         { subject: { id: params.sourceTaxonKey } },
+        { key: params.datasetKey } 
       );
-    }
+    } */
 
     this.resizeHandler();
     window.addEventListener("resize", this.resizeHandler);
@@ -219,8 +219,45 @@ class Assembly extends React.Component {
         console.log(err);
       });
   };
+  showSourceTaxon = async (taxon) => {
+    const taxonId = taxon?.id;
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${catalogueKey}/taxon/${taxonId}/source`
+      );
+      const datasetRes = await axios(
+        `${config.dataApi}dataset/${res.data.sourceDatasetKey}`
+      );
+      const params = qs.parse(_.get(this.props, "location.search"));
+      const newParams = {
+        ...params,
+        sourceTaxonKey: res.data.sourceId,
+        datasetKey: res.data.sourceDatasetKey,
+      };
+      history.push({
+        pathname: `/catalogue/${catalogueKey}/assembly`,
+        search: `?${qs.stringify(newParams)}`,
+      });
+      this.setState({
+        sourceTaxonKey: res.data.sourceId,
+        datasetKey: res.data.sourceDatasetKey,
+        datasetName: datasetRes.data.title,
+        selectedDataset: {
+          key: datasetRes.data.key,
+          title: datasetRes.data.alias || datasetRes.data.title,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  showSourceTaxon = (sector, source) => {
+  /*   showSourceTaxon = (sector, source) => {
     const isPlaceholder = !_.isUndefined(sector.placeholderRank);
     const subjectID = isPlaceholder
       ? `${
@@ -257,7 +294,7 @@ class Assembly extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-  };
+  }; */
 
   addMissingTargetKey = (key) => {
     this.setState({
@@ -767,7 +804,7 @@ class Assembly extends React.Component {
                       this.state.mode === "attach"
                     }
                     defaultExpandKey={this.state.sourceTaxonKey}
-                    showSourceTaxon={(sector) => {
+                    showSourceTaxon={({ sector }) => {
                       const isPlaceholder = !_.isUndefined(
                         sector.placeholderRank
                       );
