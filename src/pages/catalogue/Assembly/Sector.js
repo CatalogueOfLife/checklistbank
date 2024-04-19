@@ -7,7 +7,7 @@ import {
   HistoryOutlined,
   SyncOutlined,
   NodeCollapseOutlined,
-  WarningOutlined
+  WarningOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -18,7 +18,7 @@ import {
   Popover,
   Alert,
   Switch,
-  Modal
+  Modal,
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -40,7 +40,7 @@ class Sector extends React.Component {
     this.state = {
       popOverVisible: false,
       showEditForm: false,
-      error: null
+      error: null,
     };
   }
 
@@ -54,7 +54,6 @@ class Sector extends React.Component {
     if (!showEditForm) {
       this.setState({ popOverVisible, error: null });
     }
-
   };
 
   syncSector = (sector, syncState, syncingSector) => {
@@ -78,9 +77,9 @@ class Sector extends React.Component {
             !syncingSector && idle
               ? `Copying taxa from ${sector.id}`
               : `Awaiting sector ${_.get(syncingSector, "id")} (${_.get(
-                syncingSector,
-                "subject.name"
-              )})`,
+                  syncingSector,
+                  "subject.name"
+                )})`,
         });
       })
       .catch((err) => {
@@ -161,7 +160,7 @@ class Sector extends React.Component {
         if (typeof decisionCallback === "function") {
           decisionCallback(res.data);
         }
-        this.setState({ popOverVisible: false })
+        this.setState({ popOverVisible: false });
       })
       .catch((err) => {
         notification.error({
@@ -193,10 +192,18 @@ class Sector extends React.Component {
 
   finishEditForm = () => {
     this.getSectorDatasetRanks();
-    this.setState({ showEditForm: false })
-  }
+    this.setState({ showEditForm: false });
+  };
   render = () => {
-    const { taxon, user, catalogueKey, syncState, syncingSector, decisionCallback, reloadSelfAndSiblings } = this.props;
+    const {
+      taxon,
+      user,
+      catalogueKey,
+      syncState,
+      syncingSector,
+      decisionCallback,
+      reloadSelfAndSiblings,
+    } = this.props;
 
     const { error, showEditForm } = this.state;
     const { sector } = taxon;
@@ -220,34 +227,34 @@ class Sector extends React.Component {
         <Modal
           title="Edit sector"
           visible={isRootSector && showEditForm}
-          // onOk={this.finishEditForm} 
+          // onOk={this.finishEditForm}
           onCancel={() => this.setState({ showEditForm: false })}
           style={{ top: 150, marginRight: 20 }}
           destroyOnClose={true}
           maskClosable={false}
           footer={null}
         >
-
           <SectorForm
             sector={sector}
             onSubmit={(updatedSector) => {
               this.setState({ showEditForm: false }, () => {
-                reloadSelfAndSiblings()
-              })
+                reloadSelfAndSiblings();
+              });
             }}
           />
-
         </Modal>
         <Popover
           zIndex={999}
           content={
             <div>
-              {isRootSector && sector?.subject?.broken === true && <Alert
-                style={{ marginBottom: "8px" }}
-                message="The sector subject is broken"
-                type="warning"
-                showIcon
-              />}
+              {isRootSector && sector?.subject?.broken === true && (
+                <Alert
+                  style={{ marginBottom: "8px" }}
+                  message="The sector subject is broken"
+                  type="warning"
+                  showIcon
+                />
+              )}
               {isRootSector && (
                 <>
                   <CanEditDataset dataset={{ key: catalogueKey }}>
@@ -297,10 +304,12 @@ class Sector extends React.Component {
                 style={{ marginTop: "8px", width: "100%" }}
                 type="primary"
                 onClick={() =>
-                  this.props.showSourceTaxon(sector, sectorSourceDataset)
+                  this.props.showSourceTaxon(
+                    taxon /* sector, sectorSourceDataset */
+                  )
                 }
               >
-                Show sector in source
+                Show source taxon
               </Button>
               <br />
               <Button
@@ -321,15 +330,13 @@ class Sector extends React.Component {
                     disabled={showEditForm}
                     onClick={() => {
                       this.getSectorDatasetRanks();
-                      this.setState({ showEditForm: true })
+                      this.setState({ showEditForm: true });
                     }}
                   >
                     Edit sector
                   </Button>
-
                 </CanEditDataset>
               )}
-
 
               {isRootSector && !showEditForm && (
                 <React.Fragment>
@@ -371,12 +378,13 @@ class Sector extends React.Component {
             <React.Fragment>
               Sector {sector.id} mode:{" "}
               {sector.mode === "attach" && <CaretRightOutlined />}
-              {sector.mode === "union" && <BranchesOutlined
-                rotate={90}
-                style={{ fontSize: "16px", marginRight: "4px" }}
-              />}
-              {sector.mode === "merge" && <NodeCollapseOutlined />}
-              {" "}
+              {sector.mode === "union" && (
+                <BranchesOutlined
+                  rotate={90}
+                  style={{ fontSize: "16px", marginRight: "4px" }}
+                />
+              )}
+              {sector.mode === "merge" && <NodeCollapseOutlined />}{" "}
               {sector.mode}
             </React.Fragment>
           }
@@ -412,7 +420,8 @@ class Sector extends React.Component {
               />
             )}
           </Tag>
-        </Popover></>
+        </Popover>
+      </>
     ) : (
       <ColTreeContext.Consumer>
         {({ missingTargetKeys, applyDecision }) => (
@@ -458,7 +467,7 @@ class Sector extends React.Component {
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
                     type="primary"
-                    onClick={() => this.props.showSourceTaxon(sector)}
+                    onClick={() => this.props.showSourceTaxon(taxon)}
                   >
                     Show sector in assembly
                   </Button>
@@ -487,8 +496,8 @@ class Sector extends React.Component {
                       style={{ marginTop: "8px", width: "100%" }}
                       type="danger"
                       onClick={() => {
-                        applyDecision(taxon, catalogueKey, decisionCallback)
-                        this.setState({ popOverVisible: false })
+                        applyDecision(taxon, catalogueKey, decisionCallback);
+                        this.setState({ popOverVisible: false });
                       }}
                     >
                       Block taxon
