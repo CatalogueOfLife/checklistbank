@@ -171,11 +171,11 @@ class HomePage extends React.Component {
                 aims to support the publication and curation of checklists and
                 to provide a platform for their consistent discovery, use and
                 citation.                 
-                GBIF has for some time maintained ChecklistBank as a repository for
-                its community to share checklist data. COL and GBIF have united
-                their capabilities to make ChecklistBank a consistent foundation
-                and repository for all COL datasets and any other publicly
-                published species lists, inluding those registered with <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
+                GBIF has for some time maintained a checklist index and supported 
+                the network of repositories for its community to share checklist data. 
+                COL and GBIF have united their capabilities to make ChecklistBank a consistent foundation
+                and repository for all COL datasets and any other openly licensed
+                species lists, inluding those mobilized and registered through <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
               </p>
               <p>
                 The taxonomic community can publish a checklist to ChecklistBank
