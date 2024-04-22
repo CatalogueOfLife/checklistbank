@@ -12,6 +12,7 @@ import {
   Form,
   Tabs,
   Modal,
+  Typography,
 } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import MetaDataForm from "../../components/MetaData/MetaDataForm";
@@ -25,6 +26,7 @@ import axios from "axios";
 import qs from "query-string";
 import config from "../../config";
 
+const { Title } = Typography;
 const { TextArea } = Input;
 const Step = Steps.Step;
 const { TabPane } = Tabs;
@@ -225,11 +227,11 @@ const MetaDataValidator = ({ location }) => {
 
   const onFinish = (values, gotoStep = 1) => {
     let cb = () => {
-      if(gotoStep === 2){
-        validateFromMetadataForm()
+      if (gotoStep === 2) {
+        validateFromMetadataForm();
       }
       setStep(gotoStep);
-    }
+    };
     if (values.url) {
       validateFromUrl(values.url, cb);
     } else if (values.yaml) {
@@ -320,6 +322,28 @@ const MetaDataValidator = ({ location }) => {
         </Modal>
         {step === 0 && (
           <React.Fragment>
+            <Row justify="center">
+              <Col span={4}></Col>
+              <Col>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setData({ key: -1 });
+                    setStep(1);
+                  }}
+                >
+                  Start new metadata from scratch
+                </Button>
+              </Col>
+              <Col span={4}></Col>
+            </Row>
+            <Row justify="center" style={{ marginTop: "16px" }}>
+              <Col span={4}></Col>
+              <Col>
+                <Title level={4}>Or enter/upload existing metadata:</Title>
+              </Col>
+              <Col span={4}></Col>
+            </Row>
             <FormItem {...formItemLayout} label={`Data type`}>
               <Radio.Group
                 options={[
