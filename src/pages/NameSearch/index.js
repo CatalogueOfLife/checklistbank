@@ -35,6 +35,7 @@ const FACETS = [
   "sectorMode",
   "secondarySourceGroup",
   "sectorDatasetKey",
+  "group",
 ];
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -530,6 +531,16 @@ class NameSearchPage extends React.Component {
           label: `${s.label || s.value} (${s.count.toLocaleString("en-GB")})`,
         }))
       : [];
+    const facetTaxGroup = _.get(facets, "group")
+      ? facets["group"].map((s) => ({
+          value: s.value,
+          label: `${
+            s.value.startsWith("other")
+              ? _.startCase("Other " + s.value.replace(/^(other)/, ""))
+              : _.startCase(s.value)
+          } (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : [];
 
     return (
       <div
@@ -692,6 +703,13 @@ class NameSearchPage extends React.Component {
                 label="Source dataset"
               />
             )}
+            <MultiValueFilter
+              defaultValue={_.get(params, "group")}
+              onChange={(value) => this.updateSearch({ group: value })}
+              vocab={facetTaxGroup || []}
+              label="Taxonomic group"
+            />
+
             {advancedFilters && (
               <React.Fragment>
                 {dataset?.origin !== "external" && (
