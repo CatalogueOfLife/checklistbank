@@ -108,12 +108,12 @@ class ColTree extends React.Component {
         this.loadRoot
       );
     }
-    if (
+    /*  if (
       this.props.defaultExpandKey &&
       this.props.defaultExpandKey !== prevProps.defaultExpandKey
     ) {
       this.expandToTaxon(this.props.defaultExpandKey);
-    }
+    } */
   };
 
   reloadRoot = () => {
