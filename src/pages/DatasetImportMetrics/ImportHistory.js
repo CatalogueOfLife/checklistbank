@@ -7,6 +7,7 @@ import {
   FileZipOutlined,
   LoadingOutlined,
   DiffOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 
@@ -121,6 +122,12 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                 {h.state === "finished" &&
                   <React.Fragment>
                     {" "}
+                    <Tooltip title={`Archived tree #${h.attempt}`} placement="right">
+                      <a href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`} target="_blank">
+                        <FileTextOutlined />
+                      </a>{" "}
+                    </Tooltip>
+                    
                     <Tooltip
                       title="Browse archived tree"
                       placement="right"
@@ -133,7 +140,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                       >
                         <RiNodeTree />
                       </NavLink>
-                    </Tooltip>
+                    </Tooltip>                    
                   </React.Fragment>
                 } 
 

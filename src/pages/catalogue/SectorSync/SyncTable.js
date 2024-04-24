@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined, DiffOutlined, WarningOutlined } from "@ant-design/icons";
+import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined } from "@ant-design/icons";
 
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
@@ -178,12 +178,25 @@ const getColumns = (catalogueKey) => [
     },
   },
   {
-    title: "Diff",
-    key: "diff",
-    render: (text, record) =>
-      record.attempt < 2 ? (
-        ""
-      ) : (
+    title: "Links",
+    key: "links",
+    render: (text, record) => (
+      <div>
+        <Tooltip title="Kibana logs">
+          <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank">
+            <CodeOutlined style={{ fontSize: "20px" }} />
+          </a>
+        </Tooltip>
+
+        <Tooltip title="Name list">
+          <a href={`${config.dataApi}dataset/${catalogueKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
+            <FileTextOutlined style={{ fontSize: "20px" }} />
+          </a>
+        </Tooltip>
+
+        {record.attempt > 2 ? (
+          ""
+        ) : (
         <NavLink
           to={{
             pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
@@ -197,21 +210,11 @@ const getColumns = (catalogueKey) => [
             <DiffOutlined style={{ fontSize: "20px" }} />
           </Tooltip>
         </NavLink>
-      ),
-    width: 50,
-  },
-  {
-    title: "Logs",
-    key: "logs",
-    render: (text, record) => (
-      <Tooltip title="Kibana logs">
-        <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank">
-          <CodeOutlined style={{ fontSize: "20px" }} />
-        </a>
-      </Tooltip>
+        )}
+      </div>
     ),
     width: 50,
-  },
+  }
 ];
 
 class SyncTable extends React.Component {

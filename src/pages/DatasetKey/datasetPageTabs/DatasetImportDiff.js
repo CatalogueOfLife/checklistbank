@@ -110,7 +110,7 @@ class DatasetDiff extends React.Component {
     const params = qs.parse(search);
     this.attemptsParamIsSetAndValid(params.attempts);
     axios(
-      `${config.dataApi}dataset/${datasetKey}/diff/names?attempts=${params.attempts}`
+      `${config.dataApi}dataset/${datasetKey}/diff?attempts=${params.attempts}`
     )
       .then((res) => {
         this.setState({

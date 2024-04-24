@@ -67,7 +67,7 @@ class SectorDiff extends React.Component {
     const selectedAttempt2 = splittedAttempts ? splittedAttempts[1] : null;
     axios(
       `${config.dataApi
-      }dataset/${catalogueKey}/sector/${sectorKey}/diff/tree${query}`
+      }dataset/${catalogueKey}/sector/${sectorKey}/diff${query}`
     )
       .then(res => {
         this.setState({
