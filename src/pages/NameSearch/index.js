@@ -703,12 +703,6 @@ class NameSearchPage extends React.Component {
                 label="Source dataset"
               />
             )}
-            <MultiValueFilter
-              defaultValue={_.get(params, "group")}
-              onChange={(value) => this.updateSearch({ group: value })}
-              vocab={facetTaxGroup || []}
-              label="Taxonomic group"
-            />
 
             {advancedFilters && (
               <React.Fragment>
@@ -774,6 +768,12 @@ class NameSearchPage extends React.Component {
                   onChange={(value) => this.updateSearch({ extinct: value })}
                   vocab={facetExtinct}
                   label="Extinct"
+                />
+                <MultiValueFilter
+                  defaultValue={_.get(params, "group")}
+                  onChange={(value) => this.updateSearch({ group: value })}
+                  vocab={facetTaxGroup || []}
+                  label="Taxonomic group"
                 />
                 <MultiValueFilter
                   defaultValue={_.get(params, "origin")}
