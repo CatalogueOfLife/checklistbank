@@ -244,16 +244,6 @@ class DatasetImportMetrics extends React.Component {
             <Alert type="error" message={this.state.data.error} />
           </Row>
         )}
-        {/* {this.state.data && this.state.data.state === "unchanged" && (
-          <Row style={{ padding: "10px" }}>
-            <Alert
-              type="info"
-              message={`Import on ${moment(this.state.data.started).format(
-                "lll"
-              )} unchanged from last import`}
-            />
-          </Row>
-        )} */}
         {dataset && (
           <Row style={{ padding: "10px" }} type="flex">
             {data && !isRunning && (
@@ -273,14 +263,7 @@ class DatasetImportMetrics extends React.Component {
               </Col>
             )}
             <Col flex="auto"></Col>
-            {/*             <Col style={{ textAlign: "right", marginRight: "8px" }}>
-              {Auth.isAuthorised(user, ["editor", "admin"]) && (
-                <ArchiveUpload
-                  datasetKey={_.get(dataset, "key")}
-                  origin={_.get(dataset, "origin")}
-                />
-              )}
-            </Col> */}
+            
             {!["xrelease", "release"].includes(origin) && (
               <Col style={{ textAlign: "right" }}>
                 {importHistory && (

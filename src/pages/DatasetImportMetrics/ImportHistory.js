@@ -58,7 +58,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
         {["finished", "failed", "unchanged"].indexOf(h.state) === -1 && (
           <strong>{h.state}</strong>
         )}
-        {(h.state === "finished" || h.state === "unchanged") && (
+        {(h.state === "finished") && (
           <React.Fragment>
             <NavLink
               to={{
@@ -91,62 +91,56 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                   <FileZipOutlined />
                 </a>{" "}
               </Tooltip>
+              {" "}
+              <Tooltip title={`TextTree #${h.attempt}`} placement="right">
+                <a href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`} target="_blank">
+                  <FileTextOutlined />
+                </a>{" "}
+              </Tooltip>
+              {" "}
+              {getPreviousFinishedImport(importHistory, index) && (
+                <Tooltip
+                  title="Diff between this and previous attempt"
+                  placement="right"
+                >
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${h.datasetKey}/diff`,
+                      search: `?attempts=${getPreviousFinishedImport(
+                        importHistory,
+                        index
+                      )}..${h.attempt}`,
+                    }}
+                    exact={true}
+                  >
+                    <DiffOutlined />
+                  </NavLink>{" "}
+                </Tooltip>
+              )}
+
               <Tooltip title="Kibana logs" placement="right">
                 <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                   <CodeOutlined />
                 </a>
               </Tooltip>
-              {h.state === "finished" &&
-                getPreviousFinishedImport(importHistory, index) && (
-                  <React.Fragment>
-                    {" "}
-                    <Tooltip
-                      title="Diff between this and previous attempt"
-                      placement="right"
-                    >
-                      <NavLink
-                        to={{
-                          pathname: `/dataset/${h.datasetKey}/diff`,
-                          search: `?attempts=${getPreviousFinishedImport(
-                            importHistory,
-                            index
-                          )}..${h.attempt}`,
-                        }}
-                        exact={true}
-                      >
-                        <DiffOutlined />
-                      </NavLink>
-                    </Tooltip>
-                  </React.Fragment>
-                )}
-                {h.state === "finished" &&
-                  <React.Fragment>
-                    {" "}
-                    <Tooltip title={`Archived tree #${h.attempt}`} placement="right">
-                      <a href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`} target="_blank">
-                        <FileTextOutlined />
-                      </a>{" "}
-                    </Tooltip>
-                    
-                    <Tooltip
-                      title="Browse archived tree"
-                      placement="right"
-                    >
-                      <NavLink
-                        to={{
-                          pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`
-                        }}
-                        exact={true}
-                      >
-                        <RiNodeTree />
-                      </NavLink>
-                    </Tooltip>                    
-                  </React.Fragment>
-                } 
-
+              {" "}
+              <Tooltip
+                  title="Browse archived tree"
+                  placement="right"
+                >
+                  <NavLink
+                    to={{
+                      pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`
+                    }}
+                    exact={true}
+                  >
+                    <RiNodeTree />
+                  </NavLink>
+                </Tooltip>                    
             </p>
           </React.Fragment>
         )}
+
         {h.state === "failed" && (
           <React.Fragment>
             <NavLink

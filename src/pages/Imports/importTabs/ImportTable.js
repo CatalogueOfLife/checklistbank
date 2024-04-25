@@ -151,7 +151,7 @@ class ImportTable extends React.Component {
               </>
           )}
 
-              {record.attempt > 2 && record.state === "finished" ? (
+              {record.attempt > 1 && record.state === "finished" ? (
                 <NavLink
                   to={{
                     pathname: `/dataset/${record.datasetKey}/diff`,
