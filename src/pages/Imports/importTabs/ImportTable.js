@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined, DiffOutlined } from "@ant-design/icons";
+import { CodeOutlined, DiffOutlined, FileZipOutlined, FileTextOutlined } from "@ant-design/icons";
 
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
@@ -65,7 +65,7 @@ class ImportTable extends React.Component {
           render: (text, record) => (
             <Tag color={tagColors[record.state]}>{record.state}</Tag>
           ),
-          width: 50,
+          width: 40,
         },
         {
           title: "Job",
@@ -94,13 +94,13 @@ class ImportTable extends React.Component {
           title: "Attempt",
           dataIndex: "attempt",
           key: "attempt",
-          width: 50,
+          width: 25,
         },
         {
           title: "Started",
           dataIndex: "started",
           key: "started",
-          width: 50,
+          width: 60,
           render: (date) => {
             return date ? moment(date).format("MMMM Do, h:mm a") : "";
           },
@@ -109,45 +109,66 @@ class ImportTable extends React.Component {
           title: "Finished",
           dataIndex: "finished",
           key: "finished",
-          width: 50,
+          width: 60,
           render: (date) => {
             return date ? moment(date).format("MMMM Do, h:mm a") : "";
           },
-        },
+        },        
         {
-          title: "Diff",
-          key: "diff",
-          render: (text, record) =>
-            record.attempt < 2 ? (
-              ""
-            ) : (
-              <NavLink
-                to={{
-                  pathname: `/dataset/${record.datasetKey}/diff`,
-                  search:
-                    record.attempt > 0
-                      ? `?attempts=${record.attempt - 1}..${record.attempt}`
-                      : "",
-                }}
-              >
-                <Tooltip title="Names diff">
-                  <DiffOutlined style={{ fontSize: "20px" }} />
-                </Tooltip>
-              </NavLink>
-            ),
+          title: "Links",
+          key: "link",
           width: 50,
-        },
-        {
-          title: "Logs",
-          key: "logs",
           render: (text, record) => (
-            <Tooltip title="Kibana logs">
-              <a href={kibanaQuery(record.datasetKey)} target="_blank">
-                <CodeOutlined style={{ fontSize: "20px" }} />
-              </a>
-            </Tooltip>
-          ),
-          width: 50,
+            <>            
+            {_.get(record, "dataset.origin") === "external" ? (
+              <>
+              <Tooltip title="Data Archive">
+                <a href={`${config.dataApi}dataset/${record.datasetKey}/archive.zip?attempt=${record.attempt}`} target="_blank">
+                  <FileZipOutlined style={{ fontSize: "20px" }} />
+                </a>{" "}
+              </Tooltip>
+
+              <Tooltip title="TextTree">
+                <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/tree.txt`} target="_blank">
+                  <FileTextOutlined style={{ fontSize: "20px" }} />
+                </a>{" "}
+              </Tooltip>
+
+              <Tooltip title="Name list">
+                <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/names.txt`} target="_blank">
+                  <FileTextOutlined style={{ fontSize: "20px" }} />
+                </a>{" "}
+              </Tooltip>
+              </>
+            ) : (
+              ""
+            )}
+
+              {record.attempt > 2 ? (
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${record.datasetKey}/diff`,
+                    search:
+                      record.attempt > 0
+                        ? `?attempts=${record.attempt - 1}..${record.attempt}`
+                        : "",
+                  }}
+                >
+                  <Tooltip title="Names Diff">
+                    <DiffOutlined style={{ fontSize: "20px" }} />{" "}
+                  </Tooltip>
+                </NavLink>
+              ) : (
+                ""
+              )}
+
+              <Tooltip title="Kibana Logs">
+                <a href={kibanaQuery(record.datasetKey)} target="_blank">
+                  <CodeOutlined style={{ fontSize: "20px" }} />
+                </a>
+              </Tooltip>
+            </>
+          )
         },
       ],
     };
@@ -161,15 +182,6 @@ class ImportTable extends React.Component {
         limit: 10,
         offset: 0,
         state: importState
-        /* importState.length > 0 || section === "finished"
-          ? importState
-          : [
-              "downloading",
-              "processing",
-              "inserting",
-              "indexing",
-              "analyzing",
-            ], */
       };
     }
     if (query.state) {
@@ -199,42 +211,6 @@ class ImportTable extends React.Component {
       clearInterval(this.timer);
     }
   }
-
-  /*   refresh = () => {
-      const { importState, section } = this.props;
-      let query = qs.parse(_.get(this.props, "location.search"));
-      if (_.isEmpty(query)) {
-        query = {
-          limit: 10,
-          offset: 0,
-          state:
-            importState.length > 0 || section === "finished"
-              ? importState
-              : [
-                  "downloading",
-                  "processing",
-                  "inserting",
-                  "indexing",
-                  "analyzing",
-                ],
-        };
-      }
-      if (query.state) {
-        this.updateStatusQuery(query);
-      }
-  
-      this.setState(
-        {
-          params: query,
-          pagination: {
-            pageSize: query.limit,
-            current: Number(query.offset) / Number(query.limit) + 1,
-          },
-        },
-        this.getData
-      );
-      // this.getData(query);
-    }; */
 
   getData = () => {
     const { section, addError } = this.props;

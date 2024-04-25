@@ -670,19 +670,7 @@ class CatalogueSectors extends React.Component {
               ),
               rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: catalogueKey}, user)
             }}
-            /* expandedRowRender={
-                !Auth.canEditDataset({key: catalogueKey}, user)
-                  ? null
-                  : (record) => (
-                      <React.Fragment>
-                        <SectorForm
-                          sector={record}
-                          onError={(err) => this.setState({ error: err })}
-                        />
-
-                      </React.Fragment>
-                    )
-              } */
+    
           ></SectorTable>
         )}
       </>

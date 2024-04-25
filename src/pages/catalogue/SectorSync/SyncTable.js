@@ -195,8 +195,6 @@ const getColumns = (catalogueKey) => [
         </Tooltip>
 
         {record.attempt > 2 ? (
-          ""
-        ) : (
         <NavLink
           to={{
             pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
@@ -210,6 +208,8 @@ const getColumns = (catalogueKey) => [
             <DiffOutlined style={{ fontSize: "20px" }} />
           </Tooltip>
         </NavLink>
+        ) : (
+          ""
         )}
       </div>
     ),

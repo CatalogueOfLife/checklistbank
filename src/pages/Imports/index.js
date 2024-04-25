@@ -40,33 +40,7 @@ const Imports = ({ section, importState, location }) => {
           location={location}
         />}
       </PageContent>
-
-
-      {/* {section === "running" && (
-          <ImportTable
-            importState={importState
-              .filter(
-                (i) =>
-                  i.running === true ||
-                  i.queued === true
-              )
-              .map((i) => i.name)}
-            section={section}
-            location={location}
-          />
-        )}
-        {section === "finished" && (
-          <ImportTable
-            importState={importState
-              .filter(
-                (i) =>
-                  i.finished === true
-              )
-              .map((i) => i.name)}
-            section={section}
-            location={location}
-          />
-        )} */}
+      
     </Layout>
   );
 }

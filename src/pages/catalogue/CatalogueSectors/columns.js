@@ -193,9 +193,10 @@ export default (
       title: "Created",
       dataIndex: "created",
       key: "created",
+      width: 100,
       //  sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("l LT") : "";
+        return date ? moment(date).format("YYYY-MM-DD") : "";
       },
     },
     {
@@ -203,15 +204,16 @@ export default (
       dataIndex: ["user", "username"],
       key: "user",
       ellipsis: true,
-      //    sorter: (a, b) => a.dataset.alias < b.dataset.alias,
-      //  ...this.getColumnSearchProps("dataset.alias")
+      width: 100,
     },
 
     {
-      title: "History",
-      key: "history",
+      title: "Links",
+      key: "links",
+      width: 75,
       render: (text, record) => (
-        <Tooltip title="Synchronization history">
+        <>
+        <Tooltip title="Sync History">
           <NavLink
             to={{
               pathname: `/catalogue/${catalogueKey}/sector/sync`,
@@ -220,23 +222,17 @@ export default (
             exact={true}
           >
             <HistoryOutlined style={{ fontSize: "20px" }} />
-          </NavLink>
+          </NavLink>{" "}
         </Tooltip>
-      ),
-      width: 50,
-    },
-    {
-      title: "Logs",
-      key: "logs",
-      render: (text, record) => (
-        <Tooltip title="Kibana logs">
+
+        <Tooltip title="Kibana Logs">
           <a href={kibanaQuery(record.id)} target="_blank">
             <CodeOutlined style={{ fontSize: "20px" }} />
-          </a>
+          </a>{" "}
         </Tooltip>
+        </>
       ),
-      width: 50,
-    },
+    }
   ];
 
   return !!catalogueKey
