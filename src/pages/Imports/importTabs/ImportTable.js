@@ -84,12 +84,6 @@ class ImportTable extends React.Component {
           ),
           width: 50,
         },
-        /* {
-          title: "Data Format",
-          dataIndex: "format",
-          key: "dataFormat",
-          width: 50,
-        }, */
         {
           title: "Attempt",
           dataIndex: "attempt",
@@ -128,23 +122,36 @@ class ImportTable extends React.Component {
                 </a>{" "}
               </Tooltip>
 
-              <Tooltip title="TextTree">
-                <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/tree.txt`} target="_blank">
-                  <FileTextOutlined style={{ fontSize: "20px" }} />
-                </a>{" "}
-              </Tooltip>
+              {record.state === "finished" ? (
+                <>
+                <Tooltip title="TextTree">
+                  <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/tree.txt`} target="_blank">
+                    <FileTextOutlined style={{ fontSize: "20px" }} />
+                  </a>{" "}
+                </Tooltip>
 
-              <Tooltip title="Name list">
-                <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/names.txt`} target="_blank">
-                  <FileTextOutlined style={{ fontSize: "20px" }} />
-                </a>{" "}
-              </Tooltip>
+                <Tooltip title="Name list">
+                  <a href={`${config.dataApi}dataset/${record.datasetKey}/import/${record.attempt}/names.txt`} target="_blank">
+                    <FileTextOutlined style={{ fontSize: "20px" }} />
+                  </a>{" "}
+                </Tooltip>
+                </>
+              ) : (
+                <>
+                <FileTextOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+                <FileTextOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+                </>
+              )}
               </>
             ) : (
-              ""
-            )}
+              <>              
+              <FileZipOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+              <FileTextOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+              <FileTextOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+              </>
+          )}
 
-              {record.attempt > 2 ? (
+              {record.attempt > 2 && record.state === "finished" ? (
                 <NavLink
                   to={{
                     pathname: `/dataset/${record.datasetKey}/diff`,
@@ -159,7 +166,9 @@ class ImportTable extends React.Component {
                   </Tooltip>
                 </NavLink>
               ) : (
-                ""
+                <>                
+                <DiffOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+                </>
               )}
 
               <Tooltip title="Kibana Logs">
