@@ -181,37 +181,49 @@ const getColumns = (catalogueKey) => [
     title: "Links",
     key: "links",
     render: (text, record) => (
-      <div>
+      <>
+        {record.state === "finished" ? (
+        <>
+          <Tooltip title="Name list">
+            <a href={`${config.dataApi}dataset/${catalogueKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
+              <FileTextOutlined style={{ fontSize: "20px" }} />{" "}
+            </a>
+          </Tooltip>
+          {record.attempt > 2 ? (
+            <NavLink
+              to={{
+                pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
+                search:
+                  record.attempt > 0
+                    ? `?attempts=${record.attempt - 1}..${record.attempt}`
+                    : "",
+              }}
+            >
+              <Tooltip title="Names diff">
+                <DiffOutlined style={{ fontSize: "20px" }} />
+              </Tooltip>{" "}
+            </NavLink>
+          ) : (
+            <>
+              <DiffOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+            </>
+          )}
+        </>
+
+        ) : (
+          <>
+          <FileTextOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+          <DiffOutlined style={{ fontSize: "20px", color: "#EEEEEE" }} />{" "}
+          </>
+        )}
+
         <Tooltip title="Kibana logs">
           <a href={kibanaQuery(record.sectorKey, record.attempt)} target="_blank">
-            <CodeOutlined style={{ fontSize: "20px" }} />
+            <CodeOutlined style={{ fontSize: "20px" }} />{" "}
           </a>
         </Tooltip>
 
-        <Tooltip title="Name list">
-          <a href={`${config.dataApi}dataset/${catalogueKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
-            <FileTextOutlined style={{ fontSize: "20px" }} />
-          </a>
-        </Tooltip>
-
-        {record.attempt > 2 ? (
-        <NavLink
-          to={{
-            pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
-            search:
-              record.attempt > 0
-                ? `?attempts=${record.attempt - 1}..${record.attempt}`
-                : "",
-          }}
-        >
-          <Tooltip title="Names diff">
-            <DiffOutlined style={{ fontSize: "20px" }} />
-          </Tooltip>
-        </NavLink>
-        ) : (
-          ""
-        )}
-      </div>
+      </>
     ),
     width: 50,
   }

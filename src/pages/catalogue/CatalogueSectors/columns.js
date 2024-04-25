@@ -221,14 +221,14 @@ export default (
             }}
             exact={true}
           >
-            <HistoryOutlined style={{ fontSize: "20px" }} />
-          </NavLink>{" "}
+            <HistoryOutlined style={{ fontSize: "20px" }} />{"  "}
+          </NavLink>
         </Tooltip>
 
         <Tooltip title="Kibana Logs">
           <a href={kibanaQuery(record.id)} target="_blank">
-            <CodeOutlined style={{ fontSize: "20px" }} />
-          </a>{" "}
+            <CodeOutlined style={{ fontSize: "20px" }} />{" "}
+          </a>
         </Tooltip>
         </>
       ),
