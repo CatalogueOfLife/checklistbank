@@ -47,6 +47,16 @@ const formItemLayout = {
   },
 };
 
+const tagColors = {
+  processing: "purple",
+  downloading: "cyan",
+  inserting: "blue",
+  finished: "green",
+  released: "green",
+  failed: "red",
+  waiting: "orange",
+};
+
 class DatasetList extends React.Component {
   constructor(props) {
     super(props);
@@ -224,6 +234,28 @@ class DatasetList extends React.Component {
           },
         },
         {
+          title: "Last Import Attempt",
+          dataIndex: "lastImportAttempt",
+          key: "lastImportAttempt",
+          sorter: true,
+          render: (date) => {
+            return moment(date).format("MMM Do YYYY");
+          },
+        },
+        {
+          title: "Import State",
+          dataIndex: "lastImportState",
+          key: "lastImportState",
+          render: (text, record) => {
+            return (
+              <Tag color={tagColors[record?.lastImportState]}>
+                {record?.lastImportState}
+              </Tag>
+            );
+          },
+        },
+
+        {
           title: "Created",
           dataIndex: "created",
           key: "created",
@@ -241,6 +273,7 @@ class DatasetList extends React.Component {
             return moment(date).format("MMM Do YYYY");
           },
         },
+
         {
           title: "",
           dataIndex: "private",
@@ -491,10 +524,15 @@ class DatasetList extends React.Component {
       params,
       pagination,
     } = this.state;
-    const { datasetOrigin, recentDatasets, datasetType, user } = this.props;
+    const { datasetOrigin, recentDatasets, datasetType, user, importState } =
+      this.props;
     defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
+    }));
+    defaultColumns[17].filters = importState.map((i) => ({
+      text: _.startCase(i?.name),
+      value: i.name,
     }));
     if (params.origin) {
       defaultColumns[7].filteredValue = _.isArray(params.origin)
@@ -514,6 +552,14 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[9].filteredValue = null;
     }
+    if (params.lastImportState) {
+      defaultColumns[17].filteredValue = _.isArray(params.lastImportState)
+        ? params.lastImportState
+        : [params.lastImportState];
+    } else {
+      defaultColumns[17].filteredValue = null;
+    }
+
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
           ...defaultColumns,
@@ -831,6 +877,7 @@ const mapContextToProps = ({
   datasetOrigin,
   catalogueKey,
   recentDatasets,
+  importState,
   addError,
 }) => ({
   user,
@@ -838,6 +885,7 @@ const mapContextToProps = ({
   datasetOrigin,
   catalogueKey,
   recentDatasets,
+  importState,
   addError,
 });
 
