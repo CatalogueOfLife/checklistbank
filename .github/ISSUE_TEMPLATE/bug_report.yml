@@ -1,7 +1,7 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
+description: Create a report to help us improve
+title: 
 labels: bug
 assignees: thomasstjerne
 projects: CatalogueOfLife/2
