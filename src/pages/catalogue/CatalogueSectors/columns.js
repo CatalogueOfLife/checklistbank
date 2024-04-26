@@ -37,7 +37,7 @@ export default (
       render: (text, record) => {
         return (
           <NavLink
-            to={{ pathname: `/dataset/${record?.dataset?.key}/about` }}
+            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record?.dataset?.key}/metadata` }}
             exact={true}
           >
             {text ? text.toString() : record?.dataset?.title}

@@ -325,8 +325,16 @@ class DatasetMeta extends React.Component {
         )}
         {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
-            <PresentationItem label="Alias">
-              {displayData.alias}
+            <PresentationItem label="Alias">              
+              {catalogue ? (
+                <NavLink to={{
+                  pathname: `/dataset/${displayData.key}/metadata`,
+                }}>
+                {displayData.alias}
+                </NavLink>
+              ) : (
+                displayData.alias
+              )}
             </PresentationItem>
             <PresentationItem
               label={`${displayData.version ? "Version" : ""}${displayData.version && displayData.issued ? " / " : ""
