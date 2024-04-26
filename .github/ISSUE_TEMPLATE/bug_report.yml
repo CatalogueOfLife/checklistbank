@@ -12,6 +12,25 @@ body:
       description: clear explanation of the bug requested
     validations:
       required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Chrome
+        - Safari
+        - Firefox
+        - Microsoft Edge
+        - Other
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: ChecklistBank URL
+      description: URL in ChecklistBank that caused the problem
+    validations:
+      required: false
 ---
 
 
