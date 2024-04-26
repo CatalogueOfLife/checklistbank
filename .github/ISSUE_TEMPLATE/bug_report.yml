@@ -1,10 +1,17 @@
 ---
 name: Bug report
 description: Create a report to help us improve
-title: 
+title: 'Bug: '
 labels: bug
 assignees: thomasstjerne
-projects: CatalogueOfLife/2
+projects: ["CatalogueOfLife/2"]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: clear explanation of the bug requested
+    validations:
+      required: true
 ---
 
 
