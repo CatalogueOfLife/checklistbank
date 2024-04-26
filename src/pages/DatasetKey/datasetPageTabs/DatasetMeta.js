@@ -89,7 +89,7 @@ class DatasetMeta extends React.Component {
   getSourceMeta = () => {
     const { id, catalogueKey, addError } = this.props;
 
-    axios(`${config.dataApi}dataset/${catalogueKey}/source/${id}?original=true`)
+    axios(`${config.dataApi}dataset/${catalogueKey}/source/${id}`)
       .then((res) => this.setState({ sourceMeta: res.data, sourceError: null }))
       .catch((err) => {
         addError(err);
