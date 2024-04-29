@@ -37,10 +37,9 @@ import {
   getUserRole,
   getNameIndexRank,
   getDoiResolution,
-  getInfoGroup
+  getInfoGroup,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
-
 
 // Helpers
 // import { getUserItems } from '../helpers';
@@ -71,7 +70,6 @@ const TAXONOMIC_STATUS_COLOR = {
 };
 
 class ContextProvider extends React.Component {
-
   state = {
     catalogueKey: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project")).key
@@ -106,12 +104,16 @@ class ContextProvider extends React.Component {
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
-    dataset: localStorage.getItem("col_selected_dataset")
-      ? JSON.parse(localStorage.getItem("col_selected_dataset"))
-      : null,
-    sourceDataset: localStorage.getItem("col_selected_source_dataset")
-      ? JSON.parse(localStorage.getItem("col_selected_source_dataset"))
-      : null,
+    dataset:
+      localStorage.getItem("col_selected_dataset") &&
+      localStorage.getItem("col_selected_dataset") !== "undefined"
+        ? JSON.parse(localStorage.getItem("col_selected_dataset"))
+        : null,
+    sourceDataset:
+      localStorage.getItem("col_selected_source_dataset") &&
+      localStorage.getItem("col_selected_source_dataset") !== "undefined"
+        ? JSON.parse(localStorage.getItem("col_selected_source_dataset"))
+        : null,
     recentDatasets: [],
     estimateType: [],
     datasetSettings: [],
@@ -136,17 +138,19 @@ class ContextProvider extends React.Component {
         localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
         this.setState({ catalogue, catalogueKey: catalogue.key });
       } else {
-        localStorage.removeItem("col_selected_project")
+        localStorage.removeItem("col_selected_project");
         this.setState({ catalogue: null, catalogueKey: null });
       }
-
     },
     setDataset: (dataset) => {
       localStorage.setItem("col_selected_dataset", JSON.stringify(dataset));
       this.setState({ dataset });
     },
     setSourceDataset: (sourceDataset) => {
-      localStorage.setItem("col_selected_source_dataset", JSON.stringify(sourceDataset));
+      localStorage.setItem(
+        "col_selected_source_dataset",
+        JSON.stringify(sourceDataset)
+      );
       this.setState({ sourceDataset });
     },
     setRecentDatasets: (recentDatasets) => {
@@ -185,7 +189,7 @@ class ContextProvider extends React.Component {
       if (!nomStatusMap) {
         return name.nomStatus;
       } else if (!name.nomStatus) {
-        return ""
+        return "";
       } else {
         return nomStatusMap[name.nomStatus] &&
           nomStatusMap[name.nomStatus][name.code]
@@ -241,7 +245,7 @@ class ContextProvider extends React.Component {
       getUserRole(),
       getNameIndexRank(),
       getDoiResolution(),
-      getInfoGroup()
+      getInfoGroup(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -402,7 +406,7 @@ class ContextProvider extends React.Component {
         if (
           _.get(syncState, "running") &&
           _.get(syncState, "running.sectorKey") !==
-          _.get(this.state, "syncState.running.sectorKey")
+            _.get(this.state, "syncState.running.sectorKey")
         ) {
           const { data: sector } = await axios(
             `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
@@ -431,7 +435,6 @@ class ContextProvider extends React.Component {
         this.state.addError(err);
       }
     }
-
   };
 
   getBackground = async () => {
@@ -441,7 +444,7 @@ class ContextProvider extends React.Component {
       );
       this.setState({ background });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
