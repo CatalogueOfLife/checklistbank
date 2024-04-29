@@ -237,6 +237,8 @@ class SiteLayout extends Component {
                             style={{ marginTop: "-48px" }}
                           >{`in ${catalogue.title}`}</h5>
                         )}
+                    </Col>
+                    <Col>
                       <span style={{ marginRight: "8px" }}>
                         {" "}
                         {selectedDataset.version || selectedDataset.issued}
