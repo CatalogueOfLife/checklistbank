@@ -283,6 +283,11 @@ class SourceMetrics extends React.Component {
     });
   };
 
+  renderDatasetAttempt = (datasetAttempt) =>
+    datasetAttempt?.length > 1
+      ? `${datasetAttempt[0]} - ${datasetAttempt[datasetAttempt.length - 1]}`
+      : datasetAttempt[0];
+
   render() {
     const {
       data,
@@ -336,6 +341,7 @@ class SourceMetrics extends React.Component {
 
             const linkKey =
               selectedGroup === "default" ? column : selectedGroup;
+
             return (
               <React.Fragment>
                 {typeof Links[linkKey] === "function" && (
@@ -361,16 +367,28 @@ class SourceMetrics extends React.Component {
                       }}
                       exact={true}
                     >
-                      {isPublisher && column === "datasetAttempt"
+                      {/* {isPublisher && column === "datasetAttempt"
                         ? ""
-                        : Number(text || 0).toLocaleString()}{" "}
+                        : Number(text || 0).toLocaleString()}{" "} */}
+                      {!isPublisher &&
+                        column !== "datasetAttempt" &&
+                        Number(text || 0).toLocaleString()}
+                      {!isPublisher &&
+                        column === "datasetAttempt" &&
+                        this.renderDatasetAttempt(
+                          _.get(record, "metrics.datasetAttempt")
+                        )}
                       {getIconForDiff(text || 0, selectedRelaseValue || 0)}
                     </NavLink>
                     {isProject &&
                       column === "datasetAttempt" &&
                       (_.get(record, "metrics.datasetAttempt.length", 0) > 1 ||
-                        _.get(record, "metrics.datasetAttempt[0]") !==
-                          record?.metrics?.latestAttempt) && (
+                        _.get(
+                          record,
+                          `metrics.datasetAttempt[${
+                            record?.metrics?.datasetAttempt?.length - 1
+                          }]`
+                        ) !== record?.metrics?.latestAttempt) && (
                         <Tooltip title="Latest Attempt">
                           {" "}
                           <NavLink
@@ -378,13 +396,7 @@ class SourceMetrics extends React.Component {
                               pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
                             }}
                           >
-                            {` (${record?.metrics?.latestAttempt}${
-                              record?.metrics?.datasetMd5?.length > 1 ||
-                              _.get(record, "metrics.datasetMd5[0]") !==
-                                record?.metrics?.latestMd5
-                                ? " *"
-                                : ""
-                            })`}
+                            {` (${record?.metrics?.latestAttempt})`}
                           </NavLink>
                         </Tooltip>
                       )}
