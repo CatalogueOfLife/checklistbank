@@ -254,6 +254,15 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "sector remove ordinals",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "gbif sync lock",
     "origin": [
       "external"

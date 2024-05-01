@@ -1,1 +1,20 @@
-[{"name":"name"},{"name":"authorship"},{"name":"published in"},{"name":"basionym"},{"name":"status"},{"name":"parent"},{"name":"extinct"},{"name":"doi"},{"name":"link"}]
+[
+  {
+    "name": "authorship"
+  },
+  {
+    "name": "published in"
+  },
+  {
+    "name": "parent"
+  },
+  {
+    "name": "basionym"
+  },
+  {
+    "name": "extinct"
+  },
+  {
+    "name": "temporal range"
+  }
+]
