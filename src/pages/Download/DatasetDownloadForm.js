@@ -44,6 +44,7 @@ class DatasetDownload extends React.Component {
       rootTaxon: null,
       synonyms: true,
       bareNames: false,
+      extinct: null,
       excel: false,
       extended: false,
       dataAccess: null,
@@ -132,6 +133,7 @@ class DatasetDownload extends React.Component {
       rootTaxon,
       synonyms,
       bareNames,
+      extinct,
       excel,
       minRank,
       dataAccess,
@@ -206,6 +208,7 @@ class DatasetDownload extends React.Component {
                     format: selectedDataFormat,
                     synonyms,
                     bareNames,
+                    extinct,
                     excel,
                   };
                   if (rootTaxon) {
@@ -217,7 +220,7 @@ class DatasetDownload extends React.Component {
                   }
                   if (
                     extended &&
-                    ["dwca", "coldp"].includes(selectedDataFormat)
+                    ["dwca", "coldp", "text tree"].includes(selectedDataFormat)
                   ) {
                     options.extended = true;
                   }
@@ -299,7 +302,7 @@ class DatasetDownload extends React.Component {
             </Select>
           </Col>
           <Col style={{ paddingLeft: "10px" }}>
-            {["dwca", "coldp"].includes(selectedDataFormat) && (
+            {["dwca", "coldp", "text tree"].includes(selectedDataFormat) && (
               <Checkbox
                 checked={extended}
                 onChange={(e) => this.setState({ extended: e.target.checked })}
@@ -318,10 +321,10 @@ class DatasetDownload extends React.Component {
           </Col>
           <Col style={{ paddingLeft: "10px" }}>
             <Checkbox
-              checked={bareNames}
-              onChange={(e) => this.setState({ bareNames: e.target.checked })}
+              checked={extinct}
+              onChange={(e) => this.setState({ extinct: e.target.checked })}
             >
-              Include bare names
+              Extinct only
             </Checkbox>
           </Col>
           <Col>
