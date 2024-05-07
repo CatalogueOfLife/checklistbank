@@ -556,16 +556,6 @@ class TaxonPage extends React.Component {
                       </NavLink>
                     </Title>
                   )}
-
-                {/* {taxon.referenceIds && (
-                  <div style={{ display: "inline-block", paddingLeft: "10px" }}>
-                    <ReferencePopover
-                      datasetKey={datasetKey}
-                      referenceId={taxon.referenceIds}
-                      placement="bottom"
-                    />
-                  </div>
-                )} */}
               </Col>
               <Col>
                 {this.canEdit() && (
@@ -695,21 +685,6 @@ class TaxonPage extends React.Component {
                   {getNomStatus(_.get(taxon, "name"))}
                 </PresentationItem>
               )}
-              {/*           {synonyms && synonyms.length > 0 && (
-            <PresentationItem md={md} label="Synonyms and combinations">
-              <SynonymTable
-                onEditSuccess={this.getData}
-                canEdit={this.canEdit}
-                data={synonyms}
-                references={_.get(info, "references")}
-                referenceIndexMap={referenceIndexMap}
-                typeMaterial={_.get(info, "typeMaterial")}
-                style={{ marginTop: "-3px" }}
-                datasetKey={datasetKey}
-                catalogueKey={catalogueKey}
-              />
-            </PresentationItem>
-          )} */}
               {_.get(info, "synonyms") && (
                 <PresentationItem md={md} label="Synonyms and combinations">
                   <Synonyms
@@ -726,29 +701,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
-              {/* {misapplied && misapplied.length > 0 && (
-                <PresentationItem md={md} label="Misapplied names">
-                  <SynonymTable
-                    data={misapplied}
-                    references={_.get(info, "references")}
-                    referenceIndexMap={referenceIndexMap}
-                    typeMaterial={_.get(info, "typeMaterial")}
-                    style={{ marginBottom: 16, marginTop: "-3px" }}
-                    datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
-                  />
-                </PresentationItem>
-              )} */}
-              {/*  {_.get(taxon, "name.relations") &&
-                taxon.name.relations.length > 0 && (
-                  <NameRelations
-                    md={md}
-                    style={{ marginTop: "-3px" }}
-                    data={taxon.name.relations}
-                    catalogueKey={catalogueKey}
-                    datasetKey={datasetKey}
-                  />
-                )} */}
               {_.get(info, "nameRelations") &&
                 info.nameRelations.filter((rel) => rel?.usageId === taxon?.id)
                   .length > 0 && (
@@ -787,6 +739,28 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}
+              {info && info.speciesInteractions && (
+                <SpeciesInterActions
+                  md={md}
+                  style={{ marginTop: "-3px", marginLeft: "-10px" }}
+                  speciesInteractions={info.speciesInteractions}
+                  references={info?.references || {}}
+                  referenceIndexMap={referenceIndexMap}
+                  datasetKey={datasetKey}
+                />
+              )}
+              {_.get(taxon, "environments") && (
+                <PresentationItem md={md} label="Environments">
+                  {_.get(taxon, "environments").join(", ")}
+                </PresentationItem>
+              )}
+              {_.get(taxon, "temporalRangeStart") && (
+                <PresentationItem md={md} label="Temporal range">
+                  <span>
+                  {taxon.temporalRangeStart}{_.get(taxon, "temporalRangeEnd") && (` to ${taxon.temporalRangeEnd}`)}
+                  </span>
+                </PresentationItem>
+              )}
               {((taxon &&
                 rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
                 rank.indexOf(_.get(taxon, "name.rank")) > -1) ||
@@ -803,16 +777,6 @@ class TaxonPage extends React.Component {
                     datasetKey={datasetKey}
                   />
                 </PresentationItem>
-              )}
-              {info && info.speciesInteractions && (
-                <SpeciesInterActions
-                  md={md}
-                  style={{ marginTop: "-3px", marginLeft: "-10px" }}
-                  speciesInteractions={info.speciesInteractions}
-                  references={info?.references || {}}
-                  referenceIndexMap={referenceIndexMap}
-                  datasetKey={datasetKey}
-                />
               )}
               {_.get(info, "media") && (
                 <PresentationItem md={md} label="Media">
@@ -837,11 +801,6 @@ class TaxonPage extends React.Component {
                     datasetKey={datasetKey}
                     catalogueKey={catalogueKey}
                   />
-                </PresentationItem>
-              )}
-              {_.get(taxon, "environments") && (
-                <PresentationItem md={md} label="Environments">
-                  {_.get(taxon, "environments").join(", ")}
                 </PresentationItem>
               )}
               {_.get(info, "properties") && (
