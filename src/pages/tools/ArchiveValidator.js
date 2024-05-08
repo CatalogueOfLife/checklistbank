@@ -86,7 +86,7 @@ const ArchiveValidator = () => {
               action={`${config.dataApi}validator`}
               customRequest={customRequest}
               onSuccess={(d) => {
-                history.push(`/dataset/${d.key}/about`);
+                history.push(`/dataset/${d.key}/issues`);
               }}
             >
               <Button icon={<UploadOutlined />}>Select local file</Button>
