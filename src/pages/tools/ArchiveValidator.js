@@ -86,13 +86,19 @@ const ArchiveValidator = () => {
               action={`${config.dataApi}validator`}
               customRequest={customRequest}
               onSuccess={(d) => {
-                history.push(`/dataset/${d.key}/issues`);
+                history.push(`/dataset/${d.key}/imports`);
               }}
             >
               <Button icon={<UploadOutlined />}>Select local file</Button>
             </Upload>
           </FormItem>
         </React.Fragment>
+
+        <p>
+          After the upload you will be taken to the metrics page of your validation dataset.
+          The validation will take a little while, depending on the size of your archive.
+          Metrics, issues and the search will only be available once the validation has finished.
+        </p>
 
       </PageContent>
     </Layout>
