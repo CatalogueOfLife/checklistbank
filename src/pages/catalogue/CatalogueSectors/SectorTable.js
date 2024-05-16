@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import {
   Table,
-  Tooltip,
+  Popconfirm,
   Input,
   Button,
   Row,
@@ -290,14 +290,28 @@ class SectorTable extends React.Component {
               Rematch
             </Button>
             {onDeleteSector && typeof onDeleteSector === "function" && (
-              <Button
-                size="small"
-                style={{ display: "inline" }}
-                type="danger"
-                onClick={() => onDeleteSector(record)}
+              <Popconfirm
+                placement="left"
+                title={
+                  <p style={{ width: "350px" }}>
+                    Do you want a full deletion or a partial deletion? A partial
+                    deletion will delete the sector mapping and all species, but
+                    keep the higher classification above species
+                  </p>
+                }
+                onConfirm={() => onDeleteSector(record, false)}
+                onCancel={() => onDeleteSector(record, true)}
+                okText="Full"
+                cancelText="Partial"
               >
-                <DeleteOutlined />
-              </Button>
+                <Button
+                  size="small"
+                  style={{ display: "inline" }}
+                  type="danger"
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>
             )}
           </React.Fragment>
         ),

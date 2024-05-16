@@ -17,7 +17,7 @@ import {
   Tooltip,
   Popover,
   Alert,
-  Switch,
+  Popconfirm,
   Modal,
 } from "antd";
 import _ from "lodash";
@@ -87,15 +87,19 @@ class Sector extends React.Component {
       });
   };
 
-  deleteSector = (sector) => {
+  deleteSector = (sector, partial = false) => {
     const { catalogueKey } = this.props;
     axios
-      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`) // /assembly/3/sync/
+      .delete(
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}?partial=${partial}`
+      ) // /assembly/3/sync/
       .then(() => {
         debounce(this.props.onDeleteSector, 500)();
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.id} placed on the sync queue`,
+          description: `${partial ? "Partial" : "Full"} delete job for ${
+            sector.id
+          } placed on the sync queue`,
         });
       })
       .catch((err) => {
@@ -258,17 +262,28 @@ class Sector extends React.Component {
               {isRootSector && (
                 <>
                   <CanEditDataset dataset={{ key: catalogueKey }}>
-                    <Tooltip title="Delete sector will delete the sector mapping and all species, but keep the higher classification above species">
-                      <Button
-                        style={{ width: "100%" }}
-                        type="danger"
-                        onClick={() => {
-                          this.deleteSector(sector);
-                        }}
-                      >
+                    <Popconfirm
+                      title={
+                        <p style={{ width: "350px" }}>
+                          Do you want a full deletion or a partial deletion? A
+                          partial deletion will delete the sector mapping and
+                          all species, but keep the higher classification above
+                          species
+                        </p>
+                      }
+                      onConfirm={() => {
+                        this.deleteSector(sector, false);
+                      }}
+                      onCancel={() => {
+                        this.deleteSector(sector, true);
+                      }}
+                      okText="Full"
+                      cancelText="Partial"
+                    >
+                      <Button style={{ width: "100%" }} type="danger">
                         Delete sector
                       </Button>
-                    </Tooltip>
+                    </Popconfirm>
                     <br />
 
                     {_.get(syncState, "running.sectorKey") !== sector.id && (
@@ -452,15 +467,28 @@ class Sector extends React.Component {
                 )}
                 {isRootSectorInSourceTree && (
                   <CanEditDataset dataset={{ key: catalogueKey }}>
-                    <Button
-                      style={{ width: "100%" }}
-                      type="danger"
-                      onClick={() => {
-                        this.deleteSector(sector);
+                    <Popconfirm
+                      title={
+                        <p style={{ width: "350px" }}>
+                          Do you want a full deletion or a partial deletion? A
+                          partial deletion will delete the sector mapping and
+                          all species, but keep the higher classification above
+                          species
+                        </p>
+                      }
+                      onConfirm={() => {
+                        this.deleteSector(sector, false);
                       }}
+                      onCancel={() => {
+                        this.deleteSector(sector, true);
+                      }}
+                      okText="Full"
+                      cancelText="Partial"
                     >
-                      Delete sector
-                    </Button>
+                      <Button style={{ width: "100%" }} type="danger">
+                        Delete sector
+                      </Button>
+                    </Popconfirm>
                   </CanEditDataset>
                 )}
                 {missingTargetKeys[_.get(sector, "target.id")] !== true && (

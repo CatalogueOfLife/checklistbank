@@ -253,18 +253,22 @@ class CatalogueSectors extends React.Component {
     this.setState({ currentDataSourceLength: extra.currentDataSource.length });
   };
 
-  onDeleteSector = (sector) => {
+  onDeleteSector = (sector, partial = false) => {
     const {
       match: {
         params: { catalogueKey },
       },
     } = this.props;
     axios
-      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
+      .delete(
+        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}?partial=${partial}`
+      )
       .then(() => {
         notification.open({
           message: "Deletion triggered",
-          description: `Delete job for ${sector.id} placed on the sync queue`,
+          description: `${partial ? "Partial" : "Full"} delete job for ${
+            sector.id
+          } placed on the sync queue`,
         });
         this.setState({
           data: this.state.data.filter((d) => d.id !== sector.id),
@@ -670,7 +674,6 @@ class CatalogueSectors extends React.Component {
               ),
               rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: catalogueKey}, user)
             }}
-    
           ></SectorTable>
         )}
       </>
