@@ -352,7 +352,7 @@ const App = () => {
               />
               <Route
                 exact
-                key="namematch"
+                key="gbifimpact"
                 path={`/tools/gbif-impact`}
                 component={GBIFTaxonomyReview}
               />

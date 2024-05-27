@@ -103,7 +103,7 @@ const COL_LR = {
   key: "3LR",
   alias: "COL LR",
 };
-const NameMatch = ({ addError, rank }) => {
+const NameMatch = ({ addError, rank, issueMap }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
   const [defaultCode, setDefaultCode] = useState(null);
@@ -169,12 +169,22 @@ const NameMatch = ({ addError, rank }) => {
       const { data: primaryDatasetMatch } = await axios(
         `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${nidxParams}`
       );
-      const { usage: primaryDatasetUsage } = primaryDatasetMatch;
+      const {
+        usage: primaryDatasetUsage,
+        issues,
+        original,
+      } = primaryDatasetMatch;
       name.primaryDatasetUsage = {
         ...primaryDatasetUsage,
         ...formatUsageClassification(primaryDatasetUsage),
         matchType: primaryDatasetMatch?.type,
       };
+      if (issues) {
+        name.issues = issues;
+      }
+      if (original) {
+        name.original = original;
+      }
 
       if (secondaryDataset) {
         const { data: secondaryDatasetMatch } = await axios(
@@ -792,6 +802,11 @@ const NameMatch = ({ addError, rank }) => {
           <Table
             scroll={{ x: 2000 }}
             dataSource={names}
+            /* expandable={{
+              expandedRowRender: (record) => (
+                <pre> {JSON.stringify(record?.original, null, 2)} </pre>
+              ),
+            }} */
             columns={[
               {
                 title: (
@@ -806,6 +821,25 @@ const NameMatch = ({ addError, rank }) => {
                 ),
                 dataIndex: "providedScientificName",
                 key: "providedScientificName",
+              },
+              {
+                title: "Issues",
+                dataIndex: ["issues", "issues"],
+                key: "issues",
+                render: (text, record) => (
+                  <>
+                    {record?.issues?.issues?.length > 0
+                      ? record?.issues?.issues?.map((i) => (
+                          <Tag
+                            style={{ marginRight: "6px" }}
+                            color={issueMap?.[i]?.color}
+                          >
+                            {i}
+                          </Tag>
+                        ))
+                      : "None"}
+                  </>
+                ),
               },
               {
                 title: "Match type",
@@ -1024,6 +1058,7 @@ const NameMatch = ({ addError, rank }) => {
                   );
                 },
               },
+
               {
                 title: "Status",
                 dataIndex: ["usage", "status"],
@@ -1096,372 +1131,15 @@ const NameMatch = ({ addError, rank }) => {
             ]}
           />
         )}
-
-        {/*         {step !== 1 && (
-          <>
-            {step === 0 && (
-              <Divider
-                orientation="left"
-                style={{ marginTop: "24px", marginBottom: "24px" }}
-              >
-                Data you want to match against
-              </Divider>
-            )}
-            <Row>
-              <Col
-                style={{ paddingRight: "8px" }}
-                span={step === 0 || !secondaryDataset ? 12 : 10}
-              >
-                <DatasetAutocomplete
-                  defaultDatasetKey={primaryDataset.key}
-                  onResetSearch={() => setPrimaryDataset(COL_LR)}
-                  onSelectDataset={setPrimaryDataset}
-                  // contributesTo={this.props.catalogueKey}
-                  placeHolder="Choose primary dataset"
-                />
-
-                {step === 2 && (
-                  <Row justify="space-between">
-                    <Col>
-                      <Statistic
-                        title={"Matches"}
-                        value={primaryUsageMetrics}
-                        suffix={`/ ${names.length.toLocaleString()}`}
-                      />
-                    </Col>
-                    <Col>
-                      <CSVLink
-                        filename={getDownLoadDataFileName("primary")}
-                        data={getDownLoadData("primary")}
-                      >
-                        <Button type="primary" style={{ marginTop: "10px" }}>
-                          <DownloadOutlined /> Download result
-                        </Button>
-                      </CSVLink>
-                    </Col>
-                  </Row>
-                )}
-              </Col>
-              {(step < 1 || secondaryDataset) && (
-                <Col
-                  style={
-                    showSecondary
-                      ? {
-                          paddingLeft: "8px",
-                          paddingRight: "8px",
-                          marginTop: "-22px",
-                        }
-                      : { paddingLeft: "8px", paddingRight: "8px" }
-                  }
-                  span={step === 0 || !secondaryDataset ? 12 : 10}
-                >
-                  <span>Match against two datasets </span>
-                  <Switch
-                    checked={showSecondary}
-                    onChange={(checked) => {
-                      setShowSecondary(checked);
-                      if (!checked) {
-                        setSecondaryDataset(null);
-                      }
-                    }}
-                  />
-                  {showSecondary && (
-                    <DatasetAutocomplete
-                      defaultDatasetKey={
-                        secondaryDataset ? secondaryDataset.key : null
-                      }
-                      onResetSearch={() => setSecondaryDataset(null)}
-                      onSelectDataset={setSecondaryDataset}
-                      // contributesTo={this.props.catalogueKey}
-                      placeHolder="Choose secondary dataset"
-                    />
-                  )}
-                  {step === 2 && (
-                    <Row justify="space-between">
-                      <Col>
-                        <Statistic
-                          title={"Matches"}
-                          value={secondaryUsageMetrics}
-                          suffix={`/ ${names.length}`}
-                        />
-                      </Col>
-                      <Col>
-                        <CSVLink
-                          filename={getDownLoadDataFileName("secondary")}
-                          data={getDownLoadData("secondary")}
-                        >
-                          <Button type="primary" style={{ marginTop: "10px" }}>
-                            <DownloadOutlined /> Download result
-                          </Button>
-                        </CSVLink>
-                      </Col>
-                    </Row>
-                  )}
-                </Col>
-              )}
-              
-            </Row>
-          </>
-        )}
-
-        {step === 0 && (
-          <>
-            <Divider orientation="left" style={{ marginTop: "48px" }}>
-              Your input data
-            </Divider>
-            <Row style={{ marginTop: "10px" }}>
-              <Col span={12} style={{ paddingRight: "8px" }}>
-                <Dragger {...draggerProps}>
-                  <p className="ant-upload-drag-icon">
-                    <UploadOutlined />
-                  </p>
-                  <p className="ant-upload-text">
-                    Click or drag csv file to this area to upload
-                  </p>
-                  <p className="ant-upload-hint">
-                    Your csv must contain a column{" "}
-                    <code className="code">scientificName</code> (which may
-                    include the author) and optional columns{" "}
-                    <code className="code">author</code>,{" "}
-                    <code className="code">rank</code> and{" "}
-                    <code className="code">code</code> (nomenclatural code)
-                  </p>
-                </Dragger>
-              </Col>
-              <Col
-                span={12}
-                style={{ paddingRight: "8px", paddingLeft: "8px" }}
-              >
-                Or select a subject dataset:
-                <DatasetAutocomplete
-                  onResetSearch={() => {
-                    setSubjectDataset(null);
-                    setSubjectTaxon(null);
-                  }}
-                  onSelectDataset={(dataset) => {
-                    setSubjectDataset(dataset);
-                    setSubjectTaxon(null);
-                  }}
-                  placeHolder="Choose subject dataset"
-                />
-                And a root taxon:
-                <NameAutocomplete
-                  minRank="GENUS"
-                  datasetKey={_.get(subjectDataset, "key")}
-                  onError={setError}
-                  disabled={!subjectDataset}
-                  onSelectName={(name) => {
-                    setSubjectTaxon(name);
-                    testSizeLimit(name);
-                  }}
-                  onResetSearch={() => {
-                    setSubjectTaxon(null);
-                    setSubjectDataTotal(null);
-                  }}
-                />
-                {!_.isNull(subjectDataTotal) &&
-                  subjectDataTotal <= MAX_LIST_SIZE && (
-                    <Button
-                      onClick={getSubjectDataAndMatch}
-                      style={{ marginTop: "10px" }}
-                      type="primary"
-                      loading={subjectDataLoading}
-                    >
-                      Match {subjectDataTotal.toLocaleString()} names
-                    </Button>
-                  )}
-                {!_.isNull(subjectDataTotal) &&
-                  subjectDataTotal > MAX_LIST_SIZE && (
-                    <Alert
-                      message="Too many names"
-                      description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                      type="error"
-                      style={{ marginTop: "10px" }}
-                      closable
-                      onClose={() => {
-                        setSubjectTaxon(null);
-                        setSubjectDataTotal(null);
-                      }}
-                    />
-                  )}
-              </Col>
-            </Row>
-          </>
-        )}
-        {step === 1 && (
-          <MatchProgress total={names.length} matched={numMatchedNames} />
-        )}
-
-        {(step === 1 || step === 2) && (
-          <Table
-            scroll={{ x: 2000 }}
-            dataSource={names}
-            columns={[
-              {
-                title: (
-                  <Tooltip
-                    placement="topLeft"
-                    title={
-                      "The name from your uploaded csv or the subject dataset you picked"
-                    }
-                  >
-                    Provided Scientific Name
-                  </Tooltip>
-                ),
-                dataIndex: "providedScientificName",
-                key: "providedScientificName",
-              },
-
-              {
-                title: "Scientific Name",
-                dataIndex: ["primaryDatasetUsage", "label"],
-                key: (
-                  <Tooltip
-                    placement="topLeft"
-                    title={
-                      "The name found in the Checklistbank dataset(s) you picked."
-                    }
-                  >
-                    Scientific Name
-                  </Tooltip>
-                ),
-                filters: secondaryDataset
-                  ? [
-                      {
-                        text: `Only usage in ${
-                          primaryDataset.alias ||
-                          "Dataset " + primaryDataset.key
-                        }`,
-                        value: "only_primary_usage",
-                      },
-                      {
-                        text: `Only usage in ${
-                          secondaryDataset.alias ||
-                          "Dataset " + secondaryDataset.key
-                        }`,
-                        value: "only_secondary_usage",
-                      },
-                      {
-                        text: `Usage in ${
-                          primaryDataset.alias ||
-                          "Dataset " + primaryDataset.key
-                        }`,
-                        value: "primary_usage",
-                      },
-                      {
-                        text: `NO usage in ${
-                          primaryDataset.alias ||
-                          "Dataset " + primaryDataset.key
-                        }`,
-                        value: "no_primary_usage",
-                      },
-                      {
-                        text: `Usage in ${
-                          secondaryDataset.alias ||
-                          "Dataset " + secondaryDataset.key
-                        }`,
-                        value: "secondary_usage",
-                      },
-                      {
-                        text: `NO usage in ${
-                          secondaryDataset.alias ||
-                          "Dataset " + secondaryDataset.key
-                        }`,
-                        value: "no_secondary_usage",
-                      },
-                    ]
-                  : [
-                      {
-                        text: `Usage in ${
-                          primaryDataset.alias ||
-                          "Dataset " + primaryDataset.key
-                        }`,
-                        value: "primary_usage",
-                      },
-                      {
-                        text: ` NO usage in ${
-                          primaryDataset.alias ||
-                          "Dataset " + primaryDataset.key
-                        }`,
-                        value: "no_primary_usage",
-                      },
-                    ],
-                onFilter: (value, record) => {
-                  if (value === "only_primary_usage") {
-                    return !!(
-                      _.get(record, "primaryDatasetUsage") &&
-                      !_.get(record, "secondaryDatasetUsage")
-                    );
-                  }
-                  if (value === "only_secondary_usage") {
-                    return !!(
-                      !_.get(record, "primaryDatasetUsage") &&
-                      _.get(record, "secondaryDatasetUsage")
-                    );
-                  }
-                  if (value === "primary_usage") {
-                    return !!_.get(record, "primaryDatasetUsage");
-                  }
-                  if (value === "no_primary_usage") {
-                    return !_.get(record, "primaryDatasetUsage");
-                  }
-                  if (value === "secondary_usage") {
-                    return !!_.get(record, "secondaryDatasetUsage");
-                  }
-                  if (value === "no_secondary_usage") {
-                    return !_.get(record, "secondaryDatasetUsage");
-                  }
-                },
-                render: (text, record) => {
-                  return (
-                    <React.Fragment
-                      key={_.get(record, "primaryDatasetUsage.id")}
-                    >
-                      {_.get(record, "primaryDatasetUsage.labelHtml") ? (
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: _.get(
-                              record,
-                              "primaryDatasetUsage.labelHtml"
-                            ),
-                          }}
-                        />
-                      ) : (
-                        <Tag color="red">None</Tag>
-                      )}
-                      {secondaryDataset && (
-                        <React.Fragment>
-                          <br />
-                          {_.get(record, "secondaryDatasetUsage.labelHtml") ? (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: _.get(
-                                  record,
-                                  "secondaryDatasetUsage.labelHtml"
-                                ),
-                              }}
-                            />
-                          ) : (
-                            <Tag color="red">None</Tag>
-                          )}
-                        </React.Fragment>
-                      )}
-                    </React.Fragment>
-                  );
-                },
-              },
-              ...getClassificationColumns(),
-            ]}
-          />
-        )} */}
       </PageContent>
     </Layout>
   );
 };
 
-const mapContextToProps = ({ nomCode, addError, rank }) => ({
+const mapContextToProps = ({ nomCode, addError, rank, issueMap }) => ({
   nomCode,
   addError,
   rank,
+  issueMap,
 });
 export default withContext(mapContextToProps)(NameMatch);
