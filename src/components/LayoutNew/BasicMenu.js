@@ -231,6 +231,13 @@ class BasicMenu extends Component {
               </Menu.Item>
             )}
             {user && (
+              <Menu.Item key="taxalign">
+                <NavLink to={{ pathname: "/tools/taxonomic-alignment" }}>
+                  <span>Taxonomic alignment</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+            {user && (
               <Menu.Item key="datasetComparison">
                 <NavLink to={{ pathname: "/tools/dataset-comparison" }}>
                   <span>Dataset comparison</span>

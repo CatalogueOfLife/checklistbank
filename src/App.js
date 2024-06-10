@@ -57,6 +57,8 @@ import NameMatchJob from "./pages/tools/NameMatchJob";
 
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
+import TaxAlign from "./pages/tools/TaxAlign";
+
 import TaxonComparer from "./pages/tools/TaxonComparer";
 import NameUsageSearch from "./pages/NameSearch/Search";
 import GlobalRedirect from "./pages/GlobalRedirect";
@@ -343,6 +345,12 @@ const App = () => {
                 key="diffviewer"
                 path={`/tools/diff-viewer`}
                 component={DiffViewer}
+              />
+              <Route
+                exact
+                key="taxalign"
+                path={`/tools/taxonomic-alignment`}
+                component={TaxAlign}
               />
               <Route
                 exact
