@@ -296,5 +296,14 @@
       "external"
     ],
     "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "block merge syncs",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
   }
 ]

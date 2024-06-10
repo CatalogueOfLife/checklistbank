@@ -2,7 +2,7 @@
   {
     "abbrev": "P",
     "acronym": "ICNP",
-    "link": "https://doi.org/10.1099/ijsem.0.000778",
+    "link": "https://doi.org/10.1099/ijsem.0.005585",
     "name": "bacterial",
     "title": "International Code of Nomenclature of Prokaryotes"
   },
@@ -23,22 +23,29 @@
   {
     "abbrev": "S",
     "acronym": "ICPN",
-    "link": "https://doi.org/10.2307/3236580",
-    "name": "phytosociological",
+    "link": "https://doi.org/10.1111/avsc.12491",
+    "name": "phyto",
     "title": "International Code of Phytosociological Nomenclature"
   },
   {
     "abbrev": "V",
     "acronym": "ICVCN",
-    "link": "https://talk.ictvonline.org/information/w/ictv-information/383/ictv-code",
+    "link": "https://ictv.global/about/code",
     "name": "virus",
     "title": "International Code of Virus Classifications and Nomenclature"
   },
   {
     "abbrev": "Z",
     "acronym": "ICZN",
-    "link": "http://www.iczn.org/code",
+    "link": "https://www.iczn.org/the-code/the-code-online/",
     "name": "zoological",
     "title": "International Code of Zoological Nomenclature"
+  },
+  {
+    "abbrev": "Y",
+    "acronym": "ICPN",
+    "link": "http://phylonames.org/code/",
+    "name": "phylo",
+    "title": "International Code of Phylogenetic Nomenclature (PhyloCode)"
   }
 ]
