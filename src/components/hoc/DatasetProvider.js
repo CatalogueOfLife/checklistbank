@@ -36,7 +36,7 @@ class DatasetProvider extends React.Component {
     const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
 
     if (nextKey === "1008") {
-      console.log("test")
+      console.log("test");
     }
     const {
       match: {
@@ -57,7 +57,8 @@ class DatasetProvider extends React.Component {
   };
 
   fetchDataset = (key) => {
-    const { setCatalogue, setDataset, setRecentDatasets, addError } = this.props;
+    const { setCatalogue, setDataset, setRecentDatasets, addError } =
+      this.props;
     this.setState({ loading: true });
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
@@ -80,7 +81,9 @@ class DatasetProvider extends React.Component {
           ? JSON.parse(recentDatasetsAsText)
           : [];
         recentDatasets.unshift(res.data);
-        recentDatasets = _.uniqBy(recentDatasets, "key").slice(0, 5);
+        recentDatasets = _.uniqBy(recentDatasets, "key")
+          .slice(0, 5)
+          .map((d) => ({ key: d?.key, title: d?.title, alias: d?.alias }));
         localStorage.setItem(
           "colplus_recent_datasets",
           JSON.stringify(recentDatasets)
@@ -90,7 +93,7 @@ class DatasetProvider extends React.Component {
         if (res?.data?.origin === "project") {
           setCatalogue(res.data);
         } else {
-          setCatalogue(null)
+          setCatalogue(null);
         }
       })
       .catch((err) => {
@@ -120,8 +123,8 @@ class DatasetProvider extends React.Component {
       .then((res) => {
         this.setState({ catalogueLoading: false });
         setCatalogue(res.data);
-        setSourceDataset(null)
-        setDataset(null)
+        setSourceDataset(null);
+        setDataset(null);
       })
       .catch((err) => {
         this.setState({ catalogueLoading: false });
