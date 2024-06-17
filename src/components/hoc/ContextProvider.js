@@ -69,6 +69,13 @@ const TAXONOMIC_STATUS_COLOR = {
   misapplied: "red",
 };
 
+const getJsonDatasetForLocalStorage = (dataset) =>
+  JSON.stringify({
+    key: dataset.key,
+    title: dataset.title,
+    alias: dataset?.alias || "",
+  });
+
 class ContextProvider extends React.Component {
   state = {
     catalogueKey: localStorage.getItem("col_selected_project")
@@ -143,13 +150,16 @@ class ContextProvider extends React.Component {
       }
     },
     setDataset: (dataset) => {
-      localStorage.setItem("col_selected_dataset", JSON.stringify(dataset));
+      localStorage.setItem(
+        "col_selected_dataset",
+        getJsonDatasetForLocalStorage(dataset)
+      );
       this.setState({ dataset });
     },
     setSourceDataset: (sourceDataset) => {
       localStorage.setItem(
         "col_selected_source_dataset",
-        JSON.stringify(sourceDataset)
+        getJsonDatasetForLocalStorage(sourceDataset)
       );
       this.setState({ sourceDataset });
     },

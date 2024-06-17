@@ -81,14 +81,21 @@ class DatasetProvider extends React.Component {
           ? JSON.parse(recentDatasetsAsText)
           : [];
         recentDatasets.unshift(res.data);
-        recentDatasets = _.uniqBy(recentDatasets, "key")
+        let recentDatasetsFilteredAndMapped = _.uniqBy(recentDatasets, "key")
           .slice(0, 5)
           .map((d) => ({ key: d?.key, title: d?.title, alias: d?.alias }));
-        localStorage.setItem(
-          "colplus_recent_datasets",
-          JSON.stringify(recentDatasets)
-        );
-        setRecentDatasets(recentDatasets);
+        try {
+          console.log("Try to set storage 1");
+          localStorage.setItem(
+            "colplus_recent_datasets",
+            JSON.stringify(recentDatasetsFilteredAndMapped)
+          );
+          setRecentDatasets(recentDatasets);
+        } catch (error) {
+          console.log("err Try to set storage 1");
+          console.log(error);
+        }
+
         setDataset(res.data);
         if (res?.data?.origin === "project") {
           setCatalogue(res.data);
@@ -105,14 +112,23 @@ class DatasetProvider extends React.Component {
         let recentDatasets = recentDatasetsAsText
           ? JSON.parse(recentDatasetsAsText)
           : [];
-        recentDatasets = recentDatasets.filter((d) => d.key !== key);
-        localStorage.setItem(
-          "colplus_recent_datasets",
-          JSON.stringify(recentDatasets)
-        );
-        localStorage.removeItem("col_selected_dataset");
+        let recentDatasetsFilteredAndMapped = recentDatasets
+          .filter((d) => d.key !== key)
+          .map((d) => ({ key: d?.key, title: d?.title, alias: d?.alias }));
+        try {
+          localStorage.setItem(
+            "colplus_recent_datasets",
+            JSON.stringify(recentDatasetsFilteredAndMapped)
+          );
+          console.log("Try to set storage 2");
 
-        addError(err);
+          localStorage.removeItem("col_selected_dataset");
+        } catch (error) {
+          console.log("error Try to set storage 2");
+          console.log(error);
+        }
+
+        // addError(err);
       });
   };
 
