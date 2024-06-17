@@ -19,6 +19,7 @@ import {
   Col,
   Divider,
   Checkbox,
+  Typography,
   Tag,
 } from "antd";
 import axios from "axios";
@@ -30,7 +31,7 @@ import Exception403 from "../../components/exception/403";
 
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import qs from "query-string";
-
+const { Text } = Typography;
 const Option = Select.Option;
 
 class DatasetDownload extends React.Component {
@@ -48,6 +49,7 @@ class DatasetDownload extends React.Component {
       excel: false,
       extended: false,
       dataAccess: null,
+      minRank: "GENUS",
     };
   }
 
@@ -239,7 +241,7 @@ class DatasetDownload extends React.Component {
           </Col>
           <Col span={10}>
             <NameAutocomplete
-              minRank="GENUS"
+              minRank={this.state.minRank}
               datasetKey={dataset?.key}
               defaultTaxonKey={
                 _.get(qs.parse(_.get(location, "search")), "taxonID") || null
@@ -260,6 +262,15 @@ class DatasetDownload extends React.Component {
                 this.setState({ rootTaxon: null });
               }}
             />
+            <Text>Minimum rank for search: </Text>
+            <Radio.Group
+              onChange={(e) => this.setState({ minRank: e.target.value })}
+              value={this.state.minRank}
+            >
+              <Radio value={"FAMILY"}>Family</Radio>
+              <Radio value={"GENUS"}>Genus</Radio>
+              <Radio value={"SPECIES"}>Species</Radio>
+            </Radio.Group>
           </Col>
 
           <Col span={10} style={{ textAlign: "right" }}>
