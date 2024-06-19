@@ -70,11 +70,13 @@ const TAXONOMIC_STATUS_COLOR = {
 };
 
 const getJsonDatasetForLocalStorage = (dataset) =>
-  JSON.stringify({
-    key: dataset.key,
-    title: dataset.title,
-    alias: dataset?.alias || "",
-  });
+  !!dataset
+    ? JSON.stringify({
+        key: dataset.key,
+        title: dataset.title,
+        alias: dataset?.alias || "",
+      })
+    : null;
 
 class ContextProvider extends React.Component {
   state = {
