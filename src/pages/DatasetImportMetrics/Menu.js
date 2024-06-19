@@ -38,7 +38,7 @@ class ImportMenu extends React.Component {
             {!attempt && `Current ${isProject ? "release" : "import"}`}
           </NavLink>
         </Menu.Item>
-        {attempt && (
+        {!isProject && attempt && (
           <Menu.Item key="tree" icon={<RiNodeTree />}>
             <NavLink
               to={{
