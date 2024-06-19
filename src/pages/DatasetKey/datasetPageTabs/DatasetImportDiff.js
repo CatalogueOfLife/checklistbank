@@ -12,6 +12,8 @@ import moment from "moment";
 import history from "../../../history";
 import qs from "query-string";
 import Menu from "../../DatasetImportMetrics/Menu";
+import withContext from "../../../components/hoc/withContext";
+
 const { Option } = Select;
 class DatasetDiff extends React.Component {
   constructor(props) {
@@ -138,8 +140,8 @@ class DatasetDiff extends React.Component {
           importHistory,
           err: null,
         });
-        if(importHistory.length === 1){
-          this.setState({loading: false, onlyOneImport: true})
+        if (importHistory.length === 1) {
+          this.setState({ loading: false, onlyOneImport: true });
         }
         return importHistory;
       })
@@ -152,8 +154,9 @@ class DatasetDiff extends React.Component {
 
   render() {
     const diff = _.get(this.state, "data");
-    const { datasetKey } = this.props;
-    const { error, attempt1, attempt2, importHistory, loading, onlyOneImport } = this.state;
+    const { datasetKey, dataset } = this.props;
+    const { error, attempt1, attempt2, importHistory, loading, onlyOneImport } =
+      this.state;
 
     let html;
     if (diff) {
@@ -171,7 +174,7 @@ class DatasetDiff extends React.Component {
 
     return (
       <PageContent>
-        <Menu datasetKey={datasetKey} />
+        <Menu dataset={dataset} datasetKey={datasetKey} />
         <Row style={{ marginBottom: "8px" }}>
           <Col span={12}>
             <Select
@@ -262,4 +265,5 @@ class DatasetDiff extends React.Component {
   }
 }
 
-export default withRouter(DatasetDiff);
+const mapContextToProps = ({ addError, dataset }) => ({ addError, dataset });
+export default withContext(mapContextToProps)(withRouter(DatasetDiff));

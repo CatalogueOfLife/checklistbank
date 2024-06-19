@@ -108,6 +108,7 @@ class DatasetPage extends React.Component {
       importStateMap,
       user,
     } = this.props;
+    const isProject = dataset?.origin === "project";
     console.log(subsection);
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
@@ -130,7 +131,7 @@ class DatasetPage extends React.Component {
 
     const sect = !section ? "about" : section.split("?")[0];
     const openKeys = ["dataset", "datasetKey"];
-    const selectedKeys = ["diff", "import-history"].includes(section)
+    const selectedKeys = ["diff", "import-timeline"].includes(section)
       ? ["imports"]
       : sect === "duplicates" && !taxonOrNameKey
       ? ["datasetDuplicateSearch"]
@@ -142,8 +143,16 @@ class DatasetPage extends React.Component {
       <Layout
         selectedDataset={dataset}
         selectedCatalogueKey={catalogueKey}
-        openKeys={openKeys}
-        selectedKeys={selectedKeys}
+        openKeys={
+          isProject && ["imports", "diff", "import-timeline"].includes(section)
+            ? ["assembly"]
+            : openKeys
+        }
+        selectedKeys={
+          isProject && ["imports", "diff", "import-timeline"].includes(section)
+            ? ["release-metrics"]
+            : selectedKeys
+        }
         taxonOrNameKey={taxonOrNameKey}
       >
         {_.get(dataset, "title") && (

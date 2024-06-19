@@ -468,6 +468,15 @@ class BasicMenu extends Component {
                       <span>Releases</span>
                     </NavLink>
                   </Menu.Item>
+                  <Menu.Item key="release-metrics">
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${catalogueKey}/imports`,
+                      }}
+                    >
+                      <span>Release metrics</span>
+                    </NavLink>
+                  </Menu.Item>
                   {Auth.canEditDataset({ key: catalogueKey }, user) && (
                     <Menu.Item key="projectEditors">
                       <NavLink

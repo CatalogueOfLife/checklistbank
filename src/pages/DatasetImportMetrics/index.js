@@ -198,7 +198,7 @@ class DatasetImportMetrics extends React.Component {
     return (
       <PageContent>
         {!["xrelease", "release"].includes(origin) && (
-          <Menu datasetKey={datasetKey} attempt={attempt} />
+          <Menu dataset={dataset} datasetKey={datasetKey} attempt={attempt} />
         )}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
@@ -217,7 +217,11 @@ class DatasetImportMetrics extends React.Component {
         )}
         {importHistory && importHistory.length > 0 && (
           <Drawer
-            title="Import history"
+            title={
+              dataset.origin === "project"
+                ? "Release history"
+                : "Import history"
+            }
             placement="right"
             closable={false}
             onClose={this.hideHistoryDrawer}
@@ -249,21 +253,22 @@ class DatasetImportMetrics extends React.Component {
             {data && !isRunning && (
               <Col>
                 <h1>
-                  {["xrelease", "release"].includes(origin)
+                  {["xrelease", "release", "project"].includes(origin)
                     ? "Released "
                     : "Imported "}
                   {moment(data.finished).format("lll")}
                 </h1>
-                {dataset?.lastImportAttempt && (
-                  <span>
-                    Last import attempt:{" "}
-                    {moment(dataset?.lastImportAttempt).format("lll")}
-                  </span>
-                )}
+                {dataset?.lastImportAttempt &&
+                  dataset?.origin !== "project" && (
+                    <span>
+                      Last import attempt:{" "}
+                      {moment(dataset?.lastImportAttempt).format("lll")}
+                    </span>
+                  )}
               </Col>
             )}
             <Col flex="auto"></Col>
-            
+
             {!["xrelease", "release"].includes(origin) && (
               <Col style={{ textAlign: "right" }}>
                 {importHistory && (
@@ -285,7 +290,7 @@ class DatasetImportMetrics extends React.Component {
               <ImportMetrics
                 data={data}
                 subtitle={
-                  ["xrelease", "release"].includes(origin)
+                  ["xrelease", "release", "project"].includes(origin)
                     ? `Released ${moment(data.finished).format(
                         "MMMM Do YYYY, h:mm a"
                       )}`

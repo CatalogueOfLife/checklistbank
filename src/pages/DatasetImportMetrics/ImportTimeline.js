@@ -77,7 +77,7 @@ class ImportTimeline extends React.Component {
   };
 
   initChart = (finishedImports) => {
-    const { datasetKey, addError } = this.props;
+    const { datasetKey, addError, dataset } = this.props;
 
     const { selectedGroup, timestampToAttemptMap } = this.state;
     const seriesNames =
@@ -116,7 +116,10 @@ class ImportTimeline extends React.Component {
         zoomType: "x",
       },
       title: {
-        text: "Import timeline",
+        text:
+          dataset?.origin === "project"
+            ? "Release timeline"
+            : "Import timeline",
       },
       credits: false,
       /*  subtitle: {
@@ -190,10 +193,10 @@ class ImportTimeline extends React.Component {
 
   render() {
     const { options, groups, selectedGroup } = this.state;
-    const { datasetKey, addError } = this.props;
+    const { datasetKey, addError, dataset } = this.props;
     return (
       <PageContent>
-        <Menu datasetKey={datasetKey} />
+        <Menu datasetKey={datasetKey} dataset={dataset} />
         <Row>
           <Col flex="auto"></Col>
           <Col>

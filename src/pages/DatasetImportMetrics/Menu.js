@@ -11,7 +11,8 @@ import { RiNodeTree } from "react-icons/ri";
 class ImportMenu extends React.Component {
   render() {
     // const { current } = this.state;
-    const { datasetKey, attempt, location } = this.props;
+    const { datasetKey, attempt, location, dataset } = this.props;
+    const isProject = dataset?.origin === "project";
     const splitted = location.pathname
       .split(`/dataset/${datasetKey}/`)[1]
       .split("/");
@@ -33,8 +34,8 @@ class ImportMenu extends React.Component {
                 : `/dataset/${datasetKey}/imports`,
             }}
           >
-            {attempt && `Import ${attempt}`}
-            {!attempt && `Current import`}
+            {attempt && `${isProject ? "Release" : "Import"} ${attempt}`}
+            {!attempt && `Current ${isProject ? "release" : "import"}`}
           </NavLink>
         </Menu.Item>
         {attempt && (

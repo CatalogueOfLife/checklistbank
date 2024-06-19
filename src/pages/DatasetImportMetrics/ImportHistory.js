@@ -58,7 +58,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
         {["finished", "failed", "unchanged"].indexOf(h.state) === -1 && (
           <strong>{h.state}</strong>
         )}
-        {(h.state === "finished") && (
+        {h.state === "finished" && (
           <React.Fragment>
             <NavLink
               to={{
@@ -78,7 +78,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
             </NavLink>
             {_.get(h, "user.username") && (
               <p>
-                {_.get(h, "upload") ? "Upload" : "Download"} by{" "}
+                {_.get(h, "upload") ? "Upload" : _.startCase(h.job)} by{" "}
                 {h.user.username}
               </p>
             )}
@@ -87,17 +87,21 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                 {`${moment(h.started).format("lll")}`}{" "}
               </span>{" "}
               <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
-                <a href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`} target="_blank">
+                <a
+                  href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`}
+                  target="_blank"
+                >
                   <FileZipOutlined />
                 </a>{" "}
-              </Tooltip>
-              {" "}
+              </Tooltip>{" "}
               <Tooltip title={`TextTree #${h.attempt}`} placement="right">
-                <a href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`} target="_blank">
+                <a
+                  href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`}
+                  target="_blank"
+                >
                   <FileTextOutlined />
                 </a>{" "}
-              </Tooltip>
-              {" "}
+              </Tooltip>{" "}
               {getPreviousFinishedImport(importHistory, index) && (
                 <Tooltip
                   title="Diff between this and previous attempt"
@@ -117,26 +121,21 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                   </NavLink>{" "}
                 </Tooltip>
               )}
-
               <Tooltip title="Kibana logs" placement="right">
                 <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                   <CodeOutlined />
                 </a>
-              </Tooltip>
-              {" "}
-              <Tooltip
-                  title="Browse archived tree"
-                  placement="right"
+              </Tooltip>{" "}
+              <Tooltip title="Browse archived tree" placement="right">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`,
+                  }}
+                  exact={true}
                 >
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`
-                    }}
-                    exact={true}
-                  >
-                    <RiNodeTree />
-                  </NavLink>
-                </Tooltip>                    
+                  <RiNodeTree />
+                </NavLink>
+              </Tooltip>
             </p>
           </React.Fragment>
         )}
@@ -152,7 +151,10 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
               <strong>{`${h.state}`}</strong>
             </NavLink>{" "}
             <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
-              <a href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`} target="_blank">
+              <a
+                href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`}
+                target="_blank"
+              >
                 <FileZipOutlined />
               </a>{" "}
             </Tooltip>
