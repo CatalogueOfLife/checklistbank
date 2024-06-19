@@ -405,6 +405,7 @@ class CatalogueSectors extends React.Component {
         params: { catalogueKey },
       },
       datasetKey,
+      dataset,
       user,
       rank,
     } = this.props;
@@ -642,6 +643,7 @@ class CatalogueSectors extends React.Component {
         {!error && (
           <SectorTable
             isRelease={isRelease}
+            releasedFrom={dataset?.sourceKey}
             data={data}
             loading={loading}
             onSectorRematch={this.getData}
@@ -681,11 +683,18 @@ class CatalogueSectors extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, rank, catalogueKey, addError }) => ({
+const mapContextToProps = ({
+  user,
+  rank,
+  catalogueKey,
+  dataset,
+  addError,
+}) => ({
   addError,
   user,
   rank,
   catalogueKey,
+  dataset,
 });
 
 export default withContext(mapContextToProps)(withRouter(CatalogueSectors));

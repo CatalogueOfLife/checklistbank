@@ -219,12 +219,13 @@ class SectorTable extends React.Component {
       expandedRowRender,
       isRelease,
       expandable,
+      releasedFrom,
     } = this.props;
     const offset = pagination
       ? (pagination.current - 1) * pagination.pageSize
       : 0;
     const columns = getColumns(
-      catalogueKey,
+      !!releasedFrom ? releasedFrom : catalogueKey,
       this.state.searchText,
       this.getColumnSearchProps
     );
