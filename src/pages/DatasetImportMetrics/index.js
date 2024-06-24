@@ -198,7 +198,11 @@ class DatasetImportMetrics extends React.Component {
     return (
       <PageContent>
         {!["xrelease", "release"].includes(origin) && (
-          <Menu dataset={dataset} datasetKey={datasetKey} attempt={attempt} />
+          <Menu
+            dataset={dataset}
+            datasetKey={datasetKey}
+            attempt={attempt || this?.state?.data?.attempt}
+          />
         )}
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
@@ -228,6 +232,7 @@ class DatasetImportMetrics extends React.Component {
             open={this.state.historyVisible}
           >
             <ImportHistory
+              origin={dataset?.origin}
               importHistory={importHistory}
               attempt={attempt}
               catalogueKey={catalogueKey}
@@ -238,7 +243,9 @@ class DatasetImportMetrics extends React.Component {
           <Spin>
             <Alert
               message={_.startCase(this.state.data.state)}
-              description="The import is not finished"
+              description={`The ${
+                ["project"].includes(origin) ? "Release" : "Import"
+              } is not finished`}
               type="info"
             />
           </Spin>

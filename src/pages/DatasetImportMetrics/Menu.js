@@ -49,6 +49,18 @@ class ImportMenu extends React.Component {
             </NavLink>
           </Menu.Item>
         )}
+        {isProject && attempt && (
+          <Menu.Item key="tree" icon={<RiNodeTree />}>
+            <NavLink
+              to={{
+                pathname: `/dataset/${datasetKey}R${attempt}/classification`,
+              }}
+            >
+              Browse tree
+            </NavLink>
+          </Menu.Item>
+        )}
+
         <Menu.Item key="import-timeline" icon={<LineChartOutlined />}>
           <NavLink to={{ pathname: `/dataset/${datasetKey}/import-timeline` }}>
             Timeline

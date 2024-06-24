@@ -47,7 +47,7 @@ const getPreviousFinishedImport = (importHistory, index) => {
   );
 };
 
-const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
+const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
   <Timeline>
     {importHistory.map((h, index) => (
       <Timeline.Item
@@ -102,6 +102,16 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey }) => (
                   <FileTextOutlined />
                 </a>{" "}
               </Tooltip>{" "}
+              {origin === "project" && (
+                <Tooltip title={`Release files`} placement="right">
+                  <a
+                    href={`${config.downloadApi}releases/${h.datasetKey}/${h.attempt}`}
+                    target="_blank"
+                  >
+                    <DownloadOutlined />
+                  </a>{" "}
+                </Tooltip>
+              )}
               {getPreviousFinishedImport(importHistory, index) && (
                 <Tooltip
                   title="Diff between this and previous attempt"
