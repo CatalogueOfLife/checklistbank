@@ -908,9 +908,8 @@ class TaxonPage extends React.Component {
                 <PresentationItem md={md} label="Related names">
                   <NavLink
                     to={{
-                      pathname: `/namesindex/${_.get(
-                        info,
-                        "taxon.name.namesIndexId"
+                      pathname: `/namesindex/${encodeURIComponent(
+                        _.get(info, "taxon.name.namesIndexId")
                       )}/related`,
                     }}
                   >
