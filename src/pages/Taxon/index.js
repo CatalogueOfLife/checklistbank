@@ -81,7 +81,7 @@ const initialState = {
   sourceDatasetKeyMap: null,
   sourceTaxon: null,
   includes: [],
-  issues: [],
+  //issues: [],
   edit: false,
 };
 
@@ -149,7 +149,7 @@ class TaxonPage extends React.Component {
               )}`
         );
       } */
-      console.log(nameusage.data.status);
+      //  console.log(nameusage.data.status);
     } catch (err) {
       this.setState({ taxonLoading: false, taxonError: err, taxon: null });
     }
@@ -426,14 +426,14 @@ class TaxonPage extends React.Component {
         this.setState({
           includesLoading: false,
           includes: _.get(res, "data.facets.rank") || [],
-          issues: _.get(res, "data.result[0].issues") || [],
+          // issues: _.get(res, "data.result[0].issues") || [],
         });
       })
       .catch((err) => {
         this.setState({
           includesLoading: false,
           includes: [],
-          issues: [],
+          //  issues: [],
         });
       });
   };
@@ -940,7 +940,7 @@ class TaxonPage extends React.Component {
                   )}
                 </Col>
               </Row>
-              {issues && issues.length > 0 && (
+              {/*  {issues && issues.length > 0 && (
                 <PresentationItem md={md} label="Issues and flags">
                   <div>
                     {issues.map((i) => (
@@ -955,9 +955,9 @@ class TaxonPage extends React.Component {
                     ))}
                   </div>
                 </PresentationItem>
-              )}
+              )} */}
               {sourceTaxon?.issues && sourceTaxon?.issues.length > 0 && (
-                <PresentationItem md={md} label="Source Issues and flags">
+                <PresentationItem md={md} label="Issues and flags">
                   <div>
                     {sourceTaxon?.issues.map((i) => (
                       <Tooltip
