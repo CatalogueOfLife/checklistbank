@@ -4,6 +4,9 @@ import AgentPresentation from "./AgentPresentation";
 import { Row, Col, Switch, Divider } from "antd";
 
 import _ from "lodash";
+
+import IDENTIFIER_TYPES from "../../pages/DatasetKey/datasetPageTabs/DatasetMeta";
+
 const render = (data, field) => {
   switch (field) {
     case "creator":
@@ -22,6 +25,63 @@ const render = (data, field) => {
       return <AgentPresentation agent={data.contact} />;
     case "publisher":
       return <AgentPresentation agent={data.publisher} />;
+    case "source":
+      return (
+        <>
+          {data?.source.map((citation) => (
+            <Row>
+              {citation.citation ? (
+                <div
+                  style={{
+                    display: "inline-block",
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: citation.citation,
+                  }}
+                ></div>
+              ) : (
+                <div
+                  style={{
+                    display: "inline-block",
+                  }}
+                >
+                  {citation.title}
+                </div>
+              )}
+            </Row>
+          ))}
+        </>
+      );
+    case "identifier":
+      return (
+        <ol
+          style={{
+            listStyle: "none",
+            paddingInlineStart: "0px",
+          }}
+        >
+          {Object.keys(data.identifier).map((i) => (
+            <li
+              style={{
+                float: "left",
+                marginRight: "8px",
+              }}
+            >
+              {`${i.toUpperCase()}: `}
+              {IDENTIFIER_TYPES[i] ? (
+                <a
+                  href={`${IDENTIFIER_TYPES[i]}${data.identifier[i]}`}
+                  target="_blank"
+                >
+                  {data.identifier[i]}
+                </a>
+              ) : (
+                data.identifier[i]
+              )}
+            </li>
+          ))}
+        </ol>
+      );
     default:
       return data[field];
   }
