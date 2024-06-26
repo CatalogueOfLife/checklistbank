@@ -461,7 +461,7 @@ class NameSearchPage extends React.Component {
       ? facets.sectorDatasetKey.map((s) => ({
           value: s.value,
           label: `${
-            this.state.sectorDatasetKeyMap[s.value]?.title || s.value
+            this.state.sectorDatasetKeyMap?.[s.value]?.title || s.value
           } (${s.count.toLocaleString("en-GB")})`, //`${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
@@ -591,7 +591,7 @@ class NameSearchPage extends React.Component {
                 />
               </div>
             )}
-            {/*  {(catalogueKey === datasetKey ||
+            {(catalogueKey === datasetKey ||
               Number(datasetKey) === catalogueKey ||
               (dataset &&
                 ["project", "release", "xrelease"].includes(
@@ -613,7 +613,7 @@ class NameSearchPage extends React.Component {
                   autoFocus={false}
                 />
               </div>
-            )} */}
+            )}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
                 <FormItem label="Fuzzy">
