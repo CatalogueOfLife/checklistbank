@@ -147,11 +147,19 @@ export default {
     KEY,
     basePath,
     project = false,
-    publisher = false
-  ) => ({
-    pathname: publisher
-      ? `${basePath}/publisher/${KEY}`
-      : `/dataset/${KEY}/imports/${value}`,
-    search: ``,
-  }),
+    publisher = false,
+    record
+  ) =>
+    !!record?.metrics?.datasetAttempt
+      ? {
+          pathname: publisher
+            ? `${basePath}/publisher/${KEY}`
+            : `/dataset/${KEY}/imports/${
+                record?.metrics?.datasetAttempt[
+                  record?.metrics?.datasetAttempt.length - 1
+                ]
+              }`,
+          search: ``,
+        }
+      : null,
 };

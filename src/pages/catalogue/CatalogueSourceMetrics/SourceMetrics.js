@@ -286,7 +286,9 @@ class SourceMetrics extends React.Component {
   renderDatasetAttempt = (datasetAttempt) =>
     datasetAttempt?.length > 1
       ? `${datasetAttempt[0]} - ${datasetAttempt[datasetAttempt.length - 1]}`
-      : datasetAttempt[0];
+      : datasetAttempt?.length === 1
+      ? datasetAttempt[0]
+      : "N/A";
 
   render() {
     const {
@@ -344,81 +346,93 @@ class SourceMetrics extends React.Component {
 
             return (
               <React.Fragment>
-                {typeof Links[linkKey] === "function" && (
-                  <>
-                    <NavLink
-                      to={{
-                        pathname: Links[linkKey](
-                          column,
-                          text,
-                          record.key || record.id,
-                          basePath,
-                          isProject,
-                          isPublisher
-                        ).pathname,
-                        search: Links[linkKey](
-                          column,
-                          text,
-                          record.key || record.id,
-                          basePath,
-                          isProject,
-                          isPublisher
-                        ).search,
-                      }}
-                      exact={true}
-                    >
-                      {/* {isPublisher && column === "datasetAttempt"
+                {typeof Links[linkKey] === "function" &&
+                  Links[linkKey](
+                    column,
+                    text,
+                    record.key || record.id,
+                    basePath,
+                    isProject,
+                    isPublisher,
+                    record
+                  ) !== null && (
+                    <>
+                      <NavLink
+                        to={{
+                          pathname: Links[linkKey](
+                            column,
+                            text,
+                            record.key || record.id,
+                            basePath,
+                            isProject,
+                            isPublisher,
+                            record
+                          ).pathname,
+                          search: Links[linkKey](
+                            column,
+                            text,
+                            record.key || record.id,
+                            basePath,
+                            isProject,
+                            isPublisher,
+                            record
+                          ).search,
+                        }}
+                        exact={true}
+                      >
+                        {/* {isPublisher && column === "datasetAttempt"
                         ? ""
                         : Number(text || 0).toLocaleString()}{" "} */}
-                      {!isPublisher &&
-                        column !== "datasetAttempt" &&
-                        Number(text || 0).toLocaleString()}
-                      {!isPublisher &&
+                        {!isPublisher &&
+                          column !== "datasetAttempt" &&
+                          Number(text || 0).toLocaleString()}
+                        {!isPublisher &&
+                          column === "datasetAttempt" &&
+                          this.renderDatasetAttempt(
+                            _.get(record, "metrics.datasetAttempt")
+                          )}
+                        {getIconForDiff(text || 0, selectedRelaseValue || 0)}
+                      </NavLink>
+                      {isProject &&
                         column === "datasetAttempt" &&
-                        this.renderDatasetAttempt(
-                          _.get(record, "metrics.datasetAttempt")
+                        (_.get(record, "metrics.datasetAttempt.length", 0) >
+                          1 ||
+                          _.get(
+                            record,
+                            `metrics.datasetAttempt[${
+                              record?.metrics?.datasetAttempt?.length - 1
+                            }]`
+                          ) !== record?.metrics?.latestAttempt) && (
+                          <Tooltip title="Latest Attempt">
+                            {" "}
+                            <NavLink
+                              to={{
+                                pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
+                              }}
+                            >
+                              {` (${record?.metrics?.latestAttempt})`}
+                            </NavLink>
+                          </Tooltip>
                         )}
-                      {getIconForDiff(text || 0, selectedRelaseValue || 0)}
-                    </NavLink>
-                    {isProject &&
-                      column === "datasetAttempt" &&
-                      (_.get(record, "metrics.datasetAttempt.length", 0) > 1 ||
-                        _.get(
-                          record,
-                          `metrics.datasetAttempt[${
-                            record?.metrics?.datasetAttempt?.length - 1
-                          }]`
-                        ) !== record?.metrics?.latestAttempt) && (
-                        <Tooltip title="Latest Attempt">
-                          {" "}
-                          <NavLink
-                            to={{
-                              pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
-                            }}
-                          >
-                            {` (${record?.metrics?.latestAttempt})`}
-                          </NavLink>
-                        </Tooltip>
-                      )}
 
-                    {isProject &&
-                      column === "usagesCount" &&
-                      Number(text || 0) <
-                        record?.metrics?.latestUsagesCount && (
-                        <Tooltip title="Latest Usages">
-                          <NavLink
-                            to={{
-                              pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
-                            }}
-                          >
-                            {` (${Number(
-                              record?.metrics?.latestUsagesCount || 0
-                            ).toLocaleString()})`}
-                          </NavLink>
-                        </Tooltip>
-                      )}
-                  </>
-                )}
+                      {isProject &&
+                        column === "usagesCount" &&
+                        Number(text || 0) <
+                          record?.metrics?.latestUsagesCount && (
+                          <Tooltip title="Latest Usages">
+                            <NavLink
+                              to={{
+                                pathname: `/dataset/${record?.key}/imports/${record?.metrics?.latestAttempt}`,
+                              }}
+                            >
+                              {` (${Number(
+                                record?.metrics?.latestUsagesCount || 0
+                              ).toLocaleString()})`}
+                            </NavLink>
+                          </Tooltip>
+                        )}
+                    </>
+                  )}
                 {typeof Links[linkKey] !== "function" &&
                   (column === "nameMatchesCount" && text === 0 ? (
                     "N/A"
