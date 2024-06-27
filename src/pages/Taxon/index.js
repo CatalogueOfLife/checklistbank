@@ -816,6 +816,11 @@ class TaxonPage extends React.Component {
                   properties={info.properties}
                 />
               )}
+              {_.get(taxon, "name.etymology") && (
+                <PresentationItem md={md} label="Etymology">
+                  {_.get(taxon, "name.etymology")}
+                </PresentationItem>
+              )}
               {_.get(taxon, "remarks") && (
                 <PresentationItem md={md} label="Remarks">
                   {taxon?.remarks ? (
