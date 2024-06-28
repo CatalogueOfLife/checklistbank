@@ -100,6 +100,40 @@ class CatalogueOptions extends React.Component {
       );
   };
 
+  validateProject = () => {
+    const {
+      match: {
+        params: { catalogueKey },
+      },
+    } = this.props;
+
+    this.setState({ validateProjectLoading: true });
+    axios
+      .post(`${config.dataApi}dataset/${catalogueKey}/validate`)
+      .then((res) => {
+        this.setState(
+          {
+            validateProjectLoading: false,
+            error: null,
+            exportResponse: res.data,
+          },
+          () => {
+            notification.open({
+              message: "Action triggered",
+              description: "validate selected project (might take a while)",
+            });
+          }
+        );
+      })
+      .catch((err) =>
+        this.setState({
+          error: err,
+          validateProjectLoading: false,
+          exportResponse: null,
+        })
+      );
+  };
+
   releaseCatalogue = () => {
     const {
       match: {
@@ -322,6 +356,22 @@ class CatalogueOptions extends React.Component {
           </Col>
           {Auth.canEditDataset({ key: catalogueKey }, user) && (
             <Col span={6}>
+              <Popconfirm
+                placement="rightTop"
+                title={`Do you want to validate ${catalogue.title}? All issues will be rebuild.`}
+                onConfirm={this.validateProject}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={releaseColLoading}
+                  style={{ marginRight: "10px", marginBottom: "10px" }}
+                >
+                  Validate
+                </Button>
+              </Popconfirm>
+              
               <Popconfirm
                 placement="rightTop"
                 title={`Do you want to release ${catalogue.title}?`}
