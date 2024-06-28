@@ -355,7 +355,6 @@ const SectorForm = ({
         <Col span={15} style={{ paddingLeft: "8px" }}>
           <NameAutocomplete
             disabled={targetDisabled}
-            minRank="genus"
             accepted={true}
             datasetKey={sector.datasetKey}
             defaultTaxonKey={_.get(sector, "target.id") || null}
@@ -385,6 +384,7 @@ const SectorForm = ({
         <Col span={15} style={{ paddingLeft: "8px" }}>
           <NameAutocomplete
             disabled={subjectDisabled}
+            accepted={true}
             datasetKey={sector.subjectDatasetKey}
             defaultTaxonKey={_.get(sector, "subject.id") || null}
             onSelectName={(name) => updateTargetOrSubject(name, "subject")}
