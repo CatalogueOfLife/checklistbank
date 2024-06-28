@@ -302,7 +302,6 @@ const SectorForm = ({
 
         <FormItem {...formItemLayout} label="Target" key="target" name="target">
           <TaxonFormControl
-            minRank="genus"
             accepted={true}
             datasetKey={sector?.datasetKey || catalogueKey}
             defaultTaxonKey={_.get(sector, "target.id") || null}
@@ -317,7 +316,6 @@ const SectorForm = ({
         >
           <TaxonFormControl
             disabled={!sector && !subjectDatasetKey}
-            minRank="genus"
             accepted={true}
             datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
             defaultTaxonKey={_.get(sector, "subject.id") || null}
