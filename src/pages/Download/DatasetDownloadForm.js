@@ -50,6 +50,7 @@ class DatasetDownload extends React.Component {
       extended: false,
       dataAccess: null,
       minRank: "GENUS",
+      excludeRanksBelow: null,
     };
   }
 
@@ -137,7 +138,7 @@ class DatasetDownload extends React.Component {
       bareNames,
       extinct,
       excel,
-      minRank,
+      excludeRanksBelow,
       dataAccess,
       selectedDataFormat,
       downloadModalVisible,
@@ -217,8 +218,8 @@ class DatasetDownload extends React.Component {
                     options.root = {};
                     options.root.id = rootTaxon.id;
                   }
-                  if (minRank) {
-                    options.minRank = minRank;
+                  if (excludeRanksBelow) {
+                    options.minRank = excludeRanksBelow;
                   }
                   if (
                     extended &&
@@ -303,7 +304,7 @@ class DatasetDownload extends React.Component {
             <Select
               style={{ width: 200 }}
               showSearch
-              onChange={(val) => this.setState({ minRank: val })}
+              onChange={(val) => this.setState({ excludeRanksBelow: val })}
             >
               {rank.map((r) => (
                 <Option key={r} value={r}>
