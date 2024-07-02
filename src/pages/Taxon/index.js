@@ -81,7 +81,7 @@ const initialState = {
   sourceDatasetKeyMap: null,
   sourceTaxon: null,
   includes: [],
-  //issues: [],
+  issues: [],
   edit: false,
 };
 
@@ -426,14 +426,14 @@ class TaxonPage extends React.Component {
         this.setState({
           includesLoading: false,
           includes: _.get(res, "data.facets.rank") || [],
-          // issues: _.get(res, "data.result[0].issues") || [],
+          issues: _.get(res, "data.result[0].issues") || [],
         });
       })
       .catch((err) => {
         this.setState({
           includesLoading: false,
           includes: [],
-          //  issues: [],
+          issues: [],
         });
       });
   };
@@ -482,6 +482,10 @@ class TaxonPage extends React.Component {
       referenceIndexMap,
       issues,
     } = this.state;
+
+    const mergedIssues = [
+      ...new Set([...(sourceTaxon?.issues || []), ...issues]),
+    ];
 
     /*     const synonyms =
           info && info.synonyms && info.synonyms.length > 0
@@ -960,10 +964,10 @@ class TaxonPage extends React.Component {
                   </div>
                 </PresentationItem>
               )} */}
-              {sourceTaxon?.issues && sourceTaxon?.issues.length > 0 && (
+              {mergedIssues && mergedIssues.length > 0 && (
                 <PresentationItem md={md} label="Issues and flags">
                   <div>
-                    {sourceTaxon?.issues.map((i) => (
+                    {mergedIssues.map((i) => (
                       <Tooltip
                         key={i}
                         title={_.get(issueMap, `[${i}].description`)}
