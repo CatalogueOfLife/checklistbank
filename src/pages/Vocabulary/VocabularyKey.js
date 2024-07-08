@@ -51,7 +51,7 @@ const VocabularyKey = ({
                     {typeof item[key] == "boolean" ? (
                       <BooleanValue value={item[key]} />
                     ) : (
-                      item[key].endsWith('.png') ? (
+                      typeof item[key] == "string" && item[key].endsWith('.png') ? (
                         <Image src={item[key]}/>
                       ) : (
                         <Linkify>{item[key]}</Linkify>
