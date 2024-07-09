@@ -462,6 +462,7 @@ class TaxonPage extends React.Component {
       getNomStatus,
       rank,
       issueMap,
+      taxGroup,
       user,
       dataset,
     } = this.props;
@@ -569,6 +570,14 @@ class TaxonPage extends React.Component {
                     <EditOutlined /> Edit taxon
                   </Button>
                 )}
+                {_.get(info, "group") && !_.get(info, "group").startsWith("other") && (
+                  <img
+                    style={{ marginRight: "8px", width: "24px", height: "24px" }}
+                    src={_.get(taxGroup[_.get(info, "group")], "icon")}
+                    alt={_.get(info, "group")}
+                  />
+                )}
+                
                 {taxon.provisional && <Tag color="red">Provisional</Tag>}
                 <Button
                   onClick={() => {
@@ -1012,6 +1021,7 @@ const mapContextToProps = ({
   getNomStatus,
   rank,
   user,
+  taxGroup,
 }) => ({
   issueMap,
   dataset,
@@ -1019,6 +1029,7 @@ const mapContextToProps = ({
   getNomStatus,
   rank,
   user,
+  taxGroup,
 });
 
 export default withContext(mapContextToProps)(TaxonPage);

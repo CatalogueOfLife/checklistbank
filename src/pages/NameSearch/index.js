@@ -50,7 +50,7 @@ const getBaseUri = (catalogueKey, datasetKey) =>
   )
 ); */
 
-const getColumns = (catalogueKey) => [
+const getColumns = (catalogueKey, taxGroup) => [
   {
     title: "",
     dataIndex: ["usage", "merged"],
@@ -130,6 +130,23 @@ const getColumns = (catalogueKey) => [
     width: 60,
     sorter: true,
   },
+//  {
+//    title: "Group",
+//    dataIndex: ["group"],
+//    key: "group",
+//    width: 40,
+//    render: (text, record) => {
+//      return !_.get(record, "group") ? (
+//        ""
+//      ) : (
+//        <img
+//        style={{ width: "32px", height: "32px" }}
+//        src={_.get(taxGroup[_.get(record, "group")], "icon")}
+//        alt={_.get(record, "group")}
+//      />
+//      );
+//    },
+//  },
   {
     title: "Parents",
     dataIndex: ["usage", "classification"],
@@ -155,7 +172,9 @@ class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const isCatalogue = this.props.catalogueKey === this.props.datasetKey;
-    const clms = getColumns(isCatalogue ? this.props.catalogueKey : null);
+    const taxGroup = props.taxGroup;
+    console.log(props.taxGroup);
+    const clms = getColumns(isCatalogue ? this.props.catalogueKey : null, props.taxGroup);
     const columns = this.props.datasetKey
       ? clms
       : [
@@ -424,6 +443,7 @@ class NameSearchPage extends React.Component {
       rank,
       taxonomicstatus,
       infoGroup,
+      taxGroup,
       issue,
       nomstatus,
       nomCode,
@@ -844,6 +864,7 @@ const mapContextToProps = ({
   rank,
   taxonomicstatus,
   infoGroup,
+  taxGroup,
   issue,
   nomstatus,
   nametype,
@@ -855,6 +876,7 @@ const mapContextToProps = ({
   rank,
   taxonomicstatus,
   infoGroup,
+  taxGroup,
   issue,
   nomstatus,
   nametype,

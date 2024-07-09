@@ -416,7 +416,7 @@
   {
     "description": "The (accepted) bi/trinomial name does not match the parent genus/species. For example the species Picea alba with a parent genus Abies is a mismatch.",
     "group": "name usage",
-    "level": "error",
+    "level": "warning",
     "name": "parent name mismatch"
   },
   {

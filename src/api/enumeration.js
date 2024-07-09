@@ -115,6 +115,10 @@ export const getInfoGroup = () => {
   return getData(`infoGroup`).then((res) => res.data.map((e) => e.name));
 };
 
+export const getTaxGroup = () => {
+  return getData(`taxGroup`).then((res) => Object.fromEntries(res.data.map(e => [e.name, e])));
+};
+
 export const getNameIndexRank = () => {
   return Promise.resolve(require(`../enumeration/nameIndexRank`))
 }

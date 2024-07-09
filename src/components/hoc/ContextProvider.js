@@ -38,6 +38,7 @@ import {
   getNameIndexRank,
   getDoiResolution,
   getInfoGroup,
+  getTaxGroup,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -111,6 +112,7 @@ class ContextProvider extends React.Component {
     userRole: [],
     doiResolution: [],
     infoGroup: [],
+    taxGroup: [],
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
@@ -259,6 +261,7 @@ class ContextProvider extends React.Component {
       getNameIndexRank(),
       getDoiResolution(),
       getInfoGroup(),
+      getTaxGroup(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -334,6 +337,7 @@ class ContextProvider extends React.Component {
           nameIndexRank: responses[25],
           doiResolution: responses[26],
           infoGroup: responses[27],
+          taxGroup: responses[28],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

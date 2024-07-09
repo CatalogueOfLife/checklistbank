@@ -12,6 +12,7 @@ const enums = [
   "rank",
   "taxonomicstatus",
   "infoGroup",
+  "taxGroup",
   "issue",
   "nametype",
   "namefield",
