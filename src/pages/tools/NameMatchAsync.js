@@ -5,7 +5,7 @@ import {
   Col,
   Progress,
   Alert,
-  Steps,
+  List,
   Button,
   Collapse,
   Statistic,
@@ -34,7 +34,7 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import history from "../../history";
-const { Paragraph, Text } = Typography;
+const { Paragraph, Text, Title } = Typography;
 
 const { Dragger } = Upload;
 
@@ -115,10 +115,11 @@ const NameMatchAsync = ({ addError, rank }) => {
         )}
         <Row style={{ marginBottom: "10px" }}>
           <Col>
-            <Text>
-              Here you can upload csv or tsv files for larger name matching
-              jobs. You will recieve an email when the result is ready.
-            </Text>
+            <Title level={3}>Name Matching Jobs</Title>
+            <Paragraph>
+                Here you can upload text files for larger, asynchronous name matching
+                jobs. It requires a login and you will recieve an email when the result is ready.
+            </Paragraph>
           </Col>
           <Col flex="auto"></Col>
           <Col>
@@ -143,23 +144,11 @@ const NameMatchAsync = ({ addError, rank }) => {
           <p className="ant-upload-text">
             Click or drag csv/tsv file to this area to upload
           </p>
-          <p className="ant-upload-hint">
-            Your csv/tsv must contain a column{" "}
-            <code className="code">scientificName</code> (which may include the
-            author) and optional columns <code className="code">author</code>,{" "}
-            <code className="code">status</code>,{" "}
-            <code className="code">rank</code>,{" "}
-            <code className="code">code</code> (nomenclatural code), and any
-            higher taxon (like <code className="code">kingom</code>: Animalia or{" "}
-            <code className="code">domain</code>: Bacteria)
-          </p>
         </Dragger>
 
         <Row>
           <Col>
-            <Typography>
-              <Paragraph>Which dataset do you want to match against?</Paragraph>
-            </Typography>
+            <Paragraph>Which dataset do you want to match against?</Paragraph>
           </Col>
         </Row>
         <Row>
@@ -173,6 +162,46 @@ const NameMatchAsync = ({ addError, rank }) => {
             />
           </Col>
         </Row>
+
+        <Row style={{ marginTop: "50px"}}>
+          <Col>
+            <Title level={3}>File format</Title>
+            <Paragraph>
+              Your uploaded file has to be a comma (CSV) or tab (TSV) delimited text file
+              with a header row to specify column names. It can contain any number of columns 
+              which will all be included again in the result, but must 
+              at least contain the column <code className="code">scientificName</code>. 
+              For better matching results we recommend to include as many of the following 
+              <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage"> ColDP columns</a> as possible:
+            </Paragraph>
+
+            <List itemLayout="horizontal" bordered="true">
+              <List.Item><List.Item.Meta title="ID" description="A unique identifier for your name" /></List.Item>
+              <List.Item><List.Item.Meta title="scientificName" description="The scientific name to be matched. May include the authorship" /></List.Item>
+              <List.Item><List.Item.Meta title="authorship" description="Authorship of the scientificName" /></List.Item>
+<List.Item><List.Item.Meta title="rank" description="The rank of the name preferably given in case insensitive english. See http://api.checklistbank.org/vocab/rank"/></List.Item>
+<List.Item><List.Item.Meta title="code" description="The nomenclatural code the name falls under. See http://api.checklistbank.org/vocab/nomCode"/></List.Item>
+
+<List.Item><List.Item.Meta title="kingdom" description="The kingdom the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="phylum" description="The phylum the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="subphylum" description="The subphylum the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="class" description="The class the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="subclass" description="The subclass the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="order" description="The order the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="suborder" description="The suborder the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="superfamily" description="The superfamily the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="family" description="The family the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="subfamily" description="The subfamily the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="tribe" description="The tribe the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="subtribe" description="The subtribe the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="genus" description="The genus the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="subgenus" description="The subgenus the name is classified in."/></List.Item>
+<List.Item><List.Item.Meta title="section" description="The (botanical) section the name is classified in. Considered a botanical rank below subgenus, not a zoological above family."/></List.Item>
+            </List>
+          </Col>
+          <Col flex="auto"></Col>
+        </Row>
+
       </PageContent>
     </Layout>
   );
