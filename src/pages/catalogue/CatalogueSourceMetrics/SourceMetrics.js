@@ -422,7 +422,8 @@ class SourceMetrics extends React.Component {
                           this.renderDatasetAttempt(
                             _.get(record, "metrics.datasetAttempt")
                           )}
-                        {getIconForDiff(text || 0, selectedRelaseValue || 0)}
+                        {!isPublisher &&
+                          getIconForDiff(text || 0, selectedRelaseValue || 0)}
                       </NavLink>
                       {isProject &&
                         column === "datasetAttempt" &&
