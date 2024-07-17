@@ -161,23 +161,42 @@ class SourceMetrics extends React.Component {
       })
       .then(({ res, groups }) => {
         if (releaseKey) {
-          return Promise.allSettled(
-            res.map((r) => {
-              return this.getMetrics(releaseKey, r.key)
-                .then((metrics) => ({
-                  ...r,
-                  selectedReleaseMetrics: metrics,
-                }))
-                .catch((err) => {
-                  addError(err);
-                  return {
+          return Promise.allSettled([
+            ...res
+              .filter((r) => !!r?.id)
+              .map((r) => {
+                return this.getPublisherMetrics(releaseKey, r?.id)
+                  .then((metrics) => ({
                     ...r,
-                    selectedReleaseMetrics: {},
-                    releaseError: err,
-                  };
-                });
-            })
-          ).then((result) => {
+                    selectedReleaseMetrics: metrics,
+                  }))
+                  .catch((err) => {
+                    addError(err);
+                    return {
+                      ...r,
+                      selectedReleaseMetrics: {},
+                      releaseError: err,
+                    };
+                  });
+              }),
+            ...res
+              .filter((r) => !!r?.key)
+              .map((r) => {
+                return this.getMetrics(releaseKey, r?.key)
+                  .then((metrics) => ({
+                    ...r,
+                    selectedReleaseMetrics: metrics,
+                  }))
+                  .catch((err) => {
+                    addError(err);
+                    return {
+                      ...r,
+                      selectedReleaseMetrics: {},
+                      releaseError: err,
+                    };
+                  });
+              }),
+          ]).then((result) => {
             return { res: result.map((r) => r?.value), groups };
           });
         } else {
@@ -230,19 +249,34 @@ class SourceMetrics extends React.Component {
           pathname: location.path,
           search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
         });
-        Promise.allSettled(
-          this.state.data.map((r) => {
-            return this.getMetrics(newReleaseKey, r.key)
-              .then((metrics) => {
-                r.selectedReleaseMetrics = metrics;
-              })
-              .catch((err) => {
-                addError(err);
-                r.selectedReleaseMetrics = {};
-                r.releaseError = err;
-              });
-          })
-        ).then((results) => {
+        Promise.allSettled([
+          ...this.state.data
+            .filter((r) => !!r?.id)
+            .map((r) => {
+              return this.getPublisherMetrics(newReleaseKey, r?.id)
+                .then((metrics) => {
+                  r.selectedReleaseMetrics = metrics;
+                })
+                .catch((err) => {
+                  addError(err);
+                  r.selectedReleaseMetrics = {};
+                  r.releaseError = err;
+                });
+            }),
+          ...this.state.data
+            .filter((r) => !!r?.key)
+            .map((r) => {
+              return this.getMetrics(newReleaseKey, r?.key)
+                .then((metrics) => {
+                  r.selectedReleaseMetrics = metrics;
+                })
+                .catch((err) => {
+                  addError(err);
+                  r.selectedReleaseMetrics = {};
+                  r.releaseError = err;
+                });
+            }),
+        ]).then((results) => {
           this.setState({ loading: false, data: [...this.state.data] });
         });
       } else {
@@ -380,9 +414,6 @@ class SourceMetrics extends React.Component {
                         }}
                         exact={true}
                       >
-                        {/* {isPublisher && column === "datasetAttempt"
-                        ? ""
-                        : Number(text || 0).toLocaleString()}{" "} */}
                         {!isPublisher &&
                           column !== "datasetAttempt" &&
                           Number(text || 0).toLocaleString()}
@@ -455,9 +486,30 @@ class SourceMetrics extends React.Component {
                     />
                   </div>
                 )}
-                {record.selectedReleaseMetrics && !record?.releaseError && (
-                  <div>{Number(selectedRelaseValue || 0).toLocaleString()}</div>
-                )}
+                {record.selectedReleaseMetrics &&
+                  !record?.releaseError &&
+                  !(isPublisher && column === "datasetAttempt") && (
+                    <div>
+                      {Number(selectedRelaseValue || 0).toLocaleString()}
+                    </div>
+                  )}
+                {record.selectedReleaseMetrics &&
+                  !record?.releaseError &&
+                  isPublisher &&
+                  typeof Links[linkKey] === "function" &&
+                  Links[linkKey](
+                    column,
+                    text,
+                    record.key || record.id,
+                    basePath,
+                    isProject,
+                    isPublisher,
+                    record
+                  ) !== null && (
+                    <div>
+                      {Number(selectedRelaseValue || 0).toLocaleString()}
+                    </div>
+                  )}
               </React.Fragment>
             );
           },
