@@ -58,9 +58,22 @@ const NameMatchAsync = ({ addError, rank, user }) => {
     );
   };
   const customRequest = (options) => {
+    let type = options?.file?.type;
+
+    if (!type) {
+      let name = options?.file?.name || "";
+      if (name.endsWith(".csv")) {
+        type == "text/csv";
+      } else if (name.endsWith(".tsv")) {
+        type == "text/tab-separated-values";
+      } else {
+        type == "text/plain";
+      }
+    }
+
     const reqConfig = {
       headers: {
-        "Content-Type": options?.file?.type,
+        "Content-Type": type,
       },
     };
     return axios
