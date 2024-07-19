@@ -674,7 +674,16 @@ class SourceMetrics extends React.Component {
             size="small"
             rowKey={(record) => record?.key || record?.id}
             columns={columns}
-            dataSource={hideUnchanged ? filteredData : data}
+            dataSource={(hideUnchanged ? filteredData : data).filter((d) => {
+              if (!d?.metrics?.publisherKey) {
+                return true;
+              } else {
+                return !(
+                  d?.metrics?.datasetCount === 0 ||
+                  d?.metrics?.usagesCount === 0
+                );
+              }
+            })}
             loading={loading}
             scroll={scroll}
             expandable={{
