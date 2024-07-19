@@ -16,6 +16,7 @@ import {
   Switch,
   Tooltip,
   Typography,
+  Radio,
 } from "antd";
 import { CSVLink } from "react-csv";
 import {
@@ -47,7 +48,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
 
   const [submissionError, setSubmissionError] = useState(null);
   const [primaryDataset, setPrimaryDataset] = useState(COL_LR);
-
+  const [format, setFormat] = useState("TSV");
   const isValidFile = (file) => {
     return (
       !!file &&
@@ -86,7 +87,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
   const draggerProps = {
     name: "file",
     multiple: false,
-    action: `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
+    action: `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job?format=${format}`,
     customRequest: customRequest,
     onSuccess: (res) => {
       history.push({
@@ -166,12 +167,13 @@ const NameMatchAsync = ({ addError, rank, user }) => {
               </p>
             </Dragger>
 
-            <Row>
-              <Col>
+            <Row style={{ marginTop: "10px" }}>
+              <Col span={12}>
                 <Paragraph>
                   Which dataset do you want to match against?
                 </Paragraph>
               </Col>
+              <Col>Select your upload format</Col>
             </Row>
             <Row>
               <Col style={{ paddingRight: "8px" }} span={12}>
@@ -182,6 +184,15 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                   // contributesTo={this.props.catalogueKey}
                   placeHolder="Choose primary dataset"
                 />
+              </Col>
+              <Col>
+                <Radio.Group
+                  onChange={(e) => setFormat(e.target.value)}
+                  value={format}
+                >
+                  <Radio value={"TSV"}>TSV</Radio>
+                  <Radio value={"CSV"}>CSV</Radio>
+                </Radio.Group>
               </Col>
             </Row>
 
