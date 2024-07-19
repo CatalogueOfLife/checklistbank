@@ -58,7 +58,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
     );
   };
   const customRequest = (options) => {
-    let type = options?.file?.type;
+    /*  let type = options?.file?.type;
 
     if (!type) {
       let name = options?.file?.name || "";
@@ -67,11 +67,11 @@ const NameMatchAsync = ({ addError, rank, user }) => {
       } else if (name.endsWith(".tsv")) {
         type == "text/tab-separated-values";
       }
-    }
+    } */
 
     const reqConfig = {
       headers: {
-        "Content-Type": type || "text/plain",
+        "Content-Type": "text/plain",
       },
     };
     return axios
