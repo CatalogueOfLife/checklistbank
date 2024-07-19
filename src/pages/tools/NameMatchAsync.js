@@ -66,14 +66,12 @@ const NameMatchAsync = ({ addError, rank, user }) => {
         type == "text/csv";
       } else if (name.endsWith(".tsv")) {
         type == "text/tab-separated-values";
-      } else {
-        type == "text/plain";
       }
     }
 
     const reqConfig = {
       headers: {
-        "Content-Type": type,
+        "Content-Type": type || "text/plain",
       },
     };
     return axios
@@ -192,9 +190,15 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                 <Title level={3}>File format</Title>
                 <Paragraph>
                   Your uploaded file has to be a comma (CSV) or tab (TSV)
-                  delimited text file with a header row to specify column names - 
-                  <a target="_blank" href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv">example</a>. 
-                  It can contain any number of columns which will all be
+                  delimited text file with a header row to specify column names
+                  -
+                  <a
+                    target="_blank"
+                    href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
+                  >
+                    example
+                  </a>
+                  . It can contain any number of columns which will all be
                   included again in the result, but must at least contain the
                   column <code className="code">scientificName</code>. For
                   better matching results we recommend to include as many of the
