@@ -4,11 +4,11 @@ import { withRouter } from "react-router-dom";
 import config from "../../config";
 import _ from "lodash";
 import { SettingOutlined } from "@ant-design/icons";
-import { Modal, Select } from "antd";
+import { Modal, Select, Checkbox } from "antd";
 import history from "../../history";
 import { truncate } from "../../components/util";
 
-// import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../../pages/catalogue/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 const { Option } = Select;
@@ -31,6 +31,7 @@ const SourceSeelect = ({
   const [sources, setSources] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [merge, setMerge] = useState(false);
 
   useEffect(() => {
     getSources();
@@ -62,12 +63,12 @@ const SourceSeelect = ({
     setVisible(visible);
   };
 
-  const onSourceChange = (newDatasetKey) => {
+  const onSourceChange = (selectedSource) => {
     const {
       params: { sourceKey: key },
     } = match;
 
-    const selectedSource = sources.find((c) => c.key === newDatasetKey);
+    // const selectedSource = sources.find((c) => c.key === newDatasetKey);
     if (
       catalogueKey &&
       selectedSource &&
@@ -77,19 +78,19 @@ const SourceSeelect = ({
     ) {
       const newPath = _.get(location, "pathname").replace(
         `catalogue/${catalogueKey}/dataset/${key}/`,
-        `catalogue/${catalogueKey}/dataset/${newDatasetKey}/`
+        `catalogue/${catalogueKey}/dataset/${selectedSource.key}/`
       );
       setSourceDataset(selectedSource);
       history.push({
         pathname: newPath,
       });
     } else if (catalogueKey) {
-      setSourceDataset(selectedSource);
+      setSourceDataset(selectedSource?.data);
       history.push({
-        pathname: `/catalogue/${catalogueKey}/dataset/${newDatasetKey}/issues`,
+        pathname: `/catalogue/${catalogueKey}/dataset/${selectedSource.key}/issues`,
       });
     }
-    setVisible(false);
+    //  setVisible(false);
   };
 
   return (
@@ -116,38 +117,15 @@ const SourceSeelect = ({
             e.nativeEvent.stopImmediatePropagation();
           }}
         >
-          <Select
-            showSearch
-            loading={loading}
-            style={{ width: "100%" }}
-            value={match?.params?.sourceKey}
-            placeholder="Select source"
-            optionFilterProp="children"
-            onChange={onSourceChange}
-            filterOption={(input, option) =>
-              option.props.children
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            onDropdownVisibleChange={(open) => {
-              if (open) {
-                getSources();
-              }
-            }}
-          >
-            {sources.map((c) => (
-              <Option
-                onClick={(e) => {
-                  e.domEvent.stopPropagation();
-                  e.domEvent.nativeEvent.stopImmediatePropagation();
-                }}
-                value={c.key}
-                key={c.key}
-              >{`${c.alias ? c.alias : truncate(c.title, 50)} ${
-                c.version || ""
-              } [${c.key}]`}</Option>
-            ))}
-          </Select>
+          <DatasetAutocomplete
+            contributesTo={catalogueKey}
+            onSelectDataset={onSourceChange}
+            defaultDatasetKey={match?.params?.sourceKey}
+            merge={merge}
+          />
+          <Checkbox onChange={(e) => setMerge(e.target.checked)}>
+            Include merged sources
+          </Checkbox>
         </div>
       </Modal>
     </React.Fragment>

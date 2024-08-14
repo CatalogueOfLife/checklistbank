@@ -81,21 +81,14 @@ class DatasetProvider extends React.Component {
           ? JSON.parse(recentDatasetsAsText)
           : [];
         recentDatasets.unshift(res.data);
-        let recentDatasetsFilteredAndMapped = _.uniqBy(recentDatasets, "key")
+        recentDatasets = _.uniqBy(recentDatasets, "key")
           .slice(0, 5)
           .map((d) => ({ key: d?.key, title: d?.title, alias: d?.alias }));
-        try {
-          console.log("Try to set storage 1");
-          localStorage.setItem(
-            "colplus_recent_datasets",
-            JSON.stringify(recentDatasetsFilteredAndMapped)
-          );
-          setRecentDatasets(recentDatasets);
-        } catch (error) {
-          console.log("err Try to set storage 1");
-          console.log(error);
-        }
-
+        localStorage.setItem(
+          "colplus_recent_datasets",
+          JSON.stringify(recentDatasets)
+        );
+        setRecentDatasets(recentDatasets);
         setDataset(res.data);
         if (res?.data?.origin === "project") {
           setCatalogue(res.data);
@@ -112,23 +105,16 @@ class DatasetProvider extends React.Component {
         let recentDatasets = recentDatasetsAsText
           ? JSON.parse(recentDatasetsAsText)
           : [];
-        let recentDatasetsFilteredAndMapped = recentDatasets
+        recentDatasets = recentDatasets
           .filter((d) => d.key !== key)
           .map((d) => ({ key: d?.key, title: d?.title, alias: d?.alias }));
-        try {
-          localStorage.setItem(
-            "colplus_recent_datasets",
-            JSON.stringify(recentDatasetsFilteredAndMapped)
-          );
-          console.log("Try to set storage 2");
+        localStorage.setItem(
+          "colplus_recent_datasets",
+          JSON.stringify(recentDatasets)
+        );
+        localStorage.removeItem("col_selected_dataset");
 
-          localStorage.removeItem("col_selected_dataset");
-        } catch (error) {
-          console.log("error Try to set storage 2");
-          console.log(error);
-        }
-
-        // addError(err);
+        addError(err);
       });
   };
 

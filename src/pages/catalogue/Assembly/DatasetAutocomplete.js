@@ -66,16 +66,20 @@ class DatasetAutocomplete extends React.Component {
   };
 
   getDatasets = (q) => {
-    const { contributesTo, origin, minSize } = this.props;
-    axios(
-      `${config.dataApi}dataset?q=${encodeURIComponent(q)}&limit=30${
-        contributesTo ? "&contributesTo=" + contributesTo : ""
-      }${origin ? "&origin=" + origin : ""}${
-        minSize ? "&minSize=" + minSize : ""
-      }`
-    )
+    const { contributesTo, origin, minSize, merge = false } = this.props;
+
+    const url = !!contributesTo
+      ? `${
+          config.dataApi
+        }dataset/${contributesTo}/source/suggest?merge=${merge}&q=${encodeURIComponent(
+          q
+        )}`
+      : `${config.dataApi}dataset?q=${encodeURIComponent(q)}&limit=30${
+          origin ? "&origin=" + origin : ""
+        }${minSize ? "&minSize=" + minSize : ""}`;
+    axios(url)
       .then((res) => {
-        this.setState({ datasets: res.data.result });
+        this.setState({ datasets: res.data.result || res.data });
       })
       .catch((err) => {
         if (typeof this.props.onError === "function") {
@@ -86,7 +90,8 @@ class DatasetAutocomplete extends React.Component {
   };
   onSelectDataset = (val, obj) => {
     this.setState({ value: val });
-    this.props.onSelectDataset({ key: obj.key, title: val });
+    console.log(obj?.data);
+    this.props.onSelectDataset({ key: obj.key, title: val, data: obj?.data });
   };
   onReset = () => {
     this.setState({ value: "", datasets: [] });
