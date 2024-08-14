@@ -118,6 +118,8 @@ class Root extends React.Component {
       download: true,
       skipEmptyLines: true,
       delimiter: "\t",
+      quoteChar: "",
+      escapeChar: "",
       header: true,
       dynamicTyping: true,
       complete: (result) => {
