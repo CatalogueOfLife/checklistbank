@@ -570,14 +570,19 @@ class TaxonPage extends React.Component {
                     <EditOutlined /> Edit taxon
                   </Button>
                 )}
-                {_.get(info, "group") && !_.get(info, "group").startsWith("other") && (
-                  <img
-                    style={{ marginRight: "8px", width: "24px", height: "24px" }}
-                    src={_.get(taxGroup[_.get(info, "group")], "icon")}
-                    alt={_.get(info, "group")}
-                  />
-                )}
-                
+                {_.get(info, "group") &&
+                  !_.get(info, "group").startsWith("other") && (
+                    <img
+                      style={{
+                        marginRight: "8px",
+                        width: "24px",
+                        height: "24px",
+                      }}
+                      src={_.get(taxGroup[_.get(info, "group")], "icon")}
+                      alt={_.get(info, "group")}
+                    />
+                  )}
+
                 {taxon.provisional && <Tag color="red">Provisional</Tag>}
                 <Button
                   onClick={() => {
@@ -894,6 +899,11 @@ class TaxonPage extends React.Component {
               {_.get(taxon, "link") && (
                 <PresentationItem md={md} label="Online resource">
                   <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
+                </PresentationItem>
+              )}
+              {_.isArray(taxon?.identifier) && (
+                <PresentationItem md={md} label="Identifiers">
+                  {taxon?.identifier.join(", ")}
                 </PresentationItem>
               )}
               {info?.source?.secondarySources && (
