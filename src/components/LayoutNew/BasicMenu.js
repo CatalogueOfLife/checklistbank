@@ -548,7 +548,7 @@ class BasicMenu extends Component {
                           title={
                             <>
                               <SourceSelect catalogueKey={catalogueKey} />{" "}
-                              {sourceDataset && sourceHasData
+                              {sourceDataset /* && sourceHasData */
                                 ? sourceDataset?.alias ||
                                   truncate(sourceDataset?.title, 25)
                                 : "Select"}
@@ -569,7 +569,7 @@ class BasicMenu extends Component {
                               </NavLink>
                             </Menu.Item>
                           )}
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_classification">
                               <NavLink
                                 to={{
@@ -584,7 +584,7 @@ class BasicMenu extends Component {
                             </Menu.Item>
                           )}
 
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_workbench">
                               <NavLink
                                 to={{
@@ -598,7 +598,7 @@ class BasicMenu extends Component {
                               </NavLink>
                             </Menu.Item>
                           )}
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_references">
                               <NavLink
                                 to={{
@@ -612,7 +612,7 @@ class BasicMenu extends Component {
                               </NavLink>
                             </Menu.Item>
                           )}
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_duplicates">
                               <NavLink
                                 to={{
@@ -626,7 +626,7 @@ class BasicMenu extends Component {
                               </NavLink>
                             </Menu.Item>
                           )}
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_tasks">
                               <NavLink
                                 to={{
@@ -641,7 +641,7 @@ class BasicMenu extends Component {
                             </Menu.Item>
                           )}
 
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_sectors">
                               <NavLink
                                 to={{
@@ -654,7 +654,7 @@ class BasicMenu extends Component {
                             </Menu.Item>
                           )}
 
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_decisions">
                               <NavLink
                                 to={{
@@ -667,7 +667,7 @@ class BasicMenu extends Component {
                             </Menu.Item>
                           )}
 
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_issues">
                               <NavLink
                                 to={{
@@ -693,7 +693,7 @@ class BasicMenu extends Component {
                               </NavLink>
                             </Menu.Item>
                           )} */}
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_imports">
                               <NavLink
                                 to={{
@@ -708,7 +708,7 @@ class BasicMenu extends Component {
                             </Menu.Item>
                           )}
 
-                          {sourceDataset && sourceHasData && (
+                          {sourceDataset /* && sourceHasData */ && (
                             <Menu.Item key="source_verbatim">
                               <NavLink
                                 to={{

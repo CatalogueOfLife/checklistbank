@@ -76,7 +76,7 @@ const getJsonDatasetForLocalStorage = (dataset) =>
         key: dataset.key,
         title: dataset.title,
         alias: dataset?.alias || "",
-        origin: dataset.origin,
+        origin: dataset?.origin || "",
       })
     : null;
 

@@ -19,55 +19,47 @@ function truncate(str, n){
 
 const SourceSeelect = ({
   catalogueKey,
-  catalogue,
   setSourceDataset,
-  sourceDataset,
-  user,
-  dataset,
+
   match,
   location,
   style = {},
 }) => {
-  const [sources, setSources] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [merge, setMerge] = useState(false);
 
   useEffect(() => {
-    getSources();
+    // getSources();
   }, [catalogueKey]);
 
   useEffect(() => {
-    if (match?.params?.sourceKey && sources?.length > 0) {
-      const selectedSource = sources.find(
-        (c) => c.key == match?.params?.sourceKey
-      );
-      setSourceDataset(selectedSource);
+    if (match?.params?.sourceKey) {
+      getSourceDataset(match?.params?.sourceKey);
     }
-  }, [match?.params?.sourceKey, sources]);
+  }, [match?.params?.sourceKey]);
 
-  const getSources = () => {
-    setLoading(true);
-    axios(
-      `${config.dataApi}dataset?contributesTo=${catalogueKey}&limit=1000`
-    ).then((res) => {
-      setLoading(false);
-      setSources(_.get(res, "data.result") ? _.get(res, "data.result") : []);
-    });
+  const getSourceDataset = async (key) => {
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${catalogueKey}/source/${key}`
+      );
+
+      setSourceDataset(res?.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const hide = () => {
     setVisible(false);
-  };
-
-  const handleVisibleChange = (visible) => {
-    setVisible(visible);
   };
 
   const onSourceChange = (selectedSource) => {
     const {
       params: { sourceKey: key },
     } = match;
-
+    console.log("SELECTED:");
+    console.log(selectedSource);
     // const selectedSource = sources.find((c) => c.key === newDatasetKey);
     if (
       catalogueKey &&
@@ -80,7 +72,7 @@ const SourceSeelect = ({
         `catalogue/${catalogueKey}/dataset/${key}/`,
         `catalogue/${catalogueKey}/dataset/${selectedSource.key}/`
       );
-      setSourceDataset(selectedSource);
+      setSourceDataset(selectedSource?.data);
       history.push({
         pathname: newPath,
       });

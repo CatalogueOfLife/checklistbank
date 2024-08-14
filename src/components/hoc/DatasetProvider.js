@@ -35,9 +35,9 @@ class DatasetProvider extends React.Component {
     const nextKey = _.get(this.props, "match.params.key");
     const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
 
-    if (nextKey === "1008") {
+    /*  if (nextKey === "1008") {
       console.log("test");
-    }
+    } */
     const {
       match: {
         params: { key, catalogueKey },
