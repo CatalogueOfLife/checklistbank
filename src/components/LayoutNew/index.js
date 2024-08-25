@@ -239,7 +239,7 @@ class SiteLayout extends Component {
                         )}
                     </Col>
                     <Col>
-                      <span style={{ marginRight: "8px" }}>
+                      <span style={{ marginRight: "8px", marginLeft: "8px" }}>
                         {" "}
                         {selectedDataset.version || selectedDataset.issued}
                       </span>
