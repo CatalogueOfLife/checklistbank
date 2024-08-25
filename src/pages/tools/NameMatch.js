@@ -573,7 +573,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                     <code className="code">status</code>,{" "}
                     <code className="code">code</code> (nomenclatural code), and
                     any higher taxon (like
-                    <code className="code">kingom</code>: Animalia,
+                    <code className="code">kingdom</code>: Animalia,
                     <code className="code">domain</code>: Bacteria,
                     <code className="code">order</code>: Lepidoptera or{" "}
                     <code className="code">family</code>: Fabaceae)

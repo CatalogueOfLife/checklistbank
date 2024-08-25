@@ -17,7 +17,7 @@ function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
 }; */
 
-const SourceSeelect = ({
+const SourceSelect = ({
   catalogueKey,
   setSourceDataset,
 
@@ -139,4 +139,4 @@ const mapContextToProps = ({
   user,
   dataset,
 });
-export default withContext(mapContextToProps)(withRouter(SourceSeelect));
+export default withContext(mapContextToProps)(withRouter(SourceSelect));
