@@ -66,7 +66,7 @@ class DatasetAutocomplete extends React.Component {
   };
 
   getDatasets = (q) => {
-    const { contributesTo, origin, minSize, merge = false } = this.props;
+    const { contributesTo, origin, minSize, merge = true } = this.props;
 
     const url = !!contributesTo
       ? `${
