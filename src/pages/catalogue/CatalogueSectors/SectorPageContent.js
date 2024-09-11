@@ -16,6 +16,7 @@ import {
   Modal,
   Typography,
   notification,
+  Checkbox,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import SectorForm from "../Assembly/SectorForm2";
@@ -51,6 +52,7 @@ class CatalogueSectors extends React.Component {
     super(props);
     this.state = {
       data: [],
+      merge: false,
       searchText: "",
       loading: false,
       rematchSectorsLoading: false,
@@ -461,8 +463,15 @@ class CatalogueSectors extends React.Component {
                 onResetSearch={this.onResetDataset}
                 onSelectDataset={this.onSelectDataset}
                 contributesTo={this.props.catalogueKey}
+                merge={this.state.merge}
                 placeHolder="Source dataset"
-              />
+              />{" "}
+              <Checkbox
+                checked={this.state.merge}
+                onClick={(e) => this.setState({ merge: e.target.checked })}
+              >
+                Include merged sources
+              </Checkbox>
             </div>
           </FormItem>
 
