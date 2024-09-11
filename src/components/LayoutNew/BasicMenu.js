@@ -172,7 +172,56 @@ class BasicMenu extends Component {
               }
             />
           )} */}
+          {config.env !== "production" && (
+            <SubMenu
+              key="about"
+              title={
+                <span>
+                  <ToolOutlined />
+                  <span>About</span>
+                </span>
+              }
+            >
+              <Menu.Item key="introduction">
+                <NavLink to={{ pathname: "/about/introduction" }}>
+                  <span>Introduction</span>
+                </NavLink>
+              </Menu.Item>
 
+              <Menu.Item key="contribute">
+                <NavLink to={{ pathname: "/about/contribute" }}>
+                  <span>Contribute</span>
+                </NavLink>
+              </Menu.Item>
+
+              <Menu.Item key="projects">
+                <NavLink to={{ pathname: "/about/projects" }}>
+                  <span>Projects</span>
+                </NavLink>
+              </Menu.Item>
+
+              <Menu.Item key="formats">
+                <NavLink to={{ pathname: "/about/formats" }}>
+                  <span>Formats</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="matching">
+                <NavLink to={{ pathname: "/about/matching" }}>
+                  <span>Matching</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="API">
+                <NavLink to={{ pathname: "/about/API" }}>
+                  <span>API</span>
+                </NavLink>
+              </Menu.Item>
+              <Menu.Item key="wishlist">
+                <NavLink to={{ pathname: "/about/wishlist" }}>
+                  <span>Wishlist</span>
+                </NavLink>
+              </Menu.Item>
+            </SubMenu>
+          )}
           <Menu.Item key="/dataset">
             <NavLink to="/dataset">
               <SearchOutlined />

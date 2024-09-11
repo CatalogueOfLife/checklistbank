@@ -13,6 +13,7 @@ import DatasetProvider from "./components/hoc/DatasetProvider";
 import SyncProvider from "./components/hoc/SyncProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
+import About from "./pages/About";
 import Assembly from "./pages/catalogue/Assembly";
 import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
 import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
@@ -399,6 +400,12 @@ const App = () => {
                 key="vocabIndexKey"
                 path={`/vocabulary/:key`}
                 component={VocabularyKey}
+              />
+              <Route
+                exact
+                key="about"
+                path={`/about/:mdFile`}
+                component={About}
               />
 
               <Route component={Exception404} />
