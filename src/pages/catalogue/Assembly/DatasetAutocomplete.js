@@ -79,7 +79,13 @@ class DatasetAutocomplete extends React.Component {
         }${minSize ? "&minSize=" + minSize : ""}`;
     axios(url)
       .then((res) => {
-        this.setState({ datasets: res.data.result || res.data });
+        this.setState({
+          datasets: _.isArray(res?.data?.result)
+            ? res?.data?.result
+            : _.isArray(res?.data)
+            ? res.data
+            : [],
+        });
       })
       .catch((err) => {
         if (typeof this.props.onError === "function") {
