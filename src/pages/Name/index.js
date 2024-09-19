@@ -349,7 +349,9 @@ class NamePage extends React.Component {
                   </PresentationItem>
                 )}
                 <PresentationItem md={md} label="Published In ID">
-                  {name.publishedInId}
+                    <NavLink to={{pathname: `/dataset/${datasetKey}/reference/${name.publishedInId}`,}}>
+                        {name.publishedInId}
+                    </NavLink>
                 </PresentationItem>
                 <PresentationItem md={md} label="Published In Page">
                   {name.publishedInPage}
