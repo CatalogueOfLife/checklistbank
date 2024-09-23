@@ -333,6 +333,17 @@ class Root extends React.Component {
           },
           ...columns,
           {
+            title: "IDs",
+            key: "identifier",
+            render: (text, record) => (
+            <>
+              <Tag>NID</Tag> {record.verbatim_scientificNameID}<br/>
+              <Tag>TID</Tag> {record.verbatim_taxonID}<br/>
+              <Tag>CID</Tag> {record.verbatim_taxonConceptID}
+            </>
+            ),
+          },
+          {
             title: "Changes",
             key: "changes",
             dataIndex: "changes",
@@ -355,15 +366,15 @@ class Root extends React.Component {
             title: "Action",
             key: "operation",
             render: (text, record) => (
-              <a
-                href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
-                  record
-                )}&body=${this.getIssueBodyText(record)}&labels=feedback`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Report
-              </a>
+              <>
+                <a
+                  href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
+                    record
+                  )}&body=${this.getIssueBodyText(record)}&labels=feedback`}
+                  target="_blank" rel="noopener noreferrer">Report</a> 
+                <br/>
+                <a href={record.debug_url} target="_blank">Debug</a>
+            </>
             ),
           },
         ];
