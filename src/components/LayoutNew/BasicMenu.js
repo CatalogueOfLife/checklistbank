@@ -215,11 +215,6 @@ class BasicMenu extends Component {
                   <span>API</span>
                 </NavLink>
               </Menu.Item>
-              <Menu.Item key="wishlist">
-                <NavLink to={{ pathname: "/about/wishlist" }}>
-                  <span>Wishlist</span>
-                </NavLink>
-              </Menu.Item>
             </SubMenu>
           )}
           <Menu.Item key="/dataset">
