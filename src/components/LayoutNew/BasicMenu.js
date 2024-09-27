@@ -177,24 +177,24 @@ class BasicMenu extends Component {
               </NavLink>
             </Menu.Item>
 
-            <Menu.Item key="contribute">
-              <NavLink to={{ pathname: "/about/contribute" }}>
-                <span>Contribute</span>
-              </NavLink>
-            </Menu.Item>
             <Menu.Item key="projects">
               <NavLink to={{ pathname: "/about/projects" }}>
                 <span>Projects</span>
               </NavLink>
             </Menu.Item>
-            <Menu.Item key="formats">
-              <NavLink to={{ pathname: "/about/formats" }}>
-                <span>Formats</span>
+            <Menu.Item key="contribute">
+              <NavLink to={{ pathname: "/about/contribute" }}>
+                <span>Contribute</span>
               </NavLink>
             </Menu.Item>
             <Menu.Item key="matching">
               <NavLink to={{ pathname: "/about/matching" }}>
                 <span>Matching</span>
+              </NavLink>
+            </Menu.Item>
+            <Menu.Item key="formats">
+              <NavLink to={{ pathname: "/about/formats" }}>
+                <span>Formats</span>
               </NavLink>
             </Menu.Item>
             <Menu.Item key="API">
