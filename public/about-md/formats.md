@@ -1,8 +1,8 @@
-# Data Formats
+## Data Formats
 
 ChecklistBank supports a variety of formats for both uploads and downloads.
 
-### Catalogue of Life Data Package (ColDP)
+## Catalogue of Life Data Package (ColDP)
 
 The recommended exchange format for submitting data to and downloading data from ChecklistBank
 is the [Catalogue of Life Data Package](https://github.com/CatalogueOfLife/coldp) (ColDP),
@@ -32,7 +32,7 @@ and [CSL-JSON](https://github.com/CatalogueOfLife/coldp#reference-json-csl) form
 
 The ColDP format was developed to overcome limitations in existing formats for sharing taxonomic information, particularly Darwin Core Archives and the Annual Checklist Exchange Format used previously in COL.
 
-### Darwin Core Archive (DwC-A)
+## Darwin Core Archive (DwC-A)
 
 Darwin Core Archive (DwC-A) is a standard for biodiversity informatics data that makes use of the [Darwin Core](https://dwc.tdwg.org/list/) terms to produce a single, self-contained dataset for sharing species-level (checklist) data, species-occurrence data or sampling-event data. Each archive contains a set of text files, in standard comma- or tab-delimited format, along with a simple descriptor file (_meta.xml_) to document how the files are organised. The format is defined in the [Darwin Core Text Guidelines](https://dwc.tdwg.org/text/) (GBIF 2017).
 
@@ -47,30 +47,30 @@ ChecklistBank currently interprets the following DwC extensions:
 
 Data from all other DwC extensions is available via the [verbatim browser](https://www.checklistbank.org/dataset/1010/verbatim) though.
 
-### Annual Checklist Exchange Format (ACEF)
+## Annual Checklist Exchange Format (ACEF)
 
 The previous data format used by COL, the Annual Checklist Exchange Format (ACEF), can still be used to submit data,
 although the new ColDP format is recommended.
-The [ACEF format](/images/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) includes several tables with pre-defined fields ([list of tables and fields](/images/acef/List_of_tables_and_fields_2014.pdf), [entity relationship diagram](/images/acef/ERD_DataSubmissionFormat_29Sep2014.pdf)). Version 4 from 29 September 2014 is the latest release.
+The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) includes several tables with pre-defined fields ([list of tables and fields](/docs/acef/List_of_tables_and_fields_2014.pdf), [entity relationship diagram](/docs/acef/ERD_DataSubmissionFormat_29Sep2014.pdf)). The September 2014 version is the latest release.
 
-### TextTree
+## TextTree
 
 [TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a = character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
 
-### Excel
+## Excel
 
 ChecklistBank supports the upload and download of Excel spreadsheets as a variant for the ColDP and DwC-A formats.
 Worksheets with a header row are used instead of CSV files to represent a single entity like Taxon or VernacularName.
 
 Excel restricts the maximum amount of records to just above 1 million, so spreadsheets cannot be used to download the entire COL checklist.
 
-### Newick
+## Newick
 
 [Newick](https://en.wikipedia.org/wiki/Newick_format) format is a way of representing graph-theoretical trees with edge lengths using parentheses and commas.
 It is often used with phylogenetic data.
 The New Hampshire eXtended format (which COL implements) uses Newick comments to encode additional key value pairs, e.g. the id, scientificName ond rank.
 
-### DOT
+## DOT
 
 [Graphviz DOT](http://www.graphviz.org/doc/info/lang.html) is a simple widely used format for representing graphs as nodes and edges.
 ChecklistBank exports will include synonym and basionym relations in the final graph that can be rendered with many software tools.
