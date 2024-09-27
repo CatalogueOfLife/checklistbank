@@ -150,7 +150,6 @@ class BasicMenu extends Component {
             exact={true}
           >
             <Logo />
-            {/* <h1 style={{   display: "inline" }}>ChecklistBank</h1> */}
           </NavLink>
         </div>
 
@@ -163,16 +162,6 @@ class BasicMenu extends Component {
           onOpenChange={this.onOpenChange}
           onSelect={this.onSelect}
         >
-          {/*           {config.env === "dev" && (
-            <Alert
-              type="warning"
-              style={{ margin: "6px" }}
-              message={
-                <div style={{ textAlign: "center" }}>Test enviroment</div>
-              }
-            />
-          )} */}
-          {config.env !== "production" && (
             <SubMenu
               key="about"
               title={
@@ -182,41 +171,39 @@ class BasicMenu extends Component {
                 </span>
               }
             >
-              <Menu.Item key="introduction">
-                <NavLink to={{ pathname: "/about/introduction" }}>
-                  <span>Introduction</span>
-                </NavLink>
-              </Menu.Item>
+            <Menu.Item key="introduction">
+              <NavLink to={{ pathname: "/about/introduction" }}>
+                <span>Introduction</span>
+              </NavLink>
+            </Menu.Item>
 
-              <Menu.Item key="contribute">
-                <NavLink to={{ pathname: "/about/contribute" }}>
-                  <span>Contribute</span>
-                </NavLink>
-              </Menu.Item>
+            <Menu.Item key="contribute">
+              <NavLink to={{ pathname: "/about/contribute" }}>
+                <span>Contribute</span>
+              </NavLink>
+            </Menu.Item>
+            <Menu.Item key="projects">
+              <NavLink to={{ pathname: "/about/projects" }}>
+                <span>Projects</span>
+              </NavLink>
+            </Menu.Item>
+            <Menu.Item key="formats">
+              <NavLink to={{ pathname: "/about/formats" }}>
+                <span>Formats</span>
+              </NavLink>
+            </Menu.Item>
+            <Menu.Item key="matching">
+              <NavLink to={{ pathname: "/about/matching" }}>
+                <span>Matching</span>
+              </NavLink>
+            </Menu.Item>
+            <Menu.Item key="API">
+              <NavLink to={{ pathname: "/about/API" }}>
+                <span>API</span>
+              </NavLink>
+            </Menu.Item>
+          </SubMenu>
 
-              <Menu.Item key="projects">
-                <NavLink to={{ pathname: "/about/projects" }}>
-                  <span>Projects</span>
-                </NavLink>
-              </Menu.Item>
-
-              <Menu.Item key="formats">
-                <NavLink to={{ pathname: "/about/formats" }}>
-                  <span>Formats</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="matching">
-                <NavLink to={{ pathname: "/about/matching" }}>
-                  <span>Matching</span>
-                </NavLink>
-              </Menu.Item>
-              <Menu.Item key="API">
-                <NavLink to={{ pathname: "/about/API" }}>
-                  <span>API</span>
-                </NavLink>
-              </Menu.Item>
-            </SubMenu>
-          )}
           <Menu.Item key="/dataset">
             <NavLink to="/dataset">
               <SearchOutlined />

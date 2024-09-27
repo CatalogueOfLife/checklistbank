@@ -2,6 +2,14 @@
 
 ChecklistBank supports a variety of formats for both uploads and downloads.
 
+- [ColDP](#catalogue-of-life-data-package-coldp)
+- [DwC-A](#darwin-core-archive-dwc-a)
+- [TextTree](#texttree)
+- [ACEF](#annual-checklist-exchange-format-acef)
+- [Excel](#excel)
+- [Newick](#newick)
+- [DOT](#dot)
+
 ## Catalogue of Life Data Package (ColDP)
 
 The recommended exchange format for submitting data to and downloading data from ChecklistBank
@@ -55,7 +63,7 @@ The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) include
 
 ## TextTree
 
-[TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a = character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
+[TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a `=` or `≡` (homotypic) character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
 
 ## Excel
 
