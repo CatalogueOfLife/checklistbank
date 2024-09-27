@@ -1,4 +1,4 @@
-# Introduction to ChecklistBank
+## Introduction to ChecklistBank
 
 ChecklistBank (CLB) is a repository for taxonomic datasets of various kinds that allows users to [publish](contribute), discover, use and manage such lists in a variety of [formats](formats).
 
@@ -24,7 +24,19 @@ ChecklistBank therefore syncs with the GBIF registry ever hour and inserts missi
 
 Regardless of the original data format, ChecklistBank generates a standardised interpretation similar to the COL Data Package ([ColDP](https://github.com/CatalogueOfLife/coldp/blob/master/README.md)) format, the preferred data format to share rich data. Both the original and the interpreted versions are accessible. This allows us to offer a consistent API and UI across all datasets and is important for data integration in projects like the Catalogue of Life.
 
-To be continues with:
+In addition to the interpreted data the entire original, verbatim data is stored as it existed in the source.
+With most formats being CSV file based, a verbatim record usually represents a single row in a CSV file with labelled columns. They can be searched and also browsed by linking verbatim records through well known foreign key columns in the supported formats.
 
-- verbatim data
-- downloads
+## Downloads
+
+All data in ChecklistBank can be [downloaded](https://www.checklistbank.org/dataset/1199/download).
+The entire dataset is available in the original archive format,
+but can also be downloaded in any of the other [formats](#formats), optionally filtering the data in various ways -
+for example by selecting only a subtree or specific ranks.
+
+Downloads require a user login and users are reminded via email when their requested download is available.
+We currently do store all downloads so they can be accessed for a long time, but the current behavior might change in the future and we recommend users to store their downloads lcoally if they need to archive them.
+
+## User accounts
+
+ChecklistBank relies on [GBIF user accounts](https://www.gbif.org/user/profile). Once you have a registered GBIF account you can also use it to log into ChecklistBank. If you want to become an editor and manage datasets your GBIF profile must include an ORCID.
