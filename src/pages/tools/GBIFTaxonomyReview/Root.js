@@ -57,16 +57,16 @@ const ranksToCompare = [
 ];
 const fieldsToCompare = ["acceptedScientificName", "taxonKey"];
 const tableColumns = [
-  "kingdom",
-  "phylum",
-  "class",
-  "order",
-  "family",
-  "genus",
-  "subGenus",
-  "species",
   "scientificName",
   "acceptedScientificName",
+  "species",
+  "subGenus",
+  "genus",
+  "family",
+  "order",
+  "class",
+  "phylum",
+  "kingdom",
 ];
 
 //const csvFallback = "/diff.txt";
