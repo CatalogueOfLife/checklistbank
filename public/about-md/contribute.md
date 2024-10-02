@@ -19,6 +19,7 @@ Some areas in COL have full gaps for which we do not know any species at all.
 These areas are often filled with genera only provided by the [Interim Register of Marine and Nonmarine Genera](https://www.catalogueoflife.org/data/dataset/2007).
 
 - Symphyta (Hymenoptera)
+- [Chrysidinae & Cleptinae](https://www.catalogueoflife.org/data/browse?taxonKey=87J) (Hymenoptera)
 - [Diplura](https://www.catalogueoflife.org/data/taxon/6222Y)
 - Algae & Protozoa/Chromista, see [IRMNG](https://www.catalogueoflife.org/data/dataset/2007)
 - ...
