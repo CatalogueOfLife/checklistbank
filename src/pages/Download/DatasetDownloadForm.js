@@ -180,7 +180,7 @@ class DatasetDownload extends React.Component {
           <Col span={4} style={{ textAlign: "right", paddingRight: "10px" }}>
             Choose format
           </Col>
-          <Col span={14}>
+          <Col span={16}>
             <Radio.Group
               options={dataFormat
                 .filter((f) => !["proxy", "acef"].includes(f.name))
@@ -194,6 +194,17 @@ class DatasetDownload extends React.Component {
               }
               optionType="button"
             />
+
+            {["dwca", "coldp", "text tree"].includes(selectedDataFormat) && (
+              <Checkbox
+                checked={extended}
+                onChange={(e) => this.setState({ extended: e.target.checked })}
+                style={{ marginLeft: "8px" }}
+              >
+                Extended
+              </Checkbox>
+            )}
+
             <a
               href="https://www.catalogueoflife.org/about/colusage#data-formats"
               target="_blank"
@@ -202,7 +213,7 @@ class DatasetDownload extends React.Component {
               <InfoCircleOutlined />
             </a>
           </Col>
-          <Col span={6} style={{ textAlign: "right" }}>
+          <Col span={4} style={{ textAlign: "right" }}>
             {user && (
               <Button
                 type="primary"
@@ -312,16 +323,6 @@ class DatasetDownload extends React.Component {
                 </Option>
               ))}
             </Select>
-          </Col>
-          <Col style={{ paddingLeft: "10px" }}>
-            {["dwca", "coldp", "text tree"].includes(selectedDataFormat) && (
-              <Checkbox
-                checked={extended}
-                onChange={(e) => this.setState({ extended: e.target.checked })}
-              >
-                Extended
-              </Checkbox>
-            )}
           </Col>
           <Col style={{ paddingLeft: "10px" }}>
             <Checkbox
