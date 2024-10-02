@@ -10,6 +10,15 @@ ChecklistBank supports a variety of formats for both uploads and downloads.
 - [Newick](#newick)
 - [DOT](#dot)
 
+## Simple vs Extended Downloads
+
+For downloads most formats support 2 flavors, a `simple` and an `extended` version.
+To save us space and processing, ChecklistBank defaults to the simple flavor unless the extended was speficially requested.
+
+The `simple` downloads only include very basic information: the scientific name, authorship, rank, status, code, classification and the extinct flag.
+
+The `extended` format exports all available information including distributions, vernacular names, type material, treatment documents, references, etc.
+
 ## Catalogue of Life Data Package (ColDP)
 
 The recommended exchange format for submitting data to and downloading data from ChecklistBank
