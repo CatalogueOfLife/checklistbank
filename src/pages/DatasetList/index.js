@@ -660,8 +660,7 @@ class DatasetList extends React.Component {
                   </Button>
                 </NavLink>{" "}
               </Col>
-              {(isEditorOrAdmin(this.props.user) ||
-                this.props?.user?.editor?.length > 0) && (
+              {user && (
                 <Col>
                   {" "}
                   <NavLink to={{ pathname: `/newdataset` }} exact={true}>

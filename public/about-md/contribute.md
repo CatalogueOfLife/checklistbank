@@ -3,9 +3,7 @@
 ChecklistBank welcomes all datasets about global, regional or thematic taxonomies.
 National faunas and floras, redlists, monographs, legal species lists and many more.
 
-You can create a dataset, author metadata and publish updates to your data yourself.
-To get started please contact us at contact@catalogueoflife.org to gain editor permissions
-or request them directly from your profile in ChecklistBank.
+You can [create a dataset](https://www.checklistbank.org/dataset), author metadata and publish updates to your data yourself with your existing [GBIF account](https://www.gbif.org/user/profile).
 
 ## Contribute to the Catalogue of Life
 
