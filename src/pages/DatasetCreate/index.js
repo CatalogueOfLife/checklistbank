@@ -13,7 +13,7 @@ const DatasetCreate = ({ user, loadTokenUser, addError }) => (
     selectedKeys={["datasetCreate"]}
     title="New Dataset"
   >
-    {Auth.isEditorOrAdmin(user) || user?.editor?.length > 0 ? (
+    {user? (
       <PageContent>
         <MetaDataForm
           onSaveSuccess={async (res, origin) => {
