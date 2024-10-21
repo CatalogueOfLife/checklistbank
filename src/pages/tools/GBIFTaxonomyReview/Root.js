@@ -321,26 +321,34 @@ class Root extends React.Component {
             title: "reviewed",
             key: "reviewed",
             dataIndex: "reviewed",
-            render: (text, record) => (
-              <Checkbox
-                checked={text}
-                onChange={(e) => {
-                  record.reviewed = e.target.checked;
-                  this.setState({ dataSource: [...this.state.dataSource] });
-                }}
-              />
-            ),
+            render: (text, record) => {
+              return (
+                <Checkbox
+                  checked={!!record.reviewed}
+                  onChange={(e) => {
+                    record.reviewed = e.target.checked;
+                    const data = [...this.state.dataSource];
+                    this.setState({ dataSource: [] }, () =>
+                      this.setState({ dataSource: data })
+                    );
+                    // this.setState({ dataSource: [...this.state.dataSource] });
+                  }}
+                />
+              );
+            },
           },
           ...columns,
           {
             title: "IDs",
             key: "identifier",
             render: (text, record) => (
-            <>
-              <Tag>NID</Tag> {record.verbatim_scientificNameID}<br/>
-              <Tag>TID</Tag> {record.verbatim_taxonID}<br/>
-              <Tag>CID</Tag> {record.verbatim_taxonConceptID}
-            </>
+              <>
+                <Tag>NID</Tag> {record.verbatim_scientificNameID}
+                <br />
+                <Tag>TID</Tag> {record.verbatim_taxonID}
+                <br />
+                <Tag>CID</Tag> {record.verbatim_taxonConceptID}
+              </>
             ),
           },
           {
@@ -371,10 +379,16 @@ class Root extends React.Component {
                   href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
                     record
                   )}&body=${this.getIssueBodyText(record)}&labels=feedback`}
-                  target="_blank" rel="noopener noreferrer">Report</a> 
-                <br/>
-                <a href={record.debug_url} target="_blank">Debug</a>
-            </>
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Report
+                </a>
+                <br />
+                <a href={record.debug_url} target="_blank">
+                  Debug
+                </a>
+              </>
             ),
           },
         ];
