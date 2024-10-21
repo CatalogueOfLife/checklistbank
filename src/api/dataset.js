@@ -15,37 +15,47 @@ export const getDatasetsBatch = (ids) => {
   );
 };
 
+export const getSourcesBatch = (ids, catalogueKey) => {
+  return Promise.all(
+    ids.map((i) =>
+      reflect(axios(`${config.dataApi}dataset/${catalogueKey}/source/${i}`))
+    )
+  );
+};
+
 export const getDuplicateOverview = (
   datasetKey,
   catalogueKey,
-  withDecision,
+  withDecision
 ) => {
   let groups = [
     ...duplicatePresets.map((p) => {
-      let params = { ...p.params};
-      if('boolean' === typeof withDecision) {
+      let params = { ...p.params };
+      if ("boolean" === typeof withDecision) {
         params.withDecision = withDecision;
       } else {
-        delete params.withDecision
+        delete params.withDecision;
       }
       return {
-      ...p,
-      params,
-    }
-  }),
+        ...p,
+        params,
+      };
+    }),
   ];
 
   return Promise.all(
     groups.map((g) => {
-      let params = catalogueKey ? {...g.params, catalogueKey} : {...g.params};
+      let params = catalogueKey
+        ? { ...g.params, catalogueKey }
+        : { ...g.params };
       return axios(
-        `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify(params)}`
+        `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify(
+          params
+        )}`
       )
         .then((res) => (g.count = res.data))
-        .catch((err) => (g.error = err))
-    }
-      
-    )
+        .catch((err) => (g.error = err));
+    })
   ).then(() => groups);
 };
 

@@ -16,14 +16,13 @@ import ColTreeNode from "./ColTreeNode";
 import ErrorMsg from "../../../components/ErrorMsg";
 import Custom404 from "./Custom404";
 import { getSectorsBatch } from "../../../api/sector";
-import { getDatasetsBatch } from "../../../api/dataset";
+import { getSourcesBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
 import { ColTreeContext } from "./ColTreeContext";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import Auth from "../../../components/Auth";
-const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
 const IRREGULAR_RANKS = [
   "unranked",
@@ -688,6 +687,10 @@ class ColTree extends React.Component {
     const sectorLoader = new DataLoader((ids) =>
       getSectorsBatch(ids, catalogueKey)
     );
+    const datasetLoader = new DataLoader((ids) =>
+      getSourcesBatch(ids, catalogueKey)
+    );
+
     return Promise.allSettled(
       res.data.result
         .filter((tx) => !!tx.sectorKey)
