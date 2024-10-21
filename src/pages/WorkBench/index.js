@@ -570,29 +570,41 @@ class WorkBench extends React.Component {
 
           .then((res) => {
             d.decisions = [{ id: res.data }];
-            const statusMsg = `Status changed to ${decision} for ${_.get(
-              d,
-              "usage.name.scientificName"
-            )}`;
-            const decisionMsg = `${_.get(d, "usage.name.scientificName")} was ${
-              decision === "block" ? "blocked from the assembly" : ""
-            }${
-              decision === "ignore"
-                ? "ignored (Taxon blocked, but children kept under parent)"
-                : ""
-            }${decision === "reviewed" ? "marked as reviewed" : ""}`;
 
-            notification.open({
-              message: "Decision applied",
-              description: ["block", "ignore", "reviewed"].includes(decision)
-                ? decisionMsg
-                : statusMsg,
-            });
+            if (selectedRowKeys?.length < 6) {
+              const statusMsg = `Status changed to ${decision} for ${_.get(
+                d,
+                "usage.name.scientificName"
+              )}`;
+              const decisionMsg = `${_.get(
+                d,
+                "usage.name.scientificName"
+              )} was ${
+                decision === "block" ? "blocked from the assembly" : ""
+              }${
+                decision === "ignore"
+                  ? "ignored (Taxon blocked, but children kept under parent)"
+                  : ""
+              }${decision === "reviewed" ? "marked as reviewed" : ""}`;
+
+              notification.open({
+                message: "Decision applied",
+                description: ["block", "ignore", "reviewed"].includes(decision)
+                  ? decisionMsg
+                  : statusMsg,
+              });
+            }
           });
       });
 
     return Promise.all(promises)
       .then((res) => {
+        if (selectedRowKeys?.length > 5) {
+          notification.open({
+            message: "Success",
+            description: `${selectedRowKeys?.length} decisions applied.`,
+          });
+        }
         return this.getDecisions(this.state);
       })
       .then((res) => {
