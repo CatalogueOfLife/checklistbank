@@ -670,12 +670,12 @@ class WorkBench extends React.Component {
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : [];
-    const facetNomStatus = _.get(facets, "nomstatus")
-      ? facets.nomstatus.map((s) => ({
+    const facetNomStatus = _.get(facets, "nomStatus")
+      ? facets["nomStatus"].map((s) => ({
           value: s.value,
           label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
-      : [];
+      : null;
     const facetNomType = _.get(facets, "nameType")
       ? facets.nameType.map((s) => ({
           value: s.value,
