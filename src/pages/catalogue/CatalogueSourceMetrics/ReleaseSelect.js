@@ -19,22 +19,27 @@ class RealeaseSelect extends React.Component {
   }
 
   componentDidMount = () => {
-    this.getReleases().then(() => {
-      const { defaultReleaseKey } = this.props;
-    if (defaultReleaseKey) {
-      // this.setState({ selectedRelease: defaultReleaseKey });
-      this.setDefaultValue(defaultReleaseKey)
+    if (this.props?.catalogueKey) {
+      this.getReleases().then(() => {
+        const { defaultReleaseKey } = this.props;
+        if (defaultReleaseKey) {
+          // this.setState({ selectedRelease: defaultReleaseKey });
+          this.setDefaultValue(defaultReleaseKey);
+        }
+      });
     }
-    });
-    
   };
 
   setDefaultValue = (defaultReleaseKey) => {
-    const {onReleaseChange} = this.props;
+    const { onReleaseChange } = this.props;
     axios(`${config.dataApi}dataset/${defaultReleaseKey}`).then((res) => {
-      const releaseLabel = `${res?.data?.alias || res?.data?.key} [${res?.data?.version}]`;
+      const releaseLabel = `${res?.data?.alias || res?.data?.key} [${
+        res?.data?.version
+      }]`;
       onReleaseChange(defaultReleaseKey, releaseLabel);
-      this.setState({ selectedRelease: { value:res?.data?.key, label:releaseLabel}});
+      this.setState({
+        selectedRelease: { value: res?.data?.key, label: releaseLabel },
+      });
     });
   };
 
@@ -48,7 +53,7 @@ class RealeaseSelect extends React.Component {
   getReleases = () => {
     const { catalogueKey } = this.props;
     this.setState({ loading: true });
-   return axios(
+    return axios(
       `${config.dataApi}dataset?releasedFrom=${catalogueKey}&limit=1000`
     ).then((res) =>
       this.setState({
@@ -89,9 +94,9 @@ class RealeaseSelect extends React.Component {
         {releases
           .filter((c) => !omitList.includes(c.key))
           .map((c) => (
-            <Option value={c.key} key={c.key}>{`${
-              c.alias ? c.alias : c.key
-            } [${c.version}]`}</Option>
+            <Option value={c.key} key={c.key}>{`${c.alias ? c.alias : c.key} [${
+              c.version
+            }]`}</Option>
           ))}
       </Select>
     );
