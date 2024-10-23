@@ -704,8 +704,8 @@ class ColTreeNode extends React.Component {
                         <NavLink
                           to={{
                             pathname: releaseKey
-                              ? `/dataset/${releaseKey}/source/${sector.dataset.key}`
-                              : `/dataset/${sector.dataset.key}/about`,
+                              ? `/dataset/${releaseKey}/source/${sector?.dataset?.key}`
+                              : `/dataset/${sector?.dataset?.key}/about`,
                           }}
                           exact={true}
                         >
