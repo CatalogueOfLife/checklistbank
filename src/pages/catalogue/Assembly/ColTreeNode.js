@@ -717,7 +717,9 @@ class ColTreeNode extends React.Component {
                                 : { fontSize: "11px" }
                             }
                           >
-                            {sector.dataset.alias || sector.dataset.key}
+                            {sector?.dataset?.alias ||
+                              sector?.dataset?.key ||
+                              ""}
                             {hasDatasetSectors && ", "}
                           </span>
                         </NavLink>
