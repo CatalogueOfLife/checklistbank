@@ -378,7 +378,7 @@ class Root extends React.Component {
                 <a
                   href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
                     record
-                  )}&body=${this.getIssueBodyText(record)}&labels=feedback`}
+                  )}&body=${this.getIssueBodyText(record)}&labels=xrelease,feedback`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
