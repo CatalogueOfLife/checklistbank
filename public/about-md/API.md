@@ -314,6 +314,9 @@ https://api.checklistbank.org/nidx/1/group
 The names index id also allows to find all name instances in CheckistBank no matter which dataset they belong to:
 https://api.checklistbank.org/nameusage?nidx=1
 
+You can find the names index id from the scientific name (e.g. _Acer rubrum_):
+https://api.checklistbank.org/nidx/match?name=Acer%20rubrum
+
 ### Names Index ID mapping exports
 
 Another feature driven by the names index are exports of ID mappings between different datasets.
