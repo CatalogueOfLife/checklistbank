@@ -254,6 +254,24 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "sync scheduler",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": true,
+    "name": "sync scheduler sources",
+    "origin": [
+      "project"
+    ],
+    "type": "Integer"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "sector remove ordinals",
     "origin": [
       "project"

@@ -19,6 +19,14 @@
     "name": "name usage"
   },
   {
+    "coldp": "col:NameUsage",
+    "name": "taxon"
+  },
+  {
+    "coldp": "col:NameUsage",
+    "name": "synonym"
+  },
+  {
     "coldp": "col:TaxonConceptRelation",
     "name": "taxon concept relation"
   },
