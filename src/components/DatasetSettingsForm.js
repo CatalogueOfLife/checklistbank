@@ -155,9 +155,10 @@ const SettingsForm = (props) => {
             {s.type === "String" ||
             s.type === "URI" ||
             s.type === "UUID" ||
-            s.type === "Character" ? (
+            s.type === "Character" ||
+            s.type === "Integer" ? (
               s.multiple ? (
-                <TagControl />
+                <TagControl type={s.type === "Integer" ? "number" : "text"} />
               ) : (
                 <Input type="text" />
               )

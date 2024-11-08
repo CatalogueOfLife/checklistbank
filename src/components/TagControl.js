@@ -1,24 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { PlusOutlined } from '@ant-design/icons';
-import { Input, Tag, Tooltip } from 'antd';
-import injectSheet from 'react-jss';
+import React from "react";
+import PropTypes from "prop-types";
+import { PlusOutlined } from "@ant-design/icons";
+import { Input, InputNumber, Tag, Tooltip } from "antd";
+import injectSheet from "react-jss";
 
-const stringToArray = value => {
-    if (Array.isArray(value)) {
-      return value;
-    } else if (value) {
-      return [value];
-    }
-  
-    return [];
-  };
+const stringToArray = (value) => {
+  if (Array.isArray(value)) {
+    return value;
+  } else if (value) {
+    return [value];
+  }
+
+  return [];
+};
 
 const styles = {
   newTag: {
-    background: '#fff',
-    borderStyle: 'dashed'
-  }
+    background: "#fff",
+    borderStyle: "dashed",
+  },
 };
 
 /**
@@ -29,7 +29,7 @@ const styles = {
 class TagControl extends React.Component {
   static getDerivedStateFromProps(nextProps) {
     // Should be a controlled component
-    if ('value' in nextProps) {
+    if ("value" in nextProps) {
       let value = stringToArray(nextProps.value);
 
       return { tags: value };
@@ -43,12 +43,12 @@ class TagControl extends React.Component {
     this.state = {
       tags: stringToArray(props.value),
       inputVisible: false,
-      inputValue: ''
+      inputValue: this.props?.type === "",
     };
   }
 
-  handleClose = removedTag => {
-    const tags = this.state.tags.filter(tag => tag !== removedTag);
+  handleClose = (removedTag) => {
+    const tags = this.state.tags.filter((tag) => tag !== removedTag);
 
     this.setState({ tags });
     this.triggerChange(tags);
@@ -58,8 +58,10 @@ class TagControl extends React.Component {
     this.setState({ inputVisible: true }, () => this.input.focus());
   };
 
-  handleInputChange = event => {
-    this.setState({ inputValue: event.target.value });
+  handleInputChange = (event) => {
+    this.setState({
+      inputValue: this.props?.type === "number" ? event : event.target.value,
+    });
   };
 
   handleInputConfirm = () => {
@@ -73,12 +75,12 @@ class TagControl extends React.Component {
     this.setState({
       tags,
       inputVisible: false,
-      inputValue: ''
+      inputValue: "",
     });
     this.triggerChange(tags);
   };
 
-  triggerChange = changedValue => {
+  triggerChange = (changedValue) => {
     // Should provide an event to pass value to Form
     const onChange = this.props.onChange;
     if (onChange) {
@@ -86,7 +88,7 @@ class TagControl extends React.Component {
     }
   };
 
-  saveInputRef = input => this.input = input;
+  saveInputRef = (input) => (this.input = input);
 
   render() {
     const { tags, inputVisible, inputValue } = this.state;
@@ -97,16 +99,37 @@ class TagControl extends React.Component {
         {tags.map((tag, index) => {
           const isLongTag = tag && tag.length > 20;
           const tagElem = (
-            <Tag key={tag} closable={removeAll || index !== 0} onClose={() => this.handleClose(tag)}>
+            <Tag
+              key={tag}
+              closable={removeAll || index !== 0}
+              onClose={() => this.handleClose(tag)}
+            >
               {isLongTag ? `${tag.slice(0, 20)}...` : tag}
             </Tag>
           );
-          return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
+          return isLongTag ? (
+            <Tooltip title={tag} key={tag}>
+              {tagElem}
+            </Tooltip>
+          ) : (
+            tagElem
+          );
         })}
-        {inputVisible && (
+        {inputVisible && this.props?.type === "number" && (
+          <InputNumber
+            ref={this.saveInputRef}
+            size="small"
+            style={{ width: 78 }}
+            value={inputValue}
+            onChange={this.handleInputChange}
+            onBlur={this.handleInputConfirm}
+            onPressEnter={this.handleInputConfirm}
+          />
+        )}
+        {inputVisible && this.props?.type !== "number" && (
           <Input
             ref={this.saveInputRef}
-            type="text"
+            type={"text"}
             size="small"
             style={{ width: 78 }}
             value={inputValue}
@@ -129,7 +152,7 @@ TagControl.propTypes = {
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired, // text label
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]), // value passed from form field decorator
   onChange: PropTypes.func.isRequired, // callback to been called on any data change
-  removeAll: PropTypes.bool // optional flag, to allow remove all tags or not
+  removeAll: PropTypes.bool, // optional flag, to allow remove all tags or not
 };
 
 export default injectSheet(styles)(TagControl);
