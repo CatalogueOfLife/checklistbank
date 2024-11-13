@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Tag, Card, Spin } from "antd";
+import { Alert, Tag, Card, Spin, Row, Col, Checkbox } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
@@ -7,6 +7,7 @@ import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { getDuplicateOverview } from "../../../api/dataset";
 import ErrorMsg from "../../../components/ErrorMsg";
+import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
 
 class DatasetTasks extends React.Component {
   constructor(props) {
@@ -17,6 +18,8 @@ class DatasetTasks extends React.Component {
       manuscriptNames: null,
       staleDecisions: null,
       loading: false,
+      sourceDatasetKey: null,
+      merge: false,
     };
   }
 
@@ -28,9 +31,12 @@ class DatasetTasks extends React.Component {
 
   getData = async () => {
     const { datasetKey } = this.props;
-
+    const { sourceDatasetKey } = this.state;
     this.setState({ loading: true });
-    const duplicatesWithNodecision = await getDuplicateOverview(datasetKey);
+    const duplicatesWithNodecision = await getDuplicateOverview({
+      datasetKey,
+      sourceDatasetKey,
+    });
 
     const duplicates = duplicatesWithNodecision.map((d) => ({
       id: d.id,
@@ -44,7 +50,13 @@ class DatasetTasks extends React.Component {
   getManusciptNames = () => {
     const { datasetKey } = this.props;
     axios(
-      `${config.dataApi}dataset/${datasetKey}/nameusage/search?nomstatus=manuscript&limit=0`
+      `${
+        config.dataApi
+      }dataset/${datasetKey}/nameusage/search?nomstatus=manuscript&limit=0${
+        this.state.sourceDatasetKey
+          ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+          : ""
+      }`
     ).then((res) => {
       this.setState({
         manuscriptNames: { count: res.data.total },
@@ -54,13 +66,17 @@ class DatasetTasks extends React.Component {
 
   getStaleDecisions = () => {
     const { datasetKey } = this.props;
-    axios(`${config.dataApi}dataset/${datasetKey}/decision/stale`).then(
-      (res) => {
-        this.setState({
-          staleDecisions: { count: res.data.total },
-        });
-      }
-    );
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/decision/stale${
+        this.state.sourceDatasetKey
+          ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+          : ""
+      }`
+    ).then((res) => {
+      this.setState({
+        staleDecisions: { count: res.data.total },
+      });
+    });
   };
 
   render() {
@@ -82,7 +98,38 @@ class DatasetTasks extends React.Component {
               type="error"
             />
           ))}
+
         <Card>
+          {!!assembly && (
+            <Row>
+              <Col flex="auto"></Col>
+              <Col>
+                <DatasetAutocomplete
+                  placeHolder="Filter to source"
+                  contributesTo={this.props?.catalogueKey}
+                  autoFocus={false}
+                  onSelectDataset={(ds) =>
+                    this.setState(
+                      {
+                        sourceDatasetKey: ds?.key,
+                        duplicates: [],
+                        duplicatesWithdecision: [],
+                      },
+                      this.getData
+                    )
+                  }
+                  /*               defaultDatasetKey={match?.params?.sourceKey}
+                   */ merge={this.state?.merge}
+                />
+                <Checkbox
+                  value={this.state.merge}
+                  onChange={(e) => this.setState({ merge: e.target.checked })}
+                >
+                  Include merged sources
+                </Checkbox>
+              </Col>
+            </Row>
+          )}
           <h1>Duplicates</h1>
 
           {loading && <Spin />}
@@ -92,7 +139,11 @@ class DatasetTasks extends React.Component {
               <NavLink
                 to={{
                   pathname: `/dataset/${datasetKey}/duplicates`,
-                  search: `?_colCheck=${d.id}`,
+                  search: `?_colCheck=${d.id}${
+                    this.state.sourceDatasetKey
+                      ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+                      : ""
+                  }`,
                 }}
                 exact={true}
               >
@@ -110,7 +161,11 @@ class DatasetTasks extends React.Component {
             <NavLink
               to={{
                 pathname: `/dataset/${datasetKey}/workbench`,
-                search: `?nomstatus=manuscript&limit=50`,
+                search: `?nomstatus=manuscript&limit=50${
+                  this.state.sourceDatasetKey
+                    ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+                    : ""
+                }`,
               }}
               exact={true}
             >
@@ -126,7 +181,11 @@ class DatasetTasks extends React.Component {
             <NavLink
               to={{
                 pathname: `/catalogue/${datasetKey}/decision`,
-                search: `?stale=true`,
+                search: `?stale=true${
+                  this.state.sourceDatasetKey
+                    ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+                    : ""
+                }`,
               }}
               exact={true}
             >

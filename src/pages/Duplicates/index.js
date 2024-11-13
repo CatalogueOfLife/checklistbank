@@ -370,6 +370,7 @@ class DuplicateSearchPage extends React.Component {
 
   onPresetSelect = (value, option) => {
     const { catalogueKey } = this.props;
+    let params_ = qs.parse(_.get(this.props, "location.search"));
     if (!value) {
       this.resetSearch();
     } else {
@@ -378,11 +379,21 @@ class DuplicateSearchPage extends React.Component {
       } = option;
       this.setState(
         {
-          params: { ...params, offset: 0, limit: this.state.params.limit },
+          params: params_?.sourceDatasetKey
+            ? {
+                ...params,
+                offset: 0,
+                limit: this.state.params.limit,
+                sourceDatasetKey: params_?.sourceDatasetKey,
+              }
+            : { ...params, offset: 0, limit: this.state.params.limit },
           selectedPreset: value,
           totalFaked: 0,
           decision: null,
           selectedRowKeys: [],
+          advancedMode: params_?.sourceDatasetKey
+            ? true
+            : this.state.advancedMode,
         },
         this.getData
       );

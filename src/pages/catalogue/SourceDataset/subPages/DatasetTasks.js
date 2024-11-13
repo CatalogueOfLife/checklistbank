@@ -46,16 +46,16 @@ class DatasetTasks extends React.Component {
     const { datasetKey, catalogueKey } = this.props;
 
     this.setState({ loading: true });
-    const duplicatesWithNodecision = await getDuplicateOverview(
+    const duplicatesWithNodecision = await getDuplicateOverview({
       datasetKey,
       catalogueKey,
-      false
-    );
-    const duplicatesWithdecision = await getDuplicateOverview(
+      withDecision: false,
+    });
+    const duplicatesWithdecision = await getDuplicateOverview({
       datasetKey,
       catalogueKey,
-      true
-    );
+      withDecision: true,
+    });
     let completedMap = {};
     duplicatesWithdecision.forEach((c) => {
       completedMap[c.id] = { count: c.count, error: c.error };

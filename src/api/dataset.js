@@ -23,11 +23,12 @@ export const getSourcesBatch = (ids, catalogueKey) => {
   );
 };
 
-export const getDuplicateOverview = (
+export const getDuplicateOverview = ({
   datasetKey,
   catalogueKey,
-  withDecision
-) => {
+  withDecision,
+  sourceDatasetKey,
+}) => {
   let groups = [
     ...duplicatePresets.map((p) => {
       let params = { ...p.params };
@@ -48,6 +49,9 @@ export const getDuplicateOverview = (
       let params = catalogueKey
         ? { ...g.params, catalogueKey }
         : { ...g.params };
+      if (sourceDatasetKey) {
+        params.sourceDatasetKey = sourceDatasetKey;
+      }
       return axios(
         `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify(
           params
