@@ -30,11 +30,12 @@ class DatasetTasks extends React.Component {
   }
 
   getData = async () => {
-    const { datasetKey } = this.props;
+    const { datasetKey, assembly } = this.props;
     const { sourceDatasetKey } = this.state;
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview({
       datasetKey,
+      catalogueKey: assembly ? datasetKey : null,
       sourceDatasetKey,
     });
 
