@@ -34,7 +34,7 @@ const Jobs = ({ user, addError }) => {
   const getJobs = async () => {
     try {
       const res = await axios(`${config.dataApi}job`);
-      // const data = MockData  //
+      //const data = MockData; //
       const data = res.data || [];
       for (let d of data) {
         await userLoader.load(d.userKey).then((user) => {
@@ -215,15 +215,15 @@ const Jobs = ({ user, addError }) => {
       key: "action",
       render: (text, record) => (
         <>
-          {(record?.dataset && Auth.canEditDataset(record?.dataset, user)) ||
-            (Auth.isAuthorised(user, "admin") && (
-              <Button
-                loading={killedJobs.has(record.key)}
-                onClick={() => killJob(record.key)}
-              >
-                Stop
-              </Button>
-            ))}
+          {((record?.dataset && Auth.canEditDataset(record?.dataset, user)) ||
+            Auth.isAuthorised(user, "admin")) && (
+            <Button
+              loading={killedJobs.has(record.key)}
+              onClick={() => killJob(record.key)}
+            >
+              Stop
+            </Button>
+          )}
           {!record?.dataset && Auth.isAuthorised(user, "admin") && (
             <Button
               loading={killedJobs.has(record.key)}
