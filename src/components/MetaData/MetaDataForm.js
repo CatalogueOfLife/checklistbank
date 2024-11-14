@@ -18,7 +18,7 @@ import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
 import KeyValueControl from "./KeyValueControl";
 import TagControl from "../TagControl";
-import Auth from "../Auth"
+import Auth from "../Auth";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
 const { TabPane } = Tabs;
@@ -64,12 +64,12 @@ const MetaDataForm = (props) => {
     datasetoriginEnum,
     onSaveSuccess,
     originalData,
-    user
+    user,
   } = props;
 
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     console.log(datasetoriginEnum);
   }, [datasetoriginEnum]);
@@ -80,7 +80,7 @@ const MetaDataForm = (props) => {
 
   const submitData = (values) => {
     const key = _.get(data, "key");
-    setLoading(true)
+    setLoading(true);
     if (key === -1) {
       // No dataset attached, we are just building metadata for download
       if (onSaveSuccess && typeof onSaveSuccess === "function") {
@@ -89,17 +89,16 @@ const MetaDataForm = (props) => {
     } else {
       let task = key
         ? axios.put(`${config.dataApi}dataset/${key}`, {
-          ...values,
-          private: data.private,
-          source: _.isArray(values.source)
-            ? values.source.filter((s) => !!s)
-            : [],
-        })
+            ...values,
+            private: data.private,
+            source: _.isArray(values.source)
+              ? values.source.filter((s) => !!s)
+              : [],
+          })
         : axios.post(`${config.dataApi}dataset`, values);
 
       task
         .then((res) => {
-
           let title = key ? "Meta data updated" : "Dataset registered";
           let msg = key
             ? `Meta data updated successfully updated for ${values.title}`
@@ -111,12 +110,12 @@ const MetaDataForm = (props) => {
               onSaveSuccess(res, values.origin);
             }
           }
-          setLoading(false)
+          setLoading(false);
           openNotification(title, msg);
           setSubmissionError(null);
         })
         .catch((err) => {
-          setLoading(false)
+          setLoading(false);
           setSubmissionError(err);
         });
     }
@@ -124,7 +123,7 @@ const MetaDataForm = (props) => {
 
   const submitPatch = (values) => {
     const key = _.get(originalData, "key");
-    setLoading(true)
+    setLoading(true);
 
     const sanitised = Object.keys(values).reduce(
       (acc, cur) => {
@@ -138,9 +137,9 @@ const MetaDataForm = (props) => {
 
     const task = _.get(data, "key") // there was already a patch
       ? axios.put(
-        `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
-        sanitised
-      )
+          `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
+          sanitised
+        )
       : axios.post(`${config.dataApi}dataset/${catalogueKey}/patch`, sanitised);
 
     task
@@ -151,13 +150,13 @@ const MetaDataForm = (props) => {
         if (onSaveSuccess && typeof onSaveSuccess === "function") {
           onSaveSuccess(res);
         }
-        setLoading(false)
+        setLoading(false);
 
         openNotification(title, msg);
         setSubmissionError(null);
       })
       .catch((err) => {
-        setLoading(false)
+        setLoading(false);
 
         setSubmissionError(err);
       });
@@ -166,13 +165,13 @@ const MetaDataForm = (props) => {
   const initialValues = originalData
     ? data
     : {
-      organisations: [],
-      authorsAndEditors: [],
-      private: true,
-      confidence: null,
-      completeness: 0,
-      ...data,
-    };
+        organisations: [],
+        authorsAndEditors: [],
+        private: true,
+        confidence: null,
+        completeness: 0,
+        ...data,
+      };
 
   const transferOriginalValueToPatch = (value, field) => {
     form.setFieldsValue({ [field]: value });
@@ -213,11 +212,11 @@ const MetaDataForm = (props) => {
           originalData
             ? null
             : [
-              {
-                required: true,
-                message: "Please input dataset title",
-              },
-            ]
+                {
+                  required: true,
+                  message: "Please input dataset title",
+                },
+              ]
         }
       >
         <Input />
@@ -487,11 +486,7 @@ const MetaDataForm = (props) => {
       )}
 
       {data && (
-        <FormItem
-          {...formItemLayout}
-          label="Keywords"
-          name="keyword"
-        >
+        <FormItem {...formItemLayout} label="Keywords" name="keyword">
           <TagControl label="Add keyword" removeAll={true} />
         </FormItem>
       )}
@@ -553,11 +548,11 @@ const MetaDataForm = (props) => {
           originalData
             ? null
             : [
-              {
-                required: true,
-                message: "Please select a license",
-              },
-            ]
+                {
+                  required: true,
+                  message: "Please select a license",
+                },
+              ]
         }
         help={
           originalData ? (
@@ -571,13 +566,15 @@ const MetaDataForm = (props) => {
       >
         <Select style={{ width: 200 }} showSearch>
           <Option value={undefined}>-</Option>
-          {licenseEnum.map((f) => {
-            return (
-              <Option key={f} value={f}>
-                {f}
-              </Option>
-            );
-          })}
+          {licenseEnum
+            .filter((f) => ["cc0", "cc by", "cc by nc"].includes(f))
+            .map((f) => {
+              return (
+                <Option key={f} value={f}>
+                  {f}
+                </Option>
+              );
+            })}
         </Select>
       </FormItem>
       {data && (
@@ -779,7 +776,12 @@ const MetaDataForm = (props) => {
         </React.Fragment>
       )}
       <FormItem {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={loading}
+          disabled={loading}
+        >
           {props.saveButtonLabel || "Save"}
         </Button>
       </FormItem>
@@ -798,7 +800,7 @@ const mapContextToProps = ({
   nomCode,
   datasetSettings,
   gazetteer,
-  user
+  user,
 }) => ({
   addError,
   addInfo,
@@ -810,7 +812,7 @@ const mapContextToProps = ({
   nomCode,
   datasetSettings,
   gazetteer,
-  user
+  user,
 });
 
 export default withContext(mapContextToProps)(MetaDataForm);
