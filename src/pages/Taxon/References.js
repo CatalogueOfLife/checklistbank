@@ -39,7 +39,12 @@ const ReferencesTable = ({
                 dangerouslySetInnerHTML={{
                   __html: s?.citation ? linkify(s?.citation) : "",
                 }}
-              ></span>
+              ></span>{" "}
+              {s?.csl?.URL && (
+                <a href={s?.csl?.URL} target="_blank">
+                  <LinkOutlined />
+                </a>
+              )}
             </Col>
           </Row>
           {s?.sourceDataset?.key !== primarySourceDatasetKey && (
