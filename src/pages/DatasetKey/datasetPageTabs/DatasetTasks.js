@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Tag, Card, Spin, Row, Col, Checkbox } from "antd";
+import { Alert, Tag, Card, Spin, Row, Col, Checkbox, Button } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
@@ -23,11 +23,11 @@ class DatasetTasks extends React.Component {
     };
   }
 
-  componentDidMount() {
+  /*  componentDidMount() {
     this.getData();
     this.getManusciptNames();
     this.getStaleDecisions();
-  }
+  } */
 
   getData = async () => {
     const { datasetKey, assembly } = this.props;
@@ -103,6 +103,23 @@ class DatasetTasks extends React.Component {
         <Card>
           {!!assembly && (
             <Row>
+              <Col>
+                <Button
+                  loading={loading}
+                  disabled={loading}
+                  type="primary"
+                  onClick={() => {
+                    this.getData();
+                    this.getManusciptNames();
+                    this.getStaleDecisions();
+                  }}
+                >
+                  Load tasks{" "}
+                  {this.state?.sourceDatasetKey
+                    ? `for source ${this.state?.sourceDatasetKey}`
+                    : ""}
+                </Button>
+              </Col>
               <Col flex="auto"></Col>
               <Col>
                 <DatasetAutocomplete
@@ -115,6 +132,8 @@ class DatasetTasks extends React.Component {
                         sourceDatasetKey: ds?.key,
                         duplicates: [],
                         duplicatesWithdecision: [],
+                        manuscriptNames: null,
+                        staleDecisions: null,
                       },
                       this.getData
                     )
@@ -131,9 +150,10 @@ class DatasetTasks extends React.Component {
               </Col>
             </Row>
           )}
-          <h1>Duplicates</h1>
+          {duplicates?.length > 0 && <h1>Duplicates</h1>}
 
           {loading && <Spin />}
+
           {duplicates
             .filter((d) => !d.error)
             .map((d) => (
@@ -157,7 +177,7 @@ class DatasetTasks extends React.Component {
                 </Tag>{" "}
               </NavLink>
             ))}
-          <h1>Manuscript names</h1>
+          {!!manuscriptNames?.count && <h1>Manuscript names</h1>}
           {manuscriptNames && (
             <NavLink
               to={{
