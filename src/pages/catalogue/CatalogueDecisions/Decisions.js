@@ -709,39 +709,30 @@ class CatalogueDecisions extends React.Component {
                   {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
                 </pre>
               )} */
-            expandedRowRender={
-              !Auth.canEditDataset({ key: datasetKey }, user)
-                ? null
-                : (record) => (
-                    <React.Fragment>
-                      {record.mode === "update" && (
-                        <a
-                          onClick={() => {
-                            this.setState({
-                              rowsForEdit: [
-                                {
-                                  decisions: [
-                                    _.omit(record, ["dataset", "user"]),
-                                  ],
-                                },
-                              ],
-                              decisionFormVisible: true,
-                            });
-                          }}
-                        >
-                          Edit <EditOutlined />
-                        </a>
-                      )}
-                      <pre>
-                        {JSON.stringify(
-                          _.omit(record, ["dataset", "user"]),
-                          null,
-                          4
-                        )}
-                      </pre>
-                    </React.Fragment>
-                  )
-            }
+            expandedRowRender={(record) => (
+              <React.Fragment>
+                {record.mode === "update" &&
+                  Auth.canEditDataset({ key: datasetKey }, user) && (
+                    <a
+                      onClick={() => {
+                        this.setState({
+                          rowsForEdit: [
+                            {
+                              decisions: [_.omit(record, ["dataset", "user"])],
+                            },
+                          ],
+                          decisionFormVisible: true,
+                        });
+                      }}
+                    >
+                      Edit <EditOutlined />
+                    </a>
+                  )}
+                <pre>
+                  {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
+                </pre>
+              </React.Fragment>
+            )}
             onChange={this.handleTableChange}
           />
         )}
