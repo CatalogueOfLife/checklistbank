@@ -68,6 +68,7 @@ import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
+import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 import Analytics from "./Analytics";
 import config from "./config";
@@ -394,6 +395,12 @@ const App = () => {
                 key="vocabIndex"
                 path={`/vocabulary`}
                 component={VocabularyIndex}
+              />
+              <Route
+                exact
+                key="vocabIndexKey"
+                path={`/vocabulary/taxgrouptree`}
+                component={TaxGroupTree}
               />
               <Route
                 exact
