@@ -5,13 +5,8 @@ import { withRouter } from "react-router-dom";
 import { Row, Col, Typography } from "antd";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
-import { Image, Tree, Select } from "antd";
-
-import {
-  DownOutlined,
-  SmallDashOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
+import { Image, Tree, Popover } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -24,39 +19,39 @@ const TaxGroupTree = () => {
       .then((data) => loadTree(data));
   }, []);
 
-  const onSelect = (selectedKeys, info) => {
-    console.log("show description", selectedKeys, info);
-  };
-
+  const [expandedKeys, setExpandedKeys] = useState([]);
+  
   const loadTree = (array) => {
-    const arrayDictionary = {};
+    const byNameDict = {};
     const treeData_ = [];
+    var key = 1;
     array.forEach((tg) => {
-      arrayDictionary[tg.name] = tg;
-      tg["title"] = <span style={{ marginLeft: "6px" }}>{tg["name"]}</span>;
-      tg["key"] = tg["name"];
+      byNameDict[tg.name] = tg;
+      tg["title"] = <span style={{ marginLeft: "6px" }}><Popover trigger="click" content={tg["description"]}>{tg["name"]}</Popover></span>;
       tg["children"] = [];
       tg["icon"] = <Image height={24} src={tg.iconSVG} />;
     });
 
-    for (var entry in arrayDictionary) {
+    for (var entry in byNameDict) {
       // get all the data for this entry in the dictionary
-      const mappedElem = arrayDictionary[entry];
+      const node = byNameDict[entry];
 
       // if the element has a parent, add it
-      if (mappedElem["parents"]) {
-        mappedElem["parents"].forEach((p) => {
-          arrayDictionary[p]["children"].push(mappedElem);
+      if (node["parents"]) {
+        node["parents"].forEach((p) => {
+          node["key"] = key++;
+          byNameDict[p]["children"].push({...node});
         });
-      }
-      // else is at the root level
-      else {
-        treeData_.push(mappedElem);
+      } else {
+        // else is at the root level
+        node["key"] = key++;
+        treeData_.push(node);
       }
     }
-
-    console.log(treeData_);
     setData(treeData_);
+    // expand all nodes with children
+    var pNodes = array.filter(n => n["children"].length > 0).map(n => n["key"]);
+    setExpandedKeys(pNodes);
   };
 
   return (
@@ -79,7 +74,8 @@ const TaxGroupTree = () => {
               showIcon={true}
               switcherIcon={<DownOutlined />}
               defaultExpandAll={true}
-              onSelect={onSelect}
+              onExpand={setExpandedKeys}
+              expandedKeys={expandedKeys}
               treeData={treeData}
             />
           </Col>

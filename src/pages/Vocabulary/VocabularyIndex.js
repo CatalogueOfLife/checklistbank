@@ -37,6 +37,13 @@ const VocabularyIndex = ({ addError }) => {
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto"></Col>
           <Col span={16}>
+            <NavLink to={{ pathname: `/vocabulary/taxgrouptree` }} exact={true}>TaxGroup tree</NavLink>
+          </Col>
+          <Col flex="auto"></Col>
+        </Row>
+        <Row style={{ marginTop: "10px" }}>
+          <Col flex="auto"></Col>
+          <Col span={16}>
             <List
               size="large"
               bordered
