@@ -9,7 +9,7 @@ import BooleanValue from "../../components/BooleanValue";
 import Linkify from "react-linkify";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
-import { Image } from 'antd'
+import { Image } from "antd";
 
 const { Title } = Typography;
 
@@ -50,16 +50,14 @@ const VocabularyKey = ({
                   <PresentationItem label={key}>
                     {typeof item[key] == "boolean" ? (
                       <BooleanValue value={item[key]} />
+                    ) : typeof item[key] == "string" &&
+                      item[key].endsWith(".png") ? (
+                      <Image src={item[key]} />
                     ) : (
-                      typeof item[key] == "string" && item[key].endsWith('.png') ? (
-                        <Image src={item[key]} />
-                      ) : (
-                        <Linkify>{item[key]}</Linkify>
-                      )
+                      <Linkify>{item[key]}</Linkify>
                     )}
                   </PresentationItem>
-                ))}
-                {" "}
+                ))}{" "}
               </Card>
             ))}
           </Col>

@@ -5,13 +5,61 @@ import { withRouter } from "react-router-dom";
 import { Row, Col, Typography } from "antd";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
-import { Image, Tree, Select } from 'antd'
-import {DownOutlined, SmallDashOutlined, CheckOutlined} from '@ant-design/icons';
+import { Image, Tree, Select } from "antd";
+
+import {
+  DownOutlined,
+  SmallDashOutlined,
+  CheckOutlined,
+} from "@ant-design/icons";
 
 const { Title } = Typography;
 
 const TaxGroupTree = () => {
-  const [treeData, setData] = useState([]);
+  const [treeData, setData] = useState(
+    [] /* [
+    {
+      title: "parent 1",
+      key: "0-0",
+      children: [
+        {
+          title: "parent 1-0",
+          key: "0-0-0",
+          disabled: true,
+          children: [
+            {
+              title: "leaf",
+              key: "0-0-0-0",
+              disableCheckbox: true,
+            },
+            {
+              title: "leaf",
+              key: "0-0-0-1",
+            },
+          ],
+        },
+        {
+          title: "parent 1-1",
+          key: "0-0-1",
+          children: [
+            {
+              title: (
+                <span
+                  style={{
+                    color: "#1890ff",
+                  }}
+                >
+                  sss
+                </span>
+              ),
+              key: "0-0-1-0",
+            },
+          ],
+        },
+      ],
+    },
+  ] */
+  );
 
   useEffect(() => {
     fetch(`${config.dataApi}vocab/taxgroup`)
@@ -20,40 +68,40 @@ const TaxGroupTree = () => {
   }, []);
 
   const onSelect = (selectedKeys, info) => {
-    console.log('show description', selectedKeys, info);
+    console.log("show description", selectedKeys, info);
   };
 
   const loadTree = (array) => {
     const arrayDictionary = {};
+    const treeData_ = [];
     array.forEach((tg) => {
       arrayDictionary[tg.name] = tg;
-      tg["title"] = tg["name"];
+      tg["title"] = <span style={{ marginLeft: "6px" }}>{tg["name"]}</span>;
       tg["key"] = tg["name"];
       tg["children"] = [];
-      tg["icon"] = <Image src={tg.iconSVG} />;
+      tg["icon"] = <Image height={24} src={tg.iconSVG} />;
     });
 
     for (var entry in arrayDictionary) {
-
       // get all the data for this entry in the dictionary
       const mappedElem = arrayDictionary[entry];
 
       // if the element has a parent, add it
       if (mappedElem["parents"]) {
-        mappedElem["parents"].forEach( p => {
+        mappedElem["parents"].forEach((p) => {
           arrayDictionary[p]["children"].push(mappedElem);
-        })
+        });
       }
       // else is at the root level
       else {
-        treeData.push(mappedElem);
+        treeData_.push(mappedElem);
       }
     }
-    
-    console.log(treeData);
-    setData(treeData);
+
+    console.log(treeData_);
+    setData(treeData_);
   };
-  
+
   return (
     <Layout
       title={`Taxonomic Groups`}
@@ -61,22 +109,22 @@ const TaxGroupTree = () => {
       selectedKeys={["vocabulary"]}
     >
       <PageContent>
-      
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto">
-              <Tree
-      showLine={true
-          ? {
-              showLeafIcon: false
-            }
-          : false
-      }
-      showIcon={true}
-      switcherIcon={<DownOutlined />}
-      defaultExpandAll={true}
-      onSelect={onSelect}
-      treeData={treeData}
-    />
+            <Tree
+              showLine={
+                true
+                  ? {
+                      showLeafIcon: false,
+                    }
+                  : false
+              }
+              showIcon={true}
+              switcherIcon={<DownOutlined />}
+              defaultExpandAll={true}
+              onSelect={onSelect}
+              treeData={treeData}
+            />
           </Col>
         </Row>
       </PageContent>
