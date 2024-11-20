@@ -4,7 +4,7 @@ import _ from "lodash";
 import Classification from "./Classification";
 import { NavLink } from "react-router-dom";
 import CopyableColumnText from "../WorkBench/CopyableColumnText";
-import { Tooltip } from "antd";
+import { Tooltip, Button } from "antd";
 export default (catalogueKey, deleteCallback) => ({
   binomial: [
     {
@@ -14,23 +14,25 @@ export default (catalogueKey, deleteCallback) => ({
       className: "workbench-td",
       render: (text, record) => {
         return (
-          <NavLink
+          <Button
+            type="link"
+            size="small"
+            target="_blank"
             key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
-              }/${encodeURIComponent(
-                _.get(record, "accepted.id") || _.get(record, "id")
-              )}`,
-            }}
-            exact={true}
+            href={`/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName") ? "name" : "taxon"
+            }/${encodeURIComponent(
+              _.get(record, "accepted.id") || _.get(record, "id")
+            )}`}
           >
-            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
+            <Tooltip
+              title={_.get(record, "accepted.id") || _.get(record, "id")}
+            >
               <div style={{ width: "50px" }} className="truncate">
                 {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
-          </NavLink>
+          </Button>
         );
       },
     },
@@ -124,23 +126,25 @@ export default (catalogueKey, deleteCallback) => ({
       className: "workbench-td",
       render: (text, record) => {
         return (
-          <NavLink
+          <Button
+            type="link"
+            size="small"
+            target="_blank"
             key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
-              }/${encodeURIComponent(
-                _.get(record, "accepted.id") || _.get(record, "id")
-              )}`,
-            }}
-            exact={true}
+            href={`/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName") ? "name" : "taxon"
+            }/${encodeURIComponent(
+              _.get(record, "accepted.id") || _.get(record, "id")
+            )}`}
           >
-            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
+            <Tooltip
+              title={_.get(record, "accepted.id") || _.get(record, "id")}
+            >
               <div style={{ width: "50px" }} className="truncate">
-              {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
-          </NavLink>
+          </Button>
         );
       },
     },
@@ -243,23 +247,25 @@ export default (catalogueKey, deleteCallback) => ({
       className: "workbench-td",
       render: (text, record) => {
         return (
-          <NavLink
+          <Button
+            type="link"
+            size="small"
+            target="_blank"
             key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
-              }/${encodeURIComponent(
-                _.get(record, "accepted.id") || _.get(record, "id")
-              )}`,
-            }}
-            exact={true}
+            href={`/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName") ? "name" : "taxon"
+            }/${encodeURIComponent(
+              _.get(record, "accepted.id") || _.get(record, "id")
+            )}`}
           >
-            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
+            <Tooltip
+              title={_.get(record, "accepted.id") || _.get(record, "id")}
+            >
               <div style={{ width: "50px" }} className="truncate">
-              {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
-          </NavLink>
+          </Button>
         );
       },
     },
@@ -350,23 +356,25 @@ export default (catalogueKey, deleteCallback) => ({
       className: "workbench-td",
       render: (text, record) => {
         return (
-          <NavLink
+          <Button
+            type="link"
+            size="small"
+            target="_blank"
             key={_.get(record, "id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "datasetKey")}/${
-                _.get(record, "bareName") ? "name" : "taxon"
-              }/${encodeURIComponent(
-                _.get(record, "accepted.id") || _.get(record, "id")
-              )}`,
-            }}
-            exact={true}
+            href={`/dataset/${_.get(record, "datasetKey")}/${
+              _.get(record, "bareName") ? "name" : "taxon"
+            }/${encodeURIComponent(
+              _.get(record, "accepted.id") || _.get(record, "id")
+            )}`}
           >
-            <Tooltip title={_.get(record, "accepted.id") || _.get(record, "id")}>
+            <Tooltip
+              title={_.get(record, "accepted.id") || _.get(record, "id")}
+            >
               <div style={{ width: "50px" }} className="truncate">
-              {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "accepted.id") || _.get(record, "id")}
               </div>
             </Tooltip>
-          </NavLink>
+          </Button>
         );
       },
     },
