@@ -54,6 +54,7 @@ import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
 
 import DataLoader from "dataloader";
+import OtherUsages from "./OtherUsages";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
 const { TabPane } = Tabs;
@@ -82,6 +83,7 @@ const initialState = {
   sourceTaxon: null,
   includes: [],
   issues: [],
+  otherUsages: [],
   edit: false,
 };
 
@@ -287,6 +289,29 @@ class TaxonPage extends React.Component {
             ).then((dataset) => {
               this.setState({ sourceDataset: dataset.data });
             });
+          });
+        }
+
+        if (res?.data?.status === "ambiguous synonym") {
+          axios(
+            `${config.dataApi}dataset/${
+              res?.data?.datasetKey
+            }/nameusage/search?q=${encodeURIComponent(
+              res?.data?.name?.scientificName
+            )}`
+          ).then((otherUsages) => {
+            console.log(otherUsages);
+            this.setState({
+              otherUsages:
+                otherUsages?.data?.result.filter(
+                  (u) => u?.id !== res?.data?.id
+                ) || [],
+            });
+            /* otherUsages?.data?.result?.forEach((r) => {
+              console.log(
+                `${r?.id} ${r?.usage?.name?.scientificName} ${r?.usage?.status}`
+              );
+            }); */
           });
         }
 
@@ -943,6 +968,11 @@ class TaxonPage extends React.Component {
                   >
                     <LinkOutlined />
                   </NavLink>
+                </PresentationItem>
+              )}
+              {_.get(info, "taxon.status") === "ambiguous synonym" && (
+                <PresentationItem md={md} label="Other usages">
+                  <OtherUsages otherUsages={this.state?.otherUsages} />
                 </PresentationItem>
               )}
               <Row style={{ borderBottom: "1px solid #eee" }}>
