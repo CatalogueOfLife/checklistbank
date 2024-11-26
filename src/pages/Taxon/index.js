@@ -296,9 +296,7 @@ class TaxonPage extends React.Component {
           axios(
             `${config.dataApi}dataset/${
               res?.data?.datasetKey
-            }/nameusage/search?q=${encodeURIComponent(
-              res?.data?.name?.scientificName
-            )}`
+            }/nameusage/search?content=scientific_name&type=exact&q=${encodeURIComponent(res?.data?.name?.scientificName)}`
           ).then((otherUsages) => {
             console.log(otherUsages);
             this.setState({
