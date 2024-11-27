@@ -445,7 +445,7 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Completeness">
               {displayData.completeness}
             </PresentationItem>
-            <PresentationItem label="Url (website)">
+            <PresentationItem label="Website">
               {displayData.url && (
                 <a href={displayData.url} target="_blank">
                   {displayData.url}
@@ -458,6 +458,17 @@ class DatasetMeta extends React.Component {
                   {displayData.logoUrl}
                 </a>
               )}
+            </PresentationItem>
+            <PresentationItem label="Data Conversion">
+              {displayData.conversion.url && (
+                <a href={displayData.conversion.url} target="_blank">
+                  {displayData.conversion.url}
+                </a>
+              )}
+              {displayData.conversion.url && displayData.conversion.description && (
+                <br/>
+              )}
+              {displayData.conversion.description}
             </PresentationItem>
             <PresentationItem label="ISSN">
               {displayData.issn && (
