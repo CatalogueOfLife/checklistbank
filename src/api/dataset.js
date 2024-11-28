@@ -28,6 +28,7 @@ export const getDuplicateOverview = ({
   catalogueKey,
   withDecision,
   sourceDatasetKey,
+  sourceOnly,
 }) => {
   let groups = [
     ...duplicatePresets.map((p) => {
@@ -51,6 +52,9 @@ export const getDuplicateOverview = ({
         : { ...g.params };
       if (sourceDatasetKey) {
         params.sourceDatasetKey = sourceDatasetKey;
+      }
+      if (sourceOnly) {
+        params.sourceOnly = sourceOnly;
       }
       return axios(
         `${config.dataApi}dataset/${datasetKey}/duplicate/count?${qs.stringify(

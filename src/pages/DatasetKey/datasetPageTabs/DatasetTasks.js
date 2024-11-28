@@ -31,12 +31,13 @@ class DatasetTasks extends React.Component {
 
   getData = async () => {
     const { datasetKey, assembly } = this.props;
-    const { sourceDatasetKey } = this.state;
+    const { sourceDatasetKey, sourceOnly } = this.state;
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview({
       datasetKey,
       catalogueKey: assembly ? datasetKey : null,
       sourceDatasetKey,
+      sourceOnly,
     });
 
     const duplicates = duplicatesWithNodecision.map((d) => ({
@@ -147,6 +148,14 @@ class DatasetTasks extends React.Component {
                 >
                   Include merged sources
                 </Checkbox>
+                <Checkbox
+                  value={this.state.sourceOnly}
+                  onChange={(e) =>
+                    this.setState({ sourceOnly: e.target.checked })
+                  }
+                >
+                  From this source only
+                </Checkbox>
               </Col>
             </Row>
           )}
@@ -163,6 +172,10 @@ class DatasetTasks extends React.Component {
                   search: `?_colCheck=${d.id}${
                     this.state.sourceDatasetKey
                       ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
+                      : ""
+                  }${
+                    this.state.sourceOnly
+                      ? "&sourceOnly=" + this.state.sourceOnly
                       : ""
                   }`,
                 }}

@@ -24,6 +24,7 @@ import {
   Tooltip,
   notification,
   Form,
+  Checkbox,
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -116,6 +117,7 @@ class DuplicateSearchPage extends React.Component {
       "authorshipDifferent",
       "rankDifferent",
       "codeDifferent",
+      "sourceOnly",
     ].forEach((n) => {
       if (params[n] === "true") {
         booleans[n] = true;
@@ -385,6 +387,7 @@ class DuplicateSearchPage extends React.Component {
                 offset: 0,
                 limit: this.state.params.limit,
                 sourceDatasetKey: params_?.sourceDatasetKey,
+                sourceOnly: !!params_?.sourceOnly,
               }
             : { ...params, offset: 0, limit: this.state.params.limit },
           selectedPreset: value,
@@ -727,19 +730,34 @@ class DuplicateSearchPage extends React.Component {
             {advancedMode && (
               <Form layout="inline">
                 {showSourceFeatures && (
-                  <DatasetAutocomplete
-                    placeHolder="Source dataset"
-                    style={{ marginBottom: "10px", width: "100%" }}
-                    onSelectDataset={(value) =>
-                      this.updateSearch({ sourceDatasetKey: value.key })
-                    }
-                    onResetSearch={() =>
-                      this.updateSearch({ sourceDatasetKey: null })
-                    }
-                    defaultDatasetKey={
-                      _.get(params, "sourceDatasetKey") || null
-                    }
-                  />
+                  <>
+                    {" "}
+                    <DatasetAutocomplete
+                      placeHolder="Source dataset"
+                      style={{
+                        marginBottom: "10px",
+                        marginRight: "10px",
+                        width: "75%",
+                      }}
+                      onSelectDataset={(value) =>
+                        this.updateSearch({ sourceDatasetKey: value.key })
+                      }
+                      onResetSearch={() =>
+                        this.updateSearch({ sourceDatasetKey: null })
+                      }
+                      defaultDatasetKey={
+                        _.get(params, "sourceDatasetKey") || null
+                      }
+                    />
+                    <Checkbox
+                      checked={params?.sourceOnly || false}
+                      onChange={(e) =>
+                        this.updateSearch({ sourceOnly: e?.target?.checked })
+                      }
+                    >
+                      From this source only
+                    </Checkbox>
+                  </>
                 )}
                 <Input.Search
                   placeholder="Search names"
