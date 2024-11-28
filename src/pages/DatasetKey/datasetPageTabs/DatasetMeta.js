@@ -30,7 +30,7 @@ import Yaml from "../../../components/MetaData/Yaml";
 
 import marked from "marked";
 import DOMPurify from "dompurify";
-import linkify from 'linkify-html';
+import linkify from "linkify-html";
 
 export const IDENTIFIER_TYPES = {
   col: "https://www.checklistbank.org/dataset/",
@@ -119,7 +119,7 @@ class DatasetMeta extends React.Component {
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             //res.data.contributesTo = projects.data.result.map((r) => r.key);
-            this.setState({ contributesTo: _.get(projects, "data.result") })
+            this.setState({ contributesTo: _.get(projects, "data.result") });
           }
           return res;
         });
@@ -137,7 +137,6 @@ class DatasetMeta extends React.Component {
           res.data,
           axios(`${config.dataApi}user/${createdBy}`),
           axios(`${config.dataApi}user/${modifiedBy}`),
-
         ]);
       })
       .then((res) => {
@@ -172,8 +171,9 @@ class DatasetMeta extends React.Component {
       .then(() => {
         notification.open({
           message: "Updated",
-          description: `The dataset is now ${toggledPrivate ? "private" : "public"
-            }`,
+          description: `The dataset is now ${
+            toggledPrivate ? "private" : "public"
+          }`,
         });
         this.setState(
           {
@@ -193,8 +193,8 @@ class DatasetMeta extends React.Component {
   };
 
   getAgentSpan = (agents) => {
-    return agents.length === 1 ? 24 : agents.length === 2 ? 12 : 8
-  }
+    return agents.length === 1 ? 24 : agents.length === 2 ? 12 : 8;
+  };
 
   render() {
     const {
@@ -242,30 +242,33 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
               <Col>
-                {/* !catalogueKey &&  */data && !data.deleted && (
-                  <Popconfirm
-                    title={`Make dataset ${data.private ? "public" : "private"
+                {
+                  /* !catalogueKey &&  */ data && !data.deleted && (
+                    <Popconfirm
+                      title={`Make dataset ${
+                        data.private ? "public" : "private"
                       }`}
-                    visible={confirmPrivatePopupVisible}
-                    onConfirm={this.setPrivate}
-                    okButtonProps={{ loading: privateChangeLoading }}
-                    onCancel={() =>
-                      this.setState({ confirmPrivatePopupVisible: false })
-                    }
-                  >
-                    <Switch
-                      style={{ marginRight: "8px" }}
-                      checked={data.private}
-                      onChange={() =>
-                        this.setState({ confirmPrivatePopupVisible: true })
+                      visible={confirmPrivatePopupVisible}
+                      onConfirm={this.setPrivate}
+                      okButtonProps={{ loading: privateChangeLoading }}
+                      onCancel={() =>
+                        this.setState({ confirmPrivatePopupVisible: false })
                       }
-                      checkedChildren="Private"
-                      unCheckedChildren="Private"
-                    />
-                  </Popconfirm>
-                )}
-                {data && !data.deleted && /* data.createdBy !== config.gbifSyncUser && */ (
-                  <Switch
+                    >
+                      <Switch
+                        style={{ marginRight: "8px" }}
+                        checked={data.private}
+                        onChange={() =>
+                          this.setState({ confirmPrivatePopupVisible: true })
+                        }
+                        checkedChildren="Private"
+                        unCheckedChildren="Private"
+                      />
+                    </Popconfirm>
+                  )
+                }
+                {data && !data.deleted && (
+                  /* data.createdBy !== config.gbifSyncUser && */ <Switch
                     checked={editMode}
                     onChange={this.setEditMode}
                     checkedChildren="Cancel"
@@ -325,23 +328,27 @@ class DatasetMeta extends React.Component {
         )}
         {!editMode && !editPatchMode && displayData && (
           <React.Fragment>
-            <PresentationItem label="Alias">              
+            <PresentationItem label="Alias">
               {catalogue ? (
-                <NavLink to={{
-                  pathname: `/dataset/${displayData.key}/metadata`,
-                }}>
-                {displayData.alias}
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${displayData.key}/metadata`,
+                  }}
+                >
+                  {displayData.alias}
                 </NavLink>
               ) : (
                 displayData.alias
               )}
             </PresentationItem>
             <PresentationItem
-              label={`${displayData.version ? "Version" : ""}${displayData.version && displayData.issued ? " / " : ""
-                }${displayData.issued ? "Issued" : ""}`}
+              label={`${displayData.version ? "Version" : ""}${
+                displayData.version && displayData.issued ? " / " : ""
+              }${displayData.issued ? "Issued" : ""}`}
             >
               {(displayData.version || displayData.issued) &&
-                `${displayData.version ? displayData.version : ""}${displayData.issued ? " / " + displayData.issued : ""
+                `${displayData.version ? displayData.version : ""}${
+                  displayData.issued ? " / " + displayData.issued : ""
                 }`}
             </PresentationItem>
             <PresentationItem label="DOI">
@@ -405,18 +412,19 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
             <PresentationItem label="Contributor">
-              {displayData.contributor && _.isArray(displayData.contributor) && (
-                <Row gutter={[8, 8]}>
-                  {displayData.contributor.map((a) => (
-                    <Col span={this.getAgentSpan(displayData.contributor)}>
-                      <AgentPresentation
-                        hideEmail={!Auth.canEditDataset(displayData, user)}
-                        agent={a}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              )}
+              {displayData.contributor &&
+                _.isArray(displayData.contributor) && (
+                  <Row gutter={[8, 8]}>
+                    {displayData.contributor.map((a) => (
+                      <Col span={this.getAgentSpan(displayData.contributor)}>
+                        <AgentPresentation
+                          hideEmail={!Auth.canEditDataset(displayData, user)}
+                          agent={a}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
             </PresentationItem>
             <PresentationItem label="Taxonomic scope">
               {displayData.taxonomicScope}
@@ -429,7 +437,9 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
 
             <PresentationItem label="Keywords">
-              {displayData.keyword && _.isArray(displayData.keyword) && (displayData.keyword.join(", "))}
+              {displayData.keyword &&
+                _.isArray(displayData.keyword) &&
+                displayData.keyword.join(", ")}
             </PresentationItem>
 
             <PresentationItem label="Origin">
@@ -460,15 +470,14 @@ class DatasetMeta extends React.Component {
               )}
             </PresentationItem>
             <PresentationItem label="Data Conversion">
-              {displayData.conversion.url && (
-                <a href={displayData.conversion.url} target="_blank">
-                  {displayData.conversion.url}
+              {displayData?.conversion?.url && (
+                <a href={displayData?.conversion?.url} target="_blank">
+                  {displayData?.conversion?.url}
                 </a>
               )}
-              {displayData.conversion.url && displayData.conversion.description && (
-                <br/>
-              )}
-              {displayData.conversion.description}
+              {displayData?.conversion?.url &&
+                displayData?.conversion?.description && <br />}
+              {displayData?.conversion?.description}
             </PresentationItem>
             <PresentationItem label="ISSN">
               {displayData.issn && (
@@ -479,24 +488,31 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
-            {Auth.isAuthorised(user, ["admin"]) && <PresentationItem label="GBIF key">
-              {displayData.gbifKey && (
-                <a href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}>
-                  {displayData.gbifKey}
-                </a>
-              )}
-            </PresentationItem>}
-            {Auth.isAuthorised(user, ["admin"]) && <PresentationItem label="GBIF publisher key">
-              {displayData.gbifPublisherKey && (
-                <NavLink to={{
-                  pathname: `/dataset`,
-                  search: `?gbifPublisherKey=${displayData.gbifPublisherKey}`
-                }}>
-                  {displayData.gbifPublisherKey}
-                </NavLink>
-
-              )}
-            </PresentationItem>}
+            {Auth.isAuthorised(user, ["admin"]) && (
+              <PresentationItem label="GBIF key">
+                {displayData.gbifKey && (
+                  <a
+                    href={`https://www.gbif.org/dataset/${displayData.gbifKey}`}
+                  >
+                    {displayData.gbifKey}
+                  </a>
+                )}
+              </PresentationItem>
+            )}
+            {Auth.isAuthorised(user, ["admin"]) && (
+              <PresentationItem label="GBIF publisher key">
+                {displayData.gbifPublisherKey && (
+                  <NavLink
+                    to={{
+                      pathname: `/dataset`,
+                      search: `?gbifPublisherKey=${displayData.gbifPublisherKey}`,
+                    }}
+                  >
+                    {displayData.gbifPublisherKey}
+                  </NavLink>
+                )}
+              </PresentationItem>
+            )}
             <PresentationItem label="Identifiers">
               {displayData.identifier && (
                 <ol
@@ -532,22 +548,38 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Citation">
               {displayData.citation && (
                 <span
-                  dangerouslySetInnerHTML={{ __html: linkify(displayData?.citation || "") }}
+                  dangerouslySetInnerHTML={{
+                    __html: linkify(displayData?.citation || ""),
+                  }}
                 ></span>
               )}
             </PresentationItem>
             <PresentationItem label="Released from">
-              {<span>
-                <NavLink to={{
-                  pathname: Auth.canViewDataset(catalogue, user) ? `/catalogue/${displayData.sourceKey}/metadata` : `/dataset/${displayData.sourceKey}`,
-                }}
-                >
-                  {releasedFrom ? releasedFrom.title : displayData.sourceKey}
-                </NavLink>
-                {displayData.sourceKey &&
-                  <span> - (<a href={`${config.downloadApi}releases/${displayData.sourceKey}/${displayData.attempt}`} target="_blank">logs</a>)</span>
-                }
-              </span>
+              {
+                <span>
+                  <NavLink
+                    to={{
+                      pathname: Auth.canViewDataset(catalogue, user)
+                        ? `/catalogue/${displayData.sourceKey}/metadata`
+                        : `/dataset/${displayData.sourceKey}`,
+                    }}
+                  >
+                    {releasedFrom ? releasedFrom.title : displayData.sourceKey}
+                  </NavLink>
+                  {displayData.sourceKey && (
+                    <span>
+                      {" "}
+                      - (
+                      <a
+                        href={`${config.downloadApi}releases/${displayData.sourceKey}/${displayData.attempt}`}
+                        target="_blank"
+                      >
+                        logs
+                      </a>
+                      )
+                    </span>
+                  )}
+                </span>
               }
             </PresentationItem>
             <PresentationItem label="Source">
@@ -559,7 +591,9 @@ class DatasetMeta extends React.Component {
                     (s.citation ? (
                       <div
                         style={{ display: "inline-block" }}
-                        dangerouslySetInnerHTML={{ __html: linkify(s?.citation || "") }}
+                        dangerouslySetInnerHTML={{
+                          __html: linkify(s?.citation || ""),
+                        }}
                       ></div>
                     ) : (
                       s.title
@@ -586,10 +620,11 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Created">
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"
-              )}${displayData.createdByUser
-                ? " by " + displayData.createdByUser
-                : ""
-                }`}
+              )}${
+                displayData.createdByUser
+                  ? " by " + displayData.createdByUser
+                  : ""
+              }`}
             </PresentationItem>
             <PresentationItem label="Modified">
               {`${moment(displayData.modified).format(
