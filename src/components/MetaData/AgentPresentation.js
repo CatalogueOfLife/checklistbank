@@ -90,6 +90,14 @@ const AgentPresentation = ({
             {agent.email}
           </a>
         ))}
+      {agent.url &&
+        (noLinks ? (
+          <div>{agent.url}</div>
+        ) : (
+          <a style={{ display: "block" }} href={agent.url} target="_blank">
+            {agent.url}
+          </a>
+        ))}
       {agent.note && <div>{agent.note}</div>}
     </span>
   ) : null;
