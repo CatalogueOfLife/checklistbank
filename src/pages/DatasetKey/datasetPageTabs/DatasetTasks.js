@@ -23,11 +23,14 @@ class DatasetTasks extends React.Component {
     };
   }
 
-  /*  componentDidMount() {
-    this.getData();
-    this.getManusciptNames();
-    this.getStaleDecisions();
-  } */
+  componentDidMount() {
+    const { assembly } = this.props;
+    if (!assembly) {
+      this.getData();
+      this.getManusciptNames();
+      this.getStaleDecisions();
+    }
+  }
 
   getData = async () => {
     const { datasetKey, assembly } = this.props;
