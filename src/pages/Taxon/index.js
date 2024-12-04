@@ -3,6 +3,7 @@ import config from "../../config";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { RiNodeTree } from "react-icons/ri";
 import { LinkOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Alert,
@@ -773,7 +774,13 @@ class TaxonPage extends React.Component {
                   />
                 )}
               {classification && (
-                <PresentationItem md={md} label="Classification">
+                <PresentationItem md={md} label={<><span>Classification</span><NavLink 
+                  style={{ marginLeft: "5px"}}
+                  to={{
+                    pathname: `/dataset/${datasetKey}/classification`,
+                    search: `?taxonKey=${taxon?.id}`
+                  }}><RiNodeTree/>
+                  </NavLink></>}>
                   <Classification
                     style={{ marginTop: "-3px", marginLeft: "-3px" }}
                     data={classification}
