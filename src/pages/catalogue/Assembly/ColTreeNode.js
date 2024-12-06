@@ -23,7 +23,9 @@ import AddChildModal from "./AddChildModal";
 import EditTaxonModal from "./EditTaxonModal";
 import SpeciesEstimateModal from "./SpeciesEstimateModal";
 import UploadTextTreeModal from "./UploadTextTreeModal";
-import TaxonSources from "./TaxonSources";
+/* import TaxonSources from "./TaxonSources";
+ */ import TaxonSources from "./TaxonSourcesNew";
+
 import withContext from "../../../components/hoc/withContext";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
@@ -244,7 +246,7 @@ class ColTreeNode extends React.Component {
   render = () => {
     const {
       taxon,
-      taxon: { sector, datasetSectors },
+      taxon: { sector, datasetSectors, sourceDatasetKeys },
       treeType,
       isUpdating,
       getTaxonomicStatusColor,
@@ -252,11 +254,13 @@ class ColTreeNode extends React.Component {
       dataset,
     } = this.props;
     const hasDatasetSectors =
-      datasetSectors &&
+      (sourceDatasetKeys || []).filter((d) => sector.subjectDatasetKey !== d)
+        .length > 0;
+    /* datasetSectors &&
       (sector && sector.subjectDatasetKey
         ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey]))
             .length > 0
-        : true);
+        : true); */
 
     const {
       childModalVisible,
@@ -562,12 +566,19 @@ class ColTreeNode extends React.Component {
                         </CopyToClipboard>
                       </span>
 
-                      {!_.isUndefined(taxon.speciesCount) && (
+                      {!_.isUndefined(taxon.count) && (
                         <span>
                           {" "}
-                          • {taxon.speciesCount}{" "}
+                          • {Number(taxon.count).toLocaleString()}{" "}
                           {!_.isUndefined(taxon.speciesEstimate) && (
-                            <span> of {taxon.speciesEstimate} est. </span>
+                            <span>
+                              {" "}
+                              of{" "}
+                              {Number(
+                                taxon.speciesEstimate
+                              ).toLocaleString()}{" "}
+                              est.{" "}
+                            </span>
                           )}
                           living species
                         </span>
@@ -591,7 +602,7 @@ class ColTreeNode extends React.Component {
                         </React.Fragment>
                       )}
                       {taxon.datasetKey === catalogueKey &&
-                        (!datasetSectors || _.isEmpty(datasetSectors)) &&
+                        !hasDatasetSectors &&
                         !sector && (
                           <Tooltip title="No sectors">
                             <WarningFilled
@@ -599,12 +610,13 @@ class ColTreeNode extends React.Component {
                             />
                           </Tooltip>
                         )}
-                      {datasetSectors && !_.isEmpty(datasetSectors) && (
+                      {hasDatasetSectors && (
                         <span>
                           <span> • </span>
                           <TaxonSources
-                            datasetSectors={datasetSectors}
-                            taxon={taxon}
+                            sourceDatasetKeys={sourceDatasetKeys}
+                            /*                             datasetSectors={datasetSectors}
+                             */ taxon={taxon}
                             releaseKey={releaseKey}
                             catalogueKey={catalogueKey}
                           />
@@ -670,7 +682,22 @@ class ColTreeNode extends React.Component {
                         </span>
                       </NavLink>
                     </span>
-                    {taxon.estimate && (
+                    {!_.isUndefined(taxon.count) && (
+                      <span>
+                        {" "}
+                        • {Number(taxon.count).toLocaleString()}{" "}
+                        {taxon.estimate && (
+                          <span>
+                            {" "}
+                            of {Number(
+                              taxon.estimate
+                            ).toLocaleString()} est.{" "}
+                          </span>
+                        )}
+                        living species
+                      </span>
+                    )}
+                    {/* {taxon.estimate && (
                       <span>
                         {" "}
                         • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
@@ -684,7 +711,7 @@ class ColTreeNode extends React.Component {
                             })`
                           : ""}
                       </span>
-                    )}
+                    )} */}
 
                     {taxon.status === "provisionally accepted" && (
                       <React.Fragment>
@@ -727,11 +754,12 @@ class ColTreeNode extends React.Component {
                     )}
                     {hasDatasetSectors && (
                       <TaxonSources
-                        datasetSectors={
+                        sourceDatasetKeys={sourceDatasetKeys}
+                        /* datasetSectors={
                           sector && sector.subjectDatasetKey
                             ? _.omit(datasetSectors, [sector.subjectDatasetKey])
                             : datasetSectors
-                        }
+                        } */
                         taxon={taxon}
                         releaseKey={releaseKey}
                         catalogueKey={catalogueKey}
