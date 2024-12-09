@@ -243,6 +243,10 @@ class ColTreeNode extends React.Component {
     }
   };
 
+  rankIsAboveSpecies = (rank) => {
+    return this.props.rank.indexOf(rank) < this.props.rank.indexOf("species");
+  };
+
   render = () => {
     const {
       taxon,
@@ -566,23 +570,24 @@ class ColTreeNode extends React.Component {
                         </CopyToClipboard>
                       </span>
 
-                      {!_.isUndefined(taxon.count) && (
-                        <span>
-                          {" "}
-                          • {Number(taxon.count).toLocaleString()}{" "}
-                          {!_.isUndefined(taxon.speciesEstimate) && (
-                            <span>
-                              {" "}
-                              of{" "}
-                              {Number(
-                                taxon.speciesEstimate
-                              ).toLocaleString()}{" "}
-                              est.{" "}
-                            </span>
-                          )}
-                          living species
-                        </span>
-                      )}
+                      {!_.isUndefined(taxon.count) &&
+                        this.rankIsAboveSpecies(taxon?.rank) && (
+                          <span>
+                            {" "}
+                            • {Number(taxon.count).toLocaleString()}{" "}
+                            {!_.isUndefined(taxon.speciesEstimate) && (
+                              <span>
+                                {" "}
+                                of{" "}
+                                {Number(
+                                  taxon.speciesEstimate
+                                ).toLocaleString()}{" "}
+                                est.{" "}
+                              </span>
+                            )}
+                            living species
+                          </span>
+                        )}
                       {isUpdating && (
                         <span>
                           {" "}
@@ -682,21 +687,22 @@ class ColTreeNode extends React.Component {
                         </span>
                       </NavLink>
                     </span>
-                    {!_.isUndefined(taxon.count) && (
-                      <span>
-                        {" "}
-                        • {Number(taxon.count).toLocaleString()}{" "}
-                        {taxon.estimate && (
-                          <span>
-                            {" "}
-                            of {Number(
-                              taxon.estimate
-                            ).toLocaleString()} est.{" "}
-                          </span>
-                        )}
-                        living species
-                      </span>
-                    )}
+                    {!_.isUndefined(taxon.count) &&
+                      this.rankIsAboveSpecies(taxon?.rank) && (
+                        <span>
+                          {" "}
+                          • {Number(taxon.count).toLocaleString()}{" "}
+                          {taxon.estimate && (
+                            <span>
+                              {" "}
+                              of {Number(
+                                taxon.estimate
+                              ).toLocaleString()} est.{" "}
+                            </span>
+                          )}
+                          living species
+                        </span>
+                      )}
                     {/* {taxon.estimate && (
                       <span>
                         {" "}
@@ -780,10 +786,12 @@ const mapContextToProps = ({
   getTaxonomicStatusColor,
   catalogueKey,
   addError,
+  rank,
 }) => ({
   getTaxonomicStatusColor,
   catalogueKey,
   addError,
+  rank,
 });
 
 export default withContext(mapContextToProps)(withRouter(ColTreeNode));
