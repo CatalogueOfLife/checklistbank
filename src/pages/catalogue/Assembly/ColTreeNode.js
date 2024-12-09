@@ -258,7 +258,7 @@ class ColTreeNode extends React.Component {
       dataset,
     } = this.props;
     const hasDatasetSectors =
-      (sourceDatasetKeys || []).filter((d) => sector.subjectDatasetKey !== d)
+      (sourceDatasetKeys || []).filter((d) => sector?.subjectDatasetKey !== d)
         .length > 0;
     /* datasetSectors &&
       (sector && sector.subjectDatasetKey
