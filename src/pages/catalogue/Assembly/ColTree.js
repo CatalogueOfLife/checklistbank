@@ -226,12 +226,22 @@ class ColTree extends React.Component {
         });
       });
   };
-  appendTypeParam = (treeType) => {
+  /*   appendTypeParam = (treeType) => {
     return treeType === "readOnly"
       ? `&type=CATALOGUE`
       : ["CATALOGUE", "SOURCE"].includes(treeType)
       ? `&type=${treeType}`
       : "";
+  }; */
+
+  appendTypeParam = (treeType) => {
+    const param = ["CATALOGUE", "readOnly"].includes(treeType)
+      ? `&type=PROJECT`
+      : ["SOURCE"].includes(treeType)
+      ? `&type=${treeType}`
+      : "";
+
+    return param;
   };
   expandToTaxon = async (defaultExpandKey) => {
     const {
