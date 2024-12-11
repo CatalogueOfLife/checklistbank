@@ -31,8 +31,7 @@ class AdminPage extends React.Component {
     this.state = {
       error: null,
       updateAllLogosloading: false,
-      updateAllMetricsloading: false,
-      recalculateSectorCountsLoading: false,
+      metricsSchedulerloading: false,
       reindexSchedulerLoading: false,
       rematchMissingLoading: false,
       components: { foo: true, bar: false },
@@ -94,22 +93,22 @@ class AdminPage extends React.Component {
       );
   };
 
-  updateAllMetrics = () => {
-    this.setState({ updateAllMetricsloading: true });
+  metricsScheduler = () => {
+    this.setState({ metricsSchedulerloading: true });
     axios
-      .post(`${config.dataApi}admin/metrics-update`)
+      .post(`${config.dataApi}admin/rebuild-taxon-metrics/scheduler`)
       .then((res) => {
-        this.setState({ updateAllMetricsloading: false, error: null }, () => {
+        this.setState({ metricsSchedulerloading: false, error: null }, () => {
           notification.open({
             message: "Action triggered",
-            description: "updating all metrics async",
+            description: "Run taxon metrics rebuild scheduler",
           });
         });
       })
       .catch((err) =>
         this.setState({
           error: err,
-          updateAllMetricsloading: false,
+          metricsSchedulerloading: false,
         })
       );
   };
@@ -130,58 +129,6 @@ class AdminPage extends React.Component {
         this.setState({
           error: err,
           updateUsageCountsLoading: false,
-        })
-      );
-  };
-
-  recalculateSectorCounts = () => {
-    this.setState({ recalculateSectorCountsLoading: true });
-    axios
-      .post(`${config.dataApi}admin/sector-count-update`)
-      .then((res) => {
-        this.setState(
-          {
-            recalculateSectorCountsLoading: false,
-            error: null,
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "recalculating sector counts",
-            });
-          }
-        );
-      })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          recalculateSectorCountsLoading: false,
-        })
-      );
-  };
-
-  reindexAllDatasets = () => {
-    this.setState({ reindexAllDatasetsLoading: true });
-    axios
-      .post(`${config.dataApi}admin/reindex`, { all: true })
-      .then((res) => {
-        this.setState(
-          {
-            reindexAllDatasetsLoading: false,
-            error: null,
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "reindexing all datasets",
-            });
-          }
-        );
-      })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          reindexAllDatasetsLoading: false,
         })
       );
   };
@@ -254,10 +201,8 @@ class AdminPage extends React.Component {
   render() {
     const {
       updateAllLogosloading,
-      updateAllMetricsloading,
+      metricsSchedulerLoading,
       updateUsageCountsLoading,
-      recalculateSectorCountsLoading,
-      reindexAllDatasetsLoading,
       reindexSchedulerLoading,
       rematchMissingLoading,
       error,
@@ -350,22 +295,6 @@ class AdminPage extends React.Component {
 
             <Popconfirm
               placement="rightTop"
-              title="Update all metrics?"
-              onConfirm={this.updateAllMetrics}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                type="primary"
-                loading={updateAllMetricsloading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Update all metrics
-              </Button>
-            </Popconfirm>
-
-            <Popconfirm
-              placement="rightTop"
               title="Update usage counts?"
               onConfirm={this.updateUsageCounts}
               okText="Yes"
@@ -377,38 +306,6 @@ class AdminPage extends React.Component {
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               >
                 Update usage counts
-              </Button>
-            </Popconfirm>
-
-            <Popconfirm
-              placement="rightTop"
-              title="Update sector counts?"
-              onConfirm={this.recalculateSectorCounts}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                type="primary"
-                loading={recalculateSectorCountsLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Update sector counts
-              </Button>
-            </Popconfirm>
-
-            <Popconfirm
-              placement="rightTop"
-              title="Do you want to reindex all datasets?"
-              onConfirm={this.reindexAllDatasets}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                type="primary"
-                loading={reindexAllDatasetsLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Reindex all datasets
               </Button>
             </Popconfirm>
 
@@ -443,6 +340,23 @@ class AdminPage extends React.Component {
                 Rematch missing
               </Button>
             </Popconfirm>
+
+            <Popconfirm
+              placement="rightTop"
+              title="Do you want to schedule to rebuild taxon metrics for incomplete datasets?"
+              onConfirm={this.metricsScheduler}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                loading={metricsSchedulerLoading}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
+              >
+                Metrics scheduler
+              </Button>
+            </Popconfirm>
+            
             <Popconfirm
               placement="rightTop"
               title="Do you want to restart all components?"
