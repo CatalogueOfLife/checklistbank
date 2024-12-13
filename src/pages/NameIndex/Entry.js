@@ -40,7 +40,10 @@ const Entry = ({record}) => {
             }}/></Col></Row>
     {asJson ? <pre>{JSON.stringify(record, null, 2)}</pre> : <>
             <PresentationItem  label="ID">
-              {record.id}
+              <NavLink to={{pathname: `/namesindex/${record.id}`}}>{record.id}</NavLink>
+            </PresentationItem>
+            <PresentationItem  label="Canonical ID">
+              <NavLink to={{pathname: `/namesindex/${record.canonicalId}`}}>{record.canonicalId}</NavLink>              
             </PresentationItem>
             <PresentationItem  label="Scientific Name">
               {record.scientificName}
@@ -60,20 +63,11 @@ const Entry = ({record}) => {
             <PresentationItem  label="Infraspecific Epithet">
               {record.infraspecificEpithet}
             </PresentationItem>
-            
             <PresentationItem  label="Basionym Authorship">
                {record?.basionymAuthorship ? <Authorship author={record?.basionymAuthorship} /> : record?.basionymAuthorship}
             </PresentationItem>
             <PresentationItem  label="Combination Authorship">
                {record?.combinationAuthorship ? <Authorship author={record?.combinationAuthorship} /> : record?.combinationAuthorship}
-            </PresentationItem>
-            <PresentationItem  label={record.canonical ? "Canonical" : <span>Canonical {<NavLink to={{
-                pathname: `/namesindex/${record.canonicalId}`
-            }}>
-                <LinkOutlined />
-                </NavLink>}</span>}>
-            <BooleanValue value={record.canonical} /> 
-            
             </PresentationItem>
             <PresentationItem  label="parsed">
             <BooleanValue value={record.parsed} />
