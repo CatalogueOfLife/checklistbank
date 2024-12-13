@@ -36,7 +36,7 @@ const ClassificationTable = ({
 }) => (
   <div style={style}>
     {" "}
-    {_.reverse([...data]).map((t) => (
+    {data.map((t) => (
       <div style={{ float: "left", marginRight: "3px" }} key={t.rank}>
         <span style={rankStyle}>{t.rank}: </span>
         <NavLink
