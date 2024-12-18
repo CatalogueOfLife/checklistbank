@@ -414,9 +414,8 @@ class SourceMetrics extends React.Component {
                         }}
                         exact={true}
                       >
-                        {!isPublisher &&
-                          column !== "datasetAttempt" &&
-                          Number(text || 0).toLocaleString()}
+                        {Number(text || 0).toLocaleString()}
+
                         {!isPublisher &&
                           column === "datasetAttempt" &&
                           this.renderDatasetAttempt(
