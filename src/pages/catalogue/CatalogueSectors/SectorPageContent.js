@@ -53,6 +53,7 @@ class CatalogueSectors extends React.Component {
     this.state = {
       data: [],
       merge: false,
+      nested: false,
       searchText: "",
       loading: false,
       rematchSectorsLoading: false,
@@ -485,6 +486,16 @@ class CatalogueSectors extends React.Component {
                 this.setState({ name }, () => this.updateSearch({ name }));
               }}
               style={{ width: 200 }}
+            />
+          </FormItem>
+
+          <FormItem
+            label="Nested"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={params.nested === true || params.nested === "true"}
+              onChange={(value) => this.updateSearch({ nested: value })}
             />
           </FormItem>
           <FormItem
