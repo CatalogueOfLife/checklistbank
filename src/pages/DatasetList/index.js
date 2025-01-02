@@ -72,13 +72,22 @@ class DatasetList extends React.Component {
       columns: [],
       defaultColumns: [
         {
+          title: "Key",
+          dataIndex: "key",
+          key: "key",
+          render: (text, record) => (
+            <DatasetNavLink text={text} record={record} />
+          ),
+          sorter: true,
+        },
+        {
           title: "Alias",
           dataIndex: "alias",
           key: "alias",
           render: (text, record) => (
             <DatasetNavLink text={text} record={record} />
           ),
-          // sorter: true
+          sorter: true,
         },
         {
           title: "Title",
@@ -113,7 +122,7 @@ class DatasetList extends React.Component {
           title: "Creator",
           dataIndex: "creator",
           key: "creator",
-          // sorter: true,
+          sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -134,7 +143,7 @@ class DatasetList extends React.Component {
           title: "Editor",
           dataIndex: "editor",
           key: "editor",
-          // sorter: true,
+          sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -155,7 +164,7 @@ class DatasetList extends React.Component {
           title: "Contributor",
           dataIndex: "contributor",
           key: "contributor",
-          // sorter: true,
+          sorter: true,
           ellipsis: {
             showTitle: false,
           },
@@ -464,9 +473,8 @@ class DatasetList extends React.Component {
         addError(error);
         notification.error({
           message: `Error`,
-          description: `It was not possible to import ${
-            dataset?.alias || dataset.key
-          }`,
+          description: `It was not possible to import ${dataset?.alias || dataset.key
+            }`,
         });
       }
     }
@@ -487,9 +495,8 @@ class DatasetList extends React.Component {
         addError(error);
         notification.error({
           message: `Error`,
-          description: `It was not possible to delete ${
-            dataset?.alias || dataset.key
-          }`,
+          description: `It was not possible to delete ${dataset?.alias || dataset.key
+            }`,
         });
       }
     }
@@ -562,24 +569,24 @@ class DatasetList extends React.Component {
 
     const filteredColumns = isEditorOrAdmin(this.props.user)
       ? [
-          ...defaultColumns,
-          {
-            title: "Action",
-            dataIndex: "",
-            width: 60,
-            key: "__actions__",
-            render: (text, record) =>
-              record.origin === "external" &&
+        ...defaultColumns,
+        {
+          title: "Action",
+          dataIndex: "",
+          width: 60,
+          key: "__actions__",
+          render: (text, record) =>
+            record.origin === "external" &&
               canEditDataset(record, this.props.user) ? (
-                <ImportButton
-                  key={record.key}
-                  record={{ datasetKey: record.key }}
-                />
-              ) : (
-                ""
-              ),
-          },
-        ]
+              <ImportButton
+                key={record.key}
+                record={{ datasetKey: record.key }}
+              />
+            ) : (
+              ""
+            ),
+        },
+      ]
       : defaultColumns;
 
     const columns = _.filter(
@@ -776,7 +783,7 @@ class DatasetList extends React.Component {
                               pageSize: params.limit || PAGE_SIZE,
                               current:
                                 Number(params.offset || 0) /
-                                  Number(params.limit || PAGE_SIZE) +
+                                Number(params.limit || PAGE_SIZE) +
                                 1,
                             },
                           },
@@ -808,58 +815,58 @@ class DatasetList extends React.Component {
                   !Auth.isAuthorised(user, ["admin"])
                     ? null
                     : {
-                        selectedRowKeys: this.state.selectedRowKeys,
-                        onChange: (selectedRowKeys, selectedRows) => {
-                          this.setState({ selectedRowKeys, selectedRows });
-                          // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                      selectedRowKeys: this.state.selectedRowKeys,
+                      onChange: (selectedRowKeys, selectedRows) => {
+                        this.setState({ selectedRowKeys, selectedRows });
+                        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                      },
+                      selections: [
+                        {
+                          key: "import",
+                          text: (
+                            <Popconfirm
+                              placement="topLeft"
+                              title={this.getConfirmText("import")}
+                              onConfirm={() =>
+                                this.importDatasets(this.state.selectedRows)
+                              }
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <Button
+                                onClick={(e) => e.stopPropagation()}
+                                type="primary"
+                              >
+                                Import {this.state.selectedRowKeys.length}{" "}
+                                datasets
+                              </Button>
+                            </Popconfirm>
+                          ),
                         },
-                        selections: [
-                          {
-                            key: "import",
-                            text: (
-                              <Popconfirm
-                                placement="topLeft"
-                                title={this.getConfirmText("import")}
-                                onConfirm={() =>
-                                  this.importDatasets(this.state.selectedRows)
-                                }
-                                okText="Yes"
-                                cancelText="No"
+                        {
+                          key: "delete",
+                          text: (
+                            <Popconfirm
+                              placement="topLeft"
+                              title={this.getConfirmText("delete")}
+                              onConfirm={() =>
+                                this.deleteDatasets(this.state.selectedRows)
+                              }
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <Button
+                                onClick={(e) => e.stopPropagation()}
+                                type="danger"
                               >
-                                <Button
-                                  onClick={(e) => e.stopPropagation()}
-                                  type="primary"
-                                >
-                                  Import {this.state.selectedRowKeys.length}{" "}
-                                  datasets
-                                </Button>
-                              </Popconfirm>
-                            ),
-                          },
-                          {
-                            key: "delete",
-                            text: (
-                              <Popconfirm
-                                placement="topLeft"
-                                title={this.getConfirmText("delete")}
-                                onConfirm={() =>
-                                  this.deleteDatasets(this.state.selectedRows)
-                                }
-                                okText="Yes"
-                                cancelText="No"
-                              >
-                                <Button
-                                  onClick={(e) => e.stopPropagation()}
-                                  type="danger"
-                                >
-                                  Delete {this.state.selectedRowKeys.length}{" "}
-                                  datasets
-                                </Button>
-                              </Popconfirm>
-                            ),
-                          },
-                        ],
-                      }
+                                Delete {this.state.selectedRowKeys.length}{" "}
+                                datasets
+                              </Button>
+                            </Popconfirm>
+                          ),
+                        },
+                      ],
+                    }
                 }
               />
             </ConfigProvider>
