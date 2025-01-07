@@ -85,9 +85,8 @@ class ColTreeNode extends React.Component {
       this.props.reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
-        description: `${
-          taxa.length - errors.length
-        } were deleted from the assembly`,
+        description: `${taxa.length - errors.length
+          } were deleted from the assembly`,
       });
     });
   };
@@ -96,8 +95,7 @@ class ColTreeNode extends React.Component {
     Promise.allSettled(
       taxa.map((taxon) =>
         axios.delete(
-          `${config.dataApi}dataset/${
-            taxon.datasetKey
+          `${config.dataApi}dataset/${taxon.datasetKey
           }/tree/${encodeURIComponent(taxon.id)}`
         )
       )
@@ -111,9 +109,8 @@ class ColTreeNode extends React.Component {
       this.props.reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
-        description: `${
-          taxa.length - errors.length
-        } were deleted recursively from the assembly`,
+        description: `${taxa.length - errors.length
+          } were deleted recursively from the assembly`,
       });
     });
   };
@@ -159,8 +156,7 @@ class ColTreeNode extends React.Component {
   consolidateHomotypicNames = (taxon) => {
     axios
       .post(
-        `${config.dataApi}dataset/${
-          taxon.datasetKey
+        `${config.dataApi}dataset/${taxon.datasetKey
         }/consolidate-homotypic?taxonID=${encodeURIComponent(taxon.id)}`
       )
       .then(() => {
@@ -216,9 +212,8 @@ class ColTreeNode extends React.Component {
       const { taxon } = this.props;
       this.setState({ subtreeDownloadPending: true });
       axios({
-        url: `${config.dataApi}dataset/${
-          taxon.datasetKey
-        }/taxon/${encodeURIComponent(taxon.id)}/tree`, //your url
+        url: `${config.dataApi}dataset/${taxon.datasetKey
+          }/taxon/${encodeURIComponent(taxon.id)}/tree`, //your url
         method: "GET",
         responseType: "blob", // important
       }).then((response) => {
@@ -502,12 +497,11 @@ class ColTreeNode extends React.Component {
                           • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
                           {taxon.estimates.length
                             ? `(${taxon.estimates.length.toLocaleString(
-                                "en-GB"
-                              )} ${
-                                taxon.estimates.length > 1
-                                  ? "estimates"
-                                  : "estimate"
-                              })`
+                              "en-GB"
+                            )} ${taxon.estimates.length > 1
+                              ? "estimates"
+                              : "estimate"
+                            })`
                             : ""}
                         </span>
                       )}
@@ -535,125 +529,125 @@ class ColTreeNode extends React.Component {
 
                 {((mode !== "modify" && treeType === "CATALOGUE") ||
                   treeType === "SOURCE") && (
-                  <PopconfirmMultiOption
-                    visible={this.props.confirmVisible}
-                    title={this.props.confirmTitle}
-                    onConfirm={this.props.onConfirm}
-                    actions={this.props.actions}
-                    onCancel={this.props.onCancel}
-                  >
-                    <div>
-                      <span>
-                        <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                          {taxon.rank}:{" "}
-                        </span>
+                    <PopconfirmMultiOption
+                      visible={this.props.confirmVisible}
+                      title={this.props.confirmTitle}
+                      onConfirm={this.props.onConfirm}
+                      actions={this.props.actions}
+                      onCancel={this.props.onCancel}
+                    >
+                      <div>
+                        <span>
+                          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                            {taxon.rank}:{" "}
+                          </span>
 
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: taxon.labelHtml,
-                          }}
-                        />
-                        <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                          {taxon?.merged && (
-                            <MergedDataBadge style={{ marginLeft: "4px" }} />
-                          )}
-                        </span>
-                        <CopyToClipboard
-                          text={taxon.name}
-                          onCopy={() =>
-                            message.info(`Copied "${taxon.name}" to clipboard`)
-                          }
-                        >
-                          <CopyOutlined
-                            style={{ fontSize: "10px", marginLeft: "4px" }}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: taxon.labelHtml,
+                            }}
                           />
-                        </CopyToClipboard>
-                      </span>
+                          <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                            {taxon?.merged && (
+                              <MergedDataBadge style={{ marginLeft: "4px" }} />
+                            )}
+                          </span>
+                          <CopyToClipboard
+                            text={taxon.name}
+                            onCopy={() =>
+                              message.info(`Copied "${taxon.name}" to clipboard`)
+                            }
+                          >
+                            <CopyOutlined
+                              style={{ fontSize: "10px", marginLeft: "4px" }}
+                            />
+                          </CopyToClipboard>
+                        </span>
 
-                      {!_.isUndefined(taxon.count) &&
-                        this.rankIsAboveSpecies(taxon?.rank) && (
+                        {!_.isUndefined(taxon.count) &&
+                          this.rankIsAboveSpecies(taxon?.rank) && (
+                            <span>
+                              {" "}
+                              • {Number(taxon.count).toLocaleString()}{" "}
+                              {!_.isUndefined(taxon.speciesEstimate) && (
+                                <span>
+                                  {" "}
+                                  of{" "}
+                                  {Number(
+                                    taxon.speciesEstimate
+                                  ).toLocaleString()}{" "}
+                                  est.{" "}
+                                </span>
+                              )}
+                              spp.
+                            </span>
+                          )}
+                        {isUpdating && (
                           <span>
                             {" "}
-                            • {Number(taxon.count).toLocaleString()}{" "}
-                            {!_.isUndefined(taxon.speciesEstimate) && (
-                              <span>
-                                {" "}
-                                of{" "}
-                                {Number(
-                                  taxon.speciesEstimate
-                                ).toLocaleString()}{" "}
-                                est.{" "}
-                              </span>
-                            )}
-                            species
+                            <SyncOutlined spin />
                           </span>
                         )}
-                      {isUpdating && (
-                        <span>
-                          {" "}
-                          <SyncOutlined spin />
-                        </span>
-                      )}
-                      {taxon.status === "provisionally accepted" && (
-                        <React.Fragment>
-                          {" "}
-                          •{" "}
-                          <Tag
-                            color={getTaxonomicStatusColor(taxon.status)}
-                            style={{ marginRight: 0 }}
-                          >
-                            prov.
-                          </Tag>
-                        </React.Fragment>
-                      )}
-                      {taxon.datasetKey === catalogueKey &&
-                        !hasDatasetSectors &&
-                        !sector && (
-                          <Tooltip title="No sectors">
-                            <WarningFilled
-                              style={{ marginLeft: "6px", color: "wheat" }}
-                            />
-                          </Tooltip>
+                        {taxon.status === "provisionally accepted" && (
+                          <React.Fragment>
+                            {" "}
+                            •{" "}
+                            <Tag
+                              color={getTaxonomicStatusColor(taxon.status)}
+                              style={{ marginRight: 0 }}
+                            >
+                              prov.
+                            </Tag>
+                          </React.Fragment>
                         )}
-                      {hasDatasetSectors && (
-                        <span>
-                          <span> • </span>
-                          <TaxonSources
-                            sourceDatasetKeys={sourceDatasetKeys}
+                        {taxon.datasetKey === catalogueKey &&
+                          !hasDatasetSectors &&
+                          !sector && (
+                            <Tooltip title="No sectors">
+                              <WarningFilled
+                                style={{ marginLeft: "6px", color: "wheat" }}
+                              />
+                            </Tooltip>
+                          )}
+                        {hasDatasetSectors && (
+                          <span>
+                            <span> • </span>
+                            <TaxonSources
+                              sourceDatasetKeys={sourceDatasetKeys}
                             /*                             datasetSectors={datasetSectors}
                              */ taxon={taxon}
-                            releaseKey={releaseKey}
-                            catalogueKey={catalogueKey}
-                          />
-                        </span>
-                      )}
-                      {sector && mode !== "modify" && (
-                        <span>
-                          <span> • </span>
-                          <Sector
-                            {...this.props}
-                            selectedSourceDatasetKey={selectedSourceDatasetKey}
-                            decisionCallback={(decision) =>
-                              this.setState({ decision })
-                            }
-                          />
-                        </span>
-                      )}
-                      {decision && (
-                        <span>
-                          <span> • </span>
-                          <DecisionTag
-                            {...this.props}
-                            decision={decision}
-                            deleteCallback={() =>
-                              this.setState({ decision: null })
-                            }
-                          />
-                        </span>
-                      )}
-                    </div>
-                  </PopconfirmMultiOption>
-                )}
+                              releaseKey={releaseKey}
+                              catalogueKey={catalogueKey}
+                            />
+                          </span>
+                        )}
+                        {sector && mode !== "modify" && (
+                          <span>
+                            <span> • </span>
+                            <Sector
+                              {...this.props}
+                              selectedSourceDatasetKey={selectedSourceDatasetKey}
+                              decisionCallback={(decision) =>
+                                this.setState({ decision })
+                              }
+                            />
+                          </span>
+                        )}
+                        {decision && (
+                          <span>
+                            <span> • </span>
+                            <DecisionTag
+                              {...this.props}
+                              decision={decision}
+                              deleteCallback={() =>
+                                this.setState({ decision: null })
+                              }
+                            />
+                          </span>
+                        )}
+                      </div>
+                    </PopconfirmMultiOption>
+                  )}
                 {treeType === "readOnly" && (
                   <div>
                     <span
