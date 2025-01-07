@@ -585,7 +585,7 @@ class ColTreeNode extends React.Component {
                                 est.{" "}
                               </span>
                             )}
-                            living species
+                            species
                           </span>
                         )}
                       {isUpdating && (
@@ -700,7 +700,7 @@ class ColTreeNode extends React.Component {
                               ).toLocaleString()} est.{" "}
                             </span>
                           )}
-                          living species
+                          species
                         </span>
                       )}
                     {/* {taxon.estimate && (
