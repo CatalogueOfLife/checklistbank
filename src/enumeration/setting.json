@@ -124,6 +124,15 @@
     "type": "Boolean"
   },
   {
+    "enum": true,
+    "multiple": true,
+    "name": "release author source exclusion",
+    "origin": [
+    "project"
+    ],
+    "type": "DatasetType"
+  },
+  {
     "enum": false,
     "multiple": false,
     "name": "release add contributors",
