@@ -54,7 +54,7 @@
       "external",
       "project"
     ],
-    "type": "Boolean"
+    "type": "Rank"
   },
   {
     "enum": true,
