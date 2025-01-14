@@ -49,6 +49,8 @@ and [CSL-JSON](https://github.com/CatalogueOfLife/coldp#reference-json-csl) form
 
 The ColDP format was developed to overcome limitations in existing formats for sharing taxonomic information, particularly Darwin Core Archives and the Annual Checklist Exchange Format used previously in COL.
 
+We recommend to read the [format specifications](https://github.com/CatalogueOfLife/coldp/blob/master/README.md) and the [ColDP publishing guidelines](https://github.com/CatalogueOfLife/coldp/blob/master/docs/publishing-guide.md).
+
 ## Darwin Core Archive (DwC-A)
 
 Darwin Core Archive (DwC-A) is a standard for biodiversity informatics data that makes use of the [Darwin Core](https://dwc.tdwg.org/list/) terms to produce a single, self-contained dataset for sharing species-level (checklist) data, species-occurrence data or sampling-event data. Each archive contains a set of text files, in standard comma- or tab-delimited format, along with a simple descriptor file (_meta.xml_) to document how the files are organised. The format is defined in the [Darwin Core Text Guidelines](https://dwc.tdwg.org/text/) (GBIF 2017).
