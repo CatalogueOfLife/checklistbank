@@ -596,6 +596,8 @@ class TaxonPage extends React.Component {
                 )}
                 {_.get(info, "group") &&
                   !_.get(info, "group").startsWith("other") && (
+                  <Tooltip title={_.get(info, "group")}>
+                    <a href={`/vocabulary/taxgrouptree#${_.get(info, "group")}`}>
                     <img
                       style={{
                         marginRight: "8px",
@@ -603,8 +605,9 @@ class TaxonPage extends React.Component {
                         height: "24px",
                       }}
                       src={_.get(taxGroup[_.get(info, "group")], "icon")}
-                      alt={_.get(info, "group")}
                     />
+                    </a>
+                  </Tooltip>
                   )}
 
                 {taxon.provisional && <Tag color="red">Provisional</Tag>}
