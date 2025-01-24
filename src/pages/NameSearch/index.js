@@ -50,7 +50,7 @@ const getBaseUri = (catalogueKey, datasetKey) =>
   )
 ); */
 
-const getColumns = (catalogueKey, taxGroup) => [
+const getColumns = (catalogueKey) => [
   {
     title: "",
     dataIndex: ["usage", "merged"],
@@ -130,23 +130,7 @@ const getColumns = (catalogueKey, taxGroup) => [
     width: 60,
     sorter: true,
   },
-  //  {
-  //    title: "Group",
-  //    dataIndex: ["group"],
-  //    key: "group",
-  //    width: 40,
-  //    render: (text, record) => {
-  //      return !_.get(record, "group") ? (
-  //        ""
-  //      ) : (
-  //        <img
-  //        style={{ width: "32px", height: "32px" }}
-  //        src={_.get(taxGroup[_.get(record, "group")], "icon")}
-  //        alt={_.get(record, "group")}
-  //      />
-  //      );
-  //    },
-  //  },
+
   {
     title: "Parents",
     dataIndex: ["usage", "classification"],
@@ -202,6 +186,29 @@ class NameSearchPage extends React.Component {
           },
           ...clms,
         ];
+    if (this.props.showSourceDataset) {
+      columns.push({
+        title: "Source Dataset",
+        dataIndex: ["sectorDatasetKey"],
+        key: "sourceDatasetLabel",
+        render: (text, record) => (
+          <NavLink
+            key={_.get(record, "usage.id")}
+            to={{
+              pathname: `/dataset/${_.get(record, "usage.sourceDatasetKey")}`,
+            }}
+            exact={true}
+          >
+            <span
+              dangerouslySetInnerHTML={{ __html: record?.sourceDatasetLabel }}
+            />
+          </NavLink>
+        ),
+
+        width: 200,
+        sorter: false,
+      });
+    }
     this.state = {
       data: [],
       sectorDatasetKeyMap: {},
@@ -267,6 +274,29 @@ class NameSearchPage extends React.Component {
         }
       }
     );
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.taxGroup !== prevProps.taxGroup) {
+      const { taxGroup } = this.props;
+      const clms = this.state.columns.toSpliced(3, 0, {
+        title: "Group",
+        dataIndex: ["group"],
+        key: "group",
+        width: 40,
+        render: (text, record) => {
+          return !_.get(record, "group") ? (
+            ""
+          ) : (
+            <img
+              style={{ width: "32px", height: "32px" }}
+              src={_.get(taxGroup[_.get(record, "group")], "icon")}
+              alt={_.get(record, "group")}
+            />
+          );
+        },
+      });
+      this.setState({ columns: clms });
+    }
   }
   get = (url, options) => {
     let cancel;
@@ -367,8 +397,17 @@ class NameSearchPage extends React.Component {
         const keyMap = _.keyBy(sectorDatasets, "key");
         //this.setState({sectorDatasetKeyMap: keyMap})
         console.log(keyMap);
+        for await (const d of data.result) {
+          if (d?.sectorDatasetKey && keyMap[d?.sectorDatasetKey]) {
+            d.sourceDatasetLabel = keyMap[d?.sectorDatasetKey].label;
+          } else if (d?.sectorDatasetKey) {
+            const dataset = await datasetLoader.load(d?.sectorDatasetKey);
+            d.sourceDatasetLabel = dataset?.title;
+          }
+        }
         return keyMap;
       } catch (error) {
+        console.log(error);
         console.log("Could not load sectorDatasets");
         return {};
       }

@@ -230,7 +230,13 @@ class DatasetPage extends React.Component {
           <DatasetProjects dataset={dataset} location={location} />
         )}
         {sect === "names" && (
-          <NameSearch datasetKey={datasetKey} location={this.props.location} />
+          <NameSearch
+            datasetKey={datasetKey}
+            location={this.props.location}
+            showSourceDataset={["project", "xrelease", "release"].includes(
+              dataset?.origin
+            )}
+          />
         )}
         {sect === "workbench" && (
           <WorkBench
