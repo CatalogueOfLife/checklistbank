@@ -147,7 +147,8 @@ class CatalogueSectors extends React.Component {
         })
       )
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        this.props.addError(err);
+        this.setState({ loading: false, data: [] });
       });
   };
 
@@ -278,7 +279,7 @@ class CatalogueSectors extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ error: err });
+        this.props.addError(err);
       });
   };
 
@@ -355,13 +356,13 @@ class CatalogueSectors extends React.Component {
           error: null,
         });
       })
-      .catch((err) =>
+      .catch((err) => {
+        this.props.addError(err);
         this.setState({
-          error: err,
           rematchSectorsLoading: false,
           rematchInfo: null,
-        })
-      );
+        });
+      });
   };
 
   deleteAllSectorsFromSource = (subjectDatasetKey) => {
@@ -384,12 +385,12 @@ class CatalogueSectors extends React.Component {
           this.getData
         );
       })
-      .catch((err) =>
+      .catch((err) => {
+        this.props.addError(err);
         this.setState({
-          error: err,
           deleteSectorsLoading: false,
-        })
-      );
+        });
+      });
   };
 
   render() {
