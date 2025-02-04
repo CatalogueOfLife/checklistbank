@@ -953,18 +953,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}{" "}
-              {/*  {sourceTaxon && (
-                <PresentationItem md={md} label="Source taxon">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
-                    }}
-                    exact={true}
-                  >
-                    {sourceTaxon.sourceId}
-                  </NavLink>
-                </PresentationItem>
-              )} */}
               {_.get(info, "taxon.name.namesIndexId") && (
                 <PresentationItem md={md} label="Related names">
                   <NavLink
@@ -1005,35 +993,29 @@ class TaxonPage extends React.Component {
                   )}
                 </Col>
               </Row>
-              {/*  {issues && issues.length > 0 && (
-                <PresentationItem md={md} label="Issues and flags">
-                  <div>
-                    {issues.map((i) => (
-                      <Tooltip
-                        key={i}
-                        title={_.get(issueMap, `[${i}].description`)}
-                      >
-                        <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                          {i}
-                        </Tag>
-                      </Tooltip>
-                    ))}
-                  </div>
-                </PresentationItem>
-              )} */}
               {mergedIssues && mergedIssues.length > 0 && (
                 <PresentationItem md={md} label="Issues and flags">
                   <div>
-                    {mergedIssues.map((i) => (
+                    {mergedIssues.map((i) => {
+                      const tag = <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>{i}</Tag>;
+                      return (
                       <Tooltip
                         key={i}
                         title={_.get(issueMap, `[${i}].description`)}
                       >
-                        <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                          {i}
-                        </Tag>
+                       {(i === "duplicate name") ? (
+                          <NavLink to={{
+                            pathname: `/dataset/${datasetKey}/names`,
+                            search: `?q=${_.get(taxon, "name.scientificName")}&rank=${_.get(taxon, "name.rank")}`
+                          }}
+                          exact={true}>
+                            {tag}
+                          </NavLink>
+                        ) : (
+                          {tag}
+                        )}
                       </Tooltip>
-                    ))}
+                    )})}
                   </div>
                 </PresentationItem>
               )}
