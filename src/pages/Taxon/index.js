@@ -1012,7 +1012,7 @@ class TaxonPage extends React.Component {
                             {tag}
                           </NavLink>
                         ) : (
-                          {tag}
+                          <React.Fragment>{tag}</React.Fragment>
                         )}
                       </Tooltip>
                     )})}
