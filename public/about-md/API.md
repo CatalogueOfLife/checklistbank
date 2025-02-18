@@ -4,6 +4,8 @@ In addition to the code generated [Swagger API documentation](https://api.checkl
 The ChecklistBank API is accessible at https://api.checklistbank.org,
 but we also provide a development installation for testing: http://api.dev.checklistbank.org
 
+We invite you to use our [mailinglist](https://lists.gbif.org/postorius/lists/col-users.lists.gbif.org/) to discuss ChecklistBank and it's API. We also use this list to infrequently announce important COL and API news.
+
 ## Introduction
 
 ChecklistBank (CLB) was designed to store many different datasets, often called checklists, that are dealing with scientific names at their core.
