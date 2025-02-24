@@ -177,11 +177,13 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
             <p style={{ fontSize: "10px" }}>{`${moment(h.started).format(
               "lll"
             )}`}</p>
-            <p>
-              {h.error.length > 200
-                ? `${h.error.substring(0, 200)} .....`
-                : h.error}
-            </p>
+            {h?.error?.length && (
+              <p>
+                {h.error.length > 200
+                  ? `${h.error.substring(0, 200)} .....`
+                  : h.error}
+              </p>
+            )}
           </React.Fragment>
         )}
       </Timeline.Item>
