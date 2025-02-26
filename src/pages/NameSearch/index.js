@@ -195,7 +195,7 @@ class NameSearchPage extends React.Component {
           <NavLink
             key={_.get(record, "usage.id")}
             to={{
-              pathname: `/dataset/${_.get(record, "usage.sourceDatasetKey")}`,
+              pathname: `/dataset/${_.get(record, "sectorDatasetKey")}`,
             }}
             exact={true}
           >
