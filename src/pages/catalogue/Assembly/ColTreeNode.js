@@ -212,8 +212,8 @@ class ColTreeNode extends React.Component {
       const { taxon } = this.props;
       this.setState({ subtreeDownloadPending: true });
       axios({
-        url: `${config.dataApi}dataset/${taxon.datasetKey
-          }/taxon/${encodeURIComponent(taxon.id)}/tree`, //your url
+        url: `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(taxon.id)}/tree`,
+        params: {extended: true},
         method: "GET",
         responseType: "blob", // important
       }).then((response) => {
