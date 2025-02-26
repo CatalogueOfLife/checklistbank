@@ -10,6 +10,8 @@ import {
   notification,
   Popconfirm,
   Divider,
+  Card,
+  Button,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import MetaDataForm from "../../../components/MetaData/MetaDataForm";
@@ -53,6 +55,8 @@ class DatasetMeta extends React.Component {
       privateChangeLoading: false,
       contributesTo: null,
       releasedFrom: null,
+      showAllCreators: false,
+      showAllContributors: false,
     };
   }
 
@@ -385,16 +389,38 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
             <PresentationItem label="Creator">
               {displayData.creator && _.isArray(displayData.creator) && (
-                <Row gutter={[8, 8]}>
-                  {displayData.creator.map((a) => (
-                    <Col span={this.getAgentSpan(displayData.creator)}>
-                      <AgentPresentation
-                        hideEmail={!Auth.canEditDataset(displayData, user)}
-                        agent={a}
-                      />
-                    </Col>
-                  ))}
-                </Row>
+                <>
+                  <Row gutter={[8, 8]}>
+                    {(this.state.showAllCreators
+                      ? displayData.creator
+                      : displayData.creator.slice(0, 6)
+                    ).map((a) => (
+                      <Col span={this.getAgentSpan(displayData.creator)}>
+                        <Card bodyStyle={{ background: "#f5f7fa" }}>
+                          <AgentPresentation
+                            hideEmail={!Auth.canEditDataset(displayData, user)}
+                            agent={a}
+                          />
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                  {_.isArray(displayData.creator) &&
+                    displayData.creator.length > 6 && (
+                      <Button
+                        type="link"
+                        onClick={() =>
+                          this.setState({
+                            showAllCreators: !this.state.showAllCreators,
+                          })
+                        }
+                      >
+                        {this.state.showAllCreators
+                          ? "Collapse creators"
+                          : "Show all creators"}
+                      </Button>
+                    )}
+                </>
               )}
             </PresentationItem>
             <PresentationItem label="Editor">
@@ -402,10 +428,12 @@ class DatasetMeta extends React.Component {
                 <Row gutter={[8, 8]}>
                   {displayData.editor.map((a) => (
                     <Col span={this.getAgentSpan(displayData.editor)}>
-                      <AgentPresentation
-                        hideEmail={!Auth.canEditDataset(displayData, user)}
-                        agent={a}
-                      />
+                      <Card>
+                        <AgentPresentation
+                          hideEmail={!Auth.canEditDataset(displayData, user)}
+                          agent={a}
+                        />
+                      </Card>
                     </Col>
                   ))}
                 </Row>
@@ -414,16 +442,41 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Contributor">
               {displayData.contributor &&
                 _.isArray(displayData.contributor) && (
-                  <Row gutter={[8, 8]}>
-                    {displayData.contributor.map((a) => (
-                      <Col span={this.getAgentSpan(displayData.contributor)}>
-                        <AgentPresentation
-                          hideEmail={!Auth.canEditDataset(displayData, user)}
-                          agent={a}
-                        />
-                      </Col>
-                    ))}
-                  </Row>
+                  <>
+                    <Row gutter={[8, 8]}>
+                      {(this.state.showAllContributors
+                        ? displayData.contributor
+                        : displayData.contributor.slice(0, 6)
+                      ).map((a) => (
+                        <Col span={this.getAgentSpan(displayData.contributor)}>
+                          <Card bodyStyle={{ background: "#f5f7fa" }}>
+                            <AgentPresentation
+                              hideEmail={
+                                !Auth.canEditDataset(displayData, user)
+                              }
+                              agent={a}
+                            />
+                          </Card>
+                        </Col>
+                      ))}
+                    </Row>
+                    {_.isArray(displayData.contributor) &&
+                      displayData.contributor.length > 6 && (
+                        <Button
+                          type="link"
+                          onClick={() =>
+                            this.setState({
+                              showAllContributors:
+                                !this.state.showAllContributors,
+                            })
+                          }
+                        >
+                          {this.state.showAllContributors
+                            ? "Collapse contributors"
+                            : "Show all contributors"}
+                        </Button>
+                      )}
+                  </>
                 )}
             </PresentationItem>
             <PresentationItem label="Taxonomic scope">
