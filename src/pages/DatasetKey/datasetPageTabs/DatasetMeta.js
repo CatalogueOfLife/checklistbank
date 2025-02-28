@@ -396,7 +396,7 @@ class DatasetMeta extends React.Component {
                       : displayData.creator.slice(0, 6)
                     ).map((a) => (
                       <Col span={this.getAgentSpan(displayData.creator)}>
-                        <Card bodyStyle={{ background: "#f5f7fa" }}>
+                        <Card style={{ height: "100%", background: "#f5f7fa" }}>
                           <AgentPresentation
                             hideEmail={!Auth.canEditDataset(displayData, user)}
                             agent={a}
