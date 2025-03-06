@@ -3,7 +3,7 @@ import { Tag } from "antd";
 
 const MergedDataBadge = ({ style = {} }) => (
   <Tag
-    color="warning"
+    color="purple"
     style={{
       fontFamily: "monospace",
       fontSize: "8px",
@@ -15,7 +15,7 @@ const MergedDataBadge = ({ style = {} }) => (
       ...style,
     }}
   >
-    m
+    XR
   </Tag>
 );
 
