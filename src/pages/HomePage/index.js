@@ -165,10 +165,9 @@ class HomePage extends React.Component {
             <Col style={{ paddingRight: "30px" }} xs={24} sm={24} md={16} lg={16}>
               <p>
                 The{" "}
-                <a href="https://www.catalogueoflife.org">
-                  Catalogue of Life (COL)
-                </a>{" "}
-                aims to support the publication and curation of checklists and
+                <a href="https://www.catalogueoflife.org">Catalogue of Life</a> (COL) and 
+                <a href="https://www.catalogueoflife.org">GBIF</a>{" "}
+                aim to support the publication and curation of checklists and
                 to provide a platform for their consistent discovery, use and
                 citation.                 
                 GBIF has for some time maintained a checklist index and supported 
@@ -178,14 +177,9 @@ class HomePage extends React.Component {
                 species lists, inluding those mobilized and registered through <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
               </p>
               <p>
-                The taxonomic community can publish a checklist to ChecklistBank
-                either by directly uploading a{" "}
-                <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">
-                  ColDP
-                </a>
-                , DwC-A or ACEF file along with metadata describing its content
-                or by publishing such a file on the Internet in a form that COL
-                can consume and then registering the dataset with ChecklistBank.
+                The taxonomic community can publish a checklist to ChecklistBank using
+                <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">ColDP</a> 
+                or any other <a href="/about/formats">supported format</a>.
               </p>
               <p>
                 Regardless of the original data format, ChecklistBank generates
@@ -195,8 +189,8 @@ class HomePage extends React.Component {
               </p>
               <p>
                 In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
-                This includes a continuously improved <a href="/tools/diff-viewer">diff tool</a> for comparing datasets 
-                as well as downloading custom exports.
+                You can learn more about ChecklistBank in our <a href="/about/introduction">introduction pages</a> 
+                or our <a href="https://docs.gbif.org/course-checklistbank-tutorial/">user</a> and <a href="https://docs.gbif.org/course-checklistbank-project/">project</a> tutorials.
               </p>
             </Col>
             {datasets && (
