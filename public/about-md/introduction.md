@@ -6,6 +6,9 @@ ChecklistBank is hosted by [GBIF](https://www.gbif.org) and developed jointly by
 The source code for the [backend (Java)](https://github.com/CatalogueOfLife/backend) and [frontend (JS React)](https://github.com/CatalogueOfLife/checklistbank) are managed in Github and we welcome software contributions.
 The software is an evolution of the one that currently drives the [GBIF species API](https://www.gbif.org/species/search?advanced=1), which internally was also called [checklist bank](http://github.com/gbif/checklistbank).
 
+You can learn more about ChecklistBank in our [user tutorial](https://docs.gbif.org/course-checklistbank-tutorial/)
+and [project tutorial](https://docs.gbif.org/course-checklistbank-project/).
+
 ## Datasets
 
 The main entry point to ChecklistBank is the [dataset search](https://www.checklistbank.org/dataset), where all registered datasets can be found. We differ between 4 main kind of datasets based on their `origin`:
