@@ -165,8 +165,7 @@ class HomePage extends React.Component {
             <Col style={{ paddingRight: "30px" }} xs={24} sm={24} md={16} lg={16}>
               <p>
                 The{" "}
-                <a href="https://www.catalogueoflife.org">Catalogue of Life</a> (COL) and 
-                <a href="https://www.catalogueoflife.org">GBIF</a>{" "}
+                <a href="https://www.catalogueoflife.org">Catalogue of Life</a> (COL) and <a href="https://www.catalogueoflife.org">GBIF</a>{" "}
                 aim to support the publication and curation of checklists and
                 to provide a platform for their consistent discovery, use and
                 citation.                 
@@ -177,8 +176,7 @@ class HomePage extends React.Component {
                 species lists, inluding those mobilized and registered through <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
               </p>
               <p>
-                The taxonomic community can publish a checklist to ChecklistBank using
-                <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">ColDP</a> 
+                The taxonomic community can publish a checklist to ChecklistBank using <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">ColDP</a>{" "}
                 or any other <a href="/about/formats">supported format</a>.
               </p>
               <p>
@@ -189,7 +187,7 @@ class HomePage extends React.Component {
               </p>
               <p>
                 In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
-                You can learn more about ChecklistBank in our <a href="/about/introduction">introduction pages</a> 
+                You can learn more about ChecklistBank in our <a href="/about/introduction">introduction pages</a>{" "}
                 or our <a href="https://docs.gbif.org/course-checklistbank-tutorial/">user</a> and <a href="https://docs.gbif.org/course-checklistbank-project/">project</a> tutorials.
               </p>
             </Col>
