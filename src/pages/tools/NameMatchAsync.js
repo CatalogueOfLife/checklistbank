@@ -138,7 +138,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                 <Title level={3}>Name Matching Jobs</Title>
                 <Paragraph>
                   Here you can upload text files for larger, asynchronous name
-                  matching jobs. It requires a login and you will recieve an
+                  matching jobs. It requires a login and you will receive an
                   email when the result is ready.
                 </Paragraph>
               </Col>
