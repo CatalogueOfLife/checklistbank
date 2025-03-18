@@ -416,11 +416,11 @@ class SourceMetrics extends React.Component {
                       >
                         {Number(text || 0).toLocaleString()}
 
-                        {!isPublisher &&
+                        {/* {!isPublisher &&
                           column === "datasetAttempt" &&
                           this.renderDatasetAttempt(
                             _.get(record, "metrics.datasetAttempt")
-                          )}
+                          )} */}
                         {!isPublisher &&
                           getIconForDiff(text || 0, selectedRelaseValue || 0)}
                       </NavLink>
