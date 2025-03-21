@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import { LinkOutlined } from "@ant-design/icons";
 import { Row, Col } from "antd";
 import MergedDataBadge from "../../components/MergedDataBadge";
+import DOMPurify from "dompurify";
 
 const ReferencesTable = ({
   data,
@@ -37,7 +38,9 @@ const ReferencesTable = ({
               <span
                 id={`col-refererence-${s.id}`}
                 dangerouslySetInnerHTML={{
-                  __html: s?.citation ? linkify(s?.citation) : "",
+                  __html: s?.citation
+                    ? linkify(DOMPurify.sanitize(s?.citation))
+                    : "",
                 }}
               ></span>{" "}
               {s?.csl?.URL && (
