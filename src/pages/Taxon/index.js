@@ -19,7 +19,6 @@ import {
 } from "antd";
 import MergedDataBadge from "../../components/MergedDataBadge";
 
-import SynonymTable from "./Synonyms";
 import Synonyms from "./Synonyms2";
 import VernacularNames from "./VernacularNames";
 import Distributions from "./Distributions";
@@ -29,15 +28,12 @@ import SpeciesInterActions from "./SpeciesInteractions";
 import ErrorMsg from "../../components/ErrorMsg";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
-import VerbatimPresentation from "../../components/VerbatimPresentation";
 import Verbatim from "./Verbatim";
-import InlineEdit from "../../components/InlineEdit";
 import TaxonProperties from "./TaxonProperties";
 import SecondarySources from "./SecondarySources";
 import moment from "moment";
 import history from "../../history";
 import withContext from "../../components/hoc/withContext";
-import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import References from "./References";
 import TypeMaterial from "./TypeMaterial";
 import PublishedInPagePreview from "./PublishedInPagePreview";
@@ -88,6 +84,19 @@ const initialState = {
   edit: false,
 };
 
+const getDatasetTreeRoute = (location, datasetKey, catalogueKey) => {
+  return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
+    ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`
+    : `/dataset/${datasetKey}/classification`;
+};
+
+const isAssembly = (location, catalogueKey) => {
+  return (
+    location.pathname.startsWith(`/catalogue/${catalogueKey}`) &&
+    location.pathname.indexOf("/dataset") === -1
+  );
+};
+
 class TaxonPage extends React.Component {
   constructor(props) {
     super(props);
@@ -134,25 +143,6 @@ class TaxonPage extends React.Component {
       this.getClassification();
       this.getIncludesAndIssues();
 
-      /*  if (
-        ["accepted", "provisionally accepted"].includes(nameusage?.data?.status)
-      ) {
-        this.getTaxon();
-        this.getInfo();
-        this.getClassification();
-        this.getIncludesAndIssues();
-      } else {
-        history.push(
-          datasetKey === catalogueKey
-            ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
-                nameusage?.data?.name?.id
-              )}`
-            : `/dataset/${datasetKey}/name/${encodeURIComponent(
-                nameusage?.data?.name?.id
-              )}`
-        );
-      } */
-      //  console.log(nameusage.data.status);
     } catch (err) {
       this.setState({ taxonLoading: false, taxonError: err, taxon: null });
     }
@@ -162,9 +152,6 @@ class TaxonPage extends React.Component {
   );
   decorateWithSectorsAndDataset = async (synonyms) => {
     const { datasetKey } = this.props;
-    /* const sectorLoader = new DataLoader((ids) =>
-      getSectorsBatch(ids, datasetKey)
-    ); */
     const sourceDatasetsMap = {};
     for (const type of ["misapplied", "heterotypic", "homotypic"].filter(
       (t) => !!synonyms[t]
@@ -176,7 +163,6 @@ class TaxonPage extends React.Component {
             this.sectorLoader.load(tx.sectorKey, datasetKey).then((r) => {
               tx.sector = r;
               return datasetLoader.load(r.subjectDatasetKey).then((dataset) => {
-                // tx.sector.dataset = dataset
                 tx.sourceDatasetKey = dataset.key;
                 sourceDatasetsMap[dataset.key] = dataset;
               });
@@ -195,7 +181,6 @@ class TaxonPage extends React.Component {
                 return datasetLoader
                   .load(r.subjectDatasetKey)
                   .then((dataset) => {
-                    // tx.sector.dataset = dataset
                     tx.sourceDatasetKey = dataset.key;
                     sourceDatasetsMap[dataset.key] = dataset;
                   });
@@ -221,43 +206,6 @@ class TaxonPage extends React.Component {
     )
       .then((res) => {
         let promises = [res];
-
-        /* promises.push(
-          axios(
-            `${config.dataApi}dataset/${datasetKey}/nameusage/${urlSafe(
-              taxonKey
-            )}/source`
-          )
-            .then((sourceTaxon) => {
-              this.setState({ sourceTaxon: sourceTaxon.data });
-            })
-            .catch((e) => this.setState({ sourceTaxon: null }))
-        ); */
-
-        /*   if (_.get(res, "data.name")) {
-          promises.push(
-            axios(
-              `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(
-                _.get(res, "data.name.id")
-              )}/relations`
-            ).then((relations) => {
-              res.data.name.relations = relations.data;
-              return Promise.all(
-                relations.data.map((r) => {
-                  return axios(
-                    `${
-                      config.dataApi
-                    }dataset/${datasetKey}/name/${encodeURIComponent(
-                      r.relatedNameId
-                    )}`
-                  ).then((n) => {
-                    r.relatedName = n.data;
-                  });
-                })
-              );
-            })
-          );
-        } */
         // sector keys are only present if its a catalogue
         if (_.get(res, "data.sectorKey")) {
           axios(
@@ -299,18 +247,12 @@ class TaxonPage extends React.Component {
               res?.data?.datasetKey
             }/nameusage/search?content=scientific_name&type=exact&q=${encodeURIComponent(res?.data?.name?.scientificName)}`
           ).then((otherUsages) => {
-            console.log(otherUsages);
             this.setState({
               otherUsages:
                 otherUsages?.data?.result.filter(
                   (u) => u?.id !== res?.data?.id
                 ) || [],
             });
-            /* otherUsages?.data?.result?.forEach((r) => {
-              console.log(
-                `${r?.id} ${r?.usage?.name?.scientificName} ${r?.usage?.status}`
-              );
-            }); */
           });
         }
 
@@ -371,9 +313,7 @@ class TaxonPage extends React.Component {
                 return datasetLoader
                   .load(r.subjectDatasetKey)
                   .then((dataset) => {
-                    // tx.sector.dataset = dataset
                     ref.sourceDataset = dataset;
-                    // sourceDatasetsMap[dataset.key] = dataset;
                   });
               })
             )
@@ -510,23 +450,7 @@ class TaxonPage extends React.Component {
 
     const mergedIssues = [
       ...new Set([...(sourceTaxon?.issues || []), ...issues]),
-    ];
-
-    /*     const synonyms =
-          info && info.synonyms && info.synonyms.length > 0
-            ? info.synonyms.filter((s) => s.status !== "misapplied")
-            : [];
-        const misapplied =
-          info && info.synonyms && info.synonyms.length > 0
-            ? info.synonyms.filter((s) => s.status === "misapplied")
-            : []; */
-    /*  const homotypic = _.get(info, "synonyms.homotypic", []);
-    const heterotypic = _.get(info, "synonyms.heterotypic", []); */
-    const misapplied = _.get(info, "synonyms.misapplied", []);
-    /* const synonyms = [
-      ...homotypic.map((h) => ({ ...h, __homotypic: true })),
-      ...heterotypic,
-    ]; */
+    ];    
 
     return (
       <React.Fragment>
@@ -733,17 +657,23 @@ class TaxonPage extends React.Component {
                   {getNomStatus(_.get(taxon, "name"))}
                 </PresentationItem>
               )}
-              {_.get(info, "synonyms") && (
-                <PresentationItem md={md} label="Synonyms and combinations">
-                  <Synonyms
-                    primarySource={sourceDataset}
-                    onEditSuccess={this.getData}
-                    canEdit={this.canEdit}
-                    data={_.get(info, "synonyms")}
-                    references={_.get(info, "references")}
-                    referenceIndexMap={referenceIndexMap}
-                    typeMaterial={_.get(info, "typeMaterial")}
-                    style={{ marginTop: "-3px" }}
+              {classification && (
+                <PresentationItem md={md} label={<><span>Classification</span>
+                <NavLink 
+                  style={{ marginLeft: "5px"}}
+                  to={{
+                    pathname: isAssembly(location, catalogueKey)
+                      ? `/catalogue/${catalogueKey}/assembly`
+                      : getDatasetTreeRoute(location, datasetKey, catalogueKey),
+                    search: isAssembly(location, catalogueKey)
+                      ? `?assemblyTaxonKey=${encodeURIComponent(_.get(taxon, "id"))}`
+                      : `?taxonKey=${encodeURIComponent(_.get(taxon, "id"))}`
+                  }}><RiNodeTree/>
+                  </NavLink></>}>
+                  <Classification
+                    style={{ marginTop: "-3px", marginLeft: "-3px" }}
+                    data={classification}
+                    taxon={taxon}
                     datasetKey={datasetKey}
                     catalogueKey={catalogueKey}
                   />
@@ -761,7 +691,7 @@ class TaxonPage extends React.Component {
                     catalogueKey={catalogueKey}
                     datasetKey={datasetKey}
                   />
-                )}
+              )}
               {_.get(info, "nameRelations") &&
                 info.nameRelations.filter((rel) => rel?.usageId !== taxon?.id)
                   .length > 0 && (
@@ -775,24 +705,23 @@ class TaxonPage extends React.Component {
                     catalogueKey={catalogueKey}
                     datasetKey={datasetKey}
                   />
-                )}
-              {classification && (
-                <PresentationItem md={md} label={<><span>Classification</span><NavLink 
-                  style={{ marginLeft: "5px"}}
-                  to={{
-                    pathname: `/dataset/${datasetKey}/classification`,
-                    search: `?taxonKey=${taxon?.id}`
-                  }}><RiNodeTree/>
-                  </NavLink></>}>
-                  <Classification
-                    style={{ marginTop: "-3px", marginLeft: "-3px" }}
-                    data={classification}
-                    taxon={taxon}
+              )}
+              {_.get(info, "synonyms") && (
+                <PresentationItem md={md} label="Synonyms and combinations">
+                  <Synonyms
+                    primarySource={sourceDataset}
+                    onEditSuccess={this.getData}
+                    canEdit={this.canEdit}
+                    data={_.get(info, "synonyms")}
+                    references={_.get(info, "references")}
+                    referenceIndexMap={referenceIndexMap}
+                    typeMaterial={_.get(info, "typeMaterial")}
+                    style={{ marginTop: "-3px" }}
                     datasetKey={datasetKey}
                     catalogueKey={catalogueKey}
                   />
                 </PresentationItem>
-              )}
+              )}                
               {info && info.speciesInteractions && (
                 <SpeciesInterActions
                   md={md}

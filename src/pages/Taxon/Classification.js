@@ -1,18 +1,11 @@
 import React from "react";
 import _ from "lodash";
 import { NavLink, withRouter } from "react-router-dom";
-import PresentationItem from "../../components/PresentationItem";
 
 const getDatasetTaxonRoute = (location, datasetKey, catalogueKey) => {
   return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
     ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/`
     : `/dataset/${datasetKey}/taxon/`;
-};
-
-const getDatasetTreeRoute = (location, datasetKey, catalogueKey) => {
-  return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
-    ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`
-    : `/dataset/${datasetKey}/classification`;
 };
 
 const isAssembly = (location, catalogueKey) => {
@@ -55,25 +48,6 @@ const ClassificationTable = ({
         {" >"}
       </div>
     ))}
-    <div style={{ float: "left" }}>
-      {_.get(taxon, "name.rank") && (
-        <span style={rankStyle}>{taxon.name.rank}: </span>
-      )}
-      <NavLink
-        to={{
-          pathname: isAssembly(location, catalogueKey)
-            ? `/catalogue/${catalogueKey}/assembly`
-            : getDatasetTreeRoute(location, datasetKey, catalogueKey),
-          search: isAssembly(location, catalogueKey)
-            ? `?assemblyTaxonKey=${encodeURIComponent(_.get(taxon, "id"))}`
-            : `?taxonKey=${encodeURIComponent(_.get(taxon, "id"))}`,
-        }}
-      >
-        {_.get(taxon, "labelHtml") && (
-          <span dangerouslySetInnerHTML={{ __html: taxon.labelHtml }} />
-        )}
-      </NavLink>
-    </div>
   </div>
 );
 
