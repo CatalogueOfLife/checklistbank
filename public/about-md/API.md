@@ -209,10 +209,20 @@ Adding an author or some classification helps to disambiguate in such a case:
 https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&kingdom=Plantae
 https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&authorship=Linneaus
 
-Alternatively there is also a **bulk matching** method which creates an asynchroneous job similar to downloads.
-You must have a user account to use it and will get an email notification once done.
-CLB user accounts are the same as GBIF accounts, therefore you need to register with GBIF and then log into ChecklistBank with the GBIF credentials once.
-The bulk matching is only available via the API at this stage, the UI will follow shortly.
+Alternatively there is also a [bulk matching](https://www.checklistbank.org/tools/name-match-async) method which creates an asynchroneous job similar to downloads.
+You must be authenticated to use it and will get an email notification once done. 
+When used via the API you will receive a job object with a key (UUID) that can be used to poll the API while it is still running. For example
+https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7
+
+When the job is finished this does give a 404 as we currently do not persist the jobs themselves. 
+We are working on storing them like we do for exports/downloads, so they will resolve also after they have completed.
+
+To download actual results you can use the same job resource, but request the binary zip file like that:
+https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7.zip
+
+This will redirect you to the actual result file. Currently we are still keeping all job results, but this will likely change in the future as we will need to clean up older results at some point.
+
+
 
 Bulk matching accepts different inputs for names:
 
@@ -222,7 +232,7 @@ Bulk matching accepts different inputs for names:
 A bulk matching request could look like this:
 
 ```bash
-  curl -s --user USERNAME:PASSWORD -H "Content-Type: text/tsv" --data-binary @match.tsv -X POST "https://api.checklistbank.org/dataset/COL2022/match/nameusage/job"
+  curl -s --user USERNAME:PASSWORD -H "Content-Type: text/tsv" --data-binary @match.tsv -X POST "https://api.checklistbank.org/dataset/COL2024/match/nameusage/job"
 ```
 
 with a `match.tsv` input file such as this one:
@@ -271,8 +281,7 @@ Query params for individual matches and column names in bulk input are called th
 - `section`
 - `species`
 
-Authentification in the CLB API works either as plain `BasicAuth` for every request or you can request a `JWToken` which the UI for example does.
-Basic API Docs https://api.checklistbank.org/#/default/match_1
+
 
 ## Names Index
 
