@@ -3,6 +3,7 @@
     "codes": [
       "virus"
     ],
+    "description": "Viruses",
     "icon": "https://images.phylopic.org/images/6dba8988-8a64-4c10-8934-77d5880dc21c/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/6dba8988-8a64-4c10-8934-77d5880dc21c/vector.svg",
     "name": "viruses",
@@ -13,6 +14,7 @@
     "codes": [
       "bacterial"
     ],
+    "description": "Prokaryota",
     "icon": "https://images.phylopic.org/images/680e6e45-3e3a-4e4b-b679-9bf2ae9091ab/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/680e6e45-3e3a-4e4b-b679-9bf2ae9091ab/vector.svg",
     "name": "prokaryotes",
@@ -23,6 +25,7 @@
     "codes": [
       "bacterial"
     ],
+    "description": "Bacteria",
     "icon": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/vector.svg",
     "name": "bacteria",
@@ -36,6 +39,7 @@
     "codes": [
       "bacterial"
     ],
+    "description": "Archaea excluding the eukaryotes",
     "icon": "https://images.phylopic.org/images/d979c5bd-f760-427d-bd23-7b8779bd1c8f/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/d979c5bd-f760-427d-bd23-7b8779bd1c8f/vector.svg",
     "name": "archaea",
@@ -47,9 +51,10 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
+    "description": "Eukaryotes are divided into 4 groups only similar to Haeckels 4 kingdoms",
     "icon": "https://images.phylopic.org/images/d878c432-0b0b-44f5-b1a1-12557b439c3f/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/d878c432-0b0b-44f5-b1a1-12557b439c3f/vector.svg",
     "name": "eukaryotes",
@@ -58,8 +63,8 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
     "description": "Any eukaryote that is not animal, plant (incl algae s.l.) nor fungus. Includes all Protozoa (ciliates, flagellates, and amoebas), Foraminifera, Radiolaria",
     "icon": "https://images.phylopic.org/images/5fccc7f9-60b8-4aea-96cf-ce93f85c9e90/thumbnail/64x64.png",
@@ -75,7 +80,7 @@
     "codes": [
       "botanical"
     ],
-    "description": "Sensu lato incl red algae. More like Archaeplastida",
+    "description": "Sensu lato incl red algae and Glaucophytes. Similar to Archaeplastida",
     "icon": "https://images.phylopic.org/images/5c6ae9a1-1405-4f81-b4c1-c169faef475e/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/5c6ae9a1-1405-4f81-b4c1-c169faef475e/vector.svg",
     "name": "plants",
@@ -87,8 +92,8 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
     "description": "Sensu lato including names traditionally treated as eukaryotic algae. Includes diatoms, red algae and any protist algae, but excluding prokaryotic cyanobacteria",
     "icon": "https://images.phylopic.org/images/65414989-e801-4d0e-acc1-4309cd35ab7e/thumbnail/64x64.png",
@@ -133,6 +138,7 @@
     "codes": [
       "botanical"
     ],
+    "description": "Flowering plants, Magnoliophyta",
     "icon": "https://images.phylopic.org/images/3e84c211-b5d1-4c4d-9749-9dbda2e73f89/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/3e84c211-b5d1-4c4d-9749-9dbda2e73f89/vector.svg",
     "name": "angiosperms",
@@ -146,6 +152,7 @@
     "codes": [
       "botanical"
     ],
+    "description": "Seed plants including Cycads, Ginkgo, Gnetophytes and Conifers",
     "icon": "https://images.phylopic.org/images/9b9d6b61-d571-4503-9107-50c54a2beedb/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/9b9d6b61-d571-4503-9107-50c54a2beedb/vector.svg",
     "name": "gymnosperms",
@@ -173,6 +180,7 @@
     "codes": [
       "botanical"
     ],
+    "description": "Ascomycota",
     "icon": "https://images.phylopic.org/images/7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1/vector.svg",
     "name": "ascomycetes",
@@ -186,6 +194,7 @@
     "codes": [
       "botanical"
     ],
+    "description": "Basidiomycota",
     "icon": "https://images.phylopic.org/images/237a0fb1-7b73-43ec-b0a5-eff95e7237df/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/237a0fb1-7b73-43ec-b0a5-eff95e7237df/vector.svg",
     "name": "basidiomycetes",
@@ -197,16 +206,16 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
-    "description": "traditionally follows fungal nomenclature therefore placed here. Includes the wider pseudo fungi. Phylogenetically related to Algae and protists",
+    "description": "traditionally follows fungal nomenclature therefore placed here. Includes Oomycetes and Hyphochytriomycetes. Phylogenetically related to Algae and protists",
     "icon": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/vector.svg",
-    "name": "oomycetes",
+    "name": "pseudofungi",
     "other": false,
     "parents": [
-      "protists",
+      "algae",
       "fungi"
     ],
     "phylopic": "53b543aa-2a5e-4407-88cd-6acbb0b5c3f9"
@@ -215,16 +224,21 @@
     "codes": [
       "botanical"
     ],
+    "description": "All other basal fungi not being asco- or basidiomycetes",
+    "icon": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/thumbnail/64x64.png",
+    "iconSVG": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/vector.svg",
     "name": "otherfungi",
     "other": true,
     "parents": [
       "fungi"
-    ]
+    ],
+    "phylopic": "44c27c08-400f-4304-92b4-997fdd85ec4b"
   },
   {
     "codes": [
       "zoological"
     ],
+    "description": "Animalia",
     "icon": "https://images.phylopic.org/images/a3dd3044-648c-4e45-93f0-21a156247132/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/a3dd3044-648c-4e45-93f0-21a156247132/vector.svg",
     "name": "animals",
@@ -355,11 +369,14 @@
     "codes": [
       "zoological"
     ],
+    "icon": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/thumbnail/64x64.png",
+    "iconSVG": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/vector.svg",
     "name": "otherinsects",
     "other": true,
     "parents": [
       "insects"
-    ]
+    ],
+    "phylopic": "2894776f-a2cf-4475-b13d-6d8ea1607ea4"
   },
   {
     "codes": [
@@ -391,11 +408,14 @@
     "codes": [
       "zoological"
     ],
+    "icon": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/thumbnail/64x64.png",
+    "iconSVG": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/vector.svg",
     "name": "otherarthropods",
     "other": true,
     "parents": [
       "arthropods"
-    ]
+    ],
+    "phylopic": "1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91"
   },
   {
     "codes": [
@@ -440,76 +460,14 @@
     "codes": [
       "zoological"
     ],
+    "icon": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/thumbnail/64x64.png",
+    "iconSVG": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/vector.svg",
     "name": "othermolluscs",
     "other": true,
     "parents": [
       "molluscs"
-    ]
-  },
-  {
-    "codes": [
-      "zoological"
     ],
-    "icon": "https://images.phylopic.org/images/aba20543-fb51-42d1-a03b-a9f9d25d526b/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/aba20543-fb51-42d1-a03b-a9f9d25d526b/vector.svg",
-    "name": "chordates",
-    "other": false,
-    "parents": [
-      "animals"
-    ],
-    "phylopic": "aba20543-fb51-42d1-a03b-a9f9d25d526b"
-  },
-  {
-    "codes": [
-      "zoological"
-    ],
-    "icon": "https://images.phylopic.org/images/40b1198a-ec00-4dff-ab82-c79817244485/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/40b1198a-ec00-4dff-ab82-c79817244485/vector.svg",
-    "name": "amphibians",
-    "other": false,
-    "parents": [
-      "chordates"
-    ],
-    "phylopic": "40b1198a-ec00-4dff-ab82-c79817244485"
-  },
-  {
-    "codes": [
-      "zoological"
-    ],
-    "icon": "https://images.phylopic.org/images/ca1082e0-718c-48dc-a011-995511e48180/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/ca1082e0-718c-48dc-a011-995511e48180/vector.svg",
-    "name": "birds",
-    "other": false,
-    "parents": [
-      "chordates"
-    ],
-    "phylopic": "ca1082e0-718c-48dc-a011-995511e48180"
-  },
-  {
-    "codes": [
-      "zoological"
-    ],
-    "icon": "https://images.phylopic.org/images/f4b6df56-f216-4a4c-9940-4105da8b462e/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/f4b6df56-f216-4a4c-9940-4105da8b462e/vector.svg",
-    "name": "mammals",
-    "other": false,
-    "parents": [
-      "chordates"
-    ],
-    "phylopic": "f4b6df56-f216-4a4c-9940-4105da8b462e"
-  },
-  {
-    "codes": [
-      "zoological"
-    ],
-    "icon": "https://images.phylopic.org/images/aefc9af2-1f5d-4e16-94c4-da3436b8e92d/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/aefc9af2-1f5d-4e16-94c4-da3436b8e92d/vector.svg",
-    "name": "reptiles",
-    "other": false,
-    "parents": [
-      "chordates"
-    ],
-    "phylopic": "aefc9af2-1f5d-4e16-94c4-da3436b8e92d"
+    "phylopic": "f060bcc7-5725-46f7-8276-14553af3707f"
   },
   {
     "codes": [
@@ -517,10 +475,10 @@
     ],
     "icon": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/vector.svg",
-    "name": "fish",
+    "name": "chordates",
     "other": false,
     "parents": [
-      "chordates"
+      "animals"
     ],
     "phylopic": "23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba"
   },
@@ -528,31 +486,13 @@
     "codes": [
       "zoological"
     ],
-    "name": "otherchordates",
-    "other": true,
-    "parents": [
-      "chordates"
-    ]
-  },
-  {
-    "codes": [
-      "zoological"
-    ],
+    "icon": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/thumbnail/64x64.png",
+    "iconSVG": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/vector.svg",
     "name": "otheranimals",
     "other": true,
     "parents": [
       "animals"
-    ]
-  },
-  {
-    "codes": [
-      "botanical",
-      "zoological"
     ],
-    "name": "othereukaryotes",
-    "other": true,
-    "parents": [
-      "eukaryotes"
-    ]
+    "phylopic": "f0d839a1-5a3e-42b2-828a-c5e536f0f7b7"
   }
 ]

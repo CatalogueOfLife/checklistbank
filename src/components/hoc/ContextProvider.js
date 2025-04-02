@@ -39,6 +39,7 @@ import {
   getDoiResolution,
   getInfoGroup,
   getTaxGroup,
+  getLanguages,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -262,6 +263,7 @@ class ContextProvider extends React.Component {
       getDoiResolution(),
       getInfoGroup(),
       getTaxGroup(),
+      getLanguages(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -338,6 +340,7 @@ class ContextProvider extends React.Component {
           doiResolution: responses[26],
           infoGroup: responses[27],
           taxGroup: responses[28],
+          language: responses[29],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,
@@ -350,26 +353,6 @@ class ContextProvider extends React.Component {
         console.log(err);
       });
   }
-  /*
-  changeLocale = locale => {
-    if (locale) {
-      this.setState(state => {
-        return {
-          locale: { ...state.locale, loading: true }
-        };
-      });
-      localStorage.setItem(LOCALE_STORAGE_NAME, locale);
-      // Requesting new localization
-      localeApi.getMessages(locale)
-        .then(res => {
-          this.setState({ locale: { locale, messages: res.data, loading: false } });
-        })
-        .catch(err => {
-          this.state.addError(err.response);
-        });
-    }
-  };
-  */
 
   login = ({ username, password, remember }) => {
     return logUserIn(username, password, remember).then((user) => {

@@ -58,9 +58,6 @@ const SourceSelect = ({
     const {
       params: { sourceKey: key },
     } = match;
-    console.log("SELECTED:");
-    console.log(selectedSource);
-    // const selectedSource = sources.find((c) => c.key === newDatasetKey);
     if (
       catalogueKey &&
       selectedSource &&

@@ -47,7 +47,7 @@
     "type": "NomCode"
   },
   {
-    "enum": false,
+    "enum": true,
     "multiple": false,
     "name": "extinct",
     "origin": [
@@ -99,74 +99,11 @@
   {
     "enum": false,
     "multiple": false,
-    "name": "release alias template",
+    "name": "release config",
     "origin": [
       "project"
     ],
-    "type": "String"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release version template",
-    "origin": [
-      "project"
-    ],
-    "type": "String"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release add source authors",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
-    "enum": true,
-    "multiple": true,
-    "name": "release author source exclusion",
-    "origin": [
-    "project"
-    ],
-    "type": "DatasetType"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release add contributors",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release issue source dois",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release remove bare names",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "release prepare downloads",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
+    "type": "URI"
   },
   {
     "enum": false,

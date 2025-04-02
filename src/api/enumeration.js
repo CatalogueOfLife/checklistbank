@@ -79,6 +79,10 @@ export const getCountries = () => {
   return getData(`country`).then((res) => res.data);
 };
 
+export const getLanguages = () => {
+  return getData(`language`).then((res) => res.data);
+};
+
 export const getEstimateType = () => {
   return getData(`estimatetype`).then((res) => res.data.map((e) => e.name));
 };

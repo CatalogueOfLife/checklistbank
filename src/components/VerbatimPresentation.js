@@ -90,7 +90,7 @@ class VerbatimPresentation extends React.Component {
           { headers: { "content-type": "text/plain" } }
         );
         if (homoglyphs.hasHomoglyphs) {
-          console.log(terms[key]);
+          //console.log(terms[key]);
           termsMap[key] = homoglyphs.positions.map((p) =>
             terms[key].charAt(p - 1)
           );
@@ -100,7 +100,7 @@ class VerbatimPresentation extends React.Component {
       }
     }
     this.setState({ homoglyphs: termsMap });
-    console.log(termsMap);
+    //console.log(termsMap);
   };
 
   renderTerm = (key, value, type, homoglyphs) => {

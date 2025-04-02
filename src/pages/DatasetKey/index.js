@@ -109,7 +109,6 @@ class DatasetPage extends React.Component {
       user,
     } = this.props;
     const isProject = dataset?.origin === "project";
-    console.log(subsection);
     if (dataset && !section && !_.get(dataset, "deleted")) {
       return (
         <Redirect

@@ -5,6 +5,7 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
+import MergedDataBadge from "../../components/MergedDataBadge";
 
 class VernacularNamesTable extends React.Component {
   constructor(props) {
@@ -14,37 +15,46 @@ class VernacularNamesTable extends React.Component {
       data: this.props.data ? [...this.props.data] : [],
       columns: [
         {
-          title: "Original name",
-          dataIndex: "name",
-          key: "name",
-          width: 150,
+          title: "",
+          dataIndex: "merged",
+          key: "merged",
+          width: 12,
+          render: (text, record) =>
+            record?.merged ? <MergedDataBadge /> : "",
         },
         {
-          title: "Transliterated name",
+          title: "Name",
+          dataIndex: "name",
+          key: "name",
+          width: 200,
+        },
+        {
+          title: "Transliteration",
           dataIndex: "latin",
           key: "latin",
-          width: 150,
+          width: 200,
         },
         {
           title: "Language",
           dataIndex: "language",
           key: "language",
-          width: 150,
+          width: 100,
           render: (text, record) =>
-            record.languageName ? record.languageName : text,
+            record.languageTitle ? record.languageTitle : text,
         },
         {
-          title: "Country of use",
+          title: "Country",
           dataIndex: "country",
           key: "country",
-          width: 150,
+          width: 70,
           render: (text, record) =>
             record.countryTitle ? record.countryTitle : text,
         },
         {
-          title: "",
+          title: "Ref",
           dataIndex: "referenceId",
           key: "referenceId",
+          width: 30,
 
           render: (text, record) => {
             return text ? (
@@ -58,6 +68,11 @@ class VernacularNamesTable extends React.Component {
             );
           },
         },
+        {
+          title: "Remarks",
+          dataIndex: "remarks",
+          key: "remarks",
+        },
       ],
     };
   }
@@ -66,38 +81,34 @@ class VernacularNamesTable extends React.Component {
 
     const newData = data.map(this.decorateWithCountryByCode);
     this.setState({ data: newData });
-    Promise.all(newData.map(this.decorateWithLanguageByCode)).then(() =>
-      this.setState({ data: [...this.state.data] })
-    );
+    console.log(newData);
   };
 
   decorateWithCountryByCode = (name) => {
-    const { countryAlpha3, countryAlpha2 } = this.props;
+    const { countryAlpha3, countryAlpha2, language } = this.props;
 
-    if (countryAlpha2 && name.country && name.country.length === 2) {
-      return {
-        ...name,
-        countryTitle: _.get(countryAlpha2, `[${name.country}].title`) || "",
-      };
-    } else if (countryAlpha3 && name.country && name.country.length === 3) {
-      return {
-        ...name,
-        countryTitle: _.get(countryAlpha3, `[${name.country}].title`) || "",
-      };
-    } else {
-      return name;
+    var countryName = name.country;
+    var languageName = name.language;
+
+    
+    if (name.country) {
+      if (countryAlpha2 && name.country.length === 2) {
+        countryName = _.get(countryAlpha2, `[${name.country}].title`) || name.country;
+      } else if (countryAlpha3 && name.country.length === 3) {
+        countryName = _.get(countryAlpha3, `[${name.country}].title`) || name.country;
+      }  
     }
-  };
+    if (language && name.language) {
+      languageName = _.get(language, `[${name.language}]`) || name.language;
+    }
 
-  decorateWithLanguageByCode = (name) => {
-    return !name.language
-      ? Promise.resolve()
-      : axios(`${config.dataApi}vocab/language/${name.language}`)
-          .then((res) => {
-            name.languageName = res.data;
-          })
-          .catch((error) => console.log(error));
+    return {
+      ...name,
+      countryTitle: countryName,
+      languageTitle: languageName,
+    };
   };
+  
   render() {
     const { style } = this.props;
     const { data, columns } = this.state;
@@ -116,9 +127,10 @@ class VernacularNamesTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ countryAlpha3, countryAlpha2 }) => ({
+const mapContextToProps = ({ countryAlpha3, countryAlpha2, language }) => ({
   countryAlpha3,
   countryAlpha2,
+  language,
 });
 
 export default withContext(mapContextToProps)(VernacularNamesTable);

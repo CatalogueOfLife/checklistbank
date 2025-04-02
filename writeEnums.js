@@ -23,6 +23,7 @@ const enums = [
   "environment",
   "importstate",
   "country",
+  "language",
   "estimatetype",
   "setting",
   "Gazetteer",

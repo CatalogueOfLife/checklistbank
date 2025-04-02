@@ -212,7 +212,7 @@
   {
     "description": "A basionym that claims itself to have another basionym.",
     "group": "name",
-    "level": "error",
+    "level": "warning",
     "name": "chained basionym"
   },
   {
@@ -386,7 +386,7 @@
   {
     "description": "If a synonym points to another synonym as its accepted taxon the chain is resolved.",
     "group": "name usage",
-    "level": "error",
+    "level": "warning",
     "name": "chained synonym"
   },
   {
@@ -760,5 +760,17 @@
     "group": "name",
     "level": "warning",
     "name": "rank name suffix conflict"
+  },
+  {
+    "description": "The authorship of the name is unlikely a true author, e.g. resembles part of the scientific name.",
+    "group": "name",
+    "level": "warning",
+    "name": "authorship unlikely"
+  },
+  {
+    "description": "The name phrase is unlikely, e.g. is just a number or a boolean value.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "name phrase unlikely"
   }
 ]
