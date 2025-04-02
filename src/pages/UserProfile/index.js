@@ -184,8 +184,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
                   )}
                 </PresentationItem>
                 <PresentationItem label="Country">
-                  {user?.country &&
-                    _.startCase(countryAlpha2[user?.country]?.name)}
+                  {user?.country && countryAlpha2[user?.country]?.name}
                 </PresentationItem>
                 <PresentationItem label="Roles">
                   {user?.roles?.length && (

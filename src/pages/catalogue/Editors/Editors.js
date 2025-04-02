@@ -44,7 +44,7 @@ const Editors = ({
       dataIndex: "country",
       key: "Country",
       render: (text, record) =>
-        record?.country ? capitalize(countryAlpha2[record.country].name) : "",
+        record?.country ? countryAlpha2[record.country].name : record.country,
     },
     {
       title: "Orcid",
