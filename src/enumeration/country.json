@@ -8,7 +8,7 @@
     "iso2LetterCode": "AF",
     "iso3LetterCode": "AFG",
     "isoNumericalCode": 4,
-    "name": "afghanistan",
+    "name": "Afghanistan",
     "numericalCode": 4,
     "official": true
   },
@@ -21,7 +21,7 @@
     "iso2LetterCode": "AX",
     "iso3LetterCode": "ALA",
     "isoNumericalCode": 248,
-    "name": "aland islands",
+    "name": "Åland Islands",
     "numericalCode": 248,
     "official": true
   },
@@ -34,7 +34,7 @@
     "iso2LetterCode": "AL",
     "iso3LetterCode": "ALB",
     "isoNumericalCode": 8,
-    "name": "albania",
+    "name": "Albania",
     "numericalCode": 8,
     "official": true
   },
@@ -47,7 +47,7 @@
     "iso2LetterCode": "DZ",
     "iso3LetterCode": "DZA",
     "isoNumericalCode": 12,
-    "name": "algeria",
+    "name": "Algeria",
     "numericalCode": 12,
     "official": true
   },
@@ -60,7 +60,7 @@
     "iso2LetterCode": "AS",
     "iso3LetterCode": "ASM",
     "isoNumericalCode": 16,
-    "name": "american samoa",
+    "name": "American Samoa",
     "numericalCode": 16,
     "official": true
   },
@@ -73,7 +73,7 @@
     "iso2LetterCode": "AD",
     "iso3LetterCode": "AND",
     "isoNumericalCode": 20,
-    "name": "andorra",
+    "name": "Andorra",
     "numericalCode": 20,
     "official": true
   },
@@ -86,7 +86,7 @@
     "iso2LetterCode": "AO",
     "iso3LetterCode": "AGO",
     "isoNumericalCode": 24,
-    "name": "angola",
+    "name": "Angola",
     "numericalCode": 24,
     "official": true
   },
@@ -99,7 +99,7 @@
     "iso2LetterCode": "AI",
     "iso3LetterCode": "AIA",
     "isoNumericalCode": 660,
-    "name": "anguilla",
+    "name": "Anguilla",
     "numericalCode": 660,
     "official": true
   },
@@ -112,7 +112,7 @@
     "iso2LetterCode": "AQ",
     "iso3LetterCode": "ATA",
     "isoNumericalCode": 10,
-    "name": "antarctica",
+    "name": "Antarctica",
     "numericalCode": 10,
     "official": true
   },
@@ -125,7 +125,7 @@
     "iso2LetterCode": "AG",
     "iso3LetterCode": "ATG",
     "isoNumericalCode": 28,
-    "name": "antigua barbuda",
+    "name": "Antigua and Barbuda",
     "numericalCode": 28,
     "official": true
   },
@@ -138,7 +138,7 @@
     "iso2LetterCode": "AR",
     "iso3LetterCode": "ARG",
     "isoNumericalCode": 32,
-    "name": "argentina",
+    "name": "Argentina",
     "numericalCode": 32,
     "official": true
   },
@@ -151,7 +151,7 @@
     "iso2LetterCode": "AM",
     "iso3LetterCode": "ARM",
     "isoNumericalCode": 51,
-    "name": "armenia",
+    "name": "Armenia",
     "numericalCode": 51,
     "official": true
   },
@@ -164,7 +164,7 @@
     "iso2LetterCode": "AW",
     "iso3LetterCode": "ABW",
     "isoNumericalCode": 533,
-    "name": "aruba",
+    "name": "Aruba",
     "numericalCode": 533,
     "official": true
   },
@@ -177,7 +177,7 @@
     "iso2LetterCode": "AU",
     "iso3LetterCode": "AUS",
     "isoNumericalCode": 36,
-    "name": "australia",
+    "name": "Australia",
     "numericalCode": 36,
     "official": true
   },
@@ -190,7 +190,7 @@
     "iso2LetterCode": "AT",
     "iso3LetterCode": "AUT",
     "isoNumericalCode": 40,
-    "name": "austria",
+    "name": "Austria",
     "numericalCode": 40,
     "official": true
   },
@@ -203,7 +203,7 @@
     "iso2LetterCode": "AZ",
     "iso3LetterCode": "AZE",
     "isoNumericalCode": 31,
-    "name": "azerbaijan",
+    "name": "Azerbaijan",
     "numericalCode": 31,
     "official": true
   },
@@ -216,7 +216,7 @@
     "iso2LetterCode": "BS",
     "iso3LetterCode": "BHS",
     "isoNumericalCode": 44,
-    "name": "bahamas",
+    "name": "Bahamas",
     "numericalCode": 44,
     "official": true
   },
@@ -229,7 +229,7 @@
     "iso2LetterCode": "BH",
     "iso3LetterCode": "BHR",
     "isoNumericalCode": 48,
-    "name": "bahrain",
+    "name": "Bahrain",
     "numericalCode": 48,
     "official": true
   },
@@ -242,7 +242,7 @@
     "iso2LetterCode": "BD",
     "iso3LetterCode": "BGD",
     "isoNumericalCode": 50,
-    "name": "bangladesh",
+    "name": "Bangladesh",
     "numericalCode": 50,
     "official": true
   },
@@ -255,7 +255,7 @@
     "iso2LetterCode": "BB",
     "iso3LetterCode": "BRB",
     "isoNumericalCode": 52,
-    "name": "barbados",
+    "name": "Barbados",
     "numericalCode": 52,
     "official": true
   },
@@ -268,7 +268,7 @@
     "iso2LetterCode": "BY",
     "iso3LetterCode": "BLR",
     "isoNumericalCode": 112,
-    "name": "belarus",
+    "name": "Belarus",
     "numericalCode": 112,
     "official": true
   },
@@ -281,7 +281,7 @@
     "iso2LetterCode": "BE",
     "iso3LetterCode": "BEL",
     "isoNumericalCode": 56,
-    "name": "belgium",
+    "name": "Belgium",
     "numericalCode": 56,
     "official": true
   },
@@ -294,7 +294,7 @@
     "iso2LetterCode": "BZ",
     "iso3LetterCode": "BLZ",
     "isoNumericalCode": 84,
-    "name": "belize",
+    "name": "Belize",
     "numericalCode": 84,
     "official": true
   },
@@ -307,7 +307,7 @@
     "iso2LetterCode": "BJ",
     "iso3LetterCode": "BEN",
     "isoNumericalCode": 204,
-    "name": "benin",
+    "name": "Benin",
     "numericalCode": 204,
     "official": true
   },
@@ -320,7 +320,7 @@
     "iso2LetterCode": "BM",
     "iso3LetterCode": "BMU",
     "isoNumericalCode": 60,
-    "name": "bermuda",
+    "name": "Bermuda",
     "numericalCode": 60,
     "official": true
   },
@@ -333,7 +333,7 @@
     "iso2LetterCode": "BT",
     "iso3LetterCode": "BTN",
     "isoNumericalCode": 64,
-    "name": "bhutan",
+    "name": "Bhutan",
     "numericalCode": 64,
     "official": true
   },
@@ -346,7 +346,7 @@
     "iso2LetterCode": "BO",
     "iso3LetterCode": "BOL",
     "isoNumericalCode": 68,
-    "name": "bolivia",
+    "name": "Bolivia, Plurinational State of",
     "numericalCode": 68,
     "official": true
   },
@@ -359,7 +359,7 @@
     "iso2LetterCode": "BQ",
     "iso3LetterCode": "BES",
     "isoNumericalCode": 535,
-    "name": "bonaire sint eustatius saba",
+    "name": "Bonaire, Sint Eustatius and Saba",
     "numericalCode": 535,
     "official": true
   },
@@ -372,7 +372,7 @@
     "iso2LetterCode": "BA",
     "iso3LetterCode": "BIH",
     "isoNumericalCode": 70,
-    "name": "bosnia herzegovina",
+    "name": "Bosnia and Herzegovina",
     "numericalCode": 70,
     "official": true
   },
@@ -385,7 +385,7 @@
     "iso2LetterCode": "BW",
     "iso3LetterCode": "BWA",
     "isoNumericalCode": 72,
-    "name": "botswana",
+    "name": "Botswana",
     "numericalCode": 72,
     "official": true
   },
@@ -398,7 +398,7 @@
     "iso2LetterCode": "BV",
     "iso3LetterCode": "BVT",
     "isoNumericalCode": 74,
-    "name": "bouvet island",
+    "name": "Bouvet Island",
     "numericalCode": 74,
     "official": true
   },
@@ -411,7 +411,7 @@
     "iso2LetterCode": "BR",
     "iso3LetterCode": "BRA",
     "isoNumericalCode": 76,
-    "name": "brazil",
+    "name": "Brazil",
     "numericalCode": 76,
     "official": true
   },
@@ -424,7 +424,7 @@
     "iso2LetterCode": "IO",
     "iso3LetterCode": "IOT",
     "isoNumericalCode": 86,
-    "name": "british indian ocean territory",
+    "name": "British Indian Ocean Territory",
     "numericalCode": 86,
     "official": true
   },
@@ -437,7 +437,7 @@
     "iso2LetterCode": "BN",
     "iso3LetterCode": "BRN",
     "isoNumericalCode": 96,
-    "name": "brunei darussalam",
+    "name": "Brunei Darussalam",
     "numericalCode": 96,
     "official": true
   },
@@ -450,7 +450,7 @@
     "iso2LetterCode": "BG",
     "iso3LetterCode": "BGR",
     "isoNumericalCode": 100,
-    "name": "bulgaria",
+    "name": "Bulgaria",
     "numericalCode": 100,
     "official": true
   },
@@ -463,7 +463,7 @@
     "iso2LetterCode": "BF",
     "iso3LetterCode": "BFA",
     "isoNumericalCode": 854,
-    "name": "burkina faso",
+    "name": "Burkina Faso",
     "numericalCode": 854,
     "official": true
   },
@@ -476,7 +476,7 @@
     "iso2LetterCode": "BI",
     "iso3LetterCode": "BDI",
     "isoNumericalCode": 108,
-    "name": "burundi",
+    "name": "Burundi",
     "numericalCode": 108,
     "official": true
   },
@@ -489,7 +489,7 @@
     "iso2LetterCode": "KH",
     "iso3LetterCode": "KHM",
     "isoNumericalCode": 116,
-    "name": "cambodia",
+    "name": "Cambodia",
     "numericalCode": 116,
     "official": true
   },
@@ -502,7 +502,7 @@
     "iso2LetterCode": "CM",
     "iso3LetterCode": "CMR",
     "isoNumericalCode": 120,
-    "name": "cameroon",
+    "name": "Cameroon",
     "numericalCode": 120,
     "official": true
   },
@@ -515,7 +515,7 @@
     "iso2LetterCode": "CA",
     "iso3LetterCode": "CAN",
     "isoNumericalCode": 124,
-    "name": "canada",
+    "name": "Canada",
     "numericalCode": 124,
     "official": true
   },
@@ -528,7 +528,7 @@
     "iso2LetterCode": "CV",
     "iso3LetterCode": "CPV",
     "isoNumericalCode": 132,
-    "name": "cape verde",
+    "name": "Cape Verde",
     "numericalCode": 132,
     "official": true
   },
@@ -541,7 +541,7 @@
     "iso2LetterCode": "KY",
     "iso3LetterCode": "CYM",
     "isoNumericalCode": 136,
-    "name": "cayman islands",
+    "name": "Cayman Islands",
     "numericalCode": 136,
     "official": true
   },
@@ -554,7 +554,7 @@
     "iso2LetterCode": "CF",
     "iso3LetterCode": "CAF",
     "isoNumericalCode": 140,
-    "name": "central african republic",
+    "name": "Central African Republic",
     "numericalCode": 140,
     "official": true
   },
@@ -567,7 +567,7 @@
     "iso2LetterCode": "TD",
     "iso3LetterCode": "TCD",
     "isoNumericalCode": 148,
-    "name": "chad",
+    "name": "Chad",
     "numericalCode": 148,
     "official": true
   },
@@ -580,7 +580,7 @@
     "iso2LetterCode": "CL",
     "iso3LetterCode": "CHL",
     "isoNumericalCode": 152,
-    "name": "chile",
+    "name": "Chile",
     "numericalCode": 152,
     "official": true
   },
@@ -593,7 +593,7 @@
     "iso2LetterCode": "CN",
     "iso3LetterCode": "CHN",
     "isoNumericalCode": 156,
-    "name": "china",
+    "name": "China",
     "numericalCode": 156,
     "official": true
   },
@@ -606,7 +606,7 @@
     "iso2LetterCode": "CX",
     "iso3LetterCode": "CXR",
     "isoNumericalCode": 162,
-    "name": "christmas island",
+    "name": "Christmas Island",
     "numericalCode": 162,
     "official": true
   },
@@ -619,7 +619,7 @@
     "iso2LetterCode": "CC",
     "iso3LetterCode": "CCK",
     "isoNumericalCode": 166,
-    "name": "cocos islands",
+    "name": "Cocos (Keeling) Islands",
     "numericalCode": 166,
     "official": true
   },
@@ -632,7 +632,7 @@
     "iso2LetterCode": "CO",
     "iso3LetterCode": "COL",
     "isoNumericalCode": 170,
-    "name": "colombia",
+    "name": "Colombia",
     "numericalCode": 170,
     "official": true
   },
@@ -645,7 +645,7 @@
     "iso2LetterCode": "KM",
     "iso3LetterCode": "COM",
     "isoNumericalCode": 174,
-    "name": "comoros",
+    "name": "Comoros",
     "numericalCode": 174,
     "official": true
   },
@@ -658,7 +658,7 @@
     "iso2LetterCode": "CD",
     "iso3LetterCode": "COD",
     "isoNumericalCode": 180,
-    "name": "congo democratic republic",
+    "name": "Congo, Democratic Republic of the",
     "numericalCode": 180,
     "official": true
   },
@@ -671,7 +671,7 @@
     "iso2LetterCode": "CG",
     "iso3LetterCode": "COG",
     "isoNumericalCode": 178,
-    "name": "congo",
+    "name": "Congo, Republic of the",
     "numericalCode": 178,
     "official": true
   },
@@ -684,7 +684,7 @@
     "iso2LetterCode": "CK",
     "iso3LetterCode": "COK",
     "isoNumericalCode": 184,
-    "name": "cook islands",
+    "name": "Cook Islands",
     "numericalCode": 184,
     "official": true
   },
@@ -697,7 +697,7 @@
     "iso2LetterCode": "CR",
     "iso3LetterCode": "CRI",
     "isoNumericalCode": 188,
-    "name": "costa rica",
+    "name": "Costa Rica",
     "numericalCode": 188,
     "official": true
   },
@@ -710,7 +710,7 @@
     "iso2LetterCode": "CI",
     "iso3LetterCode": "CIV",
     "isoNumericalCode": 384,
-    "name": "côte divoire",
+    "name": "Côte d'Ivoire",
     "numericalCode": 384,
     "official": true
   },
@@ -723,7 +723,7 @@
     "iso2LetterCode": "HR",
     "iso3LetterCode": "HRV",
     "isoNumericalCode": 191,
-    "name": "croatia",
+    "name": "Croatia",
     "numericalCode": 191,
     "official": true
   },
@@ -736,7 +736,7 @@
     "iso2LetterCode": "CU",
     "iso3LetterCode": "CUB",
     "isoNumericalCode": 192,
-    "name": "cuba",
+    "name": "Cuba",
     "numericalCode": 192,
     "official": true
   },
@@ -749,7 +749,7 @@
     "iso2LetterCode": "CW",
     "iso3LetterCode": "CUW",
     "isoNumericalCode": 531,
-    "name": "curaçao",
+    "name": "Curaçao",
     "numericalCode": 531,
     "official": true
   },
@@ -762,7 +762,7 @@
     "iso2LetterCode": "CY",
     "iso3LetterCode": "CYP",
     "isoNumericalCode": 196,
-    "name": "cyprus",
+    "name": "Cyprus",
     "numericalCode": 196,
     "official": true
   },
@@ -775,7 +775,7 @@
     "iso2LetterCode": "CZ",
     "iso3LetterCode": "CZE",
     "isoNumericalCode": 203,
-    "name": "czech republic",
+    "name": "Czech Republic",
     "numericalCode": 203,
     "official": true
   },
@@ -788,7 +788,7 @@
     "iso2LetterCode": "DK",
     "iso3LetterCode": "DNK",
     "isoNumericalCode": 208,
-    "name": "denmark",
+    "name": "Denmark",
     "numericalCode": 208,
     "official": true
   },
@@ -801,7 +801,7 @@
     "iso2LetterCode": "DJ",
     "iso3LetterCode": "DJI",
     "isoNumericalCode": 262,
-    "name": "djibouti",
+    "name": "Djibouti",
     "numericalCode": 262,
     "official": true
   },
@@ -814,7 +814,7 @@
     "iso2LetterCode": "DM",
     "iso3LetterCode": "DMA",
     "isoNumericalCode": 212,
-    "name": "dominica",
+    "name": "Dominica",
     "numericalCode": 212,
     "official": true
   },
@@ -827,7 +827,7 @@
     "iso2LetterCode": "DO",
     "iso3LetterCode": "DOM",
     "isoNumericalCode": 214,
-    "name": "dominican republic",
+    "name": "Dominican Republic",
     "numericalCode": 214,
     "official": true
   },
@@ -840,7 +840,7 @@
     "iso2LetterCode": "EC",
     "iso3LetterCode": "ECU",
     "isoNumericalCode": 218,
-    "name": "ecuador",
+    "name": "Ecuador",
     "numericalCode": 218,
     "official": true
   },
@@ -853,7 +853,7 @@
     "iso2LetterCode": "EG",
     "iso3LetterCode": "EGY",
     "isoNumericalCode": 818,
-    "name": "egypt",
+    "name": "Egypt",
     "numericalCode": 818,
     "official": true
   },
@@ -866,7 +866,7 @@
     "iso2LetterCode": "SV",
     "iso3LetterCode": "SLV",
     "isoNumericalCode": 222,
-    "name": "el salvador",
+    "name": "El Salvador",
     "numericalCode": 222,
     "official": true
   },
@@ -879,7 +879,7 @@
     "iso2LetterCode": "GQ",
     "iso3LetterCode": "GNQ",
     "isoNumericalCode": 226,
-    "name": "equatorial guinea",
+    "name": "Equatorial Guinea",
     "numericalCode": 226,
     "official": true
   },
@@ -892,7 +892,7 @@
     "iso2LetterCode": "ER",
     "iso3LetterCode": "ERI",
     "isoNumericalCode": 232,
-    "name": "eritrea",
+    "name": "Eritrea",
     "numericalCode": 232,
     "official": true
   },
@@ -905,7 +905,7 @@
     "iso2LetterCode": "EE",
     "iso3LetterCode": "EST",
     "isoNumericalCode": 233,
-    "name": "estonia",
+    "name": "Estonia",
     "numericalCode": 233,
     "official": true
   },
@@ -918,7 +918,7 @@
     "iso2LetterCode": "ET",
     "iso3LetterCode": "ETH",
     "isoNumericalCode": 231,
-    "name": "ethiopia",
+    "name": "Ethiopia",
     "numericalCode": 231,
     "official": true
   },
@@ -931,7 +931,7 @@
     "iso2LetterCode": "FK",
     "iso3LetterCode": "FLK",
     "isoNumericalCode": 238,
-    "name": "falkland islands",
+    "name": "Falkland Islands (Malvinas)",
     "numericalCode": 238,
     "official": true
   },
@@ -944,7 +944,7 @@
     "iso2LetterCode": "FO",
     "iso3LetterCode": "FRO",
     "isoNumericalCode": 234,
-    "name": "faroe islands",
+    "name": "Faroe Islands",
     "numericalCode": 234,
     "official": true
   },
@@ -957,7 +957,7 @@
     "iso2LetterCode": "FJ",
     "iso3LetterCode": "FJI",
     "isoNumericalCode": 242,
-    "name": "fiji",
+    "name": "Fiji",
     "numericalCode": 242,
     "official": true
   },
@@ -970,7 +970,7 @@
     "iso2LetterCode": "FI",
     "iso3LetterCode": "FIN",
     "isoNumericalCode": 246,
-    "name": "finland",
+    "name": "Finland",
     "numericalCode": 246,
     "official": true
   },
@@ -983,7 +983,7 @@
     "iso2LetterCode": "FR",
     "iso3LetterCode": "FRA",
     "isoNumericalCode": 250,
-    "name": "france",
+    "name": "France",
     "numericalCode": 250,
     "official": true
   },
@@ -996,7 +996,7 @@
     "iso2LetterCode": "GF",
     "iso3LetterCode": "GUF",
     "isoNumericalCode": 254,
-    "name": "french guiana",
+    "name": "French Guiana",
     "numericalCode": 254,
     "official": true
   },
@@ -1009,7 +1009,7 @@
     "iso2LetterCode": "PF",
     "iso3LetterCode": "PYF",
     "isoNumericalCode": 258,
-    "name": "french polynesia",
+    "name": "French Polynesia",
     "numericalCode": 258,
     "official": true
   },
@@ -1022,7 +1022,7 @@
     "iso2LetterCode": "TF",
     "iso3LetterCode": "ATF",
     "isoNumericalCode": 260,
-    "name": "french southern territories",
+    "name": "French Southern Territories",
     "numericalCode": 260,
     "official": true
   },
@@ -1035,7 +1035,7 @@
     "iso2LetterCode": "GA",
     "iso3LetterCode": "GAB",
     "isoNumericalCode": 266,
-    "name": "gabon",
+    "name": "Gabon",
     "numericalCode": 266,
     "official": true
   },
@@ -1048,7 +1048,7 @@
     "iso2LetterCode": "GM",
     "iso3LetterCode": "GMB",
     "isoNumericalCode": 270,
-    "name": "gambia",
+    "name": "Gambia",
     "numericalCode": 270,
     "official": true
   },
@@ -1061,7 +1061,7 @@
     "iso2LetterCode": "GE",
     "iso3LetterCode": "GEO",
     "isoNumericalCode": 268,
-    "name": "georgia",
+    "name": "Georgia",
     "numericalCode": 268,
     "official": true
   },
@@ -1074,7 +1074,7 @@
     "iso2LetterCode": "DE",
     "iso3LetterCode": "DEU",
     "isoNumericalCode": 276,
-    "name": "germany",
+    "name": "Germany",
     "numericalCode": 276,
     "official": true
   },
@@ -1087,7 +1087,7 @@
     "iso2LetterCode": "GH",
     "iso3LetterCode": "GHA",
     "isoNumericalCode": 288,
-    "name": "ghana",
+    "name": "Ghana",
     "numericalCode": 288,
     "official": true
   },
@@ -1100,7 +1100,7 @@
     "iso2LetterCode": "GI",
     "iso3LetterCode": "GIB",
     "isoNumericalCode": 292,
-    "name": "gibraltar",
+    "name": "Gibraltar",
     "numericalCode": 292,
     "official": true
   },
@@ -1113,7 +1113,7 @@
     "iso2LetterCode": "GR",
     "iso3LetterCode": "GRC",
     "isoNumericalCode": 300,
-    "name": "greece",
+    "name": "Greece",
     "numericalCode": 300,
     "official": true
   },
@@ -1126,7 +1126,7 @@
     "iso2LetterCode": "GL",
     "iso3LetterCode": "GRL",
     "isoNumericalCode": 304,
-    "name": "greenland",
+    "name": "Greenland",
     "numericalCode": 304,
     "official": true
   },
@@ -1139,7 +1139,7 @@
     "iso2LetterCode": "GD",
     "iso3LetterCode": "GRD",
     "isoNumericalCode": 308,
-    "name": "grenada",
+    "name": "Grenada",
     "numericalCode": 308,
     "official": true
   },
@@ -1152,7 +1152,7 @@
     "iso2LetterCode": "GP",
     "iso3LetterCode": "GLP",
     "isoNumericalCode": 312,
-    "name": "guadeloupe",
+    "name": "Guadeloupe",
     "numericalCode": 312,
     "official": true
   },
@@ -1165,7 +1165,7 @@
     "iso2LetterCode": "GU",
     "iso3LetterCode": "GUM",
     "isoNumericalCode": 316,
-    "name": "guam",
+    "name": "Guam",
     "numericalCode": 316,
     "official": true
   },
@@ -1178,7 +1178,7 @@
     "iso2LetterCode": "GT",
     "iso3LetterCode": "GTM",
     "isoNumericalCode": 320,
-    "name": "guatemala",
+    "name": "Guatemala",
     "numericalCode": 320,
     "official": true
   },
@@ -1191,7 +1191,7 @@
     "iso2LetterCode": "GG",
     "iso3LetterCode": "GGY",
     "isoNumericalCode": 831,
-    "name": "guernsey",
+    "name": "Guernsey",
     "numericalCode": 831,
     "official": true
   },
@@ -1204,7 +1204,7 @@
     "iso2LetterCode": "GN",
     "iso3LetterCode": "GIN",
     "isoNumericalCode": 324,
-    "name": "guinea",
+    "name": "Guinea",
     "numericalCode": 324,
     "official": true
   },
@@ -1217,7 +1217,7 @@
     "iso2LetterCode": "GW",
     "iso3LetterCode": "GNB",
     "isoNumericalCode": 624,
-    "name": "guinea bissau",
+    "name": "Guinea-Bissau",
     "numericalCode": 624,
     "official": true
   },
@@ -1230,7 +1230,7 @@
     "iso2LetterCode": "GY",
     "iso3LetterCode": "GUY",
     "isoNumericalCode": 328,
-    "name": "guyana",
+    "name": "Guyana",
     "numericalCode": 328,
     "official": true
   },
@@ -1243,7 +1243,7 @@
     "iso2LetterCode": "HT",
     "iso3LetterCode": "HTI",
     "isoNumericalCode": 332,
-    "name": "haiti",
+    "name": "Haiti",
     "numericalCode": 332,
     "official": true
   },
@@ -1256,7 +1256,7 @@
     "iso2LetterCode": "HM",
     "iso3LetterCode": "HMD",
     "isoNumericalCode": 334,
-    "name": "heard mcdonald islands",
+    "name": "Heard Island and McDonald Islands",
     "numericalCode": 334,
     "official": true
   },
@@ -1269,7 +1269,7 @@
     "iso2LetterCode": "VA",
     "iso3LetterCode": "VAT",
     "isoNumericalCode": 336,
-    "name": "vatican",
+    "name": "Holy See",
     "numericalCode": 336,
     "official": true
   },
@@ -1282,7 +1282,7 @@
     "iso2LetterCode": "HN",
     "iso3LetterCode": "HND",
     "isoNumericalCode": 340,
-    "name": "honduras",
+    "name": "Honduras",
     "numericalCode": 340,
     "official": true
   },
@@ -1295,7 +1295,7 @@
     "iso2LetterCode": "HK",
     "iso3LetterCode": "HKG",
     "isoNumericalCode": 344,
-    "name": "hong kong",
+    "name": "Hong Kong",
     "numericalCode": 344,
     "official": true
   },
@@ -1308,7 +1308,7 @@
     "iso2LetterCode": "HU",
     "iso3LetterCode": "HUN",
     "isoNumericalCode": 348,
-    "name": "hungary",
+    "name": "Hungary",
     "numericalCode": 348,
     "official": true
   },
@@ -1321,7 +1321,7 @@
     "iso2LetterCode": "IS",
     "iso3LetterCode": "ISL",
     "isoNumericalCode": 352,
-    "name": "iceland",
+    "name": "Iceland",
     "numericalCode": 352,
     "official": true
   },
@@ -1334,7 +1334,7 @@
     "iso2LetterCode": "IN",
     "iso3LetterCode": "IND",
     "isoNumericalCode": 356,
-    "name": "india",
+    "name": "India",
     "numericalCode": 356,
     "official": true
   },
@@ -1347,7 +1347,7 @@
     "iso2LetterCode": "ID",
     "iso3LetterCode": "IDN",
     "isoNumericalCode": 360,
-    "name": "indonesia",
+    "name": "Indonesia",
     "numericalCode": 360,
     "official": true
   },
@@ -1360,7 +1360,7 @@
     "iso2LetterCode": "IR",
     "iso3LetterCode": "IRN",
     "isoNumericalCode": 364,
-    "name": "iran",
+    "name": "Iran, Islamic Republic of",
     "numericalCode": 364,
     "official": true
   },
@@ -1373,7 +1373,7 @@
     "iso2LetterCode": "IQ",
     "iso3LetterCode": "IRQ",
     "isoNumericalCode": 368,
-    "name": "iraq",
+    "name": "Iraq",
     "numericalCode": 368,
     "official": true
   },
@@ -1386,7 +1386,7 @@
     "iso2LetterCode": "IE",
     "iso3LetterCode": "IRL",
     "isoNumericalCode": 372,
-    "name": "ireland",
+    "name": "Ireland",
     "numericalCode": 372,
     "official": true
   },
@@ -1399,7 +1399,7 @@
     "iso2LetterCode": "IM",
     "iso3LetterCode": "IMN",
     "isoNumericalCode": 833,
-    "name": "isle of man",
+    "name": "Isle of Man",
     "numericalCode": 833,
     "official": true
   },
@@ -1412,7 +1412,7 @@
     "iso2LetterCode": "IL",
     "iso3LetterCode": "ISR",
     "isoNumericalCode": 376,
-    "name": "israel",
+    "name": "Israel",
     "numericalCode": 376,
     "official": true
   },
@@ -1425,7 +1425,7 @@
     "iso2LetterCode": "IT",
     "iso3LetterCode": "ITA",
     "isoNumericalCode": 380,
-    "name": "italy",
+    "name": "Italy",
     "numericalCode": 380,
     "official": true
   },
@@ -1438,7 +1438,7 @@
     "iso2LetterCode": "JM",
     "iso3LetterCode": "JAM",
     "isoNumericalCode": 388,
-    "name": "jamaica",
+    "name": "Jamaica",
     "numericalCode": 388,
     "official": true
   },
@@ -1451,7 +1451,7 @@
     "iso2LetterCode": "JP",
     "iso3LetterCode": "JPN",
     "isoNumericalCode": 392,
-    "name": "japan",
+    "name": "Japan",
     "numericalCode": 392,
     "official": true
   },
@@ -1464,7 +1464,7 @@
     "iso2LetterCode": "JE",
     "iso3LetterCode": "JEY",
     "isoNumericalCode": 832,
-    "name": "jersey",
+    "name": "Jersey",
     "numericalCode": 832,
     "official": true
   },
@@ -1477,7 +1477,7 @@
     "iso2LetterCode": "JO",
     "iso3LetterCode": "JOR",
     "isoNumericalCode": 400,
-    "name": "jordan",
+    "name": "Jordan",
     "numericalCode": 400,
     "official": true
   },
@@ -1490,7 +1490,7 @@
     "iso2LetterCode": "KZ",
     "iso3LetterCode": "KAZ",
     "isoNumericalCode": 398,
-    "name": "kazakhstan",
+    "name": "Kazakhstan",
     "numericalCode": 398,
     "official": true
   },
@@ -1503,7 +1503,7 @@
     "iso2LetterCode": "KE",
     "iso3LetterCode": "KEN",
     "isoNumericalCode": 404,
-    "name": "kenya",
+    "name": "Kenya",
     "numericalCode": 404,
     "official": true
   },
@@ -1516,7 +1516,7 @@
     "iso2LetterCode": "KI",
     "iso3LetterCode": "KIR",
     "isoNumericalCode": 296,
-    "name": "kiribati",
+    "name": "Kiribati",
     "numericalCode": 296,
     "official": true
   },
@@ -1529,7 +1529,7 @@
     "iso2LetterCode": "KP",
     "iso3LetterCode": "PRK",
     "isoNumericalCode": 408,
-    "name": "korea north",
+    "name": "Korea, Democratic People's Republic of",
     "numericalCode": 408,
     "official": true
   },
@@ -1542,7 +1542,7 @@
     "iso2LetterCode": "KR",
     "iso3LetterCode": "KOR",
     "isoNumericalCode": 410,
-    "name": "korea south",
+    "name": "Korea, Republic of",
     "numericalCode": 410,
     "official": true
   },
@@ -1555,7 +1555,7 @@
     "iso2LetterCode": "XK",
     "iso3LetterCode": "XKX",
     "isoNumericalCode": 902,
-    "name": "kosovo",
+    "name": "Kosovo",
     "numericalCode": 902,
     "official": true
   },
@@ -1568,7 +1568,7 @@
     "iso2LetterCode": "KW",
     "iso3LetterCode": "KWT",
     "isoNumericalCode": 414,
-    "name": "kuwait",
+    "name": "Kuwait",
     "numericalCode": 414,
     "official": true
   },
@@ -1581,7 +1581,7 @@
     "iso2LetterCode": "KG",
     "iso3LetterCode": "KGZ",
     "isoNumericalCode": 417,
-    "name": "kyrgyzstan",
+    "name": "Kyrgyzstan",
     "numericalCode": 417,
     "official": true
   },
@@ -1594,7 +1594,7 @@
     "iso2LetterCode": "LA",
     "iso3LetterCode": "LAO",
     "isoNumericalCode": 418,
-    "name": "lao",
+    "name": "Lao People's Democratic Republic",
     "numericalCode": 418,
     "official": true
   },
@@ -1607,7 +1607,7 @@
     "iso2LetterCode": "LV",
     "iso3LetterCode": "LVA",
     "isoNumericalCode": 428,
-    "name": "latvia",
+    "name": "Latvia",
     "numericalCode": 428,
     "official": true
   },
@@ -1620,7 +1620,7 @@
     "iso2LetterCode": "LB",
     "iso3LetterCode": "LBN",
     "isoNumericalCode": 422,
-    "name": "lebanon",
+    "name": "Lebanon",
     "numericalCode": 422,
     "official": true
   },
@@ -1633,7 +1633,7 @@
     "iso2LetterCode": "LS",
     "iso3LetterCode": "LSO",
     "isoNumericalCode": 426,
-    "name": "lesotho",
+    "name": "Lesotho",
     "numericalCode": 426,
     "official": true
   },
@@ -1646,7 +1646,7 @@
     "iso2LetterCode": "LR",
     "iso3LetterCode": "LBR",
     "isoNumericalCode": 430,
-    "name": "liberia",
+    "name": "Liberia",
     "numericalCode": 430,
     "official": true
   },
@@ -1659,7 +1659,7 @@
     "iso2LetterCode": "LY",
     "iso3LetterCode": "LBY",
     "isoNumericalCode": 434,
-    "name": "libya",
+    "name": "Libya",
     "numericalCode": 434,
     "official": true
   },
@@ -1672,7 +1672,7 @@
     "iso2LetterCode": "LI",
     "iso3LetterCode": "LIE",
     "isoNumericalCode": 438,
-    "name": "liechtenstein",
+    "name": "Liechtenstein",
     "numericalCode": 438,
     "official": true
   },
@@ -1685,7 +1685,7 @@
     "iso2LetterCode": "LT",
     "iso3LetterCode": "LTU",
     "isoNumericalCode": 440,
-    "name": "lithuania",
+    "name": "Lithuania",
     "numericalCode": 440,
     "official": true
   },
@@ -1698,7 +1698,7 @@
     "iso2LetterCode": "LU",
     "iso3LetterCode": "LUX",
     "isoNumericalCode": 442,
-    "name": "luxembourg",
+    "name": "Luxembourg",
     "numericalCode": 442,
     "official": true
   },
@@ -1711,7 +1711,7 @@
     "iso2LetterCode": "MO",
     "iso3LetterCode": "MAC",
     "isoNumericalCode": 446,
-    "name": "macao",
+    "name": "Macao",
     "numericalCode": 446,
     "official": true
   },
@@ -1724,7 +1724,7 @@
     "iso2LetterCode": "MK",
     "iso3LetterCode": "MKD",
     "isoNumericalCode": 807,
-    "name": "macedonia",
+    "name": "North Macedonia",
     "numericalCode": 807,
     "official": true
   },
@@ -1737,7 +1737,7 @@
     "iso2LetterCode": "MG",
     "iso3LetterCode": "MDG",
     "isoNumericalCode": 450,
-    "name": "madagascar",
+    "name": "Madagascar",
     "numericalCode": 450,
     "official": true
   },
@@ -1750,7 +1750,7 @@
     "iso2LetterCode": "MW",
     "iso3LetterCode": "MWI",
     "isoNumericalCode": 454,
-    "name": "malawi",
+    "name": "Malawi",
     "numericalCode": 454,
     "official": true
   },
@@ -1763,7 +1763,7 @@
     "iso2LetterCode": "MY",
     "iso3LetterCode": "MYS",
     "isoNumericalCode": 458,
-    "name": "malaysia",
+    "name": "Malaysia",
     "numericalCode": 458,
     "official": true
   },
@@ -1776,7 +1776,7 @@
     "iso2LetterCode": "MV",
     "iso3LetterCode": "MDV",
     "isoNumericalCode": 462,
-    "name": "maldives",
+    "name": "Maldives",
     "numericalCode": 462,
     "official": true
   },
@@ -1789,7 +1789,7 @@
     "iso2LetterCode": "ML",
     "iso3LetterCode": "MLI",
     "isoNumericalCode": 466,
-    "name": "mali",
+    "name": "Mali",
     "numericalCode": 466,
     "official": true
   },
@@ -1802,7 +1802,7 @@
     "iso2LetterCode": "MT",
     "iso3LetterCode": "MLT",
     "isoNumericalCode": 470,
-    "name": "malta",
+    "name": "Malta",
     "numericalCode": 470,
     "official": true
   },
@@ -1815,7 +1815,7 @@
     "iso2LetterCode": "MH",
     "iso3LetterCode": "MHL",
     "isoNumericalCode": 584,
-    "name": "marshall islands",
+    "name": "Marshall Islands",
     "numericalCode": 584,
     "official": true
   },
@@ -1828,7 +1828,7 @@
     "iso2LetterCode": "MQ",
     "iso3LetterCode": "MTQ",
     "isoNumericalCode": 474,
-    "name": "martinique",
+    "name": "Martinique",
     "numericalCode": 474,
     "official": true
   },
@@ -1841,7 +1841,7 @@
     "iso2LetterCode": "MR",
     "iso3LetterCode": "MRT",
     "isoNumericalCode": 478,
-    "name": "mauritania",
+    "name": "Mauritania",
     "numericalCode": 478,
     "official": true
   },
@@ -1854,7 +1854,7 @@
     "iso2LetterCode": "MU",
     "iso3LetterCode": "MUS",
     "isoNumericalCode": 480,
-    "name": "mauritius",
+    "name": "Mauritius",
     "numericalCode": 480,
     "official": true
   },
@@ -1867,7 +1867,7 @@
     "iso2LetterCode": "YT",
     "iso3LetterCode": "MYT",
     "isoNumericalCode": 175,
-    "name": "mayotte",
+    "name": "Mayotte",
     "numericalCode": 175,
     "official": true
   },
@@ -1880,7 +1880,7 @@
     "iso2LetterCode": "MX",
     "iso3LetterCode": "MEX",
     "isoNumericalCode": 484,
-    "name": "mexico",
+    "name": "Mexico",
     "numericalCode": 484,
     "official": true
   },
@@ -1893,7 +1893,7 @@
     "iso2LetterCode": "FM",
     "iso3LetterCode": "FSM",
     "isoNumericalCode": 583,
-    "name": "micronesia",
+    "name": "Micronesia, Federated States of",
     "numericalCode": 583,
     "official": true
   },
@@ -1906,7 +1906,7 @@
     "iso2LetterCode": "MD",
     "iso3LetterCode": "MDA",
     "isoNumericalCode": 498,
-    "name": "moldova",
+    "name": "Moldova, Republic of",
     "numericalCode": 498,
     "official": true
   },
@@ -1919,7 +1919,7 @@
     "iso2LetterCode": "MC",
     "iso3LetterCode": "MCO",
     "isoNumericalCode": 492,
-    "name": "monaco",
+    "name": "Monaco",
     "numericalCode": 492,
     "official": true
   },
@@ -1932,7 +1932,7 @@
     "iso2LetterCode": "MN",
     "iso3LetterCode": "MNG",
     "isoNumericalCode": 496,
-    "name": "mongolia",
+    "name": "Mongolia",
     "numericalCode": 496,
     "official": true
   },
@@ -1945,7 +1945,7 @@
     "iso2LetterCode": "ME",
     "iso3LetterCode": "MNE",
     "isoNumericalCode": 499,
-    "name": "montenegro",
+    "name": "Montenegro",
     "numericalCode": 499,
     "official": true
   },
@@ -1958,7 +1958,7 @@
     "iso2LetterCode": "MS",
     "iso3LetterCode": "MSR",
     "isoNumericalCode": 500,
-    "name": "montserrat",
+    "name": "Montserrat",
     "numericalCode": 500,
     "official": true
   },
@@ -1971,7 +1971,7 @@
     "iso2LetterCode": "MA",
     "iso3LetterCode": "MAR",
     "isoNumericalCode": 504,
-    "name": "morocco",
+    "name": "Morocco",
     "numericalCode": 504,
     "official": true
   },
@@ -1984,7 +1984,7 @@
     "iso2LetterCode": "MZ",
     "iso3LetterCode": "MOZ",
     "isoNumericalCode": 508,
-    "name": "mozambique",
+    "name": "Mozambique",
     "numericalCode": 508,
     "official": true
   },
@@ -1997,7 +1997,7 @@
     "iso2LetterCode": "MM",
     "iso3LetterCode": "MMR",
     "isoNumericalCode": 104,
-    "name": "myanmar",
+    "name": "Myanmar",
     "numericalCode": 104,
     "official": true
   },
@@ -2010,7 +2010,7 @@
     "iso2LetterCode": "NA",
     "iso3LetterCode": "NAM",
     "isoNumericalCode": 516,
-    "name": "namibia",
+    "name": "Namibia",
     "numericalCode": 516,
     "official": true
   },
@@ -2023,7 +2023,7 @@
     "iso2LetterCode": "NR",
     "iso3LetterCode": "NRU",
     "isoNumericalCode": 520,
-    "name": "nauru",
+    "name": "Nauru",
     "numericalCode": 520,
     "official": true
   },
@@ -2036,7 +2036,7 @@
     "iso2LetterCode": "NP",
     "iso3LetterCode": "NPL",
     "isoNumericalCode": 524,
-    "name": "nepal",
+    "name": "Nepal",
     "numericalCode": 524,
     "official": true
   },
@@ -2049,7 +2049,7 @@
     "iso2LetterCode": "NL",
     "iso3LetterCode": "NLD",
     "isoNumericalCode": 528,
-    "name": "netherlands",
+    "name": "Netherlands",
     "numericalCode": 528,
     "official": true
   },
@@ -2062,7 +2062,7 @@
     "iso2LetterCode": "NC",
     "iso3LetterCode": "NCL",
     "isoNumericalCode": 540,
-    "name": "new caledonia",
+    "name": "New Caledonia",
     "numericalCode": 540,
     "official": true
   },
@@ -2075,7 +2075,7 @@
     "iso2LetterCode": "NZ",
     "iso3LetterCode": "NZL",
     "isoNumericalCode": 554,
-    "name": "new zealand",
+    "name": "New Zealand",
     "numericalCode": 554,
     "official": true
   },
@@ -2088,7 +2088,7 @@
     "iso2LetterCode": "NI",
     "iso3LetterCode": "NIC",
     "isoNumericalCode": 558,
-    "name": "nicaragua",
+    "name": "Nicaragua",
     "numericalCode": 558,
     "official": true
   },
@@ -2101,7 +2101,7 @@
     "iso2LetterCode": "NE",
     "iso3LetterCode": "NER",
     "isoNumericalCode": 562,
-    "name": "niger",
+    "name": "Niger",
     "numericalCode": 562,
     "official": true
   },
@@ -2114,7 +2114,7 @@
     "iso2LetterCode": "NG",
     "iso3LetterCode": "NGA",
     "isoNumericalCode": 566,
-    "name": "nigeria",
+    "name": "Nigeria",
     "numericalCode": 566,
     "official": true
   },
@@ -2127,7 +2127,7 @@
     "iso2LetterCode": "NU",
     "iso3LetterCode": "NIU",
     "isoNumericalCode": 570,
-    "name": "niue",
+    "name": "Niue",
     "numericalCode": 570,
     "official": true
   },
@@ -2140,7 +2140,7 @@
     "iso2LetterCode": "NF",
     "iso3LetterCode": "NFK",
     "isoNumericalCode": 574,
-    "name": "norfolk island",
+    "name": "Norfolk Island",
     "numericalCode": 574,
     "official": true
   },
@@ -2153,7 +2153,7 @@
     "iso2LetterCode": "MP",
     "iso3LetterCode": "MNP",
     "isoNumericalCode": 580,
-    "name": "northern mariana islands",
+    "name": "Northern Mariana Islands",
     "numericalCode": 580,
     "official": true
   },
@@ -2166,7 +2166,7 @@
     "iso2LetterCode": "NO",
     "iso3LetterCode": "NOR",
     "isoNumericalCode": 578,
-    "name": "norway",
+    "name": "Norway",
     "numericalCode": 578,
     "official": true
   },
@@ -2179,7 +2179,7 @@
     "iso2LetterCode": "OM",
     "iso3LetterCode": "OMN",
     "isoNumericalCode": 512,
-    "name": "oman",
+    "name": "Oman",
     "numericalCode": 512,
     "official": true
   },
@@ -2192,7 +2192,7 @@
     "iso2LetterCode": "PK",
     "iso3LetterCode": "PAK",
     "isoNumericalCode": 586,
-    "name": "pakistan",
+    "name": "Pakistan",
     "numericalCode": 586,
     "official": true
   },
@@ -2205,7 +2205,7 @@
     "iso2LetterCode": "PW",
     "iso3LetterCode": "PLW",
     "isoNumericalCode": 585,
-    "name": "palau",
+    "name": "Palau",
     "numericalCode": 585,
     "official": true
   },
@@ -2218,7 +2218,7 @@
     "iso2LetterCode": "PS",
     "iso3LetterCode": "PSE",
     "isoNumericalCode": 275,
-    "name": "palestinian territory",
+    "name": "Palestine, State Of",
     "numericalCode": 275,
     "official": true
   },
@@ -2231,7 +2231,7 @@
     "iso2LetterCode": "PA",
     "iso3LetterCode": "PAN",
     "isoNumericalCode": 591,
-    "name": "panama",
+    "name": "Panama",
     "numericalCode": 591,
     "official": true
   },
@@ -2244,7 +2244,7 @@
     "iso2LetterCode": "PG",
     "iso3LetterCode": "PNG",
     "isoNumericalCode": 598,
-    "name": "papua new guinea",
+    "name": "Papua New Guinea",
     "numericalCode": 598,
     "official": true
   },
@@ -2257,7 +2257,7 @@
     "iso2LetterCode": "PY",
     "iso3LetterCode": "PRY",
     "isoNumericalCode": 600,
-    "name": "paraguay",
+    "name": "Paraguay",
     "numericalCode": 600,
     "official": true
   },
@@ -2270,7 +2270,7 @@
     "iso2LetterCode": "PE",
     "iso3LetterCode": "PER",
     "isoNumericalCode": 604,
-    "name": "peru",
+    "name": "Peru",
     "numericalCode": 604,
     "official": true
   },
@@ -2283,7 +2283,7 @@
     "iso2LetterCode": "PH",
     "iso3LetterCode": "PHL",
     "isoNumericalCode": 608,
-    "name": "philippines",
+    "name": "Philippines",
     "numericalCode": 608,
     "official": true
   },
@@ -2296,7 +2296,7 @@
     "iso2LetterCode": "PN",
     "iso3LetterCode": "PCN",
     "isoNumericalCode": 612,
-    "name": "pitcairn",
+    "name": "Pitcairn",
     "numericalCode": 612,
     "official": true
   },
@@ -2309,7 +2309,7 @@
     "iso2LetterCode": "PL",
     "iso3LetterCode": "POL",
     "isoNumericalCode": 616,
-    "name": "poland",
+    "name": "Poland",
     "numericalCode": 616,
     "official": true
   },
@@ -2322,7 +2322,7 @@
     "iso2LetterCode": "PT",
     "iso3LetterCode": "PRT",
     "isoNumericalCode": 620,
-    "name": "portugal",
+    "name": "Portugal",
     "numericalCode": 620,
     "official": true
   },
@@ -2335,7 +2335,7 @@
     "iso2LetterCode": "PR",
     "iso3LetterCode": "PRI",
     "isoNumericalCode": 630,
-    "name": "puerto rico",
+    "name": "Puerto Rico",
     "numericalCode": 630,
     "official": true
   },
@@ -2348,7 +2348,7 @@
     "iso2LetterCode": "QA",
     "iso3LetterCode": "QAT",
     "isoNumericalCode": 634,
-    "name": "qatar",
+    "name": "Qatar",
     "numericalCode": 634,
     "official": true
   },
@@ -2361,7 +2361,7 @@
     "iso2LetterCode": "RE",
     "iso3LetterCode": "REU",
     "isoNumericalCode": 638,
-    "name": "réunion",
+    "name": "Réunion",
     "numericalCode": 638,
     "official": true
   },
@@ -2374,7 +2374,7 @@
     "iso2LetterCode": "RO",
     "iso3LetterCode": "ROU",
     "isoNumericalCode": 642,
-    "name": "romania",
+    "name": "Romania",
     "numericalCode": 642,
     "official": true
   },
@@ -2387,7 +2387,7 @@
     "iso2LetterCode": "RU",
     "iso3LetterCode": "RUS",
     "isoNumericalCode": 643,
-    "name": "russian federation",
+    "name": "Russian Federation",
     "numericalCode": 643,
     "official": true
   },
@@ -2400,7 +2400,7 @@
     "iso2LetterCode": "RW",
     "iso3LetterCode": "RWA",
     "isoNumericalCode": 646,
-    "name": "rwanda",
+    "name": "Rwanda",
     "numericalCode": 646,
     "official": true
   },
@@ -2413,7 +2413,7 @@
     "iso2LetterCode": "BL",
     "iso3LetterCode": "BLM",
     "isoNumericalCode": 652,
-    "name": "saint barthélemy",
+    "name": "Saint Barthélemy",
     "numericalCode": 652,
     "official": true
   },
@@ -2426,7 +2426,7 @@
     "iso2LetterCode": "SH",
     "iso3LetterCode": "SHN",
     "isoNumericalCode": 654,
-    "name": "saint helena ascension tristan da cunha",
+    "name": "Saint Helena, Ascension and Tristan da Cunha",
     "numericalCode": 654,
     "official": true
   },
@@ -2439,7 +2439,7 @@
     "iso2LetterCode": "KN",
     "iso3LetterCode": "KNA",
     "isoNumericalCode": 659,
-    "name": "saint kitts nevis",
+    "name": "Saint Kitts and Nevis",
     "numericalCode": 659,
     "official": true
   },
@@ -2452,7 +2452,7 @@
     "iso2LetterCode": "LC",
     "iso3LetterCode": "LCA",
     "isoNumericalCode": 662,
-    "name": "saint lucia",
+    "name": "Saint Lucia",
     "numericalCode": 662,
     "official": true
   },
@@ -2465,7 +2465,7 @@
     "iso2LetterCode": "MF",
     "iso3LetterCode": "MAF",
     "isoNumericalCode": 663,
-    "name": "saint martin french",
+    "name": "Saint Martin (French part)",
     "numericalCode": 663,
     "official": true
   },
@@ -2478,7 +2478,7 @@
     "iso2LetterCode": "PM",
     "iso3LetterCode": "SPM",
     "isoNumericalCode": 666,
-    "name": "saint pierre miquelon",
+    "name": "Saint Pierre and Miquelon",
     "numericalCode": 666,
     "official": true
   },
@@ -2491,7 +2491,7 @@
     "iso2LetterCode": "VC",
     "iso3LetterCode": "VCT",
     "isoNumericalCode": 670,
-    "name": "saint vincent grenadines",
+    "name": "Saint Vincent and the Grenadines",
     "numericalCode": 670,
     "official": true
   },
@@ -2504,7 +2504,7 @@
     "iso2LetterCode": "WS",
     "iso3LetterCode": "WSM",
     "isoNumericalCode": 882,
-    "name": "samoa",
+    "name": "Samoa",
     "numericalCode": 882,
     "official": true
   },
@@ -2517,7 +2517,7 @@
     "iso2LetterCode": "SM",
     "iso3LetterCode": "SMR",
     "isoNumericalCode": 674,
-    "name": "san marino",
+    "name": "San Marino",
     "numericalCode": 674,
     "official": true
   },
@@ -2530,7 +2530,7 @@
     "iso2LetterCode": "ST",
     "iso3LetterCode": "STP",
     "isoNumericalCode": 678,
-    "name": "sao tome principe",
+    "name": "Sao Tome and Principe",
     "numericalCode": 678,
     "official": true
   },
@@ -2543,7 +2543,7 @@
     "iso2LetterCode": "SA",
     "iso3LetterCode": "SAU",
     "isoNumericalCode": 682,
-    "name": "saudi arabia",
+    "name": "Saudi Arabia",
     "numericalCode": 682,
     "official": true
   },
@@ -2556,7 +2556,7 @@
     "iso2LetterCode": "SN",
     "iso3LetterCode": "SEN",
     "isoNumericalCode": 686,
-    "name": "senegal",
+    "name": "Senegal",
     "numericalCode": 686,
     "official": true
   },
@@ -2569,7 +2569,7 @@
     "iso2LetterCode": "RS",
     "iso3LetterCode": "SRB",
     "isoNumericalCode": 688,
-    "name": "serbia",
+    "name": "Serbia",
     "numericalCode": 688,
     "official": true
   },
@@ -2582,7 +2582,7 @@
     "iso2LetterCode": "SC",
     "iso3LetterCode": "SYC",
     "isoNumericalCode": 690,
-    "name": "seychelles",
+    "name": "Seychelles",
     "numericalCode": 690,
     "official": true
   },
@@ -2595,7 +2595,7 @@
     "iso2LetterCode": "SL",
     "iso3LetterCode": "SLE",
     "isoNumericalCode": 694,
-    "name": "sierra leone",
+    "name": "Sierra Leone",
     "numericalCode": 694,
     "official": true
   },
@@ -2608,7 +2608,7 @@
     "iso2LetterCode": "SG",
     "iso3LetterCode": "SGP",
     "isoNumericalCode": 702,
-    "name": "singapore",
+    "name": "Singapore",
     "numericalCode": 702,
     "official": true
   },
@@ -2621,7 +2621,7 @@
     "iso2LetterCode": "SX",
     "iso3LetterCode": "SXM",
     "isoNumericalCode": 534,
-    "name": "sint maarten",
+    "name": "Sint Maarten (Dutch part)",
     "numericalCode": 534,
     "official": true
   },
@@ -2634,7 +2634,7 @@
     "iso2LetterCode": "SK",
     "iso3LetterCode": "SVK",
     "isoNumericalCode": 703,
-    "name": "slovakia",
+    "name": "Slovakia",
     "numericalCode": 703,
     "official": true
   },
@@ -2647,7 +2647,7 @@
     "iso2LetterCode": "SI",
     "iso3LetterCode": "SVN",
     "isoNumericalCode": 705,
-    "name": "slovenia",
+    "name": "Slovenia",
     "numericalCode": 705,
     "official": true
   },
@@ -2660,7 +2660,7 @@
     "iso2LetterCode": "SB",
     "iso3LetterCode": "SLB",
     "isoNumericalCode": 90,
-    "name": "solomon islands",
+    "name": "Solomon Islands",
     "numericalCode": 90,
     "official": true
   },
@@ -2673,7 +2673,7 @@
     "iso2LetterCode": "SO",
     "iso3LetterCode": "SOM",
     "isoNumericalCode": 706,
-    "name": "somalia",
+    "name": "Somalia",
     "numericalCode": 706,
     "official": true
   },
@@ -2686,7 +2686,7 @@
     "iso2LetterCode": "ZA",
     "iso3LetterCode": "ZAF",
     "isoNumericalCode": 710,
-    "name": "south africa",
+    "name": "South Africa",
     "numericalCode": 710,
     "official": true
   },
@@ -2699,7 +2699,7 @@
     "iso2LetterCode": "GS",
     "iso3LetterCode": "SGS",
     "isoNumericalCode": 239,
-    "name": "south georgia sandwich islands",
+    "name": "South Georgia and the South Sandwich Islands",
     "numericalCode": 239,
     "official": true
   },
@@ -2712,7 +2712,7 @@
     "iso2LetterCode": "SS",
     "iso3LetterCode": "SSD",
     "isoNumericalCode": 728,
-    "name": "south sudan",
+    "name": "South Sudan",
     "numericalCode": 728,
     "official": true
   },
@@ -2725,7 +2725,7 @@
     "iso2LetterCode": "ES",
     "iso3LetterCode": "ESP",
     "isoNumericalCode": 724,
-    "name": "spain",
+    "name": "Spain",
     "numericalCode": 724,
     "official": true
   },
@@ -2738,7 +2738,7 @@
     "iso2LetterCode": "LK",
     "iso3LetterCode": "LKA",
     "isoNumericalCode": 144,
-    "name": "sri lanka",
+    "name": "Sri Lanka",
     "numericalCode": 144,
     "official": true
   },
@@ -2751,7 +2751,7 @@
     "iso2LetterCode": "SD",
     "iso3LetterCode": "SDN",
     "isoNumericalCode": 729,
-    "name": "sudan",
+    "name": "Sudan",
     "numericalCode": 729,
     "official": true
   },
@@ -2764,7 +2764,7 @@
     "iso2LetterCode": "SR",
     "iso3LetterCode": "SUR",
     "isoNumericalCode": 740,
-    "name": "suriname",
+    "name": "Suriname",
     "numericalCode": 740,
     "official": true
   },
@@ -2777,7 +2777,7 @@
     "iso2LetterCode": "SJ",
     "iso3LetterCode": "SJM",
     "isoNumericalCode": 744,
-    "name": "svalbard jan mayen",
+    "name": "Svalbard and Jan Mayen",
     "numericalCode": 744,
     "official": true
   },
@@ -2790,7 +2790,7 @@
     "iso2LetterCode": "SZ",
     "iso3LetterCode": "SWZ",
     "isoNumericalCode": 748,
-    "name": "swaziland",
+    "name": "Eswatini",
     "numericalCode": 748,
     "official": true
   },
@@ -2803,7 +2803,7 @@
     "iso2LetterCode": "SE",
     "iso3LetterCode": "SWE",
     "isoNumericalCode": 752,
-    "name": "sweden",
+    "name": "Sweden",
     "numericalCode": 752,
     "official": true
   },
@@ -2816,7 +2816,7 @@
     "iso2LetterCode": "CH",
     "iso3LetterCode": "CHE",
     "isoNumericalCode": 756,
-    "name": "switzerland",
+    "name": "Switzerland",
     "numericalCode": 756,
     "official": true
   },
@@ -2829,7 +2829,7 @@
     "iso2LetterCode": "SY",
     "iso3LetterCode": "SYR",
     "isoNumericalCode": 760,
-    "name": "syria",
+    "name": "Syrian Arab Republic",
     "numericalCode": 760,
     "official": true
   },
@@ -2842,7 +2842,7 @@
     "iso2LetterCode": "TW",
     "iso3LetterCode": "TWN",
     "isoNumericalCode": 158,
-    "name": "taiwan",
+    "name": "Taiwan",
     "numericalCode": 158,
     "official": true
   },
@@ -2855,7 +2855,7 @@
     "iso2LetterCode": "TJ",
     "iso3LetterCode": "TJK",
     "isoNumericalCode": 762,
-    "name": "tajikistan",
+    "name": "Tajikistan",
     "numericalCode": 762,
     "official": true
   },
@@ -2868,7 +2868,7 @@
     "iso2LetterCode": "TZ",
     "iso3LetterCode": "TZA",
     "isoNumericalCode": 834,
-    "name": "tanzania",
+    "name": "Tanzania, United Republic of",
     "numericalCode": 834,
     "official": true
   },
@@ -2881,7 +2881,7 @@
     "iso2LetterCode": "TH",
     "iso3LetterCode": "THA",
     "isoNumericalCode": 764,
-    "name": "thailand",
+    "name": "Thailand",
     "numericalCode": 764,
     "official": true
   },
@@ -2894,7 +2894,7 @@
     "iso2LetterCode": "TL",
     "iso3LetterCode": "TLS",
     "isoNumericalCode": 626,
-    "name": "timor leste",
+    "name": "Timor-Leste",
     "numericalCode": 626,
     "official": true
   },
@@ -2907,7 +2907,7 @@
     "iso2LetterCode": "TG",
     "iso3LetterCode": "TGO",
     "isoNumericalCode": 768,
-    "name": "togo",
+    "name": "Togo",
     "numericalCode": 768,
     "official": true
   },
@@ -2920,7 +2920,7 @@
     "iso2LetterCode": "TK",
     "iso3LetterCode": "TKL",
     "isoNumericalCode": 772,
-    "name": "tokelau",
+    "name": "Tokelau",
     "numericalCode": 772,
     "official": true
   },
@@ -2933,7 +2933,7 @@
     "iso2LetterCode": "TO",
     "iso3LetterCode": "TON",
     "isoNumericalCode": 776,
-    "name": "tonga",
+    "name": "Tonga",
     "numericalCode": 776,
     "official": true
   },
@@ -2946,7 +2946,7 @@
     "iso2LetterCode": "TT",
     "iso3LetterCode": "TTO",
     "isoNumericalCode": 780,
-    "name": "trinidad tobago",
+    "name": "Trinidad and Tobago",
     "numericalCode": 780,
     "official": true
   },
@@ -2959,7 +2959,7 @@
     "iso2LetterCode": "TN",
     "iso3LetterCode": "TUN",
     "isoNumericalCode": 788,
-    "name": "tunisia",
+    "name": "Tunisia",
     "numericalCode": 788,
     "official": true
   },
@@ -2972,7 +2972,7 @@
     "iso2LetterCode": "TR",
     "iso3LetterCode": "TUR",
     "isoNumericalCode": 792,
-    "name": "turkey",
+    "name": "Türkiye",
     "numericalCode": 792,
     "official": true
   },
@@ -2985,7 +2985,7 @@
     "iso2LetterCode": "TM",
     "iso3LetterCode": "TKM",
     "isoNumericalCode": 795,
-    "name": "turkmenistan",
+    "name": "Turkmenistan",
     "numericalCode": 795,
     "official": true
   },
@@ -2998,7 +2998,7 @@
     "iso2LetterCode": "TC",
     "iso3LetterCode": "TCA",
     "isoNumericalCode": 796,
-    "name": "turks caicos islands",
+    "name": "Turks and Caicos Islands",
     "numericalCode": 796,
     "official": true
   },
@@ -3011,7 +3011,7 @@
     "iso2LetterCode": "TV",
     "iso3LetterCode": "TUV",
     "isoNumericalCode": 798,
-    "name": "tuvalu",
+    "name": "Tuvalu",
     "numericalCode": 798,
     "official": true
   },
@@ -3024,7 +3024,7 @@
     "iso2LetterCode": "UG",
     "iso3LetterCode": "UGA",
     "isoNumericalCode": 800,
-    "name": "uganda",
+    "name": "Uganda",
     "numericalCode": 800,
     "official": true
   },
@@ -3037,7 +3037,7 @@
     "iso2LetterCode": "UA",
     "iso3LetterCode": "UKR",
     "isoNumericalCode": 804,
-    "name": "ukraine",
+    "name": "Ukraine",
     "numericalCode": 804,
     "official": true
   },
@@ -3050,7 +3050,7 @@
     "iso2LetterCode": "AE",
     "iso3LetterCode": "ARE",
     "isoNumericalCode": 784,
-    "name": "united arab emirates",
+    "name": "United Arab Emirates",
     "numericalCode": 784,
     "official": true
   },
@@ -3063,7 +3063,7 @@
     "iso2LetterCode": "GB",
     "iso3LetterCode": "GBR",
     "isoNumericalCode": 826,
-    "name": "united kingdom",
+    "name": "United Kingdom",
     "numericalCode": 826,
     "official": true
   },
@@ -3076,7 +3076,7 @@
     "iso2LetterCode": "US",
     "iso3LetterCode": "USA",
     "isoNumericalCode": 840,
-    "name": "united states",
+    "name": "United States of America",
     "numericalCode": 840,
     "official": true
   },
@@ -3089,7 +3089,7 @@
     "iso2LetterCode": "UM",
     "iso3LetterCode": "UMI",
     "isoNumericalCode": 581,
-    "name": "united states outlying islands",
+    "name": "United States Minor Outlying Islands",
     "numericalCode": 581,
     "official": true
   },
@@ -3102,7 +3102,7 @@
     "iso2LetterCode": "UY",
     "iso3LetterCode": "URY",
     "isoNumericalCode": 858,
-    "name": "uruguay",
+    "name": "Uruguay",
     "numericalCode": 858,
     "official": true
   },
@@ -3115,7 +3115,7 @@
     "iso2LetterCode": "UZ",
     "iso3LetterCode": "UZB",
     "isoNumericalCode": 860,
-    "name": "uzbekistan",
+    "name": "Uzbekistan",
     "numericalCode": 860,
     "official": true
   },
@@ -3128,7 +3128,7 @@
     "iso2LetterCode": "VU",
     "iso3LetterCode": "VUT",
     "isoNumericalCode": 548,
-    "name": "vanuatu",
+    "name": "Vanuatu",
     "numericalCode": 548,
     "official": true
   },
@@ -3141,7 +3141,7 @@
     "iso2LetterCode": "VE",
     "iso3LetterCode": "VEN",
     "isoNumericalCode": 862,
-    "name": "venezuela",
+    "name": "Venezuela, Bolivarian Republic of",
     "numericalCode": 862,
     "official": true
   },
@@ -3154,7 +3154,7 @@
     "iso2LetterCode": "VN",
     "iso3LetterCode": "VNM",
     "isoNumericalCode": 704,
-    "name": "vietnam",
+    "name": "Viet Nam",
     "numericalCode": 704,
     "official": true
   },
@@ -3167,7 +3167,7 @@
     "iso2LetterCode": "VG",
     "iso3LetterCode": "VGB",
     "isoNumericalCode": 92,
-    "name": "virgin islands british",
+    "name": "Virgin Islands, British",
     "numericalCode": 92,
     "official": true
   },
@@ -3180,7 +3180,7 @@
     "iso2LetterCode": "VI",
     "iso3LetterCode": "VIR",
     "isoNumericalCode": 850,
-    "name": "virgin islands",
+    "name": "Virgin Islands, U.S.",
     "numericalCode": 850,
     "official": true
   },
@@ -3193,7 +3193,7 @@
     "iso2LetterCode": "WF",
     "iso3LetterCode": "WLF",
     "isoNumericalCode": 876,
-    "name": "wallis futuna",
+    "name": "Wallis and Futuna",
     "numericalCode": 876,
     "official": true
   },
@@ -3206,7 +3206,7 @@
     "iso2LetterCode": "EH",
     "iso3LetterCode": "ESH",
     "isoNumericalCode": 732,
-    "name": "western sahara",
+    "name": "Western Sahara",
     "numericalCode": 732,
     "official": true
   },
@@ -3219,7 +3219,7 @@
     "iso2LetterCode": "YE",
     "iso3LetterCode": "YEM",
     "isoNumericalCode": 887,
-    "name": "yemen",
+    "name": "Yemen",
     "numericalCode": 887,
     "official": true
   },
@@ -3232,7 +3232,7 @@
     "iso2LetterCode": "ZM",
     "iso3LetterCode": "ZMB",
     "isoNumericalCode": 894,
-    "name": "zambia",
+    "name": "Zambia",
     "numericalCode": 894,
     "official": true
   },
@@ -3245,7 +3245,7 @@
     "iso2LetterCode": "ZW",
     "iso3LetterCode": "ZWE",
     "isoNumericalCode": 716,
-    "name": "zimbabwe",
+    "name": "Zimbabwe",
     "numericalCode": 716,
     "official": true
   },

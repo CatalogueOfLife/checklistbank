@@ -772,5 +772,11 @@
     "group": "name usage",
     "level": "warning",
     "name": "name phrase unlikely"
+  },
+  {
+    "description": "A vernacular name which is rather unlikely a true, single vernacular name.",
+    "group": "vernacular",
+    "level": "warning",
+    "name": "vernacular name unlikely"
   }
 ]

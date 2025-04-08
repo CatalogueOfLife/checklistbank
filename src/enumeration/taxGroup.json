@@ -101,8 +101,8 @@
     "name": "algae",
     "other": false,
     "parents": [
-      "protists",
-      "plants"
+      "plants",
+      "protists"
     ],
     "phylopic": "65414989-e801-4d0e-acc1-4309cd35ab7e"
   },
@@ -215,8 +215,8 @@
     "name": "pseudofungi",
     "other": false,
     "parents": [
-      "algae",
-      "fungi"
+      "fungi",
+      "algae"
     ],
     "phylopic": "53b543aa-2a5e-4407-88cd-6acbb0b5c3f9"
   },

@@ -21,6 +21,7 @@ import {
   Checkbox,
   Typography,
   Tag,
+  Tooltip,
 } from "antd";
 import axios from "axios";
 import config from "../../config";
@@ -39,7 +40,7 @@ class DatasetDownload extends React.Component {
     super(props);
     this.state = {
       error: null,
-      selectedDataFormat: "coldp",
+      selectedDataFormat: "ColDP",
       exportUrl: null,
       downloadModalVisible: false,
       rootTaxon: null,
@@ -183,9 +184,15 @@ class DatasetDownload extends React.Component {
           <Col span={16}>
             <Radio.Group
               options={dataFormat
-                .filter((f) => !["proxy", "acef"].includes(f.name))
+                .filter(
+                  (f) => !["proxy", "acef"].includes(f.name?.toLowerCase())
+                )
                 .map((f) => ({
-                  label: f.name,
+                  label: (
+                    <Tooltip title={f?.title}>
+                      <span>{f.name}</span>
+                    </Tooltip>
+                  ),
                   value: f.name,
                 }))}
               value={selectedDataFormat}
@@ -195,7 +202,11 @@ class DatasetDownload extends React.Component {
               optionType="button"
             />
 
-            {["dwca", "coldp", "text tree"].includes(selectedDataFormat) && (
+            {dataFormat.find(
+              (f) =>
+                f.name.toLowerCase() === selectedDataFormat?.toLowerCase() &&
+                !!f.extendedContent
+            ) && (
               <Checkbox
                 checked={extended}
                 onChange={(e) => this.setState({ extended: e.target.checked })}

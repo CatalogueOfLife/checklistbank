@@ -2,25 +2,25 @@
   {
     "extendedContent": true,
     "filename": "dwca",
-    "name": "dwca",
+    "name": "DwCA",
     "title": "Darwin Core Archive"
   },
   {
     "extendedContent": false,
     "filename": "acef",
-    "name": "acef",
+    "name": "ACEF",
     "title": "Annual Checklist Exchange Format"
   },
   {
     "extendedContent": true,
     "filename": "txtree",
-    "name": "text tree",
+    "name": "TextTree",
     "title": "TextTree"
   },
   {
     "extendedContent": true,
     "filename": "coldp",
-    "name": "coldp",
+    "name": "ColDP",
     "title": "Catalogue of Life Data Package"
   },
   {
@@ -32,13 +32,13 @@
   {
     "extendedContent": true,
     "filename": "newick",
-    "name": "newick",
+    "name": "Newick",
     "title": "New Hampshire X"
   },
   {
     "extendedContent": false,
     "filename": "dot",
-    "name": "dot",
+    "name": "DOT",
     "title": "Graphviz DOT"
   }
 ]
