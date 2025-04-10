@@ -814,6 +814,79 @@ class TaxonPage extends React.Component {
                   )}
                 </PresentationItem>
               )}
+              {_.isArray(taxon?.identifier) && (
+                <PresentationItem md={md} label="Identifiers">
+                  {taxon?.identifier.join(", ")}
+                </PresentationItem>
+              )}
+              {_.get(info, "taxon.status") === "ambiguous synonym" && (
+                <PresentationItem md={md} label="Other usages">
+                  <OtherUsages otherUsages={this.state?.otherUsages} />
+                </PresentationItem>
+              )}
+              {_.get(info, "taxon.name.namesIndexId") && (
+                <PresentationItem md={md} label="Related names">
+                  <NavLink
+                    to={{
+                      pathname: `/namesindex/${encodeURIComponent(
+                        _.get(info, "taxon.name.namesIndexId")
+                      )}/related`,
+                    }}
+                  >
+                    Names Index Entry
+                  </NavLink>
+                </PresentationItem>
+              )}
+
+              <Row style={{ borderBottom: "1px solid #eee" }}>
+                {_.get(taxon, "scrutinizer") && (
+                  <Col span={12}>
+                    <PresentationItem md={md * 2} label="Taxonomic scrutiny">
+                      {`${_.get(taxon, "scrutinizer")}${
+                        _.get(taxon, "scrutinizerDate")
+                          ? ", " +
+                            moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                          : ""
+                      }`}
+                    </PresentationItem>
+                  </Col>
+                )}
+
+                <Col span={12}>
+                  {_.get(taxon, "origin") && (
+                    <PresentationItem md={md * 2} label="Origin">
+                      {_.get(taxon, "origin")}
+                    </PresentationItem>
+                  )}
+                </Col>
+              </Row>
+              {mergedIssues && mergedIssues.length > 0 && (
+                <PresentationItem md={md} label="Issues and flags">
+                  <div>
+                    {mergedIssues.map((i) => {
+                      const tag = <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>{i}</Tag>;
+                      return (
+                      <Tooltip
+                        key={i}
+                        title={_.get(issueMap, `[${i}].description`)}
+                      >
+                       {(i === "duplicate name") ? (
+                          <NavLink to={{
+                            pathname: `/dataset/${datasetKey}/names`,
+                            search: `?q=${_.get(taxon, "name.scientificName")}&rank=${_.get(taxon, "name.rank")}`
+                          }}
+                          exact={true}>
+                            {tag}
+                          </NavLink>
+                        ) : (
+                          <React.Fragment>{tag}</React.Fragment>
+                        )}
+                      </Tooltip>
+                    )})}
+                  </div>
+                </PresentationItem>
+              )}
+
               {_.get(sourceDataset, "title") && (
                 <PresentationItem md={md} label="Source">
                   <div style={{ display: "inline-block" }}>
@@ -863,11 +936,6 @@ class TaxonPage extends React.Component {
                   <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
                 </PresentationItem>
               )}
-              {_.isArray(taxon?.identifier) && (
-                <PresentationItem md={md} label="Identifiers">
-                  {taxon?.identifier.join(", ")}
-                </PresentationItem>
-              )}
               {info?.source?.secondarySources && (
                 <PresentationItem md={md} label="Secondary Sources">
                   <SecondarySources info={info} />
@@ -882,72 +950,6 @@ class TaxonPage extends React.Component {
                   />
                 </PresentationItem>
               )}{" "}
-              {_.get(info, "taxon.name.namesIndexId") && (
-                <PresentationItem md={md} label="Related names">
-                  <NavLink
-                    to={{
-                      pathname: `/namesindex/${encodeURIComponent(
-                        _.get(info, "taxon.name.namesIndexId")
-                      )}/related`,
-                    }}
-                  >
-                    <LinkOutlined />
-                  </NavLink>
-                </PresentationItem>
-              )}
-              {_.get(info, "taxon.status") === "ambiguous synonym" && (
-                <PresentationItem md={md} label="Other usages">
-                  <OtherUsages otherUsages={this.state?.otherUsages} />
-                </PresentationItem>
-              )}
-              <Row style={{ borderBottom: "1px solid #eee" }}>
-                {_.get(taxon, "scrutinizer") && (
-                  <Col span={12}>
-                    <PresentationItem md={md * 2} label="Taxonomic scrutiny">
-                      {`${_.get(taxon, "scrutinizer")}${
-                        _.get(taxon, "scrutinizerDate")
-                          ? ", " +
-                            moment(_.get(taxon, "scrutinizerDate")).format("LL")
-                          : ""
-                      }`}
-                    </PresentationItem>
-                  </Col>
-                )}
-
-                <Col span={12}>
-                  {_.get(taxon, "origin") && (
-                    <PresentationItem md={md * 2} label="Origin">
-                      {_.get(taxon, "origin")}
-                    </PresentationItem>
-                  )}
-                </Col>
-              </Row>
-              {mergedIssues && mergedIssues.length > 0 && (
-                <PresentationItem md={md} label="Issues and flags">
-                  <div>
-                    {mergedIssues.map((i) => {
-                      const tag = <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>{i}</Tag>;
-                      return (
-                      <Tooltip
-                        key={i}
-                        title={_.get(issueMap, `[${i}].description`)}
-                      >
-                       {(i === "duplicate name") ? (
-                          <NavLink to={{
-                            pathname: `/dataset/${datasetKey}/names`,
-                            search: `?q=${_.get(taxon, "name.scientificName")}&rank=${_.get(taxon, "name.rank")}`
-                          }}
-                          exact={true}>
-                            {tag}
-                          </NavLink>
-                        ) : (
-                          <React.Fragment>{tag}</React.Fragment>
-                        )}
-                      </Tooltip>
-                    )})}
-                  </div>
-                </PresentationItem>
-              )}
               {_.get(info, "references") && (
                 <PresentationItem md={md} label="References">
                   <References
