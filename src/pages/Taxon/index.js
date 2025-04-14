@@ -19,7 +19,7 @@ import {
 } from "antd";
 import MergedDataBadge from "../../components/MergedDataBadge";
 
-import Synonyms from "./Synonyms2";
+import Synonyms from "./Synonyms";
 import VernacularNames from "./VernacularNames";
 import Distributions from "./Distributions";
 import Classification from "./Classification";
@@ -287,15 +287,15 @@ class TaxonPage extends React.Component {
       }
 
       if (
-        _.get(res, "data.taxon.name.publishedInId") &&
+        _.get(res, "data.usage.name.publishedInId") &&
         _.get(
           res,
-          `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+          `data.references[${_.get(res, "data.usage.name.publishedInId")}]`
         )
       ) {
-        res.data.taxon.name.publishedIn = _.get(
+        res.data.usage.name.publishedIn = _.get(
           res,
-          `data.references[${_.get(res, "data.taxon.name.publishedInId")}]`
+          `data.references[${_.get(res, "data.usage.name.publishedInId")}]`
         );
       }
       let referenceIndexMap = {};
@@ -539,12 +539,8 @@ class TaxonPage extends React.Component {
                   onClick={() => {
                     history.push(
                       Number(datasetKey) === catalogueKey
-                        ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
-                            taxon.name.id
-                          )}`
-                        : `/dataset/${
-                            taxon.datasetKey
-                          }/name/${encodeURIComponent(taxon.name.id)}`
+                        ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(taxon.name.id)}`
+                        : `/dataset/${taxon.datasetKey}/name/${encodeURIComponent(taxon.name.id)}`
                     );
                   }}
                 >
@@ -582,48 +578,42 @@ class TaxonPage extends React.Component {
 
           <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
             <TabPane tab="About" key="1">
-              {_.get(info, "taxon.name.publishedIn.citation") && (
+              {_.get(info, "usage.name.publishedIn.citation") && (
                 <PresentationItem md={md} label="Published in">
                   <Linkify>
-                    {_.get(info, "taxon.name.publishedIn.citation", "")}
+                    {_.get(info, "usage.name.publishedIn.citation", "")}
                   </Linkify>
                 </PresentationItem>
               )}
-              {_.get(info, "taxon.accordingTo") && (
+              {_.get(info, "usage.accordingTo") && (
                 <PresentationItem md={md} label="According to">
-                  {_.get(info, "taxon.accordingToId") ? (
+                  {_.get(info, "usage.accordingToId") ? (
                     <NavLink
                       to={{
-                        pathname: `/dataset/${datasetKey}/reference/${_.get(
-                          info,
-                          "taxon.accordingToId"
-                        )}`,
+                        pathname: `/dataset/${datasetKey}/reference/${_.get(info, "usage.accordingToId")}`,
                       }}
                     >
-                      {_.get(info, "taxon.accordingTo")}
+                      {_.get(info, "usage.accordingTo")}
                     </NavLink>
                   ) : (
-                    _.get(info, "taxon.accordingTo")
+                    _.get(info, "usage.accordingTo")
                   )}
                 </PresentationItem>
               )}
-              {_.get(info, "taxon.name.publishedInPageLink") && (
+              {_.get(info, "usage.name.publishedInPageLink") && (
                 <PresentationItem md={md} label="Published In Page Link">
                   <Row>
                     <Col>
                       <a
-                        href={_.get(info, "taxon.name.publishedInPageLink")}
+                        href={_.get(info, "usage.name.publishedInPageLink")}
                         target="_blank"
                       >
-                        {_.get(info, "taxon.name.publishedInPageLink")}
+                        {_.get(info, "usage.name.publishedInPageLink")}
                       </a>
                     </Col>
                     <Col>
                       <PublishedInPagePreview
-                        publishedInPageLink={_.get(
-                          info,
-                          "taxon.name.publishedInPageLink"
-                        )}
+                        publishedInPageLink={_.get(info, "usage.name.publishedInPageLink")}
                         style={{
                           boxShadow: "6px 6px 6px lightgrey",
                           marginLeft: "10px",
@@ -819,17 +809,17 @@ class TaxonPage extends React.Component {
                   {taxon?.identifier.join(", ")}
                 </PresentationItem>
               )}
-              {_.get(info, "taxon.status") === "ambiguous synonym" && (
+              {_.get(info, "usage.status") === "ambiguous synonym" && (
                 <PresentationItem md={md} label="Other usages">
                   <OtherUsages otherUsages={this.state?.otherUsages} />
                 </PresentationItem>
               )}
-              {_.get(info, "taxon.name.namesIndexId") && (
+              {_.get(info, "usage.name.namesIndexId") && (
                 <PresentationItem md={md} label="Related names">
                   <NavLink
                     to={{
                       pathname: `/namesindex/${encodeURIComponent(
-                        _.get(info, "taxon.name.namesIndexId")
+                        _.get(info, "usage.name.namesIndexId")
                       )}/related`,
                     }}
                   >
