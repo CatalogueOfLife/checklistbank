@@ -35,6 +35,7 @@ const FACETS = [
   "sectorMode",
   "secondarySourceGroup",
   "sectorDatasetKey",
+  "secondarySource",
   "group",
 ];
 const FormItem = Form.Item;
@@ -212,6 +213,7 @@ class NameSearchPage extends React.Component {
     this.state = {
       data: [],
       sectorDatasetKeyMap: {},
+      secondarySourceMap: {},
       advancedFilters: false,
       columns: columns,
       params: {},
@@ -350,8 +352,14 @@ class NameSearchPage extends React.Component {
           res.data
         );
 
+        const secondarySourceMap = await this.sectorDatasetLabelsFromFacets(
+          res.data,
+          "secondarySource"
+        );
+
         this.setState({
           sectorDatasetKeyMap,
+          secondarySourceMap,
           loading: false,
           data: res.data,
           err: null,
@@ -382,26 +390,20 @@ class NameSearchPage extends React.Component {
     }
   };
 
-  sectorDatasetLabelsFromFacets = async (data) => {
-    if (_.get(data, "facets.sectorDatasetKey") && _.get(data, "result[0]")) {
-      console.log(
-        "sectorDatasetKey facet length " +
-          data?.facets?.sectorDatasetKey?.length
-      );
+  sectorDatasetLabelsFromFacets = async (data, key = "sectorDatasetKey") => {
+    if (_.get(data, `facets.${key}`) && _.get(data, "result[0]")) {
+      console.log(`${key} facet length ` + data?.facets?.[key]?.length);
       try {
         const sectorDatasets = await Promise.all(
-          data.facets.sectorDatasetKey.map((elm) =>
-            datasetLoader.load(elm?.value)
-          )
+          data.facets?.[key].map((elm) => datasetLoader.load(elm?.value))
         );
         const keyMap = _.keyBy(sectorDatasets, "key");
         //this.setState({sectorDatasetKeyMap: keyMap})
-        console.log(keyMap);
         for await (const d of data.result) {
-          if (d?.sectorDatasetKey && keyMap[d?.sectorDatasetKey]) {
-            d.sourceDatasetLabel = keyMap[d?.sectorDatasetKey].label;
-          } else if (d?.sectorDatasetKey) {
-            const dataset = await datasetLoader.load(d?.sectorDatasetKey);
+          if (d?.[key] && keyMap[d?.[key]]) {
+            d.sourceDatasetLabel = keyMap[d?.[key]].label;
+          } else if (d?.[key]) {
+            const dataset = await datasetLoader.load(d?.[key]);
             d.sourceDatasetLabel = dataset?.title;
           }
         }
@@ -523,7 +525,17 @@ class NameSearchPage extends React.Component {
       ? facets.sectorDatasetKey.map((s) => ({
           value: s.value,
           label: `${
-            this.state.sectorDatasetKeyMap?.[s.value]?.title || s.value
+            this.state.sectorDatasetKeyMap?.[s.value]?.title ||
+            s.alias ||
+            s.value
+          } (${s.count.toLocaleString("en-GB")})`, //`${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+        }))
+      : null;
+    const facetSecondarySource = _.get(facets, "secondarySource")
+      ? facets.secondarySource.map((s) => ({
+          value: s.value,
+          label: `${
+            this.state.secondarySourceMap?.[s.value]?.title || s.value
           } (${s.count.toLocaleString("en-GB")})`, //`${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
         }))
       : null;
@@ -663,13 +675,11 @@ class NameSearchPage extends React.Component {
                 <DatasetAutocomplete
                   contributesTo={Number(datasetKey)}
                   onSelectDataset={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+                    this.updateSearch({ sectorDatasetKey: value.key });
                   }}
-                  defaultDatasetKey={
-                    _.get(params, "SECTOR_DATASET_KEY") || null
-                  }
+                  defaultDatasetKey={_.get(params, "sectorDatasetKey") || null}
                   onResetSearch={(value) => {
-                    this.updateSearch({ SECTOR_DATASET_KEY: null });
+                    this.updateSearch({ sectorDatasetKey: null });
                   }}
                   placeHolder="Filter by source dataset"
                   autoFocus={false}
@@ -765,6 +775,16 @@ class NameSearchPage extends React.Component {
                 label="Source dataset"
               />
             )}
+            {dataset?.origin !== "external" && (
+              <MultiValueFilter
+                defaultValue={_.get(params, "secondarySource")}
+                onChange={(value) =>
+                  this.updateSearch({ secondarySource: value })
+                }
+                vocab={facetSecondarySource || []}
+                label="Secondary source"
+              />
+            )}
 
             {advancedFilters && (
               <React.Fragment>
@@ -775,7 +795,7 @@ class NameSearchPage extends React.Component {
                       this.updateSearch({ secondarySourceGroup: value })
                     }
                     vocab={facetSecondarySourceGroup || infoGroup}
-                    label="Secondary Source"
+                    label="Source Group"
                   />
                 )}
 
