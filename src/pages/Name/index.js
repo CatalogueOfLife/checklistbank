@@ -186,6 +186,7 @@ class NamePage extends React.Component {
       publishedIn,
     } = this.state;
 
+    const filteredUsages = usages.filter((u) => u.usage.status != 'bare name');
     const filteredSynonyms = synonyms.filter((s) => s?.id !== name?.id);
     const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus } =
       this.props;
@@ -220,12 +221,12 @@ class NamePage extends React.Component {
           </Col>
           <Col flex="auto"></Col>
           <Col>
-            {!usages && <Tag color="warning">No usages</Tag>}
-            {usages && usages.length > 0 && (
+            {(!filteredUsages || filteredUsages.length === 0) && <Tag color="warning">No usages</Tag>}
+            {filteredUsages && filteredUsages.length > 0 && (
               <>
-                <span>{usages.length > 1 ? "Usages " : "Usage "}</span>
-                {usages &&
-                  usages.map((u, i) => (
+                <span>{filteredUsages.length > 1 ? "Usages " : "Usage "}</span>
+                {filteredUsages &&
+                  filteredUsages.map((u, i) => (
                     <NavLink
                       key={i}
                       to={{
