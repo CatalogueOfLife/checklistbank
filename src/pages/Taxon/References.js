@@ -57,7 +57,7 @@ const ReferencesTable = ({
                 Source:{" "}
                 <NavLink
                   to={{
-                    pathname: `/dataset/${s?.datasetKey}`,
+                    pathname: `/dataset/${s?.sourceDataset?.key}`,
                   }}
                 >
                   {s?.sourceDataset?.title}
