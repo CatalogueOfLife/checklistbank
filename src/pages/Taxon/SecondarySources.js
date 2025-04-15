@@ -28,24 +28,23 @@ const SecondarySources = ({ info }) => {
     setDatasets(data);
   };
 
-  return info?.source?.secondarySources
-    ? Object.keys(info?.source?.secondarySources || {}).map((key, index) => (
-      <>
+  return Object.keys(info?.source?.secondarySources || {}).map((key, index) => {
+      var src = info?.source?.secondarySources?.[key];
+      var entityPath = src?.entity === 'name' ? 'name' : 'taxon';
+      return (
         <div>
           <NavLink
             key={key}
             to={{
-              pathname: `/dataset/${info?.source?.secondarySources?.[key]?.datasetKey}/taxon/${info?.source?.secondarySources?.[key]?.id}`,
+              pathname: `/dataset/${src?.datasetKey}/${entityPath}/${encodeURIComponent(src?.id)}`,
             }}
           >
-            {datasets[info?.source?.secondarySources?.[key]?.datasetKey]
-              ?.title + " "}
+            {datasets[src?.datasetKey]?.title + " "}
           </NavLink>
           : {_.startCase(key)}
         </div>
-      </>
-    ))
-    : null;
+      )
+  })
 };
 
 export default SecondarySources;

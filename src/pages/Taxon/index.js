@@ -895,10 +895,7 @@ class TaxonPage extends React.Component {
                     ) : (
                       <NavLink
                         to={{
-                          pathname: `/dataset/${datasetKey}/source/${_.get(
-                            sourceDataset,
-                            "key"
-                          )}`,
+                          pathname: `/dataset/${datasetKey}/source/${_.get(sourceDataset,"key")}`,
                         }}
                         exact={true}
                       >
