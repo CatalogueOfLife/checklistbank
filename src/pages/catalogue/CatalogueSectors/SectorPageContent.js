@@ -458,7 +458,9 @@ class CatalogueSectors extends React.Component {
         )}
 
         <Form layout="inline">
-          <FormItem>
+
+        <Row style={{ marginTop: "10px" }}>
+        <FormItem>
             <div style={{ marginBottom: "8px", marginRight: "8px" }}>
               <DatasetAutocomplete
                 defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
@@ -487,47 +489,6 @@ class CatalogueSectors extends React.Component {
                 this.setState({ name }, () => this.updateSearch({ name }));
               }}
               style={{ width: 200 }}
-            />
-          </FormItem>
-
-          <FormItem
-            label="Nested"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.nested === true || params.nested === "true"}
-              onChange={(value) => this.updateSearch({ nested: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Only broken"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.broken === true || params.broken === "true"}
-              onChange={(value) => this.updateSearch({ broken: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Without data"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={
-                params.withoutData === true || params.withoutData === "true"
-              }
-              onChange={(value) => this.updateSearch({ withoutData: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Created by me"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={user && Number(params.modifiedBy) === user.key}
-              onChange={(value) =>
-                this.updateSearch({ modifiedBy: value ? user.key : null })
-              }
             />
           </FormItem>
 
@@ -590,8 +551,62 @@ class CatalogueSectors extends React.Component {
                 ))}
               </Select>
             </FormItem>
-          )}
+          )}          
+        </Row>
+
+        <Row style={{ marginTop: "10px" }}>
+          <FormItem
+            label="Nested"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={params.nested === true || params.nested === "true"}
+              onChange={(value) => this.updateSearch({ nested: value })}
+            />
+          </FormItem>
+          <FormItem
+            label="Only broken"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={params.broken === true || params.broken === "true"}
+              onChange={(value) => this.updateSearch({ broken: value })}
+            />
+          </FormItem>
+          <FormItem
+            label="Wrong subject"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={params.wrongSubject === true || params.wrongSubject === "true"}
+              onChange={(value) => this.updateSearch({ wrongSubject: value })}
+            />
+          </FormItem>
+          <FormItem
+            label="Without data"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={
+                params.withoutData === true || params.withoutData === "true"
+              }
+              onChange={(value) => this.updateSearch({ withoutData: value })}
+            />
+          </FormItem>
+          <FormItem
+            label="Created by me"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              checked={user && Number(params.modifiedBy) === user.key}
+              onChange={(value) =>
+                this.updateSearch({ modifiedBy: value ? user.key : null })
+              }
+            />
+          </FormItem>
+        </Row>
         </Form>
+
         <Row style={{ marginTop: "10px" }}>
           <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
             <Button type="danger" onClick={this.resetAllFilters}>
