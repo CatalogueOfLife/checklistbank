@@ -51,7 +51,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       const counts = await getOverView();
 
       const ranks = canonicalRanks;
-      let countBy;
+      /* let countBy;
       if (_.get(counts, "species.count", 0) > 0) {
         countBy = "species";
       } else {
@@ -63,7 +63,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
           }
           i--;
         }
-      }
+      } */
       // Check if the rank is in the canonical ranks
       let taxonRankIdx = ranks.indexOf(_.get(taxon, "name.rank"));
       // If not, find it in the full rank enum, and place it within canonical ranks.
@@ -110,26 +110,29 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         setInvalid(true);
         setLoading(false);
       } else {
-        const res = await axios(
+        /* const res = await axios(
           `${
             config.dataApi
           }dataset/${datasetKey}/export.json?rank=${childRank}${
             !root ? "&rank=" + grandChildRank : ""
           }&countBy=${countBy}&taxonID=${taxon.id}`
+        ); */
+        const res = await axios(
+          `${config.dataApi}dataset/${datasetKey}/taxon/${taxon.id}/breakdown`
         );
         //Api returns both ranks in the root array
         const childRankData = res.data; //.filter((t) => t.rank === childRank);
         if (_.get(root, "[0]")) {
-          root[0].children = processChildren(childRankData, countBy);
-          root[0][countBy] = root[0].children.reduce(
-            (acc, cur) => acc + cur[countBy],
+          root[0].children = processChildren(childRankData);
+          root[0].species = root[0].children.reduce(
+            (acc, cur) => acc + cur.species,
             0
           );
         } else {
-          root = processChildren(childRankData, countBy);
+          root = processChildren(childRankData);
         }
         setLoading(false);
-        initChart(root, countBy);
+        initChart(root);
       }
     } catch (err) {
       setError(err);
@@ -137,9 +140,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
     }
   };
 
-  const processChildren = (children, countBy) => {
+  const processChildren = (children) => {
     children.sort(function compareFn(a, b) {
-      return b[countBy] - a[countBy];
+      return b.species - a.species;
     });
     if (children.length < 100) {
       return children;
@@ -148,33 +151,33 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
     }
   };
 
-  const initChart = (root, countBy) => {
+  const initChart = (root) => {
     const DOI = dataset.doi ? "https://doi.org/" + dataset.doi : null;
-    const totalCount = root.reduce((acc, cur) => acc + cur[countBy], 0);
+    const totalCount = root.reduce((acc, cur) => acc + cur.species, 0);
     var colors = Highcharts.getOptions().colors,
       categories = root.map((t) => t.name),
       data = root.map((k, idx) => {
-        const children = processChildren(k.children, countBy);
-        const sum = k.children.reduce((acc, cur) => acc + cur[countBy], 0);
+        const children = processChildren(k.children);
+        const sum = k.children.reduce((acc, cur) => acc + cur.species, 0);
         let c =
-          sum < k[countBy]
+          sum < k.species
             ? [
                 ...children,
                 {
                   name: `Other / Unknown ${_.get(children, "[0].rank", "")}`,
-                  [countBy]: k[countBy] - sum,
+                  species: k.species - sum,
                 },
               ]
             : children;
         // test
-        /*         const c = k.children.reduce((acc, cur) => acc + cur[countBy], 0);
-        if (k[countBy] !== c) {
-          console.log(k.name + " Count " + k[countBy] + " Processed " + c);
+        /*         const c = k.children.reduce((acc, cur) => acc + cur.species, 0);
+        if (k.species !== c) {
+          console.log(k.name + " Count " + k.species + " Processed " + c);
         } */
         //
         return {
           color: colors[idx],
-          y: k[countBy],
+          y: k.species,
           _id: k.id,
           drilldown: {
             name: k.name,
@@ -207,7 +210,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         brightness = 0.2 - j / drillDataLen / 5;
         childData.push({
           name: data[i].drilldown.categories[j],
-          y: data[i].drilldown.data[j][countBy],
+          y: data[i].drilldown.data[j].species,
           _id: data[i].drilldown.data[j].id,
           color: Highcharts.color(data[i].color).brighten(brightness).get(),
         });
@@ -235,7 +238,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       tooltip: {},
       series: [
         {
-          name: _.startCase(countBy),
+          name: "Species", //_.startCase(countBy),
           data: rootData,
           size: "60%",
           dataLabels: {
@@ -263,7 +266,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
           },
         },
         {
-          name: _.startCase(countBy),
+          name: "Species", // _.startCase(countBy),
           data: childData,
           size: "80%",
           innerSize: "60%",
@@ -295,7 +298,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
                 : null;
             },
           },
-          id: countBy,
+          id: "Species", //countBy,
         },
       ],
       responsive: {
