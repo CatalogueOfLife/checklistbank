@@ -474,6 +474,19 @@ class NameSearchPage extends React.Component {
     this.setState({ advancedFilters: !this.state.advancedFilters });
   };
 
+  getMerge = () => {
+    const sectorModeParam = this.state.params.sectorMode;
+    if (_.isArray(sectorModeParam) && sectorModeParam.length > 0) {
+      return sectorModeParam.includes("merge");
+    } else if (_.isArray(sectorModeParam) && sectorModeParam.length === 0) {
+      return true;
+    } else if (!!sectorModeParam) {
+      return sectorModeParam === "merge";
+    } else {
+      return true;
+    }
+  };
+
   render() {
     const {
       data: { result, facets },
@@ -615,7 +628,7 @@ class NameSearchPage extends React.Component {
           } (${s.count.toLocaleString("en-GB")})`,
         }))
       : [];
-
+    const merge = this.getMerge();
     return (
       <div
         style={{
@@ -673,6 +686,7 @@ class NameSearchPage extends React.Component {
                 ))) && (
               <div style={{ marginTop: "10px" }}>
                 <DatasetAutocomplete
+                  merge={merge}
                   contributesTo={Number(datasetKey)}
                   onSelectDataset={(value) => {
                     this.updateSearch({ sectorDatasetKey: value.key });
