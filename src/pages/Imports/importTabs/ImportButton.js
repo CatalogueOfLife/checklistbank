@@ -110,7 +110,7 @@ class ImportButton extends React.Component {
           loading={this.state.importTriggered}
           onClick={isStopButton ? this.stopImport : reImport ? this.reImport : this.startImport}
         >
-          {!isStopButton && (reImport ? "Re-import" : "Import")}
+          {!isStopButton && (reImport ? "Reimport" : "Import")}
           {isStopButton && record.state !== "waiting" && "Stop import"}
           {isStopButton && record.state === "waiting" && "Cancel"}
         </Button>

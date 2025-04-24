@@ -53,7 +53,7 @@ class DatasetSettings extends React.Component {
   reindexDataset = () => {
     const { datasetKey } = this.props;
     axios
-      .post(`${config.dataApi}admin/reindex`, { datasetKey })
+      .post(`${config.dataApi}admin/reindex?datasetKey=${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
@@ -173,7 +173,7 @@ class DatasetSettings extends React.Component {
                 marginBottom: "10px",
               }}
             >
-              Re-index dataset
+              Reindex dataset
             </Button>
 
             <DeleteOrphansButton
