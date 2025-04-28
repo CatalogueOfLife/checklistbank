@@ -518,8 +518,7 @@ class TaxonPage extends React.Component {
                     <EditOutlined /> Edit taxon
                   </Button>
                 )}
-                {_.get(info, "group") &&
-                  !_.get(info, "group").startsWith("other") && (
+                {_.get(info, "group") && (
                   <Tooltip title={_.get(info, "group")}>
                     <a href={`/vocabulary/taxgrouptree#${_.get(info, "group")}`}>
                     <img
