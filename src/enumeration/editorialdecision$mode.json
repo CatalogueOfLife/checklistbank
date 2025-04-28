@@ -9,9 +9,6 @@
     "name": "update"
   },
   {
-    "name": "update recursive"
-  },
-  {
     "name": "ignore"
   }
 ]
