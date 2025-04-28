@@ -38,6 +38,7 @@ const VocabularyKey = ({
           <Col span={12}>
             {data.map((item) => (
               <Card
+                id={item.name}
                 size="small"
                 title={
                   <Title style={{ marginLeft: "6px" }} level={4}>
