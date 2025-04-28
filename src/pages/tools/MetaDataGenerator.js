@@ -125,6 +125,7 @@ const MetaDataValidator = ({ location }) => {
   };
 
   const validateFromMetadataForm = async (values) => {
+    console.log("validateFromMetadataForm", values);
     let yamlRes, emlRes, jsonRes;
     try {
       yamlRes = await axios.post(`${config.dataApi}parser/metadata`, values, {
@@ -226,9 +227,9 @@ const MetaDataValidator = ({ location }) => {
   };
 
   const onFinish = (values, gotoStep = 1) => {
-    let cb = () => {
+    let cb = (vals) => {
       if (gotoStep === 2) {
-        validateFromMetadataForm();
+        validateFromMetadataForm(vals);
       }
       setStep(gotoStep);
     };
