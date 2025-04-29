@@ -20,7 +20,6 @@ import ArchiveUpload from "../../../components/ArchiveUpload";
 import MetaDataUpload from "../../../components/MetaData/MetaDataUpload";
 import PageContent from "../../../components/PageContent";
 import PresentationItem from "../../../components/PresentationItem";
-import DeleteDatasetButton from "./DeleteDatasetButton";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import moment from "moment";
@@ -216,20 +215,22 @@ class DatasetMeta extends React.Component {
     const patchMode = !!catalogueKey;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
+    const modifyMetadata = data && !data.deleted && data?.origin != "release";
+    console.debug(data?.origin)
     return (
       <PageContent>
         {Auth.canEditDataset(displayData, user) && !patchMode && (
           <React.Fragment>
             <Row>
               <Col flex="auto">
-                {data && !data.deleted && (
+                {modifyMetadata && (
                   <LogoUpload datasetKey={this.props.id} />
                 )}
               </Col>
             </Row>
             <Row>
               <Col>
-                {data && (
+                {data && !data.deleted && data?.origin === "external" && (
                   <ArchiveUpload
                     datasetKey={_.get(this.state, "data.key")}
                     origin={_.get(this.state, "data.origin")}
@@ -237,7 +238,7 @@ class DatasetMeta extends React.Component {
                 )}
               </Col>
               <Col flex="auto">
-                {data && !data.deleted && (
+                {modifyMetadata && (
                   <MetaDataUpload
                     style={{ marginLeft: "10px" }}
                     datasetKey={this.props.id}

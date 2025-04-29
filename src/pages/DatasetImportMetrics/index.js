@@ -14,7 +14,6 @@ import ImportButton from "../Imports/importTabs/ImportButton";
 import ImportHistory from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
 import Auth from "../../components/Auth";
-import ArchiveUpload from "../../components/ArchiveUpload";
 import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";
 import DataLoader from "dataloader";
