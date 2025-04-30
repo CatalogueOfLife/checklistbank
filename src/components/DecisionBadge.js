@@ -1,7 +1,14 @@
 import React from "react";
 import { Tag, Popover } from "antd";
 
-const DecisionBadge = ({ style = {}, decision }) => (
+const DecisionBadge = ({ style = {}, decision }) => {
+  delete decision.subject;
+  delete decision.originalSubjectId;
+  delete decision.subjectDatasetKey;
+  delete decision.datasetKey;
+  delete decision.created;
+  delete decision.createdBy;
+  return (
   <Popover
     content={
       <pre
@@ -30,6 +37,6 @@ const DecisionBadge = ({ style = {}, decision }) => (
       DC
     </Tag>
   </Popover>
-);
+)};
 
 export default DecisionBadge;

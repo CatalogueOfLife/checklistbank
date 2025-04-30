@@ -170,7 +170,7 @@ export default {
     project = false,
     publisher = false
   ) => ({
-    pathname: `${basePath}/decisions`,
+    pathname: `${basePath}/decision`,
     search: `?subjectDatasetKey=${KEY}`,
   }),
 };

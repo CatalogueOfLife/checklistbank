@@ -586,12 +586,6 @@ class TaxonPage extends React.Component {
 
           <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
             <TabPane tab="About" key="1">
-              {this.state?.info?.decisions?.[taxon?.id] && (
-                <DecisionBadge
-                  style={{ marginLeft: "10px" }}
-                  decision={this.state?.info?.decisions?.[taxon?.id]}
-                />
-              )}
               {_.get(info, "usage.name.publishedIn.citation") && (
                 <PresentationItem md={md} label="Published in">
                   <Linkify>
@@ -882,9 +876,21 @@ class TaxonPage extends React.Component {
                 <Col span={12}>
                   {_.get(taxon, "origin") && (
                     <PresentationItem md={md * 2} label="Origin">
+                      <span>
                       {_.get(taxon, "origin")}
+                      {this.state?.info?.decisions?.[taxon?.id] && (
+                        <>
+                          &nbsp;with {this.state?.info?.decisions?.[taxon?.id]?.mode} decision
+                          <DecisionBadge
+                            style={{ marginLeft: "10px" }}
+                            decision={this.state?.info?.decisions?.[taxon?.id]}
+                          />
+                        </>
+                      )}
+                      </span>
                     </PresentationItem>
                   )}
+
                 </Col>
               </Row>
               {mergedIssues && mergedIssues.length > 0 && (
