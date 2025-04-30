@@ -9,10 +9,11 @@ import { Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import TypeMaterialPopover from "./TypeMaterialPopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
-
+import DecisionBadge from "../../components/DecisionBadge";
 const SynonymsTable = ({
   datasetKey,
   data,
+  decisions,
   style,
   onEditSuccess,
   getNomStatus,
@@ -77,7 +78,10 @@ const SynonymsTable = ({
             {s?.sourceDatasetKey &&
               _.get(primarySource, "key") !== s?.sourceDatasetKey && (
                 <MergedDataBadge />
-              )}{" "}
+              )}
+            {decisions?.[s?.id] && (
+              <DecisionBadge decision={decisions?.[s?.id]} />
+            )}{" "}
             {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
             {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
               ? _.get(s, "accordingTo")

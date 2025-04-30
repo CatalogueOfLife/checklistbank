@@ -58,6 +58,8 @@ class CatalogueDecisions extends React.Component {
         pageSize: PAGE_SIZE,
         current: 1,
         showQuickJumper: true,
+        total: 0,
+        showTotal: (total) => `Total ${total} items`,
       },
       decisionFormVisible: false,
       rowsForEdit: [],
@@ -114,6 +116,7 @@ class CatalogueDecisions extends React.Component {
     this.setState({ loading: true });
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
+      facet: "mode",
     };
     const url = !!params.stale
       ? `${config.dataApi}dataset/${datasetKey}/decision/stale${
@@ -131,6 +134,10 @@ class CatalogueDecisions extends React.Component {
           loading: false,
           error: null,
           data: _.get(res, "data.result") || [],
+          facetMode: (res?.data?.facets?.mode || []).reduce((acc, cur) => {
+            acc[cur.value] = cur.count;
+            return acc;
+          }, {}),
           pagination: {
             ...this.state.pagination,
             total: _.get(res, "data.total"),
@@ -285,6 +292,7 @@ class CatalogueDecisions extends React.Component {
       rematchInfo,
       decisionFormVisible,
       rowsForEdit,
+      facetMode,
     } = this.state;
     const { datasetKey, user, rank, decisionMode, type, releasedFrom } =
       this.props;
@@ -633,7 +641,9 @@ class CatalogueDecisions extends React.Component {
             >
               {decisionMode.map((r) => (
                 <Option key={r.name} value={r.name}>
-                  {r.name}
+                  {r.name}{" "}
+                  {facetMode?.[r.name] > 0 &&
+                    `(${facetMode[r.name].toLocaleString("en-GB")})`}
                 </Option>
               ))}
             </Select>
@@ -697,44 +707,59 @@ class CatalogueDecisions extends React.Component {
             )}
         </Row>
         {!error && (
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            pagination={pagination}
-            rowKey="id"
-            /*  expandedRowRender={(record) => (
+          <>
+            <Row>
+              <Col flex="auto" />
+              <Col>
+                {this.state?.pagination?.total?.toLocaleString("en-GB")}{" "}
+                Decisions
+              </Col>
+            </Row>
+            <Table
+              size="small"
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+              pagination={pagination}
+              rowKey="id"
+              /*  expandedRowRender={(record) => (
                 <pre>
                   {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
                 </pre>
               )} */
-            expandedRowRender={(record) => (
-              <React.Fragment>
-                {record.mode === "update" &&
-                  Auth.canEditDataset({ key: datasetKey }, user) && (
-                    <a
-                      onClick={() => {
-                        this.setState({
-                          rowsForEdit: [
-                            {
-                              decisions: [_.omit(record, ["dataset", "user"])],
-                            },
-                          ],
-                          decisionFormVisible: true,
-                        });
-                      }}
-                    >
-                      Edit <EditOutlined />
-                    </a>
-                  )}
-                <pre>
-                  {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
-                </pre>
-              </React.Fragment>
-            )}
-            onChange={this.handleTableChange}
-          />
+              expandedRowRender={(record) => (
+                <React.Fragment>
+                  {record.mode === "update" &&
+                    Auth.canEditDataset({ key: datasetKey }, user) && (
+                      <a
+                        onClick={() => {
+                          this.setState({
+                            rowsForEdit: [
+                              {
+                                decisions: [
+                                  _.omit(record, ["dataset", "user"]),
+                                ],
+                              },
+                            ],
+                            decisionFormVisible: true,
+                          });
+                        }}
+                      >
+                        Edit <EditOutlined />
+                      </a>
+                    )}
+                  <pre>
+                    {JSON.stringify(
+                      _.omit(record, ["dataset", "user"]),
+                      null,
+                      4
+                    )}
+                  </pre>
+                </React.Fragment>
+              )}
+              onChange={this.handleTableChange}
+            />
+          </>
         )}
       </>
     );

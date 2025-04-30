@@ -162,4 +162,15 @@ export default {
           search: ``,
         }
       : null,
+  appliedDecisionCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) => ({
+    pathname: `${basePath}/decisions`,
+    search: `?subjectDatasetKey=${KEY}`,
+  }),
 };
