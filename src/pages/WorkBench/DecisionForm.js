@@ -12,6 +12,7 @@ import {
   Steps,
   notification,
   Form,
+  Radio,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -365,10 +366,15 @@ const DecisionForm = (props) => {
             <FormItem
               {...formItemLayout}
               label="Extinct"
-              valuePropName="checked"
-              name="extinct"
+              /*               valuePropName="checked"
+               */ name="extinct"
             >
-              <Checkbox />
+              {/*  <Checkbox /> */}
+              <Radio.Group>
+                <Radio value={true}>Yes</Radio>
+                <Radio value={false}>No</Radio>
+                <Radio value={null}>Unknown</Radio>
+              </Radio.Group>
             </FormItem>
             <FormItem
               {...formItemLayout}
