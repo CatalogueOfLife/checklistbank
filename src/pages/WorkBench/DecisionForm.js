@@ -211,7 +211,12 @@ const DecisionForm = (props) => {
       environments: _.get(currentDecision, "environments")
         ? _.get(currentDecision, "environments")
         : [],
-      extinct: _.get(currentDecision, "extinct") === true ? true : false,
+      extinct:
+        _.get(currentDecision, "extinct") === true
+          ? true
+          : _.get(currentDecision, "extinct") === false
+          ? false
+          : null,
       keepOriginalName:
         _.get(currentDecision, "keepOriginalName") === true ? true : false,
       note: _.get(currentDecision, "note")
