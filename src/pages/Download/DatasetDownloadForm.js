@@ -217,7 +217,7 @@ class DatasetDownload extends React.Component {
             )}
 
             <a
-              href="https://www.catalogueoflife.org/about/colusage#data-formats"
+              href="/about/formats"
               target="_blank"
               style={{ marginLeft: "8px" }}
             >
