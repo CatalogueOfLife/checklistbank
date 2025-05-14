@@ -10,15 +10,17 @@ import ImportMetrics from "../../components/ImportMetrics";
 import { DownloadOutlined } from "@ant-design/icons";
 
 import PageContent from "../../components/PageContent";
-import ImportButton from "../Imports/importTabs/ImportButton";
 import ImportHistory from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
+import { withRouter } from "react-router-dom";
 import Auth from "../../components/Auth";
 import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";
 import DataLoader from "dataloader";
 import { getUsersBatch } from "../../api/user";
 import Menu from "./Menu";
+import qs from "query-string";
+
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 class DatasetImportMetrics extends React.Component {
@@ -31,6 +33,11 @@ class DatasetImportMetrics extends React.Component {
       historyVisible: false,
       hasImportDiff: false,
     };
+    const { search } = location; 
+    const params = qs.parse(search);
+    if (params?.showHistory == "true") {
+      this.state.historyVisible = true;
+    }
   }
 
   componentDidMount() {
@@ -360,4 +367,4 @@ const mapContextToProps = ({ user, dataset, importState, catalogueKey }) => ({
   catalogueKey,
 });
 
-export default withContext(mapContextToProps)(DatasetImportMetrics);
+export default withContext(mapContextToProps)(withRouter(DatasetImportMetrics));

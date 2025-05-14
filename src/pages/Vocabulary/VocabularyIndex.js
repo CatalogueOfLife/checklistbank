@@ -4,6 +4,10 @@ import PageContent from "../../components/PageContent";
 import { NavLink } from "react-router-dom"
 import { withRouter } from "react-router-dom";
 import { Row, Col, List, Select } from "antd";
+import {
+  ApiOutlined,
+  ApiTwoTone,
+} from '@ant-design/icons';
 
 
 import withContext from "../../components/hoc/withContext";
@@ -27,34 +31,23 @@ const VocabularyIndex = ({ addError }) => {
       selectedKeys={["vocabulary"]}
     >
       <PageContent>
-        <Row style={{ marginTop: "10px" }}>
-          <Col flex="auto"></Col>
-          <Col>
-            Index to all controlled vocabularies used in ChecklistBank.
-          </Col>
-          <Col flex="auto"></Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }}>
-          <Col flex="auto"></Col>
-          <Col span={16}>
-            <NavLink to={{ pathname: `/vocabulary/taxgrouptree` }} exact={true}>TaxGroup tree</NavLink>
-          </Col>
-          <Col flex="auto"></Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }}>
-          <Col flex="auto"></Col>
-          <Col span={16}>
-            <List
-              size="large"
-              bordered
-              dataSource={data}
-              renderItem={(item) => <List.Item>
-                <NavLink to={{ pathname: `/vocabulary/${item}` }} exact={true}>{item}</NavLink>
-              </List.Item>}
-            />
-          </Col>
-          <Col flex="auto"></Col>
-        </Row>
+        <h3>ChecklistBank Vocabularies</h3>
+        <p>An index to all controlled vocabularies used in ChecklistBank. 
+          These vocabularies are also available through the <a href={`${config.dataApi}vocab`} target="_blank">API</a> for machines.
+        </p>
+
+        <ul>
+          {data.map( (item) => (  
+            <>
+            <li><NavLink to={{ pathname: `/vocabulary/${item}` }} exact={true}>{item.replace("$", " ")}</NavLink>
+              {item=="taxgroup" && (
+                <span> (view as <NavLink to={{ pathname: `/vocabulary/taxgrouptree` }} exact={true}>tree</NavLink>)</span>
+              )}
+              &nbsp; <a href={`${config.dataApi}vocab/rank`} target="_blank"><ApiOutlined /></a>
+            </li>
+            </>
+          ))}
+        </ul>
       </PageContent>
     </Layout>
   );
