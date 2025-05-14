@@ -9,7 +9,7 @@ import config from "../../config";
 import Helmet from "react-helmet";
 import {
   Row,
-  Col,
+  Divider,
   Space,
   Switch,
   Badge,
@@ -373,15 +373,29 @@ class AdminPage extends React.Component {
             </Popconfirm>
           </Row>
 
+          <Divider orientation="left">Links</Divider>
           <Row>
             <a href={config.downloadApi}>Downloads</a>
           </Row>
-          <Row>
+
+          <Divider orientation="left">Main</Divider>
+          <Row> 
             <a href={`${config.dataApi}monitor/healthcheck`}>Health</a> -
             <a href={`${config.dataApi}monitor/threads`}>Threads</a> -
             <a href={`${config.dataApi}monitor/metrics`}>Metrics</a> -
             <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a> -
             <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
+              CPU Blocked
+            </a>
+          </Row>
+
+          <Divider orientation="left">Read only</Divider>
+          <Row> 
+            <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a> -
+            <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a> -
+            <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a> -
+            <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a> -
+            <a href={`${config.dataApi}monitor-ro/pprof?state=blocked`}>
               CPU Blocked
             </a>
           </Row>
