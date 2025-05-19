@@ -375,15 +375,16 @@ class AdminPage extends React.Component {
 
           <Divider orientation="left">Links</Divider>
           <Row>
-            <a href={config.downloadApi}>Downloads</a>
+            <a href={config.downloadApi}>Downloads</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}dataset/duplicates`}>Duplicate Datasets</a>
           </Row>
 
           <Divider orientation="left">Main</Divider>
           <Row> 
-            <a href={`${config.dataApi}monitor/healthcheck`}>Health</a> -
-            <a href={`${config.dataApi}monitor/threads`}>Threads</a> -
-            <a href={`${config.dataApi}monitor/metrics`}>Metrics</a> -
-            <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a> -
+            <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor/threads`}>Threads</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor/metrics`}>Metrics</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
             <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
               CPU Blocked
             </a>
@@ -391,10 +392,10 @@ class AdminPage extends React.Component {
 
           <Divider orientation="left">Read only</Divider>
           <Row> 
-            <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a> -
-            <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a> -
-            <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a> -
-            <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a> -
+            <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a>&nbsp;-&nbsp;
+            <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
             <a href={`${config.dataApi}monitor-ro/pprof?state=blocked`}>
               CPU Blocked
             </a>
