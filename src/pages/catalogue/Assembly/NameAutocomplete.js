@@ -73,7 +73,7 @@ class NameSearchAutocomplete extends React.Component {
     )
       .then((res) => {
         this.setState({
-          names: res.data.suggestions || [],
+          names: res.data || [],
         });
       })
       .catch((err) => {
