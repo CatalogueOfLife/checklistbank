@@ -14,7 +14,6 @@ import {
   notification,
   Tag,
   Button,
-  Tooltip,
   Popover,
   Alert,
   Popconfirm,
@@ -29,8 +28,7 @@ import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
-import Auth from "../../../components/Auth";
-import SectorForm from "./SectorForm2";
+import SectorForm from "./SectorForm";
 import PresentationItem from "../../../components/PresentationItem";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 

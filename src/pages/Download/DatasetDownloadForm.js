@@ -347,7 +347,7 @@ class DatasetDownload extends React.Component {
               Download <DownloadOutlined />
             </Button>
           )}
-          {!user && `Please login to create downloads`}
+          {!user && `<b>Please login to create downloads!</b>`}
         </Row>
 
         <Row style={{ marginTop: "24px" }}>

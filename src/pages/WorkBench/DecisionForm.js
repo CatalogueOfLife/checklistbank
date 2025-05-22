@@ -13,6 +13,7 @@ import {
   notification,
   Form,
   Radio,
+  Tooltip,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import ErrorMsg from "../../components/ErrorMsg";
@@ -257,7 +258,7 @@ const DecisionForm = (props) => {
           <Form form={form} initialValues={getInitialValues()}>
             <FormItem
               {...formItemLayout}
-              label="Scientific name"
+              label="Scientific Name"
               name="scientificName"
             >
               <AutoComplete
@@ -291,7 +292,7 @@ const DecisionForm = (props) => {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="Taxonomic status"
+              label="Taxonomic Status"
               name="status"
             >
               <Select style={{ width: 200 }} showSearch>
@@ -317,7 +318,7 @@ const DecisionForm = (props) => {
                 ))}
               </Select>
             </FormItem>
-            <FormItem {...formItemLayout} label="Nom. status" name="nomstatus">
+            <FormItem {...formItemLayout} label="Nomenclatural Status" name="nomstatus">
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                   -
@@ -329,7 +330,7 @@ const DecisionForm = (props) => {
                 ))}
               </Select>
             </FormItem>
-            <FormItem {...formItemLayout} label="Nom. code" name="nomCode">
+            <FormItem {...formItemLayout} label="Nomenclatural Code" name="nomCode">
               <Select style={{ width: 200 }} showSearch>
                 <Option key="_null" value={""}>
                   -
@@ -343,7 +344,7 @@ const DecisionForm = (props) => {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="environments"
+              label="Environments"
               name="environments"
             >
               <Select style={{ width: 200 }} showSearch mode="multiple">
@@ -370,20 +371,18 @@ const DecisionForm = (props) => {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="Extinct"
-              /*               valuePropName="checked"
-               */ name="extinct"
+              label="Extinct Status"
+              name="extinct"
             >
-              {/*  <Checkbox /> */}
-              <Radio.Group>
-                <Radio value={true}>Yes</Radio>
-                <Radio value={false}>No</Radio>
+              <Radio.Group optionType="button" buttonStyle="solid">
                 <Radio value={null}>Unknown</Radio>
+                <Radio value={true}>Extinct</Radio>
+                <Radio value={false}>Extant</Radio>
               </Radio.Group>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="keepOriginalName"
+              label={<Tooltip color='green' title="Keep the original name as a synonym of the updated name when the scientific name or authorship has changed. Only applies to update decision.">keepOriginalName</Tooltip>}
               valuePropName="checked"
               name="keepOriginalName"
             >

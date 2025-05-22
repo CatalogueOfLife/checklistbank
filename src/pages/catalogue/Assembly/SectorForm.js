@@ -1,215 +1,178 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import { notification, Select, Row, Col, Button, Input } from "antd";
-import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
-
+import {
+  notification,
+  Select,
+  Checkbox,
+  Input,
+  Alert,
+  Button,
+  InputNumber,
+  Form,
+  Divider,
+  Tooltip,
+  Radio,
+} from "antd";
+import TaxonFormControl from "../../../components/TaxonFormControl";
+import DatasetFormControl from "../../../components/DatasetFormControl";
+import ErrorMsg from "../../../components/ErrorMsg";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
-import NameAutocomplete from "./NameAutocomplete";
-import SectorNote from "./SectorNote";
 import withContext from "../../../components/hoc/withContext";
+import {
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+
+const FormItem = Form.Item;
 
 const { Option } = Select;
+const { TextArea } = Input;
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 18 },
+    sm: { span: 7 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 15 },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 4,
+      offset: 19,
+    },
+  },
+};
 
 const SectorForm = ({
   sector,
   nomCode,
   entitytype,
-  sectorDatasetRanks,
+  // sectorDatasetRanks,
   rank,
   onError,
+  catalogueKey,
+  onSubmit,
   nametype,
-  nomstatus
+  nomstatus,
 }) => {
-  const [subjectDisabled, setSubjectDisabled] = useState(true);
-  const [targetDisabled, setTargetDisabled] = useState(true);
+  const [error, setError] = useState(null);
+  const [form] = Form.useForm();
+  const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);
+  const mode = Form.useWatch("mode", form);
 
-  const updateNameTypes = (nameTypes) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, nameTypes: nameTypes }
-      )
-      .then(() => {
-        sector.nameTypes = nameTypes;
-        notification.open({
-          message: "Nametypes for sector updated",
-          description: `New value is ${nameTypes?.toString()}`,
+  const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
+  useEffect(() => {
+    console.log(sector?.nameTypes);
+  }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
+  useEffect(() => {
+    if (subjectDatasetKey || sector?.subjectDatasetKey) {
+      axios
+        .get(
+          `${config.dataApi}dataset/${
+            subjectDatasetKey || sector?.subjectDatasetKey
+          }/nameusage/search?facet=rank&limit=0`
+        ) // /assembly/3/sync/
+        .then((res) => {
+          setSectorDatasetRanks(
+            _.get(res, "data.facets.rank", []).map((r) => r.value)
+          );
+        })
+        .catch((err) => {
+          setError(err);
         });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
+    }
+  }, [subjectDatasetKey]);
+  const onFinishFailed = ({ errorFields }) => {
+    form.scrollToField(errorFields[0].name);
   };
 
-  const updateNameStatusExclusion = (nameStatusExclusion) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, nameStatusExclusion: nameStatusExclusion }
-      )
-      .then(() => {
-        sector.nameStatusExclusion = nameStatusExclusion;
-        notification.open({
-          message: "NameStatusExclusion for sector updated",
-          description: `New value is ${nameStatusExclusion?.toString()}`,
+  const submitData = (values) => {
+    if (sector) {
+      axios
+        .put(
+          `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
+          { ...sector, ...values }
+        )
+        .then(() => {
+          notification.open({
+            message: "Sector updated",
+            description: "Sector updated",
+          });
+          if (onSubmit && typeof onSubmit === "function") {
+            onSubmit(values);
+          }
+        })
+        .catch((err) => {
+          setError(err);
+          if (typeof onError === "function") {
+            onError(err);
+          }
         });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
+    } else {
+      axios
+        .post(`${config.dataApi}dataset/${catalogueKey}/sector`, values)
+        .then(() => {
+          notification.open({
+            message: "Sector created",
+            description: "Sector created",
+          });
+          if (onSubmit && typeof onSubmit === "function") {
+            onSubmit(values);
+          }
+        })
+        .catch((err) => {
+          setError(err);
+          if (typeof onError === "function") {
+            onError(err);
+          }
+        });
+    }
   };
 
-
-  const updateSectorMode = (mode) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, mode: mode }
-      )
-      .then(() => {
-        sector.mode = mode;
-        notification.open({
-          message: "Mode for sector updated",
-          description: `New mode is ${mode}`,
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
+  const initialValues = {
+    ranks: [],
+    entities: [],
+    nameTypes: [],
+    nameStatusExclusion: [],
+    ...sector,
   };
-
-  const updateSectorCode = (code) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, code: code }
-      )
-      .then(() => {
-        sector.code = code;
-        notification.open({
-          message: "Nom. code for sector updated",
-          description: `New code is ${code}`,
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
-  const updateTargetOrSubject = (obj, targetOrSubject) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, [targetOrSubject]: { id: obj.key, name: obj.title } }
-      )
-      .then(() => {
-        notification.open({
-          message: `${targetOrSubject} updated, please refresh tree`,
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
-  const updateSectorRank = (ranks) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, ranks: ranks }
-      )
-      .then(() => {
-        sector.ranks = ranks;
-        notification.open({
-          message: "Ranks for sector configured",
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
-  const updatePlaceholderRank = (rank) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, placeholderRank: rank }
-      )
-      .then(() => {
-        sector.placeholderRank = rank;
-        notification.open({
-          message: "Placeholder rank for sector configured",
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
-  const updateSectorNote = (note) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, note: note }
-      )
-      .then(() => {
-        sector.note = note;
-        notification.open({
-          message: "Sector note updated:",
-          description: note,
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
-  const updateSectorEntities = (entities) => {
-    axios
-      .put(
-        `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-        { ...sector, entities: entities }
-      )
-      .then(() => {
-        sector.entities = entities;
-        notification.open({
-          message: "Sector entities updated",
-        });
-      })
-      .catch((err) => {
-        if (typeof onError === "function") {
-          onError(err);
-        }
-      });
-  };
-
   return (
-    <React.Fragment>
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Sector mode</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
+    <>
+      {error && (
+        <Alert
+          style={{ marginBottom: "10px" }}
+          description={<ErrorMsg error={error} />}
+          type="error"
+          closable
+          onClose={() => setError(null)}
+        />
+      )}
+      <Form
+        form={form}
+        initialValues={initialValues}
+        onFinish={submitData}
+        onFinishFailed={onFinishFailed}
+      >
+        <FormItem
+          {...formItemLayout}
+          label="Mode"
+          key="mode"
+          name="mode"
+          required
+        >
           <Select
             style={{ width: "100%" }}
-            defaultValue={sector.mode}
-            onChange={(value) => updateSectorMode(value)}
+            // defaultValue={sector.mode}
+            // onChange={(value) => updateSectorMode(value)}
             showSearch
             allowClear
           >
@@ -223,107 +186,125 @@ const SectorForm = ({
               merge
             </Option>
           </Select>
-        </Col>
-      </Row>
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Nom. code</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
+        </FormItem>
+        {mode === "merge" && (
+          <FormItem
+            {...formItemLayout}
+            label="Priority"
+            key="priority"
+            name="priority"
+          >
+            <InputNumber />
+          </FormItem>
+        )}
+        {!sector && (
+          <FormItem
+            {...formItemLayout}
+            label="Subject Dataset"
+            key="subjectDatasetKey"
+            name="subjectDatasetKey"
+            required
+          >
+            <DatasetFormControl />
+          </FormItem>
+        )}
+
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Select the sector's root taxon in the source (subject) dataset. Not required for merge sectors.">Subject</Tooltip>}
+          key="subject"
+          name="subject"
+        >
+          <TaxonFormControl
+            disabled={!sector && !subjectDatasetKey}
+            accepted={true}
+            datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
+            defaultTaxonKey={_.get(sector, "subject.id") || null}
+          />
+        </FormItem>
+
+        <FormItem {...formItemLayout} 
+          label={<Tooltip color='green' title="Under which taxon in the project should the synced names be copied to? Not required for merge sectors.">Target</Tooltip>}
+          key="target" name="target"
+        >
+          <TaxonFormControl
+            accepted={true}
+            datasetKey={sector?.datasetKey || catalogueKey}
+            defaultTaxonKey={_.get(sector, "target.id") || null}
+          />
+        </FormItem>
+
+        <Divider plain>Filter</Divider>
+
+        <FormItem {...formItemLayout} 
+          label={<Tooltip color='green' title="Include only names with selected ranks">Ranks</Tooltip>}
+          key="ranks" name="ranks"
+        >
           <Select
             style={{ width: "100%" }}
-            defaultValue={sector.code}
-            onChange={(value) => updateSectorCode(value)}
+            mode="multiple"
             showSearch
             allowClear
+            disabled={sectorDatasetRanks.length === 0}
           >
-            {nomCode.map((f) => {
+            {(sectorDatasetRanks || []).map((r) => {
               return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
+                <Option key={r} value={r}>
+                  {r}
                 </Option>
               );
             })}
           </Select>
-        </Col>
-      </Row>
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Ranks</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
-          <Input.Group style={{ width: "100%" }}>
-            <Select
-              style={{ width: "70%" }}
-              mode="multiple"
-              value={sector.ranks || []}
-              onChange={(value) => updateSectorRank(value)}
-              showSearch
-              allowClear
-            >
-              {(sectorDatasetRanks || []).map((r) => {
-                return (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                );
-              })}
-            </Select>
-            <Button onClick={() => updateSectorRank(sectorDatasetRanks)}>
-              All
-            </Button>
-          </Input.Group>
-        </Col>
-      </Row>
+        </FormItem>
 
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Entities</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            defaultValue={sector.entities || []}
-            onChange={(value) => updateSectorEntities(value)}
-            showSearch
-            allowClear
-          >
-            {entitytype.map((f) => {
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Optionally ignore immediate children of the source subject which are above the selected rank.">Placeholder Rank</Tooltip>}
+          key="placeholderRank"
+          name="placeholderRank"
+        >
+          <Select style={{ width: "100%" }} showSearch allowClear>
+            {rank.map((r) => {
               return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
+                <Option key={r} value={r}>
+                  {r}
                 </Option>
               );
             })}
           </Select>
-        </Col>
-      </Row>
+        </FormItem>
 
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Name Types</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Include only names of the selected name types">Name Types</Tooltip>}
+          key="nameTypes"
+          name="nameTypes"
+        >
           <Select
             mode="multiple"
             style={{ width: "100%" }}
-            defaultValue={sector.nameTypes || []}
-            onChange={(value) => updateNameTypes(value)}
             showSearch
             allowClear
           >
             {nametype.map((f) => {
               return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
+                <Option key={f} value={f}>
+                  {f}
                 </Option>
               );
             })}
           </Select>
-        </Col>
-      </Row>
+        </FormItem>
 
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={9}>Name Status Exclusion</Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Exclude names with the selected nomenclatural status">Name Status</Tooltip>}
+          key="nameStatusExclusion"
+          name="nameStatusExclusion"
+        >
           <Select
             mode="multiple"
             style={{ width: "100%" }}
-            defaultValue={sector.nameStatusExclusion || []}
-            onChange={(value) => updateNameStatusExclusion(value)}
             showSearch
             allowClear
           >
@@ -335,100 +316,111 @@ const SectorForm = ({
               );
             })}
           </Select>
-        </Col>
-      </Row>
+        </FormItem>
 
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={8}>Target</Col>
-        <Col span={1} style={{ textAlign: "right" }}>
-          {targetDisabled && (
-            <a>
-              <LockOutlined onClick={() => setTargetDisabled(false)} />
-            </a>
-          )}
-          {!targetDisabled && (
-            <a>
-              <UnlockOutlined onClick={() => setTargetDisabled(true)} />
-            </a>
-          )}
-        </Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
-          <NameAutocomplete
-            disabled={targetDisabled}
-            accepted={true}
-            datasetKey={sector.datasetKey}
-            defaultTaxonKey={_.get(sector, "target.id") || null}
-            onSelectName={(name) => updateTargetOrSubject(name, "target")}
-            onResetSearch={() => { }}
-          />
-          {/*           <Input.Search 
-            enterButton={<SaveOutlined />} 
-            onSearch={parentName => updateParent(parentName, 'target')}
-            defaultValue={_.get(sector, 'target.parent') || null} /> */}
-        </Col>
-      </Row>
-      <Row style={{ marginTop: "8px" }}>
-        <Col span={8}>Subject</Col>
-        <Col span={1} style={{ textAlign: "right" }}>
-          {subjectDisabled && (
-            <a>
-              <LockOutlined onClick={() => setSubjectDisabled(false)} />
-            </a>
-          )}
-          {!subjectDisabled && (
-            <a>
-              <UnlockOutlined onClick={() => setSubjectDisabled(true)} />
-            </a>
-          )}
-        </Col>
-        <Col span={15} style={{ paddingLeft: "8px" }}>
-          <NameAutocomplete
-            disabled={subjectDisabled}
-            accepted={true}
-            datasetKey={sector.subjectDatasetKey}
-            defaultTaxonKey={_.get(sector, "subject.id") || null}
-            onSelectName={(name) => updateTargetOrSubject(name, "subject")}
-            onResetSearch={() => { }}
-          />
-          {/*           <Input.Search 
-            enterButton={<SaveOutlined />} 
-            onSearch={parentName => updateParent(parentName, 'subject')}
-            defaultValue={_.get(sector, 'subject.parent') || null} /> */}
-        </Col>
-      </Row>
-      {sector.placeholderRank && (
-        <Row style={{ marginTop: "8px" }}>
-          <Col span={9}>Placeholder rank</Col>
-          <Col span={15} style={{ paddingLeft: "8px" }}>
-            <Select
-              style={{ width: "100%" }}
-              defaultValue={sector.placeholderRank}
-              onChange={(value) => updatePlaceholderRank(value)}
-              showSearch
-              allowClear
-            >
-              {rank.map((r) => {
-                return (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Col>
-        </Row>
-      )}
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Optionally restrict taxa to be synced to extinct or extant only">Extinct Status</Tooltip>}
+          key="extinctFilter"
+          name="extinctFilter"
+          valuePropName="checked"
+        >
+          <Radio.Group defaultValue={null} optionType="button" buttonStyle="solid">
+            <Radio value={null}>All</Radio>
+            <Radio value={true}>Extinct</Radio>
+            <Radio value={false}>Extant</Radio>
+          </Radio.Group>
+        </FormItem>
 
-      <Row style={{ marginTop: "8px" }}>
-        <SectorNote note={sector.note} onSave={updateSectorNote}></SectorNote>
-      </Row>
-    </React.Fragment>
+        <Divider plain>Data to sync</Divider>
+
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Which record entities to sync. Defaults to all">Entities</Tooltip>}
+          key="entities"
+          name="entities"
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+          >
+            {entitytype.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
+
+        <FormItem {...formItemLayout} 
+          label={<Tooltip color='green' title="The default nomenclatural code to apply during syncs">Code</Tooltip>}
+          key="code" name="code"
+        >
+          <Select style={{ width: "100%" }} showSearch allowClear>
+            {nomCode.map((f) => {
+              return (
+                <Option key={f.name} value={f.name}>
+                  {f.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Copies also the accordingTo taxon reference of the name usage. Off by default.">AccordingTo</Tooltip>}
+          key="copyAccordingTo"
+          name="copyAccordingTo"
+          valuePropName="checked"
+        >
+          <Checkbox />          
+        
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label={<Tooltip color='green' title="Removes the custom taxon sort order from source data">Remove Ordinals</Tooltip>}
+          key="removeOrdinals"
+          name="removeOrdinals"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+
+        <Divider plain>Editorial notes</Divider>
+
+        <FormItem key="note" name="note">
+          <TextArea />
+        </FormItem>
+
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" onClick={form.submit}>
+            Save
+          </Button>
+        </FormItem>
+      </Form>
+    </>
   );
 };
 
-const mapContextToProps = ({ nomCode, entitytype, rank, nametype, nomstatus }) => ({
+const mapContextToProps = ({
   nomCode,
   entitytype,
-  rank, nametype, nomstatus
+  rank,
+  catalogueKey,
+  nametype,
+  nomstatus,
+}) => ({
+  catalogueKey,
+  nomCode,
+  entitytype,
+  rank,
+  nametype,
+  nomstatus,
 });
 export default withContext(mapContextToProps)(SectorForm);

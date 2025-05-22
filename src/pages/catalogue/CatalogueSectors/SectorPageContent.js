@@ -19,10 +19,8 @@ import {
   Checkbox,
 } from "antd";
 import { withRouter } from "react-router-dom";
-import SectorForm from "../Assembly/SectorForm2";
+import SectorForm from "../Assembly/SectorForm";
 import config from "../../../config";
-import Layout from "../../../components/LayoutNew";
-import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
