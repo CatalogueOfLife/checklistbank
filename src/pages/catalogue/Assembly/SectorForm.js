@@ -323,7 +323,6 @@ const SectorForm = ({
           label={<Tooltip color='green' title="Optionally restrict taxa to be synced to extinct or extant only">Extinct Status</Tooltip>}
           key="extinctFilter"
           name="extinctFilter"
-          valuePropName="checked"
         >
           <Radio.Group defaultValue={null} optionType="button" buttonStyle="solid">
             <Radio value={null}>All</Radio>
