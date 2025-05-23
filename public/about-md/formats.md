@@ -22,34 +22,34 @@ The `extended` format exports all available information including distributions,
 ## Catalogue of Life Data Package (ColDP)
 
 The recommended exchange format for submitting data to and downloading data from ChecklistBank
-is the [Catalogue of Life Data Package](https://github.com/CatalogueOfLife/coldp) (ColDP),
+is the [Catalogue of Life Data Package](hhttps://catalogueoflife.github.io/coldp) (ColDP),
 a tabular text format with a standard set of files and columns and it is inspired by [Frictionless Data](https://frictionlessdata.io/).
 The format is a single ZIP archive that bundles various delimited text files:
 
-- [Name](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#name)
-- [Author](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#author)
-- [NameRelation](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#namerelation)
-- [Taxon](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#taxon)
-- [Synonym](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#synonym)
-- [NameUsage](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage)
-- [TaxonProperty](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#taxonproperty)
-- [TaxonConceptRelation](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#taxonconceptrelation)
-- [SpeciesInteraction](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#speciesinteraction)
-- [SpeciesEstimate](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#speciesestimate)
-- [Reference](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#reference)
-- [TypeMaterial](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#typematerial)
-- [Distribution](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#distribution)
-- [Media](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#media)
-- [VernacularName](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#vernacularname)
-- [Treatments](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#treatment)
+- [Name](https://catalogueoflife.github.io/coldp/#name)
+- [Author](https://catalogueoflife.github.io/coldp/#author)
+- [NameRelation](https://catalogueoflife.github.io/coldp/#namerelation)
+- [Taxon](https://catalogueoflife.github.io/coldp/#taxon)
+- [Synonym](https://catalogueoflife.github.io/coldp/#synonym)
+- [NameUsage](https://catalogueoflife.github.io/coldp/#nameusage)
+- [TaxonProperty](https://catalogueoflife.github.io/coldp/#taxonproperty)
+- [TaxonConceptRelation](https://catalogueoflife.github.io/coldp/#taxonconceptrelation)
+- [SpeciesInteraction](https://catalogueoflife.github.io/coldp/#speciesinteraction)
+- [SpeciesEstimate](https://catalogueoflife.github.io/coldp/#speciesestimate)
+- [Reference](https://catalogueoflife.github.io/coldp/#reference)
+- [TypeMaterial](https://catalogueoflife.github.io/coldp/#typematerial)
+- [Distribution](https://catalogueoflife.github.io/coldp/#distribution)
+- [Media](https://catalogueoflife.github.io/coldp/#media)
+- [VernacularName](https://catalogueoflife.github.io/coldp/#vernacularname)
+- [Treatments](https://catalogueoflife.github.io/coldp/#treatment)
 
-A [metadata.yaml](https://github.com/CatalogueOfLife/coldp/blob/master/metadata.yaml) file should also be included to provide basic metadata about the entire dataset.
-For sharing structured bibliographic references the [BibTex](https://github.com/CatalogueOfLife/coldp#reference-bibtex)
-and [CSL-JSON](https://github.com/CatalogueOfLife/coldp#reference-json-csl) format is also supported.
+A [metadata.yaml](https://catalogueoflife.github.io/coldp/metadata.yaml) file should also be included to provide basic metadata about the entire dataset.
+For sharing structured bibliographic references the [BibTex](https://catalogueoflife.github.io/coldp/#reference-bibtex)
+and [CSL-JSON](https://catalogueoflife.github.io/coldp/#reference-json-csl) format is also supported.
 
 The ColDP format was developed to overcome limitations in existing formats for sharing taxonomic information, particularly Darwin Core Archives and the Annual Checklist Exchange Format used previously in COL.
 
-We recommend to read the [format specifications](https://github.com/CatalogueOfLife/coldp/blob/master/README.md) and the [ColDP publishing guidelines](https://github.com/CatalogueOfLife/coldp/blob/master/docs/publishing-guide.md).
+We recommend to read the [format specifications](https://catalogueoflife.github.io/coldp/) and the [ColDP publishing guidelines](https://catalogueoflife.github.io/coldp/docs/publishing-guide.html).
 
 ## Darwin Core Archive (DwC-A)
 
@@ -76,7 +76,7 @@ The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) include
 
 [TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a `=` or `≡` (homotypic) character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
 
-For a little more expressiveness we provide a small [publishing guide for TextTree](https://github.com/CatalogueOfLife/coldp/blob/master/docs/publishing-guide-txtree.md) based datasets which defines a small set of info keys and also a way to share structured references,
+For a little more expressiveness we provide a small [publishing guide for TextTree](https://catalogueoflife.github.io/coldp/docs/publishing-guide-txtree) based datasets which defines a small set of info keys and also a way to share structured references,
 turning the simple tree file into a small checklist archive.
 
 ## Excel
