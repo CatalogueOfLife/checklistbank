@@ -43,6 +43,7 @@ const DiffViewer = ({ location, addError, rank }) => {
   const [root, setRoot] = useState([]);
   const [root2, setRoot2] = useState([]);
   const [minRank, setMinRank] = useState(null);
+  const [rankFilter, setRankFilter] = useState(null);
   const [synonyms, setSynonyms] = useState(false);
   const [showParent, setShowParent] = useState(false);
   const [parentRank, setParentRank] = useState("");
@@ -86,6 +87,7 @@ const DiffViewer = ({ location, addError, rank }) => {
     setDatasetKey2(null);
     setRoot([]);
     setRoot2([]);
+    setRankFilter(null);
     setMinRank(null);
     history.push({
       ...location,
@@ -114,8 +116,7 @@ const DiffViewer = ({ location, addError, rank }) => {
     });
     try {
       const { data: diff } = await axios(
-        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${minRank ? "&minRank=" + minRank : ""
-        }${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true" : ""}${showParent ? "&parentRank=" + parentRank : ""}${!authorship ? "&authorship=false" : ""}`
+        `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${minRank ? "&minRank=" + minRank : ""}${rankFilter ? "&rankFilter=" + rankFilter : ""}${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true" : ""}${showParent ? "&parentRank=" + parentRank : ""}${!authorship ? "&authorship=false" : ""}`
       );
       let html;
       if (!diff) {
@@ -239,6 +240,24 @@ const DiffViewer = ({ location, addError, rank }) => {
               ))}
             </Select>
           </Col>
+
+          <Col style={{ marginLeft: "12px" }}>
+            <Select
+              value={rankFilter}
+              onChange={setRankFilter}
+              placeholder="Rank filter"
+              allowClear
+              showSearch
+              style={{ width: '200px' }}
+            >
+              {rank.map((r) => (
+                <Option key={r} value={r}>
+                  {r}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+
           <Col style={{ marginLeft: "12px" }}>
             Include: {" "}
             <Checkbox checked={authorship} onChange={(e) => setAuthorship(e.target.checked)}>
