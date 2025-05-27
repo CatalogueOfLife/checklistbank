@@ -375,10 +375,10 @@ class Root extends React.Component {
             key: "operation",
             render: (text, record) => (
               <>
-                <a
+                <a ddd={colKey}
                   href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
                     record
-                  )}&body=${this.getIssueBodyText(record)}&labels=xrelease,feedback`}
+                  )}&body=${this.getIssueBodyText(record,colKey)}&labels=xrelease,feedback,xr${colKey}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -413,8 +413,8 @@ class Root extends React.Component {
     return encodeURIComponent(template);
   };
 
-  getIssueBodyText = (record) => {
-    let template = `\`\`\`\n${JSON.stringify(record, null, 2)}\n\`\`\``;
+  getIssueBodyText = (record, colKey) => {
+    let template = `\`\`\`\n${JSON.stringify(record, null, 2)}\n\`\`\`\n\nUsing impact report based on [checklist ${colKey}](https://www.checklistbank.org/dataset/${colKey}/names?q=${record[`${currentPrefix}scientificName`]})`;
     return encodeURIComponent(template);
   };
 
