@@ -44,15 +44,23 @@ Popular dataset filters:
 
 We synchronise ChecklistBank with [checklist datasets in GBIF](https://www.gbif.org/dataset/search?type=CHECKLIST), so you have access to all these GBIF datasets from CLB.
 
-ChecklistBank distinguishes 3 kind of datasets indicated by their `origin` property:
+ChecklistBank distinguishes 4 kind of datasets indicated by their `origin` property:
 
 - `external`: datasets which are maintained outside of ChecklistBank and are imported for read accecss only. This is the vast majority of all datasets
 - `project`: datasets which are maintained inside ChecklistBank and which often include & sync data from other sources. The Catalogue of Life checklist is such a project with datasetKey=3
 - `release`: immutable snapshots of a project with stable identifiers
+- `xrelease`: immutable snapshots of an extended release of a project with stable identifiers
 
-The API also provides some simple magic dataset keys, that will allow you to access some datasets without knowing the latest key:
+### COL release keys
 
-- `{KEY}LR`: a substitute for the latest, public release of a project, e.g the latest COL checklist: https://api.checklistbank.org/dataset/3LR
+The API also provides some simple magic dataset keys, that will allow you to access release datasets without knowing the latest key.
+All you need is the dataset key `{PROJECT_KEY}` of the project:
+
+- `{PROJECT_KEY}LR`: a substitute for the latest, public release of a project, e.g the latest COL checklist: https://api.checklistbank.org/dataset/3LR
+- `{PROJECT_KEY}LXR`: a substitute for the latest, public, extended release of a project, e.g the latest COL XR: https://api.checklistbank.org/dataset/3LXR
+
+The annual editions of the Catalogue of Life are also directly accessible by their year in addition to their integer keys:
+
 - `COL{YEAR}`: a substitute for the annual release of the COL checklist in the given year with 4 digits: https://api.checklistbank.org/dataset/COL2023
 
 ## Vocabularies
@@ -210,19 +218,17 @@ https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&kingdom=Pla
 https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&authorship=Linneaus
 
 Alternatively there is also a [bulk matching](https://www.checklistbank.org/tools/name-match-async) method which creates an asynchroneous job similar to downloads.
-You must be authenticated to use it and will get an email notification once done. 
+You must be authenticated to use it and will get an email notification once done.
 When used via the API you will receive a job object with a key (UUID) that can be used to poll the API while it is still running. For example
 https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7
 
-When the job is finished this does give a 404 as we currently do not persist the jobs themselves. 
+When the job is finished this does give a 404 as we currently do not persist the jobs themselves.
 We are working on storing them like we do for exports/downloads, so they will resolve also after they have completed.
 
 To download actual results you can use the same job resource, but request the binary zip file like that:
 https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7.zip
 
 This will redirect you to the actual result file. Currently we are still keeping all job results, but this will likely change in the future as we will need to clean up older results at some point.
-
-
 
 Bulk matching accepts different inputs for names:
 
@@ -280,8 +286,6 @@ Query params for individual matches and column names in bulk input are called th
 - `subgenus`
 - `section`
 - `species`
-
-
 
 ## Names Index
 
