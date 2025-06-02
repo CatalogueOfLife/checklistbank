@@ -90,6 +90,7 @@ class DatasetDownload extends React.Component {
   exportDataset = (options) => {
     const { dataset, addError } = this.props;
 
+    console.log(options);
     axios
       .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
       .then((res) => {
@@ -325,6 +326,7 @@ class DatasetDownload extends React.Component {
                   format: selectedDataFormat,
                   synonyms: !synonyms,
                   bareNames,
+                  extended,
                   extinct,
                   excel,
                 };
@@ -334,12 +336,6 @@ class DatasetDownload extends React.Component {
                 }
                 if (excludeRanksBelow) {
                   options.minRank = excludeRanksBelow;
-                }
-                if (
-                  extended &&
-                  ["dwca", "coldp", "text tree"].includes(selectedDataFormat)
-                ) {
-                  options.extended = true;
                 }
                 this.exportDataset(options);
               }}

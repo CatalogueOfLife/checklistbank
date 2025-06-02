@@ -19,7 +19,7 @@ const AgentPresentation = ({
   return agent ? (
     <span style={style}>
       {(agent.given || agent.family) && (
-        <span style={{ display: "block", "text-decoration": "underline" }}>
+        <span style={{ display: "block", "textDecoration": "underline" }}>
           {[agent.family, agent.given].filter((a) => !!a).join(", ")}
         </span>
       )}
