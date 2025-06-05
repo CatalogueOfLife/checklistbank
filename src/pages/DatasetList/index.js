@@ -161,6 +161,12 @@ class DatasetList extends React.Component {
           },
         },
         {
+          title: "Publisher",
+          dataIndex: ["publisher", "name"],
+          key: "publisher",
+          sorter: true,
+        },
+        {
           title: "Contributor",
           dataIndex: "contributor",
           key: "contributor",
@@ -185,6 +191,7 @@ class DatasetList extends React.Component {
           title: "Origin",
           dataIndex: "origin",
           key: "origin",
+          sorter: true,
         },
         {
           title: "Contact",
@@ -195,11 +202,13 @@ class DatasetList extends React.Component {
           title: "Type",
           dataIndex: "type",
           key: "type",
+          sorter: true,
         },
         {
           title: "License",
           dataIndex: "license",
           key: "license",
+          sorter: true,
         },
         {
           title: "Geographic Scope",
