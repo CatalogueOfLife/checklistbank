@@ -70,7 +70,6 @@ import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
 import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
-import Analytics from "./Analytics";
 import config from "./config";
 
 const theme = {
@@ -85,7 +84,6 @@ const App = () => {
         <title>ChecklistBank (CLB)</title>
       </Helmet>
       <Router history={history}>
-        {["dev", "prod"].includes(config.env) && <Analytics />}
         <React.Fragment>
           <ThemeProvider theme={theme}>
             <Switch>
