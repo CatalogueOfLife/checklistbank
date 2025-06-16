@@ -28,7 +28,6 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>ChecklistBank</title>
-    <meta name="NODE_ENV" content="<%= process.env.NODE_ENV %>">
     <!-- REPLACE_WITH_SEO -->
   </head>
   <body>
@@ -45,7 +44,7 @@
       To create a production bundle, use `npm run build` or `yarn build`.      
     -->
     <script src="%PUBLIC_URL%/prism/prism.js"></script>
-<% if (process.env.NODE_ENV === 'prod') { %>
+<% if (process.env.NODE_ENV === 'production') { %>
     <script defer data-domain="checklistbank.org" src="https://plausible.io/js/script.js"></script>
 <% } %>
   </body>
