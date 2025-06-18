@@ -167,7 +167,9 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
 
     setLoading(true);
     const res = await axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector/publisher`
+      `${config.dataApi}dataset/${catalogueKey}/sector/publisher?${qs.stringify(
+        query
+      )}`
     );
 
     await Promise.all([
