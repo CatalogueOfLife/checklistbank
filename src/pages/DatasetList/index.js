@@ -544,38 +544,38 @@ class DatasetList extends React.Component {
     } = this.state;
     const { datasetOrigin, recentDatasets, datasetType, user, importState } =
       this.props;
-    defaultColumns[8].filters = datasetOrigin.map((i) => ({
+    defaultColumns[9].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
-    defaultColumns[18].filters = importState.map((i) => ({
+    defaultColumns[19].filters = importState.map((i) => ({
       text: _.startCase(i?.name),
       value: i.name,
     }));
     if (params.origin) {
-      defaultColumns[8].filteredValue = _.isArray(params.origin)
+      defaultColumns[9].filteredValue = _.isArray(params.origin)
         ? params.origin
         : [params.origin];
     } else {
-      defaultColumns[8].filteredValue = null;
+      defaultColumns[9].filteredValue = null;
     }
     defaultColumns[10].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.type) {
-      defaultColumns[10].filteredValue = _.isArray(params.type)
+      defaultColumns[11].filteredValue = _.isArray(params.type)
         ? params.type
         : [params.type];
     } else {
-      defaultColumns[10].filteredValue = null;
+      defaultColumns[11].filteredValue = null;
     }
     if (params.lastImportState) {
-      defaultColumns[18].filteredValue = _.isArray(params.lastImportState)
+      defaultColumns[19].filteredValue = _.isArray(params.lastImportState)
         ? params.lastImportState
         : [params.lastImportState];
     } else {
-      defaultColumns[18].filteredValue = null;
+      defaultColumns[19].filteredValue = null;
     }
 
     const filteredColumns = isEditorOrAdmin(this.props.user)
