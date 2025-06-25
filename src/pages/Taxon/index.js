@@ -877,20 +877,23 @@ class TaxonPage extends React.Component {
                   {_.get(taxon, "origin") && (
                     <PresentationItem md={md * 2} label="Origin">
                       <span>
-                      {_.get(taxon, "origin")}
-                      {this.state?.info?.decisions?.[taxon?.id] && (
-                        <>
-                          &nbsp;with {this.state?.info?.decisions?.[taxon?.id]?.mode} decision
-                          <DecisionBadge
-                            style={{ marginLeft: "10px" }}
-                            decision={this.state?.info?.decisions?.[taxon?.id]}
-                          />
-                        </>
-                      )}
+                        {_.get(taxon, "origin")}
+                        {this.state?.info?.decisions?.[taxon?.id] && (
+                          <>
+                            &nbsp;with{" "}
+                            {this.state?.info?.decisions?.[taxon?.id]?.mode}{" "}
+                            decision
+                            <DecisionBadge
+                              style={{ marginLeft: "10px" }}
+                              decision={
+                                this.state?.info?.decisions?.[taxon?.id]
+                              }
+                            />
+                          </>
+                        )}
                       </span>
                     </PresentationItem>
                   )}
-
                 </Col>
               </Row>
               {mergedIssues && mergedIssues.length > 0 && (
@@ -937,7 +940,11 @@ class TaxonPage extends React.Component {
                       <>
                         <NavLink
                           to={{
-                            pathname: `/dataset/${sourceTaxon.sourceDatasetKey}/taxon/${sourceTaxon.sourceId}`,
+                            pathname: `/dataset/${
+                              sourceTaxon.sourceDatasetKey
+                            }/taxon/${encodeURIComponent(
+                              sourceTaxon.sourceId
+                            )}`,
                           }}
                           exact={true}
                         >
