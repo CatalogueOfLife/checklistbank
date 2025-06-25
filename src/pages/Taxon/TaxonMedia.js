@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Image, Row, Col, Button } from "antd";
 import _ from "lodash";
+import LicenseIcon from "../../components/LicenseIcon";
+import { LinkOutlined } from "@ant-design/icons";
 
 const PAGE_SIZE = 10;
 export default ({ media }) => {
@@ -31,16 +33,19 @@ export default ({ media }) => {
                 src={i.url}
               />
             )}
-            <div style={{ marginTop: "-4px" }}>
-              {i.title || ""}
-              {i.capturedBy && `©  ${i.capturedBy}`}
-              {i.rightsHolder && `©  ${i.rightsHolder}`}
-              {i.link && (
+            <div style={{ marginTop: "-2px" }}>
+              {i.title || ''}
+              {i.rightsHolder && ` ©  ${i.rightsHolder}`}
+              {i.capturedBy && ` captured by ${i.capturedBy}`}
+              {i.captured && ` ${i.captured}`}
+              {i.link && <>&nbsp;<a href={i.link}><LinkOutlined/></a></>}
+              {i.license || i.remarks ? (
                 <>
-                  <br />
-                  <a href={i.link}>{i.link} </a>
+                <br/>
+                <LicenseIcon value={i.license}/>
+                {i.remarks && ` ${i.remarks}`}
                 </>
-              )}
+              ) : ""}                
             </div>
           </Col>
         ))}
