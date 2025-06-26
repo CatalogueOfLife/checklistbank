@@ -639,11 +639,11 @@ class TaxonPage extends React.Component {
                 </PresentationItem>
               )}
               {_.get(info, "typeMaterial") &&
-                info.typeMaterial[info?.taxon?.name?.id] && (
+                info.typeMaterial[info?.usage?.name?.id] && (
                   <PresentationItem md={md} label="Type material">
                     <TypeMaterial
                       data={_.get(info, "typeMaterial")}
-                      nameID={_.get(taxon, "name.id")}
+                      nameID={_.get(info, "usage.name.id")}
                     />
                   </PresentationItem>
                 )}
