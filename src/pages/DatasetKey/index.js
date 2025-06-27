@@ -38,6 +38,8 @@ import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "moment";
+import CataloguePublisherKey from "../catalogue/CataloguePublisherKey";
+
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);
@@ -333,6 +335,13 @@ class DatasetPage extends React.Component {
 
         {["release", "xrelease"].includes(dataset?.origin) &&
           section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
+
+        {sect === "publisher" && taxonOrNameKey && (
+          <CataloguePublisherKey
+            catalogueKey={datasetKey}
+            publisherKey={taxonOrNameKey}
+          />
+        )}
       </Layout>
     );
   }
