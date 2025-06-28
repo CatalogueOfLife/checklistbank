@@ -223,12 +223,6 @@ class TaxonPage extends React.Component {
         });
       };
 
-      if (
-        _.get(res, "data.usage.name.publishedInId") &&
-        _.get(res, `data.references[${_.get(res, "data.usage.name.publishedInId")}]`)
-      ) {
-        res.data.usage.name.publishedIn = _.get(res, `data.references[${_.get(res, "data.usage.name.publishedInId")}]`);
-      }
       let referenceIndexMap = {};
       if (_.get(res, "data.references")) {
         Object.keys(res.data.references).forEach((k, i) => {
@@ -274,7 +268,7 @@ class TaxonPage extends React.Component {
     }
   };
 
-  getIncludesAndIssues = () => {
+  getIncludesAndIssues = async () => {
     const {
       match: {
         params: { taxonOrNameKey: taxonKey },
@@ -339,8 +333,11 @@ class TaxonPage extends React.Component {
       referenceIndexMap,
     } = this.state;
 
+    console.debug(sourceTaxon?.issues);
+    console.debug(info?.issues);
+
     const mergedIssues = [
-      ...new Set([...(sourceTaxon?.issues || []), ...info?.issues]),
+      ...new Set([...(sourceTaxon?.issues || []), ...info?.issues || []]),
     ];
 
     return (
@@ -454,10 +451,10 @@ class TaxonPage extends React.Component {
 
           <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
             <TabPane tab="About" key="1">
-              {_.get(info, "usage.name.publishedIn.citation") && (
+              {_.get(info, "publishedIn.citation") && (
                 <PresentationItem md={md} label="Published in">
                   <Linkify>
-                    {_.get(info, "usage.name.publishedIn.citation", "")}
+                    {_.get(info, "publishedIn.citation", "")}
                   </Linkify>
                 </PresentationItem>
               )}
