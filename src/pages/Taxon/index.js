@@ -188,7 +188,7 @@ class TaxonPage extends React.Component {
       // sector keys are only present if its a catalogue
       if (_.get(res, "data.usage.sectorKey")) {
         axios(
-          `${config.dataApi}dataset/${datasetKey}/sector/${_.get(res, "data.sectorKey")}`
+          `${config.dataApi}dataset/${datasetKey}/sector/${_.get(res, "data.usage.sectorKey")}`
         ).then((sector) => {
           const logoUrl = `${config.dataApi}dataset/${datasetKey}/logo/source/${_.get(sector, "data.subjectDatasetKey")}`;
           axios(logoUrl)
@@ -200,7 +200,6 @@ class TaxonPage extends React.Component {
             .catch(() => {
               // ignore, there is no logo
             });
-
           axios(
             `${config.dataApi}dataset/${_.get(sector, "data.subjectDatasetKey")}`
           ).then((dataset) => {
@@ -332,9 +331,6 @@ class TaxonPage extends React.Component {
       edit,
       referenceIndexMap,
     } = this.state;
-
-    console.debug(sourceTaxon?.issues);
-    console.debug(info?.issues);
 
     const mergedIssues = [
       ...new Set([...(sourceTaxon?.issues || []), ...info?.issues || []]),
@@ -725,43 +721,16 @@ class TaxonPage extends React.Component {
                   </NavLink>
                 </PresentationItem>
               )}
-              <Row style={{ borderBottom: "1px solid #eee" }}>
-                {_.get(taxon, "scrutinizer") && (
-                  <Col span={12}>
-                    <PresentationItem md={md * 2} label="Taxonomic scrutiny">
-                      {`${_.get(taxon, "scrutinizer")}${
-                        _.get(taxon, "scrutinizerDate")
-                          ? ", " +
-                            moment(_.get(taxon, "scrutinizerDate")).format("LL")
-                          : ""
-                      }`}
-                    </PresentationItem>
-                  </Col>
-                )}
-
-                <Col span={12}>
-                  {_.get(taxon, "origin") && (
-                    <PresentationItem md={md * 2} label="Origin">
-                      <span>
-                        {_.get(taxon, "origin")}
-                        {this.state?.info?.decisions?.[taxon?.id] && (
-                          <>
-                            &nbsp;with{" "}
-                            {this.state?.info?.decisions?.[taxon?.id]?.mode}{" "}
-                            decision
-                            <DecisionBadge
-                              style={{ marginLeft: "10px" }}
-                              decision={
-                                this.state?.info?.decisions?.[taxon?.id]
-                              }
-                            />
-                          </>
-                        )}
-                      </span>
-                    </PresentationItem>
-                  )}
-                </Col>
-              </Row>
+              {_.get(taxon, "scrutinizer") && (
+                <PresentationItem md={md} label="Taxonomic scrutiny">
+                  {`${_.get(taxon, "scrutinizer")}${
+                    _.get(taxon, "scrutinizerDate")
+                      ? ", " +
+                        moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                      : ""
+                  }`}
+                </PresentationItem>
+              )}
               {mergedIssues && mergedIssues.length > 0 && (
                 <PresentationItem md={md} label="Issues and flags">
                   <div>
@@ -796,6 +765,26 @@ class TaxonPage extends React.Component {
                       );
                     })}
                   </div>
+                </PresentationItem>
+              )}
+              {_.get(taxon, "origin") && !_.get(sourceDataset, "title") && (
+                <PresentationItem md={md} label="Origin">
+                  <span>
+                    {_.get(taxon, "origin")}
+                    {this.state?.info?.decisions?.[taxon?.id] && (
+                      <>
+                        &nbsp;with{" "}
+                        {this.state?.info?.decisions?.[taxon?.id]?.mode}{" "}
+                        decision
+                        <DecisionBadge
+                          style={{ marginLeft: "10px" }}
+                          decision={
+                            this.state?.info?.decisions?.[taxon?.id]
+                          }
+                        />
+                      </>
+                    )}
+                  </span>
                 </PresentationItem>
               )}
               {_.get(sourceDataset, "title") && (
