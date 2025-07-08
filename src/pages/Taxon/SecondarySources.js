@@ -3,6 +3,8 @@ import _ from "lodash";
 import { NavLink } from "react-router-dom";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const SecondarySources = ({ info }) => {
@@ -33,6 +35,7 @@ const SecondarySources = ({ info }) => {
       var entityPath = src?.entity === 'name' ? 'name' : 'taxon';
       return (
         <div>
+          <i2>{_.startCase(key)}</i2> &nbsp;-&nbsp;&nbsp;
           <NavLink
             key={key}
             to={{
@@ -41,7 +44,6 @@ const SecondarySources = ({ info }) => {
           >
             {datasets[src?.datasetKey]?.title + " "}
           </NavLink>
-          : {_.startCase(key)}
         </div>
       )
   })
