@@ -24,16 +24,19 @@ import Includes from "../../Taxon/Includes"
 
 
 
-const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError}) => {
-    const [includes, setIncludes] = useState([]);
-    const [synonyms, setSynonyms] = useState([]);
-    const [taxonID, setTaxonID] = useState(null)
-    useEffect(()=>{
+const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError, rank}) => {
+  const [includes, setIncludes] = useState([]);
+  const [synonyms, setSynonyms] = useState([]);
+  const [taxonID, setTaxonID] = useState(null)
+  const genusRankIndex = rank.indexOf("genus");
+
+  useEffect(()=>{
         if(taxon?.id !== taxonID){
             setTaxonID(taxon?.id)
             getIncludes()
         }
     }, [taxon])
+
 
   const  getIncludes = async () => {
     setIncludes([])
@@ -57,9 +60,13 @@ const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError}) => {
       };
 
     return <>
-        <Row style={{width: "100%"}}>
-        <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} onTaxonClick={onTaxonClick}  dataset={dataset}/>
-        </Row>
+        {(rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
+          rank.indexOf(_.get(taxon, "name.rank")) > -1
+        ) && (
+          <Row style={{width: "100%"}}>
+            <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} onTaxonClick={onTaxonClick}  dataset={dataset}/>
+          </Row>
+        )}
         <Row style={{width: "100%", marginTop: "12px"}}>
             <Col span={24} style={{paddingRight: "12px"}}>
             <h4>Accepted taxa</h4>

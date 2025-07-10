@@ -46,7 +46,6 @@ const TaxonComparer = ({ location, addError, rank }) => {
     const { search } = location;
 
     const params = qs.parse(search);
-    console.log(params);
     if (params.dataset2) {
       setDatasetKey2(params.dataset2);
       getDataset(params.dataset2).then((dataset) => {
@@ -225,7 +224,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
               </Col>
             </Row>
             <Row>
-              {datasetKey1 && root && (
+              {(datasetKey1 && root &&
                 <TaxonSummary
                   datasetKey={datasetKey1}
                   dataset={dataset1}
