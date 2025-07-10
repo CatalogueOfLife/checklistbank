@@ -331,7 +331,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 `primaryDatasetUsage.keyedClassification.${rank}.labelHtml`
               ),
             }}
-          />
+          />&nbsp;
           {secondaryDataset && (
             <React.Fragment>
               <br />
@@ -342,7 +342,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                     `secondaryDatasetUsage.keyedClassification.${rank}.labelHtml`
                   ),
                 }}
-              />
+              />&nbsp;
             </React.Fragment>
           )}
         </React.Fragment>
