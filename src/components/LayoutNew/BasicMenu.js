@@ -279,6 +279,14 @@ class BasicMenu extends Component {
                 <span>Vocabularies</span>
               </NavLink>
             </Menu.Item>
+            
+            {!user && (
+              <Menu.Item key="toolsIndex">
+                <NavLink to={{ pathname: "/tools/index" }}>
+                  <span>... all tools</span>
+                </NavLink>
+              </Menu.Item>
+            )}
           </SubMenu>
 
           {Auth.isAuthorised(user, ["editor", "admin"]) && (

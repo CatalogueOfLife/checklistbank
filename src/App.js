@@ -60,6 +60,7 @@ import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
 import TaxAlign from "./pages/tools/TaxAlign";
 
+import ToolIndex from "./pages/tools/ToolIndex";
 import TaxonComparer from "./pages/tools/TaxonComparer";
 import NameUsageSearch from "./pages/NameSearch/Search";
 import GlobalRedirect from "./pages/GlobalRedirect";
@@ -405,6 +406,12 @@ const App = () => {
                 key="vocabIndexKey"
                 path={`/vocabulary/:key`}
                 component={VocabularyKey}
+              />
+              <Route
+                exact
+                key="toolsIndex"
+                path={`/tools/index`}
+                component={ToolIndex}
               />
               <Route
                 exact
