@@ -209,11 +209,59 @@ class BasicMenu extends Component {
               </span>
             }
           >
+            <Menu.Item key="namematch">
+              <NavLink to={{ pathname: "/tools/name-match" }}>
+                <span>Name matching</span>
+              </NavLink>
+            </Menu.Item>
             <Menu.Item key="nameUsageSearch">
               <NavLink to={{ pathname: "/nameusage/search" }}>
                 <span>Cross dataset search</span>
               </NavLink>
             </Menu.Item>
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+              <Menu.Item key="nameIndexSearch">
+                <NavLink to={{ pathname: "/namesindex" }}>
+                  <span>Names index search</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+            {_.isArray(_selectedKeys) &&
+              _selectedKeys.includes("nameIndexKey") &&
+              taxonOrNameKey && (
+                <Menu.Item key="nameIndexKey">Nidx: {taxonOrNameKey}</Menu.Item>
+            )}
+            {user && (
+              <Menu.Item key="taxalign">
+                <NavLink to={{ pathname: "/tools/taxonomic-alignment" }}>
+                  <span>Taxonomic alignment</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+
+            {user && (
+              <Menu.Item key="datasetComparison">
+                <NavLink to={{ pathname: "/tools/dataset-comparison" }}>
+                  <span>Dataset comparison</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+              <Menu.Item key="diffviewer">
+                <NavLink to={{ pathname: "/tools/diff-viewer" }}>
+                  <span>Diff viewer</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+
+            {Auth.isAuthorised(user, ["admin", "editor"]) && (
+              <Menu.Item key="gbif-impact">
+                <NavLink to={{ pathname: "/tools/gbif-impact" }}>
+                  <span>GBIF impact</span>
+                </NavLink>
+              </Menu.Item>
+            )}
+
             <Menu.Item key="metadatagenerator">
               <NavLink to={{ pathname: "/tools/metadata-generator" }}>
                 <span>Metadata generator</span>
@@ -226,58 +274,11 @@ class BasicMenu extends Component {
                 </NavLink>
               </Menu.Item>
             )}
-            <Menu.Item key="namematch">
-              <NavLink to={{ pathname: "/tools/name-match" }}>
-                <span>Name match</span>
-              </NavLink>
-            </Menu.Item>
             <Menu.Item key="vocabulary">
               <NavLink to={{ pathname: "/vocabulary" }}>
                 <span>Vocabularies</span>
               </NavLink>
             </Menu.Item>
-            {Auth.isAuthorised(user, ["admin", "editor"]) && (
-              <Menu.Item key="gbif-impact">
-                <NavLink to={{ pathname: "/tools/gbif-impact" }}>
-                  <span>GBIF impact</span>
-                </NavLink>
-              </Menu.Item>
-            )}
-            {Auth.isAuthorised(user, ["admin", "editor"]) && (
-              <Menu.Item key="diffviewer">
-                <NavLink to={{ pathname: "/tools/diff-viewer" }}>
-                  <span>Diff viewer</span>
-                </NavLink>
-              </Menu.Item>
-            )}
-            {user && (
-              <Menu.Item key="taxalign">
-                <NavLink to={{ pathname: "/tools/taxonomic-alignment" }}>
-                  <span>Taxonomic alignment</span>
-                </NavLink>
-              </Menu.Item>
-            )}
-            {user && (
-              <Menu.Item key="datasetComparison">
-                <NavLink to={{ pathname: "/tools/dataset-comparison" }}>
-                  <span>Dataset comparison</span>
-                </NavLink>
-              </Menu.Item>
-            )}
-
-            {Auth.isAuthorised(user, ["admin", "editor"]) && (
-              <Menu.Item key="nameIndexSearch">
-                <NavLink to={{ pathname: "/namesindex" }}>
-                  <span>Names index search</span>
-                </NavLink>
-              </Menu.Item>
-            )}
-
-            {_.isArray(_selectedKeys) &&
-              _selectedKeys.includes("nameIndexKey") &&
-              taxonOrNameKey && (
-                <Menu.Item key="nameIndexKey">Nidx: {taxonOrNameKey}</Menu.Item>
-              )}
           </SubMenu>
 
           {Auth.isAuthorised(user, ["editor", "admin"]) && (

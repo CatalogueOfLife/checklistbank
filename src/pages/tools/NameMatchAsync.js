@@ -202,14 +202,10 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                 <Paragraph>
                   Your uploaded file has to be a comma (CSV) or tab (TSV)
                   delimited text file with a header row to specify column names
-                  -
-                  <a
-                    target="_blank"
-                    href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
-                  >
+                  (<a target="_blank" href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv">
                     example
-                  </a>
-                  . It can contain any number of columns which will all be
+                  </a>). 
+                  It can contain any number of columns which will all be
                   included again in the result, but must at least contain the
                   column <code className="code">scientificName</code>. For
                   better matching results we recommend to include as many of the
@@ -256,13 +252,13 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                   <List.Item>
                     <List.Item.Meta
                       title="kingdom"
-                      description="The kingdom the name is classified in."
+                      description="The kingdom the name is classified in, e.g. Animalia"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="phylum"
-                      description="The phylum the name is classified in."
+                      description="The phylum the name is classified in, e.g. Arthropoda"
                     />
                   </List.Item>
                   <List.Item>
@@ -274,7 +270,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                   <List.Item>
                     <List.Item.Meta
                       title="class"
-                      description="The class the name is classified in."
+                      description="The class the name is classified in, e.g. Insecta"
                     />
                   </List.Item>
                   <List.Item>
@@ -286,37 +282,37 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                   <List.Item>
                     <List.Item.Meta
                       title="order"
-                      description="The order the name is classified in."
+                      description="The order the name is classified in, e.g. Lepidoptera"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="suborder"
-                      description="The suborder the name is classified in."
+                      description="The suborder the name is classified in, e.g. Glossata"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="superfamily"
-                      description="The superfamily the name is classified in."
+                      description="The superfamily the name is classified in, e.g. Papilionoidea"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="family"
-                      description="The family the name is classified in."
+                      description="The family the name is classified in, e.g. Nymphalidae"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="subfamily"
-                      description="The subfamily the name is classified in."
+                      description="The subfamily the name is classified in, e.g. Danainae"
                     />
                   </List.Item>
                   <List.Item>
                     <List.Item.Meta
                       title="tribe"
-                      description="The tribe the name is classified in."
+                      description="The tribe the name is classified in, e.g. Danaini"
                     />
                   </List.Item>
                   <List.Item>
@@ -328,7 +324,7 @@ const NameMatchAsync = ({ addError, rank, user }) => {
                   <List.Item>
                     <List.Item.Meta
                       title="genus"
-                      description="The genus the name is classified in."
+                      description="The genus the name is classified in, e.g. Danaus"
                     />
                   </List.Item>
                   <List.Item>

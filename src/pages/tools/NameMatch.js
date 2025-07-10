@@ -141,33 +141,39 @@ const NameMatch = ({ addError, rank, issueMap }) => {
     return result;
   };
 
+  const matchParams = (name) => {
+    let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
+    if (name.code) {
+      nidxParams += `&code=${name.code}`;
+    }
+    if (name.rank) {
+      nidxParams += `&rank=${name.rank}`;
+    }
+    if (name.author) {
+      nidxParams += `&authorship=${encodeURIComponent(name.author)}`;
+    }
+    if (name.code) {
+      nidxParams += `&code=${encodeURIComponent(name.code)}`;
+    }
+    if (name.status) {
+      nidxParams += `&status=${encodeURIComponent(name.status)}`;
+    }
+
+    rank.forEach((r) => {
+      if (name[r]) {
+        nidxParams += `&${r}=${encodeURIComponent(name[r])}`;
+      }
+    });
+
+    return nidxParams;
+  };
+
   const match = async (name) => {
     try {
-      let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
-      if (name.code) {
-        nidxParams += `&code=${name.code}`;
-      }
-      if (name.rank) {
-        nidxParams += `&rank=${name.rank}`;
-      }
-      if (name.author) {
-        nidxParams += `&authorship=${encodeURIComponent(name.author)}`;
-      }
-      if (name.code) {
-        nidxParams += `&code=${encodeURIComponent(name.code)}`;
-      }
-      if (name.status) {
-        nidxParams += `&status=${encodeURIComponent(name.status)}`;
-      }
-
-      rank.forEach((r) => {
-        if (name[r]) {
-          nidxParams += `&${r}=${encodeURIComponent(name[r])}`;
-        }
-      });
+      let params = matchParams(name);
 
       const { data: primaryDatasetMatch } = await axios(
-        `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${nidxParams}`
+        `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${params}`
       );
       const {
         usage: primaryDatasetUsage,
@@ -185,10 +191,11 @@ const NameMatch = ({ addError, rank, issueMap }) => {
       if (original) {
         name.original = original;
       }
+      name.apilink = `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${params}&verbose=true`;
 
       if (secondaryDataset) {
         const { data: secondaryDatasetMatch } = await axios(
-          `${config.dataApi}dataset/${secondaryDataset.key}/match/nameusage${nidxParams}`
+          `${config.dataApi}dataset/${secondaryDataset.key}/match/nameusage${params}`
         );
         const { usage: secondaryDatasetUsage } = secondaryDatasetMatch;
         name.secondaryDatasetUsage = {
@@ -477,19 +484,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
 
         <Row style={{ marginBottom: "10px" }}>
           <Col>
-            If your list contains more than 5000 names, you should{" "}
-            <Button
-              type="link"
-              style={{ padding: 0 }}
-              onClick={() => {
-                history.push({
-                  pathname: `/tools/name-match-async`,
-                });
-              }}
-            >
-              submit it here
-            </Button>{" "}
-            for asynchronous processing.{" "}
+            Please chose between one of three ways of submitting your names to the matching service:
           </Col>
           <Col flex="auto"></Col>
           {names && step === 0 && (
@@ -566,17 +561,40 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   </p>
                   <p className="ant-upload-hint">
                     Your csv must contain a column{" "}
-                    <code className="code">scientificName</code> (which may
-                    include the author) and optional but recommended columns{" "}
-                    <code className="code">author</code>,{" "}
+                    <code className="code">scientificName</code> (which may include the author)
+                  </p>
+                  <p className="ant-upload-hint">
+                    and optional but recommended columns:
+                  </p>
+                  <p className="ant-upload-hint">
+                    <code className="code">authorship</code>,{" "}
                     <code className="code">rank</code>,{" "}
-                    <code className="code">status</code>,{" "}
-                    <code className="code">code</code> (nomenclatural code), and
-                    any higher taxon (like
-                    <code className="code">kingdom</code>: Animalia,
-                    <code className="code">domain</code>: Bacteria,
-                    <code className="code">order</code>: Lepidoptera or{" "}
-                    <code className="code">family</code>: Fabaceae)
+                    <code className="code">status</code>,{" "}nomenclatural{" "}
+                    <code className="code">code</code> and the classification at any rank:
+                  </p>
+                  <p className="ant-upload-hint">
+                    <code className="code">kingdom</code>,{" "}
+                    <code className="code">phylum</code>,{" "}
+                    <code className="code">class</code>,{" "}
+                    <code className="code">order</code>,{" "}
+                    <code className="code">suborder</code>,{" "}
+                    <code className="code">superfamly</code>,{" "}
+                    <code className="code">family</code>,{" "}
+                    <code className="code">tribe</code>
+                  </p>
+                  <p className="ant-upload-hint">
+                    Read the full list of supported parameters on our 
+                    <Button
+                      type="link"
+                      style={{ padding: 0 }}
+                      onClick={() => {
+                        history.push({
+                          pathname: `/tools/name-match-async`,
+                        });
+                      }}
+                    >
+                      asynchronous matching
+                    </Button> page.
                   </p>
                 </Dragger>
               </Panel>
@@ -646,6 +664,33 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 </Row>
               </Panel>
             </Collapse>
+            <Row style={{ marginTop: "10px" }}>
+              <Col>
+                If your list contains <i><u>more than 5000 names</u></i>, you should use our{" "}
+                <Button
+                  type="link"
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    history.push({
+                      pathname: `/tools/name-match-async`,
+                    });
+                  }}
+                >
+                  asynchronous matching
+                </Button>.{" "}
+              </Col>
+              <Col flex="auto"></Col>
+              {names && step === 0 && (
+                <Col>
+                  <span>{`${names.length} name${
+                    names.length === 1 ? "" : "s"
+                  } provided for matching `}</span>
+                  <Button type="primary" onClick={() => setStep(1)}>
+                    Next
+                  </Button>
+                </Col>
+              )}
+            </Row>            
           </>
         )}
         {step === 1 && (
@@ -813,7 +858,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   <Tooltip
                     placement="topLeft"
                     title={
-                      "The name from your uploaded csv or the subject dataset you picked"
+                      "The scientific name from your uploaded csv or the subject dataset you picked"
                     }
                   >
                     Provided Scientific Name
@@ -1128,6 +1173,16 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 },
               },
               ...getClassificationColumns(),
+              {
+                title: "API",
+                dataIndex: ["apilink"],
+                key: "apilink",
+                render: (text, record) => {
+                  return (
+                    <a target="_blank" href={_.get(record, "apilink")}>API</a>
+                  )
+                }
+              },
             ]}
           />
         )}
