@@ -10,14 +10,17 @@ ChecklistBank supports a variety of formats for both uploads and downloads.
 - [Newick](#newick)
 - [DOT](#dot)
 
-## Simple vs Extended Downloads
+## Data Content
 
 For downloads most formats support 2 flavors, a `simple` and an `extended` version.
 To save us space and processing, ChecklistBank defaults to the simple flavor unless the extended was speficially requested.
+The simple flavor includes the classification in a parent-child form and does not include a flat, denormalised classification.
+For an additional flat classification to be included you can turn on the classification box.
 
-The `simple` downloads only include very basic information: the scientific name, authorship, rank, status, code, classification and the extinct flag.
+The `simple` downloads only include very basic information: the scientific name, authorship, rank, status, code, the next higher parent and the extinct flag.
 
 The `extended` format exports all available information including distributions, vernacular names, type material, treatment documents, references, etc.
+It is rather resource intensive to create, so please only use it when needed.
 
 ## Catalogue of Life Data Package (ColDP)
 

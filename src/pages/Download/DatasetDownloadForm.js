@@ -194,7 +194,7 @@ class DatasetDownload extends React.Component {
         <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
           Archive format{" "}
           <a
-            href="/about/formats"
+            href="/about/formats#data-formats"
             target="_blank"
             style={{ marginLeft: "8px" }}
           >
@@ -219,7 +219,19 @@ class DatasetDownload extends React.Component {
             }
             optionType="button"
           />
+        </Row>
 
+        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+          Content{" "}
+          <a
+            href="/about/formats#data-content"
+            target="_blank"
+            style={{ marginLeft: "8px" }}
+          >
+            <InfoCircleOutlined />
+          </a>
+        </Row>
+        <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
           <Checkbox
             checked={classification}
             onChange={(e) => this.setState({ classification: e.target.checked })}
