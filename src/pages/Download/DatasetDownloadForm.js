@@ -47,7 +47,7 @@ class DatasetDownload extends React.Component {
       synonyms: false,
       bareNames: false,
       extinct: null,
-      excel: false,
+      classification: false,
       extended: false,
       dataAccess: null,
       minRank: "GENUS",
@@ -89,8 +89,6 @@ class DatasetDownload extends React.Component {
 
   exportDataset = (options) => {
     const { dataset, addError } = this.props;
-
-    console.log(options);
     axios
       .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
       .then((res) => {
@@ -127,7 +125,6 @@ class DatasetDownload extends React.Component {
         )}`
       )
       .then(({ data: rootTaxon }) => {
-        console.log(rootTaxon);
         this.setState({ rootTaxon });
       })
       .catch((err) => addError(err));
@@ -139,7 +136,7 @@ class DatasetDownload extends React.Component {
       synonyms,
       bareNames,
       extinct,
-      excel,
+      classification,
       excludeRanksBelow,
       dataAccess,
       selectedDataFormat,
@@ -224,11 +221,11 @@ class DatasetDownload extends React.Component {
           />
 
           <Checkbox
-            checked={excel}
-            onChange={(e) => this.setState({ excel: e.target.checked })}
+            checked={classification}
+            onChange={(e) => this.setState({ classification: e.target.checked })}
             style={{ marginLeft: "8px" }}
           >
-            Excel
+            Classification
           </Checkbox>
 
           {dataFormat.find(
@@ -350,8 +347,11 @@ class DatasetDownload extends React.Component {
                   bareNames,
                   extended,
                   extinct,
-                  excel,
+                  classification,
                 };
+                if (classification) {
+                  options.taxGroups = true;
+                }
                 if (rootTaxon) {
                   options.root = {};
                   options.root.id = rootTaxon.id;
