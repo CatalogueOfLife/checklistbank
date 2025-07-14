@@ -39,13 +39,13 @@ const cczero = () => (
  */
 const LicenseIcon = ({ value }) =>
   <> 
-    {value.includes("cc") ? (<Icon component={cccc} />) : null}
-    {value.includes("0") ? (<Icon component={cczero} />) : null}
-    {value.includes("pd") ? (<Icon component={ccpd} />) : null}
-    {value.includes("by") ? (<Icon component={ccby} />) : null}
-    {value.includes("nc") ? (<Icon component={ccnc} />) : null}
-    {value.includes("nd") ? (<Icon component={ccnd} />) : null}
-    {value.includes("sa") ? (<Icon component={ccsa} />) : null}
+    {value && value.includes("cc") ? (<Icon component={cccc} />) : null}
+    {value && value.includes("0") ? (<Icon component={cczero} />) : null}
+    {value && value.includes("pd") ? (<Icon component={ccpd} />) : null}
+    {value && value.includes("by") ? (<Icon component={ccby} />) : null}
+    {value && value.includes("nc") ? (<Icon component={ccnc} />) : null}
+    {value && value.includes("nd") ? (<Icon component={ccnd} />) : null}
+    {value && value.includes("sa") ? (<Icon component={ccsa} />) : null}
   </>
 
 
