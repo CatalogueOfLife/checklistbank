@@ -62,11 +62,19 @@ Darwin Core Archives may include one or many data files, depending on the scope 
 
 ChecklistBank currently interprets the following DwC extensions:
 
-- [gbif:VernacularName](https://rs.gbif.org/extension/gbif/1.0/vernacularname.xml)
+- [dwc:MeasurementOrFact](https://rs.gbif.org/extension/measurements_or_facts_2024-02-19.xml)
+- [eol:Media](https://rs.gbif.org/extension/eol/media_extension.xml)
+- [eol:Reference](https://rs.gbif.org/extension/eol/reference_extension.xml)
+- [gbif:Description](https://rs.gbif.org/extension/gbif/1.0/description.xml)
 - [gbif:Distribution](https://rs.gbif.org/extension/gbif/1.0/distribution.xml)
-- [gbif:Reference](https://rs.gbif.org/extension/gbif/1.0/references.xml)
+- [gbif:Identifier](https://rs.gbif.org/extension/gbif/1.0/identifier.xml)
 - [gbif:Multimedia](https://rs.gbif.org/extension/gbif/1.0/multimedia.xml)
+- [gbif:References](https://rs.gbif.org/extension/gbif/1.0/references.xml)
+- [gbif:SpeciesProfile](https://rs.gbif.org/extension/gbif/1.0/speciesprofile.xml)
+- [gbif:TypesAndSpecimen](https://rs.gbif.org/extension/gbif/1.0/typesandspecimen.xml)
+- [gbif:VernacularName](https://rs.gbif.org/extension/gbif/1.0/vernacularname.xml)
 
+Note that not all terms of the above extensions will be consumed at this stage.
 Data from all other DwC extensions is available via the [verbatim browser](https://www.checklistbank.org/dataset/1010/verbatim) though.
 
 ## Annual Checklist Exchange Format (ACEF)
