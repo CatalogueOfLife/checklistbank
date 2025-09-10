@@ -19,26 +19,14 @@ export default ({ media }) => {
         .filter((m) => m.type === "image" && !!m.url)
         .map((i) => (
           <Col key={i.url} span={12} style={{ paddingBottom: "12px" }}>
-            {i.url.indexOf("zenodo.org") === -1 ? (
-              <Image
-                preview={{
-                  src: i.url,
-                }}
-                src={`//api.gbif.org/v1/image/unsafe/x260/${encodeURIComponent(
-                  i.url
-                )}`}
-                fallback={fallback}
-              />
-            ) : (
-              <Image
-                preview={{
-                  src: i.url,
-                }}
-                height={260}
-                src={i.url}
-                fallback={fallback}
-              />
-            )}
+            <Image
+              preview={{
+                src: i.url,
+              }}
+              height={260}
+              src={i.thumbnail}
+              fallback={fallback}
+            />
             <div style={{ marginTop: "-2px" }}>
               {i.title || ""}
               {i.rightsHolder && ` ©  ${i.rightsHolder}`}
