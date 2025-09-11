@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Row, Col, Button } from "antd";
+import { Image, Row, Col, Button, Skeleton } from "antd";
 import _ from "lodash";
 import LicenseIcon from "../../components/LicenseIcon";
 import { LinkOutlined } from "@ant-design/icons";
@@ -27,6 +27,12 @@ export default ({ media }) => {
                 height={260}
                 src={i.thumbnail}
                 fallback={fallback}
+                placeholder={
+                  <Skeleton.Image
+                    active
+                    style={{ height: "260px", width: "260px" }}
+                  />
+                }
               />
             ) : (
               <Image
@@ -36,6 +42,12 @@ export default ({ media }) => {
                 height={260}
                 src={i.url}
                 fallback={fallback}
+                placeholder={
+                  <Skeleton.Image
+                    active
+                    style={{ height: "260px", width: "260px" }}
+                  />
+                }
               />
             )}
             <div style={{ marginTop: "-2px" }}>
