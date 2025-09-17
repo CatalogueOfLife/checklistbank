@@ -75,12 +75,6 @@ class SourceMetrics extends React.Component {
       this.getData();
     }
   };
-  getPublisherData = async () => {
-    const { datasetKey, location, addError } = this.props;
-    const publisherRes = await axios(
-      `${config.dataApi}dataset/${datasetKey}/sector/publisher`
-    );
-  };
   getData = () => {
     const { datasetKey, location, addError } = this.props;
     const params = qs.parse(_.get(location, "search"));
@@ -89,10 +83,9 @@ class SourceMetrics extends React.Component {
 
     Promise.all([
       axios(
-        /* `${config.dataApi}dataset?limit=1000&contributesTo=${datasetKey}&sortBy=alias` */
         `${config.dataApi}dataset/${datasetKey}/source`
       ),
-      axios(`${config.dataApi}dataset/${datasetKey}/sector/publisher`),
+      axios(`${config.dataApi}dataset/${datasetKey}/sector/publisher?limit=1000`),
     ])
       .then(([res, publisherRes]) => {
         let columns = {};
