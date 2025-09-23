@@ -5,6 +5,8 @@ import axios from "axios";
 import config from "../../config";
 import _ from "lodash";
 import { getTypeColor } from "./TypeMaterial";
+import linkify from "linkify-html";
+import MergedDataBadge from "../../components/MergedDataBadge";
 class TypeMaterialPopover extends React.Component {
   constructor(props) {
     super(props);
@@ -37,18 +39,22 @@ class TypeMaterialPopover extends React.Component {
   };
 
   getContent = () => {
-    const { typeMaterial, loading } = this.state;
-    if (loading) {
-      return <Spin />;
-    } else if (typeMaterial.length === 1) {
-      return typeMaterial[0].citation;
+    const { typeMaterial, nameId } = this.props;
+    const data = typeMaterial?.[nameId] || [];
+    if (data.length === 1) {
+      return data[0].citation;
     } else {
       return (
         <ul>
-          {typeMaterial.map((s) => (
+          {data.map((s) => (
             <>
               {" "}
               <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag>
+              {s.merged && (
+                <>
+                  <MergedDataBadge />{" "}
+                </>
+              )}
               {s?.citation && (
                 <span
                   dangerouslySetInnerHTML={{
@@ -64,16 +70,17 @@ class TypeMaterialPopover extends React.Component {
   };
 
   render = () => {
-    const { referenceId } = this.props;
+    const { typeMaterial, nameId } = this.props;
+    const data = typeMaterial?.[nameId] || [];
 
-    return referenceId ? (
+    return data.length > 0 ? (
       <Popover
         placement={this.props.placement || "left"}
         title="Type Material"
-        onVisibleChange={(visible) => visible && this.getData()}
         content={<div style={{ maxWidth: "500px" }}>{this.getContent()}</div>}
         trigger="click"
       >
+        {" "}
         <TagOutlined style={{ cursor: "pointer" }} />
       </Popover>
     ) : (

@@ -35,6 +35,14 @@ const ReferencesTable = ({
               </NavLink>
             </Col>
             <Col span={20} flex="auto">
+              {s?.sourceDataset?.key !== primarySourceDatasetKey && (
+                <MergedDataBadge
+                  createdBy={s?.createdBy}
+                  datasetKey={s.datasetKey}
+                  verbatimSourceKey={s?.verbatimSourceKey}
+                  sourceDatasetKey={s?.sourceDataset?.key}
+                />
+              )}
               <span
                 id={`col-refererence-${s.id}`}
                 dangerouslySetInnerHTML={{
@@ -50,10 +58,15 @@ const ReferencesTable = ({
               )}
             </Col>
           </Row>
-          {s?.sourceDataset?.key !== primarySourceDatasetKey && (
+          {/*  {s?.sourceDataset?.key !== primarySourceDatasetKey && (
             <Row>
               <Col style={{ paddingLeft: "32px" }}>
-                <MergedDataBadge />
+                <MergedDataBadge
+                  createdBy={s?.createdBy}
+                  datasetKey={s.datasetKey}
+                  verbatimSourceKey={s?.verbatimSourceKey}
+                  sourceDatasetKey={s?.sourceDataset?.key}
+                />
                 Source:{" "}
                 <NavLink
                   to={{
@@ -64,7 +77,7 @@ const ReferencesTable = ({
                 </NavLink>
               </Col>
             </Row>
-          )}
+          )} */}
         </>
       ))}
     </div>

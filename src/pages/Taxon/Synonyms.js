@@ -77,11 +77,22 @@ const SynonymsTable = ({
           <>
             {s?.sourceDatasetKey &&
               _.get(primarySource, "key") !== s?.sourceDatasetKey && (
-                <MergedDataBadge />
+                <MergedDataBadge
+                  createdBy={s?.createdBy}
+                  datasetKey={s.datasetKey}
+                  sourceDatasetKey={s?.sourceDatasetKey}
+                  verbatimSourceKey={s.verbatimSourceKey}
+                />
               )}
             {decisions?.[s?.id] && (
               <DecisionBadge decision={decisions?.[s?.id]} />
-            )}{" "}
+            )}
+            <TypeMaterialPopover
+              datasetKey={datasetKey}
+              typeMaterial={typeMaterial}
+              nameId={_.get(s, "name.id")}
+              placement="top"
+            />{" "}
             {_.get(s, "name.nomStatus") ? `(${getNomStatus(s.name)})` : ""}{" "}
             {_.get(s, "status") === "misapplied" && _.get(s, "accordingTo")
               ? _.get(s, "accordingTo")
@@ -104,13 +115,7 @@ const SynonymsTable = ({
             }
             placement="top"
           />
-          <TypeMaterialPopover
-            datasetKey={datasetKey}
-            typeMaterial={typeMaterial}
-            nameId={_.get(s, "name.id")}
-            placement="top"
-          />
-          {s?.sourceDatasetKey &&
+          {/* {s?.sourceDatasetKey &&
             _.get(primarySource, "key") !== s?.sourceDatasetKey && (
               <>
                 {" "}
@@ -119,7 +124,7 @@ const SynonymsTable = ({
                   href={`#col-sourcedataset-${s?.sourceDatasetKey}`}
                 >{`[source: ${s?.sourceDatasetKey}]`}</a>
               </>
-            )}
+            )} */}
         </BorderedListItem>
         {isGroup &&
           syn.length > 1 &&

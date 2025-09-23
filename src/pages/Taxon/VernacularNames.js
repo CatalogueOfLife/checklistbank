@@ -20,7 +20,16 @@ class VernacularNamesTable extends React.Component {
           key: "merged",
           width: 12,
           render: (text, record) =>
-            record?.merged ? <MergedDataBadge /> : "",
+            record?.merged ? (
+              <MergedDataBadge
+                createdBy={record?.createdBy}
+                datasetKey={record?.datasetKey}
+                verbatimSourceKey={record?.verbatimSourceKey}
+                sourceDatasetKey={record?.sourceDatasetKey}
+              />
+            ) : (
+              ""
+            ),
         },
         {
           title: "Name",
@@ -90,13 +99,14 @@ class VernacularNamesTable extends React.Component {
     var countryName = name.country;
     var languageName = name.language;
 
-    
     if (name.country) {
       if (countryAlpha2 && name.country.length === 2) {
-        countryName = _.get(countryAlpha2, `[${name.country}].title`) || name.country;
+        countryName =
+          _.get(countryAlpha2, `[${name.country}].title`) || name.country;
       } else if (countryAlpha3 && name.country.length === 3) {
-        countryName = _.get(countryAlpha3, `[${name.country}].title`) || name.country;
-      }  
+        countryName =
+          _.get(countryAlpha3, `[${name.country}].title`) || name.country;
+      }
     }
     if (language && name.language) {
       languageName = _.get(language, `[${name.language}]`) || name.language;
@@ -108,7 +118,7 @@ class VernacularNamesTable extends React.Component {
       languageTitle: languageName,
     };
   };
-  
+
   render() {
     const { style } = this.props;
     const { data, columns } = this.state;
