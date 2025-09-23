@@ -809,7 +809,7 @@ class NameSearchPage extends React.Component {
                       this.updateSearch({ secondarySourceGroup: value })
                     }
                     vocab={facetSecondarySourceGroup || infoGroup}
-                    label="Source Group"
+                    label="Secondary information"
                   />
                 )}
 
