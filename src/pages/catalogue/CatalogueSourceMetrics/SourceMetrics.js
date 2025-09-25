@@ -2,7 +2,17 @@ import React from "react";
 import axios from "axios";
 import qs from "query-string";
 import { NavLink, withRouter } from "react-router-dom";
-import { Table, Alert, Row, Col, Form, Select, Switch, Tooltip } from "antd";
+import {
+  Table,
+  Alert,
+  Row,
+  Col,
+  Form,
+  Select,
+  Switch,
+  Tooltip,
+  Checkbox,
+} from "antd";
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
@@ -14,6 +24,7 @@ import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import TaxonomicCoverage from "./TaxonomicCoverage";
 import Links from "./Links";
+import MergedDataBadge from "../../../components/MergedDataBadge";
 const _ = require("lodash");
 
 const formItemLayout = {
@@ -55,6 +66,7 @@ class SourceMetrics extends React.Component {
       loading: false,
       releaseKey: null,
       hideUnchanged: false,
+      showMerged: true,
     };
   }
 
@@ -82,10 +94,10 @@ class SourceMetrics extends React.Component {
     this.setState({ loading: true, releaseKey });
 
     Promise.all([
+      axios(`${config.dataApi}dataset/${datasetKey}/source?splitMerge=true`),
       axios(
-        `${config.dataApi}dataset/${datasetKey}/source`
+        `${config.dataApi}dataset/${datasetKey}/sector/publisher?limit=1000`
       ),
-      axios(`${config.dataApi}dataset/${datasetKey}/sector/publisher?limit=1000`),
     ])
       .then(([res, publisherRes]) => {
         let columns = {};
@@ -104,7 +116,7 @@ class SourceMetrics extends React.Component {
             );
           }),
           ...datasetData.map((r) => {
-            return this.getMetrics(datasetKey, r.key).then((metrics) => {
+            return this.getMetrics(datasetKey, r).then((metrics) => {
               columns = _.merge(columns, metrics);
               return {
                 ...r,
@@ -175,7 +187,7 @@ class SourceMetrics extends React.Component {
             ...res
               .filter((r) => !!r?.key)
               .map((r) => {
-                return this.getMetrics(releaseKey, r?.key)
+                return this.getMetrics(releaseKey, r)
                   .then((metrics) => ({
                     ...r,
                     selectedReleaseMetrics: metrics,
@@ -205,7 +217,21 @@ class SourceMetrics extends React.Component {
           : [];
         this.setState({
           loading: false,
-          data: res,
+          data: res.sort((a, b) => {
+            if (!!a.id && !b.id) {
+              return a;
+            } else if (!!b.id && !a.id) {
+              return b;
+            } else if (a.alias && b.alias) {
+              return a.alias.localeCompare(b.alias) === 0
+                ? a.merged === true
+                  ? 1
+                  : -1
+                : a.alias.localeCompare(b.alias);
+            } else {
+              return 0;
+            }
+          }),
           filteredData,
           hideUnchanged,
           err: null,
@@ -216,9 +242,9 @@ class SourceMetrics extends React.Component {
       });
   };
 
-  getMetrics = (datasetKey, sourceDatasetKey) => {
+  getMetrics = (datasetKey, source) => {
     return axios(
-      `${config.dataApi}dataset/${datasetKey}/source/${sourceDatasetKey}/metrics`
+      `${config.dataApi}dataset/${datasetKey}/source/${source.key}/metrics?merged=${source?.merged}`
     ).then((res) => res.data);
   };
   getPublisherMetrics = (datasetKey, publisherId) => {
@@ -259,7 +285,7 @@ class SourceMetrics extends React.Component {
           ...this.state.data
             .filter((r) => !!r?.key)
             .map((r) => {
-              return this.getMetrics(newReleaseKey, r?.key)
+              return this.getMetrics(newReleaseKey, r)
                 .then((metrics) => {
                   r.selectedReleaseMetrics = metrics;
                 })
@@ -337,6 +363,7 @@ class SourceMetrics extends React.Component {
       basePath,
       isProject,
       addError,
+      origin,
     } = this.props;
 
     const columnsSorter =
@@ -524,7 +551,12 @@ class SourceMetrics extends React.Component {
         render: (text, record) => {
           return (
             <React.Fragment>
-              {record?.id && "Publisher: "}
+              {record?.id && (
+                <>
+                  <MergedDataBadge style={{ marginLeft: "0px" }} />
+                  Publisher:{" "}
+                </>
+              )}
               <NavLink
                 to={{
                   pathname: record?.id
@@ -536,6 +568,10 @@ class SourceMetrics extends React.Component {
                 }}
                 exact={true}
               >
+                {" "}
+                {!!record?.merged && (
+                  <MergedDataBadge style={{ marginLeft: "0px" }} />
+                )}{" "}
                 {`${record?.alias || record?.key}${
                   isProject && record?.version
                     ? " [" + record?.version + "]"
@@ -580,7 +616,20 @@ class SourceMetrics extends React.Component {
       <React.Fragment>
         <div>
           <Row>
-            <Col md={12} sm={24}>
+            {origin === "xrelease" && (
+              <Col md={2} sm={24}>
+                Include <MergedDataBadge />{" "}
+                <Checkbox
+                  checked={this.state.showMerged}
+                  onChange={({ target: { checked } }) =>
+                    this.setState({
+                      showMerged: checked,
+                    })
+                  }
+                />
+              </Col>
+            )}
+            <Col md={10} sm={24}>
               <Form.Item
                 {...formItemLayout}
                 label="Select view"
@@ -664,9 +713,13 @@ class SourceMetrics extends React.Component {
         {!error && (
           <Table
             size="small"
-            rowKey={(record) => record?.key || record?.id}
+            rowKey={(record) => `${record.key || record.id}-${record.merged}`}
+            showSorterTooltip={false}
             columns={columns}
             dataSource={(hideUnchanged ? filteredData : data).filter((d) => {
+              if (!this.state.showMerged && (d?.merged || !!d?.id)) {
+                return false;
+              }
               if (!d?.metrics?.publisherKey) {
                 return true;
               } else {

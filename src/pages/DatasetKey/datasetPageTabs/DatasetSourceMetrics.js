@@ -83,8 +83,11 @@ class DatasetSourceMetrics extends React.Component {
         <SourceMetrics
           isProject={false}
           catalogueKey={
-            [ "xrelease", "release"].includes(dataset?.origin) ? dataset?.sourceKey : dataset?.key
+            ["xrelease", "release"].includes(dataset?.origin)
+              ? dataset?.sourceKey
+              : dataset?.key
           }
+          origin={dataset?.origin}
           datasetKey={dataset?.key}
           basePath={`/dataset/${dataset?.key}`}
           omitList={[dataset?.key]}
