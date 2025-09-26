@@ -135,6 +135,8 @@ class ContextProvider extends React.Component {
     _selectedKeys: [], // Menu
     _openKeys: [], // Menu
     syncState: {},
+    components: {},
+    health: {},
     syncingSector: null,
     syncingDataset: null,
     background: {},
@@ -216,6 +218,7 @@ class ContextProvider extends React.Component {
 
     getSyncState: () => this.getSyncState(),
     getBackground: () => this.getBackground(),
+    getSystemHealth: () => this.getSystemHealth(),
   };
 
   componentDidMount() {
@@ -445,6 +448,39 @@ class ContextProvider extends React.Component {
       this.setState({ background });
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  getSystemHealth = async () => {
+    try {
+      const { data: components } = await axios.get(
+        `${config.dataApi}admin/component`
+      );
+      const allComponentsRunning = Object.keys(components).reduce((a, c) => {
+        return a && components[c];
+      }, true);
+      this.setState({
+        allComponentsRunning,
+        components,
+      });
+    } catch (err) {
+      console.log(err);
+      //this.state.addError(err);
+    }
+    try {
+      const { data: health } = await axios.get(
+        `${config.dataApi}monitor/healthcheck`
+      );
+      const allHealthChecksPassing = Object.keys(health).reduce((a, c) => {
+        return a && health[c].healthy;
+      }, true);
+      this.setState({
+        allHealthChecksPassing,
+        health,
+      });
+    } catch (err) {
+      console.log(err);
+      // this.state.addError(err);
     }
   };
 

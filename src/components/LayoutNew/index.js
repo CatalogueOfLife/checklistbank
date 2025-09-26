@@ -23,6 +23,8 @@ import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill";
 import { truncate } from "../util";
+import Health from "./Health";
+
 // import withWidth, { MEDIUM } from "./hoc/Width";
 
 const compose = _.flowRight;
@@ -262,6 +264,7 @@ class SiteLayout extends Component {
               )}
             </div>
             <div className="header__secondary" style={{ flex: "0 0 auto" }}>
+              <Health />
               <UserMenu />
               <Sync />
             </div>

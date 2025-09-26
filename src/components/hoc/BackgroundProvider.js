@@ -11,10 +11,14 @@ class BackgroundProvider extends React.Component {
     this.timer = setInterval(() => {
       this.props.getBackground();
     }, backgroundHeartBeat);
+    this.systemTimer = setInterval(() => {
+      this.props.getSystemHealth();
+    }, backgroundHeartBeat);
   };
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    clearInterval(this.systemTimer);
   }
 
   render = () => {
@@ -22,8 +26,9 @@ class BackgroundProvider extends React.Component {
   };
 }
 
-const mapContextToProps = ({ getBackground }) => ({
+const mapContextToProps = ({ getBackground, getSystemHealth }) => ({
   getBackground,
+  getSystemHealth,
 });
 
 export default withContext(mapContextToProps)(BackgroundProvider);

@@ -37,6 +37,7 @@ import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
 import ProjectEditors from "./pages/catalogue/Editors";
 
 import Admin from "./pages/Admin";
+import SystemHealth from "./pages/SystemHealth";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import AdminJobs from "./pages/Admin/Jobs";
@@ -419,7 +420,12 @@ const App = () => {
                 path={`/about/:mdFile`}
                 component={About}
               />
-
+              <Route
+                exact
+                key="systemHealth"
+                path={`/system-health`}
+                component={SystemHealth}
+              />
               <Route component={Exception404} />
             </Switch>
           </ThemeProvider>
