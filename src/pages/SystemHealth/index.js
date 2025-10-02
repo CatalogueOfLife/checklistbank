@@ -35,7 +35,7 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
               </Col>
               <Col span={10} style={{ padding: "16px" }}>
                 <Tag color={components[comp] ? "green" : "red"}>
-                  {components[comp] ? "Operational" : "Not operational"}
+                  {components[comp] ? "Active" : "Unavailable"}
                 </Tag>
               </Col>
               <Col flex="auto" />
