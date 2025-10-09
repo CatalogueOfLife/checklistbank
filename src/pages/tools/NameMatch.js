@@ -149,8 +149,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
     if (name.rank) {
       nidxParams += `&rank=${name.rank}`;
     }
-    if (name.author) {
-      nidxParams += `&authorship=${encodeURIComponent(name.author)}`;
+    if (name.authorship) {
+      nidxParams += `&authorship=${encodeURIComponent(name.authorship)}`;
     }
     if (name.code) {
       nidxParams += `&code=${encodeURIComponent(name.code)}`;
