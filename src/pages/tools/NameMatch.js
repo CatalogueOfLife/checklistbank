@@ -299,6 +299,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
             ) {
               result.forEach(function (e) {
                 e.providedScientificName = e.scientificname;
+                e.providedAuthorship = e.authorship || "";
                 e.code = e.code || defaultCode;
                 e.scientificName = undefined;
               });
@@ -879,6 +880,20 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 key: "providedScientificName",
               },
               {
+                title: (
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      "The authorship from your uploaded csv or the subject dataset you picked"
+                    }
+                  >
+                    Provided Authorship
+                  </Tooltip>
+                ),
+                dataIndex: "providedAuthorship",
+                key: "providedAuthorship",
+              },
+              {
                 title: "Issues",
                 dataIndex: ["issues", "issues"],
                 key: "issues",
@@ -1111,6 +1126,30 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                         </React.Fragment>
                       )}
                     </React.Fragment>
+                  );
+                },
+              },
+              {
+                title: "Authorship",
+                dataIndex: ["usage", "authorship"],
+                key: "authorship",
+                render: (text, record) => {
+                  return (
+                    <>
+                      {_.get(record, "primaryDatasetUsage.id") && (
+                        <span className="col-reference-link">[1] </span>
+                      )}
+                      {_.get(record, "primaryDatasetUsage.authorship")}
+                      {secondaryDataset && (
+                        <>
+                          <br />
+                          {_.get(record, "secondaryDatasetUsage.id") && (
+                            <span className="col-reference-link">[2] </span>
+                          )}
+                          {_.get(record, "secondaryDatasetUsage.authorship")}
+                        </>
+                      )}
+                    </>
                   );
                 },
               },
