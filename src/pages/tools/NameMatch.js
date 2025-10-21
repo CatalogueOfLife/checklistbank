@@ -331,7 +331,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 `primaryDatasetUsage.keyedClassification.${rank}.labelHtml`
               ),
             }}
-          />&nbsp;
+          />
+          &nbsp;
           {secondaryDataset && (
             <React.Fragment>
               <br />
@@ -342,7 +343,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                     `secondaryDatasetUsage.keyedClassification.${rank}.labelHtml`
                   ),
                 }}
-              />&nbsp;
+              />
+              &nbsp;
             </React.Fragment>
           )}
         </React.Fragment>
@@ -484,7 +486,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
 
         <Row style={{ marginBottom: "10px" }}>
           <Col>
-            Please chose between one of three ways of submitting your names to the matching service:
+            Please chose between one of three ways of submitting your names to
+            the matching service:
           </Col>
           <Col flex="auto"></Col>
           {names && step === 0 && (
@@ -561,7 +564,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   </p>
                   <p className="ant-upload-hint">
                     Your csv must contain a column{" "}
-                    <code className="code">scientificName</code> (which may include the author)
+                    <code className="code">scientificName</code> (which may
+                    include the author)
                   </p>
                   <p className="ant-upload-hint">
                     and optional but recommended columns:
@@ -569,8 +573,9 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   <p className="ant-upload-hint">
                     <code className="code">authorship</code>,{" "}
                     <code className="code">rank</code>,{" "}
-                    <code className="code">status</code>,{" "}nomenclatural{" "}
-                    <code className="code">code</code> and the classification at any rank:
+                    <code className="code">status</code>, nomenclatural{" "}
+                    <code className="code">code</code> and the classification at
+                    any rank:
                   </p>
                   <p className="ant-upload-hint">
                     <code className="code">kingdom</code>,{" "}
@@ -583,7 +588,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                     <code className="code">tribe</code>
                   </p>
                   <p className="ant-upload-hint">
-                    Read the full list of supported parameters on our 
+                    Read the full list of supported parameters on our
                     <Button
                       type="link"
                       style={{ padding: 0 }}
@@ -594,7 +599,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                       }}
                     >
                       asynchronous matching
-                    </Button> page.
+                    </Button>{" "}
+                    page.
                   </p>
                 </Dragger>
               </Panel>
@@ -666,7 +672,11 @@ const NameMatch = ({ addError, rank, issueMap }) => {
             </Collapse>
             <Row style={{ marginTop: "10px" }}>
               <Col>
-                If your list contains <i><u>more than 5000 names</u></i>, you should use our{" "}
+                If your list contains{" "}
+                <i>
+                  <u>more than 5000 names</u>
+                </i>
+                , you should use our{" "}
                 <Button
                   type="link"
                   style={{ padding: 0 }}
@@ -677,7 +687,8 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   }}
                 >
                   asynchronous matching
-                </Button>.{" "}
+                </Button>
+                .{" "}
               </Col>
               <Col flex="auto"></Col>
               {names && step === 0 && (
@@ -690,7 +701,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                   </Button>
                 </Col>
               )}
-            </Row>            
+            </Row>
           </>
         )}
         {step === 1 && (
@@ -1179,9 +1190,11 @@ const NameMatch = ({ addError, rank, issueMap }) => {
                 key: "apilink",
                 render: (text, record) => {
                   return (
-                    <a target="_blank" href={_.get(record, "apilink")}>API</a>
-                  )
-                }
+                    <a target="_blank" href={_.get(record, "apilink")}>
+                      API
+                    </a>
+                  );
+                },
               },
             ]}
           />
