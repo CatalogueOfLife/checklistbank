@@ -346,16 +346,11 @@ class DatasetMeta extends React.Component {
                 displayData.alias
               )}
             </PresentationItem>
-            <PresentationItem
-              label={`${displayData.version ? "Version" : ""}${
-                displayData.version && displayData.issued ? " / " : ""
-              }${displayData.issued ? "Issued" : ""}`}
-            >
-              {(displayData.version || displayData.issued) &&
-                `${displayData.version ? displayData.version : ""}${
-                  displayData.issued ? " / " + displayData.issued : ""
-                }`}
+
+            <PresentationItem label="Title">
+              {displayData.title}
             </PresentationItem>
+
             <PresentationItem label="DOI">
               {displayData.doi ? <DoiPresentation doi={displayData.doi} /> : ""}
             </PresentationItem>
@@ -370,6 +365,17 @@ class DatasetMeta extends React.Component {
               ) : (
                 displayData.description
               )}
+            </PresentationItem>
+
+            <PresentationItem
+              label={`${displayData.version ? "Version" : ""}${
+                displayData.version && displayData.issued ? " / " : ""
+              }${displayData.issued ? "Issued" : ""}`}
+            >
+              {(displayData.version || displayData.issued) &&
+                `${displayData.version ? displayData.version : ""}${
+                  displayData.issued ? " / " + displayData.issued : ""
+                }`}
             </PresentationItem>
 
             <PresentationItem label="Contact">
