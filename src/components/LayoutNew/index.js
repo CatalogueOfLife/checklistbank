@@ -202,8 +202,7 @@ class SiteLayout extends Component {
               {selectedDataset && (
                 <React.Fragment>
                   <Row>
-                    <Col flex="auto"></Col>
-                    <Col>
+                    <Col flex="auto">
                       <DatasetLogo
                         datasetKey={selectedDataset.key}
                         style={{ height: "50px", marginRight: "10px" }}
@@ -211,7 +210,7 @@ class SiteLayout extends Component {
                     </Col>
                     <Col
                       style={{
-                        maxWidth: "700px",
+                        maxWidth: "600px",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                       }}
@@ -240,10 +239,31 @@ class SiteLayout extends Component {
                           >{`in ${catalogue.title}`}</h5>
                         )}
                     </Col>
-                    <Col>
-                      <span style={{ marginRight: "8px", marginLeft: "8px" }}>
-                        {" "}
-                        {selectedDataset.version || selectedDataset.issued}
+                    <Col
+                      style={{
+                        maxWidth: "60px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      <span
+                        style={{
+                          marginRight: "8px",
+                          marginLeft: "8px",
+                          display: "inline",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <Tooltip
+                          placement="bottom"
+                          title={`${
+                            selectedDataset.version
+                              ? "Version: " + selectedDataset.version
+                              : "Issued: " + selectedDataset.issued
+                          }`}
+                        >
+                          {selectedDataset.version || selectedDataset.issued}
+                        </Tooltip>
                       </span>
                       <DatasetOriginPill dataset={selectedDataset} />
                     </Col>
