@@ -522,13 +522,6 @@ class DatasetMeta extends React.Component {
                 </a>
               )}
             </PresentationItem>
-            <PresentationItem label="Logo Url">
-              {displayData.url && (
-                <a href={displayData.logoUrl} target="_blank">
-                  {displayData.logoUrl}
-                </a>
-              )}
-            </PresentationItem>
             <PresentationItem label="Data Conversion">
               {displayData?.conversion?.url && (
                 <a href={displayData?.conversion?.url} target="_blank">
