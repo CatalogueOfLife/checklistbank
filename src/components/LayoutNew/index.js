@@ -241,7 +241,9 @@ class SiteLayout extends Component {
                     </Col>
                     <Col
                       style={{
-                        maxWidth: "60px",
+                        maxWidth: `${
+                          selectedDataset?.title.length > 500 ? 60 : 120
+                        }px`,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                       }}
