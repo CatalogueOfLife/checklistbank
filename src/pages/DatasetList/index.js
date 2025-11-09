@@ -548,6 +548,10 @@ class DatasetList extends React.Component {
       text: _.startCase(i),
       value: i,
     }));
+    defaultColumns[11].filters = datasetType.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
     defaultColumns[19].filters = importState.map((i) => ({
       text: _.startCase(i?.name),
       value: i.name,
