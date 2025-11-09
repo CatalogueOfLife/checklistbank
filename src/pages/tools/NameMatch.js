@@ -99,9 +99,9 @@ const getPercent = (num, total) => Math.round((num / total) * 100);
       <br />
     </React.Fragment>
   )); */
-const COL_LR = {
-  key: "3LR",
-  alias: "COL LR",
+const COL_LXR = {
+  key: "3LXR",
+  alias: "COL LXR",
 };
 const NameMatch = ({ addError, rank, issueMap }) => {
   const [error, setError] = useState(null);
@@ -109,7 +109,7 @@ const NameMatch = ({ addError, rank, issueMap }) => {
   const [defaultCode, setDefaultCode] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [step, setStep] = useState(0);
-  const [primaryDataset, setPrimaryDataset] = useState(COL_LR);
+  const [primaryDataset, setPrimaryDataset] = useState(COL_LXR);
   const [secondaryDataset, setSecondaryDataset] = useState(null);
   const [subjectDataset, setSubjectDataset] = useState(null);
   const [subjectTaxon, setSubjectTaxon] = useState(null);

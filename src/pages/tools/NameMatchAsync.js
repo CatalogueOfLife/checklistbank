@@ -39,15 +39,15 @@ const { Paragraph, Text, Title } = Typography;
 
 const { Dragger } = Upload;
 
-const COL_LR = {
-  key: "3LR",
-  alias: "COL LR",
+const COL_LXR = {
+  key: "3LXR",
+  alias: "COL LXR",
 };
 const NameMatchAsync = ({ addError, rank, user }) => {
   const [error, setError] = useState(null);
 
   const [submissionError, setSubmissionError] = useState(null);
-  const [primaryDataset, setPrimaryDataset] = useState(COL_LR);
+  const [primaryDataset, setPrimaryDataset] = useState(COL_LXR);
   const [format, setFormat] = useState("TSV");
   const isValidFile = (file) => {
     return (
