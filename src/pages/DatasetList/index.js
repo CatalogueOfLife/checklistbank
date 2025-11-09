@@ -542,19 +542,11 @@ class DatasetList extends React.Component {
       params,
       pagination,
     } = this.state;
-    const { datasetOrigin, recentDatasets, datasetType, user, importState } =
+    const { datasetOrigin, recentDatasets, datasetType, license, user, importState } =
       this.props;
     defaultColumns[9].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
-    }));
-    defaultColumns[11].filters = datasetType.map((i) => ({
-      text: _.startCase(i),
-      value: i,
-    }));
-    defaultColumns[19].filters = importState.map((i) => ({
-      text: _.startCase(i?.name),
-      value: i.name,
     }));
     if (params.origin) {
       defaultColumns[9].filteredValue = _.isArray(params.origin)
@@ -563,7 +555,7 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[9].filteredValue = null;
     }
-    defaultColumns[10].filters = datasetType.map((i) => ({
+    defaultColumns[11].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
@@ -574,6 +566,21 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[11].filteredValue = null;
     }
+    defaultColumns[12].filters = license.map((i) => ({
+      text: _.startCase(i),
+      value: i,
+    }));
+    if (params.license) {
+      defaultColumns[12].filteredValue = _.isArray(params.license)
+        ? params.license
+        : [params.license];
+    } else {
+      defaultColumns[12].filteredValue = null;
+    }
+    defaultColumns[19].filters = importState.map((i) => ({
+      text: _.startCase(i?.name),
+      value: i.name,
+    }));
     if (params.lastImportState) {
       defaultColumns[19].filteredValue = _.isArray(params.lastImportState)
         ? params.lastImportState
@@ -896,6 +903,7 @@ const mapContextToProps = ({
   user,
   datasetType,
   datasetOrigin,
+  license,
   catalogueKey,
   recentDatasets,
   importState,
@@ -904,6 +912,7 @@ const mapContextToProps = ({
   user,
   datasetType,
   datasetOrigin,
+  license,
   catalogueKey,
   recentDatasets,
   importState,
