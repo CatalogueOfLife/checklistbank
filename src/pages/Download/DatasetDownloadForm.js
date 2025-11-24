@@ -62,13 +62,20 @@ class DatasetDownload extends React.Component {
     }
 
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
-    if (taxonID) {
+    if (taxonID && dataset) {
       this.getRootTaxon(taxonID);
     }
   };
   componentDidUpdate = (prevProps) => {
     if (prevProps?.dataset?.key !== this.props?.dataset?.key) {
       this.getSettings();
+    }
+    const taxonID = _.get(
+      qs.parse(_.get(this.props.location, "search")),
+      "taxonID"
+    );
+    if (taxonID && prevProps?.dataset?.key !== this.props?.dataset?.key) {
+      this.getRootTaxon(taxonID);
     }
   };
   getSettings = () => {
@@ -234,7 +241,9 @@ class DatasetDownload extends React.Component {
         <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
           <Checkbox
             checked={classification}
-            onChange={(e) => this.setState({ classification: e.target.checked })}
+            onChange={(e) =>
+              this.setState({ classification: e.target.checked })
+            }
             style={{ marginLeft: "8px" }}
           >
             Classification
