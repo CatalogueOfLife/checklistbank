@@ -56,9 +56,11 @@ We recommend to read the [format specifications](https://catalogueoflife.github.
 
 ## Darwin Core Archive (DwC-A)
 
-Darwin Core Archive (DwC-A) is a standard for biodiversity informatics data that makes use of the [Darwin Core](https://dwc.tdwg.org/list/) terms to produce a single, self-contained dataset for sharing species-level (checklist) data, species-occurrence data or sampling-event data. Each archive contains a set of text files, in standard comma- or tab-delimited format, along with a simple descriptor file (_meta.xml_) to document how the files are organised. The format is defined in the [Darwin Core Text Guidelines](https://dwc.tdwg.org/text/) (GBIF 2017).
+Darwin Core Archive (DwC-A) is a standard for biodiversity informatics data that makes use of the [Darwin Core](https://dwc.tdwg.org/list/) terms to produce a single, self-contained dataset for sharing taxonomic (checklist), species-occurrence or sampling-event data.
+Similar to ColDP these archives package up column separated files, e.g. CSV or TAB delimited files, but are restricted by a _star schema_ that especially limits sharing of structured references. Only Taxon core [DwC archives known as checklists](https://github.com/gbif/ipt/wiki/BestPracticesChecklists) are supported in ChecklistBank.
+The format is defined in the [Darwin Core Text Guidelines](https://dwc.tdwg.org/text/) (GBIF 2017).
 
-Darwin Core Archives may include one or many data files, depending on the scope of the dataset published. As a minimum, they should include a required core data file with values for a standard set of Darwin Core terms. For checklist data, each record should include an identifier supplied as dwc:taxonID. The definitive list of core Taxon terms can be found in the [Darwin Core Taxon Extension](http://rs.gbif.org/core/dwc_taxon_2015-04-24.xml). For more information about preparation of a DwC-A, please refer to the GBIF [DwC-A How-to Guide](https://github.com/gbif/ipt/wiki/DwCAHowToGuide).
+Darwin Core checklist archives may include one or many data files, depending on the scope of the dataset published. As a minimum, they should include the required core dwc:Taxon data file with values for a standard set of Darwin Core terms. For checklist data, each record should include an identifier supplied as dwc:taxonID. The definitive list of core Taxon terms can be found in the [Darwin Core Taxon Extension](http://rs.gbif.org/core/dwc_taxon_2015-04-24.xml). For more information about preparation of a DwC-A, please refer to the GBIF [DwC-A How-to Guide](https://github.com/gbif/ipt/wiki/DwCAHowToGuide).
 
 ChecklistBank currently interprets the following DwC extensions:
 
@@ -73,14 +75,36 @@ ChecklistBank currently interprets the following DwC extensions:
 - [gbif:SpeciesProfile](https://rs.gbif.org/extension/gbif/1.0/speciesprofile.xml)
 - [gbif:TypesAndSpecimen](https://rs.gbif.org/extension/gbif/1.0/typesandspecimen.xml)
 - [gbif:VernacularName](https://rs.gbif.org/extension/gbif/1.0/vernacularname.xml)
+- [col:NameRelation](https://rs.gbif.org/sandbox/extension/col-name-relation.xml) which mimicks the [ColDP name relation](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#namerelation) entity.
 
 Note that not all terms of the above extensions will be consumed at this stage.
-Data from all other DwC extensions is available via the [verbatim browser](https://www.checklistbank.org/dataset/1010/verbatim) though.
+Data from all other DwC extensions is available via the [verbatim browser](https://www.checklistbank.org/dataset/1010/verbatim) though (the link shows FishBase as an example).
+
+### EML COL metadata
+
+In addition to the GBIF EML profile COL supports a few custom properties inside the `<additionalMetadata>` block
+which are defined in the ColDP [metadata.yaml](https://github.com/CatalogueOfLife/coldp/blob/master/metadata.yaml) profile and missing from regular EML files:
+
+```
+<dataset>
+  ...
+  <additionalMetadata>
+    <metadata>
+      <gbif>...</gbif>
+      <col>
+        <confidence>5</confidence>
+        <completeness>95</completeness>
+        <version>v.48 (06/2018)</version>
+        <feedbackUrl>https://github.com/CatalogueOfLife/data/issues</feedbackUrl>
+      </col>
+    </metadata>
+  </additionalMetadata>
+</dataset>
+```
 
 ## Annual Checklist Exchange Format (ACEF)
 
-The previous data format used by COL, the Annual Checklist Exchange Format (ACEF), can still be used to submit data,
-although the new ColDP format is recommended.
+The previous data format used by COL, the Annual Checklist Exchange Format (ACEF), can still be used to submit data as a zipped archive, although the new ColDP format is recommended. ACEF focuses on species information and is very limited when it comes to higher taxa and nomenclature.
 The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) includes several tables with pre-defined fields ([list of tables and fields](/docs/acef/List_of_tables_and_fields_2014.pdf), [entity relationship diagram](/docs/acef/ERD_DataSubmissionFormat_29Sep2014.pdf)). The September 2014 version is the latest release.
 
 ## TextTree
@@ -99,11 +123,29 @@ Excel restricts the maximum amount of records to just above 1 million, so spread
 
 ## Newick
 
-[Newick](https://en.wikipedia.org/wiki/Newick_format) format is a way of representing graph-theoretical trees with edge lengths using parentheses and commas.
+The [Newick](https://en.wikipedia.org/wiki/Newick_format) format is a way of representing graph-theoretical trees with edge lengths using parentheses and commas.
 It is often used with phylogenetic data.
-The New Hampshire eXtended format (which COL implements) uses Newick comments to encode additional key value pairs, e.g. the id, scientificName ond rank.
+The New Hampshire eXtended format (which COL implements) uses Newick comments to encode additional key value pairs, i.e. the id, scientificName and rank specifically:
+
+- `:ND=` [string] node identifier - if this is being used, it has to be unique within each phylogeny
+- `:S=` [string] species name of the species/phylum at this node
+- `:R=` [string] rank
 
 ## DOT
 
 [Graphviz DOT](http://www.graphviz.org/doc/info/lang.html) is a simple widely used format for representing graphs as nodes and edges.
 ChecklistBank exports will include synonym and basionym relations in the final graph that can be rendered with many software tools.
+
+## General file recommendations
+
+For all text files we strongly recommend to use the `UTF-8` character encoding.
+
+- If in doubt, prefer tab separated **TSV files** over CSV files
+- Do not quote values e.g. by using a quotation mark which is common for CSV files
+- Make sure to **replace all TAB characters** by a simple spaces
+- Use a **header row**
+- **NULL values** should be given as an **empty string**, not `\N` or `NULL`
+- **boolean** values should be encoded either as `0`/`1` or `false`/`true`
+- **decimals** should follow the international convention and use a dot as the decimal separator (not a comma) and no thousands separator at all
+- **dates** should be given as ISO 8601 strings, e.g. 1978-03-21
+- **multivalues** should be delimited with a simple comma if possible, e.g. `freshwater, brackish`
