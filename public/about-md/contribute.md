@@ -11,4 +11,4 @@ In order to share your data on CheckistBank it needs to be in one of the [suppor
 
 Starting with version 3 you can also use GBIF's Integrated Publishing Toolkit ([IPT](https://www.gbif.org/ipt)) to create ColDP archives from your data.
 
-Once you have a dataset archive you can [create a dataset](https://www.checklistbank.org/newdataset) in ChecklistBank and upload your data, author metadata and publish updates to your data yourself with your existing [GBIF account](https://www.gbif.org/user/profile).
+Once you have a dataset archive you can [create a dataset](/newdataset) in ChecklistBank and upload your data, author metadata and publish updates to your data yourself with your existing [GBIF account](https://www.gbif.org/user/profile).
