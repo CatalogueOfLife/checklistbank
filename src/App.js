@@ -39,6 +39,7 @@ import ProjectEditors from "./pages/catalogue/Editors";
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
+import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import AdminJobs from "./pages/Admin/Jobs";
 import SectorDiff from "./pages/catalogue/SectorDiff";
@@ -130,6 +131,13 @@ const App = () => {
                 path={`/admin/datasets`}
                 roles={["editor", "admin"]}
                 component={DatasetAdmin}
+              />
+              <AdminRoute
+                exact
+                key="MatcherAdmin"
+                path={`/admin/matcher`}
+                roles={["editor", "admin"]}
+                component={MatcherAdmin}
               />
               <PrivateRoute
                 exact

@@ -321,6 +321,11 @@ class BasicMenu extends Component {
                       <span>Datasets</span>
                     </NavLink>
                   </Menu.Item>
+                  <Menu.Item key="matcherAdmin">
+                    <NavLink to={{ pathname: "/admin/matcher" }}>
+                      <span>Matcher</span>
+                    </NavLink>
+                  </Menu.Item>
                   <Menu.Item key="backgroundJobs">
                     <NavLink to={{ pathname: "/admin/jobs" }}>
                       <span>Background jobs</span>

@@ -37,7 +37,7 @@ class DatasetList extends React.Component {
         {
           title: "Alias",
           dataIndex: "alias",
-          width: 150,
+          width: 200,
           key: "alias",
           render: (text, record) => {
             return (
@@ -54,7 +54,6 @@ class DatasetList extends React.Component {
         {
           title: "Title",
           dataIndex: "title",
-          width: 400,
           key: "title",
           render: (text, record) => {
             return (
@@ -71,6 +70,7 @@ class DatasetList extends React.Component {
         {
           title: "Origin",
           dataIndex: "origin",
+          width: 100,
           key: "origin",
         },
 
@@ -78,6 +78,7 @@ class DatasetList extends React.Component {
           title: "Size",
           dataIndex: "size",
           key: "size",
+          width: 100,
           sorter: true,
           render: (text, record) =>
             record.origin !== "project"
@@ -88,6 +89,7 @@ class DatasetList extends React.Component {
           title: "Indexed",
           dataIndex: "nameUsageTotal",
           key: "nameUsageTotal",
+          width: 100,
           sorter: false,
           render: (text, record) =>
             record.origin !== "project"
@@ -98,12 +100,13 @@ class DatasetList extends React.Component {
           title: "Matched",
           dataIndex: "matchesCount",
           key: "matchesCount",
+          width: 100,
           sorter: false,
         },
         {
           title: "Action",
           dataIndex: "",
-          width: 60,
+          width: 410,
           key: "__actions__",
           render: (text, record) => (
             <React.Fragment>
@@ -112,13 +115,19 @@ class DatasetList extends React.Component {
                 onClick={() => this.reindexDataset(record.key)}
               >
                 Reindex
-              </Button>
+              </Button>&nbsp;
               <Button
                 type="primary"
                 onClick={() => this.rematchDataset(record.key)}
               >
                 Rematch
-              </Button>
+              </Button>&nbsp;
+              <Button
+                type="primary"
+                onClick={() => this.buildMatcher(record.key)}
+              >
+                BuildMatcher
+              </Button>&nbsp;
               {!["xrelease", "release", "project"].includes(record.origin) && (
                 <Button
                   type="primary"
@@ -298,6 +307,20 @@ class DatasetList extends React.Component {
           notification.open({
             message: "Reimport started",
             description: `Dataset ${datasetKey} is being reimported from last archive`,
+          });
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
+
+  buildMatcher = (datasetKey) => {
+    axios
+      .post(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .then((res) => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Matcher job scheduled",
+            description: `Matcher job building dataset ${datasetKey} scheduled.`,
           });
         });
       })
