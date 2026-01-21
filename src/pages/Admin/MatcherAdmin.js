@@ -37,6 +37,15 @@ class MatcherList extends React.Component {
           dataIndex: ["dataset","origin"],
           width: 100,
           key: "origin",
+          sorter: (a, b) => {
+            if (!a.dataset.origin) {
+                return -1;
+            }
+            if (!b.dataset.origin) {
+                return +1;
+            }    
+            return a.dataset.origin.localeCompare(b.dataset.origin);
+          },
         },
         {
           title: "Alias",
@@ -44,13 +53,13 @@ class MatcherList extends React.Component {
           width: 150,
           key: "alias",
           sorter: (a, b) => {
-            if (!a.alias) {
+            if (!a.dataset.alias) {
                 return -1;
             }
-            if (!b.alias) {
+            if (!b.dataset.alias) {
                 return +1;
             }    
-            return a.alias.localeCompare(b.alias);
+            return a.dataset.alias.localeCompare(b.dataset.alias);
           },
           render: (text, record) => {
             return (
@@ -68,13 +77,13 @@ class MatcherList extends React.Component {
           dataIndex: ["dataset","title"],
           key: "title",
           sorter: (a, b) => {
-            if (!a.title) {
+            if (!a.dataset.title) {
                 return -1;
             }
-            if (!b.title) {
+            if (!b.dataset.title) {
                 return +1;
             }    
-            return a.title.localeCompare(b.title);
+            return a.dataset.title.localeCompare(b.dataset.title);
           },
           render: (text, record) => {
             return (
@@ -90,24 +99,28 @@ class MatcherList extends React.Component {
         {
           title: "Action",
           dataIndex: "",
-          width: 250,
+          width: 200,
           key: "__actions__",
           render: (text, record) => (
             <React.Fragment>
               <Button
                 type="primary"
+                size="small"
                 onClick={() => this.loadMatcher(record.datasetKey)}
               >
                 Load
               </Button>&nbsp;
               <Button
                 type="primary"
+                size="small"
                 onClick={() => this.reindexDataset(record.datasetKey)}
               >
                 Rebuild
               </Button>&nbsp;
               <Button
                 type="primary"
+                color="danger"
+                size="small"
                 onClick={() => this.deleteDataset(record.datasetKey)}
               >
                 Delete

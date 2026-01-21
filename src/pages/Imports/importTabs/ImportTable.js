@@ -321,7 +321,7 @@ class ImportTable extends React.Component {
           title: "Action",
           dataIndex: "",
           key: "x",
-          width: 50,
+          width: 30,
           render: (record) =>
             _.get(record, "dataset.origin") === "external" ? (
               <ImportButton

@@ -106,24 +106,27 @@ class DatasetList extends React.Component {
         {
           title: "Action",
           dataIndex: "",
-          width: 410,
+          width: 350,
           key: "__actions__",
           render: (text, record) => (
             <React.Fragment>
               <Button
                 type="primary"
+                size="small"
                 onClick={() => this.reindexDataset(record.key)}
               >
                 Reindex
               </Button>&nbsp;
               <Button
                 type="primary"
+                size="small"
                 onClick={() => this.rematchDataset(record.key)}
               >
                 Rematch
               </Button>&nbsp;
               <Button
                 type="primary"
+                size="small"
                 onClick={() => this.buildMatcher(record.key)}
               >
                 BuildMatcher
@@ -131,6 +134,7 @@ class DatasetList extends React.Component {
               {!["xrelease", "release", "project"].includes(record.origin) && (
                 <Button
                   type="primary"
+                  size="small"
                   onClick={() => this.reimportDataset(record.key)}
                   style={{ marginTop: "6px" }}
                 >
