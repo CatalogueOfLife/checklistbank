@@ -354,6 +354,12 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="DOI">
               {displayData.doi ? <DoiPresentation doi={displayData.doi} /> : ""}
             </PresentationItem>
+            
+            {displayData.versionDoi ? (
+              <PresentationItem label="Version DOI">
+                <DoiPresentation doi={displayData.versionDoi} />
+              </PresentationItem>
+            ) : ("")}
 
             <PresentationItem label="Description">
               {displayData.description ? (
