@@ -60,7 +60,13 @@ class DatasetMeta extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchAllData();
+    const { archivedData } = this.props;
+    if (archivedData) {
+      // Use pre-fetched archived data
+      this.setState({ loading: false, data: archivedData, err: null });
+    } else {
+      this.fetchAllData();
+    }
   }
 
   componentDidUpdate = (prevProps) => {
@@ -70,7 +76,12 @@ class DatasetMeta extends React.Component {
   };
 
   fetchAllData = () => {
-    const { catalogueKey } = this.props;
+    const { catalogueKey, archivedData } = this.props;
+
+    if (archivedData) {
+      // Don't fetch if we have archived data
+      return;
+    }
 
     this.getData();
 
@@ -211,15 +222,16 @@ class DatasetMeta extends React.Component {
       contributesTo,
       releasedFrom,
     } = this.state;
-    const { user, catalogueKey, catalogue } = this.props;
+    const { user, catalogueKey, catalogue, archivedData } = this.props;
     const patchMode = !!catalogueKey;
+    const isArchived = !!archivedData;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
     const modifyMetadata = data && !data.deleted && data?.origin != "release";
     console.debug(data?.origin)
     return (
       <PageContent>
-        {Auth.canEditDataset(displayData, user) && !patchMode && (
+        {Auth.canEditDataset(displayData, user) && !patchMode && !isArchived && (
           <React.Fragment>
             <Row>
               <Col flex="auto">
@@ -295,7 +307,7 @@ class DatasetMeta extends React.Component {
           </React.Fragment>
         )}
         {/* The user is allowed to patch if edtor of a project, */}
-        {Auth.canEditDataset(catalogue, user) && (
+        {Auth.canEditDataset(catalogue, user) && !isArchived && (
           <React.Fragment>
             <Row>
               <Col flex="auto"></Col>

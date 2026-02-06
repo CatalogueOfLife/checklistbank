@@ -19,6 +19,7 @@ import ReleaseSectors from "./datasetPageTabs/ReleaseSectors";
 import DatasetOptions from "./datasetPageTabs/DatasetOptions";
 import DatasetDiff from "./datasetPageTabs/DatasetImportDiff";
 import DatasetImportTree from "./datasetPageTabs/DatasetImportTree";
+import DatasetImportMetadata from "./datasetPageTabs/DatasetImportMetadata";
 import ImportTimeline from "../DatasetImportMetrics/ImportTimeline";
 
 import DatasetDownload from "../Download";
@@ -205,7 +206,8 @@ class DatasetPage extends React.Component {
           )}
         {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
         {["release-metrics", "imports"].includes(section) &&
-          subsection !== "tree" && (
+          subsection !== "tree" &&
+          subsection !== "metadata" && (
             <DatasetImportMetrics
               datasetKey={datasetKey}
               origin={_.get(dataset, "origin")}
@@ -215,6 +217,12 @@ class DatasetPage extends React.Component {
           )}
         {subsection === "tree" && section === "imports" && (
           <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey} />
+        )}
+        {subsection === "metadata" && section === "imports" && (
+          <DatasetImportMetadata
+            datasetKey={datasetKey}
+            attempt={taxonOrNameKey}
+          />
         )}
         {(!section || section === "metadata" || section === "about") && (
           <DatasetMeta id={datasetKey} />

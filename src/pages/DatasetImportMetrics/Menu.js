@@ -6,6 +6,7 @@ import {
   DiffOutlined,
   PieChartOutlined,
   LineChartOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 class ImportMenu extends React.Component {
@@ -17,8 +18,13 @@ class ImportMenu extends React.Component {
       .split(`/dataset/${datasetKey}/`)[1]
       .split("/");
 
+    const lastPart = splitted[splitted.length - 1];
     const current =
-      splitted[splitted.length - 1] === "tree" ? "tree" : splitted[0];
+      lastPart === "tree"
+        ? "tree"
+        : lastPart === "metadata"
+        ? "metadata"
+        : splitted[0];
     return (
       <Menu
         onClick={this.handleClick}
@@ -57,6 +63,17 @@ class ImportMenu extends React.Component {
               }}
             >
               Browse tree
+            </NavLink>
+          </Menu.Item>
+        )}
+        {!isProject && attempt && (
+          <Menu.Item key="metadata" icon={<FileTextOutlined />}>
+            <NavLink
+              to={{
+                pathname: `/dataset/${datasetKey}/imports/${attempt}/metadata`,
+              }}
+            >
+              Metadata
             </NavLink>
           </Menu.Item>
         )}
