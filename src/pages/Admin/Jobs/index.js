@@ -134,7 +134,7 @@ const Jobs = ({ user, addError }) => {
       width: 50,
       ellipsis: true,
       render: (text, record) => (
-        <NavLink to={{ pathname: `/dataset/${record.datasetKey}/about` }} exact={true}>
+        <NavLink to={{ pathname: `/dataset/${record.datasetKey}/metadata` }} exact={true}>
           {text}
         </NavLink>
       ),

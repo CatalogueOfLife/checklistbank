@@ -49,7 +49,7 @@ const Releases = ({dataset, addError}) => {
         render: (text, record) => {
           return (
             <NavLink
-              to={{ pathname: `/dataset/${record.key}/about` }}
+              to={{ pathname: `/dataset/${record.key}/metadata` }}
               exact={true}
             >
               {text}

@@ -424,12 +424,6 @@ class BasicMenu extends Component {
                       <span>Sectors</span>
                     </NavLink>
                   </Menu.Item>
-                  {/* <Menu.Item key="catalogueSectorPriority">
-                <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}>
-                  <OrderedListOutlined />
-                  <span>Sector priority</span>
-                </NavLink>
-              </Menu.Item> */}
                   <Menu.Item key="catalogueSources">
                     <NavLink
                       to={{
@@ -463,35 +457,6 @@ class BasicMenu extends Component {
                       <span>Decisions</span>
                     </NavLink>
                   </Menu.Item>
-                  {/* <Menu.Item key="catalogue_issues">
-                    <NavLink
-                      to={{
-                        pathname: `/catalogue/${catalogueKey}/issues`,
-                      }}
-                    >
-                      Issues
-                    </NavLink>
-                  </Menu.Item> */}
-                  {/* <Menu.Item key="catalogueSourceMetrics">
-                    <NavLink
-                      to={{
-                        pathname: `/catalogue/${catalogueKey}/sourcemetrics`,
-                      }}
-                    >
-                      {" "}
-                      <span>Source metrics</span>
-                    </NavLink>
-                  </Menu.Item> */}
-                  {/*               <SubMenu
-                key="projectDetails"
-                title={
-                  <span>
-                    <MenuOutlined />
-                    <span>More...</span>
-                  </span>
-                }
-                
-              > */}
                   <Menu.Item key="releases">
                     <NavLink
                       to={{
@@ -780,30 +745,6 @@ class BasicMenu extends Component {
             </SubMenu>
           )}
 
-          {/*           {user && recentDatasets && recentDatasets.length > 1 && (
-            <SubMenu
-              key="recentDatasets"
-              title={
-                <span>
-                  <HistoryOutlined />
-                  <span>Recently visited datasets</span>
-                </span>
-              }
-            >
-              {recentDatasets.map((d) => (
-                <Menu.Item key={`recent_${d.key}`}>
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${d.key}`,
-                    }}
-                  >
-                    {d.alias ? d.alias : d.key}
-                  </NavLink>
-                </Menu.Item>
-              ))}
-            </SubMenu>
-          )} */}
-
           {selectedDataset &&
             !this.selectedDatasetIsProjectAndUserHasAccess(
               catalogue,
@@ -822,7 +763,6 @@ class BasicMenu extends Component {
                   </span>
                 }
               >
-                {/*  {Auth.canEditDataset(selectedDataset, user) && (
                 <Menu.Item key="metadata">
                   <NavLink
                     to={{
@@ -830,19 +770,6 @@ class BasicMenu extends Component {
                         selectedDataset,
                         "key"
                       )}/metadata`,
-                    }}
-                  >
-                    Metadata
-                  </NavLink>
-                </Menu.Item>
-              )} */}
-                <Menu.Item key="about">
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${_.get(
-                        selectedDataset,
-                        "key"
-                      )}/about`,
                     }}
                   >
                     Metadata
@@ -1034,7 +961,7 @@ class BasicMenu extends Component {
                           )}/imports`,
                         }}
                       >
-                        Metrics
+                        Imports
                       </NavLink>
                     </Menu.Item>
                   )}

@@ -732,7 +732,7 @@ class ColTreeNode extends React.Component {
                           to={{
                             pathname: releaseKey
                               ? `/dataset/${releaseKey}/source/${sector?.dataset?.key}`
-                              : `/dataset/${sector?.dataset?.key}/about`,
+                              : `/dataset/${sector?.dataset?.key}/metadata`,
                           }}
                           exact={true}
                         >

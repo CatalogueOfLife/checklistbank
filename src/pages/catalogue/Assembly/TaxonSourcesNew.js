@@ -48,7 +48,7 @@ class TaxonSources extends React.Component {
               to={{
                 pathname: releaseKey
                   ? `/dataset/${releaseKey}/source/${d.key}`
-                  : `/dataset/${d.key}/about`,
+                  : `/dataset/${d.key}/metadata`,
               }}
               exact={true}
             >
@@ -72,7 +72,7 @@ class TaxonSources extends React.Component {
                       to={{
                         pathname: releaseKey
                           ? `/dataset/${releaseKey}/source/${d.key}`
-                          : `/dataset/${d.key}/about`,
+                          : `/dataset/${d.key}/metadata`,
                       }}
                       exact={true}
                     >

@@ -5,7 +5,7 @@ import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { parse } from "../../../components/util/textTree";
-import Menu from "../../DatasetImportMetrics/Menu";
+import ImportMenu from "../../DatasetImportMetrics/Menu";
 import moment from "moment";
 const ImportTree = ({ datasetKey, dataset, attempt, addError }) => {
   const [loading, setLoading] = useState(false);
@@ -64,12 +64,7 @@ const ImportTree = ({ datasetKey, dataset, attempt, addError }) => {
 
   return (
     <PageContent>
-              <Menu datasetKey={datasetKey} attempt={attempt} />
-            {importDate &&  <h1>
-                  {dataset?.origin === "released" ? "Released " : "Imported "}
-                  {moment(importDate).format("lll")}
-                </h1>}
-
+      <ImportMenu datasetKey={datasetKey} attempt={attempt} dataset={dataset} isFinished={true}/>
       <Row>
         <Col>
         <AutoComplete

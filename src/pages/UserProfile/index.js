@@ -96,7 +96,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
               pathname:
                 item?.origin === "project"
                   ? `/catalogue/${item?.key}/assembly`
-                  : `/dataset/${item?.key}/about`,
+                  : `/dataset/${item?.key}/metadata`,
             }}
           >
             {item?.title}

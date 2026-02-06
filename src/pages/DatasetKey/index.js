@@ -116,7 +116,7 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/about`,
+            pathname: `/dataset/${datasetKey}/metadata`,
           }}
         />
       );
@@ -125,7 +125,7 @@ class DatasetPage extends React.Component {
       return (
         <Redirect
           to={{
-            pathname: `/dataset/${datasetKey}/about`,
+            pathname: `/dataset/${datasetKey}/metadata`,
           }}
         />
       );
@@ -219,10 +219,7 @@ class DatasetPage extends React.Component {
           <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey} />
         )}
         {subsection === "metadata" && section === "imports" && (
-          <DatasetImportMetadata
-            datasetKey={datasetKey}
-            attempt={taxonOrNameKey}
-          />
+          <DatasetImportMetadata datasetKey={datasetKey} attempt={taxonOrNameKey}/>
         )}
         {(!section || section === "metadata" || section === "about") && (
           <DatasetMeta id={datasetKey} />

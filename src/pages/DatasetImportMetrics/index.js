@@ -18,7 +18,7 @@ import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";
 import DataLoader from "dataloader";
 import { getUsersBatch } from "../../api/user";
-import Menu from "./Menu";
+import ImportMenu from "./Menu";
 import qs from "query-string";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
@@ -142,7 +142,7 @@ class DatasetImportMetrics extends React.Component {
     return axios(
       `${
         config.dataApi
-      }dataset/${datasetKey}/import?limit=50${"WAITING, PREPARING, DOWNLOADING, PROCESSING, DELETING, INSERTING, MATCHING, INDEXING, ANALYZING, ARCHIVING, EXPORTING, FINISHED, CANCELED, FAILED"
+      }dataset/${datasetKey}/import?limit=100${"WAITING, PREPARING, DOWNLOADING, PROCESSING, DELETING, INSERTING, MATCHING, INDEXING, ANALYZING, ARCHIVING, EXPORTING, FINISHED, CANCELED, FAILED"
         .split(", ")
         .map((st) => "&state=" + st)
         .join("")}`
@@ -204,7 +204,8 @@ class DatasetImportMetrics extends React.Component {
     return (
       <PageContent>
         {!["xrelease", "release"].includes(origin) && (
-          <Menu
+          <ImportMenu
+            isFinished={this.state?.data?.state === "finished"}
             dataset={dataset}
             datasetKey={datasetKey}
             attempt={attempt || this?.state?.data?.attempt}
@@ -256,45 +257,18 @@ class DatasetImportMetrics extends React.Component {
             />
           </Spin>
         )}
+        {dataset && importHistory && !["xrelease", "release"].includes(origin) && (
+          <Button
+            type="primary"
+            style={{ display: "inline", position: "relative", top: "-48px", float: "right", marginRight: "10px" }}
+            onClick={this.showHistoryDrawer}
+          >
+            History
+          </Button>
+        )}
         {this.state.data && this.state.data.state === "failed" && (
           <Row style={{ padding: "10px" }}>
             <Alert type="error" message={this.state.data.error} />
-          </Row>
-        )}
-        {dataset && (
-          <Row style={{ padding: "10px" }} type="flex">
-            {data && !isRunning && (
-              <Col>
-                <h1>
-                  {["xrelease", "release", "project"].includes(origin)
-                    ? "Released "
-                    : "Imported "}
-                  {moment(data.finished).format("lll")}
-                </h1>
-                {dataset?.lastImportAttempt &&
-                  dataset?.origin !== "project" && (
-                    <span>
-                      Last import attempt:{" "}
-                      {moment(dataset?.lastImportAttempt).format("lll")}
-                    </span>
-                  )}
-              </Col>
-            )}
-            <Col flex="auto"></Col>
-
-            {!["xrelease", "release"].includes(origin) && (
-              <Col style={{ textAlign: "right" }}>
-                {importHistory && (
-                  <Button
-                    type="primary"
-                    style={{ display: "inline", marginLeft: "8px" }}
-                    onClick={this.showHistoryDrawer}
-                  >
-                    History
-                  </Button>
-                )}
-              </Col>
-            )}
           </Row>
         )}
         {data && (

@@ -91,19 +91,6 @@ const App = () => {
           <ThemeProvider theme={theme}>
             <Switch>
               <Route exact key="HomePage" path="/" component={HomePage} />
-              <PrivateRoute
-                exact
-                key="catalogueSources"
-                path="/catalogue/:catalogueKey/sources/:issues?"
-                component={CatalogueSources}
-              />
-
-              <PrivateRoute
-                exact
-                key="catalogueSourceMetrics"
-                path="/catalogue/:catalogueKey/sourcemetrics"
-                component={CatalogueSourceMetrics}
-              />
               <AdminRoute
                 exact
                 key="Admin"
@@ -139,12 +126,6 @@ const App = () => {
                 roles={["editor", "admin"]}
                 component={MatcherAdmin}
               />
-              <PrivateRoute
-                exact
-                key="References"
-                path="/catalogue/:catalogueKey/references/:key?"
-                component={CatalogueReferences}
-              />
               <Route
                 exact
                 key="imports"
@@ -152,6 +133,24 @@ const App = () => {
                 render={({ match, location }) => (
                   <Imports location={location} />
                 )}
+              />
+              <PrivateRoute
+                exact
+                key="References"
+                path="/catalogue/:catalogueKey/references/:key?"
+                component={CatalogueReferences}
+              />
+              <PrivateRoute
+                exact
+                key="catalogueSources"
+                path="/catalogue/:catalogueKey/sources/:issues?"
+                component={CatalogueSources}
+              />
+              <PrivateRoute
+                exact
+                key="catalogueSourceMetrics"
+                path="/catalogue/:catalogueKey/sourcemetrics"
+                component={CatalogueSourceMetrics}
               />
               <PrivateRoute
                 exact
@@ -274,14 +273,6 @@ const App = () => {
                 path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
                 component={CatalogueName}
               />
-
-              <Route
-                exact
-                key="datasetCreate"
-                path={`/newdataset`}
-                component={DatasetCreate}
-              />
-
               <PrivateRoute
                 exact
                 key="CatalogueSourceDataset"
@@ -294,17 +285,24 @@ const App = () => {
                 path={`/catalogue/:catalogueKey/dataset/:sourceKey/:section:(imports|classification|sectors|metadata|names|taxon|name|verbatim)/:taxonOrNameKey?`}
                 component={DatasetPage}
               />
+
               <Route
                 exact
-                key="datasetKey2"
-                path={`/dataset/:key/:section?/:taxonOrNameKey?/:subsection?`}
-                component={DatasetPage}
+                key="datasetCreate"
+                path={`/newdataset`}
+                component={DatasetCreate}
               />
               <Route
                 exact
                 key="dataset"
                 path="/dataset"
                 render={(props) => <DatasetList location={props.location} />}
+              />
+              <Route
+                exact
+                key="datasetKey2"
+                path={`/dataset/:key/:section?/:taxonOrNameKey?/:subsection?`}
+                component={DatasetPage}
               />
               <Route
                 exact

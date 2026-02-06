@@ -8,7 +8,7 @@ const DatasetNavLink = ({ user, text, record }) => {
 
     useEffect(() => { }, [user])
     return <NavLink
-        to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}/about` }}
+        to={{ pathname: (record.origin === 'project' && Auth.canViewDataset(record, user)) ? `/catalogue/${record.key}/metadata` : `/dataset/${record.key}/metadata` }}
         exact={true}
     >
         {text}

@@ -228,7 +228,6 @@ class DatasetMeta extends React.Component {
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
     const modifyMetadata = data && !data.deleted && data?.origin != "release";
-    console.debug(data?.origin)
     return (
       <PageContent>
         {Auth.canEditDataset(displayData, user) && !patchMode && !isArchived && (

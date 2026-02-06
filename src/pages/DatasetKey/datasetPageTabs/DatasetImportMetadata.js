@@ -34,13 +34,7 @@ const DatasetImportMetadata = ({ datasetKey, dataset, attempt, addError }) => {
 
   return (
     <PageContent>
-      <Menu datasetKey={datasetKey} attempt={attempt} dataset={dataset} />
-      {importDate && (
-        <h1>
-          {dataset?.origin === "project" ? "Released " : "Imported "}
-          {moment(importDate).format("lll")}
-        </h1>
-      )}
+      <Menu datasetKey={datasetKey} attempt={attempt} dataset={dataset} isFinished={true}/>
 
       {loading && <Skeleton paragraph={{ rows: 10 }} active />}
 

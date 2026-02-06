@@ -338,8 +338,8 @@ Another feature driven by the names index are exports of ID mappings between dif
 Similar to downloads this is an asynchroneous job that will result in a compressed CSV file with all names from the requested datasets
 aligned according to their names index match. An optional `min` parameter can be given to only include names that appear in at least the given number of datasets.
 
-For example an export of ID mappings between the [Catalogue of World Gelechiidae](https://www.checklistbank.org/dataset/2362/about)
-and [LepIndex](https://www.checklistbank.org/dataset/1018/about) can be triggered with
+For example an export of ID mappings between the [Catalogue of World Gelechiidae](https://www.checklistbank.org/dataset/2362/metadata)
+and [LepIndex](https://www.checklistbank.org/dataset/1018/metadata) can be triggered with
 
 ```bash
 curl --user USERNAME:PASSWORD -X POST "https://api.checklistbank.org/nidx/export?datasetKey=1018&datasetKey=2362&min=2"
