@@ -591,26 +591,20 @@ class DatasetMeta extends React.Component {
                     paddingInlineStart: "0px",
                   }}
                 >
-                  {Object.keys(displayData.identifier).map((i) => (
-                    <li
-                      style={{
-                        float: "left",
-                        marginRight: "8px",
-                      }}
-                    >
-                      {`${i.toUpperCase()}: `}
-                      {IDENTIFIER_TYPES[i] ? (
+                {_.isArray(displayData.identifier) && displayData.identifier.map((id) => (
+                    <li>
+                      {IDENTIFIER_TYPES[id.split(":", 1)[0]] ? (
                         <a
-                          href={`${IDENTIFIER_TYPES[i]}${displayData.identifier[i]}`}
+                          href={`${IDENTIFIER_TYPES[id.split(":", 1)[0]]}${id.split(":", 2)[1]}`}
                           target="_blank"
                         >
-                          {displayData.identifier[i]}
+                          {id}
                         </a>
                       ) : (
-                        displayData.identifier[i]
+                        id
                       )}
-                    </li>
-                  ))}
+                    </li>                                            
+                ))}
                 </ol>
               )}
             </PresentationItem>
@@ -676,17 +670,6 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Last successful import attempt">
               {displayData.attempt}
             </PresentationItem>
-            {/*             <PresentationItem
-              label={
-                <FormattedMessage
-                  id="contributesTo"
-                  defaultMessage="Contributes To"
-                />
-              }
-            >
-              {displayData.contributesToDatasets}
-            </PresentationItem> */}
-
             <PresentationItem label="Created">
               {`${moment(displayData.created).format(
                 "MMMM Do YYYY, h:mm:ss a"
