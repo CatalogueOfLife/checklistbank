@@ -26,7 +26,7 @@ const About = ({
 
   const getData = async () => {
     try {
-      const res = await axios(`/metadata-md/${mdFile}.md`).then((res) => res.data);
+      const res = await axios(`/about-md/${mdFile}.md`).then((res) => res.data);
       setMd(res);
       console.log(res);
     } catch (error) {
