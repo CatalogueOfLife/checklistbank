@@ -130,9 +130,7 @@ class NamePage extends React.Component {
 
   getSynonyms = (key, nameKey) => {
     axios(
-      `${config.dataApi}dataset/${key}/name/${encodeURIComponent(
-        nameKey
-      )}/synonyms`
+      `${config.dataApi}dataset/${key}/name/${encodeURIComponent(nameKey)}/synonyms`
     ).then((synonyms) => {
       this.setState({ synonyms: synonyms.data });
     });
@@ -141,8 +139,7 @@ class NamePage extends React.Component {
   getUsages = (key, nameKey) => {
     this.setState({ usageLoading: true });
     axios(
-      `${config.dataApi
-      }dataset/${key}/nameusage/search?NAME_ID=${encodeURIComponent(nameKey)}`
+      `${config.dataApi}dataset/${key}/nameusage?nid=${encodeURIComponent(nameKey)}`
     )
       .then((res) => {
         this.setState({
