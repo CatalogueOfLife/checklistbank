@@ -716,16 +716,6 @@ class NameSearchPage extends React.Component {
                     <Radio value="PREFIX">Prefix</Radio>
                   </RadioGroup>
                 </FormItem>
-
-                <FormItem label="Extinct">
-                  <Switch
-                    checked={params.extinct}
-                    onChange={(value) =>
-                      this.updateSearch({ extinct: value || null })
-                    }
-                  />
-                </FormItem>
-
                 <FormItem label="Search">
                   <RadioGroup
                     onChange={(evt) => {

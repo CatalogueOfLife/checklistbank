@@ -9,7 +9,7 @@ if (
 ) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
-  env = environments.prod;
+  env = environments.dev;
 } else {
   env = environments.dev;
 }
