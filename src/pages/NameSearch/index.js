@@ -242,7 +242,8 @@ class NameSearchPage extends React.Component {
         limit: PAGE_SIZE,
         offset: 0,
         facet: this.FACETS,
-        sortBy: "taxonomic",
+        sortBy: "relevance",
+        content: "SCIENTIFIC_NAME"
       };
       history.push({
         pathname: _.get(this.props, "location.path"),
@@ -702,21 +703,7 @@ class NameSearchPage extends React.Component {
             )}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
-                <FormItem label="Fuzzy">
-                  <Switch
-                    checked={params.fuzzy === true}
-                    onChange={(value) => this.updateSearch({ fuzzy: value })}
-                  />
-                </FormItem>
-                <FormItem label="Extinct">
-                  <Switch
-                    checked={params.extinct}
-                    onChange={(value) =>
-                      this.updateSearch({ extinct: value || null })
-                    }
-                  />
-                </FormItem>
-                <FormItem label="Matching">
+                <FormItem label="Match">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ type: evt.target.value });
@@ -725,11 +712,21 @@ class NameSearchPage extends React.Component {
                   >
                     <Radio value="EXACT">Exact</Radio>
                     <Radio value="WHOLE_WORDS">Words</Radio>
-                    <Radio value="PREFIX">Partial</Radio>
+                    <Radio value="FUZZY">Fuzzy</Radio>
+                    <Radio value="PREFIX">Prefix</Radio>
                   </RadioGroup>
                 </FormItem>
 
-                <FormItem label="Restrict to">
+                <FormItem label="Extinct">
+                  <Switch
+                    checked={params.extinct}
+                    onChange={(value) =>
+                      this.updateSearch({ extinct: value || null })
+                    }
+                  />
+                </FormItem>
+
+                <FormItem label="Search">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ content: evt.target.value });
@@ -738,7 +735,7 @@ class NameSearchPage extends React.Component {
                   >
                     <Radio value="SCIENTIFIC_NAME">Scientific name</Radio>
                     <Radio value="AUTHORSHIP">Authorship</Radio>
-                    <Radio value={null}>Any</Radio>
+                    <Radio value="VERNACULAR_NAME">Vernacular names</Radio>
                   </RadioGroup>
                 </FormItem>
               </Form>
