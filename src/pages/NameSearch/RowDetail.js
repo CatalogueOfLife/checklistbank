@@ -7,7 +7,7 @@ import _ from "lodash";
 import Auth from "../../components/Auth"
 import withContext from "../../components/hoc/withContext";
 
-const RowDetail = ({ issues, usage, classification, issueMap, baseUri, sectorDatasetKey, catalogueKey, user }) => (
+const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, baseUri, sectorDatasetKey, catalogueKey, user }) => (
   <React.Fragment>
     {sectorDatasetKey && Auth.isAuthorised(user, ["editor"]) && 
     <Row style={{ marginBottom: "10px" }}>
@@ -66,6 +66,25 @@ const RowDetail = ({ issues, usage, classification, issueMap, baseUri, sectorDat
             classification={_.initial(classification)}
             baseUri={baseUri}
           />
+        </Col>
+      </Row>
+    )}
+    {vernacularNames && (
+      <Row>
+        <Col
+          span={3}
+          style={{
+            textAlign: "right",
+            paddingRight: "16px",
+            fontWeight: "bold"
+          }}
+        >
+          Vernacular:
+        </Col>
+        <Col span={18}
+             style={{paddingBottom: "12px"}}
+        >
+          {vernacularNames.map(vn => vn.name).join(", ")}
         </Col>
       </Row>
     )}

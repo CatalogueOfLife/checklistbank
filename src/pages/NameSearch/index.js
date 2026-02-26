@@ -725,7 +725,7 @@ class NameSearchPage extends React.Component {
                   >
                     <Radio value="SCIENTIFIC_NAME">Scientific name</Radio>
                     <Radio value="AUTHORSHIP">Authorship</Radio>
-                    <Radio value="VERNACULAR_NAME">Vernacular names</Radio>
+                    <Radio value="VERNACULAR_NAME">Vernacular name</Radio>
                   </RadioGroup>
                 </FormItem>
               </Form>
