@@ -81,10 +81,8 @@ const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, b
         >
           Vernacular:
         </Col>
-        <Col span={18}
-             style={{paddingBottom: "12px"}}
-        >
-          {vernacularNames.map(vn => vn.name).join(", ")}
+        <Col span={18} style={{paddingBottom: "12px"}}>
+          {vernacularNames.slice(0, 10).map(vn => vn.name).join(", ")}
         </Col>
       </Row>
     )}
