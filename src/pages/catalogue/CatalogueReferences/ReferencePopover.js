@@ -37,19 +37,25 @@ class ReferencePopover extends React.Component {
 
   getContent = () => {
     const { reference, loading } = this.state;
+    const { remarks } = this.props;
     if (loading) {
       return <Spin />;
-    } else if (reference.length === 1) {
-      return <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation || "") }}></span>;
-    } else {
-      return (
+    }
+    const refContent = reference.length === 1
+      ? <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation || "") }}></span>
+      : (
         <ul>
           {reference.map((r) => (
             <li><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation || "") }}></span></li>
           ))}
         </ul>
       );
-    }
+    return (
+      <>
+        {refContent}
+        {remarks && <p style={{ marginTop: 8, marginBottom: 0, fontStyle: "italic" }}>{remarks}</p>}
+      </>
+    );
   };
 
   render = () => {
@@ -60,7 +66,7 @@ class ReferencePopover extends React.Component {
       <Popover
         placement={this.props.placement || "left"}
         title="Reference"
-        onVisibleChange={(visible) => visible && this.getData()}
+        onOpenChange={(visible) => visible && this.getData()}
         content={<div style={{ maxWidth: "500px" }}>{this.getContent()}</div>}
         trigger={trigger || "hover"}
       >
