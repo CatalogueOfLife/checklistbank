@@ -11,6 +11,7 @@ import Classification from "./Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
 import RowDetail from "./RowDetail";
+import TaxGroupIcon from "./TaxGroupIcon";
 import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
@@ -131,7 +132,13 @@ const getColumns = (catalogueKey) => [
     width: 60,
     sorter: true,
   },
-
+  {
+    title: "Group",
+    dataIndex: ["group"],
+    key: "group",
+    width: 32,
+    render: (group) => group ? <TaxGroupIcon group={group} size={20} /> : null,
+  },
   {
     title: "Parents",
     dataIndex: ["usage", "classification"],
@@ -157,11 +164,8 @@ class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const isCatalogue = this.props.catalogueKey === this.props.datasetKey;
-    const taxGroup = props.taxGroup;
-    console.log(props.taxGroup);
     const clms = getColumns(
-      isCatalogue ? this.props.catalogueKey : null,
-      props.taxGroup
+      isCatalogue ? this.props.catalogueKey : null
     );
     const columns = this.props.datasetKey
       ? clms
@@ -242,7 +246,8 @@ class NameSearchPage extends React.Component {
         limit: PAGE_SIZE,
         offset: 0,
         facet: this.FACETS,
-        sortBy: "taxonomic",
+        sortBy: "relevance",
+        content: "SCIENTIFIC_NAME"
       };
       history.push({
         pathname: _.get(this.props, "location.path"),
@@ -276,29 +281,6 @@ class NameSearchPage extends React.Component {
         }
       }
     );
-  }
-  componentDidUpdate(prevProps) {
-    if (this.props.taxGroup !== prevProps.taxGroup) {
-      const { taxGroup } = this.props;
-      const clms = this.state.columns.toSpliced(3, 0, {
-        title: "Group",
-        dataIndex: ["group"],
-        key: "group",
-        width: 40,
-        render: (text, record) => {
-          return !_.get(record, "group") ? (
-            ""
-          ) : (
-            <img
-              style={{ width: "32px", height: "32px" }}
-              src={_.get(taxGroup[_.get(record, "group")], "icon")}
-              alt={_.get(record, "group")}
-            />
-          );
-        },
-      });
-      this.setState({ columns: clms });
-    }
   }
   get = (url, options) => {
     let cancel;
@@ -500,7 +482,6 @@ class NameSearchPage extends React.Component {
       rank,
       taxonomicstatus,
       infoGroup,
-      taxGroup,
       issue,
       nomstatus,
       nomCode,
@@ -702,21 +683,7 @@ class NameSearchPage extends React.Component {
             )}
             <div style={{ marginTop: "10px" }}>
               <Form layout="inline">
-                <FormItem label="Fuzzy">
-                  <Switch
-                    checked={params.fuzzy === true}
-                    onChange={(value) => this.updateSearch({ fuzzy: value })}
-                  />
-                </FormItem>
-                <FormItem label="Extinct">
-                  <Switch
-                    checked={params.extinct}
-                    onChange={(value) =>
-                      this.updateSearch({ extinct: value || null })
-                    }
-                  />
-                </FormItem>
-                <FormItem label="Matching">
+                <FormItem label="Match">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ type: evt.target.value });
@@ -725,11 +692,11 @@ class NameSearchPage extends React.Component {
                   >
                     <Radio value="EXACT">Exact</Radio>
                     <Radio value="WHOLE_WORDS">Words</Radio>
-                    <Radio value="PREFIX">Partial</Radio>
+                    <Radio value="FUZZY">Fuzzy</Radio>
+                    <Radio value="PREFIX">Prefix</Radio>
                   </RadioGroup>
                 </FormItem>
-
-                <FormItem label="Restrict to">
+                <FormItem label="Search">
                   <RadioGroup
                     onChange={(evt) => {
                       this.updateSearch({ content: evt.target.value });
@@ -738,7 +705,7 @@ class NameSearchPage extends React.Component {
                   >
                     <Radio value="SCIENTIFIC_NAME">Scientific name</Radio>
                     <Radio value="AUTHORSHIP">Authorship</Radio>
-                    <Radio value={null}>Any</Radio>
+                    <Radio value="VERNACULAR_NAME">Vernacular name</Radio>
                   </RadioGroup>
                 </FormItem>
               </Form>
@@ -928,6 +895,7 @@ class NameSearchPage extends React.Component {
                 />
               ),
               rowExpandable: (record) => !record.usage.bareName,
+              columnWidth: 32,
             }}
           />
         )}

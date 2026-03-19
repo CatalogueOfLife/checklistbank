@@ -815,14 +815,6 @@ class WorkBench extends React.Component {
                 )}
                 <div style={{ marginTop: "10px" }}>
                   <Form layout="inline">
-                    <FormItem label="Fuzzy">
-                      <Switch
-                        checked={params.fuzzy === true}
-                        onChange={(value) =>
-                          this.updateSearch({ fuzzy: value })
-                        }
-                      />
-                    </FormItem>
                     <FormItem label="Matching">
                       <RadioGroup
                         onChange={(evt) => {
@@ -832,7 +824,8 @@ class WorkBench extends React.Component {
                       >
                         <Radio value="EXACT">Exact</Radio>
                         <Radio value="WHOLE_WORDS">Words</Radio>
-                        <Radio value="PREFIX">Partial</Radio>
+                        <Radio value="FUZZY">Fuzzy</Radio>
+                        <Radio value="PREFIX">Prefix</Radio>
                       </RadioGroup>
                     </FormItem>
 

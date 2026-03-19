@@ -30,6 +30,7 @@ import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import Releases from "./Releases";
 import DatasetNavLink from "./DatasetNavLink";
+import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
@@ -191,6 +192,7 @@ class DatasetList extends React.Component {
           title: "Origin",
           dataIndex: "origin",
           key: "origin",
+          width: 90,
           sorter: true,
         },
         {
@@ -202,6 +204,7 @@ class DatasetList extends React.Component {
           title: "Type",
           dataIndex: "type",
           key: "type",
+          width: 90,
           sorter: true,
         },
         {
@@ -219,6 +222,29 @@ class DatasetList extends React.Component {
           },
         },
         {
+          title: "Taxonomic Scope",
+          dataIndex: "taxonomicGroupScope",
+          key: "group",
+          width: 180,
+          render: (groups) => {
+            const filtered = filterRedundantGroups(groups, this.props.taxGroup);
+            if (!filtered || filtered.length === 0) return null;
+            const MAX = 8;
+            const visible = filtered.slice(0, MAX);
+            const hidden = filtered.length - MAX;
+            return (
+              <span style={{ display: "inline-flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
+                {visible.map((g) => (
+                  <TaxGroupIcon key={g} group={g} size={18} />
+                ))}
+                {hidden > 0 && (
+                  <span style={{ fontSize: 11, color: "#888", whiteSpace: "nowrap" }}>+{hidden} more</span>
+                )}
+              </span>
+            );
+          },
+        },
+        {
           title: "Confidence",
           dataIndex: "confidence",
           key: "confidence",
@@ -232,6 +258,7 @@ class DatasetList extends React.Component {
           title: "Size",
           dataIndex: "size",
           key: "size",
+          width: 90,
           sorter: true,
           render: (text) => {
             try {
@@ -542,7 +569,7 @@ class DatasetList extends React.Component {
       params,
       pagination,
     } = this.state;
-    const { datasetOrigin, recentDatasets, datasetType, license, user, importState } =
+    const { datasetOrigin, recentDatasets, datasetType, license, user, importState, taxGroup } =
       this.props;
     defaultColumns[9].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
@@ -577,16 +604,37 @@ class DatasetList extends React.Component {
     } else {
       defaultColumns[12].filteredValue = null;
     }
-    defaultColumns[19].filters = importState.map((i) => ({
+    defaultColumns[20].filters = importState.map((i) => ({
       text: _.startCase(i?.name),
       value: i.name,
     }));
     if (params.lastImportState) {
-      defaultColumns[19].filteredValue = _.isArray(params.lastImportState)
+      defaultColumns[20].filteredValue = _.isArray(params.lastImportState)
         ? params.lastImportState
         : [params.lastImportState];
     } else {
-      defaultColumns[19].filteredValue = null;
+      defaultColumns[20].filteredValue = null;
+    }
+    const groupDepths = computeGroupDepths(taxGroup);
+    defaultColumns[14].filters = taxGroup
+      ? Object.values(taxGroup).map((g) => ({
+          text: (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: (groupDepths[g.name] || 0) * 16 }}>
+              {g.icon && (
+                <img src={g.icon} alt={g.name} style={{ width: 16, height: 16 }} />
+              )}
+              {g.name}
+            </span>
+          ),
+          value: g.name,
+        }))
+      : [];
+    if (params.group) {
+      defaultColumns[14].filteredValue = _.isArray(params.group)
+        ? params.group
+        : [params.group];
+    } else {
+      defaultColumns[14].filteredValue = null;
     }
 
     const filteredColumns = isEditorOrAdmin(this.props.user)
@@ -907,6 +955,7 @@ const mapContextToProps = ({
   catalogueKey,
   recentDatasets,
   importState,
+  taxGroup,
   addError,
 }) => ({
   user,
@@ -916,6 +965,7 @@ const mapContextToProps = ({
   catalogueKey,
   recentDatasets,
   importState,
+  taxGroup,
   addError,
 });
 

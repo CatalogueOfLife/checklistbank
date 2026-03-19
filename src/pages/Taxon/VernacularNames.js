@@ -15,23 +15,6 @@ class VernacularNamesTable extends React.Component {
       data: this.props.data ? [...this.props.data] : [],
       columns: [
         {
-          title: "",
-          dataIndex: "merged",
-          key: "merged",
-          width: 12,
-          render: (text, record) =>
-            record?.merged ? (
-              <MergedDataBadge
-                createdBy={record?.createdBy}
-                datasetKey={record?.datasetKey}
-                verbatimSourceKey={record?.verbatimSourceKey}
-                sourceDatasetKey={record?.sourceDatasetKey}
-              />
-            ) : (
-              ""
-            ),
-        },
-        {
           title: "Name",
           dataIndex: "name",
           key: "name",
@@ -58,6 +41,23 @@ class VernacularNamesTable extends React.Component {
           width: 70,
           render: (text, record) =>
             record.countryTitle ? record.countryTitle : text,
+        },
+        {
+          title: "",
+          dataIndex: "merged",
+          key: "merged",
+          width: 12,
+          render: (text, record) =>
+            record?.merged ? (
+              <MergedDataBadge
+                createdBy={record?.createdBy}
+                datasetKey={record?.datasetKey}
+                verbatimSourceKey={record?.verbatimSourceKey}
+                sourceDatasetKey={record?.sourceDatasetKey}
+              />
+            ) : (
+              ""
+            ),
         },
         {
           title: "Ref",

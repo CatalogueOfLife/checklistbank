@@ -14,6 +14,7 @@ class ColumnFilter extends React.Component {
       "confidence",
       "editor",
       "geographicScope",
+      "group",
       "private",
       "modified",
       "created",
@@ -27,11 +28,20 @@ class ColumnFilter extends React.Component {
         "confidence",
         "editor",
         "geographicScope",
+        "group",
         "private",
         "modified",
         "created",
         "completeness",
       ];
+    }
+    // Add "group" (Taxonomic scope) to existing saved preferences if missing
+    if (!excludeColumns.includes("group")) {
+      excludeColumns = [...excludeColumns, "group"];
+      localStorage.setItem(
+        "colplus_datasetlist_hide_columns",
+        JSON.stringify(excludeColumns)
+      );
     }
 
     this.handleHideColumnChange = this.handleHideColumnChange.bind(this);

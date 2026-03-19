@@ -9,6 +9,10 @@ body {
   line-height: 14px !important;
 }
 
+.colplus-taxon-page-list {
+  margin-left: -3px;
+}
+
 .colplus-taxon-page-list tbody tr:last-child > td
 {
    border-bottom: none !important

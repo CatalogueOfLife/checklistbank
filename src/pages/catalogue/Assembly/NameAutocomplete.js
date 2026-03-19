@@ -67,7 +67,7 @@ class NameSearchAutocomplete extends React.Component {
       : `${config.dataApi}name/search`;
 
     axios(
-      `${url}?fuzzy=false&limit=25&q=${encodeURIComponent(q)}${
+      `${url}?limit=25&q=${encodeURIComponent(q)}${
         minRank ? `&minRank=${minRank}` : ""
       }${accepted ? "&accepted=true":""}`
     )

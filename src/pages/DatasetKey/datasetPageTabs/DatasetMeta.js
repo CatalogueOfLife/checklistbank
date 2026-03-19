@@ -29,6 +29,7 @@ import BibTex from "../../../components/MetaData/BibTex";
 import Eml from "../../../components/MetaData/Eml";
 import Yaml from "../../../components/MetaData/Yaml";
 
+import TaxGroupIcon, { filterRedundantGroups } from "../../NameSearch/TaxGroupIcon";
 import marked from "marked";
 import DOMPurify from "dompurify";
 import linkify from "linkify-html";
@@ -222,7 +223,7 @@ class DatasetMeta extends React.Component {
       contributesTo,
       releasedFrom,
     } = this.state;
-    const { user, catalogueKey, catalogue, archivedData } = this.props;
+    const { user, catalogueKey, catalogue, archivedData, taxGroup } = this.props;
     const patchMode = !!catalogueKey;
     const isArchived = !!archivedData;
     // If we are in a project, show the patched data. Otherwise the original data
@@ -504,7 +505,12 @@ class DatasetMeta extends React.Component {
                 )}
             </PresentationItem>
             <PresentationItem label="Taxonomic scope">
-              {displayData.taxonomicScope}
+              <span style={{ display: "inline-flex", alignItems: "center", flexWrap: "wrap", gap: 4 }}>
+                {displayData.taxonomicScope}
+                {filterRedundantGroups(displayData.taxonomicGroupScope, taxGroup).map((g) => (
+                  <TaxGroupIcon key={g} group={g} size={20} />
+                ))}
+              </span>
             </PresentationItem>
             <PresentationItem label="Geographic scope">
               {displayData.geographicScope}
@@ -715,6 +721,7 @@ const mapContextToProps = ({
   datasetSettings,
   addError,
   catalogue,
+  taxGroup,
 }) => ({
   user,
   datasetoriginEnum,
@@ -722,6 +729,7 @@ const mapContextToProps = ({
   datasetSettings,
   addError,
   catalogue,
+  taxGroup,
 });
 
 export default withContext(mapContextToProps)(DatasetMeta);
