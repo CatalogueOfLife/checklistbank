@@ -225,15 +225,21 @@ class DatasetList extends React.Component {
           title: "Taxonomic Scope",
           dataIndex: "taxonomicGroupScope",
           key: "group",
-          width: 200,
+          width: 180,
           render: (groups) => {
             const filtered = filterRedundantGroups(groups, this.props.taxGroup);
             if (!filtered || filtered.length === 0) return null;
+            const MAX = 8;
+            const visible = filtered.slice(0, MAX);
+            const hidden = filtered.length - MAX;
             return (
-              <span style={{ display: "inline-flex", flexWrap: "wrap", gap: 2 }}>
-                {filtered.map((g) => (
+              <span style={{ display: "inline-flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
+                {visible.map((g) => (
                   <TaxGroupIcon key={g} group={g} size={18} />
                 ))}
+                {hidden > 0 && (
+                  <span style={{ fontSize: 11, color: "#888", whiteSpace: "nowrap" }}>+{hidden} more</span>
+                )}
               </span>
             );
           },
