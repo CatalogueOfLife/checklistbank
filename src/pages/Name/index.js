@@ -149,7 +149,7 @@ class NamePage extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ usageLoading: false, usageError: err, usages: null });
+        this.setState({ usageLoading: false, usageError: err, usages: [] });
       });
   };
   getName = (key, nameKey) => {
@@ -183,8 +183,8 @@ class NamePage extends React.Component {
       publishedIn,
     } = this.state;
 
-    const filteredUsages = usages.filter((u) => u.usage?.id && u.usage?.status != 'bare name');
-    const filteredSynonyms = synonyms.filter((s) => s?.id !== name?.id);
+    const filteredUsages = (usages || []).filter((u) => u.usage?.id && u.usage?.status != 'bare name');
+    const filteredSynonyms = (synonyms || []).filter((s) => s?.id !== name?.id);
     const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus } =
       this.props;
 
