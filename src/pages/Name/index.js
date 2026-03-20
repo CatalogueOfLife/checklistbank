@@ -183,7 +183,7 @@ class NamePage extends React.Component {
       publishedIn,
     } = this.state;
 
-    const filteredUsages = usages.filter((u) => u.usage.status != 'bare name');
+    const filteredUsages = usages.filter((u) => u.usage?.status != 'bare name');
     const filteredSynonyms = synonyms.filter((s) => s?.id !== name?.id);
     const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus } =
       this.props;
@@ -234,10 +234,10 @@ class NamePage extends React.Component {
                       exact={true}
                     >
                       <Tag
-                        color={getTaxonomicStatusColor(u.usage.status)}
+                        color={getTaxonomicStatusColor(u.usage?.status)}
                         style={{ marginRight: "6px", cursor: "pointer" }}
                       >
-                        {u.usage.status}
+                        {u.usage?.status}
                       </Tag>
                     </NavLink>
                   ))}
