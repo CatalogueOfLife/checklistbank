@@ -159,7 +159,7 @@ You can filter the search by various options:
 - type: the kind of search to use. One of prefix, whole_words, fuzzy or exact: https://api.checklistbank.org/dataset/COL2022/nameusage/search?q=Hobern&content=AUTHORSHIP
   - _prefix_: Matches a search term to the beginning of the epithets within a scientific name. This is the only available search type for the suggest service.
   - _whole words_: Matches a search term to entire epithets within a scientific name.
-  - _exact_: Matches the entire search phrase to the entire scientific name. When choosing this type you cannot also opt for fuzzy matching. The "fuzzy" parameter is silently ignored.
+  - _exact_: Matches the entire search phrase to the entire scientific name.
   - _fuzzy_: allow for a generic, slightly fuzzy matching
 
 ## Taxon info and vernacular names
@@ -170,9 +170,9 @@ http://api.checklistbank.org/dataset/COL2023/taxon/4QHKG/info
 or individually through the vernacular name resource:
 http://api.checklistbank.org/dataset/COL2023/taxon/4QHKG/vernacular
 
-ChecklistBank also provides a basic vernacular search that finds vernacular names in an entire dataset:
-http://api.checklistbank.org/dataset/COL2023/vernacular?q=Puma
-http://api.checklistbank.org/dataset/COL2023/vernacular?q=Puma&language=spa
+ChecklistBank provides a search that finds vernacular names in an entire dataset:
+https://api.checklistbank.org/dataset/COL2025/nameusage/search?content=VERNACULAR_NAME&rank=species&q=Eagle
+
 
 ## Tree browsing
 
