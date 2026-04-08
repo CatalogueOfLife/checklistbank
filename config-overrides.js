@@ -1,5 +1,9 @@
 const webpack = require("webpack");
 module.exports = function override(config, env) {
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    "process/browser": require.resolve("process/browser.js"),
+  };
   config.resolve.fallback = {
     url: require.resolve("url"),
     fs: require.resolve("browserify-fs"),

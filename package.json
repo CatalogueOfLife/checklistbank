@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "ajv": "^6.9.1",
+    "ajv": "^8.18.0",
     "antd": "4.24.15",
     "assert": "^2.1.0",
     "axios": "^0.18.1",
@@ -18,6 +18,7 @@
     "col-rc-tree": "https://github.com/CatalogueOfLife/tree.git",
     "crypto-browserify": "^3.12.0",
     "csvtojson": "^2.0.10",
+    "d3": "^7.9.0",
     "dataloader": "^1.4.0",
     "dayjs": "^1.8.26",
     "diff2html": "^2.7.0",

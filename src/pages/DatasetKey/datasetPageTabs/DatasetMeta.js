@@ -30,6 +30,7 @@ import Eml from "../../../components/MetaData/Eml";
 import Yaml from "../../../components/MetaData/Yaml";
 
 import TaxGroupIcon, { filterRedundantGroups } from "../../NameSearch/TaxGroupIcon";
+import TaxBreakdownTreemap from "./TaxBreakdownTreemap";
 import marked from "marked";
 import DOMPurify from "dompurify";
 import linkify from "linkify-html";
@@ -57,6 +58,7 @@ class DatasetMeta extends React.Component {
       releasedFrom: null,
       showAllCreators: false,
       showAllContributors: false,
+      showBreakdownTreemap: false,
     };
   }
 
@@ -222,6 +224,7 @@ class DatasetMeta extends React.Component {
       privateChangeLoading,
       contributesTo,
       releasedFrom,
+      showBreakdownTreemap,
     } = this.state;
     const { user, catalogueKey, catalogue, archivedData, taxGroup } = this.props;
     const patchMode = !!catalogueKey;
@@ -508,9 +511,22 @@ class DatasetMeta extends React.Component {
               <span style={{ display: "inline-flex", alignItems: "center", flexWrap: "wrap", gap: 4 }}>
                 {displayData.taxonomicScope}
                 {filterRedundantGroups(displayData.taxonomicGroupScope, taxGroup).map((g) => (
-                  <TaxGroupIcon key={g} group={g} size={20} />
+                  <span
+                    key={g}
+                    title="Click to view taxonomic breakdown"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => this.setState({ showBreakdownTreemap: !showBreakdownTreemap })}
+                  >
+                    <TaxGroupIcon group={g} size={20} />
+                  </span>
                 ))}
               </span>
+              {showBreakdownTreemap && (
+                <TaxBreakdownTreemap
+                  datasetKey={displayData.key}
+                  onClose={() => this.setState({ showBreakdownTreemap: false })}
+                />
+              )}
             </PresentationItem>
             <PresentationItem label="Geographic scope">
               {displayData.geographicScope}
