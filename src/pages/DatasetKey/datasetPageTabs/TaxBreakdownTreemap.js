@@ -170,6 +170,23 @@ function Sunburst({ data, datasetKey, history }) {
       return text.slice(0, maxChars - 1) + "…";
     }
 
+    // For tangential labels the midpoint of a near-full-circle segment lands at
+    // ~180° (the bottom), producing upside-down text.  chooseLabelAngle() shifts
+    // the placement toward the top of the segment in that case.
+    function chooseLabelAngle(x0, x1) {
+      const mid = (x0 + x1) / 2;
+      const midDeg = mid * 180 / Math.PI;
+      if (midDeg > 90 && midDeg < 270) {
+        // Prefer 30° (upper-right) if it lies within the segment
+        const preferred = Math.PI / 6;
+        if (x0 <= preferred && preferred <= x1) return preferred;
+        // Otherwise use the midpoint of whatever portion is in the upper half
+        if (x0 < Math.PI / 2)
+          return (x0 + Math.min(x1, Math.PI / 2)) / 2;
+      }
+      return mid;
+    }
+
     // For each segment choose the layout direction that gives more space:
     //   tangential — text curves along the arc, available length = arc length
     //   radial     — text runs center→edge, available length = ring height
@@ -183,26 +200,30 @@ function Sunburst({ data, datasetKey, history }) {
       const midAngle = (d.x0 + d.x1) / 2;
       const r = (d.y0 + d.y1) / 2;
       const arcLen = (d.x1 - d.x0) * r;
-      const angleDeg = midAngle * 180 / Math.PI;
       const name = d.data.groupName;
 
-      let label, rotate;
+      let label, rotate, labelAngle;
       if (arcLen >= ringH) {
-        // Wide segment: tangential — text follows the arc curve
+        // Wide segment: tangential — text follows the arc curve.
+        // Use chooseLabelAngle to avoid placing the label upside-down at the bottom.
+        labelAngle = chooseLabelAngle(d.x0, d.x1);
         label = truncateLabel(name, arcLen - 6);
-        rotate = angleDeg > 180 ? angleDeg - 180 : angleDeg;
+        const deg = labelAngle * 180 / Math.PI;
+        rotate = deg > 180 ? deg - 180 : deg;
       } else {
         // Narrow segment: radial — text runs from inner to outer radius
+        labelAngle = midAngle;
         label = truncateLabel(name, ringH - 6);
+        const deg = labelAngle * 180 / Math.PI;
         // Right half: rotate -90° from tangent; left half: +90° to stay readable
-        rotate = angleDeg <= 180 ? angleDeg - 90 : angleDeg + 90;
+        rotate = deg <= 180 ? deg - 90 : deg + 90;
       }
 
       if (!label) return;
       labelData.push({
         label,
-        x: Math.sin(midAngle) * r,
-        y: -Math.cos(midAngle) * r,
+        x: Math.sin(labelAngle) * r,
+        y: -Math.cos(labelAngle) * r,
         rotate,
       });
     });
