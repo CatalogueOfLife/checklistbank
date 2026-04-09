@@ -65,12 +65,30 @@ class DatasetSettings extends React.Component {
       .catch((err) => this.setState({ error: err }));
   };
 
+  rebuildMatcher = () => {
+    const { datasetKey } = this.props;
+    this.setState({ rebuildMatcherLoading: true, error: null });
+    axios
+      .delete(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .then(() => axios.post(`${config.dataApi}admin/matcher/${datasetKey}`))
+      .then(() => {
+        this.setState({ rebuildMatcherLoading: false });
+        notification.open({
+          message: "Matcher rebuild started",
+          description: `Matcher index for dataset ${datasetKey} is being rebuilt`,
+        });
+      })
+      .catch((err) =>
+        this.setState({ rebuildMatcherLoading: false, error: err })
+      );
+  };
+
   setEditMode = (checked) => {
     this.setState({ editMode: checked });
   };
 
   render() {
-    const { error, data, editMode } = this.state;
+    const { error, data, editMode, rebuildMatcherLoading } = this.state;
 
     const { datasetSettings, datasetKey, dataset } = this.props;
     return (
@@ -174,6 +192,18 @@ class DatasetSettings extends React.Component {
               }}
             >
               Reindex dataset
+            </Button>
+
+            <Button
+              type="primary"
+              onClick={this.rebuildMatcher}
+              loading={rebuildMatcherLoading}
+              style={{
+                marginRight: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              Rebuild matcher
             </Button>
 
             <DeleteOrphansButton
