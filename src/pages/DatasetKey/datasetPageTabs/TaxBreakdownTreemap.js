@@ -119,9 +119,19 @@ function Sunburst({ data, datasetKey, history }) {
       .style("display", "none")
       .style("z-index", "9999");
 
+    // Returns true if the node itself or any non-root ancestor has no groupName.
+    function hasNullGroup(d) {
+      let node = d;
+      while (node.depth > 0) {
+        if (node.data.groupName == null) return true;
+        node = node.parent;
+      }
+      return false;
+    }
+
     // ── Arcs ─────────────────────────────────────────────────────────────────
     g.selectAll("path.arc")
-      .data(root.descendants().filter((d) => d.depth > 0))
+      .data(root.descendants().filter((d) => d.depth > 0 && !hasNullGroup(d)))
       .join("path")
       .attr("class", "arc")
       .attr("d", arc)
@@ -194,7 +204,7 @@ function Sunburst({ data, datasetKey, history }) {
     // This ensures small narrow segments still get a label where possible.
     const labelData = [];
     root.descendants().forEach((d) => {
-      if (d.depth === 0) return;
+      if (d.depth === 0 || hasNullGroup(d)) return;
       const ringH = d.y1 - d.y0;
       if (ringH < fontSize) return; // ring too thin for any glyph
 
