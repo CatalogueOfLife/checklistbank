@@ -41,12 +41,13 @@ const RADIUS = SIZE / 2;
 // Explicit colours for the major taxonomic groups.
 // Descendants inherit the nearest ancestor's colour, lightened per ring.
 const MAJOR_GROUP_COLORS = {
-  viruses:    "#9e9e9e", // grey
+  eukaryotes: "#78b4b6", // greyblue
+  viruses:    "#66089f", // violet
   prokaryotes:"#e53935", // red
   protists:   "#fb8c00", // orange
   fungi:      "#fdd835", // yellow
   plants:     "#43a047", // green
-  animals:    "#1e88e5", // blue
+  animals:    "#2373ba", // blue
 };
 
 
