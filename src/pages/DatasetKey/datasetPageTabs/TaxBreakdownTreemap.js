@@ -41,7 +41,7 @@ const RADIUS = SIZE / 2;
 // Explicit colours for the major taxonomic groups.
 // Descendants inherit the nearest ancestor's colour, lightened per ring.
 const MAJOR_GROUP_COLORS = {
-  eukaryotes: "#78b4b6", // greyblue
+  eukaryotes: "#cccccc", // grey
   viruses:    "#66089f", // violet
   prokaryotes:"#e53935", // red
   protists:   "#fb8c00", // orange
