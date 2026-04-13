@@ -17,6 +17,29 @@ const RANK_OPTIONS = [
   { value: "family", label: "Family" },
 ];
 
+// Returns an array of groupName plus all its transitive descendants,
+// using the `parents` field of each taxGroup entry to build a children map.
+function getGroupWithDescendants(groupName, taxGroup) {
+  const children = {};
+  Object.values(taxGroup).forEach((entry) => {
+    (entry.parents || []).forEach((parent) => {
+      if (!children[parent]) children[parent] = [];
+      children[parent].push(entry.name);
+    });
+  });
+  const result = [];
+  const queue = [groupName];
+  const visited = new Set();
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (visited.has(current)) continue;
+    visited.add(current);
+    result.push(current);
+    (children[current] || []).forEach((child) => queue.push(child));
+  }
+  return result;
+}
+
 // Convert API nested breakdown { group, count, breakdown[] } to d3 hierarchy input
 function toHierarchy(breakdown, taxGroup) {
   function convert(nodes) {
@@ -51,7 +74,7 @@ const MAJOR_GROUP_COLORS = {
 };
 
 
-function Sunburst({ data, datasetKey, history }) {
+function Sunburst({ data, datasetKey, history, rank, inclSynonym, taxGroup }) {
   const svgRef = useRef(null);
   useEffect(() => {
     if (!data || !svgRef.current) return;
@@ -164,7 +187,15 @@ function Sunburst({ data, datasetKey, history }) {
       .on("click", function (event, d) {
         if (!d.data.groupName) return;
         tooltip.style("display", "none");
-        history.push(`/dataset/${datasetKey}/names?group=${d.data.groupName}`);
+        const groups = getGroupWithDescendants(d.data.groupName, taxGroup);
+        const params = new URLSearchParams();
+        groups.forEach((g) => params.append("group", g));
+        if (rank) params.append("rank", rank);
+        if (!inclSynonym) {
+          params.append("status", "accepted");
+          params.append("status", "provisionally accepted");
+        }
+        history.push(`/dataset/${datasetKey}/names?${params.toString()}`);
       });
 
     // ── Labels ───────────────────────────────────────────────────────────────
@@ -273,7 +304,7 @@ function Sunburst({ data, datasetKey, history }) {
     return () => {
       tooltip.remove();
     };
-  }, [data, datasetKey, history]);
+  }, [data, datasetKey, history, rank, inclSynonym, taxGroup]);
 
   return (
     <svg
@@ -289,7 +320,7 @@ function Sunburst({ data, datasetKey, history }) {
   );
 }
 
-const TaxBreakdownTreemap = ({ datasetKey, onClose }) => {
+const TaxBreakdownChart = ({ datasetKey, onClose }) => {
   const { taxGroup } = useContext(AppContext);
   const history = useHistory();
 
@@ -385,10 +416,13 @@ const TaxBreakdownTreemap = ({ datasetKey, onClose }) => {
           data={hierarchyData}
           datasetKey={datasetKey}
           history={history}
+          rank={rank}
+          inclSynonym={inclSynonym}
+          taxGroup={taxGroup}
         />
       )}
     </div>
   );
 };
 
-export default TaxBreakdownTreemap;
+export default TaxBreakdownChart;

@@ -30,7 +30,7 @@ import Eml from "../../../components/MetaData/Eml";
 import Yaml from "../../../components/MetaData/Yaml";
 
 import TaxGroupIcon, { filterRedundantGroups } from "../../NameSearch/TaxGroupIcon";
-import TaxBreakdownTreemap from "./TaxBreakdownTreemap";
+import TaxBreakdownChart from "./TaxBreakdownChart";
 import marked from "marked";
 import DOMPurify from "dompurify";
 import linkify from "linkify-html";
@@ -522,7 +522,7 @@ class DatasetMeta extends React.Component {
                 ))}
               </span>
               {showBreakdownTreemap && (
-                <TaxBreakdownTreemap
+                <TaxBreakdownChart
                   datasetKey={displayData.key}
                   onClose={() => this.setState({ showBreakdownTreemap: false })}
                 />
