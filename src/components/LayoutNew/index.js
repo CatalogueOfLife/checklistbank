@@ -205,7 +205,7 @@ class SiteLayout extends Component {
                     <Col flex="auto">
                       <DatasetLogo
                         datasetKey={selectedDataset.key}
-                        style={{ height: "50px", marginRight: "10px" }}
+                        style={{ marginRight: "10px" }}
                       />
                     </Col>
                     <Col
