@@ -66,6 +66,25 @@ The "If your list contains more than 5000 names, use asynchronous matching" hint
 
 ---
 
+## Job status page error handling (issue #1579)
+
+The `NameMatchJob.js` polling loop does not clearly surface job failures, leaving users with an infinite spinner. The following fixes are included:
+
+### Bugs to fix
+- `Tooltip` is used in JSX but not imported — add it to the antd import list
+- `clearInterval` is called on a `setTimeout` handle — change to `clearTimeout`
+
+### Polling logic
+- Terminal job states that must stop polling: `finished`, `failed`, `cancelled`, and any state that is not `running` or `waiting`
+- When polling stops due to a non-finished terminal state, show an error immediately
+
+### Error display
+- When `job.status` is `failed` (or `job.error` is set): stop polling and display an `<Alert type="error">` with the error message above the card. The card's `<Tag color="error">Failed</Tag>` remains as a status indicator.
+- When `job.status` is `cancelled`: stop polling and display an `<Alert type="warning">` indicating the job was cancelled.
+- The "Back / New upload" button path is updated to `/tools/name-match`
+
+---
+
 ## Removed
 
 - `src/pages/tools/NameMatchAsync.js` — deleted
@@ -80,6 +99,6 @@ The "If your list contains more than 5000 names, use asynchronous matching" hint
 | File | Change |
 |---|---|
 | `src/pages/tools/NameMatch.js` | Add `asyncMode` state, switch, async submit logic, file format list, login-gating |
-| `src/pages/tools/NameMatchJob.js` | Update "Back" button path from `/tools/name-match-async` → `/tools/name-match` |
+| `src/pages/tools/NameMatchJob.js` | Fix Tooltip import, fix clearTimeout, improve error/failure display, update back-button path |
 | `src/App.js` | Update route `/tools/name-match-async/job/:key` → `/tools/name-match/job/:key`; remove `/tools/name-match-async`; remove `NameMatchAsync` import |
 | `src/pages/tools/NameMatchAsync.js` | Delete file |
