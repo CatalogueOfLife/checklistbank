@@ -55,7 +55,6 @@ import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
-import NameMatchAsync from "./pages/tools/NameMatchAsync";
 import NameMatchJob from "./pages/tools/NameMatchJob";
 
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
@@ -338,15 +337,9 @@ const App = () => {
 
               <Route
                 exact
-                key="namematchasynckey"
-                path={`/tools/name-match-async/job/:key`}
+                key="namematchjob"
+                path={`/tools/name-match/job/:key`}
                 component={NameMatchJob}
-              />
-              <Route
-                exact
-                key="namematchasync"
-                path={`/tools/name-match-async`}
-                component={NameMatchAsync}
               />
               <Route
                 exact
