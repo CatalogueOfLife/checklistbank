@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   SyncOutlined,
-  jobOutlined,
   HistoryOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
@@ -13,7 +12,7 @@ import { withRouter } from "react-router-dom";
 import axios from "axios";
 import config from "../../config";
 import _ from "lodash";
-import { Button, Card, Tag, Spin, Row, Col } from "antd";
+import { Button, Card, Tag, Spin, Row, Col, Alert, Tooltip } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
@@ -68,20 +67,39 @@ const NameMatchJob = ({ match, addError }) => {
         setIntervalHandle(hdl);
       }
     } else if (intervalHandle) {
-      clearInterval(intervalHandle);
+      clearTimeout(intervalHandle);
+      setIntervalHandle(null);
     }
   }, [job]);
 
   useEffect(() => {
     return () => {
       if (intervalHandle) {
-        clearInterval(intervalHandle);
+        clearTimeout(intervalHandle);
       }
     };
   }, []);
+
   return (
     <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank Name Matching">
       <PageContent>
+        {(job?.status === "failed" || job?.error) && (
+          <Alert
+            type="error"
+            style={{ marginBottom: "16px" }}
+            message="Matching job failed"
+            description={job?.error || "An unknown error occurred"}
+            showIcon
+          />
+        )}
+        {job?.status === "cancelled" && (
+          <Alert
+            type="warning"
+            style={{ marginBottom: "16px" }}
+            message="Matching job was cancelled"
+            showIcon
+          />
+        )}
         {resultUrl && (
           <Row>
             <Col flex="auto"></Col>
@@ -96,7 +114,7 @@ const NameMatchJob = ({ match, addError }) => {
                 type="primary"
                 onClick={() => {
                   history.push({
-                    pathname: `/tools/name-match-async`,
+                    pathname: `/tools/name-match`,
                   });
                 }}
               >
@@ -123,7 +141,7 @@ const NameMatchJob = ({ match, addError }) => {
                       href={job?.job}
                       style={{ color: "#1890ff" }}
                     >
-                      <jobOutlined /> {job?.sizeWithUnit}
+                      <DownloadOutlined /> {job?.sizeWithUnit}
                     </Button>
                   ) : job?.status === "waiting" ? (
                     <HistoryOutlined
@@ -140,25 +158,22 @@ const NameMatchJob = ({ match, addError }) => {
                 </>
               }
             >
-              <>
-                <div>
-                  {" "}
-                  <PresentationItem md={4} label="Request">
-                    {job.request && (
-                      <div>
-                        {Object.keys(job.request).map((key) => {
-                          const value = job.request[key];
-                          return (
-                            <Tag key={key}>{`${key}: ${
-                              value?.label || value
-                            }`}</Tag>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </PresentationItem>
-                </div>
-              </>
+              <div>
+                <PresentationItem md={4} label="Request">
+                  {job.request && (
+                    <div>
+                      {Object.keys(job.request).map((key) => {
+                        const value = job.request[key];
+                        return (
+                          <Tag key={key}>{`${key}: ${
+                            value?.label || value
+                          }`}</Tag>
+                        );
+                      })}
+                    </div>
+                  )}
+                </PresentationItem>
+              </div>
             </Card>
           )}
         </Spin>
