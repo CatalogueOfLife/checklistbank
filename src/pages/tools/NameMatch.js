@@ -283,7 +283,9 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
       (file.type == "" ||
         file.type == "text/csv" ||
         file.type == "text/plain" ||
-        file.name.indexOf(".csv") > 1)
+        file.type == "text/tab-separated-values" ||
+        file.name.endsWith(".csv") ||
+        file.name.endsWith(".tsv"))
     );
   };
 
@@ -330,7 +332,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
   const parseFile = (file) => {
     if (!isValidFile(file)) {
       setError(
-        "Invalid file format - the file must be a csv file and all rows must have a scientificName column"
+        "Invalid file format - the file must be a csv or tsv file and all rows must have a scientificName column"
       );
       return;
     }
