@@ -11,7 +11,6 @@ import {
   Statistic,
   Table,
   Upload,
-  Form,
   Tag,
   Switch,
   Tooltip,
@@ -23,7 +22,6 @@ import {
   DownloadOutlined,
   UploadOutlined,
   LoadingOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import history from "../../history";
 
@@ -40,26 +38,14 @@ import csv from "csvtojson/v2";
 import PQueue from "p-queue";
 const { Panel } = Collapse;
 const { TextArea } = Input;
-const { Paragraph, Text } = Typography;
+const { Paragraph } = Typography;
 
 const MAX_LIST_SIZE = 6000;
 
 const { Dragger } = Upload;
 const Step = Steps.Step;
 const defaultRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
-const FormItem = Form.Item;
-const matchTypeTypeMap = {
-  exact: "green",
-  none: "red",
-  ambiguous: "gold",
-  canonical: "gold",
-};
 const matchRemark = ["ambiguous", "canonical", "none"];
-const matchRemarkTooltip = {
-  ambiguous: "The name has more than one match in the names index",
-  none: "There is no match for this name",
-  canonical: "Only the name matches (without author string)",
-};
 
 const getLowerKeysObj = (obj) => {
   var key,
@@ -186,7 +172,7 @@ const FileFormatList = () => (
 const NameMatch = ({ addError, rank, issueMap, user }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
-  const [defaultCode, setDefaultCode] = useState(null);
+  const [defaultCode] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [step, setStep] = useState(0);
   const [primaryDataset, setPrimaryDataset] = useState(COL_LXR);
@@ -196,7 +182,6 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
   const [subjectDataLoading, setSubjectDataLoading] = useState(false);
   const [subjectDataTotal, setSubjectDataTotal] = useState(null);
   const [numMatchedNames, setNumMatchedNames] = useState(0);
-  const [nameIndexMetrics, setNameIndexMetrics] = useState(null);
   const [primaryUsageMetrics, setPrimaryUsageMetrics] = useState(null);
   const [secondaryUsageMetrics, setSecondaryUsageMetrics] = useState(null);
   const [showSecondary, setShowSecondary] = useState(false);
@@ -321,7 +306,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
 
     const grouped = _.groupBy(result, "matchType");
     let metrics = {};
-    Object.keys(grouped).forEach((k, v) => {
+    Object.keys(grouped).forEach((k) => {
       metrics[k] = grouped[k].length;
     });
     let hasPrimaryDatasetUsageCount = 0;
@@ -339,7 +324,6 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
     if (secondaryDataset) {
       setSecondaryUsageMetrics(hasSecondaryDatasetUsageCount);
     }
-    setNameIndexMetrics(metrics);
     setStep(3);
   };
 
@@ -607,73 +591,9 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
         </Row>
 
         {/* ======================================================= */}
-        {/* NOT LOGGED IN: only simple data entry + info alert       */}
+        {/* SYNC MODE — all users (anon users cannot switch to async)*/}
         {/* ======================================================= */}
-        {!user && (
-          <>
-            <Collapse
-              activeKey={inputType}
-              onChange={(key) => setInputType(key)}
-              accordion
-            >
-              <Panel header="Simple data entry" key="1">
-                <Row gutter={[16, 16]}>
-                  <Col span={16}>
-                    <TextArea
-                      value={textAreaVal}
-                      onChange={(e) => {
-                        setTextAreaVal(e?.currentTarget?.value || "");
-                        if (e?.currentTarget?.value) {
-                          setNames(
-                            e?.currentTarget?.value
-                              ?.split("\n")
-                              .filter((e) => !!e)
-                              .map((e) => ({ providedScientificName: e }))
-                          );
-                        } else {
-                          setNames(null);
-                        }
-                      }}
-                      rows={10}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <Typography>
-                      <Paragraph>
-                        Paste or write names - one name per row. Names may
-                        include the author string.
-                      </Paragraph>
-                    </Typography>
-                  </Col>
-                </Row>
-              </Panel>
-            </Collapse>
-            <Row style={{ marginTop: "10px" }}>
-              <Col>
-                {names && (
-                  <>
-                    <span>{`${names.length} name${
-                      names.length === 1 ? "" : "s"
-                    } provided for matching `}</span>
-                    <Button type="primary" onClick={() => setStep(1)}>
-                      Next
-                    </Button>
-                  </>
-                )}
-              </Col>
-            </Row>
-            <Alert
-              type="info"
-              style={{ marginTop: "16px" }}
-              message="File upload and dataset matching are also available — please log in to use them."
-            />
-          </>
-        )}
-
-        {/* ======================================================= */}
-        {/* LOGGED IN — SYNC MODE                                    */}
-        {/* ======================================================= */}
-        {!!user && !asyncMode && (
+        {!asyncMode && (
           <>
             <Steps
               current={step}
@@ -690,20 +610,6 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
               <Step title={"Review result"} disabled />
             </Steps>
 
-            <Row style={{ marginBottom: "10px" }}>
-              <Col flex="auto"></Col>
-              {names && step === 0 && (
-                <Col>
-                  <span>{`${names.length} name${
-                    names.length === 1 ? "" : "s"
-                  } provided for matching `}</span>
-                  <Button type="primary" onClick={() => setStep(1)}>
-                    Next
-                  </Button>
-                </Col>
-              )}
-            </Row>
-
             {names && step === 1 && (
               <Row style={{ marginBottom: "10px" }}>
                 <Col flex="auto"></Col>
@@ -718,6 +624,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
               </Row>
             )}
 
+            {/* STEP 0: Input panels */}
             {step === 0 && (
               <>
                 <Collapse
@@ -729,6 +636,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
                     <Row gutter={[16, 16]}>
                       <Col span={16}>
                         <TextArea
+                          name="names"
                           value={textAreaVal}
                           onChange={(e) => {
                             setTextAreaVal(e?.currentTarget?.value || "");
@@ -756,138 +664,152 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
                       </Col>
                     </Row>
                   </Panel>
-                  <Panel header="Upload CSV" key="2">
-                    <Dragger {...draggerProps}>
-                      <p className="ant-upload-drag-icon">
-                        <UploadOutlined />
-                      </p>
-                      <p className="ant-upload-text">
-                        Click or drag csv file to this area to upload
-                      </p>
-                      <p className="ant-upload-hint">
-                        Your csv must contain a column{" "}
-                        <code className="code">scientificName</code> (which may
-                        include the author)
-                      </p>
-                      <p className="ant-upload-hint">
-                        and optional but recommended columns:
-                      </p>
-                      <p className="ant-upload-hint">
-                        <code className="code">authorship</code>,{" "}
-                        <code className="code">rank</code>,{" "}
-                        <code className="code">status</code>, nomenclatural{" "}
-                        <code className="code">code</code> and the classification
-                        at any rank:
-                      </p>
-                      <p className="ant-upload-hint">
-                        <code className="code">kingdom</code>,{" "}
-                        <code className="code">phylum</code>,{" "}
-                        <code className="code">class</code>,{" "}
-                        <code className="code">order</code>,{" "}
-                        <code className="code">suborder</code>,{" "}
-                        <code className="code">superfamily</code>,{" "}
-                        <code className="code">family</code>,{" "}
-                        <code className="code">tribe</code>
-                      </p>
-                    </Dragger>
-                    <Typography style={{ marginTop: "16px" }}>
-                      <Paragraph>
-                        Your uploaded file has to be a comma (CSV) or tab (TSV)
-                        delimited text file with a header row to specify column
-                        names (
-                        <a
-                          target="_blank"
-                          href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
+                  {!!user && (
+                    <Panel header="Upload CSV" key="2">
+                      <Dragger {...draggerProps}>
+                        <p className="ant-upload-drag-icon">
+                          <UploadOutlined />
+                        </p>
+                        <p className="ant-upload-text">
+                          Click or drag csv file to this area to upload
+                        </p>
+                        <p className="ant-upload-hint">
+                          Your csv must contain a column{" "}
+                          <code className="code">scientificName</code> (which may
+                          include the author)
+                        </p>
+                        <p className="ant-upload-hint">
+                          and optional but recommended columns:
+                        </p>
+                        <p className="ant-upload-hint">
+                          <code className="code">authorship</code>,{" "}
+                          <code className="code">rank</code>,{" "}
+                          <code className="code">status</code>, nomenclatural{" "}
+                          <code className="code">code</code> and the classification
+                          at any rank:
+                        </p>
+                        <p className="ant-upload-hint">
+                          <code className="code">kingdom</code>,{" "}
+                          <code className="code">phylum</code>,{" "}
+                          <code className="code">class</code>,{" "}
+                          <code className="code">order</code>,{" "}
+                          <code className="code">suborder</code>,{" "}
+                          <code className="code">superfamily</code>,{" "}
+                          <code className="code">family</code>,{" "}
+                          <code className="code">tribe</code>
+                        </p>
+                      </Dragger>
+                      <Typography style={{ marginTop: "16px" }}>
+                        <Paragraph>
+                          Your uploaded file has to be a comma (CSV) or tab (TSV)
+                          delimited text file with a header row to specify column
+                          names (
+                          <a
+                            target="_blank"
+                            href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
+                          >
+                            example
+                          </a>
+                          ). It can contain any number of columns but must at least
+                          contain <code className="code">scientificName</code>. For
+                          better matching results include as many of the following{" "}
+                          <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
+                            ColDP columns
+                          </a>{" "}
+                          as possible:
+                        </Paragraph>
+                      </Typography>
+                      <FileFormatList />
+                    </Panel>
+                  )}
+                  {!!user && (
+                    <Panel header="Choose dataset in ChecklistBank" key="3">
+                      <Row>
+                        <Col
+                          span={12}
+                          style={{ paddingRight: "8px", paddingLeft: "8px" }}
                         >
-                          example
-                        </a>
-                        ). It can contain any number of columns but must at least
-                        contain <code className="code">scientificName</code>. For
-                        better matching results include as many of the following{" "}
-                        <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
-                          ColDP columns
-                        </a>{" "}
-                        as possible:
-                      </Paragraph>
-                    </Typography>
-                    <FileFormatList />
-                  </Panel>
-                  <Panel header="Choose dataset in ChecklistBank" key="3">
-                    <Row>
-                      <Col
-                        span={12}
-                        style={{ paddingRight: "8px", paddingLeft: "8px" }}
-                      >
-                        Select a subject dataset:
-                        <DatasetAutocomplete
-                          defaultDatasetKey={_.get(subjectDataset, "key", null)}
-                          onResetSearch={() => {
-                            setSubjectDataset(null);
-                            setSubjectTaxon(null);
-                          }}
-                          onSelectDataset={(dataset) => {
-                            setSubjectDataset(dataset);
-                            if (dataset?.key !== subjectDataset?.key) {
+                          Select a subject dataset:
+                          <DatasetAutocomplete
+                            defaultDatasetKey={_.get(subjectDataset, "key", null)}
+                            onResetSearch={() => {
+                              setSubjectDataset(null);
                               setSubjectTaxon(null);
-                            }
-                          }}
-                          placeHolder="Choose subject dataset"
-                        />
-                        And a root taxon:
-                        <NameAutocomplete
-                          minRank="GENUS"
-                          defaultTaxonKey={_.get(subjectTaxon, "key", null)}
-                          datasetKey={_.get(subjectDataset, "key")}
-                          onError={setError}
-                          disabled={!subjectDataset}
-                          onSelectName={(name) => {
-                            setSubjectTaxon(name);
-                            testSizeLimit(name);
-                          }}
-                          onResetSearch={() => {
-                            setSubjectTaxon(null);
-                            setSubjectDataTotal(null);
-                          }}
-                        />
-                        {!_.isNull(subjectDataTotal) &&
-                          subjectDataTotal <= MAX_LIST_SIZE && (
-                            <Button
-                              onClick={getSubjectDataAndMatch}
-                              style={{ marginTop: "10px" }}
-                              type="primary"
-                              loading={subjectDataLoading}
-                            >
-                              Fetch {subjectDataTotal.toLocaleString()} names
-                            </Button>
-                          )}
-                        {!_.isNull(subjectDataTotal) &&
-                          subjectDataTotal > MAX_LIST_SIZE && (
-                            <Alert
-                              message="Too many names"
-                              description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                              type="error"
-                              style={{ marginTop: "10px" }}
-                              closable
-                              onClose={() => {
+                            }}
+                            onSelectDataset={(dataset) => {
+                              setSubjectDataset(dataset);
+                              if (dataset?.key !== subjectDataset?.key) {
                                 setSubjectTaxon(null);
-                                setSubjectDataTotal(null);
-                              }}
-                            />
-                          )}
-                      </Col>
-                    </Row>
-                  </Panel>
+                              }
+                            }}
+                            placeHolder="Choose subject dataset"
+                          />
+                          And a root taxon:
+                          <NameAutocomplete
+                            minRank="GENUS"
+                            defaultTaxonKey={_.get(subjectTaxon, "key", null)}
+                            datasetKey={_.get(subjectDataset, "key")}
+                            onError={setError}
+                            disabled={!subjectDataset}
+                            onSelectName={(name) => {
+                              setSubjectTaxon(name);
+                              testSizeLimit(name);
+                            }}
+                            onResetSearch={() => {
+                              setSubjectTaxon(null);
+                              setSubjectDataTotal(null);
+                            }}
+                          />
+                          {!_.isNull(subjectDataTotal) &&
+                            subjectDataTotal <= MAX_LIST_SIZE && (
+                              <Button
+                                onClick={getSubjectDataAndMatch}
+                                style={{ marginTop: "10px" }}
+                                type="primary"
+                                loading={subjectDataLoading}
+                              >
+                                Fetch {subjectDataTotal.toLocaleString()} names
+                              </Button>
+                            )}
+                          {!_.isNull(subjectDataTotal) &&
+                            subjectDataTotal > MAX_LIST_SIZE && (
+                              <Alert
+                                message="Too many names"
+                                description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
+                                type="error"
+                                style={{ marginTop: "10px" }}
+                                closable
+                                onClose={() => {
+                                  setSubjectTaxon(null);
+                                  setSubjectDataTotal(null);
+                                }}
+                              />
+                            )}
+                        </Col>
+                      </Row>
+                    </Panel>
+                  )}
                 </Collapse>
                 <Row style={{ marginTop: "10px" }}>
-                  <Col>
-                    If your list contains{" "}
-                    <i>
-                      <u>more than 5000 names</u>
-                    </i>
-                    , switch to <b>Asynchronous mode</b> using the toggle above.
-                  </Col>
+                  {!user && (
+                    <Col>
+                      <Alert
+                        type="info"
+                        message="File upload and dataset matching are also available — please log in to use them."
+                      />
+                    </Col>
+                  )}
+                  {!!user && (
+                    <Col>
+                      If your list contains{" "}
+                      <i>
+                        <u>more than 5000 names</u>
+                      </i>
+                      , switch to <b>Asynchronous mode</b> using the toggle above.
+                    </Col>
+                  )}
                   <Col flex="auto"></Col>
-                  {names && step === 0 && (
+                  {names && (
                     <Col>
                       <span>{`${names.length} name${
                         names.length === 1 ? "" : "s"
