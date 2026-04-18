@@ -17,7 +17,6 @@ import {
   Typography,
   List,
 } from "antd";
-import { CSVLink } from "react-csv";
 import {
   DownloadOutlined,
   UploadOutlined,
@@ -44,8 +43,12 @@ const MAX_LIST_SIZE = 6000;
 
 const { Dragger } = Upload;
 const Step = Steps.Step;
-const defaultRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
-const matchRemark = ["ambiguous", "canonical", "none"];
+const classificationRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
+const API_HINT_PARAMS = [
+  "kingdom", "phylum", "subphylum", "class", "subclass",
+  "order", "suborder", "superfamily", "family", "subfamily",
+  "tribe", "subtribe", "genus", "subgenus", "section",
+];
 
 const getLowerKeysObj = (obj) => {
   var key,
@@ -81,6 +84,31 @@ const getPercent = (num, total) => Math.round((num / total) * 100);
 const COL_LXR = {
   key: "3LXR",
   alias: "COL LXR",
+};
+
+const checkScientificNameHeader = (file) =>
+  new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const firstLine = (e.target.result || "").split(/\r?\n/)[0];
+      const headers = firstLine.split(/[\t,;|$]/).map((h) => h.trim().toLowerCase());
+      resolve(headers.includes("scientificname"));
+    };
+    reader.readAsText(file.slice(0, 2048));
+  });
+
+const downloadTsv = (data, filename) => {
+  if (!data || data.length === 0) return;
+  const headers = Object.keys(data[0]);
+  const rows = data.map((row) => headers.map((h) => row[h] ?? "").join("\t"));
+  const content = [headers.join("\t"), ...rows].join("\n");
+  const blob = new Blob([content], { type: "text/tab-separated-values" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 };
 
 const FileFormatList = () => (
@@ -169,7 +197,7 @@ const FileFormatList = () => (
   </List>
 );
 
-const NameMatch = ({ addError, rank, issueMap, user }) => {
+const NameMatch = ({ addError, issueMap, user }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
   const [defaultCode] = useState(null);
@@ -189,13 +217,15 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
   const [textAreaVal, setTextAreaVal] = useState("");
   const [asyncMode, setAsyncMode] = useState(false);
   const [asyncSubmitting, setAsyncSubmitting] = useState(false);
+  const [asyncFile, setAsyncFile] = useState(null);
+  const [originalHeaders, setOriginalHeaders] = useState([]);
 
   const formatUsageClassification = (usage) => {
     let result = {};
     if (usage?.classification) {
       result.keyedClassification = _.keyBy(usage?.classification, "rank");
       result.fullClassification = usage?.classification
-        .map((tx) => `${tx.rank.toUpperCase()}:${tx.label}`)
+        .map((tx) => `${tx.rank.toUpperCase()}:${tx.name}`)
         .join("|");
     }
     if (
@@ -209,11 +239,8 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
 
   const matchParams = (name) => {
     let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
-    if (name.code) {
-      nidxParams += `&code=${name.code}`;
-    }
     if (name.rank) {
-      nidxParams += `&rank=${name.rank}`;
+      nidxParams += `&rank=${encodeURIComponent(name.rank)}`;
     }
     if (name.authorship) {
       nidxParams += `&authorship=${encodeURIComponent(name.authorship)}`;
@@ -224,13 +251,11 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
     if (name.status) {
       nidxParams += `&status=${encodeURIComponent(name.status)}`;
     }
-
-    rank.forEach((r) => {
-      if (name[r]) {
-        nidxParams += `&${r}=${encodeURIComponent(name[r])}`;
+    API_HINT_PARAMS.forEach((param) => {
+      if (name[param]) {
+        nidxParams += `&${param}=${encodeURIComponent(name[param])}`;
       }
     });
-
     return nidxParams;
   };
 
@@ -353,6 +378,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
               "Too many rows (maximum 6.000) - try using our APIs instead"
             );
           } else {
+            const headers = Object.keys(result[0]);
             result = result.map(function (e) {
               return getLowerKeysObj(e);
             });
@@ -367,6 +393,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
                 e.code = e.code || defaultCode;
                 e.scientificName = undefined;
               });
+              setOriginalHeaders(headers);
               setNames(result);
             } else {
               setError(
@@ -382,7 +409,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
   };
 
   const getClassificationColumns = () =>
-    defaultRanks.map((rank) => ({
+    classificationRanks.map((rank) => ({
       title: rank,
       dataIndex: ["primaryDatasetUsage", "keyedClassification", rank, "name"],
       key: rank,
@@ -416,37 +443,40 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
     }));
 
   const getDownLoadData = (whichDataset) => {
-    const usage =
+    const usageKey =
       !whichDataset || whichDataset === "primary"
         ? "primaryDatasetUsage"
         : "secondaryDatasetUsage";
     return names.map((n) => {
-      let row = {
-        providedScientificName: n.providedScientificName,
-        matchRemark: matchRemark.includes(n.usage?.matchType)
-          ? n?.usage?.matchType
-          : "",
-        taxonId: _.get(n, `${usage}.id`, ""),
-        acceptedTaxonId: _.get(
-          n,
-          `${usage}.accepted.id`,
-          _.get(n, `${usage}.id`, "")
-        ),
-        parentTaxonId: _.get(n, `${usage}.parentId`, ""),
-        scientificName: _.get(n, `${usage}.label`, ""),
-        canonicalName: _.get(n, `${usage}.name`, ""),
-        authorship: _.get(n, `${usage}.authorship`, ""),
-        status: _.get(n, `${usage}.status`, ""),
-        acceptedScientificName: _.get(
-          n,
-          `${usage}.accepted.label`,
-          _.get(n, `${usage}.label`, "")
-        ),
-        classification: _.get(n, `${usage}.fullClassification`),
-      };
-      defaultRanks.forEach((r) => {
-        row[r] = _.get(n, `${usage}.keyedClassification.${r}.label`, "");
+      const u = _.get(n, usageKey);
+      const isAccepted = _.get(u, "status") === "accepted";
+
+      // Preserve original input columns dynamically (CSV upload) or fall back to
+      // a minimal fixed set (simple text entry / dataset picker).
+      const row = {};
+      if (originalHeaders.length > 0) {
+        originalHeaders.forEach((header) => {
+          row[`original_${header}`] = n[header.toLowerCase()] ?? "";
+        });
+      } else {
+        row.original_scientificName = n.providedScientificName || "";
+        if (n.providedAuthorship) row.original_authorship = n.providedAuthorship;
+      }
+
+      row.matchType = _.get(u, "matchType", "");
+      row.matchIssues = (_.get(n, "issues.issues") || []).join(";");
+      row.ID = _.get(u, "id", "");
+      row.rank = _.get(u, "rank", "");
+      row.scientificName = _.get(u, "name", "");
+      row.authorship = _.get(u, "authorship", "");
+      row.status = _.get(u, "status", "");
+      row.acceptedID = isAccepted ? "" : _.get(u, "accepted.id", "");
+      row.acceptedScientificName = isAccepted ? "" : _.get(u, "accepted.name", "");
+      row.acceptedAuthorship = isAccepted ? "" : _.get(u, "accepted.authorship", "");
+      classificationRanks.forEach((r) => {
+        row[r] = _.get(u, `keyedClassification.${r}.name`, "");
       });
+      row.classification = _.get(u, "fullClassification", "");
       return row;
     });
   };
@@ -460,7 +490,7 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
       dataset.alias
         ? "Namematch_result_" + dataset.alias
         : "Namematch_result_dataset_" + dataset.key
-    }.csv`.replace(" ", "_");
+    }.tsv`.replace(" ", "_");
   };
 
   const draggerProps = {
@@ -508,39 +538,33 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
     setNames(null);
     setStep(0);
     setTextAreaVal("");
-    setInputType(checked ? "2" : "1");
+    // panel "1" (simple text entry) is only available in sync mode
+    if (checked && inputType === "1") setInputType("2");
     setSubjectDataset(null);
     setSubjectTaxon(null);
     setSubjectDataTotal(null);
+    setAsyncFile(null);
+    setOriginalHeaders([]);
   };
 
-  const submitAsyncFile = async (options) => {
+  const submitAsyncJob = async () => {
     setAsyncSubmitting(true);
     try {
-      const res = await axios.post(
-        `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
-        options.file,
-        { headers: { "Content-Type": "text/plain" } }
-      );
-      options.onSuccess(res.data, options.file);
-      history.push({ pathname: `/tools/name-match/job/${res.data.key}` });
-    } catch (err) {
-      options.onError(err);
-      setSubmissionError(err);
-    } finally {
-      setAsyncSubmitting(false);
-    }
-  };
-
-  const submitAsyncDataset = async () => {
-    setAsyncSubmitting(true);
-    try {
-      const body = { sourceDatasetKey: subjectDataset.key };
-      if (subjectTaxon?.key) body.taxonID = subjectTaxon.key;
-      const res = await axios.post(
-        `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
-        body
-      );
+      let res;
+      if (asyncFile) {
+        res = await axios.post(
+          `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
+          asyncFile,
+          { headers: { "Content-Type": "text/plain" } }
+        );
+      } else {
+        const body = { sourceDatasetKey: subjectDataset.key };
+        if (subjectTaxon?.key) body.taxonID = subjectTaxon.key;
+        res = await axios.post(
+          `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
+          body
+        );
+      }
       history.push({ pathname: `/tools/name-match/job/${res.data.key}` });
     } catch (err) {
       setSubmissionError(err);
@@ -594,47 +618,49 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
         </Row>
 
         {/* ======================================================= */}
-        {/* SYNC MODE — all users (anon users cannot switch to async)*/}
+        {/* UNIFIED STEP WORKFLOW (sync + async)                     */}
         {/* ======================================================= */}
-        {!asyncMode && (
-          <>
-            <Steps
-              current={step}
-              style={{ marginBottom: "24px" }}
-              onChange={(current) => setStep(current)}
-            >
-              <Step title={"Input data"} />
-              <Step title={"Target data"} />
-              <Step
-                title={"Matching"}
-                icon={step === 2 ? <LoadingOutlined /> : null}
-                disabled={step !== 2}
-              />
-              <Step title={"Review result"} disabled />
-            </Steps>
+        <>
+          <Steps
+            current={step}
+            style={{ marginBottom: "24px" }}
+            onChange={(current) => {
+              if (!asyncMode || current <= 1) setStep(current);
+            }}
+          >
+            <Step title={"Input data"} />
+            <Step title={"Target data"} />
+            <Step
+              title={"Matching"}
+              icon={step === 2 ? <LoadingOutlined /> : null}
+              disabled={asyncMode || step !== 2}
+            />
+            <Step title={"Review result"} disabled={asyncMode} />
+          </Steps>
 
-            {names && step === 1 && (
-              <Row style={{ marginBottom: "10px" }}>
-                <Col flex="auto"></Col>
-                <Col>
-                  <span>{`${names.length} name${
-                    names.length === 1 ? "" : "s"
-                  } provided for matching `}</span>
-                  <Button type="primary" onClick={matchResult}>
-                    Next
-                  </Button>
-                </Col>
-              </Row>
-            )}
-
-            {/* STEP 0: Input panels */}
-            {step === 0 && (
-              <>
-                <Collapse
-                  activeKey={inputType}
-                  onChange={(key) => setInputType(key)}
-                  accordion
-                >
+          {/* STEP 0: Input panels */}
+          {step === 0 && (
+            <>
+              {(asyncMode ? (asyncFile || subjectDataset) : names) && (
+                <Row justify="end" style={{ marginBottom: "8px" }}>
+                  <Col>
+                    {!asyncMode && (
+                      <span>{`${names.length} name${
+                        names.length === 1 ? "" : "s"
+                      } provided for matching `}</span>
+                    )}
+                    <Button type="primary" onClick={() => setStep(1)}>
+                      Next
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+              <Collapse
+                activeKey={inputType}
+                onChange={(key) => setInputType(key)}
+                accordion
+              >
+                {!asyncMode && (
                   <Panel header="Simple data entry" key="1">
                     <Row gutter={[16, 16]}>
                       <Col span={16}>
@@ -667,293 +693,236 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
                       </Col>
                     </Row>
                   </Panel>
-                  {!!user && (
-                    <Panel header="Upload CSV" key="2">
-                      <Dragger {...draggerProps}>
-                        <p className="ant-upload-drag-icon">
-                          <UploadOutlined />
-                        </p>
-                        <p className="ant-upload-text">
-                          Click or drag csv file to this area to upload
-                        </p>
+                )}
+                {!!user && (
+                  <Panel header="Upload CSV/TSV" key="2">
+                    <Dragger
+                      name="file"
+                      multiple={false}
+                      beforeUpload={asyncMode ? async (file) => {
+                        if (!isValidFile(file)) {
+                          setError("Invalid file format — the file must be a CSV or TSV file");
+                          return false;
+                        }
+                        const hasHeader = await checkScientificNameHeader(file);
+                        if (!hasHeader) {
+                          setError("The file must contain a scientificName column");
+                          return false;
+                        }
+                        setAsyncFile(file);
+                        setError(null);
+                        return false;
+                      } : draggerProps.beforeUpload}
+                      {...(asyncMode ? { fileList: asyncFile ? [asyncFile] : [], onRemove: () => setAsyncFile(null) } : {})}
+                    >
+                      <p className="ant-upload-drag-icon">
+                        <UploadOutlined />
+                      </p>
+                      <p className="ant-upload-text">
+                        Click or drag file to this area to upload
+                      </p>
+                      <p className="ant-upload-hint">
+                        Your file must contain a column{" "}
+                        <code className="code">scientificName</code> (which may
+                        include the author)
+                      </p>
+                      <p className="ant-upload-hint">
+                        Optional but recommended:{" "}
+                        <code className="code">authorship</code>,{" "}
+                        <code className="code">rank</code>,{" "}
+                        <code className="code">code</code> and the classification (see below)
+                      </p>
+                      {asyncMode && (
                         <p className="ant-upload-hint">
-                          Your csv must contain a column{" "}
-                          <code className="code">scientificName</code> (which may
-                          include the author)
+                          You will receive an email when the result is ready.
                         </p>
-                        <p className="ant-upload-hint">
-                          and optional but recommended columns:
-                        </p>
-                        <p className="ant-upload-hint">
-                          <code className="code">authorship</code>,{" "}
-                          <code className="code">rank</code>,{" "}
-                          <code className="code">status</code>, nomenclatural{" "}
-                          <code className="code">code</code> and the classification
-                          at any rank:
-                        </p>
-                        <p className="ant-upload-hint">
-                          <code className="code">kingdom</code>,{" "}
-                          <code className="code">phylum</code>,{" "}
-                          <code className="code">class</code>,{" "}
-                          <code className="code">order</code>,{" "}
-                          <code className="code">suborder</code>,{" "}
-                          <code className="code">superfamily</code>,{" "}
-                          <code className="code">family</code>,{" "}
-                          <code className="code">tribe</code>
-                        </p>
-                      </Dragger>
-                      <Typography style={{ marginTop: "16px" }}>
-                        <Paragraph>
-                          Your uploaded file has to be a comma (CSV) or tab (TSV)
-                          delimited text file with a header row to specify column
-                          names (
-                          <a
-                            target="_blank"
-                            href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
-                          >
-                            example
-                          </a>
-                          ). It can contain any number of columns but must at least
-                          contain <code className="code">scientificName</code>. For
-                          better matching results include as many of the following{" "}
-                          <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
-                            ColDP columns
-                          </a>{" "}
-                          as possible:
-                        </Paragraph>
-                      </Typography>
-                      <FileFormatList />
-                    </Panel>
-                  )}
-                  {!!user && (
-                    <Panel header="Choose dataset in ChecklistBank" key="3">
-                      <Row>
-                        <Col
-                          span={12}
-                          style={{ paddingRight: "8px", paddingLeft: "8px" }}
+                      )}
+                    </Dragger>
+                    <Typography style={{ marginTop: "16px" }}>
+                      <Paragraph>
+                        Your uploaded file has to be a comma (CSV) or tab (TSV)
+                        delimited text file with a header row to specify column
+                        names (
+                        <a
+                          target="_blank"
+                          href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
                         >
-                          Select a subject dataset:
-                          <DatasetAutocomplete
-                            defaultDatasetKey={_.get(subjectDataset, "key", null)}
-                            onResetSearch={() => {
-                              setSubjectDataset(null);
+                          example
+                        </a>
+                        ). It can contain any number of columns but must at least
+                        contain <code className="code">scientificName</code>. For
+                        better matching results include <code className="code">rank</code> and as many of the following{" "}
+                        <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
+                          ColDP columns
+                        </a>{" "}
+                        as possible:
+                      </Paragraph>
+                    </Typography>
+                    <FileFormatList />
+                  </Panel>
+                )}
+                {!!user && (
+                  <Panel header="Choose dataset in ChecklistBank" key="3">
+                    <Row>
+                      <Col
+                        span={12}
+                        style={{ paddingRight: "8px", paddingLeft: "8px" }}
+                      >
+                        Select a subject dataset:
+                        <DatasetAutocomplete
+                          defaultDatasetKey={_.get(subjectDataset, "key", null)}
+                          onResetSearch={() => {
+                            setSubjectDataset(null);
+                            setSubjectTaxon(null);
+                          }}
+                          onSelectDataset={(dataset) => {
+                            setSubjectDataset(dataset);
+                            if (dataset?.key !== subjectDataset?.key) {
                               setSubjectTaxon(null);
-                            }}
-                            onSelectDataset={(dataset) => {
-                              setSubjectDataset(dataset);
-                              if (dataset?.key !== subjectDataset?.key) {
+                            }
+                          }}
+                          placeHolder="Choose subject dataset"
+                        />
+                        {asyncMode ? "And an optional root taxon:" : "And a root taxon:"}
+                        <NameAutocomplete
+                          minRank="GENUS"
+                          defaultTaxonKey={_.get(subjectTaxon, "key", null)}
+                          datasetKey={_.get(subjectDataset, "key")}
+                          onError={setError}
+                          disabled={!subjectDataset}
+                          onSelectName={(name) => {
+                            setSubjectTaxon(name);
+                            if (!asyncMode) testSizeLimit(name);
+                          }}
+                          onResetSearch={() => {
+                            setSubjectTaxon(null);
+                            if (!asyncMode) setSubjectDataTotal(null);
+                          }}
+                        />
+                        {!asyncMode && !_.isNull(subjectDataTotal) &&
+                          subjectDataTotal <= MAX_LIST_SIZE && (
+                            <Button
+                              onClick={getSubjectDataAndMatch}
+                              style={{ marginTop: "10px" }}
+                              type="primary"
+                              loading={subjectDataLoading}
+                            >
+                              Fetch {subjectDataTotal.toLocaleString()} names
+                            </Button>
+                          )}
+                        {!asyncMode && !_.isNull(subjectDataTotal) &&
+                          subjectDataTotal > MAX_LIST_SIZE && (
+                            <Alert
+                              message="Too many names"
+                              description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
+                              type="error"
+                              style={{ marginTop: "10px" }}
+                              closable
+                              onClose={() => {
                                 setSubjectTaxon(null);
-                              }
-                            }}
-                            placeHolder="Choose subject dataset"
-                          />
-                          And a root taxon:
-                          <NameAutocomplete
-                            minRank="GENUS"
-                            defaultTaxonKey={_.get(subjectTaxon, "key", null)}
-                            datasetKey={_.get(subjectDataset, "key")}
-                            onError={setError}
-                            disabled={!subjectDataset}
-                            onSelectName={(name) => {
-                              setSubjectTaxon(name);
-                              testSizeLimit(name);
-                            }}
-                            onResetSearch={() => {
-                              setSubjectTaxon(null);
-                              setSubjectDataTotal(null);
-                            }}
-                          />
-                          {!_.isNull(subjectDataTotal) &&
-                            subjectDataTotal <= MAX_LIST_SIZE && (
-                              <Button
-                                onClick={getSubjectDataAndMatch}
-                                style={{ marginTop: "10px" }}
-                                type="primary"
-                                loading={subjectDataLoading}
-                              >
-                                Fetch {subjectDataTotal.toLocaleString()} names
-                              </Button>
-                            )}
-                          {!_.isNull(subjectDataTotal) &&
-                            subjectDataTotal > MAX_LIST_SIZE && (
-                              <Alert
-                                message="Too many names"
-                                description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                                type="error"
-                                style={{ marginTop: "10px" }}
-                                closable
-                                onClose={() => {
-                                  setSubjectTaxon(null);
-                                  setSubjectDataTotal(null);
-                                }}
-                              />
-                            )}
-                        </Col>
-                      </Row>
-                    </Panel>
-                  )}
-                </Collapse>
-                <Row style={{ marginTop: "10px" }}>
-                  {!user && (
-                    <Col>
-                      <Alert
-                        type="info"
-                        message="File upload and dataset matching are also available — please log in to use them."
-                      />
-                    </Col>
-                  )}
-                  {!!user && (
-                    <Col>
-                      If your list contains{" "}
-                      <i>
-                        <u>more than 5000 names</u>
-                      </i>
-                      , switch to <b>Asynchronous mode</b> using the toggle above.
-                    </Col>
-                  )}
-                  <Col flex="auto"></Col>
-                  {names && (
-                    <Col>
+                                setSubjectDataTotal(null);
+                              }}
+                            />
+                          )}
+                      </Col>
+                    </Row>
+                  </Panel>
+                )}
+              </Collapse>
+              <Row style={{ marginTop: "10px" }}>
+                {!user && (
+                  <Col>
+                    <Alert
+                      type="info"
+                      message="File upload and dataset matching are also available — please log in to use them."
+                    />
+                  </Col>
+                )}
+                {!!user && !asyncMode && (
+                  <Col>
+                    If your list contains{" "}
+                    <i>
+                      <u>more than 5000 names</u>
+                    </i>
+                    , switch to <b>Asynchronous mode</b> using the toggle above.
+                  </Col>
+                )}
+                <Col flex="auto"></Col>
+                {(asyncMode ? (asyncFile || subjectDataset) : names) && (
+                  <Col>
+                    {!asyncMode && (
                       <span>{`${names.length} name${
                         names.length === 1 ? "" : "s"
                       } provided for matching `}</span>
-                      <Button type="primary" onClick={() => setStep(1)}>
-                        Next
-                      </Button>
-                    </Col>
-                  )}
-                </Row>
-              </>
-            )}
-
-            {step === 1 && (
-              <>
-                <Row>
-                  <Col>
-                    <Typography>
-                      <Paragraph>
-                        Which dataset do you want to match against?
-                      </Paragraph>
-                    </Typography>
+                    )}
+                    <Button type="primary" onClick={() => setStep(1)}>
+                      Next
+                    </Button>
                   </Col>
-                </Row>
-                <Row>
+                )}
+              </Row>
+            </>
+          )}
+
+          {step === 1 && (
+            <>
+              <Row>
+                <Col>
+                  <Typography>
+                    <Paragraph>
+                      Which dataset do you want to match against?
+                    </Paragraph>
+                  </Typography>
+                </Col>
+              </Row>
+              <Row>
+                <Col
+                  style={{ paddingRight: "8px" }}
+                  span={!secondaryDataset || asyncMode ? 12 : 10}
+                >
+                  <DatasetAutocomplete
+                    defaultDatasetKey={primaryDataset?.key}
+                    onResetSearch={() => setPrimaryDataset(null)}
+                    onSelectDataset={setPrimaryDataset}
+                    placeHolder="Choose primary dataset"
+                  />
+                </Col>
+                {!asyncMode && (
                   <Col
-                    style={{ paddingRight: "8px" }}
-                    span={step === 0 || !secondaryDataset ? 12 : 10}
+                    style={
+                      showSecondary
+                        ? {
+                            paddingLeft: "8px",
+                            paddingRight: "8px",
+                            marginTop: "-22px",
+                          }
+                        : { paddingLeft: "8px", paddingRight: "8px" }
+                    }
+                    span={!secondaryDataset ? 12 : 10}
                   >
-                    <DatasetAutocomplete
-                      defaultDatasetKey={primaryDataset?.key}
-                      onResetSearch={() => setPrimaryDataset(null)}
-                      onSelectDataset={setPrimaryDataset}
-                      placeHolder="Choose primary dataset"
+                    <span>Match against two datasets </span>
+                    <Switch
+                      checked={showSecondary}
+                      onChange={(checked) => {
+                        setShowSecondary(checked);
+                        if (!checked) {
+                          setSecondaryDataset(null);
+                        }
+                      }}
                     />
-                  </Col>
-                  {(step === 1 || secondaryDataset) && (
-                    <Col
-                      style={
-                        showSecondary
-                          ? {
-                              paddingLeft: "8px",
-                              paddingRight: "8px",
-                              marginTop: "-22px",
-                            }
-                          : { paddingLeft: "8px", paddingRight: "8px" }
-                      }
-                      span={step === 1 || !secondaryDataset ? 12 : 10}
-                    >
-                      <span>Match against two datasets </span>
-                      <Switch
-                        checked={showSecondary}
-                        onChange={(checked) => {
-                          setShowSecondary(checked);
-                          if (!checked) {
-                            setSecondaryDataset(null);
-                          }
-                        }}
+                    {showSecondary && (
+                      <DatasetAutocomplete
+                        defaultDatasetKey={
+                          secondaryDataset ? secondaryDataset.key : null
+                        }
+                        onResetSearch={() => setSecondaryDataset(null)}
+                        onSelectDataset={setSecondaryDataset}
+                        placeHolder="Choose secondary dataset"
                       />
-                      {showSecondary && (
-                        <DatasetAutocomplete
-                          defaultDatasetKey={
-                            secondaryDataset ? secondaryDataset.key : null
-                          }
-                          onResetSearch={() => setSecondaryDataset(null)}
-                          onSelectDataset={setSecondaryDataset}
-                          placeHolder="Choose secondary dataset"
-                        />
-                      )}
-                      {step === 2 && (
-                        <Row justify="space-between">
-                          <Col>
-                            <Statistic
-                              title={"Matches"}
-                              value={secondaryUsageMetrics}
-                              suffix={`/ ${names.length}`}
-                            />
-                          </Col>
-                          <Col>
-                            <CSVLink
-                              filename={getDownLoadDataFileName("secondary")}
-                              data={getDownLoadData("secondary")}
-                            >
-                              <Button
-                                type="primary"
-                                style={{ marginTop: "10px" }}
-                              >
-                                <DownloadOutlined /> Download result
-                              </Button>
-                            </CSVLink>
-                          </Col>
-                        </Row>
-                      )}
-                    </Col>
-                  )}
-                </Row>
-              </>
-            )}
-
-            {step === 2 && (
-              <MatchProgress total={names.length} matched={numMatchedNames} />
-            )}
-
-            {step === 3 && (
-              <>
-                <Row justify="space-between">
-                  <Col span={12}>
-                    <Row>
-                      <Col span={24}>
-                        {secondaryDataset && (
-                          <span className="col-reference-link">[1] </span>
-                        )}
-                        {primaryDataset?.title}
-                      </Col>
-                      <Col span={12}>
-                        <Statistic
-                          title={"Matches"}
-                          value={primaryUsageMetrics}
-                          suffix={`/ ${names.length.toLocaleString()}`}
-                        />
-                      </Col>
-                      <Col>
-                        <CSVLink
-                          filename={getDownLoadDataFileName("primary")}
-                          data={getDownLoadData("primary")}
-                        >
-                          <Button type="primary" style={{ marginTop: "10px" }}>
-                            <DownloadOutlined /> Download result
-                          </Button>
-                        </CSVLink>
-                      </Col>
-                    </Row>
-                  </Col>
-                  {secondaryDataset && (
-                    <Col span={12}>
-                      <Row>
-                        <Col span={24}>
-                          <span className="col-reference-link">[2] </span>
-                          {secondaryDataset?.title}
-                        </Col>
-                        <Col span={12}>
+                    )}
+                    {step === 2 && (
+                      <Row justify="space-between">
+                        <Col>
                           <Statistic
                             title={"Matches"}
                             value={secondaryUsageMetrics}
@@ -961,30 +930,116 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
                           />
                         </Col>
                         <Col>
-                          <CSVLink
-                            filename={getDownLoadDataFileName("secondary")}
-                            data={getDownLoadData("secondary")}
+                          <Button
+                            type="primary"
+                            style={{ marginTop: "10px" }}
+                            onClick={() => downloadTsv(getDownLoadData("secondary"), getDownLoadDataFileName("secondary"))}
                           >
-                            <Button
-                              type="primary"
-                              style={{ marginTop: "10px" }}
-                            >
-                              <DownloadOutlined /> Download result
-                            </Button>
-                          </CSVLink>
+                            <DownloadOutlined /> Download result
+                          </Button>
                         </Col>
                       </Row>
-                    </Col>
-                  )}
+                    )}
+                  </Col>
+                )}
+              </Row>
+              {asyncMode && (
+                <Row style={{ marginTop: "16px" }}>
+                  <Col>
+                    <Button
+                      type="primary"
+                      onClick={submitAsyncJob}
+                      loading={asyncSubmitting}
+                      disabled={!primaryDataset}
+                    >
+                      Submit matching job
+                    </Button>
+                  </Col>
                 </Row>
-              </>
-            )}
+              )}
+              {!asyncMode && names && (
+                <Row style={{ marginTop: "16px" }} justify="end">
+                  <Col>
+                    <span>{`${names.length} name${
+                      names.length === 1 ? "" : "s"
+                    } provided for matching `}</span>
+                    <Button type="primary" onClick={matchResult} disabled={!primaryDataset}>
+                      Match
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+            </>
+          )}
 
-            {(step === 2 || step === 3) && (
-              <Table
-                scroll={{ x: 2000 }}
-                dataSource={names}
-                columns={[
+          {!asyncMode && step === 2 && (
+            <MatchProgress total={names.length} matched={numMatchedNames} />
+          )}
+
+          {!asyncMode && step === 3 && (
+            <>
+              <Row justify="space-between">
+                <Col span={12}>
+                  <Row>
+                    <Col span={24}>
+                      {secondaryDataset && (
+                        <span className="col-reference-link">[1] </span>
+                      )}
+                      {primaryDataset?.title}
+                    </Col>
+                    <Col span={12}>
+                      <Statistic
+                        title={"Matches"}
+                        value={primaryUsageMetrics}
+                        suffix={`/ ${names.length.toLocaleString()}`}
+                      />
+                    </Col>
+                    <Col>
+                      <Button
+                        type="primary"
+                        style={{ marginTop: "10px" }}
+                        onClick={() => downloadTsv(getDownLoadData("primary"), getDownLoadDataFileName("primary"))}
+                      >
+                        <DownloadOutlined /> Download result
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+                {secondaryDataset && (
+                  <Col span={12}>
+                    <Row>
+                      <Col span={24}>
+                        <span className="col-reference-link">[2] </span>
+                        {secondaryDataset?.title}
+                      </Col>
+                      <Col span={12}>
+                        <Statistic
+                          title={"Matches"}
+                          value={secondaryUsageMetrics}
+                          suffix={`/ ${names.length}`}
+                        />
+                      </Col>
+                      <Col>
+                          <Button
+                            type="primary"
+                            style={{ marginTop: "10px" }}
+                            onClick={() => downloadTsv(getDownLoadData("secondary"), getDownLoadDataFileName("secondary"))}
+                          >
+                            <DownloadOutlined /> Download result
+                          </Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
+              </Row>
+            </>
+          )}
+
+          {!asyncMode && (step === 2 || step === 3) && (
+            <Table
+              scroll={{ x: 2000 }}
+              dataSource={names}
+              columns={[
                   {
                     title: (
                       <Tooltip
@@ -1363,131 +1418,13 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
               />
             )}
           </>
-        )}
-
-        {/* ======================================================= */}
-        {/* LOGGED IN — ASYNC MODE                                   */}
-        {/* ======================================================= */}
-        {!!user && asyncMode && (
-          <>
-            {/* Target dataset selector */}
-            <Row style={{ marginBottom: "16px" }}>
-              <Col span={12}>
-                <Typography>
-                  <Paragraph>Match against:</Paragraph>
-                </Typography>
-                <DatasetAutocomplete
-                  defaultDatasetKey={primaryDataset?.key}
-                  onResetSearch={() => setPrimaryDataset(null)}
-                  onSelectDataset={setPrimaryDataset}
-                  placeHolder="Choose target dataset"
-                />
-              </Col>
-            </Row>
-
-            <Collapse
-              activeKey={inputType}
-              onChange={(key) => setInputType(key)}
-              accordion
-            >
-              <Panel header="Upload CSV/TSV" key="2">
-                <Dragger
-                  name="file"
-                  multiple={false}
-                  customRequest={submitAsyncFile}
-                  disabled={!primaryDataset || asyncSubmitting}
-                >
-                  <p className="ant-upload-drag-icon">
-                    <UploadOutlined />
-                  </p>
-                  <p className="ant-upload-text">
-                    Click or drag csv/tsv file to this area to upload
-                  </p>
-                  <p className="ant-upload-hint">
-                    The file format is auto-detected. You will receive an email
-                    when the result is ready.
-                  </p>
-                </Dragger>
-                <Typography style={{ marginTop: "16px" }}>
-                  <Paragraph>
-                    Your uploaded file has to be a comma (CSV) or tab (TSV)
-                    delimited text file with a header row to specify column
-                    names (
-                    <a
-                      target="_blank"
-                      href="https://gist.githubusercontent.com/mdoering/e8f464e97ac524973758c73162e4bf97/raw/8e38e8ab493d0afdcd7089b98358fc41e2f38d01/names.tsv"
-                    >
-                      example
-                    </a>
-                    ). It can contain any number of columns but must at least
-                    contain <code className="code">scientificName</code>. For
-                    better matching results include as many of the following{" "}
-                    <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
-                      ColDP columns
-                    </a>{" "}
-                    as possible:
-                  </Paragraph>
-                </Typography>
-                <FileFormatList />
-              </Panel>
-
-              <Panel header="Choose dataset in ChecklistBank" key="3">
-                <Row>
-                  <Col
-                    span={12}
-                    style={{ paddingRight: "8px", paddingLeft: "8px" }}
-                  >
-                    Select a source dataset:
-                    <DatasetAutocomplete
-                      defaultDatasetKey={_.get(subjectDataset, "key", null)}
-                      onResetSearch={() => {
-                        setSubjectDataset(null);
-                        setSubjectTaxon(null);
-                      }}
-                      onSelectDataset={(dataset) => {
-                        setSubjectDataset(dataset);
-                        if (dataset?.key !== subjectDataset?.key) {
-                          setSubjectTaxon(null);
-                        }
-                      }}
-                      placeHolder="Choose source dataset"
-                    />
-                    And an optional root taxon:
-                    <NameAutocomplete
-                      minRank="GENUS"
-                      defaultTaxonKey={_.get(subjectTaxon, "key", null)}
-                      datasetKey={_.get(subjectDataset, "key")}
-                      onError={setError}
-                      disabled={!subjectDataset}
-                      onSelectName={(name) => setSubjectTaxon(name)}
-                      onResetSearch={() => setSubjectTaxon(null)}
-                    />
-                    {subjectDataset && (
-                      <Button
-                        onClick={submitAsyncDataset}
-                        style={{ marginTop: "10px" }}
-                        type="primary"
-                        loading={asyncSubmitting}
-                        disabled={!primaryDataset}
-                      >
-                        Submit matching job
-                      </Button>
-                    )}
-                  </Col>
-                </Row>
-              </Panel>
-            </Collapse>
-          </>
-        )}
       </PageContent>
     </Layout>
   );
 };
 
-const mapContextToProps = ({ nomCode, addError, rank, issueMap, user }) => ({
-  nomCode,
+const mapContextToProps = ({ addError, issueMap, user }) => ({
   addError,
-  rank,
   issueMap,
   user,
 });

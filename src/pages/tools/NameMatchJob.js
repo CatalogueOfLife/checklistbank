@@ -124,7 +124,20 @@ const NameMatchJob = ({ match, addError }) => {
           </Row>
         )}
         {!job && !resultUrl && resultUrlHasBeenChecked && (
-          <Exception type="404" />
+          <>
+            <Alert
+              type="error"
+              style={{ marginBottom: "16px" }}
+              showIcon
+              message="Matching job not found"
+              description="The job result could not be found. This usually means the job failed to start — most likely because the uploaded file could not be parsed. Please make sure your file is a valid CSV or TSV with a scientificName column."
+            />
+            <Button
+              onClick={() => history.push({ pathname: "/tools/name-match" })}
+            >
+              New upload
+            </Button>
+          </>
         )}
         <Spin spinning={loading}>
           {job && (

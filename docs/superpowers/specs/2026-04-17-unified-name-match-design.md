@@ -22,7 +22,7 @@ Merge `/tools/name-match` (synchronous) and `/tools/name-match-async` (asynchron
 ## Page Structure
 
 ### Header area
-- Page title: "Name Match"
+- Page title: "Name Matching"
 - Switch in top-right area: **Synchronous / Asynchronous** (default: synchronous)
 - Async mode requires login. If user is not logged in:
   - Only show "Simple data entry" panel
