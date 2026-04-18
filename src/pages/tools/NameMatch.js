@@ -1238,14 +1238,20 @@ const NameMatch = ({ addError, issueMap, user }) => {
                               {secondaryDataset && (
                                 <span className="col-reference-link">[1]</span>
                               )}{" "}
-                              <span
-                                dangerouslySetInnerHTML={{
-                                  __html: _.get(
-                                    record,
-                                    "primaryDatasetUsage.labelHtml"
-                                  ),
-                                }}
-                              />
+                              <a
+                                href={`/dataset/${primaryDataset.key}/nameusage/${_.get(record, "primaryDatasetUsage.id")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: _.get(
+                                      record,
+                                      "primaryDatasetUsage.labelHtml"
+                                    ),
+                                  }}
+                                />
+                              </a>
                             </>
                           ) : (
                             <>
@@ -1267,14 +1273,20 @@ const NameMatch = ({ addError, issueMap, user }) => {
                                   <span className="col-reference-link">
                                     [2]
                                   </span>{" "}
-                                  <span
-                                    dangerouslySetInnerHTML={{
-                                      __html: _.get(
-                                        record,
-                                        "secondaryDatasetUsage.labelHtml"
-                                      ),
-                                    }}
-                                  />
+                                  <a
+                                    href={`/dataset/${secondaryDataset.key}/nameusage/${_.get(record, "secondaryDatasetUsage.id")}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <span
+                                      dangerouslySetInnerHTML={{
+                                        __html: _.get(
+                                          record,
+                                          "secondaryDatasetUsage.labelHtml"
+                                        ),
+                                      }}
+                                    />
+                                  </a>
                                 </>
                               ) : (
                                 <>
@@ -1292,42 +1304,13 @@ const NameMatch = ({ addError, issueMap, user }) => {
                     },
                   },
                   {
-                    title: "Authorship",
-                    dataIndex: ["usage", "authorship"],
-                    key: "authorship",
-                    render: (text, record) => {
-                      return (
-                        <>
-                          {_.get(record, "primaryDatasetUsage.id") && (
-                            <span className="col-reference-link">[1] </span>
-                          )}
-                          {_.get(record, "primaryDatasetUsage.authorship")}
-                          {secondaryDataset && (
-                            <>
-                              <br />
-                              {_.get(record, "secondaryDatasetUsage.id") && (
-                                <span className="col-reference-link">
-                                  [2]{" "}
-                                </span>
-                              )}
-                              {_.get(
-                                record,
-                                "secondaryDatasetUsage.authorship"
-                              )}
-                            </>
-                          )}
-                        </>
-                      );
-                    },
-                  },
-                  {
                     title: "Status",
                     dataIndex: ["usage", "status"],
                     key: "status",
                     render: (text, record) => {
                       return (
                         <>
-                          {_.get(record, "primaryDatasetUsage.id") && (
+                          {secondaryDataset && _.get(record, "primaryDatasetUsage.id") && (
                             <span className="col-reference-link">[1] </span>
                           )}
                           {![
