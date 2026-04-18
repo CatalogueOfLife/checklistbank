@@ -285,7 +285,8 @@ const NameMatch = ({ addError, rank, issueMap, user }) => {
         file.type == "text/plain" ||
         file.type == "text/tab-separated-values" ||
         file.name.endsWith(".csv") ||
-        file.name.endsWith(".tsv"))
+        file.name.endsWith(".tsv") ||
+        file.name.endsWith(".txt"))
     );
   };
 
