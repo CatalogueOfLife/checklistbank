@@ -186,6 +186,11 @@ class BasicMenu extends Component {
                 <span>Formats</span>
               </NavLink>
             </Menu.Item>
+            <Menu.Item key="DOI">
+              <NavLink to={{ pathname: "/about/DOI" }}>
+                <span>DOI</span>
+              </NavLink>
+            </Menu.Item>
             <Menu.Item key="API">
               <NavLink to={{ pathname: "/about/API" }}>
                 <span>API</span>
