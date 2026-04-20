@@ -45,7 +45,7 @@ Note: making a dataset private again does **not** revert its DOI state.
 Once a DOI is FINDABLE it stays FINDABLE; this is deliberate.
 
 ## DOI metadata and chaining
-The dataset metadata is used to build the Datacite metadata. In addition some DOI relations are established:
+The dataset metadata is used to build the [Datacite metadata](https://schema.datacite.org/). In addition some DOI relations are established:
 - Version DOIs are chained to their previous and next import attempts.
 - Release concept DOIs are chained to the previous and next release of the same project
 
