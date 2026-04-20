@@ -82,6 +82,17 @@ class DatasetList extends React.Component {
           sorter: true,
         },
         {
+          title: "DOI",
+          dataIndex: "doi",
+          key: "doi",
+          render: (doi) =>
+            doi ? (
+              <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer">
+                {doi}
+              </a>
+            ) : null,
+        },
+        {
           title: "Alias",
           dataIndex: "alias",
           key: "alias",
@@ -318,7 +329,6 @@ class DatasetList extends React.Component {
             return moment(date).format("MMM Do YYYY");
           },
         },
-
         {
           title: "",
           dataIndex: "private",
@@ -571,52 +581,52 @@ class DatasetList extends React.Component {
     } = this.state;
     const { datasetOrigin, recentDatasets, datasetType, license, user, importState, taxGroup } =
       this.props;
-    defaultColumns[9].filters = datasetOrigin.map((i) => ({
+    defaultColumns[10].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.origin) {
-      defaultColumns[9].filteredValue = _.isArray(params.origin)
+      defaultColumns[10].filteredValue = _.isArray(params.origin)
         ? params.origin
         : [params.origin];
     } else {
-      defaultColumns[9].filteredValue = null;
+      defaultColumns[10].filteredValue = null;
     }
-    defaultColumns[11].filters = datasetType.map((i) => ({
+    defaultColumns[12].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.type) {
-      defaultColumns[11].filteredValue = _.isArray(params.type)
+      defaultColumns[12].filteredValue = _.isArray(params.type)
         ? params.type
         : [params.type];
     } else {
-      defaultColumns[11].filteredValue = null;
+      defaultColumns[12].filteredValue = null;
     }
-    defaultColumns[12].filters = license.map((i) => ({
+    defaultColumns[13].filters = license.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.license) {
-      defaultColumns[12].filteredValue = _.isArray(params.license)
+      defaultColumns[13].filteredValue = _.isArray(params.license)
         ? params.license
         : [params.license];
     } else {
-      defaultColumns[12].filteredValue = null;
+      defaultColumns[13].filteredValue = null;
     }
-    defaultColumns[20].filters = importState.map((i) => ({
+    defaultColumns[21].filters = importState.map((i) => ({
       text: _.startCase(i?.name),
       value: i.name,
     }));
     if (params.lastImportState) {
-      defaultColumns[20].filteredValue = _.isArray(params.lastImportState)
+      defaultColumns[21].filteredValue = _.isArray(params.lastImportState)
         ? params.lastImportState
         : [params.lastImportState];
     } else {
-      defaultColumns[20].filteredValue = null;
+      defaultColumns[21].filteredValue = null;
     }
     const groupDepths = computeGroupDepths(taxGroup);
-    defaultColumns[14].filters = taxGroup
+    defaultColumns[15].filters = taxGroup
       ? Object.values(taxGroup).map((g) => ({
           text: (
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: (groupDepths[g.name] || 0) * 16 }}>
@@ -630,11 +640,11 @@ class DatasetList extends React.Component {
         }))
       : [];
     if (params.group) {
-      defaultColumns[14].filteredValue = _.isArray(params.group)
+      defaultColumns[15].filteredValue = _.isArray(params.group)
         ? params.group
         : [params.group];
     } else {
-      defaultColumns[14].filteredValue = null;
+      defaultColumns[15].filteredValue = null;
     }
 
     const filteredColumns = isEditorOrAdmin(this.props.user)
