@@ -69,8 +69,8 @@ class DatasetSettings extends React.Component {
     const { datasetKey } = this.props;
     this.setState({ rebuildMatcherLoading: true, error: null });
     axios
-      .delete(`${config.dataApi}admin/matcher/${datasetKey}`)
-      .then(() => axios.post(`${config.dataApi}admin/matcher/${datasetKey}`))
+      .delete(`${config.dataApi}matcher/${datasetKey}`)
+      .then(() => axios.post(`${config.dataApi}matcher/${datasetKey}`))
       .then(() => {
         this.setState({ rebuildMatcherLoading: false });
         notification.open({

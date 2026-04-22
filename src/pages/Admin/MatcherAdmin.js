@@ -143,7 +143,7 @@ class MatcherList extends React.Component {
       pathname: "/admin/matcher",
       search: `?decorate=true`,
     });
-    axios(`${config.dataApi}admin/matcher?decorate=true`)
+    axios(`${config.dataApi}matcher?decorate=true`)
       .then((res) => {
         this.setState({
           loading: false,
@@ -158,7 +158,7 @@ class MatcherList extends React.Component {
 
   loadMatcher = (datasetKey) => {
     axios
-      .get(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .get(`${config.dataApi}matcher/${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
@@ -172,7 +172,7 @@ class MatcherList extends React.Component {
   
   reindexDataset = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .post(`${config.dataApi}matcher/${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
@@ -186,7 +186,7 @@ class MatcherList extends React.Component {
 
   deleteDataset = (datasetKey) => {
     axios
-      .delete(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .delete(`${config.dataApi}matcher/${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
@@ -200,7 +200,7 @@ class MatcherList extends React.Component {
 
   reloadMatcher = () => {
     axios
-      .post(`${config.dataApi}admin/matcher/reload`)
+      .post(`${config.dataApi}matcher/reload`)
       .then(() => {
         this.setState({ error: null }, () => {
           notification.open({

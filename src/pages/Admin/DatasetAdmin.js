@@ -319,7 +319,7 @@ class DatasetList extends React.Component {
 
   buildMatcher = (datasetKey) => {
     axios
-      .post(`${config.dataApi}admin/matcher/${datasetKey}`)
+      .post(`${config.dataApi}matcher/${datasetKey}`)
       .then((res) => {
         this.setState({ error: null }, () => {
           notification.open({
