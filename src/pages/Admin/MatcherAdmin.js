@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Button, notification } from "antd";
+import { Table, Alert, Row, Col, Button, Popconfirm, notification } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -198,6 +198,20 @@ class MatcherList extends React.Component {
       .catch((err) => this.setState({ error: err }));
   };
 
+  reloadMatcher = () => {
+    axios
+      .post(`${config.dataApi}admin/matcher/reload`)
+      .then(() => {
+        this.setState({ error: null }, () => {
+          notification.open({
+            message: "Matcher reload triggered",
+            description: "All matchers are being reloaded from disk",
+          });
+        });
+      })
+      .catch((err) => this.setState({ error: err }));
+  };
+
   render() {
     const { data, loading, error, columns } = this.state;
     return (
@@ -218,7 +232,17 @@ class MatcherList extends React.Component {
             {error && <Alert message={error.message} type="error" />}
           </div>
           <h1>Dataset Matcher</h1>
-          <p>Dataset matchers are file based indices of a dataset that is used for db independent matching services.</p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <p style={{ margin: 0 }}>Dataset matchers are file based indices of a dataset that is used for db independent matching services.</p>
+            <Popconfirm
+              title="Do you want to remove all matchers from memory and reload them from disk?"
+              onConfirm={this.reloadMatcher}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary">Reload</Button>
+            </Popconfirm>
+          </div>
           {!error && (
             <Table
               size="middle"
