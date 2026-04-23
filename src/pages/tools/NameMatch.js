@@ -16,6 +16,7 @@ import {
   Tooltip,
   Typography,
   List,
+  Spin,
 } from "antd";
 import {
   DownloadOutlined,
@@ -219,6 +220,10 @@ const NameMatch = ({ addError, issueMap, user }) => {
   const [asyncSubmitting, setAsyncSubmitting] = useState(false);
   const [asyncFile, setAsyncFile] = useState(null);
   const [originalHeaders, setOriginalHeaders] = useState([]);
+  const [primaryMatcherStatus, setPrimaryMatcherStatus] = useState(null);
+  const [secondaryMatcherStatus, setSecondaryMatcherStatus] = useState(null);
+  const [primaryMatcherRequested, setPrimaryMatcherRequested] = useState(false);
+  const [secondaryMatcherRequested, setSecondaryMatcherRequested] = useState(false);
 
   const formatUsageClassification = (usage) => {
     let result = {};
@@ -236,6 +241,62 @@ const NameMatch = ({ addError, issueMap, user }) => {
     }
     return result;
   };
+
+  const checkMatcher = async (datasetKey, setStatus) => {
+    setStatus('checking');
+    try {
+      const { data } = await axios.get(`${config.dataApi}matcher/${datasetKey}`);
+      setStatus(data.size > 0 ? 'ok' : 'missing');
+    } catch (err) {
+      setStatus(err?.response?.status === 404 ? 'missing' : 'ok');
+    }
+  };
+
+  const requestMatcher = async (datasetKey, setStatus, setRequested) => {
+    try {
+      await axios.post(`${config.dataApi}matcher/${datasetKey}`);
+      setRequested(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const matcherStatusUI = (status, requested, datasetKey, setStatus, setRequested) => {
+    if (status === 'checking') {
+      return (
+        <div style={{ marginTop: 6 }}>
+          <Spin size="small" /> <span style={{ marginLeft: 8, color: '#888' }}>Checking matcher index…</span>
+        </div>
+      );
+    }
+    if (status === 'missing' && !requested) {
+      return (
+        <Alert
+          style={{ marginTop: 6 }}
+          type="warning"
+          message="No matcher index exists for this dataset — matching results will be incorrect."
+          action={
+            <Button size="small" onClick={() => requestMatcher(datasetKey, setStatus, setRequested)}>
+              Request matcher
+            </Button>
+          }
+        />
+      );
+    }
+    if (status === 'missing' && requested) {
+      return (
+        <Alert
+          style={{ marginTop: 6 }}
+          type="info"
+          message="Matcher is being built. Please come back in about an hour before running the match."
+        />
+      );
+    }
+    return null;
+  };
+
+  const matcherBlocking = primaryMatcherStatus === 'checking' || primaryMatcherStatus === 'missing' ||
+    secondaryMatcherStatus === 'checking' || secondaryMatcherStatus === 'missing';
 
   const matchParams = (name) => {
     let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
@@ -882,10 +943,19 @@ const NameMatch = ({ addError, issueMap, user }) => {
                 >
                   <DatasetAutocomplete
                     defaultDatasetKey={primaryDataset?.key}
-                    onResetSearch={() => setPrimaryDataset(null)}
-                    onSelectDataset={setPrimaryDataset}
+                    onResetSearch={() => {
+                      setPrimaryDataset(null);
+                      setPrimaryMatcherStatus(null);
+                      setPrimaryMatcherRequested(false);
+                    }}
+                    onSelectDataset={(dataset) => {
+                      setPrimaryDataset(dataset);
+                      setPrimaryMatcherRequested(false);
+                      checkMatcher(dataset.key, setPrimaryMatcherStatus);
+                    }}
                     placeHolder="Choose primary dataset"
                   />
+                  {matcherStatusUI(primaryMatcherStatus, primaryMatcherRequested, primaryDataset?.key, setPrimaryMatcherStatus, setPrimaryMatcherRequested)}
                 </Col>
                 {!asyncMode && (
                   <Col
@@ -907,18 +977,31 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         setShowSecondary(checked);
                         if (!checked) {
                           setSecondaryDataset(null);
+                          setSecondaryMatcherStatus(null);
+                          setSecondaryMatcherRequested(false);
                         }
                       }}
                     />
                     {showSecondary && (
-                      <DatasetAutocomplete
-                        defaultDatasetKey={
-                          secondaryDataset ? secondaryDataset.key : null
-                        }
-                        onResetSearch={() => setSecondaryDataset(null)}
-                        onSelectDataset={setSecondaryDataset}
-                        placeHolder="Choose secondary dataset"
-                      />
+                      <>
+                        <DatasetAutocomplete
+                          defaultDatasetKey={
+                            secondaryDataset ? secondaryDataset.key : null
+                          }
+                          onResetSearch={() => {
+                            setSecondaryDataset(null);
+                            setSecondaryMatcherStatus(null);
+                            setSecondaryMatcherRequested(false);
+                          }}
+                          onSelectDataset={(dataset) => {
+                            setSecondaryDataset(dataset);
+                            setSecondaryMatcherRequested(false);
+                            checkMatcher(dataset.key, setSecondaryMatcherStatus);
+                          }}
+                          placeHolder="Choose secondary dataset"
+                        />
+                        {matcherStatusUI(secondaryMatcherStatus, secondaryMatcherRequested, secondaryDataset?.key, setSecondaryMatcherStatus, setSecondaryMatcherRequested)}
+                      </>
                     )}
                     {step === 2 && (
                       <Row justify="space-between">
@@ -950,7 +1033,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                       type="primary"
                       onClick={submitAsyncJob}
                       loading={asyncSubmitting}
-                      disabled={!primaryDataset}
+                      disabled={!primaryDataset || matcherBlocking}
                     >
                       Submit matching job
                     </Button>
@@ -963,7 +1046,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                     <span>{`${names.length} name${
                       names.length === 1 ? "" : "s"
                     } provided for matching `}</span>
-                    <Button type="primary" onClick={matchResult} disabled={!primaryDataset}>
+                    <Button type="primary" onClick={matchResult} disabled={!primaryDataset || matcherBlocking}>
                       Match
                     </Button>
                   </Col>
