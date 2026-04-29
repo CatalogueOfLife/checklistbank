@@ -35,7 +35,7 @@ const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 const _ = require("lodash");
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 25;
 
 const formItemLayout = {
   labelCol: {
