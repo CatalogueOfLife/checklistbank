@@ -126,3 +126,9 @@ export const getTaxGroup = () => {
 export const getNameIndexRank = () => {
   return Promise.resolve(require(`../enumeration/nameIndexRank`))
 }
+
+export const getIdentifierScope = () => {
+  return getData(`identifier-scope`).then((res) =>
+    Object.fromEntries(res.data.map((e) => [e.scope, e]))
+  );
+};

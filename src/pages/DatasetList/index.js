@@ -159,7 +159,7 @@ class DatasetList extends React.Component {
           sorter: true,
         },
         {
-          title: "Taxonomic Scope",
+          title: "Group Coverage",
           dataIndex: "taxonomicGroupScope",
           key: "group",
           width: 180,

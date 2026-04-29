@@ -40,6 +40,7 @@ import {
   getInfoGroup,
   getTaxGroup,
   getLanguages,
+  getIdentifierScope,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -114,6 +115,7 @@ class ContextProvider extends React.Component {
     doiResolution: [],
     infoGroup: [],
     taxGroup: [],
+    identifierScope: {},
     countryAlpha3: {},
     countryAlpha2: {},
     termsMap: {},
@@ -267,6 +269,7 @@ class ContextProvider extends React.Component {
       getInfoGroup(),
       getTaxGroup(),
       getLanguages(),
+      getIdentifierScope(),
     ])
       .then((responses) => {
         const issueMap = {};
@@ -344,6 +347,7 @@ class ContextProvider extends React.Component {
           infoGroup: responses[27],
           taxGroup: responses[28],
           language: responses[29],
+          identifierScope: responses[30],
           countryAlpha3: countryAlpha3,
           countryAlpha2: countryAlpha2,
           termsMap: termsMap,

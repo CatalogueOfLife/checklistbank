@@ -52,6 +52,7 @@ import { getDatasetsBatch } from "../../api/dataset";
 
 import DataLoader from "dataloader";
 import OtherUsages from "./OtherUsages";
+import CurieIdentifier from "../../components/CurieIdentifier";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
 const { TabPane } = Tabs;
@@ -358,6 +359,7 @@ class TaxonPage extends React.Component {
       rank,
       issueMap,
       taxGroup,
+      identifierScope,
       user,
       dataset,
     } = this.props;
@@ -747,9 +749,14 @@ class TaxonPage extends React.Component {
                   )}
                 </PresentationItem>
               )}
-              {_.isArray(taxon?.identifier) && (
+              {_.isArray(taxon?.identifier) && taxon.identifier.length > 0 && (
                 <PresentationItem md={md} label="Identifiers">
-                  {taxon?.identifier.join(", ")}
+                  {taxon.identifier.map((id, i) => (
+                    <React.Fragment key={id}>
+                      {i > 0 && ", "}
+                      <CurieIdentifier identifier={id} identifierScope={identifierScope} />
+                    </React.Fragment>
+                  ))}
                 </PresentationItem>
               )}
               {_.get(info, "usage.status") === "ambiguous synonym" && (
@@ -950,6 +957,7 @@ const mapContextToProps = ({
   rank,
   user,
   taxGroup,
+  identifierScope,
 }) => ({
   issueMap,
   dataset,
@@ -958,6 +966,7 @@ const mapContextToProps = ({
   rank,
   user,
   taxGroup,
+  identifierScope,
 });
 
 export default withContext(mapContextToProps)(TaxonPage);

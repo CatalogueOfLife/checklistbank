@@ -16,6 +16,7 @@ import Linkify from "react-linkify";
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
+import CurieIdentifier from "../../components/CurieIdentifier";
 const { TabPane } = Tabs;
 
 const md = 5;
@@ -185,7 +186,7 @@ class NamePage extends React.Component {
 
     const filteredUsages = (usages || []).filter((u) => u.usage?.id && u.usage?.status != 'bare name');
     const filteredSynonyms = (synonyms || []).filter((s) => s?.id !== name?.id);
-    const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus } =
+    const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus, identifierScope } =
       this.props;
 
     const taxonUri =
@@ -452,6 +453,17 @@ class NamePage extends React.Component {
                   )}
                 </PresentationItem>
 
+                {_.isArray(name.identifier) && name.identifier.length > 0 && (
+                  <PresentationItem md={md} label="Identifiers">
+                    {name.identifier.map((id, i) => (
+                      <React.Fragment key={id}>
+                        {i > 0 && ", "}
+                        <CurieIdentifier identifier={id} identifierScope={identifierScope} />
+                      </React.Fragment>
+                    ))}
+                  </PresentationItem>
+                )}
+
                 <PresentationItem md={md} label="Names Index Match">
                   <Row>
                     <Col>{name.namesIndexType}</Col>
@@ -486,6 +498,7 @@ const mapContextToProps = ({
   getTaxonomicStatusColor,
   catalogueKey,
   getNomStatus,
-}) => ({ getTaxonomicStatusColor, catalogueKey, getNomStatus });
+  identifierScope,
+}) => ({ getTaxonomicStatusColor, catalogueKey, getNomStatus, identifierScope });
 
 export default withContext(mapContextToProps)(NamePage);
