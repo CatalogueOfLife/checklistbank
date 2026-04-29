@@ -28,7 +28,7 @@ import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-import Releases from "./Releases";
+import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const FormItem = Form.Item;
@@ -69,13 +69,14 @@ class DatasetList extends React.Component {
       data: [],
       excludeColumns:
         JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
-        [],
+        ["key", "doi", "version", "publisher", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "private"],
       columns: [],
       defaultColumns: [
         {
           title: "Key",
           dataIndex: "key",
           key: "key",
+          width: 70,
           render: (text, record) => (
             <DatasetNavLink text={text} record={record} />
           ),
@@ -85,6 +86,7 @@ class DatasetList extends React.Component {
           title: "DOI",
           dataIndex: "doi",
           key: "doi",
+          width: 140,
           render: (doi) =>
             doi ? (
               <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer">
@@ -96,6 +98,7 @@ class DatasetList extends React.Component {
           title: "Alias",
           dataIndex: "alias",
           key: "alias",
+          width: 160,
           render: (text, record) => (
             <DatasetNavLink text={text} record={record} />
           ),
@@ -106,6 +109,8 @@ class DatasetList extends React.Component {
           dataIndex: "title",
           key: "title",
           ellipsis: true,
+          onCell: () => ({ style: { minWidth: 300 } }),
+          onHeaderCell: () => ({ style: { minWidth: 300 } }),
           render: (text, record) => {
             return (
               <Tooltip title={text}>
@@ -120,84 +125,24 @@ class DatasetList extends React.Component {
           title: "Version",
           dataIndex: "version",
           key: "version",
+          width: 140,
         },
         {
           title: "Logo",
           dataIndex: "key",
           key: "logo",
+          width: 100,
           render: (text, record) =>
             record.private ? null : (
               <DatasetLogo datasetKey={record.key} size="SMALL" />
             ),
         },
         {
-          title: "Creator",
-          dataIndex: "creator",
-          key: "creator",
-          sorter: true,
-          ellipsis: {
-            showTitle: false,
-          },
-          render: (text, record) => {
-            return text && _.isArray(text) ? (
-              <Tooltip
-                placement="topLeft"
-                title={text.map((t) => t.name).join(", ")}
-              >
-                {text.map((t) => t.name).join(", ")}
-              </Tooltip>
-            ) : (
-              ""
-            );
-          },
-        },
-        {
-          title: "Editor",
-          dataIndex: "editor",
-          key: "editor",
-          sorter: true,
-          ellipsis: {
-            showTitle: false,
-          },
-          render: (text, record) => {
-            return text && _.isArray(text) ? (
-              <Tooltip
-                placement="topLeft"
-                title={text.map((t) => t.name).join(", ")}
-              >
-                {text.map((t) => t.name).join(", ")}
-              </Tooltip>
-            ) : (
-              ""
-            );
-          },
-        },
-        {
           title: "Publisher",
           dataIndex: ["publisher", "name"],
           key: "publisher",
+          width: 200,
           sorter: true,
-        },
-        {
-          title: "Contributor",
-          dataIndex: "contributor",
-          key: "contributor",
-          sorter: true,
-          ellipsis: {
-            showTitle: false,
-          },
-          render: (text, record) => {
-            return text && _.isArray(text) ? (
-              <Tooltip
-                placement="topLeft"
-                title={text.map((t) => t.name).join(", ")}
-              >
-                {text.map((t) => t.name).join(", ")}
-              </Tooltip>
-            ) : (
-              ""
-            );
-          },
         },
         {
           title: "Origin",
@@ -207,30 +152,11 @@ class DatasetList extends React.Component {
           sorter: true,
         },
         {
-          title: "Contact",
-          dataIndex: ["contact", "name"],
-          key: "contact",
-        },
-        {
           title: "Type",
           dataIndex: "type",
           key: "type",
           width: 90,
           sorter: true,
-        },
-        {
-          title: "License",
-          dataIndex: "license",
-          key: "license",
-          sorter: true,
-        },
-        {
-          title: "Geographic Scope",
-          dataIndex: "geographicScope",
-          key: "geographicScope",
-          ellipsis: {
-            showTitle: true,
-          },
         },
         {
           title: "Taxonomic Scope",
@@ -256,14 +182,11 @@ class DatasetList extends React.Component {
           },
         },
         {
-          title: "Confidence",
-          dataIndex: "confidence",
-          key: "confidence",
-        },
-        {
-          title: "Completeness",
-          dataIndex: "completeness",
-          key: "completeness",
+          title: "License",
+          dataIndex: "license",
+          key: "license",
+          width: 80,
+          sorter: true,
         },
         {
           title: "Size",
@@ -284,6 +207,7 @@ class DatasetList extends React.Component {
           title: "Imported",
           dataIndex: "imported",
           key: "imported",
+          width: 130,
           sorter: true,
           render: (date) => {
             return date ? moment(date).format("MMM Do YYYY") : "";
@@ -293,6 +217,7 @@ class DatasetList extends React.Component {
           title: "Last Import Attempt",
           dataIndex: "lastImportAttempt",
           key: "lastImportAttempt",
+          width: 130,
           sorter: true,
           render: (date) => {
             return moment(date).format("MMM Do YYYY");
@@ -302,6 +227,7 @@ class DatasetList extends React.Component {
           title: "Import State",
           dataIndex: "lastImportState",
           key: "lastImportState",
+          width: 120,
           render: (text, record) => {
             return (
               <Tag color={tagColors[record?.lastImportState]}>
@@ -315,6 +241,7 @@ class DatasetList extends React.Component {
           title: "Created",
           dataIndex: "created",
           key: "created",
+          width: 130,
           sorter: true,
           render: (date) => {
             return moment(date).format("MMM Do YYYY");
@@ -324,6 +251,7 @@ class DatasetList extends React.Component {
           title: "Modified",
           dataIndex: "modified",
           key: "modified",
+          width: 130,
           sorter: true,
           render: (date) => {
             return moment(date).format("MMM Do YYYY");
@@ -410,6 +338,7 @@ class DatasetList extends React.Component {
       ...params,
       limit,
       offset: (current - 1) * limit,
+      full: false,
     };
     history.push({
       pathname: "/dataset",
@@ -471,13 +400,14 @@ class DatasetList extends React.Component {
   handleTableChange = (pagination, filters, sorter) => {
     let params = qs.parse(_.get(this.props, "location.search"));
 
-    let query = {
-      ...params,
-      ...Object.keys(filters).reduce(
-        (acc, cur) => (filters[cur] !== null && (acc[cur] = filters[cur]), acc),
-        {}
-      ),
-    };
+    let query = { ...params };
+    Object.keys(filters).forEach((key) => {
+      if (filters[key] !== null) {
+        query[key] = filters[key];
+      } else {
+        delete query[key];
+      }
+    });
     if (params.releasedFrom) {
       query.releasedFrom = params.releasedFrom;
       query.sortBy = "created";
@@ -581,52 +511,52 @@ class DatasetList extends React.Component {
     } = this.state;
     const { datasetOrigin, recentDatasets, datasetType, license, user, importState, taxGroup } =
       this.props;
-    defaultColumns[10].filters = datasetOrigin.map((i) => ({
+    defaultColumns[7].filters = datasetOrigin.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.origin) {
-      defaultColumns[10].filteredValue = _.isArray(params.origin)
+      defaultColumns[7].filteredValue = _.isArray(params.origin)
         ? params.origin
         : [params.origin];
     } else {
-      defaultColumns[10].filteredValue = null;
+      defaultColumns[7].filteredValue = null;
     }
-    defaultColumns[12].filters = datasetType.map((i) => ({
+    defaultColumns[8].filters = datasetType.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.type) {
-      defaultColumns[12].filteredValue = _.isArray(params.type)
+      defaultColumns[8].filteredValue = _.isArray(params.type)
         ? params.type
         : [params.type];
     } else {
-      defaultColumns[12].filteredValue = null;
+      defaultColumns[8].filteredValue = null;
     }
-    defaultColumns[13].filters = license.map((i) => ({
+    defaultColumns[10].filters = license.map((i) => ({
       text: _.startCase(i),
       value: i,
     }));
     if (params.license) {
-      defaultColumns[13].filteredValue = _.isArray(params.license)
+      defaultColumns[10].filteredValue = _.isArray(params.license)
         ? params.license
         : [params.license];
     } else {
-      defaultColumns[13].filteredValue = null;
+      defaultColumns[10].filteredValue = null;
     }
-    defaultColumns[21].filters = importState.map((i) => ({
+    defaultColumns[14].filters = importState.map((i) => ({
       text: _.startCase(i?.name),
       value: i.name,
     }));
     if (params.lastImportState) {
-      defaultColumns[21].filteredValue = _.isArray(params.lastImportState)
+      defaultColumns[14].filteredValue = _.isArray(params.lastImportState)
         ? params.lastImportState
         : [params.lastImportState];
     } else {
-      defaultColumns[21].filteredValue = null;
+      defaultColumns[14].filteredValue = null;
     }
     const groupDepths = computeGroupDepths(taxGroup);
-    defaultColumns[15].filters = taxGroup
+    defaultColumns[9].filters = taxGroup
       ? Object.values(taxGroup).map((g) => ({
           text: (
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: (groupDepths[g.name] || 0) * 16 }}>
@@ -640,11 +570,11 @@ class DatasetList extends React.Component {
         }))
       : [];
     if (params.group) {
-      defaultColumns[15].filteredValue = _.isArray(params.group)
+      defaultColumns[9].filteredValue = _.isArray(params.group)
         ? params.group
         : [params.group];
     } else {
-      defaultColumns[15].filteredValue = null;
+      defaultColumns[9].filteredValue = null;
     }
 
     const filteredColumns = isEditorOrAdmin(this.props.user)
@@ -884,12 +814,12 @@ class DatasetList extends React.Component {
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-                scroll={{ x: `${columns.length * 120}px` }}
+                scroll={{ x: columns.reduce((sum, col) => sum + (col.width || 300), 0) }}
                 pagination={pagination}
                 onChange={this.handleTableChange}
                 expandable={{
-                  expandedRowRender: (record) => <Releases dataset={record} />,
-                  rowExpandable: (record) => record.origin === "project",
+                  expandedRowRender: (record) => <DatasetDetails record={record} />,
+                  columnWidth: 32,
                 }}
                 rowSelection={
                   !Auth.isAuthorised(user, ["admin"])

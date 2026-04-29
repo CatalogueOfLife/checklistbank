@@ -152,18 +152,16 @@ const SettingsForm = (props) => {
             key={s.name}
             name={s.name}
           >
-            {s.type === "String" ||
-            s.type === "URI" ||
-            s.type === "UUID" ||
-            s.type === "Character" ||
-            s.type === "Integer" ? (
+            {s.type === "Integer" ? (
               s.multiple ? (
-                <TagControl type={s.type === "Integer" ? "number" : "text"} />
+                <TagControl type="number" />
               ) : (
-                <Input type="text" />
+                <InputNumber />
               )
+            ) : s.multiple ? (
+              <TagControl type="text" />
             ) : (
-              <InputNumber />
+              <Input type="text" />
             )}
           </FormItem>
         ))}
