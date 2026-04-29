@@ -29,7 +29,8 @@ const enums = [
   "Gazetteer",
   "entitytype",
   "speciesinteractiontype",
-  "doiresolution"
+  "doiresolution",
+  "identifier-scope"
 ];
 
 let env;
