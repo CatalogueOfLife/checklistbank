@@ -583,7 +583,7 @@ class DatasetList extends React.Component {
           {
             title: "Action",
             dataIndex: "",
-            width: 60,
+            width: 90,
             key: "__actions__",
             render: (text, record) =>
               record.origin === "external" &&
@@ -814,7 +814,6 @@ class DatasetList extends React.Component {
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-                scroll={{ x: columns.reduce((sum, col) => sum + (col.width || 250), 0) }}
                 pagination={pagination}
                 onChange={this.handleTableChange}
                 expandable={{
