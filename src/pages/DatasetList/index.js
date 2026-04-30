@@ -109,8 +109,8 @@ class DatasetList extends React.Component {
           dataIndex: "title",
           key: "title",
           ellipsis: true,
-          onCell: () => ({ style: { minWidth: 300 } }),
-          onHeaderCell: () => ({ style: { minWidth: 300 } }),
+          onCell: () => ({ style: { minWidth: 250 } }),
+          onHeaderCell: () => ({ style: { minWidth: 250 } }),
           render: (text, record) => {
             return (
               <Tooltip title={text}>
@@ -155,7 +155,7 @@ class DatasetList extends React.Component {
           title: "Type",
           dataIndex: "type",
           key: "type",
-          width: 90,
+          width: 110,
           sorter: true,
         },
         {
@@ -814,7 +814,7 @@ class DatasetList extends React.Component {
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-                scroll={{ x: columns.reduce((sum, col) => sum + (col.width || 300), 0) }}
+                scroll={{ x: columns.reduce((sum, col) => sum + (col.width || 250), 0) }}
                 pagination={pagination}
                 onChange={this.handleTableChange}
                 expandable={{
