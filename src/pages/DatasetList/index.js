@@ -134,7 +134,7 @@ class DatasetList extends React.Component {
           width: 100,
           render: (text, record) =>
             record.private ? null : (
-              <DatasetLogo datasetKey={record.key} size="SMALL" />
+              <DatasetLogo datasetKey={record.key} size="SMALL" maxWidth={80} />
             ),
         },
         {

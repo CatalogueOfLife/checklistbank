@@ -13,11 +13,13 @@ class DatasetLogo extends React.Component {
       datasetKey,
       style = {},
       size = "MEDIUM",
+      maxWidth = 200,
+      maxHeight = 50,
     } = this.props;
     const { error, loading } = this.state;
     return loading || !error ? (
       <img
-        style={{ maxWidth: "200px", maxHeight: "50px", ...style }}
+        style={{ maxWidth: `${maxWidth}px`, maxHeight: `${maxHeight}px`, ...style }}
         alt={`Dataset ${datasetKey} logo`}
         src={`${config.dataApi}dataset/${datasetKey}/logo?size=${size}`}
         onLoad={() => this.setState({ error: false, loading: false })}
