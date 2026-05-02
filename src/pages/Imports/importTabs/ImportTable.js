@@ -321,7 +321,7 @@ class ImportTable extends React.Component {
           title: "Action",
           dataIndex: "",
           key: "x",
-          width: 30,
+          width: 110,
           render: (record) =>
             _.get(record, "dataset.origin") === "external" ? (
               <ImportButton
@@ -350,7 +350,7 @@ class ImportTable extends React.Component {
 
         {!(section === 'running' && data.length === 0) && (
           <Table
-            scroll={{ x: 1000 }}
+            scroll={{ x: "max-content" }}
             size="small"
             columns={columns}
             dataSource={data}
