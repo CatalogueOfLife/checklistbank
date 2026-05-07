@@ -1102,6 +1102,32 @@ class WorkBench extends React.Component {
               )}`}
           </Col>
         </Row>
+        {!error &&
+          !loading &&
+          _.get(pagination, "total") === 0 &&
+          params.issue && (
+            <Alert
+              style={{ marginBottom: "10px" }}
+              type="info"
+              showIcon
+              message="No matching results in the workbench"
+              description={
+                <span>
+                  The selected issue filter may only apply to source rows that
+                  are not indexed for name usage search. Try the{" "}
+                  <NavLink
+                    to={{
+                      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
+                      search: `?${qs.stringify({ issue: params.issue })}`,
+                    }}
+                  >
+                    verbatim view
+                  </NavLink>{" "}
+                  instead.
+                </span>
+              }
+            />
+          )}
         {!error && (
           <Table
             scroll={{ x: 3000, y: 600 }}
