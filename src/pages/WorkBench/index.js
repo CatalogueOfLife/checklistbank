@@ -399,20 +399,24 @@ class WorkBench extends React.Component {
 
   getDecisions = (res) => {
     const { catalogueKey } = this.props;
+    // Search embeds decisions across all projects — pick the one for the current project.
+    const cKey = Number(catalogueKey);
     const promises = _.get(res, "data.result")
       ? res.data.result.map((d) => {
-          return _.get(d, "decisions[0]")
-            ? axios(
-                `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
-                  d,
-                  "decisions[0].id"
-                )}`
-              ).then((decision) => {
-                if (decision.data) {
-                  d.decisions = [decision.data];
-                }
-              })
-            : Promise.resolve(false);
+          const myDecision = (d.decisions || []).find(
+            (dec) => dec.datasetKey === cKey
+          );
+          if (!myDecision) {
+            d.decisions = [];
+            return Promise.resolve(false);
+          }
+          return axios(
+            `${config.dataApi}dataset/${catalogueKey}/decision/${myDecision.id}`
+          ).then((decision) => {
+            if (decision.data) {
+              d.decisions = [decision.data];
+            }
+          });
         })
       : [];
     return Promise.all(promises).then(() => res);
