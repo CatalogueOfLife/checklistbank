@@ -48,7 +48,7 @@ class MultiValueFilter extends React.Component {
           value={defaultValue}
           onChange={this.handleChange}
         >
-          {vocab.map((i) => {
+          {(vocab || []).map((i) => {
             return typeof i === "string" ? (
               <Option key={i} value={i}>
                 {_.startCase(i)}
