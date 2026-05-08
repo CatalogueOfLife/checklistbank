@@ -68,11 +68,25 @@ const SectorForm = ({
   const [form] = Form.useForm();
   const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);
   const mode = Form.useWatch("mode", form);
+  const [existingHierarchySector, setExistingHierarchySector] = useState(null);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
   useEffect(() => {
     console.log(sector?.nameTypes);
   }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
+  useEffect(() => {
+    if (mode === "hierarchy" && !sector) {
+      axios
+        .get(`${config.dataApi}dataset/${catalogueKey}/sector?mode=hierarchy&limit=1`)
+        .then((res) => {
+          setExistingHierarchySector(_.get(res, "data.result[0]", null));
+        })
+        .catch(() => setExistingHierarchySector(null));
+    } else {
+      setExistingHierarchySector(null);
+    }
+  }, [mode]);
+
   useEffect(() => {
     if (subjectDatasetKey || sector?.subjectDatasetKey) {
       axios
@@ -143,6 +157,7 @@ const SectorForm = ({
     entities: [],
     nameTypes: [],
     nameStatusExclusion: [],
+    useXRelease: true,
     ...sector,
   };
   return (
@@ -185,8 +200,19 @@ const SectorForm = ({
             <Option key="merge" value="merge">
               merge
             </Option>
+            <Option key="hierarchy" value="hierarchy">
+              hierarchy
+            </Option>
           </Select>
         </FormItem>
+        {mode === "hierarchy" && !sector && existingHierarchySector && (
+          <Alert
+            style={{ marginBottom: "10px" }}
+            message="A hierarchy sector already exists for this project. Only one is allowed."
+            type="warning"
+            showIcon
+          />
+        )}
         {mode === "merge" && (
           <FormItem
             {...formItemLayout}
@@ -195,6 +221,17 @@ const SectorForm = ({
             name="priority"
           >
             <InputNumber />
+          </FormItem>
+        )}
+        {mode === "hierarchy" && (
+          <FormItem
+            {...formItemLayout}
+            label={<Tooltip color="green" title="Use the latest extended (not base) release of the subject project as the hierarchy source. Only relevant when subjectDatasetKey is a project.">Use X Release</Tooltip>}
+            key="useXRelease"
+            name="useXRelease"
+            valuePropName="checked"
+          >
+            <Checkbox />
           </FormItem>
         )}
         {!sector && (
@@ -209,30 +246,34 @@ const SectorForm = ({
           </FormItem>
         )}
 
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Select the sector's root taxon in the source (subject) dataset. Not required for merge sectors.">Subject</Tooltip>}
-          key="subject"
-          name="subject"
-        >
-          <TaxonFormControl
-            disabled={!sector && !subjectDatasetKey}
-            accepted={true}
-            datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
-            defaultTaxonKey={_.get(sector, "subject.id") || null}
-          />
-        </FormItem>
+        {mode !== "hierarchy" && (
+          <FormItem
+            {...formItemLayout}
+            label={<Tooltip color='green' title="Select the sector's root taxon in the source (subject) dataset. Not required for merge sectors.">Subject</Tooltip>}
+            key="subject"
+            name="subject"
+          >
+            <TaxonFormControl
+              disabled={!sector && !subjectDatasetKey}
+              accepted={true}
+              datasetKey={sector ? sector.subjectDatasetKey : subjectDatasetKey}
+              defaultTaxonKey={_.get(sector, "subject.id") || null}
+            />
+          </FormItem>
+        )}
 
-        <FormItem {...formItemLayout} 
-          label={<Tooltip color='green' title="Under which taxon in the project should the synced names be copied to? Not required for merge sectors.">Target</Tooltip>}
-          key="target" name="target"
-        >
-          <TaxonFormControl
-            accepted={true}
-            datasetKey={sector?.datasetKey || catalogueKey}
-            defaultTaxonKey={_.get(sector, "target.id") || null}
-          />
-        </FormItem>
+        {mode !== "hierarchy" && (
+          <FormItem {...formItemLayout}
+            label={<Tooltip color='green' title="Under which taxon in the project should the synced names be copied to? Not required for merge sectors.">Target</Tooltip>}
+            key="target" name="target"
+          >
+            <TaxonFormControl
+              accepted={true}
+              datasetKey={sector?.datasetKey || catalogueKey}
+              defaultTaxonKey={_.get(sector, "target.id") || null}
+            />
+          </FormItem>
+        )}
 
         <Divider plain>Filter</Divider>
 
@@ -398,7 +439,11 @@ const SectorForm = ({
         </FormItem>
 
         <FormItem {...tailFormItemLayout}>
-          <Button type="primary" onClick={form.submit}>
+          <Button
+            type="primary"
+            onClick={form.submit}
+            disabled={mode === "hierarchy" && !sector && !!existingHierarchySector}
+          >
             Save
           </Button>
         </FormItem>

@@ -516,7 +516,7 @@ class CatalogueSectors extends React.Component {
               allowClear
               onChange={(value) => this.updateSearch({ mode: value })}
             >
-              {["attach", "union", "merge"].map((r) => (
+              {["attach", "union", "merge", "hierarchy"].map((r) => (
                 <Option key={r} value={r}>
                   {r}
                 </Option>
