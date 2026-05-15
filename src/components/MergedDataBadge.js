@@ -7,6 +7,22 @@ const createdByAlgorithm = {
   14: "The data was created by the homotypic grouping algorithm",
 };
 
+// Backend currently only emits NameUsage, Name or Reference as sourceEntity.
+const ENTITY_SECTION = {
+  "name usage": "taxon",
+  name: "name",
+  reference: "reference",
+};
+
+const verbatimSourceUrl = (verbatimRecord) => {
+  if (!verbatimRecord?.sourceDatasetKey) return null;
+  const section = ENTITY_SECTION[(verbatimRecord.sourceEntity || "").toLowerCase()];
+  const base = `/dataset/${verbatimRecord.sourceDatasetKey}`;
+  return section && verbatimRecord.sourceId
+    ? `${base}/${section}/${encodeURIComponent(verbatimRecord.sourceId)}`
+    : base;
+};
+
 const MergedDataBadge = ({
   style = {},
   datasetKey,
@@ -19,6 +35,7 @@ const MergedDataBadge = ({
 }) => {
   const [sourceDataset, setSourceDataset] = useState(null);
   const [sourceDatasetLoading, setSourceDatasetLoading] = useState(false);
+  const [verbatimSourceDataset, setVerbatimSourceDataset] = useState(null);
   const [sourceTaxon, setSourceTaxon] = useState(null);
   const [sourceTaxonLoading, setSourceTaxonLoading] = useState(null);
   const [verbatimRecord, setVerbatimRecord] = useState(null);
@@ -35,6 +52,27 @@ const MergedDataBadge = ({
       getVerbatimRecord();
     }
   }, [sourceDatasetKey, sourceId, verbatimSourceKey, open]);
+
+  useEffect(() => {
+    const key = verbatimRecord?.sourceDatasetKey;
+    if (!key) {
+      setVerbatimSourceDataset(null);
+      return;
+    }
+    if (sourceDataset?.key === key) {
+      setVerbatimSourceDataset(sourceDataset);
+      return;
+    }
+    setVerbatimSourceDataset(null);
+    axios(`${config.dataApi}dataset/${key}`)
+      .then((res) => {
+        setVerbatimSourceDataset(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching verbatim source dataset:", err);
+        setVerbatimSourceDataset(null);
+      });
+  }, [verbatimRecord, sourceDataset]);
 
   const getSourceTaxon = () => {
     setSourceTaxonLoading(true);
@@ -97,7 +135,7 @@ const MergedDataBadge = ({
                 {sourceDatasetLoading ? (
                   "Loading..."
                 ) : (
-                  <NavLink to={`dataset/${sourceDataset?.key}`}>
+                  <NavLink to={`/dataset/${sourceDataset?.key}`}>
                     {sourceDataset?.title}
                   </NavLink>
                 )}
@@ -109,13 +147,12 @@ const MergedDataBadge = ({
                 {sourceTaxonLoading ? (
                   "Loading..."
                 ) : (
-                  <a
-                    href={`https://www.checklistbank.org/dataset/${sourceDatasetKey}/taxon/${sourceId}`}
+                  <NavLink
+                    to={`/dataset/${sourceDatasetKey}/taxon/${encodeURIComponent(
+                      sourceId
+                    )}`}
                     dangerouslySetInnerHTML={{ __html: sourceTaxon?.labelHtml }}
-                    onClick={() => {
-                      window.location.href = `https://www.checklistbank.org/dataset/${sourceDatasetKey}/taxon/${sourceId}`;
-                    }}
-                  ></a>
+                  ></NavLink>
                 )}
               </div>
             )}
@@ -131,27 +168,15 @@ const MergedDataBadge = ({
                   <>
                     {" "}
                     {
-                      <a
-                        href={`https://www.dev.checklistbank.org/dataset/${
-                          verbatimRecord.sourceDatasetKey
-                        }/${(verbatimRecord.sourceEntity || "").replace(
-                          /\s/g,
-                          ""
-                        )}/${encodeURIComponent(verbatimRecord.sourceId)}`}
+                      <NavLink
+                        to={verbatimSourceUrl(verbatimRecord)}
                         dangerouslySetInnerHTML={{
                           __html:
+                            verbatimSourceDataset?.title ||
                             sourceDataset?.title ||
                             verbatimRecord?.sourceEntity,
                         }}
-                        onClick={() => {
-                          window.location.href = `https://www.dev.checklistbank.org/dataset/${
-                            verbatimRecord.sourceDatasetKey
-                          }/${(verbatimRecord.sourceEntity || "").replace(
-                            /\s/g,
-                            ""
-                          )}/${encodeURIComponent(verbatimRecord.sourceId)}`;
-                        }}
-                      ></a>
+                      ></NavLink>
                     }
                     {verbatimRecord?.issues &&
                     verbatimRecord?.issues.length > 0 ? (
