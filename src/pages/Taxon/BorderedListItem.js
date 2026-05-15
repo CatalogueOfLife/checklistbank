@@ -11,6 +11,10 @@ const styles = () => ({
     paddingBottom: 0,
     width: "100%",
     clear: "both",
+    borderBottom: "1px solid #eee",
+    "&:last-of-type": {
+      border: "none",
+    },
   },
   label: {
     display: "block",
@@ -29,8 +33,8 @@ const styles = () => ({
     wordBreak: "break-word",
   },
   smallMargin: {
-    marginBottom: 5,
-    marginTop: 5,
+    marginBottom: 3,
+    marginTop: 3,
   },
   mediumMargin: {
     marginBottom: 10,

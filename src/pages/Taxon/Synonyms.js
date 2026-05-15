@@ -10,6 +10,9 @@ import { EditOutlined } from "@ant-design/icons";
 import TypeMaterialPopover from "./TypeMaterialPopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import DecisionBadge from "../../components/DecisionBadge";
+import ShowMoreToggle from "./ShowMoreToggle";
+
+const TOP_N = 10;
 const SynonymsTable = ({
   datasetKey,
   data,
@@ -25,6 +28,7 @@ const SynonymsTable = ({
 }) => {
   const uri = `/dataset/${datasetKey}/nameusage/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
+  const [showAll, setShowAll] = useState(false);
   useEffect(() => {}, [data, canEdit, primarySource]);
 
   const sorter = (a, b) => {
@@ -133,6 +137,21 @@ const SynonymsTable = ({
     );
   };
 
+  const homotypicSorted = (data.homotypic || []).slice().sort(sorter);
+  const heterotypicSorted = (data.heterotypicGroups || [])
+    .slice()
+    .sort((a, b) => sorter(a[0], b[0]));
+  const totalEntries = homotypicSorted.length + heterotypicSorted.length;
+  const homotypicVisible = showAll
+    ? homotypicSorted
+    : homotypicSorted.slice(0, TOP_N);
+  const heterotypicSlots = showAll
+    ? heterotypicSorted.length
+    : Math.max(0, TOP_N - homotypicVisible.length);
+  const heterotypicVisible = showAll
+    ? heterotypicSorted
+    : heterotypicSorted.slice(0, heterotypicSlots);
+
   return (
     <div style={style}>
       {taxonForEdit && (
@@ -148,12 +167,14 @@ const SynonymsTable = ({
           taxon={taxonForEdit}
         />
       )}
-      {data.homotypic &&
-        data.homotypic.sort(sorter).map((s) => renderSynonym(s, true))}
-      {data.heterotypicGroups &&
-        data.heterotypicGroups
-          .sort((a, b) => sorter(a[0], b[0]))
-          .map((s) => renderSynonym(s, false))}
+      {homotypicVisible.map((s) => renderSynonym(s, true))}
+      {heterotypicVisible.map((s) => renderSynonym(s, false))}
+      <ShowMoreToggle
+        total={totalEntries}
+        visible={TOP_N}
+        showAll={showAll}
+        onChange={setShowAll}
+      />
     </div>
   );
 };

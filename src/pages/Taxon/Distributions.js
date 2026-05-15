@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table } from "antd";
 import BorderedListItem from "./BorderedListItem";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
+import ShowMoreToggle from "./ShowMoreToggle";
+
+const TOP_N = 10;
 
 const DistributionsTable = ({ datasetKey, data, style }) => {
+  const [showAll, setShowAll] = useState(false);
   const textRecords = data.filter((s) => s.area?.gazetteer === "text");
   const otherRecords = data.filter((s) => s.area?.gazetteer !== "text");
+  const total = textRecords.length + otherRecords.length;
+  const textVisible = showAll
+    ? textRecords
+    : textRecords.slice(0, TOP_N);
+  const remainingSlots = showAll
+    ? otherRecords.length
+    : Math.max(0, TOP_N - textVisible.length);
+  const otherVisible = showAll
+    ? otherRecords
+    : otherRecords.slice(0, remainingSlots);
 
   const columns = [
     {
@@ -89,7 +103,7 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
 
   return (
     <div style={style}>
-      {textRecords.map((s) => (
+      {textVisible.map((s) => (
         <BorderedListItem key={s.verbatimKey}>
           {s?.merged && (
             <MergedDataBadge
@@ -124,16 +138,22 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
           )}
         </BorderedListItem>
       ))}
-      {otherRecords.length > 0 && (
+      {otherVisible.length > 0 && (
         <Table
           className="colplus-taxon-page-list"
           columns={columns}
-          dataSource={otherRecords}
+          dataSource={otherVisible}
           rowKey="verbatimKey"
           pagination={false}
           size="middle"
         />
       )}
+      <ShowMoreToggle
+        total={total}
+        visible={TOP_N}
+        showAll={showAll}
+        onChange={setShowAll}
+      />
     </div>
   );
 };

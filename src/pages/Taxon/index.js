@@ -39,6 +39,7 @@ import TypeMaterial from "./TypeMaterial";
 import PublishedInPagePreview from "./PublishedInPagePreview";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import IncludesTable from "./Includes";
+import SpeciesBySource from "./SpeciesBySource";
 import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
 import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
@@ -73,6 +74,7 @@ const initialState = {
   sourceDatasetKeyMap: null,
   sourceTaxon: null,
   includes: [],
+  taxonMetrics: null,
   otherUsages: [],
   edit: false,
 };
@@ -120,7 +122,36 @@ class TaxonPage extends React.Component {
 
   getData = async () => {
     this.getInfo();
-    this.getIncludesAndIssues();
+    this.getStatistics();
+  };
+
+  getStatistics = async () => {
+    const metrics = await this.getTaxonMetrics();
+    if (!metrics?.taxaByRankCount) {
+      this.getIncludesAndIssues();
+    }
+  };
+
+  getTaxonMetrics = async () => {
+    const {
+      match: {
+        params: { taxonOrNameKey: taxonKey },
+      },
+      datasetKey,
+    } = this.props;
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(
+          taxonKey
+        )}/metrics`
+      );
+      const metrics = res?.data || null;
+      this.setState({ taxonMetrics: metrics });
+      return metrics;
+    } catch (err) {
+      this.setState({ taxonMetrics: null });
+      return null;
+    }
   };
   sectorLoader = new DataLoader((ids) =>
     getSectorsBatch(ids, this.props.datasetKey)
@@ -371,9 +402,22 @@ class TaxonPage extends React.Component {
       sourceTaxon,
       infoError,
       includes,
+      taxonMetrics,
       edit,
       referenceIndexMap,
     } = this.state;
+    const taxonRank = _.get(taxon, "name.rank");
+    const ranksFromMetrics = taxonMetrics?.taxaByRankCount
+      ? Object.entries(taxonMetrics.taxaByRankCount).map(([value, count]) => ({
+          value,
+          count,
+        }))
+      : null;
+    const rankStats = ranksFromMetrics || includes;
+    const rankStatsHasChildren =
+      rankStats.filter((t) => t.value !== taxonRank).length > 0;
+    const speciesBySource = taxonMetrics?.speciesBySourceCount || {};
+    const hasSpeciesBySource = Object.keys(speciesBySource).length > 0;
 
     const mergedIssues = [
       ...new Set([...(sourceTaxon?.issues || []), ...(info?.issues || [])]),
@@ -677,15 +721,26 @@ class TaxonPage extends React.Component {
               {taxon &&
                 rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
                 rank.indexOf(_.get(taxon, "name.rank")) > -1 && (
-                  <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
+                  <div style={{ borderBottom: "1px solid #eee" }}>
+                    <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
+                  </div>
                 )}
-              {includes.length > 1 && taxon && (
+              {taxon && rankStatsHasChildren && (
                 <PresentationItem md={md} label="Statistics">
                   <IncludesTable
                     style={{ marginTop: "-3px", marginLeft: "-3px" }}
-                    data={includes}
+                    data={rankStats}
                     taxon={taxon}
                     datasetKey={datasetKey}
+                  />
+                </PresentationItem>
+              )}
+              {taxon && hasSpeciesBySource && (
+                <PresentationItem md={md} label="Species by source">
+                  <SpeciesBySource
+                    counts={speciesBySource}
+                    datasetKey={datasetKey}
+                    taxonId={taxon.id}
                   />
                 </PresentationItem>
               )}

@@ -6,12 +6,16 @@ import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
+import ShowMoreToggle from "./ShowMoreToggle";
+
+const TOP_N = 10;
 
 class VernacularNamesTable extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      showAll: false,
       data: this.props.data ? [...this.props.data] : [],
       columns: [
         {
@@ -121,18 +125,26 @@ class VernacularNamesTable extends React.Component {
 
   render() {
     const { style } = this.props;
-    const { data, columns } = this.state;
+    const { data, columns, showAll } = this.state;
+    const visible = showAll ? data : data.slice(0, TOP_N);
 
     return (
-      <Table
-        style={style}
-        className="colplus-taxon-page-list"
-        columns={columns}
-        dataSource={data}
-        rowKey="verbatimKey"
-        pagination={false}
-        size="middle"
-      />
+      <div style={style}>
+        <Table
+          className="colplus-taxon-page-list"
+          columns={columns}
+          dataSource={visible}
+          rowKey="verbatimKey"
+          pagination={false}
+          size="middle"
+        />
+        <ShowMoreToggle
+          total={data.length}
+          visible={TOP_N}
+          showAll={showAll}
+          onChange={(v) => this.setState({ showAll: v })}
+        />
+      </div>
     );
   }
 }
