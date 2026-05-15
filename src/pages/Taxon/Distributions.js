@@ -25,13 +25,8 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
   const columns = [
     {
       title: "Area",
-      dataIndex: ["area", "name"],
       key: "area",
-    },
-    {
-      title: "ID",
-      dataIndex: ["area", "globalId"],
-      key: "globalId",
+      render: (_text, record) => record?.area?.name || record?.area?.globalId,
     },
     {
       title: "Establishment means",
