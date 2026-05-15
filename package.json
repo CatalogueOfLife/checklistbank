@@ -30,6 +30,7 @@
     "https-browserify": "^1.0.0",
     "install": "^0.13.0",
     "js-base64": "^3.7.5",
+    "leaflet": "^1.9.4",
     "linkify-html": "^3.0.5",
     "linkifyjs": "^3.0.5",
     "lodash": ">=4.6.2",
