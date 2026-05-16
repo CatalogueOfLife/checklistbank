@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "../../components/LayoutNew";
 import { NavLink } from "react-router-dom";
 import config from "../../config";
-import moment from "moment";
+import moment from "dayjs";
 import { Helmet } from "react-helmet-async";
 import { Row, Col, Statistic, Card, Image } from "antd";
 import withContext from "../../components/hoc/withContext";

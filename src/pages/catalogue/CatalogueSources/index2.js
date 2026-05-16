@@ -6,7 +6,7 @@ import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
-import moment from "moment";
+import moment from "dayjs";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";

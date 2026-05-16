@@ -108,7 +108,7 @@ class CatalogueSelect extends React.Component {
         </a>
         <Modal
           title="Select project"
-          visible={this.state.visible}
+          open={this.state.visible}
           maskClosable={true}
           onCancel={this.hide}
           footer={null}

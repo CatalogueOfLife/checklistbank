@@ -8,7 +8,7 @@ import PageContent from "../../../components/PageContent";
 import { Diff2Html } from "diff2html";
 import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../../history";
 import qs from "query-string";
 import Menu from "../../DatasetImportMetrics/Menu";

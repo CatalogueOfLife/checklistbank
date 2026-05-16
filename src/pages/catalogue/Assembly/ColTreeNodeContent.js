@@ -104,15 +104,15 @@ export const AssemblyNodeContent = ({ mode }) => {
         )
       }
       title="Options"
-      visible={this.state.popOverVisible}
-      onVisibleChange={() =>
+      open={this.state.popOverVisible}
+      onOpenChange={() =>
         this.setState({ popOverVisible: !this.state.popOverVisible })
       }
       trigger="click"
       placement="bottom"
     >
       <Popconfirm
-        visible={this.props.confirmVisible}
+        open={this.props.confirmVisible}
         title={this.props.confirmTitle}
         onConfirm={this.props.onConfirm}
         onCancel={this.props.onCancel}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Descriptions, Spin } from "antd";
-import moment from "moment";
+import moment from "dayjs";
 import config from "../../config";
 import TaxGroupIcon, { filterRedundantGroups } from "../NameSearch/TaxGroupIcon";
 import Releases from "./Releases";

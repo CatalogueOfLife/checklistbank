@@ -465,8 +465,8 @@ class ColTreeNode extends React.Component {
                       )
                     }
                     title="Options"
-                    visible={this.state.popOverVisible}
-                    onVisibleChange={() =>
+                    open={this.state.popOverVisible}
+                    onOpenChange={() =>
                       this.setState({
                         popOverVisible: !this.state.popOverVisible,
                       })
@@ -475,7 +475,7 @@ class ColTreeNode extends React.Component {
                     placement="bottom"
                   >
                     <Popconfirm
-                      visible={this.props.confirmVisible}
+                      open={this.props.confirmVisible}
                       title={this.props.confirmTitle}
                       onConfirm={this.props.onConfirm}
                       onCancel={this.props.onCancel}
@@ -531,7 +531,7 @@ class ColTreeNode extends React.Component {
                 {((mode !== "modify" && treeType === "CATALOGUE") ||
                   treeType === "SOURCE") && (
                     <PopconfirmMultiOption
-                      visible={this.props.confirmVisible}
+                      open={this.props.confirmVisible}
                       title={this.props.confirmTitle}
                       onConfirm={this.props.onConfirm}
                       actions={this.props.actions}

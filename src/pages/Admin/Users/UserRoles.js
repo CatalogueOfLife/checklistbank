@@ -179,7 +179,7 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
   return (
     <Popconfirm
       title={confirmText}
-      visible={confirmVisible}
+      open={confirmVisible}
       // onVisibleChange={handleVisibleChange}
       onConfirm={confirm}
       onCancel={() => setConfirmVisible(false)}
@@ -189,7 +189,7 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
       <Checkbox.Group
         options={options}
         value={roles}
-        visible={confirmVisible}
+        open={confirmVisible}
         onChange={onChange}
       />
       </Col>

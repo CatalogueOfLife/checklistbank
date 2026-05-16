@@ -112,7 +112,7 @@ class LogoUpload extends React.Component {
           {fileList.length >= 1 ? null : uploadButton}
         </Upload>
         <Modal
-          visible={previewVisible}
+          open={previewVisible}
           footer={null}
           onCancel={this.handleCancel}
         >

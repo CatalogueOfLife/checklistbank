@@ -332,7 +332,7 @@ const TaxAlign = ({ location, addError }) => {
         )}
       </PageContent>
       <Modal
-        visible={!!submittedJob}
+        open={!!submittedJob}
         footer={null}
         onCancel={() => setSubmittedJob(null)}
       >

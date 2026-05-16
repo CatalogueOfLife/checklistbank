@@ -31,7 +31,7 @@ import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
-import moment from "moment";
+import moment from "dayjs";
 import RematchResult from "./RematchResult";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 
@@ -419,7 +419,7 @@ class CatalogueSectors extends React.Component {
       <>
         <Modal
           title="Create sector"
-          visible={showSectorForm}
+          open={showSectorForm}
           onOk={this.finishEditForm}
           onCancel={() => this.setState({ showSectorForm: false })}
           // style={{ top: 150, marginRight:20 }}

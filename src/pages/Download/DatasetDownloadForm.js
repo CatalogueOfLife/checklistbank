@@ -6,7 +6,7 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import history from "../../history";
-import moment from "moment";
+import moment from "dayjs";
 import _ from "lodash";
 import {
   Button,
@@ -421,7 +421,7 @@ class DatasetDownload extends React.Component {
         </Row>
         <Modal
           title="Your download will be available at this link"
-          visible={downloadModalVisible}
+          open={downloadModalVisible}
           onCancel={() => this.setState({ downloadModalVisible: false })}
           footer={null}
         >

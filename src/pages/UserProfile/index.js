@@ -11,7 +11,7 @@ import axios from "axios";
 import _ from "lodash";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined } from "@ant-design/icons";
 import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin } from "antd";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../history";
 const { TabPane } = Tabs;
 const UserProfile = ({ user, countryAlpha2, match }) => {

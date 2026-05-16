@@ -3,7 +3,7 @@ import axios from "axios";
 import {SearchOutlined} from "@ant-design/icons"
 import { Table, Row, Col, Input, Space, Button } from "antd";
 import config from "../../../config";
-import moment from "moment";
+import moment from "dayjs";
 import qs from "query-string";
 import history from "../../../history";
 import SearchBox from "../../DatasetList/SearchBox";

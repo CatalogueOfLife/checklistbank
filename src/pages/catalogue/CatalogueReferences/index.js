@@ -99,7 +99,7 @@ class Reference extends React.Component {
             <Modal
               width={1000}
               title="New reference"
-              visible={showAddNewModal}
+              open={showAddNewModal}
               onOk={() => {
                 this.setState({
                   showAddNewModal: false,

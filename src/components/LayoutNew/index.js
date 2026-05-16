@@ -13,7 +13,7 @@ import UserMenu from "./UserMenu";
 import { getGitVersion, getBackendGitVersion } from "../../api/gitVersion";
 import "./menu.css";
 import config from "../../config";
-import moment from "moment";
+import moment from "dayjs";
 import ErrorMsg from "../ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
@@ -150,7 +150,7 @@ class SiteLayout extends Component {
             onClose={() => {
               this.setState({ collapsed: true });
             }}
-            visible={!collapsed}
+            open={!collapsed}
             className="mainMenu__drawer"
           >
             <BasicMenu />

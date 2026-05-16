@@ -4,7 +4,7 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { Table, Tooltip, Button, Spin } from "antd";
-import moment from "moment";
+import moment from "dayjs";
 import axios from "axios";
 import config from "../../../config";
 import DataLoader from "dataloader";

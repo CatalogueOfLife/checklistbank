@@ -36,7 +36,7 @@ class SyncState extends React.Component {
         )}
         <Modal
           title="Sync state"
-          visible={this.state.visible}
+          open={this.state.visible}
           onCancel={() => this.setState({ visible: false })}
           footer={null}
         >

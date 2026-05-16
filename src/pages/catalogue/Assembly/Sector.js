@@ -228,7 +228,7 @@ class Sector extends React.Component {
       <>
         <Modal
           title="Edit sector"
-          visible={isRootSector && showEditForm}
+          open={isRootSector && showEditForm}
           // onOk={this.finishEditForm}
           onCancel={() => this.setState({ showEditForm: false })}
           style={{ top: 150, marginRight: 20 }}
@@ -401,8 +401,8 @@ class Sector extends React.Component {
               {sector.mode}
             </React.Fragment>
           }
-          visible={this.state.popOverVisible}
-          onVisibleChange={this.handleVisibleChange}
+          open={this.state.popOverVisible}
+          onOpenChange={this.handleVisibleChange}
           trigger="contextMenu"
           placement="rightTop"
         >
@@ -557,8 +557,8 @@ class Sector extends React.Component {
                 {sector.mode}
               </React.Fragment>
             }
-            visible={this.state.popOverVisible}
-            onVisibleChange={this.handleVisibleChange}
+            open={this.state.popOverVisible}
+            onOpenChange={this.handleVisibleChange}
             trigger="contextMenu"
             placement="rightTop"
           >

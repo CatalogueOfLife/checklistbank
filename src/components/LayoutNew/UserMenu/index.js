@@ -166,7 +166,7 @@ class UserMenu extends PureComponent {
           </span>
         )}
         {user && (
-          <Dropdown overlay={menu} trigger={["click"]}>
+          <Dropdown dropdownRender={() => menu} trigger={["click"]}>
             <span style={{ padding: "0 16px" }}>
               <Avatar
                 style={{ marginRight: 8 }}
@@ -181,7 +181,7 @@ class UserMenu extends PureComponent {
         )}
         <Modal
           title="Login with your GBIF account"
-          visible={this.state.visible}
+          open={this.state.visible}
           onOk={this.handleLogin}
           onCancel={this.handleCancel}
           footer={null}

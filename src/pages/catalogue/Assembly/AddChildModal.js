@@ -213,7 +213,7 @@ const AddChildModal = (props) => {
           />
         </span>
       }
-      visible={visible}
+      open={visible}
       okText={steps[current].okText}
       onOk={() => {
         setConfirmLoading(true);

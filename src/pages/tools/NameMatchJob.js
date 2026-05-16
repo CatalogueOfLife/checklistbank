@@ -7,7 +7,7 @@ import {
 import PresentationItem from "../../components/PresentationItem";
 import Exception from "../../components/exception/Exception";
 import history from "../../history";
-import moment from "moment";
+import moment from "dayjs";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";

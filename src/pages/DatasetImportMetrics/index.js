@@ -3,7 +3,7 @@ import React from "react";
 import config from "../../config";
 import _ from "lodash";
 import axios from "axios";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../history";
 import { Drawer, Row, Col, Alert, Button, Spin, Divider } from "antd";
 import ImportMetrics from "../../components/ImportMetrics";

@@ -20,7 +20,7 @@ import {
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../history";
 import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";

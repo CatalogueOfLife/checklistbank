@@ -122,7 +122,7 @@ const SpeciesestimateModal = (props) => {
           <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
         </span>
       }
-      visible={visible}
+      open={visible}
       onOk={() => {
         setVisible(false);
         onCancel();

@@ -12,7 +12,7 @@ import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 import { NavLink } from "react-router-dom";
-import moment from "moment";
+import moment from "dayjs";
 import _ from "lodash"
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
@@ -214,7 +214,7 @@ const UserAdmin = ({
           title={<>{`Roles and scopes for ${userForEdit?.username}`}{userForEdit?.blocked && <> <Tooltip title={`The user was blocked ${moment(userForEdit.blocked).format(
             "MMMM Do YYYY, h:mm a"
           )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip></>}</>}
-          visible={userForEdit}
+          open={userForEdit}
           onCancel={() => setUserForEdit(null)}
           footer={null}
         >

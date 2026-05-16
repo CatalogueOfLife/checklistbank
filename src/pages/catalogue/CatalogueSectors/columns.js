@@ -21,7 +21,7 @@ import { NavLink } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 
-import moment from "moment";
+import moment from "dayjs";
 
 export default (
   catalogueKey,

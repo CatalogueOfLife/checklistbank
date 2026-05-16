@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Tooltip } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 import PresentationItem from "../../../components/PresentationItem";
-import moment from "moment";
+import moment from "dayjs";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../../withRouter";
 import axios from "axios";

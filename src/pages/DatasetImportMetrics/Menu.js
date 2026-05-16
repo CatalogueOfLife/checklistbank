@@ -11,7 +11,7 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
-import moment from "moment";
+import moment from "dayjs";
 
 class ImportMenu extends React.Component {
   render() {

@@ -7,7 +7,7 @@ import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined } from "@
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../../history";
 import SyncButton from "./SyncButton";
 import PageContent from "../../../components/PageContent";

@@ -29,7 +29,7 @@ import qs from "query-string";
 import { getUsersBatch } from "../../../api/user";
 
 import DataLoader from "dataloader";
-import moment from "moment";
+import moment from "dayjs";
 import _ from "lodash";
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 

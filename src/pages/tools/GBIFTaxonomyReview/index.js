@@ -9,7 +9,7 @@ import { Select, Row, Col } from "antd";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-import moment from "moment";
+import moment from "dayjs";
 import _ from "lodash";
 const { Option } = Select;
 

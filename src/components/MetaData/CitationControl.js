@@ -202,7 +202,7 @@ class CitationControl extends React.Component {
 
         <Modal
           width={1000}
-          visible={formVisible}
+          open={formVisible}
           footer={null}
           onCancel={() =>
             citationForEdit

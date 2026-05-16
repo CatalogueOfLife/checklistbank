@@ -22,7 +22,7 @@ import _ from "lodash";
 import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 
-import moment from "moment";
+import moment from "dayjs";
 class DatasetPage extends React.Component {
   constructor(props) {
     super(props);

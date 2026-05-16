@@ -95,7 +95,7 @@ const SourceSelect = ({
       </a>
       <Modal
         title="Select source"
-        visible={visible}
+        open={visible}
         maskClosable={true}
         onCancel={hide}
         footer={null}

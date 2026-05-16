@@ -230,7 +230,7 @@ const DecisionForm = (props) => {
     <Modal
       width="90%"
       title={<span>Decision</span>}
-      visible={visible}
+      open={visible}
       destroyOnClose={destroyOnClose}
       onOk={() => {
         handleSubmit(current, onOk);

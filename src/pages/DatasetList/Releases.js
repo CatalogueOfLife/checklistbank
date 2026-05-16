@@ -3,7 +3,7 @@ import { Table, Alert, Row, Col, Form, Button, Tooltip, Tag, ConfigProvider, Emp
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import config from "../../config";
-import moment from "moment";
+import moment from "dayjs";
 
 import { NavLink } from "react-router-dom";
 import withContext from "../../components/hoc/withContext";

@@ -21,7 +21,7 @@ const TaxGroupTreeNodeTitle = ({ tg, poVisible = false }) => {
     >
       <Popover
         trigger={"click"}
-        visible={popOverVisible}
+        open={popOverVisible}
         content={tg["description"]}
       >
         {tg["name"]}

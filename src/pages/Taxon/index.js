@@ -32,7 +32,7 @@ import PresentationItem from "../../components/PresentationItem";
 import Verbatim from "./Verbatim";
 import TaxonProperties from "./TaxonProperties";
 import SecondarySources from "./SecondarySources";
-import moment from "moment";
+import moment from "dayjs";
 import history from "../../history";
 import withContext from "../../components/hoc/withContext";
 import References from "./References";

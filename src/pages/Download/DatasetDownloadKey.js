@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { Tooltip } from 'antd';
 import PresentationItem from "../../components/PresentationItem";
-import moment from "moment";
+import moment from "dayjs";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";

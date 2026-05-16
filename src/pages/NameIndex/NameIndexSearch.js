@@ -9,7 +9,7 @@ import RelatedNames from "./RelatedNames";
 import axios from "axios";
 import config from "../../config";
 import history from "../../history";
-import moment from "moment";
+import moment from "dayjs";
 import { debounce } from "lodash";
 
 const { Option } = Select;

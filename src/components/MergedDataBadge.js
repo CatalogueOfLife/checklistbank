@@ -201,7 +201,7 @@ const MergedDataBadge = ({
         }
         trigger={"click"}
         placement={popoverPlacement || "right"}
-        onVisibleChange={setOpen}
+        onOpenChange={setOpen}
       >
         <Tag
           color="purple"

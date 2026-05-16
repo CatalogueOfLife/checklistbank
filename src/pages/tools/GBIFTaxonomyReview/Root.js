@@ -520,7 +520,7 @@ class Root extends React.Component {
         </div>
         <Modal
           title="Help"
-          visible={helpVisible}
+          open={helpVisible}
           onOk={() => this.setState({ helpVisible: false })}
           onCancel={() => this.setState({ helpVisible: false })}
           footer={[

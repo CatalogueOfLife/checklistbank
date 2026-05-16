@@ -2,7 +2,7 @@ import React from "react";
 import { CodeOutlined } from '@ant-design/icons';
 import { Col, Row, Tag, Statistic, Tooltip } from "antd";
 import _ from "lodash";
-import moment from "moment";
+import moment from "dayjs";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import SyncButton from "../SectorSync/SyncButton"
 

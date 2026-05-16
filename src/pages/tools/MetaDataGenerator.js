@@ -285,7 +285,7 @@ const MetaDataValidator = ({ location }) => {
         )}
         <Modal
           title={template ? `Template fetched` : "Upload successful"}
-          visible={uploadModalVisible}
+          open={uploadModalVisible}
           onCancel={() => setUploadModalVisible(false)}
           footer={
             <>

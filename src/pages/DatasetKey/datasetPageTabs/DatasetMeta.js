@@ -22,7 +22,7 @@ import PageContent from "../../../components/PageContent";
 import PresentationItem from "../../../components/PresentationItem";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
-import moment from "moment";
+import moment from "dayjs";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
@@ -268,7 +268,7 @@ class DatasetMeta extends React.Component {
                       title={`Make dataset ${
                         data.private ? "public" : "private"
                       }`}
-                      visible={confirmPrivatePopupVisible}
+                      open={confirmPrivatePopupVisible}
                       onConfirm={this.setPrivate}
                       okButtonProps={{ loading: privateChangeLoading }}
                       onCancel={() =>

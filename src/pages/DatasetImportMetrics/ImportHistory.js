@@ -12,7 +12,7 @@ import {
 import { RiNodeTree } from "react-icons/ri";
 
 import { Timeline, Tooltip } from "antd";
-import moment from "moment";
+import moment from "dayjs";
 import { NavLink } from "react-router-dom";
 import kibanaQuery from "../Imports/importTabs/kibanaQuery";
 import _ from "lodash";

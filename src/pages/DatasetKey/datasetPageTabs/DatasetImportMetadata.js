@@ -5,7 +5,7 @@ import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import Menu from "../../DatasetImportMetrics/Menu";
-import moment from "moment";
+import moment from "dayjs";
 import DatasetMeta from "./DatasetMeta";
 
 const DatasetImportMetadata = ({ datasetKey, dataset, attempt, addError }) => {

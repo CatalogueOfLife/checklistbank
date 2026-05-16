@@ -6,7 +6,7 @@ import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { parse } from "../../../components/util/textTree";
 import ImportMenu from "../../DatasetImportMetrics/Menu";
-import moment from "moment";
+import moment from "dayjs";
 const ImportTree = ({ datasetKey, dataset, attempt, addError }) => {
   const [loading, setLoading] = useState(false);
   const [importDate, setImportDate] = useState(null)

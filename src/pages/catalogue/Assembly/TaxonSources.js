@@ -84,8 +84,8 @@ class TaxonSources extends React.Component {
             )
           }
           title={<span dangerouslySetInnerHTML={{ __html: taxon.name }} />}
-          visible={popOverVisible}
-          onVisibleChange={() =>
+          open={popOverVisible}
+          onOpenChange={() =>
             this.setState({ popOverVisible: !popOverVisible })
           }
           trigger="click"

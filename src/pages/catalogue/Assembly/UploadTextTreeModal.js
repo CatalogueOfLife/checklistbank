@@ -36,7 +36,7 @@ const TextTreeUploadModal = ({ taxon, onCancel }) => {
           <span dangerouslySetInnerHTML={{ __html: taxon.name }} />
         </span>
       }
-      visible={visible}
+      open={visible}
       onOk={() => {
         setVisible(false);
         onCancel();

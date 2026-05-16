@@ -39,7 +39,7 @@ import Name from "../Name";
 import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
-import moment from "moment";
+import moment from "dayjs";
 import CataloguePublisherKey from "../catalogue/CataloguePublisherKey";
 
 class DatasetPage extends React.Component {

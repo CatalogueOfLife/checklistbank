@@ -24,7 +24,7 @@ import {
 } from "antd";
 
 import config from "../../../config";
-import moment from "moment";
+import moment from "dayjs";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";

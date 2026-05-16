@@ -7,9 +7,9 @@
     "node": ">=22.12"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^6.2.3",
     "ajv": "^8.18.0",
-    "antd": "4.24.15",
+    "antd": "^6.4.2",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
     "classnames": "^2.3.1",
@@ -17,7 +17,7 @@
     "csvtojson": "^2.0.10",
     "d3": "^7.9.0",
     "dataloader": "^1.4.0",
-    "dayjs": "^1.8.26",
+    "dayjs": "^1.11.20",
     "diff2html": "^2.7.0",
     "dompurify": "^2.2.7",
     "highcharts": "^9.1.2",
@@ -28,7 +28,6 @@
     "linkifyjs": "^3.0.5",
     "lodash": ">=4.6.2",
     "marked": "^2.0.3",
-    "moment": "2.24.0",
     "new-github-issue-url": "^1.0.0",
     "p-queue": "^6.6.1",
     "papaparse": "^5.0.2",

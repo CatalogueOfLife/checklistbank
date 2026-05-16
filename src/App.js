@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { ConfigProvider } from "antd";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
 import { installNavigator } from "./history";
@@ -77,6 +78,11 @@ const theme = {
   colorPrimary: "deepskyblue",
 };
 
+// antd 5+ defaults to a different blue than v4. Pin colorPrimary so the
+// jss-styled components (which use the same `theme` object) and antd
+// components stay visually consistent.
+const antdTheme = { token: { colorPrimary: theme.colorPrimary } };
+
 // Wires `useNavigate` into the legacy `history.push()` shim once on mount.
 const NavigatorInstaller = () => {
   const navigate = useNavigate();
@@ -118,14 +124,15 @@ const ProviderRoutes = () => (
 
 const App = () => {
   return (
-    <ContextProvider>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>ChecklistBank (CLB)</title>
-      </Helmet>
-      <BrowserRouter>
-        <NavigatorInstaller />
-        <ThemeProvider theme={theme}>
+    <ConfigProvider theme={antdTheme}>
+      <ContextProvider>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>ChecklistBank (CLB)</title>
+        </Helmet>
+        <BrowserRouter>
+          <NavigatorInstaller />
+          <ThemeProvider theme={theme}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route
@@ -396,10 +403,11 @@ const App = () => {
             <Route path="/system-health" element={<SystemHealth />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
-        </ThemeProvider>
-        <ProviderRoutes />
-      </BrowserRouter>
-    </ContextProvider>
+          </ThemeProvider>
+          <ProviderRoutes />
+        </BrowserRouter>
+      </ContextProvider>
+    </ConfigProvider>
   );
 };
 

@@ -130,8 +130,8 @@ class Popconfirm extends React.Component{
         {...restProps}
         overlayClassName="popover-multi"
         placement={placement}
-        onVisibleChange={this.onVisibleChange}
-        visible={this.state.visible}
+        onOpenChange={this.onVisibleChange}
+        open={this.state.visible}
         overlay={overlay}
         ref={this.saveTooltip}
       />

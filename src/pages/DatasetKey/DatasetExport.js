@@ -63,7 +63,7 @@ class DatasetExport extends React.Component {
         </Select>
         <Modal
           title="Your download will be available at this link"
-          visible={downloadModalVisible}
+          open={downloadModalVisible}
           onCancel={() => this.setState({ downloadModalVisible: false })}
           footer={null}
         >

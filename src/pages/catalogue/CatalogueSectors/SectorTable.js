@@ -20,7 +20,7 @@ import {
   notification,
 } from "antd";
 import config from "../../../config";
-import moment from "moment";
+import moment from "dayjs";
 import withContext from "../../../components/hoc/withContext";
 import kibanaQuery from "../SectorSync/kibanaQuery";
 import Highlighter from "react-highlight-words";
