@@ -13,7 +13,6 @@ import AgentPresentation from "../../components/MetaData/AgentPresentation";
 import linkify from 'linkify-html';
 import _ from 'lodash';
 
-const {TabPane} = Tabs;
 const md = 5;
 
 const isCslPerson = (entity) => {
@@ -51,73 +50,103 @@ const Reference = ({dataset, id, addError}) => {
    {reference && <>
     {reference?.citation &&   <h1 dangerouslySetInnerHTML={{ __html: linkify(reference?.citation || "")}}></h1>}
 
-    <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
-    <TabPane tab="Reference" key="1">
-        <PresentationItem md={md} label="id">
-              {reference?.id}
-         </PresentationItem>
-{/*          <PresentationItem md={md} label="citation">
-         {reference?.citation && (
-               <span
-                  dangerouslySetInnerHTML={{ __html: linkify(reference?.citation)}}
-                ></span>
+    <Tabs
+      defaultActiveKey="1"
+      tabBarExtraContent={null}
+      items={[
+        {
+          key: "1",
+          label: "Reference",
+          children: (
+            <>
+              <PresentationItem md={md} label="id">
+                {reference?.id}
+              </PresentationItem>
+              <PresentationItem md={md} label="year">
+                {reference?.year}
+              </PresentationItem>
+              <PresentationItem md={md} label="page">
+                {reference?.page}
+              </PresentationItem>
+              <PresentationItem md={md} label="parsed">
+                <BooleanValue value={reference.parsed} />
+              </PresentationItem>
+              {reference?.csl && (
+                <>
+                  {Object.keys(reference.csl)
+                    .filter((key) => !["id"].includes(key))
+                    .map((key) => {
+                      if (key === "URL" && reference.csl[key]) {
+                        return (
+                          <PresentationItem md={md} label={key}>
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: linkify(reference.csl[key] || ""),
+                              }}
+                            ></span>
+                          </PresentationItem>
+                        );
+                      }
+                      if (typeof reference.csl[key] === "string") {
+                        return (
+                          <PresentationItem md={md} label={key}>
+                            {reference.csl[key]}
+                          </PresentationItem>
+                        );
+                      } else if (
+                        reference.csl[key] &&
+                        _.get(reference, `csl[${key}]["date-parts"]`)
+                      ) {
+                        return (
+                          <PresentationItem md={md} label={key}>
+                            {reference.csl[key]["date-parts"]
+                              .map((part) => _.get(part, "[0]", ""))
+                              .join("-")}
+                          </PresentationItem>
+                        );
+                      } else if (isCslPerson(reference.csl[key])) {
+                        return (
+                          <PresentationItem md={md} label={key}>
+                            <Row>
+                              {reference.csl[key].map((person) => (
+                                <Col style={{ paddingRight: "6px" }}>
+                                  <AgentPresentation agent={person} />
+                                </Col>
+                              ))}
+                            </Row>
+                          </PresentationItem>
+                        );
+                      }
+                    })}
+                </>
               )}
-         </PresentationItem> */}
-         <PresentationItem md={md} label="year">
-              {reference?.year}
-         </PresentationItem>
-         <PresentationItem md={md} label="page">
-              {reference?.page}
-         </PresentationItem>
-         <PresentationItem md={md} label="parsed">
-             <BooleanValue value={reference.parsed}/>
-
-         </PresentationItem>
-         
-
-         {reference?.csl && <>
-           
-                {Object.keys(reference.csl).filter(key => !['id'].includes(key)).map(key => {
-                    if(key === 'URL' && reference.csl[key]){
-                        return <PresentationItem md={md} label={key}>
-                        {
-                        <span
-                        dangerouslySetInnerHTML={{ __html: linkify(reference.csl[key] || "")}}
-                      ></span>}
-                   </PresentationItem>
-                    }
-                    if(typeof reference.csl[key] === 'string'){
-                        return <PresentationItem md={md} label={key}>
-                        {reference.csl[key]}
-                   </PresentationItem>
-                    } else if(reference.csl[key] && _.get(reference, `csl[${key}]["date-parts"]`)){
-                        return <PresentationItem md={md} label={key}>
-                                {reference.csl[key]["date-parts"].map(part => _.get(part, '[0]', '')).join('-')}
-                            </PresentationItem>
-                    } else if(isCslPerson(reference.csl[key])){
-                        return <PresentationItem md={md} label={key}>
-                                <Row>
-                                {reference.csl[key].map(person => <Col style={{paddingRight: "6px"}}> <AgentPresentation agent={person} /></Col>)}
-                                </Row>
-                            </PresentationItem>
-                    }
-                })}
-            
-        </>}
-        <PresentationItem md={md} label="remarks">
-              {reference?.remarks}
-         </PresentationItem>
-         <PresentationItem md={md} label="">
-              <NavLink to={{pathname: `/dataset/${dataset?.key}/names`, search: `?PUBLISHED_IN_ID=${reference?.id}`}}>
-              Names associated with this reference
-              </NavLink>
-         </PresentationItem>
-            </TabPane>
-            {reference?.verbatimKey &&  
-    <TabPane tab="Verbatim" key="2">
-       <Verbatim verbatimKey={reference.verbatimKey} />
-      </TabPane>}
-            </Tabs>
+              <PresentationItem md={md} label="remarks">
+                {reference?.remarks}
+              </PresentationItem>
+              <PresentationItem md={md} label="">
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${dataset?.key}/names`,
+                    search: `?PUBLISHED_IN_ID=${reference?.id}`,
+                  }}
+                >
+                  Names associated with this reference
+                </NavLink>
+              </PresentationItem>
+            </>
+          ),
+        },
+        ...(reference?.verbatimKey
+          ? [
+              {
+                key: "2",
+                label: "Verbatim",
+                children: <Verbatim verbatimKey={reference.verbatimKey} />,
+              },
+            ]
+          : []),
+      ]}
+    />
     </>}
     
     </PageContent>

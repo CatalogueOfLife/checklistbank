@@ -10,7 +10,6 @@ import axios from "axios";
 import config from "../../config";
 import history from "../../history";
 
-const { TabPane } = Tabs;
 
 
 
@@ -145,30 +144,51 @@ const NameIndexKey = ({ match, addError }) => {
       taxonOrNameKey={record?.id}
     >
       <PageContent>
-        <Tabs activeKey={activeKey} onChange={onTabChange} defaultActiveKey="1">
-          <TabPane tab="Entry" key="1">
-            {record && <Entry record={record} />}
-          </TabPane>
-          {group && (
-            <TabPane tab={`Group (${group.length})`} key="2">
-              <Table
-                size="small"
-                columns={columns}
-                dataSource={group}
-                /*  pagination={this.state.pagination}
-      onChange={this.handleTableChange} */
-                rowKey="id"
-                pagination={false}
-                expandable={{
-                  expandedRowRender: (record) => <Entry record={record} />,
-                }}
-              />
-            </TabPane>
-          )}
-          <TabPane tab={<span>Related ({count})</span>} key="3">
-            <RelatedNames updateCount={updateCount} group={group ? [record, ...group] : []} defaultFilteredValue={defaultFilteredValue} />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          activeKey={activeKey}
+          onChange={onTabChange}
+          defaultActiveKey="1"
+          items={[
+            {
+              key: "1",
+              label: "Entry",
+              children: record && <Entry record={record} />,
+            },
+            ...(group
+              ? [
+                  {
+                    key: "2",
+                    label: `Group (${group.length})`,
+                    children: (
+                      <Table
+                        size="small"
+                        columns={columns}
+                        dataSource={group}
+                        rowKey="id"
+                        pagination={false}
+                        expandable={{
+                          expandedRowRender: (record) => (
+                            <Entry record={record} />
+                          ),
+                        }}
+                      />
+                    ),
+                  },
+                ]
+              : []),
+            {
+              key: "3",
+              label: <span>Related ({count})</span>,
+              children: (
+                <RelatedNames
+                  updateCount={updateCount}
+                  group={group ? [record, ...group] : []}
+                  defaultFilteredValue={defaultFilteredValue}
+                />
+              ),
+            },
+          ]}
+        />
       </PageContent>
     </Layout>
   );

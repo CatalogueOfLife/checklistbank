@@ -128,55 +128,75 @@ class TextTreeUpload extends React.Component {
           />
         )}
 
-        <Tabs defaultActiveKey="1" style={{ width: "100%" }}>
-          <Tabs.TabPane tab="Paste tree" key="1">
-            <Checkbox
-              disabled={this.state.loading}
-              checked={replace}
-              onChange={(e) => this.setState({ replace: e.target.checked })}
-            >
-              Replace
-            </Checkbox>
-            <TextArea
-              rows={10}
-              value={this.state.textAreaContent}
-              onChange={(e) =>
-                this.setState({ textAreaContent: e.target.value })
-              }
-            />
-            <Button
-              style={{ marginTop: "10px" }}
-              onClick={this.sendDataFromText}
-            >
-              Submit
-            </Button>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Upload tree" key="2">
-            <Upload
-              action={`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}/tree`}
-              customRequest={this.customRequest}
-              onChange={this.onChange}
-              fileList={fileList}
-              beforeUpload={this.confirmUpload}
-              showUploadList={false}
-            >
-              <Button
-                loading={this.state.loading}
-                style={{ marginTop: "8px", marginRight: "12px" }}
-                type="primary"
-              >
-                <UploadOutlined /> Upload text tree
-              </Button>
-            </Upload>
-            <Checkbox
-              disabled={this.state.loading}
-              checked={replace}
-              onChange={(e) => this.setState({ replace: e.target.checked })}
-            >
-              Replace
-            </Checkbox>
-          </Tabs.TabPane>
-        </Tabs>
+        <Tabs
+          defaultActiveKey="1"
+          style={{ width: "100%" }}
+          items={[
+            {
+              key: "1",
+              label: "Paste tree",
+              children: (
+                <>
+                  <Checkbox
+                    disabled={this.state.loading}
+                    checked={replace}
+                    onChange={(e) =>
+                      this.setState({ replace: e.target.checked })
+                    }
+                  >
+                    Replace
+                  </Checkbox>
+                  <TextArea
+                    rows={10}
+                    value={this.state.textAreaContent}
+                    onChange={(e) =>
+                      this.setState({ textAreaContent: e.target.value })
+                    }
+                  />
+                  <Button
+                    style={{ marginTop: "10px" }}
+                    onClick={this.sendDataFromText}
+                  >
+                    Submit
+                  </Button>
+                </>
+              ),
+            },
+            {
+              key: "2",
+              label: "Upload tree",
+              children: (
+                <>
+                  <Upload
+                    action={`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}/tree`}
+                    customRequest={this.customRequest}
+                    onChange={this.onChange}
+                    fileList={fileList}
+                    beforeUpload={this.confirmUpload}
+                    showUploadList={false}
+                  >
+                    <Button
+                      loading={this.state.loading}
+                      style={{ marginTop: "8px", marginRight: "12px" }}
+                      type="primary"
+                    >
+                      <UploadOutlined /> Upload text tree
+                    </Button>
+                  </Upload>
+                  <Checkbox
+                    disabled={this.state.loading}
+                    checked={replace}
+                    onChange={(e) =>
+                      this.setState({ replace: e.target.checked })
+                    }
+                  >
+                    Replace
+                  </Checkbox>
+                </>
+              ),
+            },
+          ]}
+        />
       </>
     );
   }

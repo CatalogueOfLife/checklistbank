@@ -65,62 +65,94 @@ class ImportMenu extends React.Component {
         selectedKeys={[current]}
         mode="horizontal"
         style={{ marginBottom: "8px" }}
-      >
-        <Menu.Item key="imports" icon={<PieChartOutlined />}>
-          <NavLink
-            to={{
-              pathname: attempt
-                ? `/dataset/${datasetKey}/imports/${attempt}`
-                : `/dataset/${datasetKey}/imports`,
-            }}
-          >
-            Metrics
-          </NavLink>
-        </Menu.Item>
-        {!isProject && attempt && isFinished && dataset.attempt != attempt && (
-          <Menu.Item key="metadata" icon={<FileTextOutlined />}>
-            <NavLink
-              to={{
-                pathname: `/dataset/${datasetKey}/imports/${attempt}/metadata`,
-              }}
-            >
-              Metadata
-            </NavLink>
-          </Menu.Item>
-        )}
-        {!isProject && attempt && isFinished && dataset.attempt != attempt && (
-          <Menu.Item key="tree" icon={<RiNodeTree />}>
-            <NavLink
-              to={{
-                pathname: `/dataset/${datasetKey}/imports/${attempt}/tree`,
-              }}
-            >
-              Archived tree
-            </NavLink>
-          </Menu.Item>
-        )}
-        {isProject && attempt && isFinished && (
-          <Menu.Item key="tree" icon={<RiNodeTree />}>
-            <NavLink
-              to={{
-                pathname: `/dataset/${datasetKey}R${attempt}/classification`,
-              }}
-            >
-              Browse tree
-            </NavLink>
-          </Menu.Item>
-        )}
-        <Menu.Item key="import-timeline" icon={<LineChartOutlined />}>
-          <NavLink to={{ pathname: `/dataset/${datasetKey}/import-timeline` }}>
-            Timeline
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key="diff" icon={<DiffOutlined />}>
-          <NavLink to={{ pathname: `/dataset/${datasetKey}/diff` }}>
-            Diff
-          </NavLink>
-        </Menu.Item>
-      </Menu>
+        items={[
+          {
+            key: "imports",
+            icon: <PieChartOutlined />,
+            label: (
+              <NavLink
+                to={{
+                  pathname: attempt
+                    ? `/dataset/${datasetKey}/imports/${attempt}`
+                    : `/dataset/${datasetKey}/imports`,
+                }}
+              >
+                Metrics
+              </NavLink>
+            ),
+          },
+          ...(!isProject &&
+          attempt &&
+          isFinished &&
+          dataset.attempt != attempt
+            ? [
+                {
+                  key: "metadata",
+                  icon: <FileTextOutlined />,
+                  label: (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${datasetKey}/imports/${attempt}/metadata`,
+                      }}
+                    >
+                      Metadata
+                    </NavLink>
+                  ),
+                },
+                {
+                  key: "tree",
+                  icon: <RiNodeTree />,
+                  label: (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${datasetKey}/imports/${attempt}/tree`,
+                      }}
+                    >
+                      Archived tree
+                    </NavLink>
+                  ),
+                },
+              ]
+            : []),
+          ...(isProject && attempt && isFinished
+            ? [
+                {
+                  key: "tree",
+                  icon: <RiNodeTree />,
+                  label: (
+                    <NavLink
+                      to={{
+                        pathname: `/dataset/${datasetKey}R${attempt}/classification`,
+                      }}
+                    >
+                      Browse tree
+                    </NavLink>
+                  ),
+                },
+              ]
+            : []),
+          {
+            key: "import-timeline",
+            icon: <LineChartOutlined />,
+            label: (
+              <NavLink
+                to={{ pathname: `/dataset/${datasetKey}/import-timeline` }}
+              >
+                Timeline
+              </NavLink>
+            ),
+          },
+          {
+            key: "diff",
+            icon: <DiffOutlined />,
+            label: (
+              <NavLink to={{ pathname: `/dataset/${datasetKey}/diff` }}>
+                Diff
+              </NavLink>
+            ),
+          },
+        ]}
+      />
       </>
     );
   }

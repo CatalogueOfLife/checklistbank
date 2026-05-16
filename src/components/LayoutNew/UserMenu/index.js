@@ -117,43 +117,31 @@ class UserMenu extends PureComponent {
     }
 
     const menu = (
-      <Menu selectedKeys={[]}>
-        <Menu.Item
-          key="logout"
-          onClick={() => {
-            logout();
-            window.location.reload();
-          }}
-        >
-          <LogoutOutlined /> Logout
-        </Menu.Item>
-        <Menu.Item key="profile">
-          <NavLink
-            to={{ pathname: `/user-profile` }}
-          >
-            <UserOutlined /> Profile
-          </NavLink>
-        </Menu.Item>
-
-        {/*         {Auth.isEditorOrAdmin(user) && (
-          <Menu.ItemGroup title="Project">
-            {(Auth.isAdmin(user) ||
-              user?.editor?.length > 0 ||
-              user?.reviewer?.length > 0) && (
-              <Menu.Item key="project">
-                <CatalogueSelect />
-              </Menu.Item>
-            )}
-            <Menu.Item key="newproject">
-            <NavLink
-                    to={{ pathname: `/newdataset` }}
-                  >
-                    <span>Create new</span>
-                  </NavLink>
-              </Menu.Item>
-          </Menu.ItemGroup>
-        )} */}
-      </Menu>
+      <Menu
+        selectedKeys={[]}
+        items={[
+          {
+            key: "logout",
+            label: (
+              <>
+                <LogoutOutlined /> Logout
+              </>
+            ),
+            onClick: () => {
+              logout();
+              window.location.reload();
+            },
+          },
+          {
+            key: "profile",
+            label: (
+              <NavLink to={{ pathname: `/user-profile` }}>
+                <UserOutlined /> Profile
+              </NavLink>
+            ),
+          },
+        ]}
+      />
     );
 
     return (

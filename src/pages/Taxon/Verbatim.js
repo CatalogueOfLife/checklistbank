@@ -9,7 +9,6 @@ import _ from "lodash";
 import withWidth, { SMALL } from "../../components/hoc/Width";
 
 const compose = _.flowRight;
-const { TabPane } = Tabs;
 
 const TYPES = {
   "col:Taxon": "col:ID",
@@ -115,23 +114,22 @@ const Verbatim = ({
         <Tabs
           defaultActiveKey="1"
           tabPosition={width <= SMALL ? "top" : "right"}
-        >
-          {Object.keys(verbatimRecords).map((key) => (
-            <TabPane tab={key} key={key}>
-              {verbatimRecords[key].map((v) => (
-                <VerbatimPresentation
-                  style={{ marginBottom: "10px" }}
-                  key={v.id}
-                  record={v}
-                  datasetKey={v.datasetKey}
-                  verbatimKey={v.id}
-                  basicHeader={true}
-                  location={location}
-                />
-              ))}
-            </TabPane>
-          ))}
-        </Tabs>
+          items={Object.keys(verbatimRecords).map((key) => ({
+            key,
+            label: key,
+            children: verbatimRecords[key].map((v) => (
+              <VerbatimPresentation
+                style={{ marginBottom: "10px" }}
+                key={v.id}
+                record={v}
+                datasetKey={v.datasetKey}
+                verbatimKey={v.id}
+                basicHeader={true}
+                location={location}
+              />
+            )),
+          }))}
+        />
       )}
     </>
   );

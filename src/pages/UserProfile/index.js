@@ -13,7 +13,6 @@ import { DownloadOutlined, HistoryOutlined, SyncOutlined } from "@ant-design/ico
 import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin } from "antd";
 import moment from "dayjs";
 import history from "../../history";
-const { TabPane } = Tabs;
 const UserProfile = ({ user, countryAlpha2, match }) => {
   const [editorDatasets, setEditorDatasets] = useState([]);
   const [reviewerDatasets, setReviewerDatasets] = useState([]);
@@ -147,72 +146,105 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
     <Layout title={user?.username ? `User profile: ${user?.username}` : ""}>
       {user ? (
         <PageContent>
-          <Tabs activeKey={activeTab} onChange={tb => {
-            history.push({
-              pathname: tb === "profile" ? "/user-profile" : `/user-profile/${tb}`
-            })
-          }} >
-            <TabPane tab="Profile" key="profile">
-              <Row>
-                <Col flex="auto"></Col>
-                <Col>
-                  <Button href="https://www.gbif.org/user/profile">
-                    Edit on gbif.org
-                  </Button>
-                </Col>
-              </Row>
-              <Row>
-                <PresentationItem label="UserName">
-                  {user?.username}
-                </PresentationItem>
-                <PresentationItem label="Name">
-                  {user?.firstname} {user?.lastname}
-                </PresentationItem>
-                <PresentationItem label="Email">{user?.email}</PresentationItem>
-                <PresentationItem label="Orcid">
-                  {user?.orcid && (
-                    <a
-                      style={{ display: "block" }}
-                      href={`https://orcid.org/${user.orcid}`}
-                    >
-                      <img
-                        src="/images/orcid_16x16.png"
-                        style={{ flex: "0 0 auto" }}
-                        alt=""
-                      ></img>{" "}
-                      {user.orcid}
-                    </a>
-                  )}
-                </PresentationItem>
-                <PresentationItem label="Country">
-                  {user?.country && countryAlpha2[user?.country]?.name}
-                </PresentationItem>
-                <PresentationItem label="Roles">
-                  {user?.roles?.length && (
-                    <div>
-                      {user.roles.map((r) => (
-                        <Tag key={r}>{r}</Tag>
-                      ))}{" "}
-                    </div>
-                  )}
-                </PresentationItem>
-              </Row>
-            </TabPane>
-            <TabPane tab={`Editor (${editorDatasets.length})`} key="editor">
-              <List dataSource={editorDatasets} renderItem={renderItem} />
-            </TabPane>
-            <TabPane tab={`Reviewer (${reviewerDatasets.length})`} key="reviewer">
-              <List dataSource={reviewerDatasets} renderItem={renderItem} />
-            </TabPane>
-            <TabPane tab={`Downloads (${downloads.length})`} key="downloads" >
-              <Row>
-                <Col flex="auto"></Col>
-                <Col><List dataSource={downloads} renderItem={renderDownload} split={false} /></Col>
-                <Col flex="auto"></Col>
-              </Row>
-              
-            </TabPane>
-          </Tabs>
+          <Tabs
+            activeKey={activeTab}
+            onChange={(tb) => {
+              history.push({
+                pathname:
+                  tb === "profile" ? "/user-profile" : `/user-profile/${tb}`,
+              });
+            }}
+            items={[
+              {
+                key: "profile",
+                label: "Profile",
+                children: (
+                  <>
+                    <Row>
+                      <Col flex="auto"></Col>
+                      <Col>
+                        <Button href="https://www.gbif.org/user/profile">
+                          Edit on gbif.org
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <PresentationItem label="UserName">
+                        {user?.username}
+                      </PresentationItem>
+                      <PresentationItem label="Name">
+                        {user?.firstname} {user?.lastname}
+                      </PresentationItem>
+                      <PresentationItem label="Email">
+                        {user?.email}
+                      </PresentationItem>
+                      <PresentationItem label="Orcid">
+                        {user?.orcid && (
+                          <a
+                            style={{ display: "block" }}
+                            href={`https://orcid.org/${user.orcid}`}
+                          >
+                            <img
+                              src="/images/orcid_16x16.png"
+                              style={{ flex: "0 0 auto" }}
+                              alt=""
+                            ></img>{" "}
+                            {user.orcid}
+                          </a>
+                        )}
+                      </PresentationItem>
+                      <PresentationItem label="Country">
+                        {user?.country && countryAlpha2[user?.country]?.name}
+                      </PresentationItem>
+                      <PresentationItem label="Roles">
+                        {user?.roles?.length && (
+                          <div>
+                            {user.roles.map((r) => (
+                              <Tag key={r}>{r}</Tag>
+                            ))}{" "}
+                          </div>
+                        )}
+                      </PresentationItem>
+                    </Row>
+                  </>
+                ),
+              },
+              {
+                key: "editor",
+                label: `Editor (${editorDatasets.length})`,
+                children: (
+                  <List dataSource={editorDatasets} renderItem={renderItem} />
+                ),
+              },
+              {
+                key: "reviewer",
+                label: `Reviewer (${reviewerDatasets.length})`,
+                children: (
+                  <List
+                    dataSource={reviewerDatasets}
+                    renderItem={renderItem}
+                  />
+                ),
+              },
+              {
+                key: "downloads",
+                label: `Downloads (${downloads.length})`,
+                children: (
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col>
+                      <List
+                        dataSource={downloads}
+                        renderItem={renderDownload}
+                        split={false}
+                      />
+                    </Col>
+                    <Col flex="auto"></Col>
+                  </Row>
+                ),
+              },
+            ]}
+          />
 
           {/*         <Row>
           <Col span={12} style={{ padding: "0px 12px 0px 12px" }}>

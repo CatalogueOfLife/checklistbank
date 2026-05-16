@@ -29,7 +29,6 @@ import config from "../../config";
 const { Title } = Typography;
 const { TextArea } = Input;
 const Step = Steps.Step;
-const { TabPane } = Tabs;
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -426,92 +425,111 @@ const MetaDataValidator = ({ location }) => {
             defaultActiveKey="1"
             activeKey={activeTab}
             onChange={onTabChange}
-          >
-            <TabPane tab="YAML" key="1">
-              <Row style={{ marginBottom: "10px" }}>
-                <Col flex="auto"></Col>
-                <Col>
-                  <Button
-                    type="primary"
-                    href={downloadUrl}
-                    download={"metadata.yaml"}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <DownloadOutlined /> Download
-                  </Button>
-                </Col>
-              </Row>
-              <pre>
-                <code
-                  dangerouslySetInnerHTML={{
-                    __html: getHighlighted(validatorResult, "yaml"),
-                  }}
-                ></code>
-              </pre>
-            </TabPane>
-            <TabPane tab="EML" key="2">
-              {!emlError && (
-                <Row style={{ marginBottom: "10px" }}>
-                  <Col flex="auto"></Col>
-                  <Col>
-                    <Button
-                      type="primary"
-                      href={emlDownloadUrl}
-                      download={"eml.xml"}
-                      style={{ marginRight: "10px" }}
-                    >
-                      <DownloadOutlined /> Download
-                    </Button>
-                  </Col>
-                </Row>
-              )}
-              {emlError && (
-                <Alert
-                  type="error"
-                  closable
-                  onClose={() => setEmlError(null)}
-                  message={
-                    <ErrorMsg
-                      error={emlError}
-                      style={{ marginBottom: "10px" }}
-                    />
-                  }
-                ></Alert>
-              )}
-              <pre>
-                <code
-                  dangerouslySetInnerHTML={{
-                    __html: getHighlighted(eml, "xml"),
-                  }}
-                ></code>
-              </pre>
-            </TabPane>
-            <TabPane tab="JSON" key="3">
-              <Row style={{ marginBottom: "10px" }}>
-                <Col flex="auto"></Col>
-                <Col>
-                  <Button
-                    type="primary"
-                    href={jsonDownloadUrl}
-                    download={"metadata.json"}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <DownloadOutlined /> Download
-                  </Button>
-                </Col>
-              </Row>
-              <pre>
-                <code
-                  dangerouslySetInnerHTML={{
-                    __html: getHighlighted(
-                      JSON.stringify(_.omit(data, "key"), null, 2),
-                      "json"
-                    ),
-                  }}
-                ></code>
-              </pre>
-            </TabPane>
-          </Tabs>
+            items={[
+              {
+                key: "1",
+                label: "YAML",
+                children: (
+                  <>
+                    <Row style={{ marginBottom: "10px" }}>
+                      <Col flex="auto"></Col>
+                      <Col>
+                        <Button
+                          type="primary"
+                          href={downloadUrl}
+                          download={"metadata.yaml"}
+                          style={{ marginRight: "10px" }}
+                        >
+                          <DownloadOutlined /> Download
+                        </Button>
+                      </Col>
+                    </Row>
+                    <pre>
+                      <code
+                        dangerouslySetInnerHTML={{
+                          __html: getHighlighted(validatorResult, "yaml"),
+                        }}
+                      ></code>
+                    </pre>
+                  </>
+                ),
+              },
+              {
+                key: "2",
+                label: "EML",
+                children: (
+                  <>
+                    {!emlError && (
+                      <Row style={{ marginBottom: "10px" }}>
+                        <Col flex="auto"></Col>
+                        <Col>
+                          <Button
+                            type="primary"
+                            href={emlDownloadUrl}
+                            download={"eml.xml"}
+                            style={{ marginRight: "10px" }}
+                          >
+                            <DownloadOutlined /> Download
+                          </Button>
+                        </Col>
+                      </Row>
+                    )}
+                    {emlError && (
+                      <Alert
+                        type="error"
+                        closable
+                        onClose={() => setEmlError(null)}
+                        message={
+                          <ErrorMsg
+                            error={emlError}
+                            style={{ marginBottom: "10px" }}
+                          />
+                        }
+                      ></Alert>
+                    )}
+                    <pre>
+                      <code
+                        dangerouslySetInnerHTML={{
+                          __html: getHighlighted(eml, "xml"),
+                        }}
+                      ></code>
+                    </pre>
+                  </>
+                ),
+              },
+              {
+                key: "3",
+                label: "JSON",
+                children: (
+                  <>
+                    <Row style={{ marginBottom: "10px" }}>
+                      <Col flex="auto"></Col>
+                      <Col>
+                        <Button
+                          type="primary"
+                          href={jsonDownloadUrl}
+                          download={"metadata.json"}
+                          style={{ marginRight: "10px" }}
+                        >
+                          <DownloadOutlined /> Download
+                        </Button>
+                      </Col>
+                    </Row>
+                    <pre>
+                      <code
+                        dangerouslySetInnerHTML={{
+                          __html: getHighlighted(
+                            JSON.stringify(_.omit(data, "key"), null, 2),
+                            "json"
+                          ),
+                        }}
+                      ></code>
+                    </pre>
+                  </>
+                ),
+              },
+            ]}
+          />
         )}
       </PageContent>
     </Layout>
