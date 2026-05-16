@@ -1,11 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App";
-// import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
 
-ReactDOM.render(<App />, document.getElementById("root"));
-// registerServiceWorker();
-// test unregister
+const root = createRoot(document.getElementById("root"));
+root.render(
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
+);
+
+// Clear any stale CRA-era service-worker registration.
 unregister();

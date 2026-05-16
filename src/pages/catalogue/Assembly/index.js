@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import {
   EyeOutlined,
   PlusOutlined,
@@ -29,7 +30,7 @@ import NameAutocomplete from "./NameAutocomplete";
 import PageContent from "../../../components/PageContent";
 import AddChildModal from "./AddChildModal";
 import DecisionForm from "../../WorkBench/DecisionForm";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import qs from "query-string";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
@@ -841,4 +842,4 @@ class Assembly extends React.Component {
 
 const mapContextToProps = ({ catalogue, user }) => ({ catalogue, user });
 
-export default withContext(mapContextToProps)(Assembly);
+export default withRouter(withContext(mapContextToProps)(Assembly));

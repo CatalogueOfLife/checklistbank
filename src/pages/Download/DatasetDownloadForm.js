@@ -178,7 +178,7 @@ class DatasetDownload extends React.Component {
                     pathname: `/dataset/${dataset?.key}/imports`,
                     search: "?showHistory=true",
                   }}
-                  exact={true}
+                  end
                 >
                   historic archives
                 </NavLink>{" "}

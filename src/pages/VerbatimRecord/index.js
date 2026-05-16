@@ -1,7 +1,7 @@
 import React from "react";
 import config from "../../config";
 import axios from "axios";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
 import qs from "query-string";
 import _ from "lodash";

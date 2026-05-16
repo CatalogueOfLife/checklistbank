@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../withRouter";
 import config from "../../config";
 
 import axios from "axios";
@@ -865,7 +866,7 @@ class TaxonPage extends React.Component {
                                   "name.scientificName"
                                 )}&rank=${_.get(taxon, "name.rank")}`,
                               }}
-                              exact={true}
+                              end
                             >
                               {tag}
                             </NavLink>
@@ -918,7 +919,7 @@ class TaxonPage extends React.Component {
                               sourceTaxon.sourceId
                             )}`,
                           }}
-                          exact={true}
+                          end
                         >
                           {_.get(sourceDataset, "title")}
                         </NavLink>{" "}
@@ -931,7 +932,7 @@ class TaxonPage extends React.Component {
                             "key"
                           )}`,
                         }}
-                        exact={true}
+                        end
                       >
                         {_.get(sourceDataset, "title")}
                       </NavLink>
@@ -1024,4 +1025,4 @@ const mapContextToProps = ({
   identifierScope,
 });
 
-export default withContext(mapContextToProps)(TaxonPage);
+export default withRouter(withContext(mapContextToProps)(TaxonPage));

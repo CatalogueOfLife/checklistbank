@@ -8,7 +8,7 @@ import PresentationItem from "../../components/PresentationItem";
 import Exception from "../../components/exception/Exception";
 import history from "../../history";
 import moment from "moment";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
 import _ from "lodash";

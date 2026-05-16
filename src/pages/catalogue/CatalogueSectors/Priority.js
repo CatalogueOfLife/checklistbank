@@ -14,7 +14,7 @@ import getColumns from "./columns";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import { getSourcesBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
 

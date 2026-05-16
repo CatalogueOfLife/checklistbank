@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/LayoutNew";
 import PageContent from "../components/PageContent";
-import { withRouter, Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import withRouter from "../withRouter";
 import { Row, Col, Card } from "antd";
 import axios from "axios";
 import Exception404 from "../components/exception/404";
@@ -49,11 +50,7 @@ const GlobalRedirect = ({
       </PageContent>
     </Layout>
   ) : !!redirectUrl ? (
-    <Redirect
-      to={{
-        pathname: redirectUrl,
-      }}
-    />
+    <Navigate to={redirectUrl} replace />
   ) : (
     <Exception404 />
   );

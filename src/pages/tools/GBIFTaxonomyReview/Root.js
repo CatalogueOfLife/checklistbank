@@ -12,7 +12,7 @@ import {
   Modal,
   Button,
 } from "antd";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import Papa from "papaparse";
 import { QuestionCircleOutlined, LinkOutlined } from "@ant-design/icons";
 import withContext from "../../../components/hoc/withContext";

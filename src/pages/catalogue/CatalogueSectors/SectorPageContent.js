@@ -18,7 +18,7 @@ import {
   notification,
   Checkbox,
 } from "antd";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import SectorForm from "../Assembly/SectorForm";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";

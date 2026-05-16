@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
 import SourceMetrics from "./SourceMetrics";
@@ -44,4 +45,4 @@ const mapContextToProps = ({ user, rank, catalogue }) => ({
   catalogue,
 });
 
-export default withContext(mapContextToProps)(CatalogueSourceMetrics);
+export default withRouter(withContext(mapContextToProps)(CatalogueSourceMetrics));

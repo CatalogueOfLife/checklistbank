@@ -1,4 +1,4 @@
-import { withRouter } from "react-router-dom";
+import withRouter from "../withRouter";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import React from "react";

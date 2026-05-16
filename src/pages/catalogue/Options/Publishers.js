@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Auth from "../../../components/Auth";
 import config from "../../../config";
-import { withRouter, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";

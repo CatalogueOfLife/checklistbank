@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
-import history from "./history";
+import { installNavigator } from "./history";
 import "./App.css";
 import DatasetList from "./pages/DatasetList";
 import DatasetPage from "./pages/DatasetKey";
@@ -47,7 +48,6 @@ import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import ExceptionHandler from "./components/exception/ExceptionHandler";
-import Helmet from "react-helmet";
 import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
 import HomePage from "./pages/HomePage";
 import CatalogueSources from "./pages/catalogue/CatalogueSources";
@@ -72,11 +72,49 @@ import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
 import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
-import config from "./config";
 
 const theme = {
   colorPrimary: "deepskyblue",
 };
+
+// Wires `useNavigate` into the legacy `history.push()` shim once on mount.
+const NavigatorInstaller = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    installNavigator(navigate);
+  }, [navigate]);
+  return null;
+};
+
+// Router 6 requires `<Route>` to live inside `<Routes>`. The Router-5 code
+// rendered these provider routes as siblings of the main `<Switch>` so each
+// matched independently; we give each its own `<Routes>` so the same
+// "render whenever this prefix matches" semantics survive.
+const ProviderRoutes = () => (
+  <>
+    <Routes>
+      <Route path="/dataset/:key/*" element={<DatasetProvider />} />
+    </Routes>
+    <Routes>
+      <Route
+        path="/catalogue/:catalogueKey/dataset/:sourceKey/*"
+        element={<DatasetProvider />}
+      />
+    </Routes>
+    <Routes>
+      <Route path="/catalogue/:catalogueKey/*" element={<DatasetProvider />} />
+    </Routes>
+    <Routes>
+      <Route path="/catalogue/:catalogueKey/*" element={<SyncProvider />} />
+    </Routes>
+    <Routes>
+      <Route path="/*" element={<ExceptionHandler />} />
+    </Routes>
+    <Routes>
+      <Route path="/*" element={<BackgroundProvider />} />
+    </Routes>
+  </>
+);
 
 const App = () => {
   return (
@@ -85,381 +123,282 @@ const App = () => {
         <meta charSet="utf-8" />
         <title>ChecklistBank (CLB)</title>
       </Helmet>
-      <Router history={history}>
-        <React.Fragment>
-          <ThemeProvider theme={theme}>
-            <Switch>
-              <Route exact key="HomePage" path="/" component={HomePage} />
-              <AdminRoute
-                exact
-                key="Admin"
-                path={`/admin/settings`}
-                roles={["editor", "admin"]}
-                component={Admin}
-              />
-              <AdminRoute
-                exact
-                key="UserJobs"
-                path={`/admin/jobs`}
-                roles={["admin"]}
-                component={AdminJobs}
-              />
-              <AdminRoute
-                exact
-                key="UserAdmin"
-                path={`/admin/users`}
-                roles={["admin"]}
-                component={UserAdmin}
-              />
-              <AdminRoute
-                exact
-                key="DatasetAdmin"
-                path={`/admin/datasets`}
-                roles={["editor", "admin"]}
-                component={DatasetAdmin}
-              />
-              <AdminRoute
-                exact
-                key="MatcherAdmin"
-                path={`/admin/matcher`}
-                roles={["editor", "admin"]}
-                component={MatcherAdmin}
-              />
-              <Route
-                exact
-                key="imports"
-                path="/imports"
-                render={({ match, location }) => (
-                  <Imports location={location} />
-                )}
-              />
-              <PrivateRoute
-                exact
-                key="References"
-                path="/catalogue/:catalogueKey/references/:key?"
-                component={CatalogueReferences}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueSources"
-                path="/catalogue/:catalogueKey/sources/:issues?"
-                component={CatalogueSources}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueSourceMetrics"
-                path="/catalogue/:catalogueKey/sourcemetrics"
-                component={CatalogueSourceMetrics}
-              />
-              <PrivateRoute
-                exact
-                key="CatalogueOptions"
-                path={`/catalogue/:catalogueKey/options`}
-                roles={["editor"]}
-                component={CatalogueOptions}
-              />
-              <PrivateRoute
-                exact
-                key="CataloguePublishers"
-                path={`/catalogue/:catalogueKey/publishers`}
-                roles={["editor"]}
-                component={CataloguePublishers}
-              />
-              <PrivateRoute
-                exact
-                key="Assembly"
-                path={`/catalogue/:catalogueKey/assembly`}
-                roles={["editor"]}
-                component={Assembly}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueDownload"
-                path="/catalogue/:catalogueKey/download/:key?"
-                component={CatalogueDownload}
-              />
-              <PrivateRoute
-                exact
-                key="AssemblyDuplicates"
-                path={`/catalogue/:catalogueKey/duplicates`}
-                roles={["editor"]}
-                component={AssemblyDuplicates}
-              />
-              <PrivateRoute
-                exact
-                key="AssemblyTasks"
-                path={`/catalogue/:catalogueKey/tasks`}
-                roles={["editor"]}
-                component={AssemblyTasks}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueMeta"
-                path="/catalogue/:catalogueKey/metadata"
-                component={CatalogueMeta}
-              />
-              <PrivateRoute
-                exact
-                key="projectEditors"
-                path="/catalogue/:catalogueKey/editors"
-                component={ProjectEditors}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueNameSearch"
-                path="/catalogue/:catalogueKey/names"
-                component={CatalogueNameSearch}
-              />
-              <PrivateRoute
-                exact
-                key="sectorPriority"
-                path="/catalogue/:catalogueKey/sector/priority"
-                component={SectorPriority}
-              />
-              <PrivateRoute
-                exact
-                key="sectorSync"
-                path="/catalogue/:catalogueKey/sector/sync"
-                component={SectorSync}
-              />
-              <PrivateRoute
-                exact
-                key="sectorPublishers"
-                path="/catalogue/:catalogueKey/sector/publishers"
-                component={SectorPublishers}
-              />
-              <PrivateRoute
-                exact
-                key="sector"
-                path="/catalogue/:catalogueKey/sector"
-                component={CatalogueSectors}
-              />
-              <PrivateRoute
-                exact
-                key="cataloguePublisherKey"
-                path="/catalogue/:catalogueKey/publisher/:key?"
-                component={CataloguePublisherKey}
-              />
-              <PrivateRoute
-                exact
-                key="decisions"
-                path="/catalogue/:catalogueKey/decision"
-                component={CatalogueDecisions}
-              />
-              <PrivateRoute
-                exact
-                key="decisions"
-                path="/catalogue/:catalogueKey/issues"
-                component={CatalogueIssues}
-              />
-
-              <PrivateRoute
-                exact
-                key="sectorDiff"
-                path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
-                component={SectorDiff}
-              />
-
-              <PrivateRoute
-                exact
-                key="catalogueTaxon"
-                path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
-                component={CatalogueTaxon}
-              />
-              <PrivateRoute
-                exact
-                key="catalogueName"
-                path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
-                component={CatalogueName}
-              />
-              <PrivateRoute
-                exact
-                key="CatalogueSourceDataset"
-                path={`/catalogue/:catalogueKey/dataset/:sourceKey/:section(issues|tasks|workbench|duplicates|metadata|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
-                component={CatalogueSourceDataset}
-              />
-              <PrivateRoute
-                exact
-                key="datasetKey"
-                path={`/catalogue/:catalogueKey/dataset/:sourceKey/:section:(imports|classification|sectors|metadata|names|taxon|name|verbatim)/:taxonOrNameKey?`}
-                component={DatasetPage}
-              />
-
-              <Route
-                exact
-                key="datasetCreate"
-                path={`/newdataset`}
-                component={DatasetCreate}
-              />
-              <Route
-                exact
-                key="dataset"
-                path="/dataset"
-                render={(props) => <DatasetList location={props.location} />}
-              />
-              <Route
-                exact
-                key="datasetKey2"
-                path={`/dataset/:key/:section?/:taxonOrNameKey?/:subsection?`}
-                component={DatasetPage}
-              />
-              <Route
-                exact
-                key="nameUsageSearch"
-                path={`/nameusage/search`}
-                component={NameUsageSearch}
-              />
-              <Route
-                exact
-                key="nameUsageID"
-                path="/nameusage/:id"
-                component={GlobalRedirect}
-              />
-
-              <Route
-                exact
-                key="metadatagenerator"
-                path={`/tools/metadata-generator`}
-                component={MetaDataGenerator}
-              />
-              <Route
-                exact
-                key="validator"
-                path={`/tools/validator`}
-                component={ArchiveValidator}
-              />
-              <Route
-                exact
-                key="namematch"
-                path={`/tools/name-match`}
-                component={NameMatch}
-              />
-
-              <Route
-                exact
-                key="namematchjob"
-                path={`/tools/name-match/job/:key`}
-                component={NameMatchJob}
-              />
-              <Route
-                exact
-                key="diffviewer"
-                path={`/tools/diff-viewer`}
-                component={DiffViewer}
-              />
-              <Route
-                exact
-                key="taxalign"
-                path={`/tools/taxonomic-alignment`}
-                component={TaxAlign}
-              />
-              <Route
-                exact
-                key="datasetComparison"
-                path={`/tools/dataset-comparison`}
-                component={TaxonComparer}
-              />
-              <Route
-                exact
-                key="gbifimpact"
-                path={`/tools/gbif-impact`}
-                component={GBIFTaxonomyReview}
-              />
-              <Route
-                exact
-                key="userprofile"
-                path={`/user-profile/:tab?`}
-                component={UserProfile}
-              />
-              <Route
-                exact
-                key="download"
-                path={`/download/:key`}
-                component={DownloadKey}
-              />
-              <Route
-                exact
-                key="nameIndexSearch"
-                path={`/namesindex`}
-                component={NameIndexSearch}
-              />
-              <Route
-                exact
-                key="nameIndexKey"
-                path={`/namesindex/:key/:section?`}
-                component={NameIndexKey}
-              />
-              <Route
-                exact
-                key="vocabIndex"
-                path={`/vocabulary`}
-                component={VocabularyIndex}
-              />
-              <Route
-                exact
-                key="vocabIndexKey"
-                path={`/vocabulary/taxgrouptree`}
-                component={TaxGroupTree}
-              />
-              <Route
-                exact
-                key="vocabIndexKey"
-                path={`/vocabulary/:key`}
-                component={VocabularyKey}
-              />
-              <Route
-                exact
-                key="toolsIndex"
-                path={`/tools/index`}
-                component={ToolIndex}
-              />
-              <Route
-                exact
-                key="about"
-                path={`/about/:mdFile`}
-                component={About}
-              />
-              <Route
-                exact
-                key="systemHealth"
-                path={`/system-health`}
-                component={SystemHealth}
-              />
-              <Route component={Exception404} />
-            </Switch>
-          </ThemeProvider>
-          <Route
-            key="datasetProvider"
-            path={`/dataset/:key`}
-            component={DatasetProvider}
-          />
-          <Route
-            key="sourceDatasetProvider"
-            path={`/catalogue/:catalogueKey/dataset/:sourceKey`}
-            component={DatasetProvider}
-          />
-          <Route
-            key="catalogueProvider"
-            path={`/catalogue/:catalogueKey`}
-            component={DatasetProvider}
-          />
-          <Route
-            key="syncProvider"
-            path={`/catalogue/:catalogueKey`}
-            component={SyncProvider}
-          />
-          <Route
-            key="exceptionHandler"
-            path={`/`}
-            component={ExceptionHandler}
-          />
-          <Route
-            key="backgroundProvider"
-            path={`/`}
-            component={BackgroundProvider}
-          />
-        </React.Fragment>
-      </Router>
+      <BrowserRouter>
+        <NavigatorInstaller />
+        <ThemeProvider theme={theme}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/admin/settings"
+              element={
+                <AdminRoute roles={["editor", "admin"]}>
+                  <Admin />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/jobs"
+              element={
+                <AdminRoute roles={["admin"]}>
+                  <AdminJobs />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <AdminRoute roles={["admin"]}>
+                  <UserAdmin />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/datasets"
+              element={
+                <AdminRoute roles={["editor", "admin"]}>
+                  <DatasetAdmin />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/matcher"
+              element={
+                <AdminRoute roles={["editor", "admin"]}>
+                  <MatcherAdmin />
+                </AdminRoute>
+              }
+            />
+            <Route path="/imports" element={<Imports />} />
+            <Route
+              path="/catalogue/:catalogueKey/references/:key?"
+              element={
+                <PrivateRoute>
+                  <CatalogueReferences />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sources/:issues?"
+              element={
+                <PrivateRoute>
+                  <CatalogueSources />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sourcemetrics"
+              element={
+                <PrivateRoute>
+                  <CatalogueSourceMetrics />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/options"
+              element={
+                <PrivateRoute roles={["editor"]}>
+                  <CatalogueOptions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/publishers"
+              element={
+                <PrivateRoute roles={["editor"]}>
+                  <CataloguePublishers />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/assembly"
+              element={
+                <PrivateRoute roles={["editor"]}>
+                  <Assembly />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/download/:key?"
+              element={
+                <PrivateRoute>
+                  <CatalogueDownload />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/duplicates"
+              element={
+                <PrivateRoute roles={["editor"]}>
+                  <AssemblyDuplicates />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/tasks"
+              element={
+                <PrivateRoute roles={["editor"]}>
+                  <AssemblyTasks />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/metadata"
+              element={
+                <PrivateRoute>
+                  <CatalogueMeta />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/editors"
+              element={
+                <PrivateRoute>
+                  <ProjectEditors />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/names"
+              element={
+                <PrivateRoute>
+                  <CatalogueNameSearch />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sector/priority"
+              element={
+                <PrivateRoute>
+                  <SectorPriority />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sector/sync"
+              element={
+                <PrivateRoute>
+                  <SectorSync />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sector/publishers"
+              element={
+                <PrivateRoute>
+                  <SectorPublishers />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sector"
+              element={
+                <PrivateRoute>
+                  <CatalogueSectors />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/publisher/:key?"
+              element={
+                <PrivateRoute>
+                  <CataloguePublisherKey />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/decision"
+              element={
+                <PrivateRoute>
+                  <CatalogueDecisions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/issues"
+              element={
+                <PrivateRoute>
+                  <CatalogueIssues />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
+              element={
+                <PrivateRoute>
+                  <SectorDiff />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
+              element={
+                <PrivateRoute>
+                  <CatalogueTaxon />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
+              element={
+                <PrivateRoute>
+                  <CatalogueName />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/catalogue/:catalogueKey/dataset/:sourceKey/:section/:taxonOrNameKey?"
+              element={
+                <PrivateRoute>
+                  <CatalogueSourceDataset />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/newdataset" element={<DatasetCreate />} />
+            <Route path="/dataset" element={<DatasetList />} />
+            <Route
+              path="/dataset/:key/:section?/:taxonOrNameKey?/:subsection?"
+              element={<DatasetPage />}
+            />
+            <Route path="/nameusage/search" element={<NameUsageSearch />} />
+            <Route path="/nameusage/:id" element={<GlobalRedirect />} />
+            <Route
+              path="/tools/metadata-generator"
+              element={<MetaDataGenerator />}
+            />
+            <Route path="/tools/validator" element={<ArchiveValidator />} />
+            <Route path="/tools/name-match" element={<NameMatch />} />
+            <Route
+              path="/tools/name-match/job/:key"
+              element={<NameMatchJob />}
+            />
+            <Route path="/tools/diff-viewer" element={<DiffViewer />} />
+            <Route path="/tools/taxonomic-alignment" element={<TaxAlign />} />
+            <Route
+              path="/tools/dataset-comparison"
+              element={<TaxonComparer />}
+            />
+            <Route
+              path="/tools/gbif-impact"
+              element={<GBIFTaxonomyReview />}
+            />
+            <Route path="/user-profile/:tab?" element={<UserProfile />} />
+            <Route path="/download/:key" element={<DownloadKey />} />
+            <Route path="/namesindex" element={<NameIndexSearch />} />
+            <Route
+              path="/namesindex/:key/:section?"
+              element={<NameIndexKey />}
+            />
+            <Route path="/vocabulary" element={<VocabularyIndex />} />
+            <Route path="/vocabulary/taxgrouptree" element={<TaxGroupTree />} />
+            <Route path="/vocabulary/:key" element={<VocabularyKey />} />
+            <Route path="/tools/index" element={<ToolIndex />} />
+            <Route path="/about/:mdFile" element={<About />} />
+            <Route path="/system-health" element={<SystemHealth />} />
+            <Route path="*" element={<Exception404 />} />
+          </Routes>
+        </ThemeProvider>
+        <ProviderRoutes />
+      </BrowserRouter>
     </ContextProvider>
   );
 };

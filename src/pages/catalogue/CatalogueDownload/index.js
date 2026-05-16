@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
@@ -29,4 +30,4 @@ const CatalogueDownload = ({
 
 const mapContextToProps = ({ catalogue, user }) => ({ catalogue, user });
 
-export default withContext(mapContextToProps)(CatalogueDownload);
+export default withRouter(withContext(mapContextToProps)(CatalogueDownload));

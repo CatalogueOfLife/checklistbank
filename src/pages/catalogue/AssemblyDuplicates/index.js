@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "../../../components/LayoutNew";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";

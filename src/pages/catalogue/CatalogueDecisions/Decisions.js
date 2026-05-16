@@ -21,7 +21,7 @@ import {
   Form,
   notification,
 } from "antd";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import config from "../../../config";
 import moment from "moment";
 import Layout from "../../../components/LayoutNew";
@@ -311,7 +311,7 @@ class CatalogueDecisions extends React.Component {
                   type === "project" ? datasetKey : releasedFrom
                 }/dataset/${record.subjectDatasetKey}/imports`,
               }}
-              exact={true}
+              end
             >
               <Highlighter
                 highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -354,7 +354,7 @@ class CatalogueDecisions extends React.Component {
                     pathname: `/dataset/${record.subjectDatasetKey}/names`,
                     search: `?q=${record?.subject?.name}`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Highlighter
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -373,7 +373,7 @@ class CatalogueDecisions extends React.Component {
                       record?.subject?.id
                     }`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Highlighter
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}

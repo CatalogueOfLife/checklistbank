@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "lodash";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import withRouter from "../../withRouter";
 
 const getDatasetTaxonRoute = (location, datasetKey, catalogueKey) => {
   return location.pathname.startsWith(`/catalogue/${catalogueKey}`)

@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../withRouter";
 import withContext from "./withContext";
 import _ from "lodash";
 import config from "../../config";
@@ -38,4 +39,4 @@ const mapContextToProps = ({ getSyncState }) => ({
   getSyncState,
 });
 
-export default withContext(mapContextToProps)(SyncProvider);
+export default withRouter(withContext(mapContextToProps)(SyncProvider));

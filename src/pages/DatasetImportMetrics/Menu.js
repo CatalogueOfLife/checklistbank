@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import { Typography } from 'antd';
 const { Title } = Typography;
 import { Menu, Row, Col, Button } from "antd";

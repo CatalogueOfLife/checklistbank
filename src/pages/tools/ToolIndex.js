@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { NavLink } from "react-router-dom"
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import { Avatar, List, Typography } from 'antd';
 const { Text, Link } = Typography;
 

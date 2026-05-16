@@ -12,7 +12,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import PageContent from "../../components/PageContent";
 import ImportHistory from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import Auth from "../../components/Auth";
 import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";

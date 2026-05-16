@@ -182,7 +182,7 @@ class DatasetTasks extends React.Component {
                       : ""
                   }`,
                 }}
-                exact={true}
+                end
               >
                 <Tag
                   key={d.id}
@@ -204,7 +204,7 @@ class DatasetTasks extends React.Component {
                     : ""
                 }`,
               }}
-              exact={true}
+              end
             >
               <Tag
                 style={{ marginBottom: "10px" }}
@@ -224,7 +224,7 @@ class DatasetTasks extends React.Component {
                     : ""
                 }`,
               }}
-              exact={true}
+              end
             >
               <Tag
                 style={{ marginBottom: "10px" }}

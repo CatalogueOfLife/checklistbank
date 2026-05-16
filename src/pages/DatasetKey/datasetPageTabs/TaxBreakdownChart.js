@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Select, Switch, Button, Spin, Alert, Space, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as d3 from "d3";
 import config from "../../../config";
 import { AppContext } from "../../../components/hoc/ContextProvider";
@@ -195,7 +195,7 @@ function Sunburst({ data, datasetKey, history, rank, inclSynonym, taxGroup }) {
           params.append("status", "accepted");
           params.append("status", "provisionally accepted");
         }
-        history.push(`/dataset/${datasetKey}/names?${params.toString()}`);
+        navigate(`/dataset/${datasetKey}/names?${params.toString()}`);
       });
 
     // ── Labels ───────────────────────────────────────────────────────────────
@@ -322,7 +322,7 @@ function Sunburst({ data, datasetKey, history, rank, inclSynonym, taxGroup }) {
 
 const TaxBreakdownChart = ({ datasetKey, onClose }) => {
   const { taxGroup } = useContext(AppContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [rank, setRank] = useState("species");
   const [inclSynonym, setInclSynonym] = useState(false);

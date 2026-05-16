@@ -1,6 +1,7 @@
 import React from "react";
 import config from "../../config";
 import { NavLink } from "react-router-dom";
+import withRouter from "../../withRouter";
 
 import axios from "axios";
 import { Alert, Spin, Row, Col, Tag, Tabs } from "antd";
@@ -232,7 +233,7 @@ class NamePage extends React.Component {
                           _.get(u, "usage.id")
                         )}`,
                       }}
-                      exact={true}
+                      end
                     >
                       <Tag
                         color={getTaxonomicStatusColor(u.usage?.status)}
@@ -501,4 +502,4 @@ const mapContextToProps = ({
   identifierScope,
 }) => ({ getTaxonomicStatusColor, catalogueKey, getNomStatus, identifierScope });
 
-export default withContext(mapContextToProps)(NamePage);
+export default withRouter(withContext(mapContextToProps)(NamePage));

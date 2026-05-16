@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import withRouter from "../../withRouter";
 import { Button, Row, Col, Tooltip, Table } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Entry from "./Entry";
@@ -96,7 +97,7 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
                 to={{
                   pathname: `/dataset/${_.get(record, "datasetKey")}`,
                 }}
-                exact={true}
+                end
               >
                   <Tooltip title={text}>
                 {truncate(text, 25)} {record?.dataset?.version ? `[${record?.dataset?.version}]` : ""}
@@ -133,7 +134,7 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
                 to={{
                   pathname: uri,
                 }}
-                exact={true}
+                end
               >
                 <span dangerouslySetInnerHTML={{ __html: text }} />
               </NavLink>

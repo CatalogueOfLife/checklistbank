@@ -1,7 +1,6 @@
 import React from "react";
 import injectSheet from "react-jss";
 import { Row, Col } from "antd";
-import { FormattedMessage } from "react-intl";
 
 // Wrappers
 import withWidth from "../../components/hoc/Width";
@@ -54,9 +53,7 @@ const styles = () => ({
 const BorderedListItem = ({ classes, children, size }) => {
   const getValue = () => {
     let value = (
-      <span className={classes.noContent}>
-        <FormattedMessage id="noInformation" defaultMessage="No information" />
-      </span>
+      <span className={classes.noContent}>No information</span>
     );
 
     if (Array.isArray(children) && children.length > 0) {

@@ -715,7 +715,7 @@ class DatasetMeta extends React.Component {
                       to={{
                         pathname: `/dataset/${c.key}/source/${displayData.key}`,
                       }}
-                      exact={true}
+                      end
                     >
                       {c.title}
                     </NavLink>

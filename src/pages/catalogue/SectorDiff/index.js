@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import axios from "axios";
 import Layout from "../../../components/LayoutNew";
 import { Row, Col, Select, Alert, Tag } from "antd";
@@ -187,4 +188,4 @@ class SectorDiff extends React.Component {
 
 const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue });
 
-export default withContext(mapContextToProps)(SectorDiff);
+export default withRouter(withContext(mapContextToProps)(SectorDiff));

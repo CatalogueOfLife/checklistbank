@@ -38,7 +38,7 @@ export default (
         return (
           <NavLink
             to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record?.dataset?.key}/metadata` }}
-            exact={true}
+            end
           >
             {text ? text.toString() : record?.dataset?.title}
           </NavLink>
@@ -89,7 +89,7 @@ export default (
                   pathname: `/dataset/${record.subjectDatasetKey}/names`,
                   search: `?q=${record?.subject?.name}`,
                 }}
-                exact={true}
+                end
               >
                 <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -111,7 +111,7 @@ export default (
                       : record?.subject?.id
                   }&datasetKey=${record.subjectDatasetKey}`,
                 }}
-                exact={true}
+                end
               >
                 <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -155,7 +155,7 @@ export default (
                   pathname: `/catalogue/${catalogueKey}/assembly`,
                   search: `?assemblyTaxonKey=${record?.target?.id}`,
                 }}
-                exact={true}
+                end
               >
                 <Highlighter
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -219,7 +219,7 @@ export default (
               pathname: `/catalogue/${catalogueKey}/sector/sync`,
               search: `?sectorKey=${record.id}`,
             }}
-            exact={true}
+            end
           >
             <HistoryOutlined style={{ fontSize: "20px" }} />{"  "}
           </NavLink>

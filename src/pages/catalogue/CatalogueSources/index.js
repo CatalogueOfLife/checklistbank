@@ -8,7 +8,7 @@ import SourceTabs from "./SourceTabs";
 import SourceMetrics from "../CatalogueSourceMetrics/SourceMetrics";
 import SourceIssues from "./Issues";
 import withContext from "../../../components/hoc/withContext";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 
 import _ from "lodash";
 

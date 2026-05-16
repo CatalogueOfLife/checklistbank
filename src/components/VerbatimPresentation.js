@@ -1,6 +1,6 @@
 import React from "react";
 import config from "../config";
-import { withRouter } from "react-router-dom";
+import withRouter from "../withRouter";
 import _ from "lodash";
 import axios from "axios";
 import { LinkOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";

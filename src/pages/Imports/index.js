@@ -4,6 +4,7 @@ import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import ImportTable from "./importTabs/ImportTable";
 import withContext from "../../components/hoc/withContext";
+import withRouter from "../../withRouter";
 
 import _ from "lodash";
 
@@ -47,4 +48,4 @@ const Imports = ({ section, importState, location }) => {
 
 
 const mapContextToProps = ({ user, importState }) => ({ user, importState });
-export default withContext(mapContextToProps)(Imports);
+export default withRouter(withContext(mapContextToProps)(Imports));

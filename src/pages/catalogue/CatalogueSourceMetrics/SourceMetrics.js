@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
 import qs from "query-string";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import {
   Table,
   Alert,
@@ -432,7 +433,7 @@ class SourceMetrics extends React.Component {
                             record
                           ).search,
                         }}
-                        exact={true}
+                        end
                       >
                         {Number(text || 0).toLocaleString()}
 
@@ -566,7 +567,7 @@ class SourceMetrics extends React.Component {
                     : `/dataset/${datasetKey}/source/${record?.key}`,
                   //  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
-                exact={true}
+                end
               >
                 {" "}
                 {!!record?.merged && (
@@ -585,7 +586,7 @@ class SourceMetrics extends React.Component {
                     to={{
                       pathname: `/dataset/${releaseKey}/source/${record?.key}`,
                     }}
-                    exact={true}
+                    end
                   >
                     {releaseLabel && releaseLabel.split(" [")[0]}{" "}
                   </NavLink>{" "}

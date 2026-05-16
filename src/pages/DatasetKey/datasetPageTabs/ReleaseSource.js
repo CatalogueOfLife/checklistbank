@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import config from "../../../config";
 import axios from "axios";
 import { Alert, Rate, Row, Col, Divider } from "antd";
@@ -362,4 +363,4 @@ const mapContextToProps = ({ dataset, user }) => ({
   dataset,
   user,
 });
-export default withContext(mapContextToProps)(ReleaseSource);
+export default withRouter(withContext(mapContextToProps)(ReleaseSource));

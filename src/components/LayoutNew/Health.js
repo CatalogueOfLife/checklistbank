@@ -1,7 +1,7 @@
 import { color } from "highcharts";
 import withContext from "../../components/hoc/withContext";
 import { TbActivity } from "react-icons/tb";
-import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
+import { NavLink } from "react-router-dom";
 import { Badge } from "antd";
 const Health = (props) => {
   const { allComponentsRunning, allHealthChecksPassing } = props;

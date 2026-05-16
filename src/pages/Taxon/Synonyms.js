@@ -59,7 +59,7 @@ const SynonymsTable = ({
             to={{
               pathname: `${uri}${encodeURIComponent(_.get(s, "id"))}`,
             }}
-            exact={true}
+            end
           >
             <span style={indent ? { marginLeft: "10px" } : null}>
               {homotypic === true ? "≡ " : "= "}{" "}

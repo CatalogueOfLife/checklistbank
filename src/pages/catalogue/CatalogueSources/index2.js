@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Tooltip } from "antd";
@@ -179,7 +180,7 @@ class GSDIssuesMatrix extends React.Component {
               to={{
                 pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
               }}
-              exact={true}
+              end
             >
               {record.alias ? `${record.alias} [${record.key}]` : record.key}
             </NavLink>
@@ -217,7 +218,7 @@ class GSDIssuesMatrix extends React.Component {
                 pathname: `/catalogue/${catalogueKey}/decision`,
                 search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}`,
               }}
-              exact={true}
+              end
             >
               {record.brokenDecisions}
             </NavLink>
@@ -249,7 +250,7 @@ class GSDIssuesMatrix extends React.Component {
                   pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
                   search: `?issue=${i.name}`,
                 }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>
@@ -286,7 +287,7 @@ class GSDIssuesMatrix extends React.Component {
                     pathname: `/dataset`,
                     search: `?contributesTo=${catalogueKey}`,
                   }}
-                  exact={true}
+                  end
                 >
                   View metadata of all sources
                 </NavLink>
@@ -330,4 +331,4 @@ const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
   catalogue,
 });
 
-export default withContext(mapContextToProps)(GSDIssuesMatrix);
+export default withRouter(withContext(mapContextToProps)(GSDIssuesMatrix));

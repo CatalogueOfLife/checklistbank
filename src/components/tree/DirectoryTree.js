@@ -29,9 +29,17 @@ function getTreeData({ treeData, children }) {
 }
 
 const DirectoryTree = (
-  { defaultExpandAll, defaultExpandParent, defaultExpandedKeys, ...props },
+  {
+    defaultExpandAll,
+    defaultExpandParent,
+    defaultExpandedKeys,
+    showIcon = true,
+    expandAction = "click",
+    ...props
+  },
   ref
 ) => {
+  props = { ...props, showIcon, expandAction };
   // Shift click usage
   const lastSelectedKey = React.useRef();
 
@@ -217,10 +225,5 @@ const DirectoryTree = (
 
 const ForwardDirectoryTree = React.forwardRef(DirectoryTree);
 ForwardDirectoryTree.displayName = "DirectoryTree";
-
-ForwardDirectoryTree.defaultProps = {
-  showIcon: true,
-  expandAction: "click",
-};
 
 export default ForwardDirectoryTree;

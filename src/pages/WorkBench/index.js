@@ -124,7 +124,7 @@ const getColumns = (catalogueKey, user) => [
               to={{
                 pathname: uri,
               }}
-              exact={true}
+              end
             >
               <LinkOutlined />
             </NavLink>

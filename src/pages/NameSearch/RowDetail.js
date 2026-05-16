@@ -27,7 +27,7 @@ const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, b
                 pathname: `/catalogue/${catalogueKey}/dataset/${sectorDatasetKey}/workbench`,
                 search: `?q=${_.get(usage, 'name.scientificName')}&rank=${_.get(usage, 'name.rank')}`
               }}
-              exact={true}
+              end
             >
               <LinkOutlined /> Workbench
             </NavLink>

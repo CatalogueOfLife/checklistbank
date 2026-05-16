@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "../../components/LayoutNew";
-import { withRouter } from "react-router";
+import withRouter from "../../withRouter";
 import NameSearch from "./index";
 const NameUsageSearch = ({ location }) => {
   return (

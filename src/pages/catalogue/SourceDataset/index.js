@@ -1,6 +1,7 @@
 import React from "react";
 import config from "../../../config";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import axios from "axios";
 import { Alert } from "antd";
 
@@ -18,7 +19,7 @@ import Name from "../../Name";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 
 import moment from "moment";
@@ -87,22 +88,10 @@ class DatasetPage extends React.Component {
     } = this.props;
     const dataset = sourceDataset;
     if (dataset && !section && !_.get(dataset, "deleted")) {
-      return (
-        <Redirect
-          to={{
-            pathname: `/dataset/${datasetKey}/names`,
-          }}
-        />
-      );
+      return <Navigate to={`/dataset/${datasetKey}/names`} replace />;
     }
     if (dataset && !section && _.get(dataset, "deleted")) {
-      return (
-        <Redirect
-          to={{
-            pathname: `/dataset/${datasetKey}/metadata`,
-          }}
-        />
-      );
+      return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
     }
 
     const sect = !section ? "metadata" : section.split("?")[0];
@@ -220,4 +209,4 @@ const mapContextToProps = ({ sourceDataset, importStateMap }) => ({
   sourceDataset,
   importStateMap,
 });
-export default withContext(mapContextToProps)(DatasetPage);
+export default withRouter(withContext(mapContextToProps)(DatasetPage));

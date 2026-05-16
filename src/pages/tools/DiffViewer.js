@@ -17,7 +17,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import config from "../../config";
 import ErrorMsg from "../../components/ErrorMsg";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { Diff2Html } from "diff2html";

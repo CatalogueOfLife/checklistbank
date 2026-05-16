@@ -99,7 +99,7 @@ const NameRelations = ({ data, catalogueKey, datasetKey, md, reverse }) =>
                     id
                   )}`,
           }}
-          exact={true}
+          end
         >
           {/*<span dangerouslySetInnerHTML={{ __html: r.relatedName.labelHtml }}></span> */}
           {!reverse && (

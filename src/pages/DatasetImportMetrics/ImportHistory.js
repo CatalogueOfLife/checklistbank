@@ -64,7 +64,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
               to={{
                 pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`,
               }}
-              exact={true}
+              end
             >
               <strong>
                 {`${h.state}`}{" "}
@@ -125,7 +125,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
                         index
                       )}..${h.attempt}`,
                     }}
-                    exact={true}
+                    end
                   >
                     <DiffOutlined />
                   </NavLink>{" "}
@@ -141,7 +141,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
                   to={{
                     pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}/tree`,
                   }}
-                  exact={true}
+                  end
                 >
                   <RiNodeTree />
                 </NavLink>
@@ -156,7 +156,7 @@ const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
               to={{
                 pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`,
               }}
-              exact={true}
+              end
             >
               <strong>{`${h.state}`}</strong>
             </NavLink>{" "}

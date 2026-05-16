@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import SectorTabs from "../CatalogueSectors/SectorTabs";

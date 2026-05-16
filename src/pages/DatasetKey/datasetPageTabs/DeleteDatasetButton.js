@@ -1,7 +1,7 @@
 import React from "react";
 import { WarningOutlined } from "@ant-design/icons";
 import { Button, Popover, Popconfirm, notification } from "antd";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -44,14 +44,7 @@ class DeleteDatasetButton extends React.Component {
     const { error, deleteSuccess } = this.state;
     const { record, style } = this.props;
 
-    if (deleteSuccess)
-      return (
-        <Redirect
-          to={{
-            pathname: "/dataset",
-          }}
-        />
-      );
+    if (deleteSuccess) return <Navigate to="/dataset" replace />;
 
     return (
       <React.Fragment>

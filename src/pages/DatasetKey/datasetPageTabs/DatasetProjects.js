@@ -96,7 +96,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.alias ? `${record.alias} [${record.key}]` : record.key}
               </NavLink>
@@ -124,7 +124,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.sectorCount}
               </NavLink>
@@ -152,7 +152,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.nameCount}
               </NavLink>
@@ -180,7 +180,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.usagesCount}
               </NavLink>
@@ -210,7 +210,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.synonymCount}
               </NavLink>
@@ -240,7 +240,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.taxonCount}
               </NavLink>
@@ -270,7 +270,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.vernacularCount}
               </NavLink>
@@ -300,7 +300,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.distributionCount}
               </NavLink>
@@ -331,7 +331,7 @@ class DatasetProjects extends React.Component {
                 to={{
                   pathname: `/dataset/${record.key}/classification`,
                 }}
-                exact={true}
+                end
               >
                 {record.referenceCount}
               </NavLink>

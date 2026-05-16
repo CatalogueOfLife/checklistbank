@@ -40,7 +40,7 @@ import withContext from "../../components/hoc/withContext";
                    _.get(record, "accepted.name.id") ? _.get(record, "accepted.name.id") : _.get(record, "name.id")
                 )}`
               }}
-              exact={true}
+              end
             >
               <span dangerouslySetInnerHTML={{__html: text}}></span>
             </NavLink>

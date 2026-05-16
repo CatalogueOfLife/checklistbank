@@ -289,7 +289,7 @@ class DuplicateSearchPage extends React.Component {
                 "sourceDatasetKey"
               )}/taxon/${_.get(record, "sourceId")}`,
             }}
-            exact={true}
+            end
           >
             {_.get(record, "dataset.alias") || _.get(record, "dataset.title")}
           </NavLink>

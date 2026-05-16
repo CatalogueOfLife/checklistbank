@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import axios from "axios";
 
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import PageContent from "../../components/PageContent";
 
 import withContext from "../../components/hoc/withContext";

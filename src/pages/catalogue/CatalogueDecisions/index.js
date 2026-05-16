@@ -2,7 +2,7 @@ import React from "react";
 
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 
 import Decisions from "./Decisions";
 

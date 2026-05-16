@@ -4,7 +4,7 @@ import { Alert, Button, Input, Upload, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
 import _ from "lodash";

@@ -7,7 +7,7 @@ import {
   OrderedListOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 
 import { NavLink } from "react-router-dom";

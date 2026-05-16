@@ -10,7 +10,8 @@ import {
   Tooltip,
   message,
 } from "antd";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption";
 import TextTreeUpload from "../../../components/TextTreeUpload";
 import _ from "lodash";
@@ -663,7 +664,7 @@ class ColTreeNode extends React.Component {
                             selectedSourceDatasetKey
                           )}${encodeURIComponent(taxon.id)}`,
                         }}
-                        exact={true}
+                        end
                       >
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
@@ -734,7 +735,7 @@ class ColTreeNode extends React.Component {
                               ? `/dataset/${releaseKey}/source/${sector?.dataset?.key}`
                               : `/dataset/${sector?.dataset?.key}/metadata`,
                           }}
-                          exact={true}
+                          end
                         >
                           {" "}
                           <span

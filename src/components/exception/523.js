@@ -1,14 +1,14 @@
-import React from 'react';
-import Exception from './Exception';
-import { Link } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import React from "react";
+import Exception from "./Exception";
+import { Link } from "react-router-dom";
 
-const Exception523 = props => (
+// Previously translated via react-intl, now hard-coded English.
+const Exception523 = () => (
   <Exception
     type="523"
-    desc={props.intl.formatMessage({ id: 'exception.description.523', defaultMessage: 'Sorry, the server is unreachable. Perhaps, you are offline.' })}
+    desc="Sorry, the server is unreachable. Perhaps, you are offline."
     linkElement={Link}
   />
 );
 
-export default injectIntl(Exception523);
+export default Exception523;

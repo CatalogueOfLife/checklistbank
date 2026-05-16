@@ -14,7 +14,7 @@ const OtherUsages = ({ otherUsages }) => {
                 u?.usage?.datasetKey
               }/nameusage/${encodeURIComponent(_.get(u, "id"))}`,
             }}
-            exact={true}
+            end
           >
             <span
               dangerouslySetInnerHTML={{
@@ -46,7 +46,7 @@ const OtherUsages = ({ otherUsages }) => {
                     _.get(u, "usage.accepted.id")
                   )}`,
                 }}
-                exact={true}
+                end
               >
                 <span
                   dangerouslySetInnerHTML={{

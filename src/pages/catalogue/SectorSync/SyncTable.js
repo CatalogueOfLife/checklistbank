@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -78,7 +79,7 @@ const getColumns = (catalogueKey) => [
                 "sector.subjectDatasetKey"
               )}`,
             }}
-            exact={true}
+            end
           >
             {_.get(record, "sector.subject.name")}
           </NavLink>
@@ -112,7 +113,7 @@ const getColumns = (catalogueKey) => [
                   "sector.target.id"
                 )}`,
               }}
-              exact={true}
+              end
             >
               {_.get(record, "sector.target.name")}
             </NavLink>
@@ -596,4 +597,4 @@ const mapContextToProps = ({ user, sectorImportState, catalogueKey }) => ({
   catalogueKey,
 });
 
-export default withContext(mapContextToProps)(SyncTable);
+export default withRouter(withContext(mapContextToProps)(SyncTable));

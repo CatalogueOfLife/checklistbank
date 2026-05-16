@@ -3,7 +3,7 @@ import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 import moment from "moment";
 import withContext from "../../../components/hoc/withContext";
@@ -179,7 +179,7 @@ class GSDIssuesMatrix extends React.Component {
               to={{
                 pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
               }}
-              exact={true}
+              end
             >
               {record.alias ? `${record.alias} [${record.key}]` : record.key}
             </NavLink>
@@ -217,7 +217,7 @@ class GSDIssuesMatrix extends React.Component {
                 pathname: `/catalogue/${catalogueKey}/decision`,
                 search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}`,
               }}
-              exact={true}
+              end
             >
               {record.brokenDecisions}
             </NavLink>
@@ -249,7 +249,7 @@ class GSDIssuesMatrix extends React.Component {
                   pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
                   search: `?issue=${i.name}`,
                 }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>

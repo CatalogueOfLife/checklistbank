@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import injectSheet from "react-jss";
-import withWidth, { LARGE, MEDIUM } from "react-width";
-import { withRouter } from "react-router-dom";
+import withWidth, { LARGE, MEDIUM } from "../hoc/Width";
+import withRouter from "../../withRouter";
 import { Layout, Drawer, Row, Col, Tag, Alert, Tooltip } from "antd";
 import {
   MenuUnfoldOutlined,

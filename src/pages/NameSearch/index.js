@@ -95,7 +95,7 @@ const getColumns = (catalogueKey) => [
             to={{
               pathname: uri,
             }}
-            exact={true}
+            end
           >
             <span dangerouslySetInnerHTML={{ __html: text }} />
           </NavLink>
@@ -180,7 +180,7 @@ class NameSearchPage extends React.Component {
                 to={{
                   pathname: `/dataset/${_.get(record, "usage.datasetKey")}`,
                 }}
-                exact={true}
+                end
               >
                 <span dangerouslySetInnerHTML={{ __html: text }} />
               </NavLink>
@@ -202,7 +202,7 @@ class NameSearchPage extends React.Component {
             to={{
               pathname: `/dataset/${_.get(record, "sectorDatasetKey")}`,
             }}
-            exact={true}
+            end
           >
             <span
               dangerouslySetInnerHTML={{ __html: record?.sourceDatasetLabel }}

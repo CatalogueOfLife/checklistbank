@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import withRouter from "../../withRouter";
 import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Table,
@@ -663,7 +664,7 @@ class DatasetList extends React.Component {
                     pathname: `/dataset`,
                     search: `?releasedFrom=3&sortBy=created`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Button
                     style={{
@@ -680,7 +681,7 @@ class DatasetList extends React.Component {
               {user && (
                 <Col>
                   {" "}
-                  <NavLink to={{ pathname: `/newdataset` }} exact={true}>
+                  <NavLink to={{ pathname: `/newdataset` }} end>
                     <Button
                       style={{
                         marginTop: "10px",
@@ -908,4 +909,4 @@ const mapContextToProps = ({
   addError,
 });
 
-export default withContext(mapContextToProps)(DatasetList);
+export default withRouter(withContext(mapContextToProps)(DatasetList));

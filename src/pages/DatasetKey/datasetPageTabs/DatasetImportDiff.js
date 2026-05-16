@@ -3,7 +3,7 @@ import { Alert, Empty, Row, Col, Select, notification, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import PageContent from "../../../components/PageContent";
 import { Diff2Html } from "diff2html";
 import "diff2html/dist/diff2html.min.css";

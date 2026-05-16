@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import _ from "lodash";
 
 import withContext from "../hoc/withContext";

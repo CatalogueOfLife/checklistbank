@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import { Card, Tabs, Table, Button } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Entry, { Authorship } from "./Entry";

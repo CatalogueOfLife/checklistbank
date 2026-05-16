@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";

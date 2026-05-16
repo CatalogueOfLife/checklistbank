@@ -149,7 +149,7 @@ class DatasetTasks extends React.Component {
                     pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
                     search: `?_colCheck=${d.id}`,
                   }}
-                  exact={true}
+                  end
                 >
                   {d.text}{" "}
                   {
@@ -178,7 +178,7 @@ class DatasetTasks extends React.Component {
                   pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
                   search: `?nomstatus=manuscript&limit=50`,
                 }}
-                exact={true}
+                end
               >
                 Manuscript names{" "}
                 {
@@ -198,7 +198,7 @@ class DatasetTasks extends React.Component {
                   pathname: `/catalogue/${catalogueKey}/decision`,
                   search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}`,
                 }}
-                exact={true}
+                end
               >
                 Broken decisions: {<strong>{`${brokenDecisions}`}</strong>}
               </NavLink>
@@ -211,7 +211,7 @@ class DatasetTasks extends React.Component {
                 pathname: `/catalogue/${catalogueKey}/decision`,
                 search: `?stale=true&subjectDatasetKey=${datasetKey}`,
               }}
-              exact={true}
+              end
             >
               <Tag
                 style={{ marginBottom: "10px" }}

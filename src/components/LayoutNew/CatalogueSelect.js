@@ -1,6 +1,6 @@
 import React from "react";
 import withContext from "../../components/hoc/withContext";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import config from "../../config";
 import _ from "lodash";
 import { SettingOutlined } from "@ant-design/icons";

@@ -1,4 +1,5 @@
 import React from "react";
+import withRouter from "../../../withRouter";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import {
@@ -320,7 +321,7 @@ class CatalogueDecisions extends React.Component {
               to={{
                 pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/imports`,
               }}
-              exact={true}
+              end
             >
               <Highlighter
                 highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -363,7 +364,7 @@ class CatalogueDecisions extends React.Component {
                     pathname: `/dataset/${record.subjectDatasetKey}/names`,
                     search: `?q=${record?.subject?.name}`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Highlighter
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -378,7 +379,7 @@ class CatalogueDecisions extends React.Component {
                   to={{
                     pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Highlighter
                     highlightStyle={{ fontWeight: "bold", padding: 0 }}
@@ -768,4 +769,4 @@ const mapContextToProps = ({ user, rank, decisionMode }) => ({
   decisionMode,
 });
 
-export default withContext(mapContextToProps)(CatalogueDecisions);
+export default withRouter(withContext(mapContextToProps)(CatalogueDecisions));

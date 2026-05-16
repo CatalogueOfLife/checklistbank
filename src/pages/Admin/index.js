@@ -6,7 +6,7 @@ import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
 import BackgroundProvider from "../../components/hoc/BackgroundProvider";
 import config from "../../config";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import {
   Row,
   Divider,

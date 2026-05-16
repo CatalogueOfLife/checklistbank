@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Popconfirm, Tag, Spin, Button, Divider, Modal } from "antd";
 import axios from "axios";
 import config from "../../config";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import "diff2html/dist/diff2html.min.css";

@@ -65,7 +65,7 @@ class MatcherList extends React.Component {
             return (
               <NavLink
                 to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>
@@ -89,7 +89,7 @@ class MatcherList extends React.Component {
             return (
               <NavLink
                 to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>

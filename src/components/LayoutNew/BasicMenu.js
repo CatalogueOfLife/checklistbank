@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-import { withRouter } from "react-router";
+import withRouter from "../../withRouter";
 import injectSheet from "react-jss";
 
 import {
@@ -147,7 +147,7 @@ class BasicMenu extends Component {
             to={{
               pathname: `/`,
             }}
-            exact={true}
+            end
           >
             <Logo />
           </NavLink>

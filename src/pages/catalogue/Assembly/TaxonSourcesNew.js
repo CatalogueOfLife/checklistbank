@@ -50,7 +50,7 @@ class TaxonSources extends React.Component {
                   ? `/dataset/${releaseKey}/source/${d.key}`
                   : `/dataset/${d.key}/metadata`,
               }}
-              exact={true}
+              end
             >
               {(index ? ", " : "") + (d.alias || d.key)}
             </NavLink>
@@ -74,7 +74,7 @@ class TaxonSources extends React.Component {
                           ? `/dataset/${releaseKey}/source/${d.key}`
                           : `/dataset/${d.key}/metadata`,
                       }}
-                      exact={true}
+                      end
                     >
                       {(index ? ", " : "") + (d.alias || d.key)}
                     </NavLink>

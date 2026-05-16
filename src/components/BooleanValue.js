@@ -1,6 +1,5 @@
 import React from "react";
 import { Badge } from "antd";
-import { FormattedMessage } from "react-intl";
 
 /**
  * Widget for boolean value representation with color indicator and Yes/No text transcription

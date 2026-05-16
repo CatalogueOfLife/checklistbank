@@ -48,7 +48,7 @@ class ImportTable extends React.Component {
           render: (text, record) => (
             <NavLink
               to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-              exact={true}
+              end
             >
               {_.get(record, "dataset.alias") ||
                 _.get(record, "dataset.title") ||

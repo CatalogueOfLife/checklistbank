@@ -15,7 +15,7 @@ import {
     Slider
   } from "antd";
 
-  import { withRouter } from "react-router-dom";
+  import withRouter from "../../../withRouter";
   import axios from "axios";
 import config from "../../../config";
 

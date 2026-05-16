@@ -3,7 +3,7 @@ import withContext from "./withContext";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../withRouter";
 class DatasetProvider extends React.Component {
   constructor() {
     super();

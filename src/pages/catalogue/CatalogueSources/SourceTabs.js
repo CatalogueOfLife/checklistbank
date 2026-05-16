@@ -10,7 +10,7 @@ import {
   WarningOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 
 import { NavLink } from "react-router-dom";
@@ -57,7 +57,7 @@ const SourceTabs = ({
             pathname: `/dataset`,
             search: `?contributesTo=${catalogueKey}`,
           }}
-          exact={true}
+          end
         >
           Metadata
         </NavLink>

@@ -37,7 +37,7 @@ const getColumns = ({ issueMap, catalogueKey }) => {
                 pathname: `/dataset/${record.datasetKey}/verbatim`,
                 search: `?issue=${text}`,
               }}
-              exact={true}
+              end
             >
               {" "}
               verbatim <LinkOutlined />
@@ -62,7 +62,7 @@ const getColumns = ({ issueMap, catalogueKey }) => {
               pathname: `/dataset/${record.datasetKey}/names`,
               search: `?issue=${record.title}`,
             }}
-            exact={true}
+            end
           >
             {text}
           </NavLink>

@@ -10,24 +10,32 @@ import dropIndicatorRender from "./utils/dropIndicator";
 
 const { ConfigContext } = ConfigProvider;
 
+const defaultMotion = { ...collapseMotion, motionAppear: false };
+
 const Tree = React.forwardRef((props, ref) => {
   const { getPrefixCls, direction, virtual } = React.useContext(ConfigContext);
   const {
     prefixCls: customizePrefixCls,
     className,
-    showIcon,
+    showIcon = false,
     showLine,
     switcherIcon,
-    blockNode,
+    blockNode = false,
     children,
-    checkable,
-    selectable,
+    checkable = false,
+    selectable = true,
     draggable,
+    motion = defaultMotion,
   } = props;
   const prefixCls = getPrefixCls("tree", customizePrefixCls);
   const newProps = {
     ...props,
     showLine: Boolean(showLine),
+    showIcon,
+    blockNode,
+    checkable,
+    selectable,
+    motion,
     dropIndicatorRender,
   };
 
@@ -96,16 +104,5 @@ const Tree = React.forwardRef((props, ref) => {
 Tree.TreeNode = TreeNode;
 
 Tree.DirectoryTree = DirectoryTree;
-
-Tree.defaultProps = {
-  checkable: false,
-  selectable: true,
-  showIcon: false,
-  motion: {
-    ...collapseMotion,
-    motionAppear: false,
-  },
-  blockNode: false,
-};
 
 export default Tree;

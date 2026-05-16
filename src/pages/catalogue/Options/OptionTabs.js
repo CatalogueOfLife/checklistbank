@@ -2,7 +2,7 @@ import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
 import { SettingOutlined, TeamOutlined } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
+import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 
 import { NavLink } from "react-router-dom";

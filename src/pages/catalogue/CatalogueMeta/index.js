@@ -8,7 +8,7 @@ import withContext from "../../../components/hoc/withContext"
 import Exception404 from "../../../components/exception/404";
 
 import _ from 'lodash'
-import Helmet from 'react-helmet'
+import { Helmet } from "react-helmet-async";
 
 
 const CatalogueMeta = ({ catalogueKey, catalogue }) => (

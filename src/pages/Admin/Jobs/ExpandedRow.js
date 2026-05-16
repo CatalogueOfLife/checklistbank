@@ -3,11 +3,18 @@ import withContext from "../../../components/hoc/withContext";
 import { Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
-import MockData from "./mockData.json";
-import ReactJsonPrint from 'react-json-print'
-
 
 import PresentationItem from "../../../components/PresentationItem";
+
+// Render a labeled JSON block. Replaces the abandoned react-json-print which
+// only supported React 16.
+const JsonBlock = ({ objectKey, dataObject }) => (
+  <PresentationItem label={objectKey}>
+    <pre style={{ background: "#f5f5f5", padding: 8, overflow: "auto" }}>
+      {JSON.stringify(dataObject, null, 2)}
+    </pre>
+  </PresentationItem>
+);
 const getHighlighted = (text, lang) => {
   try {
     const { Prism } = window;
@@ -40,13 +47,12 @@ const ExpandedRow = ({ uuid, addError }) => {
     <>
       {loading && <Spin></Spin>}
 
-      {/* {data && <ReactJsonPrint objectKey={"data"} dataObject={data} />} */}
-
-      {data && Object.keys(data)
-        .filter((key) => typeof data[key] === "object")
-        .map((key) => (
-          <ReactJsonPrint objectKey={key} dataObject={data[key]} />
-        ))}
+      {data &&
+        Object.keys(data)
+          .filter((key) => typeof data[key] === "object")
+          .map((key) => (
+            <JsonBlock key={key} objectKey={key} dataObject={data[key]} />
+          ))}
       {data &&
         Object.keys(data)
           .filter((key) => typeof data[key] !== "object")

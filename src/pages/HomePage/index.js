@@ -4,7 +4,7 @@ import Layout from "../../components/LayoutNew";
 import { NavLink } from "react-router-dom";
 import config from "../../config";
 import moment from "moment";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Row, Col, Statistic, Card, Image } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Hero from "./Hero"
@@ -120,7 +120,7 @@ class HomePage extends React.Component {
                   to={{
                     pathname: `/dataset/3LR/names`,
                   }}
-                  exact={true}
+                  end
                 >
                   <Statistic
                     title="Species in Catalogue of Life"
@@ -131,7 +131,7 @@ class HomePage extends React.Component {
             </Col>
             <Col xs={12} sm={12} md={6} lg={6}>
               {nameUsages && (
-                <NavLink to={{ pathname: `/` }} exact={true}>
+                <NavLink to={{ pathname: `/` }} end>
                   <Statistic
                     title="Name Usages in ChecklistBank"
                     value={nameUsages.total}
@@ -141,7 +141,7 @@ class HomePage extends React.Component {
             </Col>
             <Col xs={12}sm={12} md={6} lg={6}>
               {datasets && (
-                <NavLink to={{ pathname: `/dataset` }} exact={true}>
+                <NavLink to={{ pathname: `/dataset` }} end>
                   <Statistic
                     title="Datasets in ChecklistBank"
                     value={datasets.total}
@@ -151,7 +151,7 @@ class HomePage extends React.Component {
             </Col>
             <Col xs={12} sm={12}  md={6} lg={6}>
               {latestCol && (
-                <NavLink to={{ pathname: `/dataset/${latestCol?.key}` }} exact={true}>
+                <NavLink to={{ pathname: `/dataset/${latestCol?.key}` }} end>
                   <Statistic
                     title="Latest COL Checklist"
                     value={latestCol?.version}
@@ -201,7 +201,7 @@ class HomePage extends React.Component {
                         to={{
                           pathname: `/dataset/${d.key}`,
                         }}
-                        exact={true}
+                        end
                       >
                         {d.title} ({moment(d.created).format("MMM Do YYYY")})
                       </NavLink>

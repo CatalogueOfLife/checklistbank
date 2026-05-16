@@ -43,7 +43,7 @@ class DatasetList extends React.Component {
             return (
               <NavLink
                 to={{ pathname: `/dataset/${record.key}/names` }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>
@@ -59,7 +59,7 @@ class DatasetList extends React.Component {
             return (
               <NavLink
                 to={{ pathname: `/dataset/${record.key}/names` }}
-                exact={true}
+                end
               >
                 {text}
               </NavLink>
