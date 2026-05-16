@@ -244,9 +244,6 @@ class CatalogueOptions extends React.Component {
         this.setState({ error: err });
       });
   };
-  setEditMode = (checked) => {
-    this.setState({ editMode: checked });
-  };
 
   render() {
     const {

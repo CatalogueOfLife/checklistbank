@@ -5,7 +5,7 @@ import PageContent from "../../components/PageContent";
 import ImportTable from "./importTabs/ImportTable";
 import withContext from "../../components/hoc/withContext";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const Imports = ({ section, importState, location }) => {
 

@@ -33,7 +33,7 @@ import DatasetNavLink from "./DatasetNavLink";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
-const _ = require("lodash");
+import _ from "lodash";
 
 const PAGE_SIZE = 25;
 

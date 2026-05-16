@@ -17,7 +17,7 @@ import ImportMetrics from "../../../components/ImportMetrics";
 import kibanaQuery from "./kibanaQuery";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const tagColors = {
   processing: "purple",

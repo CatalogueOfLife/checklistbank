@@ -20,7 +20,7 @@ import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 
 const PAGE_SIZE = 25;
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const tagColors = {
   processing: "purple",

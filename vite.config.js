@@ -1,0 +1,44 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+
+// Most source files use the `.js` extension but contain JSX. Tell esbuild
+// (Vite 7's transform) to treat all `.js` under src/ as JSX, and tell
+// dep pre-bundling the same so React 16 packages also parse.
+const JSX_IN_JS = {
+  loader: "jsx",
+  include: /src\/.*\.[jt]sx?$/,
+  exclude: [],
+};
+
+export default defineConfig({
+  plugins: [
+    // Plugin-react v4 already includes `.js, .jsx, .ts, .tsx` by default.
+    react(),
+    // csvtojson (NameMatch.js) and diff2html pull in Node builtins. We
+    // polyfill only what they actually need — keeping the bundle lean.
+    nodePolyfills({
+      include: ["buffer", "fs", "os", "path", "process", "stream"],
+      globals: { Buffer: true, process: true },
+    }),
+  ],
+  // CRA listened on 0.0.0.0 by default; Vite's default `localhost` resolves
+  // to IPv6 only on macOS, which breaks the 127.0.0.1-based dev-API trick
+  // (see src/config.js — anything that doesn't end in "localhost" picks the
+  // dev backend). Bind both v4 and v6 so 127.0.0.1 works too.
+  server: { port: 3000, host: true, open: false },
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+  },
+  esbuild: JSX_IN_JS,
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: { ".js": "jsx" },
+    },
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/setupTests.js"],
+  },
+});

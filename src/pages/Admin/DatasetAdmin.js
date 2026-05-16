@@ -10,7 +10,7 @@ import history from "../../history";
 import SearchBox from "../DatasetList/SearchBox";
 import withContext from "../../components/hoc/withContext";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const PAGE_SIZE = 100;
 

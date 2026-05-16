@@ -11,19 +11,19 @@ ChecklistBank UI is a React-based web application for the Catalogue of Life. It 
 ### Setup
 ```bash
 npm install                    # Install dependencies
-node writeEnums.js            # Fetch enumerations from API and write to src/enumeration/
+node writeEnums.cjs            # Fetch enumerations from API and write to src/enumeration/
 ```
 
 ### Development
 ```bash
 npm start                      # Start dev server at http://localhost:3000 connecting to the prod ChecklistBank API
 npm test                       # Run tests in watch mode
-npm run build                  # Production build (runs gitTag.js, writeEnums.js, build, and compression)
+npm run build                  # Production build (runs gitTag.cjs, writeEnums.cjs, build, and compression)
 ```
 
 ### Pre-build Scripts
-- `gitTag.js` - Writes current git commit SHA to `public/gitVersion.json`
-- `writeEnums.js` - Fetches enumeration data from the API (rank, taxonomicstatus, issue, nomstatus, etc.) and writes JSON files to `src/enumeration/`
+- `gitTag.cjs` - Writes current git commit SHA to `public/gitVersion.json`
+- `writeEnums.cjs` - Fetches enumeration data from the API (rank, taxonomicstatus, issue, nomstatus, etc.) and writes JSON files to `src/enumeration/`
 
 ## Architecture
 
@@ -64,13 +64,13 @@ The app uses React Context extensively instead of Redux:
 Enumerations are central to the application's data model:
 
 - **Storage**: JSON files in `src/enumeration/` (frequency.json, rank.json, taxonomicstatus.json, issue.json, etc.)
-- **Fetching**: `node writeEnums.js` script fetches from API and writes to these files
+- **Fetching**: `node writeEnums.cjs` script fetches from API and writes to these files
 - **Loading**: `src/api/enumeration.js` provides functions to load enumerations
   - Can load from local files (default) or API based on `loadEnumsFromAPI` config flag
   - Each enumeration has a dedicated getter (e.g., `getRank()`, `getTaxonomicStatus()`, `getIssue()`)
 - **Usage**: Loaded into `ContextProvider` on app initialization and made available via `AppContext`
 
-**When adding new enumerations**: Add to the `enums` array in `writeEnums.js`, create the getter in `src/api/enumeration.js`, and import/load in `ContextProvider`.
+**When adding new enumerations**: Add to the `enums` array in `writeEnums.cjs`, create the getter in `src/api/enumeration.js`, and import/load in `ContextProvider`.
 
 ### Routing Structure
 
@@ -104,8 +104,8 @@ The app uses `react-app-rewired` to customize Create React App's webpack config:
 ### Build Process
 
 The production build (`npm run build`) runs a multi-step pipeline:
-1. `node gitTag.js` - Embed git version info
-2. `node writeEnums.js` - Fetch latest enumerations
+1. `node gitTag.cjs` - Embed git version info
+2. `node writeEnums.cjs` - Fetch latest enumerations
 3. `react-app-rewired build` - Build React app
 4. `gzipper compress ./build` - Gzip compression
 5. `gzipper compress --brotli` - Brotli compression for static assets

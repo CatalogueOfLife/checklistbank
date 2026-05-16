@@ -10,7 +10,7 @@ import SourceIssues from "./Issues";
 import withContext from "../../../components/hoc/withContext";
 import { withRouter } from "react-router-dom";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const getIssuesAbbrev = (issue) =>
   issue.split(" ").map((s) => s.charAt(0).toUpperCase());

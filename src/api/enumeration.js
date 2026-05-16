@@ -4,10 +4,18 @@ import config from "../config";
 
 const { loadEnumsFromAPI } = config;
 
+// Eagerly bundle every local enumeration JSON. Vite's import.meta.glob
+// replaces the CRA-era dynamic `require("../enumeration/${e}")`.
+const localEnums = import.meta.glob("../enumeration/*.json", {
+  eager: true,
+  import: "default",
+});
+const localEnumFor = (e) => localEnums[`../enumeration/${e}.json`];
+
 const getData = (e) =>
   loadEnumsFromAPI
     ? axios(`${config.dataApi}vocab/${e}`)
-    : Promise.resolve({ data: require(`../enumeration/${e}`) });
+    : Promise.resolve({ data: localEnumFor(e) });
 
 export const getFrequency = () => {
   return getData(`frequency`).then(
@@ -124,8 +132,8 @@ export const getTaxGroup = () => {
 };
 
 export const getNameIndexRank = () => {
-  return Promise.resolve(require(`../enumeration/nameIndexRank`))
-}
+  return Promise.resolve(localEnumFor("nameIndexRank"));
+};
 
 export const getIdentifierScope = () => {
   return getData(`identifier-scope`).then((res) =>

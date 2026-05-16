@@ -4,7 +4,7 @@ import axios from "axios";
 import { Skeleton } from "antd";
 import PresentationItem from "./PresentationItem";
 import { NavLink } from "react-router-dom";
-const _ = require("lodash");
+import _ from "lodash";
 
 const getLivingTaxa = (metrics, rank) =>
   (_.get(metrics, `taxaByRankCount.${rank}`) || 0) -

@@ -21,7 +21,7 @@ import MockData from "./mockData.json";
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const Jobs = ({ user, addError }) => {
   const [jobs, setJobs] = useState([]);

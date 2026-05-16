@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import config from "../../../config";
 import axios from "axios";
-const _ = require("lodash");
+import _ from "lodash";
 
 class TaxonomicCoverage extends React.Component {
   constructor(props) {

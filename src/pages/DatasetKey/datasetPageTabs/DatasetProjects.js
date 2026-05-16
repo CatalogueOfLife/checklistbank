@@ -6,7 +6,7 @@ import config from "../../../config";
 import PageContent from "../../../components/PageContent";
 
 import withContext from "../../../components/hoc/withContext";
-const _ = require("lodash");
+import _ from "lodash";
 
 class DatasetProjects extends React.Component {
   constructor(props) {

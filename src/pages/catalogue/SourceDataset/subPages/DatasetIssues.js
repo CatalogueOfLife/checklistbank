@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 import PageContent from "../../../../components/PageContent";
 import withContext from "../../../../components/hoc/withContext";
 import MultiValueFilter from "../../../NameSearch/MultiValueFilter";
-const _ = require("lodash");
+import _ from "lodash";
 
 // Issues that don't appear in the nameusage/search index — link to verbatim only.
 const NON_NAMEUSAGE_ISSUES = new Set([

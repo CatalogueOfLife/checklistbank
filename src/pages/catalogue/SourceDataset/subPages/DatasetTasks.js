@@ -9,7 +9,7 @@ import { getDuplicateOverview } from "../../../../api/dataset";
 import ErrorMsg from "../../../../components/ErrorMsg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { CopyOutlined } from "@ant-design/icons";
-const _ = require("lodash");
+import _ from "lodash";
 
 class DatasetTasks extends React.Component {
   constructor(props) {

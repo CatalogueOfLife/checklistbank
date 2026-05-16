@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import config from "../../config";
 import moment from "moment";
 import Helmet from "react-helmet";
-import { Row, Col, Statistic, Card, View, Image } from "antd";
+import { Row, Col, Statistic, Card, Image } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Hero from "./Hero"
 import axios from "axios";

@@ -9,7 +9,7 @@ import history from "../../history";
 
 import withContext from "../../components/hoc/withContext";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 
 class MatcherList extends React.Component {

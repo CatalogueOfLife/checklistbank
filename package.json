@@ -2,50 +2,39 @@
   "name": "col-checklistbank",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=22.12"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "ajv": "^8.18.0",
     "antd": "4.24.15",
-    "assert": "^2.1.0",
     "axios": "^0.18.1",
     "base-64": "^0.1.0",
-    "browserify-fs": "^1.0.0",
-    "buffer": "^6.0.3",
     "classnames": "^2.3.1",
     "col-rc-tree": "https://github.com/CatalogueOfLife/tree.git",
-    "crypto-browserify": "^3.12.0",
     "csvtojson": "^2.0.10",
     "d3": "^7.9.0",
     "dataloader": "^1.4.0",
     "dayjs": "^1.8.26",
     "diff2html": "^2.7.0",
     "dompurify": "^2.2.7",
-    "fs": "^0.0.1-security",
     "highcharts": "^9.1.2",
     "highcharts-react-official": "^3.0.0",
     "history": "^4.7.2",
-    "https-browserify": "^1.0.0",
-    "install": "^0.13.0",
     "js-base64": "^3.7.5",
     "leaflet": "^1.9.4",
     "linkify-html": "^3.0.5",
     "linkifyjs": "^3.0.5",
     "lodash": ">=4.6.2",
     "marked": "^2.0.3",
-    "moment": "^2.24.0",
+    "moment": "2.24.0",
     "new-github-issue-url": "^1.0.0",
-    "npm": "^8.18.0",
-    "os": "^0.1.2",
-    "os-browserify": "^0.3.0",
     "p-queue": "^6.6.1",
     "papaparse": "^5.0.2",
-    "path-browserify": "^1.0.1",
     "query-string": "~5.1.1",
     "react": "^16.9.0",
-    "react-app-rewired": "^2.2.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-csv": "^2.0.3",
     "react-dom": "^16.9.0",
@@ -59,25 +48,21 @@
     "react-linkify": "^1.0.0-alpha",
     "react-resizable": "^1.7.5",
     "react-router-dom": "^5.3.3",
-    "react-scripts": "5.0.0",
-    "react-width": "^0.1.8",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0"
+    "react-width": "^0.1.8"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@vitejs/plugin-react": "^4.7.0",
     "gzipper": "^4.3.0",
-    "process": "^0.11.10"
-  },
-  "resolutions": {
-    "moment": "2.24.0"
+    "jsdom": "^26.0.0",
+    "vite": "^7.3.3",
+    "vite-plugin-node-polyfills": "^0.27.0",
+    "vitest": "^3.2.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "node gitTag.js; node writeEnums.js; react-app-rewired build; gzipper compress --include js,css,html,txt,json ./build ; gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json  ./build",
-    "test": "react-app-rewired test --env=jsdom",
-    "eject": "react-app-rewired eject",
-    "preinstall": "npx npm-force-resolutions"
+    "start": "vite",
+    "build": "node gitTag.cjs && node writeEnums.cjs && vite build && gzipper compress --include js,css,html,txt,json ./dist && gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json ./dist",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "browserslist": {
     "production": [

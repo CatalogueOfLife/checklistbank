@@ -8,7 +8,7 @@ import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 import moment from "moment";
 import withContext from "../../../components/hoc/withContext";
 
-const _ = require("lodash");
+import _ from "lodash";
 
 const getIssuesAbbrev = (issue) =>
   issue.split(" ").map((s) => s.charAt(0).toUpperCase());

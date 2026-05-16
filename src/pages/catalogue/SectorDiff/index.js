@@ -14,7 +14,7 @@ import qs from "query-string";
 const { Option } = Select;
 
 
-const _ = require("lodash");
+import _ from "lodash";
 
 class SectorDiff extends React.Component {
   constructor(props) {

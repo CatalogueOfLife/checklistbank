@@ -25,7 +25,7 @@ import withContext from "../../../components/hoc/withContext";
 import TaxonomicCoverage from "./TaxonomicCoverage";
 import Links from "./Links";
 import MergedDataBadge from "../../../components/MergedDataBadge";
-const _ = require("lodash");
+import _ from "lodash";
 
 const formItemLayout = {
   labelCol: {
