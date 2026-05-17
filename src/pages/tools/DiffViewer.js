@@ -321,7 +321,7 @@ const DiffViewer = ({ location, addError, rank }) => {
 
         <Row style={{ marginBottom: "8px" }}>
           <Col span={12} style={{ padding: "8px", borderRightStyle: 'solid', borderRightColor: 'rgba(0, 0, 0, 0.06)', borderRightWidth: "1px" }}>
-            <Divider orientation="left" plain>
+            <Divider titlePlacement="left" plain>
               Dataset 1
             </Divider>
             <DatasetAutocomplete
@@ -369,7 +369,7 @@ const DiffViewer = ({ location, addError, rank }) => {
             )}
           </Col>
           <Col span={12} style={{ padding: "8px" }}>
-            <Divider orientation="left" plain>
+            <Divider titlePlacement="left" plain>
               Dataset 2
             </Divider>
             <DatasetAutocomplete

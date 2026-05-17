@@ -209,7 +209,7 @@ const TaxAlign = ({ location, addError }) => {
               borderRightWidth: "1px",
             }}
           >
-            <Divider orientation="left" plain>
+            <Divider titlePlacement="left" plain>
               Dataset 1
             </Divider>
             <DatasetAutocomplete
@@ -264,7 +264,7 @@ const TaxAlign = ({ location, addError }) => {
             )}
           </Col>
           <Col span={12} style={{ padding: "8px" }}>
-            <Divider orientation="left" plain>
+            <Divider titlePlacement="left" plain>
               Dataset 2
             </Divider>
             <DatasetAutocomplete

@@ -287,7 +287,7 @@ class DatasetImportMetrics extends React.Component {
             )}
 
             <Row style={{ padding: "10px" }}>
-              <Divider orientation="left">Details</Divider>
+              <Divider titlePlacement="left">Details</Divider>
               <PresentationItem label="State">
                 {_.get(data, "state")}
               </PresentationItem>

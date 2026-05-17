@@ -422,8 +422,8 @@ class DatasetMeta extends React.Component {
                     {(this.state.showAllCreators
                       ? displayData.creator
                       : displayData.creator.slice(0, 6)
-                    ).map((a) => (
-                      <Col span={this.getAgentSpan(displayData.creator)}>
+                    ).map((a, i) => (
+                      <Col key={i} span={this.getAgentSpan(displayData.creator)}>
                         <Card style={{ height: "100%", background: "#f5f7fa" }}>
                           <AgentPresentation
                             hideEmail={!Auth.canEditDataset(displayData, user)}
@@ -454,8 +454,8 @@ class DatasetMeta extends React.Component {
             <PresentationItem label="Editor">
               {displayData.editor && _.isArray(displayData.editor) && (
                 <Row gutter={[8, 8]}>
-                  {displayData.editor.map((a) => (
-                    <Col span={this.getAgentSpan(displayData.editor)}>
+                  {displayData.editor.map((a, i) => (
+                    <Col key={i} span={this.getAgentSpan(displayData.editor)}>
                       <Card>
                         <AgentPresentation
                           hideEmail={!Auth.canEditDataset(displayData, user)}
@@ -475,9 +475,9 @@ class DatasetMeta extends React.Component {
                       {(this.state.showAllContributors
                         ? displayData.contributor
                         : displayData.contributor.slice(0, 6)
-                      ).map((a) => (
-                        <Col span={this.getAgentSpan(displayData.contributor)}>
-                          <Card bodyStyle={{ background: "#f5f7fa" }}>
+                      ).map((a, i) => (
+                        <Col key={i} span={this.getAgentSpan(displayData.contributor)}>
+                          <Card styles={{ body: { background: "#f5f7fa" } }}>
                             <AgentPresentation
                               hideEmail={
                                 !Auth.canEditDataset(displayData, user)
@@ -614,7 +614,7 @@ class DatasetMeta extends React.Component {
                   }}
                 >
                 {_.isArray(displayData.identifier) && displayData.identifier.map((id) => (
-                    <li>
+                    <li key={id}>
                       {IDENTIFIER_TYPES[id.split(":", 1)[0]] ? (
                         <a
                           href={`${IDENTIFIER_TYPES[id.split(":", 1)[0]]}${id.split(":", 2)[1]}`}
@@ -708,10 +708,11 @@ class DatasetMeta extends React.Component {
             </PresentationItem>
             {contributesTo && (
               <React.Fragment>
-                <Divider orientation="left">Contributes to</Divider>
+                <Divider titlePlacement="left">Contributes to</Divider>
                 {contributesTo
                   .map((c) => (
                     <NavLink
+                      key={c.key}
                       to={{
                         pathname: `/dataset/${c.key}/source/${displayData.key}`,
                       }}

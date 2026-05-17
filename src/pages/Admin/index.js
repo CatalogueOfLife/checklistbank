@@ -373,13 +373,13 @@ class AdminPage extends React.Component {
             </Popconfirm>
           </Row>
 
-          <Divider orientation="left">Links</Divider>
+          <Divider titlePlacement="left">Links</Divider>
           <Row>
             <a href={config.downloadApi}>Downloads</a>&nbsp;-&nbsp;
             <a href={`${config.dataApi}dataset/duplicates`}>Duplicate Datasets</a>
           </Row>
 
-          <Divider orientation="left">Main</Divider>
+          <Divider titlePlacement="left">Main</Divider>
           <Row> 
             <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>&nbsp;-&nbsp;
             <a href={`${config.dataApi}monitor/threads`}>Threads</a>&nbsp;-&nbsp;
@@ -390,7 +390,7 @@ class AdminPage extends React.Component {
             </a>
           </Row>
 
-          <Divider orientation="left">Read only</Divider>
+          <Divider titlePlacement="left">Read only</Divider>
           <Row> 
             <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a>&nbsp;-&nbsp;
             <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a>&nbsp;-&nbsp;

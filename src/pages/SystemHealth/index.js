@@ -24,7 +24,7 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
         <title>System Health</title>
       </Helmet>
       <PageContent>
-        <Divider orientation="left">Components</Divider>
+        <Divider titlePlacement="left">Components</Divider>
         {Object.keys(components)
           .filter((c) => c != "idle")
           .map((comp) => (
@@ -41,7 +41,7 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
               <Col flex="auto" />
             </Row>
           ))}
-        <Divider orientation="left">System health</Divider>
+        <Divider titlePlacement="left">System health</Divider>
         {Object.keys(health).map((hc) => (
           <Row>
             <Col flex="auto" />

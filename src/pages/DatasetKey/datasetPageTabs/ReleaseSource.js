@@ -327,7 +327,7 @@ class ReleaseSource extends React.Component {
                     : "-"}
                 </PresentationItem>
               </div>
-              <Divider orientation="left">Contributions</Divider>
+              <Divider titlePlacement="left">Contributions</Divider>
               <PresentationItem label="Taxonomic coverage">
                 <TaxonomicCoverage
                   isProject={false}
