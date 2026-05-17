@@ -2,15 +2,15 @@ import React from "react";
 import _ from "lodash";
 import { NavLink, withRouter } from "react-router-dom";
 
-const getDatasetTaxonRoute = (location, datasetKey, catalogueKey) => {
-  return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
-    ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/taxon/`
+const getDatasetTaxonRoute = (location, datasetKey, projectKey) => {
+  return location.pathname.startsWith(`/project/${projectKey}`)
+    ? `/project/${projectKey}/dataset/${datasetKey}/taxon/`
     : `/dataset/${datasetKey}/taxon/`;
 };
 
-const isAssembly = (location, catalogueKey) => {
+const isAssembly = (location, projectKey) => {
   return (
-    location.pathname.startsWith(`/catalogue/${catalogueKey}`) &&
+    location.pathname.startsWith(`/project/${projectKey}`) &&
     location.pathname.indexOf("/dataset") === -1
   );
 };
@@ -24,7 +24,7 @@ const ClassificationTable = ({
   data,
   taxon,
   style,
-  catalogueKey,
+  projectKey,
   location,
 }) => (
   <div style={style}>
@@ -34,12 +34,12 @@ const ClassificationTable = ({
         <span style={rankStyle}>{t.rank}: </span>
         <NavLink
           to={{
-            pathname: isAssembly(location, catalogueKey)
-              ? `/catalogue/${catalogueKey}/taxon/${encodeURIComponent(_.get(t, "id"))}`
+            pathname: isAssembly(location, projectKey)
+              ? `/project/${projectKey}/taxon/${encodeURIComponent(_.get(t, "id"))}`
               : `${getDatasetTaxonRoute(
                   location,
                   datasetKey,
-                  catalogueKey
+                  projectKey
                 )}${encodeURIComponent(_.get(t, "id"))}`,
           }}
         >

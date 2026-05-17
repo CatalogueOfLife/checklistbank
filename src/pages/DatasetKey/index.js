@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { Alert, Row, Col, Button } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
-import Editors from "../catalogue/Editors/Editors";
+import Editors from "../project/Editors/Editors";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
@@ -39,7 +39,7 @@ import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "moment";
-import CataloguePublisherKey from "../catalogue/CataloguePublisherKey";
+import ProjectPublisherKey from "../project/ProjectPublisherKey";
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -102,7 +102,7 @@ class DatasetPage extends React.Component {
           key: datasetKey,
           section,
           taxonOrNameKey,
-          catalogueKey,
+          projectKey,
           subsection,
         },
       },
@@ -144,7 +144,7 @@ class DatasetPage extends React.Component {
     return (
       <Layout
         selectedDataset={dataset}
-        selectedCatalogueKey={catalogueKey}
+        selectedCatalogueKey={projectKey}
         openKeys={
           isProject && ["imports", "diff", "import-timeline"].includes(section)
             ? ["assembly"]
@@ -248,14 +248,14 @@ class DatasetPage extends React.Component {
           <WorkBench
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}
 
         {sect === "duplicates" && !taxonOrNameKey && (
           <Duplicates
             datasetKey={datasetKey}
-            catalogueKey={dataset?.origin === "project" ? datasetKey : null}
+            projectKey={dataset?.origin === "project" ? datasetKey : null}
             assembly={!!dataset?.origin === "project"}
             dataset={dataset}
             location={this.props.location}
@@ -342,8 +342,8 @@ class DatasetPage extends React.Component {
           section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
 
         {sect === "publisher" && taxonOrNameKey && (
-          <CataloguePublisherKey
-            catalogueKey={datasetKey}
+          <ProjectPublisherKey
+            projectKey={datasetKey}
             publisherKey={taxonOrNameKey}
           />
         )}

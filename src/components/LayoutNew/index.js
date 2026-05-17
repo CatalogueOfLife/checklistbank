@@ -94,7 +94,7 @@ class SiteLayout extends Component {
       background,
       catalogue,
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       location,
     } = this.props;
@@ -277,9 +277,9 @@ class SiteLayout extends Component {
               {!selectedDataset && catalogue && title && (
                 <>
                   <h1 style={{ display: "inline" }}>{title}</h1>{" "}
-                  {catalogueKey && (
+                  {projectKey && (
                     <DatasetOriginPill
-                      dataset={{ key: catalogueKey, origin: catalogue?.origin }}
+                      dataset={{ key: projectKey, origin: catalogue?.origin }}
                     />
                   )}
                 </>

@@ -63,7 +63,7 @@ const GBIFTaxonomyReview = ({ location }) => {
                   ? `?csv=${e}&colKey=${filesByFileName[e].colKey}`
                   : null;
                 history.push({
-                  pathname: location.path,
+                  pathname: location.pathname,
                   search,
                 });
                 setSelectedFile(e);

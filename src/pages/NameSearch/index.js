@@ -14,8 +14,8 @@ import RowDetail from "./RowDetail";
 import TaxGroupIcon from "./TaxGroupIcon";
 import _ from "lodash";
 import ErrorMsg from "../../components/ErrorMsg";
-import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../project/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
@@ -42,9 +42,9 @@ const FACETS = [
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const PAGE_SIZE = 50;
-const getBaseUri = (catalogueKey, datasetKey) =>
-  catalogueKey === datasetKey
-    ? `/catalogue/${catalogueKey}`
+const getBaseUri = (projectKey, datasetKey) =>
+  projectKey === datasetKey
+    ? `/project/${projectKey}`
     : `/dataset/${datasetKey}`;
 /* console.log(
   encodeURIComponent(
@@ -52,7 +52,7 @@ const getBaseUri = (catalogueKey, datasetKey) =>
   )
 ); */
 
-const getColumns = (catalogueKey) => [
+const getColumns = (projectKey) => [
   {
     title: "",
     dataIndex: ["usage", "merged"],
@@ -71,16 +71,16 @@ const getColumns = (catalogueKey) => [
         record?.usage?.status === "bare name" ||
         !_.get(record, "usage.status")
           ? `${getBaseUri(
-              catalogueKey,
+              projectKey,
               _.get(record, "usage.datasetKey")
             )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
           : _.get(record, "usage.accepted")
           ? `${getBaseUri(
-              catalogueKey,
+              projectKey,
               _.get(record, "usage.datasetKey")
             )}/nameusage/${encodeURIComponent(_.get(record, "usage.id"))}`
           : `${getBaseUri(
-              catalogueKey,
+              projectKey,
               _.get(record, "usage.datasetKey")
             )}/taxon/${encodeURIComponent(
               _.get(record, "usage.id")
@@ -153,7 +153,7 @@ const getColumns = (catalogueKey) => [
           classification={_.initial(record.classification)}
           maxParents={2}
           datasetKey={_.get(record, "usage.name.datasetKey")}
-          baseUri={getBaseUri(catalogueKey, _.get(record, "usage.datasetKey"))}
+          baseUri={getBaseUri(projectKey, _.get(record, "usage.datasetKey"))}
         />
       );
     },
@@ -163,9 +163,9 @@ const getColumns = (catalogueKey) => [
 class NameSearchPage extends React.Component {
   constructor(props) {
     super(props);
-    const isCatalogue = this.props.catalogueKey === this.props.datasetKey;
+    const isCatalogue = this.props.projectKey === this.props.datasetKey;
     const clms = getColumns(
-      isCatalogue ? this.props.catalogueKey : null
+      isCatalogue ? this.props.projectKey : null
     );
     const columns = this.props.datasetKey
       ? clms
@@ -250,7 +250,7 @@ class NameSearchPage extends React.Component {
         content: "SCIENTIFIC_NAME"
       };
       history.push({
-        pathname: _.get(this.props, "location.path"),
+        pathname: _.get(this.props, "location.pathname"),
         search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
@@ -315,7 +315,7 @@ class NameSearchPage extends React.Component {
       };
 
       history.push({
-        pathname: _.get(this.props, "location.path"),
+        pathname: _.get(this.props, "location.pathname"),
         search: `?${qs.stringify(newParamsWithPaging)}`,
       });
       const url = datasetKey
@@ -488,7 +488,7 @@ class NameSearchPage extends React.Component {
       nametype,
       namefield,
       datasetKey,
-      catalogueKey,
+      projectKey,
       dataset,
     } = this.props;
     const facetRanks = _.get(facets, "rank")
@@ -659,8 +659,8 @@ class NameSearchPage extends React.Component {
                 />
               </div>
             )}
-            {(catalogueKey === datasetKey ||
-              Number(datasetKey) === catalogueKey ||
+            {(projectKey === datasetKey ||
+              Number(datasetKey) === projectKey ||
               (dataset &&
                 ["project", "release", "xrelease"].includes(
                   dataset.origin
@@ -887,9 +887,9 @@ class NameSearchPage extends React.Component {
               expandedRowRender: (record) => (
                 <RowDetail
                   {...record}
-                  catalogueKey={catalogueKey || dataset?.sourceKey}
+                  projectKey={projectKey || dataset?.sourceKey}
                   baseUri={getBaseUri(
-                    catalogueKey === datasetKey ? catalogueKey : null,
+                    projectKey === datasetKey ? projectKey : null,
                     _.get(record, "usage.datasetKey")
                   )}
                 />
@@ -913,7 +913,7 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  catalogueKey,
+  projectKey,
   dataset,
   nomCode,
 }) => ({
@@ -925,7 +925,7 @@ const mapContextToProps = ({
   nomstatus,
   nametype,
   namefield,
-  catalogueKey,
+  projectKey,
   dataset,
   nomCode,
 });

@@ -217,6 +217,6 @@ class HomePage extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
+const mapContextToProps = ({ projectKey }) => ({ projectKey });
 
 export default withContext(mapContextToProps)(HomePage);

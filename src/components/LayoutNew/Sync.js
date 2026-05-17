@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { SyncOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import withContext from "../hoc/withContext";
-import SyncStatePresentation from "../../pages/catalogue/Assembly/SyncState";
+import SyncStatePresentation from "../../pages/project/Assembly/SyncState";
 import { Modal } from "antd";
 
 class SyncState extends React.Component {
@@ -16,11 +16,11 @@ class SyncState extends React.Component {
     const { syncState, syncingSector, syncingDataset } = this.props;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
-    return catalogueKey ? (
+    return projectKey ? (
       <React.Fragment>
         {_.get(syncState, "running") ? (
           <SyncOutlined

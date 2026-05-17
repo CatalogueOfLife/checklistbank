@@ -126,7 +126,7 @@ class VerbatimRecord extends React.Component {
     let newQuery = { ...params, ...search, offset: 0 };
 
     history.push({
-      pathname: location.path,
+      pathname: location.pathname,
       search: `?${qs.stringify(removeEmptyValues(newQuery))}`,
     });
   };

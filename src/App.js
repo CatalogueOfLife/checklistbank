@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import { Router, Route, Switch, Redirect } from "react-router-dom";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
 import history from "./history";
@@ -14,27 +14,27 @@ import SyncProvider from "./components/hoc/SyncProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import About from "./pages/About";
-import Assembly from "./pages/catalogue/Assembly";
-import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
-import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
+import Assembly from "./pages/project/Assembly";
+import AssemblyDuplicates from "./pages/project/AssemblyDuplicates";
+import AssemblyTasks from "./pages/project/AssemblyTasks";
 
-import SectorSync from "./pages/catalogue/SectorSync";
-import SectorPriority from "./pages/catalogue/CatalogueSectors/Priority";
-import SectorPublishers from "./pages/catalogue/SectorPublishers";
-import CatalogueSectors from "./pages/catalogue/CatalogueSectors";
-import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon";
-import CatalogueName from "./pages/catalogue/CatalogueName";
-import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
-import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
-import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
-import CatalogueOptions from "./pages/catalogue/Options";
-import CataloguePublishers from "./pages/catalogue/Options/Publishers";
-import CataloguePublisherKey from "./pages/catalogue/CataloguePublisherKey";
-import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
-import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
-import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
+import SectorSync from "./pages/project/SectorSync";
+import SectorPriority from "./pages/project/ProjectSectors/Priority";
+import SectorPublishers from "./pages/project/SectorPublishers";
+import ProjectSectors from "./pages/project/ProjectSectors";
+import ProjectTaxon from "./pages/project/ProjectTaxon";
+import ProjectName from "./pages/project/ProjectName";
+import ProjectMeta from "./pages/project/ProjectMeta";
+import ProjectNameSearch from "./pages/project/ProjectNameSearch";
+import ProjectDecisions from "./pages/project/ProjectDecisions";
+import ProjectOptions from "./pages/project/Options";
+import ProjectPublishers from "./pages/project/Options/Publishers";
+import ProjectPublisherKey from "./pages/project/ProjectPublisherKey";
+import ProjectSourceDataset from "./pages/project/SourceDataset";
+import ProjectIssues from "./pages/project/ProjectIssues";
+import ProjectDownload from "./pages/project/ProjectDownload";
 
-import ProjectEditors from "./pages/catalogue/Editors";
+import ProjectEditors from "./pages/project/Editors";
 
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
@@ -42,16 +42,16 @@ import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import AdminJobs from "./pages/Admin/Jobs";
-import SectorDiff from "./pages/catalogue/SectorDiff";
+import SectorDiff from "./pages/project/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import ExceptionHandler from "./components/exception/ExceptionHandler";
 import Helmet from "react-helmet";
-import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
+import ProjectReferences from "./pages/project/ProjectReferences";
 import HomePage from "./pages/HomePage";
-import CatalogueSources from "./pages/catalogue/CatalogueSources";
-import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
+import ProjectSources from "./pages/project/ProjectSources";
+import ProjectSourceMetrics from "./pages/project/ProjectSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
@@ -136,152 +136,152 @@ const App = () => {
               <PrivateRoute
                 exact
                 key="References"
-                path="/catalogue/:catalogueKey/references/:key?"
-                component={CatalogueReferences}
+                path="/project/:projectKey/references/:key?"
+                component={ProjectReferences}
               />
               <PrivateRoute
                 exact
                 key="catalogueSources"
-                path="/catalogue/:catalogueKey/sources/:issues?"
-                component={CatalogueSources}
+                path="/project/:projectKey/sources/:issues?"
+                component={ProjectSources}
               />
               <PrivateRoute
                 exact
                 key="catalogueSourceMetrics"
-                path="/catalogue/:catalogueKey/sourcemetrics"
-                component={CatalogueSourceMetrics}
+                path="/project/:projectKey/sourcemetrics"
+                component={ProjectSourceMetrics}
               />
               <PrivateRoute
                 exact
-                key="CatalogueOptions"
-                path={`/catalogue/:catalogueKey/options`}
+                key="ProjectOptions"
+                path={`/project/:projectKey/options`}
                 roles={["editor"]}
-                component={CatalogueOptions}
+                component={ProjectOptions}
               />
               <PrivateRoute
                 exact
-                key="CataloguePublishers"
-                path={`/catalogue/:catalogueKey/publishers`}
+                key="ProjectPublishers"
+                path={`/project/:projectKey/publishers`}
                 roles={["editor"]}
-                component={CataloguePublishers}
+                component={ProjectPublishers}
               />
               <PrivateRoute
                 exact
                 key="Assembly"
-                path={`/catalogue/:catalogueKey/assembly`}
+                path={`/project/:projectKey/assembly`}
                 roles={["editor"]}
                 component={Assembly}
               />
               <PrivateRoute
                 exact
                 key="catalogueDownload"
-                path="/catalogue/:catalogueKey/download/:key?"
-                component={CatalogueDownload}
+                path="/project/:projectKey/download/:key?"
+                component={ProjectDownload}
               />
               <PrivateRoute
                 exact
                 key="AssemblyDuplicates"
-                path={`/catalogue/:catalogueKey/duplicates`}
+                path={`/project/:projectKey/duplicates`}
                 roles={["editor"]}
                 component={AssemblyDuplicates}
               />
               <PrivateRoute
                 exact
                 key="AssemblyTasks"
-                path={`/catalogue/:catalogueKey/tasks`}
+                path={`/project/:projectKey/tasks`}
                 roles={["editor"]}
                 component={AssemblyTasks}
               />
               <PrivateRoute
                 exact
                 key="catalogueMeta"
-                path="/catalogue/:catalogueKey/metadata"
-                component={CatalogueMeta}
+                path="/project/:projectKey/metadata"
+                component={ProjectMeta}
               />
               <PrivateRoute
                 exact
                 key="projectEditors"
-                path="/catalogue/:catalogueKey/editors"
+                path="/project/:projectKey/editors"
                 component={ProjectEditors}
               />
               <PrivateRoute
                 exact
                 key="catalogueNameSearch"
-                path="/catalogue/:catalogueKey/names"
-                component={CatalogueNameSearch}
+                path="/project/:projectKey/names"
+                component={ProjectNameSearch}
               />
               <PrivateRoute
                 exact
                 key="sectorPriority"
-                path="/catalogue/:catalogueKey/sector/priority"
+                path="/project/:projectKey/sector/priority"
                 component={SectorPriority}
               />
               <PrivateRoute
                 exact
                 key="sectorSync"
-                path="/catalogue/:catalogueKey/sector/sync"
+                path="/project/:projectKey/sector/sync"
                 component={SectorSync}
               />
               <PrivateRoute
                 exact
                 key="sectorPublishers"
-                path="/catalogue/:catalogueKey/sector/publishers"
+                path="/project/:projectKey/sector/publishers"
                 component={SectorPublishers}
               />
               <PrivateRoute
                 exact
                 key="sector"
-                path="/catalogue/:catalogueKey/sector"
-                component={CatalogueSectors}
+                path="/project/:projectKey/sector"
+                component={ProjectSectors}
               />
               <PrivateRoute
                 exact
                 key="cataloguePublisherKey"
-                path="/catalogue/:catalogueKey/publisher/:key?"
-                component={CataloguePublisherKey}
+                path="/project/:projectKey/publisher/:key?"
+                component={ProjectPublisherKey}
               />
               <PrivateRoute
                 exact
                 key="decisions"
-                path="/catalogue/:catalogueKey/decision"
-                component={CatalogueDecisions}
+                path="/project/:projectKey/decision"
+                component={ProjectDecisions}
               />
               <PrivateRoute
                 exact
                 key="decisions"
-                path="/catalogue/:catalogueKey/issues"
-                component={CatalogueIssues}
+                path="/project/:projectKey/issues"
+                component={ProjectIssues}
               />
 
               <PrivateRoute
                 exact
                 key="sectorDiff"
-                path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
+                path="/project/:projectKey/sync/:sectorKey/diff"
                 component={SectorDiff}
               />
 
               <PrivateRoute
                 exact
                 key="catalogueTaxon"
-                path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
-                component={CatalogueTaxon}
+                path="/project/:projectKey/taxon/:taxonOrNameKey"
+                component={ProjectTaxon}
               />
               <PrivateRoute
                 exact
                 key="catalogueName"
-                path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
-                component={CatalogueName}
+                path="/project/:projectKey/name/:taxonOrNameKey"
+                component={ProjectName}
               />
               <PrivateRoute
                 exact
-                key="CatalogueSourceDataset"
-                path={`/catalogue/:catalogueKey/dataset/:sourceKey/:section(issues|tasks|workbench|duplicates|metadata|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
-                component={CatalogueSourceDataset}
+                key="ProjectSourceDataset"
+                path={`/project/:projectKey/dataset/:sourceKey/:section(issues|tasks|workbench|duplicates|metadata|classification|references|imports|verbatim|taxon|name)/:taxonOrNameKey?`}
+                component={ProjectSourceDataset}
               />
               <PrivateRoute
                 exact
                 key="datasetKey"
-                path={`/catalogue/:catalogueKey/dataset/:sourceKey/:section:(imports|classification|sectors|metadata|names|taxon|name|verbatim)/:taxonOrNameKey?`}
+                path={`/project/:projectKey/dataset/:sourceKey/:section:(imports|classification|sectors|metadata|names|taxon|name|verbatim)/:taxonOrNameKey?`}
                 component={DatasetPage}
               />
 
@@ -425,6 +425,24 @@ const App = () => {
                 path={`/system-health`}
                 component={SystemHealth}
               />
+              {/* Back-compat: the route prefix was renamed from /catalogue/
+                  to /project/. Preserve the path tail and query string. */}
+              <Route
+                key="catalogueRedirect"
+                path="/catalogue/:rest*"
+                render={({ location }) => (
+                  <Redirect
+                    to={{
+                      pathname: location.pathname.replace(
+                        /^\/catalogue\//,
+                        "/project/"
+                      ),
+                      search: location.search,
+                      hash: location.hash,
+                    }}
+                  />
+                )}
+              />
               <Route component={Exception404} />
             </Switch>
           </ThemeProvider>
@@ -435,17 +453,17 @@ const App = () => {
           />
           <Route
             key="sourceDatasetProvider"
-            path={`/catalogue/:catalogueKey/dataset/:sourceKey`}
+            path={`/project/:projectKey/dataset/:sourceKey`}
             component={DatasetProvider}
           />
           <Route
             key="catalogueProvider"
-            path={`/catalogue/:catalogueKey`}
+            path={`/project/:projectKey`}
             component={DatasetProvider}
           />
           <Route
             key="syncProvider"
-            path={`/catalogue/:catalogueKey`}
+            path={`/project/:projectKey`}
             component={SyncProvider}
           />
           <Route

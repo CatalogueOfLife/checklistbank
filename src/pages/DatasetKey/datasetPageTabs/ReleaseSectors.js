@@ -1,7 +1,7 @@
 import React from "react";
 
 import PageContent from "../../../components/PageContent";
-import SectorPageContent from "../../catalogue/CatalogueSectors/SectorPageContent";
+import SectorPageContent from "../../project/ProjectSectors/SectorPageContent";
 
 const ReleaseSectors = ({ datasetKey }) => {
   return (

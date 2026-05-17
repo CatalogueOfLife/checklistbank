@@ -12,7 +12,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 
 import withContext from "../../../components/hoc/withContext";
-import TaxonomicCoverage from "../../catalogue/CatalogueSourceMetrics/TaxonomicCoverage";
+import TaxonomicCoverage from "../../project/ProjectSourceMetrics/TaxonomicCoverage";
 import { IDENTIFIER_TYPES } from "./DatasetMeta";
 
 class ReleaseSource extends React.Component {
@@ -331,12 +331,12 @@ class ReleaseSource extends React.Component {
                 <TaxonomicCoverage
                   isProject={false}
                   dataset={data}
-                  catalogueKey={datasetKey}
+                  projectKey={datasetKey}
                   pathToTree={pathToTree}
                 />
               </PresentationItem>
               <Metrics
-                catalogueKey={datasetKey}
+                projectKey={datasetKey}
                 dataset={data}
                 pathToSearch={`/dataset/${datasetKey}/names`}
               />

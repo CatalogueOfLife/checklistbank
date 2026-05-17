@@ -28,8 +28,8 @@ import history from "../../../history";
 import qs from "query-string";
 import withContext from "../../../components/hoc/withContext";
 
-import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../../project/Assembly/NameAutocomplete";
 import TaxonSummary from "./TaxonSummary";
 const TaxonComparer = ({ location, addError, rank }) => {
   const [loading, setLoading] = useState(false);
@@ -186,7 +186,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                       // setDatasetKey1(dataset.key), setRoot([])
                     }
                   }}
-                  // contributesTo={this.props.catalogueKey}
+                  // contributesTo={this.props.projectKey}
                   placeHolder="Choose 1st dataset"
                 />
               </Col>
@@ -250,7 +250,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                       // setDatasetKey2(dataset.key), setRoot2([])
                     }
                   }}
-                  // contributesTo={this.props.catalogueKey}
+                  // contributesTo={this.props.projectKey}
                   placeHolder="Choose 2nd dataset"
                 />
               </Col>

@@ -3,7 +3,7 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import PresentationItem from "../../components/PresentationItem";
 import BorderedListItem from "./BorderedListItem";
-import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
+import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import { Popover } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import NameAutocomplete from '../pages/catalogue/Assembly/NameAutocomplete';
+import NameAutocomplete from '../pages/project/Assembly/NameAutocomplete';
 
 const TaxonFormControl = ({ value, onChange, datasetKey, minRank, accepted = true, disabled = false }) => {
   

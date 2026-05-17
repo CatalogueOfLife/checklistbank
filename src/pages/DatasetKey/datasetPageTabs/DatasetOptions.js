@@ -12,7 +12,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
-import DeleteOrphansButton from "../../catalogue/Options/DeleteOrphansButton";
+import DeleteOrphansButton from "../../project/Options/DeleteOrphansButton";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
 

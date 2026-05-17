@@ -47,7 +47,7 @@ const getPreviousFinishedImport = (importHistory, index) => {
   );
 };
 
-const ImportHistory = ({ importHistory, attempt, catalogueKey, origin }) => (
+const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
   <Timeline>
     {importHistory.map((h, index) => (
       <Timeline.Item

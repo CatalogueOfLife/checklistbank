@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Table, Radio } from "antd";
 import BorderedListItem from "./BorderedListItem";
-import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
+import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import ShowMoreToggle from "./ShowMoreToggle";
 import DistributionsMap from "./DistributionsMap";

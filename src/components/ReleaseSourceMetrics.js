@@ -120,9 +120,9 @@ class Metrics extends React.Component {
   }
 
   getData = () => {
-    const { dataset, catalogueKey } = this.props;
+    const { dataset, projectKey } = this.props;
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/source/${dataset?.key}/metrics`
+      `${config.dataApi}dataset/${projectKey}/source/${dataset?.key}/metrics`
     ).then((res) => {
       this.setState({ metrics: res.data });
     });

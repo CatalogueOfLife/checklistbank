@@ -28,8 +28,8 @@ import history from "../../history";
 import qs from "query-string";
 import withContext from "../../components/hoc/withContext";
 
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 
 const { Option } = Select;
 
@@ -334,7 +334,7 @@ const DiffViewer = ({ location, addError, rank }) => {
                   // setDatasetKey1(dataset.key), setRoot([])
                 }
               }}
-              // contributesTo={this.props.catalogueKey}
+              // contributesTo={this.props.projectKey}
               placeHolder="Choose 1st dataset"
             />
             <div style={{ marginTop: "8px", marginBottom: "8px" }}>
@@ -384,7 +384,7 @@ const DiffViewer = ({ location, addError, rank }) => {
                   // setDatasetKey2(dataset.key), setRoot2([])
                 }
               }}
-              // contributesTo={this.props.catalogueKey}
+              // contributesTo={this.props.projectKey}
               placeHolder="Choose 2nd dataset"
             />
             <div style={{ marginTop: "8px", marginBottom: "8px" }}>

@@ -1,0 +1,97 @@
+import { Menu } from "antd";
+import React, { useEffect, useState } from "react";
+import qs from "query-string";
+import {
+  PartitionOutlined,
+  SyncOutlined,
+  OrderedListOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
+import { withRouter } from "react-router-dom";
+import withContext from "../../../components/hoc/withContext";
+
+import { NavLink } from "react-router-dom";
+
+const SectorTabs = ({ location, projectKey }) => {
+  const [subjectDatasetKey, setSubjectDatasetKey] = useState(null);
+  useEffect(() => {
+    const params = qs.parse(location?.search);
+    // On sectors its subjectDatasetKey, on syncs its datasetKey
+    if (params.subjectDatasetKey || params.datasetKey) {
+      setSubjectDatasetKey(params.subjectDatasetKey || params.datasetKey);
+    } else {
+      setSubjectDatasetKey(null);
+    }
+  }, [projectKey, location]);
+  const items = [
+    {
+      label: (
+        <NavLink
+          to={{
+            pathname: `/project/${projectKey}/sector`,
+            search: subjectDatasetKey
+              ? `?subjectDatasetKey=${subjectDatasetKey}`
+              : null,
+          }}
+        >
+          Sectors
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector`,
+      icon: <PartitionOutlined />,
+    },
+    {
+      label: (
+        <NavLink
+          to={{ pathname: `/project/${projectKey}/sector/priority` }}
+        >
+          Priority
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector/priority`,
+      icon: <OrderedListOutlined />,
+    },
+    {
+      label: (
+        <NavLink
+          to={{
+            pathname: `/project/${projectKey}/sector/sync`,
+            search: subjectDatasetKey
+              ? `?datasetKey=${subjectDatasetKey}`
+              : null,
+          }}
+        >
+          Syncs
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector/sync`,
+      icon: <SyncOutlined />,
+    },
+    {
+      label: (
+        <NavLink
+          to={{ pathname: `/project/${projectKey}/sector/publishers` }}
+        >
+          Publishers
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector/publishers`,
+      icon: <TeamOutlined />,
+    },
+  ];
+
+  return (
+    <Menu
+      style={{ marginBottom: "8px" }}
+      selectedKeys={[location.pathname]}
+      mode="horizontal"
+      items={items}
+    />
+  );
+};
+
+const mapContextToProps = ({ projectKey }) => ({
+  projectKey,
+});
+
+export default withContext(mapContextToProps)(withRouter(SectorTabs));

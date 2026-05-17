@@ -107,10 +107,10 @@ class BasicMenu extends Component {
   };
 
   isSourceDataset = (dataset) => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     return (
       _.isArray(dataset.contributesTo) &&
-      dataset.contributesTo.includes(catalogueKey)
+      dataset.contributesTo.includes(projectKey)
     );
   };
   render() {
@@ -123,7 +123,7 @@ class BasicMenu extends Component {
       user,
       //   recentDatasets,
       taxonOrNameKey,
-      catalogueKey,
+      projectKey,
       _selectedKeys,
       _openKeys,
     } = this.props;
@@ -382,16 +382,16 @@ class BasicMenu extends Component {
                 <>
                   <Menu.Item key="catalogueMeta">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/metadata` }}
+                      to={{ pathname: `/project/${projectKey}/metadata` }}
                     >
                       <span>Metadata</span>
                     </NavLink>
                   </Menu.Item>
                   <Menu.Item key="colAssembly">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/assembly` }}
+                      to={{ pathname: `/project/${projectKey}/assembly` }}
                     >
-                      {Auth.canEditDataset({ key: catalogueKey }, user) ? (
+                      {Auth.canEditDataset({ key: projectKey }, user) ? (
                         <span>Assembly</span>
                       ) : (
                         <span>Browse</span>
@@ -400,7 +400,7 @@ class BasicMenu extends Component {
                   </Menu.Item>
                   <Menu.Item key="catalogueNameSearch">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/names` }}
+                      to={{ pathname: `/project/${projectKey}/names` }}
                     >
                       <span>Search</span>
                     </NavLink>
@@ -408,7 +408,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="catalogueDownload">
                     <NavLink
                       to={{
-                        pathname: `/catalogue/${catalogueKey}/download`,
+                        pathname: `/project/${projectKey}/download`,
                       }}
                     >
                       Download
@@ -416,14 +416,14 @@ class BasicMenu extends Component {
                   </Menu.Item>
                   <Menu.Item key="assemblyReferences">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/references` }}
+                      to={{ pathname: `/project/${projectKey}/references` }}
                     >
                       <span>References</span>
                     </NavLink>
                   </Menu.Item>
                   <Menu.Item key="catalogueSectors">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/sector` }}
+                      to={{ pathname: `/project/${projectKey}/sector` }}
                     >
                       {/* <PartitionOutlined /> */}
                       <span>Sectors</span>
@@ -432,7 +432,7 @@ class BasicMenu extends Component {
                   <Menu.Item key="catalogueSources">
                     <NavLink
                       to={{
-                        pathname: `/catalogue/${catalogueKey}/sources`,
+                        pathname: `/project/${projectKey}/sources`,
                       }}
                     >
                       {" "}
@@ -442,21 +442,21 @@ class BasicMenu extends Component {
                   </Menu.Item>
                   <Menu.Item key="assemblyDuplicates">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/duplicates` }}
+                      to={{ pathname: `/project/${projectKey}/duplicates` }}
                     >
                       <span>Duplicates</span>
                     </NavLink>
                   </Menu.Item>
                   <Menu.Item key="assemblyTasks">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/tasks` }}
+                      to={{ pathname: `/project/${projectKey}/tasks` }}
                     >
                       <span>Tasks</span>
                     </NavLink>
                   </Menu.Item>
                   <Menu.Item key="catalogueDecisions">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/decision` }}
+                      to={{ pathname: `/project/${projectKey}/decision` }}
                     >
                       {/*  <CheckOutlined /> */}
                       <span>Decisions</span>
@@ -466,7 +466,7 @@ class BasicMenu extends Component {
                     <NavLink
                       to={{
                         pathname: "/dataset",
-                        search: `?releasedFrom=${catalogueKey}`,
+                        search: `?releasedFrom=${projectKey}`,
                       }}
                     >
                       <span>Releases</span>
@@ -475,16 +475,16 @@ class BasicMenu extends Component {
                   <Menu.Item key="release-metrics">
                     <NavLink
                       to={{
-                        pathname: `/dataset/${catalogueKey}/imports`,
+                        pathname: `/dataset/${projectKey}/imports`,
                       }}
                     >
                       <span>Release metrics</span>
                     </NavLink>
                   </Menu.Item>
-                  {Auth.canEditDataset({ key: catalogueKey }, user) && (
+                  {Auth.canEditDataset({ key: projectKey }, user) && (
                     <Menu.Item key="projectEditors">
                       <NavLink
-                        to={{ pathname: `/catalogue/${catalogueKey}/editors` }}
+                        to={{ pathname: `/project/${projectKey}/editors` }}
                       >
                         <span>Editors</span>
                       </NavLink>
@@ -492,14 +492,14 @@ class BasicMenu extends Component {
                   )}
                   <Menu.Item key="catalogueOptions">
                     <NavLink
-                      to={{ pathname: `/catalogue/${catalogueKey}/options` }}
+                      to={{ pathname: `/project/${projectKey}/options` }}
                     >
                       <span>Options</span>
                     </NavLink>
                   </Menu.Item>
                   {/*  <Menu.Item key="sectorSync">
                   <NavLink
-                    to={{ pathname: `/catalogue/${catalogueKey}/sector/sync` }}
+                    to={{ pathname: `/project/${projectKey}/sector/sync` }}
                   >
                     <span>Sector sync</span>
                   </NavLink>
@@ -531,7 +531,7 @@ class BasicMenu extends Component {
                       title={
                         <span>
                           Source
-                          {/* <SourceSelect catalogueKey={catalogueKey} />
+                          {/* <SourceSelect projectKey={projectKey} />
                       <span
                         style={{ textOverflow: "ellipsis", maxWidth: "40px" }}
                       >
@@ -551,7 +551,7 @@ class BasicMenu extends Component {
                         <Menu.ItemGroup
                           title={
                             <>
-                              <SourceSelect catalogueKey={catalogueKey} />{" "}
+                              <SourceSelect projectKey={projectKey} />{" "}
                               {sourceDataset /* && sourceHasData */
                                 ? sourceDataset?.alias ||
                                   truncate(sourceDataset?.title, 25)
@@ -563,7 +563,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_metadata">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/metadata`,
@@ -577,7 +577,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_classification">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/classification`,
@@ -592,7 +592,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_workbench">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/workbench`,
@@ -606,7 +606,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_references">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/references`,
@@ -620,7 +620,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_duplicates">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/duplicates`,
@@ -634,7 +634,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_tasks">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/tasks`,
@@ -649,7 +649,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_sectors">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/sector`,
+                                  pathname: `/project/${projectKey}/sector`,
                                   search: `?limit=100&offset=0&subjectDatasetKey=${sourceDataset?.key}`,
                                 }}
                               >
@@ -662,7 +662,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_decisions">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/decision`,
+                                  pathname: `/project/${projectKey}/decision`,
                                   search: `?limit=100&offset=0&subjectDatasetKey=${sourceDataset?.key}`,
                                 }}
                               >
@@ -675,7 +675,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_issues">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/issues`,
@@ -689,7 +689,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="sourceSectors">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/sector`,
+                                  pathname: `/project/${projectKey}/sector`,
                                   search: `?subjectDatasetKey=${sourceDataset.key}`,
                                 }}
                               >
@@ -701,7 +701,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_imports">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/imports`,
@@ -716,7 +716,7 @@ class BasicMenu extends Component {
                             <Menu.Item key="source_verbatim">
                               <NavLink
                                 to={{
-                                  pathname: `/catalogue/${catalogueKey}/dataset/${_.get(
+                                  pathname: `/project/${projectKey}/dataset/${_.get(
                                     sourceDataset,
                                     "key"
                                   )}/verbatim`,
@@ -1083,7 +1083,7 @@ class BasicMenu extends Component {
 const mapContextToProps = ({
   user,
   // recentDatasets,
-  catalogueKey,
+  projectKey,
   dataset,
   sourceDataset,
   catalogue,
@@ -1094,7 +1094,7 @@ const mapContextToProps = ({
 }) => ({
   user,
   // recentDatasets,
-  catalogueKey,
+  projectKey,
   dataset,
   sourceDataset,
   catalogue,

@@ -188,7 +188,7 @@ class DatasetImportMetrics extends React.Component {
       match: {
         params: { taxonOrNameKey: attempt, key: datasetKey_, sourceKey },
       },
-      catalogueKey,
+      projectKey,
     } = this.props;
     const datasetKey = datasetKey_ || sourceKey;
 
@@ -242,7 +242,7 @@ class DatasetImportMetrics extends React.Component {
               origin={dataset?.origin}
               importHistory={importHistory}
               attempt={attempt}
-              catalogueKey={catalogueKey}
+              projectKey={projectKey}
             />
           </Drawer>
         )}
@@ -334,11 +334,11 @@ class DatasetImportMetrics extends React.Component {
     );
   }
 }
-const mapContextToProps = ({ user, dataset, importState, catalogueKey }) => ({
+const mapContextToProps = ({ user, dataset, importState, projectKey }) => ({
   user,
   dataset,
   importState,
-  catalogueKey,
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(withRouter(DatasetImportMetrics));

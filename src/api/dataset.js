@@ -15,17 +15,17 @@ export const getDatasetsBatch = (ids) => {
   );
 };
 
-export const getSourcesBatch = (ids, catalogueKey) => {
+export const getSourcesBatch = (ids, projectKey) => {
   return Promise.all(
     ids.map((i) =>
-      reflect(axios(`${config.dataApi}dataset/${catalogueKey}/source/${i}`))
+      reflect(axios(`${config.dataApi}dataset/${projectKey}/source/${i}`))
     )
   );
 };
 
 export const getDuplicateOverview = ({
   datasetKey,
-  catalogueKey,
+  projectKey,
   withDecision,
   sourceDatasetKey,
   sourceOnly,
@@ -47,8 +47,8 @@ export const getDuplicateOverview = ({
 
   return Promise.all(
     groups.map((g) => {
-      let params = catalogueKey
-        ? { ...g.params, catalogueKey }
+      let params = projectKey
+        ? { ...g.params, catalogueKey: projectKey }
         : { ...g.params };
       if (sourceDatasetKey) {
         params.sourceDatasetKey = sourceDatasetKey;

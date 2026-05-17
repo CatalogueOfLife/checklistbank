@@ -14,14 +14,14 @@ class SyncProvider extends React.Component {
   };
 
   componentDidUpdate = (prevProps) => {
-    const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
+    const nextCatalogueKey = _.get(this.props, "match.params.projectKey");
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = prevProps;
 
-    if (nextCatalogueKey && Number(catalogueKey) !== Number(nextCatalogueKey)) {
+    if (nextCatalogueKey && Number(projectKey) !== Number(nextCatalogueKey)) {
       this.props.getSyncState();
     }
   };

@@ -2,7 +2,7 @@ import React from "react";
 import { Breadcrumb } from "antd";
 import { NavLink } from "react-router-dom";
 
- const Classification = ({ path, maxLength, datasetKey, catalogueKey }) => 
+ const Classification = ({ path, maxLength, datasetKey, projectKey }) => 
  <Breadcrumb separator=">">
         {!maxLength && [...path].reverse().map(taxon => {
           return (

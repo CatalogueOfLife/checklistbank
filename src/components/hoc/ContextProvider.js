@@ -84,7 +84,7 @@ const getJsonDatasetForLocalStorage = (dataset) =>
 
 class ContextProvider extends React.Component {
   state = {
-    catalogueKey: localStorage.getItem("col_selected_project")
+    projectKey: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project")).key
       : null,
     frequency: [],
@@ -147,16 +147,16 @@ class ContextProvider extends React.Component {
     catalogue: localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project"))
       : null,
-    setCatalogueKey: (catalogueKey) => {
-      this.setState({ catalogueKey });
+    setCatalogueKey: (projectKey) => {
+      this.setState({ projectKey });
     },
     setCatalogue: (catalogue) => {
       if (catalogue?.key && catalogue?.title) {
         localStorage.setItem("col_selected_project", JSON.stringify(catalogue));
-        this.setState({ catalogue, catalogueKey: catalogue.key });
+        this.setState({ catalogue, projectKey: catalogue.key });
       } else {
         localStorage.removeItem("col_selected_project");
-        this.setState({ catalogue: null, catalogueKey: null });
+        this.setState({ catalogue: null, projectKey: null });
       }
     },
     setDataset: (dataset) => {
@@ -404,11 +404,11 @@ class ContextProvider extends React.Component {
   };
 
   getSyncState = async () => {
-    const { catalogueKey } = this.state;
-    if (catalogueKey) {
+    const { projectKey } = this.state;
+    if (projectKey) {
       try {
         const { data: syncState } = await axios(
-          `${config.dataApi}dataset/${catalogueKey}/assembly`
+          `${config.dataApi}dataset/${projectKey}/assembly`
         );
         if (
           _.get(syncState, "running") &&
@@ -416,7 +416,7 @@ class ContextProvider extends React.Component {
             _.get(this.state, "syncState.running.sectorKey")
         ) {
           const { data: sector } = await axios(
-            `${config.dataApi}dataset/${catalogueKey}/sector/${_.get(
+            `${config.dataApi}dataset/${projectKey}/sector/${_.get(
               syncState,
               "running.sectorKey"
             )}`

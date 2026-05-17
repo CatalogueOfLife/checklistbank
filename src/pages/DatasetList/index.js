@@ -27,7 +27,7 @@ import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
@@ -738,7 +738,7 @@ class DatasetList extends React.Component {
                       />
                       /*  <NavLink
                        to={{
-                         pathname: (d.origin === 'project' && Auth.canViewDataset(d, user)) ? `/catalogue/${d.key}/metadata` : `/dataset/${d.key}`,
+                         pathname: (d.origin === 'project' && Auth.canViewDataset(d, user)) ? `/project/${d.key}/metadata` : `/dataset/${d.key}`,
                        }}
                      >
                        <Tag size="small">{d.alias ? d.alias : d.key}</Tag>
@@ -891,7 +891,7 @@ const mapContextToProps = ({
   datasetType,
   datasetOrigin,
   license,
-  catalogueKey,
+  projectKey,
   recentDatasets,
   importState,
   taxGroup,
@@ -901,7 +901,7 @@ const mapContextToProps = ({
   datasetType,
   datasetOrigin,
   license,
-  catalogueKey,
+  projectKey,
   recentDatasets,
   importState,
   taxGroup,

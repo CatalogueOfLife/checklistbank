@@ -1,5 +1,5 @@
 import React from 'react';
-import DatasetAutocomplete from '../pages/catalogue/Assembly/DatasetAutocomplete';
+import DatasetAutocomplete from '../pages/project/Assembly/DatasetAutocomplete';
 
 const DatasetFormControl = ({ value, onChange }) => {
 

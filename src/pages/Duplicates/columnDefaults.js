@@ -5,7 +5,7 @@ import Classification from "./Classification";
 import { NavLink } from "react-router-dom";
 import CopyableColumnText from "../WorkBench/CopyableColumnText";
 import { Tooltip, Button } from "antd";
-export default (catalogueKey, deleteCallback) => ({
+export default (projectKey, deleteCallback) => ({
   binomial: [
     {
       title: "ID",
@@ -46,7 +46,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -159,7 +159,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -280,7 +280,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -340,7 +340,7 @@ export default (catalogueKey, deleteCallback) => ({
           <Classification
             path={_.get(record, "classification")}
             datasetKey={_.get(record, "datasetKey")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         ) : (
           ""
@@ -389,7 +389,7 @@ export default (catalogueKey, deleteCallback) => ({
         return (
           <DecisionTag
             decision={_.get(record, "decision")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
             deleteCallback={deleteCallback}
           />
         );
@@ -453,7 +453,7 @@ export default (catalogueKey, deleteCallback) => ({
             path={_.get(record, "classification")}
             maxLength={3}
             datasetKey={_.get(record, "datasetKey")}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         ) : (
           ""

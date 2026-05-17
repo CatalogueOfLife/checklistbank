@@ -7,7 +7,7 @@ import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { getDuplicateOverview } from "../../../api/dataset";
 import ErrorMsg from "../../../components/ErrorMsg";
-import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
 
 class DatasetTasks extends React.Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class DatasetTasks extends React.Component {
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview({
       datasetKey,
-      catalogueKey: assembly ? datasetKey : null,
+      projectKey: assembly ? datasetKey : null,
       sourceDatasetKey,
       sourceOnly,
     });
@@ -128,7 +128,7 @@ class DatasetTasks extends React.Component {
               <Col>
                 <DatasetAutocomplete
                   placeHolder="Filter to source"
-                  contributesTo={this.props?.catalogueKey}
+                  contributesTo={this.props?.projectKey}
                   autoFocus={false}
                   onSelectDataset={(ds) =>
                     this.setState(
@@ -217,7 +217,7 @@ class DatasetTasks extends React.Component {
           {staleDecisions && (
             <NavLink
               to={{
-                pathname: `/catalogue/${datasetKey}/decision`,
+                pathname: `/project/${datasetKey}/decision`,
                 search: `?stale=true${
                   this.state.sourceDatasetKey
                     ? "&sourceDatasetKey=" + this.state.sourceDatasetKey
@@ -246,7 +246,7 @@ const mapContextToProps = ({
   issue,
   issueMap,
   getDuplicateWarningColor,
-  catalogueKey,
-}) => ({ user, issue, issueMap, getDuplicateWarningColor, catalogueKey });
+  projectKey,
+}) => ({ user, issue, issueMap, getDuplicateWarningColor, projectKey });
 
 export default withContext(mapContextToProps)(DatasetTasks);

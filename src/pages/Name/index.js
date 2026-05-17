@@ -186,12 +186,12 @@ class NamePage extends React.Component {
 
     const filteredUsages = (usages || []).filter((u) => u.usage?.id && u.usage?.status != 'bare name');
     const filteredSynonyms = (synonyms || []).filter((s) => s?.id !== name?.id);
-    const { datasetKey, catalogueKey, getTaxonomicStatusColor, getNomStatus, identifierScope } =
+    const { datasetKey, projectKey, getTaxonomicStatusColor, getNomStatus, identifierScope } =
       this.props;
 
     const taxonUri =
-      datasetKey === catalogueKey
-        ? `/catalogue/${catalogueKey}/taxon/`
+      datasetKey === projectKey
+        ? `/project/${projectKey}/taxon/`
         : `/dataset/${datasetKey}/taxon/`;
     return (
       <div
@@ -415,7 +415,7 @@ class NamePage extends React.Component {
                     style={{ marginTop: "-3px" }}
                     data={relations}
                     datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                   />
                 )}
                 {filteredSynonyms && filteredSynonyms.length > 0 && (
@@ -427,7 +427,7 @@ class NamePage extends React.Component {
                       }))}
                       style={{ marginTop: "-3px" }}
                       datasetKey={datasetKey}
-                      catalogueKey={catalogueKey}
+                      projectKey={projectKey}
                     />
                   </PresentationItem>
                 )}
@@ -496,9 +496,9 @@ class NamePage extends React.Component {
 }
 const mapContextToProps = ({
   getTaxonomicStatusColor,
-  catalogueKey,
+  projectKey,
   getNomStatus,
   identifierScope,
-}) => ({ getTaxonomicStatusColor, catalogueKey, getNomStatus, identifierScope });
+}) => ({ getTaxonomicStatusColor, projectKey, getNomStatus, identifierScope });
 
 export default withContext(mapContextToProps)(NamePage);

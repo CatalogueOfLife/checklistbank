@@ -79,7 +79,7 @@ class DatasetMeta extends React.Component {
   };
 
   fetchAllData = () => {
-    const { catalogueKey, archivedData } = this.props;
+    const { projectKey, archivedData } = this.props;
 
     if (archivedData) {
       // Don't fetch if we have archived data
@@ -88,25 +88,25 @@ class DatasetMeta extends React.Component {
 
     this.getData();
 
-    if (catalogueKey) {
+    if (projectKey) {
       this.getSourceMeta();
       this.getPatch();
     }
   };
 
   getPatch = () => {
-    const { id, catalogueKey, addError } = this.props;
+    const { id, projectKey, addError } = this.props;
 
-    axios(`${config.dataApi}dataset/${catalogueKey}/patch/${id}`)
+    axios(`${config.dataApi}dataset/${projectKey}/patch/${id}`)
       .then((res) => this.setState({ patch: res.data, patchError: null }))
       .catch((err) => {
         this.setState({ patchError: err, patch: null });
       });
   };
   getSourceMeta = () => {
-    const { id, catalogueKey, addError } = this.props;
+    const { id, projectKey, addError } = this.props;
 
-    axios(`${config.dataApi}dataset/${catalogueKey}/source/${id}`)
+    axios(`${config.dataApi}dataset/${projectKey}/source/${id}`)
       .then((res) => this.setState({ sourceMeta: res.data, sourceError: null }))
       .catch((err) => {
         addError(err);
@@ -226,8 +226,8 @@ class DatasetMeta extends React.Component {
       releasedFrom,
       showBreakdownTreemap,
     } = this.state;
-    const { user, catalogueKey, catalogue, archivedData, taxGroup } = this.props;
-    const patchMode = !!catalogueKey;
+    const { user, projectKey, catalogue, archivedData, taxGroup } = this.props;
+    const patchMode = !!projectKey;
     const isArchived = !!archivedData;
     // If we are in a project, show the patched data. Otherwise the original data
     const displayData = patchMode ? sourceMeta : data;
@@ -263,7 +263,7 @@ class DatasetMeta extends React.Component {
               </Col>
               <Col>
                 {
-                  /* !catalogueKey &&  */ data && !data.deleted && (
+                  /* !projectKey &&  */ data && !data.deleted && (
                     <Popconfirm
                       title={`Make dataset ${
                         data.private ? "public" : "private"
@@ -329,7 +329,7 @@ class DatasetMeta extends React.Component {
             {editPatchMode && patchMode && data && (
               <MetaDataForm
                 data={patch || {}}
-                catalogueKey={catalogueKey}
+                projectKey={projectKey}
                 originalData={data}
                 onSaveSuccess={() => {
                   this.setEditPatchMode(false);
@@ -646,7 +646,7 @@ class DatasetMeta extends React.Component {
                   <NavLink
                     to={{
                       pathname: Auth.canViewDataset(catalogue, user)
-                        ? `/catalogue/${displayData.sourceKey}/metadata`
+                        ? `/project/${displayData.sourceKey}/metadata`
                         : `/dataset/${displayData.sourceKey}`,
                     }}
                   >

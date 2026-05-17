@@ -4,11 +4,11 @@ import history from "../../../history";
 import { Alert, Row, Col, Switch } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import PageContent from "../../../components/PageContent";
-import ColTree from "../../catalogue/Assembly/ColTree";
-import { ColTreeContext } from "../../catalogue/Assembly/ColTreeContext";
+import ColTree from "../../project/Assembly/ColTree";
+import { ColTreeContext } from "../../project/Assembly/ColTreeContext";
 import queryString from "query-string";
 import withContext from "../../../components/hoc/withContext";
-import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
+import NameAutocomplete from "../../project/Assembly/NameAutocomplete";
 
 class DatasetClassification extends React.Component {
   constructor(props) {
@@ -79,7 +79,7 @@ class DatasetClassification extends React.Component {
               treeRef={(ref) => (this.treeRef = ref)}
               dataset={dataset}
               treeType="readOnly"
-              catalogueKey={dataset.key}
+              projectKey={dataset.key}
               defaultExpandKey={params.taxonKey}
               location={location}
               insertPlaceholder={insertPlaceholder}
@@ -92,5 +92,5 @@ class DatasetClassification extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
+const mapContextToProps = ({ user, projectKey }) => ({ user, projectKey });
 export default withContext(mapContextToProps)(DatasetClassification);

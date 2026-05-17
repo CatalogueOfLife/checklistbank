@@ -30,7 +30,7 @@ import PageContent from "../../components/PageContent";
 import ErrorMsg from "../../components/ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 
-import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
+import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import qs from "query-string";
 const { Text } = Typography;
 const Option = Select.Option;

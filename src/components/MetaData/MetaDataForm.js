@@ -60,7 +60,7 @@ const MetaDataForm = (props) => {
     data,
     datasettypeEnum,
     licenseEnum,
-    catalogueKey,
+    projectKey,
     datasetoriginEnum,
     onSaveSuccess,
     originalData,
@@ -137,10 +137,10 @@ const MetaDataForm = (props) => {
 
     const task = _.get(data, "key") // there was already a patch
       ? axios.put(
-          `${config.dataApi}dataset/${catalogueKey}/patch/${key}`,
+          `${config.dataApi}dataset/${projectKey}/patch/${key}`,
           sanitised
         )
-      : axios.post(`${config.dataApi}dataset/${catalogueKey}/patch`, sanitised);
+      : axios.post(`${config.dataApi}dataset/${projectKey}/patch`, sanitised);
 
     task
       .then((res) => {

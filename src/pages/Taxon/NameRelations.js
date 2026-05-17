@@ -77,7 +77,7 @@ const getId = (r, reverse) => {
   }
 };
 
-const NameRelations = ({ data, catalogueKey, datasetKey, md, reverse }) =>
+const NameRelations = ({ data, projectKey, datasetKey, md, reverse }) =>
   data.map((r) => {
     const linkEntity = getLinkEntity(r, reverse); //!!r?.relatedUsageId ? "nameusage" : "name";
     const id = getId(r, reverse); // r?.relatedUsageId || r?.relatedNameId;
@@ -91,8 +91,8 @@ const NameRelations = ({ data, catalogueKey, datasetKey, md, reverse }) =>
         <NavLink
           to={{
             pathname:
-              datasetKey === catalogueKey
-                ? `/catalogue/${catalogueKey}/${linkEntity}/${encodeURIComponent(
+              datasetKey === projectKey
+                ? `/project/${projectKey}/${linkEntity}/${encodeURIComponent(
                     id
                   )}`
                 : `/dataset/${datasetKey}/${linkEntity}/${encodeURIComponent(

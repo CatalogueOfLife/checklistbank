@@ -16,7 +16,7 @@ const NON_NAMEUSAGE_ISSUES = new Set([
   "accepted name missing",
 ]);
 
-const getColumns = ({ issueMap, catalogueKey }) => {
+const getColumns = ({ issueMap, projectKey }) => {
   return [
     {
       title: "Title",
@@ -176,11 +176,11 @@ class DatasetIssues extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap, catalogueKey }) => ({
+const mapContextToProps = ({ user, issue, issueMap, projectKey }) => ({
   user,
   issue,
   issueMap,
-  catalogueKey,
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(DatasetIssues);

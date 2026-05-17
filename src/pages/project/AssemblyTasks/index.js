@@ -1,0 +1,30 @@
+import React from "react";
+import Layout from "../../../components/LayoutNew";
+import Helmet from "react-helmet";
+import Tasks from "../../../pages/DatasetKey/datasetPageTabs/DatasetTasks";
+import PageContent from "../../../components/PageContent";
+import withContext from "../../../components/hoc/withContext";
+
+const AssemblyTasks = ({ location, projectKey, catalogue }) => {
+  return (
+    <Layout
+      openKeys={["assembly"]}
+      selectedKeys={["assemblyTasks"]}
+      title={catalogue.title}
+    >
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{catalogue.title}</title>
+      </Helmet>
+      <PageContent>
+        <Tasks datasetKey={projectKey} location={location} assembly={true} />
+      </PageContent>
+    </Layout>
+  );
+};
+
+const mapContextToProps = ({ projectKey, catalogue }) => ({
+  projectKey,
+  catalogue,
+});
+export default withContext(mapContextToProps)(AssemblyTasks);
