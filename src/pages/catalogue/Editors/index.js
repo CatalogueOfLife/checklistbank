@@ -9,7 +9,7 @@ import Editors from "./Editors";
 
 
 const ProjectEditors = ({
-  catalogueKey,
+  projectKey,
   catalogue
 }) => {
 
@@ -19,20 +19,20 @@ const ProjectEditors = ({
       openKeys={["assembly"]}
       title={catalogue ? catalogue.title : ""}
     >
-      <Editors datasetKey={catalogueKey} />
+      <Editors datasetKey={projectKey} />
     </Layout>
   );
 };
 
 const mapContextToProps = ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,
 }) => ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,

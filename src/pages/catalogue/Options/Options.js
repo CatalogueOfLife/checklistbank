@@ -46,8 +46,8 @@ class CatalogueOptions extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
-      _.get(this.props, "match.params.catalogueKey") !==
-      _.get(prevProps, "match.params.catalogueKey")
+      _.get(this.props, "match.params.projectKey") !==
+      _.get(prevProps, "match.params.projectKey")
     ) {
       this.getData();
     }
@@ -56,12 +56,12 @@ class CatalogueOptions extends React.Component {
   getData = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${catalogueKey}/settings`)
+    axios(`${config.dataApi}dataset/${projectKey}/settings`)
       .then((res) => {
         this.setState({ loading: false, data: res.data, err: null });
       })
@@ -77,13 +77,13 @@ class CatalogueOptions extends React.Component {
   rematchSectorsOrDecisions = (type) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ rematchSectorsAndDecisionsLoading: true });
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/${type}/rematch`, {})
+      .post(`${config.dataApi}dataset/${projectKey}/${type}/rematch`, {})
       .then((res) => {
         this.setState({
           rematchSectorsAndDecisionsLoading: false,
@@ -103,13 +103,13 @@ class CatalogueOptions extends React.Component {
   validateProject = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ validateProjectLoading: true });
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/validate`)
+      .post(`${config.dataApi}dataset/${projectKey}/validate`)
       .then((res) => {
         this.setState(
           {
@@ -137,13 +137,13 @@ class CatalogueOptions extends React.Component {
   releaseCatalogue = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ releaseColLoading: true });
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/release`)
+      .post(`${config.dataApi}dataset/${projectKey}/release`)
       .then((res) => {
         this.setState(
           {
@@ -171,13 +171,13 @@ class CatalogueOptions extends React.Component {
   xrelease = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ releaseColLoading: true });
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/xrelease`)
+      .post(`${config.dataApi}dataset/${projectKey}/xrelease`)
       .then((res) => {
         this.setState(
           {
@@ -206,12 +206,12 @@ class CatalogueOptions extends React.Component {
   recalculateSectorCounts = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     axios
       .post(
-        `${config.dataApi}admin/sector-count-update?datasetKey=${catalogueKey}`
+        `${config.dataApi}admin/sector-count-update?datasetKey=${projectKey}`
       )
       .then((res) => {
         notification.open({
@@ -229,11 +229,11 @@ class CatalogueOptions extends React.Component {
   consolidateHomotypicNames = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/consolidate-homotypic`)
+      .post(`${config.dataApi}dataset/${projectKey}/consolidate-homotypic`)
       .then(() => {
         notification.open({
           message: "Homotypic grouping",
@@ -256,7 +256,7 @@ class CatalogueOptions extends React.Component {
 
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       catalogue,
       datasetSettings,
@@ -280,7 +280,7 @@ class CatalogueOptions extends React.Component {
             <h3>Settings</h3>
           </Col>
           <Col flex="auto"></Col>
-          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {Auth.canEditDataset({ key: projectKey }, user) && (
             <>
               <Col span={2}>
                 {data && (
@@ -303,7 +303,7 @@ class CatalogueOptions extends React.Component {
             {editMode && (
               <DatasetSettingsForm
                 data={data}
-                datasetKey={catalogueKey}
+                datasetKey={projectKey}
                 dataset={catalogue}
                 onSaveSuccess={() => {
                   this.setEditMode(false);
@@ -351,7 +351,7 @@ class CatalogueOptions extends React.Component {
               </div>
             )}
           </Col>
-          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {Auth.canEditDataset({ key: projectKey }, user) && (
             <Col span={6}>
               <Popconfirm
                 placement="rightTop"
@@ -434,7 +434,7 @@ class CatalogueOptions extends React.Component {
               </Popconfirm>
 
               <SyncAllSectorsButton
-                catalogueKey={catalogueKey}
+                projectKey={projectKey}
                 onError={(err) => this.setState({ error: err })}
               ></SyncAllSectorsButton>
 
@@ -454,16 +454,16 @@ class CatalogueOptions extends React.Component {
               </Button>
 
               <DeleteOrphansButton
-                datasetKey={catalogueKey}
+                datasetKey={projectKey}
                 type="name"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               />
               <DeleteOrphansButton
-                datasetKey={catalogueKey}
+                datasetKey={projectKey}
                 type="reference"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
               />
-              {catalogue?.key?.toString() === catalogueKey && (
+              {catalogue?.key?.toString() === projectKey && (
                 <DeleteDatasetButton
                   style={{ marginRight: "10px", marginBottom: "10px" }}
                   record={catalogue}

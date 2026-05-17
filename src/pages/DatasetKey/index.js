@@ -103,7 +103,7 @@ class DatasetPage extends React.Component {
           key: datasetKey,
           section,
           taxonOrNameKey,
-          catalogueKey,
+          projectKey,
           subsection,
         },
       },
@@ -133,7 +133,7 @@ class DatasetPage extends React.Component {
     return (
       <Layout
         selectedDataset={dataset}
-        selectedCatalogueKey={catalogueKey}
+        selectedCatalogueKey={projectKey}
         openKeys={
           isProject && ["imports", "diff", "import-timeline"].includes(section)
             ? ["assembly"]
@@ -237,14 +237,14 @@ class DatasetPage extends React.Component {
           <WorkBench
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}
 
         {sect === "duplicates" && !taxonOrNameKey && (
           <Duplicates
             datasetKey={datasetKey}
-            catalogueKey={dataset?.origin === "project" ? datasetKey : null}
+            projectKey={dataset?.origin === "project" ? datasetKey : null}
             assembly={!!dataset?.origin === "project"}
             dataset={dataset}
             location={this.props.location}
@@ -332,7 +332,7 @@ class DatasetPage extends React.Component {
 
         {sect === "publisher" && taxonOrNameKey && (
           <CataloguePublisherKey
-            catalogueKey={datasetKey}
+            projectKey={datasetKey}
             publisherKey={taxonOrNameKey}
           />
         )}

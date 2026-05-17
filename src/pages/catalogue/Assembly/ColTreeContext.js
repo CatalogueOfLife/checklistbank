@@ -3,7 +3,7 @@ import axios from "axios";
 import config from "../../../config";
 import { notification } from "antd";
 
-export const applyDecision = (taxon, catalogueKey, cb) => {
+export const applyDecision = (taxon, projectKey, cb) => {
 
   const { datasetKey } = taxon;
   //this.setState({ postingDecisions: true });
@@ -26,7 +26,7 @@ export const applyDecision = (taxon, catalogueKey, cb) => {
     .then((taxa) => {
       const tx = taxa[0].data;
       const parent = taxa[1].data;
-      return axios.post(`${config.dataApi}dataset/${catalogueKey}/decision`, {
+      return axios.post(`${config.dataApi}dataset/${projectKey}/decision`, {
         subjectDatasetKey: datasetKey,
         subject: {
           id: _.get(tx, "id"),
@@ -43,7 +43,7 @@ export const applyDecision = (taxon, catalogueKey, cb) => {
     })
     .then((decisionId) =>
       axios(
-        `${config.dataApi}dataset/${catalogueKey}/decision/${decisionId.data}`
+        `${config.dataApi}dataset/${projectKey}/decision/${decisionId.data}`
       )
     )
     .then((res) => {

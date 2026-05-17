@@ -21,17 +21,17 @@ class TaxonomicCoverage extends React.Component {
   }
 
   getData = () => {
-    const { dataset, catalogueKey } = this.props;
+    const { dataset, projectKey } = this.props;
     const taxonMap = {};
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector?limit=1000&subjectDatasetKey=${dataset.key}`
+      `${config.dataApi}dataset/${projectKey}/sector?limit=1000&subjectDatasetKey=${dataset.key}`
     ).then((res) => {
       return Promise.all(
         res.data.result.map((t) =>
           axios(
             `${
               config.dataApi
-            }dataset/${catalogueKey}/nameusage/search?TAXON_ID=${
+            }dataset/${projectKey}/nameusage/search?TAXON_ID=${
               t.target ? t.target.id : ""
             }&rank=${t.subject ? t.subject.rank : ""}&q=${
               t.subject ? t.subject.name : ""
@@ -61,7 +61,7 @@ class TaxonomicCoverage extends React.Component {
 
   render = () => {
     const { taxonMap } = this.state;
-    const { catalogueKey, style, isProject } = this.props;
+    const { projectKey, style, isProject } = this.props;
     return taxonMap
       ? Object.keys(taxonMap).map((k) => (
           <div style={style}>
@@ -71,8 +71,8 @@ class TaxonomicCoverage extends React.Component {
                 <NavLink
                   to={{
                     pathname: isProject
-                      ? `/catalogue/${catalogueKey}/assembly`
-                      : `/dataset/${catalogueKey}/classification`,
+                      ? `/project/${projectKey}/assembly`
+                      : `/dataset/${projectKey}/classification`,
                     search: isProject
                       ? `?assemblyTaxonKey=${tx.id}`
                       : `?taxonKey=${tx.id}`,

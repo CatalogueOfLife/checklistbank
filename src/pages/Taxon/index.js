@@ -80,15 +80,15 @@ const initialState = {
   edit: false,
 };
 
-const getDatasetTreeRoute = (location, datasetKey, catalogueKey) => {
-  return location.pathname.startsWith(`/catalogue/${catalogueKey}`)
-    ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/classification`
+const getDatasetTreeRoute = (location, datasetKey, projectKey) => {
+  return location.pathname.startsWith(`/project/${projectKey}`)
+    ? `/project/${projectKey}/dataset/${datasetKey}/classification`
     : `/dataset/${datasetKey}/classification`;
 };
 
-const isAssembly = (location, catalogueKey) => {
+const isAssembly = (location, projectKey) => {
   return (
-    location.pathname.startsWith(`/catalogue/${catalogueKey}`) &&
+    location.pathname.startsWith(`/project/${projectKey}`) &&
     location.pathname.indexOf("/dataset") === -1
   );
 };
@@ -367,9 +367,9 @@ class TaxonPage extends React.Component {
   };
 
   canEdit = () => {
-    const { dataset, datasetKey, catalogueKey, user } = this.props;
+    const { dataset, datasetKey, projectKey, user } = this.props;
     const { taxon } = this.state;
-    if (Number(datasetKey) === catalogueKey) {
+    if (Number(datasetKey) === projectKey) {
       return canEditDataset({ key: datasetKey }, user) && !taxon?.sectorKey;
     } else if (
       dataset?.key === Number(datasetKey) &&
@@ -386,7 +386,7 @@ class TaxonPage extends React.Component {
   render() {
     const {
       datasetKey,
-      catalogueKey,
+      projectKey,
       getNomStatus,
       rank,
       issueMap,
@@ -512,8 +512,8 @@ class TaxonPage extends React.Component {
                 <Button
                   onClick={() => {
                     history.push(
-                      Number(datasetKey) === catalogueKey
-                        ? `/catalogue/${catalogueKey}/name/${encodeURIComponent(
+                      Number(datasetKey) === projectKey
+                        ? `/project/${projectKey}/name/${encodeURIComponent(
                             taxon.name.id
                           )}`
                         : `/dataset/${
@@ -612,14 +612,14 @@ class TaxonPage extends React.Component {
                       <NavLink
                         style={{ marginLeft: "5px" }}
                         to={{
-                          pathname: isAssembly(location, catalogueKey)
-                            ? `/catalogue/${catalogueKey}/assembly`
+                          pathname: isAssembly(location, projectKey)
+                            ? `/project/${projectKey}/assembly`
                             : getDatasetTreeRoute(
                                 location,
                                 datasetKey,
-                                catalogueKey
+                                projectKey
                               ),
-                          search: isAssembly(location, catalogueKey)
+                          search: isAssembly(location, projectKey)
                             ? `?assemblyTaxonKey=${encodeURIComponent(
                                 _.get(taxon, "id")
                               )}`
@@ -638,7 +638,7 @@ class TaxonPage extends React.Component {
                     data={_.get(info, "classification")}
                     taxon={taxon}
                     datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                   />
                 </PresentationItem>
               )}
@@ -651,7 +651,7 @@ class TaxonPage extends React.Component {
                     data={info.nameRelations.filter(
                       (rel) => rel?.usageId === taxon?.id
                     )}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                     datasetKey={datasetKey}
                   />
                 )}
@@ -665,7 +665,7 @@ class TaxonPage extends React.Component {
                     data={info.nameRelations.filter(
                       (rel) => rel?.usageId !== taxon?.id
                     )}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                     datasetKey={datasetKey}
                   />
                 )}
@@ -682,7 +682,7 @@ class TaxonPage extends React.Component {
                     typeMaterial={_.get(info, "typeMaterial")}
                     style={{ marginTop: "-3px" }}
                     datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                   />
                 </PresentationItem>
               )}
@@ -756,7 +756,7 @@ class TaxonPage extends React.Component {
                     style={{ marginTop: "-3px" }}
                     data={info.vernacularNames}
                     datasetKey={taxon.datasetKey}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                   />
                 </PresentationItem>
               )}
@@ -766,7 +766,7 @@ class TaxonPage extends React.Component {
                     style={{ marginTop: "-3px" }}
                     data={info.distributions}
                     datasetKey={datasetKey}
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                   />
                 </PresentationItem>
               )}
@@ -1008,7 +1008,7 @@ class TaxonPage extends React.Component {
 const mapContextToProps = ({
   issueMap,
   dataset,
-  catalogueKey,
+  projectKey,
   getNomStatus,
   rank,
   user,
@@ -1017,7 +1017,7 @@ const mapContextToProps = ({
 }) => ({
   issueMap,
   dataset,
-  catalogueKey,
+  projectKey,
   getNomStatus,
   rank,
   user,

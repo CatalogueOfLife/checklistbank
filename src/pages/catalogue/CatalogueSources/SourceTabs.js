@@ -17,7 +17,7 @@ import { NavLink } from "react-router-dom";
 
 const SourceTabs = ({
   match: {
-    params: { catalogueKey },
+    params: { projectKey },
   },
   location,
 }) => {
@@ -30,24 +30,24 @@ const SourceTabs = ({
     } else {
       setSubjectDatasetKey(null);
     }
-  }, [catalogueKey, location?.pathname]);
+  }, [projectKey, location?.pathname]);
   const items = [
     {
       label: (
-        <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sources` }}>
+        <NavLink to={{ pathname: `/project/${projectKey}/sources` }}>
           Metrics
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sources`,
+      key: `/project/${projectKey}/sources`,
       icon: <LineChartOutlined />,
     },
     {
       label: (
-        <NavLink to={{ pathname: `/catalogue/${catalogueKey}/sources/issues` }}>
+        <NavLink to={{ pathname: `/project/${projectKey}/sources/issues` }}>
           Issues
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sources/issues`,
+      key: `/project/${projectKey}/sources/issues`,
       icon: <WarningOutlined />,
     },
     {
@@ -55,7 +55,7 @@ const SourceTabs = ({
         <NavLink
           to={{
             pathname: `/dataset`,
-            search: `?contributesTo=${catalogueKey}`,
+            search: `?contributesTo=${projectKey}`,
           }}
           end
         >
@@ -77,8 +77,8 @@ const SourceTabs = ({
   );
 };
 
-const mapContextToProps = ({ catalogueKey }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey }) => ({
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(withRouter(SourceTabs));

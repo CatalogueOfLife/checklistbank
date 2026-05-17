@@ -21,7 +21,7 @@ import DataLoader from "dataloader";
 import _ from "lodash";
 const PAGE_SIZE = 500;
 
-const SectorPriority = ({ catalogueKey, location, addError, user }) => {
+const SectorPriority = ({ projectKey, location, addError, user }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -36,11 +36,11 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
         Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
     });
     getData();
-  }, [catalogueKey, location.search]);
+  }, [projectKey, location.search]);
 
   const onDeleteSector = (sector) => {
     axios
-      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
+      .delete(`${config.dataApi}dataset/${projectKey}/sector/${sector.id}`)
       .then(() => {
         notification.open({
           message: "Deletion triggered",
@@ -76,10 +76,10 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
       render: (text, record) => (!isNaN(text) ? text : "Not set"),
       width: 75,
     },
-    ...getColumns(catalogueKey).filter((c) => c?.title !== "Mode"),
+    ...getColumns(projectKey).filter((c) => c?.title !== "Mode"),
   ];
 
-  if (Auth.canEditDataset({ key: catalogueKey }, user)) {
+  if (Auth.canEditDataset({ key: projectKey }, user)) {
     columns.push({
       title: "Action",
       key: "action",
@@ -106,7 +106,7 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
   }
   const updatePriority = async (sector, priority) => {
     await axios.put(
-      `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`,
+      `${config.dataApi}dataset/${projectKey}/sector/${sector.id}`,
       { ...sector, priority }
     );
   };
@@ -154,10 +154,10 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
       mode: "merge",
       limit: PAGE_SIZE,
       ...qs.parse(_.get(location, "search", {})),
-      datasetKey: catalogueKey,
+      datasetKey: projectKey,
     };
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector?${qs.stringify(params)}`
+      `${config.dataApi}dataset/${projectKey}/sector?${qs.stringify(params)}`
     )
       .then(decorateWithDataset)
       .then((res) => {
@@ -182,7 +182,7 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
   const decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     const datasetLoader = new DataLoader((ids) =>
-      getSourcesBatch(ids, catalogueKey)
+      getSourcesBatch(ids, projectKey)
     );
 
     return Promise.all(
@@ -202,10 +202,10 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
     >
       <PageContent>
         <SectorTabs />
-        {Auth.canEditDataset({ key: catalogueKey }, user) && (
+        {Auth.canEditDataset({ key: projectKey }, user) && (
           <h2>Change sector priority by dragging rows in this table</h2>
         )}
-        {!Auth.canEditDataset({ key: catalogueKey }, user) && (
+        {!Auth.canEditDataset({ key: projectKey }, user) && (
           <h2>Prioritazation of merge sectors</h2>
         )}
         <ReactDragListView {...dragProps}>
@@ -245,11 +245,11 @@ const SectorPriority = ({ catalogueKey, location, addError, user }) => {
   );
 };
 
-const mapContextToProps = ({ user, rank, catalogueKey, addError }) => ({
+const mapContextToProps = ({ user, rank, projectKey, addError }) => ({
   addError,
   user,
   rank,
-  catalogueKey,
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(withRouter(SectorPriority));

@@ -34,7 +34,7 @@ class Reference extends React.Component {
   submitData = async (values) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     const id = _.get(values, "id");
@@ -45,12 +45,12 @@ class Reference extends React.Component {
     };
     const task = id
       ? axios.put(
-        `${config.dataApi}dataset/${catalogueKey}/reference/${id}`,
+        `${config.dataApi}dataset/${projectKey}/reference/${id}`,
         values,
         conf
       )
       : axios.post(
-        `${config.dataApi}dataset/${catalogueKey}/reference`,
+        `${config.dataApi}dataset/${projectKey}/reference`,
         values,
         conf
       );
@@ -77,7 +77,7 @@ class Reference extends React.Component {
     const {
       catalogue,
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       user
     } = this.props;
@@ -120,7 +120,7 @@ class Reference extends React.Component {
               />
             </Modal>
           )}
-          {Auth.canEditDataset({ key: catalogueKey }, user) && <Row>
+          {Auth.canEditDataset({ key: projectKey }, user) && <Row>
             <Col style={{ textAlign: "right", marginBottom: "10px" }}>
               <Button onClick={() => this.setState({ showAddNewModal: true })}>
                 Add new
@@ -128,7 +128,7 @@ class Reference extends React.Component {
             </Col>
           </Row>}
 
-          <RefTable datasetKey={catalogueKey}></RefTable>
+          <RefTable datasetKey={projectKey}></RefTable>
         </PageContent>
       </Layout>
     );

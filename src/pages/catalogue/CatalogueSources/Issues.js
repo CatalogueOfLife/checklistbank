@@ -35,10 +35,10 @@ class GSDIssuesMatrix extends React.Component {
     this.setState({ loading: true });
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
-    axios(`${config.dataApi}dataset?limit=1000&contributesTo=${catalogueKey}`)
+    axios(`${config.dataApi}dataset?limit=1000&contributesTo=${projectKey}`)
       .then((res) => {
         return Promise.all(
           !res.data.result
@@ -94,33 +94,33 @@ class GSDIssuesMatrix extends React.Component {
   getCatalogueSpeciesCount = (sourceDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
+      `${config.dataApi}dataset/${projectKey}/nameusage/search?limit=0&rank=SPECIES&sectorDatasetKey=${sourceDatasetKey}&limit=0`
     ).then((res) => _.get(res, "data.total"));
   };
 
   getMetrics = (sourceDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/source/${sourceDatasetKey}/metrics`
+      `${config.dataApi}dataset/${projectKey}/source/${sourceDatasetKey}/metrics`
     ).then((res) => res.data);
   };
 
   getBrokenDecisions = (sourceDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision?broken=true&subjectDatasetKey=${sourceDatasetKey}&limit=0`
+      `${config.dataApi}dataset/${projectKey}/decision?broken=true&subjectDatasetKey=${sourceDatasetKey}&limit=0`
     ).then((res) => _.get(res, "data.total"));
   };
 
@@ -142,7 +142,7 @@ class GSDIssuesMatrix extends React.Component {
       issue,
       issueMap,
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       catalogue,
     } = this.props;
@@ -177,7 +177,7 @@ class GSDIssuesMatrix extends React.Component {
           return (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                pathname: `/project/${projectKey}/dataset/${record.key}/workbench`,
               }}
               end
             >
@@ -214,7 +214,7 @@ class GSDIssuesMatrix extends React.Component {
           return (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/decision`,
+                pathname: `/project/${projectKey}/decision`,
                 search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${record.key}`,
               }}
               end
@@ -246,7 +246,7 @@ class GSDIssuesMatrix extends React.Component {
             return (
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${record.key}/workbench`,
+                  pathname: `/project/${projectKey}/dataset/${record.key}/workbench`,
                   search: `?issue=${i.name}`,
                 }}
                 end

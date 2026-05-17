@@ -19,7 +19,7 @@ const CatalogueSources = ({
   match: {
     params: { issues },
   },
-  catalogueKey,
+  projectKey,
   catalogue,
 }) => {
   return (
@@ -40,9 +40,9 @@ const CatalogueSources = ({
         {!issues && (
           <SourceMetrics
             isProject={true}
-            catalogueKey={catalogueKey}
-            datasetKey={catalogueKey}
-            basePath={`/catalogue/${catalogueKey}`}
+            projectKey={projectKey}
+            datasetKey={projectKey}
+            basePath={`/project/${projectKey}`}
           />
         )}
         {!!issues && <SourceIssues />}
@@ -56,13 +56,13 @@ const mapContextToProps = ({
   issue,
   issueMap,
   catalogue,
-  catalogueKey,
+  projectKey,
 }) => ({
   user,
   issue,
   issueMap,
   catalogue,
-  catalogueKey,
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(withRouter(CatalogueSources));

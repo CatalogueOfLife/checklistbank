@@ -32,15 +32,15 @@ const SpeciesestimateModal = (props) => {
   };
 
   const submitData = (values) => {
-    const { taxon, catalogueKey } = props;
+    const { taxon, projectKey } = props;
     const newEst = {
-      datasetKey: catalogueKey,
+      datasetKey: projectKey,
       referenceId: _.get(selectedReference, "key") ? selectedReference.key : "",
       estimate: values.estimate,
       type: values.type,
       note: values.note,
     };
-    axios(`${config.dataApi}dataset/${catalogueKey}/taxon/${taxon.id}`)
+    axios(`${config.dataApi}dataset/${projectKey}/taxon/${taxon.id}`)
       .then((tx) => {
         const target = {
           id: _.get(tx, "data.name.id"),
@@ -50,7 +50,7 @@ const SpeciesestimateModal = (props) => {
           rank: _.get(tx, "data.name.rank"),
         };
         return axios.all([
-          axios.post(`${config.dataApi}dataset/${catalogueKey}/estimate`, {
+          axios.post(`${config.dataApi}dataset/${projectKey}/estimate`, {
             ...newEst,
             target: target,
           }),
@@ -86,7 +86,7 @@ const SpeciesestimateModal = (props) => {
     taxon,
     onCancel,
     // form: { getFieldDecorator },
-    catalogueKey,
+    projectKey,
     estimateType,
   } = props;
   //  const { estimates } = this.state;
@@ -181,7 +181,7 @@ const SpeciesestimateModal = (props) => {
           <FormItem {...formItemLayout} label="Reference" name="reference">
             {
               <ReferenceAutocomplete
-                datasetKey={catalogueKey}
+                datasetKey={projectKey}
                 onSelectReference={setSelectedReference}
                 onResetSearch={() => setSelectedReference(null)}
               />
@@ -218,7 +218,7 @@ const SpeciesestimateModal = (props) => {
 
       {estimates && _.isArray(estimates) && (
         <EditableTable
-          catalogueKey={catalogueKey}
+          projectKey={projectKey}
           data={estimates}
           onDataUpdate={(estimates) => setEstimates(estimates)}
         />

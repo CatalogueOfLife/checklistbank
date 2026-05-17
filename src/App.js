@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ConfigProvider } from "antd";
 import PrivateRoute from "./components/Auth/PrivateRoute";
@@ -92,6 +99,15 @@ const NavigatorInstaller = () => {
   return null;
 };
 
+// Back-compat: the route prefix was renamed from `/catalogue/` to `/project/`.
+// Preserve the path tail and query string so existing bookmarks and external
+// links don't break.
+const CatalogueRedirect = () => {
+  const location = useLocation();
+  const newPath = location.pathname.replace(/^\/catalogue\//, "/project/");
+  return <Navigate to={`${newPath}${location.search}${location.hash}`} replace />;
+};
+
 // Router 6 requires `<Route>` to live inside `<Routes>`. The Router-5 code
 // rendered these provider routes as siblings of the main `<Switch>` so each
 // matched independently; we give each its own `<Routes>` so the same
@@ -106,17 +122,17 @@ const ProviderRoutes = () => (
     </Routes>
     <Routes>
       <Route
-        path="/catalogue/:catalogueKey/dataset/:sourceKey/*"
+        path="/project/:projectKey/dataset/:sourceKey/*"
         element={<DatasetProvider />}
       />
       <Route path="*" element={null} />
     </Routes>
     <Routes>
-      <Route path="/catalogue/:catalogueKey/*" element={<DatasetProvider />} />
+      <Route path="/project/:projectKey/*" element={<DatasetProvider />} />
       <Route path="*" element={null} />
     </Routes>
     <Routes>
-      <Route path="/catalogue/:catalogueKey/*" element={<SyncProvider />} />
+      <Route path="/project/:projectKey/*" element={<SyncProvider />} />
       <Route path="*" element={null} />
     </Routes>
     <Routes>
@@ -183,7 +199,7 @@ const App = () => {
             />
             <Route path="/imports" element={<Imports />} />
             <Route
-              path="/catalogue/:catalogueKey/references/:key?"
+              path="/project/:projectKey/references/:key?"
               element={
                 <PrivateRoute>
                   <CatalogueReferences />
@@ -191,7 +207,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sources/:issues?"
+              path="/project/:projectKey/sources/:issues?"
               element={
                 <PrivateRoute>
                   <CatalogueSources />
@@ -199,7 +215,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sourcemetrics"
+              path="/project/:projectKey/sourcemetrics"
               element={
                 <PrivateRoute>
                   <CatalogueSourceMetrics />
@@ -207,7 +223,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/options"
+              path="/project/:projectKey/options"
               element={
                 <PrivateRoute roles={["editor"]}>
                   <CatalogueOptions />
@@ -215,7 +231,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/publishers"
+              path="/project/:projectKey/publishers"
               element={
                 <PrivateRoute roles={["editor"]}>
                   <CataloguePublishers />
@@ -223,7 +239,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/assembly"
+              path="/project/:projectKey/assembly"
               element={
                 <PrivateRoute roles={["editor"]}>
                   <Assembly />
@@ -231,7 +247,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/download/:key?"
+              path="/project/:projectKey/download/:key?"
               element={
                 <PrivateRoute>
                   <CatalogueDownload />
@@ -239,7 +255,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/duplicates"
+              path="/project/:projectKey/duplicates"
               element={
                 <PrivateRoute roles={["editor"]}>
                   <AssemblyDuplicates />
@@ -247,7 +263,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/tasks"
+              path="/project/:projectKey/tasks"
               element={
                 <PrivateRoute roles={["editor"]}>
                   <AssemblyTasks />
@@ -255,7 +271,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/metadata"
+              path="/project/:projectKey/metadata"
               element={
                 <PrivateRoute>
                   <CatalogueMeta />
@@ -263,7 +279,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/editors"
+              path="/project/:projectKey/editors"
               element={
                 <PrivateRoute>
                   <ProjectEditors />
@@ -271,7 +287,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/names"
+              path="/project/:projectKey/names"
               element={
                 <PrivateRoute>
                   <CatalogueNameSearch />
@@ -279,7 +295,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sector/priority"
+              path="/project/:projectKey/sector/priority"
               element={
                 <PrivateRoute>
                   <SectorPriority />
@@ -287,7 +303,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sector/sync"
+              path="/project/:projectKey/sector/sync"
               element={
                 <PrivateRoute>
                   <SectorSync />
@@ -295,7 +311,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sector/publishers"
+              path="/project/:projectKey/sector/publishers"
               element={
                 <PrivateRoute>
                   <SectorPublishers />
@@ -303,7 +319,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sector"
+              path="/project/:projectKey/sector"
               element={
                 <PrivateRoute>
                   <CatalogueSectors />
@@ -311,7 +327,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/publisher/:key?"
+              path="/project/:projectKey/publisher/:key?"
               element={
                 <PrivateRoute>
                   <CataloguePublisherKey />
@@ -319,7 +335,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/decision"
+              path="/project/:projectKey/decision"
               element={
                 <PrivateRoute>
                   <CatalogueDecisions />
@@ -327,7 +343,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/issues"
+              path="/project/:projectKey/issues"
               element={
                 <PrivateRoute>
                   <CatalogueIssues />
@@ -335,7 +351,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/sync/:sectorKey/diff"
+              path="/project/:projectKey/sync/:sectorKey/diff"
               element={
                 <PrivateRoute>
                   <SectorDiff />
@@ -343,7 +359,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/taxon/:taxonOrNameKey"
+              path="/project/:projectKey/taxon/:taxonOrNameKey"
               element={
                 <PrivateRoute>
                   <CatalogueTaxon />
@@ -351,7 +367,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/name/:taxonOrNameKey"
+              path="/project/:projectKey/name/:taxonOrNameKey"
               element={
                 <PrivateRoute>
                   <CatalogueName />
@@ -359,7 +375,7 @@ const App = () => {
               }
             />
             <Route
-              path="/catalogue/:catalogueKey/dataset/:sourceKey/:section/:taxonOrNameKey?"
+              path="/project/:projectKey/dataset/:sourceKey/:section/:taxonOrNameKey?"
               element={
                 <PrivateRoute>
                   <CatalogueSourceDataset />
@@ -407,6 +423,7 @@ const App = () => {
             <Route path="/tools/index" element={<ToolIndex />} />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
+            <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
           </ThemeProvider>

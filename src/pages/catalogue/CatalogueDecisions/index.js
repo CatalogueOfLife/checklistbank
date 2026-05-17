@@ -8,7 +8,7 @@ import Decisions from "./Decisions";
 
 const CatalogueDecisions = ({
   match: {
-    params: { catalogueKey },
+    params: { projectKey },
   },
 }) => {
   return (
@@ -18,7 +18,7 @@ const CatalogueDecisions = ({
       title="Decisions"
     >
       <PageContent>
-        <Decisions datasetKey={catalogueKey} type="project" />
+        <Decisions datasetKey={projectKey} type="project" />
       </PageContent>
     </Layout>
   );

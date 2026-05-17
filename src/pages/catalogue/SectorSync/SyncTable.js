@@ -31,7 +31,7 @@ const tagColors = {
   failed: "red",
   "in queue": "orange",
 };
-const getColumns = (catalogueKey) => [
+const getColumns = (projectKey) => [
   {
     title: "Source",
     dataIndex: ["sector", "dataset", "alias"],
@@ -45,7 +45,7 @@ const getColumns = (catalogueKey) => [
         )}
         <NavLink
           to={{
-            pathname: `/catalogue/${catalogueKey}/dataset/${record.sector.dataset.key}/metadata`,
+            pathname: `/project/${projectKey}/dataset/${record.sector.dataset.key}/metadata`,
           }}
         >
           {_.get(record, "sector.dataset.alias") ||
@@ -70,7 +70,7 @@ const getColumns = (catalogueKey) => [
           )}
           <NavLink
             to={{
-              pathname: `/catalogue/${catalogueKey}/names`,
+              pathname: `/project/${projectKey}/names`,
               search: `?q=${_.get(
                 record,
                 "sector.subject.name"
@@ -107,7 +107,7 @@ const getColumns = (catalogueKey) => [
           {_.get(record, "sector.target.id") && (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/assembly`,
+                pathname: `/project/${projectKey}/assembly`,
                 search: `?assemblyTaxonKey=${_.get(
                   record,
                   "sector.target.id"
@@ -186,14 +186,14 @@ const getColumns = (catalogueKey) => [
         {record.state === "finished" ? (
         <>
           <Tooltip title="Name list">
-            <a href={`${config.dataApi}dataset/${catalogueKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
+            <a href={`${config.dataApi}dataset/${projectKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
               <FileTextOutlined style={{ fontSize: "20px" }} />{" "}
             </a>
           </Tooltip>
           {record.attempt > 2 ? (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/sync/${record.sectorKey}/diff`,
+                pathname: `/project/${projectKey}/sync/${record.sectorKey}/diff`,
                 search:
                   record.attempt > 0
                     ? `?attempts=${record.attempt - 1}..${record.attempt}`
@@ -268,8 +268,8 @@ class SyncTable extends React.Component {
     const prevParams = qs.parse(_.get(prevProps, "location.search"));
 
     if (
-      _.get(prevProps, "match.params.catalogueKey") !==
-        _.get(this.props, "match.params.catalogueKey") ||
+      _.get(prevProps, "match.params.projectKey") !==
+        _.get(this.props, "match.params.projectKey") ||
       _.get(prevParams, "datasetKey") !== _.get(params, "datasetKey")
     ) {
       this.setState(
@@ -288,15 +288,15 @@ class SyncTable extends React.Component {
     this.setState({ loading: true, params });
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     history.push({
-      pathname: `/catalogue/${catalogueKey}/sector/sync`,
+      pathname: `/project/${projectKey}/sector/sync`,
       search: `?${qs.stringify(params)}`,
     });
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector/sync?${qs.stringify(
+      `${config.dataApi}dataset/${projectKey}/sector/sync?${qs.stringify(
         params
       )}`
     )
@@ -305,7 +305,7 @@ class SyncTable extends React.Component {
           res.data.result && _.isArray(res.data.result)
             ? res.data.result.map((sync) =>
                 axios(
-                  `${config.dataApi}dataset/${catalogueKey}/sector/${sync.sectorKey}`
+                  `${config.dataApi}dataset/${projectKey}/sector/${sync.sectorKey}`
                 )
                   .then((sector) => {
                     sync.sector = sector.data;
@@ -391,12 +391,12 @@ class SyncTable extends React.Component {
     const { user, sectorImportState } = this.props;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
-    const columns = Auth.canEditDataset({ key: catalogueKey }, user)
+    const columns = Auth.canEditDataset({ key: projectKey }, user)
       ? [
-          ...getColumns(catalogueKey),
+          ...getColumns(projectKey),
           {
             title: "Action",
             dataIndex: "",
@@ -414,7 +414,7 @@ class SyncTable extends React.Component {
               ),
           },
         ]
-      : getColumns(catalogueKey);
+      : getColumns(projectKey);
 
     columns[5].filters = sectorImportState.map((i) => ({
       text: _.startCase(i),
@@ -428,11 +428,11 @@ class SyncTable extends React.Component {
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
         <Row>
-          {!sectorKey && Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {!sectorKey && Auth.canEditDataset({ key: projectKey }, user) && (
             <Col>
               {" "}
               <SyncAllSectorsButton
-                catalogueKey={catalogueKey}
+                projectKey={projectKey}
                 onError={(err) => this.setState({ syncAllError: err })}
                 onSuccess={() => this.setState({ syncAllError: null })}
               />
@@ -451,7 +451,7 @@ class SyncTable extends React.Component {
           <Col>
             <DatasetAutocomplete
               defaultDatasetKey={datasetKey}
-              contributesTo={catalogueKey}
+              contributesTo={projectKey}
               onResetSearch={() => this.updateSearch({ datasetKey: null })}
               onSelectDataset={this.onSelectDataset}
               placeHolder="Source dataset"
@@ -591,10 +591,10 @@ class SyncTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, sectorImportState, catalogueKey }) => ({
+const mapContextToProps = ({ user, sectorImportState, projectKey }) => ({
   user,
   sectorImportState,
-  catalogueKey,
+  projectKey,
 });
 
 export default withRouter(withContext(mapContextToProps)(SyncTable));

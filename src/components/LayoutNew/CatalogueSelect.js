@@ -58,13 +58,13 @@ class CatalogueSelect extends React.Component {
     const { setCatalogue } = this.props;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     const { catalogues } = this.state;
-    if (catalogueKey) {
+    if (projectKey) {
       const newPath = _.get(this.props, "location.pathname").replace(
-        `catalogue/${catalogueKey}/`,
+        `catalogue/${projectKey}/`,
         `catalogue/${newCatalogueKey}/`
       );
       history.push({
@@ -83,7 +83,7 @@ class CatalogueSelect extends React.Component {
   render = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       catalogue,
       iconOnly = false,
@@ -123,7 +123,7 @@ class CatalogueSelect extends React.Component {
               showSearch
               loading={loading}
               style={{ width: "100%" }}
-              value={catalogueKey || null}
+              value={projectKey || null}
               placeholder="Select project"
               optionFilterProp="children"
               onChange={this.onCatalogueChange}
@@ -156,12 +156,12 @@ class CatalogueSelect extends React.Component {
   };
 }
 const mapContextToProps = ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setCatalogue,
   user,
 }) => ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setCatalogue,
   user,

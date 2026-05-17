@@ -18,7 +18,7 @@ function truncate(str, n){
 }; */
 
 const SourceSelect = ({
-  catalogueKey,
+  projectKey,
   setSourceDataset,
 
   match,
@@ -30,7 +30,7 @@ const SourceSelect = ({
 
   useEffect(() => {
     // getSources();
-  }, [catalogueKey]);
+  }, [projectKey]);
 
   useEffect(() => {
     if (match?.params?.sourceKey) {
@@ -41,7 +41,7 @@ const SourceSelect = ({
   const getSourceDataset = async (key) => {
     try {
       const res = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/source/${key}`
+        `${config.dataApi}dataset/${projectKey}/source/${key}`
       );
 
       setSourceDataset(res?.data);
@@ -59,24 +59,24 @@ const SourceSelect = ({
       params: { sourceKey: key },
     } = match;
     if (
-      catalogueKey &&
+      projectKey &&
       selectedSource &&
       _.get(location, "pathname").indexOf(
-        `catalogue/${catalogueKey}/dataset/`
+        `catalogue/${projectKey}/dataset/`
       ) > -1
     ) {
       const newPath = _.get(location, "pathname").replace(
-        `catalogue/${catalogueKey}/dataset/${key}/`,
-        `catalogue/${catalogueKey}/dataset/${selectedSource.key}/`
+        `catalogue/${projectKey}/dataset/${key}/`,
+        `catalogue/${projectKey}/dataset/${selectedSource.key}/`
       );
       setSourceDataset(selectedSource?.data);
       history.push({
         pathname: newPath,
       });
-    } else if (catalogueKey) {
+    } else if (projectKey) {
       setSourceDataset(selectedSource?.data);
       history.push({
-        pathname: `/catalogue/${catalogueKey}/dataset/${selectedSource.key}/issues`,
+        pathname: `/project/${projectKey}/dataset/${selectedSource.key}/issues`,
       });
     }
     //  setVisible(false);
@@ -107,7 +107,7 @@ const SourceSelect = ({
           }}
         >
           <DatasetAutocomplete
-            contributesTo={catalogueKey}
+            contributesTo={projectKey}
             onSelectDataset={onSourceChange}
             defaultDatasetKey={match?.params?.sourceKey}
             merge={merge}
@@ -122,14 +122,14 @@ const SourceSelect = ({
 };
 
 const mapContextToProps = ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setSourceDataset,
   sourceDataset,
   user,
   dataset,
 }) => ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setSourceDataset,
   sourceDataset,

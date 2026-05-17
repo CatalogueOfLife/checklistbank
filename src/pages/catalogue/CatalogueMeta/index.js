@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { Helmet } from "react-helmet-async";
 
 
-const CatalogueMeta = ({ catalogueKey, catalogue }) => (
+const CatalogueMeta = ({ projectKey, catalogue }) => (
   !catalogue ? <Exception404 /> :
     <Layout
       openKeys={["assembly"]}
@@ -23,7 +23,7 @@ const CatalogueMeta = ({ catalogueKey, catalogue }) => (
       />}
 
 
-      <DatasetMeta id={catalogueKey} />
+      <DatasetMeta id={projectKey} />
 
 
     </Layout>
@@ -33,5 +33,5 @@ const CatalogueMeta = ({ catalogueKey, catalogue }) => (
 
 
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue })
+const mapContextToProps = ({ projectKey, catalogue }) => ({ projectKey, catalogue })
 export default withContext(mapContextToProps)(CatalogueMeta);

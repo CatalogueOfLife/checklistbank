@@ -78,13 +78,13 @@ const EditableTable = (props) => {
     setEditingKey('');
   };
   const decorateEstimatesWithReference = (data) => {
-    const {catalogueKey} = props;
+    const {projectKey} = props;
     if (_.isArray(data)) {
         Promise.all(
           data.filter(a => !_.isUndefined(a.referenceId)).map(d =>
             axios(
               `${config.dataApi}dataset/${
-                catalogueKey
+                projectKey
               }/reference/${d.referenceId}`
             ).then(res => {
                 d.reference = res.data.citation
@@ -98,7 +98,7 @@ const EditableTable = (props) => {
       } 
   }
   const save = async id => {
-    const {catalogueKey} = props;
+    const {projectKey} = props;
     try {
       const row = await form.validateFields();
       const newData = [...data];
@@ -110,7 +110,7 @@ const EditableTable = (props) => {
       });
       
       try{
-        await axios.put(`${config.dataApi}dataset/${catalogueKey}/estimate/${id}`, {...item, ...row})
+        await axios.put(`${config.dataApi}dataset/${projectKey}/estimate/${id}`, {...item, ...row})
        if(typeof props.onDataUpdate === 'function'){
         props.onDataUpdate(newData)
     }

@@ -79,7 +79,7 @@ class DatasetClassification extends React.Component {
               treeRef={(ref) => (this.treeRef = ref)}
               dataset={dataset}
               treeType="readOnly"
-              catalogueKey={dataset.key}
+              projectKey={dataset.key}
               defaultExpandKey={params.taxonKey}
               location={location}
               insertPlaceholder={insertPlaceholder}
@@ -92,5 +92,5 @@ class DatasetClassification extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey }) => ({ user, catalogueKey });
+const mapContextToProps = ({ user, projectKey }) => ({ user, projectKey });
 export default withContext(mapContextToProps)(DatasetClassification);

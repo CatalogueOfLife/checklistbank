@@ -38,7 +38,7 @@ const PAGE_SIZE = 10;
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
-const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
+const Publishers = ({ user, projectKey, location, addError, catalogue }) => {
   const defaltColumns = [
     {
       title: "id",
@@ -49,7 +49,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
       render: (text, record) => (
         <NavLink
           to={{
-            pathname: `/catalogue/${catalogueKey}/publisher/${record?.id}`,
+            pathname: `/project/${projectKey}/publisher/${record?.id}`,
           }}
         >
           {text}
@@ -117,7 +117,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
   }, [location]);
 
   useEffect(() => {
-    if (Auth.canEditDataset({ key: catalogueKey }, user)) {
+    if (Auth.canEditDataset({ key: projectKey }, user)) {
       setColumns([
         ...defaltColumns,
         {
@@ -153,7 +153,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
         },
       ]);
     }
-  }, [user, catalogueKey]);
+  }, [user, projectKey]);
   const getData = async () => {
     let params = location?.search ? qs.parse(location?.search) : {};
     const { q } = params;
@@ -168,7 +168,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
 
     setLoading(true);
     const res = await axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector/publisher?${qs.stringify(
+      `${config.dataApi}dataset/${projectKey}/sector/publisher?${qs.stringify(
         query
       )}`
     );
@@ -190,7 +190,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
   const deletePublisher = async (id) => {
     try {
       const res = await axios.delete(
-        `${config.dataApi}dataset/${catalogueKey}/sector/publisher/${id}`
+        `${config.dataApi}dataset/${projectKey}/sector/publisher/${id}`
       );
       getData();
     } catch (error) {
@@ -269,7 +269,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
             /> */}
         </Col>
         <Col>
-          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {Auth.canEditDataset({ key: projectKey }, user) && (
             <Button type="primary" onClick={() => setPublisherForEdit({})}>
               Add publisher
             </Button>
@@ -292,14 +292,14 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
 
 const mapContextToProps = ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,
   userRole,
 }) => ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,

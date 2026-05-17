@@ -34,7 +34,7 @@ export const AssemblyNodeContent = ({ mode }) => {
               style={{ width: "100%" }}
               type="primary"
               onClick={() => {
-                history.push(`/catalogue/${catalogueKey}/taxon/${taxon.id}`);
+                history.push(`/project/${projectKey}/taxon/${taxon.id}`);
               }}
             >
               Show taxon

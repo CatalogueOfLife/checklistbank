@@ -15,7 +15,7 @@ class DatasetProvider extends React.Component {
   componentDidMount = () => {
     const {
       match: {
-        params: { key, catalogueKey },
+        params: { key, projectKey },
       },
       dataset,
       catalogue,
@@ -24,20 +24,20 @@ class DatasetProvider extends React.Component {
       this.fetchDataset(key);
     }
     if (
-      catalogueKey &&
-      Number(catalogueKey) !== Number(_.get(catalogue, "key"))
+      projectKey &&
+      Number(projectKey) !== Number(_.get(catalogue, "key"))
     ) {
-      this.fetchCatalogue(catalogueKey);
+      this.fetchCatalogue(projectKey);
     }
   };
 
   componentDidUpdate = (prevProps) => {
     const nextKey = _.get(this.props, "match.params.key");
-    const nextCatalogueKey = _.get(this.props, "match.params.catalogueKey");
+    const nextCatalogueKey = _.get(this.props, "match.params.projectKey");
 
     const {
       match: {
-        params: { key, catalogueKey },
+        params: { key, projectKey },
       },
     } = prevProps;
 
@@ -47,7 +47,7 @@ class DatasetProvider extends React.Component {
     if (
       nextCatalogueKey &&
       !this.state.catalogueLoading &&
-      Number(catalogueKey) !== Number(nextCatalogueKey)
+      Number(projectKey) !== Number(nextCatalogueKey)
     ) {
       this.fetchCatalogue(nextCatalogueKey);
     }

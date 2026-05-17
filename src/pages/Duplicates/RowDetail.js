@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 import withContext from "../../components/hoc/withContext";
 
-  const expandedRowRender = ({data, selectedRowKeys, onSelectChange, index, catalogueKey}) => {
+  const expandedRowRender = ({data, selectedRowKeys, onSelectChange, index, projectKey}) => {
     const columns = [
       {
         title: "ID",

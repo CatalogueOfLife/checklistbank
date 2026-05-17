@@ -110,7 +110,7 @@ class ColTree extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (
       prevProps.dataset.key !== this.props.dataset.key ||
-      prevProps.catalogueKey !== this.props.catalogueKey ||
+      prevProps.projectKey !== this.props.projectKey ||
       prevProps.insertPlaceholder !== this.props.insertPlaceholder
     ) {
       this.setState(
@@ -156,7 +156,7 @@ class ColTree extends React.Component {
       dataset: { key },
       dataset,
       showSourceTaxon,
-      catalogueKey,
+      projectKey,
       onDeleteSector,
       defaultExpandKey,
       insertPlaceholder = false,
@@ -166,7 +166,7 @@ class ColTree extends React.Component {
     return axios(
       `${
         config.dataApi
-      }dataset/${id}/tree?catalogueKey=${catalogueKey}${this.appendTypeParam(
+      }dataset/${id}/tree?catalogueKey=${projectKey}${this.appendTypeParam(
         treeType
       )}&limit=${CHILD_PAGE_SIZE}&offset=${
         this.state.treeData.length
@@ -265,7 +265,7 @@ class ColTree extends React.Component {
       dataset: { key },
       dataset,
       showSourceTaxon,
-      catalogueKey,
+      projectKey,
       onDeleteSector,
       insertPlaceholder = false,
     } = this.props;
@@ -274,7 +274,7 @@ class ColTree extends React.Component {
     const { data } = await axios(
       `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
         defaultExpandKey
-      )}?catalogueKey=${catalogueKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
+      )}?catalogueKey=${projectKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
         treeType
       )}`
     )
@@ -404,7 +404,7 @@ class ColTree extends React.Component {
       showSourceTaxon,
       dataset,
       treeType,
-      catalogueKey,
+      projectKey,
       onDeleteSector,
       insertPlaceholder = false,
     } = this.props;
@@ -416,7 +416,7 @@ class ColTree extends React.Component {
     const res = await axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         encodeURIComponent(dataRef.taxon.id) //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${catalogueKey}${this.appendTypeParam(
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${projectKey}${this.appendTypeParam(
         treeType
       )}`
     );
@@ -558,7 +558,7 @@ class ColTree extends React.Component {
       showSourceTaxon,
       dataset,
       treeType,
-      catalogueKey,
+      projectKey,
       onDeleteSector,
     } = this.props;
     const { treeData } = this.state;
@@ -569,7 +569,7 @@ class ColTree extends React.Component {
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         dataRef.taxon.id //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${catalogueKey}${this.appendTypeParam(
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${projectKey}${this.appendTypeParam(
         treeType
       )}`
     )
@@ -709,19 +709,19 @@ class ColTree extends React.Component {
 
   decorateWithSectorsAndDataset = (res) => {
     if (!res.data.result) return res;
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     const sectorLoader = new DataLoader((ids) =>
-      getSectorsBatch(ids, catalogueKey)
+      getSectorsBatch(ids, projectKey)
     );
     const datasetLoader = new DataLoader((ids) =>
-      getSourcesBatch(ids, catalogueKey)
+      getSourcesBatch(ids, projectKey)
     );
 
     return Promise.allSettled(
       res.data.result
         .filter((tx) => !!tx.sectorKey)
         .map((tx) =>
-          sectorLoader.load(tx.sectorKey, catalogueKey).then((r) => {
+          sectorLoader.load(tx.sectorKey, projectKey).then((r) => {
             if (!r) {
               return this.setState({
                 error: { message: `Sector ${tx.sectorKey} was not found` },

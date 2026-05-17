@@ -47,7 +47,7 @@ const tailFormItemLayout = {
   },
 };
 
-const PublisherForm = ({ publisher, onError, catalogueKey, onSubmit }) => {
+const PublisherForm = ({ publisher, onError, projectKey, onSubmit }) => {
   const [error, setError] = useState(null);
   const [form] = Form.useForm();
   const selectedPublisher = Form.useWatch("publisher", form);
@@ -62,7 +62,7 @@ const PublisherForm = ({ publisher, onError, catalogueKey, onSubmit }) => {
     if (publisher?.id) {
       axios
         .put(
-          `${config.dataApi}dataset/${catalogueKey}/sector/publisher/${publisher.id}`,
+          `${config.dataApi}dataset/${projectKey}/sector/publisher/${publisher.id}`,
           {
             id: publisher?.id,
             title: values?.title || publisher?.title,
@@ -87,7 +87,7 @@ const PublisherForm = ({ publisher, onError, catalogueKey, onSubmit }) => {
         });
     } else {
       axios
-        .post(`${config.dataApi}dataset/${catalogueKey}/sector/publisher/`, {
+        .post(`${config.dataApi}dataset/${projectKey}/sector/publisher/`, {
           id: values?.publisher?.key,
           title: values?.title || values?.publisher?.title,
           alias: values?.alias,
@@ -189,11 +189,11 @@ const mapContextToProps = ({
   nomCode,
   entitytype,
   rank,
-  catalogueKey,
+  projectKey,
   nametype,
   nomstatus,
 }) => ({
-  catalogueKey,
+  projectKey,
   nomCode,
   entitytype,
   rank,

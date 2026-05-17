@@ -34,12 +34,12 @@ class SectorDiff extends React.Component {
     let query = _.get(this.props, "location.search");
     const {
       match: {
-        params: { sectorKey, catalogueKey }
+        params: { sectorKey, projectKey }
       }
     } = this.props;
 
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
+      `${config.dataApi}dataset/${projectKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
     )
       .then(res => {
         this.setState({ maxAttempt: _.get(res, 'data.result[0].attempt') })
@@ -59,7 +59,7 @@ class SectorDiff extends React.Component {
   getData = query => {
     const {
       match: {
-        params: { sectorKey, catalogueKey }
+        params: { sectorKey, projectKey }
       }
     } = this.props;
     const params = qs.parse(_.get(this.props, "location.search"));
@@ -68,7 +68,7 @@ class SectorDiff extends React.Component {
     const selectedAttempt2 = splittedAttempts ? splittedAttempts[1] : null;
     axios(
       `${config.dataApi
-      }dataset/${catalogueKey}/sector/${sectorKey}/diff${query}`
+      }dataset/${projectKey}/sector/${sectorKey}/diff${query}`
     )
       .then(res => {
         this.setState({
@@ -98,7 +98,7 @@ class SectorDiff extends React.Component {
         params: { sectorKey }
       },
       catalogue,
-      catalogueKey
+      projectKey
     } = this.props;
 
     const { error, maxAttempt, selectedAttempt1, selectedAttempt2 } = this.state;
@@ -135,7 +135,7 @@ class SectorDiff extends React.Component {
                   this.setState({ selectedAttempt1: value });
 
                   history.push({
-                    pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
+                    pathname: `/project/${projectKey}/sync/${sectorKey}/diff`,
                     search: `?attempts=${value}..${selectedAttempt2}`
                   });
                 }}
@@ -153,7 +153,7 @@ class SectorDiff extends React.Component {
                 onChange={value => {
                   this.setState({ selectedAttempt2: value });
                   history.push({
-                    pathname: `/catalogue/${catalogueKey}/sync/${sectorKey}/diff`,
+                    pathname: `/project/${projectKey}/sync/${sectorKey}/diff`,
                     search: `?attempts=${selectedAttempt1}..${value}`
                   });
                 }}
@@ -186,6 +186,6 @@ class SectorDiff extends React.Component {
   }
 }
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({ catalogueKey, catalogue });
+const mapContextToProps = ({ projectKey, catalogue }) => ({ projectKey, catalogue });
 
 export default withRouter(withContext(mapContextToProps)(SectorDiff));

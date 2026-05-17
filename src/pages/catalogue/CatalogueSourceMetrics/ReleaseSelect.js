@@ -19,7 +19,7 @@ class RealeaseSelect extends React.Component {
   }
 
   componentDidMount = () => {
-    if (this.props?.catalogueKey) {
+    if (this.props?.projectKey) {
       this.getReleases().then(() => {
         const { defaultReleaseKey } = this.props;
         if (defaultReleaseKey) {
@@ -45,16 +45,16 @@ class RealeaseSelect extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (
-      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
+      _.get(prevProps, "projectKey") !== _.get(this.props, "projectKey")
     ) {
       this.getReleases();
     }
   };
   getReleases = () => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     this.setState({ loading: true });
     return axios(
-      `${config.dataApi}dataset?releasedFrom=${catalogueKey}&limit=1000`
+      `${config.dataApi}dataset?releasedFrom=${projectKey}&limit=1000`
     ).then((res) =>
       this.setState({
         releases: _.get(res, "data.result") ? _.get(res, "data.result") : [],

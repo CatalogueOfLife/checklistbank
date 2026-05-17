@@ -332,12 +332,12 @@ class ReleaseSource extends React.Component {
                 <TaxonomicCoverage
                   isProject={false}
                   dataset={data}
-                  catalogueKey={datasetKey}
+                  projectKey={datasetKey}
                   pathToTree={pathToTree}
                 />
               </PresentationItem>
               <Metrics
-                catalogueKey={datasetKey}
+                projectKey={datasetKey}
                 dataset={data}
                 pathToSearch={`/dataset/${datasetKey}/names`}
               />

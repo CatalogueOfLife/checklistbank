@@ -65,7 +65,7 @@ class DuplicateSearchPage extends React.Component {
   constructor(props) {
     super(props);
     const limit = localStorage.getItem("col_plus_duplicates_limit");
-    const { assembly, catalogueKey } = props;
+    const { assembly, projectKey } = props;
     this.state = {
       data: [],
       rawData: [],
@@ -73,7 +73,7 @@ class DuplicateSearchPage extends React.Component {
       sectors: [],
       filteredSectors: [],
       advancedMode: false,
-      columns: columnDefaults(catalogueKey, this.getData).binomial,
+      columns: columnDefaults(projectKey, this.getData).binomial,
       params: { limit: limit ? Number(limit) : 50, offset: 0 },
       page: 1,
       totalFaked: 0,
@@ -95,7 +95,7 @@ class DuplicateSearchPage extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (
       _.get(prevProps, "dataset.key") !== _.get(this.props, "dataset.key") ||
-      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
+      _.get(prevProps, "projectKey") !== _.get(this.props, "projectKey")
     ) {
       this.initOrUpdate();
     }
@@ -104,10 +104,10 @@ class DuplicateSearchPage extends React.Component {
   initOrUpdate = () => {
     let params = qs.parse(_.get(this.props, "location.search"));
     /*  this.sectorLoader = new DataLoader((ids) =>
-       getSectorsBatch(ids, this.props.catalogueKey)
+       getSectorsBatch(ids, this.props.projectKey)
      ); */
 
-    //this.sourceLoader = new DataLoader((ids) => getSourceTaxaBatch(ids, this.props.catalogueKey))
+    //this.sourceLoader = new DataLoader((ids) => getSourceTaxaBatch(ids, this.props.projectKey))
 
     this.getSectors();
     let booleans = {};
@@ -145,7 +145,7 @@ class DuplicateSearchPage extends React.Component {
 
   decorateWithSectorsAndDataset = (res) => {
     if (!res.usages) return res;
-    const { catalogueKey, assembly } = this.props;
+    const { projectKey, assembly } = this.props;
     return Promise.all(
       res.usages
         .filter((tx) => _.get(tx, "sourceDatasetKey"))
@@ -161,7 +161,7 @@ class DuplicateSearchPage extends React.Component {
             .then((dataset) => (tx.usage.dataset = dataset));
         })
       /*  this.sectorLoader
-         .load(_.get(tx, "usage.sectorKey"), catalogueKey)
+         .load(_.get(tx, "usage.sectorKey"), projectKey)
          .then((r) => {
            tx.sector = r;
            return datasetLoader
@@ -171,7 +171,7 @@ class DuplicateSearchPage extends React.Component {
          .then(() => {
            if (assembly) {
              return this.sourceLoader
-               .load(_.get(tx, "usage.id"), catalogueKey)
+               .load(_.get(tx, "usage.id"), projectKey)
                .then((source) => (tx.usage.sourceId = source?.sourceId));
            }
          })
@@ -183,7 +183,7 @@ class DuplicateSearchPage extends React.Component {
     const { params } = this.state;
     const {
       location: { pathname },
-      catalogueKey,
+      projectKey,
       dataset,
       datasetKey,
       assembly,
@@ -195,8 +195,8 @@ class DuplicateSearchPage extends React.Component {
       ...params,
       limit: Number(params.limit),
     };
-    if (catalogueKey) {
-      prms.catalogueKey = catalogueKey;
+    if (projectKey) {
+      prms.projectKey = projectKey;
     } else {
       delete prms.withDecision;
     }
@@ -228,8 +228,8 @@ class DuplicateSearchPage extends React.Component {
       const dataArr = data;
       const { totalFaked } = this.state;
       const clms = params.category
-        ? columnDefaults(catalogueKey, this.getData)[params.category]
-        : columnDefaults(catalogueKey, this.getData).binomial;
+        ? columnDefaults(projectKey, this.getData)[params.category]
+        : columnDefaults(projectKey, this.getData).binomial;
 
       this.setState({
         loading: false,
@@ -299,10 +299,10 @@ class DuplicateSearchPage extends React.Component {
   };
 
   getSectors = () => {
-    const { datasetKey, catalogueKey } = this.props;
-    if (catalogueKey) {
+    const { datasetKey, projectKey } = this.props;
+    if (projectKey) {
       axios(
-        `${config.dataApi}dataset/${catalogueKey}/sector?subjectDatasetKey=${datasetKey}`
+        `${config.dataApi}dataset/${projectKey}/sector?subjectDatasetKey=${datasetKey}`
       )
         .then((res) => {
           this.setState({
@@ -319,12 +319,12 @@ class DuplicateSearchPage extends React.Component {
     }
   };
   getDecisions = (data) => {
-    const { catalogueKey, assembly } = this.props;
+    const { projectKey, assembly } = this.props;
 
     const promises = data.usages.map((d) =>
       d.decision
         ? axios(
-            `${config.dataApi}dataset/${catalogueKey}/decision/${_.get(
+            `${config.dataApi}dataset/${projectKey}/decision/${_.get(
               d,
               "decision.id"
             )}`
@@ -371,7 +371,7 @@ class DuplicateSearchPage extends React.Component {
   };
 
   onPresetSelect = (value, option) => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     let params_ = qs.parse(_.get(this.props, "location.search"));
     if (!value) {
       this.resetSearch();
@@ -419,7 +419,7 @@ class DuplicateSearchPage extends React.Component {
   };
   applyDecision = async () => {
     const { selectedRowKeys, data, decision } = this.state;
-    const { datasetKey, catalogueKey, assembly } = this.props;
+    const { datasetKey, projectKey, assembly } = this.props;
     this.setState({ postingDecisions: true });
     const promises = data
       .filter((d) => selectedRowKeys.includes(_.get(d, "id")))
@@ -428,7 +428,7 @@ class DuplicateSearchPage extends React.Component {
         const mode = ["block", "ignore", "reviewed"].includes(decision)
           ? decision
           : "update";
-        // const sourceSubject = assembly ? await axios(`${config.dataApi}dataset/${catalogueKey}/nameusage/${_.get(d, "id")}/source`) : null;
+        // const sourceSubject = assembly ? await axios(`${config.dataApi}dataset/${projectKey}/nameusage/${_.get(d, "id")}/source`) : null;
         // const sourceId = sourceSubject?.data?.sourceId || null;
 
         const parent = ["accepted", "provisionally accepted"].includes(
@@ -439,7 +439,7 @@ class DuplicateSearchPage extends React.Component {
             : ""
           : _.get(d, "usage.accepted.name.scientificName", "");
         const body = {
-          datasetKey: catalogueKey,
+          datasetKey: projectKey,
           subjectDatasetKey: assembly ? d?.sourceDatasetKey : datasetKey,
           subject: {
             id: d?.sourceId || d?.id,
@@ -454,14 +454,14 @@ class DuplicateSearchPage extends React.Component {
         };
 
         return axios[method](
-          `${config.dataApi}dataset/${catalogueKey}/decision${
+          `${config.dataApi}dataset/${projectKey}/decision${
             method === "put" ? `/${d.decision.id}` : ""
           }`,
           body
         )
           .then((decisionId) =>
             axios(
-              `${config.dataApi}dataset/${catalogueKey}/decision/${
+              `${config.dataApi}dataset/${projectKey}/decision/${
                 method === "post" ? decisionId.data : d.decision.id
               }`
             )
@@ -627,7 +627,7 @@ class DuplicateSearchPage extends React.Component {
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
         ...params,
-        catalogueKey: catalogueKey,
+        projectKey: projectKey,
         limit: Number(params.limit) + 1,
       })}`
     );
@@ -656,7 +656,7 @@ class DuplicateSearchPage extends React.Component {
       taxonomicstatus,
       user,
       assembly,
-      catalogueKey,
+      projectKey,
       datasetKey,
       dataset,
     } = this.props;
@@ -698,7 +698,7 @@ class DuplicateSearchPage extends React.Component {
         <Row gutter={16}>
           <Col
             span={
-              Auth.canEditDataset({ key: catalogueKey }, user) && catalogueKey
+              Auth.canEditDataset({ key: projectKey }, user) && projectKey
                 ? 18
                 : 24
             }
@@ -975,7 +975,7 @@ class DuplicateSearchPage extends React.Component {
                   </RadioGroup>
                 </FormItem>
 
-                {catalogueKey && (
+                {projectKey && (
                   <FormItem label="With decision">
                     <RadioGroup
                       onChange={(evt) => {
@@ -1042,8 +1042,8 @@ class DuplicateSearchPage extends React.Component {
               </Form>
             )}{" "}
           </Col>
-          {catalogueKey && (
-            <CanEditDataset dataset={{ key: catalogueKey }}>
+          {projectKey && (
+            <CanEditDataset dataset={{ key: projectKey }}>
               <Col flex="auto"></Col>
               <Col>
                 <Select
@@ -1093,8 +1093,8 @@ class DuplicateSearchPage extends React.Component {
         </Row>
         <Row style={{ marginBottom: "8px", marginTop: "12px" }}>
           <Col span={12}>
-            {Auth.canEditDataset({ key: catalogueKey }, user) &&
-              catalogueKey && (
+            {Auth.canEditDataset({ key: projectKey }, user) &&
+              projectKey && (
                 <>
                   <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
                     <Button
@@ -1133,7 +1133,7 @@ class DuplicateSearchPage extends React.Component {
                 config.dataApi
               }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
                 ...downloadParams,
-                catalogueKey: catalogueKey,
+                projectKey: projectKey,
               })}`}
             >
               <DownloadOutlined /> CSV
@@ -1145,14 +1145,14 @@ class DuplicateSearchPage extends React.Component {
                 config.dataApi
               }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
                 ...downloadParams,
-                catalogueKey: catalogueKey,
+                projectKey: projectKey,
               })}`}
             >
               <DownloadOutlined /> TSV
             </Button>
           </Col>
           <Col
-            span={Auth.canEditDataset({ key: catalogueKey }, user) ? 12 : 24}
+            span={Auth.canEditDataset({ key: projectKey }, user) ? 12 : 24}
             style={{ textAlign: "right" }}
           >
             {data.length + " names on this page"}
@@ -1204,10 +1204,10 @@ class DuplicateSearchPage extends React.Component {
                   : showSourceFeatures
                   ? [
                       this.getSourceColumn(),
-                      ...columnDefaults(catalogueKey, this.getData)
+                      ...columnDefaults(projectKey, this.getData)
                         .fullScientificName,
                     ]
-                  : columnDefaults(catalogueKey, this.getData)
+                  : columnDefaults(projectKey, this.getData)
                       .fullScientificName
               }
               dataSource={data}
@@ -1219,8 +1219,8 @@ class DuplicateSearchPage extends React.Component {
               }
               pagination={false}
               rowSelection={
-                !Auth.canEditDataset({ key: catalogueKey }, user) ||
-                !catalogueKey
+                !Auth.canEditDataset({ key: projectKey }, user) ||
+                !projectKey
                   ? null
                   : rowSelection
               }

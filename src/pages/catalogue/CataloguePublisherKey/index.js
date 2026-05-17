@@ -13,7 +13,7 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 
-const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
+const PublisherKey = ({ projectKey, match, publisherKey, addError }) => {
   const [publisher, setPublisher] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sectorCount, setSectorCount] = useState(0);
@@ -23,7 +23,7 @@ const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
     try {
       const key = publisherKey || match?.params?.key;
       const res = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/sector/publisher/${key}`
+        `${config.dataApi}dataset/${projectKey}/sector/publisher/${key}`
       );
       setPublisher(res.data);
       const datasetRes = await axios(
@@ -31,7 +31,7 @@ const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
       );
       setDatasetCount(datasetRes?.data?.total);
       const sectorRes = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/sector?limit=0&publisherKey=${key}`
+        `${config.dataApi}dataset/${projectKey}/sector?limit=0&publisherKey=${key}`
       );
       setSectorCount(sectorRes?.data?.total);
       setLoading(false);
@@ -62,7 +62,7 @@ const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
         <PresentationItem md={4} label="Sectors in project">
           <NavLink
             to={{
-              pathname: `/catalogue/${catalogueKey}/sector`,
+              pathname: `/project/${projectKey}/sector`,
               search: `?limit=100&offset=0&publisherKey=${publisher?.id}`,
             }}
           >
@@ -109,7 +109,7 @@ const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
           <PresentationItem md={4} label="Sectors in project">
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/sector`,
+                pathname: `/project/${projectKey}/sector`,
                 search: `?limit=100&offset=0&publisherKey=${publisher?.id}`,
               }}
             >
@@ -140,8 +140,8 @@ const PublisherKey = ({ catalogueKey, match, publisherKey, addError }) => {
   );
 };
 
-const mapContextToProps = ({ catalogueKey, addError }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey, addError }) => ({
+  projectKey,
   addError,
 });
 export default withRouter(withContext(mapContextToProps)(PublisherKey));

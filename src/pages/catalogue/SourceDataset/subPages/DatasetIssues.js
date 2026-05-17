@@ -16,7 +16,7 @@ const NON_NAMEUSAGE_ISSUES = new Set([
   "accepted name missing",
 ]);
 
-const getColumns = ({ issueMap, catalogueKey }) => {
+const getColumns = ({ issueMap, projectKey }) => {
   return [
     {
       title: "Title",
@@ -34,7 +34,7 @@ const getColumns = ({ issueMap, catalogueKey }) => {
             </Tag>
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/verbatim`,
+                pathname: `/project/${projectKey}/dataset/${record.datasetKey}/verbatim`,
                 search: `?issue=${text}`,
               }}
               end
@@ -59,7 +59,7 @@ const getColumns = ({ issueMap, catalogueKey }) => {
         return (
           <NavLink
             to={{
-              pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/workbench`,
+              pathname: `/project/${projectKey}/dataset/${record.datasetKey}/workbench`,
               search: `?issue=${record.title}&limit=100`,
             }}
             end
@@ -182,11 +182,11 @@ class DatasetIssues extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, issue, issueMap, catalogueKey }) => ({
+const mapContextToProps = ({ user, issue, issueMap, projectKey }) => ({
   user,
   issue,
   issueMap,
-  catalogueKey,
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(DatasetIssues);

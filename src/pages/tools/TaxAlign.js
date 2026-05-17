@@ -224,7 +224,7 @@ const TaxAlign = ({ location, addError }) => {
                   // setDatasetKey1(dataset.key), setRoot([])
                 }
               }}
-              // contributesTo={this.props.catalogueKey}
+              // contributesTo={this.props.projectKey}
               placeHolder="Choose 1st dataset"
             />
             <div style={{ marginTop: "8px", marginBottom: "8px" }}>
@@ -279,7 +279,7 @@ const TaxAlign = ({ location, addError }) => {
                   // setDatasetKey2(dataset.key), setRoot2([])
                 }
               }}
-              // contributesTo={this.props.catalogueKey}
+              // contributesTo={this.props.projectKey}
               placeHolder="Choose 2nd dataset"
             />
             <div style={{ marginTop: "8px", marginBottom: "8px" }}>

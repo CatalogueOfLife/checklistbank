@@ -79,10 +79,10 @@ class SourceMetrics extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const { catalogueKey, datasetKey } = this.props;
+    const { projectKey, datasetKey } = this.props;
 
     if (
-      prevProps.catalogueKey !== catalogueKey ||
+      prevProps.projectKey !== projectKey ||
       prevProps.datasetKey !== datasetKey
     ) {
       this.getData();
@@ -357,7 +357,7 @@ class SourceMetrics extends React.Component {
       releaseLabel,
     } = this.state;
     const {
-      catalogueKey,
+      projectKey,
       datasetKey,
       location,
       rank,
@@ -561,9 +561,9 @@ class SourceMetrics extends React.Component {
               <NavLink
                 to={{
                   pathname: record?.id
-                    ? `/catalogue/${datasetKey}/publisher/${record?.id}`
+                    ? `/project/${datasetKey}/publisher/${record?.id}`
                     : isProject
-                    ? `/catalogue/${datasetKey}/dataset/${record?.key}/metadata`
+                    ? `/project/${datasetKey}/dataset/${record?.key}/metadata`
                     : `/dataset/${datasetKey}/source/${record?.key}`,
                   //  search: `?SECTOR_DATASET_KEY=${record.key}`,
                 }}
@@ -659,7 +659,7 @@ class SourceMetrics extends React.Component {
               >
                 <ReleaseSelect
                   omitList={this.props.omitList}
-                  catalogueKey={catalogueKey}
+                  projectKey={projectKey}
                   defaultReleaseKey={
                     _.get(qs.parse(_.get(location, "search")), "releaseKey") ||
                     null
@@ -739,7 +739,7 @@ class SourceMetrics extends React.Component {
                   <TaxonomicCoverage
                     isProject={this.props.isProject === false ? false : true}
                     dataset={row}
-                    catalogueKey={datasetKey}
+                    projectKey={datasetKey}
                   />
                 </div>
               ),

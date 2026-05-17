@@ -100,8 +100,8 @@ class CatalogueSectors extends React.Component {
     if (
       _.get(prevProps, "location.search") !==
         _.get(this.props, "location.search") ||
-      _.get(prevProps, "match.params.catalogueKey") !==
-        _.get(this.props, "match.params.catalogueKey") ||
+      _.get(prevProps, "match.params.projectKey") !==
+        _.get(this.props, "match.params.projectKey") ||
       _.get(params, "subjectDatasetKey") !==
         _.get(prevParams, "subjectDatasetKey")
     ) {
@@ -121,11 +121,11 @@ class CatalogueSectors extends React.Component {
   getData = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       datasetKey,
     } = this.props;
-    const key = catalogueKey || datasetKey;
+    const key = projectKey || datasetKey;
     this.setState({ loading: true });
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
@@ -153,11 +153,11 @@ class CatalogueSectors extends React.Component {
   getPublishers = async () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       datasetKey,
     } = this.props;
-    const key = catalogueKey || datasetKey;
+    const key = projectKey || datasetKey;
     try {
       const res = await axios(
         `${config.dataApi}dataset/${key}/sector/publisher`
@@ -258,12 +258,12 @@ class CatalogueSectors extends React.Component {
   onDeleteSector = (sector, partial = false) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     axios
       .delete(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}?partial=${partial}`
+        `${config.dataApi}dataset/${projectKey}/sector/${sector.id}?partial=${partial}`
       )
       .then(() => {
         notification.open({
@@ -339,14 +339,14 @@ class CatalogueSectors extends React.Component {
   rematchSectors = (subjectDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ rematchSectorsLoading: true });
     const body = subjectDatasetKey ? { subjectDatasetKey } : {};
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/sector/rematch`, body)
+      .post(`${config.dataApi}dataset/${projectKey}/sector/rematch`, body)
       .then((res) => {
         this.setState({
           rematchSectorsLoading: false,
@@ -366,13 +366,13 @@ class CatalogueSectors extends React.Component {
   deleteAllSectorsFromSource = (subjectDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     this.setState({ deleteSectorsLoading: true });
     axios
       .delete(
-        `${config.dataApi}dataset/${catalogueKey}/sector?datasetKey=${subjectDatasetKey}`
+        `${config.dataApi}dataset/${projectKey}/sector?datasetKey=${subjectDatasetKey}`
       )
       .then((res) => {
         this.setState(
@@ -404,7 +404,7 @@ class CatalogueSectors extends React.Component {
     } = this.state;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       datasetKey,
       dataset,
@@ -412,7 +412,7 @@ class CatalogueSectors extends React.Component {
       rank,
     } = this.props;
 
-    const isRelease = !!datasetKey && !catalogueKey;
+    const isRelease = !!datasetKey && !projectKey;
     const params = qs.parse(_.get(this.props, "location.search"));
 
     return (
@@ -464,7 +464,7 @@ class CatalogueSectors extends React.Component {
                 defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
                 onResetSearch={this.onResetDataset}
                 onSelectDataset={this.onSelectDataset}
-                contributesTo={this.props.catalogueKey}
+                contributesTo={this.props.projectKey}
                 merge={this.state.merge}
                 placeHolder="Source dataset"
               />{" "}
@@ -611,7 +611,7 @@ class CatalogueSectors extends React.Component {
               Reset all
             </Button>
           </Col>
-          {!isRelease && Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {!isRelease && Auth.canEditDataset({ key: projectKey }, user) && (
             <Col span={21} style={{ textAlign: "right" }}>
               <Button
                 type="primary"
@@ -626,7 +626,7 @@ class CatalogueSectors extends React.Component {
                     ? { key: params.subjectDatasetKey }
                     : null
                 }
-                catalogueKey={catalogueKey}
+                projectKey={projectKey}
                 onError={(err) => this.setState({ error: err })}
                 text={
                   params.subjectDatasetKey
@@ -708,7 +708,7 @@ class CatalogueSectors extends React.Component {
                   </Row>
                 </>
               ),
-              rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: catalogueKey}, user)
+              rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: projectKey}, user)
             }}
           ></SectorTable>
         )}
@@ -720,14 +720,14 @@ class CatalogueSectors extends React.Component {
 const mapContextToProps = ({
   user,
   rank,
-  catalogueKey,
+  projectKey,
   dataset,
   addError,
 }) => ({
   addError,
   user,
   rank,
-  catalogueKey,
+  projectKey,
   dataset,
 });
 

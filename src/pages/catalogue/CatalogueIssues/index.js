@@ -10,7 +10,7 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import { Helmet } from "react-helmet-async";
 
-const CatalogueMeta = ({ catalogueKey, catalogue }) =>
+const CatalogueMeta = ({ projectKey, catalogue }) =>
   !catalogue ? (
     <Exception404 />
   ) : (
@@ -23,12 +23,12 @@ const CatalogueMeta = ({ catalogueKey, catalogue }) =>
         <Helmet title={`${_.get(catalogue, "title")} in COL`} />
       )}
 
-      <DatasetIssues datasetKey={catalogueKey} />
+      <DatasetIssues datasetKey={projectKey} />
     </Layout>
   );
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey, catalogue }) => ({
+  projectKey,
   catalogue,
 });
 export default withContext(mapContextToProps)(CatalogueMeta);

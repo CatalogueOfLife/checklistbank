@@ -186,7 +186,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                       // setDatasetKey1(dataset.key), setRoot([])
                     }
                   }}
-                  // contributesTo={this.props.catalogueKey}
+                  // contributesTo={this.props.projectKey}
                   placeHolder="Choose 1st dataset"
                 />
               </Col>
@@ -250,7 +250,7 @@ const TaxonComparer = ({ location, addError, rank }) => {
                       // setDatasetKey2(dataset.key), setRoot2([])
                     }
                   }}
-                  // contributesTo={this.props.catalogueKey}
+                  // contributesTo={this.props.projectKey}
                   placeHolder="Choose 2nd dataset"
                 />
               </Col>

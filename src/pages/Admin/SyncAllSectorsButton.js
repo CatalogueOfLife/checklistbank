@@ -17,11 +17,11 @@ class SyncAllSectorsButton extends React.Component {
   syncAllSectors = () => {
     this.setState({ allSectorSyncloading: true });
     const { onError } = this.props;
-    const { dataset, catalogueKey } = this.props;
+    const { dataset, projectKey } = this.props;
     const body = dataset ? { datasetKey: dataset.key } : { all: true };
 
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/sector/sync`, body)
+      .post(`${config.dataApi}dataset/${projectKey}/sector/sync`, body)
       .then((res) => {
         this.setState({ allSectorSyncloading: false }, () => {
           notification.open({

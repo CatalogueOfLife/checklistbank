@@ -59,7 +59,7 @@ const SectorForm = ({
   // sectorDatasetRanks,
   rank,
   onError,
-  catalogueKey,
+  projectKey,
   onSubmit,
   nametype,
   nomstatus,
@@ -77,7 +77,7 @@ const SectorForm = ({
   useEffect(() => {
     if (mode === "hierarchy" && !sector) {
       axios
-        .get(`${config.dataApi}dataset/${catalogueKey}/sector?mode=hierarchy&limit=1`)
+        .get(`${config.dataApi}dataset/${projectKey}/sector?mode=hierarchy&limit=1`)
         .then((res) => {
           setExistingHierarchySector(_.get(res, "data.result[0]", null));
         })
@@ -133,7 +133,7 @@ const SectorForm = ({
         });
     } else {
       axios
-        .post(`${config.dataApi}dataset/${catalogueKey}/sector`, values)
+        .post(`${config.dataApi}dataset/${projectKey}/sector`, values)
         .then(() => {
           notification.open({
             message: "Sector created",
@@ -269,7 +269,7 @@ const SectorForm = ({
           >
             <TaxonFormControl
               accepted={true}
-              datasetKey={sector?.datasetKey || catalogueKey}
+              datasetKey={sector?.datasetKey || projectKey}
               defaultTaxonKey={_.get(sector, "target.id") || null}
             />
           </FormItem>
@@ -456,11 +456,11 @@ const mapContextToProps = ({
   nomCode,
   entitytype,
   rank,
-  catalogueKey,
+  projectKey,
   nametype,
   nomstatus,
 }) => ({
-  catalogueKey,
+  projectKey,
   nomCode,
   entitytype,
   rank,

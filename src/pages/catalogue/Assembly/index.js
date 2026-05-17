@@ -109,7 +109,7 @@ class Assembly extends React.Component {
     /* const { datasetKey } = this.state;
     const {
       match: {
-        params: { catalogueKey }
+        params: { projectKey }
       }
     } = this.props; */
     const rootData = _.get(root, "taxon");
@@ -122,13 +122,13 @@ class Assembly extends React.Component {
   saveChild = (subject, target) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     return axios
       .post(
-        `${config.dataApi}dataset/${catalogueKey}/tree/${encodeURIComponent(
+        `${config.dataApi}dataset/${projectKey}/tree/${encodeURIComponent(
           target.id
         )}/copy`,
         {
@@ -138,7 +138,7 @@ class Assembly extends React.Component {
       )
       .then((res) => {
         return axios(
-          `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
+          `${config.dataApi}dataset/${projectKey}/taxon/${encodeURIComponent(
             res.data
           )}`
         );
@@ -149,12 +149,12 @@ class Assembly extends React.Component {
     const { assemblyTaxonKey } = this.state;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     const params = qs.parse(_.get(this.props, "location.search"));
     return axios(
-      `${config.dataApi}dataset/${catalogueKey}/taxon/${encodeURIComponent(
+      `${config.dataApi}dataset/${projectKey}/taxon/${encodeURIComponent(
         parentId
       )}`
     )
@@ -163,7 +163,7 @@ class Assembly extends React.Component {
         // delete recursive
         return axios
           .delete(
-            `${config.dataApi}dataset/${catalogueKey}/tree/${encodeURIComponent(
+            `${config.dataApi}dataset/${projectKey}/tree/${encodeURIComponent(
               target.id
             )}`
           )
@@ -172,7 +172,7 @@ class Assembly extends React.Component {
       .then((parent) => {
         if (assemblyTaxonKey === target.id) {
           history.push({
-            pathname: `/catalogue/${catalogueKey}/assembly`,
+            pathname: `/project/${projectKey}/assembly`,
             search: `?${qs.stringify(_.omit(params, ["assemblyTaxonKey"]))}`,
           });
           this.setState({ assemblyTaxonKey: null });
@@ -193,19 +193,19 @@ class Assembly extends React.Component {
   saveSector = (subject, target, mode) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     const sector = {
       subjectDatasetKey: subject.datasetKey,
-      datasetKey: catalogueKey,
+      datasetKey: projectKey,
       mode: mode,
       subject: { id: subject.id, status: subject.status, rank: subject.rank },
       target: { id: target.id, status: target.status, rank: target.rank },
     };
 
     return axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/sector`, sector)
+      .post(`${config.dataApi}dataset/${projectKey}/sector`, sector)
       .then((res) => {
         const msg = `${
           _.get(target, "name.scientificName") || target.id
@@ -224,12 +224,12 @@ class Assembly extends React.Component {
     const taxonId = taxon?.id;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     try {
       const res = await axios(
-        `${config.dataApi}dataset/${catalogueKey}/taxon/${taxonId}/source`
+        `${config.dataApi}dataset/${projectKey}/taxon/${taxonId}/source`
       );
       const datasetRes = await axios(
         `${config.dataApi}dataset/${res.data.sourceDatasetKey}`
@@ -241,7 +241,7 @@ class Assembly extends React.Component {
         datasetKey: res.data.sourceDatasetKey,
       };
       history.push({
-        pathname: `/catalogue/${catalogueKey}/assembly`,
+        pathname: `/project/${projectKey}/assembly`,
         search: `?${qs.stringify(newParams)}`,
       });
       this.setState({
@@ -267,7 +267,7 @@ class Assembly extends React.Component {
       : sector.subject.id;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     axios(`${config.dataApi}dataset/${source.key}`)
@@ -279,7 +279,7 @@ class Assembly extends React.Component {
           datasetKey: source.key,
         };
         history.push({
-          pathname: `/catalogue/${catalogueKey}/assembly`,
+          pathname: `/project/${projectKey}/assembly`,
           search: `?${qs.stringify(newParams)}`,
         });
         this.setState({
@@ -307,7 +307,7 @@ class Assembly extends React.Component {
     const {
       location,
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     const { datasetKey } = this.state;
@@ -326,7 +326,7 @@ class Assembly extends React.Component {
         datasetKey: _.get(dataset, "key"),
       };
       history.push({
-        pathname: `/catalogue/${catalogueKey}/assembly`,
+        pathname: `/project/${projectKey}/assembly`,
         search: `?${qs.stringify(_.omit(newParams, ["sourceTaxonKey"]))}`,
       });
     } else {
@@ -359,7 +359,7 @@ class Assembly extends React.Component {
 
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       location,
       catalogue,
@@ -430,7 +430,7 @@ class Assembly extends React.Component {
                     onSaveDecision={(name) => {
                       console.log(name);
                     }}
-                    datasetKey={catalogueKey}
+                    datasetKey={projectKey}
                     subjectDatasetKey={datasetKey}
                   />
                 )}
@@ -499,7 +499,7 @@ class Assembly extends React.Component {
                           )
                         }
                         parent={null}
-                        catalogueKey={catalogueKey}
+                        projectKey={projectKey}
                       />
                     )}
                     <CanEditDataset dataset={catalogue}>
@@ -525,7 +525,7 @@ class Assembly extends React.Component {
                           assemblyTaxonKey: null,
                         };
                         history.push({
-                          pathname: `/catalogue/${catalogueKey}/assembly`,
+                          pathname: `/project/${projectKey}/assembly`,
                           search: `?${qs.stringify(
                             _.omit(newParams, ["assemblyTaxonKey"])
                           )}`,
@@ -541,7 +541,7 @@ class Assembly extends React.Component {
                 </Row>
 
                 <NameAutocomplete
-                  datasetKey={catalogueKey}
+                  datasetKey={projectKey}
                   defaultTaxonKey={
                     _.get(
                       qs.parse(_.get(location, "search")),
@@ -557,7 +557,7 @@ class Assembly extends React.Component {
                       assemblyTaxonKey: _.get(name, "key"),
                     };
                     history.push({
-                      pathname: `/catalogue/${catalogueKey}/assembly`,
+                      pathname: `/project/${projectKey}/assembly`,
                       search: `?${qs.stringify(newParams)}`,
                     });
                     this.setState({ assemblyTaxonKey: name.key }, () =>
@@ -569,7 +569,7 @@ class Assembly extends React.Component {
 
                     const newParams = { ...params, assemblyTaxonKey: null };
                     history.push({
-                      pathname: `/catalogue/${catalogueKey}/assembly`,
+                      pathname: `/project/${projectKey}/assembly`,
                       search: `?${qs.stringify(
                         _.omit(newParams, ["assemblyTaxonKey"])
                       )}`,
@@ -593,9 +593,9 @@ class Assembly extends React.Component {
                       height={height}
                       treeRef={(ref) => (this.assemblyRef = ref)}
                       location={location}
-                      dataset={{ key: catalogueKey }}
+                      dataset={{ key: projectKey }}
                       treeType="CATALOGUE"
-                      catalogueKey={catalogueKey}
+                      projectKey={projectKey}
                       onDeleteSector={this.onDeleteSector}
                       attachFn={this.getSectorInfo}
                       onDragStart={(e) => this.onDragStart(e, catalogue)}
@@ -603,7 +603,7 @@ class Assembly extends React.Component {
                       selectedSourceTreeNodes={
                         _.get(this.sourceRef, "state.selectedNodes") || []
                       }
-                      draggable={canEditDataset({ key: catalogueKey }, user)}
+                      draggable={canEditDataset({ key: projectKey }, user)}
                       showSourceTaxon={this.showSourceTaxon}
                       defaultExpandKey={assemblyTaxonKey}
                       addMissingTargetKey={this.addMissingTargetKey}
@@ -635,7 +635,7 @@ class Assembly extends React.Component {
                   </Col>
                   <Col flex="auto"></Col>
                   <Col>
-                    <CanEditDataset dataset={{ key: catalogueKey }}>
+                    <CanEditDataset dataset={{ key: projectKey }}>
                       <ColTreeContext.Consumer>
                         {({ selectedSourceTreeNodes }) =>
                           selectedSourceTreeNodes.length > 0 && (
@@ -657,7 +657,7 @@ class Assembly extends React.Component {
                                       onClick={() => {
                                         Promise.allSettled(
                                           selectedSourceTreeNodes.map((n) =>
-                                            applyDecision(n.taxon, catalogueKey)
+                                            applyDecision(n.taxon, projectKey)
                                           )
                                         ).then(() => {
                                           this.sourceRef.reloadRoot();
@@ -694,7 +694,7 @@ class Assembly extends React.Component {
                                         Promise.allSettled(
                                           taxaWithdecisions.map((n) => {
                                             return axios.delete(
-                                              `${config.dataApi}dataset/${catalogueKey}/decision/${n.taxon.decision.id}`
+                                              `${config.dataApi}dataset/${projectKey}/decision/${n.taxon.decision.id}`
                                             );
                                           })
                                         ).then(() => {
@@ -738,7 +738,7 @@ class Assembly extends React.Component {
                   defaultDatasetKey={_.get(params, "datasetKey") || null}
                   onResetSearch={() => {
                     history.push({
-                      pathname: `/catalogue/${catalogueKey}/assembly`,
+                      pathname: `/project/${projectKey}/assembly`,
                       search: `?${qs.stringify(
                         _.omit(params, ["datasetKey"])
                       )}`,
@@ -766,7 +766,7 @@ class Assembly extends React.Component {
                         sourceTaxonKey: _.get(name, "key"),
                       };
                       history.push({
-                        pathname: `/catalogue/${catalogueKey}/assembly`,
+                        pathname: `/project/${projectKey}/assembly`,
                         search: `?${qs.stringify(newParams)}`,
                       });
                       this.setState({ sourceTaxonKey: name.key }, () =>
@@ -778,7 +778,7 @@ class Assembly extends React.Component {
 
                       const newParams = { ...params, sourceTaxonKey: null };
                       history.push({
-                        pathname: `/catalogue/${catalogueKey}/assembly`,
+                        pathname: `/project/${projectKey}/assembly`,
                         search: `?${qs.stringify(
                           _.omit(newParams, ["sourceTaxonKey"])
                         )}`,
@@ -795,13 +795,13 @@ class Assembly extends React.Component {
                     location={location}
                     dataset={this.state.selectedDataset}
                     treeType="SOURCE"
-                    catalogueKey={catalogueKey}
+                    projectKey={projectKey}
                     onDeleteSector={this.onDeleteSector}
                     onDragStart={(e) =>
                       this.onDragStart(e, this.state.selectedDataset)
                     }
                     draggable={
-                      canEditDataset({ key: catalogueKey }, user) &&
+                      canEditDataset({ key: projectKey }, user) &&
                       this.state.mode === "attach"
                     }
                     defaultExpandKey={this.state.sourceTaxonKey}
@@ -820,7 +820,7 @@ class Assembly extends React.Component {
                         assemblyTaxonKey: targetID,
                       };
                       history.push({
-                        pathname: `/catalogue/${catalogueKey}/assembly`,
+                        pathname: `/project/${projectKey}/assembly`,
                         search: `?${qs.stringify(newParams)}`,
                       });
                       this.setState(

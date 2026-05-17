@@ -407,13 +407,13 @@ class AdminPage extends React.Component {
 }
 
 const mapContextToProps = ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setCatalogue,
   background,
   addError,
 }) => ({
-  catalogueKey,
+  projectKey,
   catalogue,
   setCatalogue,
   background,

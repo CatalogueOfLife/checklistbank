@@ -56,9 +56,9 @@ class Sector extends React.Component {
 
   syncSector = (sector, syncState, syncingSector) => {
     const { idle } = syncState;
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/sector/sync`, {
+      .post(`${config.dataApi}dataset/${projectKey}/sector/sync`, {
         sectorKey: sector.id,
         key: sector.id,
         target: sector.target,
@@ -86,10 +86,10 @@ class Sector extends React.Component {
   };
 
   deleteSector = (sector, partial = false) => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     axios
       .delete(
-        `${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}?partial=${partial}`
+        `${config.dataApi}dataset/${projectKey}/sector/${sector.id}?partial=${partial}`
       ) // /assembly/3/sync/
       .then(() => {
         debounce(this.props.onDeleteSector, 500)();
@@ -106,7 +106,7 @@ class Sector extends React.Component {
   };
 
   applyDecision = (taxon) => {
-    const { decisionCallback, catalogueKey } = this.props;
+    const { decisionCallback, projectKey } = this.props;
 
     const { datasetKey } = taxon;
     this.setState({ postingDecisions: true });
@@ -129,7 +129,7 @@ class Sector extends React.Component {
       .then((taxa) => {
         const tx = taxa[0].data;
         const parent = taxa[1].data;
-        return axios.post(`${config.dataApi}dataset/${catalogueKey}/decision`, {
+        return axios.post(`${config.dataApi}dataset/${projectKey}/decision`, {
           subjectDatasetKey: datasetKey,
           subject: {
             id: _.get(tx, "id"),
@@ -146,7 +146,7 @@ class Sector extends React.Component {
       })
       .then((decisionId) =>
         axios(
-          `${config.dataApi}dataset/${catalogueKey}/decision/${decisionId.data}`
+          `${config.dataApi}dataset/${projectKey}/decision/${decisionId.data}`
         )
       )
       .then((res) => {
@@ -200,7 +200,7 @@ class Sector extends React.Component {
     const {
       taxon,
       user,
-      catalogueKey,
+      projectKey,
       syncState,
       syncingSector,
       decisionCallback,
@@ -219,7 +219,7 @@ class Sector extends React.Component {
         taxon.parentId === sector.target.id);
 
     const isRootSectorInSourceTree = taxon.id === sector?.subject?.id;
-    const isSourceTree = catalogueKey !== _.get(taxon, "datasetKey");
+    const isSourceTree = projectKey !== _.get(taxon, "datasetKey");
 
     if (!sectorSourceDataset) {
       return "";
@@ -259,7 +259,7 @@ class Sector extends React.Component {
               )}
               {isRootSector && (
                 <>
-                  <CanEditDataset dataset={{ key: catalogueKey }}>
+                  <CanEditDataset dataset={{ key: projectKey }}>
                     <Popconfirm
                       title={
                         <p style={{ width: "350px" }}>
@@ -306,7 +306,7 @@ class Sector extends React.Component {
                 type="primary"
                 onClick={() => {
                   history.push(
-                    `/catalogue/${catalogueKey}/sector?id=${sector.id}`
+                    `/project/${projectKey}/sector?id=${sector.id}`
                   );
                 }}
               >
@@ -336,7 +336,7 @@ class Sector extends React.Component {
               </Button>
 
               {isRootSector && (
-                <CanEditDataset dataset={{ key: catalogueKey }}>
+                <CanEditDataset dataset={{ key: projectKey }}>
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
                     type="primary"
@@ -464,7 +464,7 @@ class Sector extends React.Component {
                   ></Alert>
                 )}
                 {isRootSectorInSourceTree && (
-                  <CanEditDataset dataset={{ key: catalogueKey }}>
+                  <CanEditDataset dataset={{ key: projectKey }}>
                     <Popconfirm
                       title={
                         <p style={{ width: "350px" }}>
@@ -502,7 +502,7 @@ class Sector extends React.Component {
                   missingTargetKeys[_.get(sector, "target.id")] !== true &&
                   _.get(syncState, "running.sectorKey") !== sector.id && (
                     <>
-                      <CanEditDataset dataset={{ key: catalogueKey }}>
+                      <CanEditDataset dataset={{ key: projectKey }}>
                         <Button
                           style={{ marginTop: "8px", width: "100%" }}
                           type="primary"
@@ -517,12 +517,12 @@ class Sector extends React.Component {
                     </>
                   )}
                 {!isRootSectorInSourceTree && (
-                  <CanEditDataset dataset={{ key: catalogueKey }}>
+                  <CanEditDataset dataset={{ key: projectKey }}>
                     <Button
                       style={{ marginTop: "8px", width: "100%" }}
                       type="danger"
                       onClick={() => {
-                        applyDecision(taxon, catalogueKey, decisionCallback);
+                        applyDecision(taxon, projectKey, decisionCallback);
                         this.setState({ popOverVisible: false });
                       }}
                     >
@@ -603,9 +603,9 @@ class Sector extends React.Component {
 
 const mapContextToProps = ({
   user,
-  catalogueKey,
+  projectKey,
   syncState,
   syncingSector,
   getSyncState,
-}) => ({ user, catalogueKey, syncState, syncingSector, getSyncState });
+}) => ({ user, projectKey, syncState, syncingSector, getSyncState });
 export default withContext(mapContextToProps)(Sector);

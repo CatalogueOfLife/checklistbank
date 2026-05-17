@@ -16,11 +16,11 @@ class SyncState extends React.Component {
     const { syncState, syncingSector, syncingDataset } = this.props;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
-    return catalogueKey ? (
+    return projectKey ? (
       <React.Fragment>
         {_.get(syncState, "running") ? (
           <SyncOutlined

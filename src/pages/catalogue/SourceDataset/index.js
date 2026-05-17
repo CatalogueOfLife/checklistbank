@@ -80,7 +80,7 @@ class DatasetPage extends React.Component {
 
     const {
       match: {
-        params: { sourceKey: datasetKey, section, taxonOrNameKey, catalogueKey },
+        params: { sourceKey: datasetKey, section, taxonOrNameKey, projectKey },
       },
       location,
       sourceDataset,
@@ -100,7 +100,7 @@ class DatasetPage extends React.Component {
     return (
       <Layout
         selectedDataset={dataset}
-        selectedCatalogueKey={catalogueKey}
+        selectedCatalogueKey={projectKey}
         openKeys={openKeys}
         selectedKeys={selectedKeys}
         taxonOrNameKey={taxonOrNameKey}
@@ -139,27 +139,27 @@ class DatasetPage extends React.Component {
           <WorkBench
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}{" "}
-        {/* catalogueKeys are used to scope decisions and tasks */}
+        {/* projectKeys are used to scope decisions and tasks */}
         {sect === "duplicates" && (
           <Duplicates
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}
         {sect === "tasks" && (
           <DatasetTasks
             datasetKey={datasetKey}
             location={this.props.location}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}
         {!section ||
           (section === "metadata" && (
-            <DatasetMeta isSourceInCatalogueView={true} id={datasetKey} catalogueKey={catalogueKey} />
+            <DatasetMeta isSourceInCatalogueView={true} id={datasetKey} projectKey={projectKey} />
           ))}
         {section === "classification" && (
           <DatasetClassification dataset={dataset} location={location} />

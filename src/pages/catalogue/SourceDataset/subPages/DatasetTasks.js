@@ -33,7 +33,7 @@ class DatasetTasks extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (
       _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey") ||
-      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
+      _.get(prevProps, "projectKey") !== _.get(this.props, "projectKey")
     ) {
       this.getData();
       this.getManusciptNames();
@@ -43,17 +43,17 @@ class DatasetTasks extends React.Component {
   };
 
   getData = async () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
 
     this.setState({ loading: true });
     const duplicatesWithNodecision = await getDuplicateOverview({
       datasetKey,
-      catalogueKey,
+      projectKey,
       withDecision: false,
     });
     const duplicatesWithdecision = await getDuplicateOverview({
       datasetKey,
-      catalogueKey,
+      projectKey,
       withDecision: true,
     });
     let completedMap = {};
@@ -71,15 +71,15 @@ class DatasetTasks extends React.Component {
   };
 
   getManusciptNames = () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
     Promise.all([
       axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${projectKey}&nomstatus=manuscript&limit=0`
       ).then((res) => {
         return res.data.total;
       }),
       axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${catalogueKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${projectKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`
       ).then((res) => {
         return res.data.total;
       }),
@@ -91,16 +91,16 @@ class DatasetTasks extends React.Component {
   };
 
   getBrokenDecisions = () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision?subjectDatasetKey=${datasetKey}&broken=true&limit=0`
+      `${config.dataApi}dataset/${projectKey}/decision?subjectDatasetKey=${datasetKey}&broken=true&limit=0`
     ).then((res) => this.setState({ brokenDecisions: res.data.total }));
   };
 
   getStaleDecisions = () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
     axios(
-      `${config.dataApi}dataset/${catalogueKey}/decision/stale?subjectDatasetKey=${datasetKey}`
+      `${config.dataApi}dataset/${projectKey}/decision/stale?subjectDatasetKey=${datasetKey}`
     ).then((res) => {
       this.setState({
         staleDecisions: { count: res.data.total },
@@ -117,7 +117,7 @@ class DatasetTasks extends React.Component {
       brokenDecisions,
       staleDecisions,
     } = this.state;
-    const { getDuplicateWarningColor, datasetKey, catalogueKey } = this.props;
+    const { getDuplicateWarningColor, datasetKey, projectKey } = this.props;
 
     return (
       <PageContent>
@@ -146,7 +146,7 @@ class DatasetTasks extends React.Component {
               >
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/duplicates`,
+                    pathname: `/project/${projectKey}/dataset/${datasetKey}/duplicates`,
                     search: `?_colCheck=${d.id}`,
                   }}
                   end
@@ -175,7 +175,7 @@ class DatasetTasks extends React.Component {
             >
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+                  pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
                   search: `?nomstatus=manuscript&limit=50`,
                 }}
                 end
@@ -195,7 +195,7 @@ class DatasetTasks extends React.Component {
             >
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/decision`,
+                  pathname: `/project/${projectKey}/decision`,
                   search: `?broken=true&limit=100&offset=0&subjectDatasetKey=${datasetKey}`,
                 }}
                 end
@@ -208,7 +208,7 @@ class DatasetTasks extends React.Component {
           {staleDecisions && (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/decision`,
+                pathname: `/project/${projectKey}/decision`,
                 search: `?stale=true&subjectDatasetKey=${datasetKey}`,
               }}
               end
@@ -233,7 +233,7 @@ const mapContextToProps = ({
   issue,
   issueMap,
   getDuplicateWarningColor,
-  catalogueKey,
-}) => ({ user, issue, issueMap, getDuplicateWarningColor, catalogueKey });
+  projectKey,
+}) => ({ user, issue, issueMap, getDuplicateWarningColor, projectKey });
 
 export default withContext(mapContextToProps)(DatasetTasks);

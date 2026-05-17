@@ -9,7 +9,7 @@ const { canViewDataset } = Auth;
 const DatasetOriginPill = ({ user, dataset }) => {
   if (dataset?.origin === "project") {
     return canViewDataset(dataset, user) ? (
-      <NavLink to={{ pathname: `/catalogue/${dataset?.key}/assembly` }}>
+      <NavLink to={{ pathname: `/project/${dataset?.key}/assembly` }}>
         <Tag>Project</Tag>
       </NavLink>
     ) : (

@@ -10,7 +10,7 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import DatasetImportMetrics from "../../DatasetImportMetrics";
 
-const CatalogueReleaseMetrics = ({ catalogueKey, catalogue }) =>
+const CatalogueReleaseMetrics = ({ projectKey, catalogue }) =>
   !catalogue ? (
     <Exception404 />
   ) : (
@@ -23,8 +23,8 @@ const CatalogueReleaseMetrics = ({ catalogueKey, catalogue }) =>
     </Layout>
   );
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey, catalogue }) => ({
+  projectKey,
   catalogue,
 });
 export default withContext(mapContextToProps)(CatalogueReleaseMetrics);

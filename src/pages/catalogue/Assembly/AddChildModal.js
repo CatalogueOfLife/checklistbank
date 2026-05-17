@@ -93,11 +93,11 @@ const AddChildModal = (props) => {
     submitData(taxon);
   };
   const submitData = (values) => {
-    const { parent, catalogueKey } = props;
+    const { parent, projectKey } = props;
     axios
       .post(
         `${config.dataApi}dataset/${
-          parent ? parent.datasetKey : catalogueKey
+          parent ? parent.datasetKey : projectKey
         }/taxon`,
         values
       )

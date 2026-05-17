@@ -153,7 +153,7 @@ class SectorTable extends React.Component {
   };
 
   rematchSelected = async () => {
-    const { addError, catalogueKey } = this.props;
+    const { addError, projectKey } = this.props;
     const { selectedRows } = this.state;
     let errors = 0,
       rematchInfo = {
@@ -169,7 +169,7 @@ class SectorTable extends React.Component {
     for (const record of selectedRows) {
       try {
         let res = await axios.post(
-          `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
+          `${config.dataApi}dataset/${projectKey}/sector/rematch`,
           { id: record.id }
         );
         rematchInfo.broken += res?.data?.broken;
@@ -214,7 +214,7 @@ class SectorTable extends React.Component {
       user,
       onDeleteSector,
       pagination,
-      catalogueKey,
+      projectKey,
       handleTableChange,
       expandedRowRender,
       isRelease,
@@ -225,12 +225,12 @@ class SectorTable extends React.Component {
       ? (pagination.current - 1) * pagination.pageSize
       : 0;
     const columns = getColumns(
-      !!releasedFrom ? releasedFrom : catalogueKey,
+      !!releasedFrom ? releasedFrom : projectKey,
       this.state.searchText,
       this.getColumnSearchProps
     );
 
-    if (!isRelease && Auth.canEditDataset({ key: catalogueKey }, user)) {
+    if (!isRelease && Auth.canEditDataset({ key: projectKey }, user)) {
       columns.push({
         title: "Action",
         key: "action",
@@ -252,7 +252,7 @@ class SectorTable extends React.Component {
               onClick={() => {
                 axios
                   .post(
-                    `${config.dataApi}dataset/${catalogueKey}/sector/rematch`,
+                    `${config.dataApi}dataset/${projectKey}/sector/rematch`,
                     { id: record.id }
                   )
                   .then((rematchInfo) => {
@@ -352,7 +352,7 @@ class SectorTable extends React.Component {
           rowKey="id"
           expandable={expandable}
           rowSelection={
-            !Auth.canEditDataset({ key: catalogueKey }, user) || isRelease
+            !Auth.canEditDataset({ key: projectKey }, user) || isRelease
               ? null
               : {
                   selectedRowKeys: this.state.selectedRowKeys,
@@ -393,9 +393,9 @@ class SectorTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey, addError }) => ({
+const mapContextToProps = ({ user, projectKey, addError }) => ({
   user,
-  catalogueKey,
+  projectKey,
   addError,
 });
 

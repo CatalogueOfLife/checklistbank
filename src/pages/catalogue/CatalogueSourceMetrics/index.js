@@ -8,7 +8,7 @@ class CatalogueSourceMetrics extends React.Component {
   render() {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       catalogue,
     } = this.props;
@@ -29,9 +29,9 @@ class CatalogueSourceMetrics extends React.Component {
         >
           <SourceMetrics
             isProject={true}
-            catalogueKey={catalogueKey}
-            datasetKey={catalogueKey}
-            basePath={`/catalogue/${catalogueKey}`}
+            projectKey={projectKey}
+            datasetKey={projectKey}
+            basePath={`/project/${projectKey}`}
           />
         </div>
       </Layout>

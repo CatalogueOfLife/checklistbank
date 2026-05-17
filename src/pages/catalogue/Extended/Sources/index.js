@@ -11,7 +11,7 @@ import Userautocomplete from "./UserAutocomplete";
 import axios from "axios";
 
 const ExtendedSources = ({
-    catalogueKey,
+    projectKey,
     catalogue,
     addError,
   }) => {
@@ -31,12 +31,12 @@ const ExtendedSources = ({
   
   const mapContextToProps = ({
     user,
-    catalogueKey,
+    projectKey,
     catalogue,
     addError,
   }) => ({
     user,
-    catalogueKey,
+    projectKey,
     catalogue,
     addError,
   });

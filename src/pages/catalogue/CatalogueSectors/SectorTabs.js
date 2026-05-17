@@ -12,7 +12,7 @@ import withContext from "../../../components/hoc/withContext";
 
 import { NavLink } from "react-router-dom";
 
-const SectorTabs = ({ location, catalogueKey }) => {
+const SectorTabs = ({ location, projectKey }) => {
   const [subjectDatasetKey, setSubjectDatasetKey] = useState(null);
   useEffect(() => {
     const params = qs.parse(location?.search);
@@ -22,13 +22,13 @@ const SectorTabs = ({ location, catalogueKey }) => {
     } else {
       setSubjectDatasetKey(null);
     }
-  }, [catalogueKey, location]);
+  }, [projectKey, location]);
   const items = [
     {
       label: (
         <NavLink
           to={{
-            pathname: `/catalogue/${catalogueKey}/sector`,
+            pathname: `/project/${projectKey}/sector`,
             search: subjectDatasetKey
               ? `?subjectDatasetKey=${subjectDatasetKey}`
               : null,
@@ -37,25 +37,25 @@ const SectorTabs = ({ location, catalogueKey }) => {
           Sectors
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sector`,
+      key: `/project/${projectKey}/sector`,
       icon: <PartitionOutlined />,
     },
     {
       label: (
         <NavLink
-          to={{ pathname: `/catalogue/${catalogueKey}/sector/priority` }}
+          to={{ pathname: `/project/${projectKey}/sector/priority` }}
         >
           Priority
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sector/priority`,
+      key: `/project/${projectKey}/sector/priority`,
       icon: <OrderedListOutlined />,
     },
     {
       label: (
         <NavLink
           to={{
-            pathname: `/catalogue/${catalogueKey}/sector/sync`,
+            pathname: `/project/${projectKey}/sector/sync`,
             search: subjectDatasetKey
               ? `?datasetKey=${subjectDatasetKey}`
               : null,
@@ -64,18 +64,18 @@ const SectorTabs = ({ location, catalogueKey }) => {
           Syncs
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sector/sync`,
+      key: `/project/${projectKey}/sector/sync`,
       icon: <SyncOutlined />,
     },
     {
       label: (
         <NavLink
-          to={{ pathname: `/catalogue/${catalogueKey}/sector/publishers` }}
+          to={{ pathname: `/project/${projectKey}/sector/publishers` }}
         >
           Publishers
         </NavLink>
       ),
-      key: `/catalogue/${catalogueKey}/sector/publishers`,
+      key: `/project/${projectKey}/sector/publishers`,
       icon: <TeamOutlined />,
     },
   ];
@@ -90,8 +90,8 @@ const SectorTabs = ({ location, catalogueKey }) => {
   );
 };
 
-const mapContextToProps = ({ catalogueKey }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey }) => ({
+  projectKey,
 });
 
 export default withContext(mapContextToProps)(withRouter(SectorTabs));

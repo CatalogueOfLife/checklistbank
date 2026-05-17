@@ -72,7 +72,7 @@ class DatasetSectors extends React.Component {
 
   getData = (dataset) => {
     this.setState({ loading: true });
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     const params = {
       ...qs.parse(_.get(this.props, "location.search")),
       subject: true,
@@ -113,9 +113,9 @@ class DatasetSectors extends React.Component {
   };
 
   onDeleteSector = (sector) => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     axios
-      .delete(`${config.dataApi}dataset/${catalogueKey}/sector/${sector.id}`)
+      .delete(`${config.dataApi}dataset/${projectKey}/sector/${sector.id}`)
       .then(() => {
         notification.open({
           message: "Deletion triggered",
@@ -148,7 +148,7 @@ class DatasetSectors extends React.Component {
 
   render = () => {
     const { data, error, syncAllError, loading, pagination } = this.state;
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     return (
       <PageContent>
         {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
@@ -163,7 +163,7 @@ class DatasetSectors extends React.Component {
               onError={err => this.setState({ syncAllError: err })}
               onSuccess={() => this.setState({ syncAllError: null })}
               dataset={this.props.dataset}
-              catalogueKey={catalogueKey}
+              projectKey={projectKey}
               text="Sync all sectors in this dataset"
             /> */}
             {!error && (
@@ -182,6 +182,6 @@ class DatasetSectors extends React.Component {
   };
 }
 
-const mapContextToProps = ({ catalogueKey }) => ({ catalogueKey });
+const mapContextToProps = ({ projectKey }) => ({ projectKey });
 
 export default withContext(mapContextToProps)(DatasetSectors);

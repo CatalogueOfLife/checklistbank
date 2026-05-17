@@ -25,7 +25,7 @@ import _ from "lodash";
 import moment from "dayjs";
 
 export default (
-  catalogueKey,
+  projectKey,
   searchText,
   getColumnSearchProps = () => ({})
 ) => {
@@ -38,7 +38,7 @@ export default (
       render: (text, record) => {
         return (
           <NavLink
-            to={{ pathname: `/catalogue/${catalogueKey}/dataset/${record?.dataset?.key}/metadata` }}
+            to={{ pathname: `/project/${projectKey}/dataset/${record?.dataset?.key}/metadata` }}
             end
           >
             {text ? text.toString() : record?.dataset?.title}
@@ -103,7 +103,7 @@ export default (
             {record?.subject?.id && (
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/assembly`,
+                  pathname: `/project/${projectKey}/assembly`,
                   search: `?sourceTaxonKey=${
                     record.placeholderRank
                       ? record?.subject?.id +
@@ -153,7 +153,7 @@ export default (
             {!_.get(record, "target.broken") && (
               <NavLink
                 to={{
-                  pathname: `/catalogue/${catalogueKey}/assembly`,
+                  pathname: `/project/${projectKey}/assembly`,
                   search: `?assemblyTaxonKey=${record?.target?.id}`,
                 }}
                 end
@@ -217,7 +217,7 @@ export default (
         <Tooltip title="Sync History">
           <NavLink
             to={{
-              pathname: `/catalogue/${catalogueKey}/sector/sync`,
+              pathname: `/project/${projectKey}/sector/sync`,
               search: `?sectorKey=${record.id}`,
             }}
             end
@@ -236,7 +236,7 @@ export default (
     }
   ];
 
-  return !!catalogueKey
+  return !!projectKey
     ? columns
     : [
         {

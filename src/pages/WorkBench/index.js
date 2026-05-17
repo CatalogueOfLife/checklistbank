@@ -73,7 +73,7 @@ const getDecisionText = (decision) => {
   }
 };
 
-const getColumns = (catalogueKey, user) => [
+const getColumns = (projectKey, user) => [
   {
     title: "Decision",
     dataIndex: "decisions",
@@ -81,12 +81,12 @@ const getColumns = (catalogueKey, user) => [
     width: 60,
     className: "workbench-td",
     render: (text, record) =>
-      !Auth.canEditDataset({ key: catalogueKey }, user) ? (
+      !Auth.canEditDataset({ key: projectKey }, user) ? (
         getDecisionText(_.get(record, "decisions[0]"))
       ) : (
         <DecisionTag
           decision={_.get(record, "decisions[0]")}
-          catalogueKey={catalogueKey}
+          projectKey={projectKey}
         />
       ),
   },
@@ -101,11 +101,11 @@ const getColumns = (catalogueKey, user) => [
         !_.get(record, "usage.id") ||
         record.usage.bareName ||
         !_.get(record, "usage.status")
-          ? `/catalogue/${catalogueKey}/dataset/${_.get(
+          ? `/project/${projectKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/name/${encodeURIComponent(_.get(record, "usage.name.id"))}`
-          : `/catalogue/${catalogueKey}/dataset/${_.get(
+          : `/project/${projectKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
             )}/taxon/${encodeURIComponent(
@@ -236,7 +236,7 @@ const getColumns = (catalogueKey, user) => [
       ) : (
         <Classification
           key={_.get(record, "usage.id")}
-          baseUri={`/catalogue/${catalogueKey}/dataset/${_.get(
+          baseUri={`/project/${projectKey}/dataset/${_.get(
             record,
             "usage.datasetKey"
           )}`}
@@ -251,13 +251,13 @@ const getColumns = (catalogueKey, user) => [
 class WorkBench extends React.Component {
   constructor(props) {
     super(props);
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     const { user } = this.props;
     this.state = {
       activeTab: "1",
       data: { result: [] },
       decision: null,
-      columns: getColumns(catalogueKey, user),
+      columns: getColumns(projectKey, user),
       decisionFormVisible: false,
       rowsForEdit: [],
       params: {},
@@ -274,12 +274,12 @@ class WorkBench extends React.Component {
   }
 
   componentDidMount() {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
     let params = qs.parse(_.get(this.props, "location.search"));
     if (_.isEmpty(params)) {
       params = { limit: 50, offset: 0, facet: FACETS };
       history.push({
-        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+        pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
         search: `?limit=50&offset=0`,
       });
     } else if (!params.facet) {
@@ -304,15 +304,15 @@ class WorkBench extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
 
     if (
       _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey") ||
-      _.get(prevProps, "catalogueKey") !== _.get(this.props, "catalogueKey")
+      _.get(prevProps, "projectKey") !== _.get(this.props, "projectKey")
     ) {
       const params = { limit: PAGE_SIZE, offset: 0, facet: FACETS };
       history.push({
-        pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+        pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
         search: `?limit=50&offset=0`,
       });
       // columnFilters.forEach((param) => this.updateFilter(params, {}, param));
@@ -332,7 +332,7 @@ class WorkBench extends React.Component {
       );
     }
     if (!prevProps.user && this.props.user) {
-      this.setState({ columns: getColumns(catalogueKey, this.props.user) });
+      this.setState({ columns: getColumns(projectKey, this.props.user) });
     }
   };
 
@@ -344,7 +344,7 @@ class WorkBench extends React.Component {
 
     this.setState({ loading: true });
 
-    const { datasetKey, catalogueKey, addError } = this.props;
+    const { datasetKey, projectKey, addError } = this.props;
     if (!params.q) {
       delete params.q;
     }
@@ -354,17 +354,17 @@ class WorkBench extends React.Component {
       offset: (current - 1) * limit,
     };
     history.push({
-      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+      pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
       search: `?${qs.stringify(newParamsWithPaging)}`,
     });
-    // This would be cleaner with pathparam like:  /catalogue/3/dataset/1700/nameusage/search
+    // This would be cleaner with pathparam like:  /project/3/dataset/1700/nameusage/search
     let task = params.USAGE_ID
       ? axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
           facet: params.facet,
 
           filter: {
             USAGE_ID: params.USAGE_ID,
-            catalogueKey: [catalogueKey],
+            projectKey: [projectKey],
             unsafe: [true],
           },
           page: {
@@ -377,7 +377,7 @@ class WorkBench extends React.Component {
             config.dataApi
           }dataset/${datasetKey}/nameusage/search?${qs.stringify({
             ...newParamsWithPaging,
-            catalogueKey: catalogueKey,
+            projectKey: projectKey,
           })}`
         );
 
@@ -398,9 +398,9 @@ class WorkBench extends React.Component {
   };
 
   getDecisions = (res) => {
-    const { catalogueKey } = this.props;
+    const { projectKey } = this.props;
     // Search embeds decisions across all projects — pick the one for the current project.
-    const cKey = Number(catalogueKey);
+    const cKey = Number(projectKey);
     const promises = _.get(res, "data.result")
       ? res.data.result.map((d) => {
           const myDecision = (d.decisions || []).find(
@@ -411,7 +411,7 @@ class WorkBench extends React.Component {
             return Promise.resolve(false);
           }
           return axios(
-            `${config.dataApi}dataset/${catalogueKey}/decision/${myDecision.id}`
+            `${config.dataApi}dataset/${projectKey}/decision/${myDecision.id}`
           ).then((decision) => {
             if (decision.data) {
               d.decisions = [decision.data];
@@ -489,9 +489,9 @@ class WorkBench extends React.Component {
     catColumn.filteredValue = filter;
   };
   resetSearch = () => {
-    const { datasetKey, catalogueKey } = this.props;
+    const { datasetKey, projectKey } = this.props;
     history.push({
-      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/workbench`,
+      pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
       search: `?limit=${PAGE_SIZE}&offset=0`,
     });
     this.setState(
@@ -528,7 +528,7 @@ class WorkBench extends React.Component {
       data: { result },
       decision,
     } = this.state;
-    const { datasetKey, catalogueKey, taxonomicstatus } = this.props;
+    const { datasetKey, projectKey, taxonomicstatus } = this.props;
     const promises = result
       .filter((d) => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map((d) => {
@@ -568,7 +568,7 @@ class WorkBench extends React.Component {
 
         return axios
           .post(
-            `${config.dataApi}dataset/${catalogueKey}/decision`,
+            `${config.dataApi}dataset/${projectKey}/decision`,
             decisionObject
           )
 
@@ -649,7 +649,7 @@ class WorkBench extends React.Component {
       advancedFilters,
       activeTab,
     } = this.state;
-    const { taxonomicstatus, user, datasetKey, catalogueKey } = this.props;
+    const { taxonomicstatus, user, datasetKey, projectKey } = this.props;
     const facetRanks = _.get(facets, "rank")
       ? facets.rank.map((r) => ({
           value: r.value,
@@ -760,7 +760,7 @@ class WorkBench extends React.Component {
                 }
               );
             }}
-            datasetKey={catalogueKey}
+            datasetKey={projectKey}
             subjectDatasetKey={datasetKey}
           />
         )}
@@ -799,7 +799,7 @@ class WorkBench extends React.Component {
                     autoFocus={false}
                   />{" "}
                 </div>
-                {catalogueKey === datasetKey && (
+                {projectKey === datasetKey && (
                   <div style={{ marginTop: "10px" }}>
                     <DatasetAutocomplete
                       contributesTo={Number(datasetKey)}
@@ -1024,7 +1024,7 @@ class WorkBench extends React.Component {
           </Col>
         </Row>
         <Row>
-          {Auth.canEditDataset({ key: catalogueKey }, user) && (
+          {Auth.canEditDataset({ key: projectKey }, user) && (
             <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
               <Select
                 style={{ width: 200, marginRight: 10 }}
@@ -1087,7 +1087,7 @@ class WorkBench extends React.Component {
             </Col>
           )}
           <Col
-            span={!Auth.canEditDataset({ key: catalogueKey }, user) ? 24 : 8}
+            span={!Auth.canEditDataset({ key: projectKey }, user) ? 24 : 8}
             style={{ textAlign: "right", marginBottom: "8px" }}
           >
             {pagination &&
@@ -1117,7 +1117,7 @@ class WorkBench extends React.Component {
                   are not indexed for name usage search. Try the{" "}
                   <NavLink
                     to={{
-                      pathname: `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`,
+                      pathname: `/project/${projectKey}/dataset/${datasetKey}/verbatim`,
                       search: `?${qs.stringify({ issue: params.issue })}`,
                     }}
                   >
@@ -1141,13 +1141,13 @@ class WorkBench extends React.Component {
             onChange={this.handleTableChange}
             rowKey={(record) => _.get(record, "usage.id")}
             rowSelection={
-              !Auth.canEditDataset({ key: catalogueKey }, user)
+              !Auth.canEditDataset({ key: projectKey }, user)
                 ? null
                 : rowSelection
             }
             expandable={{
               rowExpandable: () =>
-                Auth.canEditDataset({ key: catalogueKey }, user),
+                Auth.canEditDataset({ key: projectKey }, user),
               expandedRowRender: (record) =>
                 _.get(record, "decisions[0]") ? (
                   <React.Fragment>
@@ -1184,7 +1184,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   user,
-  catalogueKey,
+  projectKey,
   addError,
 }) => ({
   rank,
@@ -1194,7 +1194,7 @@ const mapContextToProps = ({
   nametype,
   namefield,
   user,
-  catalogueKey,
+  projectKey,
   addError,
 });
 

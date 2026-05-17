@@ -388,6 +388,6 @@ class ImportTable extends React.Component {
   }
 }
 
-const mapContextToProps = ({ user, catalogueKey, addError }) => ({ user, catalogueKey, addError });
+const mapContextToProps = ({ user, projectKey, addError }) => ({ user, projectKey, addError });
 
 export default withContext(mapContextToProps)(ImportTable);

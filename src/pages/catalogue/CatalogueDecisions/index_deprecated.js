@@ -94,8 +94,8 @@ class CatalogueDecisions extends React.Component {
     if (
       _.get(prevProps, "location.search") !==
         _.get(this.props, "location.search") ||
-      _.get(prevProps, "match.params.catalogueKey") !==
-        _.get(this.props, "match.params.catalogueKey")
+      _.get(prevProps, "match.params.projectKey") !==
+        _.get(this.props, "match.params.projectKey")
     ) {
       const params = qs.parse(_.get(this.props, "location.search"));
       this.setState(
@@ -114,7 +114,7 @@ class CatalogueDecisions extends React.Component {
   getData = () => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
     this.setState({ loading: true });
@@ -122,12 +122,12 @@ class CatalogueDecisions extends React.Component {
       ...qs.parse(_.get(this.props, "location.search")),
     };
     const url = !!params.stale
-      ? `${config.dataApi}dataset/${catalogueKey}/decision/stale${
+      ? `${config.dataApi}dataset/${projectKey}/decision/stale${
           !!params.subjectDatasetKey
             ? "?subjectDatasetKey=" + params.subjectDatasetKey
             : ""
         }`
-      : `${config.dataApi}dataset/${catalogueKey}/decision?${qs.stringify(
+      : `${config.dataApi}dataset/${projectKey}/decision?${qs.stringify(
           params
         )}`;
     axios(url)
@@ -234,14 +234,14 @@ class CatalogueDecisions extends React.Component {
   rematchDecisions = (subjectDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ rematchDecisionsLoading: true });
     const body = subjectDatasetKey ? { subjectDatasetKey } : {};
     axios
-      .post(`${config.dataApi}dataset/${catalogueKey}/decision/rematch`, body)
+      .post(`${config.dataApi}dataset/${projectKey}/decision/rematch`, body)
       .then((res) => {
         this.setState({
           rematchDecisionsLoading: false,
@@ -261,14 +261,14 @@ class CatalogueDecisions extends React.Component {
   deleteBrokenDecisions = (subjectDatasetKey) => {
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
     } = this.props;
 
     this.setState({ deleteBrokenDecisionsLoading: true });
     axios
       .delete(
-        `${config.dataApi}dataset/${catalogueKey}/decision?datasetKey=${subjectDatasetKey}&broken=true`
+        `${config.dataApi}dataset/${projectKey}/decision?datasetKey=${subjectDatasetKey}&broken=true`
       )
       .then((res) => {
         notification.success({
@@ -302,7 +302,7 @@ class CatalogueDecisions extends React.Component {
     } = this.state;
     const {
       match: {
-        params: { catalogueKey },
+        params: { projectKey },
       },
       user,
       rank,
@@ -319,7 +319,7 @@ class CatalogueDecisions extends React.Component {
           return (
             <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${record.datasetKey}/imports`,
+                pathname: `/project/${projectKey}/dataset/${record.datasetKey}/imports`,
               }}
               end
             >
@@ -377,7 +377,7 @@ class CatalogueDecisions extends React.Component {
               {record?.subject?.id && (
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${catalogueKey}/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`,
+                    pathname: `/project/${projectKey}/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`,
                   }}
                   end
                 >
@@ -417,7 +417,7 @@ class CatalogueDecisions extends React.Component {
       },
     ];
 
-    if (Auth.canEditDataset({ key: catalogueKey }, user)) {
+    if (Auth.canEditDataset({ key: projectKey }, user)) {
       columns.push({
         title: "Action",
         key: "action",
@@ -432,7 +432,7 @@ class CatalogueDecisions extends React.Component {
                 onClick={() => {
                   axios
                     .post(
-                      `${config.dataApi}dataset/${catalogueKey}/decision/rematch`,
+                      `${config.dataApi}dataset/${projectKey}/decision/rematch`,
                       { id: record.id }
                     )
                     .then((rematchInfo) => {
@@ -481,7 +481,7 @@ class CatalogueDecisions extends React.Component {
                 onClick={() => {
                   return axios
                     .delete(
-                      `${config.dataApi}dataset/${catalogueKey}/decision/${record.id}`
+                      `${config.dataApi}dataset/${projectKey}/decision/${record.id}`
                     )
                     .then((res) => {
                       this.setState(
@@ -555,7 +555,7 @@ class CatalogueDecisions extends React.Component {
                   this.getData
                 );
               }}
-              datasetKey={catalogueKey}
+              datasetKey={projectKey}
               subjectDatasetKey={_.get(
                 rowsForEdit,
                 "[0].decisions[0].subjectDatasetKey",
@@ -571,7 +571,7 @@ class CatalogueDecisions extends React.Component {
                   defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
                   onResetSearch={this.onResetDataset}
                   onSelectDataset={this.onSelectDataset}
-                  contributesTo={this.props.catalogueKey}
+                  contributesTo={this.props.projectKey}
                   placeHolder="Source dataset"
                 />
               </div>
@@ -659,7 +659,7 @@ class CatalogueDecisions extends React.Component {
               </Button>
             </Col>
             <Col flex="auto"></Col>
-            {Auth.canEditDataset({ key: catalogueKey }, user) && (
+            {Auth.canEditDataset({ key: projectKey }, user) && (
               <Col style={{ textAlign: "right" }}>
                 <Popconfirm
                   placement="rightTop"
@@ -722,7 +722,7 @@ class CatalogueDecisions extends React.Component {
                 </pre>
               )} */
               expandedRowRender={
-                !Auth.canEditDataset({ key: catalogueKey }, user)
+                !Auth.canEditDataset({ key: projectKey }, user)
                   ? null
                   : (record) => (
                       <React.Fragment>

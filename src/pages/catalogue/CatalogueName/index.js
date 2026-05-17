@@ -20,7 +20,7 @@ const CatalogueName = ({ catalogue, match, location }) =>
         <Helmet title={`${_.get(catalogue, "title")} in COL`} />
       )}
 
-      <Name datasetKey={match.params.catalogueKey} location={location} match={match} />
+      <Name datasetKey={match.params.projectKey} location={location} match={match} />
     </Layout>
   );
 

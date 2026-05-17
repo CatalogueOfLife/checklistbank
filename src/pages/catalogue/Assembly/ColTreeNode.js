@@ -250,7 +250,7 @@ class ColTreeNode extends React.Component {
       treeType,
       isUpdating,
       getTaxonomicStatusColor,
-      catalogueKey,
+      projectKey,
       dataset,
     } = this.props;
     const hasDatasetSectors =
@@ -296,7 +296,7 @@ class ColTreeNode extends React.Component {
             onCancel={this.cancelEstimateModal}
             onSuccess={this.cancelEstimateModal}
             taxon={taxon}
-            catalogueKey={catalogueKey}
+            projectKey={projectKey}
           />
         )}
         {uploadTextTreeModalVisible && (
@@ -327,7 +327,7 @@ class ColTreeNode extends React.Component {
                                 type="primary"
                                 onClick={() => {
                                   history.push(
-                                    `/catalogue/${catalogueKey}/taxon/${taxon.id}`
+                                    `/project/${projectKey}/taxon/${taxon.id}`
                                   );
                                 }}
                               >
@@ -342,7 +342,7 @@ class ColTreeNode extends React.Component {
                               >
                                 Download subtree as text
                               </Button>
-                              <CanEditDataset dataset={{ key: catalogueKey }}>
+                              <CanEditDataset dataset={{ key: projectKey }}>
                                 <br />
                                 <Button
                                   style={{ marginTop: "8px", width: "100%" }}
@@ -601,7 +601,7 @@ class ColTreeNode extends React.Component {
                             </Tag>
                           </React.Fragment>
                         )}
-                        {taxon.datasetKey === catalogueKey &&
+                        {taxon.datasetKey === projectKey &&
                           !hasDatasetSectors &&
                           !sector && (
                             <Tooltip title="No sectors">
@@ -618,7 +618,7 @@ class ColTreeNode extends React.Component {
                             /*                             datasetSectors={datasetSectors}
                              */ taxon={taxon}
                               releaseKey={releaseKey}
-                              catalogueKey={catalogueKey}
+                              projectKey={projectKey}
                             />
                           </span>
                         )}
@@ -763,7 +763,7 @@ class ColTreeNode extends React.Component {
                         } */
                         taxon={taxon}
                         releaseKey={releaseKey}
-                        catalogueKey={catalogueKey}
+                        projectKey={projectKey}
                       />
                     )}
                   </div>
@@ -779,12 +779,12 @@ class ColTreeNode extends React.Component {
 
 const mapContextToProps = ({
   getTaxonomicStatusColor,
-  catalogueKey,
+  projectKey,
   addError,
   rank,
 }) => ({
   getTaxonomicStatusColor,
-  catalogueKey,
+  projectKey,
   addError,
   rank,
 });

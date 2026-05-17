@@ -20,7 +20,7 @@ const capitalize = (str) =>
 
 const UserAdmin = ({
   user,
-  catalogueKey,
+  projectKey,
   location,
   addError,
   countryAlpha2,
@@ -256,14 +256,14 @@ const UserAdmin = ({
 
 const mapContextToProps = ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,
   userRole
 }) => ({
   user,
-  catalogueKey,
+  projectKey,
   catalogue,
   addError,
   countryAlpha2,

@@ -82,7 +82,7 @@ class DatasetSourceMetrics extends React.Component {
         )}
         <SourceMetrics
           isProject={false}
-          catalogueKey={
+          projectKey={
             ["xrelease", "release"].includes(dataset?.origin)
               ? dataset?.sourceKey
               : dataset?.key

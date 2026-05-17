@@ -5,7 +5,7 @@ import Tasks from "../../../pages/DatasetKey/datasetPageTabs/DatasetTasks";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 
-const AssemblyTasks = ({ location, catalogueKey, catalogue }) => {
+const AssemblyTasks = ({ location, projectKey, catalogue }) => {
   return (
     <Layout
       openKeys={["assembly"]}
@@ -17,14 +17,14 @@ const AssemblyTasks = ({ location, catalogueKey, catalogue }) => {
         <title>{catalogue.title}</title>
       </Helmet>
       <PageContent>
-        <Tasks datasetKey={catalogueKey} location={location} assembly={true} />
+        <Tasks datasetKey={projectKey} location={location} assembly={true} />
       </PageContent>
     </Layout>
   );
 };
 
-const mapContextToProps = ({ catalogueKey, catalogue }) => ({
-  catalogueKey,
+const mapContextToProps = ({ projectKey, catalogue }) => ({
+  projectKey,
   catalogue,
 });
 export default withContext(mapContextToProps)(AssemblyTasks);

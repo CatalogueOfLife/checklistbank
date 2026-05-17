@@ -7,9 +7,9 @@ import withContext from "../../components/hoc/withContext";
 
 import Auth from "../../components/Auth";
 const { canEditDataset } = Auth;
-const deleteDecision = (id, deleteCallback, catalogueKey) => {
+const deleteDecision = (id, deleteCallback, projectKey) => {
   return axios
-    .delete(`${config.dataApi}dataset/${catalogueKey}/decision/${id}`)
+    .delete(`${config.dataApi}dataset/${projectKey}/decision/${id}`)
     .then((res) => {
       notification.open({
         message: "Decision deleted",
@@ -20,7 +20,7 @@ const deleteDecision = (id, deleteCallback, catalogueKey) => {
     });
 };
 
-const DecisionTag = ({ decision, deleteCallback, catalogueKey, user }) => {
+const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
   if (!_.get(decision, "mode")) {
     return "";
   } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {
@@ -28,9 +28,9 @@ const DecisionTag = ({ decision, deleteCallback, catalogueKey, user }) => {
       <Tooltip title={_.get(decision, "mode")}>
         {" "}
         <Tag
-          closable={canEditDataset({ key: catalogueKey }, user)}
+          closable={canEditDataset({ key: projectKey }, user)}
           onClose={() =>
-            deleteDecision(_.get(decision, "id"), deleteCallback, catalogueKey)
+            deleteDecision(_.get(decision, "id"), deleteCallback, projectKey)
           }
           className="decision-tag"
         >
@@ -44,7 +44,7 @@ const DecisionTag = ({ decision, deleteCallback, catalogueKey, user }) => {
         <Tag
           closable
           onClose={() =>
-            deleteDecision(_.get(decision, "id"), deleteCallback, catalogueKey)
+            deleteDecision(_.get(decision, "id"), deleteCallback, projectKey)
           }
           className="decision-tag"
         >
@@ -60,7 +60,7 @@ const DecisionTag = ({ decision, deleteCallback, catalogueKey, user }) => {
         <Tag
           closable
           onClose={() =>
-            deleteDecision(_.get(decision, "id"), deleteCallback, catalogueKey)
+            deleteDecision(_.get(decision, "id"), deleteCallback, projectKey)
           }
           className="decision-tag"
         >

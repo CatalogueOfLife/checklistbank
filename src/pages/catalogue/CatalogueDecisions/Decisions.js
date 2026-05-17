@@ -307,7 +307,7 @@ class CatalogueDecisions extends React.Component {
           return (
             <NavLink
               to={{
-                pathname: `/catalogue/${
+                pathname: `/project/${
                   type === "project" ? datasetKey : releasedFrom
                 }/dataset/${record.subjectDatasetKey}/imports`,
               }}
@@ -367,7 +367,7 @@ class CatalogueDecisions extends React.Component {
               {record?.subject?.id && (
                 <NavLink
                   to={{
-                    pathname: `/catalogue/${
+                    pathname: `/project/${
                       type === "project" ? datasetKey : releasedFrom
                     }/dataset/${record.subjectDatasetKey}/taxon/${
                       record?.subject?.id

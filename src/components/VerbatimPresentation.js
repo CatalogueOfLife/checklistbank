@@ -104,7 +104,7 @@ class VerbatimPresentation extends React.Component {
   };
 
   renderTerm = (key, value, type, homoglyphs) => {
-    const { termsMap, termsMapReversed, datasetKey, catalogueKey, location } =
+    const { termsMap, termsMapReversed, datasetKey, projectKey, location } =
       this.props;
 
     const taxonPath = {
@@ -161,8 +161,8 @@ class VerbatimPresentation extends React.Component {
             key={key}
             to={{
               pathname:
-                location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1
-                  ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`
+                location.pathname.indexOf(`catalogue/${projectKey}`) > -1
+                  ? `/project/${projectKey}/dataset/${datasetKey}/verbatim`
                   : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
             }}
@@ -225,8 +225,8 @@ class VerbatimPresentation extends React.Component {
             key={key}
             to={{
               pathname:
-                location.pathname.indexOf(`catalogue/${catalogueKey}`) > -1
-                  ? `/catalogue/${catalogueKey}/dataset/${datasetKey}/verbatim`
+                location.pathname.indexOf(`catalogue/${projectKey}`) > -1
+                  ? `/project/${projectKey}/dataset/${datasetKey}/verbatim`
                   : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
             }}
@@ -492,7 +492,7 @@ const mapContextToProps = ({
   termsMap,
   termsMapReversed,
   terms,
-  catalogueKey,
-}) => ({ issueMap, termsMap, termsMapReversed, terms, catalogueKey });
+  projectKey,
+}) => ({ issueMap, termsMap, termsMapReversed, terms, projectKey });
 
 export default withContext(mapContextToProps)(withRouter(VerbatimPresentation));

@@ -7,7 +7,7 @@ import _ from "lodash";
 import Auth from "../../components/Auth"
 import withContext from "../../components/hoc/withContext";
 
-const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, baseUri, sectorDatasetKey, catalogueKey, user }) => (
+const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, baseUri, sectorDatasetKey, projectKey, user }) => (
   <React.Fragment>
     {sectorDatasetKey && Auth.isAuthorised(user, ["editor"]) && 
     <Row style={{ marginBottom: "10px" }}>
@@ -24,7 +24,7 @@ const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, b
     <Col span={18}>
     <NavLink
               to={{
-                pathname: `/catalogue/${catalogueKey}/dataset/${sectorDatasetKey}/workbench`,
+                pathname: `/project/${projectKey}/dataset/${sectorDatasetKey}/workbench`,
                 search: `?q=${_.get(usage, 'name.scientificName')}&rank=${_.get(usage, 'name.rank')}`
               }}
               end
@@ -113,5 +113,5 @@ const RowDetail = ({ issues, usage, classification, vernacularNames, issueMap, b
   </React.Fragment>
 );
 
-const mapContextToProps = ({ issueMap, catalogueKey, user }) => ({ issueMap, catalogueKey, user });
+const mapContextToProps = ({ issueMap, projectKey, user }) => ({ issueMap, projectKey, user });
 export default withContext(mapContextToProps)(RowDetail);
