@@ -250,7 +250,7 @@ class NameSearchPage extends React.Component {
         content: "SCIENTIFIC_NAME"
       };
       history.push({
-        pathname: _.get(this.props, "location.path"),
+        pathname: _.get(this.props, "location.pathname"),
         search: `?limit=${PAGE_SIZE}&offset=0`,
       });
     }
@@ -315,7 +315,7 @@ class NameSearchPage extends React.Component {
       };
 
       history.push({
-        pathname: _.get(this.props, "location.path"),
+        pathname: _.get(this.props, "location.pathname"),
         search: `?${qs.stringify(newParamsWithPaging)}`,
       });
       const url = datasetKey

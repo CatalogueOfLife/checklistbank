@@ -1657,13 +1657,13 @@ class ColTree extends React.Component {
                     };
 
                     history.push({
-                      pathname: location.path,
+                      pathname: location.pathname,
                       search: `?${qs.stringify(newParams)}`,
                     });
                   } else {
                     const key = TAXON_KEY_PARAMETER_NAMES[treeType];
                     history.push({
-                      pathname: location.path,
+                      pathname: location.pathname,
                       search: `?${qs.stringify(
                         _.omit(qs.parse(_.get(location, "search")), [key])
                       )}`,

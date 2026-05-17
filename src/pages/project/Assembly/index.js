@@ -653,7 +653,7 @@ class Assembly extends React.Component {
                                         marginTop: "8px",
                                         width: "100%",
                                       }}
-                                      type="danger"
+                                      danger
                                       onClick={() => {
                                         Promise.allSettled(
                                           selectedSourceTreeNodes.map((n) =>
@@ -685,7 +685,7 @@ class Assembly extends React.Component {
                                         marginTop: "8px",
                                         width: "100%",
                                       }}
-                                      type="danger"
+                                      danger
                                       onClick={() => {
                                         const taxaWithdecisions =
                                           selectedSourceTreeNodes.filter(

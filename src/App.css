@@ -341,10 +341,18 @@ div.csl-entry {
 /* Selected tree row: antd paints the row blue, but inline-styled spans inside
    the node title (the rank prefix, taxon name link colors from labelHtml,
    merged-badge wrapper, etc.) keep their original dark/blue text and become
-   unreadable. Force everything inside the selected node to white. */
+   unreadable. Paint the text white via -webkit-text-fill-color rather than
+   `color: #fff` — `color` is left untouched so the Tag pills further down
+   the tree can keep using `currentColor` as their solid background. */
 .ant-tree-treenode-selected .ant-tree-node-content-wrapper,
 .ant-tree-treenode-selected .ant-tree-node-content-wrapper * {
-  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+/* Tag pills inside a selected row: keep their own fill-color (#fff) so the
+   white-on-saturated look survives the row-level override above. */
+.ant-tree-treenode-selected .ant-tag,
+.ant-tree-treenode-selected .ant-tag * {
+  -webkit-text-fill-color: #fff !important;
 }
 
 /* antd 6 renders <Tag color={...}> as pastel-bg + saturated-text. Restore the

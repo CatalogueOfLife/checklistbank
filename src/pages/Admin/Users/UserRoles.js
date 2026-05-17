@@ -212,8 +212,8 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
           <Col>
            { (!user?.editor || user?.editor?.indexOf(dataset.key) === -1) && <Button type="primary" onClick={() => addEditor(dataset, 'editor')}>{`Make ${user?.username} editor`}</Button>}
            { (!user?.reviewer || user?.reviewer?.indexOf(dataset.key) === -1) && <Button style={{marginLeft: '8px'}} type="primary" onClick={() => addEditor(dataset, 'reviewer')}>{`Make ${user?.username} reviewer`}</Button>}
-           { (user?.editor?.indexOf(dataset.key) > -1) && <Button style={{marginLeft: '8px'}} type="danger" onClick={() => deleteEditor(dataset, 'editor')}>{`Remove ${user?.username} as editor`}</Button>}
-           { (user?.reviewer?.indexOf(dataset.key) > -1) && <Button style={{marginLeft: '8px'}} type="danger" onClick={() => deleteEditor(dataset, 'reviewer')}>{`Remove ${user?.username} as reviewer`}</Button>}
+           { (user?.editor?.indexOf(dataset.key) > -1) && <Button style={{marginLeft: '8px'}} danger onClick={() => deleteEditor(dataset, 'editor')}>{`Remove ${user?.username} as editor`}</Button>}
+           { (user?.reviewer?.indexOf(dataset.key) > -1) && <Button style={{marginLeft: '8px'}} danger onClick={() => deleteEditor(dataset, 'reviewer')}>{`Remove ${user?.username} as reviewer`}</Button>}
           </Col>
         </Row>
         

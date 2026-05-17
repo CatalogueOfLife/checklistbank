@@ -56,7 +56,7 @@ export const AssemblyNodeContent = ({ mode }) => {
             <br />
             <Button
               style={{ marginTop: "8px", width: "100%" }}
-              type="danger"
+              danger
               onClick={() =>
                 this.setState({
                   editTaxonModalVisible: true,
@@ -68,7 +68,7 @@ export const AssemblyNodeContent = ({ mode }) => {
             </Button>
             <br />
             <Button
-              type="danger"
+              danger
               style={{ marginTop: "8px", width: "100%" }}
               onClick={() => this.deleteTaxon(taxon)}
             >
@@ -76,7 +76,7 @@ export const AssemblyNodeContent = ({ mode }) => {
             </Button>
             <br />
             <Button
-              type="danger"
+              danger
               style={{ marginTop: "8px", width: "100%" }}
               onClick={() => this.deleteTaxonRecursive(taxon)}
             >

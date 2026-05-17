@@ -258,7 +258,7 @@ class SourceMetrics extends React.Component {
     const { releaseKey } = this.state;
     const params = qs.parse(_.get(location, "search"));
     history.push({
-      pathname: location.path,
+      pathname: location.pathname,
       search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
     });
     this.setState({ loading: true, newReleaseKey, releaseLabel });
@@ -266,7 +266,7 @@ class SourceMetrics extends React.Component {
       if (releaseKey !== newReleaseKey) {
         this.setState({ loading: true, newReleaseKey, releaseLabel });
         history.push({
-          pathname: location.path,
+          pathname: location.pathname,
           search: `?${qs.stringify({ ...params, releaseKey: newReleaseKey })}`,
         });
         Promise.allSettled([
@@ -684,7 +684,7 @@ class SourceMetrics extends React.Component {
                       const params = qs.parse(_.get(location, "search"));
                       if (hideUnchanged) {
                         history.push({
-                          pathname: location.path,
+                          pathname: location.pathname,
                           search: `?${qs.stringify({
                             ...params,
                             hideUnchanged: hideUnchanged,
@@ -697,7 +697,7 @@ class SourceMetrics extends React.Component {
                         this.setState({ filteredData });
                       } else {
                         history.push({
-                          pathname: location.path,
+                          pathname: location.pathname,
                           search: `?${qs.stringify({
                             ..._.omit(params, "hideUnchanged"),
                           })}`,

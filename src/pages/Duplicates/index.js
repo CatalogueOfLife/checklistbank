@@ -1035,7 +1035,7 @@ class DuplicateSearchPage extends React.Component {
                 </FormItem>
 
                 <FormItem>
-                  <Button type="danger" onClick={this.resetSearch}>
+                  <Button danger onClick={this.resetSearch}>
                     Reset all
                   </Button>
                 </FormItem>

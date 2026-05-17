@@ -7,7 +7,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 const DeleteOrphansButton = ({ type, datasetKey, style }) => (
   <Button
     style={style}
-    type="danger"
+    danger
     onClick={() => {
       axios
         .delete(`${config.dataApi}dataset/${datasetKey}/${type}/orphans`)

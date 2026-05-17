@@ -699,7 +699,7 @@ class DatasetList extends React.Component {
               {!noParams && (
                 <Col>
                   <Button
-                    type="danger"
+                    danger
                     style={{
                       marginTop: "10px",
                       marginBottom: "10px",
@@ -867,7 +867,7 @@ class DatasetList extends React.Component {
                               >
                                 <Button
                                   onClick={(e) => e.stopPropagation()}
-                                  type="danger"
+                                  danger
                                 >
                                   Delete {this.state.selectedRowKeys.length}{" "}
                                   datasets

@@ -607,7 +607,7 @@ class ProjectSectors extends React.Component {
 
         <Row style={{ marginTop: "10px" }}>
           <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Button type="danger" onClick={this.resetAllFilters}>
+            <Button danger onClick={this.resetAllFilters}>
               Reset all
             </Button>
           </Col>
@@ -663,7 +663,7 @@ class ProjectSectors extends React.Component {
                   cancelText="No"
                 >
                   <Button
-                    type="danger"
+                    danger
                     loading={deleteSectorsLoading}
                     style={{ marginBottom: "10px" }}
                   >

@@ -112,17 +112,23 @@ class Popconfirm extends React.Component{
            {onConfirm && <Button onClick={this.onConfirm} type={okType} size="small" {...okButtonProps}>
               {okText || 'OK'}
             </Button>}
-            {actions && actions.map(a =>
-            <Button key={a.text} disabled={a?.disabled} onClick={(e) => {
-                this.setVisible(false, e);
-                if (a.action) {
-                    a.action.call(this, e);
-                  }
+            {actions && actions.map(a => {
+              // antd 6 dropped Button type="danger" — translate it to the
+              // `danger` boolean prop so existing call sites that pass
+              // `type: "danger"` still render red.
+              const isDanger = a.type === 'danger';
+              return (
+                <Button key={a.text} disabled={a?.disabled} onClick={(e) => {
+                    this.setVisible(false, e);
+                    if (a.action) {
+                        a.action.call(this, e);
+                      }
 
-            }} type={a.type || 'primary'} size="small" >
-            {a.text}
-          </Button>
-                )}
+                }} type={isDanger ? 'primary' : (a.type || 'primary')} danger={isDanger} size="small" >
+                {a.text}
+              </Button>
+              );
+            })}
           </div>
         </div>
       </div>

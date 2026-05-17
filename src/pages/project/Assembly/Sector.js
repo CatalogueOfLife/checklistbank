@@ -278,7 +278,7 @@ class Sector extends React.Component {
                       okText="Full"
                       cancelText="Partial"
                     >
-                      <Button style={{ width: "100%" }} type="danger">
+                      <Button style={{ width: "100%" }} danger>
                         Delete sector
                       </Button>
                     </Popconfirm>
@@ -483,7 +483,7 @@ class Sector extends React.Component {
                       okText="Full"
                       cancelText="Partial"
                     >
-                      <Button style={{ width: "100%" }} type="danger">
+                      <Button style={{ width: "100%" }} danger>
                         Delete sector
                       </Button>
                     </Popconfirm>
@@ -520,7 +520,7 @@ class Sector extends React.Component {
                   <CanEditDataset dataset={{ key: projectKey }}>
                     <Button
                       style={{ marginTop: "8px", width: "100%" }}
-                      type="danger"
+                      danger
                       onClick={() => {
                         applyDecision(taxon, projectKey, decisionCallback);
                         this.setState({ popOverVisible: false });

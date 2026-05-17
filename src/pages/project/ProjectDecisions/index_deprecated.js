@@ -477,7 +477,7 @@ class ProjectDecisions extends React.Component {
               <Button
                 size="small"
                 style={{ display: "inline" }}
-                type="danger"
+                danger
                 onClick={() => {
                   return axios
                     .delete(
@@ -654,7 +654,7 @@ class ProjectDecisions extends React.Component {
           </Form>
           <Row>
             <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-              <Button type="danger" onClick={this.resetAllFilters}>
+              <Button danger onClick={this.resetAllFilters}>
                 Reset all
               </Button>
             </Col>

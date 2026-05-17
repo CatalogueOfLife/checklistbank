@@ -371,7 +371,7 @@ class ColTreeNode extends React.Component {
                                 <br />
                                 <Button
                                   style={{ marginTop: "8px", width: "100%" }}
-                                  type="danger"
+                                  danger
                                   onClick={() =>
                                     this.setState({
                                       editTaxonModalVisible: true,
@@ -383,7 +383,7 @@ class ColTreeNode extends React.Component {
                                 </Button>
                                 <br />
                                 <Button
-                                  type="danger"
+                                  danger
                                   style={{ marginTop: "8px", width: "100%" }}
                                   onClick={() => this.deleteTaxon(taxon)}
                                 >
@@ -391,7 +391,7 @@ class ColTreeNode extends React.Component {
                                 </Button>
                                 <br />
                                 <Button
-                                  type="danger"
+                                  danger
                                   style={{ marginTop: "8px", width: "100%" }}
                                   onClick={() =>
                                     this.deleteTaxonRecursive(taxon)
@@ -428,7 +428,7 @@ class ColTreeNode extends React.Component {
                           {taxonIsInSelectedNodes && (
                             <React.Fragment>
                               <Button
-                                type="danger"
+                                danger
                                 style={{ marginTop: "8px", width: "100%" }}
                                 onClick={() =>
                                   this.deleteTaxonBatch(
@@ -442,7 +442,7 @@ class ColTreeNode extends React.Component {
                               </Button>
                               <br />
                               <Button
-                                type="danger"
+                                danger
                                 style={{ marginTop: "8px", width: "100%" }}
                                 onClick={() =>
                                   this.deleteTaxonRecursiveBatch(

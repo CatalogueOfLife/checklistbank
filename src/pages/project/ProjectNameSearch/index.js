@@ -2,6 +2,7 @@ import React from "react";
 import NameSearch from "../../NameSearch";
 import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
+import withRouter from "../../../withRouter";
 import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import { Helmet } from "react-helmet-async";
@@ -26,4 +27,4 @@ const mapContextToProps = ({ projectKey, catalogue }) => ({
   projectKey,
   catalogue
 });
-export default withContext(mapContextToProps)(ProjectNameSearch);
+export default withRouter(withContext(mapContextToProps)(ProjectNameSearch));

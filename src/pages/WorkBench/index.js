@@ -983,7 +983,7 @@ class WorkBench extends React.Component {
           <Col span={14}>
             {" "}
             <Button
-              type="danger"
+              danger
               onClick={this.resetSearch}
               style={{ width: "120px" }}
             >

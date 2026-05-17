@@ -308,7 +308,7 @@ class SectorTable extends React.Component {
                 <Button
                   size="small"
                   style={{ display: "inline" }}
-                  type="danger"
+                  danger
                 >
                   <DeleteOutlined />
                 </Button>

@@ -166,7 +166,7 @@ const TaxAlign = ({ location, addError }) => {
 
           <Button
             style={{ marginRight: "10px" }}
-            type="danger"
+            danger
             onClick={resetAll}
           >
             Reset
