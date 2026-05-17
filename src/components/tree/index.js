@@ -1,60 +1,43 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import { Tree as AntdTree } from "antd";
 
 // antd's Tree (backed by @rc-component/tree) bails out of the drop dispatch
-// when the drag was started in a different tree instance — `onNodeDrop` checks
-// `dropTargetKey === null` (set only when an internal drag is in progress) and
-// would otherwise TypeError on `this.dragNodeProps`. That's exactly the case
-// the Catalogue Assembly UI hits: drag a taxon from the source tree onto a
-// node in the project tree.
+// when the drag was started in a different tree instance — `onNodeDrop`
+// checks `dropTargetKey === null` (set only when an internal drag is in
+// progress) and would otherwise TypeError on `this.dragNodeProps`. That's
+// exactly the case the Catalogue Assembly UI hits: drag a taxon from the
+// source tree onto a node in the project tree.
 //
 // This wrapper sidesteps the limitation by intercepting native HTML5 `drop`
-// events on the tree's root element. When the parent passes a `dragNode` prop
-// AND the drag didn't originate in this tree (tracked via the `dragstart`
-// callback), the wrapper walks up from the event target to find the
-// matching tree node — identified by a `data-cross-tree-node-key` attribute
-// injected via `titleRender` — and synthesises a Router-5-shaped drop event
-// for the caller's `onDrop`.
+// events on the tree's root element. When the parent passes a `dragNode`
+// prop AND the drag didn't originate in this tree (tracked via the
+// `onDragStart` callback), the wrapper walks up from the event target to
+// find the matching tree node — identified by antd's own `id` attribute
+// on `.ant-tree-treenode` elements — and synthesises a Router-5-shaped
+// drop event for the caller's `onDrop`.
 //
 // Same-tree drags continue to go through antd's normal `onDrop` path, so
-// existing reorder logic (handleModify in ColTree.js) is unaffected.
+// the existing reorder logic (handleModify in ColTree.js) is unaffected.
 
-const findInTreeData = (nodes, key) => {
-  if (!Array.isArray(nodes)) return null;
+const flattenTreeData = (nodes, out) => {
+  if (!Array.isArray(nodes)) return;
   for (const n of nodes) {
     if (n == null) continue;
-    if (String(n.key) === key) return n;
-    const child = findInTreeData(n.children, key);
-    if (child) return child;
+    out.push(n);
+    flattenTreeData(n.children, out);
   }
-  return null;
 };
 
-const wrapTitle = (node, originalTitleRender) => {
-  const rendered = originalTitleRender ? originalTitleRender(node) : node.title;
-  return (
-    <span data-cross-tree-node-key={String(node.key)}>{rendered}</span>
-  );
-};
+// @rc-component/util's getId sanitises keys to valid HTML id characters
+// (letters, digits, hyphen, underscore, colon, period — everything else
+// becomes a hyphen) before joining with the tree's auto-generated prefix.
+// We mirror that here to match a DOM node back to its data key.
+// Mirrors @rc-component/util's getId sanitisation (it produces
+// `${prefix}-${sanitisedKey}`).
+const sanitiseForId = (s) => String(s).replace(/[^a-zA-Z0-9_.:-]/g, "-");
 
 const DirectoryTree = forwardRef(
-  (
-    {
-      dragNode,
-      onDrop,
-      onDragStart,
-      treeData,
-      titleRender,
-      ...rest
-    },
-    ref
-  ) => {
+  ({ dragNode, onDrop, onDragStart, treeData, ...rest }, ref) => {
     const wrapperRef = useRef(null);
     const innerRef = useRef(null);
     const internalDragRef = useRef(false);
@@ -75,8 +58,7 @@ const DirectoryTree = forwardRef(
       [onDragStart]
     );
 
-    // Reset the "drag started here" flag when the drag operation ends, no
-    // matter where it ended (drop, escape, off-window release).
+    // Reset the "drag started here" flag whenever the drag operation ends.
     useEffect(() => {
       const reset = () => {
         internalDragRef.current = false;
@@ -85,10 +67,8 @@ const DirectoryTree = forwardRef(
       return () => window.removeEventListener("dragend", reset);
     }, []);
 
-    // Only attach native drop interception when a cross-tree drag is in
-    // flight (dragNode is set on the parent) AND the drag didn't start in
-    // this tree. The same-tree case is left alone — antd's onDrop dispatches
-    // correctly with both e.node and e.dragNode populated.
+    // Attach native drop interception only while a cross-tree drag is in
+    // flight. Same-tree drags pass through to antd's onDrop unchanged.
     useEffect(() => {
       if (!dragNode) return undefined;
       const el = wrapperRef.current;
@@ -102,10 +82,16 @@ const DirectoryTree = forwardRef(
 
       const onNativeDrop = (e) => {
         if (internalDragRef.current) return;
-        const targetEl = e.target?.closest?.("[data-cross-tree-node-key]");
-        if (!targetEl) return;
-        const key = targetEl.getAttribute("data-cross-tree-node-key");
-        const node = findInTreeData(treeDataRef.current, key);
+        const targetEl = e.target?.closest?.(".ant-tree-treenode");
+        if (!targetEl?.id) return;
+        // antd assigns each tree node id `${treeId}-${sanitisedKey}`. Match
+        // by suffix against the (also-sanitised) key from our treeData.
+        const targetId = targetEl.id;
+        const flat = [];
+        flattenTreeData(treeDataRef.current, flat);
+        const node = flat.find(
+          (n) => n != null && targetId.endsWith("-" + sanitiseForId(n.key))
+        );
         if (!node) return;
         e.preventDefault();
         onDrop?.({ event: e, node, dragNode });
@@ -119,11 +105,6 @@ const DirectoryTree = forwardRef(
       };
     }, [dragNode, onDrop]);
 
-    const wrappedTitleRender = useMemo(
-      () => (node) => wrapTitle(node, titleRender),
-      [titleRender]
-    );
-
     return (
       <div ref={wrapperRef}>
         <AntdTree.DirectoryTree
@@ -131,7 +112,6 @@ const DirectoryTree = forwardRef(
           treeData={treeData}
           onDragStart={handleDragStart}
           onDrop={onDrop}
-          titleRender={wrappedTitleRender}
           {...rest}
         />
       </div>
