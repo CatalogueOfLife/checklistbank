@@ -126,8 +126,11 @@ const DirectoryTree = forwardRef(
 );
 DirectoryTree.displayName = "CrossTreeDirectoryTree";
 
-// Preserve the namespace shape ColTree consumes: `Tree.DirectoryTree`.
-const Tree = AntdTree;
-Tree.DirectoryTree = DirectoryTree;
+// Preserve the namespace shape ColTree consumes (`Tree.DirectoryTree`) WITHOUT
+// mutating antd's exported Tree object — the previous version did
+// `AntdTree.DirectoryTree = DirectoryTree` which replaced antd's own
+// DirectoryTree globally for every module that imports `antd`, and that
+// reentrancy froze the React tree during the assembly page's initial render.
+const Tree = { DirectoryTree };
 
 export default Tree;
