@@ -20,7 +20,7 @@ import {
   ToolOutlined,
 } from "@ant-design/icons";
 
-import { Menu, Alert } from "antd";
+import { Menu as AntdMenu, Alert } from "antd";
 import Logo from "./Logo";
 import _ from "lodash";
 import Auth from "../Auth";
@@ -29,7 +29,67 @@ import config from "../../config";
 import CatalogueSelect from "./CatalogueSelect";
 import SourceSelect from "./SourceDatasetSelect";
 import { truncate } from "../util";
-const SubMenu = Menu.SubMenu;
+
+// antd 6 deprecated <Menu>'s children API in favour of `items`. This menu is
+// large and dynamic, so rather than rewriting every `<Menu.Item>` /
+// `<SubMenu>` / `<Menu.ItemGroup>` below, we adapt them at the boundary: walk
+// the JSX children once and forward as `items` to antd. The JSX further down
+// stays unchanged.
+const childrenToItems = (children) => {
+  const items = [];
+  React.Children.forEach(children, (child) => {
+    if (child == null || child === false || child === true) return;
+    if (!React.isValidElement(child)) return;
+    if (child.type === React.Fragment) {
+      items.push(...childrenToItems(child.props.children));
+      return;
+    }
+    const { type, props, key } = child;
+    if (type === AntdMenu.Item) {
+      items.push({
+        key,
+        label: props.children,
+        icon: props.icon,
+        onClick: props.onClick,
+        disabled: props.disabled,
+        danger: props.danger,
+        style: props.style,
+        className: props.className,
+      });
+    } else if (type === AntdMenu.SubMenu) {
+      items.push({
+        key,
+        label: props.title,
+        icon: props.icon,
+        disabled: props.disabled,
+        style: props.style,
+        className: props.className,
+        children: childrenToItems(props.children),
+      });
+    } else if (type === AntdMenu.ItemGroup) {
+      items.push({
+        type: "group",
+        key,
+        label: props.title,
+        children: childrenToItems(props.children),
+      });
+    } else if (type === AntdMenu.Divider) {
+      items.push({ type: "divider", key });
+    }
+    // Unknown element types are silently skipped — better than passing
+    // unrecognised children straight to antd and re-triggering the warning.
+  });
+  return items;
+};
+
+const Menu = ({ children, items, ...rest }) => (
+  <AntdMenu items={items ?? childrenToItems(children)} {...rest} />
+);
+Menu.Item = AntdMenu.Item;
+Menu.SubMenu = AntdMenu.SubMenu;
+Menu.ItemGroup = AntdMenu.ItemGroup;
+Menu.Divider = AntdMenu.Divider;
+const SubMenu = AntdMenu.SubMenu;
 const styles = {};
 /* function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;

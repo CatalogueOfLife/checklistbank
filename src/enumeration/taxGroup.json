@@ -33,7 +33,8 @@
     "parents": [
       "prokaryotes"
     ],
-    "phylopic": "7bd82403-a662-41bd-9710-cf095bea5809"
+    "phylopic": "7bd82403-a662-41bd-9710-cf095bea5809",
+    "primaryParent": "prokaryotes"
   },
   {
     "codes": [
@@ -47,7 +48,8 @@
     "parents": [
       "prokaryotes"
     ],
-    "phylopic": "d979c5bd-f760-427d-bd23-7b8779bd1c8f"
+    "phylopic": "d979c5bd-f760-427d-bd23-7b8779bd1c8f",
+    "primaryParent": "prokaryotes"
   },
   {
     "codes": [
@@ -74,7 +76,8 @@
     "parents": [
       "eukaryotes"
     ],
-    "phylopic": "5fccc7f9-60b8-4aea-96cf-ce93f85c9e90"
+    "phylopic": "5fccc7f9-60b8-4aea-96cf-ce93f85c9e90",
+    "primaryParent": "eukaryotes"
   },
   {
     "codes": [
@@ -88,7 +91,8 @@
     "parents": [
       "eukaryotes"
     ],
-    "phylopic": "5c6ae9a1-1405-4f81-b4c1-c169faef475e"
+    "phylopic": "5c6ae9a1-1405-4f81-b4c1-c169faef475e",
+    "primaryParent": "eukaryotes"
   },
   {
     "codes": [
@@ -104,7 +108,8 @@
       "plants",
       "protists"
     ],
-    "phylopic": "65414989-e801-4d0e-acc1-4309cd35ab7e"
+    "phylopic": "65414989-e801-4d0e-acc1-4309cd35ab7e",
+    "primaryParent": "plants"
   },
   {
     "codes": [
@@ -118,7 +123,8 @@
     "parents": [
       "plants"
     ],
-    "phylopic": "f4889f66-1904-479d-8a1f-f9449733c654"
+    "phylopic": "f4889f66-1904-479d-8a1f-f9449733c654",
+    "primaryParent": "plants"
   },
   {
     "codes": [
@@ -132,7 +138,8 @@
     "parents": [
       "plants"
     ],
-    "phylopic": "ee243ea1-c311-4fa2-b730-928b80117515"
+    "phylopic": "ee243ea1-c311-4fa2-b730-928b80117515",
+    "primaryParent": "plants"
   },
   {
     "codes": [
@@ -146,7 +153,8 @@
     "parents": [
       "plants"
     ],
-    "phylopic": "3e84c211-b5d1-4c4d-9749-9dbda2e73f89"
+    "phylopic": "3e84c211-b5d1-4c4d-9749-9dbda2e73f89",
+    "primaryParent": "plants"
   },
   {
     "codes": [
@@ -160,7 +168,8 @@
     "parents": [
       "plants"
     ],
-    "phylopic": "9b9d6b61-d571-4503-9107-50c54a2beedb"
+    "phylopic": "9b9d6b61-d571-4503-9107-50c54a2beedb",
+    "primaryParent": "plants"
   },
   {
     "codes": [
@@ -174,7 +183,8 @@
     "parents": [
       "eukaryotes"
     ],
-    "phylopic": "e5d32221-7ea9-46ed-8e0a-d9dbddab0b4a"
+    "phylopic": "e5d32221-7ea9-46ed-8e0a-d9dbddab0b4a",
+    "primaryParent": "eukaryotes"
   },
   {
     "codes": [
@@ -188,7 +198,8 @@
     "parents": [
       "fungi"
     ],
-    "phylopic": "7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1"
+    "phylopic": "7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1",
+    "primaryParent": "fungi"
   },
   {
     "codes": [
@@ -202,7 +213,8 @@
     "parents": [
       "fungi"
     ],
-    "phylopic": "237a0fb1-7b73-43ec-b0a5-eff95e7237df"
+    "phylopic": "237a0fb1-7b73-43ec-b0a5-eff95e7237df",
+    "primaryParent": "fungi"
   },
   {
     "codes": [
@@ -218,7 +230,8 @@
       "fungi",
       "algae"
     ],
-    "phylopic": "53b543aa-2a5e-4407-88cd-6acbb0b5c3f9"
+    "phylopic": "53b543aa-2a5e-4407-88cd-6acbb0b5c3f9",
+    "primaryParent": "fungi"
   },
   {
     "codes": [
@@ -232,7 +245,8 @@
     "parents": [
       "fungi"
     ],
-    "phylopic": "44c27c08-400f-4304-92b4-997fdd85ec4b"
+    "phylopic": "44c27c08-400f-4304-92b4-997fdd85ec4b",
+    "primaryParent": "fungi"
   },
   {
     "codes": [
@@ -246,7 +260,8 @@
     "parents": [
       "eukaryotes"
     ],
-    "phylopic": "a3dd3044-648c-4e45-93f0-21a156247132"
+    "phylopic": "a3dd3044-648c-4e45-93f0-21a156247132",
+    "primaryParent": "eukaryotes"
   },
   {
     "codes": [
@@ -259,7 +274,8 @@
     "parents": [
       "animals"
     ],
-    "phylopic": "83c995d5-0936-441b-8a27-089005086c61"
+    "phylopic": "83c995d5-0936-441b-8a27-089005086c61",
+    "primaryParent": "animals"
   },
   {
     "codes": [
@@ -272,7 +288,8 @@
     "parents": [
       "arthropods"
     ],
-    "phylopic": "b2e26249-80be-441b-8648-4c0361892ee0"
+    "phylopic": "b2e26249-80be-441b-8648-4c0361892ee0",
+    "primaryParent": "arthropods"
   },
   {
     "codes": [
@@ -285,7 +302,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "35bb269c-5ff2-48c1-a002-a6bf8d9e8eef"
+    "phylopic": "35bb269c-5ff2-48c1-a002-a6bf8d9e8eef",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -298,7 +316,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "fb360445-4c23-452e-b43d-34b42ce449dd"
+    "phylopic": "fb360445-4c23-452e-b43d-34b42ce449dd",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -311,7 +330,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "a36477e3-5e2c-4e28-94f8-90b397212c3b"
+    "phylopic": "a36477e3-5e2c-4e28-94f8-90b397212c3b",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -324,7 +344,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "b00b5230-a08a-4413-a9ed-f8b3e5f795b0"
+    "phylopic": "b00b5230-a08a-4413-a9ed-f8b3e5f795b0",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -337,7 +358,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "61e306a9-9b19-4c9a-ba10-7856bd096356"
+    "phylopic": "61e306a9-9b19-4c9a-ba10-7856bd096356",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -350,7 +372,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "e7ba011c-6172-47ca-84bf-0dfc87b47a32"
+    "phylopic": "e7ba011c-6172-47ca-84bf-0dfc87b47a32",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -363,7 +386,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "e1307c88-3e8f-4ba8-9f93-751df3deb739"
+    "phylopic": "e1307c88-3e8f-4ba8-9f93-751df3deb739",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -376,7 +400,8 @@
     "parents": [
       "insects"
     ],
-    "phylopic": "2894776f-a2cf-4475-b13d-6d8ea1607ea4"
+    "phylopic": "2894776f-a2cf-4475-b13d-6d8ea1607ea4",
+    "primaryParent": "insects"
   },
   {
     "codes": [
@@ -389,7 +414,8 @@
     "parents": [
       "arthropods"
     ],
-    "phylopic": "95908e68-8d10-4f48-91a2-b0d7d85c4c2d"
+    "phylopic": "95908e68-8d10-4f48-91a2-b0d7d85c4c2d",
+    "primaryParent": "arthropods"
   },
   {
     "codes": [
@@ -402,7 +428,8 @@
     "parents": [
       "arthropods"
     ],
-    "phylopic": "a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16"
+    "phylopic": "a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16",
+    "primaryParent": "arthropods"
   },
   {
     "codes": [
@@ -415,7 +442,8 @@
     "parents": [
       "arthropods"
     ],
-    "phylopic": "1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91"
+    "phylopic": "1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91",
+    "primaryParent": "arthropods"
   },
   {
     "codes": [
@@ -428,7 +456,8 @@
     "parents": [
       "animals"
     ],
-    "phylopic": "e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6"
+    "phylopic": "e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6",
+    "primaryParent": "animals"
   },
   {
     "codes": [
@@ -441,7 +470,8 @@
     "parents": [
       "molluscs"
     ],
-    "phylopic": "9da7781e-48eb-407d-a13f-d6de8954dde2"
+    "phylopic": "9da7781e-48eb-407d-a13f-d6de8954dde2",
+    "primaryParent": "molluscs"
   },
   {
     "codes": [
@@ -454,7 +484,8 @@
     "parents": [
       "molluscs"
     ],
-    "phylopic": "70d345ec-c53a-45b9-a4af-93cf6f3e2125"
+    "phylopic": "70d345ec-c53a-45b9-a4af-93cf6f3e2125",
+    "primaryParent": "molluscs"
   },
   {
     "codes": [
@@ -467,7 +498,8 @@
     "parents": [
       "molluscs"
     ],
-    "phylopic": "f060bcc7-5725-46f7-8276-14553af3707f"
+    "phylopic": "f060bcc7-5725-46f7-8276-14553af3707f",
+    "primaryParent": "molluscs"
   },
   {
     "codes": [
@@ -480,7 +512,8 @@
     "parents": [
       "animals"
     ],
-    "phylopic": "23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba"
+    "phylopic": "23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba",
+    "primaryParent": "animals"
   },
   {
     "codes": [
@@ -493,6 +526,7 @@
     "parents": [
       "animals"
     ],
-    "phylopic": "f0d839a1-5a3e-42b2-828a-c5e536f0f7b7"
+    "phylopic": "f0d839a1-5a3e-42b2-828a-c5e536f0f7b7",
+    "primaryParent": "animals"
   }
 ]

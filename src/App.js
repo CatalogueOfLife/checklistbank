@@ -95,23 +95,29 @@ const NavigatorInstaller = () => {
 // Router 6 requires `<Route>` to live inside `<Routes>`. The Router-5 code
 // rendered these provider routes as siblings of the main `<Switch>` so each
 // matched independently; we give each its own `<Routes>` so the same
-// "render whenever this prefix matches" semantics survive.
+// "render whenever this prefix matches" semantics survive. Each block also
+// needs a catch-all `<Route path="*" element={null} />` so non-matching URLs
+// don't trigger R6's "No routes matched location" console warning.
 const ProviderRoutes = () => (
   <>
     <Routes>
       <Route path="/dataset/:key/*" element={<DatasetProvider />} />
+      <Route path="*" element={null} />
     </Routes>
     <Routes>
       <Route
         path="/catalogue/:catalogueKey/dataset/:sourceKey/*"
         element={<DatasetProvider />}
       />
+      <Route path="*" element={null} />
     </Routes>
     <Routes>
       <Route path="/catalogue/:catalogueKey/*" element={<DatasetProvider />} />
+      <Route path="*" element={null} />
     </Routes>
     <Routes>
       <Route path="/catalogue/:catalogueKey/*" element={<SyncProvider />} />
+      <Route path="*" element={null} />
     </Routes>
     <Routes>
       <Route path="/*" element={<ExceptionHandler />} />

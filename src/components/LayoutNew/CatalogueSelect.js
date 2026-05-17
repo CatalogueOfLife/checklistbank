@@ -109,7 +109,7 @@ class CatalogueSelect extends React.Component {
         <Modal
           title="Select project"
           open={this.state.visible}
-          maskClosable={true}
+          mask={{ closable: true }}
           onCancel={this.hide}
           footer={null}
         >

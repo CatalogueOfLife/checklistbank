@@ -307,15 +307,26 @@ div.csl-entry {
   margin-top: -4px;
 }
 
-.popover-multi > .ant-tooltip-content > .ant-tooltip-inner {
+/* antd 6 reshuffled the Tooltip DOM: the inner content sits in
+   `.ant-tooltip-container` (not `.ant-tooltip-inner` like in v4). Restyle
+   the assembly drop popconfirm to look like a Popover instead of a Tooltip
+   — white background, dark text, wider so the message + buttons fit on a
+   reasonable shape. */
+.popover-multi .ant-tooltip-container {
   background-color: #fff !important;
-  width: 330px !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+  min-width: 330px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.06);
 }
-
-.popover-multi.ant-tooltip-placement-top
-  > .ant-tooltip-content
-  > .ant-tooltip-arrow {
-  border-top-color: #fff !important;
+.popover-multi .ant-tooltip-container,
+.popover-multi .ant-popover-message-title {
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+.popover-multi .ant-tooltip-arrow::before,
+.popover-multi .ant-tooltip-arrow::after {
+  background: #fff !important;
 }
 
 .assembly-tree-box {
@@ -325,6 +336,65 @@ div.csl-entry {
 
 .ant-tree-treenode.filter-node {
   color: red;
+}
+
+/* Selected tree row: antd paints the row blue, but inline-styled spans inside
+   the node title (the rank prefix, taxon name link colors from labelHtml,
+   merged-badge wrapper, etc.) keep their original dark/blue text and become
+   unreadable. Force everything inside the selected node to white. */
+.ant-tree-treenode-selected .ant-tree-node-content-wrapper,
+.ant-tree-treenode-selected .ant-tree-node-content-wrapper * {
+  color: #fff !important;
+}
+
+/* antd 6 renders <Tag color={...}> as pastel-bg + saturated-text. Restore the
+   antd-4 look (solid color background + white text) globally for tags that
+   actually carry a color — both preset names (purple/green/…) and custom
+   hex (which arrives as an inline `background-color:` style). Default,
+   uncolored tags are left alone so neutral pills stay light grey. */
+.ant-tag.ant-tag-filled[style*="background-color"],
+.ant-tag.ant-tag-pink,
+.ant-tag.ant-tag-magenta,
+.ant-tag.ant-tag-red,
+.ant-tag.ant-tag-volcano,
+.ant-tag.ant-tag-orange,
+.ant-tag.ant-tag-yellow,
+.ant-tag.ant-tag-gold,
+.ant-tag.ant-tag-cyan,
+.ant-tag.ant-tag-lime,
+.ant-tag.ant-tag-green,
+.ant-tag.ant-tag-blue,
+.ant-tag.ant-tag-geekblue,
+.ant-tag.ant-tag-purple,
+.ant-tag.ant-tag-success,
+.ant-tag.ant-tag-processing,
+.ant-tag.ant-tag-error,
+.ant-tag.ant-tag-warning {
+  background-color: currentColor !important;
+  border-color: currentColor !important;
+  -webkit-text-fill-color: #fff;
+}
+.ant-tag.ant-tag-filled[style*="background-color"] .anticon,
+.ant-tag.ant-tag-filled[style*="background-color"] .anticon > svg,
+.ant-tag.ant-tag-pink .anticon, .ant-tag.ant-tag-pink .anticon > svg,
+.ant-tag.ant-tag-magenta .anticon, .ant-tag.ant-tag-magenta .anticon > svg,
+.ant-tag.ant-tag-red .anticon, .ant-tag.ant-tag-red .anticon > svg,
+.ant-tag.ant-tag-volcano .anticon, .ant-tag.ant-tag-volcano .anticon > svg,
+.ant-tag.ant-tag-orange .anticon, .ant-tag.ant-tag-orange .anticon > svg,
+.ant-tag.ant-tag-yellow .anticon, .ant-tag.ant-tag-yellow .anticon > svg,
+.ant-tag.ant-tag-gold .anticon, .ant-tag.ant-tag-gold .anticon > svg,
+.ant-tag.ant-tag-cyan .anticon, .ant-tag.ant-tag-cyan .anticon > svg,
+.ant-tag.ant-tag-lime .anticon, .ant-tag.ant-tag-lime .anticon > svg,
+.ant-tag.ant-tag-green .anticon, .ant-tag.ant-tag-green .anticon > svg,
+.ant-tag.ant-tag-blue .anticon, .ant-tag.ant-tag-blue .anticon > svg,
+.ant-tag.ant-tag-geekblue .anticon, .ant-tag.ant-tag-geekblue .anticon > svg,
+.ant-tag.ant-tag-purple .anticon, .ant-tag.ant-tag-purple .anticon > svg,
+.ant-tag.ant-tag-success .anticon, .ant-tag.ant-tag-success .anticon > svg,
+.ant-tag.ant-tag-processing .anticon, .ant-tag.ant-tag-processing .anticon > svg,
+.ant-tag.ant-tag-error .anticon, .ant-tag.ant-tag-error .anticon > svg,
+.ant-tag.ant-tag-warning .anticon, .ant-tag.ant-tag-warning .anticon > svg {
+  color: #fff !important;
+  fill: #fff !important;
 }
 
 .green {

@@ -34,7 +34,7 @@ const doiLink = (doi) =>
   ) : null;
 
 const labelStyle = { fontWeight: "bold" };
-const descProps = { size: "small", labelStyle };
+const descProps = { size: "small", styles: { label: labelStyle } };
 
 // For middle rows: hidden when empty
 const di = (key, label, value, span = 3) =>

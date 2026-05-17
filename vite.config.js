@@ -17,8 +17,11 @@ export default defineConfig({
     react(),
     // csvtojson (NameMatch.js) and diff2html pull in Node builtins. We
     // polyfill only what they actually need — keeping the bundle lean.
+    // `util` is needed because a transitive dep calls util.debuglog /
+    // util.inspect; without the polyfill Vite externalises it and the
+    // browser warns on every page load.
     nodePolyfills({
-      include: ["buffer", "fs", "os", "path", "process", "stream"],
+      include: ["buffer", "fs", "os", "path", "process", "stream", "util"],
       globals: { Buffer: true, process: true },
     }),
   ],

@@ -4,7 +4,8 @@ import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
 
 import axios from "axios";
-import { Alert, Spin, Row, Col, Tag, Tabs } from "antd";
+import { Alert, Spin, Row, Col, Tag } from "antd";
+import Tabs from "../../components/Tabs";
 import ErrorMsg from "../../components/ErrorMsg";
 import { LinkOutlined } from "@ant-design/icons";
 import _ from "lodash";
@@ -18,7 +19,7 @@ import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import CurieIdentifier from "../../components/CurieIdentifier";
-const { TabPane } = Tabs;
+const TabPane = Tabs.TabPane;
 
 const md = 5;
 

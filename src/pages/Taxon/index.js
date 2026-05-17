@@ -13,11 +13,11 @@ import {
   Col,
   Button,
   Rate,
-  Tabs,
   Typography,
   Tooltip,
   message,
 } from "antd";
+import Tabs from "../../components/Tabs";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import DecisionBadge from "../../components/DecisionBadge";
 import Synonyms from "./Synonyms";
@@ -57,7 +57,7 @@ import OtherUsages from "./OtherUsages";
 import CurieIdentifier from "../../components/CurieIdentifier";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
-const { TabPane } = Tabs;
+const TabPane = Tabs.TabPane;
 
 const { canEditDataset } = Auth;
 const md = 5;

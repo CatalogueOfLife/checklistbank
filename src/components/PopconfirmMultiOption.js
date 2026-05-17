@@ -14,10 +14,10 @@ class Popconfirm extends React.Component{
   };
 
   static getDerivedStateFromProps(nextProps) {
-    if ('visible' in nextProps) {
-      return { visible: nextProps.visible };
-    } else if ('defaultVisible' in nextProps) {
-      return { visible: nextProps.defaultVisible };
+    if ('open' in nextProps) {
+      return { visible: nextProps.open };
+    } else if ('defaultOpen' in nextProps) {
+      return { visible: nextProps.defaultOpen };
     }
     return null;
   }
@@ -27,7 +27,7 @@ class Popconfirm extends React.Component{
     super(props);
 
     this.state = {
-      visible: props.visible,
+      visible: props.open,
     };
   }
 
@@ -63,13 +63,13 @@ class Popconfirm extends React.Component{
 
   setVisible = (visible, e) => {
     const props = this.props;
-    if (!('visible' in props)) {
+    if (!('open' in props)) {
       this.setState({ visible });
     }
 
-    const { onVisibleChange } = props;
-    if (onVisibleChange) {
-      onVisibleChange(visible, e);
+    const { onOpenChange } = props;
+    if (onOpenChange) {
+      onOpenChange(visible, e);
     }
   }
 
@@ -96,7 +96,16 @@ class Popconfirm extends React.Component{
             {icon}
             <div className={`ant-popover-message-title`}>{title}</div>
           </div>
-          <div className={`ant-popover-buttons`}>
+          <div
+            className="popover-multi-buttons"
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              justifyContent: 'flex-end',
+              gap: '4px',
+              marginTop: '8px',
+            }}
+          >
             <Button onClick={this.onCancel} size="small" {...cancelButtonProps}>
               {cancelText || 'Cancel' }
             </Button>
@@ -104,7 +113,7 @@ class Popconfirm extends React.Component{
               {okText || 'OK'}
             </Button>}
             {actions && actions.map(a =>
-            <Button key={a.text} style={{marginLeft: '4px'}} disabled={a?.disabled} onClick={(e) => {
+            <Button key={a.text} disabled={a?.disabled} onClick={(e) => {
                 this.setVisible(false, e);
                 if (a.action) {
                     a.action.call(this, e);
@@ -128,7 +137,7 @@ class Popconfirm extends React.Component{
     return (
       <Tooltip
         {...restProps}
-        overlayClassName="popover-multi"
+        classNames={{ root: "popover-multi" }}
         placement={placement}
         onOpenChange={this.onVisibleChange}
         open={this.state.visible}

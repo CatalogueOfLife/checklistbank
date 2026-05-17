@@ -424,7 +424,7 @@ class CatalogueSectors extends React.Component {
           onCancel={() => this.setState({ showSectorForm: false })}
           // style={{ top: 150, marginRight:20 }}
           destroyOnHidden={true}
-          maskClosable={false}
+          mask={{ closable: false }}
           footer={null}
         >
           <SectorForm

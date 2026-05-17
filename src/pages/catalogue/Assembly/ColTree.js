@@ -24,6 +24,22 @@ import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import Auth from "../../../components/Auth";
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
+
+// antd 6's Tree.scrollTo throws when its inner virtual list ref hasn't
+// attached yet (e.g. while the tree is still mounting after a reload). The
+// outer ref is truthy but the inner list is null, so optional chaining at
+// the call site doesn't help. Swallow that specific timing error — failing
+// to scroll is harmless.
+const scrollToKey = (treeInstance, key) => {
+  if (!treeInstance || typeof treeInstance.scrollTo !== "function" || !key) {
+    return;
+  }
+  try {
+    treeInstance.scrollTo({ key });
+  } catch (_e) {
+    // Inner list not ready yet — give up silently.
+  }
+};
 const IRREGULAR_RANKS = [
   "unranked",
   "other",
@@ -841,11 +857,7 @@ class ColTree extends React.Component {
             if (targetNode) {
               this.setState({ treeData: [...this.state.treeData] }, () => {
                 setTimeout(() => {
-                  if (_.get(this, "treeRef.current")) {
-                    this.treeRef.current.scrollTo({
-                      key: this.props.defaultExpandKey,
-                    });
-                  }
+                  scrollToKey(this.treeRef.current, this.props.defaultExpandKey);
                 }, 100);
               });
             } else {
@@ -879,11 +891,8 @@ class ColTree extends React.Component {
             }); */
           }
         } else {
-          const treeRef = _.get(this, "treeRef");
           setTimeout(() => {
-            if (_.get(treeRef, "current")) {
-              treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
-            }
+            scrollToKey(this.treeRef.current, this.props.defaultExpandKey);
           }, 100);
         }
       }
@@ -895,9 +904,7 @@ class ColTree extends React.Component {
     this.setState(newState, () => {
       if (defaultExpandKey) {
         setTimeout(() => {
-          if (_.get(this, "treeRef.current")) {
-            this.treeRef.current.scrollTo({ key: this.props.defaultExpandKey });
-          }
+          scrollToKey(this.treeRef.current, this.props.defaultExpandKey);
         }, 100);
       }
     });

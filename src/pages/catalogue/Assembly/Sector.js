@@ -233,7 +233,7 @@ class Sector extends React.Component {
           onCancel={() => this.setState({ showEditForm: false })}
           style={{ top: 150, marginRight: 20 }}
           destroyOnHidden={true}
-          maskClosable={false}
+          mask={{ closable: false }}
           footer={null}
         >
           <SectorForm

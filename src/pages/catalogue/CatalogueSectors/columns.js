@@ -20,6 +20,7 @@ import {
 import { NavLink } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import kibanaQuery from "../SectorSync/kibanaQuery";
+import _ from "lodash";
 
 import moment from "dayjs";
 

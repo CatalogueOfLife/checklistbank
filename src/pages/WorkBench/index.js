@@ -18,8 +18,8 @@ import {
   notification,
   Switch,
   Form,
-  Tabs,
 } from "antd";
+import Tabs from "../../components/Tabs";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";
@@ -37,7 +37,7 @@ import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
 import RegExSearch from "./RegExSearch";
 
-const { TabPane } = Tabs;
+const TabPane = Tabs.TabPane;
 
 const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
