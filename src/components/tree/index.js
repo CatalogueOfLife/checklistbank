@@ -36,8 +36,18 @@ const flattenTreeData = (nodes, out) => {
 // `${prefix}-${sanitisedKey}`).
 const sanitiseForId = (s) => String(s).replace(/[^a-zA-Z0-9_.:-]/g, "-");
 
+// antd 6's Tree renders a HolderOutlined "drag handle" (the 6-dot icon)
+// next to every node when `draggable={true}`. The CoL Assembly UI never
+// had this — the old col-rc-tree fork didn't add the icon — so when a
+// boolean is passed, silence the icon by upgrading to the object form.
+const normaliseDraggable = (draggable) => {
+  if (draggable == null || draggable === false) return draggable;
+  if (typeof draggable === "object") return draggable;
+  return { icon: false };
+};
+
 const DirectoryTree = forwardRef(
-  ({ dragNode, onDrop, onDragStart, treeData, ...rest }, ref) => {
+  ({ dragNode, onDrop, onDragStart, treeData, draggable, ...rest }, ref) => {
     const wrapperRef = useRef(null);
     const innerRef = useRef(null);
     const internalDragRef = useRef(false);
@@ -116,6 +126,7 @@ const DirectoryTree = forwardRef(
         <AntdTree.DirectoryTree
           ref={innerRef}
           treeData={treeData}
+          draggable={normaliseDraggable(draggable)}
           onDragStart={handleDragStart}
           onDrop={onDrop}
           {...rest}
