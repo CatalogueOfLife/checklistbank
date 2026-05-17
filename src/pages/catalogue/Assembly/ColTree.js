@@ -1615,6 +1615,11 @@ class ColTree extends React.Component {
                 defaultExpandAll={defaultExpandAll}
                 // defaultExpandedKeys={defaultExpandedKeys}
                 draggable={draggable}
+                // dragNode is the in-flight drag from the *other* tree —
+                // the wrapper uses it to attach native drop listeners so
+                // cross-tree drops (which antd's Tree silently drops) get
+                // dispatched as our own onDrop event.
+                dragNode={this.props.dragNode}
                 onDrop={(e) => this.handleDrop(e, mode)}
                 onDragStart={onDragStart}
                 loadData={this.onLoadData}
