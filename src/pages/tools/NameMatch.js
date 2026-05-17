@@ -25,8 +25,8 @@ import {
 } from "@ant-design/icons";
 import history from "../../history";
 
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";

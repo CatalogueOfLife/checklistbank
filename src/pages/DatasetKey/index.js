@@ -5,7 +5,7 @@ import withRouter from "../../withRouter";
 import axios from "axios";
 import { Alert, Row, Col, Button } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
-import Editors from "../catalogue/Editors/Editors";
+import Editors from "../project/Editors/Editors";
 import DatasetImportMetrics from "../DatasetImportMetrics";
 
 import DatasetClassification from "./datasetPageTabs/DatasetClassification";
@@ -40,7 +40,7 @@ import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "dayjs";
-import CataloguePublisherKey from "../catalogue/CataloguePublisherKey";
+import ProjectPublisherKey from "../project/ProjectPublisherKey";
 
 class DatasetPage extends React.Component {
   constructor(props) {
@@ -331,7 +331,7 @@ class DatasetPage extends React.Component {
           section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
 
         {sect === "publisher" && taxonOrNameKey && (
-          <CataloguePublisherKey
+          <ProjectPublisherKey
             projectKey={datasetKey}
             publisherKey={taxonOrNameKey}
           />

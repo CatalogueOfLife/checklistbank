@@ -43,7 +43,7 @@ import IncludesTable from "./Includes";
 import SpeciesBySource from "./SpeciesBySource";
 import TaxonBreakdown from "./TaxonBreakdown";
 import TaxonMedia from "./TaxonMedia";
-import EditTaxonModal from "../catalogue/Assembly/EditTaxonModal";
+import EditTaxonModal from "../project/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
 import Linkify from "react-linkify";
 import SourceDatasets from "./SourceDatasets";

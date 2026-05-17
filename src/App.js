@@ -23,27 +23,27 @@ import SyncProvider from "./components/hoc/SyncProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import About from "./pages/About";
-import Assembly from "./pages/catalogue/Assembly";
-import AssemblyDuplicates from "./pages/catalogue/AssemblyDuplicates";
-import AssemblyTasks from "./pages/catalogue/AssemblyTasks";
+import Assembly from "./pages/project/Assembly";
+import AssemblyDuplicates from "./pages/project/AssemblyDuplicates";
+import AssemblyTasks from "./pages/project/AssemblyTasks";
 
-import SectorSync from "./pages/catalogue/SectorSync";
-import SectorPriority from "./pages/catalogue/CatalogueSectors/Priority";
-import SectorPublishers from "./pages/catalogue/SectorPublishers";
-import CatalogueSectors from "./pages/catalogue/CatalogueSectors";
-import CatalogueTaxon from "./pages/catalogue/CatalogueTaxon";
-import CatalogueName from "./pages/catalogue/CatalogueName";
-import CatalogueMeta from "./pages/catalogue/CatalogueMeta";
-import CatalogueNameSearch from "./pages/catalogue/CatalogueNameSearch";
-import CatalogueDecisions from "./pages/catalogue/CatalogueDecisions";
-import CatalogueOptions from "./pages/catalogue/Options";
-import CataloguePublishers from "./pages/catalogue/Options/Publishers";
-import CataloguePublisherKey from "./pages/catalogue/CataloguePublisherKey";
-import CatalogueSourceDataset from "./pages/catalogue/SourceDataset";
-import CatalogueIssues from "./pages/catalogue/CatalogueIssues";
-import CatalogueDownload from "./pages/catalogue/CatalogueDownload";
+import SectorSync from "./pages/project/SectorSync";
+import SectorPriority from "./pages/project/ProjectSectors/Priority";
+import SectorPublishers from "./pages/project/SectorPublishers";
+import ProjectSectors from "./pages/project/ProjectSectors";
+import ProjectTaxon from "./pages/project/ProjectTaxon";
+import ProjectName from "./pages/project/ProjectName";
+import ProjectMeta from "./pages/project/ProjectMeta";
+import ProjectNameSearch from "./pages/project/ProjectNameSearch";
+import ProjectDecisions from "./pages/project/ProjectDecisions";
+import ProjectOptions from "./pages/project/Options";
+import ProjectPublishers from "./pages/project/Options/Publishers";
+import ProjectPublisherKey from "./pages/project/ProjectPublisherKey";
+import ProjectSourceDataset from "./pages/project/SourceDataset";
+import ProjectIssues from "./pages/project/ProjectIssues";
+import ProjectDownload from "./pages/project/ProjectDownload";
 
-import ProjectEditors from "./pages/catalogue/Editors";
+import ProjectEditors from "./pages/project/Editors";
 
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
@@ -51,15 +51,15 @@ import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import AdminJobs from "./pages/Admin/Jobs";
-import SectorDiff from "./pages/catalogue/SectorDiff";
+import SectorDiff from "./pages/project/SectorDiff";
 import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import ExceptionHandler from "./components/exception/ExceptionHandler";
-import CatalogueReferences from "./pages/catalogue/CatalogueReferences";
+import ProjectReferences from "./pages/project/ProjectReferences";
 import HomePage from "./pages/HomePage";
-import CatalogueSources from "./pages/catalogue/CatalogueSources";
-import CatalogueSourceMetrics from "./pages/catalogue/CatalogueSourceMetrics";
+import ProjectSources from "./pages/project/ProjectSources";
+import ProjectSourceMetrics from "./pages/project/ProjectSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
@@ -202,7 +202,7 @@ const App = () => {
               path="/project/:projectKey/references/:key?"
               element={
                 <PrivateRoute>
-                  <CatalogueReferences />
+                  <ProjectReferences />
                 </PrivateRoute>
               }
             />
@@ -210,7 +210,7 @@ const App = () => {
               path="/project/:projectKey/sources/:issues?"
               element={
                 <PrivateRoute>
-                  <CatalogueSources />
+                  <ProjectSources />
                 </PrivateRoute>
               }
             />
@@ -218,7 +218,7 @@ const App = () => {
               path="/project/:projectKey/sourcemetrics"
               element={
                 <PrivateRoute>
-                  <CatalogueSourceMetrics />
+                  <ProjectSourceMetrics />
                 </PrivateRoute>
               }
             />
@@ -226,7 +226,7 @@ const App = () => {
               path="/project/:projectKey/options"
               element={
                 <PrivateRoute roles={["editor"]}>
-                  <CatalogueOptions />
+                  <ProjectOptions />
                 </PrivateRoute>
               }
             />
@@ -234,7 +234,7 @@ const App = () => {
               path="/project/:projectKey/publishers"
               element={
                 <PrivateRoute roles={["editor"]}>
-                  <CataloguePublishers />
+                  <ProjectPublishers />
                 </PrivateRoute>
               }
             />
@@ -250,7 +250,7 @@ const App = () => {
               path="/project/:projectKey/download/:key?"
               element={
                 <PrivateRoute>
-                  <CatalogueDownload />
+                  <ProjectDownload />
                 </PrivateRoute>
               }
             />
@@ -274,7 +274,7 @@ const App = () => {
               path="/project/:projectKey/metadata"
               element={
                 <PrivateRoute>
-                  <CatalogueMeta />
+                  <ProjectMeta />
                 </PrivateRoute>
               }
             />
@@ -290,7 +290,7 @@ const App = () => {
               path="/project/:projectKey/names"
               element={
                 <PrivateRoute>
-                  <CatalogueNameSearch />
+                  <ProjectNameSearch />
                 </PrivateRoute>
               }
             />
@@ -322,7 +322,7 @@ const App = () => {
               path="/project/:projectKey/sector"
               element={
                 <PrivateRoute>
-                  <CatalogueSectors />
+                  <ProjectSectors />
                 </PrivateRoute>
               }
             />
@@ -330,7 +330,7 @@ const App = () => {
               path="/project/:projectKey/publisher/:key?"
               element={
                 <PrivateRoute>
-                  <CataloguePublisherKey />
+                  <ProjectPublisherKey />
                 </PrivateRoute>
               }
             />
@@ -338,7 +338,7 @@ const App = () => {
               path="/project/:projectKey/decision"
               element={
                 <PrivateRoute>
-                  <CatalogueDecisions />
+                  <ProjectDecisions />
                 </PrivateRoute>
               }
             />
@@ -346,7 +346,7 @@ const App = () => {
               path="/project/:projectKey/issues"
               element={
                 <PrivateRoute>
-                  <CatalogueIssues />
+                  <ProjectIssues />
                 </PrivateRoute>
               }
             />
@@ -362,7 +362,7 @@ const App = () => {
               path="/project/:projectKey/taxon/:taxonOrNameKey"
               element={
                 <PrivateRoute>
-                  <CatalogueTaxon />
+                  <ProjectTaxon />
                 </PrivateRoute>
               }
             />
@@ -370,7 +370,7 @@ const App = () => {
               path="/project/:projectKey/name/:taxonOrNameKey"
               element={
                 <PrivateRoute>
-                  <CatalogueName />
+                  <ProjectName />
                 </PrivateRoute>
               }
             />
@@ -378,7 +378,7 @@ const App = () => {
               path="/project/:projectKey/dataset/:sourceKey/:section/:taxonOrNameKey?"
               element={
                 <PrivateRoute>
-                  <CatalogueSourceDataset />
+                  <ProjectSourceDataset />
                 </PrivateRoute>
               }
             />

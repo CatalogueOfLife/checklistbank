@@ -28,7 +28,7 @@ import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";

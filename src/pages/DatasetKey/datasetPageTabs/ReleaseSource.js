@@ -13,7 +13,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 
 import withContext from "../../../components/hoc/withContext";
-import TaxonomicCoverage from "../../catalogue/CatalogueSourceMetrics/TaxonomicCoverage";
+import TaxonomicCoverage from "../../project/ProjectSourceMetrics/TaxonomicCoverage";
 import { IDENTIFIER_TYPES } from "./DatasetMeta";
 
 class ReleaseSource extends React.Component {

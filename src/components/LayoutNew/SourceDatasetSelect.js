@@ -8,7 +8,7 @@ import { Modal, Select, Checkbox } from "antd";
 import history from "../../history";
 import { truncate } from "../../components/util";
 
-import DatasetAutocomplete from "../../pages/catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../../pages/project/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 const { Option } = Select;
@@ -62,12 +62,12 @@ const SourceSelect = ({
       projectKey &&
       selectedSource &&
       _.get(location, "pathname").indexOf(
-        `catalogue/${projectKey}/dataset/`
+        `project/${projectKey}/dataset/`
       ) > -1
     ) {
       const newPath = _.get(location, "pathname").replace(
-        `catalogue/${projectKey}/dataset/${key}/`,
-        `catalogue/${projectKey}/dataset/${selectedSource.key}/`
+        `project/${projectKey}/dataset/${key}/`,
+        `project/${projectKey}/dataset/${selectedSource.key}/`
       );
       setSourceDataset(selectedSource?.data);
       history.push({

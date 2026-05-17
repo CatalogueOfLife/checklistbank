@@ -3,7 +3,7 @@ import withRouter from "../../withRouter";
 import { SyncOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import withContext from "../hoc/withContext";
-import SyncStatePresentation from "../../pages/catalogue/Assembly/SyncState";
+import SyncStatePresentation from "../../pages/project/Assembly/SyncState";
 import { Modal } from "antd";
 
 class SyncState extends React.Component {

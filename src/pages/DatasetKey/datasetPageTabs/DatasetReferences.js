@@ -1,6 +1,6 @@
 import React from "react";
 import PageContent from "../../../components/PageContent";
-import RefTable from "../../catalogue/CatalogueReferences/RefTable";
+import RefTable from "../../project/ProjectReferences/RefTable";
 
 export default ({ location, datasetKey }) => (
   <PageContent>

@@ -7,7 +7,7 @@ import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DatasetNavLink from "../../DatasetList/DatasetNavLink"
-import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
 const { Text } = Typography;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 

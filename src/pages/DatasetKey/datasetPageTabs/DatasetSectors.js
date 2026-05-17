@@ -5,7 +5,7 @@ import { Alert, notification } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
-import SectorTable from "../../catalogue/CatalogueSectors/SectorTable";
+import SectorTable from "../../project/ProjectSectors/SectorTable";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import history from "../../../history";

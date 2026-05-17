@@ -33,8 +33,8 @@ import withContext from "../../components/hoc/withContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import DecisionForm from "./DecisionForm";
 import Auth from "../../components/Auth";
-import NameAutocomplete from "../catalogue/Assembly/NameAutocomplete";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../project/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import RegExSearch from "./RegExSearch";
 
 const TabPane = Tabs.TabPane;

@@ -7,7 +7,7 @@ import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { getDuplicateOverview } from "../../../api/dataset";
 import ErrorMsg from "../../../components/ErrorMsg";
-import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
 
 class DatasetTasks extends React.Component {
   constructor(props) {

@@ -161,7 +161,7 @@ class VerbatimPresentation extends React.Component {
             key={key}
             to={{
               pathname:
-                location.pathname.indexOf(`catalogue/${projectKey}`) > -1
+                location.pathname.indexOf(`project/${projectKey}`) > -1
                   ? `/project/${projectKey}/dataset/${datasetKey}/verbatim`
                   : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,
@@ -225,7 +225,7 @@ class VerbatimPresentation extends React.Component {
             key={key}
             to={{
               pathname:
-                location.pathname.indexOf(`catalogue/${projectKey}`) > -1
+                location.pathname.indexOf(`project/${projectKey}`) > -1
                   ? `/project/${projectKey}/dataset/${datasetKey}/verbatim`
                   : `/dataset/${datasetKey}/verbatim`,
               search: `?${types.join("&")}&${terms.join("&")}&termOp=OR`,

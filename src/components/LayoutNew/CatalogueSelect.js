@@ -8,7 +8,7 @@ import { Modal, Select, Typography } from "antd";
 import history from "../../history";
 import { truncate } from "../../components/util";
 
-// import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+// import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
 const { Option } = Select;
@@ -64,8 +64,8 @@ class CatalogueSelect extends React.Component {
     const { catalogues } = this.state;
     if (projectKey) {
       const newPath = _.get(this.props, "location.pathname").replace(
-        `catalogue/${projectKey}/`,
-        `catalogue/${newCatalogueKey}/`
+        `project/${projectKey}/`,
+        `project/${newCatalogueKey}/`
       );
       history.push({
         pathname: newPath,

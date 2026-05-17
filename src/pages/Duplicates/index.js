@@ -33,7 +33,7 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import { Resizable } from "react-resizable";
 import ErrorMsg from "../../components/ErrorMsg";
-import DatasetAutocomplete from "../catalogue/Assembly/DatasetAutocomplete";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import queryPresets from "./queryPresets";
 import columnDefaults from "./columnDefaults";
 import Auth from "../../components/Auth";

@@ -28,8 +28,8 @@ import history from "../../../history";
 import qs from "query-string";
 import withContext from "../../../components/hoc/withContext";
 
-import DatasetAutocomplete from "../../catalogue/Assembly/DatasetAutocomplete";
-import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
+import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
+import NameAutocomplete from "../../project/Assembly/NameAutocomplete";
 import TaxonSummary from "./TaxonSummary";
 const TaxonComparer = ({ location, addError, rank }) => {
   const [loading, setLoading] = useState(false);

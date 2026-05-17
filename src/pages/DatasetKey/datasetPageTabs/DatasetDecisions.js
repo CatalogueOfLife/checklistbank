@@ -1,7 +1,7 @@
 import React from "react";
 
 import PageContent from "../../../components/PageContent";
-import Decisions from "../../catalogue/CatalogueDecisions/Decisions";
+import Decisions from "../../project/ProjectDecisions/Decisions";
 import withContext from "../../../components/hoc/withContext";
 
 const DatasetDecisions = ({ dataset }) => {

@@ -4,7 +4,7 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
-import ReferencePopover from "../catalogue/CatalogueReferences/ReferencePopover";
+import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import ShowMoreToggle from "./ShowMoreToggle";
 

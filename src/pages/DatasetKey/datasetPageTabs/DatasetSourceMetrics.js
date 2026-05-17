@@ -9,7 +9,7 @@ import { Row, Alert, notification } from "antd";
 
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";
-import SourceMetrics from "../../catalogue/CatalogueSourceMetrics/SourceMetrics";
+import SourceMetrics from "../../project/ProjectSourceMetrics/SourceMetrics";
 
 class DatasetSourceMetrics extends React.Component {
   constructor(props) {

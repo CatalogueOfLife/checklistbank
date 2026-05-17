@@ -4,11 +4,11 @@ import history from "../../../history";
 import { Alert, Row, Col, Switch } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import PageContent from "../../../components/PageContent";
-import ColTree from "../../catalogue/Assembly/ColTree";
-import { ColTreeContext } from "../../catalogue/Assembly/ColTreeContext";
+import ColTree from "../../project/Assembly/ColTree";
+import { ColTreeContext } from "../../project/Assembly/ColTreeContext";
 import queryString from "query-string";
 import withContext from "../../../components/hoc/withContext";
-import NameAutocomplete from "../../catalogue/Assembly/NameAutocomplete";
+import NameAutocomplete from "../../project/Assembly/NameAutocomplete";
 
 class DatasetClassification extends React.Component {
   constructor(props) {
