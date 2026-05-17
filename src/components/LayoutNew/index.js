@@ -145,7 +145,7 @@ class SiteLayout extends Component {
         {isMobile && (
           <Drawer
             placement="left"
-            width={menuWidth}
+            size={menuWidth}
             closable={false}
             onClose={() => {
               this.setState({ collapsed: true });

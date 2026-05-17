@@ -399,7 +399,7 @@ class Assembly extends React.Component {
               <ColTreeContext.Consumer>
                 {({ selectedSourceTreeNodes }) => (
                   <DecisionForm
-                    destroyOnClose={true}
+                    destroyOnHidden={true}
                     rowsForEdit={selectedSourceTreeNodes.map((n) => ({
                       usage: {
                         name: {

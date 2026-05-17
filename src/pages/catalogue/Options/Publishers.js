@@ -240,7 +240,7 @@ const Publishers = ({ user, catalogueKey, location, addError, catalogue }) => {
   return (
     <>
       <Modal
-        destroyOnClose={true}
+        destroyOnHidden={true}
         width={800}
         title={
           publisherForEdit?.id

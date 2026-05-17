@@ -45,7 +45,7 @@ const TextTreeUploadModal = ({ taxon, onCancel }) => {
         setVisible(false);
         onCancel();
       }}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       footer={null}
     >
       <Row>

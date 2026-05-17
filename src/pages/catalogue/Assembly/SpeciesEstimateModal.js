@@ -131,7 +131,7 @@ const SpeciesestimateModal = (props) => {
         setVisible(false);
         onCancel();
       }}
-      destroyOnClose={true}
+      destroyOnHidden={true}
     >
       {!addNewMode && (
         <a onClick={toggleEdit}>

@@ -154,7 +154,7 @@ class UserMenu extends PureComponent {
           </span>
         )}
         {user && (
-          <Dropdown dropdownRender={() => menu} trigger={["click"]}>
+          <Dropdown popupRender={() => menu} trigger={["click"]}>
             <span style={{ padding: "0 16px" }}>
               <Avatar
                 style={{ marginRight: 8 }}
@@ -173,7 +173,7 @@ class UserMenu extends PureComponent {
           onOk={this.handleLogin}
           onCancel={this.handleCancel}
           footer={null}
-          destroyOnClose={true}
+          destroyOnHidden={true}
         >
           <div className={classes.background}>
             <LoginForm

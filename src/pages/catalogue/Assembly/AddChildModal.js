@@ -225,7 +225,7 @@ const AddChildModal = (props) => {
       confirmLoading={confirmLoading}
       cancelText={steps[current].cancelText}
       onCancel={onCancel}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       footer={
         current === 0
           ? [

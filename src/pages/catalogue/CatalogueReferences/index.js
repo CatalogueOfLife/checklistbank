@@ -112,7 +112,7 @@ class Reference extends React.Component {
                   submissionError: null,
                 });
               }}
-              destroyOnClose={true}
+              destroyOnHidden={true}
             >
               <RefForm
                 submissionError={submissionError}

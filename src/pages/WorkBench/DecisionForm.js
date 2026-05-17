@@ -231,7 +231,7 @@ const DecisionForm = (props) => {
       width="90%"
       title={<span>Decision</span>}
       open={visible}
-      destroyOnClose={destroyOnClose}
+      destroyOnHidden={destroyOnClose}
       onOk={() => {
         handleSubmit(current, onOk);
       }}

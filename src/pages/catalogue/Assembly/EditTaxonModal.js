@@ -186,7 +186,7 @@ const EditTaxonModal = (props) => {
       confirmLoading={confirmLoading}
       cancelText={steps[current].cancelText}
       onCancel={onCancel}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       footer={[
         <Button key="cancel" onClick={onCancel}>
           Cancel

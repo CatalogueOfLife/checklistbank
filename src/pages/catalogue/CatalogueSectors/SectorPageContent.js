@@ -423,7 +423,7 @@ class CatalogueSectors extends React.Component {
           onOk={this.finishEditForm}
           onCancel={() => this.setState({ showSectorForm: false })}
           // style={{ top: 150, marginRight:20 }}
-          destroyOnClose={true}
+          destroyOnHidden={true}
           maskClosable={false}
           footer={null}
         >
