@@ -106,7 +106,13 @@ const DirectoryTree = forwardRef(
     }, [dragNode, onDrop]);
 
     return (
-      <div ref={wrapperRef}>
+      // display:contents keeps this wrapper from interposing a layout
+      // box between antd's Tree and its caller — antd's virtual scroller
+      // sizes itself against the actual parent, which is critical for
+      // larger catalogues. The wrapper still exists in the DOM tree, so
+      // native event listeners attached to it still catch bubbled
+      // drop/dragover events from any descendant.
+      <div ref={wrapperRef} style={{ display: "contents" }}>
         <AntdTree.DirectoryTree
           ref={innerRef}
           treeData={treeData}
