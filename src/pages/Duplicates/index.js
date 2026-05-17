@@ -627,7 +627,7 @@ class DuplicateSearchPage extends React.Component {
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
         ...params,
-        projectKey: projectKey,
+        catalogueKey: projectKey,
         limit: Number(params.limit) + 1,
       })}`
     );
@@ -1133,7 +1133,7 @@ class DuplicateSearchPage extends React.Component {
                 config.dataApi
               }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
                 ...downloadParams,
-                projectKey: projectKey,
+                catalogueKey: projectKey,
               })}`}
             >
               <DownloadOutlined /> CSV
@@ -1145,7 +1145,7 @@ class DuplicateSearchPage extends React.Component {
                 config.dataApi
               }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
                 ...downloadParams,
-                projectKey: projectKey,
+                catalogueKey: projectKey,
               })}`}
             >
               <DownloadOutlined /> TSV

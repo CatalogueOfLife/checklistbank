@@ -364,7 +364,7 @@ class WorkBench extends React.Component {
 
           filter: {
             USAGE_ID: params.USAGE_ID,
-            projectKey: [projectKey],
+            catalogueKey: [projectKey],
             unsafe: [true],
           },
           page: {
@@ -377,7 +377,7 @@ class WorkBench extends React.Component {
             config.dataApi
           }dataset/${datasetKey}/nameusage/search?${qs.stringify({
             ...newParamsWithPaging,
-            projectKey: projectKey,
+            catalogueKey: projectKey,
           })}`
         );
 
