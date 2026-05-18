@@ -71,16 +71,17 @@ const DEFAULT_BASEMAP = "esri";
 
 const cache = new Map();
 
-const fetchShape = (globalId) => {
-  if (cache.has(globalId)) return cache.get(globalId);
-  const url = `${config.dataApi}area/${encodeURIComponent(globalId)}`;
+const fetchShape = (gazetteer, id) => {
+  const key = `${gazetteer}:${id}`;
+  if (cache.has(key)) return cache.get(key);
+  const url = `${config.dataApi}vocab/area/${key}`;
   const p = axios(url, {
     headers: { Accept: "application/geo+json" },
   }).then(
     (r) => r.data,
     () => null
   );
-  cache.set(globalId, p);
+  cache.set(key, p);
   return p;
 };
 
@@ -148,7 +149,7 @@ const DistributionsMap = ({ records, onUnmappable }) => {
 
     Promise.allSettled(
       records.map((r) =>
-        fetchShape(r.area.globalId).then((geojson) => ({
+        fetchShape(r.area.gazetteer, r.area.id).then((geojson) => ({
           record: r,
           geojson,
         }))
