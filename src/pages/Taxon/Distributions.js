@@ -80,6 +80,11 @@ const TableView = ({ datasetKey, data }) => {
         ),
     },
     {
+      title: "ID",
+      key: "globalId",
+      render: (_text, record) => record?.area?.globalId,
+    },
+    {
       title: "Ref",
       dataIndex: "referenceId",
       key: "referenceId",
@@ -161,7 +166,10 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
   const [view, setView] = useState("map");
   const [fetchFailures, setFetchFailures] = useState(0);
 
-  if (mappable.length === 0) {
+  const allMappableFailed =
+    mappable.length > 0 && fetchFailures >= mappable.length;
+
+  if (mappable.length === 0 || allMappableFailed) {
     return (
       <div style={style}>
         <TableView datasetKey={datasetKey} data={data} />
