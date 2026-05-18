@@ -74,12 +74,12 @@ class DatasetTasks extends React.Component {
     const { datasetKey, projectKey } = this.props;
     Promise.all([
       axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${projectKey}&nomstatus=manuscript&limit=0`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/search?projectKey=${projectKey}&nomstatus=manuscript&limit=0`
       ).then((res) => {
         return res.data.total;
       }),
       axios(
-        `${config.dataApi}dataset/${datasetKey}/nameusage/search?catalogueKey=${projectKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`
+        `${config.dataApi}dataset/${datasetKey}/nameusage/search?projectKey=${projectKey}&nomstatus=manuscript&limit=0&decisionMode=_NOT_NULL`
       ).then((res) => {
         return res.data.total;
       }),

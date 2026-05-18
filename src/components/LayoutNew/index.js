@@ -67,7 +67,6 @@ class SiteLayout extends Component {
 
   toggle = () => {
     const { width } = this.props;
-    console.log(this.state.collapsed);
     const collapsed =
       typeof this.state.collapsed === "boolean"
         ? this.state.collapsed
@@ -121,12 +120,6 @@ class SiteLayout extends Component {
             collapsible
             collapsedWidth={menuCollapsedWidth}
             breakpoint="lg"
-            onBreakpoint={(broken) => {
-              console.log(broken);
-            }}
-            onCollapse={(collapsed, type) => {
-              console.log(collapsed, type);
-            }}
             collapsed={collapsed}
           >
             <BasicMenu

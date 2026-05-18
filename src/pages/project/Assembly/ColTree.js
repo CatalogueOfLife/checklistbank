@@ -150,7 +150,7 @@ class ColTree extends React.Component {
     return axios(
       `${
         config.dataApi
-      }dataset/${id}/tree?catalogueKey=${projectKey}${this.appendTypeParam(
+      }dataset/${id}/tree?projectKey=${projectKey}${this.appendTypeParam(
         treeType
       )}&limit=${CHILD_PAGE_SIZE}&offset=${
         this.state.treeData.length
@@ -258,7 +258,7 @@ class ColTree extends React.Component {
     const { data } = await axios(
       `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
         defaultExpandKey
-      )}?catalogueKey=${projectKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
+      )}?projectKey=${projectKey}&insertPlaceholder=${insertPlaceholder}${this.appendTypeParam(
         treeType
       )}`
     )
@@ -400,7 +400,7 @@ class ColTree extends React.Component {
     const res = await axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         encodeURIComponent(dataRef.taxon.id) //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${projectKey}${this.appendTypeParam(
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&projectKey=${projectKey}${this.appendTypeParam(
         treeType
       )}`
     );
@@ -553,7 +553,7 @@ class ColTree extends React.Component {
     return axios(
       `${config.dataApi}dataset/${dataset.key}/tree/${
         dataRef.taxon.id //taxonKey
-      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&catalogueKey=${projectKey}${this.appendTypeParam(
+      }/children?limit=${limit}&offset=${offset}&insertPlaceholder=true&projectKey=${projectKey}${this.appendTypeParam(
         treeType
       )}`
     )
