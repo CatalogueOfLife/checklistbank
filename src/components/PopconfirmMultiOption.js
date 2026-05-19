@@ -1,94 +1,72 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Tooltip, Button } from 'antd';
 
 
-class Popconfirm extends React.Component{
-  static defaultProps = {
-    transitionName: 'zoom-big',
-    placement: 'top' ,
-    trigger: 'click' ,
-    okType: 'primary' ,
-    icon: <ExclamationCircleFilled />,
-    disabled: false,
+const PopconfirmMultiOption = ({
+  transitionName = 'zoom-big',
+  placement = 'top',
+  trigger = 'click',
+  okType = 'primary',
+  icon = <ExclamationCircleFilled />,
+  disabled = false,
+  open,
+  defaultOpen,
+  onConfirm,
+  onCancel,
+  onOpenChange,
+  okButtonProps,
+  cancelButtonProps,
+  title,
+  cancelText,
+  okText,
+  actions,
+  ...restProps
+}) => {
+  const [visible, setVisibleState] = useState(open);
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevDefaultOpen, setPrevDefaultOpen] = useState(defaultOpen);
+
+  if (open !== undefined && open !== prevOpen) {
+    setPrevOpen(open);
+    setVisibleState(open);
+  } else if (open === undefined && defaultOpen !== prevDefaultOpen) {
+    setPrevDefaultOpen(defaultOpen);
+    setVisibleState(defaultOpen);
+  }
+
+  const setVisible = (v, e) => {
+    if (open === undefined) {
+      setVisibleState(v);
+    }
+    if (onOpenChange) {
+      onOpenChange(v, e);
+    }
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    if ('open' in nextProps) {
-      return { visible: nextProps.open };
-    } else if ('defaultOpen' in nextProps) {
-      return { visible: nextProps.defaultOpen };
-    }
-    return null;
-  }
-
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      visible: props.open,
-    };
-  }
-
-  getPopupDomNode = () => {
-    return this.tooltip.getPopupDomNode();
-  }
-
-  onConfirm = (e) => {
-    this.setVisible(false, e);
-
-    const { onConfirm } = this.props;
+  const handleConfirm = (e) => {
+    setVisible(false, e);
     if (onConfirm) {
-      onConfirm.call(this, e);
+      onConfirm(e);
     }
   };
 
-  onCancel = (e) => {
-    this.setVisible(false, e);
-
-    const { onCancel } = this.props;
+  const handleCancel = (e) => {
+    setVisible(false, e);
     if (onCancel) {
-      onCancel.call(this, e);
+      onCancel(e);
     }
   };
 
-  onVisibleChange = (visible) => {
-    const { disabled } = this.props;
+  const onVisibleChange = (v) => {
     if (disabled) {
       return;
     }
-    this.setVisible(visible);
+    setVisible(v);
   };
 
-  setVisible = (visible, e) => {
-    const props = this.props;
-    if (!('open' in props)) {
-      this.setState({ visible });
-    }
-
-    const { onOpenChange } = props;
-    if (onOpenChange) {
-      onOpenChange(visible, e);
-    }
-  }
-
-  saveTooltip = (node) => {
-    this.tooltip = node;
-  };
-
-  renderOverlay = () => {
-    const {
-      okButtonProps,
-      cancelButtonProps,
-      title,
-      cancelText,
-      okText,
-      okType,
-      icon,
-      actions,
-      onConfirm
-    } = this.props;
+  const renderOverlay = () => {
     return (
       <div >
         <div className={`ant-popover-inner-content`}>
@@ -106,10 +84,10 @@ class Popconfirm extends React.Component{
               marginTop: '8px',
             }}
           >
-            <Button onClick={this.onCancel} size="small" {...cancelButtonProps}>
+            <Button onClick={handleCancel} size="small" {...cancelButtonProps}>
               {cancelText || 'Cancel' }
             </Button>
-           {onConfirm && <Button onClick={this.onConfirm} type={okType} size="small" {...okButtonProps}>
+           {onConfirm && <Button onClick={handleConfirm} type={okType} size="small" {...okButtonProps}>
               {okText || 'OK'}
             </Button>}
             {actions && actions.map(a => {
@@ -119,9 +97,9 @@ class Popconfirm extends React.Component{
               const isDanger = a.type === 'danger';
               return (
                 <Button key={a.text} disabled={a?.disabled} onClick={(e) => {
-                    this.setVisible(false, e);
+                    setVisible(false, e);
                     if (a.action) {
-                        a.action.call(this, e);
+                        a.action(e);
                       }
 
                 }} type={isDanger ? 'primary' : (a.type || 'primary')} danger={isDanger} size="small" >
@@ -135,26 +113,21 @@ class Popconfirm extends React.Component{
     );
   };
 
-  render = () => {
-    const { placement, ...restProps } = this.props;
+  const overlay = renderOverlay();
 
-    const overlay = this.renderOverlay();
-
-    return (
-      <Tooltip
-        {...restProps}
-        classNames={{ root: "popover-multi" }}
-        placement={placement}
-        onOpenChange={this.onVisibleChange}
-        open={this.state.visible}
-        overlay={overlay}
-        ref={this.saveTooltip}
-      />
-    );
-  };
-
-  
-}
+  return (
+    <Tooltip
+      {...restProps}
+      transitionName={transitionName}
+      trigger={trigger}
+      classNames={{ root: "popover-multi" }}
+      placement={placement}
+      onOpenChange={onVisibleChange}
+      open={visible}
+      overlay={overlay}
+    />
+  );
+};
 
 
-export default Popconfirm;
+export default PopconfirmMultiOption;
