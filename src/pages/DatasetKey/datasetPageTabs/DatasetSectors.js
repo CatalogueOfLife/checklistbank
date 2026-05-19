@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import _ from "lodash";
 import { Alert, notification } from "antd";
@@ -11,109 +11,89 @@ import qs from "query-string";
 import history from "../../../history";
 import { getDatasetsBatch } from "../../../api/dataset";
 import DataLoader from "dataloader";
+
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const PAGE_SIZE = 500;
-class DatasetSectors extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      data: [],
-      pagination: {
-        pageSize: PAGE_SIZE,
-        current: 1,
-        showQuickJumper: true,
-      },
-      loading: false,
-      syncAllError: null,
-    };
-  }
+const DatasetSectors = ({ dataset, projectKey, location }) => {
+  const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageSize: PAGE_SIZE,
+    current: 1,
+    showQuickJumper: true,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [syncAllError, setSyncAllError] = useState(null);
 
-  componentDidMount() {
-    // this.getData();
-    const { data } = this.state;
-    if (this.props.dataset && data.length === 0) {
-      this.init();
-    }
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(prevProps, "location.search") !==
-        _.get(this.props, "location.search") ||
-      _.get(this.props, "dataset.key") !== _.get(prevProps, "dataset.key")
-    ) {
-      this.init();
-    }
-  };
-
-  init = () => {
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: PAGE_SIZE, offset: 0 };
-      history.push({
-        pathname: _.get(this.props, "location.pathname"),
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
-    }
-
-    this.setState(
-      {
-        pagination: {
-          pageSize: params.limit,
-          current: Number(params.offset) / Number(params.limit) + 1,
-          pageSize: PAGE_SIZE,
-        },
-      },
-      () => this.getData(this.props.dataset)
-    );
-  };
-
-  getData = (dataset) => {
-    this.setState({ loading: true });
-    const { projectKey } = this.props;
-    const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      subject: true,
-    };
-
-    axios(
-      `${config.dataApi}dataset/${dataset.key}/sector?${qs.stringify(params)}`
-    )
-      .then(this.decorateWithCatalogue)
-      .then((res) => {
-        /*  if(_.get(res, 'data.result')){
-          res.data.result.forEach(d => { d.dataset = dataset })
-        } */
-        this.setState({
-          loading: false,
-          data: res.data.result || [],
-          pagination: {
-            ...this.state.pagination,
-            total: _.get(res, "data.total"),
-          },
-          err: null,
-        });
-      })
-      .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
-      });
-  };
-
-  decorateWithCatalogue = (res) => {
+  const decorateWithCatalogue = (res) => {
     if (!res.data.result) return res;
     return Promise.all(
       res.data.result.map((sector) =>
         datasetLoader
           .load(sector.datasetKey)
-          .then((dataset) => (sector.dataset = dataset))
+          .then((ds) => (sector.dataset = ds))
       )
     ).then(() => res);
   };
 
-  onDeleteSector = (sector) => {
-    const { projectKey } = this.props;
+  const getData = (ds, params) => {
+    setLoading(true);
+    axios(
+      `${config.dataApi}dataset/${ds.key}/sector?${qs.stringify({
+        ...params,
+        subject: true,
+      })}`
+    )
+      .then(decorateWithCatalogue)
+      .then((res) => {
+        setLoading(false);
+        setData(res.data.result || []);
+        setPagination((prev) => ({
+          ...prev,
+          total: _.get(res, "data.total"),
+        }));
+        setError(null);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err);
+        setData([]);
+      });
+  };
+
+  const init = (ds, locationSearch, locationPathname) => {
+    let params = qs.parse(locationSearch);
+    if (_.isEmpty(params)) {
+      params = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: locationPathname,
+        search: `?limit=${PAGE_SIZE}&offset=0`,
+      });
+    }
+
+    const newPagination = {
+      pageSize: PAGE_SIZE,
+      current: Number(params.offset) / Number(params.limit) + 1,
+    };
+    setPagination((prev) => ({ ...prev, ...newPagination }));
+    getData(ds, params);
+  };
+
+  useEffect(() => {
+    if (dataset && data.length === 0) {
+      init(dataset, _.get({ search: location?.search }, "search"), location?.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (dataset) {
+      init(dataset, location?.search, location?.pathname);
+    }
+  }, [location?.search, dataset?.key]);
+
+  const onDeleteSector = (sector) => {
     axios
       .delete(`${config.dataApi}dataset/${projectKey}/sector/${sector.id}`)
       .then(() => {
@@ -121,66 +101,51 @@ class DatasetSectors extends React.Component {
           message: "Deletion triggered",
           description: `Delete job for ${sector.key} placed on the sync queue`,
         });
-        this.setState({
-          data: this.state.data.filter((d) => d.key !== sector.key),
-        });
+        setData((prev) => prev.filter((d) => d.key !== sector.key));
       })
       .catch((err) => {
-        this.setState({ error: err });
+        setError(err);
       });
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    // pager.current = pagination.current;
-
+  const handleTableChange = (newPagination) => {
+    const pager = { ...pagination, ...newPagination };
     const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
+      ...qs.parse(location?.search),
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
     };
 
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: location?.pathname,
       search: qs.stringify(params),
     });
   };
 
-  render = () => {
-    const { data, error, syncAllError, loading, pagination } = this.state;
-    const { projectKey } = this.props;
-    return (
-      <PageContent>
-        {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
-        {syncAllError && (
-          <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
-        )}
-        {!loading && data.length === 0 ? (
-          <h4>No sectors configured</h4>
-        ) : (
-          <React.Fragment>
-            {/* <SyncAllSectorsButton
-              onError={err => this.setState({ syncAllError: err })}
-              onSuccess={() => this.setState({ syncAllError: null })}
-              dataset={this.props.dataset}
-              projectKey={projectKey}
-              text="Sync all sectors in this dataset"
-            /> */}
-            {!error && (
-              <SectorTable
-                data={data}
-                loading={loading}
-                onDeleteSector={this.onDeleteSector}
-                handleTableChange={this.handleTableChange}
-                pagination={pagination}
-              />
-            )}
-          </React.Fragment>
-        )}
-      </PageContent>
-    );
-  };
-}
+  return (
+    <PageContent>
+      {error && <Alert description={<ErrorMsg error={error} />} type="error" />}
+      {syncAllError && (
+        <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
+      )}
+      {!loading && data.length === 0 ? (
+        <h4>No sectors configured</h4>
+      ) : (
+        <>
+          {!error && (
+            <SectorTable
+              data={data}
+              loading={loading}
+              onDeleteSector={onDeleteSector}
+              handleTableChange={handleTableChange}
+              pagination={pagination}
+            />
+          )}
+        </>
+      )}
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ projectKey }) => ({ projectKey });
 
