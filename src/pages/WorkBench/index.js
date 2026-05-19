@@ -38,8 +38,6 @@ import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import RegExSearch from "./RegExSearch";
 
-const TabPane = Tabs.TabPane;
-
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
@@ -736,208 +734,217 @@ const WorkBench = ({
       <Tabs
         activeKey={activeTab}
         onChange={(activeKey) => setActiveTab(activeKey)}
-      >
-        <TabPane tab="Search" key="1">
-          <Row style={{ marginBottom: "10px" }}>
-            <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
-              <SearchBox
-                defaultValue={_.get(params, "q")}
-                onSearch={(value) => updateSearch({ q: value })}
-                style={{ marginBottom: "10px", width: "100%" }}
-              />
-              <div style={{ marginTop: "10px" }}>
-                {" "}
-                <NameAutocomplete
-                  datasetKey={datasetKey}
-                  minRank="GENUS"
-                  onSelectName={(value) => {
-                    updateSearch({ TAXON_ID: value.key });
-                  }}
-                  onResetSearch={resetSearch}
-                  placeHolder="Filter by higher taxon"
-                  defaultTaxonKey={params.TAXON_ID || null}
-                  autoFocus={false}
-                />{" "}
-              </div>
-              {projectKey === datasetKey && (
-                <div style={{ marginTop: "10px" }}>
-                  <DatasetAutocomplete
-                    contributesTo={Number(datasetKey)}
-                    onSelectDataset={(value) => {
-                      updateSearch({ SECTOR_DATASET_KEY: value.key });
-                    }}
-                    defaultDatasetKey={
-                      _.get(params, "SECTOR_DATASET_KEY") || null
-                    }
-                    onResetSearch={(value) => {
-                      updateSearch({ SECTOR_DATASET_KEY: null });
-                    }}
-                    placeHolder="Filter by source dataset"
-                    autoFocus={false}
+        items={[
+          {
+            key: "1",
+            label: "Search",
+            children: (
+              <Row style={{ marginBottom: "10px" }}>
+                <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
+                  <SearchBox
+                    defaultValue={_.get(params, "q")}
+                    onSearch={(value) => updateSearch({ q: value })}
+                    style={{ marginBottom: "10px", width: "100%" }}
                   />
-                </div>
-              )}
-              <div style={{ marginTop: "10px" }}>
-                <Form layout="inline">
-                  <FormItem label="Matching">
+                  <div style={{ marginTop: "10px" }}>
+                    {" "}
+                    <NameAutocomplete
+                      datasetKey={datasetKey}
+                      minRank="GENUS"
+                      onSelectName={(value) => {
+                        updateSearch({ TAXON_ID: value.key });
+                      }}
+                      onResetSearch={resetSearch}
+                      placeHolder="Filter by higher taxon"
+                      defaultTaxonKey={params.TAXON_ID || null}
+                      autoFocus={false}
+                    />{" "}
+                  </div>
+                  {projectKey === datasetKey && (
+                    <div style={{ marginTop: "10px" }}>
+                      <DatasetAutocomplete
+                        contributesTo={Number(datasetKey)}
+                        onSelectDataset={(value) => {
+                          updateSearch({ SECTOR_DATASET_KEY: value.key });
+                        }}
+                        defaultDatasetKey={
+                          _.get(params, "SECTOR_DATASET_KEY") || null
+                        }
+                        onResetSearch={(value) => {
+                          updateSearch({ SECTOR_DATASET_KEY: null });
+                        }}
+                        placeHolder="Filter by source dataset"
+                        autoFocus={false}
+                      />
+                    </div>
+                  )}
+                  <div style={{ marginTop: "10px" }}>
+                    <Form layout="inline">
+                      <FormItem label="Matching">
+                        <RadioGroup
+                          onChange={(evt) => {
+                            updateSearch({ type: evt.target.value });
+                          }}
+                          value={params.type || "WHOLE_WORDS"}
+                        >
+                          <Radio value="EXACT">Exact</Radio>
+                          <Radio value="WHOLE_WORDS">Words</Radio>
+                          <Radio value="FUZZY">Fuzzy</Radio>
+                          <Radio value="PREFIX">Prefix</Radio>
+                        </RadioGroup>
+                      </FormItem>
+
+                      {/*                 <FormItem
+                    style={{
+                      marginBottom: "10px",
+                    }}
+                  >
                     <RadioGroup
                       onChange={(evt) => {
-                        updateSearch({ type: evt.target.value });
+                        if (typeof evt.target.value === "undefined") {
+                          this.setState(
+                            {
+                              params: _.omit(this.state.params, ["status"]),
+                            },
+                            this.getData
+                          );
+                        } else {
+                          this.updateSearch({ status: evt.target.value });
+                        }
                       }}
-                      value={params.type || "WHOLE_WORDS"}
+                      value={params.status}
                     >
-                      <Radio value="EXACT">Exact</Radio>
-                      <Radio value="WHOLE_WORDS">Words</Radio>
-                      <Radio value="FUZZY">Fuzzy</Radio>
-                      <Radio value="PREFIX">Prefix</Radio>
+                      <Radio value="_NULL">Exclude bare names</Radio>
+                      <Radio value="_NOT_NULL">Only bare names</Radio>
+                      <Radio value={undefined}>All</Radio>
                     </RadioGroup>
-                  </FormItem>
+                  </FormItem> */}
+                    </Form>
+                  </div>
+                </Col>
+                <Col span={10}>
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "issue")}
+                    onChange={(value) => updateSearch({ issue: value })}
+                    vocab={facetIssues}
+                    label="Issues"
+                  />
+                  {/*                 <MultiValueFilter
+                    defaultValue={_.get(params, "sectorMode")}
+                    onChange={(value) => this.updateSearch({ sectorMode: value })}
+                    vocab={facetSectorMode}
+                    label="Sector Mode"
+                  /> */}
 
-                  {/*                 <FormItem
-                style={{
-                  marginBottom: "10px",
-                }}
-              >
-                <RadioGroup
-                  onChange={(evt) => {
-                    if (typeof evt.target.value === "undefined") {
-                      this.setState(
-                        {
-                          params: _.omit(this.state.params, ["status"]),
-                        },
-                        this.getData
-                      );
-                    } else {
-                      this.updateSearch({ status: evt.target.value });
-                    }
-                  }}
-                  value={params.status}
-                >
-                  <Radio value="_NULL">Exclude bare names</Radio>
-                  <Radio value="_NOT_NULL">Only bare names</Radio>
-                  <Radio value={undefined}>All</Radio>
-                </RadioGroup>
-              </FormItem> */}
-                </Form>
-              </div>
-            </Col>
-            <Col span={10}>
-              <MultiValueFilter
-                defaultValue={_.get(params, "issue")}
-                onChange={(value) => updateSearch({ issue: value })}
-                vocab={facetIssues}
-                label="Issues"
-              />
-              {/*                 <MultiValueFilter
-                defaultValue={_.get(params, "sectorMode")}
-                onChange={(value) => this.updateSearch({ sectorMode: value })}
-                vocab={facetSectorMode}
-                label="Sector Mode"
-              /> */}
-
-              <MultiValueFilter
-                defaultValue={_.get(params, "rank")}
-                onChange={(value) => updateSearch({ rank: value })}
-                vocab={facetRanks}
-                label="Ranks"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "status")}
-                onChange={(value) => updateSearch({ status: value })}
-                vocab={facetTaxonomicStatus}
-                label="Status"
-              />
-              {advancedFilters && (
-                <React.Fragment>
                   <MultiValueFilter
-                    defaultValue={_.get(params, "nomStatus")}
-                    onChange={(value) =>
-                      updateSearch({ nomstatus: value })
-                    }
-                    vocab={facetNomStatus}
-                    label="Nomenclatural status"
+                    defaultValue={_.get(params, "rank")}
+                    onChange={(value) => updateSearch({ rank: value })}
+                    vocab={facetRanks}
+                    label="Ranks"
                   />
                   <MultiValueFilter
-                    defaultValue={_.get(params, "nameType")}
-                    onChange={(value) => updateSearch({ type: value })}
-                    vocab={facetNomType}
-                    label="Name type"
+                    defaultValue={_.get(params, "status")}
+                    onChange={(value) => updateSearch({ status: value })}
+                    vocab={facetTaxonomicStatus}
+                    label="Status"
                   />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "field")}
-                    onChange={(value) => updateSearch({ field: value })}
-                    vocab={facetNomField}
-                    label="Name field"
-                  />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "authorship")}
-                    onChange={(value) =>
-                      updateSearch({ authorship: value })
-                    }
-                    vocab={facetAuthorship}
-                    label="Authorship"
-                  />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "authorshipYear")}
-                    onChange={(value) =>
-                      updateSearch({ authorshipYear: value })
-                    }
-                    vocab={facetAuthorshipYear}
-                    label="Authorship Year"
-                  />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "environment")}
-                    onChange={(value) =>
-                      updateSearch({ environment: value })
-                    }
-                    vocab={facetEnvironment}
-                    label="Environment"
-                  />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "extinct")}
-                    onChange={(value) =>
-                      updateSearch({ extinct: value })
-                    }
-                    vocab={facetExtinct}
-                    label="Extinct"
-                  />
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "origin")}
-                    onChange={(value) => updateSearch({ origin: value })}
-                    vocab={facetOrigin}
-                    label="Origin"
-                  />
-                </React.Fragment>
-              )}
-              <div style={{ textAlign: "right", marginBottom: "8px" }}>
-                <a
-                  style={{ marginLeft: 8, fontSize: 12 }}
-                  onClick={toggleAdvancedFilters}
-                >
-                  Advanced{" "}
-                  {advancedFilters ? (
-                    <UpOutlined />
-                  ) : (
-                    <DownOutlined />
+                  {advancedFilters && (
+                    <React.Fragment>
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "nomStatus")}
+                        onChange={(value) =>
+                          updateSearch({ nomstatus: value })
+                        }
+                        vocab={facetNomStatus}
+                        label="Nomenclatural status"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "nameType")}
+                        onChange={(value) => updateSearch({ type: value })}
+                        vocab={facetNomType}
+                        label="Name type"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "field")}
+                        onChange={(value) => updateSearch({ field: value })}
+                        vocab={facetNomField}
+                        label="Name field"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "authorship")}
+                        onChange={(value) =>
+                          updateSearch({ authorship: value })
+                        }
+                        vocab={facetAuthorship}
+                        label="Authorship"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "authorshipYear")}
+                        onChange={(value) =>
+                          updateSearch({ authorshipYear: value })
+                        }
+                        vocab={facetAuthorshipYear}
+                        label="Authorship Year"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "environment")}
+                        onChange={(value) =>
+                          updateSearch({ environment: value })
+                        }
+                        vocab={facetEnvironment}
+                        label="Environment"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "extinct")}
+                        onChange={(value) =>
+                          updateSearch({ extinct: value })
+                        }
+                        vocab={facetExtinct}
+                        label="Extinct"
+                      />
+                      <MultiValueFilter
+                        defaultValue={_.get(params, "origin")}
+                        onChange={(value) => updateSearch({ origin: value })}
+                        vocab={facetOrigin}
+                        label="Origin"
+                      />
+                    </React.Fragment>
                   )}
-                </a>
-              </div>
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tab="RegEx Search" key="2">
-          <RegExSearch
-            decisionMode={_.get(params?.decisionMode)}
-            limit={pagination.pageSize}
-            style={{ marginBottom: "10px" }}
-            datasetKey={datasetKey}
-            updateSearch={updateSearch}
-            onReset={() => updateSearch({ USAGE_ID: null })}
-            onSearch={(val) => updateSearch({ USAGE_ID: val })}
-            pagination={pagination}
-          />
-        </TabPane>
-      </Tabs>
+                  <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                    <a
+                      style={{ marginLeft: 8, fontSize: 12 }}
+                      onClick={toggleAdvancedFilters}
+                    >
+                      Advanced{" "}
+                      {advancedFilters ? (
+                        <UpOutlined />
+                      ) : (
+                        <DownOutlined />
+                      )}
+                    </a>
+                  </div>
+                </Col>
+              </Row>
+            ),
+          },
+          {
+            key: "2",
+            label: "RegEx Search",
+            children: (
+              <RegExSearch
+                decisionMode={_.get(params?.decisionMode)}
+                limit={pagination.pageSize}
+                style={{ marginBottom: "10px" }}
+                datasetKey={datasetKey}
+                updateSearch={updateSearch}
+                onReset={() => updateSearch({ USAGE_ID: null })}
+                onSearch={(val) => updateSearch({ USAGE_ID: val })}
+                pagination={pagination}
+              />
+            ),
+          },
+        ]}
+      />
 
       <Row>
         <Col span={14}>
