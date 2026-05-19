@@ -1,39 +1,25 @@
-import React from "react";
+import { useEffect } from "react";
 import withRouter from "../../withRouter";
 import withContext from "./withContext";
-import _ from "lodash";
 import config from "../../config";
 
 const { syncStateHeartbeat } = config;
 
-class SyncProvider extends React.Component {
-  componentDidMount = () => {
-    this.props.getSyncState();
-    this.timer = setInterval(() => {
-      this.props.getSyncState();
-    }, syncStateHeartbeat);
-  };
+const SyncProvider = ({ getSyncState, match }) => {
+  const projectKey = match?.params?.projectKey;
 
-  componentDidUpdate = (prevProps) => {
-    const nextCatalogueKey = _.get(this.props, "match.params.projectKey");
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = prevProps;
+  useEffect(() => {
+    getSyncState();
+    const t = setInterval(getSyncState, syncStateHeartbeat);
+    return () => clearInterval(t);
+  }, []);
 
-    if (nextCatalogueKey && Number(projectKey) !== Number(nextCatalogueKey)) {
-      this.props.getSyncState();
-    }
-  };
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
+  useEffect(() => {
+    if (projectKey) getSyncState();
+  }, [projectKey]);
 
-  render = () => {
-    return null;
-  };
-}
+  return null;
+};
 
 const mapContextToProps = ({ getSyncState }) => ({
   getSyncState,
