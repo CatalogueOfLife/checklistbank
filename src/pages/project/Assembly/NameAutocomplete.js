@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import config from "../../../config";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -7,38 +7,50 @@ import _ from "lodash";
 import { debounce } from "lodash";
 import Highlighter from "react-highlight-words";
 
-class NameSearchAutocomplete extends React.Component {
-  constructor(props) {
-    super(props);
+const NameSearchAutocomplete = ({
+  defaultTaxonKey,
+  datasetKey,
+  minRank,
+  accepted,
+  onSelectName,
+  onResetSearch,
+  onError,
+  placeHolder,
+  autoFocus,
+  disabled = false,
+}) => {
+  const [names, setNames] = useState([]);
+  const [value, setValue] = useState("");
+  const [notFoundText, setNotFoundText] = useState(null);
+  const getNamesRef = useRef(null);
 
-    this.getNames = debounce(this.getNames, 500);
-    this.state = {
-      names: [],
-      value: "",
-      notFoundText: null
-    };
-  }
+  useEffect(() => {
+    const fn = debounce((q) => {
+      if (!q) return;
+      const url = datasetKey
+        ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest`
+        : `${config.dataApi}name/search`;
 
-  componentDidMount = () => {
-    const { defaultTaxonKey } = this.props;
-    if (defaultTaxonKey) {
-      this.setDefaultValue(defaultTaxonKey);
-    }
-  };
+      axios(
+        `${url}?limit=25&q=${encodeURIComponent(q)}${
+          minRank ? `&minRank=${minRank}` : ""
+        }${accepted ? "&accepted=true" : ""}`
+      )
+        .then((res) => {
+          setNames(res.data || []);
+        })
+        .catch((err) => {
+          setNames([]);
+          if (onError && typeof onError === "function") {
+            onError(err);
+          }
+        });
+    }, 500);
+    getNamesRef.current = fn;
+    return () => fn.cancel();
+  }, [datasetKey, minRank, accepted]);
 
-  componentDidUpdate = (prevProps) => {
-    const { defaultTaxonKey } = this.props;
-    if (defaultTaxonKey && defaultTaxonKey !== prevProps.defaultTaxonKey) {
-      this.setDefaultValue(defaultTaxonKey);
-    }
-  };
-
-  componentWillUnmount() {
-    this.getNames.cancel();
-  }
-
-  setDefaultValue = (usageId) => {
-    const { datasetKey } = this.props;
+  const setDefaultValue = (usageId) => {
     axios(
       `${config.dataApi}nameusage/search?USAGE_ID=${encodeURIComponent(
         usageId
@@ -46,105 +58,98 @@ class NameSearchAutocomplete extends React.Component {
     )
       .then((res) => {
         let val = _.get(res, "data.result[0].usage.label");
-        let newState = val ? {value: val} : {notFoundText: `Not found: ${usageId}`} 
-        this.setState(newState);
+        if (val) {
+          setValue(val);
+        } else {
+          setNotFoundText(`Not found: ${usageId}`);
+        }
       })
       .catch((err) => {
-        this.setState({ value: "" }, () => {
-          if (this.props.onError && typeof this.props.onError === "function") {
-            this.props.onError(err);
-          }
-        });
+        setValue("");
+        if (onError && typeof onError === "function") {
+          onError(err);
+        }
       });
   };
-  getNames = (q) => {
-    if (!q) {
-      return;
-    }
-    const { datasetKey, minRank, accepted } = this.props;
-    const url = datasetKey
-      ? `${config.dataApi}dataset/${datasetKey}/nameusage/suggest`
-      : `${config.dataApi}name/search`;
 
-    axios(
-      `${url}?limit=25&q=${encodeURIComponent(q)}${
-        minRank ? `&minRank=${minRank}` : ""
-      }${accepted ? "&accepted=true":""}`
-    )
-      .then((res) => {
-        this.setState({
-          names: res.data || [],
-        });
-      })
-      .catch((err) => {
-        this.setState({ names: [] }, () => {
-          if (this.props.onError && typeof this.props.onError === "function") {
-            this.props.onError(err);
-          }
-        });
-      });
+  useEffect(() => {
+    if (defaultTaxonKey) {
+      setDefaultValue(defaultTaxonKey);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (defaultTaxonKey) {
+      setDefaultValue(defaultTaxonKey);
+    }
+  }, [defaultTaxonKey]);
+
+  const handleSearch = (q) => {
+    if (getNamesRef.current) getNamesRef.current(q);
   };
-  onSelectName = (val, obj) => {
+
+  const handleSelect = (val, obj) => {
     const selectedTaxon = _.get(obj, "data.acceptedUsageId")
       ? {
           key: _.get(obj, "data.acceptedUsageId"),
           title: _.get(obj, "data.parentOrAcceptedName"),
         }
       : { key: _.get(obj, "data.usageId"), title: _.get(obj, "data.match") };
-    this.setState({ value: val });
-    this.props.onSelectName(selectedTaxon);
+    setValue(val);
+    onSelectName(selectedTaxon);
   };
-  onReset = () => {
-    this.setState({ value: "", names: [] });
-    if (typeof this.props.onResetSearch === "function") {
-      this.props.onResetSearch();
+
+  const onReset = () => {
+    setValue("");
+    setNames([]);
+    if (typeof onResetSearch === "function") {
+      onResetSearch();
     }
   };
-  render = () => {
-    const { placeHolder, autoFocus, disabled = false } = this.props;
-    const { value, notFoundText } = this.state;
 
-    const options = this.state.names.map((o) => {
-      return {
-        key: o.usageId,
-        value: o.suggestion,
-        label: (
-          <Highlighter
-            highlightStyle={{ fontWeight: "bold", padding: 0 }}
-            searchWords={value.split(" ")}
-            autoEscape
-            textToHighlight={o.suggestion}
-          />
-        ),
-        data: o,
-      };
-    });
-    const suffix =
-      !disabled && value ? (
-        <CloseCircleOutlined
-          key="suffix"
-          onClick={this.onReset}
-          style={{ marginRight: "6px" }}
-        />
-      ) : (
-        <span />
-      );
-    return (
-      <AutoComplete
-        options={options}
-        style={{ width: "100%" }}
-        onSelect={this.onSelectName}
-        onSearch={this.getNames}
-        placeholder={!value && notFoundText ? notFoundText : placeHolder || "Find taxon"}
-        onChange={(value) => this.setState({ value, notFoundText: null })}
-        value={value}
-        autoFocus={autoFocus === false ? false : true}
-        disabled={disabled}
-      >
-        <Input.Search status={!value && notFoundText ? "error" : null} suffix={suffix} />
-      </AutoComplete>
+  const options = names.map((o) => ({
+    key: o.usageId,
+    value: o.suggestion,
+    label: (
+      <Highlighter
+        highlightStyle={{ fontWeight: "bold", padding: 0 }}
+        searchWords={value.split(" ")}
+        autoEscape
+        textToHighlight={o.suggestion}
+      />
+    ),
+    data: o,
+  }));
+
+  const suffix =
+    !disabled && value ? (
+      <CloseCircleOutlined
+        key="suffix"
+        onClick={onReset}
+        style={{ marginRight: "6px" }}
+      />
+    ) : (
+      <span />
     );
-  };
-}
+
+  return (
+    <AutoComplete
+      options={options}
+      style={{ width: "100%" }}
+      onSelect={handleSelect}
+      onSearch={handleSearch}
+      placeholder={!value && notFoundText ? notFoundText : placeHolder || "Find taxon"}
+      onChange={(v) => {
+        setValue(v);
+        setNotFoundText(null);
+      }}
+      value={value}
+      autoFocus={autoFocus === false ? false : true}
+      disabled={disabled}
+    >
+      <Input.Search status={!value && notFoundText ? "error" : null} suffix={suffix} />
+    </AutoComplete>
+  );
+};
 
 export default NameSearchAutocomplete;
