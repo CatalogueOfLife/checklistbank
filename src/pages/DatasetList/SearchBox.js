@@ -1,56 +1,40 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { Input } from "antd";
-// test
 const Search = Input.Search;
 
-class SearchBox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      search: "",
-    };
-  }
-  componentDidMount = () => {
-    if (this.props.defaultValue) {
-      this.setState({ search: this.props.defaultValue });
-    }
+const SearchBox = ({ defaultValue, onSearch }) => {
+  const [search, setSearch] = useState(defaultValue || "");
+
+  useEffect(() => {
+    if (defaultValue) setSearch(defaultValue);
+  }, [defaultValue]);
+
+  const resetSearch = () => {
+    setSearch("");
+    onSearch("");
   };
 
-  componentDidUpdate = (prevProps) => {
-    const { defaultValue } = this.props;
-    if (defaultValue && defaultValue !== prevProps.defaultValue) {
-      this.setState({ search: defaultValue });
-    }
-  };
+  const suffix = search ? (
+    <CloseCircleOutlined
+      key="suffix"
+      style={{ marginRight: "6px" }}
+      onClick={resetSearch}
+    />
+  ) : (
+    <span />
+  );
 
-  resetSearch = () => {
-    this.setState({ search: "" }, () => {
-      this.props.onSearch(this.state.search);
-    });
-  };
-  render = () => {
-    const suffix = this.state.search ? (
-      <CloseCircleOutlined
-        key="suffix"
-        style={{ marginRight: "6px" }}
-        onClick={this.resetSearch}
-      />
-    ) : (
-      <span />
-    );
-
-    return (
-      <Search
-        placeholder="Search"
-        value={this.state.search}
-        onSearch={(value) => this.props.onSearch(this.state.search)}
-        onChange={(event) => this.setState({ search: event.target.value })}
-        autoFocus={true}
-        suffix={suffix}
-      />
-    );
-  };
-}
+  return (
+    <Search
+      placeholder="Search"
+      value={search}
+      onSearch={() => onSearch(search)}
+      onChange={(event) => setSearch(event.target.value)}
+      autoFocus={true}
+      suffix={suffix}
+    />
+  );
+};
 
 export default SearchBox;
