@@ -1,78 +1,41 @@
 import React from "react";
-import injectSheet from "react-jss";
 import { Row, Col } from "antd";
 
 // Wrappers
 import withWidth from "../../components/hoc/Width";
-
-const styles = () => ({
-  formItem: {
-    paddingBottom: 0,
-    width: "100%",
-    clear: "both",
-    borderBottom: "1px solid #eee",
-    "&:last-of-type": {
-      border: "none",
-    },
-  },
-  label: {
-    display: "block",
-    color: "rgba(0, 0, 0, 0.85)",
-  },
-  content: {
-    wordBreak: "break-word",
-    marginBottom: 0,
-  },
-  noContent: {
-    wordBreak: "break-word",
-    color: "#bbb",
-    marginBottom: 0,
-  },
-  contentCol: {
-    wordBreak: "break-word",
-  },
-  smallMargin: {
-    marginBottom: 3,
-    marginTop: 3,
-  },
-  mediumMargin: {
-    marginBottom: 10,
-    marginTop: 10,
-  },
-});
+import styles from "./BorderedListItem.module.css";
 
 /**
  * Component responsible for data display in a read mode
  * @param size - how dense should the layout be. options: 'small', 'medium' (default).
- * @param classes - passed from injectSheet wrapper, CSS styles from styles object above
  * @param children - wrapped content
  * @param width - passed from withWidth wrapper, data about current page size
  * @returns {*}
  * @constructor
  */
-const BorderedListItem = ({ classes, children, size }) => {
+const BorderedListItem = ({ children, size }) => {
   const getValue = () => {
     let value = (
-      <span className={classes.noContent}>No information</span>
+      <span className={styles.noContent}>No information</span>
     );
 
     if (Array.isArray(children) && children.length > 0) {
       value = children.map((item, i) => (
-        <span className={classes.content} key={i}>
+        <span className={styles.content} key={i}>
           {item}
         </span>
       ));
     } else if (!Array.isArray(children) && typeof children !== "undefined") {
-      value = <span className={classes.content}>{children}</span>;
+      value = <span className={styles.content}>{children}</span>;
     }
 
     return value;
   };
 
   const marginSize =
-    size === "medium" ? classes.mediumMargin : classes.smallMargin;
+    size === "medium" ? styles.mediumMargin : styles.smallMargin;
   return (
-    <Row className={classes.formItem}>
+    <Row className={styles.formItem}>
       <Col span={24} className={marginSize}>
         {getValue()}
       </Col>
@@ -80,4 +43,4 @@ const BorderedListItem = ({ classes, children, size }) => {
   );
 };
 
-export default withWidth()(injectSheet(styles)(BorderedListItem));
+export default withWidth()(BorderedListItem);

@@ -1,0 +1,7 @@
+.formItem    { composes: formItem    from "../../components/borderedListItem.module.css"; }
+.label       { composes: label       from "../../components/borderedListItem.module.css"; }
+.content     { composes: content     from "../../components/borderedListItem.module.css"; }
+.noContent   { composes: noContent   from "../../components/borderedListItem.module.css"; }
+.contentCol  { composes: contentCol  from "../../components/borderedListItem.module.css"; }
+.smallMargin { composes: smallMargin from "../../components/borderedListItem.module.css"; }
+.mediumMargin{ composes: mediumMargin from "../../components/borderedListItem.module.css"; }
