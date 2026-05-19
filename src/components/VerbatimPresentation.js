@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import config from "../config";
 import withRouter from "../withRouter";
 import _ from "lodash";
@@ -26,87 +26,82 @@ const isValidURL = (string) => {
   else return string.trim().startsWith(res);
 };
 
-class VerbatimPresentation extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      verbatimLoading: false,
-      verbatim: null,
-      verbatimError: null,
-      expanded: props.expanded !== false,
-      homoglyphs: {},
-    };
-  }
-  componentDidMount() {
-    const { verbatimKey, datasetKey, record } = this.props;
-    this.isMount = true;
+const VerbatimPresentation = ({
+  verbatimKey,
+  datasetKey,
+  record,
+  expanded: expandedProp,
+  issueMap,
+  termsMap,
+  termsMapReversed,
+  terms,
+  projectKey,
+  location,
+  basicHeader,
+  style = {},
+}) => {
+  const [verbatimLoading, setVerbatimLoading] = useState(false);
+  const [verbatim, setVerbatim] = useState(null);
+  const [verbatimError, setVerbatimError] = useState(null);
+  const [expanded, setExpanded] = useState(expandedProp !== false);
+  const [homoglyphs, setHomoglyphs] = useState({});
+
+  useEffect(() => {
+    let cancelled = false;
     if (record) {
-      this.setState({
-        verbatimLoading: false,
-        verbatim: record,
-        verbatimError: null,
-      });
+      setVerbatimLoading(false);
+      setVerbatim(record);
+      setVerbatimError(null);
     } else {
-      this.setState({ verbatimLoading: true });
+      setVerbatimLoading(true);
       axios(
         `${config.dataApi}dataset/${datasetKey}/verbatim/${encodeURIComponent(
           verbatimKey
         )}`
       )
         .then((res) => {
-          if (this.isMount) {
-            this.setState({
-              verbatimLoading: false,
-              verbatim: res.data,
-              verbatimError: null,
-            });
+          if (!cancelled) {
+            setVerbatimLoading(false);
+            setVerbatim(res.data);
+            setVerbatimError(null);
           }
         })
         .catch((err) => {
-          if (this.isMount) {
-            this.setState({
-              verbatimLoading: false,
-              verbatimError: err,
-              verbatim: null,
-            });
+          if (!cancelled) {
+            setVerbatimLoading(false);
+            setVerbatimError(err);
+            setVerbatim(null);
           }
         });
     }
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [verbatimKey, datasetKey, record]);
 
-  componentWillUnmount = () => {
-    this.isMount = false;
-  };
-
-  getHomoglyphs = async () => {
-    const { terms } = this.state.verbatim;
+  const getHomoglyphs = async () => {
+    const { terms: verbatimTerms } = verbatim;
     let termsMap = {};
-    // let keys = Object.keys(terms);
-    for (const key of Object.keys(terms)) {
+    for (const key of Object.keys(verbatimTerms)) {
       try {
-        let { data: homoglyphs } = await axios.post(
+        let { data: homoglyphData } = await axios.post(
           `${config.dataApi}parser/homoglyph`,
-          terms[key],
+          verbatimTerms[key],
           { headers: { "content-type": "text/plain" } }
         );
-        if (homoglyphs.hasHomoglyphs) {
-          //console.log(terms[key]);
-          termsMap[key] = homoglyphs.positions.map((p) =>
-            terms[key].charAt(p - 1)
+        if (homoglyphData.hasHomoglyphs) {
+          termsMap[key] = homoglyphData.positions.map((p) =>
+            verbatimTerms[key].charAt(p - 1)
           );
         }
       } catch (err) {
         alert(err);
       }
     }
-    this.setState({ homoglyphs: termsMap });
-    //console.log(termsMap);
+    setHomoglyphs(termsMap);
   };
 
-  renderTerm = (key, value, type, homoglyphs) => {
-    const { termsMap, termsMapReversed, datasetKey, projectKey, location } =
-      this.props;
-
+  const renderTerm = (key, value, type, homoglyphs) => {
     const taxonPath = {
       pathname:
         location.pathname.split(`dataset/${datasetKey}`)[0] +
@@ -130,7 +125,7 @@ class VerbatimPresentation extends React.Component {
       key === "acef:AcceptedTaxonID" ||
       ((key === "dwc:taxonID" || key === "dwc:acceptedNameUsageID") /* && type === "dwc:Taxon" */) ||
       (key === "col:ID" && type === "col:Taxon") ||
-      key === "col:taxonID" || 
+      key === "col:taxonID" ||
       key === "col:relatedNameUsageID";
 
     const isNameId =
@@ -287,38 +282,132 @@ class VerbatimPresentation extends React.Component {
       );
     }
   };
-  render = () => {
-    const { verbatimLoading, verbatimError, verbatim, expanded, homoglyphs } =
-      this.state;
-    const { issueMap, basicHeader, terms, datasetKey, location, verbatimKey, style = {} } =
-      this.props;
 
-    const title =
-      _.get(verbatim, "type") && _.get(verbatim, "key")
-        ? `${basicHeader ? "" : "Verbatim"} ${_.get(
-            verbatim,
-            "type"
-          )} - ${_.get(verbatim, "key")}`
-        : "Verbatim";
-    const verbatimPath =
-      location.pathname.split(`dataset/${datasetKey}`)[0] +
-      `dataset/${datasetKey}/verbatim/${verbatimKey}`;
+  const title =
+    _.get(verbatim, "type") && _.get(verbatim, "key")
+      ? `${basicHeader ? "" : "Verbatim"} ${_.get(
+          verbatim,
+          "type"
+        )} - ${_.get(verbatim, "key")}`
+      : "Verbatim";
+  const verbatimPath =
+    location.pathname.split(`dataset/${datasetKey}`)[0] +
+    `dataset/${datasetKey}/verbatim/${verbatimKey}`;
 
-    return true ? (
-      <Card
-        style={style}
-        extra={
-          _.get(verbatim, "file") ? (
+  return true ? (
+    <Card
+      style={style}
+      extra={
+        _.get(verbatim, "file") ? (
+          <NavLink to={{ pathname: verbatimPath }}>
+            {`${_.get(verbatim, "file")}${
+              _.get(verbatim, "line")
+                ? `, line ${_.get(verbatim, "line")}`
+                : ""
+            }`}
+          </NavLink>
+        ) : null
+      }
+    >
+      <React.Fragment>
+        {verbatimLoading && <Skeleton active />}
+        {verbatimError && (
+          <Alert
+            description={<ErrorMsg error={verbatimError} />}
+            type="error"
+          />
+        )}
+        {_.get(verbatim, "file") && (
+          <PresentationItem md={md} key="file" label="File">
             <NavLink to={{ pathname: verbatimPath }}>
+              {" "}
               {`${_.get(verbatim, "file")}${
                 _.get(verbatim, "line")
                   ? `, line ${_.get(verbatim, "line")}`
                   : ""
               }`}
             </NavLink>
-          ) : null
-        }
+          </PresentationItem>
+        )}
+        {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
+          <PresentationItem md={md} label="Issues and flags">
+            <div>
+              {verbatim.issues.map((i) => (
+                <Tooltip
+                  key={i}
+                  title={_.get(issueMap, `[${i}].description`)}
+                >
+                  {i !== "homoglyph characters" ? (
+                    <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                      {i}
+                    </Tag>
+                  ) : (
+                    <Tag
+                      key={i}
+                      style={{ cursor: "pointer" }}
+                      color={_.get(issueMap, `[${i}].color`)}
+                      onClick={getHomoglyphs}
+                    >
+                      {i}
+                    </Tag>
+                  )}
+                </Tooltip>
+              ))}
+            </div>
+          </PresentationItem>
+        )}
+
+        {_.get(verbatim, "terms") &&
+           Object.keys(verbatim.terms).map((t) =>
+             (
+              <PresentationItem md={md} label={t} key={t}>
+                {renderTerm(
+                  t,
+                  verbatim.terms[t],
+                  _.get(verbatim, "type"),
+                  homoglyphs
+                )}
+              </PresentationItem>
+            )
+          )}
+      </React.Fragment>
+    </Card>
+  ) : (
+    <React.Fragment>
+      <Row
+        style={{
+          background: "#f7f7f7",
+          border: "1px solid #eee",
+          borderWidth: "1px 0",
+          paddingTop: "10px",
+        }}
       >
+        <Col span={12}>
+          <h3 style={{ paddingLeft: 6 }}>
+            {title}{" "}
+            <a
+              style={{ fontSize: 10 }}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? <UpOutlined /> : <DownOutlined />}
+            </a>
+          </h3>
+        </Col>
+        <Col span={12}>
+          {_.get(verbatim, "file") && (
+            <NavLink to={{ pathname: verbatimPath }}>
+              <p style={{ textAlign: "right", paddingRight: 6 }}>
+                {`${_.get(verbatim, "file")}${
+                  _.get(verbatim, "line")
+                    ? `, line ${_.get(verbatim, "line")}`
+                    : ""
+                }`}
+              </p>
+            </NavLink>
+          )}
+        </Col>
+      </Row>
+      {expanded && (
         <React.Fragment>
           {verbatimLoading && <Skeleton active />}
           {verbatimError && (
@@ -356,7 +445,7 @@ class VerbatimPresentation extends React.Component {
                         key={i}
                         style={{ cursor: "pointer" }}
                         color={_.get(issueMap, `[${i}].color`)}
-                        onClick={this.getHomoglyphs}
+                        onClick={getHomoglyphs}
                       >
                         {i}
                       </Tag>
@@ -368,124 +457,24 @@ class VerbatimPresentation extends React.Component {
           )}
 
           {_.get(verbatim, "terms") &&
-             Object.keys(verbatim.terms).map((t) =>
+            /* terms.map((t) => */
+            Object.keys(verbatim.terms).map((t) =>
                (
                 <PresentationItem md={md} label={t} key={t}>
-                  {this.renderTerm(
+                  {renderTerm(
                     t,
                     verbatim.terms[t],
                     _.get(verbatim, "type"),
                     homoglyphs
                   )}
                 </PresentationItem>
-              ) 
+              )
             )}
         </React.Fragment>
-      </Card>
-    ) : (
-      <React.Fragment>
-        <Row
-          style={{
-            background: "#f7f7f7",
-            border: "1px solid #eee",
-            borderWidth: "1px 0",
-            paddingTop: "10px",
-          }}
-        >
-          <Col span={12}>
-            <h3 style={{ paddingLeft: 6 }}>
-              {title}{" "}
-              <a
-                style={{ fontSize: 10 }}
-                onClick={() => this.setState({ expanded: !expanded })}
-              >
-                {expanded ? <UpOutlined /> : <DownOutlined />}
-              </a>
-            </h3>
-          </Col>
-          <Col span={12}>
-            {_.get(verbatim, "file") && (
-              <NavLink to={{ pathname: verbatimPath }}>
-                <p style={{ textAlign: "right", paddingRight: 6 }}>
-                  {`${_.get(verbatim, "file")}${
-                    _.get(verbatim, "line")
-                      ? `, line ${_.get(verbatim, "line")}`
-                      : ""
-                  }`}
-                </p>
-              </NavLink>
-            )}
-          </Col>
-        </Row>
-        {expanded && (
-          <React.Fragment>
-            {verbatimLoading && <Skeleton active />}
-            {verbatimError && (
-              <Alert
-                description={<ErrorMsg error={verbatimError} />}
-                type="error"
-              />
-            )}
-            {_.get(verbatim, "file") && (
-              <PresentationItem md={md} key="file" label="File">
-                <NavLink to={{ pathname: verbatimPath }}>
-                  {" "}
-                  {`${_.get(verbatim, "file")}${
-                    _.get(verbatim, "line")
-                      ? `, line ${_.get(verbatim, "line")}`
-                      : ""
-                  }`}
-                </NavLink>
-              </PresentationItem>
-            )}
-            {_.get(verbatim, "issues") && verbatim.issues.length > 0 && (
-              <PresentationItem md={md} label="Issues and flags">
-                <div>
-                  {verbatim.issues.map((i) => (
-                    <Tooltip
-                      key={i}
-                      title={_.get(issueMap, `[${i}].description`)}
-                    >
-                      {i !== "homoglyph characters" ? (
-                        <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                          {i}
-                        </Tag>
-                      ) : (
-                        <Tag
-                          key={i}
-                          style={{ cursor: "pointer" }}
-                          color={_.get(issueMap, `[${i}].color`)}
-                          onClick={this.getHomoglyphs}
-                        >
-                          {i}
-                        </Tag>
-                      )}
-                    </Tooltip>
-                  ))}
-                </div>
-              </PresentationItem>
-            )}
-
-            {_.get(verbatim, "terms") &&
-              /* terms.map((t) => */
-              Object.keys(verbatim.terms).map((t) =>
-                 (
-                  <PresentationItem md={md} label={t} key={t}>
-                    {this.renderTerm(
-                      t,
-                      verbatim.terms[t],
-                      _.get(verbatim, "type"),
-                      homoglyphs
-                    )}
-                  </PresentationItem>
-                ) 
-              )}
-          </React.Fragment>
-        )}
-      </React.Fragment>
-    );
-  };
-}
+      )}
+    </React.Fragment>
+  );
+};
 
 const mapContextToProps = ({
   issueMap,
