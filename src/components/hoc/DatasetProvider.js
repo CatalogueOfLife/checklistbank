@@ -1,62 +1,25 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 import withContext from "./withContext";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withRouter from "../../withRouter";
-class DatasetProvider extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      loading: false,
-      catalogueLoading: false,
-    };
-  }
-  componentDidMount = () => {
-    const {
-      match: {
-        params: { key, projectKey },
-      },
-      dataset,
-      catalogue,
-    } = this.props;
-    if (key && key !== _.get(dataset, "key")) {
-      this.fetchDataset(key);
-    }
-    if (
-      projectKey &&
-      Number(projectKey) !== Number(_.get(catalogue, "key"))
-    ) {
-      this.fetchCatalogue(projectKey);
-    }
-  };
 
-  componentDidUpdate = (prevProps) => {
-    const nextKey = _.get(this.props, "match.params.key");
-    const nextCatalogueKey = _.get(this.props, "match.params.projectKey");
+const DatasetProvider = ({
+  match,
+  dataset,
+  catalogue,
+  setCatalogue,
+  setDataset,
+  setSourceDataset,
+  setRecentDatasets,
+  addError,
+}) => {
+  const loadingRef = useRef(false);
+  const catalogueLoadingRef = useRef(false);
 
-    const {
-      match: {
-        params: { key, projectKey },
-      },
-    } = prevProps;
-
-    if (nextKey && !this.state.loading && key !== nextKey) {
-      this.fetchDataset(nextKey);
-    }
-    if (
-      nextCatalogueKey &&
-      !this.state.catalogueLoading &&
-      Number(projectKey) !== Number(nextCatalogueKey)
-    ) {
-      this.fetchCatalogue(nextCatalogueKey);
-    }
-  };
-
-  fetchDataset = (key) => {
-    const { setCatalogue, setDataset, setRecentDatasets, addError } =
-      this.props;
-    this.setState({ loading: true });
+  const fetchDataset = (key) => {
+    loadingRef.current = true;
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
         return axios(
@@ -69,7 +32,7 @@ class DatasetProvider extends React.Component {
         });
       })
       .then((res) => {
-        this.setState({ loading: false });
+        loadingRef.current = false;
 
         const recentDatasetsAsText = localStorage.getItem(
           "colplus_recent_datasets"
@@ -94,7 +57,7 @@ class DatasetProvider extends React.Component {
         }
       })
       .catch((err) => {
-        this.setState({ loading: false });
+        loadingRef.current = false;
 
         const recentDatasetsAsText = localStorage.getItem(
           "colplus_recent_datasets"
@@ -115,25 +78,53 @@ class DatasetProvider extends React.Component {
       });
   };
 
-  fetchCatalogue = (key) => {
-    const { setDataset, setCatalogue, setSourceDataset, addError } = this.props;
-    this.setState({ catalogueLoading: true });
+  const fetchCatalogue = (key) => {
+    catalogueLoadingRef.current = true;
     axios(`${config.dataApi}dataset/${key}`)
       .then((res) => {
-        this.setState({ catalogueLoading: false });
+        catalogueLoadingRef.current = false;
         setCatalogue(res.data);
         setSourceDataset(null);
         setDataset(null);
       })
       .catch((err) => {
-        this.setState({ catalogueLoading: false });
+        catalogueLoadingRef.current = false;
         addError(err);
       });
   };
-  render = () => {
-    return null;
-  };
-}
+
+  const key = _.get(match, "params.key");
+  const projectKey = _.get(match, "params.projectKey");
+
+  // Mount
+  useEffect(() => {
+    if (key && key !== _.get(dataset, "key")) {
+      fetchDataset(key);
+    }
+    if (
+      projectKey &&
+      Number(projectKey) !== Number(_.get(catalogue, "key"))
+    ) {
+      fetchCatalogue(projectKey);
+    }
+  }, []);
+
+  // key changes
+  useEffect(() => {
+    if (key && !loadingRef.current) {
+      fetchDataset(key);
+    }
+  }, [key]);
+
+  // projectKey changes
+  useEffect(() => {
+    if (projectKey && !catalogueLoadingRef.current) {
+      fetchCatalogue(projectKey);
+    }
+  }, [projectKey]);
+
+  return null;
+};
 
 const mapContextToProps = ({
   catalogue,
