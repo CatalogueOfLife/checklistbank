@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 
 import {
   BranchesOutlined,
@@ -32,31 +32,36 @@ import SectorForm from "./SectorForm";
 import PresentationItem from "../../../components/PresentationItem";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
-class Sector extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      popOverVisible: false,
-      showEditForm: false,
-      error: null,
-    };
-  }
+const Sector = ({
+  taxon,
+  user,
+  projectKey,
+  syncState,
+  syncingSector,
+  getSyncState,
+  decisionCallback,
+  reloadSelfAndSiblings,
+  onDeleteSector,
+  showSourceTaxon,
+}) => {
+  const [popOverVisible, setPopOverVisible] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [error, setError] = useState(null);
+  const [sectorDatasetRanks, setSectorDatasetRanks] = useState(null);
 
-  hidePopover = () => {
-    this.setState({
-      popOverVisible: false,
-    });
+  const hidePopover = () => {
+    setPopOverVisible(false);
   };
-  handleVisibleChange = (popOverVisible) => {
-    const { showEditForm } = this.state;
+
+  const handleVisibleChange = (visible) => {
     if (!showEditForm) {
-      this.setState({ popOverVisible, error: null });
+      setPopOverVisible(visible);
+      setError(null);
     }
   };
 
-  syncSector = (sector, syncState, syncingSector) => {
+  const syncSector = (sector, syncState, syncingSector) => {
     const { idle } = syncState;
-    const { projectKey } = this.props;
     axios
       .post(`${config.dataApi}dataset/${projectKey}/sector/sync`, {
         sectorKey: sector.id,
@@ -66,9 +71,9 @@ class Sector extends React.Component {
       })
       .then(() => {
         // If there is no sync jobs running, try to give the backend a chance to insert the root node again
-        debounce(this.props.reloadSelfAndSiblings, 1500)();
-        // this.props.reloadSelfAndSiblings();
-        this.props.getSyncState();
+        debounce(reloadSelfAndSiblings, 1500)();
+        // reloadSelfAndSiblings();
+        getSyncState();
         notification.open({
           message: idle ? "Sync started" : "Sync queued",
           description:
@@ -81,18 +86,17 @@ class Sector extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ error: err });
+        setError(err);
       });
   };
 
-  deleteSector = (sector, partial = false) => {
-    const { projectKey } = this.props;
+  const deleteSector = (sector, partial = false) => {
     axios
       .delete(
         `${config.dataApi}dataset/${projectKey}/sector/${sector.id}?partial=${partial}`
       ) // /assembly/3/sync/
       .then(() => {
-        debounce(this.props.onDeleteSector, 500)();
+        debounce(onDeleteSector, 500)();
         notification.open({
           message: "Deletion triggered",
           description: `${partial ? "Partial" : "Full"} delete job for ${
@@ -101,16 +105,13 @@ class Sector extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ error: err });
+        setError(err);
       });
   };
 
-  applyDecision = (taxon) => {
-    const { decisionCallback, projectKey } = this.props;
-
+  const applyDecision = (taxon) => {
     const { datasetKey } = taxon;
-    this.setState({ postingDecisions: true });
-
+    // Note: postingDecisions state was set but never read in original; omitted
     return axios(
       `${config.dataApi}dataset/${datasetKey}/taxon/${_.get(taxon, "id")}`
     )
@@ -162,7 +163,7 @@ class Sector extends React.Component {
         if (typeof decisionCallback === "function") {
           decisionCallback(res.data);
         }
-        this.setState({ popOverVisible: false });
+        setPopOverVisible(false);
       })
       .catch((err) => {
         notification.error({
@@ -172,212 +173,351 @@ class Sector extends React.Component {
       });
   };
 
-  getSectorDatasetRanks = () => {
-    const {
-      taxon: { sector },
-    } = this.props;
+  const getSectorDatasetRanks = () => {
+    const { sector } = taxon;
     axios
       .get(
         `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
       ) // /assembly/3/sync/
       .then((res) => {
-        this.setState({
-          sectorDatasetRanks: _.get(res, "data.facets.rank", []).map(
-            (r) => r.value
-          ),
-        });
+        setSectorDatasetRanks(
+          _.get(res, "data.facets.rank", []).map((r) => r.value)
+        );
       })
       .catch((err) => {
-        this.setState({ error: err });
+        setError(err);
       });
   };
 
-  finishEditForm = () => {
-    this.getSectorDatasetRanks();
-    this.setState({ showEditForm: false });
+  const finishEditForm = () => {
+    getSectorDatasetRanks();
+    setShowEditForm(false);
   };
-  render = () => {
-    const {
-      taxon,
-      user,
-      projectKey,
-      syncState,
-      syncingSector,
-      decisionCallback,
-      reloadSelfAndSiblings,
-    } = this.props;
 
-    const { error, showEditForm } = this.state;
-    const { sector } = taxon;
-    const { dataset: sectorSourceDataset } = sector;
-    const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
-    const isRootSector =
-      (!_.get(taxon, "parentId") && !isPlaceHolder) ||
-      _.get(taxon, "sectorRoot") === true ||
-      (_.get(sector, "target.id") &&
-        sector.target &&
-        taxon.parentId === sector.target.id);
+  const { sector } = taxon;
+  const { dataset: sectorSourceDataset } = sector;
+  const isPlaceHolder = taxon.id.indexOf("--incertae-sedis--") > -1;
+  const isRootSector =
+    (!_.get(taxon, "parentId") && !isPlaceHolder) ||
+    _.get(taxon, "sectorRoot") === true ||
+    (_.get(sector, "target.id") &&
+      sector.target &&
+      taxon.parentId === sector.target.id);
 
-    const isRootSectorInSourceTree = taxon.id === sector?.subject?.id;
-    const isSourceTree = projectKey !== _.get(taxon, "datasetKey");
+  const isRootSectorInSourceTree = taxon.id === sector?.subject?.id;
+  const isSourceTree = projectKey !== _.get(taxon, "datasetKey");
 
-    if (!sectorSourceDataset) {
-      return "";
-    }
-    return !isSourceTree ? (
-      <>
-        <Modal
-          title="Edit sector"
-          open={isRootSector && showEditForm}
-          // onOk={this.finishEditForm}
-          onCancel={() => this.setState({ showEditForm: false })}
-          style={{ top: 150, marginRight: 20 }}
-          destroyOnHidden={true}
-          mask={{ closable: false }}
-          footer={null}
-        >
-          <SectorForm
-            sector={sector}
-            onSubmit={(updatedSector) => {
-              this.setState({ showEditForm: false }, () => {
-                reloadSelfAndSiblings();
-              });
-            }}
-          />
-        </Modal>
+  if (!sectorSourceDataset) {
+    return "";
+  }
+  return !isSourceTree ? (
+    <>
+      <Modal
+        title="Edit sector"
+        open={isRootSector && showEditForm}
+        // onOk={finishEditForm}
+        onCancel={() => setShowEditForm(false)}
+        style={{ top: 150, marginRight: 20 }}
+        destroyOnHidden={true}
+        mask={{ closable: false }}
+        footer={null}
+      >
+        <SectorForm
+          sector={sector}
+          onSubmit={(updatedSector) => {
+            setShowEditForm(false);
+            reloadSelfAndSiblings();
+          }}
+        />
+      </Modal>
+      <Popover
+        zIndex={999}
+        content={
+          <div>
+            {isRootSector && sector?.subject?.broken === true && (
+              <Alert
+                style={{ marginBottom: "8px" }}
+                title="The sector subject is broken"
+                type="warning"
+                showIcon
+              />
+            )}
+            {isRootSector && (
+              <>
+                <CanEditDataset dataset={{ key: projectKey }}>
+                  <Popconfirm
+                    title={
+                      <p style={{ width: "350px" }}>
+                        Do you want a full deletion or a partial deletion? A
+                        partial deletion will delete the sector mapping and
+                        all species, but keep the higher classification above
+                        species
+                      </p>
+                    }
+                    onConfirm={() => {
+                      deleteSector(sector, false);
+                    }}
+                    onCancel={() => {
+                      deleteSector(sector, true);
+                    }}
+                    okText="Full"
+                    cancelText="Partial"
+                  >
+                    <Button style={{ width: "100%" }} danger>
+                      Delete sector
+                    </Button>
+                  </Popconfirm>
+                  <br />
+
+                  {_.get(syncState, "running.sectorKey") !== sector.id && (
+                    <>
+                      <Button
+                        style={{ marginTop: "8px", width: "100%" }}
+                        type="primary"
+                        onClick={() => {
+                          syncSector(sector, syncState, syncingSector);
+                        }}
+                      >
+                        Sync sector
+                      </Button>{" "}
+                      <br />
+                    </>
+                  )}
+                </CanEditDataset>
+              </>
+            )}
+            <Button
+              style={{ marginTop: "8px", width: "100%" }}
+              type="primary"
+              onClick={() => {
+                history.push(
+                  `/project/${projectKey}/sector?id=${sector.id}`
+                );
+              }}
+            >
+              Show sector
+            </Button>
+            <br />
+            <Button
+              style={{ marginTop: "8px", width: "100%" }}
+              type="primary"
+              onClick={() =>
+                showSourceTaxon(
+                  taxon /* sector, sectorSourceDataset */
+                )
+              }
+            >
+              Show source taxon
+            </Button>
+            <br />
+            <Button
+              style={{ marginTop: "8px", width: "100%" }}
+              type="primary"
+              onClick={() => {
+                history.push(`dataset/${sectorSourceDataset.key}/metadata`);
+              }}
+            >
+              Source Dataset Metadata
+            </Button>
+
+            {isRootSector && (
+              <CanEditDataset dataset={{ key: projectKey }}>
+                <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  disabled={showEditForm}
+                  onClick={() => {
+                    getSectorDatasetRanks();
+                    setShowEditForm(true);
+                  }}
+                >
+                  Edit sector
+                </Button>
+              </CanEditDataset>
+            )}
+
+            {isRootSector && !showEditForm && (
+              <>
+                {sector.code && (
+                  <PresentationItem label="Nom. code">
+                    {sector.code}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "ranks[0]") && (
+                  <PresentationItem label="Ranks">
+                    {sector.ranks.join(", ")}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "entities[0]") && (
+                  <PresentationItem label="Entities">
+                    {sector.entities.join(", ")}
+                  </PresentationItem>
+                )}
+                {_.get(sector, "note") && (
+                  <PresentationItem label="Note">
+                    {sector.note}
+                  </PresentationItem>
+                )}
+              </>
+            )}
+            {error && (
+              <Alert
+                closable={{ onClose: () => setError(null) }}
+                title={
+                  <ErrorMsg error={error} style={{ marginTop: "8px" }} />
+                }
+                type="error"
+              />
+            )}
+          </div>
+        }
+        title={
+          <>
+            Sector {sector.id} mode:{" "}
+            {sector.mode === "attach" && <CaretRightOutlined />}
+            {sector.mode === "union" && (
+              <BranchesOutlined
+                rotate={90}
+                style={{ fontSize: "16px", marginRight: "4px" }}
+              />
+            )}
+            {sector.mode === "merge" && <NodeCollapseOutlined />}{" "}
+            {sector.mode}
+          </>
+        }
+        open={popOverVisible}
+        onOpenChange={handleVisibleChange}
+        trigger="contextMenu"
+        placement="rightTop"
+      >
+        <Tag color={stringToColour(sectorSourceDataset.title)}>
+          {isRootSector && sector.mode === "attach" && <CaretRightOutlined />}
+          {isRootSector && sector.mode === "union" && (
+            <BranchesOutlined
+              rotate={90}
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
+          {isRootSector && sector.mode === "merge" && (
+            <NodeCollapseOutlined
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
+          {sectorSourceDataset.alias || sectorSourceDataset.key}
+          {_.get(syncState, "running.sectorKey") === sector.id && (
+            <SyncOutlined style={{ marginLeft: "5px" }} spin />
+          )}
+          {_.find(
+            _.get(syncState, "queued"),
+            (e) => e.sectorKey === sector.id
+          ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
+          {sector?.subject?.broken === true && (
+            <WarningOutlined
+              style={{ fontSize: "16px", marginRight: "4px" }}
+            />
+          )}
+        </Tag>
+      </Popover>
+    </>
+  ) : (
+    <ColTreeContext.Consumer>
+      {({ missingTargetKeys, applyDecision }) => (
         <Popover
-          zIndex={999}
           content={
             <div>
-              {isRootSector && sector?.subject?.broken === true && (
+              {missingTargetKeys[_.get(sector, "target.id")] === true && (
                 <Alert
-                  style={{ marginBottom: "8px" }}
-                  title="The sector subject is broken"
                   type="warning"
-                  showIcon
-                />
+                  style={{ marginBottom: "8px" }}
+                  title={
+                    <p>
+                      {`${_.get(sector, "target.name")} with id: ${_.get(
+                        sector,
+                        "target.id"
+                      )} is missing from the assembly.`}
+                      <br />
+                      {`You can delete this sector and reattach ${_.get(
+                        sector,
+                        "subject.name"
+                      )} under ${_.get(
+                        sector,
+                        "target.name"
+                      )} if present with another id`}
+                    </p>
+                  }
+                ></Alert>
               )}
-              {isRootSector && (
-                <>
-                  <CanEditDataset dataset={{ key: projectKey }}>
-                    <Popconfirm
-                      title={
-                        <p style={{ width: "350px" }}>
-                          Do you want a full deletion or a partial deletion? A
-                          partial deletion will delete the sector mapping and
-                          all species, but keep the higher classification above
-                          species
-                        </p>
-                      }
-                      onConfirm={() => {
-                        this.deleteSector(sector, false);
-                      }}
-                      onCancel={() => {
-                        this.deleteSector(sector, true);
-                      }}
-                      okText="Full"
-                      cancelText="Partial"
-                    >
-                      <Button style={{ width: "100%" }} danger>
-                        Delete sector
-                      </Button>
-                    </Popconfirm>
-                    <br />
-
-                    {_.get(syncState, "running.sectorKey") !== sector.id && (
-                      <React.Fragment>
-                        <Button
-                          style={{ marginTop: "8px", width: "100%" }}
-                          type="primary"
-                          onClick={() => {
-                            this.syncSector(sector, syncState, syncingSector);
-                          }}
-                        >
-                          Sync sector
-                        </Button>{" "}
-                        <br />
-                      </React.Fragment>
-                    )}
-                  </CanEditDataset>
-                </>
+              {isRootSectorInSourceTree && (
+                <CanEditDataset dataset={{ key: projectKey }}>
+                  <Popconfirm
+                    title={
+                      <p style={{ width: "350px" }}>
+                        Do you want a full deletion or a partial deletion? A
+                        partial deletion will delete the sector mapping and
+                        all species, but keep the higher classification above
+                        species
+                      </p>
+                    }
+                    onConfirm={() => {
+                      deleteSector(sector, false);
+                    }}
+                    onCancel={() => {
+                      deleteSector(sector, true);
+                    }}
+                    okText="Full"
+                    cancelText="Partial"
+                  >
+                    <Button style={{ width: "100%" }} danger>
+                      Delete sector
+                    </Button>
+                  </Popconfirm>
+                </CanEditDataset>
               )}
-              <Button
-                style={{ marginTop: "8px", width: "100%" }}
-                type="primary"
-                onClick={() => {
-                  history.push(
-                    `/project/${projectKey}/sector?id=${sector.id}`
-                  );
-                }}
-              >
-                Show sector
-              </Button>
-              <br />
-              <Button
-                style={{ marginTop: "8px", width: "100%" }}
-                type="primary"
-                onClick={() =>
-                  this.props.showSourceTaxon(
-                    taxon /* sector, sectorSourceDataset */
-                  )
-                }
-              >
-                Show source taxon
-              </Button>
-              <br />
-              <Button
-                style={{ marginTop: "8px", width: "100%" }}
-                type="primary"
-                onClick={() => {
-                  history.push(`dataset/${sectorSourceDataset.key}/metadata`);
-                }}
-              >
-                Source Dataset Metadata
-              </Button>
-
-              {isRootSector && (
+              {missingTargetKeys[_.get(sector, "target.id")] !== true && (
+                <Button
+                  style={{ marginTop: "8px", width: "100%" }}
+                  type="primary"
+                  onClick={() => showSourceTaxon(taxon)}
+                >
+                  Show sector in assembly
+                </Button>
+              )}
+              {isRootSectorInSourceTree &&
+                missingTargetKeys[_.get(sector, "target.id")] !== true &&
+                _.get(syncState, "running.sectorKey") !== sector.id && (
+                  <>
+                    <CanEditDataset dataset={{ key: projectKey }}>
+                      <Button
+                        style={{ marginTop: "8px", width: "100%" }}
+                        type="primary"
+                        onClick={() => {
+                          syncSector(sector, syncState, syncingSector);
+                        }}
+                      >
+                        Sync sector
+                      </Button>{" "}
+                      <br />
+                    </CanEditDataset>
+                  </>
+                )}
+              {!isRootSectorInSourceTree && (
                 <CanEditDataset dataset={{ key: projectKey }}>
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
-                    type="primary"
-                    disabled={showEditForm}
+                    danger
                     onClick={() => {
-                      this.getSectorDatasetRanks();
-                      this.setState({ showEditForm: true });
+                      applyDecision(taxon, projectKey, decisionCallback);
+                      setPopOverVisible(false);
                     }}
                   >
-                    Edit sector
+                    Block taxon
                   </Button>
                 </CanEditDataset>
               )}
-
-              {isRootSector && !showEditForm && (
-                <React.Fragment>
-                  {sector.code && (
-                    <PresentationItem label="Nom. code">
-                      {sector.code}
-                    </PresentationItem>
-                  )}
-                  {_.get(sector, "ranks[0]") && (
-                    <PresentationItem label="Ranks">
-                      {sector.ranks.join(", ")}
-                    </PresentationItem>
-                  )}
-                  {_.get(sector, "entities[0]") && (
-                    <PresentationItem label="Entities">
-                      {sector.entities.join(", ")}
-                    </PresentationItem>
-                  )}
-                  {_.get(sector, "note") && (
-                    <PresentationItem label="Note">
-                      {sector.note}
-                    </PresentationItem>
-                  )}
-                </React.Fragment>
-              )}
               {error && (
                 <Alert
-                  closable={{ onClose: () => this.setState({ error: null }) }}
+                  style={{ marginTop: "8px" }}
+                  closable={{ onClose: () => setError(null) }}
                   title={
                     <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                   }
@@ -387,33 +527,38 @@ class Sector extends React.Component {
             </div>
           }
           title={
-            <React.Fragment>
+            <>
               Sector {sector.id} mode:{" "}
-              {sector.mode === "attach" && <CaretRightOutlined />}
-              {sector.mode === "union" && (
+              {sector.mode === "attach" ? (
+                <CaretRightOutlined />
+              ) : (
                 <BranchesOutlined
                   rotate={90}
                   style={{ fontSize: "16px", marginRight: "4px" }}
                 />
-              )}
-              {sector.mode === "merge" && <NodeCollapseOutlined />}{" "}
+              )}{" "}
               {sector.mode}
-            </React.Fragment>
+            </>
           }
-          open={this.state.popOverVisible}
-          onOpenChange={this.handleVisibleChange}
+          open={popOverVisible}
+          onOpenChange={handleVisibleChange}
           trigger="contextMenu"
           placement="rightTop"
         >
           <Tag color={stringToColour(sectorSourceDataset.title)}>
-            {isRootSector && sector.mode === "attach" && <CaretRightOutlined />}
-            {isRootSector && sector.mode === "union" && (
+            {missingTargetKeys[_.get(sector, "target.id")] === true && (
+              <ExclamationCircleOutlined />
+            )}
+            {isRootSectorInSourceTree && sector.mode === "attach" && (
+              <CaretRightOutlined />
+            )}
+            {isRootSectorInSourceTree && sector.mode === "union" && (
               <BranchesOutlined
-                rotate={90}
                 style={{ fontSize: "16px", marginRight: "4px" }}
+                rotate={90}
               />
             )}
-            {isRootSector && sector.mode === "merge" && (
+            {isRootSectorInSourceTree && sector.mode === "merge" && (
               <NodeCollapseOutlined
                 style={{ fontSize: "16px", marginRight: "4px" }}
               />
@@ -433,171 +578,10 @@ class Sector extends React.Component {
             )}
           </Tag>
         </Popover>
-      </>
-    ) : (
-      <ColTreeContext.Consumer>
-        {({ missingTargetKeys, applyDecision }) => (
-          <Popover
-            content={
-              <div>
-                {missingTargetKeys[_.get(sector, "target.id")] === true && (
-                  <Alert
-                    type="warning"
-                    style={{ marginBottom: "8px" }}
-                    title={
-                      <p>
-                        {`${_.get(sector, "target.name")} with id: ${_.get(
-                          sector,
-                          "target.id"
-                        )} is missing from the assembly.`}
-                        <br />
-                        {`You can delete this sector and reattach ${_.get(
-                          sector,
-                          "subject.name"
-                        )} under ${_.get(
-                          sector,
-                          "target.name"
-                        )} if present with another id`}
-                      </p>
-                    }
-                  ></Alert>
-                )}
-                {isRootSectorInSourceTree && (
-                  <CanEditDataset dataset={{ key: projectKey }}>
-                    <Popconfirm
-                      title={
-                        <p style={{ width: "350px" }}>
-                          Do you want a full deletion or a partial deletion? A
-                          partial deletion will delete the sector mapping and
-                          all species, but keep the higher classification above
-                          species
-                        </p>
-                      }
-                      onConfirm={() => {
-                        this.deleteSector(sector, false);
-                      }}
-                      onCancel={() => {
-                        this.deleteSector(sector, true);
-                      }}
-                      okText="Full"
-                      cancelText="Partial"
-                    >
-                      <Button style={{ width: "100%" }} danger>
-                        Delete sector
-                      </Button>
-                    </Popconfirm>
-                  </CanEditDataset>
-                )}
-                {missingTargetKeys[_.get(sector, "target.id")] !== true && (
-                  <Button
-                    style={{ marginTop: "8px", width: "100%" }}
-                    type="primary"
-                    onClick={() => this.props.showSourceTaxon(taxon)}
-                  >
-                    Show sector in assembly
-                  </Button>
-                )}
-                {isRootSectorInSourceTree &&
-                  missingTargetKeys[_.get(sector, "target.id")] !== true &&
-                  _.get(syncState, "running.sectorKey") !== sector.id && (
-                    <>
-                      <CanEditDataset dataset={{ key: projectKey }}>
-                        <Button
-                          style={{ marginTop: "8px", width: "100%" }}
-                          type="primary"
-                          onClick={() => {
-                            this.syncSector(sector, syncState, syncingSector);
-                          }}
-                        >
-                          Sync sector
-                        </Button>{" "}
-                        <br />
-                      </CanEditDataset>
-                    </>
-                  )}
-                {!isRootSectorInSourceTree && (
-                  <CanEditDataset dataset={{ key: projectKey }}>
-                    <Button
-                      style={{ marginTop: "8px", width: "100%" }}
-                      danger
-                      onClick={() => {
-                        applyDecision(taxon, projectKey, decisionCallback);
-                        this.setState({ popOverVisible: false });
-                      }}
-                    >
-                      Block taxon
-                    </Button>
-                  </CanEditDataset>
-                )}
-                {error && (
-                  <Alert
-                    style={{ marginTop: "8px" }}
-                    closable={{ onClose: () => this.setState({ error: null }) }}
-                    title={
-                      <ErrorMsg error={error} style={{ marginTop: "8px" }} />
-                    }
-                    type="error"
-                  />
-                )}
-              </div>
-            }
-            title={
-              <React.Fragment>
-                Sector {sector.id} mode:{" "}
-                {sector.mode === "attach" ? (
-                  <CaretRightOutlined />
-                ) : (
-                  <BranchesOutlined
-                    rotate={90}
-                    style={{ fontSize: "16px", marginRight: "4px" }}
-                  />
-                )}{" "}
-                {sector.mode}
-              </React.Fragment>
-            }
-            open={this.state.popOverVisible}
-            onOpenChange={this.handleVisibleChange}
-            trigger="contextMenu"
-            placement="rightTop"
-          >
-            <Tag color={stringToColour(sectorSourceDataset.title)}>
-              {missingTargetKeys[_.get(sector, "target.id")] === true && (
-                <ExclamationCircleOutlined />
-              )}
-              {isRootSectorInSourceTree && sector.mode === "attach" && (
-                <CaretRightOutlined />
-              )}
-              {isRootSectorInSourceTree && sector.mode === "union" && (
-                <BranchesOutlined
-                  style={{ fontSize: "16px", marginRight: "4px" }}
-                  rotate={90}
-                />
-              )}
-              {isRootSectorInSourceTree && sector.mode === "merge" && (
-                <NodeCollapseOutlined
-                  style={{ fontSize: "16px", marginRight: "4px" }}
-                />
-              )}
-              {sectorSourceDataset.alias || sectorSourceDataset.key}
-              {_.get(syncState, "running.sectorKey") === sector.id && (
-                <SyncOutlined style={{ marginLeft: "5px" }} spin />
-              )}
-              {_.find(
-                _.get(syncState, "queued"),
-                (e) => e.sectorKey === sector.id
-              ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
-              {sector?.subject?.broken === true && (
-                <WarningOutlined
-                  style={{ fontSize: "16px", marginRight: "4px" }}
-                />
-              )}
-            </Tag>
-          </Popover>
-        )}
-      </ColTreeContext.Consumer>
-    );
-  };
-}
+      )}
+    </ColTreeContext.Consumer>
+  );
+};
 
 const mapContextToProps = ({
   user,
