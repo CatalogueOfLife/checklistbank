@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
-import injectSheet from "react-jss";
 
 import {
   ApiOutlined,
@@ -90,7 +89,6 @@ Menu.SubMenu = AntdMenu.SubMenu;
 Menu.ItemGroup = AntdMenu.ItemGroup;
 Menu.Divider = AntdMenu.Divider;
 const SubMenu = AntdMenu.SubMenu;
-const styles = {};
 /* function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
 }; */
@@ -1165,5 +1163,5 @@ const mapContextToProps = ({
 });
 
 export default withRouter(
-  injectSheet(styles)(withContext(mapContextToProps)(BasicMenu))
+  withContext(mapContextToProps)(BasicMenu)
 );
