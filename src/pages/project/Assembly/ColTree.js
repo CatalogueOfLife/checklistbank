@@ -54,30 +54,23 @@ const TAXON_KEY_PARAMETER_NAMES = {
   readOnly: "taxonKey",
 };
 
-class LoadMoreChildrenTreeNode extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { loading: false };
-  }
-
-  onClick = () => {
-    this.setState({ loading: true });
-    this.props.onClick();
+const LoadMoreChildrenTreeNode = ({ onClick }) => {
+  const [loading, setLoading] = useState(false);
+  const handleClick = () => {
+    setLoading(true);
+    onClick();
   };
-  render = () => {
-    const { loading } = this.state;
-    return (
-      <div>
-        {loading && <Spin />}
-        {!loading && (
-          <a onClick={this.onClick}>
-            <strong>Load more...</strong>
-          </a>
-        )}
-      </div>
-    );
-  };
-}
+  return (
+    <div>
+      {loading && <Spin />}
+      {!loading && (
+        <a onClick={handleClick}>
+          <strong>Load more...</strong>
+        </a>
+      )}
+    </div>
+  );
+};
 
 const ColTree = (props) => {
   const { notification, message } = App.useApp();

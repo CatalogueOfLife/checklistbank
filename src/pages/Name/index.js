@@ -19,7 +19,6 @@ import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import CurieIdentifier from "../../components/CurieIdentifier";
-const TabPane = Tabs.TabPane;
 
 const md = 5;
 
@@ -211,10 +210,15 @@ const NamePage = ({
       {nameError && (
         <Alert description={<ErrorMsg error={nameError} />} type="error" />
       )}
-      <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
-        <TabPane tab="About" key="1">
-          {name && (
-            <React.Fragment>
+      <Tabs
+        defaultActiveKey="1"
+        tabBarExtraContent={null}
+        items={[
+          {
+            key: "1",
+            label: "About",
+            children: name && (
+              <React.Fragment>
               <PresentationItem md={md} label="ID">
                 {name.id}
               </PresentationItem>
@@ -441,15 +445,16 @@ const NamePage = ({
                   )}
                 </Row>
               </PresentationItem>
-            </React.Fragment>
-          )}
-        </TabPane>
-        {_.get(name, "verbatimKey") && (
-          <TabPane tab="Verbatim" key="2">
-            <Verbatim verbatimKey={name.verbatimKey} />
-          </TabPane>
-        )}
-      </Tabs>
+              </React.Fragment>
+            ),
+          },
+          _.get(name, "verbatimKey") && {
+            key: "2",
+            label: "Verbatim",
+            children: <Verbatim verbatimKey={name.verbatimKey} />,
+          },
+        ].filter(Boolean)}
+      />
     </div>
   );
 };
