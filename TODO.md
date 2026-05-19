@@ -6,7 +6,6 @@ Tracked tech-debt and follow-up work that is out of scope for any active branch.
 
 These were explicitly carved out of the [stack modernization plan](https://github.com/CatalogueOfLife/checklistbank) (Vite + React 19 + antd 6 + react-leaflet 5) so each phase stays reviewable. Do incrementally after the modernization branch lands.
 
-- **Drop `react-jss` in favour of antd's CSS-in-JS (or vanilla CSS modules).** 12 files use `injectSheet`. antd v5+ already injects its own emotion-style runtime; keeping a second style runtime is overhead. Decide between (a) `antd`'s `theme.useToken()` + inline styles, (b) plain CSS modules, or (c) CSS variables — pick before starting.
 - **Migrate `<Select><Option/></Select>` to `<Select options={...}/>`.** ~156 occurrences. Cosmetic — the old pattern still works in antd 6 — but worth normalizing.
 - **Move `Modal.confirm` / `message.x` / `notification.x` static calls to the `App.useApp()` context API.** ~111 occurrences. Antd 6 logs deprecation warnings for the static form.
 - **Finish the antd 6 Tabs/Menu structural cleanup.** Phase 5 of the modernization converted the six smaller Tabs files (Verbatim, TextTreeUpload, NameIndexKey, MetaDataGenerator, Reference, UserProfile) and the two small Menu files (DatasetImportMetrics/Menu, LayoutNew/UserMenu) from JSX-children to the `items={[...]}` prop, but three Tabs files were left as-is because their tab bodies are 200+ lines each and the conversion is risky without browser verification:
