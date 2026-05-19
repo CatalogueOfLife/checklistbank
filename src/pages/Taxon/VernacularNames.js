@@ -1,8 +1,6 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Table } from "antd";
 import _ from "lodash";
-import axios from "axios";
-import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
@@ -10,96 +8,11 @@ import ShowMoreToggle from "./ShowMoreToggle";
 
 const TOP_N = 10;
 
-class VernacularNamesTable extends React.Component {
-  constructor(props) {
-    super(props);
+const VernacularNamesTable = ({ data: dataProp, datasetKey, style, countryAlpha3, countryAlpha2, language }) => {
+  const [showAll, setShowAll] = useState(false);
+  const [data, setData] = useState(dataProp ? [...dataProp] : []);
 
-    this.state = {
-      showAll: false,
-      data: this.props.data ? [...this.props.data] : [],
-      columns: [
-        {
-          title: "Name",
-          dataIndex: "name",
-          key: "name",
-          width: 200,
-        },
-        {
-          title: "Transliteration",
-          dataIndex: "latin",
-          key: "latin",
-          width: 200,
-        },
-        {
-          title: "Language",
-          dataIndex: "language",
-          key: "language",
-          width: 100,
-          render: (text, record) =>
-            record.languageTitle ? record.languageTitle : text,
-        },
-        {
-          title: "Country",
-          dataIndex: "country",
-          key: "country",
-          width: 70,
-          render: (text, record) =>
-            record.countryTitle ? record.countryTitle : text,
-        },
-        {
-          title: "",
-          dataIndex: "merged",
-          key: "merged",
-          width: 12,
-          render: (text, record) =>
-            record?.merged ? (
-              <MergedDataBadge
-                createdBy={record?.createdBy}
-                datasetKey={record?.datasetKey}
-                verbatimSourceKey={record?.verbatimSourceKey}
-                sourceDatasetKey={record?.sourceDatasetKey}
-              />
-            ) : (
-              ""
-            ),
-        },
-        {
-          title: "Ref",
-          dataIndex: "referenceId",
-          key: "referenceId",
-          width: 30,
-
-          render: (text, record) => {
-            return text ? (
-              <ReferencePopover
-                referenceId={text}
-                datasetKey={this.props.datasetKey}
-                placement="left"
-              ></ReferencePopover>
-            ) : (
-              ""
-            );
-          },
-        },
-        {
-          title: "Remarks",
-          dataIndex: "remarks",
-          key: "remarks",
-        },
-      ],
-    };
-  }
-  componentDidMount = () => {
-    const { data } = this.props;
-
-    const newData = data.map(this.decorateWithCountryByCode);
-    this.setState({ data: newData });
-    console.log(newData);
-  };
-
-  decorateWithCountryByCode = (name) => {
-    const { countryAlpha3, countryAlpha2, language } = this.props;
-
+  const decorateWithCountryByCode = (name) => {
     var countryName = name.country;
     var languageName = name.language;
 
@@ -123,31 +36,103 @@ class VernacularNamesTable extends React.Component {
     };
   };
 
-  render() {
-    const { style } = this.props;
-    const { data, columns, showAll } = this.state;
-    const visible = showAll ? data : data.slice(0, TOP_N);
+  useEffect(() => {
+    const newData = dataProp.map(decorateWithCountryByCode);
+    setData(newData);
+    console.log(newData);
+  }, []);
 
-    return (
-      <div style={style}>
-        <Table
-          className="colplus-taxon-page-list"
-          columns={columns}
-          dataSource={visible}
-          rowKey="verbatimKey"
-          pagination={false}
-          size="middle"
-        />
-        <ShowMoreToggle
-          total={data.length}
-          visible={TOP_N}
-          showAll={showAll}
-          onChange={(v) => this.setState({ showAll: v })}
-        />
-      </div>
-    );
-  }
-}
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: 200,
+    },
+    {
+      title: "Transliteration",
+      dataIndex: "latin",
+      key: "latin",
+      width: 200,
+    },
+    {
+      title: "Language",
+      dataIndex: "language",
+      key: "language",
+      width: 100,
+      render: (text, record) =>
+        record.languageTitle ? record.languageTitle : text,
+    },
+    {
+      title: "Country",
+      dataIndex: "country",
+      key: "country",
+      width: 70,
+      render: (text, record) =>
+        record.countryTitle ? record.countryTitle : text,
+    },
+    {
+      title: "",
+      dataIndex: "merged",
+      key: "merged",
+      width: 12,
+      render: (text, record) =>
+        record?.merged ? (
+          <MergedDataBadge
+            createdBy={record?.createdBy}
+            datasetKey={record?.datasetKey}
+            verbatimSourceKey={record?.verbatimSourceKey}
+            sourceDatasetKey={record?.sourceDatasetKey}
+          />
+        ) : (
+          ""
+        ),
+    },
+    {
+      title: "Ref",
+      dataIndex: "referenceId",
+      key: "referenceId",
+      width: 30,
+      render: (text, record) => {
+        return text ? (
+          <ReferencePopover
+            referenceId={text}
+            datasetKey={datasetKey}
+            placement="left"
+          ></ReferencePopover>
+        ) : (
+          ""
+        );
+      },
+    },
+    {
+      title: "Remarks",
+      dataIndex: "remarks",
+      key: "remarks",
+    },
+  ];
+
+  const visible = showAll ? data : data.slice(0, TOP_N);
+
+  return (
+    <div style={style}>
+      <Table
+        className="colplus-taxon-page-list"
+        columns={columns}
+        dataSource={visible}
+        rowKey="verbatimKey"
+        pagination={false}
+        size="middle"
+      />
+      <ShowMoreToggle
+        total={data.length}
+        visible={TOP_N}
+        showAll={showAll}
+        onChange={(v) => setShowAll(v)}
+      />
+    </div>
+  );
+};
 
 const mapContextToProps = ({ countryAlpha3, countryAlpha2, language }) => ({
   countryAlpha3,
