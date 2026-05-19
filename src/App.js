@@ -17,7 +17,6 @@ import DatasetList from "./pages/DatasetList";
 import DatasetPage from "./pages/DatasetKey";
 import DatasetCreate from "./pages/DatasetCreate";
 
-import { ThemeProvider } from "react-jss";
 import DatasetProvider from "./components/hoc/DatasetProvider";
 import SyncProvider from "./components/hoc/SyncProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
@@ -81,14 +80,9 @@ import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
 import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 
-const theme = {
-  colorPrimary: "deepskyblue",
-};
-
-// antd 5+ defaults to a different blue than v4. Pin colorPrimary so the
-// jss-styled components (which use the same `theme` object) and antd
-// components stay visually consistent.
-const antdTheme = { token: { colorPrimary: theme.colorPrimary } };
+// antd 5+ defaults to a different blue than v4. Pin colorPrimary so the brand
+// blue (deepskyblue) survives the antd version bump.
+const antdTheme = { token: { colorPrimary: "deepskyblue" } };
 
 // Wires `useNavigate` into the legacy `history.push()` shim once on mount.
 const NavigatorInstaller = () => {
@@ -154,7 +148,6 @@ const App = () => {
         </Helmet>
         <BrowserRouter>
           <NavigatorInstaller />
-          <ThemeProvider theme={theme}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route
@@ -426,7 +419,6 @@ const App = () => {
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
-          </ThemeProvider>
           <ProviderRoutes />
         </BrowserRouter>
       </ContextProvider>
