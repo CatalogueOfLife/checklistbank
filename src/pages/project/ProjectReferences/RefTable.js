@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {SearchOutlined} from "@ant-design/icons"
 import { Table, Row, Col, Input, Space, Button } from "antd";
@@ -13,109 +13,33 @@ import _ from "lodash";
 import { NavLink } from "react-router-dom";
 
 
-class RefTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      params: {},
-      pagination: {
-        pageSize: 50,
-        current: 1,
-        showQuickJumper: true,
-      },
-      loading: false,
-      columns: [
-        {
-          title: "ID",
-          dataIndex: "id",
-          key: "id",
-          render: (text, record) => {
-            return <NavLink to={{pathname: `/dataset/${record.datasetKey}/reference/${encodeURIComponent(text)}`}}>{text}</NavLink>;
-          }
-        },
-        {
-          title: "Citation",
-          dataIndex: "citation",
-          key: "citation",
-        },
-        {
-          title: "Year",
-          dataIndex: "year",
-          key: "year",
-          sorter: true,
-          ...this.getColumnSearchProps('year')
-        },
-        {
-          title: "Created",
-          dataIndex: "created",
-          key: "created",
-          width: 50,
-          sorter: (a, b) => a.created < b.created,
-          render: (date) => {
-            return date ? moment(date).format("lll") : "";
-          },
-        },
-        {
-          title: "Modified",
-          dataIndex: "modified",
-          key: "modified",
-          width: 50,
-          sorter: (a, b) => a.modified < b.modified,
-          render: (date) => {
-            return date ? moment(date).format("lll") : "";
-          },
-        },
+const RefTable = (props) => {
+  const { datasetKey, addError, location } = props;
 
-        /* {
-          title: "Action",
-          key: "action",
-          width: 50,
-          render: (text, record) => <Button type={"primary"}>Edit</Button>
-        }  */
-      ],
-    };
-  }
+  const searchInput = useRef(null);
 
-  searchInput = React.createRef()
+  const [data, setData] = useState([]);
+  const [params, setParams] = useState({});
+  const [pagination, setPagination] = useState({
+    pageSize: 50,
+    current: 1,
+    showQuickJumper: true,
+  });
+  const [loading, setLoading] = useState(false);
 
-  componentDidMount() {
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = {
-        limit: 50,
-        offset: 0,
-      };
-      history.push({
-        pathname: _.get(this.props, "location.pathname"), //
-        search: `?limit=50&offset=0`,
-      });
-    }
-
-    this.setState({ params }, this.getData);
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (_.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey")) {
-      this.getData();
-    }
-  };
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-  //  setSearchText(selectedKeys[0]);
-   // setSearchedColumn(dataIndex);
   };
-  
-  handleReset = (clearFilters, confirm) => {
+
+  const handleReset = (clearFilters, confirm) => {
     clearFilters();
-    confirm()
-    this.setState({params: {
-      limit: 50,
-      offset: 0,
-    }},  this.getData)
-   // setSearchText('');
+    confirm();
+    const newParams = { limit: 50, offset: 0 };
+    setParams(newParams);
+    // getData will be triggered by the params update via useEffect below
   };
-  getColumnSearchProps = (dataIndex) => ({
+
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div
         style={{
@@ -123,12 +47,12 @@ class RefTable extends React.Component {
         }}
       >
         <Input
-          defaultValue={this.state?.params?.year}
-          ref={this.searchInput}
+          defaultValue={params?.year}
+          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
             display: 'block',
@@ -137,7 +61,7 @@ class RefTable extends React.Component {
         <Space>
           <Button
             type="primary"
-            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -147,7 +71,7 @@ class RefTable extends React.Component {
             Search
           </Button>
           <Button
-            onClick={() => clearFilters && this.handleReset(clearFilters, confirm)}
+            onClick={() => clearFilters && handleReset(clearFilters, confirm)}
             size="small"
             style={{
               width: 90,
@@ -155,18 +79,6 @@ class RefTable extends React.Component {
           >
             Reset
           </Button>
-          {/* <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({
-                closeDropdown: false,
-              });
-              //setSearchText(selectedKeys[0]);
-            }}
-          >
-            Filter
-          </Button> */}
         </Space>
       </div>
     ),
@@ -186,45 +98,98 @@ class RefTable extends React.Component {
     }
   });
 
-  getData = () => {
-    const { params } = this.state;
-    this.setState({ loading: true });
-    const { datasetKey, addError } = this.props;
-    if (!params.q) {
-      delete params.q;
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      render: (text, record) => {
+        return <NavLink to={{pathname: `/dataset/${record.datasetKey}/reference/${encodeURIComponent(text)}`}}>{text}</NavLink>;
+      }
+    },
+    {
+      title: "Citation",
+      dataIndex: "citation",
+      key: "citation",
+    },
+    {
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+      sorter: true,
+      ...getColumnSearchProps('year')
+    },
+    {
+      title: "Created",
+      dataIndex: "created",
+      key: "created",
+      width: 50,
+      sorter: (a, b) => a.created < b.created,
+      render: (date) => {
+        return date ? moment(date).format("lll") : "";
+      },
+    },
+    {
+      title: "Modified",
+      dataIndex: "modified",
+      key: "modified",
+      width: 50,
+      sorter: (a, b) => a.modified < b.modified,
+      render: (date) => {
+        return date ? moment(date).format("lll") : "";
+      },
+    },
+  ];
+
+  const getData = (currentParams) => {
+    setLoading(true);
+    const p = { ...currentParams };
+    if (!p.q) {
+      delete p.q;
     }
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: `?${qs.stringify(params)}`,
+      pathname: _.get(props, "location.pathname"),
+      search: `?${qs.stringify(p)}`,
     });
     axios(
-      `${config.dataApi}dataset/${datasetKey}/reference?${qs.stringify(params)}`
+      `${config.dataApi}dataset/${datasetKey}/reference?${qs.stringify(p)}`
     )
       .then((res) => {
-        const pagination = { ...this.state.pagination };
-        pagination.total = res.data.total;
-
-        this.setState({
-          loading: false,
-          data: _.get(res, "data.result") || [],
-          err: null,
-          pagination,
-        });
+        setPagination((prev) => ({ ...prev, total: res.data.total }));
+        setLoading(false);
+        setData(_.get(res, "data.result") || []);
       })
       .catch((err) => {
-        addError(err)
-        this.setState({ loading: false, error: err, data: [] });
+        addError(err);
+        setLoading(false);
+        setData([]);
       });
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    // pager.current = pagination.current;
+  useEffect(() => {
+    let initParams = qs.parse(_.get(props, "location.search"));
+    if (_.isEmpty(initParams)) {
+      initParams = { limit: 50, offset: 0 };
+      history.push({
+        pathname: _.get(props, "location.pathname"),
+        search: `?limit=50&offset=0`,
+      });
+    }
+    setParams(initParams);
+    getData(initParams);
+  }, []);
 
-    this.setState({
-      pagination: pager,
-    });
-    let query = _.merge(this.state.params, {
+  useEffect(() => {
+    if (datasetKey) {
+      getData(params);
+    }
+  }, [datasetKey]);
+
+  const handleTableChange = (newPagination, filters, sorter) => {
+    const pager = { ...pagination, ...newPagination };
+    setPagination(pager);
+
+    let query = _.merge({ ...params }, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...Object.keys(filters).reduce(
@@ -234,57 +199,48 @@ class RefTable extends React.Component {
     });
     if (sorter) {
       query.sortBy = sorter.field;
-      if (sorter.order === "descend") {
-        query.reverse = true;
-      } else {
-        query.reverse = false;
-      }
+      query.reverse = sorter.order === "descend";
     }
 
-    this.setState({ params: query }, this.getData);
+    setParams(query);
+    getData(query);
   };
 
-  updateSearch = (params) => {
-    let newParams = { ...this.state.params, offset: 0, limit: 50 };
-    _.forEach(params, (v, k) => {
-      newParams[k] = v;
-    });
-    this.setState({ params: newParams }, this.getData);
+  const updateSearch = (newSearchParams) => {
+    const newParams = { ...params, offset: 0, limit: 50, ...newSearchParams };
+    setParams(newParams);
+    getData(newParams);
   };
 
-  render() {
-    const { data, columns, loading, pagination } = this.state;
+  return (
+    <>
+      <Row style={{ marginBottom: "10px" }}>
+        <Col xs={24} sm={24} md={12} lg={12}>
+          <SearchBox
+            defaultValue={_.get(params, "q")}
+            style={{ width: "50%" }}
+            onSearch={(value) => updateSearch({ q: value })}
+          />
+        </Col>
+        <Col xs={24} sm={24} md={12} lg={12} style={{ textAlign: "right" }}>
+          {pagination &&
+            !isNaN(pagination.total) &&
+            `results: ${pagination.total}`}
+        </Col>
+      </Row>
 
-    return (
-      <React.Fragment>
-        <Row style={{ marginBottom: "10px" }}>
-          <Col xs={24} sm={24} md={12} lg={12}>
-            <SearchBox
-              defaultValue={_.get(this.state, "params.q")}
-              style={{ width: "50%" }}
-              onSearch={(value) => this.updateSearch({ q: value })}
-            />
-          </Col>
-          <Col xs={24} sm={24} md={12} lg={12} style={{ textAlign: "right" }}>
-            {pagination &&
-              !isNaN(pagination.total) &&
-              `results: ${pagination.total}`}
-          </Col>
-        </Row>
-
-        <Table
-          size="small"
-          columns={columns}
-          dataSource={data}
-          loading={loading}
-          pagination={pagination}
-          onChange={this.handleTableChange}
-          rowKey="key"
-        />
-      </React.Fragment>
-    );
-  }
-}
+      <Table
+        size="small"
+        columns={columns}
+        dataSource={data}
+        loading={loading}
+        pagination={pagination}
+        onChange={handleTableChange}
+        rowKey="key"
+      />
+    </>
+  );
+};
 
 const mapContextToProps = ({ addError }) => ({
   addError

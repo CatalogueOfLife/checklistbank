@@ -1,7 +1,7 @@
 import withRouter from "../withRouter";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React from "react";
+import { useState, useEffect } from "react";
 import _ from "lodash";
 import history from "../history";
 import qs from "query-string";
@@ -11,27 +11,16 @@ import withContext from "./hoc/withContext";
 
 const ButtonGroup = Button.Group;
 
-class ImportChart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { options: {} };
-  }
+const ImportChart = (props) => {
+  const { location, datasetKey, data: chartDataProp, title, subtitle, defaultType, nameSearchParam, verbatim, additionalParams, simple = false } = props;
 
-  componentDidMount = () => {
-    this.initChart(this.props);
-  };
+  const [options, setOptions] = useState({});
+  const [chartData, setChartData] = useState([]);
+  const [logChartData, setLogChartData] = useState([]);
+  const [chartType, setChartType] = useState(defaultType || "column");
+  const [logarithmic, setLogarithmic] = useState(false);
 
-  componentDidUpdate = (prevProps) => {
-    if (
-      prevProps.datasetKey !== this.props.datasetKey ||
-      JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)
-    ) {
-      this.initChart(this.props);
-    }
-  };
-
-  getBasePath = () => {
-    const { location, datasetKey } = this.props;
+  const getBasePath = () => {
     if (location.pathname.startsWith("/catalogue")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
@@ -42,9 +31,7 @@ class ImportChart extends React.Component {
     }
   };
 
-  getVerbatimPath = () => {
-    const { location, datasetKey } = this.props;
-
+  const getVerbatimPath = () => {
     if (location.pathname.startsWith("/catalogue")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
@@ -55,107 +42,7 @@ class ImportChart extends React.Component {
     }
   };
 
-  initChart = (props) => {
-    const {
-      data,
-      title,
-      subtitle,
-      defaultType,
-      nameSearchParam,
-      verbatim,
-      additionalParams,
-    } = props;
-    var chartData = [];
-    var logChartData = [];
-    var max;
-    var min;
-    _.each(data, (v, k) => {
-      if (_.isUndefined(min) || v < min) {
-        min = v;
-      }
-      if (_.isUndefined(max) || v > max) {
-        max = v;
-      }
-      chartData.push([k, v]);
-    });
-    var logMin = Math.log(min);
-    var logStart = Math.max(0, Math.floor(logMin));
-    var logMax = Math.log(max);
-    chartData.forEach(function (e) {
-      if (e[1] === 0) {
-        logChartData.push([e[0], 0]);
-      } else {
-        logChartData.push([
-          e[0],
-          Math.round((100 * (Math.log(e[1]) - logStart)) / (logMax - logStart)),
-        ]);
-      }
-    });
-
-    let options = {
-      chart: {
-        type: defaultType || "column",
-      },
-      title: {
-        text: title,
-      },
-      subtitle: {
-        text: subtitle,
-      },
-      credits: false,
-      xAxis: {
-        type: "category",
-        labels: {
-          rotation: -65,
-          style: {
-            fontSize: "13px",
-            fontFamily: "Verdana, sans-serif",
-          },
-        },
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: title,
-        },
-      },
-      legend: {
-        enabled: false,
-      },
-      tooltip: {
-        pointFormat: `${title}: <b>{point.y}</b>`,
-      },
-      series: [
-        {
-          name: title,
-          data: chartData,
-          point: {
-            events: {
-              click: (e) => {
-                history.push(
-                  `${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${
-                    nameSearchParam ? nameSearchParam + "=" + e.point.name : ""
-                  }${
-                    additionalParams ? "&" + qs.stringify(additionalParams) : ""
-                  }`
-                );
-              },
-            },
-          },
-          dataLabels: this.getDataLabelOptions(defaultType || "column"),
-        },
-      ],
-    };
-
-    this.setState({
-      options,
-      chartData,
-      logChartData,
-      chartType: defaultType || "column",
-    });
-  };
-
-  getDataLabelOptions = (type) => {
+  const getDataLabelOptions = (type) => {
     if (type === "pie") {
       return {
         enabled: true,
@@ -174,7 +61,7 @@ class ImportChart extends React.Component {
         color: "#FFFFFF",
         align: "right",
         format: "{point.y}",
-        y: 10, // 10 pixels down from the top
+        y: 10,
         style: {
           fontSize: "13px",
           fontFamily: "Verdana, sans-serif",
@@ -183,76 +70,177 @@ class ImportChart extends React.Component {
     }
   };
 
-  toggleChartType = (type) => {
-    let { options } = this.state;
-    options.chart.type = type;
+  const initChart = (currentProps) => {
+    const {
+      data,
+      title: t,
+      subtitle: st,
+      defaultType: dt,
+      nameSearchParam: nsp,
+      verbatim: v,
+      additionalParams: ap,
+    } = currentProps;
+    var newChartData = [];
+    var newLogChartData = [];
+    var max;
+    var min;
+    _.each(data, (val, k) => {
+      if (_.isUndefined(min) || val < min) {
+        min = val;
+      }
+      if (_.isUndefined(max) || val > max) {
+        max = val;
+      }
+      newChartData.push([k, val]);
+    });
+    var logMin = Math.log(min);
+    var logStart = Math.max(0, Math.floor(logMin));
+    var logMax = Math.log(max);
+    newChartData.forEach(function (e) {
+      if (e[1] === 0) {
+        newLogChartData.push([e[0], 0]);
+      } else {
+        newLogChartData.push([
+          e[0],
+          Math.round((100 * (Math.log(e[1]) - logStart)) / (logMax - logStart)),
+        ]);
+      }
+    });
 
-    options.series[0].dataLabels = this.getDataLabelOptions(type);
+    const type = dt || "column";
+    const newOptions = {
+      chart: {
+        type,
+      },
+      title: {
+        text: t,
+      },
+      subtitle: {
+        text: st,
+      },
+      credits: false,
+      xAxis: {
+        type: "category",
+        labels: {
+          rotation: -65,
+          style: {
+            fontSize: "13px",
+            fontFamily: "Verdana, sans-serif",
+          },
+        },
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: t,
+        },
+      },
+      legend: {
+        enabled: false,
+      },
+      tooltip: {
+        pointFormat: `${t}: <b>{point.y}</b>`,
+      },
+      series: [
+        {
+          name: t,
+          data: newChartData,
+          point: {
+            events: {
+              click: (e) => {
+                history.push(
+                  `${v ? getVerbatimPath() : getBasePath()}?${
+                    nsp ? nsp + "=" + e.point.name : ""
+                  }${ap ? "&" + qs.stringify(ap) : ""}`
+                );
+              },
+            },
+          },
+          dataLabels: getDataLabelOptions(type),
+        },
+      ],
+    };
 
-    this.setState({ chartType: type, options });
+    setOptions(newOptions);
+    setChartData(newChartData);
+    setLogChartData(newLogChartData);
+    setChartType(type);
   };
 
-  setLogarithmic = (checked) => {
-    let { options } = this.state;
-    if (checked) {
-      options.series[0].data = this.state.logChartData;
-    } else {
-      options.series[0].data = this.state.chartData;
-    }
-    this.setState({ logarithmic: checked, options });
+  useEffect(() => {
+    initChart(props);
+  }, [datasetKey, JSON.stringify(chartDataProp)]);
+
+  const toggleChartType = (type) => {
+    setOptions((prev) => {
+      const updated = { ...prev };
+      updated.chart = { ...updated.chart, type };
+      updated.series = updated.series.map((s, i) =>
+        i === 0 ? { ...s, dataLabels: getDataLabelOptions(type) } : s
+      );
+      return updated;
+    });
+    setChartType(type);
   };
 
-  render = () => {
-    const { options, logarithmic, chartType } = this.state;
-    const {simple = false} = this.props;
-    return (
-      simple ? <HighchartsReact highcharts={Highcharts} options={options} />  : <Card>
-        
-        <ButtonGroup size="small">
-          <Button
-            type={!logarithmic ? "primary" : ""}
-            onClick={() => {
-              this.setLogarithmic(false);
-            }}
-          >
-            Linear
-          </Button>
-          <Button
-            type={logarithmic ? "primary" : ""}
-            onClick={() => {
-              this.setLogarithmic(true);
-            }}
-          >
-            Logarithmic
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup size="small" style={{ float: "right" }}>
-          <Button
-            type={chartType === "pie" ? "primary" : ""}
-            icon={<PieChartOutlined />}
-            onClick={() => {
-              this.toggleChartType("pie");
-            }}
-          />
-          <Button
-            type={chartType === "column" ? "primary" : ""}
-            icon={<BarChartOutlined />}
-            onClick={() => {
-              this.toggleChartType("column");
-            }}
-          />
-        </ButtonGroup>
-        
-        {chartType === "pie" && (
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        )}
-        {chartType === "column" && (
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        )}
-      </Card>
-    );
+  const handleSetLogarithmic = (checked) => {
+    setOptions((prev) => {
+      const updated = { ...prev };
+      updated.series = updated.series.map((s, i) =>
+        i === 0 ? { ...s, data: checked ? logChartData : chartData } : s
+      );
+      return updated;
+    });
+    setLogarithmic(checked);
   };
-}
+
+  return (
+    simple ? <HighchartsReact highcharts={Highcharts} options={options} /> : <Card>
+
+      <ButtonGroup size="small">
+        <Button
+          type={!logarithmic ? "primary" : ""}
+          onClick={() => {
+            handleSetLogarithmic(false);
+          }}
+        >
+          Linear
+        </Button>
+        <Button
+          type={logarithmic ? "primary" : ""}
+          onClick={() => {
+            handleSetLogarithmic(true);
+          }}
+        >
+          Logarithmic
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup size="small" style={{ float: "right" }}>
+        <Button
+          type={chartType === "pie" ? "primary" : ""}
+          icon={<PieChartOutlined />}
+          onClick={() => {
+            toggleChartType("pie");
+          }}
+        />
+        <Button
+          type={chartType === "column" ? "primary" : ""}
+          icon={<BarChartOutlined />}
+          onClick={() => {
+            toggleChartType("column");
+          }}
+        />
+      </ButtonGroup>
+
+      {chartType === "pie" && (
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      )}
+      {chartType === "column" && (
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      )}
+    </Card>
+  );
+};
 
 const mapContextToProps = ({ projectKey }) => ({
   projectKey,
