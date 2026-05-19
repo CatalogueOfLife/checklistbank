@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
 import config from "../config";
 
@@ -16,25 +16,16 @@ const readFile = (file) => {
   });
 };
 
-class TextTreeUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.customRequest = this.customRequest.bind(this);
-    this.state = {
-      confirmPromise: null,
-      visible: false,
-      submissionError: null,
-      fileList: [],
-      loading: false,
-      replace: false,
-      textAreaContent: null,
-    };
-  }
+const TextTreeUpload = ({ taxon }) => {
+  const [submissionError, setSubmissionError] = useState(null);
+  const [fileList, setFileList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [replace, setReplace] = useState(false);
+  const [textAreaContent, setTextAreaContent] = useState(null);
 
-  customRequest = async (options) => {
-    this.setState({ loading: true });
-    const { replace } = this.state;
-    const config = {
+  const customRequest = async (options) => {
+    setLoading(true);
+    const cfg = {
       headers: {
         "content-type": "text/plain",
       },
@@ -43,25 +34,33 @@ class TextTreeUpload extends React.Component {
     const text = await readFile(options.file);
     const url = replace ? `${options.action}?replace=true` : options.action;
     return axios
-      .post(url, text, config)
+      .post(url, text, cfg)
       .then((res) => {
         options.onSuccess(res.data, options.file);
-        this.setState({ submissionError: null, confirmPromise: null });
-        this.setState({ loading: false });
+        setSubmissionError(null);
+        setLoading(false);
       })
       .catch((err) => {
         options.onError(err);
-        this.setState({ submissionError: err, confirmPromise: null });
+        setSubmissionError(err);
         console.log(err);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   };
 
-  sendDataFromText = async () => {
-    if (this.confirmUpload()) {
-      const { taxon } = this.props;
-      const { replace, textAreaContent: text } = this.state;
-      this.setState({ loading: true });
+  const confirmUpload = (file) => {
+    return replace
+      ? window.confirm(
+          `ALL DATA BELOW THIS TAXON WILL BE REPLACED ${
+            file ? "WITH CONTENT OF " + file.name : ""
+          }, PROCEED?`
+        )
+      : true;
+  };
+
+  const sendDataFromText = async () => {
+    if (confirmUpload()) {
+      setLoading(true);
       const opts = {
         headers: {
           "content-type": "text/plain",
@@ -72,133 +71,106 @@ class TextTreeUpload extends React.Component {
         taxon.id
       }/tree${replace ? "?replace=true" : ""}`;
       return axios
-        .post(url, text, opts)
+        .post(url, textAreaContent, opts)
         .then((res) => {
-          // options.onSuccess(res.data, options.file);
-          this.setState({ submissionError: null, confirmPromise: null });
-          this.setState({ loading: false });
+          setSubmissionError(null);
+          setLoading(false);
           message.success(`Data submitted successfully`);
         })
         .catch((err) => {
-          //  options.onError(err);
-          this.setState({ submissionError: err, confirmPromise: null });
+          setSubmissionError(err);
           console.log(err);
-          this.setState({ loading: false });
+          setLoading(false);
           message.error(`Data submission failed.`);
         });
     }
   };
 
-  onChange = (info) => {
-    if (info.file.status !== "uploading") {
-      // console.log(info.file, info.fileList);
-    }
+  const onChange = (info) => {
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
-    this.setState({ fileList: !info.file.status ? [] : [info.file] });
+    setFileList(!info.file.status ? [] : [info.file]);
   };
 
-  confirmUpload = (file) => {
-    const { replace } = this.state;
-
-    return replace
-      ? window.confirm(
-          `ALL DATA BELOW THIS TAXON WILL BE REPLACED ${
-            file ? "WITH CONTENT OF " + file.name : ""
-          }, PROCEED?`
-        )
-      : true;
-  };
-
-  render() {
-    const { taxon } = this.props;
-    const { submissionError, fileList, replace } = this.state;
-    return (
-      <>
-        {submissionError && (
-          <Alert
-            style={{ marginBottom: "8px" }}
-            closable={{ onClose: () => this.setState({ submissionError: null }) }}
-            description={<ErrorMsg error={submissionError} />}
-            type="error"
-          />
-        )}
-
-        <Tabs
-          defaultActiveKey="1"
-          style={{ width: "100%" }}
-          items={[
-            {
-              key: "1",
-              label: "Paste tree",
-              children: (
-                <>
-                  <Checkbox
-                    disabled={this.state.loading}
-                    checked={replace}
-                    onChange={(e) =>
-                      this.setState({ replace: e.target.checked })
-                    }
-                  >
-                    Replace
-                  </Checkbox>
-                  <TextArea
-                    rows={10}
-                    value={this.state.textAreaContent}
-                    onChange={(e) =>
-                      this.setState({ textAreaContent: e.target.value })
-                    }
-                  />
-                  <Button
-                    style={{ marginTop: "10px" }}
-                    onClick={this.sendDataFromText}
-                  >
-                    Submit
-                  </Button>
-                </>
-              ),
-            },
-            {
-              key: "2",
-              label: "Upload tree",
-              children: (
-                <>
-                  <Upload
-                    action={`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}/tree`}
-                    customRequest={this.customRequest}
-                    onChange={this.onChange}
-                    fileList={fileList}
-                    beforeUpload={this.confirmUpload}
-                    showUploadList={false}
-                  >
-                    <Button
-                      loading={this.state.loading}
-                      style={{ marginTop: "8px", marginRight: "12px" }}
-                      type="primary"
-                    >
-                      <UploadOutlined /> Upload text tree
-                    </Button>
-                  </Upload>
-                  <Checkbox
-                    disabled={this.state.loading}
-                    checked={replace}
-                    onChange={(e) =>
-                      this.setState({ replace: e.target.checked })
-                    }
-                  >
-                    Replace
-                  </Checkbox>
-                </>
-              ),
-            },
-          ]}
+  return (
+    <>
+      {submissionError && (
+        <Alert
+          style={{ marginBottom: "8px" }}
+          closable={{ onClose: () => setSubmissionError(null) }}
+          description={<ErrorMsg error={submissionError} />}
+          type="error"
         />
-      </>
-    );
-  }
-}
+      )}
+
+      <Tabs
+        defaultActiveKey="1"
+        style={{ width: "100%" }}
+        items={[
+          {
+            key: "1",
+            label: "Paste tree",
+            children: (
+              <>
+                <Checkbox
+                  disabled={loading}
+                  checked={replace}
+                  onChange={(e) => setReplace(e.target.checked)}
+                >
+                  Replace
+                </Checkbox>
+                <TextArea
+                  rows={10}
+                  value={textAreaContent}
+                  onChange={(e) => setTextAreaContent(e.target.value)}
+                />
+                <Button
+                  style={{ marginTop: "10px" }}
+                  onClick={sendDataFromText}
+                >
+                  Submit
+                </Button>
+              </>
+            ),
+          },
+          {
+            key: "2",
+            label: "Upload tree",
+            children: (
+              <>
+                <Upload
+                  action={`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}/tree`}
+                  customRequest={customRequest}
+                  onChange={onChange}
+                  fileList={fileList}
+                  beforeUpload={confirmUpload}
+                  showUploadList={false}
+                >
+                  <Button
+                    loading={loading}
+                    style={{ marginTop: "8px", marginRight: "12px" }}
+                    type="primary"
+                  >
+                    <UploadOutlined /> Upload text tree
+                  </Button>
+                </Upload>
+                <Checkbox
+                  disabled={loading}
+                  checked={replace}
+                  onChange={(e) => setReplace(e.target.checked)}
+                >
+                  Replace
+                </Checkbox>
+              </>
+            ),
+          },
+        ]}
+      />
+    </>
+  );
+};
 
 export default TextTreeUpload;
