@@ -1,18 +1,8 @@
 import React from 'react';
-import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 
 import Help from './Help';
-
-const styles = {
-  header: {
-    margin: 0,
-    padding: 10,
-    background: '#f7f7f7',
-    border: '1px solid #eee',
-    borderWidth: '1px 0'
-  }
-};
+import styles from './PresentationGroupHeader.module.css';
 
 /**
  * Component responsible for data display in a read mode
@@ -21,9 +11,9 @@ const styles = {
  * @returns {*}
  * @constructor
  */
-const PresentationGroupHeader = ({ title, helpText, classes }) => {
+const PresentationGroupHeader = ({ title, helpText }) => {
   return (
-    <h3 className={classes.header}>
+    <h3 className={styles.header}>
       {title}
       <Help title={helpText} />
     </h3>
@@ -35,4 +25,4 @@ PresentationGroupHeader.propTypes = {
   helpText: PropTypes.object,
 };
 
-export default injectSheet(styles)(PresentationGroupHeader);
+export default PresentationGroupHeader;
