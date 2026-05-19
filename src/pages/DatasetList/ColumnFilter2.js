@@ -1,25 +1,10 @@
-import React from "react";
-
+import { useState, useEffect } from "react";
 import { Select } from "antd";
 
-class ColumnFilter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showColumns: [],
-    };
-  }
+const ColumnFilter = ({ columns, onChange }) => {
+  const [showColumns, setShowColumns] = useState([]);
 
-  componentDidMount = () => {
-    this.setColumns(this.props.columns);
-  };
-
-  componentDidUpdate = (nextProps) => {
-    if (!this.props.columns || this.props.columns.length === 0) {
-      this.setColumns(nextProps.columns);
-    }
-  };
-  setColumns = (columns) => {
+  const setColumnsFromProps = (cols) => {
     let excludeColumns = JSON.parse(
       localStorage.getItem("colplus_datasetlist_hide_columns")
     ) || [
@@ -48,43 +33,44 @@ class ColumnFilter extends React.Component {
       ];
     }
 
-    this.setState({
-      showColumns: columns
-        .filter((c) => !excludeColumns.includes(c.key))
-        .map((c) => c.key),
-    });
+    setShowColumns(
+      cols.filter((c) => !excludeColumns.includes(c.key)).map((c) => c.key)
+    );
   };
 
-  handleHideColumnChange = (showColumns) => {
-    const { columns } = this.props;
+  useEffect(() => {
+    setColumnsFromProps(columns);
+  }, []);
+
+  useEffect(() => {
+    if (!columns || columns.length === 0) return;
+    setColumnsFromProps(columns);
+  }, [columns]);
+
+  const handleHideColumnChange = (newShowColumns) => {
     const excludeColumns = columns
-      .filter((c) => !showColumns.includes(c.key))
+      .filter((c) => !newShowColumns.includes(c.key))
       .map((c) => c.key);
     localStorage.setItem(
       "colplus_datasetlist_hide_columns",
       JSON.stringify(excludeColumns)
     );
-    this.setState({ showColumns }, () => {
-      this.props.onChange(excludeColumns);
-    });
+    setShowColumns(newShowColumns);
+    onChange(excludeColumns);
   };
 
-  render = () => {
-    const { showColumns } = this.state;
-    const { columns } = this.props;
-    return (
-      <Select
-        style={{ width: "100%" }}
-        mode="multiple"
-        placeholder="Please select"
-        value={showColumns}
-        onChange={this.handleHideColumnChange}
-        showSearch
-        maxTagCount={4}
-        options={columns.map((f) => ({ value: f.key, label: f.title }))}
-      />
-    );
-  };
-}
+  return (
+    <Select
+      style={{ width: "100%" }}
+      mode="multiple"
+      placeholder="Please select"
+      value={showColumns}
+      onChange={handleHideColumnChange}
+      showSearch
+      maxTagCount={4}
+      options={columns.map((f) => ({ value: f.key, label: f.title }))}
+    />
+  );
+};
 
 export default ColumnFilter;
