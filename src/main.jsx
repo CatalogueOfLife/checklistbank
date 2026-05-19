@@ -8,7 +8,6 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import "antd/dist/reset.css";
 import "./index.css";
 import App from "./App";
-import { unregister } from "./registerServiceWorker";
 
 // Match moment's broader API surface — `.fromNow()` and `dayjs.utc()` are
 // referenced across the codebase (e.g. SyncState). LocalizedFormat enables
@@ -23,6 +22,3 @@ root.render(
     <App />
   </HelmetProvider>
 );
-
-// Clear any stale CRA-era service-worker registration.
-unregister();
