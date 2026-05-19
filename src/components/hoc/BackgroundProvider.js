@@ -1,30 +1,21 @@
-import React from "react";
+import { useEffect } from "react";
 import withContext from "./withContext";
-import _ from "lodash";
 import config from "../../config";
 
 const { backgroundHeartBeat } = config;
 
-class BackgroundProvider extends React.Component {
-  componentDidMount = () => {
-    this.props.getBackground();
-    this.timer = setInterval(() => {
-      this.props.getBackground();
-    }, backgroundHeartBeat);
-    this.systemTimer = setInterval(() => {
-      this.props.getSystemHealth();
-    }, backgroundHeartBeat);
-  };
-
-  componentWillUnmount() {
-    clearInterval(this.timer);
-    clearInterval(this.systemTimer);
-  }
-
-  render = () => {
-    return null;
-  };
-}
+const BackgroundProvider = ({ getBackground, getSystemHealth }) => {
+  useEffect(() => {
+    getBackground();
+    const t = setInterval(getBackground, backgroundHeartBeat);
+    const sysT = setInterval(getSystemHealth, backgroundHeartBeat);
+    return () => {
+      clearInterval(t);
+      clearInterval(sysT);
+    };
+  }, []);
+  return null;
+};
 
 const mapContextToProps = ({ getBackground, getSystemHealth }) => ({
   getBackground,
