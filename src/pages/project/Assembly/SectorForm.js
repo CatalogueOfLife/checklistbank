@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import {
-  notification,
+  App,
   Select,
   Checkbox,
   Input,
@@ -63,6 +63,7 @@ const SectorForm = ({
   nametype,
   nomstatus,
 }) => {
+  const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [form] = Form.useForm();
   const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);

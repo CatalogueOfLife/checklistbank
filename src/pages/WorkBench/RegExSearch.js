@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
 import qs from "query-string";
-import { Select, Input, Pagination, Row, Col, Form, Typography, Popover, notification, Button } from "antd";
+import { Select, Input, Pagination, Row, Col, Form, Typography, Popover, App, Button } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { getRegEx } from "../../api/regex";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
@@ -15,6 +15,7 @@ const { Search } = Input;
 
 
 const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, rankEnum, taxonomicstatus, limit = 50 }) => {
+  const { notification } = App.useApp();
   const [regEx, setRegEx] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(limit);

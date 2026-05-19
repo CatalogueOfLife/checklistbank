@@ -8,7 +8,7 @@ import {
   Steps,
   Button,
   Checkbox,
-  notification,
+  App,
   Form,
 } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -59,6 +59,7 @@ const steps = [
 
 const AddChildModal = (props) => {
   const { rank, nomstatus, nametype, onCancel, synonym, parent } = props;
+  const { notification } = App.useApp();
 
   const [visible, setVisible] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);

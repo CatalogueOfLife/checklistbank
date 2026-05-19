@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Auth from "../../../components/Auth";
 import {
-  notification,
+  App,
   Select,
   Checkbox,
   Input,
@@ -47,6 +47,7 @@ const tailFormItemLayout = {
 };
 
 const PublisherForm = ({ publisher, onError, projectKey, onSubmit }) => {
+  const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [form] = Form.useForm();
   const selectedPublisher = Form.useWatch("publisher", form);

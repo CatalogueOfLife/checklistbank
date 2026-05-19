@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, notification, Button } from "antd";
+import { Table, App, Button } from "antd";
 import SectorTabs from "./SectorTabs";
 import { EditableCell, EditableRow } from "./EditableTableComponents";
 import ReactDragListView from "react-drag-listview";
@@ -22,6 +22,7 @@ import _ from "lodash";
 const PAGE_SIZE = 500;
 
 const SectorPriority = ({ projectKey, location, addError, user }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({

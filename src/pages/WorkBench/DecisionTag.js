@@ -2,6 +2,8 @@ import React from "react";
 import _ from "lodash";
 import config from "../../config";
 import axios from "axios";
+// NOTE: notification is kept as static because deleteDecision is a module-level
+// function (not a component), so App.useApp() cannot be used here.
 import { Tooltip, Tag, notification } from "antd";
 import withContext from "../../components/hoc/withContext";
 

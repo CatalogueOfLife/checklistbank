@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 
-import { Input, Modal, Button, Select, Alert, notification, Form } from "antd";
+import { Input, Modal, Button, Select, Alert, App, Form } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import EditableTable from "./EditableTable";
@@ -13,6 +13,7 @@ import config from "../../../config";
 const FormItem = Form.Item;
 
 const SpeciesestimateModal = (props) => {
+  const { notification } = App.useApp();
   const [visible, setVisible] = useState(true);
   const [addNewMode, setAddNewMode] = useState(false);
   const [selectedReference, setSelectedReference] = useState(null);

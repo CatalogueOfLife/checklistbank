@@ -10,7 +10,7 @@ import {
   Row,
   Col,
   Steps,
-  notification,
+  App,
   Form,
   Radio,
   Tooltip,
@@ -64,6 +64,7 @@ const DecisionForm = (props) => {
     destroyOnClose = false,
   } = props;
 
+  const { notification } = App.useApp();
   const [visible, setVisible] = useState(true);
   const [current, setCurrent] = useState(0);
   const [error, setError] = useState(null);

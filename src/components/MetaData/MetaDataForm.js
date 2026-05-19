@@ -5,7 +5,7 @@ import {
   Button,
   Alert,
   Rate,
-  notification,
+  App,
   Form,
   Tabs,
 } from "antd";
@@ -24,12 +24,6 @@ import withContext from "../hoc/withContext";
 const { TabPane } = Tabs;
 
 const FormItem = Form.Item;
-const openNotification = (title, description) => {
-  notification.open({
-    message: title,
-    description: description,
-  });
-};
 
 const formItemLayout = {
   labelCol: {
@@ -66,6 +60,7 @@ const MetaDataForm = (props) => {
     user,
   } = props;
 
+  const { notification } = App.useApp();
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -110,7 +105,7 @@ const MetaDataForm = (props) => {
             }
           }
           setLoading(false);
-          openNotification(title, msg);
+          notification.open({ message: title, description: msg });
           setSubmissionError(null);
         })
         .catch((err) => {
@@ -151,7 +146,7 @@ const MetaDataForm = (props) => {
         }
         setLoading(false);
 
-        openNotification(title, msg);
+        notification.open({ message: title, description: msg });
         setSubmissionError(null);
       })
       .catch((err) => {

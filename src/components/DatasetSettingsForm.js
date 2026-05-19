@@ -5,7 +5,7 @@ import {
   Select,
   Button,
   Alert,
-  notification,
+  App,
   Form,
 } from "antd";
 import _ from "lodash";
@@ -16,12 +16,6 @@ import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
 import TagControl from "./TagControl";
 const FormItem = Form.Item;
-const openNotification = (title, description) => {
-  notification.open({
-    message: title,
-    description: description,
-  });
-};
 
 const formItemLayout = {
   labelCol: {
@@ -58,6 +52,7 @@ const SettingsForm = (props) => {
     environment,
   } = props;
 
+  const { notification } = App.useApp();
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
   useEffect(() => {}, [datasetoriginEnum]);
@@ -75,7 +70,7 @@ const SettingsForm = (props) => {
         if (onSaveSuccess && typeof onSaveSuccess === "function") {
           onSaveSuccess(res);
         }
-        openNotification("Settings updated");
+        notification.open({ message: "Settings updated" });
         setSubmissionError(null);
       })
       .catch((err) => {

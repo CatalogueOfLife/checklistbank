@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Checkbox, Popconfirm, Row, Col, Button, Tag , Typography, Table, Tooltip, notification} from "antd";
+import { Checkbox, Popconfirm, Row, Col, Button, Tag , Typography, Table, Tooltip, App} from "antd";
 import { MinusCircleOutlined, CheckCircleOutlined} from "@ant-design/icons";
 import DataLoader from "dataloader";
 import axios from "axios";
@@ -13,6 +13,7 @@ const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 
 const UserRoles = ({ user, onChangeCallback, addError }) => {
+  const { notification } = App.useApp();
   const [options, setOptions] = useState([
     { label: "Admin", value: "admin" },
     { label: "Editor", value: "editor" },

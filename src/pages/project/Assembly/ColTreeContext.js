@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
+// NOTE: notification here is kept as static because applyDecision is a module-level
+// function (not a component), so App.useApp() cannot be used here.
 import { notification } from "antd";
 
 export const applyDecision = (taxon, projectKey, cb) => {

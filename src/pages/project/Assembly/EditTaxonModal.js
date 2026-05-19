@@ -7,7 +7,7 @@ import {
   Alert,
   Steps,
   Button,
-  notification,
+  App,
   Form,
 } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -58,6 +58,7 @@ const steps = [
 
 const EditTaxonModal = (props) => {
   const { rank, nomstatus, nametype, onCancel, synonym } = props;
+  const { notification } = App.useApp();
 
   const [visible, setVisible] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);

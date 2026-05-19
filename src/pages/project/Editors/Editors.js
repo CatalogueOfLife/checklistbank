@@ -4,7 +4,7 @@ import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
-import { Table, Row, Col, Tag, Button, Radio, notification } from "antd";
+import { Table, Row, Col, Tag, Button, Radio, App } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import Userautocomplete from "./UserAutocomplete";
 import axios from "axios";
@@ -19,6 +19,7 @@ const Editors = ({
   addError,
   countryAlpha2,
 }) => {
+  const { notification } = App.useApp();
   const [editors, setEditors] = useState([]);
   const [type, setType] = useState("editor");
   const [loading, setLoading] = useState(false);
