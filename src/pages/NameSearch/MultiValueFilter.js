@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Select, Form } from "antd";
 import _ from "lodash";
 
@@ -16,44 +14,32 @@ const formItemLayout = {
   },
 };
 
-class MultiValueFilter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: this.props.selected,
-    };
-  }
-
-  handleChange = (selected) => {
-    this.setState({ selected }, () => {
-      this.props.onChange(selected);
-    });
+const MultiValueFilter = ({ selected, defaultValue, label, vocab, onChange }) => {
+  const handleChange = (selected) => {
+    onChange(selected);
   };
 
-  render = () => {
-    const { defaultValue, label, vocab } = this.props;
-    return (
-      <FormItem
-        {...formItemLayout}
-        label={label}
-        style={{ marginBottom: "8px" }}
-      >
-        <Select
-          showSearch
-          style={{ width: "100%" }}
-          mode="multiple"
-          placeholder="Please select"
-          value={defaultValue}
-          onChange={this.handleChange}
-          options={(vocab || []).map((i) =>
-            typeof i === "string"
-              ? { value: i, label: _.startCase(i) }
-              : { value: i.value, label: i.label }
-          )}
-        />
-      </FormItem>
-    );
-  };
-}
+  return (
+    <FormItem
+      {...formItemLayout}
+      label={label}
+      style={{ marginBottom: "8px" }}
+    >
+      <Select
+        showSearch
+        style={{ width: "100%" }}
+        mode="multiple"
+        placeholder="Please select"
+        value={defaultValue}
+        onChange={handleChange}
+        options={(vocab || []).map((i) =>
+          typeof i === "string"
+            ? { value: i, label: _.startCase(i) }
+            : { value: i.value, label: i.label }
+        )}
+      />
+    </FormItem>
+  );
+};
 
 export default MultiValueFilter;
