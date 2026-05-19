@@ -407,7 +407,7 @@ const TaxBreakdownChart = ({ datasetKey, onClose }) => {
       {error && !loading && (
         <Alert
           type="error"
-          message="Failed to load breakdown data"
+          title="Failed to load breakdown data"
           style={{ marginBottom: 8 }}
         />
       )}

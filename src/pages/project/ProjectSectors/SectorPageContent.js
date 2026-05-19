@@ -440,7 +440,7 @@ class ProjectSectors extends React.Component {
           <Alert
             closable
             onClose={() => this.setState({ error: null })}
-            message={error.message}
+            title={error.message}
             type="error"
           />
         )}
@@ -448,7 +448,7 @@ class ProjectSectors extends React.Component {
           <Alert
             closable
             onClose={() => this.setState({ rematchInfo: null })}
-            message="Rematch succeded"
+            title="Rematch succeded"
             description={<RematchResult rematchInfo={rematchInfo} />}
             type="success"
             style={{ marginBottom: "10px" }}

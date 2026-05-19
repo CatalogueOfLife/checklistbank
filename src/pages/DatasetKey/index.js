@@ -152,7 +152,7 @@ class DatasetPage extends React.Component {
         {dataset && _.get(dataset, "deleted") && (
           <Alert
             style={{ marginTop: "16px" }}
-            message={
+            title={
               <Row>
                 <Col>{`This dataset was deleted ${moment(
                   dataset.deleted
@@ -177,7 +177,7 @@ class DatasetPage extends React.Component {
           _.get(importStateMap[importState.state], "running") === "true" && (
             <Alert
               style={{ marginTop: "16px" }}
-              message="The dataset is currently being imported. Data may be inconsistent."
+              title="The dataset is currently being imported. Data may be inconsistent."
               type="warning"
             />
           )}
@@ -186,7 +186,7 @@ class DatasetPage extends React.Component {
           section === "imports" && (
             <Alert
               style={{ marginTop: "16px" }}
-              message={`Last ${_.startCase(
+              title={`Last ${_.startCase(
                 importState.job
               )} of this dataset failed.`}
               description={importState.error}

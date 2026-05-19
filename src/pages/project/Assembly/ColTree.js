@@ -1132,7 +1132,7 @@ class ColTree extends React.Component {
         <span>
           {showRankWarning && (
             <Alert
-              message="Subject rank is higher than target rank"
+              title="Subject rank is higher than target rank"
               type="warning"
             />
           )}
@@ -1155,7 +1155,7 @@ class ColTree extends React.Component {
             <Alert
               style={{ marginTop: "6px" }}
               type="error"
-              message={
+              title={
                 <div>
                   <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
                   already has a child named{" "}
@@ -1173,7 +1173,7 @@ class ColTree extends React.Component {
         <span>
           {showRankWarning && (
             <Alert
-              message="Subject rank is higher than target rank"
+              title="Subject rank is higher than target rank"
               type="warning"
             />
           )}
@@ -1209,13 +1209,13 @@ class ColTree extends React.Component {
         <span>
           {showRankWarning && (
             <Alert
-              message="Subject rank is higher than target rank"
+              title="Subject rank is higher than target rank"
               type="warning"
             />
           )}
           {draggedNodeRanksAreMixed && (
             <Alert
-              message={`You selected nodes of ${
+              title={`You selected nodes of ${
                 sortedDraggedRanks.length
               } different ranks! Only ${
                 rankGroupedSelectedNodes[highestDraggedRank].length
@@ -1249,7 +1249,7 @@ class ColTree extends React.Component {
             <Alert
               style={{ marginTop: "6px" }}
               type="error"
-              message={
+              title={
                 <div>
                   <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
                   already has a child named{" "}
@@ -1269,7 +1269,7 @@ class ColTree extends React.Component {
         <span>
           {showRankWarning && (
             <Alert
-              message="Subject rank is higher than target rank"
+              title="Subject rank is higher than target rank"
               type="warning"
             />
           )}
@@ -1279,7 +1279,7 @@ class ColTree extends React.Component {
             <Alert
               style={{ marginTop: "6px" }}
               type="error"
-              message={
+              title={
                 <div>
                   <span dangerouslySetInnerHTML={{ __html: node.taxon.name }} />{" "}
                   already has a child named{" "}
@@ -1300,7 +1300,7 @@ class ColTree extends React.Component {
           <Alert
             style={{ marginTop: "6px" }}
             type="error"
-            message={
+            title={
               <div>
                 This target taxon already has a sector based on{" "}
                 <span
@@ -1587,7 +1587,7 @@ class ColTree extends React.Component {
                 closable
                 onClose={() => this.setState({ error: null })}
                 style={{ marginTop: "8px" }}
-                message={
+                title={
                   <Custom404
                     error={error}
                     treeType={treeType}
@@ -1605,7 +1605,7 @@ class ColTree extends React.Component {
             closable
             onClose={() => this.setState({ ernodeNotFoundErrror: null })}
             style={{ marginTop: "8px" }}
-            message={nodeNotFoundErr}
+            title={nodeNotFoundErr}
             type="warning"
           />
         )}

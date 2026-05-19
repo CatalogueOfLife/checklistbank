@@ -274,7 +274,7 @@ const MetaDataValidator = ({ location }) => {
             type="error"
             closable
             onClose={() => setSubmissionError(null)}
-            message={
+            title={
               <ErrorMsg
                 error={submissionError}
                 style={{ marginBottom: "10px" }}
@@ -479,7 +479,7 @@ const MetaDataValidator = ({ location }) => {
                         type="error"
                         closable
                         onClose={() => setEmlError(null)}
-                        message={
+                        title={
                           <ErrorMsg
                             error={emlError}
                             style={{ marginBottom: "10px" }}

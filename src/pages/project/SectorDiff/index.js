@@ -177,7 +177,7 @@ class SectorDiff extends React.Component {
           {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
 
           {_.get(this.state, 'data.identical') && <Row style={{ marginBottom: '8px' }}>
-            <Alert message="No diff between sync attempts" />
+            <Alert title="No diff between sync attempts" />
           </Row>}
 
         </PageContent>

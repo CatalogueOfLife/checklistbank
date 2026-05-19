@@ -87,7 +87,7 @@ const NameMatchJob = ({ match, addError }) => {
           <Alert
             type="error"
             style={{ marginBottom: "16px" }}
-            message="Matching job failed"
+            title="Matching job failed"
             description={job?.error || "An unknown error occurred"}
             showIcon
           />
@@ -96,7 +96,7 @@ const NameMatchJob = ({ match, addError }) => {
           <Alert
             type="warning"
             style={{ marginBottom: "16px" }}
-            message="Matching job was cancelled"
+            title="Matching job was cancelled"
             showIcon
           />
         )}
@@ -129,7 +129,7 @@ const NameMatchJob = ({ match, addError }) => {
               type="error"
               style={{ marginBottom: "16px" }}
               showIcon
-              message="Matching job not found"
+              title="Matching job not found"
               description="The job result could not be found. This usually means the job failed to start — most likely because the uploaded file could not be parsed. Please make sure your file is a valid CSV or TSV with a scientificName column."
             />
             <Button

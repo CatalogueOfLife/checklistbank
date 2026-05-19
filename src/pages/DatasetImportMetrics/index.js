@@ -214,7 +214,7 @@ class DatasetImportMetrics extends React.Component {
         {!loading && dataset && importHistory && importHistory.length === 0 && (
           <Alert
             style={{ marginTop: "16px" }}
-            message={
+            title={
               dataset.origin === "project"
                 ? "This dataset has never been released."
                 : `This dataset has never been imported.${
@@ -249,7 +249,7 @@ class DatasetImportMetrics extends React.Component {
         {this.state.data && isRunning && (
           <Spin>
             <Alert
-              message={_.startCase(this.state.data.state)}
+              title={_.startCase(this.state.data.state)}
               description={`The ${
                 ["project"].includes(origin) ? "Release" : "Import"
               } is not finished`}
@@ -268,7 +268,7 @@ class DatasetImportMetrics extends React.Component {
         )}
         {this.state.data && this.state.data.state === "failed" && (
           <Row style={{ padding: "10px" }}>
-            <Alert type="error" message={this.state.data.error} />
+            <Alert type="error" title={this.state.data.error} />
           </Row>
         )}
         {data && (

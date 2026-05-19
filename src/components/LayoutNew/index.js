@@ -293,7 +293,7 @@ class SiteLayout extends Component {
             {background && background.maintenance && (
               <Alert
                 style={{ marginTop: "10px" }}
-                message={
+                title={
                   <Row align="middle">
                     <Col>
                       <PulsatingDot />

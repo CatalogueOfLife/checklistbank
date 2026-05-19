@@ -363,7 +363,7 @@ class ImportTable extends React.Component {
             expandable={{
               expandedRowRender: (record) => {
                 if (record.state === "failed") {
-                  return <Alert message={record.error} type="error" />;
+                  return <Alert title={record.error} type="error" />;
                 } else {
                   return <ImportMetrics data={record}></ImportMetrics>;
                 }
@@ -374,7 +374,7 @@ class ImportTable extends React.Component {
              section === "finished"
                ? (record) => {
                    if (record.state === "failed") {
-                     return <Alert message={record.error} type="error" />;
+                     return <Alert title={record.error} type="error" />;
                    } else {
                      return <ImportMetrics data={record}></ImportMetrics>;
                    }

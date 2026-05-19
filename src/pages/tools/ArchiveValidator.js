@@ -71,7 +71,7 @@ const ArchiveValidator = () => {
             type="error"
             closable
             onClose={() => setSubmissionError(null)}
-            message={
+            title={
               <ErrorMsg
                 error={submissionError}
                 style={{ marginBottom: "10px" }}

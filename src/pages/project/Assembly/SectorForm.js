@@ -208,7 +208,7 @@ const SectorForm = ({
         {mode === "hierarchy" && !sector && existingHierarchySector && (
           <Alert
             style={{ marginBottom: "10px" }}
-            message="A hierarchy sector already exists for this project. Only one is allowed."
+            title="A hierarchy sector already exists for this project. Only one is allowed."
             type="warning"
             showIcon
           />

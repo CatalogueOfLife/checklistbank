@@ -764,7 +764,7 @@ class DatasetList extends React.Component {
                   )} of ${pagination.total.toLocaleString("en-GB")}`}
               </Col>
             </Row>
-            {error && <Alert message={error.message} type="error" />}
+            {error && <Alert title={error.message} type="error" />}
           </div>
           {!error && (
             <ConfigProvider

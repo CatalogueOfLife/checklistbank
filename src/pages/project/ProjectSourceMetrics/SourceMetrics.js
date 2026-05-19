@@ -709,7 +709,7 @@ class SourceMetrics extends React.Component {
               </Col>
             </Row>
           )}
-          {error && <Alert message={error.message} type="error" />}
+          {error && <Alert title={error.message} type="error" />}
         </div>
         {!error && (
           <Table

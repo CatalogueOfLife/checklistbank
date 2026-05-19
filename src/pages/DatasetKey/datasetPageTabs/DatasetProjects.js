@@ -362,7 +362,7 @@ class DatasetProjects extends React.Component {
               <Col md={12} sm={24}></Col>
               <Col md={12} sm={24}></Col>
             </Row>
-            {error && <Alert message={error.message} type="error" />}
+            {error && <Alert title={error.message} type="error" />}
           </div>
           {!error && (
             <Table

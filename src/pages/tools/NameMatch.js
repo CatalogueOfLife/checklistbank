@@ -274,7 +274,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
         <Alert
           style={{ marginTop: 6 }}
           type="warning"
-          message="No matcher index exists for this dataset — matching results will be incorrect."
+          title="No matcher index exists for this dataset — matching results will be incorrect."
           action={
             <Button size="small" onClick={() => requestMatcher(datasetKey, setStatus, setRequested)}>
               Request matcher
@@ -288,7 +288,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
         <Alert
           style={{ marginTop: 6 }}
           type="info"
-          message="Matcher is being built. Please come back in about an hour before running the match."
+          title="Matcher is being built. Please come back in about an hour before running the match."
         />
       );
     }
@@ -646,7 +646,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
             type="error"
             closable
             onClose={() => setSubmissionError(null)}
-            message={
+            title={
               <ErrorMsg
                 error={submissionError}
                 style={{ marginBottom: "10px" }}
@@ -659,7 +659,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
             type="error"
             closable
             onClose={() => setError(null)}
-            message={error}
+            title={error}
           ></Alert>
         )}
 
@@ -874,7 +874,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         {!asyncMode && !_.isNull(subjectDataTotal) &&
                           subjectDataTotal > MAX_LIST_SIZE && (
                             <Alert
-                              message="Too many names"
+                              title="Too many names"
                               description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
                               type="error"
                               style={{ marginTop: "10px" }}
@@ -895,7 +895,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                   <Col>
                     <Alert
                       type="info"
-                      message="File upload and dataset matching are also available — please log in to use them."
+                      title="File upload and dataset matching are also available — please log in to use them."
                     />
                   </Col>
                 )}

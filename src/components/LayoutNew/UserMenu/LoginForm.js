@@ -33,7 +33,7 @@ const LoginForm = ({onLogin, invalid}) => {
         </Button>
         Or <a href="https://www.gbif.org/user/profile">register at gbif.org now!</a>
       </FormItem>
-      {invalid && <FormItem style={{width: '100%'}}><Alert message={invalid} type="error" /></FormItem>}
+      {invalid && <FormItem style={{width: '100%'}}><Alert title={invalid} type="error" /></FormItem>}
 
       <FormItem><a className="login-form-forgot" href="https://www.gbif.org/user/profile">Forgot password?</a></FormItem>
     </Form>

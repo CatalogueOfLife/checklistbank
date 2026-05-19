@@ -229,7 +229,7 @@ class MatcherList extends React.Component {
           }}
         >
           <div>
-            {error && <Alert message={error.message} type="error" />}
+            {error && <Alert title={error.message} type="error" />}
           </div>
           <h1>Dataset Matcher</h1>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>

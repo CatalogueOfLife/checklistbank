@@ -151,7 +151,7 @@ class DatasetIssues extends React.Component {
 
     return (
       <PageContent>
-        {error && <Alert message={error.message} type="error" />}
+        {error && <Alert title={error.message} type="error" />}
         <MultiValueFilter
           defaultValue={
             selectedGroups && selectedGroups.length > 0

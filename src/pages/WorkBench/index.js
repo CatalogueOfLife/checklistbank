@@ -1110,7 +1110,7 @@ class WorkBench extends React.Component {
               style={{ marginBottom: "10px" }}
               type="info"
               showIcon
-              message="No matching results in the workbench"
+              title="No matching results in the workbench"
               description={
                 <span>
                   The selected issue filter may only apply to source rows that

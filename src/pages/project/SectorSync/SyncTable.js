@@ -423,7 +423,7 @@ class SyncTable extends React.Component {
 
     return (
       <>
-        {error && <Alert message={error.message} type="error" />}
+        {error && <Alert title={error.message} type="error" />}
         {syncAllError && (
           <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
         )}
@@ -474,7 +474,7 @@ class SyncTable extends React.Component {
                 ["failed", "finished"].includes(record.state),
               expandedRowRender: (record) => {
                 if (record.state === "failed") {
-                  return <Alert message={record.error} type="error" />;
+                  return <Alert title={record.error} type="error" />;
                 } else if (record.state === "finished") {
                   return (
                     <>
@@ -539,7 +539,7 @@ class SyncTable extends React.Component {
                       {record?.warnings?.length > 0 && (
                         <Alert
                           style={{ marginTop: "10px" }}
-                          message={
+                          title={
                             <ul>
                               {record?.warnings.map((w) => (
                                 <li>{w}</li>

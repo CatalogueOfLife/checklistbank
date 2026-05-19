@@ -252,7 +252,7 @@ class Sector extends React.Component {
               {isRootSector && sector?.subject?.broken === true && (
                 <Alert
                   style={{ marginBottom: "8px" }}
-                  message="The sector subject is broken"
+                  title="The sector subject is broken"
                   type="warning"
                   showIcon
                 />
@@ -379,7 +379,7 @@ class Sector extends React.Component {
                 <Alert
                   closable
                   onClose={() => this.setState({ error: null })}
-                  message={
+                  title={
                     <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                   }
                   type="error"
@@ -445,7 +445,7 @@ class Sector extends React.Component {
                   <Alert
                     type="warning"
                     style={{ marginBottom: "8px" }}
-                    message={
+                    title={
                       <p>
                         {`${_.get(sector, "target.name")} with id: ${_.get(
                           sector,
@@ -535,7 +535,7 @@ class Sector extends React.Component {
                     style={{ marginTop: "8px" }}
                     closable
                     onClose={() => this.setState({ error: null })}
-                    message={
+                    title={
                       <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                     }
                     type="error"
