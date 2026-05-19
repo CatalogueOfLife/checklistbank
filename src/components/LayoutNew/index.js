@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import injectSheet from "react-jss";
 import withWidth, { LARGE, MEDIUM } from "../hoc/Width";
 import withRouter from "../../withRouter";
 import { Layout, Drawer, Row, Col, Tag, Alert, Tooltip } from "antd";
@@ -12,6 +11,7 @@ import BasicMenu from "./BasicMenu";
 import UserMenu from "./UserMenu";
 import { getGitVersion, getBackendGitVersion } from "../../api/gitVersion";
 import "./menu.css";
+import styles from "./LayoutNew.module.css";
 import config from "../../config";
 import moment from "dayjs";
 import ErrorMsg from "../ErrorMsg";
@@ -38,14 +38,6 @@ const exceptionIsDataset404 = (error, location) => {
     ) &&
     location?.pathname.startsWith("/dataset")
   );
-};
-const styles = {
-  sider: {
-    overflow: "auto",
-    height: "100vh",
-    position: "fixed",
-    left: 0,
-  },
 };
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -80,7 +72,6 @@ class SiteLayout extends Component {
   render() {
     const {
       width,
-      classes,
       selectedDataset,
       selectedTaxon,
       selectedName,
@@ -114,7 +105,7 @@ class SiteLayout extends Component {
       <React.Fragment>
         {!isMobile && (
           <Sider
-            className={classes.sider}
+            className={styles.sider}
             width={menuWidth}
             trigger={null}
             reverseArrow={true}
@@ -424,10 +415,7 @@ const mapContextToProps = ({
 });
 
 export default compose(
-  injectSheet(styles),
   withWidth(),
   withContext(mapContextToProps),
   withRouter
 )(SiteLayout);
-
-//export default injectSheet(styles)(withWidth()(SiteLayout));
