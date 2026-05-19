@@ -1,0 +1,14 @@
+.formItem    { composes: formItem    from "./borderedListItem.module.css"; }
+.formItem > div { padding-left: 10px; padding-right: 10px; }
+
+.label {
+  composes: label from "./borderedListItem.module.css";
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content     { composes: content     from "./borderedListItem.module.css"; }
+.noContent   { composes: noContent   from "./borderedListItem.module.css"; }
+.contentCol  { composes: contentCol  from "./borderedListItem.module.css"; }
+.smallMargin { composes: smallMargin from "./borderedListItem.module.css"; }
+.mediumMargin{ composes: mediumMargin from "./borderedListItem.module.css"; }

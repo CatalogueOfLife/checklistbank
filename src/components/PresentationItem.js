@@ -1,8 +1,8 @@
 import React, {useRef, useState, useEffect} from "react";
-import injectSheet from "react-jss";
 import { Row, Col } from "antd";
 
 import Help from "./Help";
+import styles from "./PresentationItem.module.css";
 
 // Wrappers
 import withWidth, { MEDIUM } from "./hoc/Width";
@@ -21,55 +21,12 @@ function isOverflowing(el)
    return isOverflowing;
 }
 
-const styles = () => ({
-  formItem: {
-    paddingBottom: 0,
-    width: "100%",
-    clear: "both",
-    borderBottom: "1px solid #eee",
-    "&:last-of-type": {
-      border: "none",
-    },
-    "&>div": {
-      paddingLeft: 10,
-      paddingRight: 10,
-    },
-  },
-  label: {
-    display: "block",
-    color: "rgba(0, 0, 0, 0.85)",
-    overflow: "hidden",
-    textOverflow: "ellipsis"
-  },
-  content: {
-    wordBreak: "break-word",
-    marginBottom: 0,
-  },
-  noContent: {
-    wordBreak: "break-word",
-    color: "#bbb",
-    marginBottom: 0,
-  },
-  contentCol: {
-    wordBreak: "break-word",
-  },
-  smallMargin: {
-    marginBottom: 3,
-    marginTop: 3,
-  },
-  mediumMargin: {
-    marginBottom: 10,
-    marginTop: 10,
-  },
-});
-
 /**
  * Component responsible for data display in a read mode
  * @param label - label text
  * @param helpText - text to be displayed as a tip
  * @param md - Label column width on medium devices - seconds column is the reamining.
  * @param size - how dense should the layout be. options: 'small', 'medium' (default).
- * @param classes - passed from injectSheet wrapper, CSS styles from styles object above
  * @param children - wrapped content
  * @param width - passed from withWidth wrapper, data about current page size
  * @returns {*}
@@ -78,7 +35,6 @@ const styles = () => ({
 const PresentationItem = ({
   label,
   helpText,
-  classes,
   children,
   width,
   md,
@@ -105,16 +61,16 @@ const PresentationItem = ({
   }, [label, labelRef.current])
 
   const getValue = () => {
-    let value = <dd className={classes.noContent}>No information</dd>;
+    let value = <dd className={styles.noContent}>No information</dd>;
 
     if (Array.isArray(children) && children.length > 0) {
       value = children.map((item, i) => (
-        <dd className={classes.content} key={i}>
+        <dd className={styles.content} key={i}>
           {item}
         </dd>
       ));
     } else if (!Array.isArray(children) && typeof children !== "undefined") {
-      value = <dd className={classes.content}>{children}</dd>;
+      value = <dd className={styles.content}>{children}</dd>;
     }
 
     return value;
@@ -123,9 +79,9 @@ const PresentationItem = ({
   const medium = md || 8;
   const mediumCol2 = medium < 24 ? 24 - medium : 24;
   const marginSize =
-    size === "medium" ? classes.mediumMargin : classes.smallMargin;
+    size === "medium" ? styles.mediumMargin : styles.smallMargin;
   return (
-    <Row className={classes.formItem}>
+    <Row className={styles.formItem}>
       <Col
         sm={24}
         md={medium}
@@ -133,7 +89,7 @@ const PresentationItem = ({
         className={marginSize}
       >
         <div>
-          <dt className={classes.label} ref={labelRef} >
+          <dt className={styles.label} ref={labelRef} >
             {formattedLabel}
             <Help title={helpText || overflowHelp} />
           </dt>
@@ -151,4 +107,4 @@ const PresentationItem = ({
   );
 };
 
-export default withWidth()(injectSheet(styles)(PresentationItem));
+export default withWidth()(PresentationItem);
