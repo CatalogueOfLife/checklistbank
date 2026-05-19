@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { WarningOutlined } from "@ant-design/icons";
 import { Button, Popover, notification } from "antd";
 import axios from "axios";
@@ -6,18 +6,12 @@ import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 
-class ImportButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      importTriggered: false,
-      error: null,
-    };
-  }
+const ImportButton = ({ record, style, importState, reImport, onStartImportSuccess, onDeleteSuccess }) => {
+  const [importTriggered, setImportTriggered] = useState(false);
+  const [error, setError] = useState(null);
 
-  reImport = () => {
-    const { record } = this.props;
-    this.setState({ importTriggered: true });
+  const reImportFn = () => {
+    setImportTriggered(true);
     axios
       .post(`${config.dataApi}importer/${record.datasetKey}/reimport`, {
         datasetKey: record.datasetKey,
@@ -25,22 +19,22 @@ class ImportButton extends React.Component {
         force: true,
       })
       .then((res) => {
-        this.setState({ importTriggered: false });
+        setImportTriggered(false);
         if (
-          this.props.onStartImportSuccess &&
-          typeof this.props.onStartImportSuccess === "function"
+          onStartImportSuccess &&
+          typeof onStartImportSuccess === "function"
         ) {
-          this.props.onStartImportSuccess();
+          onStartImportSuccess();
         }
       })
       .catch((err) => {
-        this.setState({ importTriggered: false, error: err });
+        setImportTriggered(false);
+        setError(err);
       });
   };
 
-  startImport = () => {
-    const { record } = this.props;
-    this.setState({ importTriggered: true });
+  const startImport = () => {
+    setImportTriggered(true);
     axios
       .post(`${config.dataApi}importer`, {
         datasetKey: record.datasetKey,
@@ -48,26 +42,26 @@ class ImportButton extends React.Component {
         force: true,
       })
       .then((res) => {
-        this.setState({ importTriggered: false });
+        setImportTriggered(false);
         if (
-          this.props.onStartImportSuccess &&
-          typeof this.props.onStartImportSuccess === "function"
+          onStartImportSuccess &&
+          typeof onStartImportSuccess === "function"
         ) {
-          this.props.onStartImportSuccess();
+          onStartImportSuccess();
         }
       })
       .catch((err) => {
-        this.setState({ importTriggered: false, error: err });
+        setImportTriggered(false);
+        setError(err);
       });
   };
 
-  stopImport = () => {
-    const { record } = this.props;
-    this.setState({ importTriggered: true });
+  const stopImport = () => {
+    setImportTriggered(true);
     axios
       .delete(`${config.dataApi}importer/${record.datasetKey}`)
       .then((res) => {
-        this.setState({ importTriggered: false });
+        setImportTriggered(false);
         if (record.state !== "waiting") {
           notification.open({
             title: "Import stopped",
@@ -81,55 +75,52 @@ class ImportButton extends React.Component {
         }
 
         if (
-          this.props.onDeleteSuccess &&
-          typeof this.props.onDeleteSuccess === "function"
+          onDeleteSuccess &&
+          typeof onDeleteSuccess === "function"
         ) {
-          this.props.onDeleteSuccess();
+          onDeleteSuccess();
         }
       })
       .catch((err) => {
-        this.setState({ importTriggered: false, error: err });
+        setImportTriggered(false);
+        setError(err);
       });
   };
 
-  render = () => {
-    const { error } = this.state;
-    const { record, style, importState, reImport } = this.props;
-    const isStopButton =
-      [
-        "waiting",
-        ...importState.filter((i) => i.running).map((i) => i.name),
-      ].indexOf(record.state) > -1;
+  const isStopButton =
+    [
+      "waiting",
+      ...importState.filter((i) => i.running).map((i) => i.name),
+    ].indexOf(record.state) > -1;
 
-    return (
-      <React.Fragment>
-        <Button
-          name="import-button"
-          style={style}
-          type={isStopButton ? "danger" : "primary"}
-          loading={this.state.importTriggered}
-          onClick={isStopButton ? this.stopImport : reImport ? this.reImport : this.startImport}
+  return (
+    <>
+      <Button
+        name="import-button"
+        style={style}
+        type={isStopButton ? "danger" : "primary"}
+        loading={importTriggered}
+        onClick={isStopButton ? stopImport : reImport ? reImportFn : startImport}
+      >
+        {!isStopButton && (reImport ? "Reimport" : "Import")}
+        {isStopButton && record.state !== "waiting" && "Stop import"}
+        {isStopButton && record.state === "waiting" && "Cancel"}
+      </Button>
+      {error && (
+        <Popover
+          placement="bottom"
+          title="Error"
+          content={<ErrorMsg error={error} />}
+          trigger="click"
         >
-          {!isStopButton && (reImport ? "Reimport" : "Import")}
-          {isStopButton && record.state !== "waiting" && "Stop import"}
-          {isStopButton && record.state === "waiting" && "Cancel"}
-        </Button>
-        {error && (
-          <Popover
-            placement="bottom"
-            title="Error"
-            content={<ErrorMsg error={error} />}
-            trigger="click"
-          >
-            <WarningOutlined
-              style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
-            />
-          </Popover>
-        )}
-      </React.Fragment>
-    );
-  };
-}
+          <WarningOutlined
+            style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
+          />
+        </Popover>
+      )}
+    </>
+  );
+};
 
 const mapContextToProps = ({ importState }) => ({ importState });
 export default withContext(mapContextToProps)(ImportButton);
