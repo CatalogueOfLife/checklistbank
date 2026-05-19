@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import config from "../../config";
 import { Navigate } from "react-router-dom";
 import withRouter from "../../withRouter";
@@ -42,304 +42,271 @@ import VerbatimByID from "../VerbatimRecord/VerbatimByID";
 import moment from "dayjs";
 import ProjectPublisherKey from "../project/ProjectPublisherKey";
 
-class DatasetPage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: null,
-      loading: true,
-      importState: null,
-      hasData: false,
-      lastSuccesFullImport: null,
-    };
-  }
-
-  componentDidMount() {
-    const {
-      match: {
-        params: { key: datasetKey },
+const DatasetPage = (props) => {
+  const {
+    match: {
+      params: {
+        key: datasetKey,
+        section,
+        taxonOrNameKey,
+        projectKey,
+        subsection,
       },
-    } = this.props;
-    this.getData(datasetKey);
-  }
+    },
+    location,
+    dataset,
+    importStateMap,
+    user,
+  } = props;
 
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(this.props, "match.params.key") !==
-      _.get(prevProps, "match.params.key")
-    ) {
-      this.getData(_.get(this.props, "match.params.key"));
-    }
-  };
+  const [importState, setImportState] = useState(null);
+  const [lastSuccesFullImport, setLastSuccesFullImport] = useState(null);
 
-  getData = (datasetKey) => {
+  const getData = (key) => {
     Promise.all([
-      axios(`${config.dataApi}dataset/${datasetKey}/import`),
-      axios(`${config.dataApi}dataset/${datasetKey}/import?state=finished`),
+      axios(`${config.dataApi}dataset/${key}/import`),
+      axios(`${config.dataApi}dataset/${key}/import?state=finished`),
     ])
-
       .then((res) => {
-        const importState = _.get(res[0], "data[0]") || null;
+        const state = _.get(res[0], "data[0]") || null;
         const hasData = res[1].data.length > 0;
-        this.setState({
-          importState,
-          hasData,
-          lastSuccesFullImport: hasData ? _.get(res, "[1].data[0]") : null,
-        });
+        setImportState(state);
+        setLastSuccesFullImport(hasData ? _.get(res, "[1].data[0]") : null);
       })
-      .catch((err) => {
-        this.setState({ importState: null });
+      .catch(() => {
+        setImportState(null);
       });
   };
 
-  render() {
-    //  const { datasetKey, section, dataset } = this.props;
-    const { importState, lastSuccesFullImport } = this.state;
+  useEffect(() => {
+    getData(datasetKey);
+  }, [datasetKey]);
 
-    const {
-      match: {
-        params: {
-          key: datasetKey,
-          section,
-          taxonOrNameKey,
-          projectKey,
-          subsection,
-        },
-      },
-      location,
-      dataset,
-      importStateMap,
-      user,
-    } = this.props;
-    const isProject = dataset?.origin === "project";
-    if (dataset && !section && !_.get(dataset, "deleted")) {
-      return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
-    }
-    if (dataset && !section && _.get(dataset, "deleted")) {
-      return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
-    }
+  const isProject = dataset?.origin === "project";
+  if (dataset && !section && !_.get(dataset, "deleted")) {
+    return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
+  }
+  if (dataset && !section && _.get(dataset, "deleted")) {
+    return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
+  }
 
-    const sect = !section ? "about" : section.split("?")[0];
-    const openKeys = ["dataset", "datasetKey"];
-    const selectedKeys = ["diff", "import-timeline"].includes(section)
-      ? ["imports"]
-      : sect === "duplicates" && !taxonOrNameKey
-      ? ["datasetDuplicateSearch"]
-      : sect === "duplicates" && taxonOrNameKey
-      ? ["datasetDuplicateTasks"]
-      : [section];
+  const sect = !section ? "about" : section.split("?")[0];
+  const openKeys = ["dataset", "datasetKey"];
+  const selectedKeys = ["diff", "import-timeline"].includes(section)
+    ? ["imports"]
+    : sect === "duplicates" && !taxonOrNameKey
+    ? ["datasetDuplicateSearch"]
+    : sect === "duplicates" && taxonOrNameKey
+    ? ["datasetDuplicateTasks"]
+    : [section];
 
-    return (
-      <Layout
-        selectedDataset={dataset}
-        selectedCatalogueKey={projectKey}
-        openKeys={
-          isProject && ["imports", "diff", "import-timeline"].includes(section)
-            ? ["assembly"]
-            : openKeys
-        }
-        selectedKeys={
-          isProject && ["imports", "diff", "import-timeline"].includes(section)
-            ? ["release-metrics"]
-            : selectedKeys
-        }
-        taxonOrNameKey={taxonOrNameKey}
-      >
-        {_.get(dataset, "title") && (
-          <Helmet title={`${_.get(dataset, "title")} in COL`} />
-        )}
-        {dataset && _.get(dataset, "deleted") && (
+  return (
+    <Layout
+      selectedDataset={dataset}
+      selectedCatalogueKey={projectKey}
+      openKeys={
+        isProject && ["imports", "diff", "import-timeline"].includes(section)
+          ? ["assembly"]
+          : openKeys
+      }
+      selectedKeys={
+        isProject && ["imports", "diff", "import-timeline"].includes(section)
+          ? ["release-metrics"]
+          : selectedKeys
+      }
+      taxonOrNameKey={taxonOrNameKey}
+    >
+      {_.get(dataset, "title") && (
+        <Helmet title={`${_.get(dataset, "title")} in COL`} />
+      )}
+      {dataset && _.get(dataset, "deleted") && (
+        <Alert
+          style={{ marginTop: "16px" }}
+          title={
+            <Row>
+              <Col>{`This dataset was deleted ${moment(
+                dataset.deleted
+              ).format("LLL")}`}</Col>
+              <Col flex="auto"></Col>
+              {dataset.origin === "release" && dataset.sourceKey === 3 && (
+                <Col>
+                  <a
+                    href="https://download.checklistbank.org/col/monthly/"
+                    target="_blank"
+                  >
+                    Archived releases
+                  </a>
+                </Col>
+              )}
+            </Row>
+          }
+          type="error"
+        />
+      )}
+      {importState &&
+        _.get(importStateMap[importState.state], "running") === "true" && (
           <Alert
             style={{ marginTop: "16px" }}
-            title={
-              <Row>
-                <Col>{`This dataset was deleted ${moment(
-                  dataset.deleted
-                ).format("LLL")}`}</Col>
-                <Col flex="auto"></Col>
-                {dataset.origin === "release" && dataset.sourceKey === 3 && (
-                  <Col>
-                    <a
-                      href="https://download.checklistbank.org/col/monthly/"
-                      target="_blank"
-                    >
-                      Archived releases
-                    </a>
-                  </Col>
-                )}
-              </Row>
-            }
+            title="The dataset is currently being imported. Data may be inconsistent."
+            type="warning"
+          />
+        )}
+      {importState &&
+        importState.state === "failed" &&
+        section === "imports" && (
+          <Alert
+            style={{ marginTop: "16px" }}
+            title={`Last ${_.startCase(
+              importState.job
+            )} of this dataset failed.`}
+            description={importState.error}
             type="error"
           />
         )}
-        {importState &&
-          _.get(importStateMap[importState.state], "running") === "true" && (
-            <Alert
-              style={{ marginTop: "16px" }}
-              title="The dataset is currently being imported. Data may be inconsistent."
-              type="warning"
-            />
-          )}
-        {importState &&
-          importState.state === "failed" &&
-          section === "imports" && (
-            <Alert
-              style={{ marginTop: "16px" }}
-              title={`Last ${_.startCase(
-                importState.job
-              )} of this dataset failed.`}
-              description={importState.error}
-              type="error"
-            />
-          )}
-        {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-        {["release-metrics", "imports"].includes(section) &&
-          subsection !== "tree" &&
-          subsection !== "metadata" && (
-            <DatasetImportMetrics
-              datasetKey={datasetKey}
-              origin={_.get(dataset, "origin")}
-              match={this.props.match}
-              updateImportState={() => this.getData(datasetKey)}
-            />
-          )}
-        {subsection === "tree" && section === "imports" && (
-          <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey} />
+      {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
+      {["release-metrics", "imports"].includes(section) &&
+        subsection !== "tree" &&
+        subsection !== "metadata" && (
+          <DatasetImportMetrics
+            datasetKey={datasetKey}
+            origin={_.get(dataset, "origin")}
+            match={props.match}
+            updateImportState={() => getData(datasetKey)}
+          />
         )}
-        {subsection === "metadata" && section === "imports" && (
-          <DatasetImportMetadata datasetKey={datasetKey} attempt={taxonOrNameKey}/>
-        )}
-        {(!section || section === "metadata" || section === "about") && (
-          <DatasetMeta id={datasetKey} />
+      {subsection === "tree" && section === "imports" && (
+        <DatasetImportTree datasetKey={datasetKey} attempt={taxonOrNameKey} />
+      )}
+      {subsection === "metadata" && section === "imports" && (
+        <DatasetImportMetadata datasetKey={datasetKey} attempt={taxonOrNameKey}/>
+      )}
+      {(!section || section === "metadata" || section === "about") && (
+        <DatasetMeta id={datasetKey} />
+      )}
+
+      {section === "classification" && (
+        <DatasetClassification
+          dataset={dataset}
+          datasetKey={datasetKey}
+          location={location}
+        />
+      )}
+      {section === "projects" && (
+        <DatasetProjects dataset={dataset} location={location} />
+      )}
+      {sect === "names" && (
+        <NameSearch
+          datasetKey={datasetKey}
+          location={props.location}
+          showSourceDataset={["project", "xrelease", "release"].includes(
+            dataset?.origin
+          )}
+        />
+      )}
+      {sect === "workbench" && (
+        <WorkBench
+          datasetKey={datasetKey}
+          location={props.location}
+          projectKey={projectKey}
+        />
+      )}
+
+      {sect === "duplicates" && !taxonOrNameKey && (
+        <Duplicates
+          datasetKey={datasetKey}
+          projectKey={dataset?.origin === "project" ? datasetKey : null}
+          assembly={!!dataset?.origin === "project"}
+          dataset={dataset}
+          location={props.location}
+        />
+      )}
+      {sect === "references" && (
+        <DatasetReferences
+          datasetKey={datasetKey}
+          location={props.location}
+        />
+      )}
+      {sect === "reference" && (
+        <Reference datasetKey={datasetKey} id={taxonOrNameKey} />
+      )}
+      {sect === "duplicates" && taxonOrNameKey && (
+        <DatasetTasks
+          datasetKey={datasetKey}
+          location={props.location}
+          assembly={false}
+        />
+      )}
+      {(sect === "taxon" || sect === "nameusage") && (
+        <Taxon
+          datasetKey={datasetKey}
+          location={props.location}
+          match={props.match}
+        />
+      )}
+      {sect === "name" && (
+        <Name
+          datasetKey={datasetKey}
+          location={props.location}
+          match={props.match}
+        />
+      )}
+      {sect === "verbatim" && !taxonOrNameKey && (
+        <VerbatimRecord
+          datasetKey={datasetKey}
+          lastSuccesFullImport={lastSuccesFullImport}
+        />
+      )}
+      {sect === "verbatim" && taxonOrNameKey && (
+        <VerbatimByID
+          key={taxonOrNameKey}
+          datasetKey={datasetKey}
+          verbatimKey={taxonOrNameKey}
+          basicHeader={true}
+          location={location}
+        />
+      )}
+      {sect === "source" && (
+        <ReleaseSource
+          datasetKey={datasetKey}
+          location={props.location}
+          match={props.match}
+        />
+      )}
+      {sect === "options" && Auth.canEditDataset(dataset, user) && (
+        <DatasetOptions datasetKey={datasetKey} />
+      )}
+      {sect === "sourcemetrics" && (
+        <DatasetSourceMetrics datasetKey={datasetKey} />
+      )}
+      {section === "download" && (
+        <DatasetDownload
+          downloadKey={taxonOrNameKey}
+          dataset={dataset}
+          location={location}
+        />
+      )}
+      {section === "diff" && <DatasetDiff datasetKey={datasetKey} />}
+      {section === "import-timeline" && (
+        <ImportTimeline datasetKey={datasetKey} />
+      )}
+      {section === "editors" && <Editors datasetKey={datasetKey} />}
+      {["release", "xrelease"].includes(dataset?.origin) &&
+        section === "decisions" && (
+          <DatasetDecisions datasetKey={datasetKey} />
         )}
 
-        {section === "classification" && (
-          <DatasetClassification
-            dataset={dataset}
-            datasetKey={datasetKey}
-            location={location}
-          />
-        )}
-        {section === "projects" && (
-          <DatasetProjects dataset={dataset} location={location} />
-        )}
-        {sect === "names" && (
-          <NameSearch
-            datasetKey={datasetKey}
-            location={this.props.location}
-            showSourceDataset={["project", "xrelease", "release"].includes(
-              dataset?.origin
-            )}
-          />
-        )}
-        {sect === "workbench" && (
-          <WorkBench
-            datasetKey={datasetKey}
-            location={this.props.location}
-            projectKey={projectKey}
-          />
-        )}
+      {["release", "xrelease"].includes(dataset?.origin) &&
+        section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
 
-        {sect === "duplicates" && !taxonOrNameKey && (
-          <Duplicates
-            datasetKey={datasetKey}
-            projectKey={dataset?.origin === "project" ? datasetKey : null}
-            assembly={!!dataset?.origin === "project"}
-            dataset={dataset}
-            location={this.props.location}
-          />
-        )}
-        {sect === "references" && (
-          <DatasetReferences
-            datasetKey={datasetKey}
-            location={this.props.location}
-          />
-        )}
-        {sect === "reference" && (
-          <Reference datasetKey={datasetKey} id={taxonOrNameKey} />
-        )}
-        {sect === "duplicates" && taxonOrNameKey && (
-          <DatasetTasks
-            datasetKey={datasetKey}
-            location={this.props.location}
-            assembly={false}
-          />
-        )}
-        {(sect === "taxon" || sect === "nameusage") && (
-          <Taxon
-            datasetKey={datasetKey}
-            location={this.props.location}
-            match={this.props.match}
-          />
-        )}
-        {sect === "name" && (
-          <Name
-            datasetKey={datasetKey}
-            location={this.props.location}
-            match={this.props.match}
-          />
-        )}
-        {sect === "verbatim" && !taxonOrNameKey && (
-          <VerbatimRecord
-            datasetKey={datasetKey}
-            lastSuccesFullImport={lastSuccesFullImport}
-            /*  location={this.props.location}
-            match={this.props.match} */
-          />
-        )}
-        {sect === "verbatim" && taxonOrNameKey && (
-          <VerbatimByID
-            key={taxonOrNameKey}
-            datasetKey={datasetKey}
-            verbatimKey={taxonOrNameKey}
-            basicHeader={true}
-            location={location}
-          />
-        )}
-        {sect === "source" && (
-          <ReleaseSource
-            datasetKey={datasetKey}
-            location={this.props.location}
-            match={this.props.match}
-          />
-        )}
-        {sect === "options" && Auth.canEditDataset(dataset, user) && (
-          <DatasetOptions datasetKey={datasetKey} />
-        )}
-        {sect === "sourcemetrics" && (
-          <DatasetSourceMetrics datasetKey={datasetKey} />
-        )}
-        {section === "download" && (
-          <DatasetDownload
-            downloadKey={taxonOrNameKey}
-            dataset={dataset}
-            location={location}
-          />
-        )}
-        {section === "diff" && <DatasetDiff datasetKey={datasetKey} />}
-        {section === "import-timeline" && (
-          <ImportTimeline datasetKey={datasetKey} />
-        )}
-        {section === "editors" && <Editors datasetKey={datasetKey} />}
-        {["release", "xrelease"].includes(dataset?.origin) &&
-          section === "decisions" && (
-            <DatasetDecisions datasetKey={datasetKey} />
-          )}
-
-        {["release", "xrelease"].includes(dataset?.origin) &&
-          section === "sector" && <ReleaseSectors datasetKey={datasetKey} />}
-
-        {sect === "publisher" && taxonOrNameKey && (
-          <ProjectPublisherKey
-            projectKey={datasetKey}
-            publisherKey={taxonOrNameKey}
-          />
-        )}
-      </Layout>
-    );
-  }
-}
+      {sect === "publisher" && taxonOrNameKey && (
+        <ProjectPublisherKey
+          projectKey={datasetKey}
+          publisherKey={taxonOrNameKey}
+        />
+      )}
+    </Layout>
+  );
+};
 
 const mapContextToProps = ({ dataset, importStateMap, user }) => ({
   dataset,
