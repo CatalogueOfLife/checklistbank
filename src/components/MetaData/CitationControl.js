@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Modal } from "antd";
-import injectSheet from "react-jss";
+import styles from "../newTag.module.css";
 import CslForm from "./CslForm";
 import _ from "lodash";
 
@@ -16,13 +16,6 @@ const stringToArray = (value) => {
   return [];
 };
 
-const styles = {
-  newTag: {
-    background: "#fff",
-    borderStyle: "dashed",
-    maxHeight: "22px",
-  },
-};
 
 /**
  * A custom Ant form control built as it shown in the official documentation
@@ -120,7 +113,6 @@ class CitationControl extends React.Component {
   render() {
     const { citations, formVisible, citationForEdit } = this.state;
     const {
-      classes,
       label,
       removeAll,
       agentType = "contact",
@@ -192,7 +184,7 @@ class CitationControl extends React.Component {
                   height: "100%",
                 }}
               >
-                <Tag onClick={() => this.showForm()} className={classes.newTag}>
+                <Tag onClick={() => this.showForm()} className={styles.newTagTall}>
                   <PlusOutlined /> {label}
                 </Tag>
               </li>
@@ -239,4 +231,4 @@ CitationControl.propTypes = {
   removeAll: PropTypes.bool, // optional flag, to allow remove all citations or not
 };
 
-export default injectSheet(styles)(CitationControl);
+export default CitationControl;
