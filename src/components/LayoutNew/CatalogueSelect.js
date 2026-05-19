@@ -11,7 +11,6 @@ import { truncate } from "../../components/util";
 // import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
-const { Option } = Select;
 const {Text, Link} = Typography;
 
 /* function truncate(str, n){
@@ -125,30 +124,21 @@ class CatalogueSelect extends React.Component {
               style={{ width: "100%" }}
               value={projectKey || null}
               placeholder="Select project"
-              optionFilterProp="children"
+              optionFilterProp="label"
               onChange={this.onCatalogueChange}
               filterOption={(input, option) =>
-                option.props.children
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               onOpenChange={(open) => {
                 if (open) {
                   this.getCatalogues();
                 }
               }}
-            >
-              {catalogues.map((c) => (
-                <Option
-                  onClick={(e) => {
-                    e.domEvent.stopPropagation();
-                    e.domEvent.nativeEvent.stopImmediatePropagation();
-                  }}
-                  value={c.key}
-                  key={c.key}
-                >{`${c.alias ? c.alias  : truncate(c.title, 50)} [${c.key}]`}</Option>
-              ))}
-            </Select>
+              options={catalogues.map((c) => ({
+                value: c.key,
+                label: `${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`,
+              }))}
+            />
           </div>
         </Modal>
       </React.Fragment>

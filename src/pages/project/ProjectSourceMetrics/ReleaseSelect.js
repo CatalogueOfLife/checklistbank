@@ -5,7 +5,6 @@ import { Select } from "antd";
 // import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
-const { Option } = Select;
 
 class RealeaseSelect extends React.Component {
   constructor(props) {
@@ -85,20 +84,18 @@ class RealeaseSelect extends React.Component {
         style={{ width: "100%" }}
         value={selectedRelease}
         placeholder="Select release"
-        optionFilterProp="children"
+        optionFilterProp="label"
         onChange={this.onReleaseChange}
         filterOption={(input, option) =>
-          option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
-      >
-        {releases
+        options={releases
           .filter((c) => !omitList.includes(c.key))
-          .map((c) => (
-            <Option value={c.key} key={c.key}>{`${c.alias ? c.alias : c.key} [${
-              c.version
-            }]`}</Option>
-          ))}
-      </Select>
+          .map((c) => ({
+            value: c.key,
+            label: `${c.alias ? c.alias : c.key} [${c.version}]`,
+          }))}
+      />
     );
   };
 }

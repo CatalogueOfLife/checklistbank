@@ -5,7 +5,6 @@ import ErrorMsg from "../ErrorMsg";
 import withContext from "../hoc/withContext";
 import _ from "lodash";
 const FormItem = Form.Item;
-const Option = Select.Option;
 const AgentForm = (props) => {
   // const [addNewMode, setAddNewMode] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
@@ -101,24 +100,16 @@ const AgentForm = (props) => {
       <FormItem {...formItemLayout} label="Country" name="country">
         <Select
           style={{ width: 300 }}
-          filterOption={(input, option) => {
-            return option.children
-              .toLowerCase()
-              .startsWith(input.toLowerCase());
-          }}
+          filterOption={(input, option) =>
+            option.label.toLowerCase().startsWith(input.toLowerCase())
+          }
           showSearch
           allowClear
-        >
-          {props.country.map((c) => {
-            const countryName =
-              c.name.charAt(0).toUpperCase() + c.name.slice(1);
-            return (
-              <Option key={c.alpha2} value={c.alpha2}>
-                {countryName}
-              </Option>
-            );
-          })}
-        </Select>
+          options={props.country.map((c) => ({
+            value: c.alpha2,
+            label: c.name.charAt(0).toUpperCase() + c.name.slice(1),
+          }))}
+        />
       </FormItem>
 
       <FormItem {...formItemLayout} label="Url (webpage)" name="url">

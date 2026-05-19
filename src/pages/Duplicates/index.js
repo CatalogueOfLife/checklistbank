@@ -45,7 +45,6 @@ import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const RadioGroup = Radio.Group;
-const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const ResizeableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
@@ -376,9 +375,7 @@ class DuplicateSearchPage extends React.Component {
     if (!value) {
       this.resetSearch();
     } else {
-      const {
-        props: { params },
-      } = option;
+      const { params } = option;
       this.setState(
         {
           params: params_?.sourceDatasetKey
@@ -709,16 +706,15 @@ class DuplicateSearchPage extends React.Component {
                 value={this.state.selectedPreset}
                 style={{ width: 500, marginRight: 10 }}
                 onChange={this.onPresetSelect}
-                optionFilterProp="children"
+                optionFilterProp="label"
                 showSearch
                 allowClear
-              >
-                {queryPresets.map((p) => (
-                  <Option key={p.id} value={p.id} params={p.params}>
-                    {p.text}
-                  </Option>
-                ))}
-              </Select>
+                options={queryPresets.map((p) => ({
+                  value: p.id,
+                  label: p.text,
+                  params: p.params,
+                }))}
+              />
               <a
                 style={{ marginLeft: 8, fontSize: 12 }}
                 onClick={this.toggleAdvanced}
@@ -778,11 +774,12 @@ class DuplicateSearchPage extends React.Component {
                   onChange={(value) => this.updateSearch({ category: value })}
                   showSearch
                   allowClear
-                >
-                  <Option value="binomial">binomial</Option>
-                  <Option value="trinomial">trinomial</Option>
-                  <Option value="uninomial">uninomial</Option>
-                </Select>
+                  options={[
+                    { value: "binomial", label: "binomial" },
+                    { value: "trinomial", label: "trinomial" },
+                    { value: "uninomial", label: "uninomial" },
+                  ]}
+                />
 
                 <Select
                   placeholder="Min size"
@@ -795,13 +792,11 @@ class DuplicateSearchPage extends React.Component {
                   onChange={(value) => this.updateSearch({ minSize: value })}
                   showSearch
                   allowClear
-                >
-                  {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                    <Option key={i} value={i}>
-                      {i}
-                    </Option>
-                  ))}
-                </Select>
+                  options={[2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({
+                    value: i,
+                    label: i,
+                  }))}
+                />
 
                 <FormItem label="Fuzzy matching">
                   <Switch
@@ -823,13 +818,11 @@ class DuplicateSearchPage extends React.Component {
                   showSearch
                   allowClear
                   onChange={(value) => this.updateSearch({ status: value })}
-                >
-                  {taxonomicstatus.map((s) => (
-                    <Option value={s} key={s}>
-                      {_.startCase(s)}
-                    </Option>
-                  ))}
-                </Select>
+                  options={taxonomicstatus.map((s) => ({
+                    value: s,
+                    label: _.startCase(s),
+                  }))}
+                />
                 <Select
                   placeholder="Rank"
                   value={params.rank}
@@ -842,13 +835,8 @@ class DuplicateSearchPage extends React.Component {
                   showSearch
                   allowClear
                   onChange={(value) => this.updateSearch({ rank: value })}
-                >
-                  {rank.map((r) => (
-                    <Option key={r} value={r}>
-                      {r}
-                    </Option>
-                  ))}
-                </Select>
+                  options={rank.map((r) => ({ value: r, label: r }))}
+                />
 
                 <AutoComplete
                   onSelect={(value) => this.updateSearch({ sectorKey: value })}
@@ -1057,20 +1045,24 @@ class DuplicateSearchPage extends React.Component {
                   placeholder="Pick decision"
                   showSearch
                   allowClear
-                >
-                  <OptGroup label="Status">
-                    {taxonomicstatus.map((s) => (
-                      <Option value={s} key={s}>
-                        {_.startCase(s)}
-                      </Option>
-                    ))}
-                  </OptGroup>
-                  <OptGroup label="Other">
-                    <Option value="block">Block</Option>
-                    <Option value="ignore">Ignore</Option>
-                    <Option value="reviewed">Reviewed</Option>
-                  </OptGroup>
-                </Select>
+                  options={[
+                    {
+                      label: "Status",
+                      options: taxonomicstatus.map((s) => ({
+                        value: s,
+                        label: _.startCase(s),
+                      })),
+                    },
+                    {
+                      label: "Other",
+                      options: [
+                        { value: "block", label: "Block" },
+                        { value: "ignore", label: "Ignore" },
+                        { value: "reviewed", label: "Reviewed" },
+                      ],
+                    },
+                  ]}
+                />
                 <br />
                 <Button
                   type="primary"
