@@ -6,7 +6,7 @@ Tracked tech-debt and follow-up work that is out of scope for any active branch.
 
 These were explicitly carved out of the [stack modernization plan](https://github.com/CatalogueOfLife/checklistbank) (Vite + React 19 + antd 6 + react-leaflet 5) so each phase stays reviewable. Do incrementally after the modernization branch lands.
 
-- **Move `Modal.confirm` / `message.x` / `notification.x` static calls to the `App.useApp()` context API.** ~111 occurrences. Antd 6 logs deprecation warnings for the static form.
+- **Migrate remaining class components from static `notification`/`message`/`Modal` calls to `App.useApp()`.** The 17 function-component call sites and the antd `<App>` provider wiring at the root are done (see commits `7e5f6ae`, `6a39fe9`). 32 class components still use the deprecated statics — they need either a `withApp` HOC injection or to be converted to function components first. Two helper modules (`Assembly/ColTreeContext.js`, `WorkBench/DecisionTag.js`) export module-level functions that call `notification.open(...)`; those need to accept a `notification` instance from the caller (passed in as an argument).
 - **Finish the antd 6 Tabs/Menu structural cleanup.** Phase 5 of the modernization converted the six smaller Tabs files (Verbatim, TextTreeUpload, NameIndexKey, MetaDataGenerator, Reference, UserProfile) and the two small Menu files (DatasetImportMetrics/Menu, LayoutNew/UserMenu) from JSX-children to the `items={[...]}` prop, but three Tabs files were left as-is because their tab bodies are 200+ lines each and the conversion is risky without browser verification:
   - `src/pages/Name/index.js` — "About" tab body lines 256–487
   - `src/pages/Taxon/index.js` — "About" tab body lines 541–992
