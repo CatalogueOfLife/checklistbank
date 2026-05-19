@@ -1,0 +1,9 @@
+.newTag {
+  background: #fff;
+  border-style: dashed;
+}
+
+.newTagTall {
+  composes: newTag;
+  max-height: 22px;
+}

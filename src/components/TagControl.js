@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Input, InputNumber, Tag, Tooltip } from "antd";
-import injectSheet from "react-jss";
+import styles from "./newTag.module.css";
 
 const stringToArray = (value) => {
   if (Array.isArray(value)) {
@@ -12,13 +12,6 @@ const stringToArray = (value) => {
   }
 
   return [];
-};
-
-const styles = {
-  newTag: {
-    background: "#fff",
-    borderStyle: "dashed",
-  },
 };
 
 /**
@@ -92,7 +85,7 @@ class TagControl extends React.Component {
 
   render() {
     const { tags, inputVisible, inputValue } = this.state;
-    const { classes, label, removeAll } = this.props;
+    const { label, removeAll } = this.props;
 
     return (
       <React.Fragment>
@@ -139,7 +132,7 @@ class TagControl extends React.Component {
           />
         )}
         {!inputVisible && (
-          <Tag onClick={this.showInput} className={classes.newTag}>
+          <Tag onClick={this.showInput} className={styles.newTag}>
             <PlusOutlined /> {label}
           </Tag>
         )}
@@ -155,4 +148,4 @@ TagControl.propTypes = {
   removeAll: PropTypes.bool, // optional flag, to allow remove all tags or not
 };
 
-export default injectSheet(styles)(TagControl);
+export default TagControl;
