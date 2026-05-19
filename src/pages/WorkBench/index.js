@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
@@ -247,158 +248,38 @@ const getColumns = (projectKey, user) => [
   },
 ];
 
-class WorkBench extends React.Component {
-  constructor(props) {
-    super(props);
-    const { projectKey } = this.props;
-    const { user } = this.props;
-    this.state = {
-      activeTab: "1",
-      data: { result: [] },
-      decision: null,
-      columns: getColumns(projectKey, user),
-      decisionFormVisible: false,
-      rowsForEdit: [],
-      params: {},
-      pagination: {
-        pageSize: 50,
-        current: 1,
-        showQuickJumper: true,
-      },
-      loading: false,
-      selectedRowKeys: [],
-      filteredInfo: null,
-      advancedFilters: false,
-    };
-  }
+const WorkBench = ({
+  datasetKey,
+  projectKey,
+  user,
+  taxonomicstatus,
+  rank,
+  issue,
+  nomstatus,
+  nametype,
+  namefield,
+  addError,
+  location,
+}) => {
+  const [activeTab, setActiveTab] = useState("1");
+  const [data, setData] = useState({ result: [] });
+  const [decision, setDecision] = useState(null);
+  const [columns, setColumns] = useState(() => getColumns(projectKey, user));
+  const [decisionFormVisible, setDecisionFormVisible] = useState(false);
+  const [rowsForEdit, setRowsForEdit] = useState([]);
+  const [params, setParams] = useState({});
+  const [pagination, setPagination] = useState({
+    pageSize: 50,
+    current: 1,
+    showQuickJumper: true,
+  });
+  const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [filteredInfo, setFilteredInfo] = useState(null);
+  const [advancedFilters, setAdvancedFilters] = useState(false);
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
-    const { datasetKey, projectKey } = this.props;
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: 50, offset: 0, facet: FACETS };
-      history.push({
-        pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
-        search: `?limit=50&offset=0`,
-      });
-    } else if (!params.facet) {
-      params.facet = FACETS;
-    }
-    params.offset = params.offset || 0;
-    params.limit = params.limit || 50;
-    // columnFilters.forEach((param) => this.updateFilter(params, params, param));
-    this.setState(
-      {
-        params,
-        pagination: {
-          pageSize: params.limit || PAGE_SIZE,
-          current:
-            Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) + 1,
-          showQuickJumper: true,
-          pageSizeOptions: [50, 100, 500, 1000],
-        },
-      },
-      this.getData
-    );
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const { datasetKey, projectKey } = this.props;
-
-    if (
-      _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey") ||
-      _.get(prevProps, "projectKey") !== _.get(this.props, "projectKey")
-    ) {
-      const params = { limit: PAGE_SIZE, offset: 0, facet: FACETS };
-      history.push({
-        pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
-        search: `?limit=50&offset=0`,
-      });
-      // columnFilters.forEach((param) => this.updateFilter(params, {}, param));
-      this.setState(
-        {
-          params,
-          pagination: {
-            pageSize: params.limit || PAGE_SIZE,
-            current:
-              Number(params.offset || 0) / Number(params.limit || PAGE_SIZE) +
-              1,
-            showQuickJumper: true,
-            pageSizeOptions: [50, 100, 500, 1000],
-          },
-        },
-        this.getData
-      );
-    }
-    if (!prevProps.user && this.props.user) {
-      this.setState({ columns: getColumns(projectKey, this.props.user) });
-    }
-  };
-
-  getData = () => {
-    const {
-      params,
-      pagination: { pageSize: limit, current },
-    } = this.state;
-
-    this.setState({ loading: true });
-
-    const { datasetKey, projectKey, addError } = this.props;
-    if (!params.q) {
-      delete params.q;
-    }
-    const newParamsWithPaging = {
-      ...params,
-      limit,
-      offset: (current - 1) * limit,
-    };
-    history.push({
-      pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
-      search: `?${qs.stringify(newParamsWithPaging)}`,
-    });
-    // This would be cleaner with pathparam like:  /project/3/dataset/1700/nameusage/search
-    let task = params.USAGE_ID
-      ? axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
-          facet: params.facet,
-
-          filter: {
-            USAGE_ID: params.USAGE_ID,
-            catalogueKey: [projectKey],
-            unsafe: [true],
-          },
-          page: {
-            offset: Number((current - 1) * limit),
-            limit: Number(limit),
-          },
-        })
-      : axios(
-          `${
-            config.dataApi
-          }dataset/${datasetKey}/nameusage/search?${qs.stringify({
-            ...newParamsWithPaging,
-            catalogueKey: projectKey,
-          })}`
-        );
-
-    task
-      .then((res) => this.getDecisions(res))
-      .then((res) => {
-        this.setState({
-          loading: false,
-          data: res.data,
-          err: null,
-          pagination: { ...this.state.pagination, total: res.data.total },
-        });
-      })
-      .catch((err) => {
-        addError(err);
-        this.setState({ loading: false, data: [] });
-      });
-  };
-
-  getDecisions = (res) => {
-    const { projectKey } = this.props;
-    // Search embeds decisions across all projects — pick the one for the current project.
+  const getDecisions = (res) => {
     const cKey = Number(projectKey);
     const promises = _.get(res, "data.result")
       ? res.data.result.map((d) => {
@@ -420,10 +301,122 @@ class WorkBench extends React.Component {
       : [];
     return Promise.all(promises).then(() => res);
   };
-  handleTableChange = (pagination, filters, sorter) => {
-    console.log(_.get(this.state, "params"));
+
+  const getData = (currentParams, currentPagination) => {
+    const { pageSize: limit, current } = currentPagination;
+
+    setLoading(true);
+
+    if (!currentParams.q) {
+      delete currentParams.q;
+    }
+    const newParamsWithPaging = {
+      ...currentParams,
+      limit,
+      offset: (current - 1) * limit,
+    };
+    history.push({
+      pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
+      search: `?${qs.stringify(newParamsWithPaging)}`,
+    });
+    let task = currentParams.USAGE_ID
+      ? axios.post(`${config.dataApi}dataset/${datasetKey}/nameusage/search`, {
+          facet: currentParams.facet,
+
+          filter: {
+            USAGE_ID: currentParams.USAGE_ID,
+            catalogueKey: [projectKey],
+            unsafe: [true],
+          },
+          page: {
+            offset: Number((current - 1) * limit),
+            limit: Number(limit),
+          },
+        })
+      : axios(
+          `${
+            config.dataApi
+          }dataset/${datasetKey}/nameusage/search?${qs.stringify({
+            ...newParamsWithPaging,
+            catalogueKey: projectKey,
+          })}`
+        );
+
+    task
+      .then((res) => getDecisions(res))
+      .then((res) => {
+        setLoading(false);
+        setData(res.data);
+        setError(null);
+        setPagination((prev) => ({ ...prev, total: res.data.total }));
+      })
+      .catch((err) => {
+        addError(err);
+        setLoading(false);
+        setData([]);
+      });
+  };
+
+  // componentDidMount
+  useEffect(() => {
+    let initialParams = qs.parse(_.get({ location }, "location.search"));
+    if (_.isEmpty(initialParams)) {
+      initialParams = { limit: 50, offset: 0, facet: FACETS };
+      history.push({
+        pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
+        search: `?limit=50&offset=0`,
+      });
+    } else if (!initialParams.facet) {
+      initialParams.facet = FACETS;
+    }
+    initialParams.offset = initialParams.offset || 0;
+    initialParams.limit = initialParams.limit || 50;
+
+    const initialPagination = {
+      pageSize: initialParams.limit || PAGE_SIZE,
+      current:
+        Number(initialParams.offset || 0) / Number(initialParams.limit || PAGE_SIZE) + 1,
+      showQuickJumper: true,
+      pageSizeOptions: [50, 100, 500, 1000],
+    };
+    setParams(initialParams);
+    setPagination(initialPagination);
+    getData(initialParams, initialPagination);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // componentDidUpdate: datasetKey / projectKey change
+  useEffect(() => {
+    const newParams = { limit: PAGE_SIZE, offset: 0, facet: FACETS };
+    history.push({
+      pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
+      search: `?limit=50&offset=0`,
+    });
+    const newPagination = {
+      pageSize: newParams.limit || PAGE_SIZE,
+      current:
+        Number(newParams.offset || 0) / Number(newParams.limit || PAGE_SIZE) + 1,
+      showQuickJumper: true,
+      pageSizeOptions: [50, 100, 500, 1000],
+    };
+    setParams(newParams);
+    setPagination(newPagination);
+    getData(newParams, newPagination);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetKey, projectKey]);
+
+  // componentDidUpdate: user change
+  useEffect(() => {
+    if (user) {
+      setColumns(getColumns(projectKey, user));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const handleTableChange = (newPagination, filters, sorter) => {
+    console.log(params);
     let query = {
-      ...this.state.params,
+      ...params,
       ..._.pickBy(filters),
     };
 
@@ -441,21 +434,20 @@ class WorkBench extends React.Component {
     } else {
       query.reverse = false;
     }
-    //  columnFilters.forEach((param) => this.updateFilter(query, filters, param));
 
-    this.setState(
-      { params: query, filteredInfo: filters, pagination },
-      this.getData
-    );
+    setParams(query);
+    setFilteredInfo(filters);
+    setPagination(newPagination);
+    getData(query, newPagination);
   };
 
-  updateSearch = (params) => {
-    let newParams = { ...this.state.params };
-    _.forEach(params, (v, k) => {
+  const updateSearch = (newValues) => {
+    let newParams = { ...params };
+    _.forEach(newValues, (v, k) => {
       newParams[k] = v;
     });
-    Object.keys(params).forEach((param) => {
-      if (!params[param]) {
+    Object.keys(newValues).forEach((param) => {
+      if (!newValues[param]) {
         delete newParams[param];
       }
     });
@@ -464,17 +456,13 @@ class WorkBench extends React.Component {
     } else {
       delete newParams.unsafe;
     }
-    this.setState(
-      {
-        params: newParams,
-        pagination: { ...this.state.pagination, current: 1 },
-      },
-      this.getData
-    );
+    const newPagination = { ...pagination, current: 1 };
+    setParams(newParams);
+    setPagination(newPagination);
+    getData(newParams, newPagination);
   };
 
-  updateFilter = (query, filters, param) => {
-    const { columns } = this.state;
+  const updateFilter = (query, filters, param) => {
     if (filters[param] && _.get(filters, `${param}.length`)) {
       query[param] = filters[param];
     } else if (!filters[param]) {
@@ -487,47 +475,39 @@ class WorkBench extends React.Component {
       typeof query[param] === "string" ? [query[param]] : query[param];
     catColumn.filteredValue = filter;
   };
-  resetSearch = () => {
-    const { datasetKey, projectKey } = this.props;
+
+  const resetSearch = () => {
     history.push({
       pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
       search: `?limit=${PAGE_SIZE}&offset=0`,
     });
-    this.setState(
-      {
-        params: { facet: FACETS },
-        filteredInfo: null,
-        pagination: {
-          ...this.state.pagination,
-          current: 1,
-          pageSize: PAGE_SIZE,
-        },
-      },
-      this.getData
-    );
+    const newParams = { facet: FACETS };
+    const newPagination = {
+      ...pagination,
+      current: 1,
+      pageSize: PAGE_SIZE,
+    };
+    setParams(newParams);
+    setFilteredInfo(null);
+    setPagination(newPagination);
+    getData(newParams, newPagination);
   };
 
-  onSelectChange = (selectedRowKeys) => {
-    this.setState({ selectedRowKeys });
+  const onSelectChange = (keys) => {
+    setSelectedRowKeys(keys);
   };
 
-  onDecisionChange = (decision) => {
-    this.setState({ decision });
+  const onDecisionChange = (dec) => {
+    setDecision(dec);
   };
-  cancelDecisionForm = () => {
-    this.setState({
-      decisionFormVisible: false,
-      decisionForEdit: null,
-      rowsForEdit: [],
-    });
+
+  const cancelDecisionForm = () => {
+    setDecisionFormVisible(false);
+    setRowsForEdit([]);
   };
-  applyDecision = () => {
-    const {
-      selectedRowKeys,
-      data: { result },
-      decision,
-    } = this.state;
-    const { datasetKey, projectKey, taxonomicstatus } = this.props;
+
+  const applyDecision = () => {
+    const { result } = data;
     const promises = result
       .filter((d) => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map((d) => {
@@ -608,574 +588,549 @@ class WorkBench extends React.Component {
             description: `${selectedRowKeys?.length} decisions applied.`,
           });
         }
-        return this.getDecisions(this.state);
+        return getDecisions({ data: { result: data.result } });
       })
       .then((res) => {
-        this.setState({
-          data: this.state.data,
-          selectedRowKeys: [],
-          decisionFormVisible: false,
-          decision: null,
-          decisionError: null,
-        });
+        setData((prev) => ({ ...prev }));
+        setSelectedRowKeys([]);
+        setDecisionFormVisible(false);
+        setDecision(null);
       })
       .catch((err) => {
-        this.props.addError(err);
-        this.setState({
-          data: this.state.data,
-          selectedRowKeys: [],
-          decisionFormVisible: false,
-          decision: null,
-          decisionError: err,
-        });
+        addError(err);
+        setData((prev) => ({ ...prev }));
+        setSelectedRowKeys([]);
+        setDecisionFormVisible(false);
+        setDecision(null);
       });
   };
-  toggleAdvancedFilters = () => {
-    this.setState({ advancedFilters: !this.state.advancedFilters });
+
+  const toggleAdvancedFilters = () => {
+    setAdvancedFilters((prev) => !prev);
   };
-  render() {
-    const {
-      data: { result, facets },
-      loading,
-      error,
-      params,
-      pagination,
-      selectedRowKeys,
-      columns,
-      decision,
-      decisionFormVisible,
-      rowsForEdit,
-      advancedFilters,
-      activeTab,
-    } = this.state;
-    const { taxonomicstatus, user, datasetKey, projectKey } = this.props;
-    const facetRanks = _.get(facets, "rank")
-      ? facets.rank.map((r) => ({
-          value: r.value,
-          label: `${_.startCase(r.value)} (${r.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetIssues = _.get(facets, "issue")
-      ? facets.issue.map((i) => ({
-          value: i.value,
-          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    /*    const facetSectorMode = _.get(facets, "sectorMode")
-      ? facets.sectorMode.map((i) => ({
-          value: i.value,
-          label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
-        }))
-      : []; */
-    const facetTaxonomicStatus = _.get(facets, "status")
-      ? facets.status.map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetNomStatus = _.get(facets, "nomStatus")
-      ? facets["nomStatus"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : null;
-    const facetNomType = _.get(facets, "nameType")
-      ? facets.nameType.map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetNomField = _.get(facets, "field")
-      ? facets.field.map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetAuthorship = _.get(facets, "authorship")
-      ? facets["authorship"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetAuthorshipYear = _.get(facets, "authorshipYear")
-      ? facets["authorshipYear"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetExtinct = _.get(facets, "extinct")
-      ? facets["extinct"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetEnvironment = _.get(facets, "environment")
-      ? facets["environment"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
-    const facetOrigin = _.get(facets, "origin")
-      ? facets["origin"].map((s) => ({
-          value: s.value,
-          label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
-        }))
-      : [];
 
-    /*     columns[2].filters = facetTaxonomicStatus
-      ? facetTaxonomicStatus.map((s) => ({ value: s.value, text: s.label }))
-      : taxonomicstatus.map((s) => ({ value: s, text: _.startCase(s) }));
-    columns[2].filteredValue = _.get(filteredInfo, "status") || null;
-    columns[9].filters =
-      facetRanks || rank.map((s) => ({ value: s, text: _.startCase(s) }));
-    columns[9].filteredValue = _.get(filteredInfo, "rank") || null; */
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-      columnWidth: "30px",
-    };
-    const hasSelected = selectedRowKeys.length > 0;
+  const { result, facets } = data;
+  const facetRanks = _.get(facets, "rank")
+    ? facets.rank.map((r) => ({
+        value: r.value,
+        label: `${_.startCase(r.value)} (${r.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetIssues = _.get(facets, "issue")
+    ? facets.issue.map((i) => ({
+        value: i.value,
+        label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  /*    const facetSectorMode = _.get(facets, "sectorMode")
+    ? facets.sectorMode.map((i) => ({
+        value: i.value,
+        label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
+      }))
+    : []; */
+  const facetTaxonomicStatus = _.get(facets, "status")
+    ? facets.status.map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetNomStatus = _.get(facets, "nomStatus")
+    ? facets["nomStatus"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : null;
+  const facetNomType = _.get(facets, "nameType")
+    ? facets.nameType.map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetNomField = _.get(facets, "field")
+    ? facets.field.map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetAuthorship = _.get(facets, "authorship")
+    ? facets["authorship"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetAuthorshipYear = _.get(facets, "authorshipYear")
+    ? facets["authorshipYear"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetExtinct = _.get(facets, "extinct")
+    ? facets["extinct"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetEnvironment = _.get(facets, "environment")
+    ? facets["environment"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
+  const facetOrigin = _.get(facets, "origin")
+    ? facets["origin"].map((s) => ({
+        value: s.value,
+        label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
+      }))
+    : [];
 
-    return (
-      <div
-        style={{
-          background: "#fff",
-          padding: 24,
-          margin: "16px 0",
-        }}
-      >
-        {decisionFormVisible && (
-          <DecisionForm
-            rowsForEdit={rowsForEdit}
-            onCancel={this.cancelDecisionForm}
-            onOk={() => {
-              this.cancelDecisionForm();
-              this.setState({ selectedRowKeys: [] });
-            }}
-            onSaveDecision={(name) => {
-              return this.getDecisions({ data: { result: [name] } }).then(
-                (res) => {
-                  this.setState({ data: this.state.data });
-                }
-              );
-            }}
-            datasetKey={projectKey}
-            subjectDatasetKey={datasetKey}
+  /*     columns[2].filters = facetTaxonomicStatus
+    ? facetTaxonomicStatus.map((s) => ({ value: s.value, text: s.label }))
+    : taxonomicstatus.map((s) => ({ value: s, text: _.startCase(s) }));
+  columns[2].filteredValue = _.get(filteredInfo, "status") || null;
+  columns[9].filters =
+    facetRanks || rank.map((s) => ({ value: s, text: _.startCase(s) }));
+  columns[9].filteredValue = _.get(filteredInfo, "rank") || null; */
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    columnWidth: "30px",
+  };
+  const hasSelected = selectedRowKeys.length > 0;
+
+  return (
+    <div
+      style={{
+        background: "#fff",
+        padding: 24,
+        margin: "16px 0",
+      }}
+    >
+      {decisionFormVisible && (
+        <DecisionForm
+          rowsForEdit={rowsForEdit}
+          onCancel={cancelDecisionForm}
+          onOk={() => {
+            cancelDecisionForm();
+            setSelectedRowKeys([]);
+          }}
+          onSaveDecision={(name) => {
+            return getDecisions({ data: { result: [name] } }).then(
+              (res) => {
+                setData((prev) => ({ ...prev }));
+              }
+            );
+          }}
+          datasetKey={projectKey}
+          subjectDatasetKey={datasetKey}
+        />
+      )}
+      <Row>
+        {error && (
+          <Alert
+            style={{ marginBottom: "10px" }}
+            description={<ErrorMsg error={error} />}
+            type="error"
           />
         )}
-        <Row>
-          {error && (
-            <Alert
-              style={{ marginBottom: "10px" }}
-              description={<ErrorMsg error={error} />}
-              type="error"
-            />
-          )}
-        </Row>
-        <Tabs
-          activeKey={this.state.activeTab}
-          onChange={(activeKey) => this.setState({ activeTab: activeKey })}
-        >
-          <TabPane tab="Search" key="1">
-            <Row style={{ marginBottom: "10px" }}>
-              <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
-                <SearchBox
-                  defaultValue={_.get(params, "q")}
-                  onSearch={(value) => this.updateSearch({ q: value })}
-                  style={{ marginBottom: "10px", width: "100%" }}
-                />
+      </Row>
+      <Tabs
+        activeKey={activeTab}
+        onChange={(activeKey) => setActiveTab(activeKey)}
+      >
+        <TabPane tab="Search" key="1">
+          <Row style={{ marginBottom: "10px" }}>
+            <Col span={14} style={{ display: "flex", flexFlow: "column" }}>
+              <SearchBox
+                defaultValue={_.get(params, "q")}
+                onSearch={(value) => updateSearch({ q: value })}
+                style={{ marginBottom: "10px", width: "100%" }}
+              />
+              <div style={{ marginTop: "10px" }}>
+                {" "}
+                <NameAutocomplete
+                  datasetKey={datasetKey}
+                  minRank="GENUS"
+                  onSelectName={(value) => {
+                    updateSearch({ TAXON_ID: value.key });
+                  }}
+                  onResetSearch={resetSearch}
+                  placeHolder="Filter by higher taxon"
+                  defaultTaxonKey={params.TAXON_ID || null}
+                  autoFocus={false}
+                />{" "}
+              </div>
+              {projectKey === datasetKey && (
                 <div style={{ marginTop: "10px" }}>
-                  {" "}
-                  <NameAutocomplete
-                    datasetKey={datasetKey}
-                    minRank="GENUS"
-                    onSelectName={(value) => {
-                      this.updateSearch({ TAXON_ID: value.key });
+                  <DatasetAutocomplete
+                    contributesTo={Number(datasetKey)}
+                    onSelectDataset={(value) => {
+                      updateSearch({ SECTOR_DATASET_KEY: value.key });
                     }}
-                    onResetSearch={this.resetSearch}
-                    placeHolder="Filter by higher taxon"
-                    defaultTaxonKey={params.TAXON_ID || null}
+                    defaultDatasetKey={
+                      _.get(params, "SECTOR_DATASET_KEY") || null
+                    }
+                    onResetSearch={(value) => {
+                      updateSearch({ SECTOR_DATASET_KEY: null });
+                    }}
+                    placeHolder="Filter by source dataset"
                     autoFocus={false}
-                  />{" "}
+                  />
                 </div>
-                {projectKey === datasetKey && (
-                  <div style={{ marginTop: "10px" }}>
-                    <DatasetAutocomplete
-                      contributesTo={Number(datasetKey)}
-                      onSelectDataset={(value) => {
-                        this.updateSearch({ SECTOR_DATASET_KEY: value.key });
+              )}
+              <div style={{ marginTop: "10px" }}>
+                <Form layout="inline">
+                  <FormItem label="Matching">
+                    <RadioGroup
+                      onChange={(evt) => {
+                        updateSearch({ type: evt.target.value });
                       }}
-                      defaultDatasetKey={
-                        _.get(params, "SECTOR_DATASET_KEY") || null
-                      }
-                      onResetSearch={(value) => {
-                        this.updateSearch({ SECTOR_DATASET_KEY: null });
-                      }}
-                      placeHolder="Filter by source dataset"
-                      autoFocus={false}
-                    />
-                  </div>
-                )}
-                <div style={{ marginTop: "10px" }}>
-                  <Form layout="inline">
-                    <FormItem label="Matching">
-                      <RadioGroup
-                        onChange={(evt) => {
-                          this.updateSearch({ type: evt.target.value });
-                        }}
-                        value={params.type || "WHOLE_WORDS"}
-                      >
-                        <Radio value="EXACT">Exact</Radio>
-                        <Radio value="WHOLE_WORDS">Words</Radio>
-                        <Radio value="FUZZY">Fuzzy</Radio>
-                        <Radio value="PREFIX">Prefix</Radio>
-                      </RadioGroup>
-                    </FormItem>
+                      value={params.type || "WHOLE_WORDS"}
+                    >
+                      <Radio value="EXACT">Exact</Radio>
+                      <Radio value="WHOLE_WORDS">Words</Radio>
+                      <Radio value="FUZZY">Fuzzy</Radio>
+                      <Radio value="PREFIX">Prefix</Radio>
+                    </RadioGroup>
+                  </FormItem>
 
-                    {/*                 <FormItem
-                  style={{
-                    marginBottom: "10px",
+                  {/*                 <FormItem
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <RadioGroup
+                  onChange={(evt) => {
+                    if (typeof evt.target.value === "undefined") {
+                      this.setState(
+                        {
+                          params: _.omit(this.state.params, ["status"]),
+                        },
+                        this.getData
+                      );
+                    } else {
+                      this.updateSearch({ status: evt.target.value });
+                    }
+                  }}
+                  value={params.status}
+                >
+                  <Radio value="_NULL">Exclude bare names</Radio>
+                  <Radio value="_NOT_NULL">Only bare names</Radio>
+                  <Radio value={undefined}>All</Radio>
+                </RadioGroup>
+              </FormItem> */}
+                </Form>
+              </div>
+            </Col>
+            <Col span={10}>
+              <MultiValueFilter
+                defaultValue={_.get(params, "issue")}
+                onChange={(value) => updateSearch({ issue: value })}
+                vocab={facetIssues}
+                label="Issues"
+              />
+              {/*                 <MultiValueFilter
+                defaultValue={_.get(params, "sectorMode")}
+                onChange={(value) => this.updateSearch({ sectorMode: value })}
+                vocab={facetSectorMode}
+                label="Sector Mode"
+              /> */}
+
+              <MultiValueFilter
+                defaultValue={_.get(params, "rank")}
+                onChange={(value) => updateSearch({ rank: value })}
+                vocab={facetRanks}
+                label="Ranks"
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "status")}
+                onChange={(value) => updateSearch({ status: value })}
+                vocab={facetTaxonomicStatus}
+                label="Status"
+              />
+              {advancedFilters && (
+                <React.Fragment>
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nomStatus")}
+                    onChange={(value) =>
+                      updateSearch({ nomstatus: value })
+                    }
+                    vocab={facetNomStatus}
+                    label="Nomenclatural status"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nameType")}
+                    onChange={(value) => updateSearch({ type: value })}
+                    vocab={facetNomType}
+                    label="Name type"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "field")}
+                    onChange={(value) => updateSearch({ field: value })}
+                    vocab={facetNomField}
+                    label="Name field"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "authorship")}
+                    onChange={(value) =>
+                      updateSearch({ authorship: value })
+                    }
+                    vocab={facetAuthorship}
+                    label="Authorship"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "authorshipYear")}
+                    onChange={(value) =>
+                      updateSearch({ authorshipYear: value })
+                    }
+                    vocab={facetAuthorshipYear}
+                    label="Authorship Year"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "environment")}
+                    onChange={(value) =>
+                      updateSearch({ environment: value })
+                    }
+                    vocab={facetEnvironment}
+                    label="Environment"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "extinct")}
+                    onChange={(value) =>
+                      updateSearch({ extinct: value })
+                    }
+                    vocab={facetExtinct}
+                    label="Extinct"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "origin")}
+                    onChange={(value) => updateSearch({ origin: value })}
+                    vocab={facetOrigin}
+                    label="Origin"
+                  />
+                </React.Fragment>
+              )}
+              <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                <a
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={toggleAdvancedFilters}
+                >
+                  Advanced{" "}
+                  {advancedFilters ? (
+                    <UpOutlined />
+                  ) : (
+                    <DownOutlined />
+                  )}
+                </a>
+              </div>
+            </Col>
+          </Row>
+        </TabPane>
+        <TabPane tab="RegEx Search" key="2">
+          <RegExSearch
+            decisionMode={_.get(params?.decisionMode)}
+            limit={pagination.pageSize}
+            style={{ marginBottom: "10px" }}
+            datasetKey={datasetKey}
+            updateSearch={updateSearch}
+            onReset={() => updateSearch({ USAGE_ID: null })}
+            onSearch={(val) => updateSearch({ USAGE_ID: val })}
+            pagination={pagination}
+          />
+        </TabPane>
+      </Tabs>
+
+      <Row>
+        <Col span={14}>
+          {" "}
+          <Button
+            danger
+            onClick={resetSearch}
+            style={{ width: "120px" }}
+          >
+            Reset search
+          </Button>
+        </Col>
+        <Col span={10} style={{ textAlign: "right" }}>
+          <FormItem
+            style={{
+              marginLeft: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <RadioGroup
+              onChange={(evt) => {
+                if (typeof evt.target.value === "undefined") {
+                  const newParams = _.omit(params, ["decisionMode"]);
+                  const newPagination = { ...pagination };
+                  setParams(newParams);
+                  getData(newParams, newPagination);
+                } else {
+                  updateSearch({ decisionMode: evt.target.value });
+                }
+              }}
+              value={params.decisionMode}
+            >
+              <Radio value="_NOT_NULL" /* disabled={activeTab === "2"} */>
+                With decision
+              </Radio>
+              <Radio value="_NULL" /* disabled={activeTab === "2"} */>
+                Without decision
+              </Radio>
+              <Radio value={undefined}>All</Radio>
+            </RadioGroup>
+          </FormItem>
+        </Col>
+      </Row>
+      <Row>
+        {Auth.canEditDataset({ key: projectKey }, user) && (
+          <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
+            <Select
+              style={{ width: 200, marginRight: 10 }}
+              onChange={onDecisionChange}
+              allowClear
+              showSearch
+              options={[
+                {
+                  label: "General",
+                  options: [
+                    { value: "block", label: "Block" },
+                    { value: "ignore", label: "Ignore" },
+                    { value: "reviewed", label: "Reviewed" },
+                  ],
+                },
+                {
+                  label: "Status",
+                  options: taxonomicstatus.map((s) => ({ value: s, label: _.startCase(s) })),
+                },
+                {
+                  label: "Name type",
+                  options: [
+                    { value: "no name", label: "No name" },
+                    { value: "placeholder", label: "Placeholder" },
+                    { value: "hybrid formula", label: "Hybrid formula" },
+                    { value: "informal", label: "Informal" },
+                  ],
+                },
+                /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
+              ]}
+            />
+            <Button
+              type="primary"
+              onClick={() => applyDecision()}
+              disabled={!hasSelected || !decision}
+              loading={loading}
+              style={{ marginRight: 10 }}
+            >
+              Apply selected decision
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                setDecisionFormVisible(true);
+                setRowsForEdit(
+                  result.filter((r) =>
+                    selectedRowKeys.includes(_.get(r, "usage.id"))
+                  )
+                );
+              }}
+              disabled={!hasSelected}
+              loading={loading}
+            >
+              Apply complex decisions
+            </Button>
+            <span style={{ marginLeft: 8 }}>
+              {selectedRowKeys.length > 1 &&
+                `Selected ${selectedRowKeys.length} ${
+                  selectedRowKeys.length > 1 ? "taxa" : "taxon"
+                }`}
+            </span>
+          </Col>
+        )}
+        <Col
+          span={!Auth.canEditDataset({ key: projectKey }, user) ? 24 : 8}
+          style={{ textAlign: "right", marginBottom: "8px" }}
+        >
+          {pagination &&
+            !isNaN(pagination.total) &&
+            `${(
+              (pagination.current - 1) * pagination.pageSize +
+              1
+            ).toLocaleString("en-GB")} - ${(
+              pagination.current * pagination.pageSize
+            ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
+              "en-GB"
+            )}`}
+        </Col>
+      </Row>
+      {!error &&
+        !loading &&
+        _.get(pagination, "total") === 0 &&
+        params.issue && (
+          <Alert
+            style={{ marginBottom: "10px" }}
+            type="info"
+            showIcon
+            title="No matching results in the workbench"
+            description={
+              <span>
+                The selected issue filter may only apply to source rows that
+                are not indexed for name usage search. Try the{" "}
+                <NavLink
+                  to={{
+                    pathname: `/project/${projectKey}/dataset/${datasetKey}/verbatim`,
+                    search: `?${qs.stringify({ issue: params.issue })}`,
                   }}
                 >
-                  <RadioGroup
-                    onChange={(evt) => {
-                      if (typeof evt.target.value === "undefined") {
-                        this.setState(
-                          {
-                            params: _.omit(this.state.params, ["status"]),
-                          },
-                          this.getData
-                        );
-                      } else {
-                        this.updateSearch({ status: evt.target.value });
-                      }
-                    }}
-                    value={params.status}
-                  >
-                    <Radio value="_NULL">Exclude bare names</Radio>
-                    <Radio value="_NOT_NULL">Only bare names</Radio>
-                    <Radio value={undefined}>All</Radio>
-                  </RadioGroup>
-                </FormItem> */}
-                  </Form>
-                </div>
-              </Col>
-              <Col span={10}>
-                <MultiValueFilter
-                  defaultValue={_.get(params, "issue")}
-                  onChange={(value) => this.updateSearch({ issue: value })}
-                  vocab={facetIssues}
-                  label="Issues"
-                />
-                {/*                 <MultiValueFilter
-                  defaultValue={_.get(params, "sectorMode")}
-                  onChange={(value) => this.updateSearch({ sectorMode: value })}
-                  vocab={facetSectorMode}
-                  label="Sector Mode"
-                /> */}
-
-                <MultiValueFilter
-                  defaultValue={_.get(params, "rank")}
-                  onChange={(value) => this.updateSearch({ rank: value })}
-                  vocab={facetRanks}
-                  label="Ranks"
-                />
-                <MultiValueFilter
-                  defaultValue={_.get(params, "status")}
-                  onChange={(value) => this.updateSearch({ status: value })}
-                  vocab={facetTaxonomicStatus}
-                  label="Status"
-                />
-                {advancedFilters && (
-                  <React.Fragment>
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "nomStatus")}
-                      onChange={(value) =>
-                        this.updateSearch({ nomstatus: value })
-                      }
-                      vocab={facetNomStatus}
-                      label="Nomenclatural status"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "nameType")}
-                      onChange={(value) => this.updateSearch({ type: value })}
-                      vocab={facetNomType}
-                      label="Name type"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "field")}
-                      onChange={(value) => this.updateSearch({ field: value })}
-                      vocab={facetNomField}
-                      label="Name field"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "authorship")}
-                      onChange={(value) =>
-                        this.updateSearch({ authorship: value })
-                      }
-                      vocab={facetAuthorship}
-                      label="Authorship"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "authorshipYear")}
-                      onChange={(value) =>
-                        this.updateSearch({ authorshipYear: value })
-                      }
-                      vocab={facetAuthorshipYear}
-                      label="Authorship Year"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "environment")}
-                      onChange={(value) =>
-                        this.updateSearch({ environment: value })
-                      }
-                      vocab={facetEnvironment}
-                      label="Environment"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "extinct")}
-                      onChange={(value) =>
-                        this.updateSearch({ extinct: value })
-                      }
-                      vocab={facetExtinct}
-                      label="Extinct"
-                    />
-                    <MultiValueFilter
-                      defaultValue={_.get(params, "origin")}
-                      onChange={(value) => this.updateSearch({ origin: value })}
-                      vocab={facetOrigin}
-                      label="Origin"
-                    />
-                  </React.Fragment>
-                )}
-                <div style={{ textAlign: "right", marginBottom: "8px" }}>
-                  <a
-                    style={{ marginLeft: 8, fontSize: 12 }}
-                    onClick={this.toggleAdvancedFilters}
-                  >
-                    Advanced{" "}
-                    {this.state.advancedFilters ? (
-                      <UpOutlined />
-                    ) : (
-                      <DownOutlined />
-                    )}
-                  </a>
-                </div>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tab="RegEx Search" key="2">
-            <RegExSearch
-              decisionMode={_.get(this.state?.params?.decisionMode)}
-              limit={pagination.pageSize}
-              style={{ marginBottom: "10px" }}
-              datasetKey={datasetKey}
-              updateSearch={this.updateSearch}
-              onReset={() => this.updateSearch({ USAGE_ID: null })}
-              onSearch={(val) => this.updateSearch({ USAGE_ID: val })}
-              pagination={pagination}
-            />
-          </TabPane>
-        </Tabs>
-
-        <Row>
-          <Col span={14}>
-            {" "}
-            <Button
-              danger
-              onClick={this.resetSearch}
-              style={{ width: "120px" }}
-            >
-              Reset search
-            </Button>
-          </Col>
-          <Col span={10} style={{ textAlign: "right" }}>
-            <FormItem
-              style={{
-                marginLeft: "10px",
-                marginBottom: "10px",
-              }}
-            >
-              <RadioGroup
-                onChange={(evt) => {
-                  if (typeof evt.target.value === "undefined") {
-                    this.setState(
-                      {
-                        params: _.omit(this.state.params, ["decisionMode"]),
-                      },
-                      this.getData
-                    );
-                  } else {
-                    this.updateSearch({ decisionMode: evt.target.value });
-                  }
-                }}
-                value={params.decisionMode}
-              >
-                <Radio value="_NOT_NULL" /* disabled={activeTab === "2"} */>
-                  With decision
-                </Radio>
-                <Radio value="_NULL" /* disabled={activeTab === "2"} */>
-                  Without decision
-                </Radio>
-                <Radio value={undefined}>All</Radio>
-              </RadioGroup>
-            </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          {Auth.canEditDataset({ key: projectKey }, user) && (
-            <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
-              <Select
-                style={{ width: 200, marginRight: 10 }}
-                onChange={this.onDecisionChange}
-                allowClear
-                showSearch
-                options={[
-                  {
-                    label: "General",
-                    options: [
-                      { value: "block", label: "Block" },
-                      { value: "ignore", label: "Ignore" },
-                      { value: "reviewed", label: "Reviewed" },
-                    ],
-                  },
-                  {
-                    label: "Status",
-                    options: taxonomicstatus.map((s) => ({ value: s, label: _.startCase(s) })),
-                  },
-                  {
-                    label: "Name type",
-                    options: [
-                      { value: "no name", label: "No name" },
-                      { value: "placeholder", label: "Placeholder" },
-                      { value: "hybrid formula", label: "Hybrid formula" },
-                      { value: "informal", label: "Informal" },
-                    ],
-                  },
-                  /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
-                ]}
-              />
-              <Button
-                type="primary"
-                onClick={() => this.applyDecision()}
-                disabled={!hasSelected || !decision}
-                loading={loading}
-                style={{ marginRight: 10 }}
-              >
-                Apply selected decision
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  this.setState({
-                    decisionFormVisible: true,
-                    rowsForEdit: result.filter((r) =>
-                      selectedRowKeys.includes(_.get(r, "usage.id"))
-                    ),
-                  })
-                }
-                disabled={!hasSelected}
-                loading={loading}
-              >
-                Apply complex decisions
-              </Button>
-              <span style={{ marginLeft: 8 }}>
-                {selectedRowKeys.length > 1 &&
-                  `Selected ${selectedRowKeys.length} ${
-                    selectedRowKeys.length > 1 ? "taxa" : "taxon"
-                  }`}
+                  verbatim view
+                </NavLink>{" "}
+                instead.
               </span>
-            </Col>
-          )}
-          <Col
-            span={!Auth.canEditDataset({ key: projectKey }, user) ? 24 : 8}
-            style={{ textAlign: "right", marginBottom: "8px" }}
-          >
-            {pagination &&
-              !isNaN(pagination.total) &&
-              `${(
-                (pagination.current - 1) * pagination.pageSize +
-                1
-              ).toLocaleString("en-GB")} - ${(
-                pagination.current * pagination.pageSize
-              ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
-                "en-GB"
-              )}`}
-          </Col>
-        </Row>
-        {!error &&
-          !loading &&
-          _.get(pagination, "total") === 0 &&
-          params.issue && (
-            <Alert
-              style={{ marginBottom: "10px" }}
-              type="info"
-              showIcon
-              title="No matching results in the workbench"
-              description={
-                <span>
-                  The selected issue filter may only apply to source rows that
-                  are not indexed for name usage search. Try the{" "}
-                  <NavLink
-                    to={{
-                      pathname: `/project/${projectKey}/dataset/${datasetKey}/verbatim`,
-                      search: `?${qs.stringify({ issue: params.issue })}`,
-                    }}
-                  >
-                    verbatim view
-                  </NavLink>{" "}
-                  instead.
-                </span>
-              }
-            />
-          )}
-        {!error && (
-          <Table
-            scroll={{ x: 3000, y: 600 }}
-            size="small"
-            components={this.components}
-            bordered
-            columns={columns}
-            dataSource={result}
-            loading={loading}
-            pagination={this.state.pagination}
-            onChange={this.handleTableChange}
-            rowKey={(record) => _.get(record, "usage.id")}
-            rowSelection={
-              !Auth.canEditDataset({ key: projectKey }, user)
-                ? null
-                : rowSelection
             }
-            expandable={{
-              rowExpandable: () =>
-                Auth.canEditDataset({ key: projectKey }, user),
-              expandedRowRender: (record) =>
-                _.get(record, "decisions[0]") ? (
-                  <React.Fragment>
-                    {record.decisions[0].mode === "update" && (
-                      <a
-                        onClick={() => {
-                          this.setState({
-                            rowsForEdit: [record],
-                            decisionFormVisible: true,
-                          });
-                        }}
-                      >
-                        Edit <EditOutlined />
-                      </a>
-                    )}
-                    <pre>{JSON.stringify(record.decisions[0], null, 4)}</pre>
-                  </React.Fragment>
-                ) : (
-                  ""
-                ),
-            }}
           />
         )}
-      </div>
-    );
-  }
-}
+      {!error && (
+        <Table
+          scroll={{ x: 3000, y: 600 }}
+          size="small"
+          bordered
+          columns={columns}
+          dataSource={result}
+          loading={loading}
+          pagination={pagination}
+          onChange={handleTableChange}
+          rowKey={(record) => _.get(record, "usage.id")}
+          rowSelection={
+            !Auth.canEditDataset({ key: projectKey }, user)
+              ? null
+              : rowSelection
+          }
+          expandable={{
+            rowExpandable: () =>
+              Auth.canEditDataset({ key: projectKey }, user),
+            expandedRowRender: (record) =>
+              _.get(record, "decisions[0]") ? (
+                <React.Fragment>
+                  {record.decisions[0].mode === "update" && (
+                    <a
+                      onClick={() => {
+                        setRowsForEdit([record]);
+                        setDecisionFormVisible(true);
+                      }}
+                    >
+                      Edit <EditOutlined />
+                    </a>
+                  )}
+                  <pre>{JSON.stringify(record.decisions[0], null, 4)}</pre>
+                </React.Fragment>
+              ) : (
+                ""
+              ),
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const mapContextToProps = ({
   rank,
