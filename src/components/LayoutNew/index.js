@@ -315,8 +315,7 @@ class SiteLayout extends Component {
                   style={{ marginTop: "10px" }}
                   description={<ErrorMsg error={error} />}
                   type="error"
-                  closable
-                  onClose={clearError}
+                  closable={{ onClose: clearError }}
                 />
               )}
             {error && error?.message === "Network Error" && (
@@ -327,8 +326,7 @@ class SiteLayout extends Component {
                 }
                 type="warning"
                 showIcon
-                closable
-                onClose={clearError}
+                closable={{ onClose: clearError }}
               />
             )}
             {(error && [401, 403].includes(_.get(error, "response.status"))) ||

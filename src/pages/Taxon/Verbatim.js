@@ -113,7 +113,7 @@ const Verbatim = ({
       ) : (
         <Tabs
           defaultActiveKey="1"
-          tabPosition={width <= SMALL ? "top" : "right"}
+          tabPlacement={width <= SMALL ? "top" : "right"}
           items={Object.keys(verbatimRecords).map((key) => ({
             key,
             label: key,

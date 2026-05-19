@@ -132,7 +132,7 @@ class CatalogueSelect extends React.Component {
                   .toLowerCase()
                   .indexOf(input.toLowerCase()) >= 0
               }
-              onDropdownVisibleChange={(open) => {
+              onOpenChange={(open) => {
                 if (open) {
                   this.getCatalogues();
                 }
