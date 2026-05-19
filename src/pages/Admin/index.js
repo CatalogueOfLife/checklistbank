@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 import Layout from "../../components/LayoutNew";
 
@@ -24,386 +24,346 @@ import ErrorMsg from "../../components/ErrorMsg";
 
 const FormItem = Form.Item;
 
-class AdminPage extends React.Component {
-  constructor(props) {
-    super(props);
+const AdminPage = ({ background, addError }) => {
+  const [error, setError] = useState(null);
+  const [updateAllLogosloading, setUpdateAllLogosloading] = useState(false);
+  const [metricsSchedulerloading, setMetricsSchedulerloading] = useState(false);
+  const [reindexSchedulerLoading, setReindexSchedulerLoading] = useState(false);
+  const [rematchMissingLoading, setRematchMissingLoading] = useState(false);
+  const [updateUsageCountsLoading, setUpdateUsageCountsLoading] = useState(false);
+  const [components, setComponents] = useState({ foo: true, bar: false });
+  const [componentsLoading, setComponentsLoading] = useState(false);
 
-    this.state = {
-      error: null,
-      updateAllLogosloading: false,
-      metricsSchedulerloading: false,
-      reindexSchedulerLoading: false,
-      rematchMissingLoading: false,
-      components: { foo: true, bar: false },
-      componentsError: null,
-      componentsLoading: false,
-    };
-  }
+  useEffect(() => {
+    getComponents();
+  }, []);
 
-  componentDidMount = () => {
-    this.getComponents();
-  };
-  getComponents = () => {
+  const getComponents = () => {
     axios
       .get(`${config.dataApi}admin/component`)
       .then((res) => {
-        this.setState({ components: res.data, componentsLoading: false });
+        setComponents(res.data);
+        setComponentsLoading(false);
       })
       .catch((err) => {
-        this.props.addError(err);
-        this.setState({ componentsLoading: false });
+        addError(err);
+        setComponentsLoading(false);
       });
   };
 
-  toggleMaintenance = (checked) => {
+  const toggleMaintenance = (checked) => {
     axios
       .post(`${config.dataApi}admin/maintenance`)
       .then(BackgroundProvider.getBackground);
   };
 
-  updateComponent = (comp, checked) => {
+  const updateComponent = (comp, checked) => {
     const method = checked ? "start" : "stop";
-    this.setState({ componentsLoading: true });
+    setComponentsLoading(true);
     axios
       .post(`${config.dataApi}admin/component/${method}?comp=${comp}`)
-      .then(this.getComponents)
+      .then(getComponents)
       .catch((err) => {
-        this.props.addError(err);
-        this.setState({ componentsLoading: false });
+        addError(err);
+        setComponentsLoading(false);
       });
   };
 
-  updateAllLogos = () => {
-    this.setState({ updateAllLogosloading: true });
+  const updateAllLogos = () => {
+    setUpdateAllLogosloading(true);
     axios
       .post(`${config.dataApi}admin/logo-update`)
       .then((res) => {
-        this.setState({ updateAllLogosloading: false, error: null }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: "updating all logos async",
-          });
+        setUpdateAllLogosloading(false);
+        setError(null);
+        notification.open({
+          message: "Action triggered",
+          description: "updating all logos async",
         });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          updateAllLogosloading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setUpdateAllLogosloading(false);
+      });
   };
 
-  metricsScheduler = () => {
-    this.setState({ metricsSchedulerloading: true });
+  const metricsScheduler = () => {
+    setMetricsSchedulerloading(true);
     axios
       .post(`${config.dataApi}admin/rebuild-taxon-metrics/scheduler`)
       .then((res) => {
-        this.setState({ metricsSchedulerloading: false, error: null }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: "Run taxon metrics rebuild scheduler",
-          });
+        setMetricsSchedulerloading(false);
+        setError(null);
+        notification.open({
+          message: "Action triggered",
+          description: "Run taxon metrics rebuild scheduler",
         });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          metricsSchedulerloading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setMetricsSchedulerloading(false);
+      });
   };
 
-  updateUsageCounts = () => {
-    this.setState({ updateUsageCountsLoading: true });
+  const updateUsageCounts = () => {
+    setUpdateUsageCountsLoading(true);
     axios
       .post(`${config.dataApi}admin/counter-update`)
       .then((res) => {
-        this.setState({ updateUsageCountsLoading: false, error: null }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: "updating all managed usage counts",
-          });
+        setUpdateUsageCountsLoading(false);
+        setError(null);
+        notification.open({
+          message: "Action triggered",
+          description: "updating all managed usage counts",
         });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          updateUsageCountsLoading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setUpdateUsageCountsLoading(false);
+      });
   };
 
-  reindexScheduler = () => {
-    this.setState({ reindexSchedulerLoading: true });
+  const reindexScheduler = () => {
+    setReindexSchedulerLoading(true);
     axios
       .post(`${config.dataApi}admin/reindex/scheduler`)
       .then((res) => {
-        this.setState(
-          {
-            reindexSchedulerLoading: false,
-            error: null,
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "Run reindex scheduler",
-            });
-          }
-        );
+        setReindexSchedulerLoading(false);
+        setError(null);
+        notification.open({
+          message: "Action triggered",
+          description: "Run reindex scheduler",
+        });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          reindexSchedulerLoading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setReindexSchedulerLoading(false);
+      });
   };
 
-  rematchMissing = () => {
-    this.setState({ rematchMissingLoading: true });
+  const rematchMissing = () => {
+    setRematchMissingLoading(true);
     axios
       .post(`${config.dataApi}admin/rematch/missing`)
       .then((res) => {
-        this.setState(
-          {
-            rematchMissingLoading: false,
-            error: null,
-          },
-          () => {
-            notification.open({
-              message: "Action triggered",
-              description: "Run rematch missing",
-            });
-          }
-        );
+        setRematchMissingLoading(false);
+        setError(null);
+        notification.open({
+          message: "Action triggered",
+          description: "Run rematch missing",
+        });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          rematchMissingLoading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setRematchMissingLoading(false);
+      });
   };
 
-  restartAll = () => {
+  const restartAll = () => {
     axios
       .post(`${config.dataApi}admin/component/restart-all`)
       .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "All components restarted",
-          });
+        setError(null);
+        notification.open({
+          message: "All components restarted",
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  render() {
-    const {
-      updateAllLogosloading,
-      metricsSchedulerLoading,
-      updateUsageCountsLoading,
-      reindexSchedulerLoading,
-      rematchMissingLoading,
-      error,
-      components: components,
-      componentsLoading: componentsLoading,
-    } = this.state;
-    const { background } = this.props;
-    return (
-      <Layout
-        openKeys={["admin"]}
-        selectedKeys={["adminSettings"]}
-        title="COL Admin"
-      >
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>COL Admin</title>
-        </Helmet>
-        <PageContent>
-          {error && (
-            <Row>
-              <Alert
-                closable={{ onClose: () => this.setState({ error: null }) }}
-                description={<ErrorMsg error={error} />}
-                type="error"
-              />
-            </Row>
-          )}
-
+  return (
+    <Layout
+      openKeys={["admin"]}
+      selectedKeys={["adminSettings"]}
+      title="COL Admin"
+    >
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>COL Admin</title>
+      </Helmet>
+      <PageContent>
+        {error && (
           <Row>
-            <Space direction="horizontal" size={[50, 0]} wrap>
-              <FormItem label="Background jobs">
-                {components.idle && (
-                  <Badge
-                    count={"idle"}
-                    style={{ backgroundColor: "#52c41a" }}
-                  />
-                )}
-                {components.idle || (
-                  <Badge count={"active"} style={{ backgroundColor: "red" }} />
-                )}
-              </FormItem>
+            <Alert
+              closable={{ onClose: () => setError(null) }}
+              description={<ErrorMsg error={error} />}
+              type="error"
+            />
+          </Row>
+        )}
 
-              <FormItem label="Maintenance">
-                <Switch
-                  loading={componentsLoading}
-                  onChange={(checked) => {
-                    this.toggleMaintenance(checked);
-                  }}
-                  checked={background && background.maintenance}
+        <Row>
+          <Space direction="horizontal" size={[50, 0]} wrap>
+            <FormItem label="Background jobs">
+              {components.idle && (
+                <Badge
+                  count={"idle"}
+                  style={{ backgroundColor: "#52c41a" }}
                 />
-              </FormItem>
-            </Space>
-          </Row>
+              )}
+              {components.idle || (
+                <Badge count={"active"} style={{ backgroundColor: "red" }} />
+              )}
+            </FormItem>
 
-          <Row>
-            <Space direction="horizontal" size={[50, 0]} wrap>
-              {Object.keys(components)
-                .filter((c) => c != "idle")
-                .map((comp) => (
-                  <FormItem label={comp}>
-                    <Switch
-                      loading={componentsLoading}
-                      onChange={(checked) => {
-                        this.updateComponent(comp, checked);
-                      }}
-                      checked={components[comp]}
-                    />
-                  </FormItem>
-                ))}
-            </Space>
-          </Row>
+            <FormItem label="Maintenance">
+              <Switch
+                loading={componentsLoading}
+                onChange={(checked) => {
+                  toggleMaintenance(checked);
+                }}
+                checked={background && background.maintenance}
+              />
+            </FormItem>
+          </Space>
+        </Row>
 
-          <Row>
-            <Popconfirm
-              placement="rightTop"
-              title="Update all logos?"
-              onConfirm={this.updateAllLogos}
-              okText="Yes"
-              cancelText="No"
+        <Row>
+          <Space direction="horizontal" size={[50, 0]} wrap>
+            {Object.keys(components)
+              .filter((c) => c != "idle")
+              .map((comp) => (
+                <FormItem label={comp}>
+                  <Switch
+                    loading={componentsLoading}
+                    onChange={(checked) => {
+                      updateComponent(comp, checked);
+                    }}
+                    checked={components[comp]}
+                  />
+                </FormItem>
+              ))}
+          </Space>
+        </Row>
+
+        <Row>
+          <Popconfirm
+            placement="rightTop"
+            title="Update all logos?"
+            onConfirm={updateAllLogos}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={updateAllLogosloading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                loading={updateAllLogosloading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Update all logos
-              </Button>
-            </Popconfirm>
+              Update all logos
+            </Button>
+          </Popconfirm>
 
-            <Popconfirm
-              placement="rightTop"
-              title="Update usage counts?"
-              onConfirm={this.updateUsageCounts}
-              okText="Yes"
-              cancelText="No"
+          <Popconfirm
+            placement="rightTop"
+            title="Update usage counts?"
+            onConfirm={updateUsageCounts}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={updateUsageCountsLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                loading={updateUsageCountsLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Update usage counts
-              </Button>
-            </Popconfirm>
+              Update usage counts
+            </Button>
+          </Popconfirm>
 
-            <Popconfirm
-              placement="rightTop"
-              title="Do you want to schedule reindexing incomplete datasets?"
-              onConfirm={this.reindexScheduler}
-              okText="Yes"
-              cancelText="No"
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to schedule reindexing incomplete datasets?"
+            onConfirm={reindexScheduler}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={reindexSchedulerLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                loading={reindexSchedulerLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Reindex scheduler
-              </Button>
-            </Popconfirm>
+              Reindex scheduler
+            </Button>
+          </Popconfirm>
 
-            <Popconfirm
-              placement="rightTop"
-              title="Do you want to match all names without a match?"
-              onConfirm={this.rematchMissing}
-              okText="Yes"
-              cancelText="No"
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to match all names without a match?"
+            onConfirm={rematchMissing}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={rematchMissingLoading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                loading={rematchMissingLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Rematch missing
-              </Button>
-            </Popconfirm>
+              Rematch missing
+            </Button>
+          </Popconfirm>
 
-            <Popconfirm
-              placement="rightTop"
-              title="Do you want to schedule to rebuild taxon metrics for incomplete datasets?"
-              onConfirm={this.metricsScheduler}
-              okText="Yes"
-              cancelText="No"
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to schedule to rebuild taxon metrics for incomplete datasets?"
+            onConfirm={metricsScheduler}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              loading={metricsSchedulerloading}
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                loading={metricsSchedulerLoading}
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Metrics scheduler
-              </Button>
-            </Popconfirm>
-            
-            <Popconfirm
-              placement="rightTop"
-              title="Do you want to restart all components?"
-              onConfirm={this.restartAll}
-              okText="Yes"
-              cancelText="No"
+              Metrics scheduler
+            </Button>
+          </Popconfirm>
+
+          <Popconfirm
+            placement="rightTop"
+            title="Do you want to restart all components?"
+            onConfirm={restartAll}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="primary"
+              style={{ marginRight: "10px", marginBottom: "10px" }}
             >
-              <Button
-                type="primary"
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-              >
-                Restart all components
-              </Button>
-            </Popconfirm>
-          </Row>
+              Restart all components
+            </Button>
+          </Popconfirm>
+        </Row>
 
-          <Divider titlePlacement="left">Links</Divider>
-          <Row>
-            <a href={config.downloadApi}>Downloads</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}dataset/duplicates`}>Duplicate Datasets</a>
-          </Row>
+        <Divider titlePlacement="left">Links</Divider>
+        <Row>
+          <a href={config.downloadApi}>Downloads</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}dataset/duplicates`}>Duplicate Datasets</a>
+        </Row>
 
-          <Divider titlePlacement="left">Main</Divider>
-          <Row> 
-            <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor/threads`}>Threads</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor/metrics`}>Metrics</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
-              CPU Blocked
-            </a>
-          </Row>
+        <Divider titlePlacement="left">Main</Divider>
+        <Row>
+          <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor/threads`}>Threads</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor/metrics`}>Metrics</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
+            CPU Blocked
+          </a>
+        </Row>
 
-          <Divider titlePlacement="left">Read only</Divider>
-          <Row> 
-            <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
-            <a href={`${config.dataApi}monitor-ro/pprof?state=blocked`}>
-              CPU Blocked
-            </a>
-          </Row>
-        </PageContent>
-      </Layout>
-    );
-  }
-}
+        <Divider titlePlacement="left">Read only</Divider>
+        <Row>
+          <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
+          <a href={`${config.dataApi}monitor-ro/pprof?state=blocked`}>
+            CPU Blocked
+          </a>
+        </Row>
+      </PageContent>
+    </Layout>
+  );
+};
 
 const mapContextToProps = ({
   projectKey,
