@@ -6,98 +6,74 @@
  * That is why I took this solution https://stackoverflow.com/a/26191207/2185053
  */
 
-import React from 'react';
+import { useState, useEffect, useRef } from "react";
 
 export const EXTRA_LARGE = 4;
 export const LARGE = 3;
 export const MEDIUM = 2;
 export const SMALL = 1;
 
-export class Width extends React.Component {
-  static EXTRA_LARGE = EXTRA_LARGE;
-  static LARGE = LARGE;
-  static MEDIUM = MEDIUM;
-  static SMALL = SMALL;
+const EXTRA_LARGE_WIDTH = 1200;
+const LARGE_WIDTH = 992;
+const MEDIUM_WIDTH = 768;
 
-  // Like a Bootstrap Grid Layout
-  static EXTRA_LARGE_WIDTH = 1200;
-  static LARGE_WIDTH = 992;
-  static MEDIUM_WIDTH = 768;
-  // static SMALL_WIDTH = 576;
-
-  constructor(props) {
-    super(props);
-
-    this.deferTime = null;
-    this.resizeInterval = 166;
-    this.state = { width: null };
-  }
-
-  componentDidMount() {
-    if (window) {
-      window.addEventListener('resize', this.handleResize);
-    }
-    this.updateWidth();
-  }
-
-  componentWillUnmount() {
-    if (window) {
-      window.removeEventListener('resize', this.handleResize);
-    }
-    clearTimeout(this.deferTime);
-  }
-
-  handleResize = () => {
-    clearTimeout(this.deferTime);
-    this.deferTime = setTimeout(
-      () => {
-        this.updateWidth();
-      },
-      this.resizeInterval
-    );
-  };
-
-  updateWidth = () => {
-    let innerWidth = this.getViewportWidth();
-    let width;
-
-    if (innerWidth >= Width.EXTRA_LARGE_WIDTH) {
-      width = Width.EXTRA_LARGE;
-    } else if (innerWidth >= Width.LARGE_WIDTH) {
-      width = Width.LARGE;
-    } else if (innerWidth >= Width.MEDIUM_WIDTH) {
-      width = Width.MEDIUM;
-    } else {
-      width = Width.SMALL;
-    }
-
-    if (width !== this.state.width) {
-      this.setState({
-        width
-      });
-    }
-  };
-
-  getViewportWidth() {
-    return  window.innerWidth && document.documentElement.clientWidth ?
-      Math.min(window.innerWidth, document.documentElement.clientWidth) :
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      document.querySelector('body').clientWidth;
-  }
-
-  render() {
-    return this.props.children(this.state.width);
-  }
+function getViewportWidth() {
+  return window.innerWidth && document.documentElement.clientWidth
+    ? Math.min(window.innerWidth, document.documentElement.clientWidth)
+    : window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.querySelector("body").clientWidth;
 }
 
-const withWidth = () => WrappedComponent => {
-  class WithWidth extends Width {
-    render() {
-      return <WrappedComponent {...this.props} width={this.state.width}/>;
-    }
-  }
+function classify(innerWidth) {
+  if (innerWidth >= EXTRA_LARGE_WIDTH) return EXTRA_LARGE;
+  if (innerWidth >= LARGE_WIDTH) return LARGE;
+  if (innerWidth >= MEDIUM_WIDTH) return MEDIUM;
+  return SMALL;
+}
 
+function useWidth() {
+  const [width, setWidth] = useState(() => classify(getViewportWidth()));
+  const deferTime = useRef(null);
+  const resizeInterval = 166;
+
+  useEffect(() => {
+    const handleResize = () => {
+      clearTimeout(deferTime.current);
+      deferTime.current = setTimeout(() => {
+        const next = classify(getViewportWidth());
+        setWidth((prev) => (next !== prev ? next : prev));
+      }, resizeInterval);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(deferTime.current);
+    };
+  }, []);
+
+  return width;
+}
+
+export const Width = ({ children }) => {
+  const width = useWidth();
+  return children(width);
+};
+
+Width.EXTRA_LARGE = EXTRA_LARGE;
+Width.LARGE = LARGE;
+Width.MEDIUM = MEDIUM;
+Width.SMALL = SMALL;
+Width.EXTRA_LARGE_WIDTH = EXTRA_LARGE_WIDTH;
+Width.LARGE_WIDTH = LARGE_WIDTH;
+Width.MEDIUM_WIDTH = MEDIUM_WIDTH;
+
+const withWidth = () => (WrappedComponent) => {
+  const WithWidth = (props) => {
+    const width = useWidth();
+    return <WrappedComponent {...props} width={width} />;
+  };
   return WithWidth;
 };
 
