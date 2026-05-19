@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Input, Tag, Tooltip } from "antd";
-import injectSheet from "react-jss";
+import styles from "../newTag.module.css";
 import _ from "lodash";
 
 const stringToArray = (value) => {
@@ -13,13 +13,6 @@ const stringToArray = (value) => {
   }
 
   return [];
-};
-
-const styles = {
-  newTag: {
-    background: "#fff",
-    borderStyle: "dashed",
-  },
 };
 
 /**
@@ -94,7 +87,7 @@ class KeyValueControl extends React.Component {
 
   render() {
     const { tags, inputVisible, inputValue, inputKey } = this.state;
-    const { classes, label, removeAll } = this.props;
+    const { label, removeAll } = this.props;
 
     return (
       <React.Fragment>
@@ -143,7 +136,7 @@ class KeyValueControl extends React.Component {
           </React.Fragment>
         )}
         {!inputVisible && (
-          <Tag onClick={this.showInput} className={classes.newTag}>
+          <Tag onClick={this.showInput} className={styles.newTag}>
             <PlusOutlined /> {label}
           </Tag>
         )}
@@ -159,4 +152,4 @@ KeyValueControl.propTypes = {
   removeAll: PropTypes.bool, // optional flag, to allow remove all tags or not
 };
 
-export default injectSheet(styles)(KeyValueControl);
+export default KeyValueControl;
