@@ -14,7 +14,6 @@ import qs from "query-string";
 import Menu from "../../DatasetImportMetrics/Menu";
 import withContext from "../../../components/hoc/withContext";
 
-const { Option } = Select;
 class DatasetDiff extends React.Component {
   constructor(props) {
     super(props);
@@ -195,15 +194,12 @@ class DatasetDiff extends React.Component {
                 }
               }}
               showSearch
-            >
-              {importHistory.map((i) => (
-                <Option key={i.attempt} value={i.attempt}>{`Attempt ${
-                  i.attempt
-                } - ${moment(i.finished).format(
-                  "MMMM Do YYYY, h:mm a"
-                )}`}</Option>
-              ))}
-            </Select>
+              options={importHistory.map((i) => ({
+                key: i.attempt,
+                value: i.attempt,
+                label: `Attempt ${i.attempt} - ${moment(i.finished).format("MMMM Do YYYY, h:mm a")}`,
+              }))}
+            />
           </Col>
           <Col span={12}>
             <Select
@@ -224,15 +220,12 @@ class DatasetDiff extends React.Component {
                 }
               }}
               showSearch
-            >
-              {importHistory.map((i) => (
-                <Option key={i.attempt} value={i.attempt}>{`Attempt ${
-                  i.attempt
-                } - ${moment(i.finished).format(
-                  "MMMM Do YYYY, h:mm a"
-                )}`}</Option>
-              ))}
-            </Select>
+              options={importHistory.map((i) => ({
+                key: i.attempt,
+                value: i.attempt,
+                label: `Attempt ${i.attempt} - ${moment(i.finished).format("MMMM Do YYYY, h:mm a")}`,
+              }))}
+            />
           </Col>
         </Row>
         {onlyOneImport && <Empty description="No diff available" />}

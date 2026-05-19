@@ -38,7 +38,6 @@ import DataLoader from "dataloader";
 import RematchResult from "../ProjectSectors/RematchResult";
 import DecisionForm from "../../WorkBench/DecisionForm";
 const FormItem = Form.Item;
-const { Option } = Select;
 const { Search } = Input;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
@@ -619,13 +618,8 @@ class ProjectDecisions extends React.Component {
               showSearch
               allowClear
               onChange={(value) => this.updateSearch({ rank: value })}
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={rank.map((r) => ({ value: r, label: r }))}
+            />
           </FormItem>
           <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
             <Select
@@ -636,15 +630,11 @@ class ProjectDecisions extends React.Component {
               showSearch
               allowClear
               onChange={(value) => this.updateSearch({ mode: value })}
-            >
-              {decisionMode.map((r) => (
-                <Option key={r.name} value={r.name}>
-                  {r.name}{" "}
-                  {facetMode?.[r.name] > 0 &&
-                    `(${facetMode[r.name].toLocaleString("en-GB")})`}
-                </Option>
-              ))}
-            </Select>
+              options={decisionMode.map((r) => ({
+                value: r.name,
+                label: `${r.name}${facetMode?.[r.name] > 0 ? ` (${facetMode[r.name].toLocaleString("en-GB")})` : ""}`,
+              }))}
+            />
           </FormItem>
         </Form>
         <Row>

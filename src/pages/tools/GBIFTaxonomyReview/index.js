@@ -11,8 +11,6 @@ import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 import moment from "dayjs";
 import _ from "lodash";
-const { Option } = Select;
-
 const GBIFTaxonomyReview = ({ location }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [availableFiles, setAvailableFiles] = useState([]);
@@ -68,22 +66,24 @@ const GBIFTaxonomyReview = ({ location }) => {
                 });
                 setSelectedFile(e);
               }}
-            >
-              <Option key={null} value={null}>
-                <strong>- No file -</strong>
-              </Option>
-              {availableFiles.map((f) => (
-                <Option key={f.filename} value={f.filename}>
-                  <strong>{f.name}</strong>
-                  <span className="small-text">
-                    {" - "}
-                    {moment(f.created).format("MMMM Do YYYY")}
-                  </span>
-                  <br />
-                  <span className="small-text">{f.description}</span>
-                </Option>
-              ))}
-            </Select>
+              options={[
+                { value: null, label: <strong>- No file -</strong> },
+                ...availableFiles.map((f) => ({
+                  value: f.filename,
+                  label: (
+                    <>
+                      <strong>{f.name}</strong>
+                      <span className="small-text">
+                        {" - "}
+                        {moment(f.created).format("MMMM Do YYYY")}
+                      </span>
+                      <br />
+                      <span className="small-text">{f.description}</span>
+                    </>
+                  ),
+                })),
+              ]}
+            />
           </Col>
           <Col span={8} style={{ textAlign: "right" }}>
             {filesByFileName[selectedFile] && (

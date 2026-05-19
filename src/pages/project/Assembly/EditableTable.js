@@ -4,8 +4,6 @@ import _ from "lodash";
 import withContext from "../../../components/hoc/withContext";
 import axios from "axios";
 import config from "../../../config";
-const Option = Select.Option
-
 const EditableCell = ({
   editing,
   dataIndex,
@@ -20,9 +18,7 @@ const EditableCell = ({
     if (dataIndex === "estimate") {
       return <InputNumber />;
     } else if(dataIndex === "type"){
-        return <Select showSearch>
-            {['described species living', 'described species fossil', 'estimated species'].map(o => <Option key={o} value={o}>{o}</Option>)}
-        </Select>
+        return <Select showSearch options={['described species living', 'described species fossil', 'estimated species'].map(o => ({ value: o, label: o }))} />
     }
     return <Input />;
   };

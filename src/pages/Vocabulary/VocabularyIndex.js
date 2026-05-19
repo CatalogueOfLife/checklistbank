@@ -3,7 +3,7 @@ import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { NavLink } from "react-router-dom"
 import withRouter from "../../withRouter";
-import { Row, Col, List, Select } from "antd";
+import { Row, Col, List } from "antd";
 import {
   ApiOutlined,
   ApiTwoTone,
@@ -12,8 +12,6 @@ import {
 
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
-
-const { Option } = Select;
 
 const VocabularyIndex = ({ addError }) => {
   const [data, setData] = useState([]);

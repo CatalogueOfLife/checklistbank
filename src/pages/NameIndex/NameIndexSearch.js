@@ -12,8 +12,6 @@ import history from "../../history";
 import moment from "dayjs";
 import { debounce } from "lodash";
 
-const { Option } = Select;
-
 const NameIndexKey = ({ nameIndexRank, addError }) => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -89,12 +87,11 @@ const NameIndexKey = ({ nameIndexRank, addError }) => {
               placeholder="Rank"
               style={{ width: "300px", marginTop: "10px" }}
               onChange={setRank}
-            >
-              <Option value={null}>Any</Option>
-              {nameIndexRank.map((r) => (
-                <Option value={r.name}>{r.label}</Option>
-              ))}
-            </Select>
+              options={[
+                { value: null, label: "Any" },
+                ...nameIndexRank.map((r) => ({ value: r.name, label: r.label })),
+              ]}
+            />
           </Col>
           <Col flex="auto"></Col>
         </Row>

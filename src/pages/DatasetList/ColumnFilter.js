@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Select } from "antd";
-const Option = Select.Option;
 
 class ColumnFilter extends React.Component {
   constructor(props) {
@@ -72,15 +71,8 @@ class ColumnFilter extends React.Component {
         onChange={this.handleHideColumnChange}
         showSearch
         maxTagCount={4}
-      >
-        {columns.map((f) => {
-          return (
-            <Option key={f.key} value={f.key}>
-              {f.title}
-            </Option>
-          );
-        })}
-      </Select>
+        options={columns.map((f) => ({ value: f.key, label: f.title }))}
+      />
     );
   };
 }

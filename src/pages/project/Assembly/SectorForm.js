@@ -26,7 +26,6 @@ import {
 
 const FormItem = Form.Item;
 
-const { Option } = Select;
 const { TextArea } = Input;
 
 const formItemLayout = {
@@ -189,20 +188,13 @@ const SectorForm = ({
             // onChange={(value) => updateSectorMode(value)}
             showSearch
             allowClear
-          >
-            <Option key="attach" value="attach">
-              attach
-            </Option>
-            <Option key="union" value="union">
-              union
-            </Option>
-            <Option key="merge" value="merge">
-              merge
-            </Option>
-            <Option key="hierarchy" value="hierarchy">
-              hierarchy
-            </Option>
-          </Select>
+            options={[
+              { value: "attach", label: "attach" },
+              { value: "union", label: "union" },
+              { value: "merge", label: "merge" },
+              { value: "hierarchy", label: "hierarchy" },
+            ]}
+          />
         </FormItem>
         {mode === "hierarchy" && !sector && existingHierarchySector && (
           <Alert
@@ -286,15 +278,8 @@ const SectorForm = ({
             showSearch
             allowClear
             disabled={sectorDatasetRanks.length === 0}
-          >
-            {(sectorDatasetRanks || []).map((r) => {
-              return (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              );
-            })}
-          </Select>
+            options={(sectorDatasetRanks || []).map((r) => ({ value: r, label: r }))}
+          />
         </FormItem>
 
         <FormItem
@@ -303,15 +288,12 @@ const SectorForm = ({
           key="placeholderRank"
           name="placeholderRank"
         >
-          <Select style={{ width: "100%" }} showSearch allowClear>
-            {rank.map((r) => {
-              return (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              );
-            })}
-          </Select>
+          <Select
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+            options={rank.map((r) => ({ value: r, label: r }))}
+          />
         </FormItem>
 
         <FormItem
@@ -325,15 +307,8 @@ const SectorForm = ({
             style={{ width: "100%" }}
             showSearch
             allowClear
-          >
-            {nametype.map((f) => {
-              return (
-                <Option key={f} value={f}>
-                  {f}
-                </Option>
-              );
-            })}
-          </Select>
+            options={nametype.map((f) => ({ value: f, label: f }))}
+          />
         </FormItem>
 
         <FormItem
@@ -347,15 +322,8 @@ const SectorForm = ({
             style={{ width: "100%" }}
             showSearch
             allowClear
-          >
-            {nomstatus.map((f) => {
-              return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
-                </Option>
-              );
-            })}
-          </Select>
+            options={nomstatus.map((f) => ({ value: f.name, label: f.name }))}
+          />
         </FormItem>
 
         <FormItem
@@ -384,30 +352,20 @@ const SectorForm = ({
             style={{ width: "100%" }}
             showSearch
             allowClear
-          >
-            {entitytype.map((f) => {
-              return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
-                </Option>
-              );
-            })}
-          </Select>
+            options={entitytype.map((f) => ({ value: f.name, label: f.name }))}
+          />
         </FormItem>
 
         <FormItem {...formItemLayout} 
           label={<Tooltip color='green' title="The default nomenclatural code to apply during syncs">Code</Tooltip>}
           key="code" name="code"
         >
-          <Select style={{ width: "100%" }} showSearch allowClear>
-            {nomCode.map((f) => {
-              return (
-                <Option key={f.name} value={f.name}>
-                  {f.name}
-                </Option>
-              );
-            })}
-          </Select>
+          <Select
+            style={{ width: "100%" }}
+            showSearch
+            allowClear
+            options={nomCode.map((f) => ({ value: f.name, label: f.name }))}
+          />
         </FormItem>
 
         <FormItem

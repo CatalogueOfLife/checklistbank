@@ -12,8 +12,6 @@ import history from "../../history";
 import Menu from "./Menu";
 const defaultSeries = "taxonCount synonymCount".split(" ");
 
-const { Option } = Select;
-
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -205,16 +203,14 @@ class ImportTimeline extends React.Component {
               label="Select group"
               style={{ marginBottom: "8px", width: "400px" }}
             >
-              <Select value={selectedGroup} onChange={this.selectGroup}>
-                <Option key="default" value="default">
-                  {"default"}
-                </Option>
-                {groups.map((g) => (
-                  <Option key={g} value={g}>
-                    {_.startCase(g)}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                value={selectedGroup}
+                onChange={this.selectGroup}
+                options={[
+                  { value: "default", label: "default" },
+                  ...groups.map((g) => ({ value: g, label: _.startCase(g) })),
+                ]}
+              />
             </Form.Item>
           </Col>
         </Row>

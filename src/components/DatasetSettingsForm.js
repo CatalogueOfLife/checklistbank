@@ -16,7 +16,6 @@ import CsvDelimiterInput from "./CsvDelimiterInput";
 import withContext from "./hoc/withContext";
 import TagControl from "./TagControl";
 const FormItem = Form.Item;
-const Option = Select.Option;
 const openNotification = (title, description) => {
   notification.open({
     message: title,
@@ -193,35 +192,27 @@ const SettingsForm = (props) => {
                 name={s.name}
               >
                 {s.type === "NomCode" ? (
-                  <Select style={{ width: 200 }} showSearch allowClear>
-                    {nomCode.map((c) => {
-                      return (
-                        <Option
-                          key={c.name}
-                          value={c.name}
-                        >{`${c.name} (${c.acronym})`}</Option>
-                      );
-                    })}
-                  </Select>
+                  <Select
+                    style={{ width: 200 }}
+                    showSearch
+                    allowClear
+                    options={nomCode.map((c) => ({
+                      value: c.name,
+                      label: `${c.name} (${c.acronym})`,
+                    }))}
+                  />
                 ) : (
                   <Select
                     style={{ width: 200 }}
                     mode={s.multiple ? "multiple" : null}
                     showSearch
                     allowClear
-                  >
-                    {props[_.camelCase(s.type)].map((e) => {
-                      return typeof e === "string" ? (
-                        <Option key={e} value={e}>
-                          {e}
-                        </Option>
-                      ) : (
-                        <Option key={e.name} value={e.name}>
-                          {e.name}
-                        </Option>
-                      );
-                    })}
-                  </Select>
+                    options={props[_.camelCase(s.type)].map((e) =>
+                      typeof e === "string"
+                        ? { value: e, label: e }
+                        : { value: e.name, label: e.name }
+                    )}
+                  />
                 )}
               </FormItem>
             );

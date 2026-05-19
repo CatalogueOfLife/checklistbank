@@ -12,9 +12,6 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
 
-const { Option } = Select;
-
-
 import _ from "lodash";
 
 class SectorDiff extends React.Component {
@@ -140,11 +137,8 @@ class SectorDiff extends React.Component {
                   });
                 }}
                 showSearch
-              >
-                {[...Array(_.get(this.state, "selectedAttempt2")).keys()].filter(i => i > 0).reverse().map(i => (
-                  <Option value={i}>Attempt: {i}</Option>
-                ))}
-              </Select>
+                options={[...Array(_.get(this.state, "selectedAttempt2")).keys()].filter(i => i > 0).reverse().map(i => ({ value: i, label: `Attempt: ${i}` }))}
+              />
             </Col>
             <Col span={6}>
               <Select
@@ -158,11 +152,8 @@ class SectorDiff extends React.Component {
                   });
                 }}
                 showSearch
-              >
-                {[...Array(maxAttempt + 1).keys()].reverse().filter(i => i > selectedAttempt1).map(i => (
-                  <Option value={i}>Attempt: {i}</Option>
-                ))}
-              </Select>
+                options={[...Array(maxAttempt + 1).keys()].reverse().filter(i => i > selectedAttempt1).map(i => ({ value: i, label: `Attempt: ${i}` }))}
+              />
             </Col>
             {_.get(this.state, 'data.summary') && <Col span={6}>
               {!isNaN(_.get(this.state, 'data.summary.DELETE')) && <Tag color="red">Deleted: {_.get(this.state, 'data.summary.DELETE')}</Tag>}

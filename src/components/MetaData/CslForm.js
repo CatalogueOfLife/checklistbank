@@ -130,7 +130,6 @@ const cslPersonsToStrings = (cslpersons) =>
   cslpersons.map((p) => `${p.family}${p.given ? ", " + p.given : ""}`);
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 /* const openNotification = (title, description) => {
   notification.open({
     message: title,
@@ -273,15 +272,11 @@ const CslForm = (props) => {
           style={{ width: 200 }}
           onChange={(value) => setType(value)}
           showSearch
-        >
-          {Object.keys(types).map((f) => {
-            return (
-              <Option key={f} value={f}>
-                {types[f].typeLabel}
-              </Option>
-            );
-          })}
-        </Select>
+          options={Object.keys(types).map((f) => ({
+            value: f,
+            label: types[f].typeLabel,
+          }))}
+        />
       </FormItem>
       <FormItem
         {...formItemLayout}

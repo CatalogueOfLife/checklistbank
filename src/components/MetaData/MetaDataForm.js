@@ -24,7 +24,6 @@ import withContext from "../hoc/withContext";
 const { TabPane } = Tabs;
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const openNotification = (title, description) => {
   notification.open({
     message: title,
@@ -503,17 +502,13 @@ const MetaDataForm = (props) => {
           ]}
           help="This cannot be changed later"
         >
-          <Select style={{ width: 200 }} showSearch>
-            {datasetoriginEnum
+          <Select
+            style={{ width: 200 }}
+            showSearch
+            options={datasetoriginEnum
               .filter((f) => !["xrelease", "release"].includes(f))
-              .map((f) => {
-                return (
-                  <Option key={f} value={f}>
-                    {f}
-                  </Option>
-                );
-              })}
-          </Select>
+              .map((f) => ({ value: f, label: f }))}
+          />
         </FormItem>
       )}
       {!originalData && (
@@ -528,15 +523,11 @@ const MetaDataForm = (props) => {
             },
           ]}
         >
-          <Select style={{ width: 200 }} showSearch>
-            {datasettypeEnum.map((f) => {
-              return (
-                <Option key={f} value={f}>
-                  {f}
-                </Option>
-              );
-            })}
-          </Select>
+          <Select
+            style={{ width: 200 }}
+            showSearch
+            options={datasettypeEnum.map((f) => ({ value: f, label: f }))}
+          />
         </FormItem>
       )}
       <FormItem
@@ -563,18 +554,16 @@ const MetaDataForm = (props) => {
           ) : null
         }
       >
-        <Select style={{ width: 200 }} showSearch>
-          <Option value={undefined}>-</Option>
-          {licenseEnum
-            .filter((f) => ["cc0", "cc by", "cc by nc"].includes(f))
-            .map((f) => {
-              return (
-                <Option key={f} value={f}>
-                  {f}
-                </Option>
-              );
-            })}
-        </Select>
+        <Select
+          style={{ width: 200 }}
+          showSearch
+          options={[
+            { value: undefined, label: "-" },
+            ...licenseEnum
+              .filter((f) => ["cc0", "cc by", "cc by nc"].includes(f))
+              .map((f) => ({ value: f, label: f })),
+          ]}
+        />
       </FormItem>
       {data && (
         <FormItem

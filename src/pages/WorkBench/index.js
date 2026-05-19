@@ -39,7 +39,6 @@ import RegExSearch from "./RegExSearch";
 
 const TabPane = Tabs.TabPane;
 
-const { Option, OptGroup } = Select;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
@@ -1031,29 +1030,31 @@ class WorkBench extends React.Component {
                 onChange={this.onDecisionChange}
                 allowClear
                 showSearch
-              >
-                <OptGroup label="General">
-                  <Option value="block">Block</Option>
-                  <Option value="ignore">Ignore</Option>
-                  <Option value="reviewed">Reviewed</Option>
-                </OptGroup>
-                <OptGroup label="Status">
-                  {taxonomicstatus.map((s) => (
-                    <Option value={s} key={s}>
-                      {_.startCase(s)}
-                    </Option>
-                  ))}
-                </OptGroup>
-                <OptGroup label="Name type">
-                  <Option value="no name">No name</Option>
-                  <Option value="placeholder">Placeholder</Option>
-                  <Option value="hybrid formula">Hybrid formula</Option>
-                  <Option value="informal">Informal</Option>
-                </OptGroup>
-                {/* <OptGroup label="Nom. status">
-                  <Option value="chresonym">Chresonym</Option>
-                </OptGroup> */}
-              </Select>
+                options={[
+                  {
+                    label: "General",
+                    options: [
+                      { value: "block", label: "Block" },
+                      { value: "ignore", label: "Ignore" },
+                      { value: "reviewed", label: "Reviewed" },
+                    ],
+                  },
+                  {
+                    label: "Status",
+                    options: taxonomicstatus.map((s) => ({ value: s, label: _.startCase(s) })),
+                  },
+                  {
+                    label: "Name type",
+                    options: [
+                      { value: "no name", label: "No name" },
+                      { value: "placeholder", label: "Placeholder" },
+                      { value: "hybrid formula", label: "Hybrid formula" },
+                      { value: "informal", label: "Informal" },
+                    ],
+                  },
+                  /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
+                ]}
+              />
               <Button
                 type="primary"
                 onClick={() => this.applyDecision()}

@@ -5,8 +5,6 @@ import _ from "lodash";
 
 const FormItem = Form.Item;
 
-const Option = Select.Option;
-
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -47,19 +45,12 @@ class MultiValueFilter extends React.Component {
           placeholder="Please select"
           value={defaultValue}
           onChange={this.handleChange}
-        >
-          {(vocab || []).map((i) => {
-            return typeof i === "string" ? (
-              <Option key={i} value={i}>
-                {_.startCase(i)}
-              </Option>
-            ) : (
-              <Option key={i.value} value={i.value}>
-                {i.label}
-              </Option>
-            );
-          })}
-        </Select>
+          options={(vocab || []).map((i) =>
+            typeof i === "string"
+              ? { value: i, label: _.startCase(i) }
+              : { value: i.value, label: i.label }
+          )}
+        />
       </FormItem>
     );
   };

@@ -23,7 +23,6 @@ import config from "../../../config";
 const DOWNLOADS_URL = config.gbifTaxReview; //"https://download.checklistbank.org/taxreview/";
 
 const { Search } = Input;
-const { Option } = Select;
 
 const verbatimPrefix = "verbatim_";
 const currentPrefix = "current_";
@@ -458,13 +457,8 @@ class Root extends React.Component {
                     defaultValue={this.state.searchCol}
                     style={{ width: "25%" }}
                     onChange={(value) => this.handleSearch(this.state.q, value)}
-                  >
-                    {tableColumns.map((x) => (
-                      <Option value={x} key={x}>
-                        {x}
-                      </Option>
-                    ))}
-                  </Select>
+                    options={tableColumns.map((x) => ({ value: x, label: x }))}
+                  />
                   <Search
                     style={{ width: "70%" }}
                     placeholder="Search names"

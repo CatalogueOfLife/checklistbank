@@ -642,13 +642,11 @@ class SourceMetrics extends React.Component {
                   onChange={(value) =>
                     this.selectGroup(value, additionalColumns)
                   }
-                >
-                  {Object.keys(groups).map((k) => (
-                    <Select.Option key={k} value={k}>
-                      {_.startCase(k)}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  options={Object.keys(groups).map((k) => ({
+                    value: k,
+                    label: _.startCase(k),
+                  }))}
+                />
               </Form.Item>
             </Col>
             <Col md={12} sm={24}>

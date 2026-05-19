@@ -16,7 +16,6 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
 
-const Option = Select.Option;
 const FormItem = Form.Item;
 const Step = Steps.Step;
 
@@ -271,22 +270,15 @@ const EditTaxonModal = (props) => {
               form.setFieldsValue({ rank: value });
             }}
             showSearch
-          >
-            {rank.map((r) => (
-              <Option key={r} value={r}>
-                {r}
-              </Option>
-            ))}
-          </Select>
+            options={rank.map((r) => ({ value: r, label: r }))}
+          />
         </FormItem>
         <FormItem {...formItemLayout} label="Nom. status" name="nomstatus">
-          <Select style={{ width: 200 }} showSearch>
-            {nomstatus.map((r) => (
-              <Option key={r.name} value={r.name}>
-                {r.name}
-              </Option>
-            ))}
-          </Select>
+          <Select
+            style={{ width: 200 }}
+            showSearch
+            options={nomstatus.map((r) => ({ value: r.name, label: r.name }))}
+          />
         </FormItem>
         <FormItem
           {...formItemLayout}
@@ -299,13 +291,11 @@ const EditTaxonModal = (props) => {
             },
           ]}
         >
-          <Select style={{ width: 200 }} showSearch>
-            {nametype.map((r) => (
-              <Option key={r} value={r}>
-                {r}
-              </Option>
-            ))}
-          </Select>
+          <Select
+            style={{ width: 200 }}
+            showSearch
+            options={nametype.map((r) => ({ value: r, label: r }))}
+          />
         </FormItem>
       </Form>
 

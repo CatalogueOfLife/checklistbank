@@ -24,7 +24,6 @@ import config from "../../config";
 
 const { Step } = Steps;
 
-const Option = Select.Option;
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
@@ -279,81 +278,70 @@ const DecisionForm = (props) => {
               />
             </FormItem>
             <FormItem {...formItemLayout} label="Rank" name="rank">
-              <Select style={{ width: 200 }} showSearch>
-                <Option key="_null" value={""}>
-                  -
-                </Option>
-                {rank.map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                options={[
+                  { value: "", label: "-" },
+                  ...rank.map((r) => ({ value: r, label: r })),
+                ]}
+              />
             </FormItem>
             <FormItem
               {...formItemLayout}
               label="Taxonomic Status"
               name="status"
             >
-              <Select style={{ width: 200 }} showSearch>
-                <Option key="_null" value={""}>
-                  -
-                </Option>
-                {taxonomicstatus.map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                options={[
+                  { value: "", label: "-" },
+                  ...taxonomicstatus.map((r) => ({ value: r, label: r })),
+                ]}
+              />
             </FormItem>
             <FormItem {...formItemLayout} label="Name type" name="nametype">
-              <Select style={{ width: 200 }} showSearch>
-                <Option key="_null" value={""}>
-                  -
-                </Option>
-                {nametype.map((r) => (
-                  <Option key={r} value={r}>
-                    {r}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                options={[
+                  { value: "", label: "-" },
+                  ...nametype.map((r) => ({ value: r, label: r })),
+                ]}
+              />
             </FormItem>
             <FormItem {...formItemLayout} label="Nomenclatural Status" name="nomstatus">
-              <Select style={{ width: 200 }} showSearch>
-                <Option key="_null" value={""}>
-                  -
-                </Option>
-                {nomstatus.map((r) => (
-                  <Option key={r.name} value={r.name}>
-                    {r.name}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                options={[
+                  { value: "", label: "-" },
+                  ...nomstatus.map((r) => ({ value: r.name, label: r.name })),
+                ]}
+              />
             </FormItem>
             <FormItem {...formItemLayout} label="Nomenclatural Code" name="nomCode">
-              <Select style={{ width: 200 }} showSearch>
-                <Option key="_null" value={""}>
-                  -
-                </Option>
-                {nomCode.map((r) => (
-                  <Option key={r.name} value={r.name}>
-                    {r.name}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                options={[
+                  { value: "", label: "-" },
+                  ...nomCode.map((r) => ({ value: r.name, label: r.name })),
+                ]}
+              />
             </FormItem>
             <FormItem
               {...formItemLayout}
               label="Environments"
               name="environments"
             >
-              <Select style={{ width: 200 }} showSearch mode="multiple">
-                {environment.map((r) => (
-                  <Option key={r.name} value={r.name}>
-                    {r.name}
-                  </Option>
-                ))}
-              </Select>
+              <Select
+                style={{ width: 200 }}
+                showSearch
+                mode="multiple"
+                options={environment.map((r) => ({ value: r.name, label: r.name }))}
+              />
             </FormItem>
             <FormItem
               {...formItemLayout}

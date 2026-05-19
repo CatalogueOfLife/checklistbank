@@ -7,8 +7,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Button, Select, Modal, message } from "antd";
 import axios from "axios";
 
-const { Option } = Select;
-
 class DatasetExport extends React.Component {
   constructor(props) {
     super(props);
@@ -54,13 +52,8 @@ class DatasetExport extends React.Component {
           style={{ width: 80 }}
           value={selectedDataFormat}
           onChange={(val) => this.setState({ selectedDataFormat: val })}
-        >
-          {dataFormat.map((f) => (
-            <Option key={f.name} value={f.name}>
-              {f.name}
-            </Option>
-          ))}
-        </Select>
+          options={dataFormat.map((f) => ({ value: f.name, label: f.name }))}
+        />
         <Modal
           title="Your download will be available at this link"
           open={downloadModalVisible}

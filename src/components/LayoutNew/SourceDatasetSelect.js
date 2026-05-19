@@ -11,8 +11,7 @@ import { truncate } from "../../components/util";
 import DatasetAutocomplete from "../../pages/project/Assembly/DatasetAutocomplete";
 
 import axios from "axios";
-const { Option } = Select;
-/* 
+/*
 function truncate(str, n){
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
 }; */

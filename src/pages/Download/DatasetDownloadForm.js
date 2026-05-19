@@ -33,7 +33,6 @@ import withContext from "../../components/hoc/withContext";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import qs from "query-string";
 const { Text } = Typography;
-const Option = Select.Option;
 
 class DatasetDownload extends React.Component {
   constructor(props) {
@@ -331,13 +330,8 @@ class DatasetDownload extends React.Component {
               showSearch
               allowClear
               onChange={(val) => this.setState({ excludeRanksBelow: val })}
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={rank.map((r) => ({ value: r, label: r }))}
+            />
           </Col>
         </Row>
 

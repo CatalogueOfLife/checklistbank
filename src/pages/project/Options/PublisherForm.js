@@ -21,7 +21,6 @@ import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 const FormItem = Form.Item;
 
-const { Option } = Select;
 const { TextArea } = Input;
 
 const formItemLayout = {

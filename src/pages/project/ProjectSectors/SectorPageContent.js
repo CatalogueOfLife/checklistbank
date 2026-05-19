@@ -38,7 +38,6 @@ import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 // import SectorForm from "../Assembly/SectorForm";
 const { Text } = Typography;
 const FormItem = Form.Item;
-const { Option } = Select;
 const { Search } = Input;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
@@ -496,13 +495,8 @@ class ProjectSectors extends React.Component {
               showSearch
               allowClear
               onChange={(value) => this.updateSearch({ rank: value })}
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={rank.map((r) => ({ value: r, label: r }))}
+            />
           </FormItem>
           <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
             <Select
@@ -513,13 +507,8 @@ class ProjectSectors extends React.Component {
               showSearch
               allowClear
               onChange={(value) => this.updateSearch({ mode: value })}
-            >
-              {["attach", "union", "merge", "hierarchy"].map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={["attach", "union", "merge", "hierarchy"].map((r) => ({ value: r, label: r }))}
+            />
           </FormItem>
           <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
             <DatePicker
@@ -539,13 +528,8 @@ class ProjectSectors extends React.Component {
                 showSearch
                 allowClear
                 onChange={(value) => this.updateSearch({ publisherKey: value })}
-              >
-                {this.state.publishers.map((p) => (
-                  <Option key={p?.id} value={p?.id}>
-                    {p?.alias}
-                  </Option>
-                ))}
-              </Select>
+                options={this.state.publishers.map((p) => ({ value: p?.id, label: p?.alias }))}
+              />
             </FormItem>
           )}          
         </Row>

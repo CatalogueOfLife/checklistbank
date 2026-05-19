@@ -11,7 +11,6 @@ import axios from "axios";
 import config from "../../../config";
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 const SpeciesestimateModal = (props) => {
   const [visible, setVisible] = useState(true);
@@ -169,13 +168,10 @@ const SpeciesestimateModal = (props) => {
               },
             ]}
           >
-            <Select showSearch>
-              {estimateType.map((o) => (
-                <Option key={o} value={o}>
-                  {o}
-                </Option>
-              ))}
-            </Select>
+            <Select
+              showSearch
+              options={estimateType.map((o) => ({ value: o, label: o }))}
+            />
           </FormItem>
 
           <FormItem {...formItemLayout} label="Reference" name="reference">

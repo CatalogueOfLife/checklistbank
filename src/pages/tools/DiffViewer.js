@@ -31,8 +31,6 @@ import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 
-const { Option } = Select;
-
 const DiffViewer = ({ location, addError, rank }) => {
   const [html, setHTML] = useState(null);
   const [diff, setDiff] = useState(null);
@@ -211,16 +209,11 @@ const DiffViewer = ({ location, addError, rank }) => {
               showSearch
               disabled={!showParent}
               style={{ width: '140px' }}
-            >
-              <Option key="" value="">
-                Direct parent
-              </Option>
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={[
+                { value: "", label: "Direct parent" },
+                ...rank.map((r) => ({ value: r, label: r })),
+              ]}
+            />
           </Col>
 
           <Col style={{ marginLeft: "12px" }}>
@@ -231,14 +224,8 @@ const DiffViewer = ({ location, addError, rank }) => {
               allowClear
               showSearch
               style={{ width: '200px' }}
-
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={rank.map((r) => ({ value: r, label: r }))}
+            />
           </Col>
 
           <Col style={{ marginLeft: "12px" }}>
@@ -249,13 +236,8 @@ const DiffViewer = ({ location, addError, rank }) => {
               allowClear
               showSearch
               style={{ width: '200px' }}
-            >
-              {rank.map((r) => (
-                <Option key={r} value={r}>
-                  {r}
-                </Option>
-              ))}
-            </Select>
+              options={rank.map((r) => ({ value: r, label: r }))}
+            />
           </Col>
 
           <Col style={{ marginLeft: "12px" }}>

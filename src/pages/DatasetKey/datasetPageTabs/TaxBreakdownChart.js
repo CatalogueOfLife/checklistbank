@@ -7,7 +7,6 @@ import * as d3 from "d3";
 import config from "../../../config";
 import { AppContext } from "../../../components/hoc/ContextProvider";
 
-const { Option } = Select;
 const { Text } = Typography;
 
 const RANK_OPTIONS = [
@@ -375,13 +374,8 @@ const TaxBreakdownChart = ({ datasetKey, onClose }) => {
             onChange={setRank}
             size="small"
             style={{ width: 100 }}
-          >
-            {RANK_OPTIONS.map((r) => (
-              <Option key={r.label} value={r.value}>
-                {r.label}
-              </Option>
-            ))}
-          </Select>
+            options={RANK_OPTIONS}
+          />
           <Space size={4}>
             <Switch
               size="small"

@@ -11,7 +11,6 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { getRegEx } from "../../api/regex";
 import MultiValueFilter from "../NameSearch/MultiValueFilter";
 
-const { Option } = Select;
 const { Search } = Input;
 
 
@@ -98,14 +97,16 @@ const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, 
                 onChange={(val) => getData(val)}
                 placeholder="Select regex"
                 allowClear
-              >
-                {options.map((o) => (
-                  <Option value={o.value}>
-                    <div style={{ fontWeight: "bold" }}>{o.value}</div>
-                    <Typography.Text disabled>{o.description}</Typography.Text>
-                  </Option>
-                ))}
-              </Select>
+                options={options.map((o) => ({
+                  value: o.value,
+                  label: (
+                    <>
+                      <div style={{ fontWeight: "bold" }}>{o.value}</div>
+                      <Typography.Text disabled>{o.description}</Typography.Text>
+                    </>
+                  ),
+                }))}
+              />
             </Form.Item>
             
 
