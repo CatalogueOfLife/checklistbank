@@ -8,7 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App as AntdApp } from "antd";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
 import { installNavigator } from "./history";
@@ -141,6 +141,7 @@ const ProviderRoutes = () => (
 const App = () => {
   return (
     <ConfigProvider theme={antdTheme}>
+      <AntdApp>
       <ContextProvider>
         <Helmet>
           <meta charSet="utf-8" />
@@ -422,6 +423,7 @@ const App = () => {
           <ProviderRoutes />
         </BrowserRouter>
       </ContextProvider>
+      </AntdApp>
     </ConfigProvider>
   );
 };
