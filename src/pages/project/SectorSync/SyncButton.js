@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { WarningOutlined } from '@ant-design/icons';
 import { Button, Popover, notification } from "antd";
 import axios from "axios";
@@ -8,19 +8,12 @@ import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash"
 
-class SyncButton extends React.Component {
-  constructor(props) {
-    super(props);
+const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, style, size }) => {
+  const [importTriggered, setImportTriggered] = useState(false);
+  const [error, setError] = useState(null);
 
-    this.state = {
-      importTriggered: false,
-      error: null
-    };
-  }
-
-  startSync = () => {
-    const {record, addError} = this.props;  
-    this.setState({ importTriggered: true });
+  const startSync = () => {
+    setImportTriggered(true);
     axios
       .post(
         `${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/sync`,
@@ -30,75 +23,72 @@ class SyncButton extends React.Component {
         }
       )
       .then(res => {
-        this.setState({ importTriggered: false });
+        setImportTriggered(false);
         notification.open({
           title: "Sync started",
           message: `Now syncyning sector ${ _.get(record, 'sector.id')}`
         })
-        if(this.props.onStartSyncSuccess && typeof this.props.onStartSyncSuccess === 'function'){
-          this.props.onStartSyncSuccess();
+        if(onStartSyncSuccess && typeof onStartSyncSuccess === 'function'){
+          onStartSyncSuccess();
         }
       })
       .catch(err => {
         addError(err)
-        this.setState({ importTriggered: false, error: err });
+        setImportTriggered(false);
+        setError(err);
       });
   };
 
-  stopSync = () => {
-    const {record, addError} = this.props;  
-    this.setState({ importTriggered: true });
+  const stopSync = () => {
+    setImportTriggered(true);
     axios
       .delete(`${config.dataApi}dataset/${_.get(record, 'sector.datasetKey')}/sector/${_.get(record, 'sector.id')}/sync`)
       .then(res => {
-        this.setState({ importTriggered: false });
+        setImportTriggered(false);
         notification.open({
           message: 'Sync canceled'
           //title: 'Sync canceled'
         })
-        
-        if(this.props.onDeleteSuccess && typeof this.props.onDeleteSuccess === 'function'){
-          this.props.onDeleteSuccess();
+
+        if(onDeleteSuccess && typeof onDeleteSuccess === 'function'){
+          onDeleteSuccess();
         }
-        
+
       })
       .catch(err => {
         addError(err)
-        this.setState({ importTriggered: false, error: err });
+        setImportTriggered(false);
+        setError(err);
       });
   };
 
-  render = () => {
-    const { error } = this.state;
-    const { record } = this.props;
-    const isStopButton = record.state && ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
-    
-    return (
-      <div style={this.props.style || {}}>
-        <Button
-          size={this.props.size || 'default'}
-          type={isStopButton ? 'danger' : 'primary'}
-          loading={this.state.importTriggered}
-          onClick={isStopButton ? this.stopSync : this.startSync}
+  const isStopButton = record.state && ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
+
+  return (
+    <div style={style || {}}>
+      <Button
+        size={size || 'default'}
+        type={isStopButton ? 'danger' : 'primary'}
+        loading={importTriggered}
+        onClick={isStopButton ? stopSync : startSync}
+      >
+        {!isStopButton && 'Sync'}
+        {isStopButton && record.state !== 'in queue' &&  'Stop sync'}
+        {isStopButton && record.state === 'in queue' &&  'Remove'}
+      </Button>
+      {error && (
+        <Popover
+          placement="bottom"
+          title="Error"
+          content={<ErrorMsg error={error} />}
+          trigger="click"
         >
-          {!isStopButton && 'Sync'}
-          {isStopButton && record.state !== 'in queue' &&  'Stop sync'}
-          {isStopButton && record.state === 'in queue' &&  'Remove'}
-        </Button>
-        {error && (
-          <Popover
-            placement="bottom"
-            title="Error"
-            content={<ErrorMsg error={error} />}
-            trigger="click"
-          >
-            <WarningOutlined style={{ color: "red", marginLeft: "10px", cursor: "pointer" }} />
-          </Popover>
-        )}
-      </div>
-    );
-  };
-}
+          <WarningOutlined style={{ color: "red", marginLeft: "10px", cursor: "pointer" }} />
+        </Popover>
+      )}
+    </div>
+  );
+};
 
 const mapContextToProps = ({ addError }) => ({
   addError
