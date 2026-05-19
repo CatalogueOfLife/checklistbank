@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState, useRef } from "react";
 import withRouter from "../../../withRouter";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
@@ -62,7 +62,7 @@ const getColumns = (projectKey) => [
 
     render: (text, record) => {
       return (
-        <React.Fragment>
+        <>
           {_.get(record, "sector.subject") && (
             <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
               {_.get(record, "sector.subject.rank")}:{" "}
@@ -86,7 +86,7 @@ const getColumns = (projectKey) => [
           {_.get(record, "sector.subject.broken") && (
             <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
-        </React.Fragment>
+        </>
       );
     },
   },
@@ -98,7 +98,7 @@ const getColumns = (projectKey) => [
 
     render: (text, record) => {
       return (
-        <React.Fragment>
+        <>
           {_.get(record, "sector.target.rank") && (
             <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
               {_.get(record, "sector.target.rank")}:{" "}
@@ -119,12 +119,12 @@ const getColumns = (projectKey) => [
             </NavLink>
           )}
           {_.get(record, "sector.target.broken") && (
-            <React.Fragment>
+            <>
               {_.get(record, "sector.target.name")}
               <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
-            </React.Fragment>
+            </>
           )}
-        </React.Fragment>
+        </>
       );
     },
   },
@@ -230,74 +230,32 @@ const getColumns = (projectKey) => [
   }
 ];
 
-class SyncTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      syncAllError: null,
-      data: [],
-      params: {},
-      pagination: {
-        pageSize: PAGE_SIZE,
-        current: 1,
-      },
-      loading: false,
-    };
-  }
+const SyncTable = ({ location, match, user, sectorImportState, importState }) => {
+  const [syncAllError, setSyncAllError] = useState(null);
+  const [data, setData] = useState([]);
+  const [params, setParams] = useState({});
+  const [pagination, setPagination] = useState({
+    pageSize: PAGE_SIZE,
+    current: 1,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
-    let query = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(query)) {
-      query = { limit: 25, offset: 0 };
-    }
+  const projectKey = _.get(match, "params.projectKey");
+  const locationSearch = _.get(location, "search");
+  const locationDatasetKey = _.get(qs.parse(locationSearch), "datasetKey");
+  const didMountRef = useRef(false);
 
-    this.setState(
-      {
-        pagination: {
-          pageSize: query.limit || PAGE_SIZE,
-          current:
-            Number(query.offset || 0) / Number(query.limit || PAGE_SIZE) + 1,
-        },
-      },
-      () => this.getData(query)
-    );
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const params = qs.parse(_.get(this.props, "location.search"));
-    const prevParams = qs.parse(_.get(prevProps, "location.search"));
-
-    if (
-      _.get(prevProps, "match.params.projectKey") !==
-        _.get(this.props, "match.params.projectKey") ||
-      _.get(prevParams, "datasetKey") !== _.get(params, "datasetKey")
-    ) {
-      this.setState(
-        {
-          pagination: {
-            pageSize: PAGE_SIZE,
-            current: 1,
-          },
-        },
-        () => this.getData({ ...params, limit: 25, offset: 0 })
-      );
-    }
-  };
-
-  getData = (params) => {
-    this.setState({ loading: true, params });
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
+  const getData = (queryParams) => {
+    setLoading(true);
+    setParams(queryParams);
     history.push({
       pathname: `/project/${projectKey}/sector/sync`,
-      search: `?${qs.stringify(params)}`,
+      search: `?${qs.stringify(queryParams)}`,
     });
     axios(
       `${config.dataApi}dataset/${projectKey}/sector/sync?${qs.stringify(
-        params
+        queryParams
       )}`
     )
       .then((res) => {
@@ -325,30 +283,49 @@ class SyncTable extends React.Component {
         return Promise.all(promises).then(() => res);
       })
       .then((res) => {
-        const pagination = { ...this.state.pagination };
-        pagination.total = res.data.total;
-
-        this.setState({
-          loading: false,
-          data: res.data.result,
-          err: null,
-          pagination,
-        });
+        setPagination((prev) => ({ ...prev, total: res.data.total }));
+        setLoading(false);
+        setData(res.data.result);
+        setError(null);
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        setLoading(false);
+        setError(err);
+        setData([]);
       });
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    pager.current = pagination.current;
-
-    this.setState({
-      pagination: pager,
+  useEffect(() => {
+    let query = qs.parse(locationSearch);
+    if (_.isEmpty(query)) {
+      query = { limit: 25, offset: 0 };
+    }
+    setPagination({
+      pageSize: query.limit || PAGE_SIZE,
+      current:
+        Number(query.offset || 0) / Number(query.limit || PAGE_SIZE) + 1,
     });
+    getData(query);
+    didMountRef.current = true;
+  }, []);
 
-    let query = _.merge(this.state.params, {
+  useEffect(() => {
+    if (!didMountRef.current) return;
+    const currentParams = qs.parse(locationSearch);
+    setPagination({
+      pageSize: PAGE_SIZE,
+      current: 1,
+    });
+    getData({ ...currentParams, limit: 25, offset: 0 });
+  }, [projectKey, locationDatasetKey]);
+
+  const handleTableChange = (newPagination, filters, sorter) => {
+    const pager = { ...pagination, ...newPagination };
+    pager.current = newPagination.current;
+
+    setPagination(pager);
+
+    let query = _.merge(params, {
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
@@ -356,240 +333,230 @@ class SyncTable extends React.Component {
     if (filters.state && _.get(filters, "state.length")) {
       query.state = filters.state;
     } else {
-      query.state = this.props.importState;
+      query.state = importState;
     }
 
-    this.getData(query);
+    getData(query);
   };
-  updateSearch = (params) => {
-    let newParams = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      ...params,
+
+  const updateSearch = (newParams) => {
+    let updatedParams = {
+      ...qs.parse(_.get(location, "search")),
+      ...newParams,
       offset: 0,
     };
-    Object.keys(params).forEach((param) => {
-      if (!params[param]) {
-        delete newParams[param];
+    Object.keys(newParams).forEach((param) => {
+      if (!newParams[param]) {
+        delete updatedParams[param];
       }
     });
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(newParams),
+      pathname: _.get(location, "pathname"),
+      search: qs.stringify(updatedParams),
     });
   };
-  onSelectDataset = (dataset) => {
-    this.updateSearch({ datasetKey: dataset.key });
+
+  const onSelectDataset = (dataset) => {
+    updateSearch({ datasetKey: dataset.key });
   };
 
-  render() {
-    const {
-      data,
-      error,
-      syncAllError,
-      params: { sectorKey, datasetKey },
-    } = this.state;
-    const { user, sectorImportState } = this.props;
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
-    const columns = Auth.canEditDataset({ key: projectKey }, user)
-      ? [
-          ...getColumns(projectKey),
-          {
-            title: "Action",
-            dataIndex: "",
-            key: "x",
-            width: 50,
-            render: (record) =>
-              record.job === "SectorSync" ? (
-                <SyncButton
-                  size="small"
-                  key={record.datasetKey}
-                  record={record}
-                />
-              ) : (
-                ""
-              ),
-          },
-        ]
-      : getColumns(projectKey);
+  const { sectorKey, datasetKey } = params;
 
-    columns[5].filters = sectorImportState.map((i) => ({
-      text: _.startCase(i),
-      value: i,
-    }));
-
-    return (
-      <>
-        {error && <Alert title={error.message} type="error" />}
-        {syncAllError && (
-          <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
-        )}
-        <Row>
-          {!sectorKey && Auth.canEditDataset({ key: projectKey }, user) && (
-            <Col>
-              {" "}
-              <SyncAllSectorsButton
-                projectKey={projectKey}
-                onError={(err) => this.setState({ syncAllError: err })}
-                onSuccess={() => this.setState({ syncAllError: null })}
+  const columns = Auth.canEditDataset({ key: projectKey }, user)
+    ? [
+        ...getColumns(projectKey),
+        {
+          title: "Action",
+          dataIndex: "",
+          key: "x",
+          width: 50,
+          render: (record) =>
+            record.job === "SectorSync" ? (
+              <SyncButton
+                size="small"
+                key={record.datasetKey}
+                record={record}
               />
-            </Col>
-          )}
-          {sectorKey && (
-            <Col>
-              <h1>Syncs for sector {sectorKey}</h1>{" "}
-              <a onClick={() => this.getData({ limit: 25, offset: 0 })}>
-                {" "}
-                Show syncs for all sectors
-              </a>
-            </Col>
-          )}
-          <Col flex="auto"></Col>
+            ) : (
+              ""
+            ),
+        },
+      ]
+    : getColumns(projectKey);
+
+  columns[5].filters = sectorImportState.map((i) => ({
+    text: _.startCase(i),
+    value: i,
+  }));
+
+  return (
+    <>
+      {error && <Alert title={error.message} type="error" />}
+      {syncAllError && (
+        <Alert description={<ErrorMsg error={syncAllError} />} type="error" />
+      )}
+      <Row>
+        {!sectorKey && Auth.canEditDataset({ key: projectKey }, user) && (
           <Col>
-            <DatasetAutocomplete
-              defaultDatasetKey={datasetKey}
-              contributesTo={projectKey}
-              onResetSearch={() => this.updateSearch({ datasetKey: null })}
-              onSelectDataset={this.onSelectDataset}
-              placeHolder="Source dataset"
+            {" "}
+            <SyncAllSectorsButton
+              projectKey={projectKey}
+              onError={(err) => setSyncAllError(err)}
+              onSuccess={() => setSyncAllError(null)}
             />
           </Col>
-        </Row>
+        )}
+        {sectorKey && (
+          <Col>
+            <h1>Syncs for sector {sectorKey}</h1>{" "}
+            <a onClick={() => getData({ limit: 25, offset: 0 })}>
+              {" "}
+              Show syncs for all sectors
+            </a>
+          </Col>
+        )}
+        <Col flex="auto"></Col>
+        <Col>
+          <DatasetAutocomplete
+            defaultDatasetKey={datasetKey}
+            contributesTo={projectKey}
+            onResetSearch={() => updateSearch({ datasetKey: null })}
+            onSelectDataset={onSelectDataset}
+            placeHolder="Source dataset"
+          />
+        </Col>
+      </Row>
 
-        {!error && (
-          <Table
-            scroll={{ x: 1000 }}
-            size="small"
-            loading={this.state.loading}
-            columns={columns}
-            dataSource={data}
-            pagination={this.state.pagination}
-            onChange={this.handleTableChange}
-            rowKey="_id"
-            expandable={{
-              rowExpandable: (record) =>
-                ["failed", "finished"].includes(record.state),
-              expandedRowRender: (record) => {
-                if (record.state === "failed") {
-                  return <Alert title={record.error} type="error" />;
-                } else if (record.state === "finished") {
-                  return (
-                    <>
-                      {Object.keys(record)
-                        .filter(
-                          (k) =>
-                            typeof record[k] === "object" &&
-                            !["sector"].includes(k)
-                        )
-                        .map((k) => (
-                          <Row style={{ marginBottom: "10px" }}>
-                            <Col span={4}>{_.startCase(k)}: </Col>
-                            <Col>
-                              {Object.keys(record[k]).map((c) =>
-                                !isNaN(_.get(record, `[${k}]${c}`)) ? (
-                                  <Tag
-                                    key={c}
-                                    color="blue"
-                                    style={{ marginBottom: "10px" }}
-                                  >
-                                    {_.startCase(c)}:{" "}
-                                    {_.get(record, `[${k}]${c}`)}
-                                  </Tag>
-                                ) : (
-                                  ""
-                                )
-                              )}
-                            </Col>
-                          </Row>
-                        ))}
-                      <Row>
-                        <Col span={4}>Other: </Col>
-                        <Col span={20}>
-                          {Object.keys(record)
-                            .filter(
-                              (r) =>
-                                ![
-                                  "datasetKey",
-                                  "attempt",
-                                  "createdBy",
-                                  "started",
-                                  "finished",
-                                  "datasetAttempt",
-                                ].includes(r)
-                            )
-                            .map((c) =>
-                              !isNaN(_.get(record, `${c}`)) ? (
+      {!error && (
+        <Table
+          scroll={{ x: 1000 }}
+          size="small"
+          loading={loading}
+          columns={columns}
+          dataSource={data}
+          pagination={pagination}
+          onChange={handleTableChange}
+          rowKey="_id"
+          expandable={{
+            rowExpandable: (record) =>
+              ["failed", "finished"].includes(record.state),
+            expandedRowRender: (record) => {
+              if (record.state === "failed") {
+                return <Alert title={record.error} type="error" />;
+              } else if (record.state === "finished") {
+                return (
+                  <>
+                    {Object.keys(record)
+                      .filter(
+                        (k) =>
+                          typeof record[k] === "object" &&
+                          !["sector"].includes(k)
+                      )
+                      .map((k) => (
+                        <Row style={{ marginBottom: "10px" }}>
+                          <Col span={4}>{_.startCase(k)}: </Col>
+                          <Col>
+                            {Object.keys(record[k]).map((c) =>
+                              !isNaN(_.get(record, `[${k}]${c}`)) ? (
                                 <Tag
                                   key={c}
                                   color="blue"
                                   style={{ marginBottom: "10px" }}
                                 >
-                                  {_.startCase(c)}: {_.get(record, `${c}`)}
+                                  {_.startCase(c)}:{" "}
+                                  {_.get(record, `[${k}]${c}`)}
                                 </Tag>
                               ) : (
                                 ""
                               )
                             )}
-                        </Col>
-                      </Row>
+                          </Col>
+                        </Row>
+                      ))}
+                    <Row>
+                      <Col span={4}>Other: </Col>
+                      <Col span={20}>
+                        {Object.keys(record)
+                          .filter(
+                            (r) =>
+                              ![
+                                "datasetKey",
+                                "attempt",
+                                "createdBy",
+                                "started",
+                                "finished",
+                                "datasetAttempt",
+                              ].includes(r)
+                          )
+                          .map((c) =>
+                            !isNaN(_.get(record, `${c}`)) ? (
+                              <Tag
+                                key={c}
+                                color="blue"
+                                style={{ marginBottom: "10px" }}
+                              >
+                                {_.startCase(c)}: {_.get(record, `${c}`)}
+                              </Tag>
+                            ) : (
+                              ""
+                            )
+                          )}
+                      </Col>
+                    </Row>
 
-                      {record?.warnings?.length > 0 && (
-                        <Alert
-                          style={{ marginTop: "10px" }}
-                          title={
-                            <ul>
-                              {record?.warnings.map((w) => (
-                                <li>{w}</li>
-                              ))}
-                            </ul>
-                          }
-                          type="error"
-                        />
-                      )}
-                    </>
-                  );
-                }
-              },
-            }}
-            /*  expandedRowRender={(record) => {
-             if (record.state === "failed") {
-               return <Alert message={record.error} type="error" />;
-             } else if (record.state === "finished") {
-               return (
-                 <React.Fragment>
-                   <Tag key="speciesCount" color="blue">
-                     Species Count: {_.get(record, `taxaByRankCount.species`)}
-                   </Tag>
-                   {[
-                     "taxonCount",
-                     "synonymCount",
-                     "referenceCount",
-                     "distributionCount",
-                     "descriptionCount",
-                     "vernacularCount",
-                     "mediaCount",
-                   ].map((c) =>
-                     !isNaN(_.get(record, `${c}`)) ? (
-                       <Tag key={c} color="blue">
-                         {_.startCase(c)}: {_.get(record, `${c}`)}
-                       </Tag>
-                     ) : (
-                       ""
-                     )
-                   )}
-                 </React.Fragment>
-               );
-             } else return null;
-           }} */
-          />
-        )}
-      </>
-    );
-  }
-}
+                    {record?.warnings?.length > 0 && (
+                      <Alert
+                        style={{ marginTop: "10px" }}
+                        title={
+                          <ul>
+                            {record?.warnings.map((w) => (
+                              <li>{w}</li>
+                            ))}
+                          </ul>
+                        }
+                        type="error"
+                      />
+                    )}
+                  </>
+                );
+              }
+            },
+          }}
+          /*  expandedRowRender={(record) => {
+           if (record.state === "failed") {
+             return <Alert message={record.error} type="error" />;
+           } else if (record.state === "finished") {
+             return (
+               <React.Fragment>
+                 <Tag key="speciesCount" color="blue">
+                   Species Count: {_.get(record, `taxaByRankCount.species`)}
+                 </Tag>
+                 {[
+                   "taxonCount",
+                   "synonymCount",
+                   "referenceCount",
+                   "distributionCount",
+                   "descriptionCount",
+                   "vernacularCount",
+                   "mediaCount",
+                 ].map((c) =>
+                   !isNaN(_.get(record, `${c}`)) ? (
+                     <Tag key={c} color="blue">
+                       {_.startCase(c)}: {_.get(record, `${c}`)}
+                     </Tag>
+                   ) : (
+                     ""
+                   )
+                 )}
+               </React.Fragment>
+             );
+           } else return null;
+         }} */
+        />
+      )}
+    </>
+  );
+};
 
 const mapContextToProps = ({ user, sectorImportState, projectKey }) => ({
   user,
