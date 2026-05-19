@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Popover, Spin } from "antd";
 import { getDatasetsBatch } from "../../../api/dataset";
@@ -6,105 +6,95 @@ import DataLoader from "dataloader";
 import _ from 'lodash'
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
-class TaxonSources extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      showInNode: false,
-      loading: false,
-    };
-  }
+const TaxonSources = ({ datasetSectors, taxon, releaseKey }) => {
+  const [data, setData] = useState([]);
+  const [showInNode, setShowInNode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [popOverVisible, setPopOverVisible] = useState(false);
 
-  componentDidMount = () => {
-    const { datasetSectors } = this.props;
-
-    if (Object.keys(datasetSectors).length < 4) {
-      this.setState({ showInNode: true }, this.getData);
-    }
-  };
-
-  getData = () => {
-    this.setState({ loading: true });
-    const { datasetSectors } = this.props;
+  const getData = () => {
+    setLoading(true);
     const promises = Object.keys(datasetSectors).map((s) =>
       datasetLoader.load(s).then((dataset) => dataset)
     );
 
-    Promise.all(promises).then((data) => {
-      this.setState({ data:_.sortBy(data, ['alias']), loading: false });
+    Promise.all(promises).then((result) => {
+      setData(_.sortBy(result, ['alias']));
+      setLoading(false);
     });
   };
 
-  render = () => {
-    const { data, showInNode, popOverVisible, loading } = this.state;
-    const { taxon, releaseKey } = this.props;
+  useEffect(() => {
+    if (Object.keys(datasetSectors).length < 4) {
+      setShowInNode(true);
+      getData();
+    }
+  }, []);
 
-    return showInNode ? (
-      <React.Fragment>
-        {data.map((d, index) => (
-          <span key={index} style={{ fontSize: "11px" }}>
-            <NavLink
-              to={{
-                pathname: releaseKey
-                  ? `/dataset/${releaseKey}/source/${d.key}`
-                  : `/dataset/${d.key}/metadata`,
-              }}
-              end
-            >
-              {(index ? ", " : "") + (d.alias || d.key)}
-            </NavLink>
-          </span>
-        ))}
-      </React.Fragment>
-    ) : (
-      <React.Fragment>
-        <Popover
-          content={
-            loading ? (
-              <Spin />
-            ) : (
-              <div style={{ maxWidth: "400px" }}>
-                <span>Source databases: </span>
-                {data.map((d, index) => (
-                  <span style={{ fontSize: "11px" }}>
-                    <NavLink
-                      to={{
-                        pathname: releaseKey
-                          ? `/dataset/${releaseKey}/source/${d.key}`
-                          : `/dataset/${d.key}/metadata`,
-                      }}
-                      end
-                    >
-                      {(index ? ", " : "") + (d.alias || d.key)}
-                    </NavLink>
-                  </span>
-                ))}
-              </div>
-            )
-          }
-          title={<span dangerouslySetInnerHTML={{ __html: taxon.name }} />}
-          open={popOverVisible}
-          onOpenChange={() =>
-            this.setState({ popOverVisible: !popOverVisible })
-          }
-          trigger="click"
-          placement="rightTop"
-        >
-          <a
-            style={{ fontSize: "11px" }}
-            href=""
-            onClick={() => {
-              this.getData();
-              this.setState({ popOverVisible: !popOverVisible });
+  return showInNode ? (
+    <>
+      {data.map((d, index) => (
+        <span key={index} style={{ fontSize: "11px" }}>
+          <NavLink
+            to={{
+              pathname: releaseKey
+                ? `/dataset/${releaseKey}/source/${d.key}`
+                : `/dataset/${d.key}/metadata`,
             }}
+            end
           >
-            Multiple providers
-          </a>
-        </Popover>
-      </React.Fragment>
-    );
-  };
-}
+            {(index ? ", " : "") + (d.alias || d.key)}
+          </NavLink>
+        </span>
+      ))}
+    </>
+  ) : (
+    <>
+      <Popover
+        content={
+          loading ? (
+            <Spin />
+          ) : (
+            <div style={{ maxWidth: "400px" }}>
+              <span>Source databases: </span>
+              {data.map((d, index) => (
+                <span style={{ fontSize: "11px" }}>
+                  <NavLink
+                    to={{
+                      pathname: releaseKey
+                        ? `/dataset/${releaseKey}/source/${d.key}`
+                        : `/dataset/${d.key}/metadata`,
+                    }}
+                    end
+                  >
+                    {(index ? ", " : "") + (d.alias || d.key)}
+                  </NavLink>
+                </span>
+              ))}
+            </div>
+          )
+        }
+        title={<span dangerouslySetInnerHTML={{ __html: taxon.name }} />}
+        open={popOverVisible}
+        onOpenChange={() =>
+          setPopOverVisible(!popOverVisible)
+        }
+        trigger="click"
+        placement="rightTop"
+      >
+        <a
+          style={{ fontSize: "11px" }}
+          href=""
+          onClick={() => {
+            getData();
+            setPopOverVisible(!popOverVisible);
+          }}
+        >
+          Multiple providers
+        </a>
+      </Popover>
+    </>
+  );
+};
 
 export default TaxonSources;
