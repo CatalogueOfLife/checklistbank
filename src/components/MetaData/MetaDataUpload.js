@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import axios from "axios";
 import config from "../../config";
 
@@ -8,57 +8,42 @@ import { UploadOutlined } from "@ant-design/icons";
 
 // const { confirm } = Modal;
 
-class MetadataUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.customRequest = this.customRequest.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.state = {
-      confirmPromise: null,
-      visible: false,
-      submissionError: null,
-      fileList: [],
-    };
-  }
+const MetadataUpload = ({ datasetKey, onSuccess, onError, style }) => {
+  const [submissionError, setSubmissionError] = useState(null);
+  const [fileList, setFileList] = useState([]);
 
-  customRequest = (options) => {
-    const config = {
+  const customRequest = (options) => {
+    const reqConfig = {
       headers: {
         "content-type": options.file.type,
       },
     };
     if (
-      !config.headers["content-type"] &&
+      !reqConfig.headers["content-type"] &&
       (options.file.name.endsWith(".yaml") ||
         options.file.name.endsWith(".yml"))
     ) {
-      config.headers["content-type"] = "text/yaml";
+      reqConfig.headers["content-type"] = "text/yaml";
     }
-    if (!config.headers["content-type"] && options.file.name.endsWith(".xml")) {
-      config.headers["content-type"] = "text/xml";
+    if (!reqConfig.headers["content-type"] && options.file.name.endsWith(".xml")) {
+      reqConfig.headers["content-type"] = "text/xml";
     }
     return axios
-      .put(options.action, options.file, config)
+      .put(options.action, options.file, reqConfig)
       .then((res) => {
         options.onSuccess(res.data, options.file);
-        this.setState({
-          submissionError: null,
-          confirmPromise: null,
-          fileList: [],
-        });
+        setSubmissionError(null);
+        setFileList([]);
       })
       .catch((err) => {
         options.onError(err);
-        this.setState({
-          submissionError: err,
-          confirmPromise: null,
-          fileList: [],
-        });
+        setSubmissionError(err);
+        setFileList([]);
         console.log(err);
       });
   };
 
-  onChange(info) {
+  const onChange = (info) => {
     if (info.file.status !== "uploading") {
       console.log(info.file, info.fileList);
     }
@@ -67,45 +52,41 @@ class MetadataUpload extends React.Component {
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
-    this.setState({ fileList: !info.file.status ? [] : [info.file] });
-  }
+    setFileList(!info.file.status ? [] : [info.file]);
+  };
 
-  confirmUpload = (file) => {
+  const confirmUpload = (file) => {
     return window.confirm(
       `ALL METADATA WILL BE REPLACED WITH CONTENT OF ${file.name}, PROCEED?`
     );
   };
 
-  render() {
-    const { datasetKey, onSuccess, onError, style } = this.props;
-    const { submissionError, fileList } = this.state;
-    return (
-      <div className="clearfix" style={style}>
-        {submissionError && (
-          <Alert
-            style={{ marginBottom: "8px" }}
-            closable={{ onClose: () => this.setState({ submissionError: null }) }}
-            description={<ErrorMsg error={submissionError} />}
-            type="error"
-          />
-        )}
+  return (
+    <div className="clearfix" style={style}>
+      {submissionError && (
+        <Alert
+          style={{ marginBottom: "8px" }}
+          closable={{ onClose: () => setSubmissionError(null) }}
+          description={<ErrorMsg error={submissionError} />}
+          type="error"
+        />
+      )}
 
-        <Upload
-          action={`${config.dataApi}dataset/${datasetKey}`}
-          customRequest={this.customRequest}
-          onSuccess={onSuccess}
-          onError={onError}
-          onChange={this.onChange}
-          fileList={fileList}
-          beforeUpload={this.confirmUpload}
-        >
-          <Button>
-            <UploadOutlined /> Upload Metadata file
-          </Button>
-        </Upload>
-      </div>
-    );
-  }
-}
+      <Upload
+        action={`${config.dataApi}dataset/${datasetKey}`}
+        customRequest={customRequest}
+        onSuccess={onSuccess}
+        onError={onError}
+        onChange={onChange}
+        fileList={fileList}
+        beforeUpload={confirmUpload}
+      >
+        <Button>
+          <UploadOutlined /> Upload Metadata file
+        </Button>
+      </Upload>
+    </div>
+  );
+};
 
 export default MetadataUpload;
