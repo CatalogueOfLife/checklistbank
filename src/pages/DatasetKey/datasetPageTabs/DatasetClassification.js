@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 import _ from "lodash";
 import history from "../../../history";
 import { Alert, Row, Col, Switch } from "antd";
@@ -10,86 +10,81 @@ import queryString from "query-string";
 import withContext from "../../../components/hoc/withContext";
 import NameAutocomplete from "../../project/Assembly/NameAutocomplete";
 
-class DatasetClassification extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null, insertPlaceholder: false };
-  }
+const DatasetClassification = ({ dataset, location }) => {
+  const [error, setError] = useState(null);
+  const [insertPlaceholder, setInsertPlaceholder] = useState(false);
+  const treeRef = useRef(null);
 
-  render() {
-    const { dataset, location } = this.props;
-    const { error, insertPlaceholder } = this.state;
-    const params = queryString.parse(this.props.location.search);
+  const params = queryString.parse(location.search);
 
-    return (
-      <PageContent>
-        {error && (
-          <Alert
-            closable={{ onClose: () => this.setState({ error: null }) }}
-            style={{ marginBottom: "8px" }}
-            description={<ErrorMsg error={error} />}
-            type="error"
+  return (
+    <PageContent>
+      {error && (
+        <Alert
+          closable={{ onClose: () => setError(null) }}
+          style={{ marginBottom: "8px" }}
+          description={<ErrorMsg error={error} />}
+          type="error"
+        />
+      )}
+      {dataset && (
+        <Row><Col span={12}>
+        <NameAutocomplete
+          datasetKey={dataset.key}
+          defaultTaxonKey={_.get(params, "taxonKey") || null}
+          onError={(error) => setError(error)}
+          onSelectName={(name) => {
+            history.push({
+              pathname: location.pathname,
+              search: `?${queryString.stringify({
+                taxonKey: _.get(name, "key"),
+              })}`,
+            });
+            treeRef.current.reloadRoot();
+          }}
+          onResetSearch={() => {
+            history.push({
+              pathname: location.pathname,
+            });
+          }}
+        />
+        </Col>
+        <Col flex="auto"></Col>
+        <Col>
+              <Switch
+                onChange={(checked) =>
+                  setInsertPlaceholder(checked)
+                }
+                checkedChildren={"Show placeholder ranks"}
+                unCheckedChildren={"Show placeholder ranks"}
+              />
+            </Col></Row>
+
+      )}
+      {dataset && (
+        <ColTreeContext.Provider
+          value={{
+            mode: "readOnly",
+            toggleMode: () => {},
+            missingTargetKeys: {},
+            selectedSourceDatasetKey: dataset.key,
+          }}
+        >
+          <ColTree
+            treeRef={(ref) => (treeRef.current = ref)}
+            dataset={dataset}
+            treeType="readOnly"
+            projectKey={dataset.key}
+            defaultExpandKey={params.taxonKey}
+            location={location}
+            insertPlaceholder={insertPlaceholder}
+
           />
-        )}
-        {dataset && (
-          <Row><Col span={12}>
-          <NameAutocomplete
-            datasetKey={dataset.key}
-            defaultTaxonKey={_.get(params, "taxonKey") || null}
-            onError={(error) => this.setState({ error })}
-            onSelectName={(name) => {
-              history.push({
-                pathname: location.pathname,
-                search: `?${queryString.stringify({
-                  taxonKey: _.get(name, "key"),
-                })}`,
-              });
-              this.treeRef.reloadRoot();
-            }}
-            onResetSearch={() => {
-              history.push({
-                pathname: location.pathname,
-              });
-            }}
-          />
-          </Col>
-          <Col flex="auto"></Col>
-          <Col>
-                <Switch
-                  onChange={(checked) =>
-                    this.setState({ insertPlaceholder: checked })
-                  }
-                  checkedChildren={"Show placeholder ranks"}
-                  unCheckedChildren={"Show placeholder ranks"}
-                />
-              </Col></Row>
-          
-        )}
-        {dataset && (
-          <ColTreeContext.Provider
-            value={{
-              mode: "readOnly",
-              toggleMode: () => {},
-              missingTargetKeys: {},
-              selectedSourceDatasetKey: dataset.key,
-            }}
-          >
-            <ColTree
-              treeRef={(ref) => (this.treeRef = ref)}
-              dataset={dataset}
-              treeType="readOnly"
-              projectKey={dataset.key}
-              defaultExpandKey={params.taxonKey}
-              location={location}
-              insertPlaceholder={insertPlaceholder}
-
-            />
-          </ColTreeContext.Provider>
-        )}
-      </PageContent>
-    );
-  }
-}
+        </ColTreeContext.Provider>
+      )}
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ user, projectKey }) => ({ user, projectKey });
 export default withContext(mapContextToProps)(DatasetClassification);
