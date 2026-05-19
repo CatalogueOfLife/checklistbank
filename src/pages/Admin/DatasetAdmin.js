@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { Table, Alert, Row, Col, Button, notification } from "antd";
@@ -22,176 +22,29 @@ const getWarningHighlightedNumber = (a, b) => {
   } else return <span style={{ color: "#ff4d4f" }}>{numA}</span>;
 };
 
-class DatasetList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      columns: [
-        {
-          title: "Key",
-          dataIndex: "key",
-          width: 100,
-          key: "key",
-        },
-        {
-          title: "Alias",
-          dataIndex: "alias",
-          width: 200,
-          key: "alias",
-          render: (text, record) => {
-            return (
-              <NavLink
-                to={{ pathname: `/dataset/${record.key}/names` }}
-                end
-              >
-                {text}
-              </NavLink>
-            );
-          },
-          // sorter: true
-        },
-        {
-          title: "Title",
-          dataIndex: "title",
-          key: "title",
-          render: (text, record) => {
-            return (
-              <NavLink
-                to={{ pathname: `/dataset/${record.key}/names` }}
-                end
-              >
-                {text}
-              </NavLink>
-            );
-          },
-          sorter: true,
-        },
-        {
-          title: "Origin",
-          dataIndex: "origin",
-          width: 100,
-          key: "origin",
-        },
+const DatasetList = ({ datasetOrigin, location }) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [params, setParams] = useState({});
+  const [pagination, setPagination] = useState({
+    pageSize: PAGE_SIZE,
+    showSizeChanger: false,
+    current: 1,
+    showQuickJumper: true,
+  });
 
-        {
-          title: "Size",
-          dataIndex: "size",
-          key: "size",
-          width: 100,
-          sorter: true,
-          render: (text, record) =>
-            record.origin !== "project"
-              ? getWarningHighlightedNumber(record.size, record.nameUsageTotal)
-              : record.size,
-        },
-        {
-          title: "Indexed",
-          dataIndex: "nameUsageTotal",
-          key: "nameUsageTotal",
-          width: 100,
-          sorter: false,
-          render: (text, record) =>
-            record.origin !== "project"
-              ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
-              : record.nameUsageTotal,
-        },
-        {
-          title: "Matched",
-          dataIndex: "matchesCount",
-          key: "matchesCount",
-          width: 100,
-          sorter: false,
-        },
-        {
-          title: "Action",
-          dataIndex: "",
-          width: 350,
-          key: "__actions__",
-          render: (text, record) => (
-            <React.Fragment>
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => this.reindexDataset(record.key)}
-              >
-                Reindex
-              </Button>&nbsp;
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => this.rematchDataset(record.key)}
-              >
-                Rematch
-              </Button>&nbsp;
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => this.buildMatcher(record.key)}
-              >
-                BuildMatcher
-              </Button>&nbsp;
-              {!["xrelease", "release", "project"].includes(record.origin) && (
-                <Button
-                  type="primary"
-                  size="small"
-                  onClick={() => this.reimportDataset(record.key)}
-                  style={{ marginTop: "6px" }}
-                >
-                  Reimport
-                </Button>
-              )}
-            </React.Fragment>
-          ),
-        },
-      ],
-      search: _.get(this.props, "location.search.q") || "",
-      params: {},
-      pagination: {
-        pageSize: PAGE_SIZE,
-        showSizeChanger: false,
-        current: 1,
-        showQuickJumper: true,
-      },
-
-      loading: false,
-    };
-  }
-
-  componentDidMount() {
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: PAGE_SIZE, offset: 0 };
-      history.push({
-        pathname: "/admin/datasets",
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
-    }
-
-    this.setState(
-      {
-        params,
-        pagination: {
-          pageSize: params.limit,
-          current: Number(params.offset) / Number(params.limit) + 1,
-        },
-      },
-      this.getData
-    );
-  }
-
-  getData = () => {
-    const { params } = this.state;
-
-    this.setState({ loading: true });
-    if (!params.q) {
-      delete params.q;
+  const getData = (currentParams) => {
+    const p = currentParams !== undefined ? currentParams : params;
+    setLoading(true);
+    if (!p.q) {
+      delete p.q;
     }
     history.push({
       pathname: "/admin/datasets",
-      search: `?${qs.stringify(params)}`,
+      search: `?${qs.stringify(p)}`,
     });
-    axios(`${config.dataApi}dataset?${qs.stringify(params)}`)
+    axios(`${config.dataApi}dataset?${qs.stringify(p)}`)
       .then((res) => {
         return Promise.allSettled(
           !res.data.result
@@ -213,42 +66,55 @@ class DatasetList extends React.Component {
         ).then(() => res);
       })
       .then((res) => {
-        const pagination = { ...this.state.pagination };
-        pagination.total = res.data.total;
-
-        this.setState({
-          loading: false,
-          data: res.data.result,
-          err: null,
-          pagination,
-        });
+        setPagination((prev) => ({ ...prev, total: res.data.total }));
+        setLoading(false);
+        setData(res.data.result);
+        setError(null);
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        setLoading(false);
+        setError(err);
+        setData([]);
       });
   };
 
-  updateSearch = (params) => {
-    let newParams = { ...this.state.params, offset: 0, limit: 50 };
-    _.forEach(params, (v, k) => {
+  useEffect(() => {
+    let initialParams = qs.parse(_.get({ location }, "location.search"));
+    if (_.isEmpty(initialParams)) {
+      initialParams = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: "/admin/datasets",
+        search: `?limit=${PAGE_SIZE}&offset=0`,
+      });
+    }
+    setParams(initialParams);
+    setPagination((prev) => ({
+      ...prev,
+      pageSize: initialParams.limit,
+      current: Number(initialParams.offset) / Number(initialParams.limit) + 1,
+    }));
+    getData(initialParams);
+  }, []);
+
+  const updateSearch = (newSearchParams) => {
+    let newParams = { ...params, offset: 0, limit: 50 };
+    _.forEach(newSearchParams, (v, k) => {
       if (typeof v !== "undefined" && v !== null) {
         newParams[k] = v;
       } else {
         delete newParams[k];
       }
     });
-    this.setState({ params: newParams }, this.getData);
+    setParams(newParams);
+    getData(newParams);
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    // pager.current = pagination.current;
+  const handleTableChange = (newPagination, filters, sorter) => {
+    const pager = { ...pagination, ...newPagination };
+    setPagination(pager);
 
-    this.setState({
-      pagination: pager,
-    });
     let query = {
-      ...this.state.params,
+      ...params,
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
@@ -270,116 +136,228 @@ class DatasetList extends React.Component {
         delete query[k];
       }
     });
-    this.setState({ params: query }, this.getData);
+    setParams(query);
+    getData(query);
   };
 
-  reindexDataset = (datasetKey) => {
+  const reindexDataset = (datasetKey) => {
     axios
       .post(`${config.dataApi}admin/reindex?datasetKey=${datasetKey}`)
       .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Indexing started",
-            description: `Dataset ${datasetKey} is being reindexed`,
-          });
+        setError(null);
+        notification.open({
+          message: "Indexing started",
+          description: `Dataset ${datasetKey} is being reindexed`,
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  rematchDataset = (datasetKey) => {
+  const rematchDataset = (datasetKey) => {
     axios
       .post(
         `${config.dataApi}admin/rematch?missingOnly=true&datasetKey=${datasetKey}`
       )
       .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Rematching started",
-            description: `Dataset ${datasetKey} is being rematched`,
-          });
+        setError(null);
+        notification.open({
+          message: "Rematching started",
+          description: `Dataset ${datasetKey} is being rematched`,
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  reimportDataset = (datasetKey) => {
+  const reimportDataset = (datasetKey) => {
     axios
       .post(`${config.dataApi}importer/${datasetKey}/reimport`)
       .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Reimport started",
-            description: `Dataset ${datasetKey} is being reimported from last archive`,
-          });
+        setError(null);
+        notification.open({
+          message: "Reimport started",
+          description: `Dataset ${datasetKey} is being reimported from last archive`,
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  buildMatcher = (datasetKey) => {
+  const buildMatcher = (datasetKey) => {
     axios
       .post(`${config.dataApi}matcher/${datasetKey}`)
       .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Matcher job scheduled",
-            description: `Matcher job building dataset ${datasetKey} scheduled.`,
-          });
+        setError(null);
+        notification.open({
+          message: "Matcher job scheduled",
+          description: `Matcher job building dataset ${datasetKey} scheduled.`,
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  render() {
-    const { data, loading, error, columns } = this.state;
-    const { datasetOrigin } = this.props;
-    columns[3].filters = datasetOrigin.map((i) => ({
-      text: _.startCase(i),
-      value: i,
-    }));
+  const columns = [
+    {
+      title: "Key",
+      dataIndex: "key",
+      width: 100,
+      key: "key",
+    },
+    {
+      title: "Alias",
+      dataIndex: "alias",
+      width: 200,
+      key: "alias",
+      render: (text, record) => {
+        return (
+          <NavLink
+            to={{ pathname: `/dataset/${record.key}/names` }}
+            end
+          >
+            {text}
+          </NavLink>
+        );
+      },
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => {
+        return (
+          <NavLink
+            to={{ pathname: `/dataset/${record.key}/names` }}
+            end
+          >
+            {text}
+          </NavLink>
+        );
+      },
+      sorter: true,
+    },
+    {
+      title: "Origin",
+      dataIndex: "origin",
+      width: 100,
+      key: "origin",
+      filters: datasetOrigin
+        ? datasetOrigin.map((i) => ({
+            text: _.startCase(i),
+            value: i,
+          }))
+        : [],
+    },
 
-    return (
-      <Layout
-        openKeys={["admin"]}
-        selectedKeys={["adminDatasets"]}
-        title="Dataset Admin"
-      >
-        <div
-          style={{
-            background: "#fff",
-            padding: 24,
-            minHeight: 280,
-            margin: "16px 0",
-          }}
-        >
-          <div>
-            <Row style={{ marginBottom: "10px" }}>
-              <Col md={12} sm={24}>
-                <SearchBox
-                  defaultValue={_.get(this.state, "params.q")}
-                  style={{ marginBottom: "10px", width: "50%" }}
-                  onSearch={(value) => this.updateSearch({ q: value })}
-                />
-              </Col>
-            </Row>
-            {error && <Alert title={error.message} type="error" />}
-          </div>
-          {!error && (
-            <Table
-              size="middle"
-              columns={columns}
-              dataSource={data}
-              loading={loading}
-              pagination={this.state.pagination}
-              onChange={this.handleTableChange}
-            />
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+      width: 100,
+      sorter: true,
+      render: (text, record) =>
+        record.origin !== "project"
+          ? getWarningHighlightedNumber(record.size, record.nameUsageTotal)
+          : record.size,
+    },
+    {
+      title: "Indexed",
+      dataIndex: "nameUsageTotal",
+      key: "nameUsageTotal",
+      width: 100,
+      sorter: false,
+      render: (text, record) =>
+        record.origin !== "project"
+          ? getWarningHighlightedNumber(record.nameUsageTotal, record.size)
+          : record.nameUsageTotal,
+    },
+    {
+      title: "Matched",
+      dataIndex: "matchesCount",
+      key: "matchesCount",
+      width: 100,
+      sorter: false,
+    },
+    {
+      title: "Action",
+      dataIndex: "",
+      width: 350,
+      key: "__actions__",
+      render: (text, record) => (
+        <>
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => reindexDataset(record.key)}
+          >
+            Reindex
+          </Button>&nbsp;
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => rematchDataset(record.key)}
+          >
+            Rematch
+          </Button>&nbsp;
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => buildMatcher(record.key)}
+          >
+            BuildMatcher
+          </Button>&nbsp;
+          {!["xrelease", "release", "project"].includes(record.origin) && (
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => reimportDataset(record.key)}
+              style={{ marginTop: "6px" }}
+            >
+              Reimport
+            </Button>
           )}
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <Layout
+      openKeys={["admin"]}
+      selectedKeys={["adminDatasets"]}
+      title="Dataset Admin"
+    >
+      <div
+        style={{
+          background: "#fff",
+          padding: 24,
+          minHeight: 280,
+          margin: "16px 0",
+        }}
+      >
+        <div>
+          <Row style={{ marginBottom: "10px" }}>
+            <Col md={12} sm={24}>
+              <SearchBox
+                defaultValue={params.q}
+                style={{ marginBottom: "10px", width: "50%" }}
+                onSearch={(value) => updateSearch({ q: value })}
+              />
+            </Col>
+          </Row>
+          {error && <Alert title={error.message} type="error" />}
         </div>
-      </Layout>
-    );
-  }
-}
+        {!error && (
+          <Table
+            size="middle"
+            columns={columns}
+            dataSource={data}
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+          />
+        )}
+      </div>
+    </Layout>
+  );
+};
 
 const mapContextToProps = ({ user, datasetOrigin }) => ({
   user,
