@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import Help from './Help';
 import styles from './PresentationGroupHeader.module.css';
 
@@ -18,11 +16,6 @@ const PresentationGroupHeader = ({ title, helpText }) => {
       <Help title={helpText} />
     </h3>
   );
-};
-
-PresentationGroupHeader.propTypes = {
-  title: PropTypes.string.isRequired,
-  helpText: PropTypes.object,
 };
 
 export default PresentationGroupHeader;

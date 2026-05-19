@@ -1,6 +1,5 @@
 import React, { createElement } from "react";
 import { Button } from "antd";
-import PropTypes from "prop-types";
 
 // Config
 import config from "./config";
@@ -64,15 +63,5 @@ class Exception extends React.PureComponent {
     );
   }
 }
-
-Exception.propTypes = {
-  type: PropTypes.string.isRequired,
-  title: PropTypes.string,
-  desc: PropTypes.string,
-  img: PropTypes.string,
-  linkElement: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  backText: PropTypes.string,
-  redirect: PropTypes.string,
-};
 
 export default Exception;

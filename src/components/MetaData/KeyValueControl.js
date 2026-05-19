@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Input, Tag, Tooltip } from "antd";
 import styles from "../newTag.module.css";
@@ -144,12 +143,5 @@ class KeyValueControl extends React.Component {
     );
   }
 }
-
-KeyValueControl.propTypes = {
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired, // text label
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]), // value passed from form field decorator
-  onChange: PropTypes.func.isRequired, // callback to been called on any data change
-  removeAll: PropTypes.bool, // optional flag, to allow remove all tags or not
-};
 
 export default KeyValueControl;
