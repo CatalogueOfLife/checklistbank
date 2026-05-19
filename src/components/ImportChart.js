@@ -6,10 +6,8 @@ import _ from "lodash";
 import history from "../history";
 import qs from "query-string";
 import { BarChartOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import { Button, Card, Space } from "antd";
 import withContext from "./hoc/withContext";
-
-const ButtonGroup = Button.Group;
 
 const ImportChart = (props) => {
   const { location, datasetKey, data: chartDataProp, title, subtitle, defaultType, nameSearchParam, verbatim, additionalParams, simple = false } = props;
@@ -197,7 +195,7 @@ const ImportChart = (props) => {
   return (
     simple ? <HighchartsReact highcharts={Highcharts} options={options} /> : <Card>
 
-      <ButtonGroup size="small">
+      <Space.Compact size="small">
         <Button
           type={!logarithmic ? "primary" : ""}
           onClick={() => {
@@ -214,8 +212,8 @@ const ImportChart = (props) => {
         >
           Logarithmic
         </Button>
-      </ButtonGroup>
-      <ButtonGroup size="small" style={{ float: "right" }}>
+      </Space.Compact>
+      <Space.Compact size="small" style={{ float: "right" }}>
         <Button
           type={chartType === "pie" ? "primary" : ""}
           icon={<PieChartOutlined />}
@@ -230,7 +228,7 @@ const ImportChart = (props) => {
             toggleChartType("column");
           }}
         />
-      </ButtonGroup>
+      </Space.Compact>
 
       {chartType === "pie" && (
         <HighchartsReact highcharts={Highcharts} options={options} />
