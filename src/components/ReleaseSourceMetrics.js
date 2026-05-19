@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import config from "../config";
 import axios from "axios";
 import { Skeleton } from "antd";
@@ -14,8 +14,8 @@ const getExtinctTaxa = (metrics, rank) =>
 
 const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
   metrics && rank ? (
-    <React.Fragment>
-      <React.Fragment>
+    <>
+      <>
         <PresentationItem label={`Living species`}>
           {dataset && pathToSearch ? (
             <NavLink
@@ -44,7 +44,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
             getExtinctTaxa(metrics, "species").toLocaleString("en-GB")
           )}
         </PresentationItem>
-      </React.Fragment>
+      </>
       {metrics.taxaByRankCount &&
         Object.keys(metrics.taxaByRankCount)
           .filter((r) => rank.indexOf(r) < rank.indexOf("species"))
@@ -96,50 +96,37 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
           (metrics.nameCount || 0).toLocaleString("en-GB")
         )}
       </PresentationItem>
-    </React.Fragment>
+    </>
   ) : (
     <PresentationItem label="">
       <Skeleton active paragraph={{ rows: 4 }} />
     </PresentationItem>
   );
 
-class Metrics extends React.Component {
-  constructor(props) {
-    super(props);
+const Metrics = ({ dataset, projectKey, pathToSearch }) => {
+  const [metrics, setMetrics] = useState(null);
+  const [rank, setRank] = useState(null);
 
-    this.state = {
-      metrics: null,
-      rank: null,
-      loading: true,
-    };
-  }
-
-  componentDidMount() {
-    this.getData();
-    this.getRank();
-  }
-
-  getData = () => {
-    const { dataset, projectKey } = this.props;
+  useEffect(() => {
     axios(
       `${config.dataApi}dataset/${projectKey}/source/${dataset?.key}/metrics`
     ).then((res) => {
-      this.setState({ metrics: res.data });
+      setMetrics(res.data);
     });
-  };
 
-  getRank = () => {
     axios(`${config.dataApi}vocab/rank`).then((res) =>
-      this.setState({ rank: res.data.map((r) => r.name) })
+      setRank(res.data.map((r) => r.name))
     );
-  };
-  render = () => (
+  }, []);
+
+  return (
     <MetricsPresentation
-      {...this.state}
-      dataset={this.props.dataset}
-      pathToSearch={this.props.pathToSearch}
+      metrics={metrics}
+      rank={rank}
+      dataset={dataset}
+      pathToSearch={pathToSearch}
     />
   );
-}
+};
 
 export default Metrics;
