@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
   CopyOutlined,
@@ -34,85 +34,70 @@ import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import qs from "query-string";
 const { Text } = Typography;
 
-class DatasetDownload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      selectedDataFormat: "ColDP",
-      exportUrl: null,
-      downloadModalVisible: false,
-      rootTaxon: null,
-      synonyms: false,
-      bareNames: false,
-      extinct: null,
-      classification: false,
-      extended: false,
-      dataAccess: null,
-      minRank: "GENUS",
-      excludeRanksBelow: null,
-    };
-  }
+const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }) => {
+  const [error, setError] = useState(null);
+  const [selectedDataFormat, setSelectedDataFormat] = useState("ColDP");
+  const [exportUrl, setExportUrl] = useState(null);
+  const [downloadModalVisible, setDownloadModalVisible] = useState(false);
+  const [rootTaxon, setRootTaxon] = useState(null);
+  const [synonyms, setSynonyms] = useState(false);
+  const [bareNames, setBareNames] = useState(false);
+  const [extinct, setExtinct] = useState(null);
+  const [classification, setClassification] = useState(false);
+  const [extended, setExtended] = useState(false);
+  const [dataAccess, setDataAccess] = useState(null);
+  const [minRank, setMinRank] = useState("GENUS");
+  const [excludeRanksBelow, setExcludeRanksBelow] = useState(null);
 
-  componentDidMount = () => {
-    const { location, dataset } = this.props;
+  useEffect(() => {
     if (dataset) {
-      this.getSettings();
+      getSettings();
     }
-
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
     if (taxonID && dataset) {
-      this.getRootTaxon(taxonID);
+      getRootTaxon(taxonID);
     }
-  };
-  componentDidUpdate = (prevProps) => {
-    if (prevProps?.dataset?.key !== this.props?.dataset?.key) {
-      this.getSettings();
-    }
-    const taxonID = _.get(
-      qs.parse(_.get(this.props.location, "search")),
-      "taxonID"
-    );
-    if (taxonID && prevProps?.dataset?.key !== this.props?.dataset?.key) {
-      this.getRootTaxon(taxonID);
-    }
-  };
-  getSettings = () => {
-    const {
-      dataset: { key },
-    } = this.props;
+  }, []);
 
-    this.setState({ loading: true });
+  useEffect(() => {
+    if (dataset?.key) {
+      getSettings();
+      const taxonID = _.get(
+        qs.parse(_.get(location, "search")),
+        "taxonID"
+      );
+      if (taxonID) {
+        getRootTaxon(taxonID);
+      }
+    }
+  }, [dataset?.key]);
+
+  const getSettings = () => {
+    const key = dataset?.key;
     axios(`${config.dataApi}dataset/${key}/settings`)
       .then((res) => {
-        this.setState({ dataAccess: _.get(res, 'data["data access"]') });
+        setDataAccess(_.get(res, 'data["data access"]'));
       })
       .catch((err) => {
         console.log(err);
-        //this.setState({ loading: false, error: err, data: null });
       });
   };
 
-  exportDataset = (options) => {
-    const { dataset, addError } = this.props;
+  const exportDataset = (options) => {
     axios
       .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
       .then((res) => {
         const uuid = res.data;
-        this.setState({
-          error: null,
-          exportUrl: `${config.dataApi}export/${uuid}`,
-          /* downloadModalVisible: true, */
-        });
+        setError(null);
+        setExportUrl(`${config.dataApi}export/${uuid}`);
         history.push({
-          pathname: `/download/${uuid}`, //"/user-profile/downloads"
+          pathname: `/download/${uuid}`,
         });
       })
       .catch((err) => addError(err));
   };
 
-  createCitation = () => {
-    const { dataset } = this.props;
+  const createCitation = () => {
     const authors = _.get(dataset, "authors", [])
       .map((a) => a.name)
       .join(", ");
@@ -121,9 +106,7 @@ class DatasetDownload extends React.Component {
     )}`;
   };
 
-  getRootTaxon = (key) => {
-    const { dataset, addError } = this.props;
-
+  const getRootTaxon = (key) => {
     axios
       .get(
         `${config.dataApi}dataset/${dataset?.key}/taxon/${encodeURIComponent(
@@ -131,308 +114,285 @@ class DatasetDownload extends React.Component {
         )}`
       )
       .then(({ data: rootTaxon }) => {
-        this.setState({ rootTaxon });
+        setRootTaxon(rootTaxon);
       })
       .catch((err) => addError(err));
   };
-  render() {
-    const {
-      error,
-      rootTaxon,
-      synonyms,
-      bareNames,
-      extinct,
-      classification,
-      excludeRanksBelow,
-      dataAccess,
-      selectedDataFormat,
-      downloadModalVisible,
-      exportUrl,
-      extended,
-    } = this.state;
 
-    const { dataFormat, dataset, location, user, rank } = this.props;
-
-    return (
-      <PageContent>
-        {error && (
-          <Alert description={<ErrorMsg error={error} />} type="error" />
-        )}
-        {dataset?.origin === "external" && (
-          <>
-            <h3>Existing archives generated by the source</h3>
-            <ul>
+  return (
+    <PageContent>
+      {error && (
+        <Alert description={<ErrorMsg error={error} />} type="error" />
+      )}
+      {dataset?.origin === "external" && (
+        <>
+          <h3>Existing archives generated by the source</h3>
+          <ul>
+            <li>
+              <a
+                href={`${config.dataApi}dataset/${dataset?.key}/archive.zip`}
+                target="_blank"
+              >
+                original archive
+              </a>{" "}
+              that was last imported into ChecklistBank.
+            </li>
+            <li>
+              <NavLink
+                to={{
+                  pathname: `/dataset/${dataset?.key}/imports`,
+                  search: "?showHistory=true",
+                }}
+                end
+              >
+                historic archives
+              </NavLink>{" "}
+              that were previously imported into ChecklistBank.
+            </li>
+            {dataAccess && (
               <li>
-                <a
-                  href={`${config.dataApi}dataset/${dataset?.key}/archive.zip`}
-                  target="_blank"
-                >
-                  original archive
+                <a href={dataAccess} target="_blank">
+                  external archive
                 </a>{" "}
-                that was last imported into ChecklistBank.
+                which is being served by the source right now.
               </li>
-              <li>
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${dataset?.key}/imports`,
-                    search: "?showHistory=true",
-                  }}
-                  end
-                >
-                  historic archives
-                </NavLink>{" "}
-                that were previously imported into ChecklistBank.
-              </li>
-              {dataAccess && (
-                <li>
-                  <a href={dataAccess} target="_blank">
-                    external archive
-                  </a>{" "}
-                  which is being served by the source right now.
-                </li>
-              )}
-            </ul>
-            <Divider></Divider>
+            )}
+          </ul>
+          <Divider></Divider>
+        </>
+      )}
+
+      <h3>Generate new download</h3>
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Archive format{" "}
+        <a
+          href="/about/formats#data-formats"
+          target="_blank"
+          style={{ marginLeft: "8px" }}
+        >
+          <InfoCircleOutlined />
+        </a>
+      </Row>
+      <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
+        <Radio.Group
+          options={dataFormat
+            .filter((f) => !["proxy", "acef"].includes(f.name?.toLowerCase()))
+            .map((f) => ({
+              label: (
+                <Tooltip title={f?.title}>
+                  <span>{f.name}</span>
+                </Tooltip>
+              ),
+              value: f.name,
+            }))}
+          value={selectedDataFormat}
+          onChange={(e) => setSelectedDataFormat(e.target.value)}
+          optionType="button"
+        />
+      </Row>
+
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Content{" "}
+        <a
+          href="/about/formats#data-content"
+          target="_blank"
+          style={{ marginLeft: "8px" }}
+        >
+          <InfoCircleOutlined />
+        </a>
+      </Row>
+      <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
+        <Checkbox
+          checked={classification}
+          onChange={(e) => setClassification(e.target.checked)}
+          style={{ marginLeft: "8px" }}
+        >
+          Classification
+        </Checkbox>
+
+        {dataFormat.find(
+          (f) =>
+            f.name.toLowerCase() === selectedDataFormat?.toLowerCase() &&
+            !!f.extendedContent
+        ) && (
+          <Checkbox
+            checked={extended}
+            onChange={(e) => setExtended(e.target.checked)}
+            style={{ marginLeft: "8px" }}
+          >
+            Extended
+          </Checkbox>
+        )}
+      </Row>
+
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Filter by higher taxon:&nbsp;
+        {rootTaxon && (
+          <>
+            <Tag
+              closable
+              onClose={() => {
+                history.push({
+                  pathname: location.pathname,
+                });
+                setRootTaxon(null);
+              }}
+            >
+              <span
+                dangerouslySetInnerHTML={{ __html: rootTaxon.labelHtml }}
+              />
+            </Tag>
           </>
         )}
-
-        <h3>Generate new download</h3>
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Archive format{" "}
-          <a
-            href="/about/formats#data-formats"
-            target="_blank"
-            style={{ marginLeft: "8px" }}
-          >
-            <InfoCircleOutlined />
-          </a>
-        </Row>
-        <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
-          <Radio.Group
-            options={dataFormat
-              .filter((f) => !["proxy", "acef"].includes(f.name?.toLowerCase()))
-              .map((f) => ({
-                label: (
-                  <Tooltip title={f?.title}>
-                    <span>{f.name}</span>
-                  </Tooltip>
-                ),
-                value: f.name,
-              }))}
-            value={selectedDataFormat}
-            onChange={(e) =>
-              this.setState({ selectedDataFormat: e.target.value })
+        {!rootTaxon && "no"}
+      </Row>
+      <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
+        <Col span={10}>
+          <NameAutocomplete
+            minRank={minRank}
+            datasetKey={dataset?.key}
+            defaultTaxonKey={
+              _.get(qs.parse(_.get(location, "search")), "taxonID") || null
             }
-            optionType="button"
+            onError={(error) => setError(error)}
+            onSelectName={(name) => {
+              history.push({
+                pathname: location.pathname,
+                search: `?taxonID=${_.get(name, "key")}`,
+              });
+              getRootTaxon(name.key);
+            }}
+            onResetSearch={() => {
+              history.push({
+                pathname: location.pathname,
+              });
+              setRootTaxon(null);
+            }}
           />
-        </Row>
-
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Content{" "}
-          <a
-            href="/about/formats#data-content"
-            target="_blank"
-            style={{ marginLeft: "8px" }}
+          <Text>Minimum rank for search: </Text>
+          <Radio.Group
+            onChange={(e) => setMinRank(e.target.value)}
+            value={minRank}
           >
-            <InfoCircleOutlined />
-          </a>
-        </Row>
-        <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
-          <Checkbox
-            checked={classification}
-            onChange={(e) =>
-              this.setState({ classification: e.target.checked })
-            }
-            style={{ marginLeft: "8px" }}
-          >
-            Classification
-          </Checkbox>
+            <Radio value={"FAMILY"}>Family</Radio>
+            <Radio value={"GENUS"}>Genus</Radio>
+            <Radio value={"SPECIES"}>Species</Radio>
+          </Radio.Group>
+        </Col>
+      </Row>
 
-          {dataFormat.find(
-            (f) =>
-              f.name.toLowerCase() === selectedDataFormat?.toLowerCase() &&
-              !!f.extendedContent
-          ) && (
-            <Checkbox
-              checked={extended}
-              onChange={(e) => this.setState({ extended: e.target.checked })}
-              style={{ marginLeft: "8px" }}
-            >
-              Extended
-            </Checkbox>
-          )}
-        </Row>
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Exclude ranks below
+      </Row>
+      <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
+        <Col>
+          <Select
+            style={{ width: 200 }}
+            showSearch
+            allowClear
+            onChange={(val) => setExcludeRanksBelow(val)}
+            options={rank.map((r) => ({ value: r, label: r }))}
+          />
+        </Col>
+      </Row>
 
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Filter by higher taxon:&nbsp;
-          {rootTaxon && (
-            <>
-              <Tag
-                closable
-                onClose={() => {
-                  history.push({
-                    pathname: location.pathname,
-                  });
-                  this.setState({ rootTaxon: null });
-                }}
-              >
-                <span
-                  dangerouslySetInnerHTML={{ __html: rootTaxon.labelHtml }}
-                />
-              </Tag>
-            </>
-          )}
-          {!rootTaxon && "no"}
-        </Row>
-        <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
-          <Col span={10}>
-            <NameAutocomplete
-              minRank={this.state.minRank}
-              datasetKey={dataset?.key}
-              defaultTaxonKey={
-                _.get(qs.parse(_.get(location, "search")), "taxonID") || null
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Exclude synonyms:&nbsp;
+        <Checkbox
+          checked={synonyms}
+          onChange={(e) => setSynonyms(e.target.checked)}
+        ></Checkbox>
+      </Row>
+
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        Extinct only:&nbsp;
+        <Checkbox
+          checked={extinct}
+          onChange={(e) => setExtinct(e.target.checked)}
+        ></Checkbox>
+      </Row>
+
+      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+        {user && (
+          <Button
+            type="primary"
+            onClick={() => {
+              let options = {
+                format: selectedDataFormat,
+                synonyms: !synonyms,
+                bareNames,
+                extended,
+                extinct,
+                classification,
+              };
+              if (classification) {
+                options.taxGroups = true;
               }
-              onError={(error) => this.setState({ error })}
-              onSelectName={(name) => {
-                history.push({
-                  pathname: location.pathname,
-                  search: `?taxonID=${_.get(name, "key")}`,
-                });
-                this.getRootTaxon(name.key);
-                //this.setState({ rootTaxon: name });
-              }}
-              onResetSearch={() => {
-                history.push({
-                  pathname: location.pathname,
-                });
-                this.setState({ rootTaxon: null });
-              }}
-            />
-            <Text>Minimum rank for search: </Text>
-            <Radio.Group
-              onChange={(e) => this.setState({ minRank: e.target.value })}
-              value={this.state.minRank}
-            >
-              <Radio value={"FAMILY"}>Family</Radio>
-              <Radio value={"GENUS"}>Genus</Radio>
-              <Radio value={"SPECIES"}>Species</Radio>
-            </Radio.Group>
-          </Col>
-        </Row>
-
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Exclude ranks below
-        </Row>
-        <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
-          <Col>
-            <Select
-              style={{ width: 200 }}
-              showSearch
-              allowClear
-              onChange={(val) => this.setState({ excludeRanksBelow: val })}
-              options={rank.map((r) => ({ value: r, label: r }))}
-            />
-          </Col>
-        </Row>
-
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Exclude synonyms:&nbsp;
-          <Checkbox
-            checked={synonyms}
-            onChange={(e) => this.setState({ synonyms: e.target.checked })}
-          ></Checkbox>
-        </Row>
-
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          Extinct only:&nbsp;
-          <Checkbox
-            checked={extinct}
-            onChange={(e) => this.setState({ extinct: e.target.checked })}
-          ></Checkbox>
-        </Row>
-
-        <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-          {user && (
-            <Button
-              type="primary"
-              onClick={() => {
-                let options = {
-                  format: selectedDataFormat,
-                  synonyms: !synonyms,
-                  bareNames,
-                  extended,
-                  extinct,
-                  classification,
-                };
-                if (classification) {
-                  options.taxGroups = true;
-                }
-                if (rootTaxon) {
-                  options.root = {};
-                  options.root.id = rootTaxon.id;
-                }
-                if (excludeRanksBelow) {
-                  options.minRank = excludeRanksBelow;
-                }
-                this.exportDataset(options);
-              }}
-            >
-              Download <DownloadOutlined />
-            </Button>
-          )}
-          {!user && `<b>Please login to create downloads!</b>`}
-        </Row>
-
-        <Row style={{ marginTop: "24px" }}>
-          <Col span={24}>
-            <Divider plain>Please cite as:</Divider>
-            <CopyToClipboard
-              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
-                dataset?.citation || this.createCitation()
-              }`}
-              onCopy={() => message.info(`Copied citation to clipboard`)}
-            >
-              <p style={{ textAlign: "center", cursor: "pointer" }}>
-                {rootTaxon && (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: rootTaxon.labelHtml + " in ",
-                    }}
-                  />
-                )}
-                {dataset?.citation ? (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: dataset?.citation,
-                    }}
-                  />
-                ) : (
-                  this.createCitation()
-                )}
-              </p>
-            </CopyToClipboard>
-          </Col>
-        </Row>
-        <Modal
-          title="Your download will be available at this link"
-          open={downloadModalVisible}
-          onCancel={() => this.setState({ downloadModalVisible: false })}
-          footer={null}
-        >
-          <a href={exportUrl}>{exportUrl}</a>{" "}
-          <CopyToClipboard
-            text={exportUrl}
-            onCopy={() => message.info(`Copied "${exportUrl}" to clipboard`)}
+              if (rootTaxon) {
+                options.root = {};
+                options.root.id = rootTaxon.id;
+              }
+              if (excludeRanksBelow) {
+                options.minRank = excludeRanksBelow;
+              }
+              exportDataset(options);
+            }}
           >
-            <Button>
-              <CopyOutlined />
-            </Button>
+            Download <DownloadOutlined />
+          </Button>
+        )}
+        {!user && `<b>Please login to create downloads!</b>`}
+      </Row>
+
+      <Row style={{ marginTop: "24px" }}>
+        <Col span={24}>
+          <Divider plain>Please cite as:</Divider>
+          <CopyToClipboard
+            text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
+              dataset?.citation || createCitation()
+            }`}
+            onCopy={() => message.info(`Copied citation to clipboard`)}
+          >
+            <p style={{ textAlign: "center", cursor: "pointer" }}>
+              {rootTaxon && (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: rootTaxon.labelHtml + " in ",
+                  }}
+                />
+              )}
+              {dataset?.citation ? (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: dataset?.citation,
+                  }}
+                />
+              ) : (
+                createCitation()
+              )}
+            </p>
           </CopyToClipboard>
-        </Modal>
-      </PageContent>
-    );
-  }
-}
+        </Col>
+      </Row>
+      <Modal
+        title="Your download will be available at this link"
+        open={downloadModalVisible}
+        onCancel={() => setDownloadModalVisible(false)}
+        footer={null}
+      >
+        <a href={exportUrl}>{exportUrl}</a>{" "}
+        <CopyToClipboard
+          text={exportUrl}
+          onCopy={() => message.info(`Copied "${exportUrl}" to clipboard`)}
+        >
+          <Button>
+            <CopyOutlined />
+          </Button>
+        </CopyToClipboard>
+      </Modal>
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ rank, dataFormat, addError, user }) => ({
   rank,
