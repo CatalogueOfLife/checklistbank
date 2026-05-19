@@ -7,7 +7,6 @@ import {
   Rate,
   App,
   Form,
-  Tabs,
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
