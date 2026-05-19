@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { LinkOutlined } from "@ant-design/icons";
 import { Table, Alert, Tag, Tooltip } from "antd";
 import axios from "axios";
@@ -75,20 +75,15 @@ const getColumns = ({ issueMap, projectKey }) => {
   ];
 };
 
-class DatasetIssues extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { data: null };
-  }
+const DatasetIssues = (props) => {
+  const { datasetKey, issue, issueMap } = props;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedGroups, setSelectedGroups] = useState(null);
 
-  componentDidMount() {
-    this.getData();
-  }
-
-  getData = () => {
-    const { datasetKey } = this.props;
-
-    this.setState({ loading: true });
+  const getData = () => {
+    setLoading(true);
     axios(
       `${config.dataApi}dataset/${datasetKey}/import?limit=3&state=finished`
     )
@@ -98,17 +93,25 @@ class DatasetIssues extends React.Component {
           tableData.push({
             title: k,
             count: v,
-            datasetKey: this.props.datasetKey,
+            datasetKey: datasetKey,
           });
         });
-        this.setState({ loading: false, data: tableData, err: null });
+        setLoading(false);
+        setData(tableData);
+        setError(null);
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: {} });
+        setLoading(false);
+        setError(err);
+        setData({});
       });
   };
 
-  updateSelectedGroups = (groups) => {
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const updateSelectedGroups = (groups) => {
     if (groups && groups.length > 0) {
       localStorage.setItem(
         "col_plus_selected_issue_groups",
@@ -117,64 +120,60 @@ class DatasetIssues extends React.Component {
     } else if (groups && groups.length === 0) {
       localStorage.removeItem("col_plus_selected_issue_groups");
     }
-    this.setState({ selectedGroups: groups });
+    setSelectedGroups(groups);
   };
 
-  render() {
-    const { error, data, loading } = this.state;
-    const { issue, issueMap } = this.props;
-    const groups = issue
-      ? issue
-          .filter(
-            (e, i) => issue.findIndex((a) => a["group"] === e["group"]) === i
-          )
-          .map((a) => a.group)
-      : [];
-    const selectedGroups = localStorage.getItem(
-      "col_plus_selected_issue_groups"
-    )
-      ? JSON.parse(localStorage.getItem("col_plus_selected_issue_groups"))
-      : [...groups];
-    let groupMap = {};
-    if (issue) {
-      issue.forEach((i) => {
-        groupMap[i.name] = i.group;
-      });
-    }
-    const columns = issueMap ? getColumns(this.props) : [];
-
-    return (
-      <PageContent>
-        {error && <Alert title={error.message} type="error" />}
-        <MultiValueFilter
-          defaultValue={
-            selectedGroups && selectedGroups.length > 0
-              ? selectedGroups
-              : groups
-          }
-          onChange={this.updateSelectedGroups}
-          vocab={groups}
-          label="Issue groups"
-        />
-
-        {!error && (
-          <Table
-            size="middle"
-            columns={columns}
-            dataSource={
-              selectedGroups && data
-                ? data.filter((d) => selectedGroups.includes(groupMap[d.title]))
-                : data
-            }
-            loading={loading}
-            pagination={false}
-            rowKey="title"
-          />
-        )}
-      </PageContent>
-    );
+  const groups = issue
+    ? issue
+        .filter(
+          (e, i) => issue.findIndex((a) => a["group"] === e["group"]) === i
+        )
+        .map((a) => a.group)
+    : [];
+  const resolvedSelectedGroups = selectedGroups !== null
+    ? selectedGroups
+    : localStorage.getItem("col_plus_selected_issue_groups")
+    ? JSON.parse(localStorage.getItem("col_plus_selected_issue_groups"))
+    : [...groups];
+  let groupMap = {};
+  if (issue) {
+    issue.forEach((i) => {
+      groupMap[i.name] = i.group;
+    });
   }
-}
+  const columns = issueMap ? getColumns(props) : [];
+
+  return (
+    <PageContent>
+      {error && <Alert title={error.message} type="error" />}
+      <MultiValueFilter
+        defaultValue={
+          resolvedSelectedGroups && resolvedSelectedGroups.length > 0
+            ? resolvedSelectedGroups
+            : groups
+        }
+        onChange={updateSelectedGroups}
+        vocab={groups}
+        label="Issue groups"
+      />
+
+      {!error && (
+        <Table
+          size="middle"
+          columns={columns}
+          dataSource={
+            resolvedSelectedGroups && data
+              ? data.filter((d) => resolvedSelectedGroups.includes(groupMap[d.title]))
+              : data
+          }
+          loading={loading}
+          pagination={false}
+          rowKey="title"
+        />
+      )}
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ user, issue, issueMap, projectKey }) => ({
   user,
