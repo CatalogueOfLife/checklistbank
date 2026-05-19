@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
 
@@ -6,61 +6,45 @@ import { PlusOutlined } from "@ant-design/icons";
 
 import { Upload, Modal } from "antd";
 
-class LogoUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      previewVisible: false,
-      previewImage: "",
-      fileList: [],
-    };
-  }
-  componentDidMount() {
-    this.getData();
-  }
-  componentDidUpdate = (prevProps) => {
-    if (this.props.datasetKey !== prevProps.datasetKey) {
-      this.getData();
-    }
-  };
-  getData = () => {
-    this.setState({ loading: true });
-    const { datasetKey } = this.props;
+const LogoUpload = ({ datasetKey }) => {
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState([]);
+
+  const getData = () => {
     axios(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
-      .then((res) => {
-        this.setState({
-          loading: false,
-          fileList: [
-            {
-              uid: "-1",
-              name: "logo.png",
-              status: "done",
-              url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`,
-            },
-          ],
-        });
+      .then(() => {
+        setFileList([
+          {
+            uid: "-1",
+            name: "logo.png",
+            status: "done",
+            url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`,
+          },
+        ]);
       })
       .catch((err) => {
-        // this.setState({ loading: false, error: err, data: [] });
         console.log(err);
       });
   };
-  handleCancel = () => this.setState({ previewVisible: false });
 
-  handlePreview = (file) => {
-    this.setState({
-      previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
-    });
+  useEffect(() => {
+    getData();
+  }, [datasetKey]);
+
+  const handleCancel = () => setPreviewVisible(false);
+
+  const handlePreview = (file) => {
+    setPreviewImage(file.url || file.thumbUrl);
+    setPreviewVisible(true);
   };
 
-  handleChange = ({ fileList }) => {
-    this.setState({ fileList });
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
   };
-  onRemove = (e) => {
+
+  const onRemove = (e) => {
     console.log(e);
-    const { datasetKey } = this.props;
-
     axios
       .delete(`${config.dataApi}dataset/${datasetKey}/logo`)
       .then(() => {
@@ -70,14 +54,15 @@ class LogoUpload extends React.Component {
         console.log(err);
       });
   };
-  customRequest = (options) => {
-    const config = {
+
+  const customRequest = (options) => {
+    const cfg = {
       headers: {
         "content-type": options.file.type,
       },
     };
     axios
-      .post(options.action, options.file, config)
+      .post(options.action, options.file, cfg)
       .then((res) => {
         options.onSuccess(res.data, options.file);
       })
@@ -86,41 +71,34 @@ class LogoUpload extends React.Component {
       });
   };
 
-  render() {
-    const { previewVisible, previewImage, fileList } = this.state;
-    const { datasetKey } = this.props;
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div className="ant-upload-text">Upload Logo</div>
-      </div>
-    );
-    return (
-      <div
-        className="clearfix"
-        style={fileList.length >= 1 ? { height: "220px" } : null}
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div className="ant-upload-text">Upload Logo</div>
+    </div>
+  );
+
+  return (
+    <div
+      className="clearfix"
+      style={fileList.length >= 1 ? { height: "220px" } : null}
+    >
+      <Upload
+        action={`${config.dataApi}dataset/${datasetKey}/logo`}
+        customRequest={customRequest}
+        listType="picture-card"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+        onRemove={onRemove}
       >
-        <Upload
-          action={`${config.dataApi}dataset/${datasetKey}/logo`}
-          customRequest={this.customRequest}
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
-          onRemove={this.onRemove}
-        >
-          {fileList.length >= 1 ? null : uploadButton}
-        </Upload>
-        <Modal
-          open={previewVisible}
-          footer={null}
-          onCancel={this.handleCancel}
-        >
-          <img alt="example" style={{ width: "100%" }} src={previewImage} />
-        </Modal>
-      </div>
-    );
-  }
-}
+        {fileList.length >= 1 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewVisible} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: "100%" }} src={previewImage} />
+      </Modal>
+    </div>
+  );
+};
 
 export default LogoUpload;
