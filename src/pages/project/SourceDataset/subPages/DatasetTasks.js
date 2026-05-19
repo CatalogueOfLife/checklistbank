@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Alert, Tag, Card, Spin, message } from "antd";
+import { Alert, Tag, Card, Spin, App } from "antd";
 import axios from "axios";
 import config from "../../../../config";
 import { NavLink } from "react-router-dom";
@@ -13,6 +13,7 @@ import _ from "lodash";
 
 const DatasetTasks = (props) => {
   const { datasetKey, projectKey, getDuplicateWarningColor } = props;
+  const { message } = App.useApp();
 
   const [duplicates, setDuplicates] = useState([]);
   const [manuscriptNames, setManuscriptNames] = useState(null);

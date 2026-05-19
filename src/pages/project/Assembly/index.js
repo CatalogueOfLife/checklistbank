@@ -9,7 +9,7 @@ import {
 import {
   Row,
   Col,
-  notification,
+  App,
   Button,
   Alert,
   Radio,
@@ -44,6 +44,7 @@ const Assembly = ({
   catalogue,
   user,
 }) => {
+  const { notification } = App.useApp();
   const params = qs.parse(_.get(location, "search"));
   const projectKey = match.params.projectKey;
 
@@ -274,7 +275,7 @@ const Assembly = ({
               _.get(sourceRef.current, "state.selectedNodes") || [],
             selectedAssemblyTreeNodes:
               _.get(assemblyRef.current, "state.selectedNodes") || [],
-            applyDecision: applyDecision,
+            applyDecision: (taxon, projectKey, cb) => applyDecision(taxon, projectKey, cb, notification),
           }}
         >
           {decisionFormVisible && (
@@ -520,7 +521,7 @@ const Assembly = ({
                                     onClick={() => {
                                       Promise.allSettled(
                                         selectedSourceTreeNodes.map((n) =>
-                                          applyDecision(n.taxon, projectKey)
+                                          applyDecision(n.taxon, projectKey, undefined, notification)
                                         )
                                       ).then(() => {
                                         sourceRef.current.reloadRoot();

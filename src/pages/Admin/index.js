@@ -16,7 +16,7 @@ import {
   Button,
   Alert,
   Popconfirm,
-  notification,
+  App,
   Form,
 } from "antd";
 import axios from "axios";
@@ -25,6 +25,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 const FormItem = Form.Item;
 
 const AdminPage = ({ background, addError }) => {
+  const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [updateAllLogosloading, setUpdateAllLogosloading] = useState(false);
   const [metricsSchedulerloading, setMetricsSchedulerloading] = useState(false);

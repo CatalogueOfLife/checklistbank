@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Alert, Empty, Row, Col, Select, notification, Spin } from "antd";
+import { Alert, Empty, Row, Col, Select, App, Spin } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -32,6 +32,7 @@ const attemptsParamIsSetAndValid = (attempts, onError) => {
 };
 
 const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
+  const { notification } = App.useApp();
   const { search } = location;
   const params = qs.parse(search);
 

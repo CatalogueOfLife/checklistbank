@@ -3,7 +3,7 @@ import withRouter from "../../../withRouter";
 import axios from "axios";
 import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
-import { Button, Modal, Row, Col, notification } from "antd";
+import { Button, Modal, Row, Col, App } from "antd";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import { Helmet } from "react-helmet-async";
@@ -12,14 +12,8 @@ import RefForm from "../../../components/MetaData/CslForm";
 import _ from "lodash";
 import Auth from "../../../components/Auth";
 
-const openNotification = (title, description) => {
-  notification.open({
-    message: title,
-    description: description,
-  });
-};
-
 const Reference = ({ catalogue, match, user }) => {
+  const { notification } = App.useApp();
   const { params: { projectKey } } = match;
   const [showAddNewModal, setShowAddNewModal] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
@@ -50,7 +44,7 @@ const Reference = ({ catalogue, match, user }) => {
           ? `Data successfully updated for ${values.title}`
           : `${values.title} saved with id ${res.id}`;
         setSubmissionError(null);
-        openNotification(title, msg);
+        notification.open({ message: title, description: msg });
       })
       .catch((err) => {
         setSubmissionError(err);

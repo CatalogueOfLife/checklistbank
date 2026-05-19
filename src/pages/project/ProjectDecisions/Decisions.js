@@ -19,7 +19,7 @@ import {
   Col,
   Switch,
   Form,
-  notification,
+  App,
 } from "antd";
 import withRouter from "../../../withRouter";
 import config from "../../../config";
@@ -53,6 +53,7 @@ const ProjectDecisions = ({
   type,
   releasedFrom,
 }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { WarningOutlined } from "@ant-design/icons";
-import { Button, Popover, Popconfirm, notification } from "antd";
+import { Button, Popover, Popconfirm, App } from "antd";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
 
 const DeleteDatasetButton = ({ record, style }) => {
+  const { notification } = App.useApp();
   const [deletionTriggered, setDeletionTriggered] = useState(false);
   const [error, setError] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);

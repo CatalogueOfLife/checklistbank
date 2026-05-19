@@ -1,9 +1,10 @@
 import { useState } from "react";
 import config from "../../config";
-import { Button, Popconfirm, notification } from "antd";
+import { Button, Popconfirm, App } from "antd";
 import axios from "axios";
 
 const SyncAllSectorsButton = ({ onError, dataset, projectKey, text }) => {
+  const { notification } = App.useApp();
   const [allSectorSyncloading, setAllSectorSyncloading] = useState(false);
 
   const syncAllSectors = () => {

@@ -2,13 +2,14 @@ import { useState } from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, message, Button, Alert } from "antd";
+import { Upload, App, Button, Alert } from "antd";
 import ErrorMsg from "../components/ErrorMsg";
 import { UploadOutlined } from "@ant-design/icons";
 
 // const { confirm } = Modal;
 
 const ArchiveUpload = ({ datasetKey }) => {
+  const { message } = App.useApp();
   const [submissionError, setSubmissionError] = useState(null);
   const [fileList, setFileList] = useState([]);
 

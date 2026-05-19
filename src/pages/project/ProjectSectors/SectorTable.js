@@ -18,7 +18,7 @@ import {
   Row,
   Col,
   Tag,
-  notification,
+  App,
 } from "antd";
 import config from "../../../config";
 import moment from "dayjs";
@@ -46,6 +46,7 @@ const SectorTable = ({
   addError,
   onSectorRematch,
 }) => {
+  const { notification } = App.useApp();
   const [currentDataSourceLength, setCurrentDataSourceLength] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);

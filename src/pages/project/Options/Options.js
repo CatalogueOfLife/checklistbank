@@ -14,7 +14,7 @@ import {
   Alert,
   Popconfirm,
   Switch,
-  notification,
+  App,
 } from "antd";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import axios from "axios";
@@ -32,6 +32,7 @@ const ProjectOptions = ({
   datasetSettings,
   user,
 }) => {
+  const { notification } = App.useApp();
   const projectKey = _.get(match, "params.projectKey");
 
   const [error, setError] = useState(null);

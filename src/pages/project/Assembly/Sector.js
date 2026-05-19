@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 import {
-  notification,
+  App,
   Tag,
   Button,
   Popover,
@@ -44,6 +44,7 @@ const Sector = ({
   onDeleteSector,
   showSourceTaxon,
 }) => {
+  const { notification } = App.useApp();
   const [popOverVisible, setPopOverVisible] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [error, setError] = useState(null);

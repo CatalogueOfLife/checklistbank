@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { WarningOutlined } from "@ant-design/icons";
-import { Button, Popover, notification } from "antd";
+import { Button, Popover, App } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 
 const ImportButton = ({ record, style, importState, reImport, onStartImportSuccess, onDeleteSuccess }) => {
+  const { notification } = App.useApp();
   const [importTriggered, setImportTriggered] = useState(false);
   const [error, setError] = useState(null);
 

@@ -22,7 +22,7 @@ import {
   Radio,
   Pagination,
   Tooltip,
-  notification,
+  App,
   Form,
   Checkbox,
 } from "antd";
@@ -77,6 +77,7 @@ const DuplicateSearchPage = (props) => {
     dataset,
     location,
   } = props;
+  const { notification } = App.useApp();
 
   const limit = localStorage.getItem("col_plus_duplicates_limit");
 

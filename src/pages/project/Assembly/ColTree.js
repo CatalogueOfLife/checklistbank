@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   //Tree,
-  notification,
-  message,
+  App,
   Alert,
   Spin,
   Button,
@@ -81,6 +80,7 @@ class LoadMoreChildrenTreeNode extends React.Component {
 }
 
 const ColTree = (props) => {
+  const { notification, message } = App.useApp();
   const {
     treeRef,
     dataset,

@@ -15,7 +15,7 @@ import {
   Popconfirm,
   Modal,
   Typography,
-  notification,
+  App,
   Checkbox,
 } from "antd";
 import withRouter from "../../../withRouter";
@@ -54,6 +54,7 @@ const ProjectSectors = ({
   projectKey: contextProjectKey,
   addError,
 }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState([]);
   const [merge, setMerge] = useState(false);
   const [nested, setNested] = useState(false);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { WarningOutlined } from '@ant-design/icons';
-import { Button, Popover, notification } from "antd";
+import { Button, Popover, App } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -9,6 +9,7 @@ import withContext from "../../../components/hoc/withContext";
 import _ from "lodash"
 
 const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, style, size }) => {
+  const { notification } = App.useApp();
   const [importTriggered, setImportTriggered] = useState(false);
   const [error, setError] = useState(null);
 

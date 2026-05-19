@@ -2,27 +2,27 @@ import React from "react";
 import _ from "lodash";
 import config from "../../config";
 import axios from "axios";
-// NOTE: notification is kept as static because deleteDecision is a module-level
-// function (not a component), so App.useApp() cannot be used here.
-import { Tooltip, Tag, notification } from "antd";
+import { Tooltip, Tag, App } from "antd";
 import withContext from "../../components/hoc/withContext";
 
 import Auth from "../../components/Auth";
 const { canEditDataset } = Auth;
-const deleteDecision = (id, deleteCallback, projectKey) => {
-  return axios
-    .delete(`${config.dataApi}dataset/${projectKey}/decision/${id}`)
-    .then((res) => {
-      notification.open({
-        message: "Decision deleted",
-      });
-      if (deleteCallback && typeof deleteCallback === "function") {
-        deleteCallback();
-      }
-    });
-};
 
 const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
+  const { notification } = App.useApp();
+
+  const deleteDecision = (id, deleteCallback, projectKey) => {
+    return axios
+      .delete(`${config.dataApi}dataset/${projectKey}/decision/${id}`)
+      .then((res) => {
+        notification.open({
+          message: "Decision deleted",
+        });
+        if (deleteCallback && typeof deleteCallback === "function") {
+          deleteCallback();
+        }
+      });
+  };
   if (!_.get(decision, "mode")) {
     return "";
   } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {

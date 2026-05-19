@@ -15,7 +15,7 @@ import {
   Rate,
   Typography,
   Tooltip,
-  message,
+  App,
 } from "antd";
 import Tabs from "../../components/Tabs";
 import MergedDataBadge from "../../components/MergedDataBadge";
@@ -104,6 +104,7 @@ const TaxonPage = ({
   user,
   dataset,
 }) => {
+  const { message } = App.useApp();
   const taxonOrNameKey = match?.params?.taxonOrNameKey;
 
   const [taxon, setTaxon] = useState(null);

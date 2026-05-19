@@ -6,7 +6,7 @@ import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import _ from "lodash";
 
-import { Row, Col, Alert, Switch, Button, notification } from "antd";
+import { Row, Col, Alert, Switch, Button, App } from "antd";
 
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -18,6 +18,7 @@ import ImportButton from "../../Imports/importTabs/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
 
 const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
+  const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [editMode, setEditModeState] = useState(false);

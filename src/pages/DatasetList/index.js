@@ -15,7 +15,7 @@ import {
   ConfigProvider,
   Empty,
   Popconfirm,
-  notification,
+  App,
 } from "antd";
 import config from "../../config";
 import qs from "query-string";
@@ -71,6 +71,7 @@ const DatasetList = ({
   addError,
   location,
 }) => {
+  const { notification } = App.useApp();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [data, setData] = useState([]);

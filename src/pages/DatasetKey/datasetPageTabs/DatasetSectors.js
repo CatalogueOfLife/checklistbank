@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import _ from "lodash";
-import { Alert, notification } from "antd";
+import { Alert, App } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
@@ -17,6 +17,7 @@ const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const PAGE_SIZE = 500;
 
 const DatasetSectors = ({ dataset, projectKey, location }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: PAGE_SIZE,

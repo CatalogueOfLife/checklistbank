@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, message, Button, Alert, Checkbox, Input, Tabs } from "antd";
+import { Upload, App, Button, Alert, Checkbox, Input, Tabs } from "antd";
 import ErrorMsg from "./ErrorMsg";
 import { UploadOutlined } from "@ant-design/icons";
 const { TextArea } = Input;
@@ -17,6 +17,7 @@ const readFile = (file) => {
 };
 
 const TextTreeUpload = ({ taxon }) => {
+  const { message } = App.useApp();
   const [submissionError, setSubmissionError] = useState(null);
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);

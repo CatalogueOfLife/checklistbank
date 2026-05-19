@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Button, notification } from "antd";
+import { Table, Alert, Row, Col, Button, App } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
@@ -23,6 +23,7 @@ const getWarningHighlightedNumber = (a, b) => {
 };
 
 const DatasetList = ({ datasetOrigin, location }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

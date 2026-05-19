@@ -3,10 +3,11 @@ import { CopyOutlined } from "@ant-design/icons";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Button, Select, Modal, message } from "antd";
+import { Button, Select, Modal, App } from "antd";
 import axios from "axios";
 
 const DatasetExport = ({ datasetKey, addError, dataFormat }) => {
+  const { message } = App.useApp();
   const [selectedDataFormat, setSelectedDataFormat] = useState("coldp");
   const [exportUrl, setExportUrl] = useState(null);
   const [downloadModalVisible, setDownloadModalVisible] = useState(false);

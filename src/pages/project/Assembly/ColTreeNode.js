@@ -2,13 +2,12 @@ import { useState } from "react";
 import { SyncOutlined, WarningFilled, CopyOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../../components/MergedDataBadge";
 import {
-  notification,
+  App,
   Tag,
   Popconfirm,
   Button,
   Popover,
   Tooltip,
-  message,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../../withRouter";
@@ -54,6 +53,7 @@ const ColTreeNode = (props) => {
     actions,
   } = props;
 
+  const { notification, message } = App.useApp();
   const [decision, setDecision] = useState(taxon.decision);
   const [provisional, setProvisionalState] = useState(
     taxon.status === "provisionally accepted"

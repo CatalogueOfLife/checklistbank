@@ -7,7 +7,7 @@ import {
   Rate,
   Row,
   Col,
-  notification,
+  App,
   Popconfirm,
   Divider,
   Card,
@@ -53,6 +53,7 @@ const DatasetMeta = ({
   addError,
   isSourceInCatalogueView,
 }) => {
+  const { notification } = App.useApp();
   const [data, setData] = useState(null);
   const [patch, setPatch] = useState(null);
   const [sourceMeta, setSourceMeta] = useState(null);

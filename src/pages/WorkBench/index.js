@@ -16,7 +16,7 @@ import {
   Button,
   Select,
   Radio,
-  notification,
+  App,
   Switch,
   Form,
 } from "antd";
@@ -259,6 +259,7 @@ const WorkBench = ({
   addError,
   location,
 }) => {
+  const { notification } = App.useApp();
   const [activeTab, setActiveTab] = useState("1");
   const [data, setData] = useState({ result: [] });
   const [decision, setDecision] = useState(null);

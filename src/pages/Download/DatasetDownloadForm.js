@@ -12,7 +12,7 @@ import {
   Button,
   Modal,
   Select,
-  message,
+  App,
   Alert,
   Radio,
   Row,
@@ -35,6 +35,7 @@ import qs from "query-string";
 const { Text } = Typography;
 
 const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }) => {
+  const { message } = App.useApp();
   const [error, setError] = useState(null);
   const [selectedDataFormat, setSelectedDataFormat] = useState("ColDP");
   const [exportUrl, setExportUrl] = useState(null);
