@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState, Fragment } from "react";
 import {
   Tooltip,
   Select,
@@ -76,43 +76,19 @@ const tableColumns = [
 
 const tagStyle = { paddingLeft: "5px", paddingRight: "5px", fontSize: "10px" };
 
-class Root extends React.Component {
-  constructor(props) {
-    super(props);
+const Root = ({ location, addError }) => {
+  const [csvUrl, setCsvUrl] = useState(null);
+  const [searchCol, setSearchCol] = useState("scientificName");
+  const [loading, setLoading] = useState(false);
+  const [hideSelected, setHideSelected] = useState(false);
+  const [helpVisible, setHelpVisible] = useState(false);
+  const [dataSource, setDataSource] = useState(null);
+  const [unfilteredData, setUnfilteredData] = useState(null);
+  const [columns, setColumns] = useState(null);
+  const [q, setQ] = useState(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-    this.state = {
-      csvUrl: null,
-      searchCol: "scientificName",
-      loading: false,
-      hideSelected: false,
-      helpVisible: false,
-    };
-  }
-
-  componentDidMount() {
-    if (_.get(this.props, "location.search")) {
-      const params = qs.parse(_.get(this.props, "location.search"));
-      if (params.csv) {
-        this.setState({ loading: true });
-        this.loadfromUrl(DOWNLOADS_URL + params.csv, params.colKey);
-      }
-    }
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(prevProps, "location.search") !==
-      _.get(this.props, "location.search")
-    ) {
-      const params = qs.parse(_.get(this.props, "location.search"));
-      if (params.csv) {
-        this.setState({ loading: true, dataSource: null });
-        this.loadfromUrl(DOWNLOADS_URL + params.csv, params.colKey);
-      }
-    }
-  };
-
-  loadfromUrl = (url, colKey) => {
+  const loadfromUrl = (url, colKey) => {
     Papa.parse(url, {
       download: true,
       skipEmptyLines: true,
@@ -162,7 +138,7 @@ class Root extends React.Component {
         });
 
         // contruct main columns for table
-        let columns = tableColumns.map((rank) => {
+        let cols = tableColumns.map((rank) => {
           return {
             title: rank,
             key: rank,
@@ -211,8 +187,8 @@ class Root extends React.Component {
               return !isDifferent && !verbatimIsDifferent ? (
                 <div className="nowrap isSame">
                   <div>{text}</div>
-                  <div>{"\u00A0"}</div>
-                  <div>{"\u00A0"}</div>
+                  <div>{" "}</div>
+                  <div>{" "}</div>
                 </div>
               ) : (
                 <div
@@ -232,10 +208,10 @@ class Root extends React.Component {
                     <Tooltip title={tooltipTitle}>
                       <Tag style={tagStyle}>{tagLabels.verbatim.short}</Tag>
                     </Tooltip>
-                    {record[`${verbatimPrefix}${rank}`] || "\u00A0"}
+                    {record[`${verbatimPrefix}${rank}`] || " "}
                     {rank === "scientificName" &&
                       record[`${verbatimPrefix}${rank}`] !== "null" && (
-                        <React.Fragment>
+                        <Fragment>
                           {" "}
                           <a
                             target="_blank"
@@ -245,7 +221,7 @@ class Root extends React.Component {
                           >
                             <LinkOutlined />
                           </a>
-                        </React.Fragment>
+                        </Fragment>
                       )}
                   </div>
                   <div
@@ -277,7 +253,7 @@ class Root extends React.Component {
                     {record[`${proposedPrefix}${rank}`]}
                     {record[`${proposedPrefix}${rank}`] &&
                       record[`${proposedPrefix}${rank}`] !== "null" && (
-                        <React.Fragment>
+                        <Fragment>
                           {" "}
                           <a
                             target="_blank"
@@ -287,7 +263,7 @@ class Root extends React.Component {
                           >
                             <LinkOutlined />
                           </a>
-                        </React.Fragment>
+                        </Fragment>
                       )}
                   </div>
                 </div>
@@ -297,7 +273,7 @@ class Root extends React.Component {
         });
 
         // add columns for counts, changes and actions
-        columns = [
+        cols = [
           {
             title: "count",
             key: "count",
@@ -326,17 +302,14 @@ class Root extends React.Component {
                   checked={!!record.reviewed}
                   onChange={(e) => {
                     record.reviewed = e.target.checked;
-                    const data = [...this.state.dataSource];
-                    this.setState({ dataSource: [] }, () =>
-                      this.setState({ dataSource: data })
-                    );
-                    // this.setState({ dataSource: [...this.state.dataSource] });
+                    // Force re-render by creating a new array reference
+                    setDataSource((prev) => [...prev]);
                   }}
                 />
               );
             },
           },
-          ...columns,
+          ...cols,
           {
             title: "IDs",
             key: "identifier",
@@ -355,11 +328,11 @@ class Root extends React.Component {
             key: "changes",
             dataIndex: "changes",
             render: (val, record) => (
-              <React.Fragment>
+              <Fragment>
                 {Object.keys(val).map((f) => (
                   <span key={f}>{f}, </span>
                 ))}
-              </React.Fragment>
+              </Fragment>
             ),
             filters: Object.keys(changeSummary).map((x) => {
               return { text: x, value: x };
@@ -375,9 +348,9 @@ class Root extends React.Component {
             render: (text, record) => (
               <>
                 <a ddd={colKey}
-                  href={`https://github.com/CatalogueOfLife/data/issues/new?title=${this.getIssueSubjectText(
+                  href={`https://github.com/CatalogueOfLife/data/issues/new?title=${getIssueSubjectText(
                     record
-                  )}&body=${this.getIssueBodyText(record,colKey)}&labels=xrelease,feedback,xr${colKey}`}
+                  )}&body=${getIssueBodyText(record,colKey)}&labels=xrelease,feedback,xr${colKey}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -392,186 +365,189 @@ class Root extends React.Component {
           },
         ];
 
-        this.setState({
-          columns,
-          dataSource: result.data.sort((a, b) => b.count - a.count),
-          unfilteredData: result.data,
-          loading: false,
-        });
+        const sorted = result.data.sort((a, b) => b.count - a.count);
+        setColumns(cols);
+        setDataSource(sorted);
+        setUnfilteredData(result.data);
+        setLoading(false);
       },
       error: (err) => {
-        if (this.props.addError && typeof this.props.addError === "function") {
-          this.props.addError(err);
+        if (addError && typeof addError === "function") {
+          addError(err);
         }
       },
     });
   };
 
-  getIssueSubjectText = (record) => {
+  useEffect(() => {
+    const params = qs.parse(_.get(location, "search"));
+    if (params.csv) {
+      setLoading(true);
+      setDataSource(null);
+      loadfromUrl(DOWNLOADS_URL + params.csv, params.colKey);
+    }
+  }, [location?.search]);
+
+  const getIssueSubjectText = (record) => {
     let template = `Regression for ${record[`${currentPrefix}scientificName`]}`;
     return encodeURIComponent(template);
   };
 
-  getIssueBodyText = (record, colKey) => {
+  const getIssueBodyText = (record, colKey) => {
     let template = `\`\`\`\n${JSON.stringify(record, null, 2)}\n\`\`\`\n\nUsing impact report based on [checklist ${colKey}](https://www.checklistbank.org/dataset/${colKey}/names?q=${record[`${currentPrefix}scientificName`]})`;
     return encodeURIComponent(template);
   };
 
-  expandedRowRender = (record) => {
+  const expandedRowRender = (record) => {
     return (
       <p>
         <pre>{JSON.stringify(record, null, 2)}</pre>
       </p>
     );
-    // return <Table columns={this.state.expandedRowColumns} dataSource={[record]} pagination={false} />;
+    // return <Table columns={expandedRowColumns} dataSource={[record]} pagination={false} />;
   };
 
-  handleSearch = (q, searchCol) => {
-    this.setState({
-      q,
-      searchCol,
-      dataSource: this.state.unfilteredData.filter((record) => {
+  const handleSearch = (newQ, newSearchCol) => {
+    setQ(newQ);
+    setSearchCol(newSearchCol);
+    setDataSource(
+      unfilteredData.filter((record) => {
         return (
-          (record[`${currentPrefix}${searchCol}`] || "").indexOf(q) > -1 ||
-          (record[`${proposedPrefix}${searchCol}`] || "").indexOf(q) > -1
+          (record[`${currentPrefix}${newSearchCol}`] || "").indexOf(newQ) > -1 ||
+          (record[`${proposedPrefix}${newSearchCol}`] || "").indexOf(newQ) > -1
         );
-      }),
-    });
-  };
-  onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  };
-
-  render() {
-    const { helpVisible, hideSelected } = this.state;
-
-    return (
-      <React.Fragment>
-        <div>
-          <div>
-            <Row gutter={16}>
-              <Col span={16}>
-                <Input.Group compact>
-                  <Select
-                    defaultValue={this.state.searchCol}
-                    style={{ width: "25%" }}
-                    onChange={(value) => this.handleSearch(this.state.q, value)}
-                    options={tableColumns.map((x) => ({ value: x, label: x }))}
-                  />
-                  <Search
-                    style={{ width: "70%" }}
-                    placeholder="Search names"
-                    enterButton="Search"
-                    onSearch={(value) =>
-                      this.handleSearch(value, this.state.searchCol)
-                    }
-                  />
-                </Input.Group>
-              </Col>
-              <Col span={8} style={{ textAlign: "right" }}>
-                <Switch
-                  style={{ marginRight: "10px" }}
-                  checked={hideSelected}
-                  onChange={(checked) =>
-                    this.setState({ hideSelected: checked })
-                  }
-                  checkedChildren={"Hide reviewed"}
-                  unCheckedChildren={"Hide reviewed"}
-                />
-                <Button
-                  type="primary"
-                  shape="circle"
-                  icon={<QuestionCircleOutlined />}
-                  onClick={() => this.setState({ helpVisible: true })}
-                />
-              </Col>
-            </Row>
-          </div>
-
-          <div style={{ overflow: "auto", width: "100%" }}>
-            <Table
-              dataSource={
-                hideSelected
-                  ? this.state.dataSource.filter((d) => !d.reviewed)
-                  : this.state.dataSource
-              }
-              columns={this.state.columns}
-              bordered={true}
-              loading={this.state.loading}
-              scroll={{ x: 870 }}
-              pagination={{
-                position: ["topRight"],
-                pageSizeOptions: [10, 20, 50, 100, 250, 500],
-              }}
-              size="middle"
-              expandable={{
-                expandedRowRender: this.expandedRowRender,
-              }}
-              rowKey="_key"
-            />
-          </div>
-        </div>
-        <Modal
-          title="Help"
-          open={helpVisible}
-          onOk={() => this.setState({ helpVisible: false })}
-          onCancel={() => this.setState({ helpVisible: false })}
-          footer={[
-            <Button
-              key="back"
-              onClick={() => this.setState({ helpVisible: false })}
-            >
-              Dismiss
-            </Button>,
-          ]}
-        >
-          <strong>Colors</strong>
-          <ul>
-            <li>
-              <span className="isSame">Grey text</span> means nothing has
-              changed
-            </li>
-            <li>
-              <span className="hasChanged">Red text</span> means interpretation
-              has changed
-            </li>
-            <li>
-              <span className="changedToPerfectMatch">Green text</span> means
-              interpretation has changed and now matches the verbatim value
-            </li>
-          </ul>
-          <strong>Tags</strong>
-          <ul>
-            <li>
-              <Tag style={tagStyle}>{tagLabels.verbatim.short}</Tag> ={" "}
-              {tagLabels.verbatim.full}
-            </li>
-            <li>
-              <Tag style={tagStyle}>{tagLabels.current.short}</Tag> ={" "}
-              {tagLabels.current.full} <br />
-              <span className="small-text">
-                Red{" "}
-                <Tag style={tagStyle} color="red">
-                  {tagLabels.current.short}
-                </Tag>
-                means that interpretation has changed away from an exact match
-                to verbatim
-              </span>
-            </li>
-            <li>
-              <Tag style={tagStyle}>{tagLabels.proposed.short}</Tag> ={" "}
-              {tagLabels.proposed.full}
-            </li>
-
-            {/*             <li><Tag style={tagStyle} color={perfectMatchChanged ? 'red': null}>{tagLabels.current.short}</Tag></li>
-             */}
-          </ul>
-        </Modal>
-      </React.Fragment>
+      })
     );
-  }
-}
+  };
+
+  const onSelectChange = (newSelectedRowKeys) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  return (
+    <Fragment>
+      <div>
+        <div>
+          <Row gutter={16}>
+            <Col span={16}>
+              <Input.Group compact>
+                <Select
+                  defaultValue={searchCol}
+                  style={{ width: "25%" }}
+                  onChange={(value) => handleSearch(q, value)}
+                  options={tableColumns.map((x) => ({ value: x, label: x }))}
+                />
+                <Search
+                  style={{ width: "70%" }}
+                  placeholder="Search names"
+                  enterButton="Search"
+                  onSearch={(value) =>
+                    handleSearch(value, searchCol)
+                  }
+                />
+              </Input.Group>
+            </Col>
+            <Col span={8} style={{ textAlign: "right" }}>
+              <Switch
+                style={{ marginRight: "10px" }}
+                checked={hideSelected}
+                onChange={(checked) => setHideSelected(checked)}
+                checkedChildren={"Hide reviewed"}
+                unCheckedChildren={"Hide reviewed"}
+              />
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<QuestionCircleOutlined />}
+                onClick={() => setHelpVisible(true)}
+              />
+            </Col>
+          </Row>
+        </div>
+
+        <div style={{ overflow: "auto", width: "100%" }}>
+          <Table
+            dataSource={
+              hideSelected
+                ? (dataSource || []).filter((d) => !d.reviewed)
+                : dataSource
+            }
+            columns={columns}
+            bordered={true}
+            loading={loading}
+            scroll={{ x: 870 }}
+            pagination={{
+              position: ["topRight"],
+              pageSizeOptions: [10, 20, 50, 100, 250, 500],
+            }}
+            size="middle"
+            expandable={{
+              expandedRowRender,
+            }}
+            rowKey="_key"
+          />
+        </div>
+      </div>
+      <Modal
+        title="Help"
+        open={helpVisible}
+        onOk={() => setHelpVisible(false)}
+        onCancel={() => setHelpVisible(false)}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => setHelpVisible(false)}
+          >
+            Dismiss
+          </Button>,
+        ]}
+      >
+        <strong>Colors</strong>
+        <ul>
+          <li>
+            <span className="isSame">Grey text</span> means nothing has
+            changed
+          </li>
+          <li>
+            <span className="hasChanged">Red text</span> means interpretation
+            has changed
+          </li>
+          <li>
+            <span className="changedToPerfectMatch">Green text</span> means
+            interpretation has changed and now matches the verbatim value
+          </li>
+        </ul>
+        <strong>Tags</strong>
+        <ul>
+          <li>
+            <Tag style={tagStyle}>{tagLabels.verbatim.short}</Tag> ={" "}
+            {tagLabels.verbatim.full}
+          </li>
+          <li>
+            <Tag style={tagStyle}>{tagLabels.current.short}</Tag> ={" "}
+            {tagLabels.current.full} <br />
+            <span className="small-text">
+              Red{" "}
+              <Tag style={tagStyle} color="red">
+                {tagLabels.current.short}
+              </Tag>
+              means that interpretation has changed away from an exact match
+              to verbatim
+            </span>
+          </li>
+          <li>
+            <Tag style={tagStyle}>{tagLabels.proposed.short}</Tag> ={" "}
+            {tagLabels.proposed.full}
+          </li>
+
+          {/*             <li><Tag style={tagStyle} color={perfectMatchChanged ? 'red': null}>{tagLabels.current.short}</Tag></li>
+           */}
+        </ul>
+      </Modal>
+    </Fragment>
+  );
+};
 const mapContextToProps = ({ addError }) => ({ addError });
 
 export default withContext(mapContextToProps)(withRouter(Root));
