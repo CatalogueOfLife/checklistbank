@@ -1,28 +1,18 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import config from "../../../config";
 import axios from "axios";
 import _ from "lodash";
 
-class TaxonomicCoverage extends React.Component {
-  constructor(props) {
-    super(props);
+const TaxonomicCoverage = ({ dataset, projectKey, style, isProject }) => {
+  const [taxonMap, setTaxonMap] = useState(null);
 
-    this.state = {
-      data: [],
-      groups: {},
-      selectedGroup: "default",
-      loading: false,
-    };
-  }
+  useEffect(() => {
+    getData();
+  }, []);
 
-  componentDidMount() {
-    this.getData();
-  }
-
-  getData = () => {
-    const { dataset, projectKey } = this.props;
-    const taxonMap = {};
+  const getData = () => {
+    const taxonMapLocal = {};
     axios(
       `${config.dataApi}dataset/${projectKey}/sector?limit=1000&subjectDatasetKey=${dataset.key}`
     ).then((res) => {
@@ -43,50 +33,46 @@ class TaxonomicCoverage extends React.Component {
                 .slice(1, taxon.classification.length - 1)
                 .map((t) => t.name)
                 .join(" > ");
-              if (taxonMap[path]) {
-                taxonMap[path].push(
+              if (taxonMapLocal[path]) {
+                taxonMapLocal[path].push(
                   taxon.classification[taxon.classification.length - 1]
                 );
               } else {
-                taxonMap[path] = [
+                taxonMapLocal[path] = [
                   taxon.classification[taxon.classification.length - 1],
                 ];
               }
             }
           })
         )
-      ).then(() => this.setState({ taxonMap }));
+      ).then(() => setTaxonMap(taxonMapLocal));
     });
   };
 
-  render = () => {
-    const { taxonMap } = this.state;
-    const { projectKey, style, isProject } = this.props;
-    return taxonMap
-      ? Object.keys(taxonMap).map((k) => (
-          <div style={style}>
-            <span>{k}:</span>{" "}
-            {taxonMap[k].map((tx, idx) => (
-              <React.Fragment>
-                <NavLink
-                  to={{
-                    pathname: isProject
-                      ? `/project/${projectKey}/assembly`
-                      : `/dataset/${projectKey}/classification`,
-                    search: isProject
-                      ? `?assemblyTaxonKey=${tx.id}`
-                      : `?taxonKey=${tx.id}`,
-                  }}
-                >
-                  {tx.name}
-                </NavLink>
-                {idx !== taxonMap[k].length - 1 ? ", " : ""}
-              </React.Fragment>
-            ))}
-          </div>
-        ))
-      : null;
-  };
-}
+  return taxonMap
+    ? Object.keys(taxonMap).map((k) => (
+        <div style={style}>
+          <span>{k}:</span>{" "}
+          {taxonMap[k].map((tx, idx) => (
+            <>
+              <NavLink
+                to={{
+                  pathname: isProject
+                    ? `/project/${projectKey}/assembly`
+                    : `/dataset/${projectKey}/classification`,
+                  search: isProject
+                    ? `?assemblyTaxonKey=${tx.id}`
+                    : `?taxonKey=${tx.id}`,
+                }}
+              >
+                {tx.name}
+              </NavLink>
+              {idx !== taxonMap[k].length - 1 ? ", " : ""}
+            </>
+          ))}
+        </div>
+      ))
+    : null;
+};
 
 export default TaxonomicCoverage;
