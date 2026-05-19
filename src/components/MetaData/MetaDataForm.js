@@ -21,7 +21,6 @@ import TagControl from "../TagControl";
 import Auth from "../Auth";
 import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
-const { TabPane } = Tabs;
 
 const FormItem = Form.Item;
 
