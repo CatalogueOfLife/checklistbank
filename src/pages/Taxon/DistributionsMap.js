@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Radio } from "antd";
@@ -14,35 +14,58 @@ const POPUP_FIELDS = [
   "lifeStage",
 ];
 
-const polygonStyle = {
-  color: "#1677ff",
-  weight: 1,
-  fillColor: "#1677ff",
-  fillOpacity: 0.2,
+const ESTABLISHMENT_MEANS = [
+  { key: "nativeendemic", label: "Native endemic", color: "#0F8554" },
+  { key: "native", label: "Native", color: "#87C55F" },
+  { key: "nativereintroduced", label: "Native reintroduced", color: "#C9DB74" },
+  { key: "introduced", label: "Introduced", color: "#FE88B1" },
+  {
+    key: "introducedassistedcolonisation",
+    label: "Introduced assisted colonisation",
+    color: "#DCB0F2",
+  },
+  { key: "vagrant", label: "Vagrant", color: "#F6CF71" },
+  { key: "uncertain", label: "Uncertain", color: "#66C5CC" },
+];
+
+const ESTABLISHMENT_COLORS = Object.fromEntries(
+  ESTABLISHMENT_MEANS.map((m) => [m.key, m.color])
+);
+const DEFAULT_KEY = "uncertain";
+
+const normalizeKey = (v) =>
+  String(v || "")
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+
+const resolveKey = (record) => {
+  const k = normalizeKey(record?.establishmentMeans);
+  return ESTABLISHMENT_COLORS[k] ? k : DEFAULT_KEY;
 };
+
+const colorFor = (record) => ESTABLISHMENT_COLORS[resolveKey(record)];
+
+const polygonStyleFor = (color) => ({
+  color,
+  weight: 1,
+  fillColor: color,
+  fillOpacity: 0.75,
+});
 const polygonHoverStyle = {
   weight: 2,
-  fillOpacity: 0.35,
+  fillOpacity: 0.95,
 };
 
 const BASEMAPS = [
   {
-    key: "esri",
-    label: "Esri",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}",
+    key: "carto",
+    label: "Carto",
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
     options: {
       attribution:
-        "Tiles &copy; Esri &mdash; Source: US National Park Service",
-      maxZoom: 8,
-    },
-  },
-  {
-    key: "nasa",
-    label: "NASA",
-    url: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg",
-    options: {
-      attribution: "NASA EOSDIS &mdash; Blue Marble Next Generation",
-      maxZoom: 8,
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      maxZoom: 19,
+      subdomains: "abcd",
     },
   },
   {
@@ -56,18 +79,17 @@ const BASEMAPS = [
     },
   },
   {
-    key: "carto",
-    label: "Carto",
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+    key: "esri",
+    label: "Esri",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}",
     options: {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      maxZoom: 19,
-      subdomains: "abcd",
+        "Tiles &copy; Esri &mdash; Source: US National Park Service",
+      maxZoom: 8,
     },
   },
 ];
-const DEFAULT_BASEMAP = "esri";
+const DEFAULT_BASEMAP = "carto";
 
 const cache = new Map();
 
@@ -111,6 +133,12 @@ const DistributionsMap = ({ records, onUnmappable }) => {
   const mapRef = useRef(null);
   const tileLayerRef = useRef(null);
   const [basemap, setBasemap] = useState(DEFAULT_BASEMAP);
+
+  const presentMeans = useMemo(() => {
+    if (!records?.length) return [];
+    const seen = new Set(records.map(resolveKey));
+    return ESTABLISHMENT_MEANS.filter((m) => seen.has(m.key));
+  }, [records]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -162,12 +190,13 @@ const DistributionsMap = ({ records, onUnmappable }) => {
           return;
         }
         const { record, geojson } = res.value;
+        const baseStyle = polygonStyleFor(colorFor(record));
         const layer = L.geoJSON(geojson, {
-          style: () => polygonStyle,
+          style: () => baseStyle,
           onEachFeature: (_feature, lyr) => {
             lyr.bindPopup(popupHtml(record));
             lyr.on("mouseover", () => lyr.setStyle(polygonHoverStyle));
-            lyr.on("mouseout", () => lyr.setStyle(polygonStyle));
+            lyr.on("mouseout", () => lyr.setStyle(baseStyle));
           },
         });
         layer.addTo(group);
@@ -213,6 +242,41 @@ const DistributionsMap = ({ records, onUnmappable }) => {
           </Radio.Button>
         ))}
       </Radio.Group>
+      {presentMeans.length > 0 && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 8,
+            left: 8,
+            zIndex: 1000,
+            background: "#fff",
+            borderRadius: 4,
+            boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+            padding: "6px 8px",
+            fontSize: 12,
+            lineHeight: 1.5,
+          }}
+        >
+          {presentMeans.map((m) => (
+            <div
+              key={m.key}
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 12,
+                  height: 12,
+                  background: m.color,
+                  border: "1px solid rgba(0,0,0,0.15)",
+                  borderRadius: 2,
+                }}
+              />
+              <span>{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
