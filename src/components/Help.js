@@ -1,25 +1,15 @@
 import React from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
+import styles from './Help.module.css';
 
-const styles = {
-  tip: {
-    color: 'rgba(0,0,0,.45)',
-    marginLeft: '4px',
-  },
-  icon: {
-    marginTop: '4px'
-  }
-};
-
-const Help = ({ title, classes }) => {
+const Help = ({ title }) => {
   return (
     <React.Fragment>
-      {title && <span className={classes.tip}>
+      {title && <span className={styles.tip}>
         <Tooltip title={title}>
-          <QuestionCircleOutlined className={classes.icon} />
+          <QuestionCircleOutlined className={styles.icon} />
         </Tooltip>
       </span>}
     </React.Fragment>
@@ -30,4 +20,4 @@ Help.propTypes = {
   title: PropTypes.object
 };
 
-export default injectSheet(styles)(Help);
+export default Help;
