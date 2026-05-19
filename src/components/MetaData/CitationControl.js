@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Modal } from "antd";
 import styles from "../newTag.module.css";
@@ -21,206 +21,174 @@ const stringToArray = (value) => {
  * https://ant.design/components/form/#components-form-demo-customized-form-controls
  * Based on built-in Tag https://ant.design/components/tag/#components-tag-demo-control
  */
-class CitationControl extends React.Component {
-  static getDerivedStateFromProps(nextProps) {
-    // Should be a controlled component
-    if ("value" in nextProps) {
-      let value = stringToArray(nextProps.value);
-
-      return { citations: value };
-    }
-    return null;
+const CitationControl = ({ value, label, removeAll, onChange, agentType = "contact", array = true }) => {
+  const [citations, setCitations] = useState(() => stringToArray(value));
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setCitations(stringToArray(value));
   }
 
-  constructor(props) {
-    super(props);
+  const [formVisible, setFormVisible] = useState(false);
+  const [citationForEdit, setCitationForEdit] = useState(null);
+  const [indexForEdit, setIndexForEdit] = useState(null);
 
-    this.state = {
-      citations: stringToArray(props.value),
-      formVisible: false,
-      citationForEdit: null,
-    };
-  }
-
-  handleClose = (e, removedTag) => {
-    if (e) {
-      e.preventDefault();
-    }
-    const citations = this.state.citations.filter((tag) => tag !== removedTag);
-    const { array = true } = this.props;
-    this.setState({ citations });
-    this.triggerChange(array ? citations : null);
-  };
-
-  showForm = (citation) => {
-    this.setState({ citationForEdit: citation, formVisible: true });
-  };
-
-  handleInputChange = (event) => {
-    this.setState({ inputValue: event.target.value });
-  };
-
-  onFormSubmit = async (citation) => {
-    const { indexForEdit } = this.state;
-
-    const citations = !_.isNull(indexForEdit)
-      ? [
-          ...this.state.citations.slice(0, indexForEdit),
-          citation,
-          ...this.state.citations.slice(indexForEdit),
-        ]
-      : [...this.state.citations, citation];
-    const { array = true } = this.props;
-    this.setState(
-      {
-        citations,
-        formVisible: false,
-        citationForEdit: null,
-        indexForEdit: null,
-      },
-      () => this.triggerChange(array ? citations : citation)
-    );
-
-    return Promise.resolve();
-  };
-
-  triggerChange = (changedValue) => {
-    // Should provide an event to pass value to Form
-    const onChange = this.props.onChange;
+  const triggerChange = (changedValue) => {
     if (onChange) {
       onChange(changedValue);
     }
   };
 
-  onDragEnd = (fromIndex, toIndex) => {
-    const citations = [...this.state.citations];
-    const citation = citations.splice(fromIndex, 1)[0];
-    citations.splice(toIndex, 0, citation);
-    const onChange = this.props.onChange;
+  const handleClose = (e, removedTag) => {
+    if (e) {
+      e.preventDefault();
+    }
+    const newCitations = citations.filter((tag) => tag !== removedTag);
+    setCitations(newCitations);
+    triggerChange(array ? newCitations : null);
+  };
+
+  const showForm = (citation) => {
+    setCitationForEdit(citation || null);
+    setFormVisible(true);
+  };
+
+  const onFormSubmit = async (citation) => {
+    const newCitations = !_.isNull(indexForEdit)
+      ? [
+          ...citations.slice(0, indexForEdit),
+          citation,
+          ...citations.slice(indexForEdit),
+        ]
+      : [...citations, citation];
+
+    setCitations(newCitations);
+    setFormVisible(false);
+    setCitationForEdit(null);
+    setIndexForEdit(null);
+    triggerChange(array ? newCitations : citation);
+
+    return Promise.resolve();
+  };
+
+  const onDragEnd = (fromIndex, toIndex) => {
+    const newCitations = [...citations];
+    const citation = newCitations.splice(fromIndex, 1)[0];
+    newCitations.splice(toIndex, 0, citation);
     if (onChange) {
-      onChange(citations); // will get derived state from props
+      onChange(newCitations); // will get derived state from props
     }
   };
 
-  editAgent = (index, citation) => {
-    this.setState(
-      { citationForEdit: citation, indexForEdit: index, formVisible: true },
-      () => this.handleClose(null, citation)
-    );
+  const editAgent = (index, citation) => {
+    setCitationForEdit(citation);
+    setIndexForEdit(index);
+    setFormVisible(true);
+    handleClose(null, citation);
   };
 
-  render() {
-    const { citations, formVisible, citationForEdit } = this.state;
-    const {
-      label,
-      removeAll,
-      agentType = "contact",
-      array = true,
-    } = this.props;
+  const dragProps = {
+    onDragEnd: onDragEnd,
+    nodeSelector: "li",
+    handleSelector: "li",
+  };
 
-    const dragProps = {
-      onDragEnd: this.onDragEnd,
-      nodeSelector: "li",
-      handleSelector: "li",
-    };
-
-    return (
-      <React.Fragment>
-        <Row>
-          <ol
-            style={{
-              height: "100%",
-              listStyle: "none",
-              paddingInlineStart: "0px",
-            }}
-          >
-            {citations
-              .filter((c) => !!c)
-              .map((citation, index) => {
-                const tagElem = (
-                  <li
+  return (
+    <React.Fragment>
+      <Row>
+        <ol
+          style={{
+            height: "100%",
+            listStyle: "none",
+            paddingInlineStart: "0px",
+          }}
+        >
+          {citations
+            .filter((c) => !!c)
+            .map((citation, index) => {
+              const tagElem = (
+                <li
+                  key={index}
+                  style={{
+                    marginBottom: "4px",
+                    height: "100%",
+                  }}
+                >
+                  {" "}
+                  <Tag
                     key={index}
-                    style={{
-                      marginBottom: "4px",
-                      height: "100%",
-                    }}
+                    style={{ height: "100%" }}
+                    onClick={() => editAgent(index, citation)}
+                    closable={true}
+                    onClose={(e) => handleClose(e, citation)}
                   >
-                    {" "}
-                    <Tag
-                      key={index}
-                      style={{ height: "100%" }}
-                      onClick={() => this.editAgent(index, citation)}
-                      closable={true}
-                      onClose={(e) => this.handleClose(e, citation)}
-                    >
-                      {citation.citation ? (
-                        <div
-                          style={{
-                            display: "inline-block",
-                          }}
-                          dangerouslySetInnerHTML={{
-                            __html: citation.citation,
-                          }}
-                        ></div>
-                      ) : (
-                        <div
-                          style={{
-                            display: "inline-block",
-                          }}
-                        >
-                          {citation.title}
-                        </div>
-                      )}
-                    </Tag>
-                  </li>
-                );
-                return tagElem;
-              })}
-            {!formVisible && (array || citations.length === 0) && (
-              <li
-                style={{
-                  marginBottom: "4px",
-                  height: "100%",
-                }}
-              >
-                <Tag onClick={() => this.showForm()} className={styles.newTagTall}>
-                  <PlusOutlined /> {label}
-                </Tag>
-              </li>
-            )}
-          </ol>
-        </Row>
+                    {citation.citation ? (
+                      <div
+                        style={{
+                          display: "inline-block",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: citation.citation,
+                        }}
+                      ></div>
+                    ) : (
+                      <div
+                        style={{
+                          display: "inline-block",
+                        }}
+                      >
+                        {citation.title}
+                      </div>
+                    )}
+                  </Tag>
+                </li>
+              );
+              return tagElem;
+            })}
+          {!formVisible && (array || citations.length === 0) && (
+            <li
+              style={{
+                marginBottom: "4px",
+                height: "100%",
+              }}
+            >
+              <Tag onClick={() => showForm()} className={styles.newTagTall}>
+                <PlusOutlined /> {label}
+              </Tag>
+            </li>
+          )}
+        </ol>
+      </Row>
 
-        <Modal
-          width={1000}
-          open={formVisible}
-          footer={null}
+      <Modal
+        width={1000}
+        open={formVisible}
+        footer={null}
+        onCancel={() =>
+          citationForEdit
+            ? onFormSubmit(citationForEdit)
+            : setFormVisible(false)
+        }
+        title={
+          citationForEdit
+            ? `Editing citation${
+                citationForEdit.id ? " " + citationForEdit.id : ""
+              }`
+            : `New citation`
+        }
+      >
+        <CslForm
+          data={formVisible ? citationForEdit : null}
+          onSubmit={onFormSubmit}
           onCancel={() =>
             citationForEdit
-              ? this.onFormSubmit(citationForEdit)
-              : this.setState({ formVisible: false })
+              ? onFormSubmit(citationForEdit)
+              : setFormVisible(false)
           }
-          title={
-            citationForEdit
-              ? `Editing citation${
-                  citationForEdit.id ? " " + citationForEdit.id : ""
-                }`
-              : `New citation`
-          }
-        >
-          <CslForm
-            data={formVisible ? citationForEdit : null}
-            onSubmit={this.onFormSubmit}
-            onCancel={() =>
-              citationForEdit
-                ? this.onFormSubmit(citationForEdit)
-                : this.setState({ formVisible: false })
-            }
-          />
-        </Modal>
-      </React.Fragment>
-    );
-  }
-}
+        />
+      </Modal>
+    </React.Fragment>
+  );
+};
 
 export default CitationControl;
