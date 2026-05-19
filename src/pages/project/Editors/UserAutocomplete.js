@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import config from "../../../config";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -7,114 +7,109 @@ import _ from "lodash";
 import { debounce } from "lodash";
 import Highlighter from "react-highlight-words";
 
-class UserAutocomplete extends React.Component {
-  constructor(props) {
-    super(props);
+const UserAutocomplete = ({ defaultUserName, onSelectUser, onResetSearch, placeHolder, style, autoFocus }) => {
+  const [users, setUsers] = useState([]);
+  const [value, setValue] = useState("");
+  const getUsersRef = useRef(null);
 
-    this.getUsers = debounce(this.getUsers, 500);
+  useEffect(() => {
+    const fn = debounce((q) => {
+      axios(`${config.dataApi}user?q=${encodeURIComponent(q)}&limit=30`)
+        .then((res) => {
+          setUsers(res.data.result);
+        })
+        .catch(() => {
+          setUsers([]);
+        });
+    }, 500);
+    getUsersRef.current = fn;
+    return () => fn.cancel();
+  }, []);
 
-    this.state = {
-      users: [],
-      value: "",
-    };
-  }
-
-  componentDidMount = () => {
-    const { defaultUserName } = this.props;
-    if (defaultUserName) {
-      this.setDefaultValue(defaultUserName);
-    }
-  };
-
-  componentDidUpdate = (prevProps) => {
-    const { defaultUserName } = this.props;
-    if (defaultUserName && defaultUserName !== prevProps.defaultUserName) {
-      this.setDefaultValue(defaultUserName);
-    } else if (prevProps.defaultUserName && !defaultUserName) {
-      this.setState({ value: "" });
-    }
-  };
-
-  componentWillUnmount() {
-    this.getUsers.cancel();
-  }
-
-  setDefaultValue = (defaultUserName) => {
-    axios(`${config.dataApi}user/${defaultUserName}`).then((res) => {
-      this.setState({ value: _.get(res, "data.title") || "" });
-      this.props.onSelectUser(res.data);
+  const setDefaultValue = (name) => {
+    axios(`${config.dataApi}user/${name}`).then((res) => {
+      setValue(_.get(res, "data.title") || "");
+      onSelectUser(res.data);
     });
   };
 
-  getUsers = (q) => {
-    axios(`${config.dataApi}user?q=${encodeURIComponent(q)}&limit=30`)
-      .then((res) => {
-        this.setState({ users: res.data.result });
-      })
-      .catch((err) => {
-        this.setState({ users: [], err });
-      });
+  useEffect(() => {
+    if (defaultUserName) {
+      setDefaultValue(defaultUserName);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (defaultUserName) {
+      setDefaultValue(defaultUserName);
+    } else if (!defaultUserName) {
+      setValue("");
+    }
+  }, [defaultUserName]);
+
+  const handleSearch = (q) => {
+    if (getUsersRef.current) getUsersRef.current(q);
   };
-  onSelectUser = (val, obj) => {
-    this.setState({ value: val });
-    this.props.onSelectUser({ key: obj.key, title: val });
+
+  const handleSelect = (val, obj) => {
+    setValue(val);
+    onSelectUser({ key: obj.key, title: val });
   };
-  onReset = () => {
-    this.setState({ value: "", users: [] });
-    if (
-      this.props.onResetSearch &&
-      typeof this.props.onResetSearch === "function"
-    ) {
-      this.props.onResetSearch();
+
+  const onReset = () => {
+    setValue("");
+    setUsers([]);
+    if (onResetSearch && typeof onResetSearch === "function") {
+      onResetSearch();
     }
   };
-  render = () => {
-    const { value } = this.state;
-    const { style, autoFocus } = this.props;
 
-    const suffix = value ? (
-      <CloseCircleOutlined
-        key="suffix"
-        onClick={this.onReset}
-        style={{ marginRight: "6px" }}
-      />
-    ) : (
-      <span />
-    );
-    const options = this.state.users
-      ? this.state.users.map((o) => {
-          const text = !o.firstname && !o.lastname ? o.username : `${o.firstname} ${o.lastname} (${o.username})`;
-          return {
-            key: o.key,
-            value: text,
-            label: (
-              <Highlighter
-                highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                searchWords={value.split(" ")}
-                autoEscape
-                textToHighlight={text}
-              />
-            ),
-            data: o,
-          };
-        })
-      : [];
+  const suffix = value ? (
+    <CloseCircleOutlined
+      key="suffix"
+      onClick={onReset}
+      style={{ marginRight: "6px" }}
+    />
+  ) : (
+    <span />
+  );
 
-    return (
-      <AutoComplete
-        onSelect={this.onSelectUser}
-        onSearch={this.getUsers}
-        options={options}
-        placeholder={this.props.placeHolder || "Find user"}
-        style={style ? style : { width: "100%" }}
-        onChange={(value) => this.setState({ value })}
-        value={value}
-        autoFocus={autoFocus === false ? false : true}
-      >
-        <Input.Search suffix={suffix} />
-      </AutoComplete>
-    );
-  };
-}
+  const options = users
+    ? users.map((o) => {
+        const text =
+          !o.firstname && !o.lastname
+            ? o.username
+            : `${o.firstname} ${o.lastname} (${o.username})`;
+        return {
+          key: o.key,
+          value: text,
+          label: (
+            <Highlighter
+              highlightStyle={{ fontWeight: "bold", padding: 0 }}
+              searchWords={value.split(" ")}
+              autoEscape
+              textToHighlight={text}
+            />
+          ),
+          data: o,
+        };
+      })
+    : [];
+
+  return (
+    <AutoComplete
+      onSelect={handleSelect}
+      onSearch={handleSearch}
+      options={options}
+      placeholder={placeHolder || "Find user"}
+      style={style ? style : { width: "100%" }}
+      onChange={(v) => setValue(v)}
+      value={value}
+      autoFocus={autoFocus === false ? false : true}
+    >
+      <Input.Search suffix={suffix} />
+    </AutoComplete>
+  );
+};
 
 export default UserAutocomplete;
