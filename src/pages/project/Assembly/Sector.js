@@ -377,8 +377,7 @@ class Sector extends React.Component {
               )}
               {error && (
                 <Alert
-                  closable
-                  onClose={() => this.setState({ error: null })}
+                  closable={{ onClose: () => this.setState({ error: null }) }}
                   title={
                     <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                   }
@@ -533,8 +532,7 @@ class Sector extends React.Component {
                 {error && (
                   <Alert
                     style={{ marginTop: "8px" }}
-                    closable
-                    onClose={() => this.setState({ error: null })}
+                    closable={{ onClose: () => this.setState({ error: null }) }}
                     title={
                       <ErrorMsg error={error} style={{ marginTop: "8px" }} />
                     }

@@ -579,8 +579,7 @@ class Assembly extends React.Component {
                 />
                 {error && (
                   <Alert
-                    closable
-                    onClose={() => this.setState({ error: null })}
+                    closable={{ onClose: () => this.setState({ error: null }) }}
                     description={<ErrorMsg error={error} />}
                     type="error"
                   />

@@ -167,8 +167,7 @@ const SectorForm = ({
           style={{ marginBottom: "10px" }}
           description={<ErrorMsg error={error} />}
           type="error"
-          closable
-          onClose={() => setError(null)}
+          closable={{ onClose: () => setError(null) }}
         />
       )}
       <Form

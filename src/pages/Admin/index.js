@@ -224,8 +224,7 @@ class AdminPage extends React.Component {
           {error && (
             <Row>
               <Alert
-                closable
-                onClose={() => this.setState({ error: null })}
+                closable={{ onClose: () => this.setState({ error: null }) }}
                 description={<ErrorMsg error={error} />}
                 type="error"
               />

@@ -69,8 +69,7 @@ const ArchiveValidator = () => {
         {submissionError && (
           <Alert
             type="error"
-            closable
-            onClose={() => setSubmissionError(null)}
+            closable={{ onClose: () => setSubmissionError(null) }}
             title={
               <ErrorMsg
                 error={submissionError}

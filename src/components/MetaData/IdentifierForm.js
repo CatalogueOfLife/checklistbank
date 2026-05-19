@@ -72,8 +72,7 @@ const IdentifierForm = (props) => {
       {submissionError && (
         <FormItem>
           <Alert
-            closable
-            onClose={() => setSubmissionError(null)}
+            closable={{ onClose: () => setSubmissionError(null) }}
             description={<ErrorMsg error={submissionError} />}
             type="error"
           />

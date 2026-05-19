@@ -507,16 +507,14 @@ class ProjectDecisions extends React.Component {
       <>
         {error && (
           <Alert
-            closable
-            onClose={() => this.setState({ error: null })}
+            closable={{ onClose: () => this.setState({ error: null }) }}
             title={error.message}
             type="error"
           />
         )}
         {rematchInfo && (
           <Alert
-            closable
-            onClose={() => this.setState({ rematchInfo: null })}
+            closable={{ onClose: () => this.setState({ rematchInfo: null }) }}
             title="Rematch succeded"
             description={<RematchResult rematchInfo={rematchInfo} />}
             type="success"

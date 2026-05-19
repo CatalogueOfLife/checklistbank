@@ -121,8 +121,7 @@ class TextTreeUpload extends React.Component {
         {submissionError && (
           <Alert
             style={{ marginBottom: "8px" }}
-            closable
-            onClose={() => this.setState({ submissionError: null })}
+            closable={{ onClose: () => this.setState({ submissionError: null }) }}
             description={<ErrorMsg error={submissionError} />}
             type="error"
           />

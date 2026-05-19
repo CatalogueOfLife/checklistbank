@@ -1576,16 +1576,14 @@ class ColTree extends React.Component {
           <React.Fragment>
             {_.get(error, "response.data.code") !== 404 ? (
               <Alert
-                closable
-                onClose={() => this.setState({ error: null })}
+                closable={{ onClose: () => this.setState({ error: null }) }}
                 style={{ marginTop: "8px" }}
                 description={<ErrorMsg error={error} />}
                 type="error"
               />
             ) : (
               <Alert
-                closable
-                onClose={() => this.setState({ error: null })}
+                closable={{ onClose: () => this.setState({ error: null }) }}
                 style={{ marginTop: "8px" }}
                 title={
                   <Custom404
@@ -1602,8 +1600,7 @@ class ColTree extends React.Component {
         )}
         {nodeNotFoundErr && (
           <Alert
-            closable
-            onClose={() => this.setState({ ernodeNotFoundErrror: null })}
+            closable={{ onClose: () => this.setState({ ernodeNotFoundErrror: null }) }}
             style={{ marginTop: "8px" }}
             title={nodeNotFoundErr}
             type="warning"

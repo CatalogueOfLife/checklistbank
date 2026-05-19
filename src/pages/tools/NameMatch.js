@@ -644,8 +644,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
         {submissionError && (
           <Alert
             type="error"
-            closable
-            onClose={() => setSubmissionError(null)}
+            closable={{ onClose: () => setSubmissionError(null) }}
             title={
               <ErrorMsg
                 error={submissionError}
@@ -657,8 +656,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
         {error && (
           <Alert
             type="error"
-            closable
-            onClose={() => setError(null)}
+            closable={{ onClose: () => setError(null) }}
             title={error}
           ></Alert>
         )}
@@ -878,11 +876,10 @@ const NameMatch = ({ addError, issueMap, user }) => {
                               description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
                               type="error"
                               style={{ marginTop: "10px" }}
-                              closable
-                              onClose={() => {
+                              closable={{ onClose: () => {
                                 setSubjectTaxon(null);
                                 setSubjectDataTotal(null);
-                              }}
+                              } }}
                             />
                           )}
                       </Col>
