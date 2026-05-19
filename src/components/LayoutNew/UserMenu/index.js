@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import { useState } from "react";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, Dropdown, Avatar, Modal, Button, Divider } from "antd";
 import { NavLink } from "react-router-dom";
@@ -26,156 +26,139 @@ const hashCode = function (str) {
   return hash;
 };
 
+const UserMenu = ({ user, login, logout, catalogue, setCatalogue }) => {
+  const [visible, setVisible] = useState(false);
+  const [invalid, setInvalid] = useState(false);
 
-class UserMenu extends PureComponent {
-  state = {
-    visible: false,
-    invalid: false,
+  const showLogin = () => {
+    setVisible(true);
   };
 
-  showLogin = () => {
-    this.setState({
-      visible: true,
-    });
+  const reset = () => {
+    setVisible(false);
+    setInvalid(false);
+    window.location.reload();
   };
-  reset = () => {
-    this.setState(
-      {
-        visible: false,
-        invalid: false,
-      },
-      () => window.location.reload()
-    );
-  }
 
-  handleLogin = (values) => {
-    const { setCatalogue } = this.props;
-    this.props
-      .login(values)
+  const handleLogin = (values) => {
+    login(values)
       .then((user) => {
         if (!Auth.isAdmin(user) && user?.roles?.length && !localStorage.getItem("col_selected_project")) {
           if (user?.editor?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.editor[0]}`)
               .then(project => {
-                setCatalogue(project?.data)
-                this.reset()
+                setCatalogue(project?.data);
+                reset();
               })
               .catch(err => {
-                console.log(err)
+                console.log(err);
               });
           } else if (!user.editor && user?.reviewer?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.reviewer[0]}`)
               .then(project => {
-                setCatalogue(project?.data)
-                this.reset()
+                setCatalogue(project?.data);
+                reset();
               })
               .catch(err => {
-                console.log(err)
+                console.log(err);
               });
           }
         } else {
-          this.reset()
+          reset();
         }
-
       })
       .catch((err) => {
         if (err?.response?.status === 401) {
-          this.setState({ invalid: `Invalid Username or password` });
+          setInvalid(`Invalid Username or password`);
         } else {
-          this.setState({ invalid: err.message });
+          setInvalid(err.message);
         }
-
       });
   };
 
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-      invalid: false,
-    });
+  const handleCancel = () => {
+    setVisible(false);
+    setInvalid(false);
   };
 
-  render() {
-    const { user, logout, catalogue } = this.props;
-    let currentUser;
-    if (user) {
-      const imgNr = Math.abs(hashCode(user.username)) % 10;
-      currentUser = {
-        name: user.username,
-        avatar: `/_palettes/${imgNr}.png`,
-      };
-    }
-
-    const menu = (
-      <Menu
-        selectedKeys={[]}
-        items={[
-          {
-            key: "logout",
-            label: (
-              <>
-                <LogoutOutlined /> Logout
-              </>
-            ),
-            onClick: () => {
-              logout();
-              window.location.reload();
-            },
-          },
-          {
-            key: "profile",
-            label: (
-              <NavLink to={{ pathname: `/user-profile` }}>
-                <UserOutlined /> Profile
-              </NavLink>
-            ),
-          },
-        ]}
-      />
-    );
-
-    return (
-      <React.Fragment>
-        {!user && (
-          <span style={{ padding: "0 16px" }}>
-            <Button htmlType="button" type="primary" onClick={this.showLogin}>
-              Login
-            </Button>
-          </span>
-        )}
-        {user && (
-          <Dropdown popupRender={() => menu} trigger={["click"]}>
-            <span style={{ padding: "0 16px" }}>
-              <Avatar
-                style={{ marginRight: 8 }}
-                size="small"
-                className={styles.avatar}
-                src={currentUser.avatar}
-                alt="avatar"
-              />
-              <span>{currentUser.name}</span>
-            </span>
-          </Dropdown>
-        )}
-        <Modal
-          title="Login with your GBIF account"
-          open={this.state.visible}
-          onOk={this.handleLogin}
-          onCancel={this.handleCancel}
-          footer={null}
-          destroyOnHidden={true}
-        >
-          <div className={styles.background}>
-            <LoginForm
-              invalid={this.state.invalid}
-              onLogin={this.handleLogin}
-            />
-          </div>
-        </Modal>
-      </React.Fragment>
-    );
+  let currentUser;
+  if (user) {
+    const imgNr = Math.abs(hashCode(user.username)) % 10;
+    currentUser = {
+      name: user.username,
+      avatar: `/_palettes/${imgNr}.png`,
+    };
   }
-}
+
+  const menu = (
+    <Menu
+      selectedKeys={[]}
+      items={[
+        {
+          key: "logout",
+          label: (
+            <>
+              <LogoutOutlined /> Logout
+            </>
+          ),
+          onClick: () => {
+            logout();
+            window.location.reload();
+          },
+        },
+        {
+          key: "profile",
+          label: (
+            <NavLink to={{ pathname: `/user-profile` }}>
+              <UserOutlined /> Profile
+            </NavLink>
+          ),
+        },
+      ]}
+    />
+  );
+
+  return (
+    <>
+      {!user && (
+        <span style={{ padding: "0 16px" }}>
+          <Button htmlType="button" type="primary" onClick={showLogin}>
+            Login
+          </Button>
+        </span>
+      )}
+      {user && (
+        <Dropdown popupRender={() => menu} trigger={["click"]}>
+          <span style={{ padding: "0 16px" }}>
+            <Avatar
+              style={{ marginRight: 8 }}
+              size="small"
+              className={styles.avatar}
+              src={currentUser.avatar}
+              alt="avatar"
+            />
+            <span>{currentUser.name}</span>
+          </span>
+        </Dropdown>
+      )}
+      <Modal
+        title="Login with your GBIF account"
+        open={visible}
+        onOk={handleLogin}
+        onCancel={handleCancel}
+        footer={null}
+        destroyOnHidden={true}
+      >
+        <div className={styles.background}>
+          <LoginForm
+            invalid={invalid}
+            onLogin={handleLogin}
+          />
+        </div>
+      </Modal>
+    </>
+  );
+};
 
 const mapContextToProps = ({ user, login, logout, catalogue, setCatalogue }) => ({
   user,
