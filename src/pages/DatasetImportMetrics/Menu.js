@@ -1,4 +1,3 @@
-import React from "react";
 import withRouter from "../../withRouter";
 import { Typography } from 'antd';
 const { Title } = Typography;
@@ -13,10 +12,8 @@ import {
 import { RiNodeTree } from "react-icons/ri";
 import moment from "dayjs";
 
-class ImportMenu extends React.Component {
-  render() {
+const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
     // const { current } = this.state;
-    const { datasetKey, attempt, location, dataset, isFinished } = this.props;
     const isProject = dataset?.origin === "project";
     const splitted = location.pathname
       .split(`/dataset/${datasetKey}/`)[1]
@@ -61,7 +58,6 @@ class ImportMenu extends React.Component {
           </Row>
         )}
       <Menu
-        onClick={this.handleClick}
         selectedKeys={[current]}
         mode="horizontal"
         style={{ marginBottom: "8px" }}
@@ -155,7 +151,6 @@ class ImportMenu extends React.Component {
       />
       </>
     );
-  }
-}
+};
 
 export default withRouter(ImportMenu);
