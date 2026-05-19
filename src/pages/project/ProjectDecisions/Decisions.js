@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import {
@@ -44,77 +44,55 @@ const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 const PAGE_SIZE = 100;
 
-class ProjectDecisions extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      searchText: "",
-      loading: false,
-      rematchDecisionsLoading: false,
-      rematchInfo: null,
-      pagination: {
-        pageSize: PAGE_SIZE,
-        current: 1,
-        showQuickJumper: true,
-        total: 0,
-        showTotal: (total) => `Total ${total} items`,
-      },
-      decisionFormVisible: false,
-      rowsForEdit: [],
-    };
-  }
-  nameRef = React.createRef();
+const ProjectDecisions = ({
+  location,
+  datasetKey,
+  user,
+  rank,
+  decisionMode,
+  type,
+  releasedFrom,
+}) => {
+  const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [rematchDecisionsLoading, setRematchDecisionsLoading] = useState(false);
+  const [deleteBrokenDecisionsLoading, setDeleteBrokenDecisionsLoading] = useState(false);
+  const [rematchInfo, setRematchInfo] = useState(null);
+  const [error, setError] = useState(null);
+  const [facetMode, setFacetMode] = useState(null);
+  const [pagination, setPagination] = useState({
+    pageSize: PAGE_SIZE,
+    current: 1,
+    showQuickJumper: true,
+    total: 0,
+    showTotal: (total) => `Total ${total} items`,
+  });
+  const [decisionFormVisible, setDecisionFormVisible] = useState(false);
+  const [rowsForEdit, setRowsForEdit] = useState([]);
 
-  componentDidMount() {
-    // this.getData();
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: PAGE_SIZE, offset: 0 };
-      history.push({
-        pathname: _.get(this.props, "location.pathname"),
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
-    }
+  const nameRef = useRef(null);
 
-    this.setState(
-      {
-        params,
-        pagination: {
-          pageSize: params.limit || PAGE_SIZE,
-          current:
-            Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
-        },
-      },
-      this.getData
-    );
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(prevProps, "location.search") !==
-        _.get(this.props, "location.search") ||
-      _.get(prevProps, "datasetKey") !== _.get(this.props, "datasetKey")
-    ) {
-      const params = qs.parse(_.get(this.props, "location.search"));
-      this.setState(
-        {
-          pagination: {
-            pageSize: params.limit || PAGE_SIZE,
-            current:
-              Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
-          },
-        },
-        this.getData
-      );
-    }
+  const decorateWithDataset = (res) => {
+    if (!res.data.result) return res;
+    return Promise.all([
+      ...res.data.result.map((decision) =>
+        datasetLoader
+          .load(decision.subjectDatasetKey)
+          .then((dataset) => (decision.dataset = dataset))
+      ),
+      ...res.data.result.map((decision) =>
+        userLoader
+          .load(decision.createdBy)
+          .then((u) => (decision.user = u))
+      ),
+    ]).then(() => res);
   };
 
-  getData = () => {
-    const { datasetKey } = this.props;
-    this.setState({ loading: true });
+  const getData = () => {
+    setLoading(true);
     const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
+      ...qs.parse(_.get(location, "search")),
       facet: "mode",
     };
     const url = !!params.stale
@@ -127,62 +105,76 @@ class ProjectDecisions extends React.Component {
           params
         )}`;
     axios(url)
-      .then(this.decorateWithDataset)
-      .then((res) =>
-        this.setState({
-          loading: false,
-          error: null,
-          data: _.get(res, "data.result") || [],
-          facetMode: (res?.data?.facets?.mode || []).reduce((acc, cur) => {
+      .then(decorateWithDataset)
+      .then((res) => {
+        setLoading(false);
+        setError(null);
+        setData(_.get(res, "data.result") || []);
+        setFacetMode(
+          (res?.data?.facets?.mode || []).reduce((acc, cur) => {
             acc[cur.value] = cur.count;
             return acc;
-          }, {}),
-          pagination: {
-            ...this.state.pagination,
-            total: _.get(res, "data.total"),
-          },
-        })
-      )
+          }, {})
+        );
+        setPagination((prev) => ({
+          ...prev,
+          total: _.get(res, "data.total"),
+        }));
+      })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: [] });
+        setLoading(false);
+        setError(err);
+        setData([]);
       });
   };
 
-  decorateWithDataset = (res) => {
-    if (!res.data.result) return res;
-    return Promise.all([
-      ...res.data.result.map((decision) =>
-        datasetLoader
-          .load(decision.subjectDatasetKey)
-          .then((dataset) => (decision.dataset = dataset))
-      ),
-      ...res.data.result.map((decision) =>
-        userLoader
-          .load(decision.createdBy)
-          .then((user) => (decision.user = user))
-      ),
-    ]).then(() => res);
-  };
+  useEffect(() => {
+    let params = qs.parse(_.get(location, "search"));
+    if (_.isEmpty(params)) {
+      params = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: _.get(location, "pathname"),
+        search: `?limit=${PAGE_SIZE}&offset=0`,
+      });
+    }
+    setPagination((prev) => ({
+      ...prev,
+      pageSize: params.limit || PAGE_SIZE,
+      current:
+        Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
+    }));
+    // getData called by the location.search effect below
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    //pager.current = pagination.current;
+  useEffect(() => {
+    const params = qs.parse(_.get(location, "search"));
+    setPagination((prev) => ({
+      ...prev,
+      pageSize: params.limit || PAGE_SIZE,
+      current:
+        Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
+    }));
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, datasetKey]);
 
+  const handleTableChange = (newPagination) => {
     const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      limit: pager.pageSize,
-      offset: (pager.current - 1) * pager.pageSize,
+      ...qs.parse(_.get(location, "search")),
+      limit: newPagination.pageSize,
+      offset: (newPagination.current - 1) * newPagination.pageSize,
     };
 
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: qs.stringify(params),
     });
   };
 
-  updateSearch = (params) => {
+  const updateSearch = (params) => {
     let newParams = {
-      ...qs.parse(_.get(this.props, "location.search")),
+      ...qs.parse(_.get(location, "search")),
       ...params,
       offset: 0,
     };
@@ -192,72 +184,54 @@ class ProjectDecisions extends React.Component {
       }
     });
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: qs.stringify(newParams),
     });
   };
 
-  onSelectDataset = (dataset) => {
-    this.updateSearch({ subjectDatasetKey: dataset.key });
+  const onSelectDataset = (dataset) => {
+    updateSearch({ subjectDatasetKey: dataset.key });
   };
 
-  onResetDataset = () => {
-    let newParams = qs.parse(_.get(this.props, "location.search"));
+  const onResetDataset = () => {
+    let newParams = qs.parse(_.get(location, "search"));
     delete newParams.subjectDatasetKey;
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: qs.stringify(newParams),
     });
   };
 
-  resetAllFilters = () => {
-    if (this?.nameRef?.current?.input?.state?.value) {
-      this.nameRef.current.input.state.value = "";
+  const resetAllFilters = () => {
+    if (nameRef?.current?.input?.state?.value) {
+      nameRef.current.input.state.value = "";
     }
 
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: `?limit=${PAGE_SIZE}&offset=0`,
     });
   };
 
-  handleSearch = (selectedKeys, confirm) => {
-    confirm();
-    this.setState({ searchText: selectedKeys[0] });
-  };
-
-  handleReset = (clearFilters) => {
-    clearFilters();
-    this.setState({ searchText: "" });
-  };
-
-  rematchDecisions = (subjectDatasetKey) => {
-    const { datasetKey } = this.props;
-
-    this.setState({ rematchDecisionsLoading: true });
+  const rematchDecisions = (subjectDatasetKey) => {
+    setRematchDecisionsLoading(true);
     const body = subjectDatasetKey ? { subjectDatasetKey } : {};
     axios
       .post(`${config.dataApi}dataset/${datasetKey}/decision/rematch`, body)
       .then((res) => {
-        this.setState({
-          rematchDecisionsLoading: false,
-          error: null,
-          rematchInfo: { decisions: res.data },
-        });
+        setRematchDecisionsLoading(false);
+        setError(null);
+        setRematchInfo({ decisions: res.data });
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          rematchInfo: null,
-          rematchDecisionsLoading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setRematchInfo(null);
+        setRematchDecisionsLoading(false);
+      });
   };
 
-  deleteBrokenDecisions = (subjectDatasetKey) => {
-    const { datasetKey } = this.props;
-
-    this.setState({ deleteBrokenDecisionsLoading: true });
+  const deleteBrokenDecisions = (subjectDatasetKey) => {
+    setDeleteBrokenDecisionsLoading(true);
     axios
       .delete(
         `${config.dataApi}dataset/${datasetKey}/decision?datasetKey=${subjectDatasetKey}&broken=true`
@@ -267,492 +241,450 @@ class ProjectDecisions extends React.Component {
           message: "Success",
           description: `Deleted ${res} broken decisions`,
         });
-        this.setState({
-          deleteBrokenDecisionsLoading: false,
-          error: null,
-        });
+        setDeleteBrokenDecisionsLoading(false);
+        setError(null);
       })
-      .catch((err) =>
-        this.setState({
-          error: err,
-          deleteBrokenDecisionsLoading: false,
-        })
-      );
+      .catch((err) => {
+        setError(err);
+        setDeleteBrokenDecisionsLoading(false);
+      });
   };
 
-  render() {
-    const {
-      data,
-      loading,
-      error,
-      pagination,
-      rematchDecisionsLoading,
-      deleteBrokenDecisionsLoading,
-      rematchInfo,
-      decisionFormVisible,
-      rowsForEdit,
-      facetMode,
-    } = this.state;
-    const { datasetKey, user, rank, decisionMode, type, releasedFrom } =
-      this.props;
-    const params = qs.parse(_.get(this.props, "location.search"));
+  const params = qs.parse(_.get(location, "search"));
 
-    const columns = [
-      {
-        title: "Dataset",
-        dataIndex: ["dataset", "title"],
-        key: "title",
-        render: (text, record) => {
-          return (
-            <NavLink
-              to={{
-                pathname: `/project/${
-                  type === "project" ? datasetKey : releasedFrom
-                }/dataset/${record.subjectDatasetKey}/imports`,
-              }}
-              end
-            >
-              <Highlighter
-                highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                searchWords={[this.state.searchText]}
-                autoEscape
-                textToHighlight={record?.alias?.toString() || text.toString()}
-              />
-            </NavLink>
-          );
-        },
-        sorter: (a, b) => a.dataset.title < b.dataset.title,
-        width: 250,
-      },
-      {
-        title: "Mode",
-        dataIndex: "mode",
-        key: "mode",
-        width: 50,
-      },
-      {
-        title: "Subject rank",
-        dataIndex: ["subject", "rank"],
-        key: "rank",
-        width: 50,
-      },
-      {
-        title: "Subject",
-        dataIndex: ["subject", "name"],
-        key: "subject",
-        width: 150,
-        render: (text, record) => {
-          return (
-            <React.Fragment>
-              <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                {record?.subject?.rank}:{" "}
-              </div>
-              {!record?.subject?.id && (
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                    search: `?q=${record?.subject?.name}`,
-                  }}
-                  end
-                >
-                  <Highlighter
-                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                    searchWords={[params.name]}
-                    autoEscape
-                    textToHighlight={record?.subject?.name?.toString()}
-                  />
-                </NavLink>
-              )}
-              {record?.subject?.id && (
-                <NavLink
-                  to={{
-                    pathname: `/project/${
-                      type === "project" ? datasetKey : releasedFrom
-                    }/dataset/${record.subjectDatasetKey}/taxon/${
-                      record?.subject?.id
-                    }`,
-                  }}
-                  end
-                >
-                  <Highlighter
-                    highlightStyle={{ fontWeight: "bold", padding: 0 }}
-                    searchWords={[params.name]}
-                    autoEscape
-                    textToHighlight={
-                      _.get(record, "subject.name")
-                        ? record?.subject?.name.toString()
-                        : ""
-                    }
-                  />
-                </NavLink>
-              )}
-              {record?.subject?.broken && (
-                <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
-              )}
-            </React.Fragment>
-          );
-        },
-      },
-      {
-        title: "Created by",
-        dataIndex: ["user", "username"],
-        key: "createdBy",
-      },
-
-      {
-        title: "Created",
-        dataIndex: "created",
-        key: "created",
-        width: 100,
-        render: (date) => {
-          return date ? moment(date).format("l LT") : "";
-        },
-      },
-    ];
-
-    if (
-      Auth.canEditDataset({ key: datasetKey }, user) &&
-      this.props?.type === "project"
-    ) {
-      columns.push({
-        title: "Action",
-        key: "action",
-        width: 250,
-        render: (text, record) => (
-          <React.Fragment>
-            {
-              <Button
-                size="small"
-                style={{ display: "inline", marginRight: "8px" }}
-                type={"primary"}
-                onClick={() => {
-                  axios
-                    .post(
-                      `${config.dataApi}dataset/${datasetKey}/decision/rematch`,
-                      { id: record.id }
-                    )
-                    .then((rematchInfo) => {
-                      const success =
-                        (_.get(rematchInfo, "data.updated") === 1 ||
-                          _.get(rematchInfo, "data.unchanged") === 1) &&
-                        _.get(rematchInfo, "data.broken") === 0;
-
-                      if (success) {
-                        notification.success({
-                          message: "Rematch success",
-                          description: `Updated: ${_.get(
-                            rematchInfo,
-                            "data.updated"
-                          )} Unchanged: ${_.get(
-                            rematchInfo,
-                            "data.unchanged"
-                          )}`,
-                        });
-                      } else {
-                        notification.error({
-                          message: "Rematch failed",
-                          description: `Broken decisions: 1`,
-                        });
-                      }
-                    })
-                    .catch((err) => {
-                      notification.error({
-                        message: `Server error ${_.get(
-                          err,
-                          "response.status"
-                        )}`,
-                        description: _.get(err, "response.data.message"),
-                      });
-                    });
-                }}
-              >
-                Rematch
-              </Button>
-            }
-            {
-              <Button
-                size="small"
-                style={{ display: "inline" }}
-                danger
-                onClick={() => {
-                  return axios
-                    .delete(
-                      `${config.dataApi}dataset/${datasetKey}/decision/${record.id}`
-                    )
-                    .then((res) => {
-                      this.setState(
-                        {
-                          data: this.state.data.filter(
-                            (d) => d.id !== record.id
-                          ),
-                        },
-                        () =>
-                          notification.open({
-                            message: "Decision deleted",
-                          })
-                      );
-                    });
-                }}
-              >
-                <DeleteOutlined />
-              </Button>
-            }
-          </React.Fragment>
-        ),
-      });
-    }
-
-    return (
-      <>
-        {error && (
-          <Alert
-            closable={{ onClose: () => this.setState({ error: null }) }}
-            title={error.message}
-            type="error"
-          />
-        )}
-        {rematchInfo && (
-          <Alert
-            closable={{ onClose: () => this.setState({ rematchInfo: null }) }}
-            title="Rematch succeded"
-            description={<RematchResult rematchInfo={rematchInfo} />}
-            type="success"
-            style={{ marginBottom: "10px" }}
-          />
-        )}
-        {decisionFormVisible && (
-          <DecisionForm
-            rowsForEdit={rowsForEdit}
-            onCancel={() => {
-              this.setState({
-                decisionFormVisible: false,
-                rowsForEdit: [],
-              });
+  const columns = [
+    {
+      title: "Dataset",
+      dataIndex: ["dataset", "title"],
+      key: "title",
+      render: (text, record) => {
+        return (
+          <NavLink
+            to={{
+              pathname: `/project/${
+                type === "project" ? datasetKey : releasedFrom
+              }/dataset/${record.subjectDatasetKey}/imports`,
             }}
-            onOk={() => {
-              this.setState({
-                decisionFormVisible: false,
-                rowsForEdit: [],
-              });
-            }}
-            onSaveDecision={(name) => {
-              this.setState(
-                {
-                  decisionFormVisible: false,
-                  rowsForEdit: [],
-                },
-                this.getData
-              );
-            }}
-            datasetKey={datasetKey}
-            subjectDatasetKey={_.get(
-              rowsForEdit,
-              "[0].decisions[0].subjectDatasetKey",
-              null
-            )}
-          />
-        )}
-
-        <Form layout="inline">
-          <FormItem>
-            <div style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <DatasetAutocomplete
-                defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
-                onResetSearch={this.onResetDataset}
-                onSelectDataset={this.onSelectDataset}
-                contributesTo={this.props.datasetKey}
-                placeHolder="Source dataset"
-              />
+            end
+          >
+            <Highlighter
+              highlightStyle={{ fontWeight: "bold", padding: 0 }}
+              searchWords={[searchText]}
+              autoEscape
+              textToHighlight={record?.alias?.toString() || text.toString()}
+            />
+          </NavLink>
+        );
+      },
+      sorter: (a, b) => a.dataset.title < b.dataset.title,
+      width: 250,
+    },
+    {
+      title: "Mode",
+      dataIndex: "mode",
+      key: "mode",
+      width: 50,
+    },
+    {
+      title: "Subject rank",
+      dataIndex: ["subject", "rank"],
+      key: "rank",
+      width: 50,
+    },
+    {
+      title: "Subject",
+      dataIndex: ["subject", "name"],
+      key: "subject",
+      width: 150,
+      render: (text, record) => {
+        return (
+          <>
+            <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+              {record?.subject?.rank}:{" "}
             </div>
-          </FormItem>
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <Search
-              placeholder="Taxon name"
-              defaultValue={params.name}
-              onSearch={(value) => this.updateSearch({ name: value })}
-              style={{ width: 200 }}
-              ref={this.nameRef}
-              allowClear
-            />
-          </FormItem>
-          <FormItem
-            label="Stale"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.stale === true || params.stale === "true"}
-              onChange={(value) => this.updateSearch({ stale: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Only broken"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              disabled={params.stale === true || params.stale === "true"}
-              checked={params.broken === true || params.broken === "true"}
-              onChange={(value) => this.updateSearch({ broken: value })}
-            />
-          </FormItem>
-          {Auth.canEditDataset({ key: datasetKey }, user) && (
-            <FormItem
-              label="Created by me"
-              style={{ marginBottom: "8px", marginRight: "8px" }}
-            >
-              <Switch
-                disabled={params.stale === true || params.stale === "true"}
-                checked={user && Number(params.modifiedBy) === user.key}
-                onChange={(value) =>
-                  this.updateSearch({ modifiedBy: value ? user.key : null })
-                }
-              />
-            </FormItem>
-          )}
+            {!record?.subject?.id && (
+              <NavLink
+                to={{
+                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                  search: `?q=${record?.subject?.name}`,
+                }}
+                end
+              >
+                <Highlighter
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                  searchWords={[params.name]}
+                  autoEscape
+                  textToHighlight={record?.subject?.name?.toString()}
+                />
+              </NavLink>
+            )}
+            {record?.subject?.id && (
+              <NavLink
+                to={{
+                  pathname: `/project/${
+                    type === "project" ? datasetKey : releasedFrom
+                  }/dataset/${record.subjectDatasetKey}/taxon/${
+                    record?.subject?.id
+                  }`,
+                }}
+                end
+              >
+                <Highlighter
+                  highlightStyle={{ fontWeight: "bold", padding: 0 }}
+                  searchWords={[params.name]}
+                  autoEscape
+                  textToHighlight={
+                    _.get(record, "subject.name")
+                      ? record?.subject?.name.toString()
+                      : ""
+                  }
+                />
+              </NavLink>
+            )}
+            {record?.subject?.broken && (
+              <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: "Created by",
+      dataIndex: ["user", "username"],
+      key: "createdBy",
+    },
 
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <Select
-              disabled={params.stale === true || params.stale === "true"}
-              placeholder="Subject rank"
-              style={{ width: 160 }}
-              value={params.rank}
-              showSearch
-              allowClear
-              onChange={(value) => this.updateSearch({ rank: value })}
-              options={rank.map((r) => ({ value: r, label: r }))}
-            />
-          </FormItem>
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <Select
-              disabled={params.stale === true || params.stale === "true"}
-              placeholder="Decision mode"
-              style={{ width: 160 }}
-              value={params.mode}
-              showSearch
-              allowClear
-              onChange={(value) => this.updateSearch({ mode: value })}
-              options={decisionMode.map((r) => ({
-                value: r.name,
-                label: `${r.name}${facetMode?.[r.name] > 0 ? ` (${facetMode[r.name].toLocaleString("en-GB")})` : ""}`,
-              }))}
-            />
-          </FormItem>
-        </Form>
-        <Row>
-          <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Button danger onClick={this.resetAllFilters}>
-              Reset all
+    {
+      title: "Created",
+      dataIndex: "created",
+      key: "created",
+      width: 100,
+      render: (date) => {
+        return date ? moment(date).format("l LT") : "";
+      },
+    },
+  ];
+
+  if (
+    Auth.canEditDataset({ key: datasetKey }, user) &&
+    type === "project"
+  ) {
+    columns.push({
+      title: "Action",
+      key: "action",
+      width: 250,
+      render: (text, record) => (
+        <>
+          {
+            <Button
+              size="small"
+              style={{ display: "inline", marginRight: "8px" }}
+              type={"primary"}
+              onClick={() => {
+                axios
+                  .post(
+                    `${config.dataApi}dataset/${datasetKey}/decision/rematch`,
+                    { id: record.id }
+                  )
+                  .then((rematchInfo) => {
+                    const success =
+                      (_.get(rematchInfo, "data.updated") === 1 ||
+                        _.get(rematchInfo, "data.unchanged") === 1) &&
+                      _.get(rematchInfo, "data.broken") === 0;
+
+                    if (success) {
+                      notification.success({
+                        message: "Rematch success",
+                        description: `Updated: ${_.get(
+                          rematchInfo,
+                          "data.updated"
+                        )} Unchanged: ${_.get(
+                          rematchInfo,
+                          "data.unchanged"
+                        )}`,
+                      });
+                    } else {
+                      notification.error({
+                        message: "Rematch failed",
+                        description: `Broken decisions: 1`,
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    notification.error({
+                      message: `Server error ${_.get(
+                        err,
+                        "response.status"
+                      )}`,
+                      description: _.get(err, "response.data.message"),
+                    });
+                  });
+              }}
+            >
+              Rematch
             </Button>
-          </Col>
-          <Col flex="auto"></Col>
-          {Auth.canEditDataset({ key: datasetKey }, user) &&
-            this.props?.type === "project" && (
-              <Col style={{ textAlign: "right" }}>
+          }
+          {
+            <Button
+              size="small"
+              style={{ display: "inline" }}
+              danger
+              onClick={() => {
+                return axios
+                  .delete(
+                    `${config.dataApi}dataset/${datasetKey}/decision/${record.id}`
+                  )
+                  .then(() => {
+                    setData((prev) => prev.filter((d) => d.id !== record.id));
+                    notification.open({
+                      message: "Decision deleted",
+                    });
+                  });
+              }}
+            >
+              <DeleteOutlined />
+            </Button>
+          }
+        </>
+      ),
+    });
+  }
+
+  return (
+    <>
+      {error && (
+        <Alert
+          closable={{ onClose: () => setError(null) }}
+          title={error.message}
+          type="error"
+        />
+      )}
+      {rematchInfo && (
+        <Alert
+          closable={{ onClose: () => setRematchInfo(null) }}
+          title="Rematch succeded"
+          description={<RematchResult rematchInfo={rematchInfo} />}
+          type="success"
+          style={{ marginBottom: "10px" }}
+        />
+      )}
+      {decisionFormVisible && (
+        <DecisionForm
+          rowsForEdit={rowsForEdit}
+          onCancel={() => {
+            setDecisionFormVisible(false);
+            setRowsForEdit([]);
+          }}
+          onOk={() => {
+            setDecisionFormVisible(false);
+            setRowsForEdit([]);
+          }}
+          onSaveDecision={() => {
+            setDecisionFormVisible(false);
+            setRowsForEdit([]);
+            getData();
+          }}
+          datasetKey={datasetKey}
+          subjectDatasetKey={_.get(
+            rowsForEdit,
+            "[0].decisions[0].subjectDatasetKey",
+            null
+          )}
+        />
+      )}
+
+      <Form layout="inline">
+        <FormItem>
+          <div style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <DatasetAutocomplete
+              defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
+              onResetSearch={onResetDataset}
+              onSelectDataset={onSelectDataset}
+              contributesTo={datasetKey}
+              placeHolder="Source dataset"
+            />
+          </div>
+        </FormItem>
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Search
+            placeholder="Taxon name"
+            defaultValue={params.name}
+            onSearch={(value) => updateSearch({ name: value })}
+            style={{ width: 200 }}
+            ref={nameRef}
+            allowClear
+          />
+        </FormItem>
+        <FormItem
+          label="Stale"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={params.stale === true || params.stale === "true"}
+            onChange={(value) => updateSearch({ stale: value })}
+          />
+        </FormItem>
+        <FormItem
+          label="Only broken"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            disabled={params.stale === true || params.stale === "true"}
+            checked={params.broken === true || params.broken === "true"}
+            onChange={(value) => updateSearch({ broken: value })}
+          />
+        </FormItem>
+        {Auth.canEditDataset({ key: datasetKey }, user) && (
+          <FormItem
+            label="Created by me"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            <Switch
+              disabled={params.stale === true || params.stale === "true"}
+              checked={user && Number(params.modifiedBy) === user.key}
+              onChange={(value) =>
+                updateSearch({ modifiedBy: value ? user.key : null })
+              }
+            />
+          </FormItem>
+        )}
+
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Select
+            disabled={params.stale === true || params.stale === "true"}
+            placeholder="Subject rank"
+            style={{ width: 160 }}
+            value={params.rank}
+            showSearch
+            allowClear
+            onChange={(value) => updateSearch({ rank: value })}
+            options={rank.map((r) => ({ value: r, label: r }))}
+          />
+        </FormItem>
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Select
+            disabled={params.stale === true || params.stale === "true"}
+            placeholder="Decision mode"
+            style={{ width: 160 }}
+            value={params.mode}
+            showSearch
+            allowClear
+            onChange={(value) => updateSearch({ mode: value })}
+            options={decisionMode.map((r) => ({
+              value: r.name,
+              label: `${r.name}${facetMode?.[r.name] > 0 ? ` (${facetMode[r.name].toLocaleString("en-GB")})` : ""}`,
+            }))}
+          />
+        </FormItem>
+      </Form>
+      <Row>
+        <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
+          <Button danger onClick={resetAllFilters}>
+            Reset all
+          </Button>
+        </Col>
+        <Col flex="auto"></Col>
+        {Auth.canEditDataset({ key: datasetKey }, user) &&
+          type === "project" && (
+            <Col style={{ textAlign: "right" }}>
+              <Popconfirm
+                placement="rightTop"
+                title={
+                  params.subjectDatasetKey
+                    ? `Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`
+                    : `Do you want to rematch all decisions?`
+                }
+                onConfirm={() =>
+                  rematchDecisions(params.subjectDatasetKey)
+                }
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  loading={rematchDecisionsLoading}
+                  style={{ marginLeft: "10px", marginBottom: "10px" }}
+                >
+                  Rematch all decisions{" "}
+                  {params.subjectDatasetKey
+                    ? ` from dataset ${params.subjectDatasetKey}`
+                    : ""}
+                </Button>
+              </Popconfirm>
+
+              {params.subjectDatasetKey && (
                 <Popconfirm
                   placement="rightTop"
-                  title={
-                    params.subjectDatasetKey
-                      ? `Do you want to rematch all decisions from source dataset ${params.subjectDatasetKey}?`
-                      : `Do you want to rematch all decisions?`
-                  }
+                  title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
                   onConfirm={() =>
-                    this.rematchDecisions(params.subjectDatasetKey)
+                    deleteBrokenDecisions(params.subjectDatasetKey)
                   }
                   okText="Yes"
                   cancelText="No"
                 >
                   <Button
                     type="primary"
-                    loading={rematchDecisionsLoading}
+                    loading={deleteBrokenDecisionsLoading}
                     style={{ marginLeft: "10px", marginBottom: "10px" }}
                   >
-                    Rematch all decisions{" "}
-                    {params.subjectDatasetKey
-                      ? ` from dataset ${params.subjectDatasetKey}`
-                      : ""}
+                    {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
                   </Button>
                 </Popconfirm>
-
-                {params.subjectDatasetKey && (
-                  <Popconfirm
-                    placement="rightTop"
-                    title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
-                    onConfirm={() =>
-                      this.deleteBrokenDecisions(params.subjectDatasetKey)
-                    }
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      type="primary"
-                      loading={deleteBrokenDecisionsLoading}
-                      style={{ marginLeft: "10px", marginBottom: "10px" }}
-                    >
-                      {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
-                    </Button>
-                  </Popconfirm>
-                )}
-              </Col>
-            )}
-        </Row>
-        {!error && (
-          <>
-            <Row>
-              <Col flex="auto" />
-              <Col>
-                {this.state?.pagination?.total?.toLocaleString("en-GB")}{" "}
-                Decisions
-              </Col>
-            </Row>
-            <Table
-              size="small"
-              columns={columns}
-              dataSource={data}
-              loading={loading}
-              pagination={pagination}
-              rowKey="id"
-              /*  expandedRowRender={(record) => (
-                <pre>
-                  {JSON.stringify(_.omit(record, ["dataset", "user"]), null, 4)}
-                </pre>
-              )} */
-              expandedRowRender={(record) => (
-                <React.Fragment>
-                  {record.mode === "update" &&
-                    Auth.canEditDataset({ key: datasetKey }, user) && (
-                      <a
-                        onClick={() => {
-                          this.setState({
-                            rowsForEdit: [
-                              {
-                                decisions: [
-                                  _.omit(record, ["dataset", "user"]),
-                                ],
-                              },
-                            ],
-                            decisionFormVisible: true,
-                          });
-                        }}
-                      >
-                        Edit <EditOutlined />
-                      </a>
-                    )}
-                  <pre>
-                    {JSON.stringify(
-                      _.omit(record, ["dataset", "user"]),
-                      null,
-                      4
-                    )}
-                  </pre>
-                </React.Fragment>
               )}
-              onChange={this.handleTableChange}
-            />
-          </>
-        )}
-      </>
-    );
-  }
-}
+            </Col>
+          )}
+      </Row>
+      {!error && (
+        <>
+          <Row>
+            <Col flex="auto" />
+            <Col>
+              {pagination?.total?.toLocaleString("en-GB")}{" "}
+              Decisions
+            </Col>
+          </Row>
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={data}
+            loading={loading}
+            pagination={pagination}
+            rowKey="id"
+            expandedRowRender={(record) => (
+              <>
+                {record.mode === "update" &&
+                  Auth.canEditDataset({ key: datasetKey }, user) && (
+                    <a
+                      onClick={() => {
+                        setRowsForEdit([
+                          {
+                            decisions: [
+                              _.omit(record, ["dataset", "user"]),
+                            ],
+                          },
+                        ]);
+                        setDecisionFormVisible(true);
+                      }}
+                    >
+                      Edit <EditOutlined />
+                    </a>
+                  )}
+                <pre>
+                  {JSON.stringify(
+                    _.omit(record, ["dataset", "user"]),
+                    null,
+                    4
+                  )}
+                </pre>
+              </>
+            )}
+            onChange={handleTableChange}
+          />
+        </>
+      )}
+    </>
+  );
+};
 
 const mapContextToProps = ({ user, rank, decisionMode }) => ({
   user,
