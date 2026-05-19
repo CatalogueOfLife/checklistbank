@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { SearchOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
@@ -44,138 +44,41 @@ const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
 const PAGE_SIZE = 100;
 
-class ProjectSectors extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      merge: false,
-      nested: false,
-      searchText: "",
-      loading: false,
-      rematchSectorsLoading: false,
-      deleteSectorsLoading: false,
-      rematchInfo: null,
-      defaultTaxonKey: null,
-      publishers: [],
-      pagination: {
-        pageSize: PAGE_SIZE,
-        current: 1,
-        showQuickJumper: true,
-      },
-      showSectorForm: false,
-    };
-  }
+const ProjectSectors = ({
+  location,
+  match,
+  datasetKey,
+  dataset,
+  user,
+  rank,
+  projectKey: contextProjectKey,
+  addError,
+}) => {
+  const [data, setData] = useState([]);
+  const [merge, setMerge] = useState(false);
+  const [nested, setNested] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [rematchSectorsLoading, setRematchSectorsLoading] = useState(false);
+  const [deleteSectorsLoading, setDeleteSectorsLoading] = useState(false);
+  const [rematchInfo, setRematchInfo] = useState(null);
+  const [defaultTaxonKey, setDefaultTaxonKey] = useState(null);
+  const [publishers, setPublishers] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageSize: PAGE_SIZE,
+    current: 1,
+    showQuickJumper: true,
+  });
+  const [showSectorForm, setShowSectorForm] = useState(false);
+  const [error, setError] = useState(null);
+  const [params, setParams] = useState({});
+  const [currentDataSourceLength, setCurrentDataSourceLength] = useState(null);
 
-  nameRef = React.createRef();
+  const nameRef = useRef(null);
 
-  componentDidMount() {
-    // this.getData();
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (_.isEmpty(params)) {
-      params = { limit: PAGE_SIZE, offset: 0 };
-      history.push({
-        pathname: _.get(this.props, "location.pathname"),
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
-    }
-    params = { limit: PAGE_SIZE, offset: 0, ...params };
-    this.setState(
-      {
-        params,
-        pagination: {
-          pageSize: params.limit || PAGE_SIZE,
-          current: Number(params.offset) / Number(params.limit) + 1,
-        },
-      },
-      this.getData
-    );
-    this.getPublishers();
-  }
+  const projectKey = _.get(match, "params.projectKey");
 
-  componentDidUpdate = (prevProps) => {
-    const params = qs.parse(_.get(this.props, "location.search"));
-    const prevParams = qs.parse(_.get(prevProps, "location.search"));
-    if (
-      _.get(prevProps, "location.search") !==
-        _.get(this.props, "location.search") ||
-      _.get(prevProps, "match.params.projectKey") !==
-        _.get(this.props, "match.params.projectKey") ||
-      _.get(params, "subjectDatasetKey") !==
-        _.get(prevParams, "subjectDatasetKey")
-    ) {
-      this.setState(
-        {
-          pagination: {
-            pageSize: params.limit || PAGE_SIZE,
-            current:
-              Number(params.offset) / Number(params.limit || PAGE_SIZE) + 1,
-          },
-        },
-        this.getData
-      );
-    }
-  };
-
-  getData = () => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-      datasetKey,
-    } = this.props;
-    const key = projectKey || datasetKey;
-    this.setState({ loading: true });
-    const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      datasetKey: key,
-    };
-    axios(`${config.dataApi}dataset/${key}/sector?${qs.stringify(params)}`)
-      .then(this.decorateWithDataset)
-      .then((res) =>
-        this.setState({
-          loading: false,
-          error: null,
-          data: [..._.get(res, "data.result", [])],
-          pagination: {
-            ...this.state.pagination,
-            total: _.get(res, "data.total"),
-          },
-        })
-      )
-      .catch((err) => {
-        this.props.addError(err);
-        this.setState({ loading: false, data: [] });
-      });
-  };
-
-  getPublishers = async () => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-      datasetKey,
-    } = this.props;
-    const key = projectKey || datasetKey;
-    try {
-      const res = await axios(
-        `${config.dataApi}dataset/${key}/sector/publisher`
-      );
-      this.setState({ publishers: res?.data?.result });
-    } catch (error) {}
-  };
-  /*   decorateWithDataset = (res) => {
-    if (!res.data.result) return res;
-    return Promise.all(
-      res.data.result.map((sector) =>
-        datasetLoader
-          .load(sector.subjectDatasetKey)
-          .then((dataset) => (sector.dataset = dataset))
-      )
-    ).then(() => res);
-  }; */
-
-  decorateWithDataset = (res) => {
+  const decorateWithDataset = (res) => {
     if (!res.data.result) return res;
     return Promise.all([
       ...res.data.result.map((sector) =>
@@ -189,7 +92,78 @@ class ProjectSectors extends React.Component {
     ]).then(() => res);
   };
 
-  getColumnSearchProps = (dataIndex) => ({
+  const getData = () => {
+    const key = projectKey || datasetKey;
+    setLoading(true);
+    const queryParams = {
+      ...qs.parse(_.get(location, "search")),
+      datasetKey: key,
+    };
+    axios(`${config.dataApi}dataset/${key}/sector?${qs.stringify(queryParams)}`)
+      .then(decorateWithDataset)
+      .then((res) => {
+        setPagination((prev) => ({
+          ...prev,
+          total: _.get(res, "data.total"),
+        }));
+        setLoading(false);
+        setError(null);
+        setData([..._.get(res, "data.result", [])]);
+      })
+      .catch((err) => {
+        addError(err);
+        setLoading(false);
+        setData([]);
+      });
+  };
+
+  const getPublishers = async () => {
+    const key = projectKey || datasetKey;
+    try {
+      const res = await axios(
+        `${config.dataApi}dataset/${key}/sector/publisher`
+      );
+      setPublishers(res?.data?.result);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    let initParams = qs.parse(_.get(location, "search"));
+    if (_.isEmpty(initParams)) {
+      initParams = { limit: PAGE_SIZE, offset: 0 };
+      history.push({
+        pathname: _.get(location, "pathname"),
+        search: `?limit=${PAGE_SIZE}&offset=0`,
+      });
+    }
+    initParams = { limit: PAGE_SIZE, offset: 0, ...initParams };
+    setParams(initParams);
+    setPagination({
+      pageSize: initParams.limit || PAGE_SIZE,
+      current: Number(initParams.offset) / Number(initParams.limit) + 1,
+    });
+    // getData is called via the location.search effect below on first render
+    getPublishers();
+  }, []);
+
+  const locationSearch = _.get(location, "search");
+  const matchProjectKey = _.get(match, "params.projectKey");
+  const locationSubjectDatasetKey = _.get(qs.parse(locationSearch), "subjectDatasetKey");
+
+  useEffect(() => {
+    const currentParams = qs.parse(locationSearch);
+    setPagination((prev) => ({
+      ...prev,
+      pageSize: currentParams.limit || PAGE_SIZE,
+      current:
+        Number(currentParams.offset) /
+          Number(currentParams.limit || PAGE_SIZE) +
+        1,
+    }));
+    getData();
+  }, [locationSearch, matchProjectKey, locationSubjectDatasetKey]);
+
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -199,19 +173,19 @@ class ProjectSectors extends React.Component {
       <div style={{ padding: 8 }}>
         <Input
           ref={(node) => {
-            this.searchInput = node;
+            nameRef.current = node;
           }}
           placeholder={`Search ${dataIndex.split(".")[0]}`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm)}
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Button
           type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          onClick={() => handleSearch(selectedKeys, confirm)}
           icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -219,7 +193,7 @@ class ProjectSectors extends React.Component {
           Search
         </Button>
         <Button
-          onClick={() => this.handleReset(clearFilters)}
+          onClick={() => handleReset(clearFilters)}
           size="small"
           style={{ width: 90 }}
         >
@@ -237,29 +211,26 @@ class ProjectSectors extends React.Component {
         .includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
-        setTimeout(() => this.searchInput.select());
+        setTimeout(() => nameRef.current && nameRef.current.select());
       }
     },
   });
-  handleSearch = (selectedKeys, confirm) => {
+
+  const handleSearch = (selectedKeys, confirm) => {
     confirm();
-    this.setState({ searchText: selectedKeys[0] });
+    setSearchText(selectedKeys[0]);
   };
 
-  handleReset = (clearFilters) => {
+  const handleReset = (clearFilters) => {
     clearFilters();
-    this.setState({ searchText: "" });
-  };
-  onChange = (pagination, filters, sorter, extra) => {
-    this.setState({ currentDataSourceLength: extra.currentDataSource.length });
+    setSearchText("");
   };
 
-  onDeleteSector = (sector, partial = false) => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
+  const onChange = (pagination, filters, sorter, extra) => {
+    setCurrentDataSourceLength(extra.currentDataSource.length);
+  };
+
+  const onDeleteSector = (sector, partial = false) => {
     axios
       .delete(
         `${config.dataApi}dataset/${projectKey}/sector/${sector.id}?partial=${partial}`
@@ -271,433 +242,390 @@ class ProjectSectors extends React.Component {
             sector.id
           } placed on the sync queue`,
         });
-        this.setState({
-          data: this.state.data.filter((d) => d.id !== sector.id),
-        });
+        setData((prev) => prev.filter((d) => d.id !== sector.id));
       })
       .catch((err) => {
-        this.props.addError(err);
+        addError(err);
       });
   };
 
-  handleTableChange = (pagination) => {
-    const pager = { ...this.state.pagination, ...pagination };
-    // pager.current = pagination.current;
+  const handleTableChange = (newPagination) => {
+    const pager = { ...pagination, ...newPagination };
 
-    const params = {
-      ...qs.parse(_.get(this.props, "location.search")),
+    const newParams = {
+      ...qs.parse(_.get(location, "search")),
       limit: pager.pageSize,
       offset: (pager.current - 1) * pager.pageSize,
     };
 
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(params),
+      pathname: _.get(location, "pathname"),
+      search: qs.stringify(newParams),
     });
   };
 
-  updateSearch = (params) => {
-    let newParams = {
-      ...qs.parse(_.get(this.props, "location.search")),
-      ...params,
+  const updateSearch = (newParams) => {
+    let updatedParams = {
+      ...qs.parse(_.get(location, "search")),
+      ...newParams,
       offset: 0,
     };
-    Object.keys(params).forEach((param) => {
-      if (!params[param]) {
-        delete newParams[param];
+    Object.keys(newParams).forEach((param) => {
+      if (!newParams[param]) {
+        delete updatedParams[param];
       }
     });
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
-      search: qs.stringify(newParams),
+      pathname: _.get(location, "pathname"),
+      search: qs.stringify(updatedParams),
     });
   };
-  onSelectDataset = (dataset) => {
-    this.updateSearch({ subjectDatasetKey: dataset.key });
+
+  const onSelectDataset = (dataset) => {
+    updateSearch({ subjectDatasetKey: dataset.key });
   };
-  onResetDataset = () => {
-    let newParams = qs.parse(_.get(this.props, "location.search"));
+
+  const onResetDataset = () => {
+    let newParams = qs.parse(_.get(location, "search"));
     delete newParams.subjectDatasetKey;
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: qs.stringify(newParams),
     });
   };
 
-  resetAllFilters = () => {
-    if (this.nameRef?.current?.input?.state?.value) {
-      this.nameRef.current.input.state.value = "";
+  const resetAllFilters = () => {
+    if (nameRef?.current?.input?.state?.value) {
+      nameRef.current.input.state.value = "";
     }
 
     history.push({
-      pathname: _.get(this.props, "location.pathname"),
+      pathname: _.get(location, "pathname"),
       search: `?limit=${PAGE_SIZE}&offset=0`,
     });
   };
 
-  rematchSectors = (subjectDatasetKey) => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
-
-    this.setState({ rematchSectorsLoading: true });
+  const rematchSectors = (subjectDatasetKey) => {
+    setRematchSectorsLoading(true);
     const body = subjectDatasetKey ? { subjectDatasetKey } : {};
     axios
       .post(`${config.dataApi}dataset/${projectKey}/sector/rematch`, body)
       .then((res) => {
-        this.setState({
-          rematchSectorsLoading: false,
-          rematchInfo: { sectors: res.data },
-          error: null,
-        });
+        setRematchSectorsLoading(false);
+        setRematchInfo({ sectors: res.data });
+        setError(null);
       })
       .catch((err) => {
-        this.props.addError(err);
-        this.setState({
-          rematchSectorsLoading: false,
-          rematchInfo: null,
-        });
+        addError(err);
+        setRematchSectorsLoading(false);
+        setRematchInfo(null);
       });
   };
 
-  deleteAllSectorsFromSource = (subjectDatasetKey) => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
-    this.setState({ deleteSectorsLoading: true });
+  const deleteAllSectorsFromSource = (subjectDatasetKey) => {
+    setDeleteSectorsLoading(true);
     axios
       .delete(
         `${config.dataApi}dataset/${projectKey}/sector?datasetKey=${subjectDatasetKey}`
       )
       .then((res) => {
-        this.setState(
-          {
-            deleteSectorsLoading: false,
-            error: null,
-          },
-          this.getData
-        );
+        setDeleteSectorsLoading(false);
+        setError(null);
+        getData();
       })
       .catch((err) => {
-        this.props.addError(err);
-        this.setState({
-          deleteSectorsLoading: false,
-        });
+        addError(err);
+        setDeleteSectorsLoading(false);
       });
   };
 
-  render() {
-    const {
-      data,
-      loading,
-      pagination,
-      error,
-      rematchSectorsLoading,
-      deleteSectorsLoading,
-      rematchInfo,
-      showSectorForm,
-    } = this.state;
-    const {
-      match: {
-        params: { projectKey },
-      },
-      datasetKey,
-      dataset,
-      user,
-      rank,
-    } = this.props;
+  const isRelease = !!datasetKey && !projectKey;
+  const locationParams = qs.parse(_.get(location, "search"));
 
-    const isRelease = !!datasetKey && !projectKey;
-    const params = qs.parse(_.get(this.props, "location.search"));
+  return (
+    <>
+      <Modal
+        title="Create sector"
+        open={showSectorForm}
+        onOk={() => {}} // finishEditForm not needed here
+        onCancel={() => setShowSectorForm(false)}
+        // style={{ top: 150, marginRight:20 }}
+        destroyOnHidden={true}
+        mask={{ closable: false }}
+        footer={null}
+      >
+        <SectorForm
+          onSubmit={() => {
+            setShowSectorForm(false);
+            getData();
+          }}
+          // sectorDatasetRanks={sectorDatasetRanks}
+          sector={null}
+          // onError={(err) => setError(err)}
+        />
+      </Modal>
+      {error && (
+        <Alert
+          closable={{ onClose: () => setError(null) }}
+          title={error.message}
+          type="error"
+        />
+      )}
+      {rematchInfo && (
+        <Alert
+          closable={{ onClose: () => setRematchInfo(null) }}
+          title="Rematch succeded"
+          description={<RematchResult rematchInfo={rematchInfo} />}
+          type="success"
+          style={{ marginBottom: "10px" }}
+        />
+      )}
 
-    return (
-      <>
-        <Modal
-          title="Create sector"
-          open={showSectorForm}
-          onOk={this.finishEditForm}
-          onCancel={() => this.setState({ showSectorForm: false })}
-          // style={{ top: 150, marginRight:20 }}
-          destroyOnHidden={true}
-          mask={{ closable: false }}
-          footer={null}
-        >
-          <SectorForm
-            onSubmit={() =>
-              this.setState({ showSectorForm: false }, this.getData)
+      <Form layout="inline">
+
+      <Row style={{ marginTop: "10px" }}>
+      <FormItem>
+          <div style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <DatasetAutocomplete
+              defaultDatasetKey={_.get(locationParams, "subjectDatasetKey") || null}
+              onResetSearch={onResetDataset}
+              onSelectDataset={onSelectDataset}
+              contributesTo={contextProjectKey}
+              merge={merge}
+              placeHolder="Source dataset"
+            />{" "}
+            <Checkbox
+              checked={merge}
+              onClick={(e) => setMerge(e.target.checked)}
+            >
+              Include merged sources
+            </Checkbox>
+          </div>
+        </FormItem>
+
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Search
+            placeholder="Taxon name"
+            ref={nameRef}
+            defaultValue={locationParams.name}
+            allowClear
+            onSearch={(name) => {
+              updateSearch({ name });
+            }}
+            style={{ width: 200 }}
+          />
+        </FormItem>
+
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Select
+            placeholder="Subject rank"
+            style={{ width: 160 }}
+            value={locationParams.rank}
+            showSearch
+            allowClear
+            onChange={(value) => updateSearch({ rank: value })}
+            options={rank.map((r) => ({ value: r, label: r }))}
+          />
+        </FormItem>
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <Select
+            placeholder="Sector mode"
+            style={{ width: 160 }}
+            value={locationParams.mode}
+            mode="multiple"
+            showSearch
+            allowClear
+            onChange={(value) => updateSearch({ mode: value })}
+            options={["attach", "union", "merge", "hierarchy"].map((r) => ({ value: r, label: r }))}
+          />
+        </FormItem>
+        <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+          <DatePicker
+            placeholder="Last sync"
+            defaultValue={locationParams.lastSync ? moment(locationParams.lastSync) : null}
+            onChange={(date, dateString) =>
+              updateSearch({ lastSync: dateString })
             }
-            // sectorDatasetRanks={sectorDatasetRanks}
-            sector={null}
-            // onError={(err) => this.setState({ error: err })}
           />
-        </Modal>
-        {error && (
-          <Alert
-            closable={{ onClose: () => this.setState({ error: null }) }}
-            title={error.message}
-            type="error"
-          />
-        )}
-        {rematchInfo && (
-          <Alert
-            closable={{ onClose: () => this.setState({ rematchInfo: null }) }}
-            title="Rematch succeded"
-            description={<RematchResult rematchInfo={rematchInfo} />}
-            type="success"
-            style={{ marginBottom: "10px" }}
-          />
-        )}
-
-        <Form layout="inline">
-
-        <Row style={{ marginTop: "10px" }}>
-        <FormItem>
-            <div style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <DatasetAutocomplete
-                defaultDatasetKey={_.get(params, "subjectDatasetKey") || null}
-                onResetSearch={this.onResetDataset}
-                onSelectDataset={this.onSelectDataset}
-                contributesTo={this.props.projectKey}
-                merge={this.state.merge}
-                placeHolder="Source dataset"
-              />{" "}
-              <Checkbox
-                checked={this.state.merge}
-                onClick={(e) => this.setState({ merge: e.target.checked })}
-              >
-                Include merged sources
-              </Checkbox>
-            </div>
-          </FormItem>
-
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <Search
-              placeholder="Taxon name"
-              ref={this.nameRef}
-              defaultValue={params.name}
-              allowClear
-              onSearch={(name) => {
-                this.setState({ name }, () => this.updateSearch({ name }));
-              }}
-              style={{ width: 200 }}
-            />
-          </FormItem>
-
+        </FormItem>
+        {publishers?.length > 0 && (
           <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
             <Select
-              placeholder="Subject rank"
+              placeholder="Publisher"
               style={{ width: 160 }}
-              value={params.rank}
+              value={locationParams.publisherKey}
               showSearch
               allowClear
-              onChange={(value) => this.updateSearch({ rank: value })}
-              options={rank.map((r) => ({ value: r, label: r }))}
+              onChange={(value) => updateSearch({ publisherKey: value })}
+              options={publishers.map((p) => ({ value: p?.id, label: p?.alias }))}
             />
           </FormItem>
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <Select
-              placeholder="Sector mode"
-              style={{ width: 160 }}
-              value={params.mode}
-              mode="multiple"
-              showSearch
-              allowClear
-              onChange={(value) => this.updateSearch({ mode: value })}
-              options={["attach", "union", "merge", "hierarchy"].map((r) => ({ value: r, label: r }))}
-            />
-          </FormItem>
-          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-            <DatePicker
-              placeholder="Last sync"
-              defaultValue={params.lastSync ? moment(params.lastSync) : null}
-              onChange={(date, dateString) =>
-                this.updateSearch({ lastSync: dateString })
-              }
-            />
-          </FormItem>
-          {this?.state?.publishers?.length > 0 && (
-            <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
-              <Select
-                placeholder="Publisher"
-                style={{ width: 160 }}
-                value={params.publisherKey}
-                showSearch
-                allowClear
-                onChange={(value) => this.updateSearch({ publisherKey: value })}
-                options={this.state.publishers.map((p) => ({ value: p?.id, label: p?.alias }))}
-              />
-            </FormItem>
-          )}          
-        </Row>
+        )}
+      </Row>
 
-        <Row style={{ marginTop: "10px" }}>
-          <FormItem
-            label="Nested"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.nested === true || params.nested === "true"}
-              onChange={(value) => this.updateSearch({ nested: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Only broken"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.broken === true || params.broken === "true"}
-              onChange={(value) => this.updateSearch({ broken: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Wrong subject"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={params.wrongSubject === true || params.wrongSubject === "true"}
-              onChange={(value) => this.updateSearch({ wrongSubject: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Without data"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={
-                params.withoutData === true || params.withoutData === "true"
-              }
-              onChange={(value) => this.updateSearch({ withoutData: value })}
-            />
-          </FormItem>
-          <FormItem
-            label="Created by me"
-            style={{ marginBottom: "8px", marginRight: "8px" }}
-          >
-            <Switch
-              checked={user && Number(params.modifiedBy) === user.key}
-              onChange={(value) =>
-                this.updateSearch({ modifiedBy: value ? user.key : null })
-              }
-            />
-          </FormItem>
-        </Row>
-        </Form>
+      <Row style={{ marginTop: "10px" }}>
+        <FormItem
+          label="Nested"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={locationParams.nested === true || locationParams.nested === "true"}
+            onChange={(value) => updateSearch({ nested: value })}
+          />
+        </FormItem>
+        <FormItem
+          label="Only broken"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={locationParams.broken === true || locationParams.broken === "true"}
+            onChange={(value) => updateSearch({ broken: value })}
+          />
+        </FormItem>
+        <FormItem
+          label="Wrong subject"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={locationParams.wrongSubject === true || locationParams.wrongSubject === "true"}
+            onChange={(value) => updateSearch({ wrongSubject: value })}
+          />
+        </FormItem>
+        <FormItem
+          label="Without data"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={
+              locationParams.withoutData === true || locationParams.withoutData === "true"
+            }
+            onChange={(value) => updateSearch({ withoutData: value })}
+          />
+        </FormItem>
+        <FormItem
+          label="Created by me"
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={user && Number(locationParams.modifiedBy) === user.key}
+            onChange={(value) =>
+              updateSearch({ modifiedBy: value ? user.key : null })
+            }
+          />
+        </FormItem>
+      </Row>
+      </Form>
 
-        <Row style={{ marginTop: "10px" }}>
-          <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Button danger onClick={this.resetAllFilters}>
-              Reset all
+      <Row style={{ marginTop: "10px" }}>
+        <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
+          <Button danger onClick={resetAllFilters}>
+            Reset all
+          </Button>
+        </Col>
+        {!isRelease && Auth.canEditDataset({ key: projectKey }, user) && (
+          <Col span={21} style={{ textAlign: "right" }}>
+            <Button
+              type="primary"
+              style={{ marginRight: "10px" }}
+              onClick={() => setShowSectorForm(true)}
+            >
+              Add sector
             </Button>
-          </Col>
-          {!isRelease && Auth.canEditDataset({ key: projectKey }, user) && (
-            <Col span={21} style={{ textAlign: "right" }}>
+            <SyncAllSectorsButton
+              dataset={
+                locationParams.subjectDatasetKey
+                  ? { key: locationParams.subjectDatasetKey }
+                  : null
+              }
+              projectKey={projectKey}
+              onError={(err) => setError(err)}
+              text={
+                locationParams.subjectDatasetKey
+                  ? `Sync all sectors from dataset ${locationParams.subjectDatasetKey}`
+                  : null
+              }
+            ></SyncAllSectorsButton>
+            <Popconfirm
+              placement="rightTop"
+              title="Do you want to rematch all sectors?"
+              onConfirm={() => rematchSectors(locationParams.subjectDatasetKey)}
+              okText="Yes"
+              cancelText="No"
+            >
               <Button
                 type="primary"
-                style={{ marginRight: "10px" }}
-                onClick={() => this.setState({ showSectorForm: true })}
+                loading={rematchSectorsLoading}
+                style={{ marginBottom: "10px", marginRight: "10px" }}
               >
-                Add sector
+                Rematch all sectors{" "}
+                {locationParams.subjectDatasetKey
+                  ? ` from dataset ${locationParams.subjectDatasetKey}`
+                  : ""}
               </Button>
-              <SyncAllSectorsButton
-                dataset={
-                  params.subjectDatasetKey
-                    ? { key: params.subjectDatasetKey }
-                    : null
-                }
-                projectKey={projectKey}
-                onError={(err) => this.setState({ error: err })}
-                text={
-                  params.subjectDatasetKey
-                    ? `Sync all sectors from dataset ${params.subjectDatasetKey}`
-                    : null
-                }
-              ></SyncAllSectorsButton>
+            </Popconfirm>
+            {locationParams.subjectDatasetKey && (
               <Popconfirm
                 placement="rightTop"
-                title="Do you want to rematch all sectors?"
-                onConfirm={() => this.rematchSectors(params.subjectDatasetKey)}
+                title={`Do you want to delete all sectors from dataset ${locationParams.subjectDatasetKey}?`}
+                onConfirm={() =>
+                  deleteAllSectorsFromSource(locationParams.subjectDatasetKey)
+                }
                 okText="Yes"
                 cancelText="No"
               >
                 <Button
-                  type="primary"
-                  loading={rematchSectorsLoading}
-                  style={{ marginBottom: "10px", marginRight: "10px" }}
+                  danger
+                  loading={deleteSectorsLoading}
+                  style={{ marginBottom: "10px" }}
                 >
-                  Rematch all sectors{" "}
-                  {params.subjectDatasetKey
-                    ? ` from dataset ${params.subjectDatasetKey}`
-                    : ""}
+                  {`Delete all sectors from dataset ${locationParams.subjectDatasetKey}`}
                 </Button>
               </Popconfirm>
-              {params.subjectDatasetKey && (
-                <Popconfirm
-                  placement="rightTop"
-                  title={`Do you want to delete all sectors from dataset ${params.subjectDatasetKey}?`}
-                  onConfirm={() =>
-                    this.deleteAllSectorsFromSource(params.subjectDatasetKey)
-                  }
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <Button
-                    danger
-                    loading={deleteSectorsLoading}
-                    style={{ marginBottom: "10px" }}
-                  >
-                    {`Delete all sectors from dataset ${params.subjectDatasetKey}`}
-                  </Button>
-                </Popconfirm>
-              )}
-            </Col>
-          )}
-        </Row>
-        {!error && (
-          <SectorTable
-            isRelease={isRelease}
-            releasedFrom={dataset?.sourceKey}
-            data={data}
-            loading={loading}
-            onSectorRematch={this.getData}
-            onDeleteSector={this.onDeleteSector}
-            pagination={pagination}
-            handleTableChange={this.handleTableChange}
-            expandable={{
-              expandedRowRender: (record) => (
-                <>
-                  <Row>
-                    <Col flex="auto"></Col>
-                    <Col>
-                      <Text style={{ marginRight: "10px", marginTop: "10px" }}>
-                        Created by {record?.user?.username}
-                      </Text>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col flex="auto"></Col>
-                    <Col style={{ width: "500px" }}>
-                      <SectorForm
-                        sector={record}
-                        // onError={(err) => this.setState({ error: err })}
-                      />
-                    </Col>
-                    <Col flex="auto"></Col>
-                  </Row>
-                </>
-              ),
-              rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: projectKey}, user)
-            }}
-          ></SectorTable>
+            )}
+          </Col>
         )}
-      </>
-    );
-  }
-}
+      </Row>
+      {!error && (
+        <SectorTable
+          isRelease={isRelease}
+          releasedFrom={dataset?.sourceKey}
+          data={data}
+          loading={loading}
+          onSectorRematch={getData}
+          onDeleteSector={onDeleteSector}
+          pagination={pagination}
+          handleTableChange={handleTableChange}
+          expandable={{
+            expandedRowRender: (record) => (
+              <>
+                <Row>
+                  <Col flex="auto"></Col>
+                  <Col>
+                    <Text style={{ marginRight: "10px", marginTop: "10px" }}>
+                      Created by {record?.user?.username}
+                    </Text>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col flex="auto"></Col>
+                  <Col style={{ width: "500px" }}>
+                    <SectorForm
+                      sector={record}
+                      // onError={(err) => setError(err)}
+                    />
+                  </Col>
+                  <Col flex="auto"></Col>
+                </Row>
+              </>
+            ),
+            rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: projectKey}, user)
+          }}
+        ></SectorTable>
+      )}
+    </>
+  );
+};
 
 const mapContextToProps = ({
   user,
