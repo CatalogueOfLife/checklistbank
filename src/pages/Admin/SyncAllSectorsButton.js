@@ -1,68 +1,53 @@
-import React from "react";
-
+import { useState } from "react";
 import config from "../../config";
 import { Button, Popconfirm, notification } from "antd";
-
 import axios from "axios";
 
-class SyncAllSectorsButton extends React.Component {
-  constructor(props) {
-    super(props);
+const SyncAllSectorsButton = ({ onError, dataset, projectKey, text }) => {
+  const [allSectorSyncloading, setAllSectorSyncloading] = useState(false);
 
-    this.state = {
-      allSectorSyncloading: false,
-    };
-  }
-
-  syncAllSectors = () => {
-    this.setState({ allSectorSyncloading: true });
-    const { onError } = this.props;
-    const { dataset, projectKey } = this.props;
+  const syncAllSectors = () => {
+    setAllSectorSyncloading(true);
     const body = dataset ? { datasetKey: dataset.key } : { all: true };
 
     axios
       .post(`${config.dataApi}dataset/${projectKey}/sector/sync`, body)
       .then((res) => {
-        this.setState({ allSectorSyncloading: false }, () => {
-          notification.open({
-            message: "Action triggered",
-            description: `All sectors syncing${
-              dataset ? " for dataset: " + dataset.title : ""
-            }`,
-          });
+        setAllSectorSyncloading(false);
+        notification.open({
+          message: "Action triggered",
+          description: `All sectors syncing${
+            dataset ? " for dataset: " + dataset.title : ""
+          }`,
         });
       })
       .catch((err) => {
         if (typeof onError === "function") {
           onError(err);
         }
-        this.setState({ allSectorSyncloading: false });
+        setAllSectorSyncloading(false);
       });
   };
 
-  render = () => {
-    const { allSectorSyncloading } = this.state;
-    const { text } = this.props;
-    return (
-      <React.Fragment>
-        <Popconfirm
-          placement="rightTop"
-          title="Sync all sectors?"
-          onConfirm={this.syncAllSectors}
-          okText="Yes"
-          cancelText="No"
+  return (
+    <>
+      <Popconfirm
+        placement="rightTop"
+        title="Sync all sectors?"
+        onConfirm={syncAllSectors}
+        okText="Yes"
+        cancelText="No"
+      >
+        <Button
+          type="primary"
+          loading={allSectorSyncloading}
+          style={{ marginRight: "10px", marginBottom: "10px" }}
         >
-          <Button
-            type="primary"
-            loading={allSectorSyncloading}
-            style={{ marginRight: "10px", marginBottom: "10px" }}
-          >
-            {text || "Sync all sectors"}
-          </Button>
-        </Popconfirm>
-      </React.Fragment>
-    );
-  };
-}
+          {text || "Sync all sectors"}
+        </Button>
+      </Popconfirm>
+    </>
+  );
+};
 
 export default SyncAllSectorsButton;
