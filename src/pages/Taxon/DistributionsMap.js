@@ -144,6 +144,7 @@ const DistributionsMap = ({ records, onUnmappable }) => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, {
       worldCopyJump: true,
+      minZoom: 1,
     }).setView([20, 0], 2);
     mapRef.current = map;
     return () => {
