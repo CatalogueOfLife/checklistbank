@@ -1,43 +1,42 @@
-import React from 'react';
-import _ from 'lodash';
-import ImportButton from '../../Imports/importTabs/ImportButton';
-import {Button} from 'antd'
-import AddChildModal from './AddChildModal';
+import { useState } from "react";
+import _ from "lodash";
+import ImportButton from "../../Imports/importTabs/ImportButton";
+import { Button } from "antd";
+import AddChildModal from "./AddChildModal";
 
-class Custom404 extends React.Component {
+const Custom404 = ({ error, treeType, dataset, loadRoot }) => {
+  const [modalVisible, setModalVisible] = useState(false);
 
+  return (
+    <div>
+      {error.message && <h3>{error.message}</h3>}
+      {_.get(error, "response.data.message") && (
+        <p>{_.get(error, "response.data.message")}</p>
+      )}
+      {_.get(error, "response.data.details") && (
+        <p>{_.get(error, "response.data.details")}</p>
+      )}
 
-    state = {
-        modalVisible: false
-    }
-
-
-    render() {
-
-        const { error, treeType, dataset, loadRoot } = this.props;
-        const {modalVisible} = this.state;
-        return (
-            <div>
-                {error.message && <h3>
-                    {error.message}
-                </h3>}
-                {_.get(error, 'response.data.message') && <p>
-                    {_.get(error, 'response.data.message')}
-                </p>}
-                {_.get(error, 'response.data.details') && <p>
-                    {_.get(error, 'response.data.details')}
-                </p>}
-
-                {treeType === 'SOURCE' && <ImportButton record={{datasetKey: dataset.key}}></ImportButton>}
-                {treeType === 'CATALOGUE' && <Button type='primary' onClick={() => this.setState({modalVisible: !modalVisible})}>Add root taxon</Button>}
-                {modalVisible && <AddChildModal parent={{datasetKey: dataset.key}} onCancel={() => this.setState({ modalVisible: false })} onSuccess={() => this.setState({ modalVisible: false }, loadRoot)}></AddChildModal>}
-                
-            </div>
-
-        );
-    }
-}
-
-
+      {treeType === "SOURCE" && (
+        <ImportButton record={{ datasetKey: dataset.key }} />
+      )}
+      {treeType === "CATALOGUE" && (
+        <Button type="primary" onClick={() => setModalVisible(!modalVisible)}>
+          Add root taxon
+        </Button>
+      )}
+      {modalVisible && (
+        <AddChildModal
+          parent={{ datasetKey: dataset.key }}
+          onCancel={() => setModalVisible(false)}
+          onSuccess={() => {
+            setModalVisible(false);
+            loadRoot();
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 export default Custom404;
