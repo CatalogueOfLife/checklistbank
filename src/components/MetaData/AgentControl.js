@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Col, Modal } from "antd";
-import injectSheet from "react-jss";
+import styles from "../newTag.module.css";
 import AgentForm from "./AgentForm";
 import AgentPresentation from "./AgentPresentation";
 import ReactDragListView from "react-drag-listview";
@@ -17,14 +17,6 @@ const stringToArray = (value) => {
   }
 
   return [];
-};
-
-const styles = {
-  newTag: {
-    background: "#fff",
-    borderStyle: "dashed",
-    maxHeight: "22px",
-  },
 };
 
 /**
@@ -122,7 +114,6 @@ class AgentControl extends React.Component {
   render() {
     const { agents, formVisible, agentForEdit } = this.state;
     const {
-      classes,
       label,
       removeAll,
       agentType = "contact",
@@ -189,7 +180,7 @@ class AgentControl extends React.Component {
                 >
                   <Tag
                     onClick={() => this.showForm()}
-                    className={classes.newTag}
+                    className={styles.newTagTall}
                   >
                     <PlusOutlined /> {label}
                   </Tag>
@@ -238,4 +229,4 @@ AgentControl.propTypes = {
   removeAll: PropTypes.bool, // optional flag, to allow remove all agents or not
 };
 
-export default injectSheet(styles)(AgentControl);
+export default AgentControl;
