@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Input, InputNumber, Tag, Tooltip } from "antd";
 import styles from "./newTag.module.css";
@@ -18,126 +18,108 @@ const stringToArray = (value) => {
  * https://ant.design/components/form/#components-form-demo-customized-form-controls
  * Based on built-in Tag https://ant.design/components/tag/#components-tag-demo-control
  */
-class TagControl extends React.Component {
-  static getDerivedStateFromProps(nextProps) {
-    // Should be a controlled component
-    if ("value" in nextProps) {
-      let value = stringToArray(nextProps.value);
-
-      return { tags: value };
-    }
-    return null;
+const TagControl = ({ value, label, removeAll, onChange, type }) => {
+  const [tags, setTags] = useState(() => stringToArray(value));
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setTags(stringToArray(value));
   }
 
-  constructor(props) {
-    super(props);
+  const [inputVisible, setInputVisible] = useState(false);
+  // Preserve pre-existing bug: assignment vs comparison (boolean)
+  const [inputValue, setInputValue] = useState(type === "");
 
-    this.state = {
-      tags: stringToArray(props.value),
-      inputVisible: false,
-      inputValue: this.props?.type === "",
-    };
-  }
+  const inputRef = useRef(null);
 
-  handleClose = (removedTag) => {
-    const tags = this.state.tags.filter((tag) => tag !== removedTag);
-
-    this.setState({ tags });
-    this.triggerChange(tags);
-  };
-
-  showInput = () => {
-    this.setState({ inputVisible: true }, () => this.input.focus());
-  };
-
-  handleInputChange = (event) => {
-    this.setState({
-      inputValue: this.props?.type === "number" ? event : event.target.value,
-    });
-  };
-
-  handleInputConfirm = () => {
-    const state = this.state;
-    const inputValue = state.inputValue;
-    let tags = state.tags;
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue];
+  useEffect(() => {
+    if (inputVisible) {
+      inputRef.current?.focus();
     }
+  }, [inputVisible]);
 
-    this.setState({
-      tags,
-      inputVisible: false,
-      inputValue: "",
-    });
-    this.triggerChange(tags);
-  };
-
-  triggerChange = (changedValue) => {
-    // Should provide an event to pass value to Form
-    const onChange = this.props.onChange;
+  const triggerChange = (changedValue) => {
     if (onChange) {
       onChange(changedValue);
     }
   };
 
-  saveInputRef = (input) => (this.input = input);
+  const handleClose = (removedTag) => {
+    const newTags = tags.filter((tag) => tag !== removedTag);
+    setTags(newTags);
+    triggerChange(newTags);
+  };
 
-  render() {
-    const { tags, inputVisible, inputValue } = this.state;
-    const { label, removeAll } = this.props;
+  const showInput = () => {
+    setInputVisible(true);
+  };
 
-    return (
-      <React.Fragment>
-        {tags.map((tag, index) => {
-          const isLongTag = tag && tag.length > 20;
-          const tagElem = (
-            <Tag
-              key={tag}
-              closable={removeAll || index !== 0}
-              onClose={() => this.handleClose(tag)}
-            >
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-            </Tag>
-          );
-          return isLongTag ? (
-            <Tooltip title={tag} key={tag}>
-              {tagElem}
-            </Tooltip>
-          ) : (
-            tagElem
-          );
-        })}
-        {inputVisible && this.props?.type === "number" && (
-          <InputNumber
-            ref={this.saveInputRef}
-            size="small"
-            style={{ width: 78 }}
-            value={inputValue}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
-          />
-        )}
-        {inputVisible && this.props?.type !== "number" && (
-          <Input
-            ref={this.saveInputRef}
-            type={"text"}
-            size="small"
-            style={{ width: 78 }}
-            value={inputValue}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
-          />
-        )}
-        {!inputVisible && (
-          <Tag onClick={this.showInput} className={styles.newTag}>
-            <PlusOutlined /> {label}
+  const handleInputChange = (event) => {
+    setInputValue(type === "number" ? event : event.target.value);
+  };
+
+  const handleInputConfirm = () => {
+    let newTags = tags;
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+      newTags = [...tags, inputValue];
+    }
+    setTags(newTags);
+    setInputVisible(false);
+    setInputValue("");
+    triggerChange(newTags);
+  };
+
+  return (
+    <React.Fragment>
+      {tags.map((tag, index) => {
+        const isLongTag = tag && tag.length > 20;
+        const tagElem = (
+          <Tag
+            key={tag}
+            closable={removeAll || index !== 0}
+            onClose={() => handleClose(tag)}
+          >
+            {isLongTag ? `${tag.slice(0, 20)}...` : tag}
           </Tag>
-        )}
-      </React.Fragment>
-    );
-  }
-}
+        );
+        return isLongTag ? (
+          <Tooltip title={tag} key={tag}>
+            {tagElem}
+          </Tooltip>
+        ) : (
+          tagElem
+        );
+      })}
+      {inputVisible && type === "number" && (
+        <InputNumber
+          ref={inputRef}
+          size="small"
+          style={{ width: 78 }}
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputConfirm}
+          onPressEnter={handleInputConfirm}
+        />
+      )}
+      {inputVisible && type !== "number" && (
+        <Input
+          ref={inputRef}
+          type={"text"}
+          size="small"
+          style={{ width: 78 }}
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputConfirm}
+          onPressEnter={handleInputConfirm}
+        />
+      )}
+      {!inputVisible && (
+        <Tag onClick={showInput} className={styles.newTag}>
+          <PlusOutlined /> {label}
+        </Tag>
+      )}
+    </React.Fragment>
+  );
+};
 
 export default TagControl;
