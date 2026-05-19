@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import withContext from "../../components/hoc/withContext";
 import withRouter from "../../withRouter";
 import config from "../../config";
@@ -17,52 +17,32 @@ const {Text, Link} = Typography;
   return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
 }; */
 
-class CatalogueSelect extends React.Component {
-  constructor(props) {
-    super(props);
+const CatalogueSelect = ({ match, location, catalogue, setCatalogue, user, iconOnly = false, style = {} }) => {
+  const { params: { projectKey } } = match;
+  const [catalogues, setCatalogues] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    this.state = {
-      catalogues: [],
-      visible: false,
-      loading: false,
-    };
-  }
-
-  componentDidMount = () => {
-    this.getCatalogues();
-  };
-
-  getCatalogues = () => {
-    this.setState({ loading: true });
+  const getCatalogues = () => {
+    setLoading(true);
     axios(
       `${config.dataApi}dataset?origin=project&limit=1000`
     ).then((res) =>
-      this.setState({
-        catalogues: _.get(res, "data.result") ? _.get(res, "data.result") : [],
-        loading: false,
-      })
-    );
-  };
-  hide = () => {
-    this.setState({
-      visible: false,
-    });
+      setCatalogues(_.get(res, "data.result") ? _.get(res, "data.result") : [])
+    ).finally(() => setLoading(false));
   };
 
-  handleVisibleChange = (visible) => {
-    this.setState({ visible });
+  useEffect(() => {
+    getCatalogues();
+  }, []);
+
+  const hide = () => {
+    setVisible(false);
   };
 
-  onCatalogueChange = (newCatalogueKey) => {
-    const { setCatalogue } = this.props;
-    const {
-      match: {
-        params: { projectKey },
-      },
-    } = this.props;
-    const { catalogues } = this.state;
+  const onCatalogueChange = (newCatalogueKey) => {
     if (projectKey) {
-      const newPath = _.get(this.props, "location.pathname").replace(
+      const newPath = _.get(location, "pathname", "").replace(
         `project/${projectKey}/`,
         `project/${newCatalogueKey}/`
       );
@@ -73,78 +53,67 @@ class CatalogueSelect extends React.Component {
       const selectedCatalogue = catalogues.find(
         (c) => c.key === newCatalogueKey
       );
-
       setCatalogue(selectedCatalogue);
     }
-
-    this.setState({ visible: false });
+    setVisible(false);
   };
-  render = () => {
-    const {
-      match: {
-        params: { projectKey },
-      },
-      catalogue,
-      iconOnly = false,
-      style = {}
-    } = this.props;
-    const { catalogues, loading } = this.state;
-    return (
-      <React.Fragment>
-        <a
-          style={style}
+
+  return (
+    <>
+      <a
+        style={style}
+        onClick={(e) => {
+          e.stopPropagation();
+          setVisible(true);
+        }}
+      >
+        {iconOnly && <SettingOutlined />}
+        {!iconOnly && catalogue &&
+          `${catalogue?.alias ? catalogue.alias : truncate(catalogue?.title, 25)} [${catalogue.key}]`
+        }
+        {!iconOnly && !catalogue && `Select`}
+
+      </a>
+      <Modal
+        title="Select project"
+        open={visible}
+        mask={{ closable: true }}
+        onCancel={hide}
+        footer={null}
+      >
+        <div
           onClick={(e) => {
             e.stopPropagation();
-            this.setState({ visible: true });
+            e.nativeEvent.stopImmediatePropagation();
           }}
         >
-          {iconOnly && <SettingOutlined />}
-          {!iconOnly && catalogue &&
-            `${catalogue?.alias ? catalogue.alias : truncate(catalogue?.title, 25)} [${catalogue.key}]`
-          }
-          {!iconOnly && !catalogue && `Select`}
-          
-        </a>
-        <Modal
-          title="Select project"
-          open={this.state.visible}
-          mask={{ closable: true }}
-          onCancel={this.hide}
-          footer={null}
-        >
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
-            }}
-          >
-            <Select
-              showSearch
-              loading={loading}
-              style={{ width: "100%" }}
-              value={projectKey || null}
-              placeholder="Select project"
-              optionFilterProp="label"
-              onChange={this.onCatalogueChange}
-              filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          <Select
+            showSearch
+            loading={loading}
+            style={{ width: "100%" }}
+            value={projectKey || null}
+            placeholder="Select project"
+            optionFilterProp="label"
+            onChange={onCatalogueChange}
+            filterOption={(input, option) =>
+              option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+            onOpenChange={(open) => {
+              if (open) {
+                getCatalogues();
               }
-              onOpenChange={(open) => {
-                if (open) {
-                  this.getCatalogues();
-                }
-              }}
-              options={catalogues.map((c) => ({
-                value: c.key,
-                label: `${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`,
-              }))}
-            />
-          </div>
-        </Modal>
-      </React.Fragment>
-    );
-  };
-}
+            }}
+            options={catalogues.map((c) => ({
+              value: c.key,
+              label: `${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`,
+            }))}
+          />
+        </div>
+      </Modal>
+    </>
+  );
+};
+
 const mapContextToProps = ({
   projectKey,
   catalogue,
