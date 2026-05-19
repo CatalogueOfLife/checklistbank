@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Alert, Empty, Row, Col, Select, Form, Spin } from "antd";
 import axios from "axios";
 import config from "../../config";
@@ -23,93 +23,46 @@ const formItemLayout = {
   },
 };
 
-class ImportTimeline extends React.Component {
-  constructor(props) {
-    super(props);
+const ImportTimeline = ({ datasetKey, addError, dataset }) => {
+  const [groups, setGroups] = useState([]);
+  const [importHistory, setImportHistory] = useState([]);
+  const [timestampToAttemptMap, setTimestampToAttemptMap] = useState({});
+  const [error, setError] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState("default");
+  const [options, setOptions] = useState(null);
 
-    this.state = {
-      groups: [],
-      importHistory: [],
-      timestampToAttemptMap: {},
-      error: null,
-      selectedGroup: "default",
-    };
-  }
-
-  componentDidMount = () => {
-    //this.initChart(null);
-    this.getHistory();
-  };
-
-  componentDidUpdate = (prevProps) => {};
-
-  getHistory = () => {
-    const { datasetKey, addError } = this.props;
-
-    return axios(
-      `${config.dataApi}dataset/${datasetKey}/import?limit=250&state=finished`
-    )
-      .then((res) => {
-        const groups = Object.keys(res.data[0]).filter(
-          (key) => typeof res.data[0][key] === "object"
-        );
-        const reversed = res.data.reverse();
-        let timestampToAttemptMap = {};
-        res.data.forEach((i) => {
-          timestampToAttemptMap[Date.parse(i.finished)] = i.attempt;
-        });
-
-        this.setState(
-          {
-            importHistory: reversed,
-            timestampToAttemptMap,
-            groups: groups,
-            error: null,
-          },
-          () => this.initChart(reversed)
-        );
-      })
-      .catch((err) => {
-        this.setState({ error: err, importHistory: null });
-      });
-  };
-
-  initChart = (finishedImports) => {
-    const { datasetKey, addError, dataset } = this.props;
-
-    const { selectedGroup, timestampToAttemptMap } = this.state;
+  const initChart = (finishedImports, currentSelectedGroup, currentTimestampMap) => {
     const seriesNames =
-      selectedGroup === "default"
+      currentSelectedGroup === "default"
         ? Object.keys(finishedImports[finishedImports.length - 1]).filter(
             (k) =>
               typeof finishedImports[finishedImports.length - 1][k] ===
                 "number" && !["attempt", "createdBy", "datasetKey"].includes(k)
           )
         : Object.keys(
-            finishedImports[finishedImports.length - 1][selectedGroup]
+            finishedImports[finishedImports.length - 1][currentSelectedGroup]
           );
 
     const series = seriesNames.map((name) => ({
-      name: selectedGroup === "default" ? _.startCase(name) : name,
+      name: currentSelectedGroup === "default" ? _.startCase(name) : name,
       data: finishedImports.map((i) => [
         Date.parse(i.finished),
-
-        selectedGroup === "default"
+        currentSelectedGroup === "default"
           ? _.get(i, `[${name}]`, 0)
-          : _.get(i, `[${selectedGroup}][${name}]`, 0),
+          : _.get(i, `[${currentSelectedGroup}][${name}]`, 0),
         i.attempt.toString(),
       ]),
       point: {
         events: {
           click: (e) => {
             // Get attempt no by finished timestamp
-            const attempt = timestampToAttemptMap[e.point.x];
+            const attempt = currentTimestampMap[e.point.x];
             history.push(`/dataset/${datasetKey}/imports/${attempt}`);
           },
         },
       },
     }));
-    let options = {
+    const newOptions = {
       chart: {
         zoomType: "x",
       },
@@ -120,9 +73,6 @@ class ImportTimeline extends React.Component {
             : "Import timeline",
       },
       credits: false,
-      /*  subtitle: {
-        text: "Source: thesolarfoundation.com",
-      }, */
 
       yAxis: {
         title: {
@@ -132,11 +82,6 @@ class ImportTimeline extends React.Component {
 
       xAxis: {
         type: "datetime",
-        /* dateTimeLabelFormats: {
-          // don't display the dummy year
-          month: "%e. %b",
-          year: "%b",
-        }, */
         title: {
           text: "Date",
         },
@@ -153,7 +98,6 @@ class ImportTimeline extends React.Component {
           label: {
             connectorAllowed: false,
           },
-          // pointStart: 2010,
         },
       },
 
@@ -177,54 +121,76 @@ class ImportTimeline extends React.Component {
       },
     };
 
-    this.setState({
-      options,
-      //chartData,
-    });
+    setOptions(newOptions);
   };
 
-  selectGroup = (selectedGroup) => {
-    this.setState({ selectedGroup }, () => {
-      this.initChart(this.state.importHistory);
-    });
+  const getHistory = () => {
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/import?limit=250&state=finished`
+    )
+      .then((res) => {
+        const newGroups = Object.keys(res.data[0]).filter(
+          (key) => typeof res.data[0][key] === "object"
+        );
+        const reversed = res.data.reverse();
+        let newTimestampToAttemptMap = {};
+        res.data.forEach((i) => {
+          newTimestampToAttemptMap[Date.parse(i.finished)] = i.attempt;
+        });
+
+        setImportHistory(reversed);
+        setTimestampToAttemptMap(newTimestampToAttemptMap);
+        setGroups(newGroups);
+        setError(null);
+        initChart(reversed, selectedGroup, newTimestampToAttemptMap);
+      })
+      .catch((err) => {
+        setError(err);
+        setImportHistory(null);
+      });
   };
 
-  render() {
-    const { options, groups, selectedGroup } = this.state;
-    const { datasetKey, addError, dataset } = this.props;
-    return (
-      <PageContent>
-        <Menu datasetKey={datasetKey} dataset={dataset} />
-        <Row>
-          <Col flex="auto"></Col>
-          <Col>
-            <Form.Item
-              {...formItemLayout}
-              label="Select group"
-              style={{ marginBottom: "8px", width: "400px" }}
-            >
-              <Select
-                value={selectedGroup}
-                onChange={this.selectGroup}
-                options={[
-                  { value: "default", label: "default" },
-                  ...groups.map((g) => ({ value: g, label: _.startCase(g) })),
-                ]}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            {options && (
-              <HighchartsReact highcharts={Highcharts} options={options} />
-            )}
-          </Col>
-        </Row>
-      </PageContent>
-    );
-  }
-}
+  useEffect(() => {
+    getHistory();
+  }, []);
+
+  const selectGroup = (newGroup) => {
+    setSelectedGroup(newGroup);
+    initChart(importHistory, newGroup, timestampToAttemptMap);
+  };
+
+  return (
+    <PageContent>
+      <Menu datasetKey={datasetKey} dataset={dataset} />
+      <Row>
+        <Col flex="auto"></Col>
+        <Col>
+          <Form.Item
+            {...formItemLayout}
+            label="Select group"
+            style={{ marginBottom: "8px", width: "400px" }}
+          >
+            <Select
+              value={selectedGroup}
+              onChange={selectGroup}
+              options={[
+                { value: "default", label: "default" },
+                ...groups.map((g) => ({ value: g, label: _.startCase(g) })),
+              ]}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}>
+          {options && (
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          )}
+        </Col>
+      </Row>
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ addError, dataset }) => ({
   addError,

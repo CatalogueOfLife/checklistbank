@@ -1,34 +1,17 @@
 import withRouter from "../withRouter";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React from "react";
+import { useState, useEffect } from "react";
 import history from "../history";
 import qs from "query-string";
 import { Card } from "antd";
 import withContext from "./hoc/withContext";
 
-class ImportChart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { options: {} };
-  }
+const ImportChart = (props) => {
+  const { location, datasetKey, nestedData } = props;
+  const [options, setOptions] = useState({});
 
-  componentDidMount = () => {
-    this.initChart(this.props);
-  };
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      prevProps.datasetKey !== this.props.datasetKey ||
-      JSON.stringify(prevProps.nestedData) !==
-        JSON.stringify(this.props.nestedData)
-    ) {
-      this.initChart(this.props);
-    }
-  };
-
-  getBasePath = () => {
-    const { location, datasetKey } = this.props;
+  const getBasePath = () => {
     if (location.pathname.startsWith("/catalogue")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
@@ -39,9 +22,7 @@ class ImportChart extends React.Component {
     }
   };
 
-  getVerbatimPath = () => {
-    const { location, datasetKey } = this.props;
-
+  const getVerbatimPath = () => {
     if (location.pathname.startsWith("/catalogue")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
@@ -52,29 +33,29 @@ class ImportChart extends React.Component {
     }
   };
 
-  initChart = (props) => {
+  const initChart = (currentProps) => {
     const {
-      nestedData,
+      nestedData: nd,
       title,
       subtitle,
       nameSearchParam,
       verbatim,
       additionalParams,
-    } = props;
+    } = currentProps;
 
     var colors = Highcharts.getOptions().colors,
-      categories = Object.keys(nestedData),
-      data = Object.keys(nestedData).map((k, idx) => {
+      categories = Object.keys(nd),
+      data = Object.keys(nd).map((k, idx) => {
         return {
           color: colors[idx],
-          y: Object.keys(nestedData[k]).reduce(
-            (acc, cur) => acc + nestedData[k][cur],
+          y: Object.keys(nd[k]).reduce(
+            (acc, cur) => acc + nd[k][cur],
             0
           ),
           drilldown: {
             name: k,
-            categories: Object.keys(nestedData[k]),
-            data: Object.keys(nestedData[k]).map((i) => nestedData[k][i]),
+            categories: Object.keys(nd[k]),
+            data: Object.keys(nd[k]).map((i) => nd[k][i]),
           },
         };
       }),
@@ -106,7 +87,7 @@ class ImportChart extends React.Component {
         });
       }
     }
-    let options = {
+    const newOptions = {
       chart: {
         type: "pie",
       },
@@ -147,7 +128,7 @@ class ImportChart extends React.Component {
             events: {
               click: (e) => {
                 history.push(
-                  `${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${
+                  `${verbatim ? getVerbatimPath() : getBasePath()}?${
                     nameSearchParam[0]
                   }=${e.point.name}${
                     additionalParams ? "&" + qs.stringify(additionalParams) : ""
@@ -166,7 +147,7 @@ class ImportChart extends React.Component {
             events: {
               click: (e) => {
                 history.push(
-                  `${verbatim ? this.getVerbatimPath() : this.getBasePath()}?${
+                  `${verbatim ? getVerbatimPath() : getBasePath()}?${
                     nameSearchParam[1]
                   }=${e.point.name}${
                     additionalParams ? "&" + qs.stringify(additionalParams) : ""
@@ -201,30 +182,19 @@ class ImportChart extends React.Component {
       },
     };
 
-    this.setState({ options });
+    setOptions(newOptions);
   };
 
-  getDataLabelOptions = (type) => {
-    return {
-      enabled: true,
-      color: "black",
-      format: "{point.name}: {point.y}",
-      style: {
-        fontSize: "13px",
-        fontFamily: "Verdana, sans-serif",
-      },
-    };
-  };
+  useEffect(() => {
+    initChart(props);
+  }, [datasetKey, JSON.stringify(nestedData)]);
 
-  render = () => {
-    const { options } = this.state;
-    return (
-      <Card>
-        <HighchartsReact highcharts={Highcharts} options={options} />
-      </Card>
-    );
-  };
-}
+  return (
+    <Card>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </Card>
+  );
+};
 
 const mapContextToProps = ({ projectKey }) => ({
   projectKey,
