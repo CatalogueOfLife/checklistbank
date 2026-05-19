@@ -1,0 +1,7 @@
+.avatar img {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.background {
+}

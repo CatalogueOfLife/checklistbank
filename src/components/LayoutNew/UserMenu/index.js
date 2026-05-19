@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import injectSheet from "react-jss";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, Dropdown, Avatar, Modal, Button, Divider } from "antd";
 import { NavLink } from "react-router-dom";
@@ -12,6 +11,7 @@ import Auth from "../../Auth";
 import withContext from "../../hoc/withContext";
 // Components
 import LoginForm from "./LoginForm";
+import styles from "./UserMenu.module.css";
 
 const hashCode = function (str) {
   let hash = 0,
@@ -26,16 +26,6 @@ const hashCode = function (str) {
   return hash;
 };
 
-const styles = {
-  avatar: {
-    "& img": {
-      imageRendering: "crisp-edges",
-      fallbacks: {
-        imageRendering: "pixelated",
-      },
-    },
-  },
-};
 
 class UserMenu extends PureComponent {
   state = {
@@ -106,7 +96,7 @@ class UserMenu extends PureComponent {
   };
 
   render() {
-    const { classes, user, logout, catalogue } = this.props;
+    const { user, logout, catalogue } = this.props;
     let currentUser;
     if (user) {
       const imgNr = Math.abs(hashCode(user.username)) % 10;
@@ -159,7 +149,7 @@ class UserMenu extends PureComponent {
               <Avatar
                 style={{ marginRight: 8 }}
                 size="small"
-                className={classes.avatar}
+                className={styles.avatar}
                 src={currentUser.avatar}
                 alt="avatar"
               />
@@ -175,7 +165,7 @@ class UserMenu extends PureComponent {
           footer={null}
           destroyOnHidden={true}
         >
-          <div className={classes.background}>
+          <div className={styles.background}>
             <LoginForm
               invalid={this.state.invalid}
               onLogin={this.handleLogin}
@@ -195,4 +185,4 @@ const mapContextToProps = ({ user, login, logout, catalogue, setCatalogue }) => 
   setCatalogue
 });
 
-export default withContext(mapContextToProps)(injectSheet(styles)(UserMenu));
+export default withContext(mapContextToProps)(UserMenu);
