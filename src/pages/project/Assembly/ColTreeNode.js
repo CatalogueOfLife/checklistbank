@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { SyncOutlined, WarningFilled, CopyOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../../components/MergedDataBadge";
 import {
@@ -33,43 +33,54 @@ import { CanEditDataset } from "../../../components/Auth/hasAccess";
 
 import history from "../../../history";
 
-class ColTreeNode extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      style: {},
-      decision: this.props.taxon.decision,
-      provisional: this.props.taxon.status === "provisionally accepted",
-      popOverVisible: false,
-      childModalVisible: false,
-      editTaxonModalVisible: false,
-      estimateModalVisible: false,
-      uploadTextTreeModalVisible: false,
-      subtreeDownloadPending: false,
-    };
-  }
+const ColTreeNode = (props) => {
+  const {
+    taxon,
+    taxon: { sector, datasetSectors, sourceDatasetKeys },
+    treeType,
+    isUpdating,
+    getTaxonomicStatusColor,
+    projectKey,
+    dataset,
+    reloadSelfAndSiblings,
+    reloadChildren,
+    addError,
+    rank,
+    location,
+    confirmVisible,
+    confirmTitle,
+    onConfirm,
+    onCancel,
+    actions,
+  } = props;
 
-  setMode = (mode) => {
-    this.setState({ mode });
-  };
+  const [decision, setDecision] = useState(taxon.decision);
+  const [provisional, setProvisionalState] = useState(
+    taxon.status === "provisionally accepted"
+  );
+  const [popOverVisible, setPopOverVisible] = useState(false);
+  const [childModalVisible, setChildModalVisible] = useState(false);
+  const [editTaxonModalVisible, setEditTaxonModalVisible] = useState(false);
+  const [estimateModalVisible, setEstimateModalVisible] = useState(false);
+  const [uploadTextTreeModalVisible, setUploadTextTreeModalVisible] = useState(false);
+  const [subtreeDownloadPending, setSubtreeDownloadPending] = useState(false);
 
-  deleteTaxon = (taxon) => {
+  const deleteTaxon = (taxon) => {
     axios
       .delete(`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}`)
       .then(() => {
-        this.props.reloadSelfAndSiblings();
+        reloadSelfAndSiblings();
         notification.open({
           message: "Taxon deleted",
           description: `${taxon.name} was deleted from the assembly`,
         });
       })
       .catch((err) => {
-        this?.props?.addError(err);
-        this.setState({ error: err });
+        addError && addError(err);
       });
   };
 
-  deleteTaxonBatch = (taxa) => {
+  const deleteTaxonBatch = (taxa) => {
     Promise.allSettled(
       taxa.map((taxon) =>
         axios.delete(
@@ -83,7 +94,7 @@ class ColTreeNode extends React.Component {
           `There were ${errors.length} errors out of ${taxa.length} deletions. Please reload trees and inspect carefully.`
         );
       }
-      this.props.reloadSelfAndSiblings();
+      reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
         description: `${taxa.length - errors.length
@@ -92,7 +103,7 @@ class ColTreeNode extends React.Component {
     });
   };
 
-  deleteTaxonRecursiveBatch = (taxa) => {
+  const deleteTaxonRecursiveBatch = (taxa) => {
     Promise.allSettled(
       taxa.map((taxon) =>
         axios.delete(
@@ -107,7 +118,7 @@ class ColTreeNode extends React.Component {
           `There were ${errors.length} errors out of ${taxa.length} deletions. Please reload trees and inspect carefully.`
         );
       }
-      this.props.reloadSelfAndSiblings();
+      reloadSelfAndSiblings();
       notification.open({
         message: "Taxa deleted",
         description: `${taxa.length - errors.length
@@ -116,7 +127,7 @@ class ColTreeNode extends React.Component {
     });
   };
 
-  deleteTaxonRecursive = (taxon) => {
+  const deleteTaxonRecursive = (taxon) => {
     axios
       .delete(
         `${config.dataApi}dataset/${taxon.datasetKey}/tree/${encodeURIComponent(
@@ -124,548 +135,366 @@ class ColTreeNode extends React.Component {
         )}`
       )
       .then(() => {
-        this.props.reloadSelfAndSiblings();
+        reloadSelfAndSiblings();
         notification.open({
           message: "Taxon deleted",
           description: `${taxon.name} was deleted recursively from the assembly`,
         });
       })
       .catch((err) => {
-        this?.props?.addError(err);
-        this.setState({ error: err });
+        addError && addError(err);
       });
   };
-  setProvisional = (provisional, taxon) => {
-    const { reloadSelfAndSiblings } = this.props;
-    this.setState({ provisional });
+
+  const setProvisional = (newProvisional, taxon) => {
+    setProvisionalState(newProvisional);
     axios(`${config.dataApi}dataset/${taxon.datasetKey}/taxon/${taxon.id}`)
       .then((res) => res.data)
       .then((tx) =>
         axios.put(`${config.dataApi}dataset/${tx.datasetKey}/taxon/${tx.id}`, {
           ...tx,
-          status: provisional ? "provisionally accepted" : "accepted",
+          status: newProvisional ? "provisionally accepted" : "accepted",
         })
       )
-      .then((res) => {
+      .then(() => {
         reloadSelfAndSiblings();
       })
-      .catch((err) => {
-        this.setState({ error: err });
-      });
+      .catch(() => {});
   };
 
-  consolidateHomotypicNames = (taxon) => {
+  const consolidateHomotypicNames = (taxon) => {
     axios
       .post(
         `${config.dataApi}dataset/${taxon.datasetKey
         }/consolidate-homotypic?taxonID=${encodeURIComponent(taxon.id)}`
       )
       .then(() => {
-        this.props.reloadSelfAndSiblings();
+        reloadSelfAndSiblings();
         notification.open({
           message: "Homotypic grouping",
           description: `Consolidating homotypic names under ${taxon.name}`,
         });
       })
-      .catch((err) => {
-        this.setState({ error: err });
-      });
+      .catch(() => {});
   };
 
-  cancelChildModal = () => {
-    const { reloadChildren } = this.props;
-    reloadChildren().then(() => this.setState({ childModalVisible: false }));
+  const cancelChildModal = () => {
+    reloadChildren().then(() => setChildModalVisible(false));
   };
 
-  cancelEditTaxonModal = () => {
-    const { reloadSelfAndSiblings } = this.props;
-
-    this.setState({ editTaxonModalVisible: false }, reloadSelfAndSiblings);
+  const cancelEditTaxonModal = () => {
+    setEditTaxonModalVisible(false);
+    reloadSelfAndSiblings();
   };
 
-  cancelEstimateModal = () => {
-    const { reloadSelfAndSiblings } = this.props;
-
-    this.setState({ estimateModalVisible: false }, reloadSelfAndSiblings);
+  const cancelEstimateModal = () => {
+    setEstimateModalVisible(false);
+    reloadSelfAndSiblings();
   };
-  cancelUploadTextTreeModal = () => {
-    const { reloadSelfAndSiblings } = this.props;
 
-    this.setState({ uploadTextTreeVisible: false }, reloadSelfAndSiblings);
+  const cancelUploadTextTreeModal = () => {
+    setUploadTextTreeModalVisible(false);
+    reloadSelfAndSiblings();
   };
-  getTaxonUrl = (selectedSourceDatasetKey) => {
-    const { location } = this.props;
+
+  const getTaxonUrl = (selectedSourceDatasetKey) => {
     const urlAfterDatasetRoute = location.pathname?.split(`dataset/`)[1];
-    // console.log("### " + urlAfterDatasetRoute)
     const datasetKey = urlAfterDatasetRoute?.split("/")[0];
     return (
       location.pathname.split(`dataset/${datasetKey}`)[0] +
       `dataset/${datasetKey}/taxon/`
     );
-    /* return (
-      location.pathname.split(`dataset/${selectedSourceDatasetKey}`)[0] +
-      `dataset/${selectedSourceDatasetKey}/taxon/`
-    ); */
   };
 
-  downloadSubtree = () => {
+  const downloadSubtree = () => {
     try {
-      const { taxon } = this.props;
-      this.setState({ subtreeDownloadPending: true });
+      setSubtreeDownloadPending(true);
       axios({
         url: `${config.dataApi}dataset/${taxon.datasetKey}/taxon/${encodeURIComponent(taxon.id)}/tree`,
         params: {extended: true},
         method: "GET",
-        responseType: "blob", // important
+        responseType: "blob",
       }).then((response) => {
-        // create file link in browser's memory
         const href = URL.createObjectURL(response.data);
-
-        // create "a" HTML element with href to file & click
         const link = document.createElement("a");
         link.href = href;
-        link.setAttribute("download", `${taxon.id}_tree.txt`); //or any other extension
+        link.setAttribute("download", `${taxon.id}_tree.txt`);
         document.body.appendChild(link);
         link.click();
-
-        // clean up "a" element & remove ObjectURL
         document.body.removeChild(link);
         URL.revokeObjectURL(href);
-        this.setState({ subtreeDownloadPending: false });
+        setSubtreeDownloadPending(false);
       });
     } catch (error) {
       alert(error);
-      this.setState({ subtreeDownloadPending: false });
+      setSubtreeDownloadPending(false);
     }
   };
 
-  rankIsAboveSpecies = (rank) => {
-    return this.props.rank.indexOf(rank) < this.props.rank.indexOf("species");
+  const rankIsAboveSpecies = (r) => {
+    return rank.indexOf(r) < rank.indexOf("species");
   };
 
-  render = () => {
-    const {
-      taxon,
-      taxon: { sector, datasetSectors, sourceDatasetKeys },
-      treeType,
-      isUpdating,
-      getTaxonomicStatusColor,
-      projectKey,
-      dataset,
-    } = this.props;
-    const hasDatasetSectors =
-      (sourceDatasetKeys || []).filter((d) => sector?.subjectDatasetKey !== d)
-        .length > 0;
-    /* datasetSectors &&
-      (sector && sector.subjectDatasetKey
-        ? Object.keys(_.omit(datasetSectors, [sector.subjectDatasetKey]))
-            .length > 0
-        : true); */
+  const hasDatasetSectors =
+    (sourceDatasetKeys || []).filter((d) => sector?.subjectDatasetKey !== d)
+      .length > 0;
 
-    const {
-      childModalVisible,
-      editTaxonModalVisible,
-      estimateModalVisible,
-      uploadTextTreeModalVisible,
-      decision,
-    } = this.state;
+  const releaseKey = ["xrelease", "release"].includes(
+    _.get(dataset, "origin")
+  )
+    ? dataset.key
+    : null;
 
-    const releaseKey = ["xrelease", "release"].includes(
-      _.get(dataset, "origin")
-    )
-      ? dataset.key
-      : null;
-    return (
-      <div>
-        {childModalVisible && (
-          <AddChildModal
-            onCancel={this.cancelChildModal}
-            onSuccess={this.cancelChildModal}
-            parent={taxon}
-          />
-        )}
-        {editTaxonModalVisible && (
-          <EditTaxonModal
-            onCancel={this.cancelEditTaxonModal}
-            onSuccess={this.cancelEditTaxonModal}
-            taxon={taxon}
-          />
-        )}
-        {estimateModalVisible && (
-          <SpeciesEstimateModal
-            onCancel={this.cancelEstimateModal}
-            onSuccess={this.cancelEstimateModal}
-            taxon={taxon}
-            projectKey={projectKey}
-          />
-        )}
-        {uploadTextTreeModalVisible && (
-          <UploadTextTreeModal
-            onCancel={this.cancelUploadTextTreeModal}
-            onSuccess={this.cancelUploadTextTreeModal}
-            taxon={taxon}
-          />
-        )}
-        <ColTreeContext.Consumer>
-          {({ mode, selectedSourceDatasetKey, selectedAssemblyTreeNodes }) => {
-            const taxonIsInSelectedNodes =
-              selectedAssemblyTreeNodes &&
-              selectedAssemblyTreeNodes.length > 1 &&
-              selectedAssemblyTreeNodes.find((n) => n.taxon.id === taxon.id);
-            return (
-              <React.Fragment>
-                {mode === "modify" && treeType === "CATALOGUE" && (
-                  <Popover
-                    content={
-                      taxon.name !== "Not assigned" ? (
-                        <React.Fragment>
-                          {!taxonIsInSelectedNodes && (
-                            <React.Fragment>
-                              {" "}
+  return (
+    <div>
+      {childModalVisible && (
+        <AddChildModal
+          onCancel={cancelChildModal}
+          onSuccess={cancelChildModal}
+          parent={taxon}
+        />
+      )}
+      {editTaxonModalVisible && (
+        <EditTaxonModal
+          onCancel={cancelEditTaxonModal}
+          onSuccess={cancelEditTaxonModal}
+          taxon={taxon}
+        />
+      )}
+      {estimateModalVisible && (
+        <SpeciesEstimateModal
+          onCancel={cancelEstimateModal}
+          onSuccess={cancelEstimateModal}
+          taxon={taxon}
+          projectKey={projectKey}
+        />
+      )}
+      {uploadTextTreeModalVisible && (
+        <UploadTextTreeModal
+          onCancel={cancelUploadTextTreeModal}
+          onSuccess={cancelUploadTextTreeModal}
+          taxon={taxon}
+        />
+      )}
+      <ColTreeContext.Consumer>
+        {({ mode, selectedSourceDatasetKey, selectedAssemblyTreeNodes }) => {
+          const taxonIsInSelectedNodes =
+            selectedAssemblyTreeNodes &&
+            selectedAssemblyTreeNodes.length > 1 &&
+            selectedAssemblyTreeNodes.find((n) => n.taxon.id === taxon.id);
+          return (
+            <>
+              {mode === "modify" && treeType === "CATALOGUE" && (
+                <Popover
+                  content={
+                    taxon.name !== "Not assigned" ? (
+                      <>
+                        {!taxonIsInSelectedNodes && (
+                          <>
+                            {" "}
+                            <Button
+                              style={{ width: "100%" }}
+                              type="primary"
+                              onClick={() => {
+                                history.push(
+                                  `/project/${projectKey}/taxon/${taxon.id}`
+                                );
+                              }}
+                            >
+                              Show taxon
+                            </Button>
+                            <br />
+                            <Button
+                              style={{ marginTop: "8px", width: "100%" }}
+                              type="primary"
+                              onClick={downloadSubtree}
+                              loading={subtreeDownloadPending}
+                            >
+                              Download subtree as text
+                            </Button>
+                            <CanEditDataset dataset={{ key: projectKey }}>
+                              <br />
                               <Button
-                                style={{ width: "100%" }}
+                                style={{ marginTop: "8px", width: "100%" }}
+                                type="primary"
+                                onClick={() =>
+                                  setUploadTextTreeModalVisible(true)
+                                }
+                              >
+                                Upload text tree
+                              </Button>
+                              <br />
+                              <Button
+                                style={{ marginTop: "8px", width: "100%" }}
                                 type="primary"
                                 onClick={() => {
-                                  history.push(
-                                    `/project/${projectKey}/taxon/${taxon.id}`
-                                  );
+                                  setChildModalVisible(true);
+                                  setPopOverVisible(false);
                                 }}
                               >
-                                Show taxon
+                                Add child
                               </Button>
                               <br />
                               <Button
                                 style={{ marginTop: "8px", width: "100%" }}
-                                type="primary"
-                                onClick={this.downloadSubtree}
-                                loading={this.state.subtreeDownloadPending}
-                              >
-                                Download subtree as text
-                              </Button>
-                              <CanEditDataset dataset={{ key: projectKey }}>
-                                <br />
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="primary"
-                                  onClick={() =>
-                                    this.setState({
-                                      uploadTextTreeModalVisible: true,
-                                    })
-                                  }
-                                >
-                                  Upload text tree
-                                </Button>
-                                <br />
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  type="primary"
-                                  onClick={() =>
-                                    this.setState({
-                                      childModalVisible: true,
-                                      popOverVisible: false,
-                                    })
-                                  }
-                                >
-                                  Add child
-                                </Button>
-                                <br />
-                                <Button
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  danger
-                                  onClick={() =>
-                                    this.setState({
-                                      editTaxonModalVisible: true,
-                                      popOverVisible: false,
-                                    })
-                                  }
-                                >
-                                  Edit taxon
-                                </Button>
-                                <br />
-                                <Button
-                                  danger
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  onClick={() => this.deleteTaxon(taxon)}
-                                >
-                                  Delete taxon
-                                </Button>
-                                <br />
-                                <Button
-                                  danger
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  onClick={() =>
-                                    this.deleteTaxonRecursive(taxon)
-                                  }
-                                >
-                                  Delete subtree
-                                </Button>
-                                <br />
-                                <Button
-                                  type="primary"
-                                  style={{ marginTop: "8px", width: "100%" }}
-                                  onClick={() =>
-                                    this.consolidateHomotypicNames(taxon)
-                                  }
-                                >
-                                  Consolidate Homotypic Names
-                                </Button>
-                                <br />
-                              </CanEditDataset>
-                              <Button
-                                style={{ marginTop: "8px", width: "100%" }}
-                                type="primary"
-                                onClick={() =>
-                                  this.setState({
-                                    estimateModalVisible: true,
-                                    popOverVisible: false,
-                                  })
-                                }
-                              >
-                                Estimates
-                              </Button>
-                            </React.Fragment>
-                          )}
-                          {taxonIsInSelectedNodes && (
-                            <React.Fragment>
-                              <Button
                                 danger
-                                style={{ marginTop: "8px", width: "100%" }}
-                                onClick={() =>
-                                  this.deleteTaxonBatch(
-                                    selectedAssemblyTreeNodes.map(
-                                      (n) => n.taxon
-                                    )
-                                  )
-                                }
+                                onClick={() => {
+                                  setEditTaxonModalVisible(true);
+                                  setPopOverVisible(false);
+                                }}
                               >
-                                {`Delete ${selectedAssemblyTreeNodes.length} taxa`}
+                                Edit taxon
                               </Button>
                               <br />
                               <Button
                                 danger
                                 style={{ marginTop: "8px", width: "100%" }}
+                                onClick={() => deleteTaxon(taxon)}
+                              >
+                                Delete taxon
+                              </Button>
+                              <br />
+                              <Button
+                                danger
+                                style={{ marginTop: "8px", width: "100%" }}
+                                onClick={() => deleteTaxonRecursive(taxon)}
+                              >
+                                Delete subtree
+                              </Button>
+                              <br />
+                              <Button
+                                type="primary"
+                                style={{ marginTop: "8px", width: "100%" }}
                                 onClick={() =>
-                                  this.deleteTaxonRecursiveBatch(
-                                    selectedAssemblyTreeNodes.map(
-                                      (n) => n.taxon
-                                    )
-                                  )
+                                  consolidateHomotypicNames(taxon)
                                 }
                               >
-                                {`Delete subtrees for ${selectedAssemblyTreeNodes.length} taxa`}
+                                Consolidate Homotypic Names
                               </Button>
-                            </React.Fragment>
-                          )}
-                        </React.Fragment>
-                      ) : (
-                        <p>
-                          This is a placeholder node for taxa that are not
-                          assigned to any <strong>{taxon.rank}</strong>.
-                        </p>
-                      )
-                    }
-                    title="Options"
-                    open={this.state.popOverVisible}
-                    onOpenChange={() =>
-                      this.setState({
-                        popOverVisible: !this.state.popOverVisible,
-                      })
-                    }
-                    trigger="contextMenu"
-                    placement="bottom"
-                  >
-                    <Popconfirm
-                      open={this.props.confirmVisible}
-                      title={this.props.confirmTitle}
-                      onConfirm={this.props.onConfirm}
-                      onCancel={this.props.onCancel}
-                    >
-                      <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                        {taxon.rank}:{" "}
-                      </span>
-
-                      <span
-                        dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
-                      />
-                      <span>
-                        {taxon?.merged && (
-                          <MergedDataBadge style={{ marginLeft: "4px" }} />
-                        )}
-                      </span>
-                      {mode === "modify" && taxon.estimate && (
-                        <span>
-                          {" "}
-                          • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
-                          {taxon.estimates.length
-                            ? `(${taxon.estimates.length.toLocaleString(
-                              "en-GB"
-                            )} ${taxon.estimates.length > 1
-                              ? "estimates"
-                              : "estimate"
-                            })`
-                            : ""}
-                        </span>
-                      )}
-                      {isUpdating && (
-                        <span>
-                          {" "}
-                          <SyncOutlined spin />
-                        </span>
-                      )}
-                      {taxon.status === "provisionally accepted" && (
-                        <React.Fragment>
-                          {" "}
-                          •{" "}
-                          <Tag
-                            color={getTaxonomicStatusColor(taxon.status)}
-                            style={{ marginRight: 0 }}
-                          >
-                            prov.
-                          </Tag>
-                        </React.Fragment>
-                      )}
-                    </Popconfirm>
-                  </Popover>
-                )}
-
-                {((mode !== "modify" && treeType === "CATALOGUE") ||
-                  treeType === "SOURCE") && (
-                    <PopconfirmMultiOption
-                      open={this.props.confirmVisible}
-                      title={this.props.confirmTitle}
-                      onConfirm={this.props.onConfirm}
-                      actions={this.props.actions}
-                      onCancel={this.props.onCancel}
-                    >
-                      <div>
-                        <span>
-                          <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
-                            {taxon.rank}:{" "}
-                          </span>
-
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: taxon.labelHtml,
-                            }}
-                          />
-                          <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                            {taxon?.merged && (
-                              <MergedDataBadge style={{ marginLeft: "4px" }} />
-                            )}
-                          </span>
-                          <CopyToClipboard
-                            text={taxon.name}
-                            onCopy={() =>
-                              message.info(`Copied "${taxon.name}" to clipboard`)
-                            }
-                          >
-                            <CopyOutlined
-                              style={{ fontSize: "10px", marginLeft: "4px" }}
-                            />
-                          </CopyToClipboard>
-                        </span>
-
-                        {!_.isUndefined(taxon.count) &&
-                          this.rankIsAboveSpecies(taxon?.rank) && (
-                            <span>
-                              {" "}
-                              • {Number(taxon.count).toLocaleString()}{" "}
-                              {!_.isUndefined(taxon.speciesEstimate) && (
-                                <span>
-                                  {" "}
-                                  of{" "}
-                                  {Number(
-                                    taxon.speciesEstimate
-                                  ).toLocaleString()}{" "}
-                                  est.{" "}
-                                </span>
-                              )}
-                              spp.
-                            </span>
-                          )}
-                        {isUpdating && (
-                          <span>
-                            {" "}
-                            <SyncOutlined spin />
-                          </span>
-                        )}
-                        {taxon.status === "provisionally accepted" && (
-                          <React.Fragment>
-                            {" "}
-                            •{" "}
-                            <Tag
-                              color={getTaxonomicStatusColor(taxon.status)}
-                              style={{ marginRight: 0 }}
+                              <br />
+                            </CanEditDataset>
+                            <Button
+                              style={{ marginTop: "8px", width: "100%" }}
+                              type="primary"
+                              onClick={() => {
+                                setEstimateModalVisible(true);
+                                setPopOverVisible(false);
+                              }}
                             >
-                              prov.
-                            </Tag>
-                          </React.Fragment>
+                              Estimates
+                            </Button>
+                          </>
                         )}
-                        {taxon.datasetKey === projectKey &&
-                          !hasDatasetSectors &&
-                          !sector && (
-                            <Tooltip title="No sectors">
-                              <WarningFilled
-                                style={{ marginLeft: "6px", color: "wheat" }}
-                              />
-                            </Tooltip>
-                          )}
-                        {hasDatasetSectors && (
-                          <span>
-                            <span> • </span>
-                            <TaxonSources
-                              sourceDatasetKeys={sourceDatasetKeys}
-                            /*                             datasetSectors={datasetSectors}
-                             */ taxon={taxon}
-                              releaseKey={releaseKey}
-                              projectKey={projectKey}
-                            />
-                          </span>
-                        )}
-                        {sector && mode !== "modify" && (
-                          <span>
-                            <span> • </span>
-                            <Sector
-                              {...this.props}
-                              selectedSourceDatasetKey={selectedSourceDatasetKey}
-                              decisionCallback={(decision) =>
-                                this.setState({ decision })
+                        {taxonIsInSelectedNodes && (
+                          <>
+                            <Button
+                              danger
+                              style={{ marginTop: "8px", width: "100%" }}
+                              onClick={() =>
+                                deleteTaxonBatch(
+                                  selectedAssemblyTreeNodes.map(
+                                    (n) => n.taxon
+                                  )
+                                )
                               }
-                            />
-                          </span>
-                        )}
-                        {decision && (
-                          <span>
-                            <span> • </span>
-                            <DecisionTag
-                              {...this.props}
-                              decision={decision}
-                              deleteCallback={() =>
-                                this.setState({ decision: null })
+                            >
+                              {`Delete ${selectedAssemblyTreeNodes.length} taxa`}
+                            </Button>
+                            <br />
+                            <Button
+                              danger
+                              style={{ marginTop: "8px", width: "100%" }}
+                              onClick={() =>
+                                deleteTaxonRecursiveBatch(
+                                  selectedAssemblyTreeNodes.map(
+                                    (n) => n.taxon
+                                  )
+                                )
                               }
-                            />
-                          </span>
+                            >
+                              {`Delete subtrees for ${selectedAssemblyTreeNodes.length} taxa`}
+                            </Button>
+                          </>
                         )}
-                      </div>
-                    </PopconfirmMultiOption>
-                  )}
-                {treeType === "readOnly" && (
-                  <div>
+                      </>
+                    ) : (
+                      <p>
+                        This is a placeholder node for taxa that are not
+                        assigned to any <strong>{taxon.rank}</strong>.
+                      </p>
+                    )
+                  }
+                  title="Options"
+                  open={popOverVisible}
+                  onOpenChange={() => setPopOverVisible(!popOverVisible)}
+                  trigger="contextMenu"
+                  placement="bottom"
+                >
+                  <Popconfirm
+                    open={confirmVisible}
+                    title={confirmTitle}
+                    onConfirm={onConfirm}
+                    onCancel={onCancel}
+                  >
+                    <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                      {taxon.rank}:{" "}
+                    </span>
+
                     <span
-                    /*                   onContextMenu={()=> {
-                    const uri = `${this.getTaxonUrl(selectedSourceDatasetKey)}${taxon.id}`
-                    const win = window.open(uri, '_blank');
-                    win.focus();
-                  }} */
-                    >
-                      <NavLink
-                        to={{
-                          pathname: `${this.getTaxonUrl(
-                            selectedSourceDatasetKey
-                          )}${encodeURIComponent(taxon.id)}`,
-                        }}
-                        end
-                      >
+                      dangerouslySetInnerHTML={{ __html: taxon.labelHtml }}
+                    />
+                    <span>
+                      {taxon?.merged && (
+                        <MergedDataBadge style={{ marginLeft: "4px" }} />
+                      )}
+                    </span>
+                    {mode === "modify" && taxon.estimate && (
+                      <span>
+                        {" "}
+                        • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
+                        {taxon.estimates.length
+                          ? `(${taxon.estimates.length.toLocaleString(
+                            "en-GB"
+                          )} ${taxon.estimates.length > 1
+                            ? "estimates"
+                            : "estimate"
+                          })`
+                          : ""}
+                      </span>
+                    )}
+                    {isUpdating && (
+                      <span>
+                        {" "}
+                        <SyncOutlined spin />
+                      </span>
+                    )}
+                    {taxon.status === "provisionally accepted" && (
+                      <>
+                        {" "}
+                        •{" "}
+                        <Tag
+                          color={getTaxonomicStatusColor(taxon.status)}
+                          style={{ marginRight: 0 }}
+                        >
+                          prov.
+                        </Tag>
+                      </>
+                    )}
+                  </Popconfirm>
+                </Popover>
+              )}
+
+              {((mode !== "modify" && treeType === "CATALOGUE") ||
+                treeType === "SOURCE") && (
+                  <PopconfirmMultiOption
+                    open={confirmVisible}
+                    title={confirmTitle}
+                    onConfirm={onConfirm}
+                    actions={actions}
+                    onCancel={onCancel}
+                  >
+                    <div>
+                      <span>
                         <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                           {taxon.rank}:{" "}
                         </span>
@@ -680,102 +509,197 @@ class ColTreeNode extends React.Component {
                             <MergedDataBadge style={{ marginLeft: "4px" }} />
                           )}
                         </span>
-                      </NavLink>
-                    </span>
-                    {!_.isUndefined(taxon.count) &&
-                      this.rankIsAboveSpecies(taxon?.rank) && (
+                        <CopyToClipboard
+                          text={taxon.name}
+                          onCopy={() =>
+                            message.info(`Copied "${taxon.name}" to clipboard`)
+                          }
+                        >
+                          <CopyOutlined
+                            style={{ fontSize: "10px", marginLeft: "4px" }}
+                          />
+                        </CopyToClipboard>
+                      </span>
+
+                      {!_.isUndefined(taxon.count) &&
+                        rankIsAboveSpecies(taxon?.rank) && (
+                          <span>
+                            {" "}
+                            • {Number(taxon.count).toLocaleString()}{" "}
+                            {!_.isUndefined(taxon.speciesEstimate) && (
+                              <span>
+                                {" "}
+                                of{" "}
+                                {Number(
+                                  taxon.speciesEstimate
+                                ).toLocaleString()}{" "}
+                                est.{" "}
+                              </span>
+                            )}
+                            spp.
+                          </span>
+                        )}
+                      {isUpdating && (
                         <span>
                           {" "}
-                          • {Number(taxon.count).toLocaleString()}{" "}
-                          {taxon.estimate && (
-                            <span>
-                              {" "}
-                              of {Number(
-                                taxon.estimate
-                              ).toLocaleString()} est.{" "}
-                            </span>
-                          )}
-                          species
+                          <SyncOutlined spin />
                         </span>
                       )}
-                    {/* {taxon.estimate && (
-                      <span>
-                        {" "}
-                        • {taxon.estimate.toLocaleString("en-GB")} est. spp.{" "}
-                        {taxon.estimates.length
-                          ? `(${taxon.estimates.length.toLocaleString(
-                              "en-GB"
-                            )} ${
-                              taxon.estimates.length > 1
-                                ? "estimates"
-                                : "estimate"
-                            })`
-                          : ""}
-                      </span>
-                    )} */}
-
-                    {taxon.status === "provisionally accepted" && (
-                      <React.Fragment>
-                        {" "}
-                        •{" "}
-                        <Tag
-                          color={getTaxonomicStatusColor(taxon.status)}
-                          style={{ marginRight: 0 }}
-                        >
-                          prov.
-                        </Tag>
-                      </React.Fragment>
-                    )}
-                    {(sector || hasDatasetSectors) && <span> • </span>}
-                    {sector && (
-                      <span>
-                        <NavLink
-                          to={{
-                            pathname: releaseKey
-                              ? `/dataset/${releaseKey}/source/${sector?.dataset?.key}`
-                              : `/dataset/${sector?.dataset?.key}/metadata`,
-                          }}
-                          end
-                        >
+                      {taxon.status === "provisionally accepted" && (
+                        <>
                           {" "}
-                          <span
-                            style={
-                              hasDatasetSectors
-                                ? { fontWeight: "bold", fontSize: "11px" }
-                                : { fontSize: "11px" }
-                            }
+                          •{" "}
+                          <Tag
+                            color={getTaxonomicStatusColor(taxon.status)}
+                            style={{ marginRight: 0 }}
                           >
-                            {sector?.dataset?.alias ||
-                              sector?.dataset?.key ||
-                              ""}
-                            {hasDatasetSectors && ", "}
+                            prov.
+                          </Tag>
+                        </>
+                      )}
+                      {taxon.datasetKey === projectKey &&
+                        !hasDatasetSectors &&
+                        !sector && (
+                          <Tooltip title="No sectors">
+                            <WarningFilled
+                              style={{ marginLeft: "6px", color: "wheat" }}
+                            />
+                          </Tooltip>
+                        )}
+                      {hasDatasetSectors && (
+                        <span>
+                          <span> • </span>
+                          <TaxonSources
+                            sourceDatasetKeys={sourceDatasetKeys}
+                          taxon={taxon}
+                            releaseKey={releaseKey}
+                            projectKey={projectKey}
+                          />
+                        </span>
+                      )}
+                      {sector && mode !== "modify" && (
+                        <span>
+                          <span> • </span>
+                          <Sector
+                            {...props}
+                            selectedSourceDatasetKey={selectedSourceDatasetKey}
+                            decisionCallback={(d) => setDecision(d)}
+                          />
+                        </span>
+                      )}
+                      {decision && (
+                        <span>
+                          <span> • </span>
+                          <DecisionTag
+                            {...props}
+                            decision={decision}
+                            deleteCallback={() => setDecision(null)}
+                          />
+                        </span>
+                      )}
+                    </div>
+                  </PopconfirmMultiOption>
+                )}
+              {treeType === "readOnly" && (
+                <div>
+                  <span>
+                    <NavLink
+                      to={{
+                        pathname: `${getTaxonUrl(
+                          selectedSourceDatasetKey
+                        )}${encodeURIComponent(taxon.id)}`,
+                      }}
+                      end
+                    >
+                      <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                        {taxon.rank}:{" "}
+                      </span>
+
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: taxon.labelHtml,
+                        }}
+                      />
+                      <span style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+                        {taxon?.merged && (
+                          <MergedDataBadge style={{ marginLeft: "4px" }} />
+                        )}
+                      </span>
+                    </NavLink>
+                  </span>
+                  {!_.isUndefined(taxon.count) &&
+                    rankIsAboveSpecies(taxon?.rank) && (
+                      <span>
+                        {" "}
+                        • {Number(taxon.count).toLocaleString()}{" "}
+                        {taxon.estimate && (
+                          <span>
+                            {" "}
+                            of {Number(
+                              taxon.estimate
+                            ).toLocaleString()} est.{" "}
                           </span>
-                        </NavLink>
+                        )}
+                        species
                       </span>
                     )}
-                    {hasDatasetSectors && (
-                      <TaxonSources
-                        sourceDatasetKeys={sourceDatasetKeys}
-                        /* datasetSectors={
-                          sector && sector.subjectDatasetKey
-                            ? _.omit(datasetSectors, [sector.subjectDatasetKey])
-                            : datasetSectors
-                        } */
-                        taxon={taxon}
-                        releaseKey={releaseKey}
-                        projectKey={projectKey}
-                      />
-                    )}
-                  </div>
-                )}
-              </React.Fragment>
-            );
-          }}
-        </ColTreeContext.Consumer>
-      </div>
-    );
-  };
-}
+
+                  {taxon.status === "provisionally accepted" && (
+                    <>
+                      {" "}
+                      •{" "}
+                      <Tag
+                        color={getTaxonomicStatusColor(taxon.status)}
+                        style={{ marginRight: 0 }}
+                      >
+                        prov.
+                      </Tag>
+                    </>
+                  )}
+                  {(sector || hasDatasetSectors) && <span> • </span>}
+                  {sector && (
+                    <span>
+                      <NavLink
+                        to={{
+                          pathname: releaseKey
+                            ? `/dataset/${releaseKey}/source/${sector?.dataset?.key}`
+                            : `/dataset/${sector?.dataset?.key}/metadata`,
+                        }}
+                        end
+                      >
+                        {" "}
+                        <span
+                          style={
+                            hasDatasetSectors
+                              ? { fontWeight: "bold", fontSize: "11px" }
+                              : { fontSize: "11px" }
+                          }
+                        >
+                          {sector?.dataset?.alias ||
+                            sector?.dataset?.key ||
+                            ""}
+                          {hasDatasetSectors && ", "}
+                        </span>
+                      </NavLink>
+                    </span>
+                  )}
+                  {hasDatasetSectors && (
+                    <TaxonSources
+                      sourceDatasetKeys={sourceDatasetKeys}
+                      taxon={taxon}
+                      releaseKey={releaseKey}
+                      projectKey={projectKey}
+                    />
+                  )}
+                </div>
+              )}
+            </>
+          );
+        }}
+      </ColTreeContext.Consumer>
+    </div>
+  );
+};
 
 const mapContextToProps = ({
   getTaxonomicStatusColor,
