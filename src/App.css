@@ -359,25 +359,27 @@ div.csl-entry {
    antd-4 look (solid color background + white text) globally for tags that
    actually carry a color — both preset names (purple/green/…) and custom
    hex (which arrives as an inline `background-color:` style). Default,
-   uncolored tags are left alone so neutral pills stay light grey. */
+   uncolored tags are left alone so neutral pills stay light grey. Tags
+   opting into `variant="outlined"` are exempted so callers can recover
+   the pastel look on a per-call basis. */
 .ant-tag.ant-tag-filled[style*="background-color"],
-.ant-tag.ant-tag-pink,
-.ant-tag.ant-tag-magenta,
-.ant-tag.ant-tag-red,
-.ant-tag.ant-tag-volcano,
-.ant-tag.ant-tag-orange,
-.ant-tag.ant-tag-yellow,
-.ant-tag.ant-tag-gold,
-.ant-tag.ant-tag-cyan,
-.ant-tag.ant-tag-lime,
-.ant-tag.ant-tag-green,
-.ant-tag.ant-tag-blue,
-.ant-tag.ant-tag-geekblue,
-.ant-tag.ant-tag-purple,
-.ant-tag.ant-tag-success,
-.ant-tag.ant-tag-processing,
-.ant-tag.ant-tag-error,
-.ant-tag.ant-tag-warning {
+.ant-tag.ant-tag-pink:not(.ant-tag-outlined),
+.ant-tag.ant-tag-magenta:not(.ant-tag-outlined),
+.ant-tag.ant-tag-red:not(.ant-tag-outlined),
+.ant-tag.ant-tag-volcano:not(.ant-tag-outlined),
+.ant-tag.ant-tag-orange:not(.ant-tag-outlined),
+.ant-tag.ant-tag-yellow:not(.ant-tag-outlined),
+.ant-tag.ant-tag-gold:not(.ant-tag-outlined),
+.ant-tag.ant-tag-cyan:not(.ant-tag-outlined),
+.ant-tag.ant-tag-lime:not(.ant-tag-outlined),
+.ant-tag.ant-tag-green:not(.ant-tag-outlined),
+.ant-tag.ant-tag-blue:not(.ant-tag-outlined),
+.ant-tag.ant-tag-geekblue:not(.ant-tag-outlined),
+.ant-tag.ant-tag-purple:not(.ant-tag-outlined),
+.ant-tag.ant-tag-success:not(.ant-tag-outlined),
+.ant-tag.ant-tag-processing:not(.ant-tag-outlined),
+.ant-tag.ant-tag-error:not(.ant-tag-outlined),
+.ant-tag.ant-tag-warning:not(.ant-tag-outlined) {
   background-color: currentColor !important;
   border-color: currentColor !important;
   -webkit-text-fill-color: #fff;

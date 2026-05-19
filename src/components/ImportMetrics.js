@@ -12,7 +12,7 @@ const ImportMetrics = ({ data, subtitle }) => {
       <Row>
         <Col span={24} style={{ padding: "10px" }}>
           {_.get(data, `taxaByRankCount.species`) && (
-          <Tag key="speciesCount" color="blue" style={{ marginBottom: "8px" }}>
+          <Tag key="speciesCount" color="blue" variant="outlined" style={{ marginBottom: "8px", marginRight: "8px" }}>
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
           )}
@@ -22,7 +22,7 @@ const ImportMetrics = ({ data, subtitle }) => {
             ),
             (c) => {
               return _.get(data, `${c}`) ? (
-                <Tag key={c} color="blue" style={{ marginBottom: "8px" }}>
+                <Tag key={c} color="blue" variant="outlined" style={{ marginBottom: "8px", marginRight: "8px" }}>
                   {_.startCase(c)}: {_.get(data, `${c}`)}
                 </Tag>
               ) : (

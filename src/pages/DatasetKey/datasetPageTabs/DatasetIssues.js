@@ -29,7 +29,7 @@ const getColumns = ({ issueMap, projectKey }) => {
             placement="right"
             title={_.get(issueMap, `[${text}].description`)}
           >
-            <Tag key={text} color={_.get(issueMap, `[${text}].color`)}>
+            <Tag key={text} color={_.get(issueMap, `[${text}].color`)} variant="outlined">
               {_.startCase(text)}
             </Tag>
             <NavLink
