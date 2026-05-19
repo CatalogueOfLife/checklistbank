@@ -57,7 +57,6 @@ import OtherUsages from "./OtherUsages";
 import CurieIdentifier from "../../components/CurieIdentifier";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
-const TabPane = Tabs.TabPane;
 
 const { canEditDataset } = Auth;
 const md = 5;
@@ -517,468 +516,480 @@ const TaxonPage = ({
           </Row>
         )}
 
-        <Tabs defaultActiveKey="1" tabBarExtraContent={null}>
-          <TabPane tab="About" key="1">
-            {_.get(info, "publishedIn.citation") && (
-              <PresentationItem md={md} label="Published in">
-                <Linkify>{_.get(info, "publishedIn.citation", "")}</Linkify>
-              </PresentationItem>
-            )}
-            {_.get(info, "usage.accordingTo") && (
-              <PresentationItem md={md} label="According to">
-                {_.get(info, "usage.accordingToId") ? (
-                  <NavLink
-                    to={{
-                      pathname: `/dataset/${datasetKey}/reference/${_.get(
-                        info,
-                        "usage.accordingToId"
-                      )}`,
-                    }}
-                  >
-                    {_.get(info, "usage.accordingTo")}
-                  </NavLink>
-                ) : (
-                  _.get(info, "usage.accordingTo")
-                )}
-              </PresentationItem>
-            )}
-            {_.get(info, "usage.name.publishedInPageLink") && (
-              <PresentationItem md={md} label="Published In Page Link">
-                <Row>
-                  <Col>
-                    <a
-                      href={_.get(info, "usage.name.publishedInPageLink")}
-                      target="_blank"
-                    >
-                      {_.get(info, "usage.name.publishedInPageLink")}
-                    </a>
-                  </Col>
-                  <Col>
-                    <PublishedInPagePreview
-                      publishedInPageLink={_.get(
-                        info,
-                        "usage.name.publishedInPageLink"
-                      )}
-                      style={{
-                        boxShadow: "6px 6px 6px lightgrey",
-                        marginLeft: "10px",
-                      }}
-                    />
-                  </Col>
-                  <Col flex="auto"></Col>
-                </Row>
-              </PresentationItem>
-            )}
-            <Row style={{ borderBottom: "1px solid #eee" }}>
-              <Col span={12}>
-                {_.get(taxon, "status") && (
-                  <PresentationItem md={md * 2} label="Status">
-                    {`${taxon.status} ${_.get(taxon, "name.rank")}`}
-                  </PresentationItem>
-                )}
-              </Col>
-            </Row>
-            {_.get(taxon, "name.nomStatus") && (
-              <PresentationItem md={md} label="Nomenclatural Status">
-                {getNomStatus(_.get(taxon, "name"))}
-              </PresentationItem>
-            )}
-            {_.get(info, "classification") && (
-              <PresentationItem
-                md={md}
-                label={
-                  <>
-                    <span>Classification</span>
-                    <NavLink
-                      style={{ marginLeft: "5px" }}
-                      to={{
-                        pathname: isAssembly(location, projectKey)
-                          ? `/project/${projectKey}/assembly`
-                          : getDatasetTreeRoute(
-                              location,
-                              datasetKey,
-                              projectKey
-                            ),
-                        search: isAssembly(location, projectKey)
-                          ? `?assemblyTaxonKey=${encodeURIComponent(
-                              _.get(taxon, "id")
-                            )}`
-                          : `?taxonKey=${encodeURIComponent(
-                              _.get(taxon, "id")
+        <Tabs
+          defaultActiveKey="1"
+          tabBarExtraContent={null}
+          items={[
+            {
+              key: "1",
+              label: "About",
+              children: (
+                <>
+                  {_.get(info, "publishedIn.citation") && (
+                    <PresentationItem md={md} label="Published in">
+                      <Linkify>{_.get(info, "publishedIn.citation", "")}</Linkify>
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "usage.accordingTo") && (
+                    <PresentationItem md={md} label="According to">
+                      {_.get(info, "usage.accordingToId") ? (
+                        <NavLink
+                          to={{
+                            pathname: `/dataset/${datasetKey}/reference/${_.get(
+                              info,
+                              "usage.accordingToId"
                             )}`,
-                      }}
+                          }}
+                        >
+                          {_.get(info, "usage.accordingTo")}
+                        </NavLink>
+                      ) : (
+                        _.get(info, "usage.accordingTo")
+                      )}
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "usage.name.publishedInPageLink") && (
+                    <PresentationItem md={md} label="Published In Page Link">
+                      <Row>
+                        <Col>
+                          <a
+                            href={_.get(info, "usage.name.publishedInPageLink")}
+                            target="_blank"
+                          >
+                            {_.get(info, "usage.name.publishedInPageLink")}
+                          </a>
+                        </Col>
+                        <Col>
+                          <PublishedInPagePreview
+                            publishedInPageLink={_.get(
+                              info,
+                              "usage.name.publishedInPageLink"
+                            )}
+                            style={{
+                              boxShadow: "6px 6px 6px lightgrey",
+                              marginLeft: "10px",
+                            }}
+                          />
+                        </Col>
+                        <Col flex="auto"></Col>
+                      </Row>
+                    </PresentationItem>
+                  )}
+                  <Row style={{ borderBottom: "1px solid #eee" }}>
+                    <Col span={12}>
+                      {_.get(taxon, "status") && (
+                        <PresentationItem md={md * 2} label="Status">
+                          {`${taxon.status} ${_.get(taxon, "name.rank")}`}
+                        </PresentationItem>
+                      )}
+                    </Col>
+                  </Row>
+                  {_.get(taxon, "name.nomStatus") && (
+                    <PresentationItem md={md} label="Nomenclatural Status">
+                      {getNomStatus(_.get(taxon, "name"))}
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "classification") && (
+                    <PresentationItem
+                      md={md}
+                      label={
+                        <>
+                          <span>Classification</span>
+                          <NavLink
+                            style={{ marginLeft: "5px" }}
+                            to={{
+                              pathname: isAssembly(location, projectKey)
+                                ? `/project/${projectKey}/assembly`
+                                : getDatasetTreeRoute(
+                                    location,
+                                    datasetKey,
+                                    projectKey
+                                  ),
+                              search: isAssembly(location, projectKey)
+                                ? `?assemblyTaxonKey=${encodeURIComponent(
+                                    _.get(taxon, "id")
+                                  )}`
+                                : `?taxonKey=${encodeURIComponent(
+                                    _.get(taxon, "id")
+                                  )}`,
+                            }}
+                          >
+                            <RiNodeTree />
+                          </NavLink>
+                        </>
+                      }
                     >
-                      <RiNodeTree />
-                    </NavLink>
-                  </>
-                }
-              >
-                <Classification
-                  style={{ marginTop: "-3px", marginLeft: "-3px" }}
-                  data={_.get(info, "classification")}
-                  taxon={taxon}
-                  datasetKey={datasetKey}
-                  projectKey={projectKey}
-                />
-              </PresentationItem>
-            )}
-            {_.get(info, "nameRelations") &&
-              info.nameRelations.filter((rel) => rel?.usageId === taxon?.id)
-                .length > 0 && (
-                <NameRelations
-                  md={md}
-                  style={{ marginTop: "-3px" }}
-                  data={info.nameRelations.filter(
-                    (rel) => rel?.usageId === taxon?.id
+                      <Classification
+                        style={{ marginTop: "-3px", marginLeft: "-3px" }}
+                        data={_.get(info, "classification")}
+                        taxon={taxon}
+                        datasetKey={datasetKey}
+                        projectKey={projectKey}
+                      />
+                    </PresentationItem>
                   )}
-                  projectKey={projectKey}
-                  datasetKey={datasetKey}
-                />
-              )}
-            {_.get(info, "nameRelations") &&
-              info.nameRelations.filter((rel) => rel?.usageId !== taxon?.id)
-                .length > 0 && (
-                <NameRelations
-                  md={md}
-                  reverse={true}
-                  style={{ marginTop: "-3px" }}
-                  data={info.nameRelations.filter(
-                    (rel) => rel?.usageId !== taxon?.id
+                  {_.get(info, "nameRelations") &&
+                    info.nameRelations.filter((rel) => rel?.usageId === taxon?.id)
+                      .length > 0 && (
+                      <NameRelations
+                        md={md}
+                        style={{ marginTop: "-3px" }}
+                        data={info.nameRelations.filter(
+                          (rel) => rel?.usageId === taxon?.id
+                        )}
+                        projectKey={projectKey}
+                        datasetKey={datasetKey}
+                      />
+                    )}
+                  {_.get(info, "nameRelations") &&
+                    info.nameRelations.filter((rel) => rel?.usageId !== taxon?.id)
+                      .length > 0 && (
+                      <NameRelations
+                        md={md}
+                        reverse={true}
+                        style={{ marginTop: "-3px" }}
+                        data={info.nameRelations.filter(
+                          (rel) => rel?.usageId !== taxon?.id
+                        )}
+                        projectKey={projectKey}
+                        datasetKey={datasetKey}
+                      />
+                    )}
+                  {_.get(info, "synonyms") && (
+                    <PresentationItem md={md} label="Synonyms and combinations">
+                      <Synonyms
+                        primarySource={sourceDataset}
+                        onEditSuccess={getData}
+                        canEdit={canEdit}
+                        data={_.get(info, "synonyms")}
+                        decisions={_.get(info, "decisions")}
+                        references={_.get(info, "references")}
+                        referenceIndexMap={referenceIndexMap}
+                        typeMaterial={_.get(info, "typeMaterial")}
+                        style={{ marginTop: "-3px" }}
+                        datasetKey={datasetKey}
+                        projectKey={projectKey}
+                      />
+                    </PresentationItem>
                   )}
-                  projectKey={projectKey}
-                  datasetKey={datasetKey}
-                />
-              )}
-            {_.get(info, "synonyms") && (
-              <PresentationItem md={md} label="Synonyms and combinations">
-                <Synonyms
-                  primarySource={sourceDataset}
-                  onEditSuccess={getData}
-                  canEdit={canEdit}
-                  data={_.get(info, "synonyms")}
-                  decisions={_.get(info, "decisions")}
-                  references={_.get(info, "references")}
-                  referenceIndexMap={referenceIndexMap}
-                  typeMaterial={_.get(info, "typeMaterial")}
-                  style={{ marginTop: "-3px" }}
-                  datasetKey={datasetKey}
-                  projectKey={projectKey}
-                />
-              </PresentationItem>
-            )}
-            {_.get(info, "typeMaterial") &&
-              info.typeMaterial[info?.usage?.name?.id] && (
-                <PresentationItem md={md} label="Type material">
-                  <TypeMaterial
-                    data={_.get(info, "typeMaterial")}
-                    nameID={_.get(taxon, "name.id")}
-                  />
-                </PresentationItem>
-              )}
-            {_.get(info, "speciesInteractions") && (
-              <SpeciesInterActions
-                md={md}
-                style={{ marginTop: "-3px", marginLeft: "-10px" }}
-                speciesInteractions={info?.speciesInteractions}
-                references={info?.references || {}}
-                referenceIndexMap={referenceIndexMap}
-                datasetKey={datasetKey}
-              />
-            )}
-            {_.get(taxon, "environments") && (
-              <PresentationItem md={md} label="Environments">
-                {_.get(taxon, "environments").join(", ")}
-              </PresentationItem>
-            )}
-            {_.get(taxon, "temporalRangeStart") && (
-              <PresentationItem md={md} label="Temporal range">
-                <span>
-                  {taxon.temporalRangeStart}
-                  {_.get(taxon, "temporalRangeEnd") &&
-                    ` to ${taxon.temporalRangeEnd}`}
-                </span>
-              </PresentationItem>
-            )}
-            {taxon &&
-              rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
-              rank.indexOf(_.get(taxon, "name.rank")) > -1 && (
-                <div style={{ borderBottom: "1px solid #eee" }}>
-                  <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
-                </div>
-              )}
-            {taxon && rankStatsHasChildren && (
-              <PresentationItem md={md} label="Statistics">
-                <IncludesTable
-                  style={{ marginTop: "-3px", marginLeft: "-3px" }}
-                  data={rankStats}
-                  taxon={taxon}
-                  datasetKey={datasetKey}
-                />
-              </PresentationItem>
-            )}
-            {taxon && hasSpeciesBySource && (
-              <PresentationItem md={md} label="Species by source">
-                <SpeciesBySource
-                  counts={speciesBySource}
-                  datasetKey={datasetKey}
-                  taxonId={taxon.id}
-                />
-              </PresentationItem>
-            )}
-            {_.get(info, "media") && (
-              <PresentationItem md={md} label="Media">
-                <TaxonMedia media={_.get(info, "media")} />
-              </PresentationItem>
-            )}
-            {_.get(info, "vernacularNames") && taxon && (
-              <PresentationItem md={md} label="Vernacular names">
-                <VernacularNames
-                  style={{ marginTop: "-3px" }}
-                  data={info.vernacularNames}
-                  datasetKey={taxon.datasetKey}
-                  projectKey={projectKey}
-                />
-              </PresentationItem>
-            )}
-            {_.get(info, "distributions") && (
-              <PresentationItem md={md} label="Distributions">
-                <Distributions
-                  style={{ marginTop: "-3px" }}
-                  data={info.distributions}
-                  datasetKey={datasetKey}
-                  projectKey={projectKey}
-                />
-              </PresentationItem>
-            )}
-            {_.get(info, "properties") && (
-              <TaxonProperties
-                md={md}
-                references={_.get(info, "references")}
-                referenceIndexMap={referenceIndexMap}
-                properties={info.properties}
-              />
-            )}
-            {_.get(taxon, "name.etymology") && (
-              <PresentationItem md={md} label="Etymology">
-                {_.get(taxon, "name.etymology")}
-              </PresentationItem>
-            )}
-            {(_.get(taxon, "remarks") || _.get(taxon, "name.remarks")) && (
-              <PresentationItem md={md} label="Remarks">
-                {taxon?.remarks ? (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(marked(taxon.remarks)),
-                    }}
-                  ></span>
-                ) : (
-                  taxon?.remarks
-                )}
-                {taxon?.name?.remarks ? (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(marked(taxon.name.remarks)),
-                    }}
-                  ></span>
-                ) : (
-                  taxon?.name?.remarks
-                )}
-              </PresentationItem>
-            )}
-            {_.isArray(taxon?.identifier) && taxon.identifier.length > 0 && (
-              <PresentationItem md={md} label="Identifiers">
-                {taxon.identifier.map((id, i) => (
-                  <React.Fragment key={id}>
-                    {i > 0 && ", "}
-                    <CurieIdentifier identifier={id} identifierScope={identifierScope} />
-                  </React.Fragment>
-                ))}
-              </PresentationItem>
-            )}
-            {_.get(info, "usage.status") === "ambiguous synonym" && (
-              <PresentationItem md={md} label="Other usages">
-                <OtherUsages otherUsages={otherUsages} />
-              </PresentationItem>
-            )}
-            {_.get(info, "usage.name.namesIndexId") && (
-              <PresentationItem md={md} label="Related names">
-                <NavLink
-                  to={{
-                    pathname: `/namesindex/${encodeURIComponent(
-                      _.get(info, "usage.name.namesIndexId")
-                    )}/related`,
-                  }}
-                >
-                  Names Index Entry
-                </NavLink>
-              </PresentationItem>
-            )}
-            {_.get(taxon, "scrutinizer") && (
-              <PresentationItem md={md} label="Taxonomic scrutiny">
-                {`${_.get(taxon, "scrutinizer")}${
-                  _.get(taxon, "scrutinizerDate")
-                    ? ", " +
-                      moment(_.get(taxon, "scrutinizerDate")).format("LL")
-                    : ""
-                }`}
-              </PresentationItem>
-            )}
-            {mergedIssues && mergedIssues.length > 0 && (
-              <PresentationItem md={md} label="Issues and flags">
-                <div>
-                  {mergedIssues.map((i) => {
-                    const tag = (
-                      <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
-                        {i}
-                      </Tag>
-                    );
-                    return (
-                      <Tooltip
-                        key={i}
-                        title={_.get(issueMap, `[${i}].description`)}
+                  {_.get(info, "typeMaterial") &&
+                    info.typeMaterial[info?.usage?.name?.id] && (
+                      <PresentationItem md={md} label="Type material">
+                        <TypeMaterial
+                          data={_.get(info, "typeMaterial")}
+                          nameID={_.get(taxon, "name.id")}
+                        />
+                      </PresentationItem>
+                    )}
+                  {_.get(info, "speciesInteractions") && (
+                    <SpeciesInterActions
+                      md={md}
+                      style={{ marginTop: "-3px", marginLeft: "-10px" }}
+                      speciesInteractions={info?.speciesInteractions}
+                      references={info?.references || {}}
+                      referenceIndexMap={referenceIndexMap}
+                      datasetKey={datasetKey}
+                    />
+                  )}
+                  {_.get(taxon, "environments") && (
+                    <PresentationItem md={md} label="Environments">
+                      {_.get(taxon, "environments").join(", ")}
+                    </PresentationItem>
+                  )}
+                  {_.get(taxon, "temporalRangeStart") && (
+                    <PresentationItem md={md} label="Temporal range">
+                      <span>
+                        {taxon.temporalRangeStart}
+                        {_.get(taxon, "temporalRangeEnd") &&
+                          ` to ${taxon.temporalRangeEnd}`}
+                      </span>
+                    </PresentationItem>
+                  )}
+                  {taxon &&
+                    rank.indexOf(_.get(taxon, "name.rank")) < genusRankIndex &&
+                    rank.indexOf(_.get(taxon, "name.rank")) > -1 && (
+                      <div style={{ borderBottom: "1px solid #eee" }}>
+                        <TaxonBreakdown taxon={taxon} datasetKey={datasetKey} />
+                      </div>
+                    )}
+                  {taxon && rankStatsHasChildren && (
+                    <PresentationItem md={md} label="Statistics">
+                      <IncludesTable
+                        style={{ marginTop: "-3px", marginLeft: "-3px" }}
+                        data={rankStats}
+                        taxon={taxon}
+                        datasetKey={datasetKey}
+                      />
+                    </PresentationItem>
+                  )}
+                  {taxon && hasSpeciesBySource && (
+                    <PresentationItem md={md} label="Species by source">
+                      <SpeciesBySource
+                        counts={speciesBySource}
+                        datasetKey={datasetKey}
+                        taxonId={taxon.id}
+                      />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "media") && (
+                    <PresentationItem md={md} label="Media">
+                      <TaxonMedia media={_.get(info, "media")} />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "vernacularNames") && taxon && (
+                    <PresentationItem md={md} label="Vernacular names">
+                      <VernacularNames
+                        style={{ marginTop: "-3px" }}
+                        data={info.vernacularNames}
+                        datasetKey={taxon.datasetKey}
+                        projectKey={projectKey}
+                      />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "distributions") && (
+                    <PresentationItem md={md} label="Distributions">
+                      <Distributions
+                        style={{ marginTop: "-3px" }}
+                        data={info.distributions}
+                        datasetKey={datasetKey}
+                        projectKey={projectKey}
+                      />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "properties") && (
+                    <TaxonProperties
+                      md={md}
+                      references={_.get(info, "references")}
+                      referenceIndexMap={referenceIndexMap}
+                      properties={info.properties}
+                    />
+                  )}
+                  {_.get(taxon, "name.etymology") && (
+                    <PresentationItem md={md} label="Etymology">
+                      {_.get(taxon, "name.etymology")}
+                    </PresentationItem>
+                  )}
+                  {(_.get(taxon, "remarks") || _.get(taxon, "name.remarks")) && (
+                    <PresentationItem md={md} label="Remarks">
+                      {taxon?.remarks ? (
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(marked(taxon.remarks)),
+                          }}
+                        ></span>
+                      ) : (
+                        taxon?.remarks
+                      )}
+                      {taxon?.name?.remarks ? (
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(marked(taxon.name.remarks)),
+                          }}
+                        ></span>
+                      ) : (
+                        taxon?.name?.remarks
+                      )}
+                    </PresentationItem>
+                  )}
+                  {_.isArray(taxon?.identifier) && taxon.identifier.length > 0 && (
+                    <PresentationItem md={md} label="Identifiers">
+                      {taxon.identifier.map((id, i) => (
+                        <React.Fragment key={id}>
+                          {i > 0 && ", "}
+                          <CurieIdentifier identifier={id} identifierScope={identifierScope} />
+                        </React.Fragment>
+                      ))}
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "usage.status") === "ambiguous synonym" && (
+                    <PresentationItem md={md} label="Other usages">
+                      <OtherUsages otherUsages={otherUsages} />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "usage.name.namesIndexId") && (
+                    <PresentationItem md={md} label="Related names">
+                      <NavLink
+                        to={{
+                          pathname: `/namesindex/${encodeURIComponent(
+                            _.get(info, "usage.name.namesIndexId")
+                          )}/related`,
+                        }}
                       >
-                        {i === "duplicate name" ? (
+                        Names Index Entry
+                      </NavLink>
+                    </PresentationItem>
+                  )}
+                  {_.get(taxon, "scrutinizer") && (
+                    <PresentationItem md={md} label="Taxonomic scrutiny">
+                      {`${_.get(taxon, "scrutinizer")}${
+                        _.get(taxon, "scrutinizerDate")
+                          ? ", " +
+                            moment(_.get(taxon, "scrutinizerDate")).format("LL")
+                          : ""
+                      }`}
+                    </PresentationItem>
+                  )}
+                  {mergedIssues && mergedIssues.length > 0 && (
+                    <PresentationItem md={md} label="Issues and flags">
+                      <div>
+                        {mergedIssues.map((i) => {
+                          const tag = (
+                            <Tag key={i} color={_.get(issueMap, `[${i}].color`)}>
+                              {i}
+                            </Tag>
+                          );
+                          return (
+                            <Tooltip
+                              key={i}
+                              title={_.get(issueMap, `[${i}].description`)}
+                            >
+                              {i === "duplicate name" ? (
+                                <NavLink
+                                  to={{
+                                    pathname: `/dataset/${datasetKey}/names`,
+                                    search: `?q=${_.get(
+                                      taxon,
+                                      "name.scientificName"
+                                    )}&rank=${_.get(taxon, "name.rank")}`,
+                                  }}
+                                  end
+                                >
+                                  {tag}
+                                </NavLink>
+                              ) : (
+                                <React.Fragment>{tag}</React.Fragment>
+                              )}
+                            </Tooltip>
+                          );
+                        })}
+                      </div>
+                    </PresentationItem>
+                  )}
+                  {_.get(taxon, "origin") && !_.get(sourceDataset, "title") && (
+                    <PresentationItem md={md} label="Origin">
+                      <span>
+                        {_.get(taxon, "origin")}
+                        {info?.decisions?.[taxon?.id] && (
+                          <>
+                            &nbsp;with{" "}
+                            {info?.decisions?.[taxon?.id]?.mode}{" "}
+                            decision
+                            <DecisionBadge
+                              style={{ marginLeft: "10px" }}
+                              decision={info?.decisions?.[taxon?.id]}
+                            />
+                          </>
+                        )}
+                      </span>
+                    </PresentationItem>
+                  )}
+                  {_.get(sourceDataset, "title") && (
+                    <PresentationItem md={md} label="Source">
+                      <div style={{ display: "inline-block" }}>
+                        {info?.usage?.merged && (
+                          <MergedDataBadge
+                            createdBy={info?.usage?.createdBy}
+                            datasetKey={info?.usage?.datasetKey}
+                            verbatimSourceKey={info?.usage?.verbatimSourceKey}
+                            sourceDatasetKey={info?.source?.sourceDatasetKey}
+                            sourceId={info?.source?.sourceId}
+                          />
+                        )}{" "}
+                        {sourceTaxon && sourceTaxon.sourceId ? (
+                          <>
+                            <NavLink
+                              to={{
+                                pathname: `/dataset/${
+                                  sourceTaxon.sourceDatasetKey
+                                }/taxon/${encodeURIComponent(
+                                  sourceTaxon.sourceId
+                                )}`,
+                              }}
+                              end
+                            >
+                              {_.get(sourceDataset, "title")}
+                            </NavLink>{" "}
+                          </>
+                        ) : (
                           <NavLink
                             to={{
-                              pathname: `/dataset/${datasetKey}/names`,
-                              search: `?q=${_.get(
-                                taxon,
-                                "name.scientificName"
-                              )}&rank=${_.get(taxon, "name.rank")}`,
+                              pathname: `/dataset/${datasetKey}/source/${_.get(
+                                sourceDataset,
+                                "key"
+                              )}`,
                             }}
                             end
                           >
-                            {tag}
+                            {_.get(sourceDataset, "title")}
                           </NavLink>
-                        ) : (
-                          <React.Fragment>{tag}</React.Fragment>
                         )}
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </PresentationItem>
-            )}
-            {_.get(taxon, "origin") && !_.get(sourceDataset, "title") && (
-              <PresentationItem md={md} label="Origin">
-                <span>
-                  {_.get(taxon, "origin")}
-                  {info?.decisions?.[taxon?.id] && (
-                    <>
-                      &nbsp;with{" "}
-                      {info?.decisions?.[taxon?.id]?.mode}{" "}
-                      decision
-                      <DecisionBadge
-                        style={{ marginLeft: "10px" }}
-                        decision={info?.decisions?.[taxon?.id]}
-                      />
-                    </>
+                        {_.get(sourceDataset, "confidence") && (
+                          <>
+                            <span style={{ marginLeft: "10px" }}>
+                              {_.get(sourceDataset, "completeness") > 0 &&
+                                _.get(sourceDataset, "completeness") + "%"}
+                            </span>
+                            <Rate
+                              style={{ marginLeft: "10px" }}
+                              value={_.get(sourceDataset, "confidence")}
+                              disabled
+                            />
+                          </>
+                        )}
+                      </div>
+                    </PresentationItem>
                   )}
-                </span>
-              </PresentationItem>
-            )}
-            {_.get(sourceDataset, "title") && (
-              <PresentationItem md={md} label="Source">
-                <div style={{ display: "inline-block" }}>
-                  {info?.usage?.merged && (
-                    <MergedDataBadge
-                      createdBy={info?.usage?.createdBy}
-                      datasetKey={info?.usage?.datasetKey}
-                      verbatimSourceKey={info?.usage?.verbatimSourceKey}
-                      sourceDatasetKey={info?.source?.sourceDatasetKey}
-                      sourceId={info?.source?.sourceId}
-                    />
+                  {(_.get(taxon, "link") || _.get(taxon, "name.link")) && (
+                    <PresentationItem md={md} label="Online resource">
+                      {_.get(taxon, "link") && (
+                        <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
+                      )}
+                      {_.get(taxon, "name.link") &&
+                        _.get(taxon, "link") != _.get(taxon, "name.link") && (
+                          <a href={_.get(taxon, "name.link")}>
+                            {_.get(taxon, "name.link")}
+                          </a>
+                        )}
+                    </PresentationItem>
+                  )}
+                  {info?.source?.secondarySources && (
+                    <PresentationItem md={md} label="Secondary Sources">
+                      <SecondarySources info={info} />
+                    </PresentationItem>
+                  )}
+                  {sourceDatasetKeyMap && (
+                    <PresentationItem md={md} label="Synonym Sources">
+                      <SourceDatasets
+                        datasetKey={datasetKey}
+                        primarySourceDatasetKey={info?.source?.sourceDatasetKey}
+                        sourceDatasetKeyMap={sourceDatasetKeyMap}
+                      />
+                    </PresentationItem>
                   )}{" "}
-                  {sourceTaxon && sourceTaxon.sourceId ? (
-                    <>
-                      <NavLink
-                        to={{
-                          pathname: `/dataset/${
-                            sourceTaxon.sourceDatasetKey
-                          }/taxon/${encodeURIComponent(
-                            sourceTaxon.sourceId
-                          )}`,
-                        }}
-                        end
-                      >
-                        {_.get(sourceDataset, "title")}
-                      </NavLink>{" "}
-                    </>
-                  ) : (
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${datasetKey}/source/${_.get(
-                          sourceDataset,
-                          "key"
-                        )}`,
-                      }}
-                      end
-                    >
-                      {_.get(sourceDataset, "title")}
-                    </NavLink>
-                  )}
-                  {_.get(sourceDataset, "confidence") && (
-                    <>
-                      <span style={{ marginLeft: "10px" }}>
-                        {_.get(sourceDataset, "completeness") > 0 &&
-                          _.get(sourceDataset, "completeness") + "%"}
-                      </span>
-                      <Rate
-                        style={{ marginLeft: "10px" }}
-                        value={_.get(sourceDataset, "confidence")}
-                        disabled
+                  {_.get(info, "references") && (
+                    <PresentationItem md={md} label="References">
+                      <References
+                        data={_.get(info, "references")}
+                        referenceIndexMap={referenceIndexMap}
+                        primarySourceDatasetKey={info?.source?.sourceDatasetKey}
                       />
-                    </>
+                    </PresentationItem>
                   )}
-                </div>
-              </PresentationItem>
-            )}
-            {(_.get(taxon, "link") || _.get(taxon, "name.link")) && (
-              <PresentationItem md={md} label="Online resource">
-                {_.get(taxon, "link") && (
-                  <a href={_.get(taxon, "link")}>{_.get(taxon, "link")}</a>
-                )}
-                {_.get(taxon, "name.link") &&
-                  _.get(taxon, "link") != _.get(taxon, "name.link") && (
-                    <a href={_.get(taxon, "name.link")}>
-                      {_.get(taxon, "name.link")}
-                    </a>
-                  )}
-              </PresentationItem>
-            )}
-            {info?.source?.secondarySources && (
-              <PresentationItem md={md} label="Secondary Sources">
-                <SecondarySources info={info} />
-              </PresentationItem>
-            )}
-            {sourceDatasetKeyMap && (
-              <PresentationItem md={md} label="Synonym Sources">
-                <SourceDatasets
-                  datasetKey={datasetKey}
-                  primarySourceDatasetKey={info?.source?.sourceDatasetKey}
-                  sourceDatasetKeyMap={sourceDatasetKeyMap}
+                </>
+              ),
+            },
+            _.get(taxon, "verbatimKey") && {
+              key: "2",
+              label: "Verbatim",
+              children: (
+                <Verbatim
+                  sourceDatasetKey={datasetKey}
+                  verbatimKey={taxon.verbatimKey}
                 />
-              </PresentationItem>
-            )}{" "}
-            {_.get(info, "references") && (
-              <PresentationItem md={md} label="References">
-                <References
-                  data={_.get(info, "references")}
-                  referenceIndexMap={referenceIndexMap}
-                  primarySourceDatasetKey={info?.source?.sourceDatasetKey}
-                />
-              </PresentationItem>
-            )}
-          </TabPane>
-          {_.get(taxon, "verbatimKey") && (
-            <TabPane tab="Verbatim" key="2">
-              <Verbatim
-                sourceDatasetKey={datasetKey}
-                verbatimKey={taxon.verbatimKey}
-              />
-            </TabPane>
-          )}
-        </Tabs>
+              ),
+            },
+          ].filter(Boolean)}
+        />
       </div>
     </React.Fragment>
   );
