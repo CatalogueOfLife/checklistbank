@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import React from "react";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
@@ -16,221 +17,203 @@ import DeleteOrphansButton from "../../project/Options/DeleteOrphansButton";
 import ImportButton from "../../Imports/importTabs/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
 
-class DatasetSettings extends React.Component {
-  constructor(props) {
-    super(props);
+const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const [editMode, setEditModeState] = useState(false);
+  const [rebuildMatcherLoading, setRebuildMatcherLoading] = useState(false);
 
-    this.state = {
-      error: null,
-      data: null,
-      editMode: false,
-    };
-  }
-
-  componentDidMount() {
-    this.getData();
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (_.get(this.props, "datasetKey") !== _.get(prevProps, "datasetKey")) {
-      this.getData();
-    }
-  };
-
-  getData = () => {
-    const { datasetKey } = this.props;
-
-    this.setState({ loading: true });
+  const getData = () => {
     axios(`${config.dataApi}dataset/${datasetKey}/settings`)
       .then((res) => {
-        this.setState({ loading: false, data: res.data, err: null });
+        setData(res.data);
+        setError(null);
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: null });
+        setError(err);
+        setData(null);
       });
   };
 
-  reindexDataset = () => {
-    const { datasetKey } = this.props;
+  useEffect(() => {
+    getData();
+  }, [datasetKey]);
+
+  const reindexDataset = () => {
     axios
       .post(`${config.dataApi}admin/reindex?datasetKey=${datasetKey}`)
-      .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `Dataset ${datasetKey} is being reindexed`,
-          });
+      .then(() => {
+        setError(null);
+        notification.open({
+          message: "Process started",
+          description: `Dataset ${datasetKey} is being reindexed`,
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch((err) => setError(err));
   };
 
-  rebuildMatcher = () => {
-    const { datasetKey } = this.props;
-    this.setState({ rebuildMatcherLoading: true, error: null });
+  const rebuildMatcher = () => {
+    setRebuildMatcherLoading(true);
+    setError(null);
     axios
       .delete(`${config.dataApi}matcher/${datasetKey}`)
       .then(() => axios.post(`${config.dataApi}matcher/${datasetKey}`))
       .then(() => {
-        this.setState({ rebuildMatcherLoading: false });
+        setRebuildMatcherLoading(false);
         notification.open({
           message: "Matcher rebuild started",
           description: `Matcher index for dataset ${datasetKey} is being rebuilt`,
         });
       })
-      .catch((err) =>
-        this.setState({ rebuildMatcherLoading: false, error: err })
-      );
+      .catch((err) => {
+        setRebuildMatcherLoading(false);
+        setError(err);
+      });
   };
 
-  setEditMode = (checked) => {
-    this.setState({ editMode: checked });
+  const setEditMode = (checked) => {
+    setEditModeState(checked);
   };
 
-  render() {
-    const { error, data, editMode, rebuildMatcherLoading } = this.state;
-
-    const { datasetSettings, datasetKey, dataset } = this.props;
-    return (
-      <PageContent>
-        {error && (
-          <Row>
-            <Alert
-              closable={{ onClose: () => this.setState({ error: null }) }}
-              description={<ErrorMsg error={error} />}
-              type="error"
-            />
-          </Row>
-        )}
-
+  return (
+    <PageContent>
+      {error && (
         <Row>
-          <Col span={4}>
-            <h3>Settings</h3>
-          </Col>
-          <Col offset={12} span={2}>
-            {data && (
-              <Switch
-                checked={editMode}
-                onChange={this.setEditMode}
-                checkedChildren="Cancel"
-                unCheckedChildren="Edit"
-              />
-            )}
-          </Col>
+          <Alert
+            closable={{ onClose: () => setError(null) }}
+            description={<ErrorMsg error={error} />}
+            type="error"
+          />
         </Row>
-        <Row>
-          <Col span={18}>
-            {editMode && (
-              <DatasetSettingsForm
-                data={data}
-                datasetKey={datasetKey}
-                dataset={dataset}
-                onSaveSuccess={() => {
-                  this.setEditMode(false);
-                  this.getData();
-                }}
+      )}
+
+      <Row>
+        <Col span={4}>
+          <h3>Settings</h3>
+        </Col>
+        <Col offset={12} span={2}>
+          {data && (
+            <Switch
+              checked={editMode}
+              onChange={setEditMode}
+              checkedChildren="Cancel"
+              unCheckedChildren="Edit"
+            />
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <Col span={18}>
+          {editMode && (
+            <DatasetSettingsForm
+              data={data}
+              datasetKey={datasetKey}
+              dataset={dataset}
+              onSaveSuccess={() => {
+                setEditMode(false);
+                getData();
+              }}
+            />
+          )}
+          {!editMode && data && dataset && (
+            <div style={{ marginRight: "28px" }}>
+              {datasetSettings
+                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
+                .filter((s) => s.type === "Boolean")
+                .map((s) => (
+                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
+                    {_.get(data, s.name) === true ||
+                      _.get(data, s.name) === false ? (
+                      <BooleanValue
+                        value={_.get(data, s.name)}
+                      ></BooleanValue>
+                    ) : (
+                      ""
+                    )}
+                  </PresentationItem>
+                ))}
+              {datasetSettings
+                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
+                .filter((s) => s.type === "String" || s.type === "Integer")
+                .map((s) => (
+                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
+                    {_.get(data, s.name) === "\t"
+                      ? "<TAB>"
+                      : _.get(data, s.name)}
+                  </PresentationItem>
+                ))}
+              {datasetSettings
+                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
+                .filter(
+                  (s) => !["String", "Integer", "Boolean"].includes(s.type)
+                )
+                .map((s) => (
+                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
+                    {_.get(data, s.name)}
+                  </PresentationItem>
+                ))}
+            </div>
+          )}
+        </Col>
+        <Col span={6}>
+          {dataset && _.get(dataset, "origin") !== "project" && (
+            <React.Fragment>
+              <ImportButton
+                style={{ marginBottom: "10px" }}
+                record={{ datasetKey: dataset.key }}
+                reImport={data && !(data['data access'])}
               />
-            )}
-            {!editMode && data && dataset && (
-              <div style={{ marginRight: "28px" }}>
-                {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                  .filter((s) => s.type === "Boolean")
-                  .map((s) => (
-                    <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                      {_.get(data, s.name) === true ||
-                        _.get(data, s.name) === false ? (
-                        <BooleanValue
-                          value={_.get(data, s.name)}
-                        ></BooleanValue>
-                      ) : (
-                        ""
-                      )}
-                    </PresentationItem>
-                  ))}
-                {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                  .filter((s) => s.type === "String" || s.type === "Integer")
-                  .map((s) => (
-                    <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                      {_.get(data, s.name) === "\t"
-                        ? "<TAB>"
-                        : _.get(data, s.name)}
-                    </PresentationItem>
-                  ))}
-                {datasetSettings
-                  .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                  .filter(
-                    (s) => !["String", "Integer", "Boolean"].includes(s.type)
-                  )
-                  .map((s) => (
-                    <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                      {_.get(data, s.name)}
-                    </PresentationItem>
-                  ))}
-              </div>
-            )}
-          </Col>
-          <Col span={6}>
-            {dataset && _.get(dataset, "origin") !== "project" && (
-              <React.Fragment>
-                <ImportButton
-                  style={{ marginBottom: "10px" }}
-                  record={{ datasetKey: dataset.key }}
-                  reImport={data && !(data['data access'])}
-                />
-                <br />
-              </React.Fragment>
-            )}
-            <Button
-              type="primary"
-              onClick={this.reindexDataset}
-              style={{
-                marginRight: "10px",
-                marginBottom: "10px",
-              }}
-            >
-              Reindex dataset
-            </Button>
+              <br />
+            </React.Fragment>
+          )}
+          <Button
+            type="primary"
+            onClick={reindexDataset}
+            style={{
+              marginRight: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            Reindex dataset
+          </Button>
 
-            <Button
-              type="primary"
-              onClick={this.rebuildMatcher}
-              loading={rebuildMatcherLoading}
-              style={{
-                marginRight: "10px",
-                marginBottom: "10px",
-              }}
-            >
-              Rebuild matcher
-            </Button>
+          <Button
+            type="primary"
+            onClick={rebuildMatcher}
+            loading={rebuildMatcherLoading}
+            style={{
+              marginRight: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            Rebuild matcher
+          </Button>
 
-            <DeleteOrphansButton
-              datasetKey={datasetKey}
-              type="name"
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            />
-            <DeleteOrphansButton
-              datasetKey={datasetKey}
-              type="reference"
-              style={{ marginRight: "10px", marginBottom: "10px" }}
-            />
+          <DeleteOrphansButton
+            datasetKey={datasetKey}
+            type="name"
+            style={{ marginRight: "10px", marginBottom: "10px" }}
+          />
+          <DeleteOrphansButton
+            datasetKey={datasetKey}
+            type="reference"
+            style={{ marginRight: "10px", marginBottom: "10px" }}
+          />
 
-            {dataset && !dataset.deleted && (
-              <React.Fragment>
-                <br />
-                <DeleteDatasetButton
-                  style={{ marginBottom: "10px" }}
-                  record={dataset}
-                ></DeleteDatasetButton>
-              </React.Fragment>
-            )}
-          </Col>
-        </Row>
-      </PageContent>
-    );
-  }
-}
+          {dataset && !dataset.deleted && (
+            <React.Fragment>
+              <br />
+              <DeleteDatasetButton
+                style={{ marginBottom: "10px" }}
+                record={dataset}
+              ></DeleteDatasetButton>
+            </React.Fragment>
+          )}
+        </Col>
+      </Row>
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ datasetSettings, dataset }) => ({
   datasetSettings,

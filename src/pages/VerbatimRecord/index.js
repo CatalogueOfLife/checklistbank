@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import config from "../../config";
 import axios from "axios";
 import withRouter from "../../withRouter";
@@ -19,109 +19,84 @@ const removeEmptyValues = (obj) => {
   );
 };
 
-class VerbatimRecord extends React.Component {
-  constructor(props) {
-    super(props);
-    const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
+const VerbatimRecord = (props) => {
+  const { location, lastSuccesFullImport, match } = props;
+  const matchKey = _.get(match, "params.key");
+  const matchSourceKey = _.get(match, "params.sourceKey");
+  const key = matchKey || matchSourceKey;
 
-    this.state = {
-      verbatim: [],
-      verbatimError: null,
-      total: 0,
-      limit: 50, // lsLimit ? Number(lsLimit) : 10,
-      offset: 0,
-      loading: false,
-      issues: []
-    };
-  }
+  const [verbatim, setVerbatim] = useState([]);
+  const [verbatimError, setVerbatimError] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(50);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [issues, setIssues] = useState([]);
 
-  componentDidMount = () => {
-    let params = qs.parse(_.get(this.props, "location.search"));
-    if (!params.limit) {
-      params.limit = this.state.limit;
-    }
-    this.getIssues()
-    this.getVerbatimData(params);
-  };
-
-  componentDidUpdate = (prevProps) => {
-    if (
-      _.get(prevProps, "match.params.key") !==
-      _.get(this.props, "match.params.key")
-    ) {
-      const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
-
-      this.setState({
-        verbatim: [],
-        verbatimError: null,
-        total: 0,
-        limit: lsLimit ? Number(lsLimit) : 10,
-        offset: 0,
-      });
-      this.getVerbatimData({});
-    } else if (
-      _.get(this.props, "location.search") !==
-      _.get(prevProps, "location.search")
-    ) {
-      let params = qs.parse(_.get(this.props, "location.search"));
-      if (!params.limit) {
-        params.limit = this.state.limit;
-      }
-      this.getVerbatimData(params);
-    }
-  };
-
-  getIssues = () => {
-    const {
-      match: {
-        params: { key: key_, sourceKey },
-      },
-    } = this.props;
-    const key = key_ || sourceKey;
+  const getIssues = (datasetKey) => {
     axios(
-      `${config.dataApi}dataset/${key}/import?limit=1&state=finished`
+      `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=finished`
     )
       .then((res) => {
-        const issuesCount = _.get(res, "data[0].issuesCount", {})
-        const issues = Object.keys(issuesCount).map((k) => ({ label: `${k} (${issuesCount[k]})`, value: k }))
-        this.setState({ issues })
+        const issuesCount = _.get(res, "data[0].issuesCount", {});
+        const newIssues = Object.keys(issuesCount).map((k) => ({
+          label: `${k} (${issuesCount[k]})`,
+          value: k,
+        }));
+        setIssues(newIssues);
       })
-      .catch((err) => {
+      .catch(() => {});
+  };
 
-      });
-
-  }
-
-  getVerbatimData = (params) => {
-    const {
-      match: {
-        params: { key: key_, sourceKey },
-      },
-    } = this.props;
-    const key = key_ || sourceKey;
-    this.setState({ loading: true });
-    axios(`${config.dataApi}dataset/${key}/verbatim?${qs.stringify(params)}`)
+  const getVerbatimData = (params, datasetKey) => {
+    setLoading(true);
+    axios(`${config.dataApi}dataset/${datasetKey}/verbatim?${qs.stringify(params)}`)
       .then((res) => {
-        this.setState({
-          verbatim: res.data.result,
-          verbatimError: null,
-          limit: res.data.limit,
-          offset: res.data.offset,
-          total: res.data.total,
-          loading: false,
-        });
+        setVerbatim(res.data.result);
+        setVerbatimError(null);
+        setLimit(res.data.limit);
+        setOffset(res.data.offset);
+        setTotal(res.data.total);
+        setLoading(false);
       })
       .catch((err) => {
-        this.setState({
-          verbatimError: err,
-          verbatim: [],
-          loading: false,
-        });
+        setVerbatimError(err);
+        setVerbatim([]);
+        setLoading(false);
       });
   };
 
-  onSearch = (search) => {
-    const { location } = this.props;
+  // Initial mount
+  useEffect(() => {
+    let params = qs.parse(_.get(props, "location.search"));
+    if (!params.limit) {
+      params.limit = 50;
+    }
+    getIssues(key);
+    getVerbatimData(params, key);
+  }, []);
+
+  // React to key change (match.params.key)
+  useEffect(() => {
+    const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
+    setVerbatim([]);
+    setVerbatimError(null);
+    setTotal(0);
+    setLimit(lsLimit ? Number(lsLimit) : 10);
+    setOffset(0);
+    getVerbatimData({}, key);
+  }, [matchKey]);
+
+  // React to location.search change
+  useEffect(() => {
+    let params = qs.parse(_.get(props, "location.search"));
+    if (!params.limit) {
+      params.limit = limit;
+    }
+    getVerbatimData(params, key);
+  }, [_.get(props, "location.search")]);
+
+  const onSearch = (search) => {
     const params = qs.parse(_.get(location, "search"));
     let newQuery = { ...params, ...search, offset: 0 };
 
@@ -131,107 +106,92 @@ class VerbatimRecord extends React.Component {
     });
   };
 
-  render = () => {
-    const { location, lastSuccesFullImport } = this.props;
-    const { total, limit, offset, verbatim, verbatimError, issues } = this.state;
-    const current = Number(offset) / Number(limit) + 1;
-    const params = qs.parse(_.get(location, "search"));
+  const current = Number(offset) / Number(limit) + 1;
+  const params = qs.parse(_.get(location, "search"));
 
-    const typeFacets = _.get(lastSuccesFullImport, "verbatimByTermCount")
-      ? Object.keys(lastSuccesFullImport.verbatimByTermCount).map((t) => ({
+  const typeFacets = _.get(lastSuccesFullImport, "verbatimByTermCount")
+    ? Object.keys(lastSuccesFullImport.verbatimByTermCount).map((t) => ({
         value: t,
         label: `${t} (${lastSuccesFullImport.verbatimByTermCount[t]})`,
       }))
-      : [];
+    : [];
 
-    return (
-      <Spin spinning={this.state.loading}>
-        <div
-          style={{
-            background: "#fff",
-            padding: 24,
-            minHeight: 280,
-            margin: "16px 0",
-          }}
-        >
-          {verbatimError && (
-            <Alert description={<ErrorMsg error={verbatimError} />} type="error" />
-          )}
-          <Row style={{ marginBottom: "10px" }}>
-            <Col xs={24} sm={24} md={12} lg={12}>
-              {" "}
-              <SearchBox
-                onSearch={(value) => this.onSearch({ q: value })}
-                defaultValue={_.get(params, "q")}
-              ></SearchBox>
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12}>
-              <MultiValueFilter
-                defaultValue={_.get(params, "type")}
-                onChange={(value) => this.onSearch({ type: value })}
-                vocab={typeFacets}
-                label="Row type"
+  return (
+    <Spin spinning={loading}>
+      <div
+        style={{
+          background: "#fff",
+          padding: 24,
+          minHeight: 280,
+          margin: "16px 0",
+        }}
+      >
+        {verbatimError && (
+          <Alert description={<ErrorMsg error={verbatimError} />} type="error" />
+        )}
+        <Row style={{ marginBottom: "10px" }}>
+          <Col xs={24} sm={24} md={12} lg={12}>
+            {" "}
+            <SearchBox
+              onSearch={(value) => onSearch({ q: value })}
+              defaultValue={_.get(params, "q")}
+            ></SearchBox>
+          </Col>
+          <Col xs={24} sm={24} md={12} lg={12}>
+            <MultiValueFilter
+              defaultValue={_.get(params, "type")}
+              onChange={(value) => onSearch({ type: value })}
+              vocab={typeFacets}
+              label="Row type"
+            />
+            <MultiValueFilter
+              defaultValue={_.get(params, "issue")}
+              onChange={(value) => onSearch({ issue: value })}
+              vocab={issues}
+              label="Issues"
+            />
+          </Col>
+          <Col span={24} style={{ textAlign: "right" }}>
+            {" "}
+            {
+              <Pagination
+                hideOnSinglePage={true}
+                style={{ display: "inline" }}
+                current={current}
+                showSizeChanger={false}
+                onChange={(page, pageSize) => {
+                  history.push({
+                    pathname: location.pathname,
+                    search: `?${qs.stringify({
+                      ...params,
+                      offset: (page - 1) * Number(limit),
+                    })}`,
+                  });
+                }}
+                pageSize={limit}
+                total={total}
               />
-              <MultiValueFilter
-                defaultValue={_.get(params, "issue")}
-                onChange={(value) => this.onSearch({ issue: value })}
-                vocab={issues}
-                label="Issues"
-              />
-            </Col>
-            <Col span={24} style={{ textAlign: "right" }}>
-              {" "}
-              {
-                <Pagination
-                  hideOnSinglePage={true}
-                  style={{ display: "inline" }}
-                  current={current}
-                  showSizeChanger={false}
-                  /*  showSizeChanger
-                   pageSizeOptions={[10, 50, 100]}
-                   onShowSizeChange={(current, size) => {
-                     history.push({
-                       pathname: location.pathname,
-                       search: `?${qs.stringify({
-                         ...params,
-                         limit: Number(size),
-                       })}`,
-                     });
-                   }} */
-                  onChange={(page, pageSize) => {
-                    history.push({
-                      pathname: location.pathname,
-                      search: `?${qs.stringify({
-                        ...params,
-                        offset: (page - 1) * Number(limit),
-                      })}`,
-                    });
-                  }}
-                  pageSize={limit}
-                  total={total}
-                />
-              }
-            </Col>
-          </Row>
+            }
+          </Col>
+        </Row>
 
-          {verbatim &&
-            verbatim.length > 0 &&
-            verbatim.map((v) => (
-              <VerbatimPresentation
-                style={{ marginBottom: "10px" }}
-                key={v.id}
-                record={v}
-                datasetKey={v.datasetKey}
-                verbatimKey={v.id}
-                basicHeader={true}
-                location={location}
-              />
-            ))}
-        </div>
-      </Spin>
-    );
-  };
-}
+        {verbatim &&
+          verbatim.length > 0 &&
+          verbatim.map((v) => (
+            <VerbatimPresentation
+              style={{ marginBottom: "10px" }}
+              key={v.id}
+              record={v}
+              datasetKey={v.datasetKey}
+              verbatimKey={v.id}
+              basicHeader={true}
+              location={location}
+            />
+          ))}
+      </div>
+    </Spin>
+  );
+};
 
 const mapContextToProps = ({ dataset }) => ({ dataset });
 export default withContext(mapContextToProps)(withRouter(VerbatimRecord));
