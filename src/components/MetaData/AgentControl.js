@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Row, Tag, Col, Modal } from "antd";
 import styles from "../newTag.module.css";
@@ -23,202 +23,171 @@ const stringToArray = (value) => {
  * https://ant.design/components/form/#components-form-demo-customized-form-controls
  * Based on built-in Tag https://ant.design/components/tag/#components-tag-demo-control
  */
-class AgentControl extends React.Component {
-  static getDerivedStateFromProps(nextProps) {
-    // Should be a controlled component
-    if ("value" in nextProps) {
-      let value = stringToArray(nextProps.value);
-
-      return { agents: value };
-    }
-    return null;
+const AgentControl = ({ value, label, removeAll, onChange, agentType = "contact", array = true }) => {
+  const [agents, setAgents] = useState(() => stringToArray(value));
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setAgents(stringToArray(value));
   }
 
-  constructor(props) {
-    super(props);
+  const [formVisible, setFormVisible] = useState(false);
+  const [agentForEdit, setAgentForEdit] = useState(null);
+  const [editAgentIndex, setEditAgentIndex] = useState(null);
 
-    this.state = {
-      agents: stringToArray(props.value),
-      formVisible: false,
-      agentForEdit: null,
-      editAgentIndex: null,
-    };
-  }
-
-  handleClose = (e, index) => {
-    if (e) {
-      e.preventDefault();
-    }
-    const agents = [...this.state.agents];
-    agents.splice(index, 1); // this.state.agents.filter((tag) => tag !== removedTag);
-    const { array = true } = this.props;
-    this.setState({ agents });
-    this.triggerChange(array ? agents : null);
-  };
-
-  showForm = (agent) => {
-    this.setState({ agentForEdit: agent, formVisible: true });
-  };
-
-  handleInputChange = (event) => {
-    this.setState({ inputValue: event.target.value });
-  };
-
-  onFormSubmit = async (agent) => {
-    const { editAgentIndex } = this.state;
-    const agents = !_.isNull(editAgentIndex)
-      ? [...this.state.agents]
-      : [...this.state.agents, agent];
-    if (!_.isNull(editAgentIndex)) {
-      agents.splice(editAgentIndex, 0, agent);
-    }
-    const { array = true } = this.props;
-    this.setState(
-      {
-        agents,
-        formVisible: false,
-        agentForEdit: null,
-        editAgentIndex: null,
-      },
-      () => this.triggerChange(array ? agents : agent)
-    );
-    return Promise.resolve();
-  };
-
-  triggerChange = (changedValue) => {
-    // Should provide an event to pass value to Form
-    const onChange = this.props.onChange;
+  const triggerChange = (changedValue) => {
     if (onChange) {
       onChange(changedValue);
     }
   };
 
-  onDragEnd = (fromIndex, toIndex) => {
-    const agents = [...this.state.agents];
-    const agent = agents.splice(fromIndex, 1)[0];
-    agents.splice(toIndex, 0, agent);
-    const onChange = this.props.onChange;
+  const handleClose = (e, index) => {
+    if (e) {
+      e.preventDefault();
+    }
+    const newAgents = [...agents];
+    newAgents.splice(index, 1);
+    setAgents(newAgents);
+    triggerChange(array ? newAgents : null);
+  };
+
+  const showForm = (agent) => {
+    setAgentForEdit(agent || null);
+    setFormVisible(true);
+  };
+
+  const onFormSubmit = async (agent) => {
+    const newAgents = !_.isNull(editAgentIndex)
+      ? [...agents]
+      : [...agents, agent];
+    if (!_.isNull(editAgentIndex)) {
+      newAgents.splice(editAgentIndex, 0, agent);
+    }
+
+    setAgents(newAgents);
+    setFormVisible(false);
+    setAgentForEdit(null);
+    setEditAgentIndex(null);
+    triggerChange(array ? newAgents : agent);
+
+    return Promise.resolve();
+  };
+
+  const onDragEnd = (fromIndex, toIndex) => {
+    const newAgents = [...agents];
+    const agent = newAgents.splice(fromIndex, 1)[0];
+    newAgents.splice(toIndex, 0, agent);
     if (onChange) {
-      onChange(agents); // will get derived state from props
+      onChange(newAgents); // will get derived state from props
     }
   };
 
-  editAgent = (agent, index) => {
-    this.setState(
-      { agentForEdit: agent, editAgentIndex: index, formVisible: true },
-      () => this.handleClose(null, index)
-    );
+  const editAgent = (agent, index) => {
+    setAgentForEdit(agent);
+    setEditAgentIndex(index);
+    setFormVisible(true);
+    handleClose(null, index);
   };
 
-  render() {
-    const { agents, formVisible, agentForEdit } = this.state;
-    const {
-      label,
-      removeAll,
-      agentType = "contact",
-      array = true,
-    } = this.props;
+  const dragProps = {
+    onDragEnd: onDragEnd,
+    nodeSelector: "li",
+    handleSelector: "li",
+  };
 
-    const dragProps = {
-      onDragEnd: this.onDragEnd,
-      nodeSelector: "li",
-      handleSelector: "li",
-    };
-
-    return (
-      <React.Fragment>
-        <div>
-          <DragColumn {...dragProps}>
-            <ol
-              style={{
-                height: "100%",
-                listStyle: "none",
-                paddingInlineStart: "0px",
-              }}
-            >
-              {agents.map((agent, index) => {
-                const tagElem = (
-                  <li
-                    key={index}
-                    style={{
-                      //float: "left",
-                      display: "inline-block",
-                      //marginBottom: "4px",
-                      paddingBottom: "4px",
-                      height: "100%",
-                    }}
-                  >
-                    {" "}
-                    <Tag
-                      key={index}
-                      style={{ height: "100%" }}
-                      onClick={() => this.editAgent(agent, index)}
-                      closable={removeAll || index !== 0}
-                      onClose={(e) => this.handleClose(e, index)}
-                    >
-                      <AgentPresentation
-                        agent={agent}
-                        noLinks={true}
-                        style={{
-                          display: "inline-grid",
-                          margin: "3px 0px 3px 0px",
-                        }}
-                      />
-                    </Tag>
-                  </li>
-                );
-                return tagElem;
-              })}
-              {!formVisible && (array || agents.length === 0) && (
+  return (
+    <React.Fragment>
+      <div>
+        <DragColumn {...dragProps}>
+          <ol
+            style={{
+              height: "100%",
+              listStyle: "none",
+              paddingInlineStart: "0px",
+            }}
+          >
+            {agents.map((agent, index) => {
+              const tagElem = (
                 <li
+                  key={index}
                   style={{
                     //float: "left",
-                    display: "inline",
+                    display: "inline-block",
+                    //marginBottom: "4px",
+                    paddingBottom: "4px",
                     height: "100%",
                   }}
                 >
+                  {" "}
                   <Tag
-                    onClick={() => this.showForm()}
-                    className={styles.newTagTall}
+                    key={index}
+                    style={{ height: "100%" }}
+                    onClick={() => editAgent(agent, index)}
+                    closable={removeAll || index !== 0}
+                    onClose={(e) => handleClose(e, index)}
                   >
-                    <PlusOutlined /> {label}
+                    <AgentPresentation
+                      agent={agent}
+                      noLinks={true}
+                      style={{
+                        display: "inline-grid",
+                        margin: "3px 0px 3px 0px",
+                      }}
+                    />
                   </Tag>
                 </li>
-              )}
-            </ol>
-          </DragColumn>
-        </div>
+              );
+              return tagElem;
+            })}
+            {!formVisible && (array || agents.length === 0) && (
+              <li
+                style={{
+                  //float: "left",
+                  display: "inline",
+                  height: "100%",
+                }}
+              >
+                <Tag
+                  onClick={() => showForm()}
+                  className={styles.newTagTall}
+                >
+                  <PlusOutlined /> {label}
+                </Tag>
+              </li>
+            )}
+          </ol>
+        </DragColumn>
+      </div>
 
-        <Modal
-          open={formVisible}
-          footer={null}
+      <Modal
+        open={formVisible}
+        footer={null}
+        onCancel={() =>
+          agentForEdit
+            ? onFormSubmit(agentForEdit)
+            : setFormVisible(false)
+        }
+        title={
+          agentForEdit
+            ? `Editing ${agentType}${
+                agentForEdit.name ? " " + agentForEdit.name : ""
+              }`
+            : `New ${agentType}`
+        }
+      >
+        <AgentForm
+          data={agentForEdit}
+          style={{ marginTop: "10px" }}
+          onSubmit={onFormSubmit}
           onCancel={() =>
             agentForEdit
-              ? this.onFormSubmit(agentForEdit)
-              : this.setState({ formVisible: false })
+              ? onFormSubmit(agentForEdit)
+              : setFormVisible(false)
           }
-          title={
-            agentForEdit
-              ? `Editing ${agentType}${
-                  agentForEdit.name ? " " + agentForEdit.name : ""
-                }`
-              : `New ${agentType}`
-          }
-        >
-          <AgentForm
-            data={agentForEdit}
-            style={{ marginTop: "10px" }}
-            onSubmit={this.onFormSubmit}
-            onCancel={() =>
-              agentForEdit
-                ? this.onFormSubmit(agentForEdit)
-                : this.setState({ formVisible: false })
-            }
-          />
-        </Modal>
-      </React.Fragment>
-    );
-  }
-}
+        />
+      </Modal>
+    </React.Fragment>
+  );
+};
 
 export default AgentControl;
