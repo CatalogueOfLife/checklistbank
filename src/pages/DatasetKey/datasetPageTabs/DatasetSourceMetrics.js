@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
@@ -11,90 +11,49 @@ import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";
 import SourceMetrics from "../../project/ProjectSourceMetrics/SourceMetrics";
 
-class DatasetSourceMetrics extends React.Component {
-  constructor(props) {
-    super(props);
+const DatasetSourceMetrics = ({ datasetKey, dataset }) => {
+  const [error, setError] = useState(null);
 
-    this.state = {
-      error: null,
-      data: null,
-      editMode: false,
-    };
-  }
+  useEffect(() => {
+    getData();
+  }, [datasetKey]);
 
-  componentDidMount() {
-    this.getData();
-  }
-
-  componentDidUpdate = (prevProps) => {
-    if (_.get(this.props, "datasetKey") !== _.get(prevProps, "datasetKey")) {
-      this.getData();
-    }
-  };
-
-  getData = () => {
-    const { datasetKey } = this.props;
-
-    this.setState({ loading: true });
+  const getData = () => {
     axios(`${config.dataApi}dataset/${datasetKey}/settings`)
       .then((res) => {
-        this.setState({ loading: false, data: res.data, err: null });
+        setError(null);
       })
       .catch((err) => {
-        this.setState({ loading: false, error: err, data: null });
+        setError(err);
       });
   };
 
-  reindexDataset = () => {
-    const { datasetKey } = this.props;
-    axios
-      .post(`${config.dataApi}admin/reindex`, { datasetKey })
-      .then((res) => {
-        this.setState({ error: null }, () => {
-          notification.open({
-            message: "Process started",
-            description: `Dataset ${datasetKey} is being reindexed`,
-          });
-        });
-      })
-      .catch((err) => this.setState({ error: err }));
-  };
-
-  setEditMode = (checked) => {
-    this.setState({ editMode: checked });
-  };
-
-  render() {
-    const { error } = this.state;
-
-    const { dataset } = this.props;
-    return (
-      <PageContent>
-        {error && (
-          <Row>
-            <Alert
-              closable={{ onClose: () => this.setState({ error: null }) }}
-              description={<ErrorMsg error={error} />}
-              type="error"
-            />
-          </Row>
-        )}
-        <SourceMetrics
-          isProject={false}
-          projectKey={
-            ["xrelease", "release"].includes(dataset?.origin)
-              ? dataset?.sourceKey
-              : dataset?.key
-          }
-          origin={dataset?.origin}
-          datasetKey={dataset?.key}
-          basePath={`/dataset/${dataset?.key}`}
-          omitList={[dataset?.key]}
-        />
-      </PageContent>
-    );
-  }
-}
+  return (
+    <PageContent>
+      {error && (
+        <Row>
+          <Alert
+            closable={{ onClose: () => setError(null) }}
+            description={<ErrorMsg error={error} />}
+            type="error"
+          />
+        </Row>
+      )}
+      <SourceMetrics
+        isProject={false}
+        projectKey={
+          ["xrelease", "release"].includes(dataset?.origin)
+            ? dataset?.sourceKey
+            : dataset?.key
+        }
+        origin={dataset?.origin}
+        datasetKey={dataset?.key}
+        basePath={`/dataset/${dataset?.key}`}
+        omitList={[dataset?.key]}
+      />
+    </PageContent>
+  );
+};
 
 const mapContextToProps = ({ dataset }) => ({
   dataset,
