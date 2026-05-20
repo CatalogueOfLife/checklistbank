@@ -501,6 +501,38 @@ const DistributionsMap = ({
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
       />
+      {(descendantState.status === "loading" ||
+        descendantState.status === "error") && (
+        <div
+          style={{
+            position: "absolute",
+            top: 8,
+            left: 8,
+            zIndex: 1000,
+            background: "#fff",
+            borderRadius: 4,
+            boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+            padding: "4px 8px",
+            fontSize: 12,
+          }}
+        >
+          {descendantState.status === "loading" && "Loading descendants…"}
+          {descendantState.status === "error" && (
+            <>
+              Couldn't load descendants.{" "}
+              <a
+                onClick={() => {
+                  fetchTriggeredRef.current = false;
+                  setDescendantState({ status: "idle", taxa: [] });
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Retry
+              </a>
+            </>
+          )}
+        </div>
+      )}
       {!showDescendantLegend && presentMeans.length > 0 && (
         <div
           style={{
