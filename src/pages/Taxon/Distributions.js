@@ -160,7 +160,7 @@ const TableView = ({ datasetKey, data }) => {
   );
 };
 
-const DistributionsTable = ({ datasetKey, data, style }) => {
+const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) => {
   const mappable = data.filter(isMappable);
   const baseUnmappable = data.length - mappable.length;
   const [view, setView] = useState("map");
@@ -195,6 +195,9 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
           <DistributionsMap
             records={mappable}
             onUnmappable={setFetchFailures}
+            datasetKey={datasetKey}
+            focalTaxon={focalTaxon}
+            rankOrder={rankOrder}
           />
           {unmappable > 0 && (
             <div style={{ marginTop: 6 }}>

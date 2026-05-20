@@ -766,6 +766,8 @@ class TaxonPage extends React.Component {
                     data={info.distributions}
                     datasetKey={datasetKey}
                     projectKey={projectKey}
+                    focalTaxon={taxon}
+                    rankOrder={rank}
                   />
                 </PresentationItem>
               )}
