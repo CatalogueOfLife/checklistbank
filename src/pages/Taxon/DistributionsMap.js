@@ -73,6 +73,7 @@ const BASEMAPS = [
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19,
       subdomains: "abcd",
+      noWrap: true,
     },
   },
   {
@@ -83,6 +84,7 @@ const BASEMAPS = [
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
+      noWrap: true,
     },
   },
   {
@@ -93,8 +95,14 @@ const BASEMAPS = [
       attribution:
         "Tiles &copy; Esri &mdash; Source: US National Park Service",
       maxZoom: 8,
+      noWrap: true,
     },
   },
+];
+
+const WORLD_BOUNDS = [
+  [-90, -180],
+  [90, 180],
 ];
 const DEFAULT_BASEMAP = "carto";
 
@@ -150,8 +158,9 @@ const DistributionsMap = ({ records, onUnmappable }) => {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, {
-      worldCopyJump: true,
       minZoom: 1,
+      maxBounds: WORLD_BOUNDS,
+      maxBoundsViscosity: 1,
     }).setView([20, 0], 2);
     mapRef.current = map;
     return () => {
