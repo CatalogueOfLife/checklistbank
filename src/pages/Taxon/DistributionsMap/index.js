@@ -6,7 +6,9 @@ import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import axios from "axios";
 import config from "../../../config";
 import { fetchDescendants } from "./descendantFetch";
-import { getDescendantRanks } from "./descendantRanks";
+import { getDescendantRanks, INFRASPECIFIC_RANKS } from "./descendantRanks";
+import { assignColors } from "./colorAssignment";
+import { buildTree } from "./descendantTree";
 
 const POPUP_FIELDS = [
   "establishmentMeans",
@@ -146,6 +148,23 @@ const popupHtml = (record) => {
   )}</div>${rows}</div>`;
 };
 
+const RANK_LABEL_PLURAL = {
+  subspecies: "Subspecies",
+  variety: "Varieties",
+  subvariety: "Subvarieties",
+  form: "Forms",
+  subform: "Subforms",
+  "infraspecific name": "Infraspecific names",
+};
+const rankLabelPlural = (rank) =>
+  RANK_LABEL_PLURAL[rank] || rank.charAt(0).toUpperCase() + rank.slice(1);
+
+const taxonLabel = (taxon, color) =>
+  `<span style="display:inline-flex;align-items:center;gap:6px">` +
+  `<span style="display:inline-block;width:10px;height:10px;background:${color};border:1px solid rgba(0,0,0,0.15);border-radius:2px"></span>` +
+  `<span style="font-style:italic">${escapeHtml(taxon.scientificName)}</span>` +
+  `</span>`;
+
 const DistributionsMap = ({
   records,
   onUnmappable,
@@ -164,6 +183,7 @@ const DistributionsMap = ({
     taxa: [],
   });
   const fetchTriggeredRef = useRef(false);
+  const descendantGroupsRef = useRef({}); // taxonId → L.featureGroup
 
   const presentMeans = useMemo(() => {
     if (!records?.length) return [];
@@ -298,6 +318,127 @@ const DistributionsMap = ({
       focalGroupRef.current = null;
     };
   }, [records, onUnmappable]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const control = layerControlRef.current;
+    const focalGroup = focalGroupRef.current;
+    if (!map || !control || descendantState.status !== "ready") return;
+
+    const { taxa } = descendantState;
+    const mappableTaxa = taxa.filter((t) => t.mappable.length > 0);
+    const colors = assignColors(mappableTaxa, rankOrder);
+
+    // Build a feature group per mappable taxon.
+    const groups = {};
+    mappableTaxa.forEach((t) => {
+      const color = colors[t.id];
+      const baseStyle = {
+        color,
+        weight: 2,
+        fillColor: color,
+        fillOpacity: 0.55,
+      };
+      const hoverStyle = { weight: 3, fillOpacity: 0.85 };
+      const group = L.featureGroup();
+      t.mappable.forEach((rec) => {
+        fetchShape(rec.area.gazetteer, rec.area.id).then((geojson) => {
+          if (!geojson) return;
+          const lyr = L.geoJSON(geojson, {
+            style: () => baseStyle,
+            onEachFeature: (_f, l) => {
+              const head = `<div style="font-weight:600;font-style:italic;margin-bottom:4px">${escapeHtml(
+                t.scientificName
+              )}</div><div style="color:#888;margin-bottom:4px">${escapeHtml(
+                t.rank || ""
+              )}</div>`;
+              l.bindPopup(head + popupHtml(rec));
+              l.on("mouseover", () => l.setStyle(hoverStyle));
+              l.on("mouseout", () => l.setStyle(baseStyle));
+            },
+          });
+          lyr.addTo(group);
+        });
+      });
+      groups[t.id] = group;
+    });
+    descendantGroupsRef.current = groups;
+
+    // Tree by rank: top-level group per rank present, with each individual
+    // taxon as a child; if a taxon has lower-ranked descendants in the same
+    // fetch, those appear as a nested sub-group ("<rank> of <name>").
+    const tree = buildTree(
+      taxa.map((t) => ({
+        id: t.id,
+        parentId: t.parentId,
+        scientificName: t.scientificName,
+        rank: t.rank,
+      })),
+      focalTaxon.id
+    );
+
+    const childrenOfTaxonNode = (taxonId) => {
+      const kids = tree.byParent[taxonId] || [];
+      // Group sub-children by rank, mapped to nested groups.
+      const grouped = {};
+      kids.forEach((k) => {
+        (grouped[k.rank] = grouped[k.rank] || []).push(k);
+      });
+      const out = [];
+      INFRASPECIFIC_RANKS.forEach((rank) => {
+        const inGroup = grouped[rank];
+        if (!inGroup) return;
+        const parentTaxon = taxa.find((t) => t.id === taxonId);
+        const subLabel = `${rankLabelPlural(rank)} of ${
+          parentTaxon ? parentTaxon.scientificName : ""
+        }`;
+        const childLeaves = inGroup
+          .filter((k) => groups[k.id])
+          .map((k) => ({
+            label: taxonLabel(k, colors[k.id]),
+            layer: groups[k.id],
+            children: childrenOfTaxonNode(k.id),
+          }));
+        out.push({
+          label: subLabel,
+          selectAllCheckbox: true,
+          children: childLeaves,
+        });
+      });
+      return out;
+    };
+
+    // Top-level rank groups: every taxon of that rank across the whole subtree.
+    const byRank = {};
+    taxa.forEach((t) => {
+      (byRank[t.rank] = byRank[t.rank] || []).push(t);
+    });
+
+    const overlayChildren = [
+      { label: "This taxon", layer: focalGroup },
+    ];
+    INFRASPECIFIC_RANKS.forEach((rank) => {
+      const inRank = (byRank[rank] || []).filter((t) => groups[t.id]);
+      if (inRank.length === 0) return;
+      const children = inRank.map((t) => ({
+        label: taxonLabel(t, colors[t.id]),
+        layer: groups[t.id],
+        children: childrenOfTaxonNode(t.id),
+      }));
+      overlayChildren.push({
+        label: rankLabelPlural(rank),
+        selectAllCheckbox: true,
+        children,
+      });
+    });
+
+    control.setOverlayTree({ label: "Overlays", children: overlayChildren });
+
+    return () => {
+      Object.values(groups).forEach((g) => g.remove());
+      descendantGroupsRef.current = {};
+    };
+  }, [descendantState, focalTaxon, rankOrder]);
 
   return (
     <div style={{ position: "relative" }}>
