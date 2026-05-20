@@ -248,9 +248,29 @@ const DistributionsMap = ({
     containerEl.addEventListener("mouseenter", triggerFetch);
     containerEl.addEventListener("click", triggerFetch);
 
+    const refit = () => {
+      const groups = [];
+      if (focalGroupRef.current && map.hasLayer(focalGroupRef.current)) {
+        groups.push(focalGroupRef.current);
+      }
+      Object.values(descendantGroupsRef.current).forEach((g) => {
+        if (map.hasLayer(g)) groups.push(g);
+      });
+      if (groups.length === 0) return;
+      const combined = L.featureGroup(groups);
+      const bounds = combined.getBounds();
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [10, 10] });
+      }
+    };
+    map.on("overlayadd", refit);
+    map.on("overlayremove", refit);
+
     return () => {
       containerEl.removeEventListener("mouseenter", triggerFetch);
       containerEl.removeEventListener("click", triggerFetch);
+      map.off("overlayadd", refit);
+      map.off("overlayremove", refit);
       map.remove();
       mapRef.current = null;
       layerControlRef.current = null;
