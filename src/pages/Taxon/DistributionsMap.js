@@ -25,12 +25,14 @@ const ESTABLISHMENT_MEANS = [
     color: "#DCB0F2",
   },
   { key: "vagrant", label: "Vagrant", color: "#F6CF71" },
-  { key: "uncertain", label: "Uncertain", color: "#66C5CC" },
+  { key: "uncertain", label: "Uncertain", color: "#8BE0A4" },
 ];
 
 const ESTABLISHMENT_COLORS = Object.fromEntries(
   ESTABLISHMENT_MEANS.map((m) => [m.key, m.color])
 );
+const NULL_KEY = "null";
+const NULL_COLOR = "#66C5CC";
 const DEFAULT_KEY = "uncertain";
 
 const normalizeKey = (v) =>
@@ -39,11 +41,16 @@ const normalizeKey = (v) =>
     .replace(/[^a-z]/g, "");
 
 const resolveKey = (record) => {
-  const k = normalizeKey(record?.establishmentMeans);
+  const raw = record?.establishmentMeans;
+  if (raw == null || raw === "") return NULL_KEY;
+  const k = normalizeKey(raw);
   return ESTABLISHMENT_COLORS[k] ? k : DEFAULT_KEY;
 };
 
-const colorFor = (record) => ESTABLISHMENT_COLORS[resolveKey(record)];
+const colorFor = (record) => {
+  const key = resolveKey(record);
+  return key === NULL_KEY ? NULL_COLOR : ESTABLISHMENT_COLORS[key];
+};
 
 const polygonStyleFor = (color) => ({
   color,
