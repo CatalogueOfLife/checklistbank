@@ -245,16 +245,21 @@ const DistributionsMap = ({
       .addTo(map);
     layerControlRef.current = control;
 
+    let isMounted = true;
     const containerEl = control.getContainer();
     const triggerFetch = () => {
       if (fetchTriggeredRef.current) return;
       if (!focalTaxon || !rankOrder) return;
-      const ranks = getDescendantRanks(focalTaxon?.name?.rank, rankOrder);
-      if (ranks.length === 0) return; // above-species or unknown rank
+      const focalRank = focalTaxon?.name?.rank;
+      if (!focalRank) return;
+      if (focalRank !== "species" && !INFRASPECIFIC_RANKS.includes(focalRank)) return;
+      const ranks = getDescendantRanks(focalRank, rankOrder);
+      if (ranks.length === 0) return;
       fetchTriggeredRef.current = true;
       setDescendantState({ status: "loading", taxa: [] });
       fetchDescendants({ datasetKey, focalTaxon, rankOrder }).then(
         ({ taxa, descendantsFailed }) => {
+          if (!isMounted) return;
           if (descendantsFailed) {
             setDescendantState({ status: "error", taxa: [] });
             return;
@@ -300,6 +305,7 @@ const DistributionsMap = ({
     map.on("overlayremove", onOverlayChange);
 
     return () => {
+      isMounted = false;
       containerEl.removeEventListener("mouseenter", triggerFetch);
       containerEl.removeEventListener("click", triggerFetch);
       map.off("overlayadd", onOverlayChange);

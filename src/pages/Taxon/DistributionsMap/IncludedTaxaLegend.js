@@ -71,9 +71,6 @@ const IncludedTaxaLegend = ({ visibleTaxa, unmappableTaxa }) => {
             <span style={rankLabelStyle}>{t.rank}</span>
           </div>
         ))}
-        {visibleTaxa.length === 0 && (
-          <div style={{ color: "#888" }}>No taxa selected.</div>
-        )}
       </div>
       {unmappableTaxa.length > 0 && (
         <>

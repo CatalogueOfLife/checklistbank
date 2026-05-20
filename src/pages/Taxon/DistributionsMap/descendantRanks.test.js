@@ -33,7 +33,7 @@ describe("getDescendantRanks", () => {
     expect(getDescendantRanks("infraspecific name", RANK_ORDER)).toEqual([]);
   });
 
-  it("returns an empty list for ranks above species", () => {
+  it("returns all infraspecific ranks for focal ranks above species (caller must gate)", () => {
     expect(getDescendantRanks("genus", RANK_ORDER)).toEqual(
       INFRASPECIFIC_RANKS
     );
