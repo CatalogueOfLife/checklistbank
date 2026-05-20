@@ -2,37 +2,40 @@
 
 ## Goal
 
-On the Taxon page distribution map, when the focal taxon has rank `species`,
-let the user reveal the distributions of its accepted infraspecific descendants
-(subspecies, varieties, forms, …) as toggleable map layers. Each infraspecific
-taxon's polygons share one distinct color so the user can read which
-infraspecific taxon contributes which area at a glance.
+On the Taxon page distribution map, when the focal taxon has rank `species` or
+any infraspecific rank, let the user reveal the distributions of its accepted
+lower-ranked descendants (subspecies, varieties, forms, …) as toggleable map
+layers. Each descendant's polygons share one distinct color so the user can
+read which taxon contributes which area at a glance.
 
-The feature is hidden for any non-species rank.
+The feature is hidden for any rank above species. For species and infraspecific
+focal taxa it is shown only when at least one lower-ranked descendant exists
+with mappable distributions; if the lazy fetch returns nothing mappable, no
+descendant groups are added to the layer control.
 
 ## Scope
 
 In scope:
 
-- Lazy fetch of accepted/provisionally-accepted infraspecific descendants and
+- Lazy fetch of accepted/provisionally-accepted lower-ranked descendants and
   their distributions, on first activation of the layer control.
+- Applies when the focal taxon's rank is `species` or any infraspecific rank.
 - A nested Leaflet layer control with:
   - the existing basemaps as base layers,
   - an overlay for the focal taxon,
-  - one overlay per infraspecific rank present in the descendants,
-  - nested sub-overlays per individual infraspecific taxon that has
-    infraspecific children of its own.
+  - one overlay per descendant rank present below the focal rank,
+  - nested sub-overlays per individual descendant that has lower-ranked
+    children of its own.
 - Color assignment per taxon from the Carto **Vivid** palette, cycling.
-- A second legend listing the infraspecific taxa currently rendered, plus a
-  collapsible footer listing taxa without mappable distributions.
+- A second legend listing the descendants currently rendered, plus a
+  collapsible footer listing descendants without mappable distributions.
 
 Out of scope:
 
 - Showing synonyms or unranked descendants.
-- Showing infraspecific descendants for higher ranks (genus, family, …) — the
-  feature is species-only.
+- Showing the feature on any rank above species (genus, family, …).
 - Persisting layer selections between page visits.
-- Editing or filtering infraspecific data; this view is read-only.
+- Editing or filtering descendant data; this view is read-only.
 
 ## UI
 
@@ -109,16 +112,16 @@ fields as the focal popup (`establishmentMeans`, `degreeOfEstablishment`,
 
 - When no infraspecific overlay is on, today's establishment-means legend
   renders unchanged.
-- When at least one infraspecific overlay is on, the establishment-means
-  legend is **hidden** and replaced by a single "Infraspecific taxa" legend
+- When at least one descendant overlay is on, the establishment-means
+  legend is **hidden** and replaced by a single "Descendants" legend
   (bottom-left), scrollable to `max-height: 200px`. Each row: color swatch +
   italic scientific name + small grey rank label. Only taxa whose polygons
   are currently rendered appear in the list.
 - Below the scroll, a collapsible footer "+K without map data" lists the
-  accepted infraspecific descendants we fetched but could not place on the
-  map (no distributions at all, or only text-gazetteer / unmappable
-  distributions). Plain italic names, no color swatch.
-- When the user toggles all infraspecific overlays off, the means legend
+  accepted descendants we fetched but could not place on the map (no
+  distributions at all, or only text-gazetteer / unmappable distributions).
+  Plain italic names, no color swatch.
+- When the user toggles all descendant overlays off, the means legend
   comes back.
 
 ### Bounds
@@ -129,15 +132,15 @@ matches today's behavior.
 
 ## Data
 
-### Fetching infraspecific descendants
+### Fetching descendants
 
 Trigger: first time the layer control panel is expanded (not on map mount),
-provided the focal taxon's rank is `species`.
+provided the focal taxon's rank is `species` or any infraspecific rank.
 
 1. **List descendants** in one call:
    ```
    GET dataset/{datasetKey}/nameusage/search
-       ?TAXON_ID={speciesId}
+       ?TAXON_ID={focalTaxonId}
        &rank=subspecies
        &rank=variety
        &rank=subvariety
@@ -149,17 +152,28 @@ provided the focal taxon's rank is `species`.
        &limit=1000
    ```
    The exact rank list comes from `src/enumeration/rank.json` filtered to
-   ranks below species. The response carries each usage with its `parentId`,
-   which is enough to rebuild the parent-child tree.
+   ranks strictly below the focal taxon's rank. The response carries each
+   usage with its `parentId`, which is enough to rebuild the parent-child
+   tree.
 
-2. **Fetch distributions per descendant** in parallel. Preferred endpoint:
-   `GET dataset/{datasetKey}/taxon/{id}/distribution` (if present in the
-   backend); fallback `GET dataset/{datasetKey}/taxon/{id}/info` reading
-   `info.distributions`. The implementation step will verify which exists
-   and pick one.
+2. **Fetch distributions per descendant** in parallel using a new dedicated
+   backend endpoint:
+   ```
+   GET dataset/{datasetKey}/taxon/{id}/distribution
+   ```
+   This endpoint is being added to the backend specifically for this view
+   (the existing `/info` resource is far too heavy for a per-taxon
+   distribution fetch). It returns just the distribution records for the
+   given taxon, with the same shape as `info.distributions`.
 
    Cap concurrency at 16 in-flight requests using a small worker pool so a
-   species with hundreds of varieties doesn't slam the API.
+   focal taxon with hundreds of descendants doesn't slam the API.
+
+   Future optimization (out of scope for this spec): a single bulk endpoint
+   like `dataset/{key}/taxon/{id}/descendants/distribution` that returns
+   every descendant's distributions in one round trip. The fetch helper
+   here is structured so swapping to a bulk call later requires changing
+   only `infraspecificFetch.js`.
 
 3. **Build the tree** from `parentId` relations. Each taxon node stores:
    `{ id, scientificName, rank, parentId, distributions, mappable, color }`.
@@ -231,7 +245,9 @@ Assignment:
 
 - **`src/pages/Taxon/Distributions.js`** — pass `focalTaxon` and
   `datasetKey` through to `DistributionsMap`, and surface the new feature
-  only when `focalTaxon.name.rank === "species"`.
+  when `focalTaxon.name.rank` is `species` or any infraspecific rank (i.e.
+  any rank present in the descendant-rank list above, plus `species`
+  itself). Higher ranks pass `enableDescendants={false}`.
 
 - **`src/pages/Taxon/index.js`** — pass the loaded `taxon` (already in state)
   down to `Distributions` so it can forward it.
@@ -251,49 +267,53 @@ Distributions.js
    ▼
 DistributionsMap.js
    ├─ on mount: render focal feature group + base map
-   ├─ on layer-control expand (species only, once):
-   │     infraspecificFetch(datasetKey, focalTaxon.id)
-   │        ├─ search infraspecific descendants
-   │        ├─ fetch distributions per descendant (pool=16)
+   ├─ on layer-control expand (species or infraspecific focal, once):
+   │     infraspecificFetch(datasetKey, focalTaxon)
+   │        ├─ search descendants below focal rank
+   │        ├─ fetch /taxon/{id}/distribution per descendant (pool=16)
    │        └─ build tree, assign colors
    ├─ on tree change: add/remove feature groups, refit bounds
-   └─ render: infraspecific legend when any overlay is on
+   └─ render: descendants legend when any overlay is on
 ```
 
 ### Error handling
 
 - If the descendants search fails, the layer control shows "Couldn't load
-  infraspecific taxa" with a retry link, and the focal layer keeps working.
+  descendant taxa" with a retry link, and the focal layer keeps working.
 - If a single descendant's distribution fetch fails, the taxon is treated as
   "without map data" (goes into the legend footer); the others still render.
   Same predicate as today: if `failures >= mappable`, fall back to table —
-  but only for the focal layer; infraspecific failures are silent on the
+  but only for the focal layer; descendant failures are silent on the
   main UI.
 
 ## Testing
 
 Manual verification (no automated tests for this component today):
 
-- Species with no infraspecific descendants → layer control has only "This
-  taxon"; no fetch fires.
+- Species with no infraspecific descendants → layer control expands; fetch
+  runs and returns nothing; control shows only "This taxon".
 - Species with subspecies only → "Subspecies" group appears, master toggle
   shows/hides all.
 - Species with subspecies that have varieties → nested "Varieties of X"
   sub-group appears under the subspecies; toggling the top-level "Varieties"
   group enables every variety (including those nested under subspecies).
-- Genus, family, or other non-species focal rank → no layer control entries
-  for infraspecific overlays.
-- Species with 50+ infraspecific descendants → colors cycle from Carto Vivid
-  predictably; legend scrolls; fetch pool caps at 16 in-flight.
+- Subspecies focal with its own varieties → layer control offers a
+  "Varieties" group containing those varieties; toggling works the same way.
+- Variety focal with no further descendants → fetch runs, returns nothing,
+  control shows only "This taxon".
+- Genus, family, or other above-species focal rank → no layer control
+  entries for descendant overlays; no fetch is triggered.
+- Species with 50+ descendants → colors cycle from Carto Vivid predictably;
+  legend scrolls; fetch pool caps at 16 in-flight.
 - Descendants whose distributions are all unmappable (text gazetteer only,
   or no distributions at all) → appear in legend footer, not on the map.
-- Means legend hides when an infraspecific overlay is on, returns when all
-  infraspecific overlays are off.
+- Means legend hides when a descendant overlay is on, returns when all
+  descendant overlays are off.
 
 ## Open questions deferred to implementation
 
-- Confirm whether `dataset/{key}/taxon/{id}/distribution` exists; if not,
-  use `/info`.
+- Confirm the response shape of the new `dataset/{key}/taxon/{id}/distribution`
+  endpoint once it lands in the backend; adjust the helper accordingly.
 - Confirm exact rank values the API accepts (case, hyphens) by checking
   `rank.json` and an example backend call.
 - Pick the spinner widget (likely an antd `<Spin size="small" />` rendered
