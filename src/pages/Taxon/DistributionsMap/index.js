@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Radio } from "antd";
 import axios from "axios";
-import config from "../../config";
+import config from "../../../config";
 
 const POPUP_FIELDS = [
   "establishmentMeans",
