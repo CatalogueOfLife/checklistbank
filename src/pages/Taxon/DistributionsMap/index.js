@@ -182,6 +182,7 @@ const DistributionsMap = ({
     status: "idle", // idle | loading | ready | empty | error
     taxa: [],
   });
+  const [focalReady, setFocalReady] = useState(false);
   const fetchTriggeredRef = useRef(false);
   const descendantGroupsRef = useRef({}); // taxonId → L.featureGroup
 
@@ -283,6 +284,7 @@ const DistributionsMap = ({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !records?.length) return;
+    setFocalReady(false);
     let cancelled = false;
     const group = L.featureGroup();
     group.addTo(map);
@@ -322,18 +324,12 @@ const DistributionsMap = ({
       if (typeof onUnmappable === "function") {
         onUnmappable(failures);
       }
-      const control = layerControlRef.current;
-      if (control) {
-        const newTree = {
-          label: "Overlays",
-          children: [{ label: "This taxon", layer: group }],
-        };
-        control.setOverlayTree(newTree);
-      }
+      setFocalReady(true);
     });
 
     return () => {
       cancelled = true;
+      setFocalReady(false);
       group.remove();
       focalGroupRef.current = null;
     };
@@ -343,7 +339,17 @@ const DistributionsMap = ({
     const map = mapRef.current;
     const control = layerControlRef.current;
     const focalGroup = focalGroupRef.current;
-    if (!map || !control || descendantState.status !== "ready") return;
+    if (!map || !control) return;
+
+    const overlayChildren = [];
+    if (focalReady && focalGroup) {
+      overlayChildren.push({ label: "This taxon", layer: focalGroup });
+    }
+
+    if (descendantState.status !== "ready") {
+      control.setOverlayTree({ label: "Overlays", children: overlayChildren });
+      return;
+    }
 
     const { taxa } = descendantState;
     const mappableTaxa = taxa.filter((t) => t.mappable.length > 0);
@@ -410,7 +416,7 @@ const DistributionsMap = ({
         if (!inGroup) return;
         const parentTaxon = taxa.find((t) => t.id === taxonId);
         const subLabel = `${rankLabelPlural(rank)} of ${
-          parentTaxon ? parentTaxon.scientificName : ""
+          parentTaxon ? escapeHtml(parentTaxon.scientificName) : ""
         }`;
         const childLeaves = inGroup
           .filter((k) => groups[k.id])
@@ -434,9 +440,6 @@ const DistributionsMap = ({
       (byRank[t.rank] = byRank[t.rank] || []).push(t);
     });
 
-    const overlayChildren = [
-      { label: "This taxon", layer: focalGroup },
-    ];
     INFRASPECIFIC_RANKS.forEach((rank) => {
       const inRank = (byRank[rank] || []).filter((t) => groups[t.id]);
       if (inRank.length === 0) return;
@@ -458,7 +461,7 @@ const DistributionsMap = ({
       Object.values(groups).forEach((g) => g.remove());
       descendantGroupsRef.current = {};
     };
-  }, [descendantState, focalTaxon, rankOrder]);
+  }, [descendantState, focalTaxon, rankOrder, focalReady]);
 
   return (
     <div style={{ position: "relative" }}>
