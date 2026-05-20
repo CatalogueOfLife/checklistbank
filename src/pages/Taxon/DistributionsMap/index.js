@@ -5,6 +5,8 @@ import "leaflet.control.layers.tree";
 import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import axios from "axios";
 import config from "../../../config";
+import { fetchDescendants } from "./descendantFetch";
+import { getDescendantRanks } from "./descendantRanks";
 
 const POPUP_FIELDS = [
   "establishmentMeans",
@@ -157,6 +159,12 @@ const DistributionsMap = ({
   const focalGroupRef = useRef(null);
   const baseLayersRef = useRef({});
 
+  const [descendantState, setDescendantState] = useState({
+    status: "idle", // idle | loading | ready | empty | error
+    taxa: [],
+  });
+  const fetchTriggeredRef = useRef(false);
+
   const presentMeans = useMemo(() => {
     if (!records?.length) return [];
     const seen = new Set(records.map(resolveKey));
@@ -195,7 +203,34 @@ const DistributionsMap = ({
       .addTo(map);
     layerControlRef.current = control;
 
+    const containerEl = control.getContainer();
+    const triggerFetch = () => {
+      if (fetchTriggeredRef.current) return;
+      if (!focalTaxon || !rankOrder) return;
+      const ranks = getDescendantRanks(focalTaxon?.name?.rank, rankOrder);
+      if (ranks.length === 0) return; // above-species or unknown rank
+      fetchTriggeredRef.current = true;
+      setDescendantState({ status: "loading", taxa: [] });
+      fetchDescendants({ datasetKey, focalTaxon, rankOrder }).then(
+        ({ taxa, descendantsFailed }) => {
+          if (descendantsFailed) {
+            setDescendantState({ status: "error", taxa: [] });
+            return;
+          }
+          if (taxa.length === 0) {
+            setDescendantState({ status: "empty", taxa: [] });
+            return;
+          }
+          setDescendantState({ status: "ready", taxa });
+        }
+      );
+    };
+    containerEl.addEventListener("mouseenter", triggerFetch);
+    containerEl.addEventListener("click", triggerFetch);
+
     return () => {
+      containerEl.removeEventListener("mouseenter", triggerFetch);
+      containerEl.removeEventListener("click", triggerFetch);
       map.remove();
       mapRef.current = null;
       layerControlRef.current = null;
