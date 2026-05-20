@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Radio } from "antd";
+import "leaflet.control.layers.tree";
+import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import axios from "axios";
 import config from "../../../config";
 
@@ -143,11 +144,18 @@ const popupHtml = (record) => {
   )}</div>${rows}</div>`;
 };
 
-const DistributionsMap = ({ records, onUnmappable }) => {
+const DistributionsMap = ({
+  records,
+  onUnmappable,
+  datasetKey,
+  focalTaxon,
+  rankOrder,
+}) => {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
-  const tileLayerRef = useRef(null);
-  const [basemap, setBasemap] = useState(DEFAULT_BASEMAP);
+  const layerControlRef = useRef(null);
+  const focalGroupRef = useRef(null);
+  const baseLayersRef = useRef({});
 
   const presentMeans = useMemo(() => {
     if (!records?.length) return [];
@@ -155,6 +163,7 @@ const DistributionsMap = ({ records, onUnmappable }) => {
     return ESTABLISHMENT_MEANS.filter((m) => seen.has(m.key));
   }, [records]);
 
+  // Mount the map and the layer-tree control with base layers only.
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, {
@@ -163,33 +172,46 @@ const DistributionsMap = ({ records, onUnmappable }) => {
       maxBoundsViscosity: 1,
     }).setView([20, 0], 2);
     mapRef.current = map;
+
+    const baseLayers = {};
+    BASEMAPS.forEach((b) => {
+      const layer = L.tileLayer(b.url, b.options);
+      baseLayers[b.key] = layer;
+      if (b.key === DEFAULT_BASEMAP) layer.addTo(map);
+    });
+    baseLayersRef.current = baseLayers;
+
+    const baseTree = BASEMAPS.map((b) => ({
+      label: b.label,
+      layer: baseLayers[b.key],
+    }));
+    const overlayTree = { label: "Overlays", children: [] };
+
+    const control = L.control.layers
+      .tree(baseTree, overlayTree, {
+        collapsed: true,
+        position: "topright",
+      })
+      .addTo(map);
+    layerControlRef.current = control;
+
     return () => {
       map.remove();
       mapRef.current = null;
-      tileLayerRef.current = null;
+      layerControlRef.current = null;
+      focalGroupRef.current = null;
+      baseLayersRef.current = {};
     };
   }, []);
 
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const def = BASEMAPS.find((b) => b.key === basemap) || BASEMAPS[0];
-    const newLayer = L.tileLayer(def.url, def.options).addTo(map);
-    if (tileLayerRef.current) {
-      map.removeLayer(tileLayerRef.current);
-    }
-    tileLayerRef.current = newLayer;
-    const max = def.options?.maxZoom;
-    if (typeof max === "number" && map.getZoom() > max) {
-      map.setZoom(max);
-    }
-  }, [basemap]);
-
+  // Focal taxon polygons — rebuilt whenever `records` changes.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !records?.length) return;
     let cancelled = false;
-    const group = L.featureGroup().addTo(map);
+    const group = L.featureGroup();
+    group.addTo(map);
+    focalGroupRef.current = group;
     let failures = 0;
 
     Promise.allSettled(
@@ -230,6 +252,7 @@ const DistributionsMap = ({ records, onUnmappable }) => {
     return () => {
       cancelled = true;
       group.remove();
+      focalGroupRef.current = null;
     };
   }, [records, onUnmappable]);
 
@@ -239,26 +262,6 @@ const DistributionsMap = ({ records, onUnmappable }) => {
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
       />
-      <Radio.Group
-        size="small"
-        value={basemap}
-        onChange={(e) => setBasemap(e.target.value)}
-        style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          zIndex: 1000,
-          background: "#fff",
-          borderRadius: 4,
-          boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-        }}
-      >
-        {BASEMAPS.map((b) => (
-          <Radio.Button key={b.key} value={b.key}>
-            {b.label}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
       {presentMeans.length > 0 && (
         <div
           style={{
