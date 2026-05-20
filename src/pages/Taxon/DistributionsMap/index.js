@@ -9,6 +9,7 @@ import { fetchDescendants } from "./descendantFetch";
 import { getDescendantRanks, INFRASPECIFIC_RANKS } from "./descendantRanks";
 import { assignColors } from "./colorAssignment";
 import { buildTree } from "./descendantTree";
+import IncludedTaxaLegend from "./IncludedTaxaLegend";
 
 const POPUP_FIELDS = [
   "establishmentMeans",
@@ -183,6 +184,7 @@ const DistributionsMap = ({
     taxa: [],
   });
   const [focalReady, setFocalReady] = useState(false);
+  const [visibleTaxonIds, setVisibleTaxonIds] = useState(new Set());
   const fetchTriggeredRef = useRef(false);
   const descendantGroupsRef = useRef({}); // taxonId → L.featureGroup
 
@@ -191,6 +193,25 @@ const DistributionsMap = ({
     const seen = new Set(records.map(resolveKey));
     return ESTABLISHMENT_MEANS.filter((m) => seen.has(m.key));
   }, [records]);
+
+  const descendantLegend = useMemo(() => {
+    if (descendantState.status !== "ready") {
+      return { visible: [], unmappable: [] };
+    }
+    const colors = assignColors(
+      descendantState.taxa.filter((t) => t.mappable.length > 0),
+      rankOrder
+    );
+    const visible = descendantState.taxa
+      .filter((t) => t.mappable.length > 0 && visibleTaxonIds.has(t.id))
+      .map((t) => ({ ...t, color: colors[t.id] }));
+    const unmappable = descendantState.taxa.filter(
+      (t) => t.mappable.length === 0
+    );
+    return { visible, unmappable };
+  }, [descendantState, visibleTaxonIds, rankOrder]);
+
+  const showDescendantLegend = descendantLegend.visible.length > 0;
 
   // Mount the map and the layer-tree control with base layers only.
   useEffect(() => {
@@ -264,14 +285,25 @@ const DistributionsMap = ({
         map.fitBounds(bounds, { padding: [10, 10] });
       }
     };
-    map.on("overlayadd", refit);
-    map.on("overlayremove", refit);
+    const recomputeVisible = () => {
+      const ids = new Set();
+      Object.entries(descendantGroupsRef.current).forEach(([id, g]) => {
+        if (map.hasLayer(g)) ids.add(id);
+      });
+      setVisibleTaxonIds(ids);
+    };
+    const onOverlayChange = () => {
+      refit();
+      recomputeVisible();
+    };
+    map.on("overlayadd", onOverlayChange);
+    map.on("overlayremove", onOverlayChange);
 
     return () => {
       containerEl.removeEventListener("mouseenter", triggerFetch);
       containerEl.removeEventListener("click", triggerFetch);
-      map.off("overlayadd", refit);
-      map.off("overlayremove", refit);
+      map.off("overlayadd", onOverlayChange);
+      map.off("overlayremove", onOverlayChange);
       map.remove();
       mapRef.current = null;
       layerControlRef.current = null;
@@ -469,7 +501,7 @@ const DistributionsMap = ({
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
       />
-      {presentMeans.length > 0 && (
+      {!showDescendantLegend && presentMeans.length > 0 && (
         <div
           style={{
             position: "absolute",
@@ -503,6 +535,12 @@ const DistributionsMap = ({
             </div>
           ))}
         </div>
+      )}
+      {showDescendantLegend && (
+        <IncludedTaxaLegend
+          visibleTaxa={descendantLegend.visible}
+          unmappableTaxa={descendantLegend.unmappable}
+        />
       )}
     </div>
   );
