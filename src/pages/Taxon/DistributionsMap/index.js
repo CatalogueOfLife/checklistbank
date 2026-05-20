@@ -247,6 +247,14 @@ const DistributionsMap = ({
       if (typeof onUnmappable === "function") {
         onUnmappable(failures);
       }
+      const control = layerControlRef.current;
+      if (control) {
+        const newTree = {
+          label: "Overlays",
+          children: [{ label: "This taxon", layer: group }],
+        };
+        control.setOverlayTree(newTree);
+      }
     });
 
     return () => {
