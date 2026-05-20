@@ -113,7 +113,7 @@ fields as the focal popup (`establishmentMeans`, `degreeOfEstablishment`,
 - When no infraspecific overlay is on, today's establishment-means legend
   renders unchanged.
 - When at least one descendant overlay is on, the establishment-means
-  legend is **hidden** and replaced by a single "Descendants" legend
+  legend is **hidden** and replaced by a single "Included taxa" legend
   (bottom-left), scrollable to `max-height: 200px`. Each row: color swatch +
   italic scientific name + small grey rank label. Only taxa whose polygons
   are currently rendered appear in the list.
