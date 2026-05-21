@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.control.layers.tree";
 import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
+import "./treeControl.css";
 import axios from "axios";
 import config from "../../../config";
 import { fetchDescendants } from "./descendantFetch";
@@ -208,30 +209,41 @@ const DistributionsMap = ({
 
   const descendantLegend = useMemo(() => {
     if (descendantState.status !== "ready") {
-      return { visible: [], unmappable: [] };
+      return { visibleGroups: [], unmappableGroups: [] };
     }
     const focalName = focalTaxon?.name?.scientificName || "";
     const colors = assignColors(
       descendantState.taxa.filter((t) => t.mappable.length > 0),
       rankOrder
     );
-    const visible = descendantState.taxa
-      .filter((t) => t.mappable.length > 0 && visibleTaxonIds.has(t.id))
-      .map((t) => ({
-        ...t,
-        color: colors[t.id],
-        displayName: shortenName(t.scientificName, focalName),
+    const decorate = (t) => ({
+      ...t,
+      color: colors[t.id],
+      displayName: shortenName(t.scientificName, focalName),
+    });
+    const groupByRank = (taxa) => {
+      const byRank = {};
+      taxa.forEach((t) => {
+        (byRank[t.rank] = byRank[t.rank] || []).push(decorate(t));
+      });
+      return INFRASPECIFIC_RANKS.filter((r) => byRank[r]).map((r) => ({
+        rank: r,
+        label: rankLabelPlural(r),
+        taxa: byRank[r],
       }));
-    const unmappable = descendantState.taxa
-      .filter((t) => t.mappable.length === 0)
-      .map((t) => ({
-        ...t,
-        displayName: shortenName(t.scientificName, focalName),
-      }));
-    return { visible, unmappable };
+    };
+    const visibleGroups = groupByRank(
+      descendantState.taxa.filter(
+        (t) => t.mappable.length > 0 && visibleTaxonIds.has(t.id)
+      )
+    );
+    const unmappableGroups = groupByRank(
+      descendantState.taxa.filter((t) => t.mappable.length === 0)
+    );
+    return { visibleGroups, unmappableGroups };
   }, [descendantState, visibleTaxonIds, rankOrder, focalTaxon]);
 
-  const showDescendantLegend = descendantLegend.visible.length > 0;
+  const showDescendantLegend = descendantLegend.visibleGroups.length > 0;
 
   // Mount the map and the layer-tree control with base layers only.
   useEffect(() => {
@@ -255,12 +267,15 @@ const DistributionsMap = ({
       label: b.label,
       layer: baseLayers[b.key],
     }));
-    const overlayTree = { label: "Overlays", children: [] };
+    const overlayTree = [];
 
     const control = L.control.layers
       .tree(baseTree, overlayTree, {
         collapsed: true,
         position: "topright",
+        closedSymbol: "+",
+        openedSymbol: "",
+        spaceSymbol: "",
       })
       .addTo(map);
     layerControlRef.current = control;
@@ -409,7 +424,7 @@ const DistributionsMap = ({
     }
 
     if (descendantState.status !== "ready") {
-      control.setOverlayTree({ label: "Overlays", children: overlayChildren });
+      control.setOverlayTree(overlayChildren);
       return;
     }
 
@@ -483,14 +498,18 @@ const DistributionsMap = ({
         const subLabel = `${rankLabelPlural(rank)} of ${escapeHtml(parentDisplay)}`;
         const childLeaves = inGroup
           .filter((k) => groups[k.id])
-          .map((k) => ({
-            label: taxonLabel(
-              shortenName(k.scientificName, focalName),
-              colors[k.id]
-            ),
-            layer: groups[k.id],
-            children: childrenOfTaxonNode(k.id),
-          }));
+          .map((k) => {
+            const nested = childrenOfTaxonNode(k.id);
+            const node = {
+              label: taxonLabel(
+                shortenName(k.scientificName, focalName),
+                colors[k.id]
+              ),
+              layer: groups[k.id],
+            };
+            if (nested.length > 0) node.children = nested;
+            return node;
+          });
         out.push({
           label: subLabel,
           selectAllCheckbox: true,
@@ -509,14 +528,18 @@ const DistributionsMap = ({
     INFRASPECIFIC_RANKS.forEach((rank) => {
       const inRank = (byRank[rank] || []).filter((t) => groups[t.id]);
       if (inRank.length === 0) return;
-      const children = inRank.map((t) => ({
-        label: taxonLabel(
-          shortenName(t.scientificName, focalName),
-          colors[t.id]
-        ),
-        layer: groups[t.id],
-        children: childrenOfTaxonNode(t.id),
-      }));
+      const children = inRank.map((t) => {
+        const nested = childrenOfTaxonNode(t.id);
+        const node = {
+          label: taxonLabel(
+            shortenName(t.scientificName, focalName),
+            colors[t.id]
+          ),
+          layer: groups[t.id],
+        };
+        if (nested.length > 0) node.children = nested;
+        return node;
+      });
       overlayChildren.push({
         label: rankLabelPlural(rank),
         selectAllCheckbox: true,
@@ -524,7 +547,7 @@ const DistributionsMap = ({
       });
     });
 
-    control.setOverlayTree({ label: "Overlays", children: overlayChildren });
+    control.setOverlayTree(overlayChildren);
 
     return () => {
       Object.values(groups).forEach((g) => g.remove());
@@ -607,8 +630,8 @@ const DistributionsMap = ({
       )}
       {showDescendantLegend && (
         <IncludedTaxaLegend
-          visibleTaxa={descendantLegend.visible}
-          unmappableTaxa={descendantLegend.unmappable}
+          visibleGroups={descendantLegend.visibleGroups}
+          unmappableGroups={descendantLegend.unmappableGroups}
         />
       )}
     </div>

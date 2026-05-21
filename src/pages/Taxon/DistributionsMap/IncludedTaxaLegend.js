@@ -15,14 +15,25 @@ const wrapStyle = {
 };
 
 const scrollStyle = {
-  maxHeight: 200,
+  maxHeight: 240,
   overflowY: "auto",
+};
+
+const groupHeadingStyle = {
+  fontWeight: 600,
+  marginTop: 4,
+};
+
+const firstGroupHeadingStyle = {
+  ...groupHeadingStyle,
+  marginTop: 0,
 };
 
 const rowStyle = {
   display: "flex",
   alignItems: "center",
   gap: 6,
+  paddingLeft: 4,
 };
 
 const swatchStyle = (color) => ({
@@ -35,58 +46,89 @@ const swatchStyle = (color) => ({
   flex: "0 0 auto",
 });
 
-const rankLabelStyle = {
-  color: "#888",
-  fontSize: 11,
-  marginLeft: "auto",
-  paddingLeft: 8,
-};
-
 const footerToggleStyle = {
-  marginTop: 4,
+  marginTop: 6,
   cursor: "pointer",
   color: "#1890ff",
   fontSize: 11,
 };
 
-const footerListStyle = {
+const footerWrapStyle = {
   marginTop: 4,
   borderTop: "1px solid #eee",
   paddingTop: 4,
-  fontStyle: "italic",
   color: "#666",
 };
 
-const IncludedTaxaLegend = ({ visibleTaxa, unmappableTaxa }) => {
+const footerGroupHeadingStyle = {
+  fontWeight: 600,
+  marginTop: 4,
+};
+
+const footerFirstGroupHeadingStyle = {
+  ...footerGroupHeadingStyle,
+  marginTop: 0,
+};
+
+const footerNameStyle = {
+  fontStyle: "italic",
+  paddingLeft: 4,
+};
+
+const totalCount = (groups) =>
+  groups.reduce((sum, g) => sum + g.taxa.length, 0);
+
+const IncludedTaxaLegend = ({ visibleGroups, unmappableGroups }) => {
   const [showUnmappable, setShowUnmappable] = useState(false);
-  if (!visibleTaxa.length && !unmappableTaxa.length) return null;
+  const visibleCount = totalCount(visibleGroups);
+  const unmappableCount = totalCount(unmappableGroups);
+  if (visibleCount === 0 && unmappableCount === 0) return null;
   return (
     <div style={wrapStyle}>
-      <div style={{ fontWeight: 600, marginBottom: 4 }}>Included taxa</div>
       <div style={scrollStyle}>
-        {visibleTaxa.map((t) => (
-          <div key={t.id} style={rowStyle}>
-            <span style={swatchStyle(t.color)} />
-            <span style={{ fontStyle: "italic" }}>
-              {t.displayName || t.scientificName}
-            </span>
-            <span style={rankLabelStyle}>{t.rank}</span>
+        {visibleGroups.map((g, i) => (
+          <div key={g.rank}>
+            <div style={i === 0 ? firstGroupHeadingStyle : groupHeadingStyle}>
+              {g.label}
+            </div>
+            {g.taxa.map((t) => (
+              <div key={t.id} style={rowStyle}>
+                <span style={swatchStyle(t.color)} />
+                <span style={{ fontStyle: "italic" }}>
+                  {t.displayName || t.scientificName}
+                </span>
+              </div>
+            ))}
           </div>
         ))}
       </div>
-      {unmappableTaxa.length > 0 && (
+      {unmappableCount > 0 && (
         <>
           <div
             style={footerToggleStyle}
             onClick={() => setShowUnmappable((v) => !v)}
           >
-            {showUnmappable ? "− Hide" : "+"} {unmappableTaxa.length} without map
-            data
+            {showUnmappable ? "− Hide" : "+"} {unmappableCount} without map data
           </div>
           {showUnmappable && (
-            <div style={footerListStyle}>
-              {unmappableTaxa.map((t) => (
-                <div key={t.id}>{t.displayName || t.scientificName}</div>
+            <div style={footerWrapStyle}>
+              {unmappableGroups.map((g, i) => (
+                <div key={g.rank}>
+                  <div
+                    style={
+                      i === 0
+                        ? footerFirstGroupHeadingStyle
+                        : footerGroupHeadingStyle
+                    }
+                  >
+                    {g.label}
+                  </div>
+                  {g.taxa.map((t) => (
+                    <div key={t.id} style={footerNameStyle}>
+                      {t.displayName || t.scientificName}
+                    </div>
+                  ))}
+                </div>
               ))}
             </div>
           )}
