@@ -264,10 +264,38 @@
   {
     "enum": false,
     "multiple": false,
+    "name": "dont infer ranks",
+    "origin": [
+      "external"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
     "name": "block merge syncs",
     "origin": [
       "project"
     ],
     "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "sector create implicit names",
+    "origin": [
+      "project"
+    ],
+    "type": "Boolean"
+  },
+  {
+    "enum": false,
+    "multiple": false,
+    "name": "add identifiers from",
+    "origin": [
+      "external",
+      "project"
+    ],
+    "type": "String"
   }
 ]

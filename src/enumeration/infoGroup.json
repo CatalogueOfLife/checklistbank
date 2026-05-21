@@ -21,6 +21,9 @@
     "name": "rank"
   },
   {
-    "name": "holotype"
+    "name": "etymology"
+  },
+  {
+    "name": "gender"
   }
 ]

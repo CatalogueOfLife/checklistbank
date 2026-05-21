@@ -186,7 +186,7 @@
     "name": "conflicting nomenclatural status"
   },
   {
-    "description": "dwc:nomenclaturalCode could not be interpreted",
+    "description": "dwc:nomenclaturalCode or col:code could not be interpreted",
     "group": "name",
     "level": "error",
     "name": "nomenclatural code invalid"
@@ -338,7 +338,7 @@
   {
     "description": "The accepted infraspecific name does not have an accepted species in it's classification.",
     "group": "name usage",
-    "level": "warning",
+    "level": "info",
     "name": "parent species missing"
   },
   {
@@ -440,7 +440,7 @@
   {
     "description": "A synonym which originally had some associated data (descriptions distributions, media items, vernacular names, bibliography) but which was removed as it lacks an accepted taxon.",
     "group": "name usage",
-    "level": "info",
+    "level": "warning",
     "name": "synonym data removed"
   },
   {
@@ -778,5 +778,119 @@
     "group": "vernacular",
     "level": "warning",
     "name": "vernacular name unlikely"
+  },
+  {
+    "description": "The accepted species does not have an accepted genus in it's classification.",
+    "group": "name usage",
+    "level": "info",
+    "name": "parent genus missing"
+  },
+  {
+    "description": "The higher taxon does not include any accepted species.",
+    "group": "name usage",
+    "level": "info",
+    "name": "no species included"
+  },
+  {
+    "description": "The rank of the synonym and it's accepted name is different.",
+    "group": "name usage",
+    "level": "info",
+    "name": "synonym rank differs"
+  },
+  {
+    "description": "A synonym has linked information which applies only to taxa, e.g. distributions, media items or species estimates.",
+    "group": "synonym",
+    "level": "warning",
+    "name": "synonym with taxon property"
+  },
+  {
+    "description": "The authorship of the nominotypical subspecies differs from the species author. Only applies to zoology",
+    "group": "name",
+    "level": "warning",
+    "name": "nominotypical authorship differs"
+  },
+  {
+    "description": "The nomenclatural code of the name is differs from the code of it's parent.",
+    "group": "name",
+    "level": "warning",
+    "name": "nomenclatural code differs"
+  },
+  {
+    "description": "The authorship of a scientific name is missing.",
+    "group": "name",
+    "level": "info",
+    "name": "missing authorship"
+  },
+  {
+    "description": "A misspelled accepted names existed which has been converted into a synonym.",
+    "group": "name usage",
+    "level": "info",
+    "name": "misspelling consolidation"
+  },
+  {
+    "description": "A basionym has itself a basionym authorship, i.e. an author in brackets",
+    "group": "name",
+    "level": "warning",
+    "name": "bad basionym authorship"
+  },
+  {
+    "description": "A distribution record contains a gazeteer value which is different from the given identifier for the area.",
+    "group": "distribution",
+    "level": "warning",
+    "name": "distribution gazetteer conflict"
+  },
+  {
+    "description": "Multiple usages matched in the configured target dataset; no identifier added.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "matching ambiguous"
+  },
+  {
+    "description": "No matching usage found in the configured target dataset; no identifier added.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "matching none"
+  },
+  {
+    "description": "Name not supported by the matcher; no identifier added.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "matching unsupported"
+  },
+  {
+    "description": "Only matched to a higher rank in the configured target dataset; identifier added for the higher-ranked match.",
+    "group": "name usage",
+    "level": "info",
+    "name": "matching higherrank"
+  },
+  {
+    "description": "Same distribution record appears several times for the same taxon.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "duplicate distributions"
+  },
+  {
+    "description": "Same media record appears several times for the same taxon.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "duplicate media"
+  },
+  {
+    "description": "Same vernacular name record appears several times for the same taxon.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "duplicate vernacular names"
+  },
+  {
+    "description": "Same species estimate record appears several times for the same taxon.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "duplicate estimates"
+  },
+  {
+    "description": "Same taxon property record appears several times for the same taxon.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "duplicate taxon properties"
   }
 ]
