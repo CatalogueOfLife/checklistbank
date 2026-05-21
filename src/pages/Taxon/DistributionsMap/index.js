@@ -555,18 +555,21 @@ const DistributionsMap = ({
 
   return (
     <div style={{ position: "relative" }}>
-      <Radio.Group
-        size="small"
-        value={basemap}
-        onChange={(e) => setBasemap(e.target.value)}
-        style={{ marginBottom: 6 }}
+      <div
+        style={{ display: "flex", justifyContent: "flex-end", marginBottom: 6 }}
       >
-        {BASEMAPS.map((b) => (
-          <Radio.Button key={b.key} value={b.key}>
-            {b.label}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
+        <Radio.Group
+          size="small"
+          value={basemap}
+          onChange={(e) => setBasemap(e.target.value)}
+        >
+          {BASEMAPS.map((b) => (
+            <Radio.Button key={b.key} value={b.key}>
+              {b.label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      </div>
       <div
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
