@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.control.layers.tree";
 import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import "./treeControl.css";
+import { Radio } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import { fetchDescendants } from "./descendantFetch";
@@ -166,13 +167,10 @@ const taxonLabel = (displayName, color) =>
   `<span style="font-style:italic">${escapeHtml(displayName)}</span>` +
   `</span>`;
 
-const shortenName = (scientificName, focalName) => {
+const epithet = (scientificName) => {
   if (!scientificName) return "";
-  if (!focalName) return scientificName;
-  const prefix = focalName + " ";
-  return scientificName.startsWith(prefix)
-    ? scientificName.slice(prefix.length)
-    : scientificName;
+  const tokens = scientificName.trim().split(/\s+/);
+  return tokens[tokens.length - 1];
 };
 
 const italicLabel = (text) =>
@@ -189,8 +187,9 @@ const DistributionsMap = ({
   const mapRef = useRef(null);
   const layerControlRef = useRef(null);
   const focalGroupRef = useRef(null);
-  const baseLayersRef = useRef({});
+  const tileLayerRef = useRef(null);
 
+  const [basemap, setBasemap] = useState(DEFAULT_BASEMAP);
   const [descendantState, setDescendantState] = useState({
     status: "idle", // idle | loading | ready | empty | error
     taxa: [],
@@ -210,7 +209,6 @@ const DistributionsMap = ({
     if (descendantState.status !== "ready") {
       return { visibleGroups: [], unmappableGroups: [] };
     }
-    const focalName = focalTaxon?.name?.scientificName || "";
     const colors = assignColors(
       descendantState.taxa.filter((t) => t.mappable.length > 0),
       rankOrder
@@ -218,7 +216,7 @@ const DistributionsMap = ({
     const decorate = (t) => ({
       ...t,
       color: colors[t.id],
-      displayName: shortenName(t.scientificName, focalName),
+      displayName: epithet(t.scientificName),
     });
     const groupByRank = (taxa) => {
       const byRank = {};
@@ -240,7 +238,7 @@ const DistributionsMap = ({
       descendantState.taxa.filter((t) => t.mappable.length === 0)
     );
     return { visibleGroups, unmappableGroups };
-  }, [descendantState, visibleTaxonIds, rankOrder, focalTaxon]);
+  }, [descendantState, visibleTaxonIds, rankOrder]);
 
   const showDescendantLegend = descendantLegend.visibleGroups.length > 0;
 
@@ -254,22 +252,8 @@ const DistributionsMap = ({
     }).setView([20, 0], 2);
     mapRef.current = map;
 
-    const baseLayers = {};
-    BASEMAPS.forEach((b) => {
-      const layer = L.tileLayer(b.url, b.options);
-      baseLayers[b.key] = layer;
-      if (b.key === DEFAULT_BASEMAP) layer.addTo(map);
-    });
-    baseLayersRef.current = baseLayers;
-
-    const baseTree = BASEMAPS.map((b) => ({
-      label: b.label,
-      layer: baseLayers[b.key],
-    }));
-    const overlayTree = [];
-
     const control = L.control.layers
-      .tree(baseTree, overlayTree, {
+      .tree(null, [], {
         collapsed: true,
         position: "topright",
         closedSymbol: "+",
@@ -348,9 +332,24 @@ const DistributionsMap = ({
       mapRef.current = null;
       layerControlRef.current = null;
       focalGroupRef.current = null;
-      baseLayersRef.current = {};
+      tileLayerRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const def = BASEMAPS.find((b) => b.key === basemap) || BASEMAPS[0];
+    const newLayer = L.tileLayer(def.url, def.options).addTo(map);
+    if (tileLayerRef.current) {
+      map.removeLayer(tileLayerRef.current);
+    }
+    tileLayerRef.current = newLayer;
+    const max = def.options?.maxZoom;
+    if (typeof max === "number" && map.getZoom() > max) {
+      map.setZoom(max);
+    }
+  }, [basemap]);
 
   // Focal taxon polygons — rebuilt whenever `records` changes.
   useEffect(() => {
@@ -556,6 +555,18 @@ const DistributionsMap = ({
 
   return (
     <div style={{ position: "relative" }}>
+      <Radio.Group
+        size="small"
+        value={basemap}
+        onChange={(e) => setBasemap(e.target.value)}
+        style={{ marginBottom: 6 }}
+      >
+        {BASEMAPS.map((b) => (
+          <Radio.Button key={b.key} value={b.key}>
+            {b.label}
+          </Radio.Button>
+        ))}
+      </Radio.Group>
       <div
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
