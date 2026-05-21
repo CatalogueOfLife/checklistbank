@@ -67,7 +67,9 @@ const IncludedTaxaLegend = ({ visibleTaxa, unmappableTaxa }) => {
         {visibleTaxa.map((t) => (
           <div key={t.id} style={rowStyle}>
             <span style={swatchStyle(t.color)} />
-            <span style={{ fontStyle: "italic" }}>{t.scientificName}</span>
+            <span style={{ fontStyle: "italic" }}>
+              {t.displayName || t.scientificName}
+            </span>
             <span style={rankLabelStyle}>{t.rank}</span>
           </div>
         ))}
@@ -84,7 +86,7 @@ const IncludedTaxaLegend = ({ visibleTaxa, unmappableTaxa }) => {
           {showUnmappable && (
             <div style={footerListStyle}>
               {unmappableTaxa.map((t) => (
-                <div key={t.id}>{t.scientificName}</div>
+                <div key={t.id}>{t.displayName || t.scientificName}</div>
               ))}
             </div>
           )}

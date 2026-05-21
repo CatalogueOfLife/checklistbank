@@ -160,11 +160,23 @@ const RANK_LABEL_PLURAL = {
 const rankLabelPlural = (rank) =>
   RANK_LABEL_PLURAL[rank] || rank.charAt(0).toUpperCase() + rank.slice(1);
 
-const taxonLabel = (taxon, color) =>
+const taxonLabel = (displayName, color) =>
   `<span style="display:inline-flex;align-items:center;gap:6px">` +
   `<span style="display:inline-block;width:10px;height:10px;background:${color};border:1px solid rgba(0,0,0,0.15);border-radius:2px"></span>` +
-  `<span style="font-style:italic">${escapeHtml(taxon.scientificName)}</span>` +
+  `<span style="font-style:italic">${escapeHtml(displayName)}</span>` +
   `</span>`;
+
+const shortenName = (scientificName, focalName) => {
+  if (!scientificName) return "";
+  if (!focalName) return scientificName;
+  const prefix = focalName + " ";
+  return scientificName.startsWith(prefix)
+    ? scientificName.slice(prefix.length)
+    : scientificName;
+};
+
+const italicLabel = (text) =>
+  `<span style="font-style:italic">${escapeHtml(text)}</span>`;
 
 const DistributionsMap = ({
   records,
@@ -198,18 +210,26 @@ const DistributionsMap = ({
     if (descendantState.status !== "ready") {
       return { visible: [], unmappable: [] };
     }
+    const focalName = focalTaxon?.name?.scientificName || "";
     const colors = assignColors(
       descendantState.taxa.filter((t) => t.mappable.length > 0),
       rankOrder
     );
     const visible = descendantState.taxa
       .filter((t) => t.mappable.length > 0 && visibleTaxonIds.has(t.id))
-      .map((t) => ({ ...t, color: colors[t.id] }));
-    const unmappable = descendantState.taxa.filter(
-      (t) => t.mappable.length === 0
-    );
+      .map((t) => ({
+        ...t,
+        color: colors[t.id],
+        displayName: shortenName(t.scientificName, focalName),
+      }));
+    const unmappable = descendantState.taxa
+      .filter((t) => t.mappable.length === 0)
+      .map((t) => ({
+        ...t,
+        displayName: shortenName(t.scientificName, focalName),
+      }));
     return { visible, unmappable };
-  }, [descendantState, visibleTaxonIds, rankOrder]);
+  }, [descendantState, visibleTaxonIds, rankOrder, focalTaxon]);
 
   const showDescendantLegend = descendantLegend.visible.length > 0;
 
@@ -379,9 +399,13 @@ const DistributionsMap = ({
     const focalGroup = focalGroupRef.current;
     if (!map || !control) return;
 
+    const focalName = focalTaxon?.name?.scientificName || "";
     const overlayChildren = [];
     if (focalReady && focalGroup) {
-      overlayChildren.push({ label: "This taxon", layer: focalGroup });
+      overlayChildren.push({
+        label: italicLabel(focalName || "This taxon"),
+        layer: focalGroup,
+      });
     }
 
     if (descendantState.status !== "ready") {
@@ -453,13 +477,17 @@ const DistributionsMap = ({
         const inGroup = grouped[rank];
         if (!inGroup) return;
         const parentTaxon = taxa.find((t) => t.id === taxonId);
-        const subLabel = `${rankLabelPlural(rank)} of ${
-          parentTaxon ? escapeHtml(parentTaxon.scientificName) : ""
-        }`;
+        const parentDisplay = parentTaxon
+          ? shortenName(parentTaxon.scientificName, focalName)
+          : "";
+        const subLabel = `${rankLabelPlural(rank)} of ${escapeHtml(parentDisplay)}`;
         const childLeaves = inGroup
           .filter((k) => groups[k.id])
           .map((k) => ({
-            label: taxonLabel(k, colors[k.id]),
+            label: taxonLabel(
+              shortenName(k.scientificName, focalName),
+              colors[k.id]
+            ),
             layer: groups[k.id],
             children: childrenOfTaxonNode(k.id),
           }));
@@ -482,7 +510,10 @@ const DistributionsMap = ({
       const inRank = (byRank[rank] || []).filter((t) => groups[t.id]);
       if (inRank.length === 0) return;
       const children = inRank.map((t) => ({
-        label: taxonLabel(t, colors[t.id]),
+        label: taxonLabel(
+          shortenName(t.scientificName, focalName),
+          colors[t.id]
+        ),
         layer: groups[t.id],
         children: childrenOfTaxonNode(t.id),
       }));
