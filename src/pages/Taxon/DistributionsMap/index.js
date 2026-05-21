@@ -4,7 +4,6 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.control.layers.tree";
 import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import "./treeControl.css";
-import { Radio } from "antd";
 import axios from "axios";
 import config from "../../../config";
 import { fetchDescendants } from "./descendantFetch";
@@ -71,7 +70,7 @@ const polygonHoverStyle = {
   fillOpacity: 0.95,
 };
 
-const BASEMAPS = [
+export const BASEMAPS = [
   {
     key: "carto",
     label: "Carto",
@@ -112,7 +111,7 @@ const WORLD_BOUNDS = [
   [-90, -180],
   [90, 180],
 ];
-const DEFAULT_BASEMAP = "carto";
+export const DEFAULT_BASEMAP = "carto";
 
 const cache = new Map();
 
@@ -182,6 +181,7 @@ const DistributionsMap = ({
   datasetKey,
   focalTaxon,
   rankOrder,
+  basemap = DEFAULT_BASEMAP,
 }) => {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -189,7 +189,6 @@ const DistributionsMap = ({
   const focalGroupRef = useRef(null);
   const tileLayerRef = useRef(null);
 
-  const [basemap, setBasemap] = useState(DEFAULT_BASEMAP);
   const [descendantState, setDescendantState] = useState({
     status: "idle", // idle | loading | ready | empty | error
     taxa: [],
@@ -555,21 +554,6 @@ const DistributionsMap = ({
 
   return (
     <div style={{ position: "relative" }}>
-      <div
-        style={{ display: "flex", justifyContent: "flex-end", marginBottom: 6 }}
-      >
-        <Radio.Group
-          size="small"
-          value={basemap}
-          onChange={(e) => setBasemap(e.target.value)}
-        >
-          {BASEMAPS.map((b) => (
-            <Radio.Button key={b.key} value={b.key}>
-              {b.label}
-            </Radio.Button>
-          ))}
-        </Radio.Group>
-      </div>
       <div
         ref={containerRef}
         style={{ height: 360, width: "100%", background: "#f5f5f5" }}
