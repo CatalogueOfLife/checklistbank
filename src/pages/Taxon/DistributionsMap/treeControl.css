@@ -1,4 +1,3 @@
-.leaflet-control-layers-tree-row label,
-.leaflet-control-layers-tree-row .leaflet-control-layers-selector + span {
-  padding-left: 6px;
+.leaflet-control-layers input {
+  margin-right: 6px;
 }

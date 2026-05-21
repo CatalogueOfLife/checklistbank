@@ -151,15 +151,14 @@ const popupHtml = (record) => {
 };
 
 const RANK_LABEL_PLURAL = {
-  subspecies: "Subspecies",
-  variety: "Varieties",
-  subvariety: "Subvarieties",
-  form: "Forms",
-  subform: "Subforms",
-  "infraspecific name": "Infraspecific names",
+  subspecies: "subspecies",
+  variety: "varieties",
+  subvariety: "subvarieties",
+  form: "forms",
+  subform: "subforms",
+  "infraspecific name": "infraspecific names",
 };
-const rankLabelPlural = (rank) =>
-  RANK_LABEL_PLURAL[rank] || rank.charAt(0).toUpperCase() + rank.slice(1);
+const rankLabelPlural = (rank) => RANK_LABEL_PLURAL[rank] || rank;
 
 const taxonLabel = (displayName, color) =>
   `<span style="display:inline-flex;align-items:center;gap:6px">` +
