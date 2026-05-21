@@ -490,7 +490,7 @@ const DistributionsMap = ({
         if (!inGroup) return;
         const parentTaxon = taxa.find((t) => t.id === taxonId);
         const parentDisplay = parentTaxon
-          ? shortenName(parentTaxon.scientificName, focalName)
+          ? epithet(parentTaxon.scientificName)
           : "";
         const subLabel = `${rankLabelPlural(rank)} of ${escapeHtml(parentDisplay)}`;
         const childLeaves = inGroup
@@ -498,10 +498,7 @@ const DistributionsMap = ({
           .map((k) => {
             const nested = childrenOfTaxonNode(k.id);
             const node = {
-              label: taxonLabel(
-                shortenName(k.scientificName, focalName),
-                colors[k.id]
-              ),
+              label: taxonLabel(epithet(k.scientificName), colors[k.id]),
               layer: groups[k.id],
             };
             if (nested.length > 0) node.children = nested;
@@ -528,10 +525,7 @@ const DistributionsMap = ({
       const children = inRank.map((t) => {
         const nested = childrenOfTaxonNode(t.id);
         const node = {
-          label: taxonLabel(
-            shortenName(t.scientificName, focalName),
-            colors[t.id]
-          ),
+          label: taxonLabel(epithet(t.scientificName), colors[t.id]),
           layer: groups[t.id],
         };
         if (nested.length > 0) node.children = nested;
