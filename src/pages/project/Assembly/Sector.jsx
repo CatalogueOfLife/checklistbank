@@ -264,7 +264,7 @@ const Sector = ({
                     okText="Full"
                     cancelText="Partial"
                   >
-                    <Button style={{ width: "100%" }} danger>
+                    <Button style={{ width: "100%" }} type="primary" danger>
                       Delete sector
                     </Button>
                   </Popconfirm>
@@ -468,7 +468,7 @@ const Sector = ({
                     okText="Full"
                     cancelText="Partial"
                   >
-                    <Button style={{ width: "100%" }} danger>
+                    <Button style={{ width: "100%" }} type="primary" danger>
                       Delete sector
                     </Button>
                   </Popconfirm>

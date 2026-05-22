@@ -99,7 +99,8 @@ const ImportButton = ({ record, style, importState, reImport, onStartImportSucce
       <Button
         name="import-button"
         style={style}
-        type={isStopButton ? "danger" : "primary"}
+        type="primary"
+        danger={isStopButton}
         loading={importTriggered}
         onClick={isStopButton ? stopImport : reImport ? reImportFn : startImport}
       >

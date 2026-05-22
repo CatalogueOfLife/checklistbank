@@ -580,7 +580,7 @@ const ProjectDecisions = ({
       </Form>
       <Row>
         <Col span={12} style={{ textAlign: "left", marginBottom: "8px" }}>
-          <Button danger onClick={resetAllFilters}>
+          <Button type="primary" danger onClick={resetAllFilters}>
             Reset all
           </Button>
         </Col>

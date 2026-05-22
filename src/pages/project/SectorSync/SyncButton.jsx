@@ -69,7 +69,8 @@ const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, sty
     <div style={style || {}}>
       <Button
         size={size || 'default'}
-        type={isStopButton ? 'danger' : 'primary'}
+        type="primary"
+        danger={isStopButton}
         loading={importTriggered}
         onClick={isStopButton ? stopSync : startSync}
       >

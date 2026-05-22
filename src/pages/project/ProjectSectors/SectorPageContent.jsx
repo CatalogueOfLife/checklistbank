@@ -519,7 +519,7 @@ const ProjectSectors = ({
 
       <Row style={{ marginTop: "10px" }}>
         <Col span={3} style={{ textAlign: "left", marginBottom: "8px" }}>
-          <Button danger onClick={resetAllFilters}>
+          <Button type="primary" danger onClick={resetAllFilters}>
             Reset all
           </Button>
         </Col>

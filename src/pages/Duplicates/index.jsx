@@ -951,7 +951,7 @@ const DuplicateSearchPage = (props) => {
               </FormItem>
 
               <FormItem>
-                <Button danger onClick={resetSearch}>
+                <Button type="primary" danger onClick={resetSearch}>
                   Reset all
                 </Button>
               </FormItem>

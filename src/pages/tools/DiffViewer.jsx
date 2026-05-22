@@ -275,7 +275,10 @@ const DiffViewer = ({ location, addError, rank }) => {
 
           <Button
             style={{ marginRight: "10px" }}
-            danger onClick={resetAll}>
+            danger
+            type="primary"
+            onClick={resetAll}
+          >
             Reset
           </Button>
           <Popconfirm
