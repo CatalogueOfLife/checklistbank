@@ -14,10 +14,12 @@ Dev UI: <https://www.dev.checklistbank.org/>
 - [React 19](https://react.dev/) with hooks throughout (no class components remain)
 - [Ant Design 6](https://ant.design/) for UI primitives
 - [React Router 6](https://reactrouter.com/)
-- [Vite 7](https://vite.dev/) as the build tool (migrated from Create React App)
+- [Vite 8](https://vite.dev/) (Rolldown bundler) as the build tool, with `@vitejs/plugin-react` v6
 - [dayjs](https://day.js.org/) for date handling
 - [axios](https://axios-http.com/) for HTTP
 - [Highcharts](https://www.highcharts.com/) for import-metrics visualisations
+- [MapLibre GL](https://maplibre.org/) for taxon distribution maps
+- [Vitest](https://vitest.dev/) for tests (jsdom environment)
 - CSS Modules for component-level styling (no runtime CSS-in-JS beyond antd's own)
 
 ## Prerequisites
@@ -45,7 +47,6 @@ The page hot-reloads on file change.
 | ------------------------------ | ------------------------ |
 | `http://localhost:3000`        | **production** (`api.checklistbank.org`) |
 | `http://127.0.0.1:3000`        | **dev** (`api.dev.checklistbank.org`)    |
-| `data.catalogueoflife.org`     | production               |
 | `www.checklistbank.org`        | production               |
 | anything else                  | dev                      |
 
@@ -56,13 +57,13 @@ The `localhost` → production mapping is intentional so the local UI can talk t
 Builds the app for production into `./dist`. The build script also:
 
 1. writes the current git SHA into `public/gitVersion.json` (`gitTag.cjs`),
-2. refreshes the enumerations from the prod API (`writeEnums.cjs`),
-3. runs `vite build`,
+2. refreshes the enumerations under `src/enumeration/` from the API selected by `NODE_ENV` — dev or prod (`writeEnums.cjs`),
+3. runs `NODE_ENV=production vite build` (the explicit `NODE_ENV=production` prefix shields the bundle from the dev API selection in step 2 — without it React would bundle its development variant),
 4. produces gzip and brotli precompressed copies of the static assets.
 
 ### `npm test`
 
-Runs the test suite (Vitest). Test coverage is minimal — currently only a smoke test that imports `App.js`.
+Runs the test suite (Vitest) once. Test coverage is minimal — currently a smoke test that imports `App.jsx` plus a couple of unit tests under `src/pages/Taxon/DistributionsMap/`.
 
 ### `npm run preview`
 
@@ -93,7 +94,7 @@ src/
 │   ├── WorkBench/        editorial workbench
 │   ├── Admin/            admin-only pages
 │   └── project/          project-level pages (assembly, decisions, sectors, …)
-├── App.js                top-level routes + providers
+├── App.jsx               top-level routes + providers
 ├── main.jsx              entry point
 └── config.js             environment selection
 ```
