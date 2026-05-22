@@ -29,11 +29,15 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   const [invalid, setInvalid] = useState(false);
   const [taxonID, setTaxonID] = useState(null);
   useEffect(() => {
-    if (taxon?.id !== taxonID) {
+    // dataset arrives via context and may be null on first render; without it
+    // initChart throws on dataset.doi and the error is swallowed by the catch,
+    // leaving the chart stuck on the loading spinner. Wait for it.
+    if (!dataset || !taxon) return;
+    if (taxon.id !== taxonID) {
       getData();
-      setTaxonID(taxon?.id);
+      setTaxonID(taxon.id);
     }
-  }, [taxon, datasetKey]);
+  }, [taxon, datasetKey, dataset]);
 
   const getOverView = async () => {
     const res = await axios(
