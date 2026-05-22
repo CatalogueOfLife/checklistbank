@@ -35,7 +35,12 @@ import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import csv from "csvtojson/v2";
-import PQueue from "p-queue";
+// p-queue 6.x is a CJS module that sets __esModule: true and assigns
+// module.exports.default. Vite 7 / esbuild auto-unwrapped that; Vite 8 /
+// Rolldown returns the wrapper object, so `new PQueue(...)` throws
+// "PQueue is not a constructor". Pick the constructor out manually.
+import PQueueModule from "p-queue";
+const PQueue = PQueueModule?.default ?? PQueueModule;
 const { Panel } = Collapse;
 const { TextArea } = Input;
 const { Paragraph } = Typography;

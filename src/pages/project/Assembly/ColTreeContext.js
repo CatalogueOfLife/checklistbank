@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import _ from "lodash";
 import config from "../../../config";
 
 export const applyDecision = (taxon, projectKey, cb, notification) => {

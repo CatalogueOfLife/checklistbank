@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import { Row } from "antd";
 
