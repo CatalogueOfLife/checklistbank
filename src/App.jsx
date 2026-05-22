@@ -81,8 +81,8 @@ import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 
 // antd 5+ defaults to a different blue than v4. Pin colorPrimary so the brand
-// blue (deepskyblue) survives the antd version bump.
-const antdTheme = { token: { colorPrimary: "deepskyblue" } };
+// blue (deepskyblue) survives the antd version bump. 
+const antdTheme = { token: { colorPrimary: "#1890ff", borderRadius: 2 } };
 
 // Wires `useNavigate` into the legacy `history.push()` shim once on mount.
 const NavigatorInstaller = () => {
