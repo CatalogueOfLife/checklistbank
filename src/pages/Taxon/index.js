@@ -754,6 +754,8 @@ const TaxonPage = ({
                         data={info.distributions}
                         datasetKey={datasetKey}
                         projectKey={projectKey}
+                        focalTaxon={taxon}
+                        rankOrder={rank}
                       />
                     </PresentationItem>
                   )}

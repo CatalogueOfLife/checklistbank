@@ -189,7 +189,7 @@ const ColTree = (props) => {
       const res = await axios(
         `${config.dataApi}dataset/${dataset.key}/tree/${
           encodeURIComponent(dataRef.taxon.id) //taxonKey
-        }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&catalogueKey=${projectKey}${appendTypeParam(
+        }/children?limit=${limit}&offset=${offset}&insertPlaceholder=${insertPlaceholder}&projectKey=${projectKey}${appendTypeParam(
           treeType
         )}`
       );
@@ -481,7 +481,7 @@ const ColTree = (props) => {
     return axios(
       `${
         config.dataApi
-      }dataset/${id}/tree?catalogueKey=${projectKey}${appendTypeParam(
+      }dataset/${id}/tree?projectKey=${projectKey}${appendTypeParam(
         treeType
       )}&limit=${CHILD_PAGE_SIZE}&offset=0&insertPlaceholder=${insertPlaceholder}`
     )
@@ -560,7 +560,7 @@ const ColTree = (props) => {
       const { data } = await axios(
         `${config.dataApi}dataset/${id}/tree/${encodeURIComponent(
           expandKey
-        )}?catalogueKey=${projectKey}&insertPlaceholder=${insertPlaceholder}${appendTypeParam(
+        )}?projectKey=${projectKey}&insertPlaceholder=${insertPlaceholder}${appendTypeParam(
           treeType
         )}`
       )

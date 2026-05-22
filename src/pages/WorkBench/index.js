@@ -324,7 +324,7 @@ const WorkBench = ({
 
           filter: {
             USAGE_ID: currentParams.USAGE_ID,
-            catalogueKey: [projectKey],
+            projectKey: [projectKey],
             unsafe: [true],
           },
           page: {
@@ -337,7 +337,7 @@ const WorkBench = ({
             config.dataApi
           }dataset/${datasetKey}/nameusage/search?${qs.stringify({
             ...newParamsWithPaging,
-            catalogueKey: projectKey,
+            projectKey,
           })}`
         );
 

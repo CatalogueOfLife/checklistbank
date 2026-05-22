@@ -48,7 +48,7 @@ export const getDuplicateOverview = ({
   return Promise.all(
     groups.map((g) => {
       let params = projectKey
-        ? { ...g.params, catalogueKey: projectKey }
+        ? { ...g.params, projectKey }
         : { ...g.params };
       if (sourceDatasetKey) {
         params.sourceDatasetKey = sourceDatasetKey;

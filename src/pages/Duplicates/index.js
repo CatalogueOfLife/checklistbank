@@ -600,7 +600,7 @@ const DuplicateSearchPage = (props) => {
     axios(
       `${config.dataApi}dataset/${datasetKey}/duplicate?${qs.stringify({
         ...params,
-        catalogueKey: projectKey,
+        projectKey,
         limit: Number(params.limit) + 1,
       })}`
     );
@@ -1052,7 +1052,7 @@ const DuplicateSearchPage = (props) => {
               config.dataApi
             }dataset/${datasetKey}/duplicate.csv?${qs.stringify({
               ...downloadParams,
-              catalogueKey: projectKey,
+              projectKey,
             })}`}
           >
             <DownloadOutlined /> CSV
@@ -1064,7 +1064,7 @@ const DuplicateSearchPage = (props) => {
               config.dataApi
             }dataset/${datasetKey}/duplicate.tsv?${qs.stringify({
               ...downloadParams,
-              catalogueKey: projectKey,
+              projectKey,
             })}`}
           >
             <DownloadOutlined /> TSV

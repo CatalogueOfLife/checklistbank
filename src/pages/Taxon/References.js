@@ -17,8 +17,8 @@ const ReferencesTable = ({
   return (
     <div style={style}>
       {_.values(data).map((s) => (
-        <>
-          <Row key={s.id}>
+        <React.Fragment key={s.id}>
+          <Row>
             <Col style={{ paddingRight: "5px" }}>
               <NavLink
                 to={{
@@ -78,7 +78,7 @@ const ReferencesTable = ({
               </Col>
             </Row>
           )} */}
-        </>
+        </React.Fragment>
       ))}
     </div>
   );

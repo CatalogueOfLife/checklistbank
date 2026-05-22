@@ -80,6 +80,11 @@ const TableView = ({ datasetKey, data }) => {
         ),
     },
     {
+      title: "ID",
+      key: "globalId",
+      render: (_text, record) => record?.area?.globalId,
+    },
+    {
       title: "Ref",
       dataIndex: "referenceId",
       key: "referenceId",
@@ -155,13 +160,16 @@ const TableView = ({ datasetKey, data }) => {
   );
 };
 
-const DistributionsTable = ({ datasetKey, data, style }) => {
+const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) => {
   const mappable = data.filter(isMappable);
   const baseUnmappable = data.length - mappable.length;
   const [view, setView] = useState("map");
   const [fetchFailures, setFetchFailures] = useState(0);
 
-  if (mappable.length === 0) {
+  const allMappableFailed =
+    mappable.length > 0 && fetchFailures >= mappable.length;
+
+  if (mappable.length === 0 || allMappableFailed) {
     return (
       <div style={style}>
         <TableView datasetKey={datasetKey} data={data} />
@@ -173,20 +181,32 @@ const DistributionsTable = ({ datasetKey, data, style }) => {
 
   return (
     <div style={style}>
-      <Radio.Group
-        size="small"
-        value={view}
-        onChange={(e) => setView(e.target.value)}
-        style={{ marginBottom: 8 }}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 8,
+          gap: 8,
+        }}
       >
-        <Radio.Button value="map">Map</Radio.Button>
-        <Radio.Button value="table">Table</Radio.Button>
-      </Radio.Group>
+        <Radio.Group
+          size="small"
+          value={view}
+          onChange={(e) => setView(e.target.value)}
+        >
+          <Radio.Button value="map">Map</Radio.Button>
+          <Radio.Button value="table">Table</Radio.Button>
+        </Radio.Group>
+      </div>
       {view === "map" ? (
         <>
           <DistributionsMap
             records={mappable}
             onUnmappable={setFetchFailures}
+            datasetKey={datasetKey}
+            focalTaxon={focalTaxon}
+            rankOrder={rankOrder}
           />
           {unmappable > 0 && (
             <div style={{ marginTop: 6 }}>

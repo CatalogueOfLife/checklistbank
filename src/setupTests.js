@@ -33,3 +33,14 @@ if (typeof globalThis.localStorage === "undefined" || globalThis.localStorage ==
 if (typeof globalThis.sessionStorage === "undefined" || globalThis.sessionStorage === null) {
   Object.defineProperty(globalThis, "sessionStorage", { value: new MemoryStorage() });
 }
+
+// maplibre-gl initialises a worker via URL.createObjectURL at import time;
+// jsdom doesn't implement it. Stub the few URL methods maplibre touches.
+if (typeof window !== "undefined" && window.URL) {
+  if (typeof window.URL.createObjectURL !== "function") {
+    window.URL.createObjectURL = () => "";
+  }
+  if (typeof window.URL.revokeObjectURL !== "function") {
+    window.URL.revokeObjectURL = () => {};
+  }
+}

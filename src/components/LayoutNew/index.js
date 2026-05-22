@@ -74,7 +74,6 @@ const SiteLayout = ({
   }, []);
 
   const toggle = () => {
-    console.log(collapsedState);
     const collapsed =
       typeof collapsedState === "boolean" ? collapsedState : width < LARGE;
     setCollapsedState(!collapsed);
@@ -99,12 +98,6 @@ const SiteLayout = ({
           collapsible
           collapsedWidth={menuCollapsedWidth}
           breakpoint="lg"
-          onBreakpoint={(broken) => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
           collapsed={collapsed}
         >
           <BasicMenu
