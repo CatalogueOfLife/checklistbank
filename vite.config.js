@@ -3,6 +3,13 @@ import react from "@vitejs/plugin-react";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
+  // writeEnums.cjs needs NODE_ENV=dev|prod at build time to pick which API
+  // to fetch enumerations from, but that same env var bleeds into the
+  // bundled code — React and others branch on process.env.NODE_ENV and
+  // include their development variants (warnings, devtools hooks) when
+  // it's not "production". Pin the bundled value here so the deploy
+  // script's NODE_ENV stays free to mean "which API for enums".
+  define: { "process.env.NODE_ENV": '"production"' },
   plugins: [
     react(),
     // csvtojson (NameMatch.jsx) and diff2html pull in Node builtins. We

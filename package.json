@@ -53,7 +53,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "node gitTag.cjs && node writeEnums.cjs && vite build && gzipper compress --include js,css,html,txt,json ./dist && gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json ./dist",
+    "build": "node gitTag.cjs && node writeEnums.cjs && NODE_ENV=production vite build && gzipper compress --include js,css,html,txt,json ./dist && gzipper compress --brotli --output-file-format [filename].[ext].brotli --include js,css,html,txt,json ./dist",
     "preview": "vite preview",
     "test": "vitest"
   },
