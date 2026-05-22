@@ -23,6 +23,30 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Split heavy vendor libs into their own chunks so the browser can
+        // cache them across deploys and load them in parallel with the app
+        // shell. Without this split, a single index-*.js was 4.5 MB / 1.3 MB
+        // gzipped. Rolldown (Vite 8's bundler) requires the function form;
+        // the classic Rollup object form throws "manualChunks is not a
+        // function".
+        manualChunks: (id) => {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("/highcharts/") || id.includes("/highcharts-react-official/")) return "highcharts";
+          if (id.includes("/maplibre-gl/")) return "maplibre";
+          if (id.includes("/antd/") || id.includes("/@ant-design/icons/") || id.includes("/rc-")) return "antd";
+          if (
+            id.includes("/react/") ||
+            id.includes("/react-dom/") ||
+            id.includes("/react-router/") ||
+            id.includes("/react-router-dom/") ||
+            id.includes("/react-helmet-async/") ||
+            id.includes("/scheduler/")
+          ) return "react";
+        },
+      },
+    },
   },
   test: {
     environment: "jsdom",
