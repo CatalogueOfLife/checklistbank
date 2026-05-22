@@ -43,7 +43,6 @@ const { Paragraph } = Typography;
 const MAX_LIST_SIZE = 6000;
 
 const { Dragger } = Upload;
-const Step = Steps.Step;
 const classificationRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
 const API_HINT_PARAMS = [
   "kingdom", "phylum", "subphylum", "class", "subclass",
@@ -686,16 +685,17 @@ const NameMatch = ({ addError, issueMap, user }) => {
             onChange={(current) => {
               if (!asyncMode || current <= 1) setStep(current);
             }}
-          >
-            <Step title={"Input data"} />
-            <Step title={"Target data"} />
-            <Step
-              title={"Matching"}
-              icon={step === 2 ? <LoadingOutlined /> : null}
-              disabled={asyncMode || step !== 2}
-            />
-            <Step title={"Review result"} disabled={asyncMode} />
-          </Steps>
+            items={[
+              { title: "Input data" },
+              { title: "Target data" },
+              {
+                title: "Matching",
+                icon: step === 2 ? <LoadingOutlined /> : undefined,
+                disabled: asyncMode || step !== 2,
+              },
+              { title: "Review result", disabled: asyncMode },
+            ]}
+          />
 
           {/* STEP 0: Input panels */}
           {step === 0 && (

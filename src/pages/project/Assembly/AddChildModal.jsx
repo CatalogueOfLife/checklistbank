@@ -18,7 +18,6 @@ import axios from "axios";
 import config from "../../../config";
 
 const FormItem = Form.Item;
-const Step = Steps.Step;
 
 const removeEmptyValues = (myObj) => {
   Object.keys(myObj).forEach((key) => {
@@ -267,11 +266,11 @@ const AddChildModal = (props) => {
             ]
       }
     >
-      <Steps current={current} style={{ marginBottom: "10px" }}>
-        {steps.map((item) => (
-          <Step key={item.title} title={item.title} />
-        ))}
-      </Steps>
+      <Steps
+        current={current}
+        style={{ marginBottom: "10px" }}
+        items={steps.map((item) => ({ title: item.title }))}
+      />
       {current === 0 && (
         <Input
           value={suggestedNameValue}

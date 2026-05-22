@@ -28,7 +28,6 @@ import config from "../../config";
 
 const { Title } = Typography;
 const { TextArea } = Input;
-const Step = Steps.Step;
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -264,11 +263,12 @@ const MetaDataValidator = ({ location }) => {
           current={step}
           style={{ marginBottom: "24px" }}
           onChange={setStep}
-        >
-          <Step title={"Upload or enter Metadata"} />
-          <Step title={"Edit Metadata"} />
-          <Step title={"Review validation result"} />
-        </Steps>
+          items={[
+            { title: "Upload or enter Metadata" },
+            { title: "Edit Metadata" },
+            { title: "Review validation result" },
+          ]}
+        />
         {submissionError && (
           <Alert
             type="error"

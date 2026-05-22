@@ -5,7 +5,6 @@ import {
   Modal,
   Select,
   Alert,
-  Steps,
   Button,
   App,
   Form,
@@ -17,7 +16,6 @@ import axios from "axios";
 import config from "../../../config";
 
 const FormItem = Form.Item;
-const Step = Steps.Step;
 
 const removeEmptyValues = (myObj) => {
   Object.keys(myObj).forEach((key) => {
