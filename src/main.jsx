@@ -16,6 +16,20 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 
+// Plausible analytics is only enabled on the public production hosts.
+// Lives here rather than as an inline <script> in index.html so the
+// dev site's CSP (which blocks unsafe-inline) doesn't refuse it.
+if (
+  window.location.hostname === "www.checklistbank.org" ||
+  window.location.hostname === "data.catalogueoflife.org"
+) {
+  const s = document.createElement("script");
+  s.defer = true;
+  s.setAttribute("data-domain", "checklistbank.org");
+  s.src = "https://plausible.io/js/script.js";
+  document.head.appendChild(s);
+}
+
 const root = createRoot(document.getElementById("root"));
 root.render(
   <HelmetProvider>
