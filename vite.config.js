@@ -2,20 +2,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
-// Most source files use the `.js` extension but contain JSX. Tell esbuild
-// (Vite 7's transform) to treat all `.js` under src/ as JSX, and tell
-// dep pre-bundling the same so React 16 packages also parse.
-const JSX_IN_JS = {
-  loader: "jsx",
-  include: /src\/.*\.[jt]sx?$/,
-  exclude: [],
-};
-
 export default defineConfig({
   plugins: [
-    // Plugin-react v4 already includes `.js, .jsx, .ts, .tsx` by default.
     react(),
-    // csvtojson (NameMatch.js) and diff2html pull in Node builtins. We
+    // csvtojson (NameMatch.jsx) and diff2html pull in Node builtins. We
     // polyfill only what they actually need — keeping the bundle lean.
     // `util` is needed because a transitive dep calls util.debuglog /
     // util.inspect; without the polyfill Vite externalises it and the
@@ -33,12 +23,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-  },
-  esbuild: JSX_IN_JS,
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: { ".js": "jsx" },
-    },
   },
   test: {
     environment: "jsdom",
