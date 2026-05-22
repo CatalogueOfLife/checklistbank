@@ -337,6 +337,7 @@ const ColTreeNode = (props) => {
                               <br />
                               <Button
                                 style={{ marginTop: "8px", width: "100%" }}
+                                type="primary"
                                 danger
                                 onClick={() => {
                                   setEditTaxonModalVisible(true);
@@ -347,6 +348,7 @@ const ColTreeNode = (props) => {
                               </Button>
                               <br />
                               <Button
+                                type="primary"
                                 danger
                                 style={{ marginTop: "8px", width: "100%" }}
                                 onClick={() => deleteTaxon(taxon)}
@@ -355,6 +357,7 @@ const ColTreeNode = (props) => {
                               </Button>
                               <br />
                               <Button
+                                type="primary"
                                 danger
                                 style={{ marginTop: "8px", width: "100%" }}
                                 onClick={() => deleteTaxonRecursive(taxon)}
@@ -388,6 +391,7 @@ const ColTreeNode = (props) => {
                         {taxonIsInSelectedNodes && (
                           <>
                             <Button
+                              type="primary"
                               danger
                               style={{ marginTop: "8px", width: "100%" }}
                               onClick={() =>
@@ -402,6 +406,7 @@ const ColTreeNode = (props) => {
                             </Button>
                             <br />
                             <Button
+                              type="primary"
                               danger
                               style={{ marginTop: "8px", width: "100%" }}
                               onClick={() =>

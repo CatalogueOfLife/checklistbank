@@ -44,7 +44,8 @@ const DeleteDatasetButton = ({ record, style }) => {
       >
         <Button
           style={style}
-          type={"danger"}
+          type="primary"
+          danger
           loading={deletionTriggered}
           disabled={deletionTriggered}
         >

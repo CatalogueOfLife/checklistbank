@@ -429,6 +429,7 @@ const ProjectDecisions = ({
             <Button
               size="small"
               style={{ display: "inline" }}
+              type="primary"
               danger
               onClick={() => {
                 return axios

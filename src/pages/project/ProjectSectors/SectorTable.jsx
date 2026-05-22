@@ -299,6 +299,7 @@ const SectorTable = ({
               <Button
                 size="small"
                 style={{ display: "inline" }}
+                type="primary"
                 danger
               >
                 <DeleteOutlined />

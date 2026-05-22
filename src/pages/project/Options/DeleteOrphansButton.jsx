@@ -9,6 +9,7 @@ const DeleteOrphansButton = ({ type, datasetKey, style }) => {
   return (
     <Button
       style={style}
+      type="primary"
       danger
       onClick={() => {
         axios

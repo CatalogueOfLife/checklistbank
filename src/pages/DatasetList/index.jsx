@@ -684,6 +684,7 @@ const DatasetList = ({
             {!noParams && (
               <Col>
                 <Button
+                  type="primary"
                   danger
                   style={{
                     marginTop: "10px",

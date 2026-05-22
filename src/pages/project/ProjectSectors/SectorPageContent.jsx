@@ -575,6 +575,7 @@ const ProjectSectors = ({
                 cancelText="No"
               >
                 <Button
+                  type="primary"
                   danger
                   loading={deleteSectorsLoading}
                   style={{ marginBottom: "10px" }}

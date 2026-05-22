@@ -505,6 +505,7 @@ const Sector = ({
                 <CanEditDataset dataset={{ key: projectKey }}>
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
+                    type="primary"
                     danger
                     onClick={() => {
                       applyDecision(taxon, projectKey, decisionCallback);

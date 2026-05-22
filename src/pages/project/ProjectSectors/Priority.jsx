@@ -96,6 +96,7 @@ const SectorPriority = ({ projectKey, location, addError, user }) => {
           <Button
             size="small"
             style={{ display: "inline" }}
+            type="primary"
             danger
             onClick={() => onDeleteSector(record)}
           >

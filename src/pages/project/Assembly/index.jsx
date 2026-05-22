@@ -517,6 +517,7 @@ const Assembly = ({
                                       marginTop: "8px",
                                       width: "100%",
                                     }}
+                                    type="primary"
                                     danger
                                     onClick={() => {
                                       Promise.allSettled(
@@ -547,6 +548,7 @@ const Assembly = ({
                                       marginTop: "8px",
                                       width: "100%",
                                     }}
+                                    type="primary"
                                     danger
                                     onClick={() => {
                                       const taxaWithdecisions =

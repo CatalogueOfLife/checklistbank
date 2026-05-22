@@ -951,6 +951,7 @@ const WorkBench = ({
         <Col span={14}>
           {" "}
           <Button
+            type="primary"
             danger
             onClick={resetSearch}
             style={{ width: "120px" }}

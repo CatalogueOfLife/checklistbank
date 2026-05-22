@@ -143,6 +143,7 @@ const Publishers = ({ user, projectKey, location, addError, catalogue }) => {
                 <Button
                   size="small"
                   style={{ display: "inline" }}
+                  type="primary"
                   danger
                 >
                   <DeleteOutlined />
