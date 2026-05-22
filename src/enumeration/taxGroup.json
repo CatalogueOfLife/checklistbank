@@ -96,8 +96,8 @@
   },
   {
     "codes": [
-      "zoological",
-      "botanical"
+      "botanical",
+      "zoological"
     ],
     "description": "Sensu lato including names traditionally treated as eukaryotic algae. Includes diatoms, red algae and any protist algae, but excluding prokaryotic cyanobacteria",
     "icon": "https://images.phylopic.org/images/65414989-e801-4d0e-acc1-4309cd35ab7e/thumbnail/64x64.png",
@@ -218,8 +218,8 @@
   },
   {
     "codes": [
-      "zoological",
-      "botanical"
+      "botanical",
+      "zoological"
     ],
     "description": "traditionally follows fungal nomenclature therefore placed here. Includes Oomycetes and Hyphochytriomycetes. Phylogenetically related to Algae and protists",
     "icon": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/thumbnail/64x64.png",
