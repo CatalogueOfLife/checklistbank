@@ -4,10 +4,7 @@ import BorderedListItem from "./BorderedListItem";
 import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import ShowMoreToggle from "./ShowMoreToggle";
-import DistributionsMap, {
-  BASEMAPS,
-  DEFAULT_BASEMAP,
-} from "./DistributionsMap";
+import DistributionsMap from "./DistributionsMap";
 
 const TOP_N = 10;
 
@@ -167,7 +164,6 @@ const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) 
   const mappable = data.filter(isMappable);
   const baseUnmappable = data.length - mappable.length;
   const [view, setView] = useState("map");
-  const [basemap, setBasemap] = useState(DEFAULT_BASEMAP);
   const [fetchFailures, setFetchFailures] = useState(0);
 
   const allMappableFailed =
@@ -202,19 +198,6 @@ const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) 
           <Radio.Button value="map">Map</Radio.Button>
           <Radio.Button value="table">Table</Radio.Button>
         </Radio.Group>
-        {view === "map" && (
-          <Radio.Group
-            size="small"
-            value={basemap}
-            onChange={(e) => setBasemap(e.target.value)}
-          >
-            {BASEMAPS.map((b) => (
-              <Radio.Button key={b.key} value={b.key}>
-                {b.label}
-              </Radio.Button>
-            ))}
-          </Radio.Group>
-        )}
       </div>
       {view === "map" ? (
         <>
@@ -224,7 +207,6 @@ const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) 
             datasetKey={datasetKey}
             focalTaxon={focalTaxon}
             rankOrder={rankOrder}
-            basemap={basemap}
           />
           {unmappable > 0 && (
             <div style={{ marginTop: 6 }}>
