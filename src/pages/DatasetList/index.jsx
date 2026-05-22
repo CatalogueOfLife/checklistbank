@@ -382,7 +382,7 @@ const DatasetList = ({
       title: "Origin",
       dataIndex: "origin",
       key: "origin",
-      width: 90,
+      width: 110,
       sorter: true,
     },
     {
@@ -419,7 +419,7 @@ const DatasetList = ({
       title: "License",
       dataIndex: "license",
       key: "license",
-      width: 80,
+      width: 110,
       sorter: true,
     },
     {
