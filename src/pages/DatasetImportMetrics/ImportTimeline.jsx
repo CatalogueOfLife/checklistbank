@@ -5,7 +5,7 @@ import config from "../../config";
 import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
 import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
+import HighchartsReact from "../../components/HighchartsReact";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import history from "../../history";

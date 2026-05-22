@@ -3,7 +3,7 @@ import config from "../../config";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HC_exporting from "highcharts/modules/exporting";
-import HighchartsReact from "highcharts-react-official";
+import HighchartsReact from "../../components/HighchartsReact";
 import _ from "lodash";
 import history from "../../history";
 import { Spin, Row, Col } from "antd";

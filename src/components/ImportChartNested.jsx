@@ -1,6 +1,6 @@
 import withRouter from "../withRouter";
 import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
+import HighchartsReact from "./HighchartsReact";
 import { useState, useEffect } from "react";
 import history from "../history";
 import qs from "query-string";
