@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import config from "../../config";
 import axios from "axios";
 import Highcharts from "highcharts";
-import HC_exporting from "highcharts/modules/exporting";
-import HighchartsReact from "../../components/HighchartsReact";
+import "highcharts/modules/exporting";
+import { Chart } from "@highcharts/react";
 import _ from "lodash";
 import history from "../../history";
 import { Spin, Row, Col } from "antd";
 import withContext from "../../components/hoc/withContext";
-
-HC_exporting(Highcharts);
 
 const MAX_GRAND_CHILDREN = 1000;
 const canonicalRanks = [
@@ -352,7 +350,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       <Col flex="auto"></Col>
     </Row>
   ) : (
-    <HighchartsReact highcharts={Highcharts} options={options} />
+    <Chart options={options} />
   );
 };
 

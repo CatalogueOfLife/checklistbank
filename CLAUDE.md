@@ -94,7 +94,6 @@ Major route groups:
   - `components/hoc/` - Higher-order components and context providers
   - `components/Auth/` - Authentication components (PrivateRoute, AdminRoute)
   - `components/tree/` - Tree wrapper around antd's `<Tree>` exposing a stable API for the assembly views
-  - `components/HighchartsReact.js` - Default-import unwrap shim for `highcharts-react-official` (Vite 8 / Rolldown does not auto-unwrap the lib's CJS `__esModule + default` shape; see comments inside)
 - **api/** - API client modules (dataset.js, enumeration.js, user.js, etc.)
 
 Files containing JSX use the `.jsx` extension; pure-JS modules (API clients, helpers, configs, tests) keep `.js`. The split exists because Vite 8 / oxc parses by file extension and won't accept JSX in `.js` files. The repo has a single `git mv` rename history for this — `git log --follow` traces through it.
@@ -128,7 +127,7 @@ The app is built with **Vite 8 / Rolldown** and `@vitejs/plugin-react` v6. Confi
 - **Vitest** - Test runner (replaces Jest + react-scripts)
 - **dayjs** with `relativeTime`, `utc`, `localizedFormat` plugins (extended in `src/main.jsx`)
 - **MapLibre GL** - Distribution maps (replaces Leaflet)
-- **Highcharts 9** - Import-metrics and taxon-breakdown charts
+- **Highcharts 12** + `@highcharts/react` v5 - Import-metrics, import-timeline, and taxon-breakdown charts. The React wrapper is the modern scoped package (the legacy `highcharts-react-official` was retired upstream). Use `import { Chart } from "@highcharts/react"` and pass options via the `options` prop — no `highcharts={Highcharts}` prop is needed. For the exporting module, import the UMD module by path: `import "highcharts/modules/exporting"` (the side-effect registers it on the global Highcharts). The ESM masters path (`highcharts/es-modules/...`) does not share state with the UMD `import Highcharts from "highcharts"` entry, which is what Vite resolves.
 - **marked** - Markdown rendering
 - **diff2html** - Diff visualization
 
@@ -159,7 +158,7 @@ API client modules in `src/api/` wrap axios calls and provide typed interfaces.
 The codebase was migrated from CRA / React 16 / antd 4 in the `modernize-stack` branch. A few patterns to watch for:
 
 - **antd 6 removed child-element APIs.** `<Steps><Step /></Steps>` and `<Tabs><TabPane /></Tabs>` silently render empty — convert to the `items={[...]}` prop. Old `<Button type="danger">` is invalid; use `<Button type="primary" danger>` for the filled red variant or just `<Button danger>` for the outlined one. `Breadcrumb.Item`, `Menu.Item` are similarly deprecated in favour of `items`.
-- **Vite 8 / Rolldown CJS interop.** Vite 7 / esbuild auto-unwrapped CJS modules whose exports had `{ __esModule: true, default: X }`; Vite 8 / Rolldown returns the wrapper object on default import. Symptom: `X is not a constructor` or `Element type is invalid: ... got: object`. Known offenders so far: `highcharts-react-official` (handled by `src/components/HighchartsReact.js`), `p-queue` (handled inline in `NameMatch.jsx`). Pattern when you hit it: `const X = M?.default ?? M;` after the default import.
+- **Vite 8 / Rolldown CJS interop.** Vite 7 / esbuild auto-unwrapped CJS modules whose exports had `{ __esModule: true, default: X }`; Vite 8 / Rolldown returns the wrapper object on default import. Symptom: `X is not a constructor` or `Element type is invalid: ... got: object`. Known offenders so far: `p-queue` (handled inline in `NameMatch.jsx`). Pattern when you hit it: `const X = M?.default ?? M;` after the default import.
 - **JSX-in-`.js` is no longer accepted.** Vite 8's oxc transform parses by file extension. JSX-bearing files must use `.jsx`.
 - **`process.env.NODE_ENV` leaks from shell to bundle.** Vite's `isProduction` is gated on `process.env.NODE_ENV === "production"`, not on `--mode`. The build script prefixes `vite build` with `NODE_ENV=production` and `vite.config.js` adds a `define` for belt-and-suspenders; don't remove either without checking that `writeEnums.cjs`'s NODE_ENV-based API selection is still isolated.
 - **No inline `<script>` in `index.html`.** Dev's CSP blocks inline scripts (`default-src 'self' …`), so any conditional initialisation belongs in `src/main.jsx` (or another bundled module) where it ships from `'self'`.

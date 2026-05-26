@@ -40,7 +40,7 @@ export default defineConfig({
         // function".
         manualChunks: (id) => {
           if (!id.includes("node_modules")) return;
-          if (id.includes("/highcharts/") || id.includes("/highcharts-react-official/")) return "highcharts";
+          if (id.includes("/highcharts/") || id.includes("/@highcharts/react/")) return "highcharts";
           if (id.includes("/maplibre-gl/")) return "maplibre";
           if (id.includes("/antd/") || id.includes("/@ant-design/icons/") || id.includes("/rc-")) return "antd";
           if (

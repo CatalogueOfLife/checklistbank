@@ -1,6 +1,5 @@
 import withRouter from "../withRouter";
-import Highcharts from "highcharts";
-import HighchartsReact from "./HighchartsReact";
+import { Chart } from "@highcharts/react";
 import { useState, useEffect } from "react";
 import _ from "lodash";
 import history from "../history";
@@ -193,7 +192,7 @@ const ImportChart = (props) => {
   };
 
   return (
-    simple ? <HighchartsReact highcharts={Highcharts} options={options} /> : <Card>
+    simple ? <Chart options={options} /> : <Card>
 
       <Space.Compact size="small">
         <Button
@@ -231,10 +230,10 @@ const ImportChart = (props) => {
       </Space.Compact>
 
       {chartType === "pie" && (
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <Chart options={options} />
       )}
       {chartType === "column" && (
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <Chart options={options} />
       )}
     </Card>
   );

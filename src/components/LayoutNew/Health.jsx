@@ -1,4 +1,3 @@
-import { color } from "highcharts";
 import withContext from "../../components/hoc/withContext";
 import { TbActivity } from "react-icons/tb";
 import { NavLink } from "react-router-dom";

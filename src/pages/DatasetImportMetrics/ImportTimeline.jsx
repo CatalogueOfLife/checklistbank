@@ -4,8 +4,7 @@ import axios from "axios";
 import config from "../../config";
 import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
-import Highcharts from "highcharts";
-import HighchartsReact from "../../components/HighchartsReact";
+import { Chart } from "@highcharts/react";
 import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import history from "../../history";
@@ -64,7 +63,7 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
     }));
     const newOptions = {
       chart: {
-        zoomType: "x",
+        zooming: { type: "x" },
       },
       title: {
         text:
@@ -184,7 +183,7 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
       <Row>
         <Col span={24}>
           {options && (
-            <HighchartsReact highcharts={Highcharts} options={options} />
+            <Chart options={options} />
           )}
         </Col>
       </Row>

@@ -13,7 +13,6 @@ import withContext from "../../components/hoc/withContext";
 
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
-import { error } from "highcharts";
 
 const TaxAlign = ({ location, addError }) => {
   const [loading, setLoading] = useState(false);

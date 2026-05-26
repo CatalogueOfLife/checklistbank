@@ -1,6 +1,6 @@
 import withRouter from "../withRouter";
 import Highcharts from "highcharts";
-import HighchartsReact from "./HighchartsReact";
+import { Chart } from "@highcharts/react";
 import { useState, useEffect } from "react";
 import history from "../history";
 import qs from "query-string";
@@ -191,7 +191,7 @@ const ImportChart = (props) => {
 
   return (
     <Card>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <Chart options={options} />
     </Card>
   );
 };
