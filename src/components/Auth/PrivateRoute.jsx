@@ -8,8 +8,8 @@ import auth from "./index.js";
 // Router 6 dropped the render-prop pattern that the previous version used.
 // Call sites now wrap the protected element directly:
 //   <Route path="..." element={<PrivateRoute><Page /></PrivateRoute>} />
-const PrivateRoute = ({ user, catalogue, children }) =>
-  auth.canViewDataset(catalogue, user) ? (
+const PrivateRoute = ({ user, project, children }) =>
+  auth.canViewDataset(project, user) ? (
     children
   ) : (
     <Layout openKeys={[]} selectedKeys={[]}>
@@ -17,9 +17,9 @@ const PrivateRoute = ({ user, catalogue, children }) =>
     </Layout>
   );
 
-const mapContextToProps = ({ user, catalogue, dataset }) => ({
+const mapContextToProps = ({ user, project, dataset }) => ({
   user,
-  catalogue,
+  project,
   dataset,
 });
 

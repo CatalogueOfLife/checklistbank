@@ -6,26 +6,26 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import { Helmet } from "react-helmet-async";
 
-const ProjectTaxon = ({ projectKey, catalogue, match, location }) =>
-  !catalogue ? (
+const ProjectTaxon = ({ projectKey, project, match, location }) =>
+  !project ? (
     <Exception404 />
   ) : (
     <Layout
       openKeys={["assembly"]}
-      selectedKeys={["catalogueTaxon"]}
-      title={catalogue ? catalogue.title : ""}
+      selectedKeys={["projectTaxon"]}
+      title={project ? project.title : ""}
       taxonOrNameKey={match.params.taxonOrNameKey}
     >
-      {_.get(catalogue, "title") && (
-        <Helmet title={`${_.get(catalogue, "title")} in COL`} />
+      {_.get(project, "title") && (
+        <Helmet title={`${_.get(project, "title")} in COL`} />
       )}
       
       <Taxon datasetKey={match.params.projectKey} location={location} match={match} />
     </Layout>
   );
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({
+const mapContextToProps = ({ projectKey, project }) => ({
   projectKey,
-  catalogue
+  project
 });
 export default withContext(mapContextToProps)(ProjectTaxon);

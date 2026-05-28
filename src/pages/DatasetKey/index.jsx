@@ -103,7 +103,7 @@ const DatasetPage = (props) => {
   return (
     <Layout
       selectedDataset={dataset}
-      selectedCatalogueKey={projectKey}
+      selectedProjectKey={projectKey}
       openKeys={
         isProject && ["imports", "diff", "import-timeline"].includes(section)
           ? ["assembly"]

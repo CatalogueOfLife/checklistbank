@@ -14,7 +14,7 @@ import qs from "query-string";
 
 import _ from "lodash";
 
-const SectorDiff = ({ match, location, catalogue, projectKey }) => {
+const SectorDiff = ({ match, location, project, projectKey }) => {
   const { sectorKey } = match.params;
 
   const [data, setData] = useState(null);
@@ -83,7 +83,7 @@ const SectorDiff = ({ match, location, catalogue, projectKey }) => {
       selectedKeys={["sectorDiff"]}
       openKeys={["assembly"]}
       selectedSector={sectorKey}
-      title={catalogue.title}
+      title={project.title}
     >
       <PageContent>
         <Row style={{ marginBottom: "8px" }}>
@@ -155,9 +155,9 @@ const SectorDiff = ({ match, location, catalogue, projectKey }) => {
   );
 };
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({
+const mapContextToProps = ({ projectKey, project }) => ({
   projectKey,
-  catalogue,
+  project,
 });
 
 export default withRouter(withContext(mapContextToProps)(SectorDiff));

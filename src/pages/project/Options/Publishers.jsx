@@ -38,7 +38,7 @@ const PAGE_SIZE = 10;
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
-const Publishers = ({ user, projectKey, location, addError, catalogue }) => {
+const Publishers = ({ user, projectKey, location, addError, project }) => {
   const defaltColumns = [
     {
       title: "id",
@@ -294,14 +294,14 @@ const Publishers = ({ user, projectKey, location, addError, catalogue }) => {
 const mapContextToProps = ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
   userRole,
 }) => ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
   userRole,

@@ -348,11 +348,11 @@ const DatasetProjects = ({ dataset }) => {
   );
 };
 
-const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
+const mapContextToProps = ({ user, issue, issueMap, project }) => ({
   user,
   issue,
   issueMap,
-  catalogue,
+  project,
 });
 
 export default withContext(mapContextToProps)(DatasetProjects);

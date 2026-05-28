@@ -10,14 +10,14 @@ import Editors from "./Editors";
 
 const ProjectEditors = ({
   projectKey,
-  catalogue
+  project
 }) => {
 
   return (
     <Layout
       selectedKeys={["projectEditors"]}
       openKeys={["assembly"]}
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
     >
       <Editors datasetKey={projectKey} />
     </Layout>
@@ -27,13 +27,13 @@ const ProjectEditors = ({
 const mapContextToProps = ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
 }) => ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
 });

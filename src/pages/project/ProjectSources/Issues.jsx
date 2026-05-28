@@ -13,7 +13,7 @@ import _ from "lodash";
 const getIssuesAbbrev = (issue) =>
   issue.split(" ").map((s) => s.charAt(0).toUpperCase());
 
-const GSDIssuesMatrix = ({ match, issue, issueMap, catalogue }) => {
+const GSDIssuesMatrix = ({ match, issue, issueMap, project }) => {
   const projectKey = match?.params?.projectKey;
 
   const [data, setData] = useState([]);
@@ -237,11 +237,11 @@ const GSDIssuesMatrix = ({ match, issue, issueMap, catalogue }) => {
   );
 };
 
-const mapContextToProps = ({ user, issue, issueMap, catalogue }) => ({
+const mapContextToProps = ({ user, issue, issueMap, project }) => ({
   user,
   issue,
   issueMap,
-  catalogue,
+  project,
 });
 
 export default withContext(mapContextToProps)(withRouter(GSDIssuesMatrix));

@@ -56,7 +56,7 @@ const SiteLayout = ({
   error,
   clearError,
   background,
-  catalogue,
+  project,
   match: {
     params: { projectKey },
   },
@@ -202,12 +202,12 @@ const SiteLayout = ({
                         </React.Fragment>
                       )}
                     </h1>
-                    {catalogue &&
+                    {project &&
                       selectedDataset &&
-                      catalogue?.key !== selectedDataset?.key && (
+                      project?.key !== selectedDataset?.key && (
                         <h5
                           style={{ marginTop: "-48px" }}
-                        >{`in ${catalogue.title}`}</h5>
+                        >{`in ${project.title}`}</h5>
                       )}
                   </Col>
                   <Col
@@ -245,12 +245,12 @@ const SiteLayout = ({
               </React.Fragment>
             )}
 
-            {!selectedDataset && catalogue && title && (
+            {!selectedDataset && project && title && (
               <>
                 <h1 style={{ display: "inline" }}>{title}</h1>{" "}
                 {projectKey && (
                   <DatasetOriginPill
-                    dataset={{ key: projectKey, origin: catalogue?.origin }}
+                    dataset={{ key: projectKey, origin: project?.origin }}
                   />
                 )}
               </>
@@ -382,13 +382,13 @@ const mapContextToProps = ({
   clearError,
   error,
   background,
-  catalogue,
+  project,
 }) => ({
   addError,
   clearError,
   error,
   background,
-  catalogue,
+  project,
 });
 
 export default compose(

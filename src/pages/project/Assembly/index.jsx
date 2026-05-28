@@ -41,7 +41,7 @@ const { canEditDataset } = Auth;
 const Assembly = ({
   match,
   location,
-  catalogue,
+  project,
   user,
 }) => {
   const { notification } = App.useApp();
@@ -258,7 +258,7 @@ const Assembly = ({
     <Layout
       openKeys={["assembly"]}
       selectedKeys={["colAssembly"]}
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
     >
       <Helmet>
         <meta charSet="utf-8" />
@@ -317,7 +317,7 @@ const Assembly = ({
           )}
           <Row>
             <Col>
-              <CanEditDataset dataset={catalogue}>
+              <CanEditDataset dataset={project}>
                 <ColTreeContext.Consumer>
                   {({ mode, toggleMode }) => (
                     <Radio.Group
@@ -359,7 +359,7 @@ const Assembly = ({
             <Col span={assemblyColSpan} className="assembly-tree-box">
               <Row>
                 <Col span={12}>
-                  <h4>{catalogue.title}</h4>{" "}
+                  <h4>{project.title}</h4>{" "}
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
                   {childModalVisible && (
@@ -373,7 +373,7 @@ const Assembly = ({
                       projectKey={projectKey}
                     />
                   )}
-                  <CanEditDataset dataset={catalogue}>
+                  <CanEditDataset dataset={project}>
                     <Button
                       icon={<PlusOutlined />}
                       size="small"
@@ -450,7 +450,7 @@ const Assembly = ({
                   type="error"
                 />
               )}
-              {catalogue && (
+              {project && (
                 <div ref={wrapperRef} style={{ height: "100%" }}>
                   {" "}
                   <ColTree
@@ -463,7 +463,7 @@ const Assembly = ({
                     projectKey={projectKey}
                     onDeleteSector={onDeleteSector}
                     attachFn={getSectorInfo}
-                    onDragStart={(e) => onDragStart(e, catalogue)}
+                    onDragStart={(e) => onDragStart(e, project)}
                     dragNode={dragNode}
                     selectedSourceTreeNodes={
                       _.get(sourceRef.current, "state.selectedNodes") || []
@@ -695,6 +695,6 @@ const Assembly = ({
   );
 };
 
-const mapContextToProps = ({ catalogue, user }) => ({ catalogue, user });
+const mapContextToProps = ({ project, user }) => ({ project, user });
 
 export default withRouter(withContext(mapContextToProps)(Assembly));

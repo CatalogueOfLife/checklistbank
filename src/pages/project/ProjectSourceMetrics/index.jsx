@@ -3,14 +3,14 @@ import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
 import SourceMetrics from "./SourceMetrics";
 
-const ProjectSourceMetrics = ({ match, catalogue }) => {
+const ProjectSourceMetrics = ({ match, project }) => {
   const projectKey = match.params.projectKey;
 
   return (
     <Layout
       openKeys={["assembly"]}
       selectedKeys={["catalogueSourceMetrics"]}
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
     >
       <div
         style={{
@@ -31,10 +31,10 @@ const ProjectSourceMetrics = ({ match, catalogue }) => {
   );
 };
 
-const mapContextToProps = ({ user, rank, catalogue }) => ({
+const mapContextToProps = ({ user, rank, project }) => ({
   user,
   rank,
-  catalogue,
+  project,
 });
 
 export default withRouter(withContext(mapContextToProps)(ProjectSourceMetrics));

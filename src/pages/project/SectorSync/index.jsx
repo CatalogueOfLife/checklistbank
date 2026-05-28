@@ -5,11 +5,11 @@ import SectorTabs from "../ProjectSectors/SectorTabs";
 import SyncTable from "./SyncTable";
 import withContext from "../../../components/hoc/withContext";
 
-const SectorSync = ({ catalogue, location, match }) => (
+const SectorSync = ({ project, location, match }) => (
   <Layout
-    selectedKeys={["catalogueSectors"]}
+    selectedKeys={["projectSectors"]}
     openKeys={["assembly"]}
-    title={catalogue ? catalogue.title : ""}
+    title={project ? project.title : ""}
   >
     <PageContent>
       <SectorTabs />
@@ -18,7 +18,7 @@ const SectorSync = ({ catalogue, location, match }) => (
   </Layout>
 );
 
-const mapContextToProps = ({ catalogue }) => ({
-  catalogue,
+const mapContextToProps = ({ project }) => ({
+  project,
 });
 export default withContext(mapContextToProps)(withRouter(SectorSync));

@@ -71,7 +71,7 @@ const DatasetPage = (props) => {
   return (
     <Layout
       selectedDataset={dataset}
-      selectedCatalogueKey={projectKey}
+      selectedProjectKey={projectKey}
       openKeys={openKeys}
       selectedKeys={selectedKeys}
       taxonOrNameKey={taxonOrNameKey}
@@ -130,7 +130,7 @@ const DatasetPage = (props) => {
       )}
       {!section ||
         (section === "metadata" && (
-          <DatasetMeta isSourceInCatalogueView={true} id={datasetKey} projectKey={projectKey} />
+          <DatasetMeta isSourceInProjectView={true} id={datasetKey} projectKey={projectKey} />
         ))}
       {section === "classification" && (
         <DatasetClassification dataset={dataset} location={location} />

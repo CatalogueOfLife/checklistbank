@@ -25,7 +25,7 @@ import _ from "lodash";
 import Auth from "../Auth";
 import withContext from "../hoc/withContext";
 import config from "../../config";
-import CatalogueSelect from "./CatalogueSelect";
+
 import SourceSelect from "./SourceDatasetSelect";
 import { truncate } from "../util";
 
@@ -33,7 +33,7 @@ const BasicMenu = (props) => {
   const {
     dataset: selectedDataset,
     sourceDataset,
-    catalogue,
+    project,
     selectedSector,
     user,
     //   recentDatasets,
@@ -70,10 +70,10 @@ const BasicMenu = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(openKeys)]);
 
-  const selectedDatasetIsProjectAndUserHasAccess = (catalogue, dataset, user) => {
+  const selectedDatasetIsProjectAndUserHasAccess = (project, dataset, user) => {
     return (
-      (!dataset || catalogue?.key === dataset?.key) &&
-      Auth.canViewDataset(catalogue, user)
+      (!dataset || project?.key === dataset?.key) &&
+      Auth.canViewDataset(project, user)
     );
   };
 
@@ -343,18 +343,18 @@ const BasicMenu = (props) => {
     },
 
     // Assembly (project) submenu
-    selectedDatasetIsProjectAndUserHasAccess(catalogue, selectedDataset, user) &&
-      catalogue && {
+    selectedDatasetIsProjectAndUserHasAccess(project, selectedDataset, user) &&
+      project && {
         key: "assembly",
         label: (
           <span>
             <BarsOutlined />
-            <span>{catalogue?.alias || `Project: ${catalogue?.key}`}</span>
+            <span>{project?.alias || `Project: ${project?.key}`}</span>
           </span>
         ),
         children: [
           {
-            key: "catalogueMeta",
+            key: "projectMeta",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/metadata` }}>
                 <span>Metadata</span>
@@ -374,7 +374,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueNameSearch",
+            key: "projectNameSearch",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/names` }}>
                 <span>Search</span>
@@ -382,7 +382,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueDownload",
+            key: "projectDownload",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/download` }}>
                 Download
@@ -398,7 +398,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueSectors",
+            key: "projectSectors",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/sector` }}>
                 {/* <PartitionOutlined /> */}
@@ -407,7 +407,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueSources",
+            key: "projectSources",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/sources` }}>
                 {" "}
@@ -433,7 +433,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueDecisions",
+            key: "projectDecisions",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/decision` }}>
                 {/*  <CheckOutlined /> */}
@@ -471,7 +471,7 @@ const BasicMenu = (props) => {
             ),
           },
           {
-            key: "catalogueOptions",
+            key: "projectOptions",
             label: (
               <NavLink to={{ pathname: `/project/${projectKey}/options` }}>
                 <span>Options</span>
@@ -483,15 +483,15 @@ const BasicMenu = (props) => {
             label: `Sector diff: ${selectedSector}`,
           },
           _selectedKeys &&
-            _selectedKeys.includes("catalogueTaxon") &&
+            _selectedKeys.includes("projectTaxon") &&
             taxonOrNameKey && {
-              key: "catalogueTaxon",
+              key: "projectTaxon",
               label: `Taxon: ${taxonOrNameKey}`,
             },
           _selectedKeys &&
-            _selectedKeys.includes("catalogueName") &&
+            _selectedKeys.includes("projectName") &&
             taxonOrNameKey && {
-              key: "catalogueName",
+              key: "projectName",
               label: `Name: ${taxonOrNameKey}`,
             },
           // Source dataset submenu
@@ -695,7 +695,7 @@ const BasicMenu = (props) => {
     // Dataset submenu (non-project datasets)
     selectedDataset &&
       !selectedDatasetIsProjectAndUserHasAccess(
-        catalogue,
+        project,
         selectedDataset,
         user
       ) && {
@@ -1049,7 +1049,7 @@ const mapContextToProps = ({
   projectKey,
   dataset,
   sourceDataset,
-  catalogue,
+  project,
   _selectedKeys,
   _openKeys,
   setSelectedKeys,
@@ -1060,7 +1060,7 @@ const mapContextToProps = ({
   projectKey,
   dataset,
   sourceDataset,
-  catalogue,
+  project,
   _selectedKeys,
   _openKeys,
   setSelectedKeys,

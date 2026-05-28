@@ -18,7 +18,7 @@ const ImportChart = (props) => {
   const [logarithmic, setLogarithmic] = useState(false);
 
   const getBasePath = () => {
-    if (location.pathname.startsWith("/catalogue")) {
+    if (location.pathname.startsWith("/project")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
         `dataset/${datasetKey}/workbench`
@@ -29,7 +29,7 @@ const ImportChart = (props) => {
   };
 
   const getVerbatimPath = () => {
-    if (location.pathname.startsWith("/catalogue")) {
+    if (location.pathname.startsWith("/project")) {
       return (
         location.pathname.split(`dataset/${datasetKey}/`)[0] +
         `dataset/${datasetKey}/verbatim`

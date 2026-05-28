@@ -5,16 +5,16 @@ import Tasks from "../../../pages/DatasetKey/datasetPageTabs/DatasetTasks";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 
-const AssemblyTasks = ({ location, projectKey, catalogue }) => {
+const AssemblyTasks = ({ location, projectKey, project }) => {
   return (
     <Layout
       openKeys={["assembly"]}
       selectedKeys={["assemblyTasks"]}
-      title={catalogue.title}
+      title={project.title}
     >
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{catalogue.title}</title>
+        <title>{project.title}</title>
       </Helmet>
       <PageContent>
         <Tasks datasetKey={projectKey} location={location} assembly={true} />
@@ -23,8 +23,8 @@ const AssemblyTasks = ({ location, projectKey, catalogue }) => {
   );
 };
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({
+const mapContextToProps = ({ projectKey, project }) => ({
   projectKey,
-  catalogue,
+  project,
 });
 export default withContext(mapContextToProps)(AssemblyTasks);

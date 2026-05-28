@@ -28,7 +28,7 @@ import Auth from "../../../components/Auth";
 
 const ProjectOptions = ({
   match,
-  catalogue,
+  project,
   datasetSettings,
   user,
 }) => {
@@ -89,7 +89,7 @@ const ProjectOptions = ({
       });
   };
 
-  const releaseCatalogue = () => {
+  const releaseProject = () => {
     setReleaseColLoading(true);
     axios
       .post(`${config.dataApi}dataset/${projectKey}/release`)
@@ -199,17 +199,17 @@ const ProjectOptions = ({
             <DatasetSettingsForm
               data={data}
               datasetKey={projectKey}
-              dataset={catalogue}
+              dataset={project}
               onSaveSuccess={() => {
                 setEditMode(false);
                 getData();
               }}
             />
           )}
-          {!editMode && data && catalogue && (
+          {!editMode && data && project && (
             <div style={{ marginRight: "28px" }}>
               {datasetSettings
-                .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
+                .filter((s) => s.origin.indexOf(project.origin) > -1)
                 .filter((s) => s.type === "Boolean")
                 .map((s) => (
                   <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -224,7 +224,7 @@ const ProjectOptions = ({
                   </PresentationItem>
                 ))}
               {datasetSettings
-                .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
+                .filter((s) => s.origin.indexOf(project.origin) > -1)
                 .filter((s) => s.type === "String" || s.type === "Integer")
                 .map((s) => (
                   <PresentationItem label={_.startCase(s.name)} key={s.name}>
@@ -234,7 +234,7 @@ const ProjectOptions = ({
                   </PresentationItem>
                 ))}
               {datasetSettings
-                .filter((s) => s.origin.indexOf(catalogue.origin) > -1)
+                .filter((s) => s.origin.indexOf(project.origin) > -1)
                 .filter(
                   (s) => !["String", "Integer", "Boolean"].includes(s.type)
                 )
@@ -250,7 +250,7 @@ const ProjectOptions = ({
           <Col span={6}>
             <Popconfirm
               placement="rightTop"
-              title={`Do you want to validate ${catalogue.title}? All issues will be rebuild.`}
+              title={`Do you want to validate ${project.title}? All issues will be rebuild.`}
               onConfirm={validateProject}
               okText="Yes"
               cancelText="No"
@@ -266,8 +266,8 @@ const ProjectOptions = ({
 
             <Popconfirm
               placement="rightTop"
-              title={`Do you want to release ${catalogue.title}?`}
-              onConfirm={releaseCatalogue}
+              title={`Do you want to release ${project.title}?`}
+              onConfirm={releaseProject}
               okText="Yes"
               cancelText="No"
             >
@@ -282,7 +282,7 @@ const ProjectOptions = ({
 
             <Popconfirm
               placement="rightTop"
-              title={`Do you want to create an extended release of ${catalogue.title}?`}
+              title={`Do you want to create an extended release of ${project.title}?`}
               onConfirm={xrelease}
               okText="Yes"
               cancelText="No"
@@ -358,10 +358,10 @@ const ProjectOptions = ({
               type="reference"
               style={{ marginRight: "10px", marginBottom: "10px" }}
             />
-            {catalogue?.key?.toString() === projectKey && (
+            {project?.key?.toString() === projectKey && (
               <DeleteDatasetButton
                 style={{ marginRight: "10px", marginBottom: "10px" }}
-                record={catalogue}
+                record={project}
               ></DeleteDatasetButton>
             )}
           </Col>
@@ -371,8 +371,8 @@ const ProjectOptions = ({
   );
 };
 
-const mapContextToProps = ({ catalogue, datasetSettings, user }) => ({
-  catalogue,
+const mapContextToProps = ({ project, datasetSettings, user }) => ({
+  project,
   datasetSettings,
   user,
 });

@@ -11,15 +11,15 @@ import _ from 'lodash'
 import { Helmet } from "react-helmet-async";
 
 
-const ProjectMeta = ({ projectKey, catalogue }) => (
-  !catalogue ? <Exception404 /> :
+const ProjectMeta = ({ projectKey, project }) => (
+  !project ? <Exception404 /> :
     <Layout
       openKeys={["assembly"]}
-      selectedKeys={["catalogueMeta"]}
-      title={catalogue ? catalogue.title : ''}
+      selectedKeys={["projectMeta"]}
+      title={project ? project.title : ''}
     >
-      {_.get(catalogue, 'title') && <Helmet
-        title={`${_.get(catalogue, 'title')} in COL`}
+      {_.get(project, 'title') && <Helmet
+        title={`${_.get(project, 'title')} in COL`}
       />}
 
 
@@ -33,5 +33,5 @@ const ProjectMeta = ({ projectKey, catalogue }) => (
 
 
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({ projectKey, catalogue })
+const mapContextToProps = ({ projectKey, project }) => ({ projectKey, project })
 export default withContext(mapContextToProps)(ProjectMeta);

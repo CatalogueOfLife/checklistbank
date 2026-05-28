@@ -7,7 +7,7 @@ import withRouter from "../../withRouter";
 
 const DatasetProvider = ({
   match,
-  setCatalogue,
+  setProject,
   setDataset,
   setSourceDataset,
   setRecentDatasets,
@@ -52,9 +52,9 @@ const DatasetProvider = ({
         setRecentDatasets(recentDatasets);
         setDataset(res.data);
         if (res?.data?.origin === "project") {
-          setCatalogue(res.data);
+          setProject(res.data);
         } else {
-          setCatalogue(null);
+          setProject(null);
         }
       })
       .catch((err) => {
@@ -83,7 +83,7 @@ const DatasetProvider = ({
     };
   }, [key]);
 
-  // Project (a.k.a. "catalogue") fetch (URL: /project/:projectKey/*)
+  // Project fetch (URL: /project/:projectKey/*)
   useEffect(() => {
     if (!projectKey) return;
     let cancelled = false;
@@ -91,7 +91,7 @@ const DatasetProvider = ({
     axios(`${config.dataApi}dataset/${projectKey}`)
       .then((res) => {
         if (cancelled) return;
-        setCatalogue(res.data);
+        setProject(res.data);
         setSourceDataset(null);
         setDataset(null);
       })
@@ -109,7 +109,7 @@ const DatasetProvider = ({
 };
 
 const mapContextToProps = ({
-  setCatalogue,
+  setProject,
   setDataset,
   setSourceDataset,
   setRecentDatasets,
@@ -119,7 +119,7 @@ const mapContextToProps = ({
   setSourceDataset,
   addError,
   setRecentDatasets,
-  setCatalogue,
+  setProject,
 });
 
 export default withContext(mapContextToProps)(withRouter(DatasetProvider));

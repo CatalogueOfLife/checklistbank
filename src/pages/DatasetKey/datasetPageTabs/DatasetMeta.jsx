@@ -47,11 +47,11 @@ const DatasetMeta = ({
   projectKey,
   archivedData,
   user,
-  catalogue,
+  project,
   taxGroup,
   setDataset,
   addError,
-  isSourceInCatalogueView,
+  isSourceInProjectView,
 }) => {
   const { notification } = App.useApp();
   const [data, setData] = useState(null);
@@ -90,7 +90,7 @@ const DatasetMeta = ({
       })
       .then((res) => {
         const { createdBy, modifiedBy } = res.data;
-        if (!isSourceInCatalogueView) {
+        if (!isSourceInProjectView) {
           setDataset(res.data);
         }
         if (res.data.sourceKey) {
@@ -261,7 +261,7 @@ const DatasetMeta = ({
         </>
       )}
       {/* The user is allowed to patch if edtor of a project, */}
-      {Auth.canEditDataset(catalogue, user) && !isArchived && (
+      {Auth.canEditDataset(project, user) && !isArchived && (
         <>
           <Row>
             <Col flex="auto"></Col>
@@ -300,7 +300,7 @@ const DatasetMeta = ({
       {!editMode && !editPatchMode && displayData && (
         <>
           <PresentationItem label="Alias">
-            {catalogue ? (
+            {project ? (
               <NavLink
                 to={{
                   pathname: `/dataset/${displayData.key}/metadata`,
@@ -587,7 +587,7 @@ const DatasetMeta = ({
               <span>
                 <NavLink
                   to={{
-                    pathname: Auth.canViewDataset(catalogue, user)
+                    pathname: Auth.canViewDataset(project, user)
                       ? `/project/${displayData.sourceKey}/metadata`
                       : `/dataset/${displayData.sourceKey}`,
                   }}
@@ -678,7 +678,7 @@ const mapContextToProps = ({
   setDataset,
   datasetSettings,
   addError,
-  catalogue,
+  project,
   taxGroup,
 }) => ({
   user,
@@ -686,7 +686,7 @@ const mapContextToProps = ({
   setDataset,
   datasetSettings,
   addError,
-  catalogue,
+  project,
   taxGroup,
 });
 

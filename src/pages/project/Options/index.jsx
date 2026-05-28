@@ -29,12 +29,12 @@ import OptionTabs from "./OptionTabs";
 import Options from "./Options";
 import Publishers from "./Publishers";
 
-const ProjectOptions = ({ catalogue, location }) => {
+const ProjectOptions = ({ project, location }) => {
   return (
     <Layout
-      selectedKeys={["catalogueOptions"]}
+      selectedKeys={["projectOptions"]}
       openKeys={["assembly"]}
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
     >
       <Helmet>
         <meta charSet="utf-8" />
@@ -50,8 +50,8 @@ const ProjectOptions = ({ catalogue, location }) => {
   );
 };
 
-const mapContextToProps = ({ catalogue, datasetSettings, user }) => ({
-  catalogue,
+const mapContextToProps = ({ project, datasetSettings, user }) => ({
+  project,
   datasetSettings,
   user,
 });

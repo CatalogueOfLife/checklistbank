@@ -177,8 +177,8 @@ const NameSearchPage = ({
 }) => {
   const effectiveFACETS = datasetKey ? FACETS : ["datasetKey", ...FACETS];
 
-  const isCatalogue = projectKey === datasetKey;
-  const clms = getColumns(isCatalogue ? projectKey : null);
+  const isProject = projectKey === datasetKey;
+  const clms = getColumns(isProject ? projectKey : null);
   const buildColumns = () => {
     const cols = datasetKey
       ? clms

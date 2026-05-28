@@ -41,7 +41,7 @@ const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
   return (
     <>
       <div
-        className="catalogue-of-life"
+        className="project-of-life"
         style={{
           background: "#fff",
           padding: 24,

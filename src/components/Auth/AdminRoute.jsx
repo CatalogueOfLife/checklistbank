@@ -16,9 +16,9 @@ const AdminRoute = ({ user, roles, children }) =>
     </Layout>
   );
 
-const mapContextToProps = ({ user, catalogue, dataset }) => ({
+const mapContextToProps = ({ user, project, dataset }) => ({
   user,
-  catalogue,
+  project,
   dataset,
 });
 

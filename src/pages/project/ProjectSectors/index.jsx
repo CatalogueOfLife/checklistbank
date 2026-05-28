@@ -12,7 +12,7 @@ import SectorTabs from "./SectorTabs"
 const ProjectSectors = () => {
   return (
     <Layout
-      selectedKeys={["catalogueSectors"]}
+      selectedKeys={["projectSectors"]}
       openKeys={["assembly"]}
       title="Source sectors"
     >

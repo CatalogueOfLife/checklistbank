@@ -368,14 +368,14 @@ const AdminPage = ({ background, addError }) => {
 
 const mapContextToProps = ({
   projectKey,
-  catalogue,
-  setCatalogue,
+  project,
+  setProject,
   background,
   addError,
 }) => ({
   projectKey,
-  catalogue,
-  setCatalogue,
+  project,
+  setProject,
   background,
   addError,
 });

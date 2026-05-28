@@ -7,24 +7,24 @@ import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import { Helmet } from "react-helmet-async";
 
-const ProjectNameSearch = ({ projectKey, catalogue, location }) =>
-  !catalogue ? (
+const ProjectNameSearch = ({ projectKey, project, location }) =>
+  !project ? (
     <Exception404 />
   ) : (
     <Layout
       openKeys={["assembly"]}
-      selectedKeys={["catalogueNameSearch"]}
-      title={catalogue ? catalogue.title : ""}
+      selectedKeys={["projectNameSearch"]}
+      title={project ? project.title : ""}
     >
-      {_.get(catalogue, "title") && (
-        <Helmet title={`${_.get(catalogue, "title")} in COL`} />
+      {_.get(project, "title") && (
+        <Helmet title={`${_.get(project, "title")} in COL`} />
       )}
       <NameSearch datasetKey={projectKey} location={location} />
     </Layout>
   );
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({
+const mapContextToProps = ({ projectKey, project }) => ({
   projectKey,
-  catalogue
+  project
 });
 export default withRouter(withContext(mapContextToProps)(ProjectNameSearch));

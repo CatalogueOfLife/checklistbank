@@ -67,7 +67,7 @@ export const getDuplicateOverview = ({
   ).then(() => groups);
 };
 
-export const getCatalogues = () => {
+export const getProjects = () => {
   return axios(`${config.dataApi}dataset?origin=project`);
 };
 

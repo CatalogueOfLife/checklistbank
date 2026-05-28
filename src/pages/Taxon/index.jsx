@@ -241,7 +241,7 @@ const TaxonPage = ({
       if (_.get(res, "data.source")) {
         setSourceTaxon(_.get(res, "data.source"));
       }
-      // sector keys are only present if its a catalogue
+      // sector keys are only present if its a project
       if (_.get(res, "data.usage.sectorKey")) {
         axios(
           `${config.dataApi}dataset/${datasetKey}/sector/${_.get(

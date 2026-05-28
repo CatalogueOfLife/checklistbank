@@ -122,14 +122,14 @@ const SourceSelect = ({
 
 const mapContextToProps = ({
   projectKey,
-  catalogue,
+  project,
   setSourceDataset,
   sourceDataset,
   user,
   dataset,
 }) => ({
   projectKey,
-  catalogue,
+  project,
   setSourceDataset,
   sourceDataset,
   user,

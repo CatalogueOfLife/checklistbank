@@ -8,52 +8,46 @@ import { Modal, Select, Typography } from "antd";
 import history from "../../history";
 import { truncate } from "../../components/util";
 
-// import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
-
 import axios from "axios";
 const {Text, Link} = Typography;
 
-/* function truncate(str, n){
-  return (str?.length > n) ? str.substr(0, n-1) + '...' : str;
-}; */
-
-const CatalogueSelect = ({ match, location, catalogue, setCatalogue, user, iconOnly = false, style = {} }) => {
+const ProjectSelect = ({ match, location, project, setProject, user, iconOnly = false, style = {} }) => {
   const { params: { projectKey } } = match;
-  const [catalogues, setCatalogues] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const getCatalogues = () => {
+  const getProjects = () => {
     setLoading(true);
     axios(
       `${config.dataApi}dataset?origin=project&limit=1000`
     ).then((res) =>
-      setCatalogues(_.get(res, "data.result") ? _.get(res, "data.result") : [])
+      setProjects(_.get(res, "data.result") ? _.get(res, "data.result") : [])
     ).finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    getCatalogues();
+    getProjects();
   }, []);
 
   const hide = () => {
     setVisible(false);
   };
 
-  const onCatalogueChange = (newCatalogueKey) => {
+  const onProjectChange = (newProjectKey) => {
     if (projectKey) {
       const newPath = _.get(location, "pathname", "").replace(
         `project/${projectKey}/`,
-        `project/${newCatalogueKey}/`
+        `project/${newProjectKey}/`
       );
       history.push({
         pathname: newPath,
       });
     } else {
-      const selectedCatalogue = catalogues.find(
-        (c) => c.key === newCatalogueKey
+      const selectedProject = projects.find(
+        (c) => c.key === newProjectKey
       );
-      setCatalogue(selectedCatalogue);
+      setProject(selectedProject);
     }
     setVisible(false);
   };
@@ -68,10 +62,10 @@ const CatalogueSelect = ({ match, location, catalogue, setCatalogue, user, iconO
         }}
       >
         {iconOnly && <SettingOutlined />}
-        {!iconOnly && catalogue &&
-          `${catalogue?.alias ? catalogue.alias : truncate(catalogue?.title, 25)} [${catalogue.key}]`
+        {!iconOnly && project &&
+          `${project?.alias ? project.alias : truncate(project?.title, 25)} [${project.key}]`
         }
-        {!iconOnly && !catalogue && `Select`}
+        {!iconOnly && !project && `Select`}
 
       </a>
       <Modal
@@ -94,16 +88,16 @@ const CatalogueSelect = ({ match, location, catalogue, setCatalogue, user, iconO
             value={projectKey || null}
             placeholder="Select project"
             optionFilterProp="label"
-            onChange={onCatalogueChange}
+            onChange={onProjectChange}
             filterOption={(input, option) =>
               option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
             onOpenChange={(open) => {
               if (open) {
-                getCatalogues();
+                getProjects();
               }
             }}
-            options={catalogues.map((c) => ({
+            options={projects.map((c) => ({
               value: c.key,
               label: `${c.alias ? c.alias : truncate(c.title, 50)} [${c.key}]`,
             }))}
@@ -116,13 +110,13 @@ const CatalogueSelect = ({ match, location, catalogue, setCatalogue, user, iconO
 
 const mapContextToProps = ({
   projectKey,
-  catalogue,
-  setCatalogue,
+  project,
+  setProject,
   user,
 }) => ({
   projectKey,
-  catalogue,
-  setCatalogue,
+  project,
+  setProject,
   user,
 });
-export default withContext(mapContextToProps)(withRouter(CatalogueSelect));
+export default withContext(mapContextToProps)(withRouter(ProjectSelect));

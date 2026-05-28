@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
 
-import CatalogueSelect from "../CatalogueSelect";
+import ProjectSelect from "../ProjectSelect";
 import Auth from "../../Auth";
 // Wrappers
 import withContext from "../../hoc/withContext";
@@ -26,7 +26,7 @@ const hashCode = function (str) {
   return hash;
 };
 
-const UserMenu = ({ user, login, logout, catalogue, setCatalogue }) => {
+const UserMenu = ({ user, login, logout, project, setProject }) => {
   const [visible, setVisible] = useState(false);
   const [invalid, setInvalid] = useState(false);
 
@@ -47,7 +47,7 @@ const UserMenu = ({ user, login, logout, catalogue, setCatalogue }) => {
           if (user?.editor?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.editor[0]}`)
               .then(project => {
-                setCatalogue(project?.data);
+                setProject(project?.data);
                 reset();
               })
               .catch(err => {
@@ -56,7 +56,7 @@ const UserMenu = ({ user, login, logout, catalogue, setCatalogue }) => {
           } else if (!user.editor && user?.reviewer?.length > 0) {
             axios.get(`${config.dataApi}dataset/${user.reviewer[0]}`)
               .then(project => {
-                setCatalogue(project?.data);
+                setProject(project?.data);
                 reset();
               })
               .catch(err => {
@@ -160,12 +160,12 @@ const UserMenu = ({ user, login, logout, catalogue, setCatalogue }) => {
   );
 };
 
-const mapContextToProps = ({ user, login, logout, catalogue, setCatalogue }) => ({
+const mapContextToProps = ({ user, login, logout, project, setProject }) => ({
   user,
   login,
   logout,
-  catalogue,
-  setCatalogue
+  project,
+  setProject
 });
 
 export default withContext(mapContextToProps)(UserMenu);

@@ -9,18 +9,18 @@ const ProjectDownload = ({
     params: { key },
   },
   location,
-  catalogue,
+  project,
 }) => {
   return (
     <Layout
-      selectedKeys={["catalogueDownload"]}
+      selectedKeys={["projectDownload"]}
       openKeys={["assembly"]}
       title="Project download"
     >
       <PageContent>
         <DatasetDownload
           downloadKey={key}
-          dataset={catalogue}
+          dataset={project}
           location={location}
         />
       </PageContent>
@@ -28,6 +28,6 @@ const ProjectDownload = ({
   );
 };
 
-const mapContextToProps = ({ catalogue, user }) => ({ catalogue, user });
+const mapContextToProps = ({ project, user }) => ({ project, user });
 
 export default withRouter(withContext(mapContextToProps)(ProjectDownload));

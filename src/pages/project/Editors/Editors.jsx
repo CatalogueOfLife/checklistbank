@@ -15,7 +15,7 @@ const capitalize = (str) =>
 const Editors = ({
   user,
   datasetKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
 }) => {

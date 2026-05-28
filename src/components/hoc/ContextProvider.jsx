@@ -151,7 +151,7 @@ const ContextProvider = ({ children }) => {
   const [allHealthChecksPassing, setAllHealthChecksPassing] = useState(undefined);
   const [speciesinteractiontype, setSpeciesinteractiontype] = useState([]);
   const [language, setLanguage] = useState([]);
-  const [catalogue, setCatalogueState] = useState(
+  const [project, setProjectState] = useState(
     localStorage.getItem("col_selected_project")
       ? JSON.parse(localStorage.getItem("col_selected_project"))
       : null
@@ -210,18 +210,14 @@ const ContextProvider = ({ children }) => {
     }
   };
 
-  const setCatalogueKey = (key) => {
-    setProjectKey(key);
-  };
-
-  const setCatalogue = (cat) => {
-    if (cat?.key && cat?.title) {
-      localStorage.setItem("col_selected_project", JSON.stringify(cat));
-      setCatalogueState(cat);
-      setProjectKey(cat.key);
+  const setProject = (proj) => {
+    if (proj?.key && proj?.title) {
+      localStorage.setItem("col_selected_project", JSON.stringify(proj));
+      setProjectState(proj);
+      setProjectKey(proj.key);
     } else {
       localStorage.removeItem("col_selected_project");
-      setCatalogueState(null);
+      setProjectState(null);
       setProjectKey(null);
     }
   };
@@ -531,11 +527,10 @@ const ContextProvider = ({ children }) => {
     allHealthChecksPassing,
     speciesinteractiontype,
     language,
-    catalogue,
+    project,
     setOpenKeys: (keys) => setOpenKeys(keys),
     setSelectedKeys: (keys) => setSelectedKeys(keys),
-    setCatalogueKey,
-    setCatalogue,
+    setProject,
     setDataset,
     setSourceDataset,
     setRecentDatasets,

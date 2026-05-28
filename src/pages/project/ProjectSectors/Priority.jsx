@@ -198,7 +198,7 @@ const SectorPriority = ({ projectKey, location, addError, user }) => {
 
   return (
     <Layout
-      selectedKeys={["catalogueSectors"]}
+      selectedKeys={["projectSectors"]}
       openKeys={["assembly"]}
       title="Project sector priority"
     >

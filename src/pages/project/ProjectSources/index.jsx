@@ -20,13 +20,13 @@ const ProjectSources = ({
     params: { issues },
   },
   projectKey,
-  catalogue,
+  project,
 }) => {
   return (
     <Layout
       openKeys={["assembly"]}
-      selectedKeys={["catalogueSources"]}
-      title={catalogue ? catalogue.title : ""}
+      selectedKeys={["projectSources"]}
+      title={project ? project.title : ""}
     >
       <div
         style={{
@@ -55,13 +55,13 @@ const mapContextToProps = ({
   user,
   issue,
   issueMap,
-  catalogue,
+  project,
   projectKey,
 }) => ({
   user,
   issue,
   issueMap,
-  catalogue,
+  project,
   projectKey,
 });
 

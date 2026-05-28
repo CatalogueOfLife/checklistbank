@@ -12,7 +12,7 @@ import RefForm from "../../../components/MetaData/CslForm";
 import _ from "lodash";
 import Auth from "../../../components/Auth";
 
-const Reference = ({ catalogue, match, user }) => {
+const Reference = ({ project, match, user }) => {
   const { notification } = App.useApp();
   const { params: { projectKey } } = match;
   const [showAddNewModal, setShowAddNewModal] = useState(false);
@@ -53,14 +53,14 @@ const Reference = ({ catalogue, match, user }) => {
 
   return (
     <Layout
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
       selectedKeys={["assemblyReferences"]}
       openKeys={["assembly"]}
     >
       <Helmet>
         <meta charSet="utf-8" />
         <title>
-          {catalogue ? `References - ${catalogue.title}` : ""}
+          {project ? `References - ${project.title}` : ""}
         </title>
       </Helmet>
       <PageContent>
@@ -99,8 +99,8 @@ const Reference = ({ catalogue, match, user }) => {
   );
 };
 
-const mapContextToProps = ({ catalogue, user }) => ({
-  catalogue,
+const mapContextToProps = ({ project, user }) => ({
+  project,
   user
 });
 export default withContext(mapContextToProps)(withRouter(Reference));

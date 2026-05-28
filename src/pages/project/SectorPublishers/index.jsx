@@ -5,12 +5,12 @@ import SectorTabs from "../ProjectSectors/SectorTabs";
 import withContext from "../../../components/hoc/withContext";
 import Publishers from "../Options/Publishers";
 
-const SectorPublishers = ({ catalogue }) => {
+const SectorPublishers = ({ project }) => {
   return (
     <Layout
-      selectedKeys={["catalogueSectors"]}
+      selectedKeys={["projectSectors"]}
       openKeys={["assembly"]}
-      title={catalogue ? catalogue.title : ""}
+      title={project ? project.title : ""}
     >
       <PageContent>
         <SectorTabs />
@@ -20,7 +20,7 @@ const SectorPublishers = ({ catalogue }) => {
   );
 };
 
-const mapContextToProps = ({ catalogue }) => ({
-  catalogue,
+const mapContextToProps = ({ project }) => ({
+  project,
 });
 export default withContext(mapContextToProps)(withRouter(SectorPublishers));

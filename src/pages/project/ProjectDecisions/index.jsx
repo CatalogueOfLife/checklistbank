@@ -13,7 +13,7 @@ const ProjectDecisions = ({
 }) => {
   return (
     <Layout
-      selectedKeys={["catalogueDecisions"]}
+      selectedKeys={["projectDecisions"]}
       openKeys={["assembly"]}
       title="Decisions"
     >

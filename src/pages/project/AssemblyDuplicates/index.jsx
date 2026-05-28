@@ -5,16 +5,16 @@ import Duplicates from "../../Duplicates";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 
-const AssemblyDuplicates = ({ location, projectKey, catalogue }) => {
+const AssemblyDuplicates = ({ location, projectKey, project }) => {
   return (
     <Layout
       openKeys={["assembly"]}
       selectedKeys={["assemblyDuplicates"]}
-      title={catalogue.title}
+      title={project.title}
     >
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{catalogue.title}</title>
+        <title>{project.title}</title>
       </Helmet>
       <PageContent>
         <Duplicates
@@ -28,8 +28,8 @@ const AssemblyDuplicates = ({ location, projectKey, catalogue }) => {
   );
 };
 
-const mapContextToProps = ({ projectKey, catalogue }) => ({
+const mapContextToProps = ({ projectKey, project }) => ({
   projectKey,
-  catalogue,
+  project,
 });
 export default withContext(mapContextToProps)(AssemblyDuplicates);

@@ -257,14 +257,14 @@ const UserAdmin = ({
 const mapContextToProps = ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
   userRole
 }) => ({
   user,
   projectKey,
-  catalogue,
+  project,
   addError,
   countryAlpha2,
   userRole
