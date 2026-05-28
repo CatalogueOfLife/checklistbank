@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import withContext from "./withContext";
 import _ from "lodash";
 import axios from "axios";
@@ -7,32 +7,33 @@ import withRouter from "../../withRouter";
 
 const DatasetProvider = ({
   match,
-  dataset,
-  catalogue,
   setCatalogue,
   setDataset,
   setSourceDataset,
   setRecentDatasets,
   addError,
 }) => {
-  const loadingRef = useRef(false);
-  const catalogueLoadingRef = useRef(false);
+  const key = _.get(match, "params.key");
+  const projectKey = _.get(match, "params.projectKey");
 
-  const fetchDataset = (key) => {
-    loadingRef.current = true;
+  // Source / release / external dataset fetch (URL: /dataset/:key/*)
+  useEffect(() => {
+    if (!key) return;
+    let cancelled = false;
+
     axios(`${config.dataApi}dataset/${key}`)
-      .then((res) => {
-        return axios(
+      .then((res) =>
+        axios(
           `${config.dataApi}dataset?limit=1000&hasSourceDataset=${key}&origin=PROJECT`
         ).then((projects) => {
           if (_.get(projects, "data.result")) {
             res.data.contributesTo = projects.data.result.map((r) => r.key);
           }
           return res;
-        });
-      })
+        })
+      )
       .then((res) => {
-        loadingRef.current = false;
+        if (cancelled) return;
 
         const recentDatasetsAsText = localStorage.getItem(
           "colplus_recent_datasets"
@@ -57,7 +58,7 @@ const DatasetProvider = ({
         }
       })
       .catch((err) => {
-        loadingRef.current = false;
+        if (cancelled) return;
 
         const recentDatasetsAsText = localStorage.getItem(
           "colplus_recent_datasets"
@@ -76,71 +77,48 @@ const DatasetProvider = ({
 
         addError(err);
       });
-  };
 
-  const fetchCatalogue = (key) => {
-    catalogueLoadingRef.current = true;
-    axios(`${config.dataApi}dataset/${key}`)
+    return () => {
+      cancelled = true;
+    };
+  }, [key]);
+
+  // Project (a.k.a. "catalogue") fetch (URL: /project/:projectKey/*)
+  useEffect(() => {
+    if (!projectKey) return;
+    let cancelled = false;
+
+    axios(`${config.dataApi}dataset/${projectKey}`)
       .then((res) => {
-        catalogueLoadingRef.current = false;
+        if (cancelled) return;
         setCatalogue(res.data);
         setSourceDataset(null);
         setDataset(null);
       })
       .catch((err) => {
-        catalogueLoadingRef.current = false;
+        if (cancelled) return;
         addError(err);
       });
-  };
 
-  const key = _.get(match, "params.key");
-  const projectKey = _.get(match, "params.projectKey");
-
-  // Mount
-  useEffect(() => {
-    if (key && key !== _.get(dataset, "key")) {
-      fetchDataset(key);
-    }
-    if (
-      projectKey &&
-      Number(projectKey) !== Number(_.get(catalogue, "key"))
-    ) {
-      fetchCatalogue(projectKey);
-    }
-  }, []);
-
-  // key changes
-  useEffect(() => {
-    if (key && !loadingRef.current) {
-      fetchDataset(key);
-    }
-  }, [key]);
-
-  // projectKey changes
-  useEffect(() => {
-    if (projectKey && !catalogueLoadingRef.current) {
-      fetchCatalogue(projectKey);
-    }
+    return () => {
+      cancelled = true;
+    };
   }, [projectKey]);
 
   return null;
 };
 
 const mapContextToProps = ({
-  catalogue,
   setCatalogue,
-  dataset,
   setDataset,
   setSourceDataset,
   setRecentDatasets,
   addError,
 }) => ({
-  dataset,
   setDataset,
   setSourceDataset,
   addError,
   setRecentDatasets,
-  catalogue,
   setCatalogue,
 });
 
