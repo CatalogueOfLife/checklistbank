@@ -31,6 +31,7 @@ import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
+import { buildSearchQuery } from "./searchQuery";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
@@ -230,27 +231,13 @@ const DatasetList = ({
     });
   };
 
-  const handleTableChange = (newPagination, filters, sorter) => {
-    let query = { ...parseSearch(_.get({ location }, "location.search")) };
-
-    Object.keys(filters).forEach((key) => {
-      if (filters[key] !== null) {
-        query[key] = filters[key];
-      } else {
-        delete query[key];
-      }
-    });
-
-    // Sort is driven by the table's (controlled) sorter state. antd always passes a `sorter`
-    // object, so key off `sorter.order`: present => apply, absent (no sort / cleared) => drop.
-    // Use columnKey (a stable string) rather than field (an array for nested-dataIndex columns).
-    if (sorter && sorter.order) {
-      query.sortBy = sorter.columnKey || sorter.field;
-      query.reverse = sorter.order === "descend";
-    } else {
-      delete query.sortBy;
-      delete query.reverse;
-    }
+  const handleTableChange = (newPagination, filters, sorter, extra) => {
+    const query = buildSearchQuery(
+      parseSearch(_.get({ location }, "location.search")),
+      filters,
+      sorter,
+      extra?.action
+    );
 
     setParams(query);
     setPagination(newPagination);
@@ -688,7 +675,7 @@ const DatasetList = ({
               <NavLink
                 to={{
                   pathname: `/dataset`,
-                  search: `?releasedFrom=3&sortBy=issued&reverse=true&limit=100`,
+                  search: `?releasedFrom=3&sortBy=issued&reverse=false&limit=100`,
                 }}
                 end
               >
