@@ -11,7 +11,7 @@ Dev UI: <https://www.dev.checklistbank.org/>
 
 ## Tech stack
 
-- [React 19](https://react.dev/) with hooks throughout (no class components remain)
+- [React 19](https://react.dev/) with hooks throughout (the only class component left is the `ErrorBoundary`, which React requires to be a class)
 - [Ant Design 6](https://ant.design/) for UI primitives
 - [React Router 6](https://reactrouter.com/)
 - [Vite 8](https://vite.dev/) (Rolldown bundler) as the build tool, with `@vitejs/plugin-react` v6
@@ -78,6 +78,12 @@ For local development against a backend you run yourself (e.g. via `~/code/col/b
 ## Authentication
 
 The UI uses JWT tokens issued by the ChecklistBank backend, which delegates to GBIF for the actual login. Tokens live in `localStorage` under the key in `JWT_STORAGE_NAME`. Public pages work anonymously; project-editing pages require an editor role on the relevant project.
+
+## Error handling
+
+All routed page content is wrapped in an app-wide error boundary (`src/components/exception/ErrorBoundary.jsx`, wired up in `App.jsx`). If any page throws while rendering, the boundary replaces the page with an error card — including a reload button and a pre-filled GitHub issue link — instead of letting React unmount the whole tree into a blank white page. It resets automatically on navigation (keyed on the pathname), so moving to another page clears the error.
+
+It is a safety net, not a fix: render crashes it catches are still bugs and should be reported/fixed. It does not catch errors in event handlers or async code — those should be handled where they occur (see `ErrorMsg` and the alert patterns used across pages).
 
 ## Project layout
 
