@@ -55,6 +55,7 @@ import Imports from "./pages/Imports";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import ExceptionHandler from "./components/exception/ExceptionHandler";
+import ErrorBoundary from "./components/exception/ErrorBoundary";
 import ProjectReferences from "./pages/project/ProjectReferences";
 import HomePage from "./pages/HomePage";
 import ProjectSources from "./pages/project/ProjectSources";
@@ -91,6 +92,14 @@ const NavigatorInstaller = () => {
     installNavigator(navigate);
   }, [navigate]);
   return null;
+};
+
+// Wraps the routed page content in an error boundary so a render-time throw in
+// any page shows a recoverable error card instead of blanking the whole app
+// (issue #1667). Keyed on the pathname so navigating elsewhere clears the error.
+const RoutedErrorBoundary = ({ children }) => {
+  const location = useLocation();
+  return <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>;
 };
 
 // Back-compat: the route prefix was renamed from `/catalogue/` to `/project/`.
@@ -149,6 +158,7 @@ const App = () => {
         </Helmet>
         <BrowserRouter>
           <NavigatorInstaller />
+          <RoutedErrorBoundary>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route
@@ -420,6 +430,7 @@ const App = () => {
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
+          </RoutedErrorBoundary>
           <ProviderRoutes />
         </BrowserRouter>
       </ContextProvider>
