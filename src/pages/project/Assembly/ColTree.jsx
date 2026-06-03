@@ -593,10 +593,17 @@ const ColTree = (props) => {
         );
 
       if (data.length === 0) {
+        // The taxon isn't in this tree. The tree endpoint answers 200 with an
+        // empty array (not a 404) for unknown ids, so we land here. loadRoot()
+        // has already populated the root level before calling us, so just
+        // surface the error and stop. Calling loadRoot() here would re-trigger
+        // expandToTaxon(defaultExpandKey) -> empty -> loadRoot() and spin
+        // forever (issue #1666).
         setError({
           message: `No classification found for Taxon ID: ${expandKey}`,
         });
-        return loadRoot();
+        setRootLoading(false);
+        return;
       }
       const tx = data[data.length - 1];
       let root = {
