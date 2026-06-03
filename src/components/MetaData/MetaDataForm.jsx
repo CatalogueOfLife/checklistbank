@@ -11,7 +11,6 @@ import {
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
-import TextArea from "antd/lib/input/TextArea";
 import ErrorMsg from "../ErrorMsg";
 import AgentControl from "./AgentControl";
 import CitationControl from "./CitationControl";
@@ -22,6 +21,11 @@ import PatchFormOriginalDataHelp from "./PatchFormOriginalDataHelp";
 import withContext from "../hoc/withContext";
 
 const FormItem = Form.Item;
+// Use the public antd API. The old deep CJS path `antd/lib/input/TextArea`
+// resolved to a `{ default: ... }` wrapper object under Vite 8 / Rolldown,
+// so `<TextArea>` rendered an object and crashed the metadata edit form with
+// React error #130 ("Element type is invalid ... got: object").
+const { TextArea } = Input;
 
 const formItemLayout = {
   labelCol: {
