@@ -14,7 +14,7 @@ import NameRelations from "../Taxon/NameRelations";
 import SynonymTable from "../Taxon/Synonyms";
 import TypeMaterial from "../Taxon/TypeMaterial";
 import PublishedInPagePreview from "../Taxon/PublishedInPagePreview";
-import Linkify from "react-linkify";
+import Linkify from "../../components/Linkify";
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";

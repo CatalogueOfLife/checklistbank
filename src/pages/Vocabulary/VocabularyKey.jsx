@@ -6,7 +6,7 @@ import { Row, Col, Typography, Card } from "antd";
 import PresentationItem from "../../components/PresentationItem";
 import BooleanValue from "../../components/BooleanValue";
 
-import Linkify from "react-linkify";
+import Linkify from "../../components/Linkify";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
 import { Image } from "antd";
