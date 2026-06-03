@@ -872,7 +872,7 @@ const BasicMenu = (props) => {
                 <NavLink
                   to={{
                     pathname: "/dataset",
-                    search: `?releasedFrom=${selectedDataset.key}&sortBy=created`,
+                    search: `?releasedFrom=${selectedDataset.key}&sortBy=issued&reverse=true`,
                   }}
                 >
                   Releases

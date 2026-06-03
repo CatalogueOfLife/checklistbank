@@ -38,6 +38,29 @@ import _ from "lodash";
 
 const PAGE_SIZE = 25;
 
+// Canonical dataset-search query params (mirrors the backend DatasetSearchRequest @QueryParam
+// names plus the paging params). The JAX-RS backend matches param NAMES case-sensitively, so a
+// hand-typed/bookmarked URL using e.g. `sortby` instead of `sortBy` would be silently dropped.
+// parseSearch() normalizes incoming keys to their canonical casing before we use/forward them.
+const DATASET_SEARCH_PARAMS = [
+  "q", "alias", "code", "private", "releasedFrom", "contributesTo",
+  "hasSourceDataset", "hasGbifKey", "gbifKey", "gbifPublisherKey",
+  "lastImportState", "editor", "reviewer", "origin", "type", "license",
+  "group", "rowType", "modified", "modifiedBefore", "modifiedBy",
+  "created", "createdBefore", "createdBy", "issued", "issuedBefore",
+  "minSize", "sortBy", "reverse", "limit", "offset", "full",
+];
+const CANONICAL_PARAM_BY_LOWER = Object.fromEntries(
+  DATASET_SEARCH_PARAMS.map((p) => [p.toLowerCase(), p])
+);
+const parseSearch = (search) =>
+  Object.fromEntries(
+    Object.entries(qs.parse(search || "")).map(([k, v]) => [
+      CANONICAL_PARAM_BY_LOWER[k.toLowerCase()] || k,
+      v,
+    ])
+  );
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -129,7 +152,7 @@ const DatasetList = ({
 
   // componentDidMount equivalent
   useEffect(() => {
-    const initialParams = qs.parse(_.get({ location }, "location.search"));
+    const initialParams = parseSearch(_.get({ location }, "location.search"));
     if (!_.isEmpty(initialParams)) {
       const newPagination = {
         pageSize: initialParams.limit || PAGE_SIZE,
@@ -151,8 +174,8 @@ const DatasetList = ({
       // Skip initial mount (handled above)
       return;
     }
-    const prevParams = qs.parse(prevLocationSearch || "");
-    const currentParams = qs.parse(location.search || "");
+    const prevParams = parseSearch(prevLocationSearch);
+    const currentParams = parseSearch(location.search);
     if (currentParams.releasedFrom !== prevParams.releasedFrom) {
       let newParams = { ...currentParams };
       if (!newParams.releasedFrom) {
@@ -192,7 +215,7 @@ const DatasetList = ({
   };
 
   const onSelectReleasedFrom = (dataset) => {
-    let currentParams = qs.parse(_.get({ location }, "location.search"));
+    let currentParams = parseSearch(_.get({ location }, "location.search"));
     history.push({
       pathname: "/dataset",
       search: `?${qs.stringify({ ...currentParams, releasedFrom: dataset.key })}`,
@@ -200,7 +223,7 @@ const DatasetList = ({
   };
 
   const onResetReleasedFrom = () => {
-    let currentParams = qs.parse(_.get({ location }, "location.search"));
+    let currentParams = parseSearch(_.get({ location }, "location.search"));
     history.push({
       pathname: "/dataset",
       search: `?${qs.stringify(_.omit(currentParams, "releasedFrom"))}`,
@@ -208,9 +231,8 @@ const DatasetList = ({
   };
 
   const handleTableChange = (newPagination, filters, sorter) => {
-    let currentParams = qs.parse(_.get({ location }, "location.search"));
+    let query = { ...parseSearch(_.get({ location }, "location.search")) };
 
-    let query = { ...currentParams };
     Object.keys(filters).forEach((key) => {
       if (filters[key] !== null) {
         query[key] = filters[key];
@@ -218,21 +240,16 @@ const DatasetList = ({
         delete query[key];
       }
     });
-    if (currentParams.releasedFrom) {
-      query.releasedFrom = currentParams.releasedFrom;
-      query.sortBy = "created";
-      query.reverse = true;
-    }
-    if (currentParams.q) {
-      query.q = currentParams.q;
-    }
-    if (sorter) {
-      query.sortBy = sorter.field;
-      if (sorter.order === "descend") {
-        query.reverse = true;
-      } else {
-        query.reverse = false;
-      }
+
+    // Sort is driven by the table's (controlled) sorter state. antd always passes a `sorter`
+    // object, so key off `sorter.order`: present => apply, absent (no sort / cleared) => drop.
+    // Use columnKey (a stable string) rather than field (an array for nested-dataIndex columns).
+    if (sorter && sorter.order) {
+      query.sortBy = sorter.columnKey || sorter.field;
+      query.reverse = sorter.order === "descend";
+    } else {
+      delete query.sortBy;
+      delete query.reverse;
     }
 
     setParams(query);
@@ -592,12 +609,29 @@ const DatasetList = ({
       ]
     : defaultColumns;
 
+  // Reflect the active sort (from params/URL) on the matching column so its header shows the
+  // arrow and antd's controlled sorter state stays in sync with what the backend is sorting by.
+  const sortByParam = params.sortBy ? String(params.sortBy).toLowerCase() : null;
+  const sortDescending = params.reverse === true || params.reverse === "true";
+
   const columns = _.filter(
     filteredColumns,
     (v) => !_.includes(excludeColumns, v.key)
+  ).map((c) =>
+    c.sorter && c.key
+      ? {
+          ...c,
+          sortOrder:
+            c.key.toLowerCase() === sortByParam
+              ? sortDescending
+                ? "descend"
+                : "ascend"
+              : null,
+        }
+      : c
   );
 
-  let queryparams = qs.parse(_.get({ location }, "location.search"));
+  let queryparams = parseSearch(_.get({ location }, "location.search"));
   const noParams = _.isEmpty(queryparams);
 
   return (
@@ -654,7 +688,7 @@ const DatasetList = ({
               <NavLink
                 to={{
                   pathname: `/dataset`,
-                  search: `?releasedFrom=3&sortBy=issued`,
+                  search: `?releasedFrom=3&sortBy=issued&reverse=true&limit=100`,
                 }}
                 end
               >
