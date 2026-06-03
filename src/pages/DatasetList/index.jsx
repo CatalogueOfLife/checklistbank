@@ -77,7 +77,7 @@ const DatasetList = ({
   const [data, setData] = useState([]);
   const [excludeColumns, setExcludeColumns] = useState(
     JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
-      ["key", "doi", "version", "publisher", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "private"]
+      ["key", "doi", "version", "publisher", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "issued", "private"]
   );
   const [params, setParams] = useState({});
   const [pagination, setPagination] = useState({
@@ -471,6 +471,13 @@ const DatasetList = ({
       },
     },
     {
+      title: "Issued",
+      dataIndex: "issued",
+      key: "issued",
+      width: 130,
+      sorter: true,
+    },
+    {
       title: "Created",
       dataIndex: "created",
       key: "created",
@@ -647,7 +654,7 @@ const DatasetList = ({
               <NavLink
                 to={{
                   pathname: `/dataset`,
-                  search: `?releasedFrom=3&sortBy=created`,
+                  search: `?releasedFrom=3&sortBy=issued`,
                 }}
                 end
               >
