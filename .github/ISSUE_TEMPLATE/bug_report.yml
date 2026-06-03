@@ -3,7 +3,7 @@ name: Bug report
 description: Create a report to help us improve
 title: 'Bug: '
 labels: bug
-assignees: thomasstjerne
+assignees: mdoering
 projects: ["CatalogueOfLife/2"]
 body:
   - type: textarea
