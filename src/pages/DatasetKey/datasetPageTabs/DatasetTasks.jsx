@@ -167,7 +167,7 @@ const DatasetTasks = (props) => {
             >
               <Tag
                 key={d.id}
-                style={{ marginBottom: "10px" }}
+                style={{ marginBottom: "10px", marginRight: "8px" }}
                 color={getDuplicateWarningColor(d.count)}
               >
                 {d.text} <strong>{d.count}</strong>
@@ -188,7 +188,7 @@ const DatasetTasks = (props) => {
             end
           >
             <Tag
-              style={{ marginBottom: "10px" }}
+              style={{ marginBottom: "10px", marginRight: "8px" }}
               color={getDuplicateWarningColor(manuscriptNames.count)}
             >
               Manuscript names <strong>{`${manuscriptNames.count}`}</strong>
@@ -208,7 +208,7 @@ const DatasetTasks = (props) => {
             end
           >
             <Tag
-              style={{ marginBottom: "10px" }}
+              style={{ marginBottom: "10px", marginRight: "8px" }}
               color={getDuplicateWarningColor(staleDecisions.count)}
             >
               Outdated decisions (<strong>{`${staleDecisions.count}`}</strong>

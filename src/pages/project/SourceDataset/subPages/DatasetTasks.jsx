@@ -109,7 +109,7 @@ const DatasetTasks = (props) => {
           .map((d) => (
             <Tag
               key={d.id}
-              style={{ marginBottom: "10px" }}
+              style={{ marginBottom: "10px", marginRight: "8px" }}
               color={getDuplicateWarningColor(d.count)}
             >
               <NavLink
@@ -138,7 +138,7 @@ const DatasetTasks = (props) => {
         <h1>Manuscript names without decision</h1>
         {manuscriptNames && (
           <Tag
-            style={{ marginBottom: "10px" }}
+            style={{ marginBottom: "10px", marginRight: "8px" }}
             color={getDuplicateWarningColor(manuscriptNames.count)}
           >
             <NavLink
@@ -158,7 +158,7 @@ const DatasetTasks = (props) => {
         <h1>Broken decisions</h1>
         {brokenDecisions && (
           <Tag
-            style={{ marginBottom: "10px" }}
+            style={{ marginBottom: "10px", marginRight: "8px" }}
             color={getDuplicateWarningColor(brokenDecisions)}
           >
             <NavLink
@@ -182,7 +182,7 @@ const DatasetTasks = (props) => {
             end
           >
             <Tag
-              style={{ marginBottom: "10px" }}
+              style={{ marginBottom: "10px", marginRight: "8px" }}
               color={getDuplicateWarningColor(staleDecisions.count)}
             >
               Outdated decisions (<strong>{`${staleDecisions.count}`}</strong>
