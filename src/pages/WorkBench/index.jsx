@@ -781,18 +781,15 @@ const WorkBench = ({
                   )}
                   <div style={{ marginTop: "10px" }}>
                     <Form layout="inline">
-                      <FormItem label="Matching">
-                        <RadioGroup
-                          onChange={(evt) => {
-                            updateSearch({ type: evt.target.value });
-                          }}
-                          value={params.type || "WHOLE_WORDS"}
-                        >
-                          <Radio value="EXACT">Exact</Radio>
-                          <Radio value="WHOLE_WORDS">Words</Radio>
-                          <Radio value="FUZZY">Fuzzy</Radio>
-                          <Radio value="PREFIX">Prefix</Radio>
-                        </RadioGroup>
+                      <FormItem label="Fuzzy">
+                        <Switch
+                          checked={
+                            (params.type || "").toUpperCase() === "FUZZY"
+                          }
+                          onChange={(checked) =>
+                            updateSearch({ type: checked ? "fuzzy" : null })
+                          }
+                        />
                       </FormItem>
 
                       {/*                 <FormItem

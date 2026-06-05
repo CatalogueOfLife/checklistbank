@@ -704,19 +704,6 @@ const NameSearchPage = ({
           )}
           <div style={{ marginTop: "10px" }}>
             <Form layout="inline">
-              <FormItem label="Match">
-                <RadioGroup
-                  onChange={(evt) => {
-                    updateSearch({ type: evt.target.value });
-                  }}
-                  value={params.type || "WHOLE_WORDS"}
-                >
-                  <Radio value="EXACT">Exact</Radio>
-                  <Radio value="WHOLE_WORDS">Words</Radio>
-                  <Radio value="FUZZY">Fuzzy</Radio>
-                  <Radio value="PREFIX">Prefix</Radio>
-                </RadioGroup>
-              </FormItem>
               <FormItem label="Search">
                 <RadioGroup
                   onChange={(evt) => {
@@ -728,6 +715,14 @@ const NameSearchPage = ({
                   <Radio value="AUTHORSHIP">Authorship</Radio>
                   <Radio value="VERNACULAR_NAME">Vernacular name</Radio>
                 </RadioGroup>
+              </FormItem>
+              <FormItem label="Fuzzy">
+                <Switch
+                  checked={(params.type || "").toUpperCase() === "FUZZY"}
+                  onChange={(checked) =>
+                    updateSearch({ type: checked ? "fuzzy" : null })
+                  }
+                />
               </FormItem>
             </Form>
           </div>
