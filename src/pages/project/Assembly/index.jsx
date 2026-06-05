@@ -429,7 +429,9 @@ const Assembly = ({
                     search: `?${qs.stringify(newParams)}`,
                   });
                   setAssemblyTaxonKey(name.key);
-                  assemblyRef.current.reloadRoot();
+                  // Pass the key explicitly: RR6 navigation is async so the new
+                  // defaultExpandKey prop has not propagated yet (issue #1671).
+                  assemblyRef.current.reloadRoot(name.key);
                 }}
                 onResetSearch={() => {
                   const currentParams = qs.parse(_.get(location, "search"));
@@ -633,7 +635,9 @@ const Assembly = ({
                       search: `?${qs.stringify(newParams)}`,
                     });
                     setSourceTaxonKey(name.key);
-                    sourceRef.current.reloadRoot();
+                    // Pass the key explicitly: RR6 navigation is async so the
+                    // new defaultExpandKey prop has not propagated yet (#1671).
+                    sourceRef.current.reloadRoot(name.key);
                   }}
                   onResetSearch={() => {
                     const currentParams = qs.parse(_.get(location, "search"));
@@ -683,7 +687,9 @@ const Assembly = ({
                       search: `?${qs.stringify(newParams)}`,
                     });
                     setAssemblyTaxonKey(targetID);
-                    assemblyRef.current.reloadRoot();
+                    // Pass the key explicitly: RR6 navigation is async so the
+                    // new defaultExpandKey prop has not propagated yet (#1671).
+                    assemblyRef.current.reloadRoot(targetID);
                   }}
                 />
               )}

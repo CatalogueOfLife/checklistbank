@@ -40,7 +40,9 @@ const DatasetClassification = ({ dataset, location }) => {
                 taxonKey: _.get(name, "key"),
               })}`,
             });
-            treeRef.current.reloadRoot();
+            // Pass the key explicitly: RR6 navigation is async so the new
+            // defaultExpandKey prop has not propagated yet (issue #1671).
+            treeRef.current.reloadRoot(_.get(name, "key"));
           }}
           onResetSearch={() => {
             history.push({

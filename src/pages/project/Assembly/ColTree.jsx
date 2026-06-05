@@ -334,13 +334,13 @@ const ColTree = (props) => {
   const reloadLoadedKeysRef = useRef(null);
 
   const reloadLoadedKeys = useCallback(
-    async (keys, expandAll = true) => {
+    async (keys, expandAll = true, targetExpandKey = defaultExpandKey) => {
       setRootLoading(true);
       const storedKeys = loadedKeysRef.current;
 
       let currentTreeData = treeDataRef.current;
-      const targetTaxon = defaultExpandKey
-        ? findNode(defaultExpandKey, currentTreeData)
+      const targetTaxon = targetExpandKey
+        ? findNode(targetExpandKey, currentTreeData)
         : null;
       const loadedKeysList = keys ? [...keys] : [...storedKeys];
       for (let index = 0; index < loadedKeysList.length; index++) {
@@ -366,7 +366,7 @@ const ColTree = (props) => {
               // It has gone missing from the tree
               setNodeNotFoundErr(
                 <span>
-                  Cannot find taxon {defaultExpandKey} in tree &#128549;
+                  Cannot find taxon {targetExpandKey} in tree &#128549;
                 </span>
               );
               setRootLoading(false);
@@ -374,7 +374,7 @@ const ColTree = (props) => {
                 treeType === "CATALOGUE" &&
                 typeof props.addMissingTargetKey === "function"
               ) {
-                props.addMissingTargetKey(defaultExpandKey);
+                props.addMissingTargetKey(targetExpandKey);
               }
             }
           }
@@ -400,26 +400,26 @@ const ColTree = (props) => {
               if (targetNode) {
                 setTreeData([...treeDataRef.current]);
                 setTimeout(() => {
-                  scrollToKey(treeInstanceRef.current, defaultExpandKey);
+                  scrollToKey(treeInstanceRef.current, targetExpandKey);
                 }, 100);
               } else {
                 // It has gone missing from the tree
                 setNodeNotFoundErr(
                   <span>
-                    Cannot find taxon {defaultExpandKey} in tree &#128549;
+                    Cannot find taxon {targetExpandKey} in tree &#128549;
                   </span>
                 );
                 if (
                   treeType === "CATALOGUE" &&
                   typeof props.addMissingTargetKey === "function"
                 ) {
-                  props.addMissingTargetKey(defaultExpandKey);
+                  props.addMissingTargetKey(targetExpandKey);
                 }
               }
             }
           } else {
             setTimeout(() => {
-              scrollToKey(treeInstanceRef.current, defaultExpandKey);
+              scrollToKey(treeInstanceRef.current, targetExpandKey);
             }, 100);
           }
         }
@@ -430,9 +430,9 @@ const ColTree = (props) => {
       if (expandAll) {
         setExpandedKeys(newLoadedKeys);
       }
-      if (defaultExpandKey) {
+      if (targetExpandKey) {
         setTimeout(() => {
-          scrollToKey(treeInstanceRef.current, defaultExpandKey);
+          scrollToKey(treeInstanceRef.current, targetExpandKey);
         }, 100);
       }
     },
@@ -471,10 +471,21 @@ const ColTree = (props) => {
     [fetchChildPage, findNode]
   );
 
-  const loadRoot = useCallback(async () => {
+  const loadRoot = useCallback(async (expandKeyOverride) => {
     const {
       dataset: { key },
     } = props;
+    // expandKeyOverride lets a caller (e.g. a search selection) name the taxon
+    // to expand to explicitly. React Router 6 navigation is asynchronous, so
+    // when a search handler calls reloadRoot() right after history.push() the
+    // new defaultExpandKey prop has not reached this component yet — reading it
+    // from the closure would expand to the *previous* taxon (issue #1671). An
+    // explicit string key sidesteps that stale read; anything else (e.g. a
+    // click event from a "Load more" button) falls back to the prop.
+    const expandKey =
+      typeof expandKeyOverride === "string"
+        ? expandKeyOverride
+        : defaultExpandKey;
     setRootLoading(true);
     setTreeData([]);
     let id = key;
@@ -521,11 +532,11 @@ const ColTree = (props) => {
         setTreeData(newTreeData);
         setError(null);
 
-        if (defaultExpandKey) {
+        if (expandKey) {
           // expandToTaxon reads treeData from state; we need the updated value.
           // We set treeDataRef synchronously here so expandToTaxon sees it.
           treeDataRef.current = newTreeData;
-          return expandToTaxon(defaultExpandKey, newTreeData);
+          return expandToTaxon(expandKey, newTreeData);
         } else {
           setExpandedKeys(newTreeData.length < 10 ? newTreeData.map((n) => n.taxon.id) : []);
         }
@@ -687,7 +698,10 @@ const ColTree = (props) => {
       setTreeData(treeDataSnapshot);
       treeDataRef.current = treeDataSnapshot;
       setRootLoading(false);
-      return reloadLoadedKeysRef.current(loadedKeysList);
+      // Pass expandKey explicitly so the target-finding / scroll-to logic in
+      // reloadLoadedKeys uses the taxon we are expanding to, not the (possibly
+      // stale) defaultExpandKey prop — see the override note in loadRoot.
+      return reloadLoadedKeysRef.current(loadedKeysList, true, expandKey);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -704,19 +718,22 @@ const ColTree = (props) => {
     ]
   );
 
-  const reloadRoot = useCallback(() => {
-    return new Promise((resolve) => {
-      setRootLoading(true);
-      setTreeData([]);
-      setLoadedKeys([]);
-      setRootTotal(0);
-      setError(null);
-      setNodeNotFoundErr(null);
-      setSelectedNodes([]);
-      setSelectedKeys([]);
-      resolve(loadRoot());
-    });
-  }, [loadRoot]);
+  const reloadRoot = useCallback(
+    (expandKeyOverride) => {
+      return new Promise((resolve) => {
+        setRootLoading(true);
+        setTreeData([]);
+        setLoadedKeys([]);
+        setRootTotal(0);
+        setError(null);
+        setNodeNotFoundErr(null);
+        setSelectedNodes([]);
+        setSelectedKeys([]);
+        resolve(loadRoot(expandKeyOverride));
+      });
+    },
+    [loadRoot]
+  );
 
   const onLoadData = useCallback(
     (treeNode, reloadAll = false) => {
