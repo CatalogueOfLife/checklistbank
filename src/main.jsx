@@ -8,6 +8,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import "antd/dist/reset.css";
 import "./index.css";
 import App from "./App";
+import installTranslationCrashGuard from "./installTranslationCrashGuard";
 
 // Match moment's broader API surface — `.fromNow()` and `dayjs.utc()` are
 // referenced across the codebase (e.g. SyncState). LocalizedFormat enables
@@ -15,6 +16,10 @@ import App from "./App";
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
+
+// Stop browser page-translation from crashing React's reconciler. Must run
+// before the app renders. See installTranslationCrashGuard for the full why.
+installTranslationCrashGuard();
 
 // Plausible analytics is only enabled on the public production host.
 // Lives here rather than as an inline <script> in index.html so the
