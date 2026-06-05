@@ -1038,6 +1038,8 @@ const BasicMenu = (props) => {
         inlineCollapsed={collapsed}
         onOpenChange={onOpenChange}
         onSelect={onSelect}
+        // buffer so the last entry can be scrolled clear of the viewport edge
+        style={{ paddingBottom: "64px" }}
       />
     </React.Fragment>
   );
