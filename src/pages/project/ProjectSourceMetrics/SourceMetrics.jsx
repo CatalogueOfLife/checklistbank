@@ -104,7 +104,8 @@ const SourceMetrics = ({
 
   const getData = () => {
     const params = qs.parse(_.get(location, "search"));
-    const { releaseKey: rkParam, hideUnchanged: huParam } = params;
+    const { releaseKey: rkParam, hideUnchanged: huParam, view: viewParam } =
+      params;
     setLoading(true);
     setReleaseKey(rkParam);
 
@@ -172,7 +173,9 @@ const SourceMetrics = ({
               }, {}),
           };
           setGroups(newGroups);
-          setSelectedGroup("default");
+          setSelectedGroup(
+            viewParam && newGroups[viewParam] ? viewParam : "default"
+          );
           return { res, groups: newGroups };
         });
       })
@@ -321,6 +324,15 @@ const SourceMetrics = ({
   };
 
   const selectGroup = (value, additionalColumns) => {
+    const params = qs.parse(_.get(location, "search"));
+    history.push({
+      pathname: location.pathname,
+      search: `?${qs.stringify(
+        value === "default"
+          ? _.omit(params, "view")
+          : { ...params, view: value }
+      )}`,
+    });
     if (hideUnchanged) {
       const newFilteredData = getChangedDataOnly(data, additionalColumns);
       setSelectedGroup(value);
