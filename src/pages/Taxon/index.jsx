@@ -656,9 +656,28 @@ const TaxonPage = ({
                         datasetKey={datasetKey}
                       />
                     )}
-                  {_.get(info, "synonyms") && (
+                  {(_.get(info, "synonyms.homotypic.length") > 0 ||
+                    _.get(info, "synonyms.heterotypicGroups.length") > 0) && (
                     <PresentationItem md={md} label="Synonyms and combinations">
                       <Synonyms
+                        primarySource={sourceDataset}
+                        onEditSuccess={getData}
+                        canEdit={canEdit}
+                        data={_.get(info, "synonyms")}
+                        decisions={_.get(info, "decisions")}
+                        references={_.get(info, "references")}
+                        referenceIndexMap={referenceIndexMap}
+                        typeMaterial={_.get(info, "typeMaterial")}
+                        style={{ marginTop: "-3px" }}
+                        datasetKey={datasetKey}
+                        projectKey={projectKey}
+                      />
+                    </PresentationItem>
+                  )}
+                  {_.get(info, "synonyms.misapplied.length") > 0 && (
+                    <PresentationItem md={md} label="Misapplied names">
+                      <Synonyms
+                        misapplied
                         primarySource={sourceDataset}
                         onEditSuccess={getData}
                         canEdit={canEdit}
@@ -796,11 +815,12 @@ const TaxonPage = ({
                   )}
                   {_.isArray(taxon?.identifier) && taxon.identifier.length > 0 && (
                     <PresentationItem md={md} label="Identifiers">
-                      {taxon.identifier.map((id, i) => (
-                        <React.Fragment key={id}>
-                          {i > 0 && ", "}
-                          <CurieIdentifier identifier={id} identifierScope={identifierScope} />
-                        </React.Fragment>
+                      {taxon.identifier.map((id) => (
+                        <CurieIdentifier
+                          key={id}
+                          identifier={id}
+                          identifierScope={identifierScope}
+                        />
                       ))}
                     </PresentationItem>
                   )}

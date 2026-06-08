@@ -25,6 +25,7 @@ const SynonymsTable = ({
   canEdit,
   referenceIndexMap,
   primarySource,
+  misapplied,
 }) => {
   const uri = `/dataset/${datasetKey}/nameusage/`;
   const [taxonForEdit, setTaxonForEdit] = useState(null);
@@ -62,7 +63,11 @@ const SynonymsTable = ({
             end
           >
             <span style={indent ? { marginLeft: "10px" } : null}>
-              {homotypic === true ? "≡ " : "= "}{" "}
+              {_.get(s, "status") === "misapplied"
+                ? ""
+                : homotypic === true
+                  ? "≡ "
+                  : "= "}{" "}
               <span
                 dangerouslySetInnerHTML={{
                   __html: _.get(
@@ -141,7 +146,10 @@ const SynonymsTable = ({
   const heterotypicSorted = (data.heterotypicGroups || [])
     .slice()
     .sort((a, b) => sorter(a[0], b[0]));
-  const totalEntries = homotypicSorted.length + heterotypicSorted.length;
+  const misappliedSorted = (data.misapplied || []).slice().sort(sorter);
+  const totalEntries = misapplied
+    ? misappliedSorted.length
+    : homotypicSorted.length + heterotypicSorted.length;
   const homotypicVisible = showAll
     ? homotypicSorted
     : homotypicSorted.slice(0, TOP_N);
@@ -151,6 +159,9 @@ const SynonymsTable = ({
   const heterotypicVisible = showAll
     ? heterotypicSorted
     : heterotypicSorted.slice(0, heterotypicSlots);
+  const misappliedVisible = showAll
+    ? misappliedSorted
+    : misappliedSorted.slice(0, TOP_N);
 
   return (
     <div style={style}>
@@ -167,8 +178,14 @@ const SynonymsTable = ({
           taxon={taxonForEdit}
         />
       )}
-      {homotypicVisible.map((s) => renderSynonym(s, true))}
-      {heterotypicVisible.map((s) => renderSynonym(s, false))}
+      {misapplied ? (
+        misappliedVisible.map((s) => renderSynonym(s, false))
+      ) : (
+        <>
+          {homotypicVisible.map((s) => renderSynonym(s, true))}
+          {heterotypicVisible.map((s) => renderSynonym(s, false))}
+        </>
+      )}
       <ShowMoreToggle
         total={totalEntries}
         visible={TOP_N}
