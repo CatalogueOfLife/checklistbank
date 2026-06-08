@@ -9,8 +9,8 @@ import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
 import _ from "lodash";
-import { DownloadOutlined, HistoryOutlined, SyncOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin } from "antd";
+import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
+import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin, Popconfirm, message } from "antd";
 import moment from "dayjs";
 import history from "../../history";
 const UserProfile = ({ user, countryAlpha2, match }) => {
@@ -20,6 +20,36 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
   const [hasRunningDownload, setHasRunningDownload] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
   const [intervalHandle, setIntervalHandle] = useState(null)
+  const [cancelingKey, setCancelingKey] = useState(null)
+
+  const loadDownloads = async () => {
+    const downloads_ = await axios(
+      `${config.dataApi}export?createdBy=${user?.key}`
+    );
+    if (downloads_?.data?.result) {
+      setDownloads(downloads_.data.result);
+      setHasRunningDownload(
+        !!downloads_.data.result.find((e) => e.status === "running")
+      );
+    }
+  };
+
+  const cancelDownload = async (key) => {
+    setCancelingKey(key);
+    try {
+      await axios.delete(`${config.dataApi}job/${key}`);
+      await loadDownloads();
+    } catch (err) {
+      message.error(
+        `Could not cancel download: ${
+          err?.response?.data?.message || err?.message || err
+        }`
+      );
+    } finally {
+      setCancelingKey(null);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       const editorDatasets_ = await axios(
@@ -28,9 +58,6 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       const reviewerDatasets_ = await axios(
         `${config.dataApi}dataset?reviewer=${user?.key}&limit=1000`
       );
-      const downloads_ = await axios(
-        `${config.dataApi}export?createdBy=${user?.key}`
-      );
 
       if (editorDatasets_?.data?.result) {
         setEditorDatasets(editorDatasets_?.data?.result);
@@ -38,13 +65,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       if (reviewerDatasets_?.data?.result) {
         setReviewerDatasets(reviewerDatasets_?.data?.result);
       }
-      if (downloads_?.data?.result) {
-        setDownloads(downloads_?.data?.result);
-        const running = downloads_?.data?.result.find(e => e.status === "running");
-        if(running){
-          setHasRunningDownload(true)
-        }
-      }
+      await loadDownloads();
     };
     if(user){
       init();
@@ -57,17 +78,8 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
 
   useEffect(() => {
     if(hasRunningDownload && !intervalHandle){
-     let hdl = setInterval(async () => {
-        const downloads_ = await axios(
-          `${config.dataApi}export?createdBy=${user?.key}`
-        );
-        if (downloads_?.data?.result) {
-          setDownloads(downloads_?.data?.result);
-          const running = downloads_?.data?.result.find(e => e.status === "running");
-          if(running){
-            setHasRunningDownload(true)
-          }
-        }
+     let hdl = setInterval(() => {
+        loadDownloads();
       }, 5000)
       setIntervalHandle(hdl)
     };
@@ -118,10 +130,32 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
             </Button>
           ) : item?.status === "waiting" ? (
             <HistoryOutlined style={{ marginRight: "10px", marginLeft: "10px" }} />
+          ) : item?.status === "canceled" ? (
+            <Tag>Cancelled</Tag>
           ) : <SyncOutlined style={{ marginRight: "10px", marginLeft: "10px" }} spin />}
-          
-          <span>{moment(item?.created).format("MMM Do YYYY")}</span> 
-        </>}>
+
+          <span>{moment(item?.created).format("MMM Do YYYY")}</span>
+        </>}
+      extra={
+        item?.status === "running" || item?.status === "waiting" ? (
+          <Popconfirm
+            title="Cancel this download?"
+            okText="Yes, cancel"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
+            onConfirm={() => cancelDownload(item?.key)}
+          >
+            <Button
+              danger
+              size="small"
+              icon={<StopOutlined />}
+              loading={cancelingKey === item?.key}
+            >
+              Cancel
+            </Button>
+          </Popconfirm>
+        ) : null
+      }>
         <>
             <div> <PresentationItem md={4} label="Request">
              {item.request && <div>{Object.keys(item.request).map((key) => (
