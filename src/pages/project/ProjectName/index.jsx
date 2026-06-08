@@ -2,6 +2,7 @@ import React from "react";
 import Name from "../../Name";
 import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
+import withRouter from "../../../withRouter";
 import Exception404 from "../../../components/exception/404";
 import _ from "lodash";
 import { Helmet } from "react-helmet-async";
@@ -28,4 +29,4 @@ const mapContextToProps = ({ project }) => ({
 
   project
 });
-export default withContext(mapContextToProps)(ProjectName);
+export default withRouter(withContext(mapContextToProps)(ProjectName));
