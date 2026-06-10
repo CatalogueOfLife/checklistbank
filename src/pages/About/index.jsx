@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 
 import withRouter from "../../withRouter";
+import config from "../../config";
 import PageContent from "../../components/PageContent";
 
 import Layout from "../../components/LayoutNew";
@@ -73,7 +74,9 @@ const About = ({
   const getData = async () => {
     try {
       const res = await axios(`/about-md/${mdFile}.md`).then((res) => res.data);
-      setMd(res);
+      // substitute environment-dependent placeholders (e.g. the GBIF web URL,
+      // which points to the test registry on dev and the live one on prod)
+      setMd(res.replaceAll("{{GBIF_URL}}", config.gbifUrl));
     } catch (error) {
       console.log(error);
     }

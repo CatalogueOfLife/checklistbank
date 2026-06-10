@@ -42,4 +42,4 @@ We currently do store all downloads so they can be accessed for a long time, but
 
 ## User accounts
 
-ChecklistBank relies on [GBIF user accounts](https://www.gbif.org/user/profile). Once you have a registered GBIF account you can also use it to log into ChecklistBank. If you want to become an editor and manage datasets your GBIF profile must include an ORCID.
+ChecklistBank relies on [GBIF user accounts]({{GBIF_URL}}user/profile). Once you have a registered GBIF account you can also use it to log into ChecklistBank. If you want to become an editor and manage datasets your GBIF profile must include an ORCID.
