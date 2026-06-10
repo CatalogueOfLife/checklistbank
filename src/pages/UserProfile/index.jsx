@@ -197,7 +197,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
                     <Row>
                       <Col flex="auto"></Col>
                       <Col>
-                        <Button href="https://www.gbif.org/user/profile">
+                        <Button href={`${config.gbifUrl}user/profile`}>
                           Edit on gbif.org
                         </Button>
                       </Col>
