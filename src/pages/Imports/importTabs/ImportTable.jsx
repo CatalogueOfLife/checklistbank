@@ -183,6 +183,8 @@ const ImportTable = (props) => {
     current: 1,
   });
   const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [columns, setColumns] = useState(defaultColumns);
 
   const updateStatusQuery = (query, cols) => {
@@ -220,6 +222,8 @@ const ImportTable = (props) => {
 
         setPagination((prev) => ({ ...prev, total }));
         setLoading(false);
+        setLoaded(true);
+        setLoadError(false);
         setData(
           res.data.result
             ? res.data.result.slice(0, Number(pagination.pageSize))
@@ -234,9 +238,17 @@ const ImportTable = (props) => {
         }
       })
       .catch((err) => {
-        addError(err);
         setLoading(false);
-        setData([]);
+        setLoadError(true);
+        // The running tab polls every 3s. Against a flapping backend, keep the last
+        // good rows and let the render show a "reconnecting" hint instead of wiping
+        // the table (which would falsely read as "No running imports.") or popping a
+        // global error notification on every failed poll. The finished tab is a
+        // one-shot user action, so surface the error there as before.
+        if (section !== "running") {
+          addError(err);
+          setData([]);
+        }
       });
   };
 
@@ -332,8 +344,9 @@ const ImportTable = (props) => {
 
   return (
     <>
-      {(section === 'running' && data.length === 0) && <Row><Col flex="auto"></Col><Col><h1>No running imports.</h1></Col><Col flex="auto"></Col></Row>}
-      {(section === 'running' && data.length > 0) && <h1>Running imports:</h1>}
+      {(section === 'running' && data.length === 0 && loaded && !loadError) && <Row><Col flex="auto"></Col><Col><h1>No running imports.</h1></Col><Col flex="auto"></Col></Row>}
+      {(section === 'running' && data.length === 0 && loadError) && <Row><Col flex="auto"></Col><Col><h1>Could not reach the server — retrying…</h1></Col><Col flex="auto"></Col></Row>}
+      {(section === 'running' && data.length > 0) && <h1>Running imports{loadError ? ' (reconnecting…)' : ''}:</h1>}
       {(section === 'finished') && <h1>Completed imports:</h1>}
 
       {!(section === 'running' && data.length === 0) && (
