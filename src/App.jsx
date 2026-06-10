@@ -425,6 +425,10 @@ const App = () => {
             <Route path="/vocabulary/taxgrouptree" element={<TaxGroupTree />} />
             <Route path="/vocabulary/:key" element={<VocabularyKey />} />
             <Route path="/tools/index" element={<ToolIndex />} />
+            <Route
+              path="/about"
+              element={<Navigate to="/about/introduction" replace />}
+            />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
