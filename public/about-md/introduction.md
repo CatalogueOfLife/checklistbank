@@ -20,7 +20,7 @@ The main entry point to ChecklistBank is the [dataset search](/dataset), where a
 
 The actual data for external datasets can either be uploaded by a user or pulled automatically by the system from a configured URL. When a new dataset import happens it will overwrite any previously existing data, only keeping the most recent version searchable. An [import history](/dataset/1199/imports?showHistory=true) is available for all datasets which not only shows the history, but also tracks metrics over time and gives access to the binary archive of all past versions which we store on our servers.
 
-GBIF also covers [checklist datasets](https://www.gbif.org/dataset/search?type=CHECKLIST) in the Darwin Core Archive format.
+GBIF also covers [checklist datasets]({{GBIF_URL}}dataset/search?type=CHECKLIST) in the Darwin Core Archive format.
 ChecklistBank therefore syncs with the GBIF registry ever hour and inserts missing datasets when an appropriate license (CC0, CC-BY, CC-BY-NC) is given. Other parties like [Plazi's TreatmentBank](http://plazi.org/treatmentbank/) use our [API](API) to directly create new datasets.
 
 ## Imports

@@ -42,7 +42,7 @@ Popular dataset filters:
 - `gbifKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c`: find dataset with the [GBIF key d7dddbf4-2cf0-4f39-9b2a-bb099caae36c](https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c)
 - `gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862`: find [datasets](https://www.checklistbank.org/dataset?gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862&limit=50&offset=0&origin=external&origin=project) which have been published in GBIF by the given publisher, in this case [Plazi](https://www.gbif.org/publisher/7ce8aef0-9e92-11dc-8738-b8a03c50a862)
 
-We synchronise ChecklistBank with [checklist datasets in GBIF](https://www.gbif.org/dataset/search?type=CHECKLIST), so you have access to all these GBIF datasets from CLB.
+We synchronise ChecklistBank with [checklist datasets in GBIF]({{GBIF_URL}}dataset/search?type=CHECKLIST), so you have access to all these GBIF datasets from CLB.
 
 ChecklistBank distinguishes 4 kind of datasets indicated by their `origin` property:
 
@@ -74,7 +74,7 @@ In order to see all supported values for a vocabulary append its name to the voc
 The majority of the API is open and can be accessed anonymously.
 Writing data often requires authentication and datasets can be `private`, i.e. are only visible to authorised users.
 
-ChecklistBank shares user accounts with GBIF, so you need to have a [GBIF account](https://www.gbif.org/user/profile) to authenticate to the CLB API.
+ChecklistBank shares user accounts with GBIF, so you need to have a [GBIF account]({{GBIF_URL}}user/profile) to authenticate to the CLB API.
 
 The **development environment is separate**: `api.dev.checklistbank.org` is linked to the GBIF development registry at [gbif-test.org](https://www.gbif-test.org), not to production GBIF. A production GBIF account will not work against dev — you need to register a separate account at [www.gbif-test.org/user/profile](https://www.gbif-test.org/user/profile) and then log in once at [dev.checklistbank.org](https://dev.checklistbank.org) with those credentials.
 
