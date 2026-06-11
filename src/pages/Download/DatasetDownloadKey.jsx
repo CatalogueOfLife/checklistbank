@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   SyncOutlined,
   DownloadOutlined,
@@ -26,7 +26,7 @@ import withContext from "../../components/hoc/withContext";
 const DatasetDownload = ({ match, addError }) => {
   const [download, setDownload] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [intervalHandle, setIntervalHandle] = useState(null);
+  const timerRef = useRef(null);
 
   const init = async () => {
     setLoading(true);
@@ -46,21 +46,24 @@ const DatasetDownload = ({ match, addError }) => {
     }
   }, [match.params.key]);
 
+  // Poll for status while the export is running. setInterval (not a one-shot
+  // setTimeout) so it keeps refreshing, and the handle lives in a ref so the
+  // guard never goes stale and unmount cleanup actually clears it.
   useEffect(() => {
-    if (["running", "waiting"].includes(download?.status)) {
-      if (!intervalHandle) {
-        let hdl = setTimeout(init, 5000);
-        setIntervalHandle(hdl);
-      }
-    } else if (intervalHandle) {
-      clearInterval(intervalHandle);
+    const running = ["running", "waiting"].includes(download?.status);
+    if (running && !timerRef.current) {
+      timerRef.current = setInterval(init, 5000);
+    } else if (!running && timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
   }, [download]);
 
   useEffect(() => {
     return () => {
-      if (intervalHandle) {
-        clearInterval(intervalHandle);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, []);
