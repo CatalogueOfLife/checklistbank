@@ -224,13 +224,13 @@ const AdminPage = ({ background, addError, getBackground }) => {
 
         <Row>
           <FormItem label="Maintenance">
-            <Space direction="vertical">
+            <Space orientation="vertical">
               <Switch
                 loading={maintenanceLoading}
                 onChange={(checked) => setMaintenance(checked)}
                 checked={background && background.maintenance}
               />
-              <Space direction="horizontal" align="start">
+              <Space orientation="horizontal" align="start">
                 <Input.TextArea
                   rows={2}
                   style={{ width: 360 }}
@@ -251,7 +251,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         </Row>
 
         <Row>
-          <Space direction="horizontal" size={[50, 0]} wrap>
+          <Space orientation="horizontal" size={[50, 0]} wrap>
             {Object.keys(components)
               .filter((c) => c != "idle")
               .map((comp) => (
