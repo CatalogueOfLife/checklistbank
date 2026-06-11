@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Layout from "../../components/LayoutNew";
 
 import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
-import BackgroundProvider from "../../components/hoc/BackgroundProvider";
 import config from "../../config";
 import { Helmet } from "react-helmet-async";
 import {
@@ -18,13 +17,14 @@ import {
   Popconfirm,
   App,
   Form,
+  Input,
 } from "antd";
 import axios from "axios";
 import ErrorMsg from "../../components/ErrorMsg";
 
 const FormItem = Form.Item;
 
-const AdminPage = ({ background, addError }) => {
+const AdminPage = ({ background, addError, getBackground }) => {
   const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [updateAllLogosloading, setUpdateAllLogosloading] = useState(false);
@@ -34,10 +34,22 @@ const AdminPage = ({ background, addError }) => {
   const [updateUsageCountsLoading, setUpdateUsageCountsLoading] = useState(false);
   const [components, setComponents] = useState({ foo: true, bar: false });
   const [componentsLoading, setComponentsLoading] = useState(false);
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState("");
+  const maintenancePrefilled = useRef(false);
 
   useEffect(() => {
     getComponents();
   }, []);
+
+  // Prefill the message box from the current status file once it has loaded,
+  // without clobbering the admin's edits on later background polls.
+  useEffect(() => {
+    if (!maintenancePrefilled.current && background) {
+      setMaintenanceMessage(background.message || "");
+      maintenancePrefilled.current = true;
+    }
+  }, [background]);
 
   const getComponents = () => {
     axios
@@ -52,10 +64,16 @@ const AdminPage = ({ background, addError }) => {
       });
   };
 
-  const toggleMaintenance = (checked) => {
+  // Set maintenance on/off together with the optional custom banner message.
+  const setMaintenance = (on) => {
+    setMaintenanceLoading(true);
     axios
-      .post(`${config.dataApi}admin/maintenance`)
-      .then(BackgroundProvider.getBackground);
+      .post(`${config.dataApi}admin/maintenance`, null, {
+        params: { on, message: maintenanceMessage || undefined },
+      })
+      .then(() => getBackground && getBackground())
+      .catch((err) => addError(err))
+      .finally(() => setMaintenanceLoading(false));
   };
 
   const updateComponent = (comp, checked) => {
@@ -208,13 +226,27 @@ const AdminPage = ({ background, addError }) => {
             </FormItem>
 
             <FormItem label="Maintenance">
-              <Switch
-                loading={componentsLoading}
-                onChange={(checked) => {
-                  toggleMaintenance(checked);
-                }}
-                checked={background && background.maintenance}
-              />
+              <Space direction="vertical">
+                <Switch
+                  loading={maintenanceLoading}
+                  onChange={(checked) => setMaintenance(checked)}
+                  checked={background && background.maintenance}
+                />
+                <Input.TextArea
+                  rows={2}
+                  style={{ width: 360 }}
+                  placeholder="Optional custom banner message (a default is shown if empty)"
+                  value={maintenanceMessage}
+                  onChange={(e) => setMaintenanceMessage(e.target.value)}
+                />
+                <Button
+                  size="small"
+                  loading={maintenanceLoading}
+                  onClick={() => setMaintenance(!!background?.maintenance)}
+                >
+                  Save message
+                </Button>
+              </Space>
             </FormItem>
           </Space>
         </Row>
@@ -372,11 +404,13 @@ const mapContextToProps = ({
   setProject,
   background,
   addError,
+  getBackground,
 }) => ({
   projectKey,
   project,
   setProject,
   background,
   addError,
+  getBackground,
 });
 export default withContext(mapContextToProps)(AdminPage);

@@ -279,7 +279,8 @@ const SiteLayout = ({
                     <PulsatingDot />
                   </Col>
                   <Col style={{ paddingLeft: "10px" }}>
-                    The system is under maintenance - please expect errors.
+                    {background.message ||
+                      "The system is under maintenance - please expect errors."}
                   </Col>
                 </Row>
               }

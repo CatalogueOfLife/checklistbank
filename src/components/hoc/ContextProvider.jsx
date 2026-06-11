@@ -298,9 +298,10 @@ const ContextProvider = ({ children }) => {
 
   const getBackground = async () => {
     try {
-      const { data: bg } = await axios.get(
-        `${config.downloadApi}.status.json?cachebust=${Math.random()}`
-      );
+      // Stable URL (no per-request cache-buster) so Varnish/Apache can cache
+      // and coalesce these polls; freshness is bounded by the Cache-Control
+      // max-age set on .status.json (see deploy) and the poll interval.
+      const { data: bg } = await axios.get(`${config.downloadApi}.status.json`);
       setBackground(bg);
     } catch (err) {
       console.log(err);
