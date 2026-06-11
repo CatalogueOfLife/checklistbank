@@ -4,16 +4,17 @@ import config from "../../config";
 
 // Configurable cadences (per env, in src/env.json):
 // - healthHeartBeat: how often the system health/components are polled (~60s)
-// - backgroundHeartBeat: how often the background task status is polled (~60s)
+// - maintenanceHeartBeat: how often .status.json (maintenance banner /
+//   background task status) is polled (~60s)
 // - pollingHeartBeat: default for all other foreground polling (~5s)
-const backgroundHeartBeat = config.backgroundHeartBeat || 60000;
+const maintenanceHeartBeat = config.maintenanceHeartBeat || 60000;
 const healthHeartBeat = config.healthHeartBeat || 60000;
 
 const BackgroundProvider = ({ getBackground, getSystemHealth }) => {
   useEffect(() => {
     getBackground();
     getSystemHealth();
-    const t = setInterval(getBackground, backgroundHeartBeat);
+    const t = setInterval(getBackground, maintenanceHeartBeat);
     const sysT = setInterval(getSystemHealth, healthHeartBeat);
     return () => {
       clearInterval(t);
