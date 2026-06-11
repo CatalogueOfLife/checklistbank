@@ -2,17 +2,18 @@ import { useEffect } from "react";
 import withContext from "./withContext";
 import config from "../../config";
 
-// Two configurable cadences (per env, in src/env.json):
+// Configurable cadences (per env, in src/env.json):
 // - healthHeartBeat: how often the system health/components are polled (~60s)
-// - pollingHeartBeat: default for all other foreground/background polling (~5s)
-const pollingHeartBeat = config.pollingHeartBeat || 5000;
+// - backgroundHeartBeat: how often the background task status is polled (~60s)
+// - pollingHeartBeat: default for all other foreground polling (~5s)
+const backgroundHeartBeat = config.backgroundHeartBeat || 60000;
 const healthHeartBeat = config.healthHeartBeat || 60000;
 
 const BackgroundProvider = ({ getBackground, getSystemHealth }) => {
   useEffect(() => {
     getBackground();
     getSystemHealth();
-    const t = setInterval(getBackground, pollingHeartBeat);
+    const t = setInterval(getBackground, backgroundHeartBeat);
     const sysT = setInterval(getSystemHealth, healthHeartBeat);
     return () => {
       clearInterval(t);
