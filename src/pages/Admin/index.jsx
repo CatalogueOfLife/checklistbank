@@ -233,7 +233,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
               <Input.TextArea
                 autoSize={{ minRows: 1 }}
                 style={{ width: 360 }}
-                placeholder="Optional custom banner message (a default is shown if empty)"
+                placeholder="Optional custom banner message"
                 value={maintenanceMessage}
                 onChange={(e) => setMaintenanceMessage(e.target.value)}
               />
