@@ -10,7 +10,12 @@ import config from "../../config";
 const maintenanceHeartBeat = config.maintenanceHeartBeat || 60000;
 const healthHeartBeat = config.healthHeartBeat || 60000;
 
-const BackgroundProvider = ({ getBackground, getSystemHealth }) => {
+const BackgroundProvider = ({
+  getBackground,
+  getSystemHealth,
+  getJobQueue,
+  user,
+}) => {
   useEffect(() => {
     getBackground();
     getSystemHealth();
@@ -21,12 +26,29 @@ const BackgroundProvider = ({ getBackground, getSystemHealth }) => {
       clearInterval(sysT);
     };
   }, []);
+
+  // The job queue is only relevant to (and only shown for) logged-in users,
+  // so poll it on the health cadence only while authenticated.
+  useEffect(() => {
+    if (!user) return undefined;
+    getJobQueue();
+    const t = setInterval(getJobQueue, healthHeartBeat);
+    return () => clearInterval(t);
+  }, [user?.key]);
+
   return null;
 };
 
-const mapContextToProps = ({ getBackground, getSystemHealth }) => ({
+const mapContextToProps = ({
   getBackground,
   getSystemHealth,
+  getJobQueue,
+  user,
+}) => ({
+  getBackground,
+  getSystemHealth,
+  getJobQueue,
+  user,
 });
 
 export default withContext(mapContextToProps)(BackgroundProvider);

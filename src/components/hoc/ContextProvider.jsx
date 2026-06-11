@@ -149,6 +149,14 @@ const ContextProvider = ({ children }) => {
   const [background, setBackground] = useState({});
   const [allComponentsRunning, setAllComponentsRunning] = useState(undefined);
   const [allHealthChecksPassing, setAllHealthChecksPassing] = useState(undefined);
+  // Active jobs across the (currently separate) import and background-job queues.
+  const [jobQueue, setJobQueue] = useState({
+    importsRunning: [],
+    importsRunningCount: 0,
+    importsQueued: 0,
+    jobsRunning: [],
+    jobsQueued: 0,
+  });
   const [speciesinteractiontype, setSpeciesinteractiontype] = useState([]);
   const [language, setLanguage] = useState([]);
   const [project, setProjectState] = useState(
@@ -352,6 +360,38 @@ const ContextProvider = ({ children }) => {
     }
   };
 
+  // Polls the active state of both queues: imports (still separate) and the
+  // general background job queue. Only active/queued counts are kept - no
+  // finished/past jobs. On a transient error the last known state is retained.
+  const getJobQueue = async () => {
+    try {
+      const [running, waiting, jobs] = await Promise.all([
+        axios.get(`${config.dataApi}importer?running=true`),
+        axios.get(`${config.dataApi}importer?state=waiting&limit=0`),
+        axios.get(`${config.dataApi}job`),
+      ]);
+      const importsRunning = running?.data?.result || [];
+      const importsRunningCount = running?.data?.total ?? importsRunning.length;
+      const importsQueued = waiting?.data?.total || 0;
+      const allJobs = Array.isArray(jobs?.data) ? jobs.data : [];
+      const jobsRunning = allJobs.filter(
+        (j) => String(j?.status).toLowerCase() === "running"
+      );
+      // the /job queue only holds non-finished jobs, so anything not running
+      // (waiting/blocked) is queued
+      const jobsQueued = allJobs.length - jobsRunning.length;
+      setJobQueue({
+        importsRunning,
+        importsRunningCount,
+        importsQueued,
+        jobsRunning,
+        jobsQueued,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     // Add interceptor to catch auth errors from XHR
     axios.interceptors.response.use(
@@ -543,6 +583,7 @@ const ContextProvider = ({ children }) => {
     background,
     allComponentsRunning,
     allHealthChecksPassing,
+    jobQueue,
     speciesinteractiontype,
     language,
     project,
@@ -563,6 +604,7 @@ const ContextProvider = ({ children }) => {
     getSyncState,
     getBackground,
     getSystemHealth,
+    getJobQueue,
   };
 
   return (

@@ -23,6 +23,7 @@ import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill";
 import Health from "./Health";
+import JobQueue from "./JobQueue";
 import React from "react";
 
 const compose = _.flowRight;
@@ -257,6 +258,7 @@ const SiteLayout = ({
             )}
           </div>
           <div className="header__secondary" style={{ flex: "0 0 auto" }}>
+            <JobQueue />
             <Health />
             <UserMenu />
             <Sync />

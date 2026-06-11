@@ -46,6 +46,7 @@ import ProjectEditors from "./pages/project/Editors";
 
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
+import JobQueue from "./pages/JobQueue";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
@@ -431,6 +432,7 @@ const App = () => {
             />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
+            <Route path="/jobqueue" element={<JobQueue />} />
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
