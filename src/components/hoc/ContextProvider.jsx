@@ -369,8 +369,9 @@ const ContextProvider = ({ children }) => {
     try {
       const userKey = user?.key;
       const requests = [
-        // all running imports, regardless of user (never createdBy-filtered)
-        axios.get(`${config.dataApi}importer?running=true&limit=1000`),
+        // all running imports, regardless of user (never createdBy-filtered);
+        // limit 100 is ample - at most 8 jobs run concurrently
+        axios.get(`${config.dataApi}importer?running=true&limit=100`),
         axios.get(`${config.dataApi}importer?state=waiting&limit=0`),
         axios.get(`${config.dataApi}job`),
         // the current user's own queued (waiting) imports - shown with a cancel

@@ -16,8 +16,11 @@ const { Text } = Typography;
 
 const JobQueuePage = ({ jobQueue, getJobQueue, addError }) => {
   useEffect(() => {
+    // While the queue page is open, poll faster than the background heartbeat
+    // so running/queued state stays current.
     getJobQueue();
-    // background polling (healthHeartBeat) keeps it fresh afterwards
+    const t = setInterval(getJobQueue, config.pollingHeartBeat || 5000);
+    return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
