@@ -154,8 +154,10 @@ const ContextProvider = ({ children }) => {
     importsRunning: [],
     importsRunningCount: 0,
     importsQueued: 0,
+    importsQueuedMine: [],
     jobsRunning: [],
     jobsQueued: 0,
+    jobsQueuedMine: [],
   });
   const [speciesinteractiontype, setSpeciesinteractiontype] = useState([]);
   const [language, setLanguage] = useState([]);
@@ -365,27 +367,49 @@ const ContextProvider = ({ children }) => {
   // finished/past jobs. On a transient error the last known state is retained.
   const getJobQueue = async () => {
     try {
-      const [running, waiting, jobs] = await Promise.all([
+      const userKey = user?.key;
+      const requests = [
         axios.get(`${config.dataApi}importer?running=true`),
         axios.get(`${config.dataApi}importer?state=waiting&limit=0`),
         axios.get(`${config.dataApi}job`),
-      ]);
+        // the current user's own queued (waiting) imports - shown with a cancel
+        // option on the queue page
+        userKey
+          ? axios.get(
+              `${config.dataApi}importer?state=waiting&createdBy=${userKey}&limit=100`
+            )
+          : Promise.resolve({ data: { result: [] } }),
+      ];
+      const [running, waiting, jobs, mineImports] = await Promise.all(requests);
+
       const importsRunning = running?.data?.result || [];
       const importsRunningCount = running?.data?.total ?? importsRunning.length;
       const importsQueued = waiting?.data?.total || 0;
+      const importsQueuedMine = mineImports?.data?.result || [];
+
       const allJobs = Array.isArray(jobs?.data) ? jobs.data : [];
       const jobsRunning = allJobs.filter(
         (j) => String(j?.status).toLowerCase() === "running"
       );
       // the /job queue only holds non-finished jobs, so anything not running
       // (waiting/blocked) is queued
-      const jobsQueued = allJobs.length - jobsRunning.length;
+      const jobsQueuedAll = allJobs.filter(
+        (j) => String(j?.status).toLowerCase() !== "running"
+      );
+      const jobsQueuedMine = userKey
+        ? jobsQueuedAll.filter((j) =>
+            [j?.userKey, j?.createdBy, j?.user?.key].includes(userKey)
+          )
+        : [];
+
       setJobQueue({
         importsRunning,
         importsRunningCount,
         importsQueued,
+        importsQueuedMine,
         jobsRunning,
-        jobsQueued,
+        jobsQueued: jobsQueuedAll.length,
+        jobsQueuedMine,
       });
     } catch (err) {
       console.log(err);
