@@ -34,7 +34,7 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
               <>
             <Col>
               <h3>
-                {["xrelease", "release", "project"].includes(origin)
+                {["xrelease", "release", "project"].includes(dataset?.origin)
                   ? "Release "
                   : "Import "}
                   #{attempt}
