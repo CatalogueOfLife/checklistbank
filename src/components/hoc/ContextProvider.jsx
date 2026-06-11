@@ -322,7 +322,17 @@ const ContextProvider = ({ children }) => {
     }
     try {
       const { data: h } = await axios.get(
-        `${config.dataApi}monitor/healthcheck`
+        `${config.dataApi}monitor/healthcheck`,
+        {
+          // monitor/healthcheck is a public endpoint. Sending the logged-in
+          // Authorization header turns this into a CORS preflight that the
+          // backend rejects (authorization not in Access-Control-Allow-Headers),
+          // so strip the header for this request.
+          transformRequest: (data, headers) => {
+            delete headers.common["Authorization"];
+            return data;
+          },
+        }
       );
       const allPassing = Object.keys(h).reduce((a, c) => {
         return a && h[c].healthy;
