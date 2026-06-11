@@ -177,6 +177,24 @@ const DatasetImportMetrics = (props) => {
           attempt={attempt || data?.attempt}
         />
       )}
+      {!loading && !data && error && (
+        <Alert
+          style={{ marginTop: "16px" }}
+          type={_.get(error, "response.status") === 403 ? "warning" : "error"}
+          title={
+            _.get(error, "response.status") === 403
+              ? "This source dataset is private"
+              : "Could not load import metrics"
+          }
+          description={
+            _.get(error, "response.status") === 403
+              ? `${
+                  _.get(dataset, "title") || "The source dataset"
+                } is private, so its import metrics are not accessible here.`
+              : _.get(error, "response.data.message") || error.message
+          }
+        />
+      )}
       {!loading && dataset && importHistory && importHistory.length === 0 && (
         <Alert
           style={{ marginTop: "16px" }}
