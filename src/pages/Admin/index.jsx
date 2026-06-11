@@ -224,28 +224,19 @@ const AdminPage = ({ background, addError, getBackground }) => {
 
         <Row>
           <FormItem label="Maintenance">
-            <Space orientation="vertical">
+            <Space orientation="horizontal" align="center">
               <Switch
                 loading={maintenanceLoading}
                 onChange={(checked) => setMaintenance(checked)}
                 checked={background && background.maintenance}
               />
-              <Space orientation="horizontal" align="start">
-                <Input.TextArea
-                  rows={2}
-                  style={{ width: 360 }}
-                  placeholder="Optional custom banner message (a default is shown if empty)"
-                  value={maintenanceMessage}
-                  onChange={(e) => setMaintenanceMessage(e.target.value)}
-                />
-                <Button
-                  size="small"
-                  loading={maintenanceLoading}
-                  onClick={() => setMaintenance(!!background?.maintenance)}
-                >
-                  Save
-                </Button>
-              </Space>
+              <Input.TextArea
+                autoSize={{ minRows: 1 }}
+                style={{ width: 360 }}
+                placeholder="Optional custom banner message (a default is shown if empty)"
+                value={maintenanceMessage}
+                onChange={(e) => setMaintenanceMessage(e.target.value)}
+              />
             </Space>
           </FormItem>
         </Row>
