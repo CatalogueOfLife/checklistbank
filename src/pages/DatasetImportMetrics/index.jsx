@@ -197,7 +197,7 @@ const DatasetImportMetrics = (props) => {
       {importHistory && importHistory.length > 0 && (
         <Drawer
           title={
-            dataset.origin === "project"
+            dataset?.origin === "project"
               ? "Release history"
               : "Import history"
           }
