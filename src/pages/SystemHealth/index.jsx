@@ -25,38 +25,40 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
         <title>System Health</title>
       </Helmet>
       <PageContent>
-        <Divider titlePlacement="left">Components</Divider>
-        {Object.keys(components)
-          .filter((c) => c != "idle")
-          .map((comp) => (
-            <Row>
-              <Col flex="auto" />
-              <Col span={10} style={{ padding: "16px", textAlign: "right" }}>
-                {_.startCase(comp)}
-              </Col>
-              <Col span={10} style={{ padding: "16px" }}>
-                <Tag color={components[comp] ? "green" : "red"}>
-                  {components[comp] ? "Active" : "Unavailable"}
-                </Tag>
-              </Col>
-              <Col flex="auto" />
-            </Row>
-          ))}
-        <Divider titlePlacement="left">System health</Divider>
-        {Object.keys(health).map((hc) => (
-          <Row>
-            <Col flex="auto" />
-            <Col span={10} style={{ padding: "16px", textAlign: "right" }}>
-              {_.startCase(hc)}
-            </Col>
-            <Col span={10} style={{ padding: "16px" }}>
-              <Tag color={health[hc].healthy ? "green" : "red"}>
-                {health[hc].healthy ? "Healthy" : "Not healthy"}
-              </Tag>
-            </Col>
-            <Col flex="auto" />
-          </Row>
-        ))}
+        <Row gutter={32}>
+          <Col xs={24} md={12}>
+            <Divider titlePlacement="left">Components</Divider>
+            {Object.keys(components)
+              .filter((c) => c != "idle")
+              .map((comp) => (
+                <Row key={comp} style={{ padding: "8px 0" }}>
+                  <Col span={12} style={{ paddingRight: "16px", textAlign: "right" }}>
+                    {_.startCase(comp)}
+                  </Col>
+                  <Col span={12}>
+                    <Tag color={components[comp] ? "green" : "red"}>
+                      {components[comp] ? "Active" : "Unavailable"}
+                    </Tag>
+                  </Col>
+                </Row>
+              ))}
+          </Col>
+          <Col xs={24} md={12}>
+            <Divider titlePlacement="left">System health</Divider>
+            {Object.keys(health).map((hc) => (
+              <Row key={hc} style={{ padding: "8px 0" }}>
+                <Col span={12} style={{ paddingRight: "16px", textAlign: "right" }}>
+                  {_.startCase(hc)}
+                </Col>
+                <Col span={12}>
+                  <Tag color={health[hc].healthy ? "green" : "red"}>
+                    {health[hc].healthy ? "Healthy" : "Not healthy"}
+                  </Tag>
+                </Col>
+              </Row>
+            ))}
+          </Col>
+        </Row>
       </PageContent>
     </Layout>
   );
