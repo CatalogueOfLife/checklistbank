@@ -3,7 +3,7 @@ import config from "../../../config";
 import { Navigate } from "react-router-dom";
 import withRouter from "../../../withRouter";
 import axios from "axios";
-import { Alert } from "antd";
+import { Alert, Spin } from "antd";
 
 import Layout from "../../../components/LayoutNew";
 import DatasetIssues from "./subPages/DatasetIssues";
@@ -36,6 +36,12 @@ const DatasetPage = (props) => {
 
   const [importState, setImportState] = useState(null);
   const [lastSuccesFullImport, setLastSuccesFullImport] = useState(null);
+  // Access to the source dataset itself. A private source the current user
+  // cannot read returns 403 on its plain /dataset/{key}/* endpoints, which
+  // every source sub-page relies on. We probe it here (via the import fetch
+  // that runs anyway) so all routes get one consistent message instead of
+  // each rendering its own blank/raw-error/global-403 variant.
+  const [access, setAccess] = useState("loading"); // loading | ok | forbidden
 
   const getData = (key) => {
     Promise.all([
@@ -47,13 +53,18 @@ const DatasetPage = (props) => {
         const hasData = res[1].data.length > 0;
         setImportState(state);
         setLastSuccesFullImport(hasData ? _.get(res, "[1].data[0]") : null);
+        setAccess("ok");
       })
-      .catch(() => {
+      .catch((err) => {
         setImportState(null);
+        // Only a 403 means the source is private/forbidden; other failures
+        // (e.g. network) should not hide the page behind the private notice.
+        setAccess(_.get(err, "response.status") === 403 ? "forbidden" : "ok");
       });
   };
 
   useEffect(() => {
+    setAccess("loading");
     getData(datasetKey);
   }, [datasetKey]);
 
@@ -105,72 +116,102 @@ const DatasetPage = (props) => {
           type="error"
         />
       )}
-      {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
-      {sect === "workbench" && (
-        <WorkBench
-          datasetKey={datasetKey}
-          location={props.location}
-          projectKey={projectKey}
-        />
-      )}{" "}
-      {/* projectKeys are used to scope decisions and tasks */}
-      {sect === "duplicates" && (
-        <Duplicates
-          datasetKey={datasetKey}
-          location={props.location}
-          projectKey={projectKey}
-        />
+      {access === "loading" && (
+        <div style={{ textAlign: "center", padding: "48px" }}>
+          <Spin />
+        </div>
       )}
-      {sect === "tasks" && (
-        <DatasetTasks
-          datasetKey={datasetKey}
-          location={props.location}
+
+      {/* Metadata works for any source: it is shown from the project-scoped
+          source metadata (sourceMeta), which stays readable even when the
+          source dataset itself is private to the current user. */}
+      {access !== "loading" && sect === "metadata" && (
+        <DatasetMeta
+          isSourceInProjectView={true}
+          id={datasetKey}
           projectKey={projectKey}
         />
       )}
-      {!section ||
-        (section === "metadata" && (
-          <DatasetMeta isSourceInProjectView={true} id={datasetKey} projectKey={projectKey} />
-        ))}
-      {section === "classification" && (
-        <DatasetClassification dataset={dataset} location={location} />
-      )}
-      {sect === "references" && (
-        <DatasetReferences
-          datasetKey={datasetKey}
-          location={props.location}
+
+      {/* Consistent notice for a private/forbidden source across every
+          non-metadata source route, instead of per-page blanks/raw errors. */}
+      {access === "forbidden" && sect !== "metadata" && (
+        <Alert
+          style={{ marginTop: "16px" }}
+          type="warning"
+          title="This source dataset is private"
+          description={`${
+            _.get(dataset, "title") || "This source dataset"
+          } is private, so this page is not accessible. You can still view its metadata.`}
         />
       )}
-      {sect === "verbatim" && (
-        <VerbatimRecord
-          datasetKey={datasetKey}
-          lastSuccesFullImport={lastSuccesFullImport}
-          location={props.location}
-          match={props.match}
-        />
-      )}
-      {section === "imports" && (
-        <DatasetImportMetrics
-          datasetKey={datasetKey}
-          dataset={dataset}
-          origin={_.get(dataset, "origin")}
-          match={props.match}
-          updateImportState={() => getData(datasetKey)}
-        />
-      )}
-      {sect === "taxon" && (
-        <Taxon
-          datasetKey={datasetKey}
-          location={props.location}
-          match={props.match}
-        />
-      )}
-      {sect === "name" && (
-        <Name
-          datasetKey={datasetKey}
-          location={props.location}
-          match={props.match}
-        />
+
+      {access === "ok" && (
+        <>
+          {section === "issues" && <DatasetIssues datasetKey={datasetKey} />}
+          {sect === "workbench" && (
+            <WorkBench
+              datasetKey={datasetKey}
+              location={props.location}
+              projectKey={projectKey}
+            />
+          )}
+          {/* projectKeys are used to scope decisions and tasks */}
+          {sect === "duplicates" && (
+            <Duplicates
+              datasetKey={datasetKey}
+              location={props.location}
+              projectKey={projectKey}
+            />
+          )}
+          {sect === "tasks" && (
+            <DatasetTasks
+              datasetKey={datasetKey}
+              location={props.location}
+              projectKey={projectKey}
+            />
+          )}
+          {section === "classification" && (
+            <DatasetClassification dataset={dataset} location={location} />
+          )}
+          {sect === "references" && (
+            <DatasetReferences
+              datasetKey={datasetKey}
+              location={props.location}
+            />
+          )}
+          {sect === "verbatim" && (
+            <VerbatimRecord
+              datasetKey={datasetKey}
+              lastSuccesFullImport={lastSuccesFullImport}
+              location={props.location}
+              match={props.match}
+            />
+          )}
+          {section === "imports" && (
+            <DatasetImportMetrics
+              datasetKey={datasetKey}
+              dataset={dataset}
+              origin={_.get(dataset, "origin")}
+              match={props.match}
+              updateImportState={() => getData(datasetKey)}
+            />
+          )}
+          {sect === "taxon" && (
+            <Taxon
+              datasetKey={datasetKey}
+              location={props.location}
+              match={props.match}
+            />
+          )}
+          {sect === "name" && (
+            <Name
+              datasetKey={datasetKey}
+              location={props.location}
+              match={props.match}
+            />
+          )}
+        </>
       )}
     </Layout>
   );
