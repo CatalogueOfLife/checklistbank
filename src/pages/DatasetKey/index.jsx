@@ -169,6 +169,7 @@ const DatasetPage = (props) => {
         subsection !== "metadata" && (
           <DatasetImportMetrics
             datasetKey={datasetKey}
+            dataset={dataset}
             origin={_.get(dataset, "origin")}
             match={props.match}
             updateImportState={() => getData(datasetKey)}

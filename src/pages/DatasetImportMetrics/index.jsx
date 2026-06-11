@@ -139,28 +139,26 @@ const DatasetImportMetrics = (props) => {
       });
   };
 
-  useEffect(() => {
-    getData_(attempt);
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, []);
-
-  // React to dataset key change
-  useEffect(() => {
-    getData_(attempt);
-  }, [datasetKey_]);
-
-  // React to attempt change
+  // Reload whenever the resolved dataset key (e.g. switching the project
+  // source via the selector, where only match.params.sourceKey changes) or the
+  // viewed attempt changes. datasetKey is datasetKey_ || sourceKey, so keying on
+  // it covers both /dataset/:key and /project/:projectKey/dataset/:sourceKey.
   useEffect(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
     getData_(attempt);
-  }, [attempt]);
+  }, [datasetKey, attempt]);
+
+  // Stop polling on unmount.
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const isRunning =
     data &&
