@@ -32,15 +32,18 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
               .filter((c) => c != "idle")
               .map((comp) => (
                 <Row key={comp} align="middle" style={{ padding: "8px 0" }}>
-                  <Col flex="110px">
+                  <Col flex="92px">
                     <Tag
                       color={components[comp] ? "green" : "red"}
+                      variant="outlined"
                       style={{ width: "100%", textAlign: "center", margin: 0 }}
                     >
                       {components[comp] ? "Active" : "Unavailable"}
                     </Tag>
                   </Col>
-                  <Col flex="auto">{_.startCase(comp)}</Col>
+                  <Col flex="auto" style={{ paddingLeft: "12px" }}>
+                    {_.startCase(comp)}
+                  </Col>
                 </Row>
               ))}
           </Col>
@@ -48,15 +51,18 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
             <Divider titlePlacement="left">System health</Divider>
             {Object.keys(health).map((hc) => (
               <Row key={hc} align="middle" style={{ padding: "8px 0" }}>
-                <Col flex="110px">
+                <Col flex="92px">
                   <Tag
                     color={health[hc].healthy ? "green" : "red"}
+                    variant="outlined"
                     style={{ width: "100%", textAlign: "center", margin: 0 }}
                   >
                     {health[hc].healthy ? "Healthy" : "Not healthy"}
                   </Tag>
                 </Col>
-                <Col flex="auto">{_.startCase(hc)}</Col>
+                <Col flex="auto" style={{ paddingLeft: "12px" }}>
+                  {_.startCase(hc)}
+                </Col>
               </Row>
             ))}
           </Col>
