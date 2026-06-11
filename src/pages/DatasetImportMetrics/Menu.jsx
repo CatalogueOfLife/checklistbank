@@ -80,7 +80,7 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
           ...(!isProject &&
           attempt &&
           isFinished &&
-          dataset.attempt != attempt
+          dataset?.attempt != attempt
             ? [
                 {
                   key: "metadata",
