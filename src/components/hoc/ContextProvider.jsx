@@ -332,13 +332,20 @@ const ContextProvider = ({ children }) => {
             delete headers.common["Authorization"];
             return data;
           },
+          // Dropwizard returns 503 (with the full healthcheck body) when any
+          // check is unhealthy. Accept it so we can still display which checks
+          // are failing instead of blanking the list.
+          validateStatus: (status) =>
+            status === 503 || (status >= 200 && status < 300),
         }
       );
-      const allPassing = Object.keys(h).reduce((a, c) => {
-        return a && h[c].healthy;
-      }, true);
-      setAllHealthChecksPassing(allPassing);
-      setHealth(h);
+      if (h && typeof h === "object") {
+        const allPassing = Object.keys(h).reduce((a, c) => {
+          return a && h[c].healthy;
+        }, true);
+        setAllHealthChecksPassing(allPassing);
+        setHealth(h);
+      }
     } catch (err) {
       console.log(err);
     }
