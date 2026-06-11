@@ -31,30 +31,32 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
             {Object.keys(components)
               .filter((c) => c != "idle")
               .map((comp) => (
-                <Row key={comp} style={{ padding: "8px 0" }}>
-                  <Col span={12} style={{ paddingRight: "16px", textAlign: "right" }}>
-                    {_.startCase(comp)}
-                  </Col>
-                  <Col span={12}>
-                    <Tag color={components[comp] ? "green" : "red"}>
+                <Row key={comp} align="middle" style={{ padding: "8px 0" }}>
+                  <Col flex="110px">
+                    <Tag
+                      color={components[comp] ? "green" : "red"}
+                      style={{ width: "100%", textAlign: "center", margin: 0 }}
+                    >
                       {components[comp] ? "Active" : "Unavailable"}
                     </Tag>
                   </Col>
+                  <Col flex="auto">{_.startCase(comp)}</Col>
                 </Row>
               ))}
           </Col>
           <Col xs={24} md={12}>
             <Divider titlePlacement="left">System health</Divider>
             {Object.keys(health).map((hc) => (
-              <Row key={hc} style={{ padding: "8px 0" }}>
-                <Col span={12} style={{ paddingRight: "16px", textAlign: "right" }}>
-                  {_.startCase(hc)}
-                </Col>
-                <Col span={12}>
-                  <Tag color={health[hc].healthy ? "green" : "red"}>
+              <Row key={hc} align="middle" style={{ padding: "8px 0" }}>
+                <Col flex="110px">
+                  <Tag
+                    color={health[hc].healthy ? "green" : "red"}
+                    style={{ width: "100%", textAlign: "center", margin: 0 }}
+                  >
                     {health[hc].healthy ? "Healthy" : "Not healthy"}
                   </Tag>
                 </Col>
+                <Col flex="auto">{_.startCase(hc)}</Col>
               </Row>
             ))}
           </Col>
