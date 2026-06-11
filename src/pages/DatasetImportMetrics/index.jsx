@@ -118,7 +118,7 @@ const DatasetImportMetrics = (props) => {
             timerRef.current = setInterval(() => {
               getData_(currentAttempt);
               getHistory();
-            }, 3000);
+            }, config.pollingHeartBeat || 5000);
           }
         } else {
           if (timerRef.current) {

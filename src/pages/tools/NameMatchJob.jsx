@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   SyncOutlined,
   HistoryOutlined,
@@ -20,7 +20,7 @@ import withContext from "../../components/hoc/withContext";
 const NameMatchJob = ({ match, addError }) => {
   const [job, setjob] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [intervalHandle, setIntervalHandle] = useState(null);
+  const timerRef = useRef(null);
   const [resultUrl, setResultUrl] = useState(null);
   const [resultUrlHasBeenChecked, setResultUrlHasBeenChecked] = useState(false);
   const init = async () => {
@@ -60,22 +60,24 @@ const NameMatchJob = ({ match, addError }) => {
     }
   }, [match.params.key]);
 
+  // Poll for status while the job is running. setInterval (not a one-shot
+  // setTimeout) so it keeps refreshing, handle in a ref so the guard never
+  // goes stale and unmount cleanup actually clears it.
   useEffect(() => {
-    if (["running", "waiting"].includes(job?.status)) {
-      if (!intervalHandle) {
-        let hdl = setTimeout(init, 5000);
-        setIntervalHandle(hdl);
-      }
-    } else if (intervalHandle) {
-      clearTimeout(intervalHandle);
-      setIntervalHandle(null);
+    const running = ["running", "waiting"].includes(job?.status);
+    if (running && !timerRef.current) {
+      timerRef.current = setInterval(init, config.pollingHeartBeat || 5000);
+    } else if (!running && timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
   }, [job]);
 
   useEffect(() => {
     return () => {
-      if (intervalHandle) {
-        clearTimeout(intervalHandle);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, []);

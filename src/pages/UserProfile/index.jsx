@@ -80,7 +80,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
     if(hasRunningDownload && !intervalHandle){
      let hdl = setInterval(() => {
         loadDownloads();
-      }, 5000)
+      }, config.pollingHeartBeat || 5000)
       setIntervalHandle(hdl)
     };
     if(!hasRunningDownload && intervalHandle){

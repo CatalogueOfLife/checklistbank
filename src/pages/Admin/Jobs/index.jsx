@@ -117,7 +117,7 @@ const Jobs = ({ user, addError }) => {
   };
   useEffect(() => {
     getJobs();
-    const hdl = setInterval(getJobs, 3000);
+    const hdl = setInterval(getJobs, config.pollingHeartBeat || 5000);
     // setTimerhandle(hdl)
 
     return () => {

@@ -52,7 +52,7 @@ const DatasetDownload = ({ match, addError }) => {
   useEffect(() => {
     const running = ["running", "waiting"].includes(download?.status);
     if (running && !timerRef.current) {
-      timerRef.current = setInterval(init, 5000);
+      timerRef.current = setInterval(init, config.pollingHeartBeat || 5000);
     } else if (!running && timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;

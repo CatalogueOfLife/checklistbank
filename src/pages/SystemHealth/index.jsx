@@ -15,7 +15,7 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
     // Fetch once on mount. getSystemHealth is recreated on every
     // ContextProvider render and itself sets state, so depending on it here
     // caused an infinite fetch loop (hundreds of requests/min). Background
-    // polling (every systemHealthHeartBeat) keeps the data fresh afterwards.
+    // polling (every healthHeartBeat) keeps the data fresh afterwards.
     getSystemHealth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

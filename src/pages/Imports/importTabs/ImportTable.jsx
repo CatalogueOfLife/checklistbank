@@ -276,7 +276,7 @@ const ImportTable = (props) => {
     if (section === "running") {
       timerRef.current = setInterval(() => {
         getData_(query);
-      }, 3000);
+      }, config.pollingHeartBeat || 5000);
     }
 
     return () => {
