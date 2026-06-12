@@ -24,6 +24,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import history from "../../history";
+import { NavLink } from "react-router-dom";
 
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
@@ -43,7 +44,21 @@ import PQueueModule from "p-queue";
 const PQueue = PQueueModule?.default ?? PQueueModule;
 const { Panel } = Collapse;
 const { TextArea } = Input;
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
+
+// Shows which dataset a match ran against: linked title plus alias & version (#1683)
+const DatasetRef = ({ dataset }) =>
+  dataset ? (
+    <span>
+      <NavLink to={`/dataset/${dataset.key}`}>
+        {dataset.title || dataset.alias || dataset.key}
+      </NavLink>
+      {dataset.title && dataset.alias && (
+        <Text type="secondary"> · {dataset.alias}</Text>
+      )}
+      {dataset.version && <Text type="secondary"> · {dataset.version}</Text>}
+    </span>
+  ) : null;
 
 const MAX_LIST_SIZE = 6000;
 
@@ -1070,7 +1085,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                       {secondaryDataset && (
                         <span className="col-reference-link">[1] </span>
                       )}
-                      {primaryDataset?.title}
+                      <DatasetRef dataset={primaryDataset} />
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -1095,7 +1110,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                     <Row>
                       <Col span={24}>
                         <span className="col-reference-link">[2] </span>
-                        {secondaryDataset?.title}
+                        <DatasetRef dataset={secondaryDataset} />
                       </Col>
                       <Col span={12}>
                         <Statistic
