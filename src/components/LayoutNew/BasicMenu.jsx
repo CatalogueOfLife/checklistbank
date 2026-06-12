@@ -942,7 +942,7 @@ const BasicMenu = (props) => {
             !["xrelease", "project", "release"].includes(
               _.get(selectedDataset, "origin")
             ) &&
-            selectedDataset.size && {
+            selectedDataset.size > 0 && {
               key: "verbatim",
               label: (
                 <NavLink

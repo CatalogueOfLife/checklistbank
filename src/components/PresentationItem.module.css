@@ -7,7 +7,12 @@
   text-overflow: ellipsis;
 }
 
-.content     { composes: content     from "./borderedListItem.module.css"; }
+.content {
+  composes: content from "./borderedListItem.module.css";
+  /* long citations / unbroken DOIs & URLs must wrap inside the box (#1042) */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .noContent   { composes: noContent   from "./borderedListItem.module.css"; }
 .contentCol  { composes: contentCol  from "./borderedListItem.module.css"; }
 .smallMargin { composes: smallMargin from "./borderedListItem.module.css"; }

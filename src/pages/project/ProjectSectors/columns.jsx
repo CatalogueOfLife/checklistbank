@@ -145,7 +145,7 @@ export default (
       render: (text, record) => {
         return (
           <React.Fragment>
-            {record?.target && (
+            {record?.target?.rank && (
               <div style={{ color: "rgba(0, 0, 0, 0.45)" }}>
                 {record?.target?.rank}:{" "}
               </div>

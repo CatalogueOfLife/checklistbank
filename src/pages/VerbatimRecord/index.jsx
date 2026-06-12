@@ -158,13 +158,22 @@ const VerbatimRecord = (props) => {
                 hideOnSinglePage={true}
                 style={{ display: "inline" }}
                 current={current}
-                showSizeChanger={false}
+                showSizeChanger={true}
                 onChange={(page, pageSize) => {
+                  const newLimit = pageSize || Number(limit);
+                  if (newLimit !== Number(limit)) {
+                    setLimit(newLimit);
+                    localStorage.setItem(
+                      "col_plus_verbatim_limit",
+                      String(newLimit)
+                    );
+                  }
                   history.push({
                     pathname: location.pathname,
                     search: `?${qs.stringify({
                       ...params,
-                      offset: (page - 1) * Number(limit),
+                      limit: newLimit,
+                      offset: (page - 1) * newLimit,
                     })}`,
                   });
                 }}
