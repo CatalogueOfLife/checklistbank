@@ -154,8 +154,15 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   };
 
   const initChart = (root) => {
+    const totalCount = root.reduce((acc, cur) => acc + (cur.species || 0), 0);
+    if (!totalCount) {
+      // No species under this taxon (e.g. a genera-only group like an order in
+      // IRMNG): the species pie would be empty and look like a bug, so hide the
+      // chart entirely (#1584).
+      setInvalid(true);
+      return;
+    }
     const DOI = dataset.doi ? "https://doi.org/" + dataset.doi : null;
-    const totalCount = root.reduce((acc, cur) => acc + cur.species, 0);
     var colors = Highcharts.getOptions().colors,
       categories = root.map((t) => t.name),
       data = root.map((k, idx) => {

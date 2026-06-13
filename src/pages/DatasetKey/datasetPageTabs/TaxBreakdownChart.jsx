@@ -57,6 +57,12 @@ function toHierarchy(breakdown, taxGroup) {
   return { name: "root", children: convert(breakdown) };
 }
 
+// Total taxa in a hierarchy (sum of leaf values) - matches the sunburst centre.
+function sumHierarchy(node) {
+  if (node.value != null) return node.value;
+  return (node.children || []).reduce((s, c) => s + sumHierarchy(c), 0);
+}
+
 const SIZE = 740;
 const RADIUS = SIZE / 2;
 
@@ -349,6 +355,11 @@ const TaxBreakdownChart = ({ datasetKey, onClose }) => {
       });
   }, [datasetKey, rank, inclSynonym]);
 
+  const total = hierarchyData ? sumHierarchy(hierarchyData) : 0;
+  const rankLabel = rank
+    ? RANK_OPTIONS.find((o) => o.value === rank)?.label || "taxa"
+    : "taxa";
+
   return (
     <div
       style={{
@@ -405,7 +416,7 @@ const TaxBreakdownChart = ({ datasetKey, onClose }) => {
           style={{ marginBottom: 8 }}
         />
       )}
-      {!loading && !error && hierarchyData && (
+      {!loading && !error && hierarchyData && total > 0 && (
         <Sunburst
           data={hierarchyData}
           datasetKey={datasetKey}
@@ -414,6 +425,20 @@ const TaxBreakdownChart = ({ datasetKey, onClose }) => {
           inclSynonym={inclSynonym}
           taxGroup={taxGroup}
         />
+      )}
+      {!loading && !error && hierarchyData && total === 0 && (
+        <div style={{ textAlign: "center", padding: "40px 0" }}>
+          <Text type="secondary">
+            No {rankLabel.toLowerCase()} found in this dataset.
+          </Text>
+          {rank && (
+            <div style={{ marginTop: 8 }}>
+              <Button size="small" onClick={() => setRank(null)}>
+                Show all ranks
+              </Button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
