@@ -106,27 +106,36 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         return;
       }
 
-      let root;
-      if (
+      // Single root: a centre node (the taxon) ringed only by its child rank.
+      // Used when there is no meaningful second ring to drill into - no
+      // grandchild rank, the grandchild rank is at or below the rank we count by
+      // (so each grandchild would just count itself), or there are too many of
+      // them. Otherwise we render two nested rings (child + grandchild).
+      const singleRoot =
         !grandChildRank ||
-        grandChildRank === "species" ||
-        _.get(counts, `${grandChildRank}.count`) > MAX_GRAND_CHILDREN
-      ) {
-        root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
-      }
+        ranks.indexOf(grandChildRank) >= ranks.indexOf(countBy) ||
+        _.get(counts, `${grandChildRank}.count`) > MAX_GRAND_CHILDREN;
       // The breakdown endpoint counts the requested rank for each node and emits
       // it under a property of that name. We size the pie by species normally,
-      // but fall back to genus for genera-only groups (e.g. an order in IRMNG
-      // with no species, #1584). Normalise the chosen count into `species` so
-      // the chart code below stays rank-agnostic.
+      // but fall back to genus when genera dominate (#1584). The two-ring layout
+      // needs the grandchildren too, so fetch level=2 for it - otherwise the
+      // outer ring has no real taxa and renders as a single "Other / Unknown"
+      // slice per child. Normalise the chosen count into `species` (recursively)
+      // so the chart code below stays rank-agnostic.
       const res = await axios(
-        `${config.dataApi}dataset/${datasetKey}/taxon/${taxon.id}/breakdown?countRank=${countBy}`
+        `${config.dataApi}dataset/${datasetKey}/taxon/${
+          taxon.id
+        }/breakdown?countRank=${countBy}&level=${singleRoot ? 1 : 2}`
       );
-      const childRankData = res.data.map((c) => ({
-        ...c,
-        species: _.get(c, countBy, 0),
-      }));
-      if (_.get(root, "[0]")) {
+      const normalize = (node) => ({
+        ...node,
+        species: _.get(node, countBy, 0),
+        children: (node.children || []).map(normalize),
+      });
+      const childRankData = res.data.map(normalize);
+      let root;
+      if (singleRoot) {
+        root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
         root[0].children = processChildren(childRankData);
         root[0].species = root[0].children.reduce(
           (acc, cur) => acc + cur.species,
