@@ -6,7 +6,7 @@ import config from "../../../config";
 import _ from "lodash";
 import linkify from 'linkify-html';
 
-const ReferencePopover = ({ referenceId, datasetKey, references, remarks, placement, referenceIndexMap, trigger }) => {
+const ReferencePopover = ({ referenceId, datasetKey, references, remarks, placement, referenceIndexMap, trigger, maxInline = 4 }) => {
   const [reference, setReference] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,8 +38,8 @@ const ReferencePopover = ({ referenceId, datasetKey, references, remarks, placem
       ? <span dangerouslySetInnerHTML={{ __html: linkify(reference[0]?.citation || "") }}></span>
       : (
         <ul>
-          {reference.map((r) => (
-            <li><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation || "") }}></span></li>
+          {reference.map((r, i) => (
+            <li key={r?.id || i}><span dangerouslySetInnerHTML={{ __html: linkify(r?.citation || "") }}></span></li>
           ))}
         </ul>
       );
@@ -52,14 +52,41 @@ const ReferencePopover = ({ referenceId, datasetKey, references, remarks, placem
   };
 
   const refIds = !_.isArray(referenceId) ? [referenceId] : [...new Set(referenceId)];
-  let icon = referenceIndexMap && _.get(referenceIndexMap, refIds[0]) ? refIds.map(r => <a className="col-reference-link" href={`#col-refererence-${r}`}>{`[${referenceIndexMap[r]}]`}</a>) : <BookOutlined style={{ cursor: "pointer" }} />;
+  // Cap the inline [n] markers so a name linked to many references does not
+  // render an unreadable trail across the row. Overflow collapses into a "+N"
+  // indicator; the hover popover still lists every citation.
+  let icon =
+    referenceIndexMap && _.get(referenceIndexMap, refIds[0])
+      ? (() => {
+          const shown = refIds.slice(0, maxInline);
+          const overflow = refIds.length - shown.length;
+          return [
+            ...shown.map((r) => (
+              <a
+                key={r}
+                className="col-reference-link"
+                href={`#col-refererence-${r}`}
+              >{`[${referenceIndexMap[r]}]`}</a>
+            )),
+            overflow > 0 ? (
+              <span key="overflow" className="col-reference-link">{` +${overflow}`}</span>
+            ) : null,
+          ];
+        })()
+      : <BookOutlined style={{ cursor: "pointer" }} />;
 
   return referenceId ? (
     <Popover
       placement={placement || "left"}
       title="Reference"
       onOpenChange={(visible) => visible && getData()}
-      content={<div style={{ maxWidth: "500px" }}>{getContent()}</div>}
+      content={
+        <div
+          style={{ maxWidth: "500px", maxHeight: "60vh", overflowY: "auto" }}
+        >
+          {getContent()}
+        </div>
+      }
       trigger={trigger || "hover"}
     >
       {icon}
