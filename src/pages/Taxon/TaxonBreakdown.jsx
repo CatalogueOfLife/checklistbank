@@ -53,13 +53,18 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       const counts = await getOverView();
 
       const ranks = canonicalRanks;
-      // What to size the pie by: species normally, but fall back to genus for
-      // genera-only groups (e.g. an order in IRMNG with no species, #1584).
+      // What to size the pie by: species normally, but fall back to genus when
+      // genera greatly outnumber species (#1584). A species pie is useless for
+      // genera-dominated groups - e.g. IRMNG's Arthropoda has 126k genera but
+      // only 2 species. Use genus whenever there are more than twice as many
+      // genera as species (which also covers genera-only groups).
+      const speciesCount = _.get(counts, "species.count", 0);
+      const genusCount = _.get(counts, "genus.count", 0);
       const countBy =
-        _.get(counts, "species.count", 0) > 0
-          ? "species"
-          : _.get(counts, "genus.count", 0) > 0
+        genusCount > 2 * speciesCount
           ? "genus"
+          : speciesCount > 0
+          ? "species"
           : null;
       // Check if the rank is in the canonical ranks
       let taxonRankIdx = ranks.indexOf(_.get(taxon, "name.rank"));
@@ -239,7 +244,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       },
       subtitle:
         countBy === "genus"
-          ? { text: "No species in this group — showing genus counts" }
+          ? { text: "Genera far outnumber species — showing genus counts" }
           : undefined,
       plotOptions: {
         pie: {
