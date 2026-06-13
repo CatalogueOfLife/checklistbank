@@ -53,19 +53,14 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       const counts = await getOverView();
 
       const ranks = canonicalRanks;
-      /* let countBy;
-      if (_.get(counts, "species.count", 0) > 0) {
-        countBy = "species";
-      } else {
-        let i = ranks.length - 1;
-        while (i > 0 && !countBy) {
-          if (_.get(counts, `${ranks[i]}.count`, 0) > 0) {
-            countBy = ranks[i];
-            break;
-          }
-          i--;
-        }
-      } */
+      // What to size the pie by: species normally, but fall back to genus for
+      // genera-only groups (e.g. an order in IRMNG with no species, #1584).
+      const countBy =
+        _.get(counts, "species.count", 0) > 0
+          ? "species"
+          : _.get(counts, "genus.count", 0) > 0
+          ? "genus"
+          : null;
       // Check if the rank is in the canonical ranks
       let taxonRankIdx = ranks.indexOf(_.get(taxon, "name.rank"));
       // If not, find it in the full rank enum, and place it within canonical ranks.
@@ -100,6 +95,12 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
           grandChildRankIndex++;
         }
       }
+      if (!childRank || !countBy) {
+        setInvalid(true);
+        setLoading(false);
+        return;
+      }
+
       let root;
       if (
         !grandChildRank ||
@@ -108,34 +109,29 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       ) {
         root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
       }
-      if (!childRank) {
-        setInvalid(true);
-        setLoading(false);
-      } else {
-        /* const res = await axios(
-          `${
-            config.dataApi
-          }dataset/${datasetKey}/export.json?rank=${childRank}${
-            !root ? "&rank=" + grandChildRank : ""
-          }&countBy=${countBy}&taxonID=${taxon.id}`
-        ); */
-        const res = await axios(
-          `${config.dataApi}dataset/${datasetKey}/taxon/${taxon.id}/breakdown`
+      // The breakdown endpoint counts the requested rank for each node and emits
+      // it under a property of that name. We size the pie by species normally,
+      // but fall back to genus for genera-only groups (e.g. an order in IRMNG
+      // with no species, #1584). Normalise the chosen count into `species` so
+      // the chart code below stays rank-agnostic.
+      const res = await axios(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${taxon.id}/breakdown?countRank=${countBy}`
+      );
+      const childRankData = res.data.map((c) => ({
+        ...c,
+        species: _.get(c, countBy, 0),
+      }));
+      if (_.get(root, "[0]")) {
+        root[0].children = processChildren(childRankData);
+        root[0].species = root[0].children.reduce(
+          (acc, cur) => acc + cur.species,
+          0
         );
-        //Api returns both ranks in the root array
-        const childRankData = res.data; //.filter((t) => t.rank === childRank);
-        if (_.get(root, "[0]")) {
-          root[0].children = processChildren(childRankData);
-          root[0].species = root[0].children.reduce(
-            (acc, cur) => acc + cur.species,
-            0
-          );
-        } else {
-          root = processChildren(childRankData);
-        }
-        setLoading(false);
-        initChart(root);
+      } else {
+        root = processChildren(childRankData);
       }
+      setLoading(false);
+      initChart(root, countBy);
     } catch (err) {
       setError(err);
       setLoading(false);
@@ -153,15 +149,18 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
     }
   };
 
-  const initChart = (root) => {
+  const initChart = (root, countBy = "species") => {
     const totalCount = root.reduce((acc, cur) => acc + (cur.species || 0), 0);
     if (!totalCount) {
-      // No species under this taxon (e.g. a genera-only group like an order in
-      // IRMNG): the species pie would be empty and look like a bug, so hide the
+      // Nothing to size the pie by (e.g. a genera-only group with no species and
+      // no genus fallback available): an empty pie looks like a bug, so hide the
       // chart entirely (#1584).
       setInvalid(true);
       return;
     }
+    // Genera-only groups are sized by genus count rather than species; label the
+    // series and add a subtitle so the switch is obvious on the chart (#1584).
+    const countLabel = countBy === "genus" ? "Genera" : "Species";
     const DOI = dataset.doi ? "https://doi.org/" + dataset.doi : null;
     var colors = Highcharts.getOptions().colors,
       categories = root.map((t) => t.name),
@@ -238,6 +237,10 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       title: {
         text: "",
       },
+      subtitle:
+        countBy === "genus"
+          ? { text: "No species in this group — showing genus counts" }
+          : undefined,
       plotOptions: {
         pie: {
           shadow: false,
@@ -247,7 +250,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       tooltip: {},
       series: [
         {
-          name: "Species", //_.startCase(countBy),
+          name: countLabel,
           data: rootData,
           size: "60%",
           dataLabels: {
@@ -275,7 +278,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
           },
         },
         {
-          name: "Species", // _.startCase(countBy),
+          name: countLabel,
           data: childData,
           size: "80%",
           innerSize: "60%",
