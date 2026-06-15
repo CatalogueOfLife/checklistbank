@@ -25,6 +25,7 @@ import {
 } from "@ant-design/icons";
 import history from "../../history";
 import { NavLink } from "react-router-dom";
+import { TbStack2 } from "react-icons/tb";
 
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
@@ -298,7 +299,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
         <Alert
           style={{ marginTop: 6 }}
           type="warning"
-          title="No matcher index exists for this dataset — matching results will be incorrect."
+          title="No matcher index exists for this dataset."
           action={
             <Button size="small" onClick={() => requestMatcher(datasetKey, setStatus, setRequested)}>
               Request matcher
@@ -312,7 +313,15 @@ const NameMatch = ({ addError, issueMap, user }) => {
         <Alert
           style={{ marginTop: 6 }}
           type="info"
-          title="Matcher is being built. Please come back in about an hour before running the match."
+          title={
+            <>
+              Matcher is being built. Please watch the{" "}
+              <NavLink to="/jobqueue">
+                job queue <TbStack2 size={16} style={{ verticalAlign: "text-bottom" }} />
+              </NavLink>{" "}
+              and come back later before running the match.
+            </>
+          }
         />
       );
     }
