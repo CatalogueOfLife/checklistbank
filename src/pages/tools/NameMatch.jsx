@@ -22,7 +22,6 @@ import {
   DownloadOutlined,
   UploadOutlined,
   LoadingOutlined,
-  ApiOutlined,
 } from "@ant-design/icons";
 import history from "../../history";
 import { NavLink } from "react-router-dom";
@@ -47,8 +46,7 @@ const { Panel } = Collapse;
 const { TextArea } = Input;
 const { Paragraph, Text } = Typography;
 
-// Shows which dataset a match ran against: linked title plus alias & version,
-// followed by a link to the dataset's match API endpoint (#1683)
+// Shows which dataset a match ran against: linked title plus alias & version (#1683)
 const DatasetRef = ({ dataset }) =>
   dataset ? (
     <span>
@@ -59,16 +57,6 @@ const DatasetRef = ({ dataset }) =>
         <Text type="secondary"> · {dataset.alias}</Text>
       )}
       {dataset.version && <Text type="secondary"> · {dataset.version}</Text>}
-      <Tooltip title="Matching API endpoint for this dataset">
-        <a
-          href={`${config.dataApi}dataset/${dataset.key}/match/nameusage`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ marginLeft: 8 }}
-        >
-          <ApiOutlined />
-        </a>
-      </Tooltip>
     </span>
   ) : null;
 
@@ -386,6 +374,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
           ...formatUsageClassification(secondaryDatasetUsage),
           matchType: secondaryDatasetMatch?.type,
         };
+        name.secondaryApilink = `${config.dataApi}dataset/${secondaryDataset.key}/match/nameusage${params}&verbose=true`;
       }
     } catch (error) {
       name.matchType = "none";
@@ -1502,10 +1491,24 @@ const NameMatch = ({ addError, issueMap, user }) => {
                     dataIndex: ["apilink"],
                     key: "apilink",
                     render: (text, record) => {
+                      const primary = _.get(record, "apilink");
+                      const secondary = _.get(record, "secondaryApilink");
                       return (
-                        <a target="_blank" href={_.get(record, "apilink")}>
-                          API
-                        </a>
+                        <span>
+                          {primary && (
+                            <a target="_blank" rel="noopener noreferrer" href={primary}>
+                              {secondaryDataset ? "[1] API" : "API"}
+                            </a>
+                          )}
+                          {secondary && (
+                            <>
+                              {primary && <br />}
+                              <a target="_blank" rel="noopener noreferrer" href={secondary}>
+                                [2] API
+                              </a>
+                            </>
+                          )}
+                        </span>
                       );
                     },
                   },
