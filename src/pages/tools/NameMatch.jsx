@@ -54,9 +54,9 @@ const DatasetRef = ({ dataset }) =>
         {dataset.title || dataset.alias || dataset.key}
       </NavLink>
       {dataset.title && dataset.alias && (
-        <Text type="secondary"> · {dataset.alias}</Text>
+        <Text component="small"> · {dataset.alias}</Text>
       )}
-      {dataset.version && <Text type="secondary"> · {dataset.version}</Text>}
+      {dataset.version && <Text type="secondary" component="small"> · {dataset.version}</Text>}
     </span>
   ) : null;
 
