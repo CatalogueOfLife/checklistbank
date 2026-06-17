@@ -67,6 +67,9 @@ const DatasetRef = ({ dataset }) =>
   ) : null;
 
 const MAX_LIST_SIZE = 6000;
+// Above this many names a subject dataset can no longer be matched synchronously
+// and the user must switch to asynchronous mode.
+const MAX_SYNC_SIZE = 5000;
 
 const { Dragger } = Upload;
 const classificationRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
@@ -331,6 +334,26 @@ const NameMatch = ({ addError, issueMap, user }) => {
   const matcherBlocking = primaryMatcherStatus === 'checking' || primaryMatcherStatus === 'missing' ||
     secondaryMatcherStatus === 'checking' || secondaryMatcherStatus === 'missing';
 
+  // Final action on the input step: run the match (sync) or submit a job (async).
+  const inputActionButton = asyncMode ? (
+    <Button
+      type="primary"
+      onClick={submitAsyncJob}
+      loading={asyncSubmitting}
+      disabled={!primaryDataset || matcherBlocking || !(asyncFile || subjectDataset)}
+    >
+      Submit matching job
+    </Button>
+  ) : (
+    <Button
+      type="primary"
+      onClick={() => matchResult()}
+      disabled={!names || !primaryDataset || matcherBlocking}
+    >
+      Match
+    </Button>
+  );
+
   const matchParams = (name) => {
     let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
     if (name.rank) {
@@ -410,9 +433,9 @@ const NameMatch = ({ addError, issueMap, user }) => {
     );
   };
 
-  const matchResult = async () => {
+  const matchResult = async (namesArg) => {
     setNumMatchedNames(0);
-    let result = names;
+    let result = namesArg || names;
     setStep(2);
     let matchedNames = 0;
     const queue = new PQueue({ concurrency: 10 });
@@ -596,21 +619,41 @@ const NameMatch = ({ addError, issueMap, user }) => {
     },
   };
 
-  const testSizeLimit = async (tx) => {
-    const {
-      data: { total },
-    } = await axios(
-      `${config.dataApi}dataset/${subjectDataset.key}/nameusage/search?TAXON_ID=${tx.key}&limit=0`
-    );
-    console.log("Data estimated " + total);
-    setSubjectDataTotal(total);
+  // Fetch a quick estimate of how many names the current subject selection holds,
+  // reading from precomputed metrics rather than counting live. With a root taxon
+  // we use the taxon metrics; for a whole dataset the latest import metrics
+  // (accepted taxa + synonyms, matching the synonyms=true export).
+  const fetchSubjectTotal = async (datasetKey, taxon) => {
+    try {
+      if (taxon?.key) {
+        const { data } = await axios(
+          `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
+            taxon.key
+          )}/metrics`
+        );
+        setSubjectDataTotal(_.get(data, "taxonCount", 0));
+      } else {
+        const { data } = await axios(
+          `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=FINISHED`
+        );
+        const m = Array.isArray(data) ? data[0] : null;
+        setSubjectDataTotal(
+          m ? _.get(m, "taxonCount", 0) + _.get(m, "synonymCount", 0) : null
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      setSubjectDataTotal(null);
+    }
   };
 
   const getSubjectDataAndMatch = async () => {
     setSubjectDataLoading(true);
     try {
       const { data } = await axios(
-        `${config.dataApi}dataset/${subjectDataset.key}/export.json?taxonID=${subjectTaxon.key}&flat=true&synonyms=true`
+        `${config.dataApi}dataset/${subjectDataset.key}/export.json?flat=true&synonyms=true${
+          subjectTaxon?.key ? `&taxonID=${subjectTaxon.key}` : ""
+        }`
       );
       console.log("Data retrieved " + data.length);
       const result = data.map((e) => ({
@@ -620,8 +663,9 @@ const NameMatch = ({ addError, issueMap, user }) => {
       }));
       setSubjectDataLoading(false);
       setNames(result);
-      setStep(1);
+      matchResult(result);
     } catch (error) {
+      setSubjectDataLoading(false);
       if (typeof addError === "function") {
         addError(error);
       }
@@ -721,8 +765,8 @@ const NameMatch = ({ addError, issueMap, user }) => {
               if (!asyncMode || current <= 1) setStep(current);
             }}
             items={[
-              { title: "Input data" },
               { title: "Target data" },
+              { title: "Input data" },
               {
                 title: "Matching",
                 icon: step === 2 ? <LoadingOutlined /> : undefined,
@@ -732,8 +776,8 @@ const NameMatch = ({ addError, issueMap, user }) => {
             ]}
           />
 
-          {/* STEP 0: Input panels */}
-          {step === 0 && (
+          {/* STEP 1: Input panels */}
+          {step === 1 && (
             <>
               {(asyncMode ? (asyncFile || subjectDataset) : names) && (
                 <Row justify="end" style={{ marginBottom: "8px" }}>
@@ -743,9 +787,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         names.length === 1 ? "" : "s"
                       } provided for matching `}</span>
                     )}
-                    <Button type="primary" onClick={() => setStep(1)}>
-                      Next
-                    </Button>
+                    {inputActionButton}
                   </Col>
                 </Row>
               )}
@@ -868,16 +910,18 @@ const NameMatch = ({ addError, issueMap, user }) => {
                           onResetSearch={() => {
                             setSubjectDataset(null);
                             setSubjectTaxon(null);
+                            setSubjectDataTotal(null);
                           }}
                           onSelectDataset={(dataset) => {
                             setSubjectDataset(dataset);
                             if (dataset?.key !== subjectDataset?.key) {
                               setSubjectTaxon(null);
                             }
+                            fetchSubjectTotal(dataset.key, null);
                           }}
                           placeHolder="Choose subject dataset"
                         />
-                        {asyncMode ? "And an optional root taxon:" : "And a root taxon:"}
+                        And an optional root taxon:
                         <NameAutocomplete
                           minRank="GENUS"
                           defaultTaxonKey={_.get(subjectTaxon, "key", null)}
@@ -886,35 +930,45 @@ const NameMatch = ({ addError, issueMap, user }) => {
                           disabled={!subjectDataset}
                           onSelectName={(name) => {
                             setSubjectTaxon(name);
-                            if (!asyncMode) testSizeLimit(name);
+                            fetchSubjectTotal(subjectDataset.key, name);
                           }}
                           onResetSearch={() => {
                             setSubjectTaxon(null);
-                            if (!asyncMode) setSubjectDataTotal(null);
+                            if (subjectDataset) fetchSubjectTotal(subjectDataset.key, null);
                           }}
                         />
+                        {!_.isNull(subjectDataTotal) && (
+                          <div style={{ marginTop: "10px" }}>
+                            <Statistic
+                              title={subjectTaxon ? "Names below the root taxon" : "Names in dataset"}
+                              value={subjectDataTotal}
+                            />
+                          </div>
+                        )}
                         {!asyncMode && !_.isNull(subjectDataTotal) &&
-                          subjectDataTotal <= MAX_LIST_SIZE && (
+                          subjectDataTotal <= MAX_SYNC_SIZE && (
                             <Button
                               onClick={getSubjectDataAndMatch}
                               style={{ marginTop: "10px" }}
                               type="primary"
                               loading={subjectDataLoading}
+                              disabled={!primaryDataset || matcherBlocking}
                             >
-                              Fetch {subjectDataTotal.toLocaleString()} names
+                              Match {subjectDataTotal.toLocaleString()} names
                             </Button>
                           )}
                         {!asyncMode && !_.isNull(subjectDataTotal) &&
-                          subjectDataTotal > MAX_LIST_SIZE && (
+                          subjectDataTotal > MAX_SYNC_SIZE && (
                             <Alert
-                              title="Too many names"
-                              description={`Found ${subjectDataTotal.toLocaleString()} names. This exceeds the limit of ${MAX_LIST_SIZE.toLocaleString()}.`}
-                              type="error"
+                              title="Too many names for synchronous matching"
+                              description={`This selection has ${subjectDataTotal.toLocaleString()} names, more than the synchronous limit of ${MAX_SYNC_SIZE.toLocaleString()}. Switch to asynchronous mode to match it.`}
+                              type="warning"
                               style={{ marginTop: "10px" }}
-                              closable={{ onClose: () => {
-                                setSubjectTaxon(null);
-                                setSubjectDataTotal(null);
-                              } }}
+                              action={
+                                <Button size="small" onClick={() => setAsyncMode(true)}>
+                                  Switch to async
+                                </Button>
+                              }
                             />
                           )}
                       </Col>
@@ -948,16 +1002,14 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         names.length === 1 ? "" : "s"
                       } provided for matching `}</span>
                     )}
-                    <Button type="primary" onClick={() => setStep(1)}>
-                      Next
-                    </Button>
+                    {inputActionButton}
                   </Col>
                 )}
               </Row>
             </>
           )}
 
-          {step === 1 && (
+          {step === 0 && (
             <>
               <Row>
                 <Col>
@@ -1035,55 +1087,20 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         {matcherStatusUI(secondaryMatcherStatus, secondaryMatcherRequested, secondaryDataset?.key, setSecondaryMatcherStatus, setSecondaryMatcherRequested)}
                       </>
                     )}
-                    {step === 2 && (
-                      <Row justify="space-between">
-                        <Col>
-                          <Statistic
-                            title={"Matches"}
-                            value={secondaryUsageMetrics}
-                            suffix={`/ ${names.length}`}
-                          />
-                        </Col>
-                        <Col>
-                          <Button
-                            type="primary"
-                            style={{ marginTop: "10px" }}
-                            onClick={() => downloadTsv(getDownLoadData("secondary"), getDownLoadDataFileName("secondary"))}
-                          >
-                            <DownloadOutlined /> Download result
-                          </Button>
-                        </Col>
-                      </Row>
-                    )}
                   </Col>
                 )}
               </Row>
-              {asyncMode && (
-                <Row style={{ marginTop: "16px" }}>
-                  <Col>
-                    <Button
-                      type="primary"
-                      onClick={submitAsyncJob}
-                      loading={asyncSubmitting}
-                      disabled={!primaryDataset || matcherBlocking}
-                    >
-                      Submit matching job
-                    </Button>
-                  </Col>
-                </Row>
-              )}
-              {!asyncMode && names && (
-                <Row style={{ marginTop: "16px" }} justify="end">
-                  <Col>
-                    <span>{`${names.length} name${
-                      names.length === 1 ? "" : "s"
-                    } provided for matching `}</span>
-                    <Button type="primary" onClick={matchResult} disabled={!primaryDataset || matcherBlocking}>
-                      Match
-                    </Button>
-                  </Col>
-                </Row>
-              )}
+              <Row style={{ marginTop: "16px" }} justify="end">
+                <Col>
+                  <Button
+                    type="primary"
+                    onClick={() => setStep(1)}
+                    disabled={!primaryDataset || matcherBlocking}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
             </>
           )}
 
