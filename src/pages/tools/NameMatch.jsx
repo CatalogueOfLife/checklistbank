@@ -657,7 +657,8 @@ const NameMatch = ({ addError, issueMap, user }) => {
       );
       console.log("Data retrieved " + data.length);
       const result = data.map((e) => ({
-        providedScientificName: e?.label,
+        providedScientificName: e?.name,
+        rank: e?.rank,
         code: e?.code || defaultCode,
         scientificName: undefined,
       }));
