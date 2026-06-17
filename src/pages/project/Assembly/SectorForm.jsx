@@ -62,6 +62,7 @@ const SectorForm = ({
   onSubmit,
   nametype,
   nomstatus,
+  sectorAuthorshipUpdate,
 }) => {
   const { notification } = App.useApp();
   const [error, setError] = useState(null);
@@ -213,17 +214,6 @@ const SectorForm = ({
             name="priority"
           >
             <InputNumber />
-          </FormItem>
-        )}
-        {mode === "hierarchy" && (
-          <FormItem
-            {...formItemLayout}
-            label={<Tooltip color="green" title="Use the latest extended (not base) release of the subject project as the hierarchy source. Only relevant when subjectDatasetKey is a project.">Use X Release</Tooltip>}
-            key="useXRelease"
-            name="useXRelease"
-            valuePropName="checked"
-          >
-            <Checkbox />
           </FormItem>
         )}
         {!sector && (
@@ -390,6 +380,34 @@ const SectorForm = ({
           <Checkbox />
         </FormItem>
 
+        {mode === "hierarchy" && (
+          <FormItem
+            {...formItemLayout}
+            label={<Tooltip color="green" title="Use the latest extended (not base) release of the subject project as the hierarchy source. Only relevant when subjectDatasetKey is a project.">Use X Release</Tooltip>}
+            key="useXRelease"
+            name="useXRelease"
+            valuePropName="checked"
+          >
+            <Checkbox />
+          </FormItem>
+        )}
+
+        {sectorAuthorshipUpdate?.length > 0 && (
+          <FormItem
+            {...formItemLayout}
+            label={<Tooltip color='green' title="Controls how the authorship of names is updated when syncing from this source">Authorship Update</Tooltip>}
+            key="authorshipUpdate"
+            name="authorshipUpdate"
+          >
+            <Select
+              style={{ width: "100%" }}
+              showSearch
+              allowClear
+              options={sectorAuthorshipUpdate.map((f) => ({ value: f.name, label: f.name }))}
+            />
+          </FormItem>
+        )}
+
         <Divider plain>Editorial notes</Divider>
 
         <FormItem key="note" name="note">
@@ -417,6 +435,7 @@ const mapContextToProps = ({
   projectKey,
   nametype,
   nomstatus,
+  sectorAuthorshipUpdate,
 }) => ({
   projectKey,
   nomCode,
@@ -424,5 +443,6 @@ const mapContextToProps = ({
   rank,
   nametype,
   nomstatus,
+  sectorAuthorshipUpdate,
 });
 export default withContext(mapContextToProps)(SectorForm);

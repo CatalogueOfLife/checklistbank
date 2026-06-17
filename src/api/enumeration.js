@@ -140,3 +140,12 @@ export const getIdentifierScope = () => {
     Object.fromEntries(res.data.map((e) => [e.scope, e]))
   );
 };
+
+// SECTOR_AUTHORSHIP_UPDATE — a nested Sector enum. Not served by every backend
+// yet, so resolve to an empty list when the vocab is missing so the shared enum
+// Promise.all cannot reject (which would block loading of all other enumerations).
+export const getSectorAuthorshipUpdate = () => {
+  return getData(`sector$authorshipupdate`)
+    .then((res) => res.data ?? [])
+    .catch(() => []);
+};

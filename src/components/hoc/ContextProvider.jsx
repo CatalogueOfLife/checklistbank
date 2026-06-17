@@ -41,6 +41,7 @@ import {
   getTaxGroup,
   getLanguages,
   getIdentifierScope,
+  getSectorAuthorshipUpdate,
 } from "../../api/enumeration";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
@@ -139,6 +140,7 @@ const ContextProvider = ({ children }) => {
   const [datasetSettings, setDatasetSettings] = useState([]);
   const [gazetteer, setGazetteer] = useState([]);
   const [entitytype, setEntitytype] = useState([]);
+  const [sectorAuthorshipUpdate, setSectorAuthorshipUpdate] = useState([]);
   const [_selectedKeys, setSelectedKeys] = useState([]);
   const [_openKeys, setOpenKeys] = useState([]);
   const [syncState, setSyncState] = useState({});
@@ -464,6 +466,7 @@ const ContextProvider = ({ children }) => {
       getTaxGroup(),
       getLanguages(),
       getIdentifierScope(),
+      getSectorAuthorshipUpdate(),
     ])
       .then((responses) => {
         const newIssueMap = {};
@@ -544,6 +547,7 @@ const ContextProvider = ({ children }) => {
         setTaxGroup(responses[28]);
         setLanguage(responses[29]);
         setIdentifierScope(responses[30]);
+        setSectorAuthorshipUpdate(responses[31]);
         setCountryAlpha3(newCountryAlpha3);
         setCountryAlpha2(newCountryAlpha2);
         setTermsMap(newTermsMap);
@@ -599,6 +603,7 @@ const ContextProvider = ({ children }) => {
     datasetSettings,
     gazetteer,
     entitytype,
+    sectorAuthorshipUpdate,
     _selectedKeys,
     _openKeys,
     syncState,
