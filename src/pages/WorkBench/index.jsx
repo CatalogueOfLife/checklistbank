@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
@@ -384,8 +384,15 @@ const WorkBench = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // componentDidUpdate: datasetKey / projectKey change
+  // componentDidUpdate: datasetKey / projectKey change.
+  // Skip the initial mount: the mount effect above already loaded the params
+  // (incl. any issue/filter) from the URL, and resetting here would drop them.
+  const didMountReset = useRef(false);
   useEffect(() => {
+    if (!didMountReset.current) {
+      didMountReset.current = true;
+      return;
+    }
     const newParams = { limit: PAGE_SIZE, offset: 0, facet: FACETS };
     history.push({
       pathname: `/project/${projectKey}/dataset/${datasetKey}/workbench`,
