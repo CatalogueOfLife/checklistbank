@@ -151,7 +151,7 @@ const MatcherList = () => {
 
   const rebuildAllMatchers = () => {
     axios
-      .put(`${config.dataApi}rebuild?all=true`)
+      .put(`${config.dataApi}matcher/rebuild?all=true`)
       .then(() => {
         setError(null);
         notification.open({
