@@ -31,7 +31,7 @@ const toolsDescriptions = {
   "namesindex":
     "Look up a scientific name in the ChecklistBank names index, the central registry of all distinct names shared across every dataset.",
   "nameusage-search":
-    "Search names across all datasets in ChecklistBank at once, with facets for rank, status, issues, source dataset and more.",
+    "Search names across all datasets in ChecklistBank at once. Sort results by name and rank using the column headers.",
   "gbif-impact": (
     <>
       Compare how{" "}

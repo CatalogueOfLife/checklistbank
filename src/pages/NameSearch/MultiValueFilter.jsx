@@ -14,7 +14,14 @@ const formItemLayout = {
   },
 };
 
-const MultiValueFilter = ({ selected, defaultValue, label, vocab, onChange }) => {
+const MultiValueFilter = ({
+  selected,
+  defaultValue,
+  label,
+  vocab,
+  onChange,
+  disabled,
+}) => {
   const handleChange = (selected) => {
     onChange(selected);
   };
@@ -27,6 +34,7 @@ const MultiValueFilter = ({ selected, defaultValue, label, vocab, onChange }) =>
     >
       <Select
         showSearch
+        disabled={disabled}
         style={{ width: "100%" }}
         mode="multiple"
         placeholder="Please select"

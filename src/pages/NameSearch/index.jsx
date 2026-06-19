@@ -21,23 +21,38 @@ import ToolHeader from "../tools/ToolHeader";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
-const FACETS = [
-  "rank",
-  "issue",
-  "status",
+// Facets are split by visibility. Computing a facet is expensive on
+// Elasticsearch, so we only ever request the facets whose filter is actually
+// on screen. The "basic" facets are always visible; the "advanced" facets sit
+// behind the Advanced toggle and are only requested once it is opened.
+const BASE_FACETS = ["rank", "issue", "status"];
+// Sector/source facets are only shown for non-external datasets (and for
+// cross-dataset search, where `dataset` is undefined).
+const SECTOR_FACETS = ["sectorMode", "sectorDatasetKey", "secondarySource"];
+const ADVANCED_FACETS = [
   "nomStatus",
-  "nomCode",
   "nameType",
+  "nomCode",
   "field",
   "authorship",
   "authorshipYear",
-  "extinct",
   "environment",
+  "extinct",
+  "group",
   "origin",
-  "sectorMode",
-  "secondarySourceGroup",
-  "sectorDatasetKey",
-  "secondarySource",
+];
+// Param keys that only appear as advanced filters. If a deep link carries any
+// of these we open the Advanced panel so the active filter is visible.
+const ADVANCED_PARAM_KEYS = ["secondarySourceGroup", ...ADVANCED_FACETS];
+// Cross-dataset ("global") search deliberately offers a small filter set:
+// most per-record filters are meaningless across datasets and faceting them
+// over the whole index is too costly for Elasticsearch.
+const CROSS_DATASET_FACETS = [
+  "datasetKey",
+  "rank",
+  "status",
+  "nameType",
+  "extinct",
   "group",
 ];
 const FormItem = Form.Item;
@@ -176,7 +191,20 @@ const NameSearchPage = ({
   showSourceDataset,
   location,
 }) => {
-  const effectiveFACETS = datasetKey ? FACETS : ["datasetKey", ...FACETS];
+  const isExternal = dataset?.origin === "external";
+  // Build the facet list for a request based on what is currently visible.
+  // Hidden filters cost ES time for facets nobody sees, so we skip them and
+  // re-query when the user opens Advanced (see toggleAdvancedFilters).
+  const computeFacets = (advanced) => {
+    if (!datasetKey) return [...CROSS_DATASET_FACETS];
+    const facets = [...BASE_FACETS];
+    if (!isExternal) facets.push(...SECTOR_FACETS);
+    if (advanced) {
+      if (!isExternal) facets.push("secondarySourceGroup");
+      facets.push(...ADVANCED_FACETS);
+    }
+    return facets;
+  };
 
   const isProject = projectKey === datasetKey;
   const clms = getColumns(isProject ? projectKey : null);
@@ -234,6 +262,9 @@ const NameSearchPage = ({
   const [sectorDatasetKeyMap, setSectorDatasetKeyMap] = useState({});
   const [secondarySourceMap, setSecondarySourceMap] = useState({});
   const [advancedFilters, setAdvancedFilters] = useState(false);
+  // Mirror of advancedFilters readable synchronously inside getData, which is
+  // captured at render time and would otherwise see a stale toggle value.
+  const advancedRef = useRef(false);
   const [params, setParams] = useState({});
   const [pagination, setPagination] = useState({
     pageSize: PAGE_SIZE,
@@ -279,18 +310,37 @@ const NameSearchPage = ({
     return p;
   };
 
+  // Many COL releases share the title "Catalogue of Life", so the dataset
+  // label must be disambiguated. The datasetKey facet already provides a label
+  // like "Catalogue of Life (2025-05-17 XR)" for free (no lookup). For rows not
+  // covered by the facet (e.g. cross-dataset search with no query term, where
+  // faceting is skipped) we fall back to the batched/cached dataset loader and
+  // build "Title (alias)" — the alias (e.g. "COL25.5 XR") is the most
+  // recognizable disambiguator.
+  const datasetLabel = (ds) =>
+    ds ? `${ds.title}${ds.alias ? ` (${ds.alias})` : ""}` : undefined;
+
   const datasetLabelsFromFacets = async (responseData) => {
-    if (_.get(responseData, "facets.datasetKey") && _.get(responseData, "result[0]")) {
-      const keyMap = _.keyBy(responseData.facets.datasetKey, "value");
-      console.log("DS facet length " + responseData?.facets?.datasetKey?.length);
-      for await (const d of responseData.result) {
-        if (keyMap[d?.usage?.datasetKey]) {
-          d.datasetLabel = keyMap[d?.usage?.datasetKey].label;
-        } else {
-          const dataset = await datasetLoader.load(d?.usage?.datasetKey);
-          d.datasetLabel = dataset?.title;
-        }
-      }
+    const results = _.get(responseData, "result");
+    if (!results || !results[0]) return;
+    const facetMap = _.keyBy(
+      _.get(responseData, "facets.datasetKey") || [],
+      "value"
+    );
+    // Load every key the facet doesn't cover in a single parallel pass so
+    // DataLoader can batch them; sequential awaits would defeat batching.
+    const missing = _.uniq(
+      results
+        .map((d) => d?.usage?.datasetKey)
+        .filter((k) => k != null && !facetMap[k])
+    );
+    const loaded = await Promise.all(missing.map((k) => datasetLoader.load(k)));
+    const loadedMap = _.keyBy(loaded.filter(Boolean), "key");
+    for (const d of results) {
+      const dsKey = d?.usage?.datasetKey;
+      d.datasetLabel = facetMap[dsKey]
+        ? facetMap[dsKey].label
+        : datasetLabel(loadedMap[dsKey]);
     }
   };
 
@@ -329,6 +379,10 @@ const NameSearchPage = ({
     setSearched(true);
     setLoading(true);
     const paramsForRequest = { ...currentParams };
+    // facet is derived from the visible filters (computeFacets), not stored or
+    // round-tripped through the URL — this keeps the URL clean and guarantees
+    // we never request facets for hidden filters.
+    delete paramsForRequest.facet;
     if (!paramsForRequest.q) {
       delete paramsForRequest.q;
     }
@@ -346,7 +400,15 @@ const NameSearchPage = ({
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
       : `${config.dataApi}nameusage/search`;
     try {
-      const res = await get(`${url}?${qs.stringify(newParamsWithPaging)}`);
+      // Cross-dataset search with no query term must not facet at all — a
+      // facet over the whole index without a term is the most expensive query
+      // we can send. Single-dataset search keeps its facets either way.
+      const facet =
+        !datasetKey && !paramsForRequest.q
+          ? []
+          : computeFacets(advancedRef.current);
+      const requestParams = { ...newParamsWithPaging, facet };
+      const res = await get(`${url}?${qs.stringify(requestParams)}`);
       if (!datasetKey) {
         // only do this if it is a cross dataset search
         await datasetLabelsFromFacets(res.data);
@@ -392,15 +454,21 @@ const NameSearchPage = ({
       initialParams.sortBy = "relevance";
       initialParams.content = "SCIENTIFIC_NAME";
     }
-    if (!initialParams.facet) {
-      initialParams.facet = effectiveFACETS;
-    }
+    // facet is derived per request (see getData), never persisted.
+    delete initialParams.facet;
     if (!initialParams.limit) {
       initialParams.limit = PAGE_SIZE;
     }
     if (!initialParams.offset) {
       initialParams.offset = 0;
     }
+    // Open Advanced when a deep link already filters on an advanced facet, so
+    // the active filter is visible and its facet gets requested.
+    const advancedActive =
+      !!datasetKey &&
+      ADVANCED_PARAM_KEYS.some((k) => !_.isNil(initialParams[k]));
+    advancedRef.current = advancedActive;
+    setAdvancedFilters(advancedActive);
 
     const initialPagination = {
       pageSize: initialParams.limit || PAGE_SIZE,
@@ -425,14 +493,22 @@ const NameSearchPage = ({
     if (!locationSearch) return;
     let newParams = qs.parse(locationSearch);
     if (_.isEmpty(newParams)) return;
-    if (!newParams.facet) {
-      newParams.facet = effectiveFACETS;
-    }
+    // facet is derived per request (see getData), never persisted.
+    delete newParams.facet;
     if (!newParams.limit) {
       newParams.limit = PAGE_SIZE;
     }
     if (!newParams.offset) {
       newParams.offset = 0;
+    }
+    // Keep the Advanced panel in sync with deep links / back-forward nav.
+    // Only relevant for single-dataset search; cross-dataset has no panel.
+    if (
+      datasetKey &&
+      ADVANCED_PARAM_KEYS.some((k) => !_.isNil(newParams[k]))
+    ) {
+      advancedRef.current = true;
+      setAdvancedFilters(true);
     }
     const newPagination = {
       pageSize: newParams.limit || PAGE_SIZE,
@@ -492,7 +568,6 @@ const NameSearchPage = ({
     const newParams = {
       limit: 50,
       offset: 0,
-      facet: effectiveFACETS,
     };
     const newPagination = { ...pagination, current: 1 };
     setParams(newParams);
@@ -501,7 +576,14 @@ const NameSearchPage = ({
   };
 
   const toggleAdvancedFilters = () => {
-    setAdvancedFilters((prev) => !prev);
+    const next = !advancedFilters;
+    advancedRef.current = next;
+    setAdvancedFilters(next);
+    // Opening Advanced reveals filters whose facets we deliberately skipped;
+    // re-run the current query to populate them. Closing needs no new request.
+    if (next && searched) {
+      getData(params, pagination);
+    }
   };
 
   const getMerge = () => {
@@ -689,12 +771,13 @@ const NameSearchPage = ({
               />
             </div>
           )}
-          {(projectKey === datasetKey ||
-            Number(datasetKey) === projectKey ||
-            (dataset &&
-              ["project", "release", "xrelease"].includes(
-                dataset.origin
-              ))) && (
+          {datasetKey &&
+            (projectKey === datasetKey ||
+              Number(datasetKey) === projectKey ||
+              (dataset &&
+                ["project", "release", "xrelease"].includes(
+                  dataset.origin
+                ))) && (
             <div style={{ marginTop: "10px" }}>
               <DatasetAutocomplete
                 merge={merge}
@@ -739,149 +822,195 @@ const NameSearchPage = ({
           </div>
         </Col>
         <Col xs={24} sm={24} md={12} lg={12}>
-          {!datasetKey && (
-            <MultiValueFilter
-              defaultValue={_.get(params, "datasetKey")}
-              onChange={(value) => updateSearch({ datasetKey: value })}
-              vocab={facetDataset}
-              label="Dataset"
-            />
-          )}
-          <MultiValueFilter
-            defaultValue={_.get(params, "issue")}
-            onChange={(value) => updateSearch({ issue: value })}
-            vocab={facetIssues || issue.map((i) => i.name)}
-            label="Issues"
-          />
-          <MultiValueFilter
-            defaultValue={_.get(params, "rank")}
-            onChange={(value) => updateSearch({ rank: value })}
-            vocab={facetRanks || rank}
-            label="Ranks"
-          />
-          <MultiValueFilter
-            defaultValue={_.get(params, "status")}
-            onChange={(value) => updateSearch({ status: value })}
-            vocab={facetTaxonomicStatus || taxonomicstatus}
-            label="Status"
-          />
-          {dataset?.origin !== "external" && (
-            <MultiValueFilter
-              defaultValue={_.get(params, "sectorMode")}
-              onChange={(value) => updateSearch({ sectorMode: value })}
-              vocab={facetSectorMode || ["attach", "union", "merge"]}
-              label="Sector Mode"
-            />
-          )}
-          {dataset?.origin !== "external" && (
-            <MultiValueFilter
-              defaultValue={_.get(params, "sectorDatasetKey")}
-              onChange={(value) =>
-                updateSearch({ sectorDatasetKey: value })
-              }
-              vocab={facetSectorDatasetKey || []}
-              label="Source dataset"
-            />
-          )}
-          {dataset?.origin !== "external" && (
-            <MultiValueFilter
-              defaultValue={_.get(params, "secondarySource")}
-              onChange={(value) =>
-                updateSearch({ secondarySource: value })
-              }
-              vocab={facetSecondarySource || []}
-              label="Secondary source"
-            />
-          )}
-
-          {advancedFilters && (
+          {!datasetKey ? (
+            // Cross-dataset ("global") search: a deliberately small filter set.
+            // Most per-record filters are meaningless across datasets and too
+            // costly to facet over the whole index, so there is no Advanced
+            // panel here. The filters are locked until a query term is entered,
+            // since faceting the whole index without a term is prohibitive.
             <React.Fragment>
-              {dataset?.origin !== "external" && (
-                <MultiValueFilter
-                  defaultValue={_.get(params, "secondarySourceGroup")}
-                  onChange={(value) =>
-                    updateSearch({ secondarySourceGroup: value })
-                  }
-                  vocab={facetSecondarySourceGroup || infoGroup}
-                  label="Secondary information"
-                />
-              )}
-
               <MultiValueFilter
-                defaultValue={_.get(params, "nomStatus")}
-                onChange={(value) => updateSearch({ nomStatus: value })}
-                vocab={facetNomStatus || nomstatus.map((n) => n.name)}
-                label="Nomenclatural status"
+                defaultValue={_.get(params, "datasetKey")}
+                onChange={(value) => updateSearch({ datasetKey: value })}
+                vocab={facetDataset}
+                label="Dataset"
+                disabled={!params.q}
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "rank")}
+                onChange={(value) => updateSearch({ rank: value })}
+                vocab={facetRanks || rank}
+                label="Ranks"
+                disabled={!params.q}
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "status")}
+                onChange={(value) => updateSearch({ status: value })}
+                vocab={facetTaxonomicStatus || taxonomicstatus}
+                label="Status"
+                disabled={!params.q}
               />
               <MultiValueFilter
                 defaultValue={_.get(params, "nameType")}
                 onChange={(value) => updateSearch({ nameType: value })}
                 vocab={facetNomType || nametype}
                 label="Name type"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "nomCode")}
-                onChange={(value) => updateSearch({ nomCode: value })}
-                vocab={facetNomCode || nomCode}
-                label="Nomenclatural code"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "field")}
-                onChange={(value) => updateSearch({ field: value })}
-                vocab={facetNomField || namefield}
-                label="Name field"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "authorship")}
-                onChange={(value) => updateSearch({ authorship: value })}
-                vocab={facetAuthorship}
-                label="Authorship"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "authorshipYear")}
-                onChange={(value) =>
-                  updateSearch({ authorshipYear: value })
-                }
-                vocab={facetAuthorshipYear}
-                label="Authorship Year"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "environment")}
-                onChange={(value) =>
-                  updateSearch({ environment: value })
-                }
-                vocab={facetEnvironment}
-                label="Environment"
+                disabled={!params.q}
               />
               <MultiValueFilter
                 defaultValue={_.get(params, "extinct")}
                 onChange={(value) => updateSearch({ extinct: value })}
                 vocab={facetExtinct}
                 label="Extinct"
+                disabled={!params.q}
               />
               <MultiValueFilter
                 defaultValue={_.get(params, "group")}
                 onChange={(value) => updateSearch({ group: value })}
                 vocab={facetTaxGroup || []}
                 label="Taxonomic group"
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "origin")}
-                onChange={(value) => updateSearch({ origin: value })}
-                vocab={facetOrigin}
-                label="Origin"
+                disabled={!params.q}
               />
             </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <MultiValueFilter
+                defaultValue={_.get(params, "issue")}
+                onChange={(value) => updateSearch({ issue: value })}
+                vocab={facetIssues || issue.map((i) => i.name)}
+                label="Issues"
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "rank")}
+                onChange={(value) => updateSearch({ rank: value })}
+                vocab={facetRanks || rank}
+                label="Ranks"
+              />
+              <MultiValueFilter
+                defaultValue={_.get(params, "status")}
+                onChange={(value) => updateSearch({ status: value })}
+                vocab={facetTaxonomicStatus || taxonomicstatus}
+                label="Status"
+              />
+              {dataset?.origin !== "external" && (
+                <MultiValueFilter
+                  defaultValue={_.get(params, "sectorMode")}
+                  onChange={(value) => updateSearch({ sectorMode: value })}
+                  vocab={facetSectorMode || ["attach", "union", "merge"]}
+                  label="Sector Mode"
+                />
+              )}
+              {dataset?.origin !== "external" && (
+                <MultiValueFilter
+                  defaultValue={_.get(params, "sectorDatasetKey")}
+                  onChange={(value) =>
+                    updateSearch({ sectorDatasetKey: value })
+                  }
+                  vocab={facetSectorDatasetKey || []}
+                  label="Source dataset"
+                />
+              )}
+              {dataset?.origin !== "external" && (
+                <MultiValueFilter
+                  defaultValue={_.get(params, "secondarySource")}
+                  onChange={(value) =>
+                    updateSearch({ secondarySource: value })
+                  }
+                  vocab={facetSecondarySource || []}
+                  label="Secondary source"
+                />
+              )}
+
+              {advancedFilters && (
+                <React.Fragment>
+                  {dataset?.origin !== "external" && (
+                    <MultiValueFilter
+                      defaultValue={_.get(params, "secondarySourceGroup")}
+                      onChange={(value) =>
+                        updateSearch({ secondarySourceGroup: value })
+                      }
+                      vocab={facetSecondarySourceGroup || infoGroup}
+                      label="Secondary information"
+                    />
+                  )}
+
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nomStatus")}
+                    onChange={(value) => updateSearch({ nomStatus: value })}
+                    vocab={facetNomStatus || nomstatus.map((n) => n.name)}
+                    label="Nomenclatural status"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nameType")}
+                    onChange={(value) => updateSearch({ nameType: value })}
+                    vocab={facetNomType || nametype}
+                    label="Name type"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nomCode")}
+                    onChange={(value) => updateSearch({ nomCode: value })}
+                    vocab={facetNomCode || nomCode}
+                    label="Nomenclatural code"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "field")}
+                    onChange={(value) => updateSearch({ field: value })}
+                    vocab={facetNomField || namefield}
+                    label="Name field"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "authorship")}
+                    onChange={(value) => updateSearch({ authorship: value })}
+                    vocab={facetAuthorship}
+                    label="Authorship"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "authorshipYear")}
+                    onChange={(value) =>
+                      updateSearch({ authorshipYear: value })
+                    }
+                    vocab={facetAuthorshipYear}
+                    label="Authorship Year"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "environment")}
+                    onChange={(value) =>
+                      updateSearch({ environment: value })
+                    }
+                    vocab={facetEnvironment}
+                    label="Environment"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "extinct")}
+                    onChange={(value) => updateSearch({ extinct: value })}
+                    vocab={facetExtinct}
+                    label="Extinct"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "group")}
+                    onChange={(value) => updateSearch({ group: value })}
+                    vocab={facetTaxGroup || []}
+                    label="Taxonomic group"
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "origin")}
+                    onChange={(value) => updateSearch({ origin: value })}
+                    vocab={facetOrigin}
+                    label="Origin"
+                  />
+                </React.Fragment>
+              )}
+              <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                <a
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={toggleAdvancedFilters}
+                >
+                  Advanced{" "}
+                  {advancedFilters ? <UpOutlined /> : <DownOutlined />}
+                </a>
+              </div>
+            </React.Fragment>
           )}
-          <div style={{ textAlign: "right", marginBottom: "8px" }}>
-            <a
-              style={{ marginLeft: 8, fontSize: 12 }}
-              onClick={toggleAdvancedFilters}
-            >
-              Advanced{" "}
-              {advancedFilters ? <UpOutlined /> : <DownOutlined />}
-            </a>
-          </div>
           <div style={{ textAlign: "right", marginBottom: "8px" }}>
             {loading && (
               <Button
@@ -909,7 +1038,7 @@ const NameSearchPage = ({
       {!error && !searched && (
         <Empty
           style={{ marginTop: 48 }}
-          description="Enter a search term or apply a filter to begin"
+          description="Enter a search term to begin"
         />
       )}
       {!error && searched && (
