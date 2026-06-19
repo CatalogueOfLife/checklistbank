@@ -339,7 +339,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
   const inputActionButton = asyncMode ? (
     <Button
       type="primary"
-      onClick={submitAsyncJob}
+      onClick={() => submitAsyncJob()}
       loading={asyncSubmitting}
       disabled={!primaryDataset || matcherBlocking || !(asyncFile || subjectDataset)}
     >
