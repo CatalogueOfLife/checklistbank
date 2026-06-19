@@ -272,7 +272,7 @@ const ProjectDecisions = ({
               highlightStyle={{ fontWeight: "bold", padding: 0 }}
               searchWords={[searchText]}
               autoEscape
-              textToHighlight={record?.alias?.toString() || text.toString()}
+              textToHighlight={(record?.alias || text || "").toString()}
             />
           </NavLink>
         );
@@ -315,7 +315,7 @@ const ProjectDecisions = ({
                   highlightStyle={{ fontWeight: "bold", padding: 0 }}
                   searchWords={[params.name]}
                   autoEscape
-                  textToHighlight={record?.subject?.name?.toString()}
+                  textToHighlight={record?.subject?.name?.toString() || ""}
                 />
               </NavLink>
             )}
