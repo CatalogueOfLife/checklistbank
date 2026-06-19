@@ -460,8 +460,9 @@ const NameSearchPage = ({
     let initialParams = qs.parse(_.get({ location }, "location.search"));
     const isEmpty = _.isEmpty(initialParams);
     if (isEmpty) {
-      // Seed sensible form defaults without running a search.
-      initialParams.sortBy = "relevance";
+      // Seed sensible form defaults without running a search. Note: no default
+      // sortBy — leave ordering to the backend unless the user explicitly sorts
+      // via a column header.
       initialParams.content = "SCIENTIFIC_NAME";
     }
     // facet is derived per request (see getData), never persisted.
