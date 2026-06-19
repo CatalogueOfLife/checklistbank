@@ -725,14 +725,16 @@ const NameSearchPage = ({
                   <Radio value="VERNACULAR_NAME">Vernacular name</Radio>
                 </RadioGroup>
               </FormItem>
-              <FormItem label="Fuzzy">
-                <Switch
-                  checked={(params.type || "").toUpperCase() === "FUZZY"}
-                  onChange={(checked) =>
-                    updateSearch({ type: checked ? "fuzzy" : null })
-                  }
-                />
-              </FormItem>
+              {datasetKey && (
+                <FormItem label="Fuzzy">
+                  <Switch
+                    checked={(params.type || "").toUpperCase() === "FUZZY"}
+                    onChange={(checked) =>
+                      updateSearch({ type: checked ? "fuzzy" : null })
+                    }
+                  />
+                </FormItem>
+              )}
             </Form>
           </div>
         </Col>
