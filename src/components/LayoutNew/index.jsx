@@ -246,10 +246,10 @@ const SiteLayout = ({
               </React.Fragment>
             )}
 
-            {!selectedDataset && project && title && (
+            {!selectedDataset && title && (
               <>
                 <h1 style={{ display: "inline" }}>{title}</h1>{" "}
-                {projectKey && (
+                {project && projectKey && (
                   <DatasetOriginPill
                     dataset={{ key: projectKey, origin: project?.origin }}
                   />

@@ -5,6 +5,7 @@ import config from "../../config";
 import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
 import history from "../../history";
@@ -143,9 +144,10 @@ const TaxAlign = ({ location, addError }) => {
     <Layout
       selectedKeys={["taxalign"]}
       openKeys={["tools"]}
-      title="Taxonomic alignment"
+      title="Taxonomic Alignment"
     >
       <PageContent>
+        <ToolHeader id="taxonomic-alignment" />
         <Row style={{ marginBottom: "8px" }}>
           <Col>
             This tool allows you to run{" "}

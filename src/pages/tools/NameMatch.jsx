@@ -32,6 +32,7 @@ import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -720,6 +721,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
       title="Name Matching"
     >
       <PageContent>
+        <ToolHeader id="name-match" />
         {submissionError && (
           <Alert
             type="error"

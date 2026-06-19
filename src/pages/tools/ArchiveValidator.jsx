@@ -7,6 +7,7 @@ import Layout from "../../components/LayoutNew";
 import withRouter from "../../withRouter";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
@@ -66,6 +67,7 @@ const ArchiveValidator = () => {
       title="Archive Validator"
     >
       <PageContent>
+        <ToolHeader id="validator" />
         {submissionError && (
           <Alert
             type="error"

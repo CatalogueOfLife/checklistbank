@@ -20,6 +20,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
+import ToolHeader from "../ToolHeader";
 import { Diff2Html } from "diff2html";
 import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
@@ -136,9 +137,10 @@ const TaxonComparer = ({ location, addError, rank }) => {
     <Layout
       selectedKeys={["datasetComparison"]}
       openKeys={["tools"]}
-      title="Dataset comparison (taxon to taxon)"
+      title="Dataset Comparison"
     >
       <PageContent>
+        <ToolHeader id="dataset-comparison" />
         <Row style={{ marginBottom: "12px" }}>
           <Col span={12} style={{ paddingLeft: "8px" }}>
             <h4>Dataset 1</h4>

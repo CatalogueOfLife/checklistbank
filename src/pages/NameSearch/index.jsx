@@ -17,6 +17,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
+import ToolHeader from "../tools/ToolHeader";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
@@ -647,6 +648,7 @@ const NameSearchPage = ({
         margin: "16px 0",
       }}
     >
+      {!datasetKey && <ToolHeader id="nameusage-search" />}
       <Row>
         {error && (
           <Alert

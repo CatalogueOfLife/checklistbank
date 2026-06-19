@@ -4,6 +4,7 @@ import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
 import { Row, Col, Card, Input, AutoComplete, Select } from "antd";
 import withContext from "../../components/hoc/withContext";
+import ToolHeader from "../tools/ToolHeader";
 import Entry from "./Entry";
 import RelatedNames from "./RelatedNames";
 import axios from "axios";
@@ -66,6 +67,7 @@ const NameIndexKey = ({ nameIndexRank, addError }) => {
       selectedKeys={["nameIndexSearch"]}
     >
       <PageContent>
+        <ToolHeader id="namesindex" />
         <Row>
           <Col flex="auto"></Col>
           <Col>

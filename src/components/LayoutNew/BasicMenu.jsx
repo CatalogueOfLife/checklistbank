@@ -270,7 +270,7 @@ const BasicMenu = (props) => {
           key: "toolsIndex",
           label: (
             <NavLink to={{ pathname: "/tools/index" }}>
-              <span>... all tools</span>
+              <span>more ...</span>
             </NavLink>
           ),
         },

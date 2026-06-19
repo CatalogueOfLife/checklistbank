@@ -20,6 +20,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import { Diff2Html } from "diff2html";
 import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
@@ -193,7 +194,7 @@ const DiffViewer = ({ location, addError, rank }) => {
       title="Diff Viewer"
     >
       <PageContent>
-
+        <ToolHeader id="diff-viewer" />
         <Row style={{ marginBottom: "8px" }}>
           <Col style={{ marginLeft: "12px" }}>
             <Checkbox onChange={(e) => setShowParent(e.target.checked)}>

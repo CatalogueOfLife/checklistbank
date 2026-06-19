@@ -21,6 +21,7 @@ import Layout from "../../components/LayoutNew";
 import withRouter from "../../withRouter";
 import history from "../../history";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import _ from "lodash";
 import axios from "axios";
 import qs from "query-string";
@@ -259,6 +260,7 @@ const MetaDataValidator = ({ location }) => {
       title="Metadata Generator"
     >
       <PageContent>
+        <ToolHeader id="metadata-generator" />
         <Steps
           current={step}
           style={{ marginBottom: "24px" }}

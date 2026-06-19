@@ -15,6 +15,7 @@ import _ from "lodash";
 import { Button, Card, Tag, Spin, Row, Col, Alert, Tooltip } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
+import ToolHeader from "./ToolHeader";
 import withContext from "../../components/hoc/withContext";
 
 const NameMatchJob = ({ match, addError }) => {
@@ -83,8 +84,9 @@ const NameMatchJob = ({ match, addError }) => {
   }, []);
 
   return (
-    <Layout openKeys={[]} selectedKeys={[]} title="ChecklistBank Name Matching">
+    <Layout openKeys={[]} selectedKeys={[]} title="Name Matching">
       <PageContent>
+        <ToolHeader id="name-match-job" />
         {(job?.status === "failed" || job?.error) && (
           <Alert
             type="error"

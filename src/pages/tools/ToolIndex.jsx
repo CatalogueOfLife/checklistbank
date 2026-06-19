@@ -20,7 +20,7 @@ const data = [
   },
   {
     title: 'Taxonomic Alignment',
-    path: '/tools/namesindex',
+    path: '/tools/taxonomic-alignment',
     description: <>
     <p>This tool allows you to compare the taxonomic concepts of two selected datasets in ChecklistBank or parts of it.
        It analyses the synonymy of taxa, aligns them and creates RCC-5 relationships regardless the accepted name was used.
@@ -30,7 +30,7 @@ const data = [
   },
   {
     title: 'GBIF Impact',
-    path: '/tools/namesindex',
+    path: '/tools/gbif-impact',
     description: <>
     <p>
       This tool compares taxonomic interpretation of <a href="https://www.gbif.org/occurrence/search">GBIF occurrence records</a> between the current GBIF taxonomic backbone and the Catalogue of Life.

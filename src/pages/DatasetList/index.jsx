@@ -24,6 +24,7 @@ import moment from "dayjs";
 import history from "../../history";
 import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";
+import ToolHeader from "../tools/ToolHeader";
 import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
@@ -635,6 +636,7 @@ const DatasetList = ({
           margin: "16px 0",
         }}
       >
+        <ToolHeader id="dataset" />
         <div>
           <Row>
             <Col xs={24} sm={24} md={12} lg={12}>

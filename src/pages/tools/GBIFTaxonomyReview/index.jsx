@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
+import ToolHeader from "../ToolHeader";
 import Root from "./Root";
 import { Select, Row, Col } from "antd";
 import history from "../../../history";
@@ -46,9 +47,10 @@ const GBIFTaxonomyReview = ({ location }) => {
     <Layout
       selectedKeys={["gbif-impact"]}
       openKeys={["tools"]}
-      title="GBIF impact"
+      title="GBIF Impact"
     >
       <PageContent>
+        <ToolHeader id="gbif-impact" />
         <Row>
           <Col span={4}>Selected file: </Col>
           <Col span={12}>
@@ -97,20 +99,6 @@ const GBIFTaxonomyReview = ({ location }) => {
         </Row>
 
         {selectedFile && <Root />}
-        {!selectedFile && (
-          <Row style={{ marginTop: 20 }}>
-            <Col style={{ paddingRight: "30px" }} span={24}>
-              <p>
-                This tool compares taxonomic interpretation of{" "}
-                <a href="https://www.gbif.org/occurrence/search">
-                  GBIF occurrence records
-                </a>{" "}
-                between the current GBIF taxonomic backbone and the Catalogue of
-                Life.
-              </p>
-            </Col>
-          </Row>
-        )}
       </PageContent>
     </Layout>
   );

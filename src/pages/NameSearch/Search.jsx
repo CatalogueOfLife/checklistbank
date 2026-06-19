@@ -4,7 +4,7 @@ import withRouter from "../../withRouter";
 import NameSearch from "./index";
 const NameUsageSearch = ({ location }) => {
   return (
-    <Layout selectedKeys={"nameUsageSearch"}>
+    <Layout selectedKeys={"nameUsageSearch"} title="Name Usage Search">
       <NameSearch location={location} />
     </Layout>
   );
