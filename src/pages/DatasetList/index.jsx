@@ -619,6 +619,22 @@ const DatasetList = ({
       : c
   );
 
+  // The Title column has no fixed width so it flexes to fill the remaining
+  // space. With many columns selected that leftover can shrink to zero and the
+  // title disappears (#1695). Drive the table's horizontal scroll from the
+  // total width the visible columns need, counting a minimum for the title, so
+  // the title keeps at least TITLE_MIN_WIDTH and the table scrolls instead of
+  // collapsing it. When the viewport is wider than the total, the title still
+  // flexes to fill the extra space.
+  const TITLE_MIN_WIDTH = 300;
+  const rowControlsWidth =
+    32 + (Auth.isAuthorised(user, ["admin"]) ? 32 : 0); // expand + selection columns
+  const scrollX =
+    columns.reduce(
+      (sum, c) => sum + (typeof c.width === "number" ? c.width : TITLE_MIN_WIDTH),
+      0
+    ) + rowControlsWidth;
+
   let queryparams = parseSearch(_.get({ location }, "location.search"));
   const noParams = _.isEmpty(queryparams);
 
@@ -815,6 +831,7 @@ const DatasetList = ({
           >
             <Table
               size="middle"
+              scroll={{ x: scrollX }}
               columns={columns}
               dataSource={data}
               loading={loading}
