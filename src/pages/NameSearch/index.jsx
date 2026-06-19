@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Form, Switch, Tag } from "antd";
+import { Table, Alert, Radio, Row, Col, Form, Switch, Tag, Empty, Button } from "antd";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import config from "../../config";
@@ -242,8 +242,21 @@ const NameSearchPage = ({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searched, setSearched] = useState(false);
 
   const cancelRef = useRef(null);
+
+  const cancelInFlight = (reason) => {
+    if (cancelRef.current && typeof cancelRef.current === "function") {
+      cancelRef.current(reason);
+      cancelRef.current = null;
+    }
+  };
+
+  const cancelSearch = () => {
+    cancelInFlight("cancelled by user");
+    setLoading(false);
+  };
 
   // Cleanup on unmount
   useEffect(() => {
@@ -308,81 +321,75 @@ const NameSearchPage = ({
   const getData = async (currentParams, currentPagination) => {
     const { pageSize: limit, current } = currentPagination;
 
-    if (loading && cancelRef.current) {
-      cancelRef.current("cancelled by user");
-    } else {
-      setLoading(true);
-      const paramsForRequest = { ...currentParams };
-      if (!paramsForRequest.q) {
-        delete paramsForRequest.q;
+    // Cancel any in-flight request before starting a new one. This replaces
+    // the previous cancel-then-retry toggle, which re-fired the request on
+    // unmount and made the page impossible to leave during a long search.
+    cancelInFlight("cancelled by a newer search");
+    setSearched(true);
+    setLoading(true);
+    const paramsForRequest = { ...currentParams };
+    if (!paramsForRequest.q) {
+      delete paramsForRequest.q;
+    }
+    const newParamsWithPaging = {
+      ...paramsForRequest,
+      limit,
+      offset: (current - 1) * limit,
+    };
+
+    history.push({
+      pathname: _.get({ location }, "location.pathname"),
+      search: `?${qs.stringify(newParamsWithPaging)}`,
+    });
+    const url = datasetKey
+      ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
+      : `${config.dataApi}nameusage/search`;
+    try {
+      const res = await get(`${url}?${qs.stringify(newParamsWithPaging)}`);
+      if (!datasetKey) {
+        // only do this if it is a cross dataset search
+        await datasetLabelsFromFacets(res.data);
       }
-      const newParamsWithPaging = {
-        ...paramsForRequest,
-        limit,
-        offset: (current - 1) * limit,
-      };
 
-      history.push({
-        pathname: _.get({ location }, "location.pathname"),
-        search: `?${qs.stringify(newParamsWithPaging)}`,
-      });
-      const url = datasetKey
-        ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
-        : `${config.dataApi}nameusage/search`;
-      try {
-        const res = await get(
-          `${url}?${qs.stringify(newParamsWithPaging)}`
-        );
-        if (!datasetKey) {
-          // only do this if it is a cross dataset search
-          await datasetLabelsFromFacets(res.data);
-        }
+      const newSectorDatasetKeyMap = await sectorDatasetLabelsFromFacets(
+        res.data
+      );
 
-        const newSectorDatasetKeyMap = await sectorDatasetLabelsFromFacets(
-          res.data
-        );
+      const newSecondarySourceMap = await sectorDatasetLabelsFromFacets(
+        res.data,
+        "secondarySource"
+      );
 
-        const newSecondarySourceMap = await sectorDatasetLabelsFromFacets(
-          res.data,
-          "secondarySource"
-        );
-
-        setSectorDatasetKeyMap(newSectorDatasetKeyMap || {});
-        setSecondarySourceMap(newSecondarySourceMap || {});
-        setLoading(false);
-        setData(res.data);
-        setError(null);
-        setPagination((prev) => ({ ...prev, total: res.data.total }));
-      } catch (err) {
-        if (axios.isCancel(err)) {
-          setLoading(false);
-          setData([]);
-          getData(currentParams, currentPagination);
-        } else {
-          setLoading(false);
-          setError(err);
-          setData([]);
-        }
+      setSectorDatasetKeyMap(newSectorDatasetKeyMap || {});
+      setSecondarySourceMap(newSecondarySourceMap || {});
+      setLoading(false);
+      setData(res.data);
+      setError(null);
+      setPagination((prev) => ({ ...prev, total: res.data.total }));
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // Cancelled by a newer search, the Stop button, or unmount — just
+        // stop. A newer search has already taken over the loading state.
+        return;
       }
+      setLoading(false);
+      setError(err);
+      setData([]);
     }
   };
 
-  // Mount: parse URL params and kick off initial fetch
+  // Mount: parse URL params. Only fetch when the URL already carries a query
+  // (a deep link or back/forward navigation). An empty URL no longer triggers
+  // a search — the user must enter a term or apply a filter first. This avoids
+  // the catastrophically expensive empty cross-dataset query that never
+  // returns and locks the page.
   useEffect(() => {
     let initialParams = qs.parse(_.get({ location }, "location.search"));
     const isEmpty = _.isEmpty(initialParams);
     if (isEmpty) {
-      initialParams = {
-        limit: PAGE_SIZE,
-        offset: 0,
-        facet: effectiveFACETS,
-        sortBy: "relevance",
-        content: "SCIENTIFIC_NAME",
-      };
-      history.push({
-        pathname: _.get({ location }, "location.pathname"),
-        search: `?limit=${PAGE_SIZE}&offset=0`,
-      });
+      // Seed sensible form defaults without running a search.
+      initialParams.sortBy = "relevance";
+      initialParams.content = "SCIENTIFIC_NAME";
     }
     if (!initialParams.facet) {
       initialParams.facet = effectiveFACETS;
@@ -405,7 +412,7 @@ const NameSearchPage = ({
     setParams(initialParams);
     setPagination(initialPagination);
 
-    if (datasetKey || !isEmpty) {
+    if (!isEmpty) {
       getData(initialParams, initialPagination);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -872,6 +879,16 @@ const NameSearchPage = ({
             </a>
           </div>
           <div style={{ textAlign: "right", marginBottom: "8px" }}>
+            {loading && (
+              <Button
+                size="small"
+                danger
+                onClick={cancelSearch}
+                style={{ marginRight: 8 }}
+              >
+                Stop
+              </Button>
+            )}
             {pagination &&
               !isNaN(pagination.total) &&
               `${(
@@ -885,7 +902,13 @@ const NameSearchPage = ({
           </div>
         </Col>
       </Row>
-      {!error && (
+      {!error && !searched && (
+        <Empty
+          style={{ marginTop: 48 }}
+          description="Enter a search term or apply a filter to begin"
+        />
+      )}
+      {!error && searched && (
         <Table
           size="small"
           columns={columns}
