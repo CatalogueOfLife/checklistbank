@@ -46,11 +46,12 @@ const ADVANCED_FACETS = [
 const ADVANCED_PARAM_KEYS = ["secondarySourceGroup", ...ADVANCED_FACETS];
 // Cross-dataset ("global") search deliberately offers a small filter set:
 // most per-record filters are meaningless across datasets and faceting them
-// over the whole index is too costly for Elasticsearch.
-const CROSS_DATASET_FACETS = [
+// over the whole index is too costly for Elasticsearch. Only ranks & status
+// show by default; the rest sit behind the Advanced toggle and are only
+// requested once it is opened.
+const CROSS_DATASET_BASE_FACETS = ["rank", "status"];
+const CROSS_DATASET_ADVANCED_FACETS = [
   "datasetKey",
-  "rank",
-  "status",
   "nameType",
   "extinct",
   "group",
@@ -196,7 +197,11 @@ const NameSearchPage = ({
   // Hidden filters cost ES time for facets nobody sees, so we skip them and
   // re-query when the user opens Advanced (see toggleAdvancedFilters).
   const computeFacets = (advanced) => {
-    if (!datasetKey) return [...CROSS_DATASET_FACETS];
+    if (!datasetKey) {
+      const facets = [...CROSS_DATASET_BASE_FACETS];
+      if (advanced) facets.push(...CROSS_DATASET_ADVANCED_FACETS);
+      return facets;
+    }
     const facets = [...BASE_FACETS];
     if (!isExternal) facets.push(...SECTOR_FACETS);
     if (advanced) {
@@ -205,6 +210,11 @@ const NameSearchPage = ({
     }
     return facets;
   };
+  // Param keys that live behind the Advanced toggle for the current mode; a
+  // deep link carrying any of them opens the panel so the filter is visible.
+  const advancedParamKeys = datasetKey
+    ? ADVANCED_PARAM_KEYS
+    : CROSS_DATASET_ADVANCED_FACETS;
 
   const isProject = projectKey === datasetKey;
   const clms = getColumns(isProject ? projectKey : null);
@@ -464,9 +474,9 @@ const NameSearchPage = ({
     }
     // Open Advanced when a deep link already filters on an advanced facet, so
     // the active filter is visible and its facet gets requested.
-    const advancedActive =
-      !!datasetKey &&
-      ADVANCED_PARAM_KEYS.some((k) => !_.isNil(initialParams[k]));
+    const advancedActive = advancedParamKeys.some(
+      (k) => !_.isNil(initialParams[k])
+    );
     advancedRef.current = advancedActive;
     setAdvancedFilters(advancedActive);
 
@@ -502,11 +512,7 @@ const NameSearchPage = ({
       newParams.offset = 0;
     }
     // Keep the Advanced panel in sync with deep links / back-forward nav.
-    // Only relevant for single-dataset search; cross-dataset has no panel.
-    if (
-      datasetKey &&
-      ADVANCED_PARAM_KEYS.some((k) => !_.isNil(newParams[k]))
-    ) {
+    if (advancedParamKeys.some((k) => !_.isNil(newParams[k]))) {
       advancedRef.current = true;
       setAdvancedFilters(true);
     }
@@ -581,7 +587,9 @@ const NameSearchPage = ({
     setAdvancedFilters(next);
     // Opening Advanced reveals filters whose facets we deliberately skipped;
     // re-run the current query to populate them. Closing needs no new request.
-    if (next && searched) {
+    // Cross-dataset search skips faceting entirely without a query term, so
+    // there is nothing new to fetch in that case.
+    if (next && searched && (datasetKey || params.q)) {
       getData(params, pagination);
     }
   };
@@ -825,17 +833,12 @@ const NameSearchPage = ({
           {!datasetKey ? (
             // Cross-dataset ("global") search: a deliberately small filter set.
             // Most per-record filters are meaningless across datasets and too
-            // costly to facet over the whole index, so there is no Advanced
-            // panel here. The filters are locked until a query term is entered,
-            // since faceting the whole index without a term is prohibitive.
+            // costly to facet over the whole index. Only ranks & status show by
+            // default; the rest sit behind Advanced and their facets are only
+            // requested once it is opened. Filters are locked until a query
+            // term is entered, since faceting the whole index without a term is
+            // prohibitive.
             <React.Fragment>
-              <MultiValueFilter
-                defaultValue={_.get(params, "datasetKey")}
-                onChange={(value) => updateSearch({ datasetKey: value })}
-                vocab={facetDataset}
-                label="Dataset"
-                disabled={!params.q}
-              />
               <MultiValueFilter
                 defaultValue={_.get(params, "rank")}
                 onChange={(value) => updateSearch({ rank: value })}
@@ -850,27 +853,47 @@ const NameSearchPage = ({
                 label="Status"
                 disabled={!params.q}
               />
-              <MultiValueFilter
-                defaultValue={_.get(params, "nameType")}
-                onChange={(value) => updateSearch({ nameType: value })}
-                vocab={facetNomType || nametype}
-                label="Name type"
-                disabled={!params.q}
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "extinct")}
-                onChange={(value) => updateSearch({ extinct: value })}
-                vocab={facetExtinct}
-                label="Extinct"
-                disabled={!params.q}
-              />
-              <MultiValueFilter
-                defaultValue={_.get(params, "group")}
-                onChange={(value) => updateSearch({ group: value })}
-                vocab={facetTaxGroup || []}
-                label="Taxonomic group"
-                disabled={!params.q}
-              />
+              {advancedFilters && (
+                <React.Fragment>
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "datasetKey")}
+                    onChange={(value) => updateSearch({ datasetKey: value })}
+                    vocab={facetDataset}
+                    label="Dataset"
+                    disabled={!params.q}
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "nameType")}
+                    onChange={(value) => updateSearch({ nameType: value })}
+                    vocab={facetNomType || nametype}
+                    label="Name type"
+                    disabled={!params.q}
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "extinct")}
+                    onChange={(value) => updateSearch({ extinct: value })}
+                    vocab={facetExtinct}
+                    label="Extinct"
+                    disabled={!params.q}
+                  />
+                  <MultiValueFilter
+                    defaultValue={_.get(params, "group")}
+                    onChange={(value) => updateSearch({ group: value })}
+                    vocab={facetTaxGroup || []}
+                    label="Taxonomic group"
+                    disabled={!params.q}
+                  />
+                </React.Fragment>
+              )}
+              <div style={{ textAlign: "right", marginBottom: "8px" }}>
+                <a
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={toggleAdvancedFilters}
+                >
+                  Advanced{" "}
+                  {advancedFilters ? <UpOutlined /> : <DownOutlined />}
+                </a>
+              </div>
             </React.Fragment>
           ) : (
             <React.Fragment>
