@@ -9,9 +9,9 @@ import Entry from "./Entry";
 import axios from "axios";
 import config from "../../config";
 import Classification from "../NameSearch/Classification";
+import { resizableComponents, useResizableColumns } from "./resizableColumns";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
-import { truncate } from "../../components/util";
 
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const limit = 500;
@@ -31,6 +31,21 @@ const usageUri = (record) =>
           ? _.get(record, "accepted.id")
           : _.get(record, "id")
       )}`;
+
+// Prefer "{alias}: {title}" — the alias is the most recognizable
+// disambiguator between releases — falling back to the title alone. The title
+// is rendered in a smaller font; the alias stays at the regular size.
+const datasetTitleStyle = { fontSize: "0.85em" };
+const datasetLabel = (dataset) =>
+  dataset?.alias ? (
+    <>
+      {dataset.alias}: <span style={datasetTitleStyle}>{dataset.title}</span>
+    </>
+  ) : (
+    <span style={datasetTitleStyle}>{dataset?.title}</span>
+  );
+const datasetLabelText = (dataset) =>
+  dataset?.alias ? `${dataset.alias}: ${dataset.title}` : dataset?.title;
 
 const decorateWithDataset = (res) => {
     if (!res?.data?.result) return res;
@@ -105,18 +120,20 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
             title: "Dataset",
             dataIndex: ["dataset", "title"],
             key: "datasetLabel",
+            width: 260,
+            ellipsis: { showTitle: false },
             render: (text, record) => (
-              <NavLink
-                key={_.get(record, "id")}
-                to={{
-                  pathname: usageUri(record),
-                }}
-                end
-              >
-                  <Tooltip title={text}>
-                {truncate(text, 25)} {record?.dataset?.version ? `[${record?.dataset?.version}]` : ""}
-                </Tooltip>
-              </NavLink>
+              <Tooltip title={datasetLabelText(record.dataset)}>
+                <NavLink
+                  key={_.get(record, "id")}
+                  to={{
+                    pathname: usageUri(record),
+                  }}
+                  end
+                >
+                  {datasetLabel(record.dataset)}
+                </NavLink>
+              </Tooltip>
             ),
 
           },
@@ -124,6 +141,7 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
           title: "Scientific Name",
           dataIndex: ["labelHtml"],
           key: "scientificName",
+          width: 320,
           filters: group ? group.map(name => ({text: <span dangerouslySetInnerHTML={{ __html: name.labelHtml }} />, value: name.id})) : null,
           onFilter: (value, record) => record.name.namesIndexId === value,
           sorter: {
@@ -160,13 +178,16 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
         }
       ];
 
+      const resizableCols = useResizableColumns(columns);
+
       return <>
     <Typography.Paragraph type="secondary">
       All name usages across every ChecklistBank dataset that share this name, linked via the names index.
     </Typography.Paragraph>
     <Table
       size="small"
-      columns={columns}
+      components={resizableComponents}
+      columns={resizableCols}
       dataSource={related?.result || []}
       loading={loading}
      /*  pagination={this.state.pagination}

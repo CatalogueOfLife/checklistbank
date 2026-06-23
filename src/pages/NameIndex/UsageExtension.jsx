@@ -7,6 +7,7 @@ import axios from "axios";
 import config from "../../config";
 import { getDatasetsBatch } from "../../api/dataset";
 import { truncate } from "../../components/util";
+import { resizableComponents, useResizableColumns } from "./resizableColumns";
 import DataLoader from "dataloader";
 import _ from "lodash";
 
@@ -54,19 +55,36 @@ const usagePath = (record) =>
     ? `/dataset/${record.datasetKey}/taxon/${encodeURIComponent(record.taxonID)}`
     : `/dataset/${record.datasetKey}`;
 
+// Prefer "{alias}: {title}" — the alias is the most recognizable
+// disambiguator between releases — falling back to the title alone. The title
+// is rendered in a smaller font; the alias stays at the regular size.
+const datasetTitleStyle = { fontSize: "0.85em" };
+const datasetLabel = (dataset) =>
+  dataset?.alias ? (
+    <>
+      {dataset.alias}: <span style={datasetTitleStyle}>{dataset.title}</span>
+    </>
+  ) : (
+    <span style={datasetTitleStyle}>{dataset?.title}</span>
+  );
+const datasetLabelText = (dataset) =>
+  dataset?.alias ? `${dataset.alias}: ${dataset.title}` : dataset?.title;
+
 // Shared Dataset column linking to the usage in the source dataset.
+// `ellipsis` clips the label to the column width with a CSS ellipsis rather
+// than hard-truncating at a fixed character count.
 const datasetColumn = {
   title: "Dataset",
   dataIndex: ["dataset", "title"],
   key: "dataset",
   width: 220,
+  ellipsis: { showTitle: false },
   render: (text, record) => (
-    <NavLink to={{ pathname: usagePath(record) }} end>
-      <Tooltip title={text}>
-        {truncate(text, 28)}
-        {record?.dataset?.version ? ` [${record.dataset.version}]` : ""}
-      </Tooltip>
-    </NavLink>
+    <Tooltip title={datasetLabelText(record.dataset)}>
+      <NavLink to={{ pathname: usagePath(record) }} end>
+        {datasetLabel(record.dataset)}
+      </NavLink>
+    </Tooltip>
   ),
 };
 
@@ -108,6 +126,9 @@ const UsageExtension = ({
     };
     getData();
   }, [nidxKey, endpoint, offset]);
+
+  // Hooks must run unconditionally (the gallery branch returns early below).
+  const tableColumns = useResizableColumns([datasetColumn, ...(columns || [])]);
 
   const pager = (
     <Row style={{ marginTop: "10px" }} align="middle">
@@ -180,7 +201,7 @@ const UsageExtension = ({
                       description={
                         <>
                           <NavLink to={{ pathname: usagePath(m) }} end>
-                            {truncate(m?.dataset?.title, 28)}
+                            {datasetLabel(m?.dataset)}
                           </NavLink>
                           {m.capturedBy && (
                             <div style={{ fontSize: "11px", color: "#999" }}>
@@ -210,7 +231,8 @@ const UsageExtension = ({
       )}
       <Table
         size="small"
-        columns={[datasetColumn, ...columns]}
+        components={resizableComponents}
+        columns={tableColumns}
         dataSource={items}
         loading={loading}
         rowKey={(record) => `${record.datasetKey}_${record.id}`}
