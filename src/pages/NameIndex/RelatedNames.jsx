@@ -3,7 +3,7 @@ import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
-import { Button, Row, Col, Tooltip, Table } from "antd";
+import { Button, Row, Col, Tooltip, Table, Typography } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Entry from "./Entry";
 import axios from "axios";
@@ -17,6 +17,20 @@ const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const limit = 500;
 
 import _ from "lodash";
+
+// Link to the actual usage in the source dataset: a taxon page for accepted
+// usages (resolving to the accepted taxon for synonyms) and the name page for
+// bare names without a usage.
+const usageUri = (record) =>
+  !_.get(record, "id") || record?.bareName || !_.get(record, "status")
+    ? `/dataset/${_.get(record, "datasetKey")}/name/${encodeURIComponent(
+        _.get(record, "name.id")
+      )}`
+    : `/dataset/${_.get(record, "datasetKey")}/taxon/${encodeURIComponent(
+        _.get(record, "accepted.id")
+          ? _.get(record, "accepted.id")
+          : _.get(record, "id")
+      )}`;
 
 const decorateWithDataset = (res) => {
     if (!res?.data?.result) return res;
@@ -95,7 +109,7 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
               <NavLink
                 key={_.get(record, "id")}
                 to={{
-                  pathname: `/dataset/${_.get(record, "datasetKey")}`,
+                  pathname: usageUri(record),
                 }}
                 end
               >
@@ -104,7 +118,7 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
                 </Tooltip>
               </NavLink>
             ),
-            
+
           },
         {
           title: "Scientific Name",
@@ -114,32 +128,9 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
           onFilter: (value, record) => record.name.namesIndexId === value,
           sorter: {
             compare: (a, b) => a.name.namesIndexId - b.name.namesIndexId,
-            
+
           },
-          render: (text, record) => {
-            const uri =
-              !_.get(record, "id") ||
-              record?.bareName ||
-              !_.get(record, "status")
-                ? `/dataset/${_.get(record, "datasetKey")}/name/${encodeURIComponent(_.get(record, "name.id"))}`
-                : `/dataset/${_.get(record, "datasetKey")}/taxon/${encodeURIComponent(
-                    _.get(record, "accepted.id")
-                      ? _.get(record, "accepted.id")
-                      : _.get(record, "id")
-                  )}`;
-      
-            return (
-              <NavLink
-                key={_.get(record, "id")}
-                to={{
-                  pathname: uri,
-                }}
-                end
-              >
-                <span dangerouslySetInnerHTML={{ __html: text }} />
-              </NavLink>
-            );
-          },
+          render: (text) => <span dangerouslySetInnerHTML={{ __html: text }} />,
         },
         {
           title: "Status",
@@ -169,7 +160,11 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
         }
       ];
 
-      return <><Table
+      return <>
+    <Typography.Paragraph type="secondary">
+      All name usages across every ChecklistBank dataset that share this name, linked via the names index.
+    </Typography.Paragraph>
+    <Table
       size="small"
       columns={columns}
       dataSource={related?.result || []}
@@ -183,8 +178,11 @@ const RelatedNames = ({ match, addError, group, defaultFilteredValue }) => {
       }
       pagination={false}
       expandable={{
-        expandedRowRender: (record) => 
-          <pre>{JSON.stringify(record, null, 2)}</pre>
+        expandedRowRender: (record) =>
+          // `dataset` is augmented client-side for the Dataset column; the
+          // verbatimKey and audit fields are noise here. Omit them so the
+          // expanded JSON shows only the meaningful record content.
+          <pre>{JSON.stringify(_.omit(record, ["dataset", "verbatimKey", "created", "createdBy", "modified", "modifiedBy"]), null, 2)}</pre>
       }}
     />
    {!related?.last && <Row><Col flex="auto"></Col><Col><Button type="link" onClick={loadMore}>Load more</Button></Col></Row>}

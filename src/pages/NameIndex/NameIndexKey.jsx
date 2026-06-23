@@ -6,9 +6,11 @@ import { Card, Tabs, Table, Button } from "antd";
 import withContext from "../../components/hoc/withContext";
 import Entry, { Authorship } from "./Entry";
 import RelatedNames from "./RelatedNames";
+import UsageExtension from "./UsageExtension";
 import axios from "axios";
 import config from "../../config";
 import history from "../../history";
+import _ from "lodash";
 
 
 
@@ -21,8 +23,13 @@ const NameIndexKey = ({ match, addError }) => {
   const [defaultFilteredValue, setDefaultFilteredValue] = useState(null)
   const sections = {
     "2": "group",
-    "3": "related"
+    "3": "related",
+    "4": "properties",
+    "5": "vernacular",
+    "6": "distribution",
+    "7": "media",
   };
+  const sectionToKey = _.invert(sections);
 
   const columns = [
     {
@@ -76,7 +83,7 @@ const NameIndexKey = ({ match, addError }) => {
       const {
         params: { key, section },
       } = match;
-      setActiveKey(section === "related" ? "3" : section === "group" ? "2" : "1")
+      setActiveKey(sectionToKey[section] || "1")
       try {
         const res = await axios(`${config.dataApi}nidx/${key}`);
         if (res?.data) {
@@ -184,6 +191,92 @@ const NameIndexKey = ({ match, addError }) => {
                   updateCount={updateCount}
                   group={group ? [record, ...group] : []}
                   defaultFilteredValue={defaultFilteredValue}
+                />
+              ),
+            },
+            {
+              key: "4",
+              label: "Properties",
+              children: record && (
+                <UsageExtension
+                  nidxKey={record.id}
+                  endpoint="property"
+                  description="Taxon properties — key/value facts such as life habit or motility — recorded for usages of this name across all ChecklistBank datasets."
+                  columns={[
+                    { title: "Property", dataIndex: "property", key: "property", width: 220 },
+                    { title: "Value", dataIndex: "value", key: "value" },
+                    { title: "Page", dataIndex: "page", key: "page", width: 120 },
+                  ]}
+                />
+              ),
+            },
+            {
+              key: "5",
+              label: "Vernacular",
+              children: record && (
+                <UsageExtension
+                  nidxKey={record.id}
+                  endpoint="vernacular"
+                  description="Common (vernacular) names recorded for usages of this name across all ChecklistBank datasets."
+                  columns={[
+                    { title: "Name", dataIndex: "name", key: "name" },
+                    { title: "Language", dataIndex: "language", key: "language", width: 100 },
+                    { title: "Transliteration", dataIndex: "latin", key: "latin" },
+                    {
+                      title: "Area",
+                      key: "area",
+                      width: 140,
+                      render: (text, r) => r.area || r.country || "",
+                    },
+                  ]}
+                />
+              ),
+            },
+            {
+              key: "6",
+              label: "Distribution",
+              children: record && (
+                <UsageExtension
+                  nidxKey={record.id}
+                  endpoint="distribution"
+                  description="Geographic distributions recorded for usages of this name across all ChecklistBank datasets."
+                  columns={[
+                    {
+                      title: "Area",
+                      key: "area",
+                      render: (text, r) => r?.area?.name,
+                    },
+                    {
+                      title: "Gazetteer",
+                      key: "gazetteer",
+                      width: 120,
+                      render: (text, r) => r?.area?.gazetteer,
+                    },
+                    {
+                      title: "Establishment Means",
+                      dataIndex: "establishmentMeans",
+                      key: "establishmentMeans",
+                      width: 160,
+                    },
+                    {
+                      title: "Status",
+                      dataIndex: "threatStatus",
+                      key: "threatStatus",
+                      width: 140,
+                    },
+                  ]}
+                />
+              ),
+            },
+            {
+              key: "7",
+              label: "Media",
+              children: record && (
+                <UsageExtension
+                  nidxKey={record.id}
+                  endpoint="media"
+                  gallery
+                  description="Images and other media linked to usages of this name across all ChecklistBank datasets."
                 />
               ),
             },
