@@ -156,6 +156,14 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
+        {
+          key: "reconciliation",
+          label: (
+            <NavLink to={{ pathname: "/about/reconciliation" }}>
+              <span>Reconciliation</span>
+            </NavLink>
+          ),
+        },
       ],
     },
 

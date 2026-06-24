@@ -291,69 +291,10 @@ Query params for individual matches and column names in bulk input are called th
 - `species`
 
 ## OpenRefine reconciliation
-
-[OpenRefine](https://openrefine.org) is a popular tool for cleaning up tabular data.
-ChecklistBank exposes its name matcher as an OpenRefine [Reconciliation Service](https://reconciliation-api.github.io/specs/0.2/),
+ChecklistBank exposes its name matcher, parser and other services as an OpenRefine [Reconciliation Service](https://reconciliation-api.github.io/specs/0.2/),
 so you can match a column of scientific names against any dataset in CLB and pull in extra columns - all without writing code.
+Please read the [reconciliation guide](/about/reconciliation) for usage details.
 
-You can reconcile either against the latest extended release of Catalogue of Life or against a specific dataset or release:
-
-- Catalogue of Life: https://api.checklistbank.org/reconcile
-- a specific dataset or release: `https://api.checklistbank.org/dataset/{key}/reconcile`
-
-The `{key}` accepts the usual dataset key aliases, e.g. `3LXR` (latest COL extended release), `3LR` (latest normal release), `COL2024` or `gbif-{uuid}`.
-
-CORS is enabled, so modern OpenRefine (3.x and newer) talks to the service directly.
-
-### Add the service in OpenRefine
-
-1. On a column choose **Reconcile → Start reconciling… → Add Standard Service…**
-2. Paste one of the service URLs above, e.g. `https://api.checklistbank.org/reconcile`
-3. Reconcile the column. Exact hits auto-match; ambiguous, variant or canonical hits are offered as a candidate list to pick from.
-
-### Improving matches with property hints
-
-When configuring reconciliation you can map other columns to **properties** that are passed to the matcher as hints. Recognised property ids:
-
-- `authorship`, `rank`, `code` (nomenclatural code)
-- any rank name used as a classification hint, e.g. `kingdom`, `family`, `genus`
-
-### Pulling extra columns (data extension)
-
-After reconciling, use **Edit column → Add columns from reconciled values…** and pick from:
-`scientificName`, `authorship`, `rank`, `status`, `nidx` (names index id), `kingdom`, `phylum`, `class`, `order`, `family`, `genus`.
-
-### Endpoints
-
-| Endpoint | Purpose |
-| --- | --- |
-| `GET  /dataset/{key}/reconcile` | service manifest (what OpenRefine fetches first) |
-| `POST /dataset/{key}/reconcile` | batch reconciliation (`queries` form field or JSON body) |
-| `POST /dataset/{key}/reconcile/extend` | data extension |
-| `GET  /dataset/{key}/reconcile/extend/propose` | list of extension properties |
-| `GET  /dataset/{key}/reconcile/suggest/entity?prefix=` | taxon autocomplete |
-| `GET  /dataset/{key}/reconcile/suggest/property?prefix=` | extension property autocomplete |
-| `…/reconcile` (without `/dataset/{key}`) | same service against the COL backbone default |
-
-You can try the API directly with curl:
-
-```bash
-# manifest
-curl 'https://api.checklistbank.org/reconcile'
-
-# reconcile a batch (form encoded, as OpenRefine sends it)
-curl -X POST 'https://api.checklistbank.org/reconcile' \
-  --data-urlencode 'queries={"q0":{"query":"Puma concolor"},"q1":{"query":"Aus bus","properties":[{"pid":"rank","v":"species"}]}}'
-
-# data extension
-curl -X POST 'https://api.checklistbank.org/reconcile/extend' \
-  -H 'Content-Type: application/json' \
-  -d '{"ids":["<usageId>"],"properties":[{"id":"authorship"},{"id":"family"}]}'
-```
-
-For very large tables or one-off cleanups of free-text columns (ranks, dates, countries, names),
-OpenRefine can also call the CLB [parser endpoints](https://api.checklistbank.org/parser) per cell via **Add column by fetching URLs…**.
-Reconciliation batches names ~10 at a time though, so prefer it over per-row parsing whenever you are matching names.
 
 ## Names Index
 
