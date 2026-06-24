@@ -41,6 +41,38 @@
   vertical-align: middle;
 }
 
+/* code blocks - give fenced blocks a card look and let long lines scroll
+   horizontally instead of overflowing the page */
+.md-content pre {
+  background: #f6f8fa;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  line-height: 1.45;
+}
+
+.md-content pre code {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  white-space: pre;
+  font-size: 0.85em;
+}
+
+/* inline code */
+.md-content code {
+  background: #f6f8fa;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  word-break: break-word;
+}
+
 /* table of contents - floats to the right with the text wrapping around it */
 .md-toc {
   float: right;
