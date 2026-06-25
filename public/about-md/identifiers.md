@@ -96,6 +96,24 @@ authorID
 Sharing identifiers this way — rather than as portal links — keeps your data terse and
 re-linkable even as the referenced services evolve.
 
+## Area identifiers (gazetteers)
+
+Geographic areas follow the same pattern. A **`Distribution`** record says where a taxon occurs
+by pointing at an area in a published gazetteer, and that reference is written as a `gazetteer:id`
+CURIE — the scope is the gazetteer, the id is the area code within it:
+
+```
+iso:DE          Germany (ISO 3166-1)
+tdwg:GER        Germany (WGSRPD level 3)
+fao:27          FAO Major Fishing Area 27, Atlantic Northeast
+```
+
+The gazetteer is drawn from a fixed set of geographic standards rather than the scope registry
+above. ChecklistBank resolves each `gazetteer:id` to its area name and, where geometry is
+available, draws it on the distribution map. The supported gazetteers — FAO, IHO, ISO 3166,
+Longhurst, MRGID, Realm, TDWG, TEOW and WDPA — and every area code within them are documented in
+the [COL gazetteers reference](https://catalogueoflife.github.io/col-gazetteers/).
+
 ## How ChecklistBank stores identifiers
 
 Internally ChecklistBank represents every identifier as a small `{scope, id}` pair and attaches
