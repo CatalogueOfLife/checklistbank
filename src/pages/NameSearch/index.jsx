@@ -792,7 +792,17 @@ const NameSearchPage = ({
                 merge={merge}
                 contributesTo={Number(datasetKey)}
                 onSelectDataset={(value) => {
-                  updateSearch({ sectorDatasetKey: value.key });
+                  // DatasetAutocomplete echoes the resolved dataset back
+                  // through onSelectDataset whenever it loads the label for an
+                  // already-set defaultDatasetKey (on mount / prop change), not
+                  // just on a genuine user pick. updateSearch resets paging to
+                  // page 1, so without this guard any attempt to page through a
+                  // sector-filtered search snapped straight back to offset 0.
+                  // Only react to an actual change of the active sector dataset.
+                  const current = _.get(params, "sectorDatasetKey");
+                  if (String(value.key) !== String(current ?? "")) {
+                    updateSearch({ sectorDatasetKey: value.key });
+                  }
                 }}
                 defaultDatasetKey={_.get(params, "sectorDatasetKey") || null}
                 onResetSearch={(value) => {

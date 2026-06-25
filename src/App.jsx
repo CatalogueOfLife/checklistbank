@@ -372,6 +372,16 @@ const App = () => {
                 </PrivateRoute>
               }
             />
+            {/* nameusage is an alias of taxon (as on dataset pages), so synonym
+                links pointing at /nameusage/ resolve instead of 404ing. */}
+            <Route
+              path="/project/:projectKey/nameusage/:taxonOrNameKey"
+              element={
+                <PrivateRoute>
+                  <ProjectTaxon />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/project/:projectKey/name/:taxonOrNameKey"
               element={
