@@ -8,33 +8,30 @@ import PageContent from "../../components/PageContent";
 import Layout from "../../components/LayoutNew";
 
 import { renderMarkdown, TableOfContents } from "./markdown";
+import IdentifierScopeTable from "./IdentifierScopeTable";
 
 import "./About.css";
 
-const About = ({
-  match: {
-    params: { mdFile },
-  },
-  location,
-}) => {
+// About page on scoped CURIE identifiers. The prose lives in the markdown file
+// (editable like the other About pages) while the live, expandable registry of
+// all scopes is rendered by IdentifierScopeTable below the text.
+const Identifiers = ({ location }) => {
   const [md, setMd] = useState(null);
 
   useEffect(() => {
-    if (mdFile) {
-      getData();
-    }
-  }, [mdFile]);
-
-  const getData = async () => {
-    try {
-      const res = await axios(`/about-md/${mdFile}.md`).then((res) => res.data);
-      // substitute environment-dependent placeholders (e.g. the GBIF web URL,
-      // which points to the test registry on dev and the live one on prod)
-      setMd(res.replaceAll("{{GBIF_URL}}", config.gbifUrl));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    (async () => {
+      try {
+        const res = await axios(`/about-md/identifiers.md`).then((r) => r.data);
+        setMd(
+          res
+            .replaceAll("{{GBIF_URL}}", config.gbifUrl)
+            .replaceAll("{{API}}", config.dataApi.replace(/\/$/, ""))
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   const { html, headings } = useMemo(() => renderMarkdown(md), [md]);
 
@@ -52,8 +49,8 @@ const About = ({
   return (
     <Layout
       openKeys={["about"]}
-      selectedKeys={[mdFile]}
-      title={`About - ${mdFile}`}
+      selectedKeys={["identifiers"]}
+      title="About - Identifiers"
     >
       <PageContent>
         {headings.length > 1 && <TableOfContents headings={headings} />}
@@ -61,9 +58,10 @@ const About = ({
           className="md-content"
           dangerouslySetInnerHTML={{ __html: html }}
         ></div>
+        <IdentifierScopeTable />
       </PageContent>
     </Layout>
   );
 };
 
-export default withRouter(About);
+export default withRouter(Identifiers);

@@ -141,6 +141,14 @@ const BasicMenu = (props) => {
           ),
         },
         {
+          key: "identifiers",
+          label: (
+            <NavLink to={{ pathname: "/about/identifiers" }}>
+              <span>Identifiers</span>
+            </NavLink>
+          ),
+        },
+        {
           key: "DOI",
           label: (
             <NavLink to={{ pathname: "/about/DOI" }}>

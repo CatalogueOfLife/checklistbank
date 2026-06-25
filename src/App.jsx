@@ -22,6 +22,7 @@ import SyncProvider from "./components/hoc/SyncProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import About from "./pages/About";
+import AboutIdentifiers from "./pages/About/Identifiers";
 import Assembly from "./pages/project/Assembly";
 import AssemblyDuplicates from "./pages/project/AssemblyDuplicates";
 import AssemblyTasks from "./pages/project/AssemblyTasks";
@@ -430,6 +431,7 @@ const App = () => {
               path="/about"
               element={<Navigate to="/about/introduction" replace />}
             />
+            <Route path="/about/identifiers" element={<AboutIdentifiers />} />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
             <Route path="/jobqueue" element={<JobQueue />} />
