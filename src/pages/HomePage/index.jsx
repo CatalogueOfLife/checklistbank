@@ -1,87 +1,91 @@
 import { useState, useEffect } from "react";
 
 import Layout from "../../components/LayoutNew";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import config from "../../config";
 import moment from "dayjs";
 import { Helmet } from "react-helmet-async";
-import { Row, Col, Statistic, Card, Image } from "antd";
+import { Row, Col, Card, Input, Typography } from "antd";
+
+const { Search } = Input;
+const { Title, Paragraph } = Typography;
+
+// Cross dataset name search needs a few characters to return useful results.
+const MIN_NAME_QUERY = 3;
 import withContext from "../../components/hoc/withContext";
 import Hero from "./Hero"
 import axios from "axios";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [nameQuery, setNameQuery] = useState("");
+  const [nameError, setNameError] = useState(null);
   const [error, setError] = useState(null);
+
+  const searchDatasets = (value) => {
+    const q = (value || "").trim();
+    navigate(q ? `/dataset?q=${encodeURIComponent(q)}` : "/dataset");
+  };
+
+  const searchNames = (value) => {
+    const q = (value || "").trim();
+    if (q.length < MIN_NAME_QUERY) {
+      setNameError(`Please enter at least ${MIN_NAME_QUERY} characters.`);
+      return;
+    }
+    setNameError(null);
+    navigate(
+      `/nameusage/search?q=${encodeURIComponent(q)}&content=SCIENTIFIC_NAME`
+    );
+  };
+
   const [nameUsages, setNameUsages] = useState(null);
-  const [nameUsagesLoading, setNameUsagesLoading] = useState(false);
-  const [colSpecies, setColSpecies] = useState(null);
-  const [colSpeciesLoading, setColSpeciesLoading] = useState(false);
   const [datasets, setDatasets] = useState(null);
-  const [datasetsLoading, setDatasetsLoading] = useState(false);
-  const [latestCol, setLatestCol] = useState(null);
+  const [baseRelease, setBaseRelease] = useState(null);
+  const [extendedRelease, setExtendedRelease] = useState(null);
 
   const getNameUsages = () => {
-    setNameUsagesLoading(true);
     axios(`${config.dataApi}nameusage/search?limit=0`)
       .then((res) => {
         setError(null);
-        setNameUsagesLoading(false);
         setNameUsages(res.data);
       })
-      .catch((err) => {
-        setError(err);
-        setNameUsagesLoading(false);
-      });
-  };
-
-  const getCoLData = () => {
-    setColSpeciesLoading(true);
-    axios(
-      `${config.dataApi}dataset/3LR/nameusage/search?rank=species&status=accepted&status=provisionally_accepted&limit=0`
-    )
-      .then((res) => {
-        setError(null);
-        setColSpeciesLoading(false);
-        setColSpecies(res.data);
-      })
-      .catch((err) => {
-        setError(err);
-        setColSpeciesLoading(false);
-      });
+      .catch((err) => setError(err));
   };
 
   const getDatasets = () => {
-    setDatasetsLoading(true);
     axios(`${config.dataApi}dataset?limit=3&sortBy=created`)
       .then((res) => {
-        setDatasetsLoading(false);
         setDatasets(res.data);
         setError(null);
       })
       .catch((err) => {
-        setDatasetsLoading(false);
         setError(err);
         setDatasets(null);
       });
   };
 
-  const getLatestCol = () => {
-    axios(`${config.dataApi}dataset/3LR`)
-      .then((res) => {
-        setLatestCol(res.data);
+  // Fetch a COL release (base "3LR" or extended "3LXR") together with its
+  // accepted species count, shown in the sidebar.
+  const getRelease = (alias, setRelease) => {
+    Promise.all([
+      axios(`${config.dataApi}dataset/${alias}`),
+      axios(
+        `${config.dataApi}dataset/${alias}/nameusage/search?rank=species&status=accepted&status=provisionally_accepted&limit=0`
+      ),
+    ])
+      .then(([meta, species]) => {
+        setRelease({ ...meta.data, speciesCount: species.data.total });
         setError(null);
       })
-      .catch((err) => {
-        setError(err);
-        setLatestCol(null);
-      });
+      .catch((err) => setError(err));
   };
 
   useEffect(() => {
     getNameUsages();
-    getCoLData();
     getDatasets();
-    getLatestCol();
+    getRelease("3LR", setBaseRelease);
+    getRelease("3LXR", setExtendedRelease);
   }, []);
 
   return (
@@ -101,108 +105,146 @@ const HomePage = () => {
 
         }
       >
-        <Row gutter={{
-      xs: 8,
-      sm: 16,
-      md: 24,
-      lg: 32,
-    }}>
-          <Col xs={12} sm={12} md={6}  lg={6}>
-            {colSpecies && (
-              <NavLink
-                to={{
-                  pathname: `/dataset/3LR/names`,
-                }}
-                end
-              >
-                <Statistic
-                  title="Species in Catalogue of Life"
-                  value={colSpecies.total}
-                />
-              </NavLink>
-            )}
+        {/* Direct search: datasets and cross-dataset names */}
+        <Row gutter={[32, 24]} style={{ marginTop: 28 }}>
+          <Col xs={24} md={12}>
+            <Title level={4} style={{ marginBottom: 4 }}>
+              {datasets
+                ? `Search ${datasets.total.toLocaleString()} datasets`
+                : "Search datasets"}
+            </Title>
+            <Paragraph type="secondary" style={{ marginBottom: 8 }}>
+              Find checklists by title, organisation, taxonomic scope and more.
+            </Paragraph>
+            <Search
+              placeholder="e.g. World Spider Catalog"
+              enterButton="Search"
+              size="large"
+              allowClear
+              onSearch={searchDatasets}
+            />
+            <Paragraph style={{ marginTop: 8, marginBottom: 0 }}>
+              <NavLink to="/dataset">Browse all datasets →</NavLink>
+            </Paragraph>
           </Col>
-          <Col xs={12} sm={12} md={6} lg={6}>
-            {nameUsages && (
-              <NavLink to={{ pathname: `/` }} end>
-                <Statistic
-                  title="Name Usages in ChecklistBank"
-                  value={nameUsages.total}
-                />
-              </NavLink>
-            )}
-          </Col>
-          <Col xs={12}sm={12} md={6} lg={6}>
-            {datasets && (
-              <NavLink to={{ pathname: `/dataset` }} end>
-                <Statistic
-                  title="Datasets in ChecklistBank"
-                  value={datasets.total}
-                />
-              </NavLink>
-            )}
-          </Col>
-          <Col xs={12} sm={12}  md={6} lg={6}>
-            {latestCol && (
-              <NavLink to={{ pathname: `/dataset/${latestCol?.key}` }} end>
-                <Statistic
-                  title="Latest COL Checklist"
-                  value={latestCol?.version}
-                />
-              </NavLink>
-            )}
+          <Col xs={24} md={12}>
+            <Title level={4} style={{ marginBottom: 4 }}>
+              {nameUsages
+                ? `Search ${nameUsages.total.toLocaleString()} names`
+                : "Search names"}
+            </Title>
+            <Paragraph type="secondary" style={{ marginBottom: 8 }}>
+              Look up a scientific name across every checklist at once.
+            </Paragraph>
+            <Search
+              placeholder="e.g. Panthera leo"
+              enterButton="Search"
+              size="large"
+              allowClear
+              value={nameQuery}
+              status={nameError ? "error" : undefined}
+              onChange={(e) => {
+                setNameQuery(e.target.value);
+                if (nameError) setNameError(null);
+              }}
+              onSearch={searchNames}
+            />
+            <Paragraph
+              style={{
+                marginTop: 4,
+                marginBottom: 0,
+                minHeight: 22,
+                color: nameError ? "#ff4d4f" : undefined,
+              }}
+            >
+              {nameError || (
+                <NavLink to="/nameusage/search">Advanced name search →</NavLink>
+              )}
+            </Paragraph>
           </Col>
         </Row>
 
         <Row style={{ marginTop: 20 }}>
           <Col style={{ paddingRight: "30px" }} xs={24} sm={24} md={16} lg={16}>
             <p>
-              The{" "}
-              <a href="https://www.catalogueoflife.org">Catalogue of Life</a> (COL) and <a href="https://www.catalogueoflife.org">GBIF</a>{" "}
-              aim to support the publication and curation of checklists and
-              to provide a platform for their consistent discovery, use and
-              citation.
-              GBIF has for some time maintained a checklist index and supported
-              the network of repositories for its community to share checklist data.
-              COL and GBIF have united their capabilities to make ChecklistBank a consistent foundation
-              and repository for all COL datasets and any other openly licensed
-              species lists, inluding those mobilized and registered through <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">GBIF</a>.
+              <b>ChecklistBank</b> is a repository and index of taxonomic
+              checklists, built jointly by the{" "}
+              <a href="https://www.catalogueoflife.org">Catalogue of Life</a>{" "}
+              and <a href="https://www.gbif.org">GBIF</a>. It lets anyone
+              publish, discover, browse, download and cite openly licensed
+              species lists — from the Catalogue of Life itself to the thousands
+              of datasets registered through{" "}
+              <a href="https://www.gbif.org/dataset/search?type=CHECKLIST">
+                GBIF
+              </a>
+              .
             </p>
             <p>
-              The taxonomic community can publish a checklist to ChecklistBank using <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">ColDP</a>{" "}
-              or any other <a href="/about/formats">supported format</a>.
-            </p>
-            <p>
-              Regardless of the original data format, ChecklistBank generates
-              a standardised interpretation. All datasets can be searched,
-              browsed, downloaded or accessed programmatically via the{" "}
+              Whatever its original format, every dataset is given a
+              standardised interpretation that you can explore here or query
+              through the{" "}
               <a href="https://api.checklistbank.org">ChecklistBank API</a>.
+              Publish your own checklist using{" "}
+              <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md">
+                ColDP
+              </a>{" "}
+              or another <a href="/about/formats">supported format</a>, and sign
+              in with a <a href="https://www.gbif.org">GBIF account</a> to unlock
+              all features.
             </p>
             <p>
-              In order to use all functions of ChecklistBanks you will need to login with a <a href="https://www.gbif.org">GBIF</a> user account.
-              You can learn more about ChecklistBank in our <a href="/about/introduction">introduction pages</a>{" "}
-              or our <a href="https://docs.gbif.org/course-checklistbank-tutorial/">user</a> and <a href="https://docs.gbif.org/course-checklistbank-project/">project</a> tutorials.
+              New here? Start with the{" "}
+              <a href="/about/introduction">introduction</a>, learn how to{" "}
+              <a href="/about/contribute">contribute</a> data, or follow the{" "}
+              <a href="https://docs.gbif.org/course-checklistbank-tutorial/">
+                user
+              </a>{" "}
+              and{" "}
+              <a href="https://docs.gbif.org/course-checklistbank-project/">
+                project
+              </a>{" "}
+              tutorials.
             </p>
           </Col>
-          {datasets && (
-            <Col xs={24} sm={24} md={8} lg={8}>
-              <h3>Latest datasets added</h3>
-              <ul>
-                {datasets.result.map((d) => (
-                  <li key={d.key}>
-                    <NavLink
-                      to={{
-                        pathname: `/dataset/${d.key}`,
-                      }}
-                      end
-                    >
-                      {d.title} ({moment(d.created).format("MMM Do YYYY")})
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </Col>
-          )}
+          <Col xs={24} sm={24} md={8} lg={8}>
+            {(baseRelease || extendedRelease) && (
+              <>
+                <h3>Latest Catalogue of Life</h3>
+                <ul>
+                  {baseRelease && (
+                    <li>
+                      <NavLink to={`/dataset/${baseRelease.key}`} end>
+                        {baseRelease.alias}
+                      </NavLink>{" "}
+                      — {baseRelease.speciesCount.toLocaleString()} species
+                    </li>
+                  )}
+                  {extendedRelease && (
+                    <li>
+                      <NavLink to={`/dataset/${extendedRelease.key}`} end>
+                        {extendedRelease.alias}
+                      </NavLink>{" "}
+                      — {extendedRelease.speciesCount.toLocaleString()} species
+                    </li>
+                  )}
+                </ul>
+              </>
+            )}
+            {datasets && (
+              <>
+                <h3>Latest datasets added</h3>
+                <ul>
+                  {datasets.result.map((d) => (
+                    <li key={d.key}>
+                      <NavLink to={{ pathname: `/dataset/${d.key}` }} end>
+                        {d.title} ({moment(d.created).format("MMM Do YYYY")})
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </Col>
         </Row>
       </Card>
     </Layout>
