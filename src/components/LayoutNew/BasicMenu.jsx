@@ -197,6 +197,14 @@ const BasicMenu = (props) => {
       ),
       children: [
         {
+          key: "nameUsageSearch",
+          label: (
+            <NavLink to={{ pathname: "/nameusage/search" }}>
+              <span>Cross dataset search</span>
+            </NavLink>
+          ),
+        },
+        {
           key: "namematch",
           label: (
             <NavLink to={{ pathname: "/tools/name-match" }}>
@@ -205,10 +213,10 @@ const BasicMenu = (props) => {
           ),
         },
         {
-          key: "nameUsageSearch",
+          key: "nameparser",
           label: (
-            <NavLink to={{ pathname: "/nameusage/search" }}>
-              <span>Cross dataset search</span>
+            <NavLink to={{ pathname: "/tools/name-parser" }}>
+              <span>Name parser</span>
             </NavLink>
           ),
         },

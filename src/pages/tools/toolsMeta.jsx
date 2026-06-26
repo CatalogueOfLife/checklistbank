@@ -10,6 +10,8 @@ const toolsDescriptions = {
   "name-match":
     "Upload a list of names (CSV) and match them against a ChecklistBank dataset like Catalogue of Life to retrieve stable identifiers and the matched taxonomy.",
   "name-match-job": "Progress and downloadable results of a name-matching job.",
+  "name-parser":
+    "Break scientific names into their structured parts — genus, epithets, rank, authorship and nomenclatural code. Paste names or upload a plain text or delimited file, then download the parsed result as JSON or TSV.",
   "metadata-generator": (
     <>
       Create a{" "}

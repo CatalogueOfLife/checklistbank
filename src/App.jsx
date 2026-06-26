@@ -66,6 +66,7 @@ import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
 import NameMatchJob from "./pages/tools/NameMatchJob";
+import NameParser from "./pages/tools/NameParser";
 
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
@@ -416,6 +417,7 @@ const App = () => {
               path="/tools/name-match/job/:key"
               element={<NameMatchJob />}
             />
+            <Route path="/tools/name-parser" element={<NameParser />} />
             <Route path="/tools/diff-viewer" element={<DiffViewer />} />
             <Route path="/tools/taxonomic-alignment" element={<TaxAlign />} />
             <Route
