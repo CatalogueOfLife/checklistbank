@@ -15,6 +15,7 @@ const DatasetAutocomplete = ({
   onError,
   contributesTo,
   origin,
+  notPrivate,
   minSize,
   merge = true,
   style,
@@ -39,7 +40,9 @@ const DatasetAutocomplete = ({
                   .map((o) => "&origin=" + o)
                   .join("")
               : ""
-          }${minSize ? "&minSize=" + minSize : ""}`;
+          }${minSize ? "&minSize=" + minSize : ""}${
+            notPrivate ? "&private=false" : ""
+          }`;
       axios(url)
         .then((res) => {
           setDatasets(
@@ -59,7 +62,7 @@ const DatasetAutocomplete = ({
     }, 500);
     getDatasetsRef.current = fn;
     return () => fn.cancel();
-  }, [contributesTo, origin, minSize, merge]);
+  }, [contributesTo, origin, notPrivate, minSize, merge]);
 
   const setDefaultValue = (key) => {
     axios(`${config.dataApi}dataset/${key}`)

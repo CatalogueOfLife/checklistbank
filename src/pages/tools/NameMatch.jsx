@@ -16,7 +16,6 @@ import {
   Tooltip,
   Typography,
   List,
-  Spin,
 } from "antd";
 import {
   DownloadOutlined,
@@ -25,7 +24,6 @@ import {
 } from "@ant-design/icons";
 import history from "../../history";
 import { NavLink } from "react-router-dom";
-import { TbStack2 } from "react-icons/tb";
 
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
@@ -249,10 +247,6 @@ const NameMatch = ({ addError, issueMap, user }) => {
   const [asyncSubmitting, setAsyncSubmitting] = useState(false);
   const [asyncFile, setAsyncFile] = useState(null);
   const [originalHeaders, setOriginalHeaders] = useState([]);
-  const [primaryMatcherStatus, setPrimaryMatcherStatus] = useState(null);
-  const [secondaryMatcherStatus, setSecondaryMatcherStatus] = useState(null);
-  const [primaryMatcherRequested, setPrimaryMatcherRequested] = useState(false);
-  const [secondaryMatcherRequested, setSecondaryMatcherRequested] = useState(false);
 
   const formatUsageClassification = (usage) => {
     let result = {};
@@ -271,77 +265,13 @@ const NameMatch = ({ addError, issueMap, user }) => {
     return result;
   };
 
-  const checkMatcher = async (datasetKey, setStatus) => {
-    setStatus('checking');
-    try {
-      const { data } = await axios.get(`${config.dataApi}matcher/${datasetKey}`);
-      setStatus(data.size > 0 ? 'ok' : 'missing');
-    } catch (err) {
-      setStatus(err?.response?.status === 404 ? 'missing' : 'ok');
-    }
-  };
-
-  const requestMatcher = async (datasetKey, setStatus, setRequested) => {
-    try {
-      await axios.post(`${config.dataApi}matcher/${datasetKey}`);
-      setRequested(true);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const matcherStatusUI = (status, requested, datasetKey, setStatus, setRequested) => {
-    if (status === 'checking') {
-      return (
-        <div style={{ marginTop: 6 }}>
-          <Spin size="small" /> <span style={{ marginLeft: 8, color: '#888' }}>Checking matcher index…</span>
-        </div>
-      );
-    }
-    if (status === 'missing' && !requested) {
-      return (
-        <Alert
-          style={{ marginTop: 6 }}
-          type="warning"
-          title="No matcher index exists for this dataset."
-          action={
-            <Button size="small" onClick={() => requestMatcher(datasetKey, setStatus, setRequested)}>
-              Request matcher
-            </Button>
-          }
-        />
-      );
-    }
-    if (status === 'missing' && requested) {
-      return (
-        <Alert
-          style={{ marginTop: 6 }}
-          type="info"
-          title={
-            <>
-              Matcher is being built. Please watch the{" "}
-              <NavLink to="/jobqueue">
-                job queue <TbStack2 size={16} style={{ verticalAlign: "text-bottom" }} />
-              </NavLink>{" "}
-              and come back later before running the match.
-            </>
-          }
-        />
-      );
-    }
-    return null;
-  };
-
-  const matcherBlocking = primaryMatcherStatus === 'checking' || primaryMatcherStatus === 'missing' ||
-    secondaryMatcherStatus === 'checking' || secondaryMatcherStatus === 'missing';
-
   // Final action on the input step: run the match (sync) or submit a job (async).
   const inputActionButton = asyncMode ? (
     <Button
       type="primary"
       onClick={() => submitAsyncJob()}
       loading={asyncSubmitting}
-      disabled={!primaryDataset || matcherBlocking || !(asyncFile || subjectDataset)}
+      disabled={!primaryDataset || !(asyncFile || subjectDataset)}
     >
       Submit matching job
     </Button>
@@ -349,7 +279,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
     <Button
       type="primary"
       onClick={() => matchResult()}
-      disabled={!names || !primaryDataset || matcherBlocking}
+      disabled={!names || !primaryDataset}
     >
       Match
     </Button>
@@ -955,7 +885,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                               style={{ marginTop: "10px" }}
                               type="primary"
                               loading={subjectDataLoading}
-                              disabled={!primaryDataset || matcherBlocking}
+                              disabled={!primaryDataset}
                             >
                               Match {subjectDataTotal.toLocaleString()} names
                             </Button>
@@ -1030,19 +960,16 @@ const NameMatch = ({ addError, issueMap, user }) => {
                 >
                   <DatasetAutocomplete
                     defaultDatasetKey={primaryDataset?.key}
+                    origin={["external", "release", "xrelease"]}
+                    notPrivate
                     onResetSearch={() => {
                       setPrimaryDataset(null);
-                      setPrimaryMatcherStatus(null);
-                      setPrimaryMatcherRequested(false);
                     }}
                     onSelectDataset={(dataset) => {
                       setPrimaryDataset(dataset);
-                      setPrimaryMatcherRequested(false);
-                      checkMatcher(dataset.key, setPrimaryMatcherStatus);
                     }}
                     placeHolder="Choose primary dataset"
                   />
-                  {matcherStatusUI(primaryMatcherStatus, primaryMatcherRequested, primaryDataset?.key, setPrimaryMatcherStatus, setPrimaryMatcherRequested)}
                 </Col>
                 {!asyncMode && (
                   <Col
@@ -1064,31 +991,24 @@ const NameMatch = ({ addError, issueMap, user }) => {
                         setShowSecondary(checked);
                         if (!checked) {
                           setSecondaryDataset(null);
-                          setSecondaryMatcherStatus(null);
-                          setSecondaryMatcherRequested(false);
                         }
                       }}
                     />
                     {showSecondary && (
-                      <>
-                        <DatasetAutocomplete
-                          defaultDatasetKey={
-                            secondaryDataset ? secondaryDataset.key : null
-                          }
-                          onResetSearch={() => {
-                            setSecondaryDataset(null);
-                            setSecondaryMatcherStatus(null);
-                            setSecondaryMatcherRequested(false);
-                          }}
-                          onSelectDataset={(dataset) => {
-                            setSecondaryDataset(dataset);
-                            setSecondaryMatcherRequested(false);
-                            checkMatcher(dataset.key, setSecondaryMatcherStatus);
-                          }}
-                          placeHolder="Choose secondary dataset"
-                        />
-                        {matcherStatusUI(secondaryMatcherStatus, secondaryMatcherRequested, secondaryDataset?.key, setSecondaryMatcherStatus, setSecondaryMatcherRequested)}
-                      </>
+                      <DatasetAutocomplete
+                        defaultDatasetKey={
+                          secondaryDataset ? secondaryDataset.key : null
+                        }
+                        origin={["external", "release", "xrelease"]}
+                        notPrivate
+                        onResetSearch={() => {
+                          setSecondaryDataset(null);
+                        }}
+                        onSelectDataset={(dataset) => {
+                          setSecondaryDataset(dataset);
+                        }}
+                        placeHolder="Choose secondary dataset"
+                      />
                     )}
                   </Col>
                 )}
@@ -1098,7 +1018,7 @@ const NameMatch = ({ addError, issueMap, user }) => {
                   <Button
                     type="primary"
                     onClick={() => setStep(1)}
-                    disabled={!primaryDataset || matcherBlocking}
+                    disabled={!primaryDataset}
                   >
                     Next
                   </Button>
