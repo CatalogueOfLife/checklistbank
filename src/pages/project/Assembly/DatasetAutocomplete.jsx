@@ -34,7 +34,11 @@ const DatasetAutocomplete = ({
             q
           )}`
         : `${config.dataApi}dataset?q=${encodeURIComponent(q)}&limit=30${
-            origin ? "&origin=" + origin : ""
+            origin
+              ? (Array.isArray(origin) ? origin : [origin])
+                  .map((o) => "&origin=" + o)
+                  .join("")
+              : ""
           }${minSize ? "&minSize=" + minSize : ""}`;
       axios(url)
         .then((res) => {

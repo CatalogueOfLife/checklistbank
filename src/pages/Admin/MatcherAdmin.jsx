@@ -1,206 +1,104 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Row, Col, Button, Popconfirm, App } from "antd";
+import {
+  Alert,
+  Row,
+  Col,
+  Button,
+  Popconfirm,
+  Descriptions,
+  Tag,
+  Spin,
+  Empty,
+  App,
+} from "antd";
 import config from "../../config";
-import qs from "query-string";
 import Layout from "../../components/LayoutNew";
-import history from "../../history";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 
 import withContext from "../../components/hoc/withContext";
 
-import _ from "lodash";
+// Matchers only exist for published, non-deleted external datasets and releases — never projects.
+const MATCHER_ORIGINS = ["external", "release", "xrelease"];
 
-const columns = [
-  {
-    title: "Key",
-    dataIndex: "datasetKey",
-    width: 100,
-    key: "key",
-    sorter: (a, b) => a.datasetKey - b.datasetKey,
-  },
-  {
-    title: "Size",
-    dataIndex: "size",
-    width: 150,
-    key: "size",
-    sorter: (a, b) => a.size - b.size,
-  },
-  {
-    title: "Origin",
-    dataIndex: ["dataset","origin"],
-    width: 100,
-    key: "origin",
-    sorter: (a, b) => {
-      if (!a.dataset.origin) {
-          return -1;
-      }
-      if (!b.dataset.origin) {
-          return +1;
-      }
-      return a.dataset.origin.localeCompare(b.dataset.origin);
-    },
-  },
-  {
-    title: "Alias",
-    dataIndex: ["dataset","alias"],
-    width: 150,
-    key: "alias",
-    sorter: (a, b) => {
-      if (!a.dataset.alias) {
-          return -1;
-      }
-      if (!b.dataset.alias) {
-          return +1;
-      }
-      return a.dataset.alias.localeCompare(b.dataset.alias);
-    },
-    render: (text, record) => {
-      return (
-        <NavLink
-          to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-          end
-        >
-          {text}
-        </NavLink>
-      );
-    },
-  },
-  {
-    title: "Title",
-    dataIndex: ["dataset","title"],
-    key: "title",
-    sorter: (a, b) => {
-      if (!a.dataset.title) {
-          return -1;
-      }
-      if (!b.dataset.title) {
-          return +1;
-      }
-      return a.dataset.title.localeCompare(b.dataset.title);
-    },
-    render: (text, record) => {
-      return (
-        <NavLink
-          to={{ pathname: `/dataset/${record.datasetKey}/names` }}
-          end
-        >
-          {text}
-        </NavLink>
-      );
-    },
-  },
-];
-
-const MatcherList = () => {
+const MatcherAdmin = () => {
   const { notification } = App.useApp();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedDataset, setSelectedDataset] = useState(null);
+  const [dataset, setDataset] = useState(null);
+  const [metadata, setMetadata] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // Threshold (number of usages) below which datasets get a Postgres-backed matcher and no
+  // persistent file. Fetched from the backend so the picker only offers datasets that have one.
+  const [threshold, setThreshold] = useState(null);
 
-  const getData = () => {
+  useEffect(() => {
+    axios(`${config.dataApi}matcher`)
+      .then((res) => setThreshold(res.data?.pgMatcherThreshold ?? null))
+      .catch(() => setThreshold(null));
+  }, []);
+
+  const loadMetadata = (key) => {
     setLoading(true);
-    history.push({
-      pathname: "/admin/matcher",
-      search: `?decorate=true`,
-    });
-    axios(`${config.dataApi}matcher?decorate=true`)
+    setMetadata(null);
+    axios(`${config.dataApi}matcher/${key}`)
       .then((res) => {
-        setLoading(false);
-        setData(res.data.matchers);
+        setMetadata(res.data || null);
         setError(null);
       })
       .catch((err) => {
-        setLoading(false);
         setError(err);
-        setData([]);
-      });
+        setMetadata(null);
+      })
+      .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const onSelectDataset = (d) => {
+    const record = d?.data || d;
+    setDataset(record);
+    if (record?.key) {
+      loadMetadata(record.key);
+    }
+  };
 
-  const reindexDataset = (datasetKey) => {
+  const onResetSearch = () => {
+    setDataset(null);
+    setMetadata(null);
+  };
+
+  const rebuildDataset = (datasetKey) => {
     axios
       .post(`${config.dataApi}matcher/${datasetKey}`)
-      .then((res) => {
+      .then(() => {
         setError(null);
         notification.open({
           message: "Matcher build started",
-          description: `Matcher for dataset ${datasetKey} is being created`,
+          description: `Matcher for dataset ${datasetKey} is being rebuilt`,
         });
       })
       .catch((err) => setError(err));
   };
 
-  const deleteDataset = (datasetKey) => {
+  const rebuildAll = (force) => {
     axios
-      .delete(`${config.dataApi}matcher/${datasetKey}`)
-      .then((res) => {
-        setError(null);
-        notification.open({
-          message: "Matcher deleted",
-          description: `Matcher for dataset ${datasetKey} is deleted`,
-        });
-      })
-      .catch((err) => setError(err));
-  };
-
-  const rebuildAllMatchers = () => {
-    axios
-      .put(`${config.dataApi}matcher/rebuild?all=true`)
+      .post(`${config.dataApi}matcher/rebuild?force=${force}`)
       .then(() => {
         setError(null);
         notification.open({
           message: "Rebuild triggered",
-          description: "All matchers are being rebuilt",
+          description: force
+            ? "All matchers are being rebuilt"
+            : "Stale matchers are being rebuilt",
         });
       })
       .catch((err) => setError(err));
   };
 
-  const deleteAllMatchers = () => {
-    axios
-      .delete(`${config.dataApi}matcher?all=true`)
-      .then(() => {
-        setError(null);
-        notification.open({
-          message: "Matchers deleted",
-          description: "All matchers are being deleted",
-        });
-        getData();
-      })
-      .catch((err) => setError(err));
-  };
-
-  const actionColumn = {
-    title: "Action",
-    dataIndex: "",
-    width: 150,
-    key: "__actions__",
-    render: (text, record) => (
-      <>
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => reindexDataset(record.datasetKey)}
-        >
-          Rebuild
-        </Button>&nbsp;
-        <Button
-          type="primary"
-          color="danger"
-          size="small"
-          onClick={() => deleteDataset(record.datasetKey)}
-        >
-          Delete
-        </Button>
-      </>
-    ),
-  };
+  // A matcher is stale when its stored attempt differs from the dataset's current import attempt.
+  const stale =
+    metadata != null &&
+    dataset?.attempt != null &&
+    metadata.attempt !== dataset.attempt;
 
   return (
     <Layout
@@ -216,69 +114,141 @@ const MatcherList = () => {
           margin: "16px 0",
         }}
       >
-        <div>
-          {error && <Alert title={error.message} type="error" />}
-        </div>
+        {error && (
+          <Alert
+            message={error.message}
+            type="error"
+            closable
+            onClose={() => setError(null)}
+            style={{ marginBottom: 16 }}
+          />
+        )}
         <h1>Dataset Matcher</h1>
-        <p>Dataset matchers are file based indices of a dataset that is used for db independent matching services.</p>
+        <p>
+          Dataset matchers are file based indices of a dataset used for
+          db independent matching services. Every published external dataset and
+          release has a matcher; projects do not.
+          {threshold > 0 && (
+            <>
+              {" "}
+              Datasets with fewer than {threshold.toLocaleString()} usages are
+              matched directly against Postgres and have no persistent matcher,
+              so they are excluded from the search below.
+            </>
+          )}
+        </p>
+
         <Row gutter={8} align="bottom" style={{ marginBottom: 16 }}>
           <Col flex="auto" style={{ maxWidth: 500 }}>
             <DatasetAutocomplete
-              defaultDatasetKey={selectedDataset?.key || null}
-              onResetSearch={() => setSelectedDataset(null)}
-              onSelectDataset={(dataset) => setSelectedDataset(dataset)}
-              placeHolder="Find a dataset to build a matcher for"
+              defaultDatasetKey={dataset?.key || null}
+              origin={MATCHER_ORIGINS}
+              minSize={threshold || undefined}
+              onResetSearch={onResetSearch}
+              onSelectDataset={onSelectDataset}
+              onError={(err) => setError(err)}
+              placeHolder="Find a dataset to inspect its matcher"
             />
-          </Col>
-          <Col>
-            <Button
-              type="primary"
-              disabled={!selectedDataset}
-              onClick={() => selectedDataset && reindexDataset(selectedDataset.key)}
-            >
-              Build matcher
-            </Button>
           </Col>
           <Col flex="auto" />
           <Col>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <Popconfirm
-                title="Do you want to rebuild all matchers?"
-                onConfirm={rebuildAllMatchers}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="primary" block>Rebuild all</Button>
-              </Popconfirm>
-              <Popconfirm
-                title="Do you want to delete all matchers?"
-                onConfirm={deleteAllMatchers}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="primary" danger block>Delete all</Button>
-              </Popconfirm>
-            </div>
+            <Popconfirm
+              title="Rebuild only stale matchers (those whose index is out of date)?"
+              onConfirm={() => rebuildAll(false)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button>Rebuild stale</Button>
+            </Popconfirm>
+          </Col>
+          <Col>
+            <Popconfirm
+              title="Rebuild all matchers? This reindexes every published dataset."
+              onConfirm={() => rebuildAll(true)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary">Rebuild all</Button>
+            </Popconfirm>
           </Col>
         </Row>
-        {!error && (
-          <Table
-            size="middle"
-            pagination={false}
-            columns={[...columns, actionColumn]}
-            dataSource={data}
-            loading={loading}
-            showSorterTooltip={{ target: 'sorter-icon' }}
-          />
+
+        {dataset && (
+          <Spin spinning={loading}>
+            {metadata ? (
+              <Descriptions
+                bordered
+                size="middle"
+                column={1}
+                style={{ marginTop: 16 }}
+                extra={
+                  <Button
+                    type="primary"
+                    onClick={() => rebuildDataset(dataset.key)}
+                  >
+                    Rebuild
+                  </Button>
+                }
+              >
+                <Descriptions.Item label="Dataset">
+                  <NavLink to={{ pathname: `/dataset/${dataset.key}/names` }} end>
+                    {dataset.alias || dataset.title} [{dataset.key}]
+                  </NavLink>
+                </Descriptions.Item>
+                <Descriptions.Item label="Origin">
+                  {dataset.origin}
+                </Descriptions.Item>
+                <Descriptions.Item label="Index size">
+                  {metadata.size != null ? metadata.size.toLocaleString() : "—"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Matcher attempt">
+                  {metadata.attempt ?? "—"}
+                </Descriptions.Item>
+                {dataset.attempt != null && (
+                  <Descriptions.Item label="Current attempt">
+                    {dataset.attempt}{" "}
+                    {stale ? (
+                      <Tag color="orange">stale</Tag>
+                    ) : (
+                      <Tag color="green">up to date</Tag>
+                    )}
+                  </Descriptions.Item>
+                )}
+              </Descriptions>
+            ) : (
+              !loading && (
+                <Empty
+                  style={{ marginTop: 16 }}
+                  description={
+                    <span>
+                      No matcher loaded for{" "}
+                      <NavLink
+                        to={{ pathname: `/dataset/${dataset.key}/names` }}
+                        end
+                      >
+                        {dataset.alias || dataset.title} [{dataset.key}]
+                      </NavLink>
+                    </span>
+                  }
+                >
+                  <Button
+                    type="primary"
+                    onClick={() => rebuildDataset(dataset.key)}
+                  >
+                    Build matcher
+                  </Button>
+                </Empty>
+              )
+            )}
+          </Spin>
         )}
       </div>
     </Layout>
   );
 };
 
-const mapContextToProps = ({ user, datasetOrigin }) => ({
+const mapContextToProps = ({ user }) => ({
   user,
-  datasetOrigin,
 });
 
-export default withContext(mapContextToProps)(MatcherList);
+export default withContext(mapContextToProps)(MatcherAdmin);
