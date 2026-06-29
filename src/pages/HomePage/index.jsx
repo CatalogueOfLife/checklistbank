@@ -193,17 +193,9 @@ const HomePage = () => {
               all features.
             </p>
             <p>
-              New here? Start with the{" "}
-              <a href="/about/introduction">introduction</a>, learn how to{" "}
-              <a href="/about/contribute">contribute</a> data, or follow the{" "}
-              <a href="https://docs.gbif.org/course-checklistbank-tutorial/">
-                user
-              </a>{" "}
-              and{" "}
-              <a href="https://docs.gbif.org/course-checklistbank-project/">
-                project
-              </a>{" "}
-              tutorials.
+              New here? Start with the <a href="/about/introduction">introduction</a>, 
+              learn how to <a href="/about/contribute">contribute</a> data, 
+              or use the <a href="/about/API">API</a>.
             </p>
           </Col>
           <Col xs={24} sm={24} md={8} lg={8}>
