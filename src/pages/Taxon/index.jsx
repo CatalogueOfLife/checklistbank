@@ -54,7 +54,7 @@ import { getDatasetsBatch } from "../../api/dataset";
 
 import DataLoader from "dataloader";
 import OtherUsages from "./OtherUsages";
-import CurieIdentifier from "../../components/CurieIdentifier";
+import { IdentifierList } from "../../components/CurieIdentifier";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
 
@@ -815,13 +815,10 @@ const TaxonPage = ({
                   )}
                   {_.isArray(taxon?.identifier) && taxon.identifier.length > 0 && (
                     <PresentationItem md={md} label="Identifiers">
-                      {taxon.identifier.map((id) => (
-                        <CurieIdentifier
-                          key={id}
-                          identifier={id}
-                          identifierScope={identifierScope}
-                        />
-                      ))}
+                      <IdentifierList
+                        identifiers={taxon.identifier}
+                        identifierScope={identifierScope}
+                      />
                     </PresentationItem>
                   )}
                   {_.get(info, "usage.status") === "ambiguous synonym" && (

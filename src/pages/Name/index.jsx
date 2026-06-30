@@ -18,7 +18,7 @@ import Linkify from "../../components/Linkify";
 import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
-import CurieIdentifier from "../../components/CurieIdentifier";
+import { IdentifierList } from "../../components/CurieIdentifier";
 
 const md = 5;
 
@@ -419,12 +419,10 @@ const NamePage = ({
 
               {_.isArray(name.identifier) && name.identifier.length > 0 && (
                 <PresentationItem md={md} label="Identifiers">
-                  {name.identifier.map((id, i) => (
-                    <React.Fragment key={id}>
-                      {i > 0 && ", "}
-                      <CurieIdentifier identifier={id} identifierScope={identifierScope} />
-                    </React.Fragment>
-                  ))}
+                  <IdentifierList
+                    identifiers={name.identifier}
+                    identifierScope={identifierScope}
+                  />
                 </PresentationItem>
               )}
 
