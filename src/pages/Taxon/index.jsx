@@ -1021,7 +1021,9 @@ const TaxonPage = ({
             _.get(info, "treatment.document") && {
               key: "treatment",
               label: "Treatment",
-              children: <Treatment treatment={_.get(info, "treatment")} />,
+              children: (
+                <Treatment treatment={_.get(info, "treatment")} dataset={dataset} />
+              ),
             },
             _.get(taxon, "verbatimKey") && {
               key: "verbatim",
