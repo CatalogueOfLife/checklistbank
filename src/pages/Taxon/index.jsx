@@ -30,6 +30,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import Verbatim from "./Verbatim";
+import Treatment from "./Treatment";
 import TaxonProperties from "./TaxonProperties";
 import SecondarySources from "./SecondarySources";
 import moment from "dayjs";
@@ -94,6 +95,8 @@ const isAssembly = (location, projectKey) => {
 
 const TaxonPage = ({
   match,
+  location,
+  history,
   datasetKey,
   projectKey,
   getNomStatus,
@@ -404,6 +407,22 @@ const TaxonPage = ({
     ...new Set([...(sourceTaxon?.issues || []), ...(info?.issues || [])]),
   ];
 
+  // Tabs are deep-linkable via the URL hash (#about, #treatment, #verbatim).
+  const tabKeys = [
+    "about",
+    ...(_.get(info, "treatment.document") ? ["treatment"] : []),
+    ...(_.get(taxon, "verbatimKey") ? ["verbatim"] : []),
+  ];
+  const hashKey = (location?.hash || "").replace(/^#/, "");
+  const activeTab = tabKeys.includes(hashKey) ? hashKey : "about";
+  const onTabChange = (key) => {
+    history.replace({
+      pathname: location.pathname,
+      search: location.search,
+      hash: key === "about" ? "" : `#${key}`,
+    });
+  };
+
   return (
     <React.Fragment>
       <div
@@ -518,11 +537,12 @@ const TaxonPage = ({
         )}
 
         <Tabs
-          defaultActiveKey="1"
+          activeKey={activeTab}
+          onChange={onTabChange}
           tabBarExtraContent={null}
           items={[
             {
-              key: "1",
+              key: "about",
               label: "About",
               children: (
                 <>
@@ -998,8 +1018,13 @@ const TaxonPage = ({
                 </>
               ),
             },
+            _.get(info, "treatment.document") && {
+              key: "treatment",
+              label: "Treatment",
+              children: <Treatment treatment={_.get(info, "treatment")} />,
+            },
             _.get(taxon, "verbatimKey") && {
-              key: "2",
+              key: "verbatim",
               label: "Verbatim",
               children: (
                 <Verbatim
