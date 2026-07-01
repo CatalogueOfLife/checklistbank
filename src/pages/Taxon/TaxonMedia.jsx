@@ -96,17 +96,27 @@ const MediaModal = ({ images, index, onClose, onPrev, onNext }) => {
       open={open}
       onCancel={onClose}
       footer={null}
-      width={900}
-      styles={{ body: { padding: 16 } }}
+      width="80vw"
+      centered
+      styles={{ body: { padding: 16, height: "80vh" } }}
       title={null}
     >
       {item && (
-        <>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 16,
+              flex: 1,
+              minHeight: 0,
+            }}
+          >
             <div
               style={{
-                flex: "1 1 380px",
+                flex: "2 1 320px",
                 minWidth: 280,
+                minHeight: 0,
                 position: "relative",
                 display: "flex",
                 alignItems: "center",
@@ -116,10 +126,18 @@ const MediaModal = ({ images, index, onClose, onPrev, onNext }) => {
             >
               <FallbackImage
                 key={item.url}
-                candidates={[cachedImage(item.url, "fit-in/1200x1200"), item.url]}
+                candidates={[cachedImage(item.url, "fit-in/1600x1600"), item.url]}
                 preview={false}
                 alt={item.title || ""}
-                style={{ maxHeight: "70vh", objectFit: "contain" }}
+                // Viewport-relative cap: a percentage max-height against a
+                // flex-stretched parent is unreliable, so tall (portrait)
+                // figures would overflow the modal. 80vh body minus padding and
+                // the counter row.
+                style={{
+                  maxHeight: "calc(80vh - 80px)",
+                  maxWidth: "100%",
+                  objectFit: "contain",
+                }}
               />
               <Button
                 shape="circle"
@@ -136,7 +154,14 @@ const MediaModal = ({ images, index, onClose, onPrev, onNext }) => {
                 style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)" }}
               />
             </div>
-            <div style={{ flex: "1 1 280px", minWidth: 260 }}>
+            <div
+              style={{
+                flex: "1 1 280px",
+                minWidth: 260,
+                minHeight: 0,
+                overflowY: "auto",
+              }}
+            >
               {item.title && (
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
                   {item.title}
@@ -173,7 +198,7 @@ const MediaModal = ({ images, index, onClose, onPrev, onNext }) => {
           >
             {index + 1} / {images.length}
           </div>
-        </>
+        </div>
       )}
     </Modal>
   );
