@@ -33,10 +33,17 @@ case-insensitively**.
 3. **Suggest matching:** substring, case- and accent-insensitive (to *find* a
    name); the applied filter is exact + case-insensitive (to *apply* it).
 4. **Counts:** the suggest dropdown shows the dataset count per publisher, e.g.
-   `Royal Botanic Gardens, Kew (312)`. Counts are **global**, not recomputed
-   against other active filters.
+   `Royal Botanic Gardens, Kew (312)`. Counts are not recomputed against other
+   active search facets (e.g. origin/type), but they **do** respect the caller's
+   private-dataset visibility (see decision 6).
 5. **Suggest scope:** all datasets that have a publisher name set, regardless of
    origin.
+6. **Private datasets:** the suggest honors the logged-in user exactly like the
+   dataset search — private datasets contribute to suggestions/counts only when
+   the caller may see them (admin, or an editor/reviewer on the dataset). Reuses
+   the existing `PRIVATE` + `FROM_PROJ` mapper fragments. Anonymous callers see
+   only public-dataset publishers. (A private dataset's publisher must not leak
+   to unauthorized users.)
 
 The publisher display name is `coalesce((publisher).organisation,
 (publisher).family)` — the same expression the existing `SortBy.PUBLISHER` sort
@@ -65,27 +72,35 @@ name from the suggest, so accents already match).
 
 - **Route:** `GET /dataset/publishers?q=<text>&limit=<n>` on
   `webservice/.../resources/DatasetResource.java` (default `limit` e.g. 25).
+  Takes `@Auth Optional<User> user` and passes `userkey(user)` down, exactly
+  like the existing `search` method.
 - **Result DTO:** a small `{ String name; int count; }` — reuse an existing
   name/count pair type if one fits, else a small new class/record.
 - **Mapper:** `DatasetMapper.suggestPublishers(@Param("q") String q,
-  @Param("limit") int limit)` returning `List<...>`.
+  @Param("limit") int limit, @Param("userKey") Integer userKey)` returning
+  `List<...>`.
 - **DAO:** thin method on `DatasetDao` opening a session and delegating to the
-  mapper (mirrors `PublisherDao.search`).
-- **SQL** (`DatasetMapper.xml`):
+  mapper (mirrors `PublisherDao.search`), threading `userKey` through.
+- **SQL** (`DatasetMapper.xml`) — reuses the existing `FROM_PROJ` join and
+  `PRIVATE` visibility fragment (included with `alias="d"`, `projAlias="proj"`,
+  same as `SEARCH_FROM_WHERE`):
   ```sql
-  SELECT coalesce((publisher).organisation,(publisher).family) AS name,
+  SELECT coalesce((d.publisher).organisation,(d.publisher).family) AS name,
          count(*) AS count
-  FROM dataset
-  WHERE deleted IS NULL
-    AND coalesce((publisher).organisation,(publisher).family) IS NOT NULL
-    AND f_unaccent(coalesce((publisher).organisation,(publisher).family))
+  FROM dataset d
+  <include FROM_PROJ/>
+  WHERE d.deleted IS NULL
+    AND coalesce((d.publisher).organisation,(d.publisher).family) IS NOT NULL
+    AND f_unaccent(coalesce((d.publisher).organisation,(d.publisher).family))
         ILIKE f_unaccent('%' || #{q} || '%')
+    <include PRIVATE/>   <!-- honors userKey; admins (-42) see all -->
   GROUP BY name
   ORDER BY count DESC, name
   LIMIT #{limit}
   ```
   Table is a few thousand rows; a sequential scan with `ILIKE` is fine, no new
-  index required.
+  index required. Because visibility is applied before the aggregate, counts
+  reflect only datasets the caller may see.
 
 ## Frontend changes (repo: `checklistbank`)
 
@@ -110,7 +125,8 @@ New component `src/components/PublisherNameAutocomplete.jsx`:
 
 - No change to the GBIF `PublisherAutocomplete` component or to `gbifPublisherKey`
   filtering / deep-links — both keep working untouched.
-- Suggest counts are global, not filtered by other active search facets.
+- Suggest counts are not filtered by other active search facets (origin/type/
+  etc.) — but they do honor private-dataset visibility.
 - No new DB index (table is small).
 
 ## Testing
