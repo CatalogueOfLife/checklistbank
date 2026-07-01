@@ -30,6 +30,7 @@ import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
+import PublisherNameAutocomplete from "../../components/PublisherNameAutocomplete";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import { buildSearchQuery } from "./searchQuery";
@@ -46,7 +47,7 @@ const PAGE_SIZE = 25;
 // parseSearch() normalizes incoming keys to their canonical casing before we use/forward them.
 const DATASET_SEARCH_PARAMS = [
   "q", "alias", "code", "private", "releasedFrom", "contributesTo",
-  "hasSourceDataset", "hasGbifKey", "gbifKey", "gbifPublisherKey",
+  "hasSourceDataset", "hasGbifKey", "gbifKey", "gbifPublisherKey", "publisher",
   "lastImportState", "editor", "reviewer", "origin", "type", "license",
   "group", "rowType", "modified", "modifiedBefore", "modifiedBy",
   "created", "createdBefore", "createdBy", "issued", "issuedBefore",
@@ -230,6 +231,14 @@ const DatasetList = ({
       pathname: "/dataset",
       search: `?${qs.stringify(_.omit(currentParams, "releasedFrom"))}`,
     });
+  };
+
+  const onSelectPublisher = (name) => {
+    updateSearch({ publisher: name });
+  };
+
+  const onResetPublisher = () => {
+    updateSearch({ publisher: "" });
   };
 
   const handleTableChange = (newPagination, filters, sorter, extra) => {
@@ -669,6 +678,17 @@ const DatasetList = ({
                     onSelectDataset={onSelectReleasedFrom}
                     placeHolder="Released from"
                     origin="project"
+                    autoFocus={false}
+                  />
+                </div>
+              </FormItem>
+              <FormItem>
+                <div style={{ marginTop: "10px" }}>
+                  <PublisherNameAutocomplete
+                    defaultValue={_.get(params, "publisher") || ""}
+                    onResetSearch={onResetPublisher}
+                    onSelectPublisher={onSelectPublisher}
+                    placeHolder="Publisher"
                     autoFocus={false}
                   />
                 </div>
