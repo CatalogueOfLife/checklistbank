@@ -742,7 +742,7 @@ const DatasetList = ({
             {recentDatasets && recentDatasets.length > 0 && (
               <Col>
                 Recently visited:{" "}
-                <div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                   {recentDatasets.map((d) => (
                     <DatasetNavLink
                       key={d.key}
