@@ -29,7 +29,6 @@ import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import PublisherNameAutocomplete from "../../components/PublisherNameAutocomplete";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
@@ -217,21 +216,6 @@ const DatasetList = ({
     getData(newParams, newPagination);
   };
 
-  const onSelectReleasedFrom = (dataset) => {
-    let currentParams = parseSearch(_.get({ location }, "location.search"));
-    history.push({
-      pathname: "/dataset",
-      search: `?${qs.stringify({ ...currentParams, releasedFrom: dataset.key })}`,
-    });
-  };
-
-  const onResetReleasedFrom = () => {
-    let currentParams = parseSearch(_.get({ location }, "location.search"));
-    history.push({
-      pathname: "/dataset",
-      search: `?${qs.stringify(_.omit(currentParams, "releasedFrom"))}`,
-    });
-  };
 
   const onSelectPublisher = (name) => {
     updateSearch({ publisher: name });
@@ -670,16 +654,6 @@ const DatasetList = ({
                 style={{ marginBottom: "10px", width: "50%" }}
                 onSearch={(value) => updateSearch({ q: value })}
               />
-              <FormItem style={{ marginBottom: "10px" }}>
-                <DatasetAutocomplete
-                  defaultDatasetKey={_.get(params, "releasedFrom") || null}
-                  onResetSearch={onResetReleasedFrom}
-                  onSelectDataset={onSelectReleasedFrom}
-                  placeHolder="Released from"
-                  origin="project"
-                  autoFocus={false}
-                />
-              </FormItem>
               <FormItem style={{ marginBottom: "10px" }}>
                 <PublisherNameAutocomplete
                   defaultValue={_.get(params, "publisher") || ""}
