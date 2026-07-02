@@ -683,15 +683,13 @@ const DatasetList = ({
                 </div>
               </FormItem>
               <FormItem>
-                <div style={{ marginTop: "10px" }}>
-                  <PublisherNameAutocomplete
-                    defaultValue={_.get(params, "publisher") || ""}
-                    onResetSearch={onResetPublisher}
-                    onSelectPublisher={onSelectPublisher}
-                    placeHolder="Publisher"
-                    autoFocus={false}
-                  />
-                </div>
+                <PublisherNameAutocomplete
+                  defaultValue={_.get(params, "publisher") || ""}
+                  onResetSearch={onResetPublisher}
+                  onSelectPublisher={onSelectPublisher}
+                  placeHolder="Publisher"
+                  autoFocus={false}
+                />
               </FormItem>
             </Col>
             <Col xs={24} sm={24} md={12} lg={12}>
