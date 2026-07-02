@@ -7,8 +7,6 @@ import { debounce } from "lodash";
 import Highlighter from "react-highlight-words";
 import { publisherOptionLabel } from "./publisherOption";
 
-const axiosNoAuth = axios.create({ headers: { Authorization: null } });
-
 // Suggests existing dataset publishers from the CLB API and applies the chosen
 // name as an exact (case-insensitive) dataset-search filter. Distinct from the
 // GBIF-org based PublisherAutocomplete.jsx.
@@ -28,7 +26,7 @@ const PublisherNameAutocomplete = ({
 
   useEffect(() => {
     const fn = debounce((q) => {
-      axiosNoAuth(
+      axios(
         `${config.dataApi}dataset/publishers?q=${encodeURIComponent(q)}&limit=25`
       )
         .then((res) => setPublishers(res.data || []))
