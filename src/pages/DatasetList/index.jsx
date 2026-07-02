@@ -651,7 +651,7 @@ const DatasetList = ({
             <Col xs={24} sm={24} md={12} lg={12}>
               <SearchBox
                 defaultValue={_.get(params, "q")}
-                style={{ marginBottom: "10px", width: "50%" }}
+                style={{ marginBottom: "16px", width: "50%" }}
                 onSearch={(value) => updateSearch({ q: value })}
               />
               <FormItem style={{ marginBottom: "10px" }}>
