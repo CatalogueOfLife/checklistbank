@@ -29,7 +29,7 @@ import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../pages/Imports/importTabs/ImportButton";
 import withContext from "../../components/hoc/withContext";
-import PublisherNameAutocomplete from "../../components/PublisherNameAutocomplete";
+import PublisherFilterDropdown from "./PublisherFilterDropdown";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import { buildSearchQuery } from "./searchQuery";
@@ -102,7 +102,7 @@ const DatasetList = ({
   const [data, setData] = useState([]);
   const [excludeColumns, setExcludeColumns] = useState(
     JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
-      ["key", "doi", "version", "publisher", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "issued", "private"]
+      ["key", "doi", "version", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "issued", "private"]
   );
   const [params, setParams] = useState({});
   const [pagination, setPagination] = useState({
@@ -216,14 +216,6 @@ const DatasetList = ({
     getData(newParams, newPagination);
   };
 
-
-  const onSelectPublisher = (name) => {
-    updateSearch({ publisher: name });
-  };
-
-  const onResetPublisher = () => {
-    updateSearch({ publisher: "" });
-  };
 
   const handleTableChange = (newPagination, filters, sorter, extra) => {
     const query = buildSearchQuery(
@@ -511,6 +503,17 @@ const DatasetList = ({
   ];
 
   // Apply column filters (mutating copies is fine here — new array each render)
+  // Publisher: type-ahead suggest rendered in a custom filter dropdown. Flows
+  // through handleTableChange -> buildSearchQuery like the enum filters below.
+  defaultColumns[6].filterDropdown = (props) => (
+    <PublisherFilterDropdown {...props} currentValue={_.get(params, "publisher") || ""} />
+  );
+  defaultColumns[6].filteredValue = params.publisher
+    ? _.isArray(params.publisher)
+      ? params.publisher
+      : [params.publisher]
+    : null;
+
   defaultColumns[7].filters = datasetOrigin
     ? datasetOrigin.map((i) => ({ text: _.startCase(i), value: i }))
     : [];
@@ -651,18 +654,9 @@ const DatasetList = ({
             <Col xs={24} sm={24} md={12} lg={12}>
               <SearchBox
                 defaultValue={_.get(params, "q")}
-                style={{ marginBottom: "16px", width: "50%" }}
+                style={{ marginBottom: "10px", width: "50%" }}
                 onSearch={(value) => updateSearch({ q: value })}
               />
-              <FormItem style={{ marginBottom: "10px" }}>
-                <PublisherNameAutocomplete
-                  defaultValue={_.get(params, "publisher") || ""}
-                  onResetSearch={onResetPublisher}
-                  onSelectPublisher={onSelectPublisher}
-                  placeHolder="Publisher"
-                  autoFocus={false}
-                />
-              </FormItem>
             </Col>
             <Col xs={24} sm={24} md={12} lg={12}>
               <FormItem
