@@ -670,19 +670,17 @@ const DatasetList = ({
                 style={{ marginBottom: "10px", width: "50%" }}
                 onSearch={(value) => updateSearch({ q: value })}
               />
-              <FormItem>
-                <div style={{ marginTop: "10px" }}>
-                  <DatasetAutocomplete
-                    defaultDatasetKey={_.get(params, "releasedFrom") || null}
-                    onResetSearch={onResetReleasedFrom}
-                    onSelectDataset={onSelectReleasedFrom}
-                    placeHolder="Released from"
-                    origin="project"
-                    autoFocus={false}
-                  />
-                </div>
+              <FormItem style={{ marginBottom: "10px" }}>
+                <DatasetAutocomplete
+                  defaultDatasetKey={_.get(params, "releasedFrom") || null}
+                  onResetSearch={onResetReleasedFrom}
+                  onSelectDataset={onSelectReleasedFrom}
+                  placeHolder="Released from"
+                  origin="project"
+                  autoFocus={false}
+                />
               </FormItem>
-              <FormItem>
+              <FormItem style={{ marginBottom: "10px" }}>
                 <PublisherNameAutocomplete
                   defaultValue={_.get(params, "publisher") || ""}
                   onResetSearch={onResetPublisher}
