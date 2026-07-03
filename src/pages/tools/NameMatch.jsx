@@ -27,6 +27,7 @@ import { NavLink } from "react-router-dom";
 
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
+import NameMatchContext from "./NameMatchContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
@@ -225,10 +226,15 @@ const FileFormatList = () => (
   </List>
 );
 
-const NameMatch = ({ addError, issueMap, user }) => {
+const NameMatch = ({ addError, issueMap, user, nomCode }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
-  const [defaultCode] = useState(null);
+  // A single nomenclatural code and a set of higher taxa (name + major rank) the
+  // user can pin as matching hints for every input record of the simple entry
+  // form and the synchronous CSV/TSV upload. Merged in at match time by
+  // applyMatchContext (gap-fill: per-record values win).
+  const [defaultCode, setDefaultCode] = useState(null);
+  const [higherTaxa, setHigherTaxa] = useState([{ rank: undefined, name: "" }]);
   const [submissionError, setSubmissionError] = useState(null);
   const [step, setStep] = useState(0);
   const [primaryDataset, setPrimaryDataset] = useState(COL_LXR);
@@ -364,9 +370,28 @@ const NameMatch = ({ addError, issueMap, user }) => {
     );
   };
 
-  const matchResult = async (namesArg) => {
+  // Merge the pinned code + higher taxa into a record. Returns a NEW object so the
+  // base input array is never mutated; existing per-record values win (gap-fill),
+  // so CSV rows carrying their own code/classification columns are preserved.
+  const applyMatchContext = (rec) => {
+    const merged = { ...rec };
+    if (defaultCode && !merged.code) merged.code = defaultCode;
+    higherTaxa.forEach(({ rank, name }) => {
+      const n = (name || "").trim();
+      if (rank && n && !merged[rank]) merged[rank] = n;
+    });
+    return merged;
+  };
+
+  const matchResult = async (namesArg, { applyContext = true } = {}) => {
     setNumMatchedNames(0);
     let result = namesArg || names;
+    if (applyContext) {
+      // Store the merged records so the result table and TSV download reflect the
+      // injected context, and so match() attaches its results to these objects.
+      result = result.map(applyMatchContext);
+      setNames(result);
+    }
     setStep(2);
     let matchedNames = 0;
     const queue = new PQueue({ concurrency: 10 });
@@ -595,7 +620,9 @@ const NameMatch = ({ addError, issueMap, user }) => {
       }));
       setSubjectDataLoading(false);
       setNames(result);
-      matchResult(result);
+      // Source dataset records already carry rank/code and a full classification;
+      // the pinned higher-taxa hints are meaningless here, so skip the merge.
+      matchResult(result, { applyContext: false });
     } catch (error) {
       setSubjectDataLoading(false);
       if (typeof addError === "function") {
@@ -759,12 +786,42 @@ const NameMatch = ({ addError, issueMap, user }) => {
                             include the author string.
                           </Paragraph>
                         </Typography>
+                        <NameMatchContext
+                          code={defaultCode}
+                          onCodeChange={setDefaultCode}
+                          higherTaxa={higherTaxa}
+                          onHigherTaxaChange={setHigherTaxa}
+                          nomCode={nomCode}
+                        />
                       </Col>
                     </Row>
                   </Panel>
                 )}
                 {!!user && (
                   <Panel header="Upload CSV/TSV" key="2">
+                    {!asyncMode && (
+                      <Row gutter={[16, 16]} style={{ marginBottom: "16px" }}>
+                        <Col span={8}>
+                          <NameMatchContext
+                            code={defaultCode}
+                            onCodeChange={setDefaultCode}
+                            higherTaxa={higherTaxa}
+                            onHigherTaxaChange={setHigherTaxa}
+                            nomCode={nomCode}
+                          />
+                        </Col>
+                        <Col span={16}>
+                          <Typography>
+                            <Paragraph type="secondary">
+                              Optional: pin a nomenclatural code and higher taxa
+                              to apply to every row that does not already provide
+                              its own <code className="code">code</code> or
+                              classification columns.
+                            </Paragraph>
+                          </Typography>
+                        </Col>
+                      </Row>
+                    )}
                     <Dragger
                       name="file"
                       multiple={false}
@@ -1475,9 +1532,10 @@ const NameMatch = ({ addError, issueMap, user }) => {
   );
 };
 
-const mapContextToProps = ({ addError, issueMap, user }) => ({
+const mapContextToProps = ({ addError, issueMap, user, nomCode }) => ({
   addError,
   issueMap,
   user,
+  nomCode,
 });
 export default withContext(mapContextToProps)(NameMatch);
