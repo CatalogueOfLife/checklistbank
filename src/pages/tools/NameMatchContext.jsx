@@ -10,6 +10,9 @@ const { Text } = Typography;
 // adds nothing. These line up with the match API classification hint params.
 const MAJOR_RANKS = ["kingdom", "phylum", "class", "order", "family"];
 
+// Nomenclatural codes not offered in the picker (rarely used for name matching).
+const EXCLUDED_CODES = ["phylo", "phyto"];
+
 // Controls that let the user pin a single nomenclatural code and one or more
 // higher taxa (name + major rank) which get applied to every input record of the
 // Simple data entry form and the synchronous CSV/TSV upload. See
@@ -51,10 +54,12 @@ const NameMatchContext = ({
         value={code || undefined}
         disabled={disabled}
         onChange={(value) => onCodeChange(value || null)}
-        options={(nomCode || []).map((c) => ({
-          value: c.name,
-          label: `${_.startCase(c.name)}${c.acronym ? ` · ${c.acronym}` : ""}`,
-        }))}
+        options={(nomCode || [])
+          .filter((c) => !EXCLUDED_CODES.includes(c.name))
+          .map((c) => ({
+            value: c.name,
+            label: `${_.startCase(c.name)}${c.acronym ? ` · ${c.acronym}` : ""}`,
+          }))}
       />
 
       <Text strong style={{ display: "block", marginTop: 12 }}>
