@@ -4,6 +4,13 @@ body {
   font-family: sans-serif;
 }
 
+/* antd 6 dropped the default trailing margin that Tag had in antd <=5, so adjacent
+   tags (issue flags, taxon groups, etc.) render flush against each other across the
+   app. Restore the old marginXS (8px) spacing. Inline styles still override this. */
+.ant-tag {
+  margin-inline-end: 8px;
+}
+
 
 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
   line-height: 14px !important;
