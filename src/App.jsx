@@ -67,6 +67,7 @@ import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
 import NameMatchJob from "./pages/tools/NameMatchJob";
 import NameParser from "./pages/tools/NameParser";
+import TaxGroupParser from "./pages/tools/TaxGroupParser";
 
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
 import DiffViewer from "./pages/tools/DiffViewer";
@@ -418,6 +419,7 @@ const App = () => {
               element={<NameMatchJob />}
             />
             <Route path="/tools/name-parser" element={<NameParser />} />
+            <Route path="/tools/taxgroup-parser" element={<TaxGroupParser />} />
             <Route path="/tools/diff-viewer" element={<DiffViewer />} />
             <Route path="/tools/taxonomic-alignment" element={<TaxAlign />} />
             <Route

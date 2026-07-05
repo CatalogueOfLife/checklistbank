@@ -12,6 +12,17 @@ const toolsDescriptions = {
   "name-match-job": "Progress and downloadable results of a name-matching job.",
   "name-parser":
     "Break scientific names into their structured parts — genus, epithets, rank, authorship and nomenclatural code. Paste names or upload a plain text or delimited file, then download the parsed result as JSON or TSV.",
+  "taxgroup-parser": (
+    <>
+      Interpret the broad{" "}
+      <a href="https://www.checklistbank.org/vocabulary/taxgrouptree">
+        taxonomic group
+      </a>{" "}
+      of a name from its higher classification. Paste one record per row (name
+      then classification, joined by a delimiter) or upload a CSV/TSV, then
+      download the resolved groups as JSON or TSV.
+    </>
+  ),
   "metadata-generator": (
     <>
       Create a{" "}

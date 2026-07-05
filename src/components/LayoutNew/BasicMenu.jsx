@@ -220,6 +220,14 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
+        {
+          key: "taxgroupparser",
+          label: (
+            <NavLink to={{ pathname: "/tools/taxgroup-parser" }}>
+              <span>Taxon group parser</span>
+            </NavLink>
+          ),
+        },
         Auth.isAuthorised(user, ["admin", "editor"]) && {
           key: "nameIndexSearch",
           label: (
