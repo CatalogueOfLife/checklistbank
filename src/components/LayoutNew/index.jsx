@@ -177,6 +177,7 @@ const SiteLayout = ({
                   <Col flex="auto">
                     <DatasetLogo
                       datasetKey={selectedDataset.key}
+                      private={selectedDataset.private}
                       style={{ marginRight: "10px" }}
                     />
                   </Col>

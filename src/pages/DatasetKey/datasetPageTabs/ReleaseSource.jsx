@@ -15,6 +15,7 @@ import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import withContext from "../../../components/hoc/withContext";
 import TaxonomicCoverage from "../../project/ProjectSourceMetrics/TaxonomicCoverage";
 import { IDENTIFIER_TYPES } from "./DatasetMeta";
+import DatasetLogo from "../../DatasetList/DatasetLogo";
 
 const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
   const sourceKey = match?.params?.taxonOrNameKey;
@@ -88,9 +89,13 @@ const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
             </Col>
 
             <Col>
-              <img
-                src={`${config.dataApi}dataset/${datasetKey}/logo/source/${data.key}?size=MEDIUM`}
+              <DatasetLogo
+                datasetKey={datasetKey}
+                sourceKey={data.key}
+                private={dataset?.private}
                 alt={_.get(data, "title")}
+                maxWidth={null}
+                maxHeight={null}
               />
             </Col>
           </Row>

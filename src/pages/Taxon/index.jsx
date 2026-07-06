@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import withRouter from "../../withRouter";
 import config from "../../config";
+import DatasetLogo from "../DatasetList/DatasetLogo";
 
 import axios from "axios";
 import { NavLink } from "react-router-dom";
@@ -70,7 +71,6 @@ const initialState = {
   datasetLoading: true,
   infoLoading: true,
   infoError: null,
-  logoUrl: null,
   sourceDataset: null,
   sourceDatasetKeyMap: null,
   sourceTaxon: null,
@@ -115,7 +115,6 @@ const TaxonPage = ({
   const [referenceIndexMap, setReferenceIndexMap] = useState({});
   const [infoLoading, setInfoLoading] = useState(true);
   const [infoError, setInfoError] = useState(null);
-  const [logoUrl, setLogoUrl] = useState(null);
   const [sourceDataset, setSourceDataset] = useState(null);
   const [sourceDatasetKeyMap, setSourceDatasetKeyMap] = useState(null);
   const [sourceTaxon, setSourceTaxon] = useState(null);
@@ -141,7 +140,6 @@ const TaxonPage = ({
     setReferenceIndexMap({});
     setInfoLoading(true);
     setInfoError(null);
-    setLogoUrl(null);
     setSourceDataset(null);
     setSourceDatasetKeyMap(null);
     setSourceTaxon(null);
@@ -252,19 +250,6 @@ const TaxonPage = ({
             "data.usage.sectorKey"
           )}`
         ).then((sector) => {
-          const logoUrlValue = `${
-            config.dataApi
-          }dataset/${datasetKey}/logo/source/${_.get(
-            sector,
-            "data.subjectDatasetKey"
-          )}`;
-          axios(logoUrlValue)
-            .then(() => {
-              setLogoUrl(logoUrlValue);
-            })
-            .catch(() => {
-              // ignore, there is no logo
-            });
           axios(
             `${config.dataApi}dataset/${_.get(
               sector,
@@ -524,12 +509,16 @@ const TaxonPage = ({
                 Name details
               </Button>
             </Col>
-            {logoUrl && (
+            {sourceDataset?.key && (
               <Col>
-                <img
-                  style={{ marginLeft: "8px" }}
-                  src={logoUrl}
+                <DatasetLogo
+                  datasetKey={datasetKey}
+                  sourceKey={sourceDataset.key}
+                  private={dataset?.private}
                   alt={_.get(taxon, "name.scientificName")}
+                  style={{ marginLeft: "8px" }}
+                  maxWidth={null}
+                  maxHeight={null}
                 />
               </Col>
             )}

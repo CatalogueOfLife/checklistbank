@@ -356,10 +356,14 @@ const DatasetList = ({
       dataIndex: "key",
       key: "logo",
       width: 100,
-      render: (text, record) =>
-        record.private ? null : (
-          <DatasetLogo datasetKey={record.key} size="SMALL" maxWidth={80} />
-        ),
+      render: (text, record) => (
+        <DatasetLogo
+          datasetKey={record.key}
+          private={record.private}
+          size="SMALL"
+          maxWidth={80}
+        />
+      ),
     },
     {
       title: "Publisher",
