@@ -6,8 +6,10 @@ import axios from "axios";
  *
  * For private datasets the logo endpoint requires the JWT bearer token, which
  * a plain <img src> request cannot carry (the token lives on axios.defaults,
- * not in a cookie). For those we fetch the image with axios as a blob — so the
- * Authorization header is sent — and expose an object URL instead.
+ * not in a cookie). For those we fetch the image with axios — so the
+ * Authorization header is sent — and expose it as a data: URL. (A blob: object
+ * URL would be simpler but the production CSP `img-src * data:` does not allow
+ * the blob: scheme, whereas data: is whitelisted.)
  *
  * Public logos are returned as-is so they keep loading natively and stay
  * cacheable by the browser and Varnish.
@@ -31,21 +33,26 @@ export default function useLogoSrc(url, authed) {
       return;
     }
     let cancelled = false;
-    let objectUrl;
     setSrc(null);
     axios
       .get(url, { responseType: "blob" })
-      .then((res) => {
-        if (cancelled) return;
-        objectUrl = URL.createObjectURL(res.data);
-        setSrc(objectUrl);
+      .then(
+        (res) =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(res.data);
+          })
+      )
+      .then((dataUrl) => {
+        if (!cancelled) setSrc(dataUrl);
       })
       .catch(() => {
         if (!cancelled) setError(true);
       });
     return () => {
       cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [url, authed]);
 
