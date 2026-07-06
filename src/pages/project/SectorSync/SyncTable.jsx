@@ -132,6 +132,12 @@ const getColumns = (projectKey) => [
     title: "Mode",
     dataIndex: ["sector", "mode"],
     key: "mode",
+    filters: [
+      { text: "attach", value: "attach" },
+      { text: "union", value: "union" },
+      { text: "merge", value: "merge" },
+      { text: "hierarchy", value: "hierarchy" },
+    ],
     render: (text, record) => {
       return record?.sector?.mode;
     },
@@ -335,6 +341,11 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
     } else {
       query.state = importState;
     }
+    if (filters.mode && _.get(filters, "mode.length")) {
+      query.mode = filters.mode;
+    } else {
+      delete query.mode;
+    }
 
     getData(query);
   };
@@ -388,6 +399,12 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
     text: _.startCase(i),
     value: i,
   }));
+
+  columns[3].filteredValue = params.mode
+    ? _.isArray(params.mode)
+      ? params.mode
+      : [params.mode]
+    : null;
 
   return (
     <>
