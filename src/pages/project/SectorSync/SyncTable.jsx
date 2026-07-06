@@ -312,11 +312,15 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
         Number(query.offset || 0) / Number(query.limit || PAGE_SIZE) + 1,
     });
     getData(query);
-    didMountRef.current = true;
   }, []);
 
   useEffect(() => {
-    if (!didMountRef.current) return;
+    // Skip the initial mount so the offset read from the URL above is kept;
+    // only reset paging when the project or source dataset actually changes.
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
     const currentParams = qs.parse(locationSearch);
     setPagination({
       pageSize: PAGE_SIZE,
