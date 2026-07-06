@@ -533,6 +533,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
           row[`original_${header}`] = n[header.toLowerCase()] ?? "";
         });
       } else {
+        if (n.providedId) row.original_ID = n.providedId;
         row.original_scientificName = n.providedScientificName || "";
         if (n.providedAuthorship) row.original_authorship = n.providedAuthorship;
       }
@@ -612,8 +613,14 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         }`
       );
       console.log("Data retrieved " + data.length);
+      // Mirror the CSV upload path: keep the source authorship (both as a match
+      // hint and for the "Provided Authorship" column) and the source id so the
+      // downloaded result carries an original_ID column (#1701).
       const result = data.map((e) => ({
         providedScientificName: e?.name,
+        providedAuthorship: e?.authorship || "",
+        providedId: e?.id,
+        authorship: e?.authorship,
         rank: e?.rank,
         code: e?.code || defaultCode,
         scientificName: undefined,
