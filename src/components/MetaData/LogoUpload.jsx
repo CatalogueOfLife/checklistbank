@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
+import { fetchLogoDataUrl } from "../useLogoSrc";
 
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -12,19 +13,21 @@ const LogoUpload = ({ datasetKey }) => {
   const [fileList, setFileList] = useState([]);
 
   const getData = () => {
-    axios(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
-      .then(() => {
+    // fetch authenticated so private dataset logos load, and render as a data:
+    // URL (a plain <img src>/blob: would 401 or violate the img-src CSP)
+    fetchLogoDataUrl(`${config.dataApi}dataset/${datasetKey}/logo?size=large`)
+      .then((dataUrl) => {
         setFileList([
           {
             uid: "-1",
             name: "logo.png",
             status: "done",
-            url: `${config.dataApi}dataset/${datasetKey}/logo?size=large`,
+            url: dataUrl,
           },
         ]);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // no logo
       });
   };
 

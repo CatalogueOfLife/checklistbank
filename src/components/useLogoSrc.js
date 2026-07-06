@@ -1,6 +1,24 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+/** Read an image Blob into a data: URL (CSP-safe, unlike blob: object URLs). */
+export function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Fetch a logo with axios (so the JWT bearer token is sent for private
+ * datasets) and resolve to a data: URL usable as an <img> src.
+ */
+export function fetchLogoDataUrl(url) {
+  return axios.get(url, { responseType: "blob" }).then((res) => blobToDataUrl(res.data));
+}
+
 /**
  * Resolve a logo image URL into a `src` usable by an <img> tag.
  *
@@ -34,17 +52,7 @@ export default function useLogoSrc(url, authed) {
     }
     let cancelled = false;
     setSrc(null);
-    axios
-      .get(url, { responseType: "blob" })
-      .then(
-        (res) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(res.data);
-          })
-      )
+    fetchLogoDataUrl(url)
       .then((dataUrl) => {
         if (!cancelled) setSrc(dataUrl);
       })
