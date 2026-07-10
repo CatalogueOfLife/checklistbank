@@ -77,10 +77,12 @@ Structure of the folder:
 - `index.jsx` — `NamesDiffView` (owns the view-toggle state, stats bar, renders one of the two views).
 - `DiffStats.jsx` — the always-on overview: three counts (Removed −N red, Added +N green,
   Changed ~N amber) + a "truncated" warning tag when `diff.truncated`.
-- `ChangedNameRow.jsx` — renders one `ChangedName` from its `chunks[]` as an **inline word-diff**:
-  `equal` text normal, `delete` text red + strikethrough, `insert` text green + underline.
-  Op comparison is case-insensitive. This is the one non-trivial renderer and is unit-testable
-  in isolation (pure function of `chunks`).
+- `ChangedNameRow.jsx` — renders one `ChangedName` as the **full old name → full new name**:
+  the old name is reconstructed from `equal`+`delete` chunks, the new name from `equal`+`insert`
+  chunks, joined by a ` → ` arrow. Only the differing parts are tinted (red in the old name,
+  green in the new); both names stay fully readable. (An earlier inline word-diff that interleaved
+  deletes and inserts on one line was rejected in review — it became unreadable when a delete and
+  insert collided mid-word.) Op comparison is case-insensitive.
 - `diffRows.js` — pure helpers: `mergeSorted(diff)` builds the single sorted list for the Sorted
   view (see below); shared row components for added/removed plain-string rows.
 - `NamesDiffView.css` (or inline styles) — the red/green/amber colors and monospace rows.
@@ -104,7 +106,7 @@ Empty sections (count 0) are hidden.
 (`removed`/`added` by the string; `changed` by `before`). Each row is color/icon-coded:
 - removed → red, `−` prefix, plain string
 - added → green, `+` prefix, plain string
-- changed → amber, `~` prefix, inline word-diff (`ChangedNameRow`)
+- changed → amber, `~` prefix, full `old → new` names (`ChangedNameRow`)
 
 Because backend lists are each pre-sorted, `mergeSorted` is a simple k-way merge (or concat+sort;
 lists are ≤ ~10k). Adjacent removed/added rows surface near-neighbor renames the grouped view

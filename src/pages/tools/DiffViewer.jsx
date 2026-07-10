@@ -253,7 +253,7 @@ const DiffViewer = ({ location, addError, rank }) => {
           <Col flex="auto"></Col>
 
           {diff && !empty && (
-            <Col>  <Tooltip title="Download unified diff">
+            <Col>  <Tooltip title="Download diff as JSON">
               <Button
                 disabled={loading}
                 type="primary"

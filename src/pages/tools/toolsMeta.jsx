@@ -34,7 +34,7 @@ const toolsDescriptions = {
     </>
   ),
   "diff-viewer":
-    "View a unified text diff between two datasets, releases or subtrees to spot added, removed or changed names.",
+    "Compare two datasets, releases or subtrees to spot added, removed or changed names.",
   "taxonomic-alignment":
     "Compare the taxonomic concepts of two datasets (or parts of them), aligning taxa and generating RCC-5 relationships from their synonymy.",
   "dataset-comparison":
