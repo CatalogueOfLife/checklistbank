@@ -20,17 +20,18 @@ const { Title } = Typography;
 // Fall back to the capitalised group name for groups that have no description.
 const capitalize = (s = "") => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-// Name of the currently selected/anchored group. Driving each popover's open
-// state from this shared value (rather than per-node local state) means
-// selecting a new group closes every other group's description, instead of
-// leaving a trail of open popovers behind.
-const ActiveGroupContext = createContext("");
+// Key of the single rendered instance whose description popover is open.
+// Driving each popover from a shared *instance key* (rather than the group name
+// or per-node local state) means: selecting a group closes every other group's
+// description, and — for a group rendered under several parents, e.g. algae —
+// only one occurrence shows the description, not all of them at once.
+const ActivePopoverContext = createContext("");
 
-const TaxGroupTreeNodeTitle = ({ tg }) => {
-  const activeGroup = useContext(ActiveGroupContext);
+const TaxGroupTreeNodeTitle = ({ tg, nodeKey }) => {
+  const activeKey = useContext(ActivePopoverContext);
   return (
     <Popover
-      open={tg["name"] === activeGroup}
+      open={nodeKey === activeKey}
       content={tg["description"] || capitalize(tg["name"])}
     >
       <span style={{ marginLeft: "6px" }}>{tg["name"]}</span>
@@ -56,6 +57,11 @@ const TaxGroupTree = ({ location, navigate }) => {
   // Set when the selection change originates from a user click (rather than an
   // incoming deep link) so the anchor effect below skips the scroll-into-view.
   const suppressScroll = useRef(false);
+  // The one instance key whose description popover is shown. A multi-parent
+  // group is highlighted at every occurrence but described at only one.
+  const [activePopoverKey, setActivePopoverKey] = useState("");
+  // Instance key of the node the user clicked, consumed by the anchor effect.
+  const clickedKey = useRef(null);
 
   useEffect(() => {
     fetch(`${config.dataApi}vocab/taxgroup`)
@@ -99,7 +105,7 @@ const TaxGroupTree = ({ location, navigate }) => {
       }
       return {
         key,
-        title: <TaxGroupTreeNodeTitle tg={tg} />,
+        title: <TaxGroupTreeNodeTitle tg={tg} nodeKey={key} />,
         icon: <Image height={24} src={tg.iconSVG} />,
         children,
       };
@@ -121,6 +127,13 @@ const TaxGroupTree = ({ location, navigate }) => {
     scrollToSelection.current = keys.length > 0 && !suppressScroll.current;
     suppressScroll.current = false;
     setSelectedKeys(keys);
+    // Describe the instance the user clicked; on a deep link (or a stale click
+    // that belongs to another group) fall back to the first occurrence.
+    const clicked = clickedKey.current;
+    clickedKey.current = null;
+    setActivePopoverKey(
+      clicked && keys.includes(clicked) ? clicked : keys[0] || ""
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.hash, treeData]);
 
@@ -129,8 +142,14 @@ const TaxGroupTree = ({ location, navigate }) => {
   // multi-parent group — e.g. both copies of algae — highlights together; the
   // anchor effect above turns the name back into all matching instance keys.
   const onSelect = (keys, info) => {
-    const name = String(info?.node?.key ?? "").split("/").pop();
+    const key = String(info?.node?.key ?? "");
+    const name = key.split("/").pop();
     if (!name) return;
+    // Remember the clicked instance so its — and only its — description shows.
+    // Set it directly too: re-selecting a different occurrence of the already
+    // anchored group still moves the popover even though the hash won't change.
+    clickedKey.current = key;
+    setActivePopoverKey(key);
     suppressScroll.current = true;
     navigate(
       {
@@ -162,10 +181,18 @@ const TaxGroupTree = ({ location, navigate }) => {
       <PageContent>
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto">
-            <Typography.Paragraph>
-              <Link to="/vocabulary/taxgroup">View as a flat list</Link>
-            </Typography.Paragraph>
-            <ActiveGroupContext.Provider value={anchorName(location)}>
+
+          <Typography.Paragraph>
+            Informal and common broad grouping of large taxonomic groups (usually &gt; 50.000 species).
+            These groups often are paraphyletic, but are convenient for broad classifications
+            and match better the application of the nomenclatural codes.
+            Icons provided by <Link to="https://www.phylopic.org">phylopic</Link>.
+            The vocabulary is also available as a <Link to="/vocabulary/taxgroup">flat list</Link>.
+            Use the <Link to="/tools/taxgroup-parser">tax group parser</Link> to assign this vocabulary to your own data.
+            You can also <Link to="https://github.com/CatalogueOfLife/backend/blob/master/parser/src/main/resources/parser/dicts/taxgroup/README.md">read more</Link> about the dictionaries supporting the parser.          
+          </Typography.Paragraph>
+
+            <ActivePopoverContext.Provider value={activePopoverKey}>
               <div ref={treeContainer} className="taxgroup-tree">
                 <Tree
                   showLine={{ showLeafIcon: false }}
@@ -183,7 +210,7 @@ const TaxGroupTree = ({ location, navigate }) => {
                   treeData={treeData}
                 />
               </div>
-            </ActiveGroupContext.Provider>
+            </ActivePopoverContext.Provider>
           </Col>
         </Row>
       </PageContent>
