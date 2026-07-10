@@ -104,8 +104,10 @@ const NameIndexKey = ({ match, addError }) => {
         }
       }
       try {
+        // Same endpoint the Related tab renders from, so the count matches the
+        // rows shown (limit=1 — we only need the envelope's total).
         const relatedres = await axios(
-          `${config.dataApi}nameusage?nidx=${key}`
+          `${config.dataApi}nidx/${key}/usages?limit=1`
         );
         if (relatedres?.data) {
           if (typeof updateCount === "function") {
