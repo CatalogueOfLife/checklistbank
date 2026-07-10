@@ -1,0 +1,19 @@
+.namesdiff-row {
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+.namesdiff-prefix {
+  display: inline-block;
+  width: 1.4em;
+  opacity: 0.6;
+  user-select: none;
+}
+.namesdiff-removed { color: #cf1322; }
+.namesdiff-added { color: #389e0d; }
+/* Differing parts within the full before/after names of a changed row. */
+.namesdiff-del { color: #cf1322; background: #fff1f0; }
+.namesdiff-ins { color: #389e0d; background: #f6ffed; }
+.namesdiff-arrow { color: #8c8c8c; }
+.namesdiff-showall { display: inline-block; margin-top: 4px; }

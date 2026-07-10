@@ -5,8 +5,7 @@ import config from "../../../config";
 import ErrorMsg from "../../../components/ErrorMsg";
 import withRouter from "../../../withRouter";
 import PageContent from "../../../components/PageContent";
-import { Diff2Html } from "diff2html";
-import "diff2html/dist/diff2html.min.css";
+import NamesDiffView from "../../../components/NamesDiffView";
 import _ from "lodash";
 import moment from "dayjs";
 import history from "../../../history";
@@ -124,21 +123,6 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
     getData(location.search);
   }, [location.search]);
 
-  const diff = data;
-  let html;
-  if (diff) {
-    try {
-      html = Diff2Html.getPrettyHtml(diff, {
-        inputFormat: "diff",
-        showFiles: false,
-        matching: "lines",
-        outputFormat: "side-by-side",
-      });
-    } catch (parsingError) {
-      // ignore parse errors in render
-    }
-  }
-
   return (
     <PageContent>
       <Menu dataset={dataset} datasetKey={datasetKey} />
@@ -202,21 +186,12 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
           <Alert type="error" description={<ErrorMsg error={error} />} />
         </Row>
       )}
-      {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
+      {data && !loading && <NamesDiffView diff={data} />}
       {loading && (
         <Row style={{ marginTop: "40px" }}>
           <Col flex="auto"></Col>
           <Col>
             <Spin size="large" />
-          </Col>
-          <Col flex="auto"></Col>
-        </Row>
-      )}
-      {data === "" && (
-        <Row style={{ marginTop: "40px" }}>
-          <Col flex="auto"></Col>
-          <Col>
-            <Empty description="No diff between import attempts" />
           </Col>
           <Col flex="auto"></Col>
         </Row>

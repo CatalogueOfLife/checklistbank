@@ -6,7 +6,6 @@ import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import ToolHeader from "./ToolHeader";
-import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
 import history from "../../history";
 import qs from "query-string";
