@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Link } from "react-router-dom";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
@@ -13,22 +20,21 @@ const { Title } = Typography;
 // Fall back to the capitalised group name for groups that have no description.
 const capitalize = (s = "") => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-const TaxGroupTreeNodeTitle = ({ tg, poVisible = false }) => {
-  const [popOverVisible, setPopOverVisible] = useState(poVisible);
+// Name of the currently selected/anchored group. Driving each popover's open
+// state from this shared value (rather than per-node local state) means
+// selecting a new group closes every other group's description, instead of
+// leaving a trail of open popovers behind.
+const ActiveGroupContext = createContext("");
 
+const TaxGroupTreeNodeTitle = ({ tg }) => {
+  const activeGroup = useContext(ActiveGroupContext);
   return (
-    <span
-      style={{ marginLeft: "6px" }}
-      onClick={() => setPopOverVisible(!popOverVisible)}
+    <Popover
+      open={tg["name"] === activeGroup}
+      content={tg["description"] || capitalize(tg["name"])}
     >
-      <Popover
-        trigger={"click"}
-        open={popOverVisible}
-        content={tg["description"] || capitalize(tg["name"])}
-      >
-        {tg["name"]}
-      </Popover>
-    </span>
+      <span style={{ marginLeft: "6px" }}>{tg["name"]}</span>
+    </Popover>
   );
 };
 
@@ -75,7 +81,6 @@ const TaxGroupTree = ({ location, navigate }) => {
       }
     });
 
-    const target = anchorName(location);
     const keysByName_ = {};
     const expandedKeys_ = [];
 
@@ -94,7 +99,7 @@ const TaxGroupTree = ({ location, navigate }) => {
       }
       return {
         key,
-        title: <TaxGroupTreeNodeTitle tg={tg} poVisible={name === target} />,
+        title: <TaxGroupTreeNodeTitle tg={tg} />,
         icon: <Image height={24} src={tg.iconSVG} />,
         children,
       };
@@ -157,23 +162,28 @@ const TaxGroupTree = ({ location, navigate }) => {
       <PageContent>
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto">
-            <div ref={treeContainer} className="taxgroup-tree">
-              <Tree
-                showLine={{ showLeafIcon: false }}
-                // multiple: a group with several parents is rendered once per
-                // parent; without this rc-tree only highlights the first of an
-                // anchor's occurrences (calcSelectedKeys drops the rest).
-                multiple
-                onSelect={onSelect}
-                selectedKeys={selectedKeys}
-                showIcon={true}
-                switcherIcon={<DownOutlined />}
-                defaultExpandAll={true}
-                onExpand={setExpandedKeys}
-                expandedKeys={expandedKeys}
-                treeData={treeData}
-              />
-            </div>
+            <Typography.Paragraph>
+              <Link to="/vocabulary/taxgroup">View as a flat list</Link>
+            </Typography.Paragraph>
+            <ActiveGroupContext.Provider value={anchorName(location)}>
+              <div ref={treeContainer} className="taxgroup-tree">
+                <Tree
+                  showLine={{ showLeafIcon: false }}
+                  // multiple: a group with several parents is rendered once per
+                  // parent; without this rc-tree only highlights the first of an
+                  // anchor's occurrences (calcSelectedKeys drops the rest).
+                  multiple
+                  onSelect={onSelect}
+                  selectedKeys={selectedKeys}
+                  showIcon={true}
+                  switcherIcon={<DownOutlined />}
+                  defaultExpandAll={true}
+                  onExpand={setExpandedKeys}
+                  expandedKeys={expandedKeys}
+                  treeData={treeData}
+                />
+              </div>
+            </ActiveGroupContext.Provider>
           </Col>
         </Row>
       </PageContent>
