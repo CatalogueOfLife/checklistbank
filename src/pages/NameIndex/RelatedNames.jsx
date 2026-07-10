@@ -41,6 +41,10 @@ const datasetLabelText = (record) =>
     ? `${record.datasetAlias}: ${record.datasetTitle}`
     : record?.datasetTitle;
 
+// Render the expanded classification smaller and indented further than the
+// dataset title in the row above it.
+const classificationStyle = { fontSize: "x-small", paddingLeft: "3rem" };
+
 // Plain scientific name + authorship, used for alphabetical sorting of the
 // name column (the response only carries the HTML label, no plain `label`).
 const plainLabel = (record) =>
@@ -229,10 +233,12 @@ const RelatedNames = ({ match, addError, rank }) => {
         expandable={{
           rowExpandable: (record) => Boolean(record?.classification?.length),
           expandedRowRender: (record) => (
-            <Classification
-              classification={record.classification}
-              baseUri={`/dataset/${record.datasetKey}`}
-            />
+            <div style={classificationStyle}>
+              <Classification
+                classification={record.classification}
+                baseUri={`/dataset/${record.datasetKey}`}
+              />
+            </div>
           ),
         }}
       />
