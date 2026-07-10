@@ -21,8 +21,7 @@ import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import ToolHeader from "./ToolHeader";
-import { Diff2Html } from "diff2html";
-import "diff2html/dist/diff2html.min.css";
+import NamesDiffView from "../../components/NamesDiffView";
 import _ from "lodash";
 import moment from "dayjs";
 import history from "../../history";
@@ -33,8 +32,8 @@ import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 
 const DiffViewer = ({ location, addError, rank }) => {
-  const [html, setHTML] = useState(null);
-  const [diff, setDiff] = useState(null);
+  const [diffData, setDiffData] = useState(null);
+  const [diff, setDiff] = useState(null); // object URL for the JSON download
   const [loading, setLoading] = useState(false);
   const [empty, setEmpty] = useState(false)
   const [datasetKey1, setDatasetKey1] = useState(null);
@@ -79,7 +78,7 @@ const DiffViewer = ({ location, addError, rank }) => {
   }, [location]);
 
   const resetAll = () => {
-    setHTML(null);
+    setDiffData(null);
     setDiff(null);
     setEmpty(false);
     setDatasetKey1(null);
@@ -114,38 +113,35 @@ const DiffViewer = ({ location, addError, rank }) => {
       search // search + `&dataset=${datasetKey1}&dataset2=${datasetKey2}`,
     });
     try {
-      const { data: diff } = await axios(
+      const { data } = await axios(
         `${config.dataApi}dataset/${datasetKey1}/diff/${datasetKey2}${search}${minRank ? "&minRank=" + minRank : ""}${rankFilter ? "&rankFilter=" + rankFilter : ""}${synonyms ? "&synonyms=true" : ""}${showParent ? "&showParent=true" : ""}${showParent ? "&parentRank=" + parentRank : ""}${!authorship ? "&authorship=false" : ""}`
       );
-      let html;
-      if (!diff) {
-        setEmpty(true)
-      }
-      makeFile(diff);
-      html = Diff2Html.getPrettyHtml(diff, {
-        inputFormat: "diff",
-        showFiles: false,
-        matching: "lines",
-        outputFormat: "side-by-side",
-      });
-      setHTML(html);
+      const isEmpty =
+        !data ||
+        data.identical ||
+        ((data.removed?.length ?? 0) === 0 &&
+          (data.added?.length ?? 0) === 0 &&
+          (data.changed?.length ?? 0) === 0);
+      setEmpty(isEmpty);
+      setDiffData(data);
+      makeFile(data);
     } catch (error) {
       addError(error);
-      setHTML(null);
+      setDiffData(null);
     }
 
     setLoading(false);
   };
-  const makeFile = function (text) {
-    var data = new Blob([text], { type: "text/plain" });
-
-    // If we are replacing a previously generated file we need to
-    // manually revoke the object URL to avoid memory leaks.
+  const makeFile = function (obj) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], {
+      type: "application/json",
+    });
+    // Revoke the previous object URL to avoid leaking it.
     if (diff !== null) {
       setDiff(null);
       window.URL.revokeObjectURL(diff);
     }
-    return setDiff(window.URL.createObjectURL(data));
+    return setDiff(window.URL.createObjectURL(blob));
   };
 
   const decorate = async (id, datasetKey_) => {
@@ -262,7 +258,7 @@ const DiffViewer = ({ location, addError, rank }) => {
                 disabled={loading}
                 type="primary"
                 href={diff}
-                download={`dataset${datasetKey1}_dataset${datasetKey2}.diff`}
+                download={`dataset${datasetKey1}_dataset${datasetKey2}.json`}
                 style={{ marginRight: "10px" }}
               >
                 <DownloadOutlined />
@@ -408,7 +404,7 @@ const DiffViewer = ({ location, addError, rank }) => {
 
         </Row>
 
-        {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
+        {diffData && !empty && <NamesDiffView diff={diffData} />}
         {empty && <Empty description="No diff" />}
         {loading && (
           <Row style={{ marginTop: "40px" }}>

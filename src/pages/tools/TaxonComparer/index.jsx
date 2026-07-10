@@ -21,8 +21,6 @@ import withRouter from "../../../withRouter";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import ToolHeader from "../ToolHeader";
-import { Diff2Html } from "diff2html";
-import "diff2html/dist/diff2html.min.css";
 import _ from "lodash";
 import moment from "dayjs";
 import history from "../../../history";
