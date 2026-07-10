@@ -34,10 +34,14 @@ const plainRow = (type, prefix) => (name, i) => (
   </div>
 );
 
-const changedRow = (chunks, key) => (
+const changedRow = (changed, key) => (
   <div key={key} className="namesdiff-row namesdiff-changed">
     <span className="namesdiff-prefix">~</span>
-    <ChangedNameRow chunks={chunks} />
+    <ChangedNameRow
+      chunks={changed.chunks}
+      before={changed.before}
+      after={changed.after}
+    />
   </div>
 );
 
@@ -71,7 +75,7 @@ const NamesDiffView = ({ diff, defaultView = "grouped" }) => {
       children: (
         <CappedList
           items={changed}
-          renderItem={(c, i) => changedRow(c.chunks, `c${i}`)}
+          renderItem={(c, i) => changedRow(c, `c${i}`)}
         />
       ),
     },
@@ -80,7 +84,7 @@ const NamesDiffView = ({ diff, defaultView = "grouped" }) => {
   const sortedRows = mergeSorted(diff);
   const renderSortedRow = (row) =>
     row.type === "changed"
-      ? changedRow(row.value.chunks, row.key)
+      ? changedRow(row.value, row.key)
       : plainRow(row.type, row.type === "removed" ? "−" : "+")(row.value, row.key);
 
   return (

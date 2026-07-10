@@ -12,14 +12,8 @@
 }
 .namesdiff-removed { color: #cf1322; }
 .namesdiff-added { color: #389e0d; }
-.namesdiff-del {
-  color: #cf1322;
-  text-decoration: line-through;
-  background: #fff1f0;
-}
-.namesdiff-ins {
-  color: #389e0d;
-  text-decoration: underline;
-  background: #f6ffed;
-}
+/* Differing parts within the full before/after names of a changed row. */
+.namesdiff-del { color: #cf1322; background: #fff1f0; }
+.namesdiff-ins { color: #389e0d; background: #f6ffed; }
+.namesdiff-arrow { color: #8c8c8c; }
 .namesdiff-showall { display: inline-block; margin-top: 4px; }
