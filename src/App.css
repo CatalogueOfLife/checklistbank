@@ -354,6 +354,13 @@ div.csl-entry {
 .ant-tree-treenode-selected .ant-tag * {
   -webkit-text-fill-color: #fff !important;
 }
+/* The taxgroup vocabulary tree has a light selected-row background and plain
+   (uncolored) group labels, so the white text-fill above just makes the
+   selected label unreadable. Scope it back to the label's own dark color. */
+.taxgroup-tree .ant-tree-treenode-selected .ant-tree-node-content-wrapper,
+.taxgroup-tree .ant-tree-treenode-selected .ant-tree-node-content-wrapper * {
+  -webkit-text-fill-color: currentColor !important;
+}
 
 /* antd 6 renders <Tag color={...}> as pastel-bg + saturated-text. Restore the
    antd-4 look (solid color background + white text) globally for tags that

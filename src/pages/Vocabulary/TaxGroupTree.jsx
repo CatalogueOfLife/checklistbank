@@ -10,6 +10,9 @@ import { DownOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
+// Fall back to the capitalised group name for groups that have no description.
+const capitalize = (s = "") => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
 const TaxGroupTreeNodeTitle = ({ tg, poVisible = false }) => {
   const [popOverVisible, setPopOverVisible] = useState(poVisible);
 
@@ -21,7 +24,7 @@ const TaxGroupTreeNodeTitle = ({ tg, poVisible = false }) => {
       <Popover
         trigger={"click"}
         open={popOverVisible}
-        content={tg["description"]}
+        content={tg["description"] || capitalize(tg["name"])}
       >
         {tg["name"]}
       </Popover>
@@ -34,7 +37,7 @@ const TaxGroupTreeNodeTitle = ({ tg, poVisible = false }) => {
 const anchorName = (location) =>
   decodeURIComponent((location.hash || "").replace(/^#/, ""));
 
-const TaxGroupTree = ({ location }) => {
+const TaxGroupTree = ({ location, navigate }) => {
   const [treeData, setData] = useState([]);
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -44,6 +47,9 @@ const TaxGroupTree = ({ location }) => {
   const keysByName = useRef({});
   const treeContainer = useRef(null);
   const scrollToSelection = useRef(false);
+  // Set when the selection change originates from a user click (rather than an
+  // incoming deep link) so the anchor effect below skips the scroll-into-view.
+  const suppressScroll = useRef(false);
 
   useEffect(() => {
     fetch(`${config.dataApi}vocab/taxgroup`)
@@ -107,10 +113,29 @@ const TaxGroupTree = ({ location }) => {
   useEffect(() => {
     const target = anchorName(location);
     const keys = target ? keysByName.current[target] || [] : [];
-    scrollToSelection.current = keys.length > 0;
+    scrollToSelection.current = keys.length > 0 && !suppressScroll.current;
+    suppressScroll.current = false;
     setSelectedKeys(keys);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.hash, treeData]);
+
+  // Selecting a node replaces any prior selection and deep-links to the group.
+  // We anchor by NAME (not the instance key) so every rendered occurrence of a
+  // multi-parent group — e.g. both copies of algae — highlights together; the
+  // anchor effect above turns the name back into all matching instance keys.
+  const onSelect = (keys, info) => {
+    const name = String(info?.node?.key ?? "").split("/").pop();
+    if (!name) return;
+    suppressScroll.current = true;
+    navigate(
+      {
+        pathname: location.pathname,
+        search: location.search,
+        hash: `#${encodeURIComponent(name)}`,
+      },
+      { replace: true }
+    );
+  };
 
   // Scroll the anchored node into view — but not when the user clicks a node.
   useEffect(() => {
@@ -132,14 +157,14 @@ const TaxGroupTree = ({ location }) => {
       <PageContent>
         <Row style={{ marginTop: "10px" }}>
           <Col flex="auto">
-            <div ref={treeContainer}>
+            <div ref={treeContainer} className="taxgroup-tree">
               <Tree
                 showLine={{ showLeafIcon: false }}
                 // multiple: a group with several parents is rendered once per
                 // parent; without this rc-tree only highlights the first of an
                 // anchor's occurrences (calcSelectedKeys drops the rest).
                 multiple
-                onSelect={(keys) => setSelectedKeys(keys)}
+                onSelect={onSelect}
                 selectedKeys={selectedKeys}
                 showIcon={true}
                 switcherIcon={<DownOutlined />}
