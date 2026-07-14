@@ -24,33 +24,29 @@ const columns = [
     dataIndex: "scientificName",
     key: "scientificName",
     render: (text, record) => (
-      <NavLink to={{ pathname: `/namesindex/${record.id}` }}>{text}</NavLink>
+      <NavLink to={{ pathname: `/namesindex/${record.key}` }}>{text}</NavLink>
     ),
   },
   {
-    title: "Authorship",
-    dataIndex: "authorship",
-    key: "authorship",
-    width: 280,
-  },
-  {
-    title: "Rank",
-    dataIndex: "rank",
-    key: "rank",
-    width: 140,
+    title: "Normalized",
+    dataIndex: "normalized",
+    key: "normalized",
+    render: (text) => (
+      <span style={{ color: "rgba(0,0,0,0.45)" }}>{text}</span>
+    ),
   },
   {
     title: "ID",
-    dataIndex: "id",
-    key: "id",
+    dataIndex: "key",
+    key: "key",
     width: 120,
     render: (text, record) => (
-      <NavLink to={{ pathname: `/namesindex/${record.id}` }}>{text}</NavLink>
+      <NavLink to={{ pathname: `/namesindex/${record.key}` }}>{text}</NavLink>
     ),
   },
 ];
 
-const NameIndexSearch = ({ rank, addError, location }) => {
+const NameIndexSearch = ({ addError, location }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   // The /nidx/pattern service returns a plain list with no total count, so we
@@ -61,10 +57,6 @@ const NameIndexSearch = ({ rank, addError, location }) => {
 
   const params = qs.parse(_.get(location, "search", ""));
   const q = params.q || "";
-  // Canonical search: all canonical names are rank=unranked, so we lock the
-  // rank to unranked and ask the API for canonical=true names only.
-  const canonical = params.canonical === "true";
-  const selectedRank = canonical ? "unranked" : params.rank || null;
   const limit = Number(params.limit) || PAGE_SIZE;
   const offset = Number(params.offset) || 0;
   const page = Math.floor(offset / limit) + 1;
@@ -90,13 +82,10 @@ const NameIndexSearch = ({ rank, addError, location }) => {
       }
       try {
         setLoading(true);
-        // Canonical names all have rank=unranked, so the Canonical toggle asks
-        // for canonical=true; otherwise we search the non-canonical names so
-        // the rank filter and the full set of names are searchable.
         const res = await axios(
-          `${config.dataApi}nidx/pattern?q=${encodeURIComponent(q)}${
-            selectedRank ? "&rank=" + selectedRank : ""
-          }&canonical=${canonical}&offset=${offset}&limit=${limit + 1}`
+          `${config.dataApi}nidx/pattern?q=${encodeURIComponent(
+            q
+          )}&offset=${offset}&limit=${limit + 1}`
         );
         const rows = res?.data || [];
         setHasNext(rows.length > limit);
@@ -111,14 +100,7 @@ const NameIndexSearch = ({ rank, addError, location }) => {
   }, [location.search]);
 
   const updateSearch = (next) => {
-    const merged = {
-      q,
-      rank: params.rank || null,
-      limit,
-      offset,
-      canonical: params.canonical || null,
-      ...next,
-    };
+    const merged = { q, limit, offset, ...next };
     const clean = _.omitBy(
       merged,
       (v) => v === null || v === undefined || v === ""
@@ -128,12 +110,6 @@ const NameIndexSearch = ({ rank, addError, location }) => {
       search: `?${qs.stringify(clean)}`,
     });
   };
-
-  // getRank() yields an array of rank name strings (not objects).
-  const rankOptions = (rank || []).map((r) => ({
-    value: r,
-    label: _.startCase(r),
-  }));
 
   return (
     <Layout
@@ -150,35 +126,6 @@ const NameIndexSearch = ({ rank, addError, location }) => {
               onSearch={(value) => updateSearch({ q: value || null, offset: 0 })}
             />
           </Col>
-          <Col>
-            <Button
-              type={canonical ? "primary" : "default"}
-              onClick={() =>
-                updateSearch(
-                  canonical
-                    ? { canonical: null, rank: null, offset: 0 }
-                    : { canonical: true, rank: null, offset: 0 }
-                )
-              }
-            >
-              Canonical
-            </Button>
-          </Col>
-          <Col>
-            <Select
-              showSearch
-              allowClear
-              placeholder="Rank"
-              style={{ width: "220px" }}
-              value={selectedRank}
-              disabled={canonical}
-              onChange={(value) =>
-                updateSearch({ rank: value || null, offset: 0 })
-              }
-              optionFilterProp="label"
-              options={rankOptions}
-            />
-          </Col>
         </Row>
 
         {q && (
@@ -188,7 +135,7 @@ const NameIndexSearch = ({ rank, addError, location }) => {
               columns={columns}
               dataSource={data}
               loading={loading}
-              rowKey="id"
+              rowKey="key"
               size="small"
               pagination={false}
             />
@@ -253,8 +200,5 @@ const NameIndexSearch = ({ rank, addError, location }) => {
   );
 };
 
-const mapContextToProps = ({ addError, rank }) => ({
-  addError,
-  rank,
-});
+const mapContextToProps = ({ addError }) => ({ addError });
 export default withContext(mapContextToProps)(withRouter(NameIndexSearch));

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
-import { Card, Tabs, Table, Button } from "antd";
+import { Tabs, Table } from "antd";
 import withContext from "../../components/hoc/withContext";
-import Entry, { Authorship } from "./Entry";
+import Entry from "./Entry";
 import RelatedNames from "./RelatedNames";
 import UsageExtension from "./UsageExtension";
 import axios from "axios";
@@ -12,15 +12,29 @@ import config from "../../config";
 import history from "../../history";
 import _ from "lodash";
 
-
-
+// Group tab: the authorship-qualified scientific names bucketed under this
+// canonical names index entry, with how many name usages carry each exact
+// label. Most frequent first.
+const groupColumns = [
+  {
+    title: "Name",
+    dataIndex: "label",
+    key: "label",
+  },
+  {
+    title: "Count",
+    dataIndex: "count",
+    key: "count",
+    width: 120,
+    align: "right",
+    render: (count) => Number(count || 0).toLocaleString(),
+  },
+];
 
 const NameIndexKey = ({ match, addError }) => {
   const [record, setRecord] = useState(null);
-  const [group, setGroup] = useState(null);
   const [count, updateCount] = useState(0);
   const [activeKey, setActiveKey] = useState("1");
-  const [defaultFilteredValue, setDefaultFilteredValue] = useState(null)
   const sections = {
     "2": "group",
     "3": "related",
@@ -31,59 +45,13 @@ const NameIndexKey = ({ match, addError }) => {
   };
   const sectionToKey = _.invert(sections);
 
-  const columns = [
-    {
-      title: "Scientific Name",
-      dataIndex: ["scientificName"],
-      key: "scientificName",
-      /* render: (text, record) => <Button type="link" onClick={() => {
-        setDefaultFilteredValue(record.id)
-        setActiveKey("3")
-      }}>{text}</Button>, */
-      width: 200,
-    },
-    {
-      title: "Rank",
-      dataIndex: ["rank"],
-      key: "rank",
-
-      width: 100,
-    },
-    {
-      title: "Basionym Authorship",
-      dataIndex: ["basionymAuthorship"],
-      key: "basionymAuthorship",
-      render: (text, record) =>
-        record?.basionymAuthorship ? (
-          <Authorship author={record?.basionymAuthorship} />
-        ) : (
-          ""
-        ),
-      width: 200,
-    },
-
-    {
-      title: "Combination Authorship",
-      dataIndex: ["combinationAuthorship"],
-      key: "combinationAuthorship",
-      render: (text, record) =>
-        record?.combinationAuthorship ? (
-          <Authorship author={record?.combinationAuthorship} />
-        ) : (
-          ""
-        ),
-      width: 200,
-    },
-  ];
-
   useEffect(() => {
     const init = async () => {
       setRecord(null);
-      setGroup(null);
       const {
         params: { key, section },
       } = match;
-      setActiveKey(sectionToKey[section] || "1")
+      setActiveKey(sectionToKey[section] || "1");
       try {
         const res = await axios(`${config.dataApi}nidx/${key}`);
         if (res?.data) {
@@ -93,26 +61,13 @@ const NameIndexKey = ({ match, addError }) => {
         addError(err);
       }
       try {
-        const groupres = await axios(`${config.dataApi}nidx/${key}/group`);
-
-        if (groupres?.data) {
-          setGroup(groupres?.data);
-        }
-      } catch (err) {
-        if (err?.response?.status > 499) {
-          addError(err);
-        }
-      }
-      try {
         // Same endpoint the Related tab renders from, so the count matches the
         // rows shown (limit=1 — we only need the envelope's total).
         const relatedres = await axios(
           `${config.dataApi}nidx/${key}/usages?limit=1`
         );
         if (relatedres?.data) {
-          if (typeof updateCount === "function") {
-            updateCount(relatedres?.data?.total);
-          }
+          updateCount(relatedres?.data?.total);
         }
       } catch (err) {
         if (err?.response?.status > 499) {
@@ -130,27 +85,26 @@ const NameIndexKey = ({ match, addError }) => {
     } = match;
     if (sections[activeKey]) {
       history.replace({
-        pathname: `/namesindex/${key}/${sections[activeKey]}`
+        pathname: `/namesindex/${key}/${sections[activeKey]}`,
       });
     } else {
       history.replace({
-        pathname: `/namesindex/${key}`
+        pathname: `/namesindex/${key}`,
       });
     }
-  }
+  };
+
+  // Copy before sorting so the source record's labels array is left untouched.
+  const labels = [...(record?.labels || [])].sort(
+    (a, b) => (b.count || 0) - (a.count || 0)
+  );
 
   return (
     <Layout
-      title={
-        record ? (
-          <span dangerouslySetInnerHTML={{ __html: record.labelHtml }} />
-        ) : (
-          ""
-        )
-      }
+      title={record ? record.scientificName : ""}
       openKeys={["tools"]}
       selectedKeys={["nameIndexKey"]}
-      taxonOrNameKey={record?.id}
+      taxonOrNameKey={record?.nidx}
     >
       <PageContent>
         <Tabs
@@ -163,23 +117,18 @@ const NameIndexKey = ({ match, addError }) => {
               label: "Entry",
               children: record && <Entry record={record} />,
             },
-            ...(group
+            ...(labels.length
               ? [
                   {
                     key: "2",
-                    label: `Group (${group.length})`,
+                    label: `Group (${labels.length})`,
                     children: (
                       <Table
                         size="small"
-                        columns={columns}
-                        dataSource={group}
-                        rowKey="id"
+                        columns={groupColumns}
+                        dataSource={labels}
+                        rowKey="label"
                         pagination={false}
-                        expandable={{
-                          expandedRowRender: (record) => (
-                            <Entry record={record} />
-                          ),
-                        }}
                       />
                     ),
                   },
@@ -188,20 +137,14 @@ const NameIndexKey = ({ match, addError }) => {
             {
               key: "3",
               label: <span>Related ({count})</span>,
-              children: (
-                <RelatedNames
-                  updateCount={updateCount}
-                  group={group ? [record, ...group] : []}
-                  defaultFilteredValue={defaultFilteredValue}
-                />
-              ),
+              children: <RelatedNames />,
             },
             {
               key: "4",
               label: "Properties",
               children: record && (
                 <UsageExtension
-                  nidxKey={record.id}
+                  nidxKey={record.nidx}
                   endpoint="property"
                   description="Taxon properties — key/value facts such as life habit or motility — recorded for usages of this name across all ChecklistBank datasets."
                   columns={[
@@ -217,7 +160,7 @@ const NameIndexKey = ({ match, addError }) => {
               label: "Vernacular",
               children: record && (
                 <UsageExtension
-                  nidxKey={record.id}
+                  nidxKey={record.nidx}
                   endpoint="vernacular"
                   description="Common (vernacular) names recorded for usages of this name across all ChecklistBank datasets."
                   columns={[
@@ -239,7 +182,7 @@ const NameIndexKey = ({ match, addError }) => {
               label: "Distribution",
               children: record && (
                 <UsageExtension
-                  nidxKey={record.id}
+                  nidxKey={record.nidx}
                   endpoint="distribution"
                   description="Geographic distributions recorded for usages of this name across all ChecklistBank datasets."
                   columns={[
@@ -275,7 +218,7 @@ const NameIndexKey = ({ match, addError }) => {
               label: "Media",
               children: record && (
                 <UsageExtension
-                  nidxKey={record.id}
+                  nidxKey={record.nidx}
                   endpoint="media"
                   gallery
                   description="Images and other media linked to usages of this name across all ChecklistBank datasets."
