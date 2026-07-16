@@ -338,7 +338,7 @@ const TaxAlign = ({ location, addError }) => {
         onCancel={() => setSubmittedJob(null)}
       >
         <p>
-          The data is being processed. You will recieive an email shortly with
+          The data is being processed. You will receive an email shortly with
           instructions on how to download the results.
         </p>
       </Modal>
