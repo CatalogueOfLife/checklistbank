@@ -10,6 +10,7 @@ import {
   Descriptions,
   Tag,
   Spin,
+  Space,
   Empty,
   App,
 } from "antd";
@@ -79,6 +80,23 @@ const MatcherAdmin = () => {
       .catch((err) => setError(err));
   };
 
+  // Only offered for private datasets: those get their matcher on demand and it otherwise lingers until the
+  // backend's onDemandTtlDays expiry. A published dataset's matcher is required by the matcher invariant and
+  // reconcile would simply build it again.
+  const deleteMatcher = (datasetKey) => {
+    axios
+      .delete(`${config.dataApi}matcher/${datasetKey}`)
+      .then(() => {
+        setError(null);
+        setMetadata(null);
+        notification.open({
+          message: "Matcher deleted",
+          description: `The matcher for dataset ${datasetKey} has been removed`,
+        });
+      })
+      .catch((err) => setError(err));
+  };
+
   const rebuildAll = (force) => {
     axios
       .post(`${config.dataApi}matcher/rebuild?force=${force}`)
@@ -127,7 +145,10 @@ const MatcherAdmin = () => {
         <p>
           Dataset matchers are file based indices of a dataset used for
           db independent matching services. Every published external dataset and
-          release has a matcher; projects do not.
+          release has a matcher; projects do not. A private dataset gets one only
+          on demand, the first time somebody matches against it, and it is dropped
+          again once nobody has used it for a while — those are the ones that can be
+          deleted here.
           {threshold > 0 && (
             <>
               {" "}
@@ -182,18 +203,35 @@ const MatcherAdmin = () => {
                 column={1}
                 style={{ marginTop: 16 }}
                 extra={
-                  <Button
-                    type="primary"
-                    onClick={() => rebuildDataset(dataset.key)}
-                  >
-                    Rebuild
-                  </Button>
+                  <Space>
+                    {dataset.privat && (
+                      <Popconfirm
+                        title="Delete this matcher? It is rebuilt the next time somebody matches against this private dataset."
+                        onConfirm={() => deleteMatcher(dataset.key)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button danger>Delete</Button>
+                      </Popconfirm>
+                    )}
+                    <Button
+                      type="primary"
+                      onClick={() => rebuildDataset(dataset.key)}
+                    >
+                      Rebuild
+                    </Button>
+                  </Space>
                 }
               >
                 <Descriptions.Item label="Dataset">
                   <NavLink to={{ pathname: `/dataset/${dataset.key}/names` }} end>
                     {dataset.alias || dataset.title} [{dataset.key}]
                   </NavLink>
+                  {dataset.privat && (
+                    <Tag color="purple" style={{ marginLeft: 8 }}>
+                      private
+                    </Tag>
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item label="Origin">
                   {dataset.origin}

@@ -71,6 +71,13 @@ const MAX_LIST_SIZE = 6000;
 // and the user must switch to asynchronous mode.
 const MAX_SYNC_SIZE = 5000;
 
+// A large dataset gets its matching index built the first time somebody matches against it — most
+// commonly a private dataset, which only ever gets one on demand. Until it is ready the API 503s
+// every single name, so we stop the queue and explain once instead of filling the table with misses.
+const MATCHER_BUILDING_MSG =
+  "ChecklistBank is still preparing the matching index for this dataset. This happens once per dataset " +
+  "and can take a few minutes for large ones — please try again shortly.";
+
 const { Dragger } = Upload;
 const classificationRanks = ["kingdom", "phylum", "class", "order", "family", "genus"];
 const API_HINT_PARAMS = [
@@ -313,7 +320,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
     return nidxParams;
   };
 
-  const match = async (name) => {
+  const match = async (name, ctx) => {
     try {
       let params = matchParams(name);
 
@@ -351,6 +358,11 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         name.secondaryApilink = `${config.dataApi}dataset/${secondaryDataset.key}/match/nameusage${params}&verbose=true`;
       }
     } catch (error) {
+      if (error?.response?.status === 503 && ctx) {
+        // the matching index is still being built — every remaining name would fail the same way
+        ctx.matcherBuilding = true;
+        return;
+      }
       name.matchType = "none";
       name.error = error;
       console.log(error);
@@ -395,16 +407,27 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
     setStep(2);
     let matchedNames = 0;
     const queue = new PQueue({ concurrency: 10 });
+    const ctx = { matcherBuilding: false };
 
     result.map((name) =>
       queue.add(() =>
-        match(name).then(() => {
-          matchedNames++;
-          setNumMatchedNames(matchedNames);
-        })
+        // once the API reports the index is still building, the queued names are skipped rather than
+        // each producing an identical failure
+        ctx.matcherBuilding
+          ? Promise.resolve()
+          : match(name, ctx).then(() => {
+              matchedNames++;
+              setNumMatchedNames(matchedNames);
+            })
       )
     );
     await queue.onIdle();
+
+    if (ctx.matcherBuilding) {
+      setError(MATCHER_BUILDING_MSG);
+      setStep(1);
+      return;
+    }
 
     const grouped = _.groupBy(result, "matchType");
     let metrics = {};
@@ -1022,10 +1045,11 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
                   style={{ paddingRight: "8px" }}
                   span={!secondaryDataset || asyncMode ? 12 : 10}
                 >
+                  {/* no notPrivate: the dataset search is already scoped to the datasets this user
+                      edits or reviews, so private ones only ever show up for the people who own them */}
                   <DatasetAutocomplete
                     defaultDatasetKey={primaryDataset?.key}
                     origin={["external", "release", "xrelease"]}
-                    notPrivate
                     onResetSearch={() => {
                       setPrimaryDataset(null);
                     }}
@@ -1064,7 +1088,6 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
                           secondaryDataset ? secondaryDataset.key : null
                         }
                         origin={["external", "release", "xrelease"]}
-                        notPrivate
                         onResetSearch={() => {
                           setSecondaryDataset(null);
                         }}
