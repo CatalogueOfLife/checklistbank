@@ -32,6 +32,7 @@ import WorkBench from "../WorkBench";
 
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
+import { isLive } from "../../api/job";
 import { Helmet } from "react-helmet-async";
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
@@ -55,26 +56,25 @@ const DatasetPage = (props) => {
     },
     location,
     dataset,
-    importStateMap,
     user,
   } = props;
 
-  const [importState, setImportState] = useState(null);
+  const [lastImport, setLastImport] = useState(null);
   const [lastSuccesFullImport, setLastSuccesFullImport] = useState(null);
 
   const getData = (key) => {
     Promise.all([
       axios(`${config.dataApi}dataset/${key}/import`),
-      axios(`${config.dataApi}dataset/${key}/import?state=finished`),
+      axios(`${config.dataApi}dataset/${key}/import?status=finished`),
     ])
       .then((res) => {
         const state = _.get(res[0], "data[0]") || null;
         const hasData = res[1].data.length > 0;
-        setImportState(state);
+        setLastImport(state);
         setLastSuccesFullImport(hasData ? _.get(res, "[1].data[0]") : null);
       })
       .catch(() => {
-        setImportState(null);
+        setLastImport(null);
       });
   };
 
@@ -143,23 +143,23 @@ const DatasetPage = (props) => {
           type="error"
         />
       )}
-      {importState &&
-        _.get(importStateMap[importState.state], "running") === "true" && (
+      {lastImport &&
+        isLive(lastImport.status) && (
           <Alert
             style={{ marginTop: "16px" }}
             title="The dataset is currently being imported. Data may be inconsistent."
             type="warning"
           />
         )}
-      {importState &&
-        importState.state === "failed" &&
+      {lastImport &&
+        lastImport.status === "failed" &&
         section === "imports" && (
           <Alert
             style={{ marginTop: "16px" }}
             title={`Last ${_.startCase(
-              importState.job
+              lastImport.job
             )} of this dataset failed.`}
-            description={importState.error}
+            description={lastImport.error}
             type="error"
           />
         )}
@@ -309,9 +309,8 @@ const DatasetPage = (props) => {
   );
 };
 
-const mapContextToProps = ({ dataset, importStateMap, user }) => ({
+const mapContextToProps = ({ dataset, user }) => ({
   dataset,
-  importStateMap,
   user,
 });
 export default withRouter(withContext(mapContextToProps)(DatasetPage));

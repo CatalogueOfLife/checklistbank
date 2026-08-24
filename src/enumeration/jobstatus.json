@@ -1,0 +1,38 @@
+[
+  {
+    "done": false,
+    "name": "waiting",
+    "queued": true,
+    "running": false
+  },
+  {
+    "done": false,
+    "name": "blocked",
+    "queued": true,
+    "running": false
+  },
+  {
+    "done": false,
+    "name": "running",
+    "queued": false,
+    "running": true
+  },
+  {
+    "done": true,
+    "name": "finished",
+    "queued": false,
+    "running": false
+  },
+  {
+    "done": true,
+    "name": "canceled",
+    "queued": false,
+    "running": false
+  },
+  {
+    "done": true,
+    "name": "failed",
+    "queued": false,
+    "running": false
+  }
+]

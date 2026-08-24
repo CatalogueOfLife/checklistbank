@@ -21,6 +21,8 @@ import DataLoader from "dataloader";
 import { getUsersBatch } from "../../api/user";
 import ImportMenu from "./Menu";
 import qs from "query-string";
+import JobStatusTag from "../../components/job/JobStatusTag";
+import { isLive } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -28,7 +30,6 @@ const DatasetImportMetrics = (props) => {
   const {
     match,
     updateImportState,
-    importState,
     dataset,
     user,
     origin,
@@ -55,14 +56,8 @@ const DatasetImportMetrics = (props) => {
   const timerRef = useRef(null);
 
   const getHistory = () => {
-    return axios(
-      `${
-        config.dataApi
-      }dataset/${datasetKey}/import?limit=100${"WAITING, PREPARING, DOWNLOADING, PROCESSING, DELETING, INSERTING, MATCHING, INDEXING, ANALYZING, ARCHIVING, EXPORTING, FINISHED, CANCELED, FAILED"
-        .split(", ")
-        .map((st) => "&state=" + st)
-        .join("")}`
-    )
+    // no status filter - we want every attempt, running ones included
+    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=100`)
       .then((res) => {
         return Promise.all(
           res.data.map((hist) =>
@@ -71,19 +66,8 @@ const DatasetImportMetrics = (props) => {
         ).then(() => res);
       })
       .then((res) => {
-        const lastFinished = res.data.find((e) => e.state === "finished");
         const newHasImportDiff =
-          res.data.filter((e) => e.state === "finished").length > 0;
-        if (
-          !attempt &&
-          data &&
-          data.state === "unchanged" &&
-          lastFinished
-        ) {
-          history.push(
-            `/dataset/${datasetKey}/imports/${lastFinished.attempt}`
-          );
-        }
+          res.data.filter((e) => e.status === "finished").length > 0;
         setImportHistory(res.data);
         setHasImportDiff(newHasImportDiff);
         return res;
@@ -107,13 +91,7 @@ const DatasetImportMetrics = (props) => {
         });
       })
       .then((d) => {
-        if (
-          d &&
-          importState
-            .filter((i) => i.running)
-            .map((i) => i.name)
-            .includes(d.state)
-        ) {
+        if (d && isLive(d.status)) {
           if (!timerRef.current) {
             timerRef.current = setInterval(() => {
               getData_(currentAttempt);
@@ -160,18 +138,13 @@ const DatasetImportMetrics = (props) => {
     };
   }, []);
 
-  const isRunning =
-    data &&
-    importState
-      .filter((i) => i.running)
-      .map((i) => i.name)
-      .includes(data.state);
+  const isRunning = data && isLive(data.status);
 
   return (
     <PageContent>
       {!["xrelease", "release"].includes(origin) && (
         <ImportMenu
-          isFinished={data?.state === "finished"}
+          isFinished={data?.status === "finished"}
           dataset={dataset}
           datasetKey={datasetKey}
           attempt={attempt || data?.attempt}
@@ -233,7 +206,7 @@ const DatasetImportMetrics = (props) => {
       {data && isRunning && (
         <Spin>
           <Alert
-            title={_.startCase(data.state)}
+            title={<JobStatusTag status={data.status} step={data.step} />}
             description={`The ${
               ["project"].includes(origin) ? "Release" : "Import"
             } is not finished`}
@@ -250,7 +223,7 @@ const DatasetImportMetrics = (props) => {
           History
         </Button>
       )}
-      {data && data.state === "failed" && (
+      {data && data.status === "failed" && (
         <Row style={{ padding: "10px" }}>
           <Alert type="error" title={data.error} />
         </Row>
@@ -318,10 +291,9 @@ const DatasetImportMetrics = (props) => {
   );
 };
 
-const mapContextToProps = ({ user, dataset, importState, projectKey }) => ({
+const mapContextToProps = ({ user, dataset, projectKey }) => ({
   user,
   dataset,
-  importState,
   projectKey,
 });
 

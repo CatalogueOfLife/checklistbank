@@ -27,7 +27,8 @@ import SearchBox from "./SearchBox";
 import ToolHeader from "../tools/ToolHeader";
 import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
-import ImportButton from "../../pages/Imports/importTabs/ImportButton";
+import ImportButton from "../../components/job/ImportButton";
+import JobStatusTag from "../../components/job/JobStatusTag";
 import withContext from "../../components/hoc/withContext";
 import PublisherFilterDropdown from "./PublisherFilterDropdown";
 import DatasetDetails from "./DatasetDetails";
@@ -74,16 +75,6 @@ const formItemLayout = {
   },
 };
 
-const tagColors = {
-  processing: "purple",
-  downloading: "cyan",
-  inserting: "blue",
-  finished: "green",
-  released: "green",
-  failed: "red",
-  waiting: "orange",
-};
-
 const DatasetList = ({
   user,
   datasetType,
@@ -91,7 +82,7 @@ const DatasetList = ({
   license,
   projectKey,
   recentDatasets,
-  importState,
+  jobStatus,
   taxGroup,
   addError,
   location,
@@ -456,13 +447,9 @@ const DatasetList = ({
       dataIndex: "lastImportState",
       key: "lastImportState",
       width: 120,
-      render: (text, record) => {
-        return (
-          <Tag color={tagColors[record?.lastImportState]}>
-            {record?.lastImportState}
-          </Tag>
-        );
-      },
+      render: (text, record) => (
+        <JobStatusTag status={record?.lastImportState} />
+      ),
     },
     {
       title: "Issued",
@@ -545,8 +532,8 @@ const DatasetList = ({
     defaultColumns[10].filteredValue = null;
   }
 
-  defaultColumns[14].filters = importState
-    ? importState.map((i) => ({ text: _.startCase(i?.name), value: i.name }))
+  defaultColumns[14].filters = jobStatus
+    ? jobStatus.map((i) => ({ text: _.startCase(i?.name), value: i.name }))
     : [];
   if (params.lastImportState) {
     defaultColumns[14].filteredValue = _.isArray(params.lastImportState)
@@ -897,7 +884,7 @@ const mapContextToProps = ({
   license,
   projectKey,
   recentDatasets,
-  importState,
+  jobStatus,
   taxGroup,
   addError,
 }) => ({
@@ -907,7 +894,7 @@ const mapContextToProps = ({
   license,
   projectKey,
   recentDatasets,
-  importState,
+  jobStatus,
   taxGroup,
   addError,
 });

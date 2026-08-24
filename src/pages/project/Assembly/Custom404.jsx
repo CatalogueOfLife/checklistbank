@@ -1,6 +1,6 @@
 import { useState } from "react";
 import _ from "lodash";
-import ImportButton from "../../Imports/importTabs/ImportButton";
+import ImportButton from "../../../components/job/ImportButton";
 import { Button } from "antd";
 import AddChildModal from "./AddChildModal";
 

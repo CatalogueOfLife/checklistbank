@@ -18,7 +18,6 @@ import ErrorMsg from "../ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
 import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
-import Sync from "./Sync";
 import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill";
@@ -262,7 +261,6 @@ const SiteLayout = ({
             <JobQueue />
             <Health />
             <UserMenu />
-            <Sync />
           </div>
         </Header>
 

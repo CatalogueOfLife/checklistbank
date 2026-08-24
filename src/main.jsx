@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import duration from "dayjs/plugin/duration";
 import "antd/dist/reset.css";
 import "./index.css";
 import App from "./App";
@@ -16,6 +17,8 @@ import installTranslationCrashGuard from "./installTranslationCrashGuard";
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
+// duration powers the job runtime column - see src/components/job/JobDuration
+dayjs.extend(duration);
 
 // Stop browser page-translation from crashing React's reconciler. Must run
 // before the app renders. See installTranslationCrashGuard for the full why.

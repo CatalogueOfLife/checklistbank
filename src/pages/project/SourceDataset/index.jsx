@@ -19,6 +19,7 @@ import Name from "../../Name";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
+import { isLive } from "../../../api/job";
 import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 
@@ -31,10 +32,9 @@ const DatasetPage = (props) => {
     },
     location,
     sourceDataset,
-    importStateMap,
   } = props;
 
-  const [importState, setImportState] = useState(null);
+  const [lastImport, setLastImport] = useState(null);
   const [lastSuccesFullImport, setLastSuccesFullImport] = useState(null);
   // Access to the source dataset itself. A private source the current user
   // cannot read returns 403 on its plain /dataset/{key}/* endpoints, which
@@ -46,17 +46,17 @@ const DatasetPage = (props) => {
   const getData = (key) => {
     Promise.all([
       axios(`${config.dataApi}dataset/${key}/import`),
-      axios(`${config.dataApi}dataset/${key}/import?state=finished`),
+      axios(`${config.dataApi}dataset/${key}/import?status=finished`),
     ])
       .then((res) => {
         const state = _.get(res[0], "data[0]") || null;
         const hasData = res[1].data.length > 0;
-        setImportState(state);
+        setLastImport(state);
         setLastSuccesFullImport(hasData ? _.get(res, "[1].data[0]") : null);
         setAccess("ok");
       })
       .catch((err) => {
-        setImportState(null);
+        setLastImport(null);
         // Only a 403 means the source is private/forbidden; other failures
         // (e.g. network) should not hide the page behind the private notice.
         setAccess(_.get(err, "response.status") === 403 ? "forbidden" : "ok");
@@ -99,19 +99,19 @@ const DatasetPage = (props) => {
           type="error"
         />
       )}
-      {importState &&
-        _.get(importStateMap[importState.state], "running") === "true" && (
+      {lastImport &&
+        isLive(lastImport.status) && (
           <Alert
             style={{ marginTop: "16px" }}
             title="The dataset is currently being imported. Data may be inconsistent."
             type="warning"
           />
         )}
-      {importState && importState.state === "failed" && (
+      {lastImport && lastImport.status === "failed" && (
         <Alert
           style={{ marginTop: "16px" }}
           title={`Last ${_.startCase(
-            importState.job
+            lastImport.job
           )} of this dataset failed.`}
           type="error"
         />
@@ -217,8 +217,7 @@ const DatasetPage = (props) => {
   );
 };
 
-const mapContextToProps = ({ sourceDataset, importStateMap }) => ({
+const mapContextToProps = ({ sourceDataset }) => ({
   sourceDataset,
-  importStateMap,
 });
 export default withRouter(withContext(mapContextToProps)(DatasetPage));

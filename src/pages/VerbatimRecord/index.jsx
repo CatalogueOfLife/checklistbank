@@ -35,7 +35,7 @@ const VerbatimRecord = (props) => {
 
   const getIssues = (datasetKey) => {
     axios(
-      `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=finished`
+      `${config.dataApi}dataset/${datasetKey}/import?limit=1&status=finished`
     )
       .then((res) => {
         const issuesCount = _.get(res, "data[0].issuesCount", {});

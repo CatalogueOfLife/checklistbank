@@ -19,7 +19,7 @@ import {
   ToolOutlined,
 } from "@ant-design/icons";
 
-import { Menu as AntdMenu } from "antd";
+import { Menu as AntdMenu, Badge } from "antd";
 import Logo from "./Logo";
 import _ from "lodash";
 import Auth from "../Auth";
@@ -28,6 +28,7 @@ import config from "../../config";
 
 import SourceSelect from "./SourceDatasetSelect";
 import { truncate } from "../util";
+import { JOB_LANE } from "../../api/job";
 
 const BasicMenu = (props) => {
   const {
@@ -46,7 +47,16 @@ const BasicMenu = (props) => {
     collapsed,
     setSelectedKeys,
     setOpenKeys,
+    projectJobQueue,
   } = props;
+
+  // Running and queued sector syncs of the open project. Replaces the old
+  // sync-state widget: syncs are ordinary background jobs now, so this comes
+  // off the same GET /job?datasetKey= poll as everything else.
+  const syncCount = [
+    ...(projectJobQueue?.running || []),
+    ...(projectJobQueue?.queued || []),
+  ].filter((j) => j.lane === JOB_LANE.SYNC).length;
 
   useEffect(() => {
     if (openKeys) {
@@ -320,10 +330,10 @@ const BasicMenu = (props) => {
       ),
       children: [
         {
-          key: "backgroundImports",
+          key: "backgroundJobs",
           label: (
-            <NavLink to={{ pathname: "/imports" }}>
-              <span>Imports</span>
+            <NavLink to={{ pathname: "/jobs" }}>
+              <span>Background jobs</span>
             </NavLink>
           ),
         },
@@ -358,14 +368,6 @@ const BasicMenu = (props) => {
                 label: (
                   <NavLink to={{ pathname: "/admin/matcher" }}>
                     <span>Matcher</span>
-                  </NavLink>
-                ),
-              },
-              {
-                key: "backgroundJobs",
-                label: (
-                  <NavLink to={{ pathname: "/admin/jobs" }}>
-                    <span>Background jobs</span>
                   </NavLink>
                 ),
               },
@@ -435,6 +437,14 @@ const BasicMenu = (props) => {
               <NavLink to={{ pathname: `/project/${projectKey}/sector` }}>
                 {/* <PartitionOutlined /> */}
                 <span>Sectors</span>
+                {syncCount > 0 && (
+                  <Badge
+                    count={syncCount}
+                    color="blue"
+                    style={{ marginLeft: "6px" }}
+                    title={`${syncCount} sector syncs running or queued`}
+                  />
+                )}
               </NavLink>
             ),
           },
@@ -1080,6 +1090,7 @@ const BasicMenu = (props) => {
 const mapContextToProps = ({
   user,
   // recentDatasets,
+  projectJobQueue,
   projectKey,
   dataset,
   sourceDataset,
@@ -1091,6 +1102,7 @@ const mapContextToProps = ({
 }) => ({
   user,
   // recentDatasets,
+  projectJobQueue,
   projectKey,
   dataset,
   sourceDataset,

@@ -125,7 +125,7 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
 
   const getHistory = () => {
     return axios(
-      `${config.dataApi}dataset/${datasetKey}/import?limit=250&state=finished`
+      `${config.dataApi}dataset/${datasetKey}/import?limit=250&status=finished`
     )
       .then((res) => {
         const newGroups = Object.keys(res.data[0]).filter(

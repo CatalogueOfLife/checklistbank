@@ -14,23 +14,14 @@ import { RiNodeTree } from "react-icons/ri";
 import { Timeline, Tooltip } from "antd";
 import moment from "dayjs";
 import { NavLink } from "react-router-dom";
-import kibanaQuery from "../Imports/importTabs/kibanaQuery";
+import { datasetLogQuery as kibanaQuery } from "../../components/job/kibanaQuery";
 import _ from "lodash";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
-
-const tagColors = {
-  processing: "purple",
-  downloading: "cyan",
-  inserting: "blue",
-  finished: "green",
-  failed: "red",
-  "in queue": "orange",
-};
+import { STATUS_COLOR } from "../../components/job/JobStatusTag";
+import { isRunning } from "../../api/job";
 
 const getDot = (h, attempt) => {
-  if (
-    ["processing", "downloading", "inserting", "analyzing"].includes(h.state)
-  ) {
+  if (isRunning(h.status)) {
     return <LoadingOutlined />;
   } else {
     return attempt && attempt === h.attempt.toString() ? (
@@ -42,7 +33,7 @@ const getDot = (h, attempt) => {
 const getPreviousFinishedImport = (importHistory, index) => {
   const prevHistory = importHistory.slice(index + 1);
   return _.get(
-    prevHistory.filter((h) => h.state === "finished"),
+    prevHistory.filter((h) => h.status === "finished"),
     "[0].attempt"
   );
 };
@@ -52,13 +43,13 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
     {importHistory.map((h, index) => (
       <Timeline.Item
         key={h.attempt}
-        color={tagColors[h.state]}
+        color={STATUS_COLOR[h.status]}
         dot={getDot(h, attempt)}
       >
-        {["finished", "failed", "unchanged"].indexOf(h.state) === -1 && (
-          <strong>{h.state}</strong>
+        {!["finished", "failed"].includes(h.status) && (
+          <strong>{h.step || h.status}</strong>
         )}
-        {h.state === "finished" && (
+        {h.status === "finished" && (
           <React.Fragment>
             <NavLink
               to={{
@@ -67,7 +58,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
               end
             >
               <strong>
-                {`${h.state}`}{" "}
+                {`${h.status}`}{" "}
                 {"upload" in h &&
                   (_.get(h, "upload") ? (
                     <UploadOutlined />
@@ -150,7 +141,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
           </React.Fragment>
         )}
 
-        {h.state === "failed" && (
+        {h.status === "failed" && (
           <React.Fragment>
             <NavLink
               to={{
@@ -158,7 +149,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
               }}
               end
             >
-              <strong>{`${h.state}`}</strong>
+              <strong>{`${h.status}`}</strong>
             </NavLink>{" "}
             <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
               <a

@@ -14,7 +14,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import BooleanValue from "../../../components/BooleanValue";
 import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "../../project/Options/DeleteOrphansButton";
-import ImportButton from "../../Imports/importTabs/ImportButton";
+import ImportButton from "../../../components/job/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
 
 const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {

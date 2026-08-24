@@ -31,14 +31,14 @@ import { debounce } from "lodash";
 import SectorForm from "./SectorForm";
 import PresentationItem from "../../../components/PresentationItem";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
+import { JOB_LANE } from "../../../api/job";
 
 const Sector = ({
   taxon,
   user,
   projectKey,
-  syncState,
-  syncingSector,
-  getSyncState,
+  projectJobQueue,
+  getProjectJobQueue,
   decisionCallback,
   reloadSelfAndSiblings,
   onDeleteSector,
@@ -61,8 +61,17 @@ const Sector = ({
     }
   };
 
-  const syncSector = (sector, syncState, syncingSector) => {
-    const { idle } = syncState;
+  // Running and queued sector syncs of this project, from the generic job
+  // queue - sector syncs are ordinary background jobs now.
+  const runningSectorKeys = (projectJobQueue?.running || [])
+    .filter((j) => j.lane === JOB_LANE.SYNC)
+    .map((j) => j.sectorKey);
+  const queuedSectorKeys = (projectJobQueue?.queued || [])
+    .filter((j) => j.lane === JOB_LANE.SYNC)
+    .map((j) => j.sectorKey);
+
+  const syncSector = (sector) => {
+    const idle = runningSectorKeys.length === 0;
     axios
       .post(`${config.dataApi}dataset/${projectKey}/sector/sync`, {
         sectorKey: sector.id,
@@ -74,16 +83,12 @@ const Sector = ({
         // If there is no sync jobs running, try to give the backend a chance to insert the root node again
         debounce(reloadSelfAndSiblings, 1500)();
         // reloadSelfAndSiblings();
-        getSyncState();
+        getProjectJobQueue();
         notification.open({
           message: idle ? "Sync started" : "Sync queued",
-          description:
-            !syncingSector && idle
-              ? `Copying taxa from ${sector.id}`
-              : `Awaiting sector ${_.get(syncingSector, "id")} (${_.get(
-                  syncingSector,
-                  "subject.name"
-                )})`,
+          description: idle
+            ? `Copying taxa from ${sector.id}`
+            : `Awaiting ${runningSectorKeys.length} running and ${queuedSectorKeys.length} queued syncs`,
         });
       })
       .catch((err) => {
@@ -270,13 +275,13 @@ const Sector = ({
                   </Popconfirm>
                   <br />
 
-                  {_.get(syncState, "running.sectorKey") !== sector.id && (
+                  {!runningSectorKeys.includes(sector.id) && (
                     <>
                       <Button
                         style={{ marginTop: "8px", width: "100%" }}
                         type="primary"
                         onClick={() => {
-                          syncSector(sector, syncState, syncingSector);
+                          syncSector(sector);
                         }}
                       >
                         Sync sector
@@ -405,13 +410,12 @@ const Sector = ({
             />
           )}
           {sectorSourceDataset.alias || sectorSourceDataset.key}
-          {_.get(syncState, "running.sectorKey") === sector.id && (
+          {runningSectorKeys.includes(sector.id) && (
             <SyncOutlined style={{ marginLeft: "5px" }} spin />
           )}
-          {_.find(
-            _.get(syncState, "queued"),
-            (e) => e.sectorKey === sector.id
-          ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
+          {queuedSectorKeys.includes(sector.id) && (
+            <HistoryOutlined style={{ marginLeft: "5px" }} />
+          )}
           {sector?.subject?.broken === true && (
             <WarningOutlined
               style={{ fontSize: "16px", marginRight: "4px" }}
@@ -485,14 +489,14 @@ const Sector = ({
               )}
               {isRootSectorInSourceTree &&
                 missingTargetKeys[_.get(sector, "target.id")] !== true &&
-                _.get(syncState, "running.sectorKey") !== sector.id && (
+                !runningSectorKeys.includes(sector.id) && (
                   <>
                     <CanEditDataset dataset={{ key: projectKey }}>
                       <Button
                         style={{ marginTop: "8px", width: "100%" }}
                         type="primary"
                         onClick={() => {
-                          syncSector(sector, syncState, syncingSector);
+                          syncSector(sector);
                         }}
                       >
                         Sync sector
@@ -566,13 +570,12 @@ const Sector = ({
               />
             )}
             {sectorSourceDataset.alias || sectorSourceDataset.key}
-            {_.get(syncState, "running.sectorKey") === sector.id && (
+            {runningSectorKeys.includes(sector.id) && (
               <SyncOutlined style={{ marginLeft: "5px" }} spin />
             )}
-            {_.find(
-              _.get(syncState, "queued"),
-              (e) => e.sectorKey === sector.id
-            ) && <HistoryOutlined style={{ marginLeft: "5px" }} />}
+            {queuedSectorKeys.includes(sector.id) && (
+              <HistoryOutlined style={{ marginLeft: "5px" }} />
+            )}
             {sector?.subject?.broken === true && (
               <WarningOutlined
                 style={{ fontSize: "16px", marginRight: "4px" }}
@@ -588,8 +591,7 @@ const Sector = ({
 const mapContextToProps = ({
   user,
   projectKey,
-  syncState,
-  syncingSector,
-  getSyncState,
-}) => ({ user, projectKey, syncState, syncingSector, getSyncState });
+  projectJobQueue,
+  getProjectJobQueue,
+}) => ({ user, projectKey, projectJobQueue, getProjectJobQueue });
 export default withContext(mapContextToProps)(Sector);

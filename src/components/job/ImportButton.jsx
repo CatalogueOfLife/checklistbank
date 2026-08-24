@@ -2,11 +2,18 @@ import { useState } from "react";
 import { WarningOutlined } from "@ant-design/icons";
 import { Button, Popover, App } from "antd";
 import axios from "axios";
-import config from "../../../config";
-import ErrorMsg from "../../../components/ErrorMsg";
-import withContext from "../../../components/hoc/withContext";
+import config from "../../config";
+import ErrorMsg from "../ErrorMsg";
+import { isQueued, isLive } from "../../api/job";
 
-const ImportButton = ({ record, style, importState, reImport, onStartImportSuccess, onDeleteSuccess }) => {
+/**
+ * Import / Reimport / Stop / Cancel for one dataset.
+ *
+ * Still driven by the dedicated /importer endpoints rather than the generic
+ * job API: those carry their own editor role check and take a dataset key,
+ * which is what every call site has.
+ */
+const ImportButton = ({ record, style, reImport, onStartImportSuccess, onDeleteSuccess }) => {
   const { notification } = App.useApp();
   const [importTriggered, setImportTriggered] = useState(false);
   const [error, setError] = useState(null);
@@ -63,15 +70,16 @@ const ImportButton = ({ record, style, importState, reImport, onStartImportSucce
       .delete(`${config.dataApi}importer/${record.datasetKey}`)
       .then((res) => {
         setImportTriggered(false);
-        if (record.state !== "waiting") {
+        const name = record.dataset?.title || `dataset ${record.datasetKey}`;
+        if (!isQueued(record.status)) {
           notification.open({
             title: "Import stopped",
-            description: `Import of ${record.dataset.title} was stopped`,
+            description: `Import of ${name} was stopped`,
           });
         } else {
           notification.open({
             title: "Import canceled",
-            description: `${record.dataset.title} was removed from the queue`,
+            description: `${name} was removed from the queue`,
           });
         }
 
@@ -88,11 +96,8 @@ const ImportButton = ({ record, style, importState, reImport, onStartImportSucce
       });
   };
 
-  const isStopButton =
-    [
-      "waiting",
-      ...importState.filter((i) => i.running).map((i) => i.name),
-    ].indexOf(record.state) > -1;
+  // A queued or running import can be stopped; anything else offers a (re)start.
+  const isStopButton = isLive(record.status);
 
   return (
     <>
@@ -105,8 +110,8 @@ const ImportButton = ({ record, style, importState, reImport, onStartImportSucce
         onClick={isStopButton ? stopImport : reImport ? reImportFn : startImport}
       >
         {!isStopButton && (reImport ? "Reimport" : "Import")}
-        {isStopButton && record.state !== "waiting" && "Stop import"}
-        {isStopButton && record.state === "waiting" && "Cancel"}
+        {isStopButton && !isQueued(record.status) && "Stop import"}
+        {isStopButton && isQueued(record.status) && "Cancel"}
       </Button>
       {error && (
         <Popover
@@ -124,5 +129,4 @@ const ImportButton = ({ record, style, importState, reImport, onStartImportSucce
   );
 };
 
-const mapContextToProps = ({ importState }) => ({ importState });
-export default withContext(mapContextToProps)(ImportButton);
+export default ImportButton;

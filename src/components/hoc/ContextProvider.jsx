@@ -26,7 +26,9 @@ import {
   getNomCode,
   getImportState,
   getEnvironments,
-  getSectorImportState,
+  getJobStatus,
+  getJobPriority,
+  getJobLane,
   getCountries,
   getEstimateType,
   getDatasetSettings,
@@ -43,6 +45,7 @@ import {
   getIdentifierScope,
   getSectorAuthorshipUpdate,
 } from "../../api/enumeration";
+import { getJobQueue as fetchJobQueue } from "../../api/job";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
 // Helpers
@@ -110,7 +113,13 @@ const ContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [terms, setTerms] = useState([]);
   const [environment, setEnvironment] = useState([]);
-  const [sectorImportState, setSectorImportState] = useState([]);
+  // JOBSTATUS - the unified lifecycle of every background job.
+  // `importState` above is no longer a lifecycle: it is now only the label
+  // vocabulary for a running job's free text `step`.
+  const [jobStatus, setJobStatus] = useState([]);
+  const [jobStatusMap, setJobStatusMap] = useState({});
+  const [jobPriority, setJobPriority] = useState([]);
+  const [jobLane, setJobLane] = useState([]);
   const [country, setCountry] = useState([]);
   const [decisionMode, setDecisionMode] = useState([]);
   const [userRole, setUserRole] = useState([]);
@@ -143,23 +152,26 @@ const ContextProvider = ({ children }) => {
   const [sectorAuthorshipUpdate, setSectorAuthorshipUpdate] = useState([]);
   const [_selectedKeys, setSelectedKeys] = useState([]);
   const [_openKeys, setOpenKeys] = useState([]);
-  const [syncState, setSyncState] = useState({});
   const [components, setComponents] = useState({});
   const [health, setHealth] = useState({});
-  const [syncingSector, setSyncingSector] = useState(null);
-  const [syncingDataset, setSyncingDataset] = useState(null);
   const [background, setBackground] = useState({});
   const [allComponentsRunning, setAllComponentsRunning] = useState(undefined);
   const [allHealthChecksPassing, setAllHealthChecksPassing] = useState(undefined);
-  // Active jobs across the (currently separate) import and background-job queues.
+  // The live job queue - imports, syncs, releases, exports and everything else
+  // now share one executor, so this is a single /job call.
   const [jobQueue, setJobQueue] = useState({
-    importsRunning: [],
-    importsRunningCount: 0,
-    importsQueued: 0,
-    importsQueuedMine: [],
-    jobsRunning: [],
-    jobsQueued: 0,
-    jobsQueuedMine: [],
+    running: [],
+    queued: [],
+    queuedCounts: {},
+    queuedTotal: 0,
+  });
+  // The same queue scoped to the currently selected project, so the project
+  // menu can badge its running and queued sector syncs.
+  const [projectJobQueue, setProjectJobQueue] = useState({
+    running: [],
+    queued: [],
+    queuedCounts: {},
+    queuedTotal: 0,
   });
   const [speciesinteractiontype, setSpeciesinteractiontype] = useState([]);
   const [language, setLanguage] = useState([]);
@@ -171,15 +183,10 @@ const ContextProvider = ({ children }) => {
 
   // Refs to avoid stale closures in async callbacks called from setInterval
   const projectKeyRef = useRef(projectKey);
-  const syncStateRef = useRef(syncState);
 
   useEffect(() => {
     projectKeyRef.current = projectKey;
   }, [projectKey]);
-
-  useEffect(() => {
-    syncStateRef.current = syncState;
-  }, [syncState]);
 
   // Stable callback functions exposed via context
   const addError = (err) => setError(err);
@@ -275,36 +282,17 @@ const ContextProvider = ({ children }) => {
     }
   };
 
-  const getSyncState = async () => {
+  // The live job queue of the selected project. Replaces the old
+  // GET dataset/{key}/assembly poll: sector syncs are ordinary background jobs
+  // now, so the generic queue answers what the sync state used to.
+  // On a transient error the last known state is retained.
+  const getProjectJobQueue = async () => {
     const currentProjectKey = projectKeyRef.current;
-    if (currentProjectKey) {
-      try {
-        const { data: newSyncState } = await axios(
-          `${config.dataApi}dataset/${currentProjectKey}/assembly`
-        );
-        if (
-          _.get(newSyncState, "running") &&
-          _.get(newSyncState, "running.sectorKey") !==
-            _.get(syncStateRef.current, "running.sectorKey")
-        ) {
-          const { data: sector } = await axios(
-            `${config.dataApi}dataset/${currentProjectKey}/sector/${_.get(
-              newSyncState,
-              "running.sectorKey"
-            )}`
-          );
-          const { data: sectorDataset } = await axios(
-            `${config.dataApi}dataset/${sector.subjectDatasetKey}`
-          );
-          setSyncState(newSyncState);
-          setSyncingSector(sector);
-          setSyncingDataset(sectorDataset);
-        } else {
-          setSyncState(newSyncState);
-        }
-      } catch (err) {
-        setError(err);
-      }
+    if (!currentProjectKey) return;
+    try {
+      setProjectJobQueue(await fetchJobQueue(currentProjectKey));
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -364,57 +352,12 @@ const ContextProvider = ({ children }) => {
     }
   };
 
-  // Polls the active state of both queues: imports (still separate) and the
-  // general background job queue. Only active/queued counts are kept - no
-  // finished/past jobs. On a transient error the last known state is retained.
+  // Polls the live job queue. Since the unified job API this is one request:
+  // running and queued jobs of every kind, with per lane queue counts.
+  // On a transient error the last known state is retained.
   const getJobQueue = async () => {
     try {
-      const userKey = user?.key;
-      const requests = [
-        // all running imports, regardless of user (never createdBy-filtered);
-        // limit 100 is ample - at most 8 jobs run concurrently
-        axios.get(`${config.dataApi}importer?running=true&limit=100`),
-        axios.get(`${config.dataApi}importer?state=waiting&limit=0`),
-        axios.get(`${config.dataApi}job`),
-        // the current user's own queued (waiting) imports - shown with a cancel
-        // option on the queue page
-        userKey
-          ? axios.get(
-              `${config.dataApi}importer?state=waiting&createdBy=${userKey}&limit=100`
-            )
-          : Promise.resolve({ data: { result: [] } }),
-      ];
-      const [running, waiting, jobs, mineImports] = await Promise.all(requests);
-
-      const importsRunning = running?.data?.result || [];
-      const importsRunningCount = running?.data?.total ?? importsRunning.length;
-      const importsQueued = waiting?.data?.total || 0;
-      const importsQueuedMine = mineImports?.data?.result || [];
-
-      const allJobs = Array.isArray(jobs?.data) ? jobs.data : [];
-      const jobsRunning = allJobs.filter(
-        (j) => String(j?.status).toLowerCase() === "running"
-      );
-      // the /job queue only holds non-finished jobs, so anything not running
-      // (waiting/blocked) is queued
-      const jobsQueuedAll = allJobs.filter(
-        (j) => String(j?.status).toLowerCase() !== "running"
-      );
-      const jobsQueuedMine = userKey
-        ? jobsQueuedAll.filter((j) =>
-            [j?.userKey, j?.createdBy, j?.user?.key].includes(userKey)
-          )
-        : [];
-
-      setJobQueue({
-        importsRunning,
-        importsRunningCount,
-        importsQueued,
-        importsQueuedMine,
-        jobsRunning,
-        jobsQueued: jobsQueuedAll.length,
-        jobsQueuedMine,
-      });
+      setJobQueue(await fetchJobQueue());
     } catch (err) {
       console.log(err);
     }
@@ -451,7 +394,7 @@ const ContextProvider = ({ children }) => {
       getImportState(),
       getTermsOrder(),
       getEnvironments(),
-      getSectorImportState(),
+      getJobStatus(),
       getCountries(),
       getEstimateType(),
       getDatasetSettings(),
@@ -467,6 +410,8 @@ const ContextProvider = ({ children }) => {
       getLanguages(),
       getIdentifierScope(),
       getSectorAuthorshipUpdate(),
+      getJobPriority(),
+      getJobLane(),
     ])
       .then((responses) => {
         const newIssueMap = {};
@@ -497,6 +442,8 @@ const ContextProvider = ({ children }) => {
         });
         const newImportStateMap = {};
         responses[13].forEach((i) => (newImportStateMap[i.name] = i));
+        const newJobStatusMap = {};
+        responses[16].forEach((i) => (newJobStatusMap[i.name] = i));
 
         const recentDatasetsAsText = localStorage.getItem(
           "colplus_recent_datasets"
@@ -532,7 +479,8 @@ const ContextProvider = ({ children }) => {
         setImportStateMap(newImportStateMap);
         setTerms(responses[14]);
         setEnvironment(responses[15]);
-        setSectorImportState(responses[16]);
+        setJobStatus(responses[16]);
+        setJobStatusMap(newJobStatusMap);
         setCountry(responses[17]);
         setEstimateType(responses[18]);
         setDatasetSettings(responses[19]);
@@ -548,6 +496,8 @@ const ContextProvider = ({ children }) => {
         setLanguage(responses[29]);
         setIdentifierScope(responses[30]);
         setSectorAuthorshipUpdate(responses[31]);
+        setJobPriority(responses[32]);
+        setJobLane(responses[33]);
         setCountryAlpha3(newCountryAlpha3);
         setCountryAlpha2(newCountryAlpha2);
         setTermsMap(newTermsMap);
@@ -583,7 +533,10 @@ const ContextProvider = ({ children }) => {
     error,
     terms,
     environment,
-    sectorImportState,
+    jobStatus,
+    jobStatusMap,
+    jobPriority,
+    jobLane,
     country,
     decisionMode,
     userRole,
@@ -606,15 +559,13 @@ const ContextProvider = ({ children }) => {
     sectorAuthorshipUpdate,
     _selectedKeys,
     _openKeys,
-    syncState,
     components,
     health,
-    syncingSector,
-    syncingDataset,
     background,
     allComponentsRunning,
     allHealthChecksPassing,
     jobQueue,
+    projectJobQueue,
     speciesinteractiontype,
     language,
     project,
@@ -632,10 +583,10 @@ const ContextProvider = ({ children }) => {
     getDuplicateWarningColor,
     getTaxonomicStatusColor,
     getNomStatus: getNomStatusFn,
-    getSyncState,
     getBackground,
     getSystemHealth,
     getJobQueue,
+    getProjectJobQueue,
   };
 
   return (

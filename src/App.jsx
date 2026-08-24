@@ -18,7 +18,7 @@ import DatasetPage from "./pages/DatasetKey";
 import DatasetCreate from "./pages/DatasetCreate";
 
 import DatasetProvider from "./components/hoc/DatasetProvider";
-import SyncProvider from "./components/hoc/SyncProvider";
+import ProjectJobProvider from "./components/hoc/ProjectJobProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
 
 import About from "./pages/About";
@@ -47,13 +47,11 @@ import ProjectEditors from "./pages/project/Editors";
 
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
-import JobQueue from "./pages/JobQueue";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
-import AdminJobs from "./pages/Admin/Jobs";
 import SectorDiff from "./pages/project/SectorDiff";
-import Imports from "./pages/Imports";
+import Jobs from "./pages/Jobs";
 import ContextProvider from "./components/hoc/ContextProvider";
 import Exception404 from "./components/exception/404";
 import ExceptionHandler from "./components/exception/ExceptionHandler";
@@ -139,7 +137,7 @@ const ProviderRoutes = () => (
       <Route path="*" element={null} />
     </Routes>
     <Routes>
-      <Route path="/project/:projectKey/*" element={<SyncProvider />} />
+      <Route path="/project/:projectKey/*" element={<ProjectJobProvider />} />
       <Route path="*" element={null} />
     </Routes>
     <Routes>
@@ -174,14 +172,6 @@ const App = () => {
               }
             />
             <Route
-              path="/admin/jobs"
-              element={
-                <AdminRoute roles={["admin"]}>
-                  <AdminJobs />
-                </AdminRoute>
-              }
-            />
-            <Route
               path="/admin/users"
               element={
                 <AdminRoute roles={["admin"]}>
@@ -205,7 +195,17 @@ const App = () => {
                 </AdminRoute>
               }
             />
-            <Route path="/imports" element={<Imports />} />
+            <Route path="/jobs" element={<Jobs />} />
+            {/* The unified job page absorbed these three views. Each old route
+                redirects to the filter that view used to be. */}
+            <Route
+              path="/imports"
+              element={<Navigate to="/jobs?lane=import" replace />}
+            />
+            <Route
+              path="/admin/jobs"
+              element={<Navigate to="/jobs?tab=queue" replace />}
+            />
             <Route
               path="/project/:projectKey/references/:key?"
               element={
@@ -448,7 +448,10 @@ const App = () => {
             <Route path="/about/identifiers" element={<AboutIdentifiers />} />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
-            <Route path="/jobqueue" element={<JobQueue />} />
+            <Route
+              path="/jobqueue"
+              element={<Navigate to="/jobs?tab=queue&mine=true" replace />}
+            />
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>

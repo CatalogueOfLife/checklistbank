@@ -71,6 +71,9 @@ export const getNomCode = () => {
   return getData(`nomcode`).then((res) => res.data);
 };
 
+// IMPORTSTATE no longer exists in the database. Since the unified job API it
+// only describes the free text `step` of a running job, so this is the step
+// label vocabulary - the job lifecycle itself is JOBSTATUS.
 export const getImportState = () => {
   return getData(`importstate`).then((res) => res.data);
 };
@@ -79,8 +82,23 @@ export const getEnvironments = () => {
   return getData(`environment`).then((res) => res.data);
 };
 
-export const getSectorImportState = () => {
-  return getData(`importstate`).then((res) => res.data.map((e) => e.name));
+export const getJobStatus = () => {
+  return getData(`jobstatus`).then((res) => res.data);
+};
+
+// JOBPRIORITY and JOBLANE are newer than some deployed backends, and JobLane
+// lives outside the package VocabResource scans, so fall back to the bundled
+// copy rather than rejecting the shared enum Promise.all.
+export const getJobPriority = () => {
+  return getData(`jobpriority`)
+    .then((res) => res.data ?? localEnumFor("jobpriority"))
+    .catch(() => localEnumFor("jobpriority"));
+};
+
+export const getJobLane = () => {
+  return getData(`joblane`)
+    .then((res) => res.data ?? localEnumFor("joblane"))
+    .catch(() => localEnumFor("joblane"));
 };
 
 export const getCountries = () => {

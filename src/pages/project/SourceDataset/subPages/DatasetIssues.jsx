@@ -84,7 +84,7 @@ const DatasetIssues = ({ datasetKey, user, issue, issueMap, projectKey }) => {
   const getData = () => {
     setLoading(true);
     axios(
-      `${config.dataApi}dataset/${datasetKey}/import?limit=3&state=finished`
+      `${config.dataApi}dataset/${datasetKey}/import?limit=3&status=finished`
     )
       .then((res) => {
         let tableData = [];

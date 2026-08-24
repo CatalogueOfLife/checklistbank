@@ -23,7 +23,7 @@ import {
 import config from "../../../config";
 import moment from "dayjs";
 import withContext from "../../../components/hoc/withContext";
-import kibanaQuery from "../SectorSync/kibanaQuery";
+import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";

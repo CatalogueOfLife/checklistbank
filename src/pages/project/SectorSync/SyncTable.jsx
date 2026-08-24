@@ -13,24 +13,17 @@ import SyncButton from "./SyncButton";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
-import kibanaQuery from "./kibanaQuery";
+import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
 
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
+import JobStatusTag from "../../../components/job/JobStatusTag";
 
 const PAGE_SIZE = 25;
 
 import _ from "lodash";
 
-const tagColors = {
-  processing: "purple",
-  downloading: "cyan",
-  inserting: "blue",
-  finished: "green",
-  failed: "red",
-  "in queue": "orange",
-};
 const getColumns = (projectKey) => [
   {
     title: "Source",
@@ -151,12 +144,16 @@ const getColumns = (projectKey) => [
     width: 50,
   },
   {
-    title: "State",
-    dataIndex: "state",
-    key: "state",
-    render: (text, record) => {
-      return <Tag color={tagColors[record.state]}>{record.state}</Tag>;
-    },
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (text, record) => (
+      <JobStatusTag
+        status={record.status}
+        step={record.step}
+        error={record.error}
+      />
+    ),
     width: 50,
   },
 
@@ -189,7 +186,7 @@ const getColumns = (projectKey) => [
     key: "links",
     render: (text, record) => (
       <>
-        {record.state === "finished" ? (
+        {record.status === "finished" ? (
         <>
           <Tooltip title="Name list">
             <a href={`${config.dataApi}dataset/${projectKey}/sector/${record.sectorKey}/sync/${record.attempt}/names`} target="_blank">
@@ -236,7 +233,7 @@ const getColumns = (projectKey) => [
   }
 ];
 
-const SyncTable = ({ location, match, user, sectorImportState, importState }) => {
+const SyncTable = ({ location, match, user, jobStatus }) => {
   const [syncAllError, setSyncAllError] = useState(null);
   const [data, setData] = useState([]);
   const [params, setParams] = useState({});
@@ -340,10 +337,10 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
       offset: (pager.current - 1) * pager.pageSize,
       ...filters,
     });
-    if (filters.state && _.get(filters, "state.length")) {
-      query.state = filters.state;
+    if (filters.status && _.get(filters, "status.length")) {
+      query.status = filters.status;
     } else {
-      query.state = importState;
+      delete query.status;
     }
     if (filters.mode && _.get(filters, "mode.length")) {
       query.mode = filters.mode;
@@ -399,10 +396,15 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
       ]
     : getColumns(projectKey);
 
-  columns[5].filters = sectorImportState.map((i) => ({
-    text: _.startCase(i),
-    value: i,
+  columns[5].filters = (jobStatus || []).map((i) => ({
+    text: _.startCase(i.name),
+    value: i.name,
   }));
+  columns[5].filteredValue = params.status
+    ? _.isArray(params.status)
+      ? params.status
+      : [params.status]
+    : null;
 
   columns[3].filteredValue = params.mode
     ? _.isArray(params.mode)
@@ -460,11 +462,11 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
           rowKey="_id"
           expandable={{
             rowExpandable: (record) =>
-              ["failed", "finished"].includes(record.state),
+              ["failed", "finished"].includes(record.status),
             expandedRowRender: (record) => {
-              if (record.state === "failed") {
+              if (record.status === "failed") {
                 return <Alert title={record.error} type="error" />;
-              } else if (record.state === "finished") {
+              } else if (record.status === "finished") {
                 return (
                   <>
                     {Object.keys(record)
@@ -544,9 +546,9 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
             },
           }}
           /*  expandedRowRender={(record) => {
-           if (record.state === "failed") {
+           if (record.status === "failed") {
              return <Alert message={record.error} type="error" />;
-           } else if (record.state === "finished") {
+           } else if (record.status === "finished") {
              return (
                <React.Fragment>
                  <Tag key="speciesCount" color="blue">
@@ -579,9 +581,9 @@ const SyncTable = ({ location, match, user, sectorImportState, importState }) =>
   );
 };
 
-const mapContextToProps = ({ user, sectorImportState, projectKey }) => ({
+const mapContextToProps = ({ user, jobStatus, projectKey }) => ({
   user,
-  sectorImportState,
+  jobStatus,
   projectKey,
 });
 

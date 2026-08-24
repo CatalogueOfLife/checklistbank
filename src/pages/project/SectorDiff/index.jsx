@@ -50,7 +50,7 @@ const SectorDiff = ({ match, location, project, projectKey }) => {
   useEffect(() => {
     const query = _.get({ search: location.search }, "search");
     axios(
-      `${config.dataApi}dataset/${projectKey}/sector/sync?sectorKey=${sectorKey}&state=finished&limit=1`
+      `${config.dataApi}dataset/${projectKey}/sector/sync?sectorKey=${sectorKey}&status=finished&limit=1`
     ).then((res) => {
       setMaxAttempt(_.get(res, "data.result[0].attempt"));
     });

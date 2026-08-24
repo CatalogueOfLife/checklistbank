@@ -7,6 +7,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash"
+import { isQueued, isLive } from "../../../api/job"
 
 const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, style, size }) => {
   const { notification } = App.useApp();
@@ -63,7 +64,7 @@ const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, sty
       });
   };
 
-  const isStopButton = record.state && ['finished', 'canceled', 'failed'].indexOf(record.state) === -1;
+  const isStopButton = isLive(record.status);
 
   return (
     <div style={style || {}}>
@@ -75,8 +76,8 @@ const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, sty
         onClick={isStopButton ? stopSync : startSync}
       >
         {!isStopButton && 'Sync'}
-        {isStopButton && record.state !== 'in queue' &&  'Stop sync'}
-        {isStopButton && record.state === 'in queue' &&  'Remove'}
+        {isStopButton && !isQueued(record.status) && 'Stop sync'}
+        {isStopButton && isQueued(record.status) && 'Remove'}
       </Button>
       {error && (
         <Popover

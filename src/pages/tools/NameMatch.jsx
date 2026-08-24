@@ -614,7 +614,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         setSubjectDataTotal(_.get(data, "taxonCount", 0));
       } else {
         const { data } = await axios(
-          `${config.dataApi}dataset/${datasetKey}/import?limit=1&state=FINISHED`
+          `${config.dataApi}dataset/${datasetKey}/import?limit=1&status=finished`
         );
         const m = Array.isArray(data) ? data[0] : null;
         setSubjectDataTotal(
