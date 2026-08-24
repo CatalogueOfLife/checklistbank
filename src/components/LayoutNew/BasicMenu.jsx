@@ -333,7 +333,7 @@ const BasicMenu = (props) => {
           key: "backgroundJobs",
           label: (
             <NavLink to={{ pathname: "/jobs" }}>
-              <span>Background jobs</span>
+              <span>Jobs</span>
             </NavLink>
           ),
         },
