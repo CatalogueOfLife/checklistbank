@@ -6,7 +6,7 @@ import withContext from "../../components/hoc/withContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import JobDetail from "../../components/job/JobDetail";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
-import { searchJobs, KNOWN_JOB_TYPES, jobLabel, JOB_LANES } from "../../api/job";
+import { searchJobs, getJobTypes, jobLabel, JOB_LANES } from "../../api/job";
 import { decorateJobs } from "./decorate";
 import { PRESETS, presetOf, applyPreset } from "./presets";
 import {
@@ -41,8 +41,13 @@ const asArray = (v) =>
  */
 const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
   const [data, setData] = useState({ result: [], total: 0 });
+  const [jobTypes, setJobTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getJobTypes().then(setJobTypes);
+  }, []);
 
   const limit = Number(params.limit) || PAGE_SIZE;
   const offset = Number(params.offset) || 0;
@@ -142,7 +147,7 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
               placeholder="Any job type"
               value={asArray(params.job) || []}
               onChange={(v) => setFilter("job", v)}
-              options={KNOWN_JOB_TYPES.map((j) => ({
+              options={jobTypes.map((j) => ({
                 value: j,
                 label: jobLabel(j),
               }))}

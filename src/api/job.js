@@ -126,56 +126,42 @@ export const laneOfJob = (job) => {
 };
 
 /**
- * GET /job/{key} answers with the live BackgroundJob while a job is still in
- * the executor and with the persisted JobInfo once it has left. The two shapes
- * differ - live carries userKey/user/lane/errorStackTrace and the job specific
- * subclass getters, persisted carries createdBy/params/resultMd5/resultSize.
- * Everything downstream works on this normalized shape instead.
+ * Every job endpoint answers with the persisted JobInfo shape. This flattens
+ * it into what the UI actually renders: `createdBy` reads as `userKey`, the
+ * job class gets a human label, and the result metadata is grouped.
  */
 export const normalizeJob = (raw) => {
   if (!raw) return null;
-  // a live BackgroundJob serializes its error as a Throwable bean, the
-  // persisted JobInfo as a plain message string
-  const err = raw.error;
-  const errorMessage =
-    typeof err === "string" ? err : err?.message || err?.localizedMessage || null;
-  const live = _.isPlainObject(err) || !_.isUndefined(raw.userKey);
-  const userKey = raw.userKey ?? raw.createdBy ?? raw.user?.key ?? null;
   const job = raw.job ?? null;
-  // SectorRunnable serializes getSectorKey() as a DSID object, JobInfo as an int
-  const sectorKey = _.isPlainObject(raw.sectorKey)
-    ? raw.sectorKey.id
-    : raw.sectorKey ?? null;
-
   return {
     key: raw.key,
     job,
     label: jobLabel(job),
     status: lower(raw.status),
     step: raw.step ?? null,
+    // lane is served by the job API; deriving it keeps the UI readable against
+    // an older deployment that predates the column
     lane: lower(raw.lane) || laneOfJob(job),
     priority: lower(raw.priority) ?? null,
     datasetKey: raw.datasetKey ?? null,
-    sectorKey,
-    sourceDatasetKey:
-      raw.sourceDatasetKey ?? raw.params?.subjectDatasetKey ?? null,
-    userKey,
-    user: raw.user ?? null,
+    sectorKey: raw.sectorKey ?? null,
+    // not a search filter - only what a sync's params happen to record, used
+    // to show which source dataset a sync was for
+    sourceDatasetKey: raw.params?.subjectDatasetKey ?? null,
+    userKey: raw.createdBy ?? null,
     created: raw.created ?? null,
     started: raw.started ?? null,
     finished: raw.finished ?? null,
-    errorMessage,
-    errorStackTrace: raw.errorStackTrace ?? null,
+    errorMessage: raw.error ?? null,
     params: raw.params ?? null,
     result:
-      raw.resultMd5 || raw.resultSize || raw.result
+      raw.resultMd5 || raw.resultSize
         ? {
-            md5: raw.resultMd5 ?? raw.result?.md5 ?? null,
-            size: raw.resultSize ?? raw.result?.size ?? null,
+            md5: raw.resultMd5 ?? null,
+            size: raw.resultSize ?? null,
             deleted: raw.resultDeleted ?? null,
           }
         : null,
-    live,
     raw,
   };
 };
@@ -207,7 +193,18 @@ export const searchJobs = (params) =>
 export const getJob = (key) =>
   axios.get(`${config.dataApi}job/${key}`).then(({ data }) => normalizeJob(data));
 
-export const cancelJob = (key) => axios.delete(`${config.dataApi}job/${key}`);
+export const cancelJob = (key) =>
+  axios.delete(`${config.dataApi}job/${key}`).then(({ data }) => normalizeJob(data));
+
+/**
+ * The job class names the backend knows about. Falls back to the labelled set
+ * below when talking to a deployment that predates the endpoint.
+ */
+export const getJobTypes = () =>
+  axios
+    .get(`${config.dataApi}job/types`)
+    .then(({ data }) => (Array.isArray(data) && data.length ? data : KNOWN_JOB_TYPES))
+    .catch(() => KNOWN_JOB_TYPES);
 
 /** Content negotiated redirects served by JobResource. */
 export const jobResultUrl = (key) => `${config.dataApi}job/${key}.zip`;

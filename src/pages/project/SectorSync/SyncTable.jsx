@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import withRouter from "../../../withRouter";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined } from "@ant-design/icons";
+import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined, ThunderboltOutlined } from "@ant-design/icons";
 
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
@@ -226,6 +226,14 @@ const getColumns = (projectKey) => [
             <CodeOutlined style={{ fontSize: "20px" }} />{" "}
           </a>
         </Tooltip>
+
+        {record.jobKey && (
+          <Tooltip title="Background job">
+            <NavLink to={`/jobs?key=${record.jobKey}`}>
+              <ThunderboltOutlined style={{ fontSize: "20px" }} />
+            </NavLink>
+          </Tooltip>
+        )}
 
       </>
     ),

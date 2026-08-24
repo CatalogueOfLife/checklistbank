@@ -13,9 +13,9 @@ import { applyPreset, DEFAULT_PRESET } from "./presets";
 // The backend matches @QueryParam names case sensitively, so normalize the
 // casing of hand typed or hand edited URLs the way DatasetList does.
 const JOB_SEARCH_PARAMS = [
+  "key",
   "datasetKey",
   "sectorKey",
-  "sourceDatasetKey",
   "createdBy",
   "status",
   "lane",

@@ -6,6 +6,7 @@ import _ from "lodash";
 import axios from "axios";
 import moment from "dayjs";
 import history from "../../history";
+import { NavLink } from "react-router-dom";
 import { Drawer, Row, Col, Alert, Button, Spin, Divider } from "antd";
 import ImportMetrics from "../../components/ImportMetrics";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -22,7 +23,7 @@ import { getUsersBatch } from "../../api/user";
 import ImportMenu from "./Menu";
 import qs from "query-string";
 import JobStatusTag from "../../components/job/JobStatusTag";
-import { isLive } from "../../api/job";
+import { isLive, jobLabel } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -245,8 +246,17 @@ const DatasetImportMetrics = (props) => {
 
           <Row style={{ padding: "10px" }}>
             <Divider titlePlacement="left">Details</Divider>
-            <PresentationItem label="State">
-              {_.get(data, "state")}
+            <PresentationItem label="Status">
+              <JobStatusTag status={data.status} step={data.step} />
+            </PresentationItem>
+            <PresentationItem label="Job">
+              {data.jobKey ? (
+                <NavLink to={`/jobs?key=${data.jobKey}`}>
+                  {jobLabel(data.job)}
+                </NavLink>
+              ) : (
+                jobLabel(data.job)
+              )}
             </PresentationItem>
             <PresentationItem label="Created by">
               {_.get(data, "user.username")}
