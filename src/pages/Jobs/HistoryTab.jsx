@@ -192,8 +192,13 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
                   delete next.createdAfter;
                   delete next.createdBefore;
                 } else {
+                  // the backend reads a bare date as the start of that day and
+                  // filters created <= createdBefore, so send the end of the
+                  // picked day - otherwise the last day is excluded
                   next.createdAfter = range[0]?.format("YYYY-MM-DD");
-                  next.createdBefore = range[1]?.format("YYYY-MM-DD");
+                  next.createdBefore = range[1]
+                    ?.endOf("day")
+                    .format("YYYY-MM-DDTHH:mm:ss");
                 }
                 updateParams(next);
               }}
