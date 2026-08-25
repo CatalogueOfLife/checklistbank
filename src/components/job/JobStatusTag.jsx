@@ -20,17 +20,25 @@ export const STATUS_COLOR = {
 };
 
 /**
+ * `step` is free text. Most jobs report a single lower cased word derived from
+ * an enum ("inserting", "building_metrics"), but some report real prose with a
+ * count ("scheduled 5 of 20"), so underscores become spaces and only the first
+ * letter is capitalised - start casing every word would mangle those.
+ *
  * @param status a JOBSTATUS value, lower cased as the API serializes it
  * @param step   the free text step of a running job, e.g. "inserting"
  * @param error  optional error message, shown as a tooltip on a failed job
  */
+export const stepLabel = (step) =>
+  step ? _.upperFirst(String(step).replace(/_+/g, " ")) : null;
+
 const JobStatusTag = ({ status, step, error, style }) => {
   if (!status) return null;
   const s = String(status).toLowerCase();
   const tag = (
     <Tag color={STATUS_COLOR[s] || "default"} style={style}>
       {_.startCase(s)}
-      {step ? ` · ${_.startCase(step)}` : ""}
+      {step ? ` · ${stepLabel(step)}` : ""}
     </Tag>
   );
   return error ? <Tooltip title={error}>{tag}</Tooltip> : tag;

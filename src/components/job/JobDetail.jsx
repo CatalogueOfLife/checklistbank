@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Spin, Alert, Typography } from "antd";
+import { Spin, Alert } from "antd";
 import dayjs from "dayjs";
 import _ from "lodash";
 import PresentationItem from "../PresentationItem";
 import JobStatusTag from "./JobStatusTag";
 import JobDuration from "./JobDuration";
-import { getJob } from "../../api/job";
+import { getJob, humanSize } from "../../api/job";
 import { jobLogQuery } from "./kibanaQuery";
 import config from "../../config";
-
-const { Paragraph } = Typography;
 
 const JsonBlock = ({ label, value }) => (
   <PresentationItem label={label}>
@@ -21,25 +19,12 @@ const JsonBlock = ({ label, value }) => (
 
 const dt = (v) => (v ? dayjs(v).format("lll") : null);
 
-const humanSize = (bytes) => {
-  if (!bytes && bytes !== 0) return null;
-  const units = ["B", "kB", "MB", "GB"];
-  let i = 0;
-  let n = bytes;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
-    i += 1;
-  }
-  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-};
-
 /**
  * Detail view of a single background job, of any kind.
  *
  * Takes either an already loaded (normalized) job or a job key to fetch.
- * GET /job/{key} answers with the live BackgroundJob while a job is still in
- * the executor and with the persisted JobInfo afterwards; normalizeJob in
- * src/api/job.js flattens both, so nothing here has to care which it got.
+ * The stack trace of a failed job is not part of JobInfo - it lives in the job
+ * log, reachable from the Kibana link below.
  */
 const JobDetail = ({ job: initial, jobKey }) => {
   const [loading, setLoading] = useState(false);
@@ -114,13 +99,6 @@ const JobDetail = ({ job: initial, jobKey }) => {
       {job.errorMessage && (
         <PresentationItem label="Error">
           <Alert type="error" message={job.errorMessage} />
-          {job.errorStackTrace && (
-            <Paragraph>
-              <pre style={{ overflow: "auto", maxHeight: 300 }}>
-                {job.errorStackTrace}
-              </pre>
-            </Paragraph>
-          )}
         </PresentationItem>
       )}
       {job.params && <JsonBlock label="Parameters" value={job.params} />}

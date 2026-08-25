@@ -8,21 +8,10 @@ import JobStatusTag from "../../components/job/JobStatusTag";
 import JobDuration from "../../components/job/JobDuration";
 import CancelJobButton from "../../components/job/CancelJobButton";
 import { jobLogQuery } from "../../components/job/kibanaQuery";
+import { humanSize } from "../../api/job";
 import config from "../../config";
 
 const dt = (date) => (date ? moment(date).format("lll") : "");
-
-const humanSize = (bytes) => {
-  if (!bytes && bytes !== 0) return "";
-  const units = ["B", "kB", "MB", "GB"];
-  let i = 0;
-  let n = bytes;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
-    i += 1;
-  }
-  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-};
 
 export const statusColumn = {
   title: "Status",

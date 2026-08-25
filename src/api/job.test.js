@@ -7,6 +7,7 @@ import {
   isDone,
   jobLabel,
   laneOfJob,
+  humanSize,
 } from "./job";
 
 // Every job endpoint - GET /job, /job/search and /job/{key} - answers with the
@@ -123,5 +124,18 @@ describe("job labels", () => {
   it("falls back to a readable class name for unknown jobs", () => {
     expect(jobLabel("SomeBrandNewJob")).toBe("Some Brand New Job");
     expect(laneOfJob("SomeBrandNewJob")).toBe("default");
+  });
+});
+
+describe("humanSize", () => {
+  it("scales bytes to a readable unit", () => {
+    expect(humanSize(0)).toBe("0 B");
+    expect(humanSize(512)).toBe("512 B");
+    expect(humanSize(2048)).toBe("2.0 kB");
+    expect(humanSize(5 * 1024 * 1024)).toBe("5.0 MB");
+  });
+  it("renders nothing for an absent size", () => {
+    expect(humanSize(null)).toBe("");
+    expect(humanSize(undefined)).toBe("");
   });
 });

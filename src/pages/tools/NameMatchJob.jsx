@@ -12,11 +12,13 @@ import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
 import _ from "lodash";
-import { Button, Card, Tag, Spin, Row, Col, Alert, Tooltip } from "antd";
+import { Button, Card, Tag, Spin, Row, Col, Alert } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import ToolHeader from "./ToolHeader";
 import withContext from "../../components/hoc/withContext";
+import JobStatusTag from "../../components/job/JobStatusTag";
+import { getJob, jobResultUrl, isLive, humanSize, JOB_STATUS } from "../../api/job";
 
 const NameMatchJob = ({ match, addError }) => {
   const [job, setjob] = useState(null);
@@ -27,8 +29,7 @@ const NameMatchJob = ({ match, addError }) => {
   const init = async () => {
     setLoading(true);
     try {
-      const res = await axios(`${config.dataApi}job/${match.params.key}`);
-      setjob(res.data);
+      setjob(await getJob(match.params.key));
       setLoading(false);
     } catch (error) {
       if (error.response.status === 404) {
@@ -44,14 +45,10 @@ const NameMatchJob = ({ match, addError }) => {
   const getResultUrl = async () => {
     setResultUrlHasBeenChecked(true);
     try {
-      const res = await axios.head(
-        `${config.dataApi}job/${match.params.key}.zip`
-      );
-      console.log(res);
-
-      setResultUrl(`${config.dataApi}job/${match.params.key}.zip`);
+      await axios.head(jobResultUrl(match.params.key));
+      setResultUrl(jobResultUrl(match.params.key));
     } catch (error) {
-      console.log(error);
+      // no result archive - the job failed or produced nothing
     }
   };
 
@@ -65,7 +62,7 @@ const NameMatchJob = ({ match, addError }) => {
   // setTimeout) so it keeps refreshing, handle in a ref so the guard never
   // goes stale and unmount cleanup actually clears it.
   useEffect(() => {
-    const running = ["running", "waiting"].includes(job?.status);
+    const running = isLive(job?.status);
     if (running && !timerRef.current) {
       timerRef.current = setInterval(init, config.pollingHeartBeat || 5000);
     } else if (!running && timerRef.current) {
@@ -87,16 +84,16 @@ const NameMatchJob = ({ match, addError }) => {
     <Layout openKeys={[]} selectedKeys={[]} title="Name Matching">
       <PageContent>
         <ToolHeader id="name-match-job" />
-        {(job?.status === "failed" || job?.error) && (
+        {(job?.status === JOB_STATUS.FAILED || job?.errorMessage) && (
           <Alert
             type="error"
             style={{ marginBottom: "16px" }}
             title="Matching job failed"
-            description={job?.error || "An unknown error occurred"}
+            description={job?.errorMessage || "An unknown error occurred"}
             showIcon
           />
         )}
-        {job?.status === "cancelled" && (
+        {job?.status === JOB_STATUS.CANCELED && (
           <Alert
             type="warning"
             style={{ marginBottom: "16px" }}
@@ -148,28 +145,27 @@ const NameMatchJob = ({ match, addError }) => {
             <Card
               title={
                 <>
-                  {job?.error ? (
-                    <Tooltip title={job?.error}>
-                      <Tag color="error">Failed</Tag>
-                    </Tooltip>
-                  ) : job?.status === "finished" ? (
+                  <JobStatusTag
+                    status={job?.status}
+                    step={job?.step}
+                    error={job?.errorMessage}
+                    style={{ marginRight: "10px" }}
+                  />
+                  {job?.status === JOB_STATUS.FINISHED && job?.result && (
                     <Button
                       type="link"
-                      href={job?.job}
+                      href={jobResultUrl(job.key)}
                       style={{ color: "#1890ff" }}
                     >
-                      <DownloadOutlined /> {job?.sizeWithUnit}
+                      <DownloadOutlined /> {humanSize(job.result.size)}
                     </Button>
-                  ) : job?.status === "waiting" ? (
-                    <HistoryOutlined
-                      style={{ marginRight: "10px", marginLeft: "10px" }}
-                    />
-                  ) : (
-                    <SyncOutlined
-                      style={{ marginRight: "10px", marginLeft: "10px" }}
-                      spin
-                    />
                   )}
+                  {isLive(job?.status) &&
+                    (job?.status === JOB_STATUS.RUNNING ? (
+                      <SyncOutlined style={{ marginRight: "10px" }} spin />
+                    ) : (
+                      <HistoryOutlined style={{ marginRight: "10px" }} />
+                    ))}
 
                   <span>{moment(job?.created).format("MMM Do YYYY")}</span>
                 </>
@@ -177,10 +173,10 @@ const NameMatchJob = ({ match, addError }) => {
             >
               <div>
                 <PresentationItem md={4} label="Request">
-                  {job.request && (
+                  {job.params && (
                     <div>
-                      {Object.keys(job.request).map((key) => {
-                        const value = job.request[key];
+                      {Object.keys(job.params).map((key) => {
+                        const value = job.params[key];
                         return (
                           <Tag key={key}>{`${key}: ${
                             value?.label || value

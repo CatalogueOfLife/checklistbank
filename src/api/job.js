@@ -206,6 +206,19 @@ export const getJobTypes = () =>
     .then(({ data }) => (Array.isArray(data) && data.length ? data : KNOWN_JOB_TYPES))
     .catch(() => KNOWN_JOB_TYPES);
 
+/** Byte size of a job's result archive, for display. */
+export const humanSize = (bytes) => {
+  if (!bytes && bytes !== 0) return "";
+  const units = ["B", "kB", "MB", "GB"];
+  let i = 0;
+  let n = bytes;
+  while (n >= 1024 && i < units.length - 1) {
+    n /= 1024;
+    i += 1;
+  }
+  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+};
+
 /** Content negotiated redirects served by JobResource. */
 export const jobResultUrl = (key) => `${config.dataApi}job/${key}.zip`;
 export const jobLogUrl = (key) => `${config.dataApi}job/${key}.log`;
