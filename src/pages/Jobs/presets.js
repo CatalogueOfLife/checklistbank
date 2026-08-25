@@ -3,21 +3,52 @@ import {
   RELEASE_JOBS,
   EXPORT_JOBS,
   LIVE_STATUS,
+  DONE_STATUS,
 } from "../../api/job";
 
 /**
  * Quick filters over the unified job history.
  *
- * The default preset deliberately leaves the SYNC lane out. Sector syncs are
- * roughly 6.9M of the ~7.9M rows in the job table and grow by ~63k a week, so
- * an unfiltered history shows nothing but syncs. Picking "Syncs" opts in.
+ * Two things every preset but "Running" settles:
+ *
+ * The SYNC lane is left out of the default. Sector syncs are roughly 6.9M of
+ * the ~7.9M rows in the job table and grow by ~63k a week, so an unfiltered
+ * history shows nothing but syncs. Picking "Syncs" opts in.
+ *
+ * Only the terminal statuses are shown. The job table holds waiting and running
+ * jobs too, so without this a freshly queued job appears in the history the
+ * moment it is submitted - which is the Queue tab's job, not this one. The
+ * status filter is a normal, visible filter, so it can be cleared or widened.
  */
 export const PRESETS = [
-  { key: "all", label: "All", params: { lane: [JOB_LANE.DEFAULT, JOB_LANE.IMPORT] } },
-  { key: "imports", label: "Imports", params: { lane: [JOB_LANE.IMPORT] } },
-  { key: "syncs", label: "Syncs", params: { lane: [JOB_LANE.SYNC] } },
-  { key: "releases", label: "Releases", params: { job: RELEASE_JOBS } },
-  { key: "exports", label: "Exports", params: { job: EXPORT_JOBS } },
+  {
+    key: "all",
+    label: "All",
+    params: {
+      lane: [JOB_LANE.DEFAULT, JOB_LANE.IMPORT],
+      status: DONE_STATUS,
+    },
+  },
+  {
+    key: "imports",
+    label: "Imports",
+    params: { lane: [JOB_LANE.IMPORT], status: DONE_STATUS },
+  },
+  {
+    key: "syncs",
+    label: "Syncs",
+    params: { lane: [JOB_LANE.SYNC], status: DONE_STATUS },
+  },
+  {
+    key: "releases",
+    label: "Releases",
+    params: { job: RELEASE_JOBS, status: DONE_STATUS },
+  },
+  {
+    key: "exports",
+    label: "Exports",
+    params: { job: EXPORT_JOBS, status: DONE_STATUS },
+  },
   { key: "running", label: "Running", params: { status: LIVE_STATUS } },
 ];
 
