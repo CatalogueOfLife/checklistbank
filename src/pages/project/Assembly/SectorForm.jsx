@@ -90,11 +90,13 @@ const SectorForm = ({
 
   useEffect(() => {
     if (subjectDatasetKey || sector?.subjectDatasetKey) {
+      // facetLimit defaults to 10, so without it the rank list is silently
+      // truncated to the 10 most frequent ranks of the source dataset
       axios
         .get(
           `${config.dataApi}dataset/${
             subjectDatasetKey || sector?.subjectDatasetKey
-          }/nameusage/search?facet=rank&limit=0`
+          }/nameusage/search?facet=rank&facetLimit=500&limit=0`
         ) // /assembly/3/sync/
         .then((res) => {
           setSectorDatasetRanks(
