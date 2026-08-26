@@ -329,10 +329,7 @@ const ContextProvider = ({ children }) => {
           // Authorization header turns this into a CORS preflight that the
           // backend rejects (authorization not in Access-Control-Allow-Headers),
           // so strip the header for this request.
-          transformRequest: (data, headers) => {
-            delete headers.common["Authorization"];
-            return data;
-          },
+          headers: { Authorization: null },
           // Dropwizard returns 503 (with the full healthcheck body) when any
           // check is unhealthy. Accept it so we can still display which checks
           // are failing instead of blanking the list.

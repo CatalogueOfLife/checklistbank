@@ -28,10 +28,8 @@ const GBIFTaxonomyReview = ({ location }) => {
   const getAvailableDataFiles = () => {
     axios
       .get(`${config.gbifTaxReview}index.json`, {
-        transformRequest: (data, headers) => {
-          delete headers.common["Authorization"];
-          return data;
-        },
+        // Third-party GBIF endpoint - don't send our Authorization header.
+        headers: { Authorization: null },
       })
       .then((res) => {
         setAvailableFiles(res.data.reports);

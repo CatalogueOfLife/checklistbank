@@ -10,7 +10,7 @@
     "@ant-design/icons": "^6.2.3",
     "ajv": "^8.18.0",
     "antd": "^6.4.2",
-    "axios": "^0.18.1",
+    "axios": "^1.20.0",
     "base-64": "^0.1.0",
     "classnames": "^2.3.1",
     "csvtojson": "^2.0.10",
