@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
-import { LockOutlined, UnlockOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  UnlockOutlined,
+  PlusOutlined,
+  SettingOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import {
   Table,
   Alert,
   Row,
   Col,
-  Form,
   Button,
   Tooltip,
   Tag,
@@ -16,6 +21,9 @@ import {
   Empty,
   Popconfirm,
   Select,
+  Popover,
+  Modal,
+  Checkbox,
   App,
 } from "antd";
 import config from "../../config";
@@ -26,7 +34,6 @@ import history from "../../history";
 import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";
 import ToolHeader from "../tools/ToolHeader";
-import ColumnFilter from "./ColumnFilter2";
 import DatasetLogo from "./DatasetLogo";
 import ImportButton from "../../components/job/ImportButton";
 import JobStatusTag from "../../components/job/JobStatusTag";
@@ -35,9 +42,13 @@ import PublisherFilterDropdown from "./PublisherFilterDropdown";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
 import { buildSearchQuery, asArray } from "./searchQuery";
+import {
+  HIDE_COLUMNS_STORAGE_KEY,
+  excludedFrom,
+  visibleFrom,
+} from "./columnPrefs";
 import { getRowTypes } from "../../api/enumeration";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
-const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
 import _ from "lodash";
 
@@ -66,17 +77,6 @@ const parseSearch = (search) =>
     ])
   );
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-
 const DatasetList = ({
   user,
   datasetType,
@@ -94,7 +94,7 @@ const DatasetList = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [data, setData] = useState([]);
   const [excludeColumns, setExcludeColumns] = useState(
-    JSON.parse(localStorage.getItem("colplus_datasetlist_hide_columns")) ||
+    JSON.parse(localStorage.getItem(HIDE_COLUMNS_STORAGE_KEY)) ||
       ["key", "doi", "version", "origin", "group", "imported", "lastImportAttempt", "lastImportState", "created", "modified", "issued", "private"]
   );
   const [params, setParams] = useState({});
@@ -108,6 +108,23 @@ const DatasetList = ({
 
   // Track previous location.search for componentDidUpdate logic
   const [prevLocationSearch, setPrevLocationSearch] = useState(null);
+
+  const [columnsModalOpen, setColumnsModalOpen] = useState(false);
+
+  // Help for the "Contains" filter. Says what selecting several entities does -
+  // they narrow, since the backend ANDs repeated rowType params - and sends
+  // people to the Formats page for which entities each format actually has.
+  // Kept inside the component: module level JSX is evaluated at import time and
+  // the test transform does not inject the JSX runtime plugin-react does.
+  const rowTypeHelp = (
+    <span>
+      Only datasets whose data contains <b>all</b> of the selected entities.
+      <br />
+      Entities are named per data format &mdash; see{" "}
+      <NavLink to={{ pathname: "/about/formats" }}>Formats</NavLink> for what
+      each format holds.
+    </span>
+  );
 
   // Row type filter vocabulary, fetched live off /vocab/term?classOnly=true
   const [rowTypes, setRowTypes] = useState([]);
@@ -229,7 +246,10 @@ const DatasetList = ({
     getData(query, newPagination);
   };
 
+  // Persisting moved here from ColumnFilter2, which owned the localStorage write
+  // before the settings modal replaced it.
   const handleColumns = (cols) => {
+    localStorage.setItem(HIDE_COLUMNS_STORAGE_KEY, JSON.stringify(cols));
     setExcludeColumns(cols);
   };
 
@@ -597,6 +617,10 @@ const DatasetList = ({
   const sortByParam = params.sortBy ? String(params.sortBy).toLowerCase() : null;
   const sortDescending = params.reverse === true || params.reverse === "true";
 
+  // The settings modal offers the data columns only; the Action column is added
+  // for editors/admins and is not user hideable, matching the old dropdown.
+  const allColumnKeys = defaultColumns.map((c) => c.key);
+
   const columns = _.filter(
     filteredColumns,
     (v) => !_.includes(excludeColumns, v.key)
@@ -658,40 +682,37 @@ const DatasetList = ({
               />
             </Col>
             <Col xs={24} sm={24} md={12} lg={12}>
-              <FormItem
-                style={{ width: "100%" }}
-                {...formItemLayout}
-                label="Show columns"
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  paddingLeft: 16,
+                }}
               >
-                <ColumnFilter
-                  columns={defaultColumns}
-                  onChange={handleColumns}
-                />
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={24} sm={24} md={12} lg={12}>
-              {/* Selecting several row types narrows rather than widens - the
-                  backend ANDs repeated rowType params - hence the wording. */}
-              <FormItem
-                style={{ width: "100%" }}
-                {...formItemLayout}
-                label="Row type"
-                help="Datasets containing all selected row types"
-              >
+                <span style={{ whiteSpace: "nowrap" }}>Contains</span>
+                <Popover
+                  placement="bottom"
+                  content={rowTypeHelp}
+                  styles={{ root: { maxWidth: 320 } }}
+                >
+                  <InfoCircleOutlined
+                    style={{ color: "#8c8c8c", cursor: "help" }}
+                  />
+                </Popover>
                 <Select
                   mode="multiple"
                   allowClear
                   showSearch
-                  placeholder="Any row type"
+                  placeholder="Any entity"
+                  style={{ flex: 1, minWidth: 180, maxWidth: 320 }}
                   value={asArray(params.rowType)}
                   onChange={(v) =>
                     updateSearch({ rowType: v?.length ? v : undefined })
                   }
                   options={rowTypes.map((t) => ({ value: t, label: t }))}
                 />
-              </FormItem>
+              </div>
             </Col>
           </Row>
           <Row>
@@ -836,6 +857,31 @@ const DatasetList = ({
               )
             }
           >
+            <Modal
+              title="Columns"
+              open={columnsModalOpen}
+              onCancel={() => setColumnsModalOpen(false)}
+              footer={null}
+              width={680}
+            >
+              <Checkbox.Group
+                style={{ width: "100%" }}
+                value={visibleFrom(allColumnKeys, excludeColumns)}
+                onChange={(visible) =>
+                  handleColumns(excludedFrom(allColumnKeys, visible))
+                }
+              >
+                <Row>
+                  {defaultColumns.map((c) => (
+                    <Col span={8} key={c.key} style={{ padding: "6px 0" }}>
+                      <Checkbox value={c.key}>
+                        {c.title || _.startCase(c.key)}
+                      </Checkbox>
+                    </Col>
+                  ))}
+                </Row>
+              </Checkbox.Group>
+            </Modal>
             <Table
               size="middle"
               scroll={{ x: scrollX }}
@@ -847,6 +893,16 @@ const DatasetList = ({
               expandable={{
                 expandedRowRender: (record) => <DatasetDetails record={record} />,
                 columnWidth: 32,
+                // The leading expand column is the only header cell that is not a
+                // data column, so it is where the column settings live.
+                columnTitle: (
+                  <Tooltip title="Configure columns">
+                    <SettingOutlined
+                      style={{ cursor: "pointer", color: "#8c8c8c" }}
+                      onClick={() => setColumnsModalOpen(true)}
+                    />
+                  </Tooltip>
+                ),
               }}
               rowSelection={
                 !Auth.isAuthorised(user, ["admin"])
