@@ -71,7 +71,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
   const getHistory = () => {
     return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
       .then((res) => {
-        const history_ = res.data.filter((e) => e.state === "finished");
+        const history_ = res.data.filter((e) => e.status === "finished");
         setImportHistory(history_);
         if (history_.length === 1) {
           setLoading(false);
