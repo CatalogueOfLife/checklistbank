@@ -86,18 +86,20 @@ const BasicMenu = (props) => {
     );
   };
 
-  const hasData =
-    !_.get(selectedDataset, "deleted") &&
-    (_.get(selectedDataset, "size") ||
-      ["xrelease", "release", "project"].includes(
-        _.get(selectedDataset, "origin")
-      ));
-  const sourceHasData =
-    !_.get(sourceDataset, "deleted") &&
-    (_.get(sourceDataset, "size") ||
-      ["xrelease", "release", "project"].includes(
-        _.get(sourceDataset, "origin")
-      ));
+  // `size` is the usage count recorded by the last import, and it can sit at a
+  // stale 0: an import that finishes having inserted nothing overwrites it even
+  // though the previous import's data is still there and queryable. Gating the
+  // menu on `size` alone therefore hides a Browse/References page that works
+  // fine. Treat "an import has finished at some point" as data too, and let the
+  // page itself say it is empty in the rare case it really is.
+  const everImported = (d) => _.get(d, "lastImportState") === "finished";
+  const datasetHasData = (d) =>
+    !_.get(d, "deleted") &&
+    (_.get(d, "size") ||
+      everImported(d) ||
+      ["xrelease", "release", "project"].includes(_.get(d, "origin")));
+  const hasDataset = datasetHasData(selectedDataset);
+  const sourceHasData = datasetHasData(sourceDataset);
 
   const menuItems = [
     // About submenu
@@ -747,7 +749,7 @@ const BasicMenu = (props) => {
               </NavLink>
             ),
           },
-          selectedDataset && hasData && {
+          selectedDataset && hasDataset && {
             key: "classification",
             label: (
               <NavLink
@@ -786,7 +788,7 @@ const BasicMenu = (props) => {
               </NavLink>
             ),
           },
-          selectedDataset && hasData && {
+          selectedDataset && hasDataset && {
             key: "references",
             label: (
               <NavLink
@@ -821,7 +823,7 @@ const BasicMenu = (props) => {
             ["xrelease", "release", "project"].includes(
               _.get(selectedDataset, "origin")
             ) &&
-            hasData && {
+            hasDataset && {
               key: "sourcemetrics",
               label: (
                 <NavLink
@@ -892,7 +894,7 @@ const BasicMenu = (props) => {
             },
           selectedDataset &&
             _.get(selectedDataset, "origin") === "project" &&
-            hasData && {
+            hasDataset && {
               key: "released_from",
               label: (
                 <NavLink
@@ -909,7 +911,7 @@ const BasicMenu = (props) => {
             /*  !["xrelease", "release"].includes(
               _.get(selectedDataset, "origin")
             ) && */
-            hasData && {
+            hasDataset && {
               key: "issues",
               label: (
                 <NavLink
