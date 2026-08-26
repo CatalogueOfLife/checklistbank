@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import withRouter from "../../withRouter";
 import { Typography } from 'antd';
 const { Title } = Typography;
@@ -6,10 +8,34 @@ import { NavLink } from "react-router-dom";
 import { DiffOutlined, PieChartOutlined, LineChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 import moment from "dayjs";
+import config from "../../config";
 
 const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
     // const { current } = this.state;
     const isProject = dataset?.origin === "project";
+    // Timeline and Diff both need something to compare: a chart over a single
+    // point, or a diff against nothing, says nothing. Only two successful
+    // imports are asked for - all that matters is whether there is more than
+    // one. Refetched when the dataset's last successful attempt changes, so
+    // the tabs appear as soon as a second import finishes.
+    const [finishedImports, setFinishedImports] = useState(null);
+    useEffect(() => {
+      if (!datasetKey) return;
+      let canceled = false;
+      axios(
+        `${config.dataApi}dataset/${datasetKey}/import?status=finished&limit=2`
+      )
+        .then((res) => {
+          if (!canceled) setFinishedImports(res.data.length);
+        })
+        .catch(() => {
+          if (!canceled) setFinishedImports(0);
+        });
+      return () => {
+        canceled = true;
+      };
+    }, [datasetKey, dataset?.attempt]);
+    const isComparable = finishedImports > 1;
     const splitted = location.pathname
       .split(`/dataset/${datasetKey}/`)[1]
       .split("/");
@@ -122,26 +148,30 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
                 },
               ]
             : []),
-          {
-            key: "import-timeline",
-            icon: <LineChartOutlined />,
-            label: (
-              <NavLink
-                to={{ pathname: `/dataset/${datasetKey}/import-timeline` }}
-              >
-                Timeline
-              </NavLink>
-            ),
-          },
-          {
-            key: "diff",
-            icon: <DiffOutlined />,
-            label: (
-              <NavLink to={{ pathname: `/dataset/${datasetKey}/diff` }}>
-                Diff
-              </NavLink>
-            ),
-          },
+          ...(isComparable
+            ? [
+                {
+                  key: "import-timeline",
+                  icon: <LineChartOutlined />,
+                  label: (
+                    <NavLink
+                      to={{ pathname: `/dataset/${datasetKey}/import-timeline` }}
+                    >
+                      Timeline
+                    </NavLink>
+                  ),
+                },
+                {
+                  key: "diff",
+                  icon: <DiffOutlined />,
+                  label: (
+                    <NavLink to={{ pathname: `/dataset/${datasetKey}/diff` }}>
+                      Diff
+                    </NavLink>
+                  ),
+                },
+              ]
+            : []),
         ]}
       />
       </>
