@@ -18,7 +18,7 @@ import { datasetLogQuery as kibanaQuery } from "../../components/job/kibanaQuery
 import _ from "lodash";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { STATUS_COLOR } from "../../components/job/JobStatusTag";
-import { isRunning } from "../../api/job";
+import { isLive, isRunning } from "../../api/job";
 
 const getDot = (h, attempt) => {
   if (isRunning(h.status)) {
@@ -46,9 +46,10 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
         color={STATUS_COLOR[h.status]}
         dot={getDot(h, attempt)}
       >
-        {!["finished", "failed"].includes(h.status) && (
-          <strong>{h.step || h.status}</strong>
-        )}
+        {/* While a job is still in flight the step ("inserting") is the useful
+            detail. Once it is done the step only says where it stopped, so the
+            state is what matters - a canceled import read as "inserting". */}
+        {isLive(h.status) && <strong>{h.step || h.status}</strong>}
         {h.status === "finished" && (
           <React.Fragment>
             <NavLink
@@ -141,7 +142,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
           </React.Fragment>
         )}
 
-        {h.status === "failed" && (
+        {["failed", "canceled"].includes(h.status) && (
           <React.Fragment>
             <NavLink
               to={{
