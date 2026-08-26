@@ -30,9 +30,7 @@ export const jobColumn = {
   title: "Job",
   key: "job",
   width: 160,
-  render: (text, record) => (
-    <Tooltip title={record.job}>{record.label}</Tooltip>
-  ),
+  render: (text, record) => record.job,
 };
 
 export const laneColumn = {

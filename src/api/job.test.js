@@ -5,7 +5,6 @@ import {
   isRunning,
   isLive,
   isDone,
-  jobLabel,
   laneOfJob,
   humanSize,
 } from "./job";
@@ -50,8 +49,8 @@ describe("normalizeJob", () => {
     expect(normalizeJob(RUNNING_SYNC).userKey).toBe(100);
   });
 
-  it("labels the job class", () => {
-    expect(normalizeJob(RUNNING_SYNC).label).toBe("Sector sync");
+  it("keeps the java class simple name verbatim, as the API filter takes it", () => {
+    expect(normalizeJob(RUNNING_SYNC).job).toBe("SectorSync");
   });
 
   it("keeps status, step, lane and the sector key", () => {
@@ -117,13 +116,13 @@ describe("status helpers mirror JobStatus on the backend", () => {
   });
 });
 
-describe("job labels", () => {
-  it("labels known job classes", () => {
-    expect(jobLabel("XRelease")).toBe("Extended release");
-  });
-  it("falls back to a readable class name for unknown jobs", () => {
-    expect(jobLabel("SomeBrandNewJob")).toBe("Some Brand New Job");
+describe("job lanes", () => {
+  it("puts a job class it does not know in the default lane", () => {
     expect(laneOfJob("SomeBrandNewJob")).toBe("default");
+  });
+  it("derives the import and sync lanes from the job class", () => {
+    expect(laneOfJob("ImportJob")).toBe("import");
+    expect(laneOfJob("SectorSync")).toBe("sync");
   });
 });
 

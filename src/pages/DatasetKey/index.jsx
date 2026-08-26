@@ -156,9 +156,7 @@ const DatasetPage = (props) => {
         section === "imports" && (
           <Alert
             style={{ marginTop: "16px" }}
-            title={`Last ${_.startCase(
-              lastImport.job
-            )} of this dataset failed.`}
+            title={`Last ${lastImport.job} of this dataset failed.`}
             description={lastImport.error}
             type="error"
           />

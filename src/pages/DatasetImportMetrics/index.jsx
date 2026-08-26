@@ -23,7 +23,7 @@ import { getUsersBatch } from "../../api/user";
 import ImportMenu from "./Menu";
 import qs from "query-string";
 import JobStatusTag from "../../components/job/JobStatusTag";
-import { isLive, jobLabel } from "../../api/job";
+import { isLive } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -251,11 +251,9 @@ const DatasetImportMetrics = (props) => {
             </PresentationItem>
             <PresentationItem label="Job">
               {data.jobKey ? (
-                <NavLink to={`/jobs?key=${data.jobKey}`}>
-                  {jobLabel(data.job)}
-                </NavLink>
+                <NavLink to={`/jobs?key=${data.jobKey}`}>{data.job}</NavLink>
               ) : (
-                jobLabel(data.job)
+                data.job
               )}
             </PresentationItem>
             <PresentationItem label="Created by">

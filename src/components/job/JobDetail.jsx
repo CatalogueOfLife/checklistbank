@@ -62,7 +62,7 @@ const JobDetail = ({ job: initial, jobKey }) => {
         <JobStatusTag status={job.status} step={job.step} />
       </PresentationItem>
       <PresentationItem label="Job">
-        {job.label} <code>{job.job}</code>
+        <code>{job.job}</code>
       </PresentationItem>
       <PresentationItem label="Key">
         <code>{job.key}</code>

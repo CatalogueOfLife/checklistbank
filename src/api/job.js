@@ -1,6 +1,5 @@
 import axios from "axios";
 import qs from "query-string";
-import _ from "lodash";
 import config from "../config";
 
 /**
@@ -73,52 +72,6 @@ export const EXPORT_JOBS = [
   "SearchExport",
 ];
 
-/**
- * Human labels for the job classes we know about. Anything else falls back to
- * a start cased class name, so a new backend job type still reads sensibly.
- */
-export const JOB_LABELS = {
-  ImportJob: "Import",
-  ReimportJob: "Reimport all",
-  ImportArticleJob: "Import articles",
-  SectorSync: "Sector sync",
-  SectorDelete: "Sector delete",
-  SectorDeleteFull: "Sector delete (full)",
-  HierarchySync: "Hierarchy sync",
-  ProjectRelease: "Release",
-  XRelease: "Extended release",
-  ProjectDuplication: "Project duplication",
-  ProjectValidationJob: "Project validation",
-  ColdpExtendedExport: "ColDP export",
-  DwcaExtendedExport: "DwC-A export",
-  ColdpTreeExport: "ColDP tree export",
-  DwcTreeExport: "DwC tree export",
-  TextTreeExport: "Text tree export",
-  NewickExport: "Newick export",
-  DotExport: "DOT export",
-  ColReleaseExportJob: "Release export",
-  SearchExport: "Search export",
-  MatchingJob: "Name matching",
-  StreamingMatchingJob: "Name matching (streaming)",
-  GlobalMatcherJob: "Build matcher",
-  RematchJob: "Rematch",
-  RematchArchiveJob: "Rematch archive",
-  IndexJob: "Search index",
-  GbifSyncJob: "GBIF sync",
-  PublisherSyncJob: "Publisher sync",
-  LogoUpdateJob: "Logo update",
-  UsageCountJob: "Usage counts",
-  RebuildMetricsJob: "Rebuild metrics",
-  DeleteDatasetJob: "Delete dataset",
-  HomotypicConsolidationJob: "Homotypic consolidation",
-  TaxonomicAlignJob: "Taxonomic alignment",
-};
-
-export const KNOWN_JOB_TYPES = Object.keys(JOB_LABELS).sort();
-
-export const jobLabel = (job) =>
-  job ? JOB_LABELS[job] || _.startCase(job) : null;
-
 export const laneOfJob = (job) => {
   if (IMPORT_LANE_JOBS.includes(job)) return JOB_LANE.IMPORT;
   if (SYNC_LANE_JOBS.includes(job)) return JOB_LANE.SYNC;
@@ -127,8 +80,9 @@ export const laneOfJob = (job) => {
 
 /**
  * Every job endpoint answers with the persisted JobInfo shape. This flattens
- * it into what the UI actually renders: `createdBy` reads as `userKey`, the
- * job class gets a human label, and the result metadata is grouped.
+ * it into what the UI actually renders: `createdBy` reads as `userKey` and the
+ * result metadata is grouped. `job` stays the bare java class simple name the
+ * API filters, logs and Kibana all speak.
  */
 export const normalizeJob = (raw) => {
   if (!raw) return null;
@@ -136,7 +90,6 @@ export const normalizeJob = (raw) => {
   return {
     key: raw.key,
     job,
-    label: jobLabel(job),
     status: lower(raw.status),
     step: raw.step ?? null,
     // lane is served by the job API; deriving it keeps the UI readable against
@@ -197,14 +150,15 @@ export const cancelJob = (key) =>
   axios.delete(`${config.dataApi}job/${key}`).then(({ data }) => normalizeJob(data));
 
 /**
- * The job class names the backend knows about. Falls back to the labelled set
- * below when talking to a deployment that predates the endpoint.
+ * The job class names the backend knows about, i.e. the values the job filter
+ * accepts. Deliberately not mirrored here: a hardcoded copy of the backend's
+ * job classes is what silently went stale before.
  */
 export const getJobTypes = () =>
   axios
     .get(`${config.dataApi}job/types`)
-    .then(({ data }) => (Array.isArray(data) && data.length ? data : KNOWN_JOB_TYPES))
-    .catch(() => KNOWN_JOB_TYPES);
+    .then(({ data }) => (Array.isArray(data) ? data : []))
+    .catch(() => []);
 
 /** Byte size of a job's result archive, for display. */
 export const humanSize = (bytes) => {

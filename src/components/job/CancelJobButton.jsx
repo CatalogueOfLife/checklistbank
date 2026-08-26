@@ -24,7 +24,7 @@ const CancelJobButton = ({ job, user, onCancelled, size = "small" }) => {
       await cancelJob(job.key);
       notification.open({
         message: "Job cancelled",
-        description: `${job.label || job.job} ${job.key}`,
+        description: `${job.job} ${job.key}`,
       });
       if (onCancelled) onCancelled();
     } catch (err) {
