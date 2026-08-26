@@ -86,17 +86,21 @@ const BasicMenu = (props) => {
     );
   };
 
-  // `size` is the usage count recorded by the last import, and it can sit at a
-  // stale 0: an import that finishes having inserted nothing overwrites it even
-  // though the previous import's data is still there and queryable. Gating the
-  // menu on `size` alone therefore hides a Browse/References page that works
-  // fine. Treat "an import has finished at some point" as data too, and let the
-  // page itself say it is empty in the rare case it really is.
-  const everImported = (d) => _.get(d, "lastImportState") === "finished";
+  // `size` is the usage count recorded by the last import and can sit at a
+  // stale 0 while the data is still there and served - GTDB (310495) reports
+  // size 0 with 243k names in search and a classification tree that renders.
+  // Gating the menu on `size` alone therefore hides pages that work, so a
+  // dataset that has been imported at all (`attempt` is set) counts as having
+  // data. `lastImportState` is deliberately not used: it flips to "running"
+  // mid-import and the menu entries would disappear for the duration.
+  //
+  // The trade is that a dataset that really is empty still shows Browse and
+  // renders an empty page, which is far less confusing than a working page
+  // with no way to reach it.
   const datasetHasData = (d) =>
     !_.get(d, "deleted") &&
     (_.get(d, "size") ||
-      everImported(d) ||
+      _.get(d, "attempt") != null ||
       ["xrelease", "release", "project"].includes(_.get(d, "origin")));
   const hasDataset = datasetHasData(selectedDataset);
   const sourceHasData = datasetHasData(sourceDataset);
