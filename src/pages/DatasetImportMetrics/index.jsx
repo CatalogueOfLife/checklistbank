@@ -86,6 +86,10 @@ const DatasetImportMetrics = (props) => {
     axios(uri)
       .then((res) => {
         const d = currentAttempt ? res.data : res.data[0];
+        // A dataset that has never been imported answers with an empty list.
+        // Reading createdBy off that threw, so the page showed the raw
+        // TypeError instead of the "never been imported" notice below.
+        if (!d) return null;
         return userLoader.load(d.createdBy).then((user_) => {
           d.user = user_;
           return d;
@@ -113,7 +117,7 @@ const DatasetImportMetrics = (props) => {
         }
         setLoading(false);
         setData(d);
-        setHasNoImports(_.isUndefined(d));
+        setHasNoImports(!d);
         setError(null);
       })
       .catch((err) => {
@@ -220,7 +224,9 @@ const DatasetImportMetrics = (props) => {
           />
         </Spin>
       )}
-      {dataset && importHistory && !["xrelease", "release"].includes(origin) && (
+      {dataset &&
+        importHistory?.length > 0 &&
+        !["xrelease", "release"].includes(origin) && (
         <Button
           type="primary"
           style={{ display: "inline", position: "relative", top: "-48px", float: "right", marginRight: "10px" }}
