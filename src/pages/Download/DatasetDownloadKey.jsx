@@ -98,23 +98,11 @@ const DatasetDownload = ({ match, addError }) => {
                   <PresentationItem md={4} label="Request">
                     {download.request && (
                       <div>
-                        {Object.keys(download.request).map((key) => {
-                          const { text, html } = formatRequestValue(
+                        {Object.keys(download.request).map((key) => (
+                          <Tag key={key}>{`${key}: ${formatRequestValue(
                             download.request[key]
-                          );
-                          return (
-                            <Tag key={key}>
-                              {`${key}: `}
-                              {html ? (
-                                <span
-                                  dangerouslySetInnerHTML={{ __html: html }}
-                                />
-                              ) : (
-                                text
-                              )}
-                            </Tag>
-                          );
-                        })}
+                          )}`}</Tag>
+                        ))}
                       </div>
                     )}
                   </PresentationItem>
