@@ -49,7 +49,7 @@ import EditTaxonModal from "../project/Assembly/EditTaxonModal";
 import Auth from "../../components/Auth";
 import Linkify from "../../components/Linkify";
 import SourceDatasets from "./SourceDatasets";
-import marked from "marked";
+import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";

@@ -31,7 +31,7 @@ import Yaml from "../../../components/MetaData/Yaml";
 
 import TaxGroupIcon, { filterRedundantGroups } from "../../NameSearch/TaxGroupIcon";
 import TaxBreakdownChart from "./TaxBreakdownChart";
-import marked from "marked";
+import { marked } from "marked";
 import DOMPurify from "dompurify";
 import linkify from "linkify-html";
 

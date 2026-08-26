@@ -1,6 +1,6 @@
 import React from "react";
 
-import marked from "marked";
+import { marked } from "marked";
 import DOMPurify from "dompurify";
 
 // GitHub-style "link" octicon used for the heading gutter anchors

@@ -1,6 +1,6 @@
 import React from "react";
 import DOMPurify from "dompurify";
-import marked from "marked";
+import { marked } from "marked";
 import linkify from "linkify-html";
 
 // Sanitize HTML treatments so no head, css or js can be injected — only plain,
