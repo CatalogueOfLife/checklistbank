@@ -15,6 +15,7 @@ import {
   ConfigProvider,
   Empty,
   Popconfirm,
+  Select,
   App,
 } from "antd";
 import config from "../../config";
@@ -33,7 +34,8 @@ import withContext from "../../components/hoc/withContext";
 import PublisherFilterDropdown from "./PublisherFilterDropdown";
 import DatasetDetails from "./DatasetDetails";
 import DatasetNavLink from "./DatasetNavLink";
-import { buildSearchQuery } from "./searchQuery";
+import { buildSearchQuery, asArray } from "./searchQuery";
+import { getRowTypes } from "../../api/enumeration";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const FormItem = Form.Item;
 const { isEditorOrAdmin, canEditDataset } = Auth;
@@ -106,6 +108,12 @@ const DatasetList = ({
 
   // Track previous location.search for componentDidUpdate logic
   const [prevLocationSearch, setPrevLocationSearch] = useState(null);
+
+  // Row type filter vocabulary, fetched live off /vocab/term?classOnly=true
+  const [rowTypes, setRowTypes] = useState([]);
+  useEffect(() => {
+    getRowTypes().then(setRowTypes);
+  }, []);
 
   const getData = (currentParams, currentPagination) => {
     const { pageSize: limit, current } = currentPagination;
@@ -658,6 +666,30 @@ const DatasetList = ({
                 <ColumnFilter
                   columns={defaultColumns}
                   onChange={handleColumns}
+                />
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={24} sm={24} md={12} lg={12}>
+              {/* Selecting several row types narrows rather than widens - the
+                  backend ANDs repeated rowType params - hence the wording. */}
+              <FormItem
+                style={{ width: "100%" }}
+                {...formItemLayout}
+                label="Row type"
+                help="Datasets containing all selected row types"
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  showSearch
+                  placeholder="Any row type"
+                  value={asArray(params.rowType)}
+                  onChange={(v) =>
+                    updateSearch({ rowType: v?.length ? v : undefined })
+                  }
+                  options={rowTypes.map((t) => ({ value: t, label: t }))}
                 />
               </FormItem>
             </Col>

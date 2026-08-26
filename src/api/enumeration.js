@@ -167,3 +167,17 @@ export const getSectorAuthorshipUpdate = () => {
     .then((res) => res.data ?? [])
     .catch(() => []);
 };
+// Row types: the term *classes* a dataset's verbatim records can carry, i.e. the
+// values the dataset search `rowType` filter accepts. Always fetched live rather
+// than via getData - there is no local JSON copy and a bundled one would go stale
+// as ColDP gains row types.
+//
+// The prefixed form is what gets returned and what must be sent on. Unprefixed
+// names resolve to whichever registered term wins: `Distribution` is
+// gbif:Distribution (~1k datasets), not col:Distribution (~34k). Never strip the
+// prefix for display.
+export const getRowTypes = () => {
+  return axios(`${config.dataApi}vocab/term?classOnly=true`)
+    .then((res) => (res.data ?? []).slice().sort())
+    .catch(() => []);
+};

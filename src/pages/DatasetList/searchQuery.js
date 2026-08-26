@@ -32,3 +32,10 @@ export const buildSearchQuery = (currentQuery, filters, sorter, action) => {
 
   return query;
 };
+
+// Normalizes a repeatable query param into the array a multi-select expects.
+// query-string yields a bare string for `?rowType=col:Taxon` and an array for
+// `?rowType=col:Taxon&rowType=col:Media`; a valueless `?rowType=` yields "",
+// which must stay an empty selection rather than become a blank term.
+export const asArray = (value) =>
+  value === undefined || value === null || value === "" ? [] : [].concat(value);

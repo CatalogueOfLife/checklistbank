@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSearchQuery } from "./searchQuery";
+import { buildSearchQuery, asArray } from "./searchQuery";
 
 describe("buildSearchQuery", () => {
   // Regression: paging while sorting by a hidden column (e.g. the default-hidden `issued`
@@ -90,5 +90,31 @@ describe("buildSearchQuery", () => {
 
     expect(next.type).toEqual(["nomenclatural"]);
     expect(next.origin).toBeUndefined();
+  });
+});
+
+// A repeatable query param arrives as a bare string when the URL carries one value
+// and as an array when it carries several (?rowType=col:Taxon vs
+// ?rowType=col:Taxon&rowType=col:Media). A multi-select needs an array either way.
+describe("asArray", () => {
+  it("wraps a single value from a one-valued query param", () => {
+    expect(asArray("col:Taxon")).toEqual(["col:Taxon"]);
+  });
+
+  it("passes an already repeated param through untouched", () => {
+    expect(asArray(["col:Taxon", "col:Media"])).toEqual([
+      "col:Taxon",
+      "col:Media",
+    ]);
+  });
+
+  it("yields an empty selection for a missing param", () => {
+    expect(asArray(undefined)).toEqual([]);
+    expect(asArray(null)).toEqual([]);
+  });
+
+  // `?rowType=` parses to "" - selecting [""] would send an empty term to the API
+  it("does not turn a valueless param into a blank selection", () => {
+    expect(asArray("")).toEqual([]);
   });
 });
