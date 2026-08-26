@@ -92,11 +92,16 @@ const DatasetImportMetrics = (props) => {
         });
       })
       .then((d) => {
+        // The history drawer, and the button that opens it, are gated on
+        // importHistory. Fetch it on every load rather than only from the poll
+        // tick below: while an import was running the first fetch was the
+        // tick, so a running import had no History button for the first five
+        // seconds. getData_ is what the tick calls, so this covers both.
+        const history = getHistory();
         if (d && isLive(d.status)) {
           if (!timerRef.current) {
             timerRef.current = setInterval(() => {
               getData_(currentAttempt);
-              getHistory();
             }, config.pollingHeartBeat || 5000);
           }
         } else {
@@ -104,7 +109,7 @@ const DatasetImportMetrics = (props) => {
             clearInterval(timerRef.current);
           }
           timerRef.current = null;
-          getHistory().then(updateImportState);
+          history.then(updateImportState);
         }
         setLoading(false);
         setData(d);
