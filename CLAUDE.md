@@ -104,7 +104,7 @@ The app is built with **Vite 8 / Rolldown** and `@vitejs/plugin-react` v6. Confi
 
 - **`plugins`**:
   - `react()` - JSX transform via plugin-react v6 (delegates to Vite's built-in oxc transform).
-  - `nodePolyfills({ include: ["buffer", "fs", "os", "path", "process", "stream", "util"], globals: { Buffer: true, process: true } })` - csvtojson (NameMatch) and diff2html pull in Node builtins. We polyfill only what they actually need.
+  - `nodePolyfills({ include: ["buffer", "fs", "os", "path", "process", "stream", "util"], globals: { Buffer: true, process: true } })` - csvtojson (NameMatch) pulls in Node builtins. We polyfill only what they actually need.
 - **`define: { "process.env.NODE_ENV": '"production"' }`** - The deploy script passes `NODE_ENV=dev` so `writeEnums.cjs` picks the dev API; without this define, the same env var leaks into the bundle and React/plugin-react emit their development variants (extra ~570 KB minified).
 - **`server: { port: 3000, host: true }`** - Binds both IPv4 and IPv6 on macOS so `127.0.0.1:3000` works (needed to route the local UI to the dev backend; see Environment Configuration).
 - **`build.rollupOptions.output.manualChunks`** - Splits Highcharts, MapLibre, antd (+icons + rc-* helpers), and React into named vendor chunks so the browser can cache them independently across deploys. Rolldown only accepts the function form, not the Rollup-classic object form.
@@ -129,7 +129,7 @@ The app is built with **Vite 8 / Rolldown** and `@vitejs/plugin-react` v6. Confi
 - **MapLibre GL** - Distribution maps (replaces Leaflet)
 - **Highcharts 12** + `@highcharts/react` v5 - Import-metrics, import-timeline, and taxon-breakdown charts. The React wrapper is the modern scoped package (the legacy `highcharts-react-official` was retired upstream). Use `import { Chart } from "@highcharts/react"` and pass options via the `options` prop — no `highcharts={Highcharts}` prop is needed. For the exporting module, import the UMD module by path: `import "highcharts/modules/exporting"` (the side-effect registers it on the global Highcharts). The ESM masters path (`highcharts/es-modules/...`) does not share state with the UMD `import Highcharts from "highcharts"` entry, which is what Vite resolves.
 - **marked** - Markdown rendering
-- **diff2html** - Diff visualization
+- **NamesDiffView** (`src/components/NamesDiffView/`) - in-house names diff rendering for the diff viewer and sector sync diffs
 
 ## API Integration
 

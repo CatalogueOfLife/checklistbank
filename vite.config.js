@@ -12,7 +12,7 @@ export default defineConfig({
   define: { "process.env.NODE_ENV": '"production"' },
   plugins: [
     react(),
-    // csvtojson (NameMatch.jsx) and diff2html pull in Node builtins. We
+    // csvtojson (NameMatch.jsx) pulls in Node builtins. We
     // polyfill only what they actually need — keeping the bundle lean.
     // `util` is needed because a transitive dep calls util.debuglog /
     // util.inspect; without the polyfill Vite externalises it and the
