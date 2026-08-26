@@ -106,7 +106,7 @@ const TableView = ({ datasetKey, data }) => {
   return (
     <>
       {textVisible.map((s) => (
-        <BorderedListItem key={s.verbatimKey}>
+        <BorderedListItem key={s.id ?? s.verbatimKey}>
           {s?.merged && (
             <MergedDataBadge
               createdBy={s?.createdBy}
@@ -145,7 +145,9 @@ const TableView = ({ datasetKey, data }) => {
           className="colplus-taxon-page-list"
           columns={columns}
           dataSource={otherVisible}
-          rowKey="verbatimKey"
+          // Distribution records are keyed by id; verbatimKey is absent on
+          // release datasets, which left every row key undefined.
+          rowKey={(r) => r.id ?? r.verbatimKey}
           pagination={false}
           size="middle"
         />

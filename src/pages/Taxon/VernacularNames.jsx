@@ -120,7 +120,9 @@ const VernacularNamesTable = ({ data: dataProp, datasetKey, style, countryAlpha3
         className="colplus-taxon-page-list"
         columns={columns}
         dataSource={visible}
-        rowKey="verbatimKey"
+        // Vernacular records are keyed by id; verbatimKey is absent on
+        // release datasets, which left every row key undefined.
+        rowKey={(r) => r.id ?? r.verbatimKey}
         pagination={false}
         size="middle"
       />

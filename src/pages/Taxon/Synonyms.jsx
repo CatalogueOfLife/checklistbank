@@ -54,8 +54,11 @@ const SynonymsTable = ({
     const s = _.isArray(syn) ? syn[0] : syn;
     const isGroup = _.isArray(syn);
     return (
-      <>
-        <BorderedListItem key={_.get(s, "name.id")}>
+      // The key belongs on the outermost node handed back to the .map() calls
+      // below - that is this fragment, not the item inside it. A shorthand <>
+      // cannot carry one, hence the explicit React.Fragment.
+      <React.Fragment key={_.get(s, "name.id")}>
+        <BorderedListItem>
           <NavLink
             to={{
               pathname: `${uri}${encodeURIComponent(_.get(s, "id"))}`,
@@ -138,7 +141,7 @@ const SynonymsTable = ({
         {isGroup &&
           syn.length > 1 &&
           syn.slice(1).map((sg) => renderSynonym(sg, true, true))}
-      </>
+      </React.Fragment>
     );
   };
 
