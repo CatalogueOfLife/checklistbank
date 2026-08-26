@@ -129,12 +129,6 @@ const cslPersonsToStrings = (cslpersons) =>
   cslpersons.map((p) => `${p.family}${p.given ? ", " + p.given : ""}`);
 
 const FormItem = Form.Item;
-/* const openNotification = (title, description) => {
-  notification.open({
-    message: title,
-    description: description,
-  });
-}; */
 
 const CslForm = (props) => {
   // const [submissionError, setSubmissionError] = useState(null);
@@ -203,41 +197,6 @@ const CslForm = (props) => {
     onSubmit(csl);
   };
 
-  /*   const submitData = (values) => {
-    const id = _.get(props, "data.id");
-    const conf = {
-      headers: {
-        "Content-Type": "application/vnd.citationstyles.csl+json",
-      },
-    };
-    const task = id
-      ? axios.put(
-          `${config.dataApi}dataset/${datasetKey}/reference/${id}`,
-          values,
-          conf
-        )
-      : axios.post(
-          `${config.dataApi}dataset/${datasetKey}/reference`,
-          values,
-          conf
-        );
-
-    task
-      .then((res) => {
-        let title = id ? "Reference updated" : "Reference saved";
-        let msg = id
-          ? `Data successfully updated for ${values.title}`
-          : `${values.title} saved with id ${res.id}`;
-        setSubmissionError(null);
-        if (onSaveSuccess && typeof onSaveSuccess === "function") {
-          onSaveSuccess(res);
-        }
-        openNotification(title, msg);
-      })
-      .catch((err) => {
-        setSubmissionError(err);
-      });
-  }; */
 
   return (
     <Form

@@ -63,11 +63,6 @@ const getBaseUri = (projectKey, datasetKey) =>
   projectKey === datasetKey
     ? `/project/${projectKey}`
     : `/dataset/${datasetKey}`;
-/* console.log(
-  encodeURIComponent(
-    "Limoniidae-Eriopterinae-Rhypholophus-\\\\n-simulans-28a397a9d"
-  )
-); */
 
 const getColumns = (projectKey) => [
   {

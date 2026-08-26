@@ -65,11 +65,6 @@ const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, 
           `${config.dataApi}dataset/${datasetKey}/nameusage/pattern?regex=${encodeURIComponent(regEx_)}&limit=${limit}&offset=${offset}${query}`
         );
         setTotal(offset + 1 + res?.data?.length);
-        /* console.log(
-          `Data length ${res?.data?.length} total ${
-            offset + 1 + res?.data?.length
-          }`
-        ); */
         if (res?.data) {
           onSearch(res?.data.map((v) => v.id));
         }

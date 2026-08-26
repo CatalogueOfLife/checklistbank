@@ -1027,20 +1027,6 @@ const BasicMenu = (props) => {
                 </NavLink>
               ),
             },
-          {/*               {selectedDataset && (
-            <Menu.Item key="projects">
-              <NavLink
-                to={{
-                  pathname: `/dataset/${_.get(
-                    selectedDataset,
-                    "key"
-                  )}/projects`,
-                }}
-              >
-                Contributes
-              </NavLink>
-            </Menu.Item>
-          )} */},
           _.isArray(_selectedKeys) &&
             (_selectedKeys.includes("taxon") ||
               _selectedKeys.includes("nameusage")) &&

@@ -205,11 +205,6 @@ const MergedDataBadge = ({
       >
         <Tag
           color="purple"
-          /*  onClick={(e) => {
-            getSourceDataset();
-            getSourceTaxon();
-            if(!createdByAlgorithm[createdBy]){ getVerbatimRecord(); }
-          }}  */
           style={{
             cursor: "pointer",
             fontFamily: "monospace",

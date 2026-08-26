@@ -138,11 +138,6 @@ const AddChildModal = (props) => {
   const parseName = () => {
     axios(`${config.dataApi}parser/name?name=${suggestedNameValue}`).then(
       (res) => {
-        /*         if (_.get(res, "data[0]")) {
-          form.setFieldsValue(_.get(res, "data[0].name"));
-          setParsedName(_.get(res, "data[0].name"));
-          setSelectedRank(_.get(res, "data[0].name.rank"));
-        } */
         if (res?.data) {
             let vals = { name: res?.data};
             if(res?.data?.rank === "unranked" && initialRank) {
@@ -163,42 +158,6 @@ const AddChildModal = (props) => {
   const prev = () => {
     setCurrent(current - 1);
   };
-/* 
-  const handleSubmit = (values) => {
-    removeEmptyValues(values);
-    //  const updatedName = { ...name, ...values };
-    submitData({ ...values, origin: "user" });
-  };
-
-  const submitData = (updatedName) => {
-    const { name } = taxon;
-
-    if (_.get(parent, "id")) {
-        taxon.parentId = parent.id;
-      }
-
-    axios
-      .put(
-        `${config.dataApi}dataset/${name.datasetKey}/name/${name.id}`,
-        updatedName
-      )
-      .then((res) => {
-        setSubmissionError(null);
-        setConfirmLoading(false);
-        notification.open({
-          message: "Name updated",
-          description: `${updatedName.scientificName} was updated`,
-        });
-        if (props.onSuccess && typeof props.onSuccess === "function") {
-          props.onSuccess();
-        }
-      })
-      .catch((err) => {
-        setCurrent(1);
-        setSubmissionError(err);
-        setConfirmLoading(false);
-      });
-  }; */
   return (
     <Modal
       style={{ width: "650px" }}

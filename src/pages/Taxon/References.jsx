@@ -58,26 +58,6 @@ const ReferencesTable = ({
               )}
             </Col>
           </Row>
-          {/*  {s?.sourceDataset?.key !== primarySourceDatasetKey && (
-            <Row>
-              <Col style={{ paddingLeft: "32px" }}>
-                <MergedDataBadge
-                  createdBy={s?.createdBy}
-                  datasetKey={s.datasetKey}
-                  verbatimSourceKey={s?.verbatimSourceKey}
-                  sourceDatasetKey={s?.sourceDataset?.key}
-                />
-                Source:{" "}
-                <NavLink
-                  to={{
-                    pathname: `/dataset/${s?.sourceDataset?.key}`,
-                  }}
-                >
-                  {s?.sourceDataset?.title}
-                </NavLink>
-              </Col>
-            </Row>
-          )} */}
         </React.Fragment>
       ))}
     </div>

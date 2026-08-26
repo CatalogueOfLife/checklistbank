@@ -28,15 +28,6 @@ const SectorTabs = ({ location, projectKey }) => {
       key: `/project/${projectKey}/options`,
       icon: <SettingOutlined />,
     },
-    /* {
-      label: (
-        <NavLink to={{ pathname: `/project/${projectKey}/publishers` }}>
-          Publishers
-        </NavLink>
-      ),
-      key: `/project/${projectKey}/publishers`,
-      icon: <TeamOutlined />,
-    }, */
   ];
 
   return (

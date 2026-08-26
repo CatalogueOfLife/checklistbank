@@ -55,21 +55,6 @@ export default (
       dataIndex: "mode",
       key: "mode",
       width: 75,
-      /*   filters: [
-      {
-        text: "Attach",
-        value: "attach",
-      },
-      {
-        text: "Union",
-        value: "union",
-      },
-      {
-        text: "Merge",
-        value: "merge",
-      },
-    ],
-    onFilter: (value, record) => record.mode === value, */
     },
     {
       title: "Subject",

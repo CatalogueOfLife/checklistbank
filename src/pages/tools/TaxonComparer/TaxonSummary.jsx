@@ -78,15 +78,7 @@ const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError, rank}
                 datasetKey={datasetKey}
               />
             </Col>
-            {/* <Col span={12}>
-            <h4>Synonyms and misapplied names</h4>
-            <Includes
-                 md={12}
-                data={synonyms}
-                taxon={taxon}
-                datasetKey={datasetKey}
-              />
-            </Col> */}</Row>
+            </Row>
     </>
 
 }

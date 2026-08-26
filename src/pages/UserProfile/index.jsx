@@ -280,22 +280,6 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
             ]}
           />
 
-          {/*         <Row>
-          <Col span={12} style={{ padding: "0px 12px 0px 12px" }}>
-            <List
-              header={<h4>Editor scope</h4>}
-              dataSource={editorDatasets}
-              renderItem={renderItem}
-            />
-          </Col>
-          <Col span={12} style={{ padding: "0px 12px 0px 20px" }}>
-            <List
-              header={<h4>Reviewer scope</h4>}
-              dataSource={reviewerDatasets}
-              renderItem={renderItem}
-            />
-          </Col>
-        </Row> */}
         </PageContent>
       ) : (
         <Exception type="401"></Exception>

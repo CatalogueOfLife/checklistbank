@@ -628,12 +628,6 @@ const WorkBench = ({
         label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
       }))
     : [];
-  /*    const facetSectorMode = _.get(facets, "sectorMode")
-    ? facets.sectorMode.map((i) => ({
-        value: i.value,
-        label: `${_.startCase(i.value)} (${i.count.toLocaleString("en-GB")})`,
-      }))
-    : []; */
   const facetTaxonomicStatus = _.get(facets, "status")
     ? facets.status.map((s) => ({
         value: s.value,
@@ -689,13 +683,6 @@ const WorkBench = ({
       }))
     : [];
 
-  /*     columns[2].filters = facetTaxonomicStatus
-    ? facetTaxonomicStatus.map((s) => ({ value: s.value, text: s.label }))
-    : taxonomicstatus.map((s) => ({ value: s, text: _.startCase(s) }));
-  columns[2].filteredValue = _.get(filteredInfo, "status") || null;
-  columns[9].filters =
-    facetRanks || rank.map((s) => ({ value: s, text: _.startCase(s) }));
-  columns[9].filteredValue = _.get(filteredInfo, "rank") || null; */
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -799,31 +786,6 @@ const WorkBench = ({
                         />
                       </FormItem>
 
-                      {/*                 <FormItem
-                    style={{
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <RadioGroup
-                      onChange={(evt) => {
-                        if (typeof evt.target.value === "undefined") {
-                          this.setState(
-                            {
-                              params: _.omit(this.state.params, ["status"]),
-                            },
-                            this.getData
-                          );
-                        } else {
-                          this.updateSearch({ status: evt.target.value });
-                        }
-                      }}
-                      value={params.status}
-                    >
-                      <Radio value="_NULL">Exclude bare names</Radio>
-                      <Radio value="_NOT_NULL">Only bare names</Radio>
-                      <Radio value={undefined}>All</Radio>
-                    </RadioGroup>
-                  </FormItem> */}
                     </Form>
                   </div>
                 </Col>
@@ -834,12 +796,6 @@ const WorkBench = ({
                     vocab={facetIssues}
                     label="Issues"
                   />
-                  {/*                 <MultiValueFilter
-                    defaultValue={_.get(params, "sectorMode")}
-                    onChange={(value) => this.updateSearch({ sectorMode: value })}
-                    vocab={facetSectorMode}
-                    label="Sector Mode"
-                  /> */}
 
                   <MultiValueFilter
                     defaultValue={_.get(params, "rank")}

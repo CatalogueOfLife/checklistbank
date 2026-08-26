@@ -294,15 +294,6 @@ export default (projectKey, deleteCallback) => ({
       className: "workbench-td",
       render: (text, record) => <CopyableColumnText text={text} width="50px" />,
     },
-    /*   {
-            title: "Accepted",
-            dataIndex: ["accepted", "labelHtml"],
-            key: "accepted",
-            width: 60,
-            className: "workbench-td",
-            render: (text, record) => {
-            return <span dangerouslySetInnerHTML={{__html: _.get(record, "accepted.labelHtml")}}></span>}
-        }, */
     {
       title: "Uninomial",
       width: 160,

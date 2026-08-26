@@ -127,16 +127,6 @@ const SynonymsTable = ({
             }
             placement="top"
           />
-          {/* {s?.sourceDatasetKey &&
-            _.get(primarySource, "key") !== s?.sourceDatasetKey && (
-              <>
-                {" "}
-                <a
-                  className="col-reference-link"
-                  href={`#col-sourcedataset-${s?.sourceDatasetKey}`}
-                >{`[source: ${s?.sourceDatasetKey}]`}</a>
-              </>
-            )} */}
         </BorderedListItem>
         {isGroup &&
           syn.length > 1 &&

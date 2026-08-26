@@ -263,11 +263,6 @@ const Publishers = ({ user, projectKey, location, addError, project }) => {
       <Row>
         <Col flex="auto">
           <Title level={4}>Publishers </Title>
-          {/* <SearchBox
-              defaultValue={location?.search?.q || null}
-              style={{ marginBottom: "10px", width: "50%" }}
-              onSearch={(value) => updateSearch({ q: value })}
-            /> */}
         </Col>
         <Col>
           {Auth.canEditDataset({ key: projectKey }, user) && (

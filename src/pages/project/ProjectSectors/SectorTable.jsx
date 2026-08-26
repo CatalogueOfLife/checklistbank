@@ -313,13 +313,6 @@ const SectorTable = ({
 
   return (
     <React.Fragment>
-      {/*  <Row>
-        {!loading && !isNaN(offset) && pagination?.total && data && (
-          <Col style={{ textAlign: "right" }}>
-            Results: {offset} - {offset + data.length} of {pagination.total}
-          </Col>
-        )}
-      </Row> */}
       <Row>
         <Col flex="auto"></Col>
         <Col>
