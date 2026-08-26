@@ -7,8 +7,7 @@ import withContext from "../../components/hoc/withContext";
 import PageContent from "../../components/PageContent";
 
 import { Helmet } from "react-helmet-async";
-import { Row, Divider, Alert, Col, Tag } from "antd";
-import ErrorMsg from "../../components/ErrorMsg";
+import { Row, Divider, Col, Tag } from "antd";
 
 const SystemHealth = ({ components, health, getSystemHealth }) => {
   useEffect(() => {

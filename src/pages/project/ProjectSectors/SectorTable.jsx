@@ -1,34 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
 
-import {
-  CodeOutlined,
-  DeleteOutlined,
-  HistoryOutlined,
-  SearchOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
-import {
-  Table,
-  Popconfirm,
-  Input,
-  Button,
-  Row,
-  Col,
-  Tag,
-  App,
-} from "antd";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { Table, Popconfirm, Input, Button, Row, Col, Tag, App } from "antd";
 import config from "../../../config";
-import moment from "dayjs";
 import withContext from "../../../components/hoc/withContext";
-import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
-import Highlighter from "react-highlight-words";
 import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth";
-import RematchResult from "./RematchResult";
 import getColumns from "./columns";
 
 const SectorTable = ({

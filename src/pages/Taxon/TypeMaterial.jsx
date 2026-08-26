@@ -1,6 +1,5 @@
 import React from "react";
 import config from "../../config";
-import _ from "lodash";
 import BorderedListItem from "./BorderedListItem";
 import linkify from "linkify-html";
 import { Tag, Space, Tooltip } from "antd";

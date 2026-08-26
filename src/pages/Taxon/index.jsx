@@ -6,18 +6,8 @@ import DatasetLogo from "../DatasetList/DatasetLogo";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { RiNodeTree } from "react-icons/ri";
-import { LinkOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Tag,
-  Row,
-  Col,
-  Button,
-  Rate,
-  Typography,
-  Tooltip,
-  App,
-} from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Alert, Tag, Row, Col, Button, Rate, Typography, Tooltip, App } from "antd";
 import Tabs from "../../components/Tabs";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import DecisionBadge from "../../components/DecisionBadge";

@@ -1,30 +1,14 @@
 import React, { useEffect, useState } from "react";
 import withContext from "../../../components/hoc/withContext";
-import {
-    Alert,
-    Empty,
-    Row,
-    Col,
-    Select,
-    Popconfirm,
-    Checkbox,
-    Tag,
-    Spin,
-    Button,
-    Tooltip,
-    Slider
-  } from "antd";
+import { Row, Col } from "antd";
 
   import withRouter from "../../../withRouter";
   import axios from "axios";
 import _ from "lodash";
 import config from "../../../config";
 
-import TaxonBreakdown from "../../Taxon/TaxonBreakdown"
-import Includes from "../../Taxon/Includes"
-
-
-
+import TaxonBreakdown from "../../Taxon/TaxonBreakdown";
+import Includes from "../../Taxon/Includes";
 const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError, rank}) => {
   const [includes, setIncludes] = useState([]);
   const [synonyms, setSynonyms] = useState([]);

@@ -1,24 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { PlusOutlined } from "@ant-design/icons";
 
-import {
-  Input,
-  Modal,
-  Button,
-  Select,
-  Alert,
-  notification,
-  Typography,
-  Row,
-  Col,
-} from "antd";
-import ErrorMsg from "../../../components/ErrorMsg";
-import withContext from "../../../components/hoc/withContext";
-import EditableTable from "./EditableTable";
-import ReferenceAutocomplete from "./ReferenceAutocomplete";
-import _ from "lodash";
-import axios from "axios";
-import config from "../../../config";
+import { Modal, Typography, Row, Col } from "antd";
 import TextTreeUpload from "../../../components/TextTreeUpload";
 
 const TextTreeUploadModal = ({ taxon, onCancel }) => {

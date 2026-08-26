@@ -1,6 +1,5 @@
 import React from "react";
 
-import DatasetMeta from "./../../DatasetKey/datasetPageTabs/DatasetMeta";
 import DatasetIssues from "../../DatasetKey/datasetPageTabs/DatasetIssues";
 import Layout from "../../../components/LayoutNew";
 

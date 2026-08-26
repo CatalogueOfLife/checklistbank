@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  SyncOutlined,
-  HistoryOutlined,
-  DownloadOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, HistoryOutlined, DownloadOutlined } from "@ant-design/icons";
 import PresentationItem from "../../components/PresentationItem";
-import Exception from "../../components/exception/Exception";
 import history from "../../history";
 import moment from "dayjs";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
-import _ from "lodash";
 import { Button, Card, Tag, Spin, Row, Col, Alert } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";

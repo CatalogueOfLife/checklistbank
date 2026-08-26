@@ -3,9 +3,8 @@ import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
-import _ from "lodash";
 
-import { Row, Alert, notification } from "antd";
+import { Row, Alert } from "antd";
 
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";

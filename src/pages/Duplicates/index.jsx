@@ -2,30 +2,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 
-import {
-  SearchOutlined,
-  UpOutlined,
-  DownOutlined,
-  DownloadOutlined,
-} from "@ant-design/icons";
-import {
-  Table,
-  Alert,
-  Select,
-  Row,
-  Col,
-  Button,
-  Switch,
-  Card,
-  AutoComplete,
-  Input,
-  Radio,
-  Pagination,
-  Tooltip,
-  App,
-  Form,
-  Checkbox,
-} from "antd";
+import { SearchOutlined, UpOutlined, DownOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Table, Alert, Select, Row, Col, Button, Switch, AutoComplete, Input, Radio, Pagination, Tooltip, App, Form, Checkbox } from "antd";
 import config from "../../config";
 import qs from "query-string";
 import history from "../../history";

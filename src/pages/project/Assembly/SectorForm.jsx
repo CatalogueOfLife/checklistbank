@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  App,
-  Select,
-  Checkbox,
-  Input,
-  Alert,
-  Button,
-  InputNumber,
-  Form,
-  Divider,
-  Tooltip,
-  Radio,
-} from "antd";
+import { App, Select, Checkbox, Input, Alert, Button, InputNumber, Form, Divider, Tooltip, Radio } from "antd";
 import TaxonFormControl from "../../../components/TaxonFormControl";
 import DatasetFormControl from "../../../components/DatasetFormControl";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -20,9 +8,6 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
-import {
-  InfoCircleOutlined,
-} from "@ant-design/icons";
 
 const FormItem = Form.Item;
 

@@ -1,7 +1,5 @@
 import { TagOutlined } from "@ant-design/icons";
 import { Popover, Tag } from "antd";
-import config from "../../config";
-import _ from "lodash";
 import { getTypeColor } from "./TypeMaterial";
 import linkify from "linkify-html";
 import MergedDataBadge from "../../components/MergedDataBadge";

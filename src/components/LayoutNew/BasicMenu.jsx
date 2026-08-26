@@ -2,29 +2,13 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
 
-import {
-  ApiOutlined,
-  BarsOutlined,
-  CopyOutlined,
-  MenuOutlined,
-  ProjectOutlined,
-  SettingOutlined,
-  TableOutlined,
-  LineChartOutlined,
-  PartitionOutlined,
-  CheckOutlined,
-  OrderedListOutlined,
-  SearchOutlined,
-  TagsOutlined,
-  ToolOutlined,
-} from "@ant-design/icons";
+import { BarsOutlined, SettingOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
 
 import { Menu as AntdMenu, Badge } from "antd";
 import Logo from "./Logo";
 import _ from "lodash";
 import Auth from "../Auth";
 import withContext from "../hoc/withContext";
-import config from "../../config";
 
 import SourceSelect from "./SourceDatasetSelect";
 import { truncate } from "../util";

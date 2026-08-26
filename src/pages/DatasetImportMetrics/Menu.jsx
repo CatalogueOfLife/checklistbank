@@ -1,14 +1,9 @@
 import withRouter from "../../withRouter";
 import { Typography } from 'antd';
 const { Title } = Typography;
-import { Menu, Row, Col, Button } from "antd";
+import { Menu, Row, Col } from "antd";
 import { NavLink } from "react-router-dom";
-import {
-  DiffOutlined,
-  PieChartOutlined,
-  LineChartOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
+import { DiffOutlined, PieChartOutlined, LineChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 import moment from "dayjs";
 

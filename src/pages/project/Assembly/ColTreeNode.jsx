@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { SyncOutlined, WarningFilled, CopyOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../../components/MergedDataBadge";
-import {
-  App,
-  Tag,
-  Popconfirm,
-  Button,
-  Popover,
-  Tooltip,
-} from "antd";
+import { App, Tag, Popconfirm, Button, Popover, Tooltip } from "antd";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../../withRouter";
 import PopconfirmMultiOption from "../../../components/PopconfirmMultiOption";
-import TextTreeUpload from "../../../components/TextTreeUpload";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";

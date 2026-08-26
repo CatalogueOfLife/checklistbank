@@ -6,14 +6,14 @@ import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import UserRoles from "./UserRoles";
 import { Table, Row, Col, Modal, Button, Space, Tooltip } from "antd";
-import { DeleteOutlined, EditOutlined , MinusCircleOutlined} from "@ant-design/icons";
+import { EditOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import history from "../../../history";
 import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 import { NavLink } from "react-router-dom";
 import moment from "dayjs";
-import _ from "lodash"
+import _ from "lodash";
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1) : "";

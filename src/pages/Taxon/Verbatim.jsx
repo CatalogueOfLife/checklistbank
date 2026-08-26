@@ -4,7 +4,7 @@ import withContext from "../../components/hoc/withContext";
 import axios from "axios";
 import config from "../../config";
 import VerbatimPresentation from "../../components/VerbatimPresentation";
-import { Skeleton, Space, Tabs } from "antd";
+import { Skeleton, Tabs } from "antd";
 import _ from "lodash";
 import withWidth, { SMALL } from "../../components/hoc/Width";
 

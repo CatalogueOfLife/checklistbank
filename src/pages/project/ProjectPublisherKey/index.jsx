@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip } from "antd";
 import { LinkOutlined } from "@ant-design/icons";
 import PresentationItem from "../../../components/PresentationItem";
-import moment from "dayjs";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../../withRouter";
 import axios from "axios";
 import config from "../../../config";
-import _ from "lodash";
-import { Button, Card, Tag, Spin } from "antd";
+import { Spin } from "antd";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";

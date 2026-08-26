@@ -3,7 +3,6 @@ import _ from "lodash";
 import { NavLink } from "react-router-dom";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 

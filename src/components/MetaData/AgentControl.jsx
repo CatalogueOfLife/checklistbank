@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Row, Tag, Col, Modal } from "antd";
+import { Tag, Modal } from "antd";
 import styles from "../newTag.module.css";
 import AgentForm from "./AgentForm";
 import AgentPresentation from "./AgentPresentation";

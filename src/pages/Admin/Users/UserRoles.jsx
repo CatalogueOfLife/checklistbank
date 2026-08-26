@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Checkbox, Popconfirm, Row, Col, Button, Tag , Typography, Table, Tooltip, App} from "antd";
-import { MinusCircleOutlined, CheckCircleOutlined} from "@ant-design/icons";
+import { Checkbox, Popconfirm, Row, Col, Button, Typography, Table, Tooltip, App } from "antd";
+import { MinusCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import DataLoader from "dataloader";
 import axios from "axios";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
-import DatasetNavLink from "../../DatasetList/DatasetNavLink"
+import DatasetNavLink from "../../DatasetList/DatasetNavLink";
 import DatasetAutocomplete from "../../project/Assembly/DatasetAutocomplete";
 const { Text } = Typography;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));

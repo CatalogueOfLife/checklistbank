@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Auth from "../../../components/Auth";
-import {
-  App,
-  Select,
-  Checkbox,
-  Input,
-  Alert,
-  Button,
-  InputNumber,
-  Form,
-} from "antd";
-import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
-import TaxonFormControl from "../../../components/TaxonFormControl";
+import { App, Input, Alert, Button, Form } from "antd";
 import PublisherFormControl from "../../../components/PublisherFormControl";
 import ErrorMsg from "../../../components/ErrorMsg";
-import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
 

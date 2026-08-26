@@ -5,7 +5,6 @@ import history from "../../history";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 import Exception403 from "../../components/exception/403";
-import Auth from "../../components/Auth";
 
 const DatasetCreate = ({ user, loadTokenUser, addError }) => (
   <Layout

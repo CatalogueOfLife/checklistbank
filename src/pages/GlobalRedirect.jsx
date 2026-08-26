@@ -3,7 +3,7 @@ import Layout from "../components/LayoutNew";
 import PageContent from "../components/PageContent";
 import { Navigate } from "react-router-dom";
 import withRouter from "../withRouter";
-import { Row, Col, Card } from "antd";
+import { Row, Col } from "antd";
 import axios from "axios";
 import Exception404 from "../components/exception/404";
 import withContext from "../components/hoc/withContext";

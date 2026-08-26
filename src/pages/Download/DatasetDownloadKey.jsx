@@ -1,23 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  SyncOutlined,
-  DownloadOutlined,
-  HistoryOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, DownloadOutlined, HistoryOutlined } from "@ant-design/icons";
 import { Tooltip } from 'antd';
 import PresentationItem from "../../components/PresentationItem";
 import moment from "dayjs";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
-import _ from "lodash";
-import {
-  Button,
-  Card,
-  Tag,
-  Spin,
-
-} from "antd";
+import { Button, Card, Tag, Spin } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";

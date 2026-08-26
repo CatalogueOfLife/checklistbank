@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import config from "../../../config";
-import withRouter from "../../../withRouter";
-import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import { Table, Row, Col, Tag, Button, Radio, App } from "antd";

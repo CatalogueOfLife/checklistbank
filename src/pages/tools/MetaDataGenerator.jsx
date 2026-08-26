@@ -1,25 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  Input,
-  Row,
-  Col,
-  Alert,
-  Steps,
-  Button,
-  Radio,
-  Upload,
-  Form,
-  Tabs,
-  Modal,
-  Typography,
-} from "antd";
+import { Input, Row, Col, Alert, Steps, Button, Radio, Upload, Form, Tabs, Modal, Typography } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import MetaDataForm from "../../components/MetaData/MetaDataForm";
 import ErrorMsg from "../../components/ErrorMsg";
 import Layout from "../../components/LayoutNew";
 import withRouter from "../../withRouter";
-import history from "../../history";
 import PageContent from "../../components/PageContent";
 import ToolHeader from "./ToolHeader";
 import _ from "lodash";

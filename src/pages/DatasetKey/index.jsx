@@ -3,7 +3,7 @@ import config from "../../config";
 import { Navigate } from "react-router-dom";
 import withRouter from "../../withRouter";
 import axios from "axios";
-import { Alert, Row, Col, Button } from "antd";
+import { Alert, Row, Col } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import Editors from "../project/Editors/Editors";
 import DatasetImportMetrics from "../DatasetImportMetrics";

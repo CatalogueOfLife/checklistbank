@@ -10,7 +10,6 @@ import qs from "query-string";
 import moment from "dayjs";
 import history from "../../../history";
 import SyncButton from "./SyncButton";
-import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";

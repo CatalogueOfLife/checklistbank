@@ -1,21 +1,10 @@
 import { useEffect, useState } from "react";
 import withRouter from "../../../withRouter";
-import Layout from "../../../components/LayoutNew";
 
 import withContext from "../../../components/hoc/withContext";
-import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import _ from "lodash";
-import { Helmet } from "react-helmet-async";
-import {
-  Row,
-  Col,
-  Button,
-  Alert,
-  Popconfirm,
-  Switch,
-  App,
-} from "antd";
+import { Row, Col, Button, Alert, Popconfirm, Switch, App } from "antd";
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";

@@ -3,26 +3,10 @@ import Auth from "../../../components/Auth";
 import config from "../../../config";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../../withRouter";
-import Layout from "../../../components/LayoutNew";
-import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import PublisherForm from "./PublisherForm";
-import OptionTabs from "./OptionTabs";
-import {
-  Table,
-  Row,
-  Col,
-  Modal,
-  Button,
-  Popconfirm,
-  Typography,
-  Tooltip,
-} from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  MinusCircleOutlined,
-} from "@ant-design/icons";
+import { Table, Row, Col, Modal, Button, Popconfirm, Typography } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import history from "../../../history";
 import axios from "axios";
 import qs from "query-string";

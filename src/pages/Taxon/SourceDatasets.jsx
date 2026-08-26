@@ -1,9 +1,5 @@
 import React from "react";
-import _ from "lodash";
-import BorderedListItem from "./BorderedListItem";
-import linkify from "linkify-html";
 import { NavLink } from "react-router-dom";
-import { LinkOutlined } from "@ant-design/icons";
 import { Row, Col } from "antd";
 
 const SourceDatasets = ({

@@ -1,6 +1,4 @@
 import React from "react";
-import _ from "lodash";
-import withContext from "../../components/hoc/withContext";
 import PresentationItem from "../../components/PresentationItem";
 import BorderedListItem from "./BorderedListItem";
 import ReferencePopover from "../project/ProjectReferences/ReferencePopover";

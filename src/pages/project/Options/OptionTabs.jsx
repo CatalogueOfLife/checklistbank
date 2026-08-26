@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
-import { SettingOutlined, TeamOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 

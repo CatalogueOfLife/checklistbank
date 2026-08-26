@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Alert, Empty, Row, Col, Select, Form, Spin } from "antd";
+import { Row, Col, Select, Form } from "antd";
 import axios from "axios";
 import config from "../../config";
-import ErrorMsg from "../../components/ErrorMsg";
 import PageContent from "../../components/PageContent";
 import { Chart } from "@highcharts/react";
 import _ from "lodash";

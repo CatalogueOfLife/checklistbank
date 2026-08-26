@@ -7,7 +7,7 @@ import axios from "axios";
 import moment from "dayjs";
 import history from "../../history";
 import { NavLink } from "react-router-dom";
-import { Drawer, Row, Col, Alert, Button, Spin, Divider } from "antd";
+import { Drawer, Row, Alert, Button, Spin, Divider } from "antd";
 import ImportMetrics from "../../components/ImportMetrics";
 import { DownloadOutlined } from "@ant-design/icons";
 

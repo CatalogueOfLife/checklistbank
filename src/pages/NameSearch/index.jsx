@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Form, Switch, Tag, Empty, Button } from "antd";
+import { Table, Alert, Radio, Row, Col, Form, Switch, Empty, Button } from "antd";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import config from "../../config";

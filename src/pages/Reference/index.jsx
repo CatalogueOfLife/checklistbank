@@ -1,11 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import PresentationItem from "../../components/PresentationItem";
 import PageContent from "../../components/PageContent";
 import Verbatim from "../Taxon/Verbatim";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { Spin, Row, Col, Divider, Tabs } from "antd";
-import ErrorMsg from "../../components/ErrorMsg";
+import { Spin, Row, Col, Tabs } from "antd";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import BooleanValue from "../../components/BooleanValue";

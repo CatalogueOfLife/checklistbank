@@ -7,7 +7,6 @@ import axios from "axios";
 import { Alert, Spin, Row, Col, Tag } from "antd";
 import Tabs from "../../components/Tabs";
 import ErrorMsg from "../../components/ErrorMsg";
-import { LinkOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import PresentationItem from "../../components/PresentationItem";
 import NameRelations from "../Taxon/NameRelations";

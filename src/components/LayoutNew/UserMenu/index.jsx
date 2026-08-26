@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Menu, Dropdown, Avatar, Modal, Button, Divider } from "antd";
+import { Menu, Dropdown, Avatar, Modal, Button } from "antd";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
 
-import ProjectSelect from "../ProjectSelect";
 import Auth from "../../Auth";
 // Wrappers
 import withContext from "../../hoc/withContext";

@@ -8,9 +8,8 @@ import PageContent from "../../components/PageContent";
 import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
-import _ from "lodash";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Spin, Popconfirm, message } from "antd";
+import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, message } from "antd";
 import moment from "dayjs";
 import history from "../../history";
 const UserProfile = ({ user, countryAlpha2, match }) => {

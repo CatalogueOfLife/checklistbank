@@ -1,29 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Empty,
-  Row,
-  Col,
-  Select,
-  Popconfirm,
-  Checkbox,
-  Tag,
-  Spin,
-  Button,
-  Tooltip,
-  Divider
-} from "antd";
+import { Empty, Row, Col, Select, Popconfirm, Checkbox, Tag, Spin, Button, Tooltip, Divider } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import config from "../../config";
-import ErrorMsg from "../../components/ErrorMsg";
 import withRouter from "../../withRouter";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import ToolHeader from "./ToolHeader";
 import NamesDiffView from "../../components/NamesDiffView";
 import _ from "lodash";
-import moment from "dayjs";
 import history from "../../history";
 import qs from "query-string";
 import withContext from "../../components/hoc/withContext";

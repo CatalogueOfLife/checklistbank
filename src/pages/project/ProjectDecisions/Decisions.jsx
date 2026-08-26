@@ -1,31 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import {
-  DeleteOutlined,
-  WarningOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, WarningOutlined, EditOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
 
-import {
-  Table,
-  Alert,
-  Popconfirm,
-  Input,
-  Button,
-  Select,
-  Row,
-  Col,
-  Switch,
-  Form,
-  App,
-} from "antd";
+import { Table, Alert, Popconfirm, Input, Button, Select, Row, Col, Switch, Form, App } from "antd";
 import withRouter from "../../../withRouter";
 import config from "../../../config";
 import moment from "dayjs";
-import Layout from "../../../components/LayoutNew";
-import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";

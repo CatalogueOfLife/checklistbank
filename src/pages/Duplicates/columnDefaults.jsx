@@ -2,7 +2,6 @@ import React from "react";
 import DecisionTag from "../WorkBench/DecisionTag";
 import _ from "lodash";
 import Classification from "./Classification";
-import { NavLink } from "react-router-dom";
 import CopyableColumnText from "../WorkBench/CopyableColumnText";
 import { Tooltip, Button } from "antd";
 export default (projectKey, deleteCallback) => ({

@@ -6,7 +6,6 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withRouter from "../../../withRouter";
 import PageContent from "../../../components/PageContent";
 import NamesDiffView from "../../../components/NamesDiffView";
-import _ from "lodash";
 import moment from "dayjs";
 import history from "../../../history";
 import qs from "query-string";

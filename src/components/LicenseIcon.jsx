@@ -1,5 +1,4 @@
 import React from "react";
-import { Badge } from "antd";
 import Icon from '@ant-design/icons';
 import bySVG from "./Icons/cc-svg/by.svg";
 import ccSVG from "./Icons/cc-svg/cc.svg";
@@ -7,7 +6,7 @@ import ncSVG from "./Icons/cc-svg/nc.svg";
 import ndSVG from "./Icons/cc-svg/nd.svg";
 import pdSVG from "./Icons/cc-svg/pd.svg";
 import saSVG from "./Icons/cc-svg/sa.svg";
-import zeroSVG from "./Icons/cc-svg/zero.svg";  
+import zeroSVG from "./Icons/cc-svg/zero.svg";
 
 const ccby = () => (
    <img src={bySVG} />

@@ -1,14 +1,10 @@
 import React from "react";
-import axios from "axios";
-import { SearchOutlined } from "@ant-design/icons";
-import Auth from "../../../components/Auth";
 
-import config from "../../../config";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 
 import SectorPageContent from "./SectorPageContent";
-import SectorTabs from "./SectorTabs"
+import SectorTabs from "./SectorTabs";
 const ProjectSectors = () => {
   return (
     <Layout

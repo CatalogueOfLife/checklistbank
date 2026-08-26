@@ -1,22 +1,7 @@
 import React from "react";
-import {
-  Table,
-  Tooltip,
-  Input,
-  Button,
-  Row,
-  Col,
-  Tag,
-  notification,
-} from "antd";
+import { Tooltip } from "antd";
 
-import {
-  CodeOutlined,
-  DeleteOutlined,
-  HistoryOutlined,
-  SearchOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
+import { CodeOutlined, HistoryOutlined, WarningOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";

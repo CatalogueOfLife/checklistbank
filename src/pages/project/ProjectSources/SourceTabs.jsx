@@ -1,15 +1,7 @@
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
-import {
-  PartitionOutlined,
-  SyncOutlined,
-  OrderedListOutlined,
-  BarChartOutlined,
-  LineChartOutlined,
-  WarningOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { LineChartOutlined, WarningOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 

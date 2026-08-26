@@ -6,7 +6,6 @@ import _ from "lodash";
 import { SettingOutlined } from "@ant-design/icons";
 import { Modal, Select, Checkbox } from "antd";
 import history from "../../history";
-import { truncate } from "../../components/util";
 
 import DatasetAutocomplete from "../../pages/project/Assembly/DatasetAutocomplete";
 

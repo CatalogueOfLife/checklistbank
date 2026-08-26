@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
-import { Row, Col, List } from "antd";
-import {
-  ApiOutlined,
-  ApiTwoTone,
-} from '@ant-design/icons';
+import { ApiOutlined } from '@ant-design/icons';
 
 
 import withContext from "../../components/hoc/withContext";
@@ -35,15 +31,13 @@ const VocabularyIndex = ({ addError }) => {
         </p>
 
         <ul>
-          {data.map( (item) => (  
-            <>
-            <li><NavLink to={{ pathname: `/vocabulary/${item}` }} end>{item.replace("$", " ")}</NavLink>
+          {data.map((item) => (
+            <li key={item}><NavLink to={{ pathname: `/vocabulary/${item}` }} end>{item.replace("$", " ")}</NavLink>
               {item=="taxgroup" && (
                 <span> (view as <NavLink to={{ pathname: `/vocabulary/taxgrouptree` }} end>tree</NavLink>)</span>
               )}
               &nbsp; <a href={`${config.dataApi}vocab/rank`} target="_blank"><ApiOutlined /></a>
             </li>
-            </>
           ))}
         </ul>
       </PageContent>

@@ -9,7 +9,6 @@ import { getDuplicateOverview } from "../../../../api/dataset";
 import ErrorMsg from "../../../../components/ErrorMsg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { CopyOutlined } from "@ant-design/icons";
-import _ from "lodash";
 
 const DatasetTasks = (props) => {
   const { datasetKey, projectKey, getDuplicateWarningColor } = props;

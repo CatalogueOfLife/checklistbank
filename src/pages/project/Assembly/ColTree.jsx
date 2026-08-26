@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import {
-  //Tree,
-  App,
-  Alert,
-  Spin,
-  Button,
-  Skeleton,
-} from "antd";
+import { App, Alert, Spin, Button, Skeleton } from "antd";
 import Tree from "../../../components/tree/index";
 import _ from "lodash";
 import axios from "axios";
@@ -21,7 +14,6 @@ import { ColTreeContext } from "./ColTreeContext";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-import Auth from "../../../components/Auth";
 const CHILD_PAGE_SIZE = 1000; // How many children will we load at a time
 
 // antd 6's Tree.scrollTo throws when its inner virtual list ref hasn't
