@@ -10,6 +10,7 @@ import { Button, Card, Tag, Spin } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
+import { formatRequestValue } from "./requestValue";
 
 
 const DatasetDownload = ({ match, addError }) => {
@@ -98,11 +99,20 @@ const DatasetDownload = ({ match, addError }) => {
                     {download.request && (
                       <div>
                         {Object.keys(download.request).map((key) => {
-                          const value = download.request[key];
+                          const { text, html } = formatRequestValue(
+                            download.request[key]
+                          );
                           return (
-                            <Tag
-                              key={key}
-                            >{`${key}: ${value?.label || value}`}</Tag>
+                            <Tag key={key}>
+                              {`${key}: `}
+                              {html ? (
+                                <span
+                                  dangerouslySetInnerHTML={{ __html: html }}
+                                />
+                              ) : (
+                                text
+                              )}
+                            </Tag>
                           );
                         })}
                       </div>
