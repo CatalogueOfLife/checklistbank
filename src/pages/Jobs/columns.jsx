@@ -33,25 +33,25 @@ export const jobColumn = {
   render: (text, record) => record.job,
 };
 
-export const laneColumn = {
-  title: "Lane",
-  dataIndex: "lane",
-  key: "lane",
-  width: 90,
-  render: (lane) => _.startCase(lane),
-};
-
 /**
- * How wide the dataset name may get before it is truncated.
+ * Stop a free text column growing with the longest value it happens to hold.
  *
  * Both job tables scroll with x: "max-content", which sizes the table itself to
  * its content and so turns a column's declared `width` into a proportion rather
- * than a cap - a 70 character dataset title stretched this column to 499px and
+ * than a cap - a 70 character dataset title stretched that column to 499px and
  * pushed the date columns off screen. A max-width on the cell bounds what the
  * column contributes to that max-content total, so the column flexes with the
- * name it holds and stops here, and antd's ellipsis truncates the remainder.
+ * text it holds and stops at the cap; pair it with ellipsis to truncate.
+ *
+ * ellipsis would normally put the full text in the cell's title attribute, but
+ * only for a plain string child. These cells render links, and the User column
+ * is not repeated in the expanded row the way Dataset is, so carry the value
+ * over here or truncating it would put it out of reach.
  */
-const DATASET_MAX_WIDTH = 320;
+const capped = (maxWidth, valueOf) => (record) => ({
+  style: { maxWidth },
+  title: valueOf(record) ?? undefined,
+});
 
 const datasetName = (record) =>
   record.dataset?.alias || record.dataset?.title || record.datasetKey;
@@ -61,13 +61,7 @@ export const datasetColumn = {
   key: "datasetKey",
   width: 220,
   ellipsis: true,
-  // ellipsis alone would set the title attribute for us, but only for a plain
-  // string child - this cell renders a link, so carry the full name over here
-  // or truncating it would put it out of reach.
-  onCell: (record) => ({
-    style: { maxWidth: DATASET_MAX_WIDTH },
-    title: datasetName(record) ?? undefined,
-  }),
+  onCell: capped(320, datasetName),
   render: (text, record) =>
     record.datasetKey ? (
       <NavLink
@@ -104,11 +98,20 @@ export const sectorColumn = {
     ),
 };
 
+const userName = (record) => record.user?.username || record.userKey;
+
+// 104px is eight characters plus an ellipsis at the table font, measured on
+// the longest username in use. The ones that actually recur here - importer,
+// matcher, a first name - stay whole; only the long ones abbreviate.
+const USER_WIDTH = 104;
+
 export const userColumn = {
   title: "User",
   key: "createdBy",
-  width: 130,
-  render: (text, record) => record.user?.username || record.userKey,
+  width: USER_WIDTH,
+  ellipsis: true,
+  onCell: capped(USER_WIDTH, userName),
+  render: (text, record) => userName(record),
 };
 
 export const priorityColumn = {

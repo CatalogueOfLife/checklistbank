@@ -12,7 +12,6 @@ import { PRESETS, presetOf, applyPreset } from "./presets";
 import {
   statusColumn,
   jobColumn,
-  laneColumn,
   datasetColumn,
   sectorColumn,
   userColumn,
@@ -86,12 +85,10 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
   const columns = [
     statusColumn,
     jobColumn,
-    laneColumn,
     datasetColumn,
     sectorColumn,
     userColumn,
     dateColumn("Created", "created"),
-    dateColumn("Started", "started"),
     dateColumn("Finished", "finished"),
     durationColumn,
     resultColumn,

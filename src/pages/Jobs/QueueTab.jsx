@@ -10,7 +10,6 @@ import { decorateJobs } from "./decorate";
 import {
   statusColumn,
   jobColumn,
-  laneColumn,
   datasetColumn,
   sectorColumn,
   userColumn,
@@ -71,13 +70,11 @@ const QueueTab = ({ mine, setMine, user }) => {
   const columns = [
     statusColumn,
     jobColumn,
-    laneColumn,
     datasetColumn,
     sectorColumn,
     userColumn,
     priorityColumn,
     dateColumn("Created", "created"),
-    dateColumn("Started", "started"),
     durationColumn,
     logsColumn,
     actionColumn(load),
