@@ -41,11 +41,33 @@ export const laneColumn = {
   render: (lane) => _.startCase(lane),
 };
 
+/**
+ * How wide the dataset name may get before it is truncated.
+ *
+ * Both job tables scroll with x: "max-content", which sizes the table itself to
+ * its content and so turns a column's declared `width` into a proportion rather
+ * than a cap - a 70 character dataset title stretched this column to 499px and
+ * pushed the date columns off screen. A max-width on the cell bounds what the
+ * column contributes to that max-content total, so the column flexes with the
+ * name it holds and stops here, and antd's ellipsis truncates the remainder.
+ */
+const DATASET_MAX_WIDTH = 320;
+
+const datasetName = (record) =>
+  record.dataset?.alias || record.dataset?.title || record.datasetKey;
+
 export const datasetColumn = {
   title: "Dataset",
   key: "datasetKey",
   width: 220,
   ellipsis: true,
+  // ellipsis alone would set the title attribute for us, but only for a plain
+  // string child - this cell renders a link, so carry the full name over here
+  // or truncating it would put it out of reach.
+  onCell: (record) => ({
+    style: { maxWidth: DATASET_MAX_WIDTH },
+    title: datasetName(record) ?? undefined,
+  }),
   render: (text, record) =>
     record.datasetKey ? (
       <NavLink
@@ -57,7 +79,7 @@ export const datasetColumn = {
         }}
         end
       >
-        {record.dataset?.alias || record.dataset?.title || record.datasetKey}
+        {datasetName(record)}
       </NavLink>
     ) : null,
 };
