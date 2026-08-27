@@ -21,6 +21,7 @@ const JOB_SEARCH_PARAMS = [
   "lane",
   "job",
   "priority",
+  "unchanged",
   "createdAfter",
   "createdBefore",
   "limit",

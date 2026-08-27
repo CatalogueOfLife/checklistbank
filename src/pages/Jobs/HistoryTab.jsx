@@ -38,6 +38,10 @@ const asArray = (v) =>
  *
  * The backend orders strictly by created DESC and offers no sortBy, so the
  * columns carry no sorters - showing arrows that cannot work would be a lie.
+ *
+ * Live jobs are deliberately not a preset here: "waiting, blocked or running"
+ * is the whole of the Queue tab, which reads them straight from the executor
+ * and can cancel them. Widening the status filter still reaches them.
  */
 const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
   const [data, setData] = useState({ result: [], total: 0 });
@@ -148,6 +152,22 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
               value={asArray(params.job) || []}
               onChange={(v) => setFilter("job", v)}
               options={jobTypes.map((j) => ({ value: j, label: j }))}
+            />
+          </Form.Item>
+          <Form.Item {...formItemLayout} label="Unchanged imports">
+            <Select
+              allowClear
+              placeholder="Include"
+              value={
+                params.unchanged === undefined || params.unchanged === ""
+                  ? undefined
+                  : String(params.unchanged)
+              }
+              onChange={(v) => setFilter("unchanged", v)}
+              options={[
+                { value: "false", label: "Exclude" },
+                { value: "true", label: "Only" },
+              ]}
             />
           </Form.Item>
         </Col>
