@@ -54,8 +54,14 @@ const colorFor = (record) => {
   return k == null ? MISSING_COLOR : ESTABLISHMENT_COLORS[k];
 };
 
-const POSITRON_STYLE =
-  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+// Basemap style for the map, configurable per environment (env.json →
+// `basemapStyle`, set to CARTO Positron for the deployed dev/prod envs). The
+// fallback is OpenFreeMap's Positron — the same cartography, but with no API
+// key and no request quota, so a local/docker checkout works out of the box.
+// https://carto.com/basemaps/apikey/ — CARTO keys are free within their fair
+// use limit; append the key to the style URL in env.json.
+const DEFAULT_BASEMAP_STYLE = "https://tiles.openfreemap.org/styles/positron";
+const BASEMAP_STYLE = config.basemapStyle || DEFAULT_BASEMAP_STYLE;
 
 // Layer IDs
 const FOCAL_SOURCE = "col-focal-distributions";
@@ -249,7 +255,7 @@ const DistributionsMap = ({
     if (!supported()) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: POSITRON_STYLE,
+      style: BASEMAP_STYLE,
       center: [0, 20],
       zoom: 1,
       minZoom: 0,

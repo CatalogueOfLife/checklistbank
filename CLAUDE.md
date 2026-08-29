@@ -39,6 +39,8 @@ The app uses a multi-environment setup controlled by domain-based detection:
 
 **Important**: When modifying backend API endpoints or adding new environments, update `src/env.json`. The `loadEnumsFromAPI` flag controls whether enumerations are fetched from API or local JSON files.
 
+**Basemap**: `basemapStyle` is the MapLibre style URL for the taxon distribution map (`src/pages/Taxon/DistributionsMap/`). It is set to CARTO Positron for the deployed `dev` and `prod` environments and left unset for `local` / `docker`, which then fall back to OpenFreeMap Positron — the same cartography with no API key and no request quota. [CARTO now issues free API keys](https://carto.com/basemaps/apikey/) (fair-use limited) and already watermarks unauthenticated *raster* tiles; the vector style we use is not gated yet. When a key is issued for CoL, append it to the `basemapStyle` URL in `env.json` (`…/style.json?api_key=<key>`) — nothing in the code needs to change.
+
 ### Application State Management
 
 The app uses React Context extensively instead of Redux:
