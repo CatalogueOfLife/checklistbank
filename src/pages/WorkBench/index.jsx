@@ -325,7 +325,6 @@ const WorkBench = ({
           filter: {
             USAGE_ID: currentParams.USAGE_ID,
             projectKey: [projectKey],
-            unsafe: [true],
           },
           page: {
             offset: Number((current - 1) * limit),
@@ -359,6 +358,11 @@ const WorkBench = ({
   // componentDidMount
   useEffect(() => {
     let initialParams = qs.parse(_.get({ location }, "location.search"));
+    // `unsafe` used to switch off a backend validation that refused USAGE_ID
+    // alongside any filter but the dataset key. Both the parameter and the
+    // validation are gone (backend 6d8bb3a77, removed in the ES 9.3 upgrade),
+    // and the search now rejects it outright, so drop it from older URLs.
+    delete initialParams.unsafe;
     if (_.isEmpty(initialParams)) {
       initialParams = { limit: 50, offset: 0, facet: FACETS };
       history.push({
@@ -457,11 +461,6 @@ const WorkBench = ({
         delete newParams[param];
       }
     });
-    if (newParams?.USAGE_ID) {
-      newParams.unsafe = true;
-    } else {
-      delete newParams.unsafe;
-    }
     const newPagination = { ...pagination, current: 1 };
     setParams(newParams);
     setPagination(newPagination);
