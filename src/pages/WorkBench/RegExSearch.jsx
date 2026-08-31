@@ -47,16 +47,16 @@ const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, 
     if (regEx_) {
         let params_ = {}
         if(params.status){
-            params_.status = status
+            params_.status = params.status
         }
         if(params.rank){
-            params_.rank=rank
+            params_.rank=params.rank
         }
         if(params.decisionMode){
-          params_.decisionMode=decisionMode
+          params_.decisionMode=params.decisionMode
         }
 
-        let query = rank || status || decisionMode ? `&${qs.stringify(params_)}` : "";
+        let query = params.rank || params.status || params.decisionMode ? `&${qs.stringify(params_)}` : "";
         
 
       try {

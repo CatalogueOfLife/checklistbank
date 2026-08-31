@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import {
   Input,
@@ -69,12 +69,6 @@ const AddChildModal = (props) => {
   const [parsedName, setParsedName] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (props.taxon) {
-      getTaxon();
-    }
-  }, [props.taxon]);
 
   const isGenusOrAbove = (rank) => {
     return props.rank.indexOf(rank) <= props.rank.indexOf("genus");

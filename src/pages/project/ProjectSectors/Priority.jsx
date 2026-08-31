@@ -10,6 +10,7 @@ import history from "../../../history";
 import Auth from "../../../components/Auth";
 import SyncButton from "../SectorSync/SyncButton";
 import { DeleteOutlined } from "@ant-design/icons";
+import getColumns from "./columns";
 import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
