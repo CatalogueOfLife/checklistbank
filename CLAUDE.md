@@ -30,11 +30,13 @@ npm run build                  # Production build (runs gitTag.cjs, writeEnums.c
 ### Environment Configuration
 
 The app uses a multi-environment setup controlled by domain-based detection:
-- **Environment files**: `src/env.json` contains configurations for `dev`, `prod`, `docker`, and `local` environments
-- **Selection**: `src/config.js` detects the environment based on `window.location.hostname`
+- **Environment files**: `src/env.json` contains configurations for `dev`, `prod`, `test`, `docker`, and `local` environments
+- **Selection**: `src/config.js` detects the environment based on `window.location.hostname` (guarded by `src/config.test.js`)
   - `www.checklistbank.org` → prod
   - hostname ending in `localhost` → prod (so the local UI talks to the live API by default)
+  - hostname ending in `test.checklistbank.org` → test
   - anything else (including `127.0.0.1`) → dev
+- **Environment banner**: non-prod deployments get a grey watermark in the header naming the environment, from the `ENV_BANNER` map in `src/components/LayoutNew/index.jsx` (`public/images/test-env.svg`, `dev-env.svg`). Prod gets none.
 - **Environment properties**: Each environment defines `url`, `dataApi`, `gbifApi`, `downloadApi`, and other service endpoints
 
 **Important**: When modifying backend API endpoints or adding new environments, update `src/env.json`. The `loadEnumsFromAPI` flag controls whether enumerations are fetched from API or local JSON files.

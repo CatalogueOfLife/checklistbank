@@ -7,6 +7,8 @@ if (domain.endsWith("www.checklistbank.org")) {
   env = environments.prod;
 } else if (domain.endsWith("localhost")) {
   env = environments.prod;
+} else if (domain.endsWith("test.checklistbank.org")) {
+  env = environments.test;
 } else {
   env = environments.dev;
 }

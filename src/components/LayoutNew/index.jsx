@@ -39,6 +39,12 @@ const exceptionIsDataset404 = (error, location) => {
   );
 };
 
+// Watermark naming the deployment, drawn behind the header. Prod gets none.
+const ENV_BANNER = {
+  test: "/images/test-env.svg",
+  dev: "/images/dev-env.svg",
+};
+
 const { Header, Sider, Content, Footer } = Layout;
 const menuWidth = 256;
 const menuCollapsedWidth = 80;
@@ -136,9 +142,9 @@ const SiteLayout = ({
       <Layout style={{ marginLeft: contentMargin + "px" }}>
         <Header
           style={
-            config.env === "dev"
+            ENV_BANNER[config.env]
               ? {
-                  backgroundImage: `url("/images/test-env.svg")`,
+                  backgroundImage: `url("${ENV_BANNER[config.env]}")`,
                   backgroundRepeat: "no-repeat",
                   backgroundPosition: "center",
                   backgroundSize: "45%",
