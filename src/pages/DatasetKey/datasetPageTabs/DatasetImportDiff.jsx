@@ -85,34 +85,27 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
       });
   };
 
-  // Mount
-  useEffect(() => {
-    const init = async () => {
-      if (!params.attempts) {
-        const importHistory_ = await getHistory();
-        if (importHistory_ && importHistory_.length > 1) {
-          const a1 = importHistory_[1];
-          const a2 = importHistory_[0];
-          history.push({
-            pathname: `/dataset/${datasetKey}/diff`,
-            search: `?attempts=${a1.attempt}..${a2.attempt}`,
-          });
-        }
-      } else {
-        getData(search);
-      }
-      getHistory();
-    };
-    init();
-  }, []);
-
-  // React to datasetKey change
+  // Import history: on mount and whenever the dataset changes.
   useEffect(() => {
     getHistory();
-    getData(location.search);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetKey]);
 
-  // React to location.search change
+  // Default ?attempts to the two most recent finished imports once the history
+  // has arrived. Derived from state, so it costs no extra request.
+  useEffect(() => {
+    if (qs.parse(location.search).attempts || importHistory.length < 2) return;
+    const a1 = importHistory[1];
+    const a2 = importHistory[0];
+    history.push({
+      pathname: `/dataset/${datasetKey}/diff`,
+      search: `?attempts=${a1.attempt}..${a2.attempt}`,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [importHistory, datasetKey]);
+
+  // The diff itself is URL driven. This runs on mount too, so nothing else may
+  // fetch it. getData no-ops while ?attempts is still missing.
   useEffect(() => {
     const p = qs.parse(location.search);
     if (attemptsParamIsSetAndValid(p.attempts)) {
@@ -120,7 +113,8 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
       setAttempt2(Number(p.attempts.split("..")[1]));
     }
     getData(location.search);
-  }, [location.search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetKey, location.search]);
 
   return (
     <PageContent>

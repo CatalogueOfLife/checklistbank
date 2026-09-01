@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import config from "../../config";
 import axios from "axios";
 import withRouter from "../../withRouter";
@@ -33,6 +33,10 @@ const VerbatimRecord = (props) => {
   const [loading, setLoading] = useState(false);
   const [issues, setIssues] = useState([]);
 
+  // Monotonic id of the newest verbatim request, so a slow response can never
+  // overwrite the result of a request that was fired after it.
+  const requestId = useRef(0);
+
   const getIssues = (datasetKey) => {
     axios(
       `${config.dataApi}dataset/${datasetKey}/import?limit=1&status=finished`
@@ -49,9 +53,11 @@ const VerbatimRecord = (props) => {
   };
 
   const getVerbatimData = (params, datasetKey) => {
+    const id = ++requestId.current;
     setLoading(true);
     axios(`${config.dataApi}dataset/${datasetKey}/verbatim?${qs.stringify(params)}`)
       .then((res) => {
+        if (id !== requestId.current) return; // superseded by a newer request
         setVerbatim(res.data.result);
         setVerbatimError(null);
         setLimit(res.data.limit);
@@ -60,41 +66,31 @@ const VerbatimRecord = (props) => {
         setLoading(false);
       })
       .catch((err) => {
+        if (id !== requestId.current) return; // superseded by a newer request
         setVerbatimError(err);
         setVerbatim([]);
         setLoading(false);
       });
   };
 
-  // Initial mount
+  // Issue facets for the dropdown.
   useEffect(() => {
-    let params = qs.parse(_.get(props, "location.search"));
-    if (!params.limit) {
-      params.limit = 50;
-    }
     getIssues(key);
-    getVerbatimData(params, key);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
-  // React to key change (match.params.key)
-  useEffect(() => {
-    const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
-    setVerbatim([]);
-    setVerbatimError(null);
-    setTotal(0);
-    setLimit(lsLimit ? Number(lsLimit) : 10);
-    setOffset(0);
-    getVerbatimData({}, key);
-  }, [matchKey]);
-
-  // React to location.search change
+  // The URL is the single source of truth for the query. Keyed on `key` as
+  // well, because switching source dataset inside a project changes the path
+  // but can leave location.search untouched.
   useEffect(() => {
     let params = qs.parse(_.get(props, "location.search"));
     if (!params.limit) {
-      params.limit = limit;
+      const lsLimit = localStorage.getItem("col_plus_verbatim_limit");
+      params.limit = lsLimit ? Number(lsLimit) : 50;
     }
     getVerbatimData(params, key);
-  }, [_.get(props, "location.search")]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, _.get(props, "location.search")]);
 
   const onSearch = (search) => {
     const params = qs.parse(_.get(location, "search"));

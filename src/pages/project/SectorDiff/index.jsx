@@ -48,18 +48,19 @@ const SectorDiff = ({ match, location, project, projectKey }) => {
   };
 
   useEffect(() => {
-    const query = _.get({ search: location.search }, "search");
     axios(
       `${config.dataApi}dataset/${projectKey}/sector/sync?sectorKey=${sectorKey}&status=finished&limit=1`
     ).then((res) => {
       setMaxAttempt(_.get(res, "data.result[0].attempt"));
     });
-    getData(query);
-  }, []);
+  }, [projectKey, sectorKey]);
 
+  // The diff itself is URL driven. This runs on mount too, so the effect above
+  // must not fetch it a second time.
   useEffect(() => {
     getData(location.search);
-  }, [location.search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectKey, sectorKey, location.search]);
 
   return (
     <Layout
