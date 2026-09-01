@@ -21,6 +21,7 @@ const RUNNING_SYNC = {
   priority: "medium",
   datasetKey: 3,
   sectorKey: 17,
+  attempt: 42,
   createdBy: 100,
   created: "2026-08-24T09:00:00",
   started: "2026-08-24T09:00:04",
@@ -59,6 +60,11 @@ describe("normalizeJob", () => {
     expect(j.step).toBe("indexing");
     expect(j.lane).toBe("sync");
     expect(j.sectorKey).toBe(17);
+  });
+
+  it("keeps the attempt, and nulls it for a job that has none", () => {
+    expect(normalizeJob(RUNNING_SYNC).attempt).toBe(42);
+    expect(normalizeJob(FAILED_EXPORT).attempt).toBeNull();
   });
 
   it("groups the result metadata, and omits it when there is no file", () => {

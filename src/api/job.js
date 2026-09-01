@@ -98,6 +98,9 @@ export const normalizeJob = (raw) => {
     priority: lower(raw.priority) ?? null,
     datasetKey: raw.datasetKey ?? null,
     sectorKey: raw.sectorKey ?? null,
+    // the import or sync attempt this job produced, scoped by the two keys above.
+    // null for jobs that leave no metrics behind, and for an unchanged import
+    attempt: raw.attempt ?? null,
     // not a search filter - only what a sync's params happen to record, used
     // to show which source dataset a sync was for
     sourceDatasetKey: raw.params?.subjectDatasetKey ?? null,

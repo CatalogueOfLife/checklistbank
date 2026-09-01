@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Spin, Alert } from "antd";
+import { NavLink } from "react-router-dom";
 import dayjs from "dayjs";
 import _ from "lodash";
 import PresentationItem from "../PresentationItem";
@@ -76,6 +77,19 @@ const JobDetail = ({ job: initial, jobKey }) => {
       )}
       {job.sectorKey && (
         <PresentationItem label="Sector">{job.sectorKey}</PresentationItem>
+      )}
+      {job.attempt && (
+        <PresentationItem label="Attempt">
+          {/* an import or release attempt has a metrics page of its own; a sync attempt
+              only exists inside the sector's sync history, so it stays plain text */}
+          {job.datasetKey && !job.sectorKey ? (
+            <NavLink to={`/dataset/${job.datasetKey}/imports/${job.attempt}`} end>
+              {job.attempt}
+            </NavLink>
+          ) : (
+            job.attempt
+          )}
+        </PresentationItem>
       )}
       <PresentationItem label="Created">{dt(job.created)}</PresentationItem>
       <PresentationItem label="Started">{dt(job.started)}</PresentationItem>
