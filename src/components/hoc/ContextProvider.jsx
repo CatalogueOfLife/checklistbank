@@ -313,9 +313,11 @@ const ContextProvider = ({ children }) => {
       const { data: comps } = await axios.get(
         `${config.dataApi}admin/component`
       );
-      const allRunning = Object.keys(comps).reduce((a, c) => {
-        return a && comps[c];
-      }, true);
+      // idle is a status flag reported alongside the components, not a
+      // component itself - a busy server must not count as "not all running".
+      const allRunning = Object.keys(comps)
+        .filter((c) => c !== "idle")
+        .every((c) => comps[c]);
       setAllComponentsRunning(allRunning);
       setComponents(comps);
     } catch (err) {
