@@ -14,7 +14,7 @@ import "./menu.css";
 import styles from "./LayoutNew.module.css";
 import config from "../../config";
 import moment from "dayjs";
-import ErrorMsg from "../ErrorMsg";
+import ErrorMsg, { isApiUnavailable } from "../ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
 import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
@@ -295,10 +295,9 @@ const SiteLayout = ({
             />
           )}
           {error &&
+            !isApiUnavailable(error) &&
             ![401, 403].includes(_.get(error, "response.status")) &&
-            !exceptionIsDataset404(error, location) &&
-            ([431, 413].includes(_.get(error, "response.status")) ||
-              error?.message !== "Network Error") && (
+            !exceptionIsDataset404(error, location) && (
               <Alert
                 style={{ marginTop: "10px" }}
                 description={<ErrorMsg error={error} />}
@@ -306,12 +305,14 @@ const SiteLayout = ({
                 closable={{ onClose: clearError }}
               />
             )}
-          {error && error?.message === "Network Error" && (
+          {/* The API not answering is an outage, not an application error, so it is a
+              warning rather than a red error. Suppressed while the maintenance banner
+              above is up - that one already explains the outage and is more specific,
+              and it keeps working because it is polled from the download host. */}
+          {error && isApiUnavailable(error) && !background?.maintenance && (
             <Alert
               style={{ marginTop: "10px" }}
-              description={
-                "The network connection was interupted. Check your internet connection and reload the page."
-              }
+              description={<ErrorMsg error={error} />}
               type="warning"
               showIcon
               closable={{ onClose: clearError }}

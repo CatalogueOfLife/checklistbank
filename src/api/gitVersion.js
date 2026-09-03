@@ -6,11 +6,14 @@ export const getGitVersion = () => {
 };
 
 export const getBackendGitVersion = () => {
-  return axios(`${config.dataApi}version`).then((res) => {
-    const splitted = res.data.split(" ");
-    return {
-      short: splitted[0].trim(),
-      created: splitted[1].trim(),
-    };
-  });
+  return axios(`${config.dataApi}version`)
+    .then((res) => {
+      const splitted = res.data.split(" ");
+      return {
+        short: splitted[0].trim(),
+        created: splitted[1].trim(),
+      };
+    })
+    // a version banner is a nicety - never let it reject unhandled when the API is down
+    .catch(() => null);
 };

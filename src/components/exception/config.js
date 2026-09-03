@@ -32,6 +32,11 @@ const config = {
     title: "500",
     desc: "Sorry, the server is reporting an error.",
   },
+  503: {
+    img: "../images/500.svg",
+    title: "503",
+    desc: "Sorry, the API is temporarily unavailable. It is most likely being restarted - please try again in a few minutes.",
+  },
   523: {
     img: "../images/500.svg",
     title: "523",

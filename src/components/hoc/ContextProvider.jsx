@@ -223,7 +223,8 @@ const ContextProvider = ({ children }) => {
             setUser(null);
             window.location.reload();
           } else {
-            setError(err.response);
+            // the axios error, not err.response: ErrorMsg reads message/config off it
+            setError(err);
           }
         });
     }
@@ -367,7 +368,7 @@ const ContextProvider = ({ children }) => {
     axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if ([401, 403].includes(_.get(error, "status"))) {
+        if ([401, 403].includes(_.get(error, "response.status"))) {
           setError(error);
         }
         return Promise.reject(error);
