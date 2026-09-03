@@ -88,7 +88,8 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
     axios
       .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
       .then((res) => {
-        const uuid = res.data;
+        // the endpoint answers with a JobInfo, like every other job submission
+        const uuid = res.data?.key;
         setError(null);
         setExportUrl(`${config.dataApi}export/${uuid}`);
         history.push({

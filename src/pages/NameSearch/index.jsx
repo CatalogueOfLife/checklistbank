@@ -1,8 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { Table, Alert, Radio, Row, Col, Form, Switch, Empty, Button } from "antd";
-import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Alert,
+  Radio,
+  Row,
+  Col,
+  Form,
+  Switch,
+  Empty,
+  Button,
+  Tooltip,
+  notification,
+} from "antd";
+import { UpOutlined, DownOutlined, DownloadOutlined } from "@ant-design/icons";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import config from "../../config";
 import qs from "query-string";
@@ -186,6 +198,8 @@ const NameSearchPage = ({
   dataset,
   showSourceDataset,
   location,
+  user,
+  addError,
 }) => {
   const isExternal = dataset?.origin === "external";
   // Build the facet list for a request based on what is currently visible.
@@ -278,6 +292,7 @@ const NameSearchPage = ({
     pageSizeOptions: [50, 100, 500, 1000],
   });
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
 
@@ -443,6 +458,66 @@ const NameSearchPage = ({
       setLoading(false);
       setError(err);
       setData([]);
+    }
+  };
+
+  // Downloading the result of a search is a background job on the backend: it streams the whole
+  // result set out of Elasticsearch, so it is not bounded by the deep paging limit the table hits.
+  // The endpoint takes the very same request as the search, so we can hand it the current filters
+  // as a query string. Paging and facets are deliberately dropped - a download is always the
+  // complete result, and facets cost Elasticsearch work that nothing here would read.
+  const downloadSearch = async () => {
+    const downloadParams = { ...params };
+    delete downloadParams.facet;
+    delete downloadParams.limit;
+    delete downloadParams.offset;
+    if (!downloadParams.q) {
+      delete downloadParams.q;
+    }
+    setDownloading(true);
+    try {
+      const res = await axios.post(
+        `${config.dataApi}dataset/${datasetKey}/export/search?${qs.stringify(
+          downloadParams
+        )}`
+      );
+      notification.success({
+        message: "Download started",
+        description: (
+          <>
+            Your download is being prepared in the background. You will get an
+            email with the link when it is ready, or follow it on the{" "}
+            <NavLink to={{ pathname: "/jobs", search: "?job=SearchExport" }}>
+              jobs page
+            </NavLink>
+            .
+          </>
+        ),
+        duration: 8,
+        key: res?.data?.key,
+      });
+    } catch (err) {
+      // A duplicate request and the per user job cap both come back as plain errors that
+      // mean nothing to a curator, so say what actually happened.
+      const status = err?.response?.status;
+      const msg = err?.response?.data?.message || "";
+      if (status === 429) {
+        notification.warning({
+          message: "Too many downloads",
+          description:
+            "You already have the maximum number of search downloads running. Wait for one to finish and try again.",
+        });
+      } else if (status === 400 && msg.includes("identical job")) {
+        notification.warning({
+          message: "Download already queued",
+          description:
+            "This exact search is already being prepared. Check the jobs page for its progress.",
+        });
+      } else if (addError) {
+        addError(err);
+      }
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -1051,6 +1126,30 @@ const NameSearchPage = ({
                 Stop
               </Button>
             )}
+            {/* The download endpoint is dataset scoped, so it has no equivalent in the
+                cross dataset search where datasetKey is undefined. */}
+            {datasetKey && searched && pagination?.total > 0 && (
+              <Tooltip
+                title={
+                  user
+                    ? "Download all results of this search as a ColDP archive"
+                    : "Please login to create downloads"
+                }
+              >
+                {/* span keeps the tooltip alive over a disabled button */}
+                <span style={{ marginRight: 8 }}>
+                  <Button
+                    size="small"
+                    icon={<DownloadOutlined />}
+                    loading={downloading}
+                    disabled={!user}
+                    onClick={downloadSearch}
+                  >
+                    Download
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
             {pagination &&
               !isNaN(pagination.total) &&
               `${(
@@ -1116,6 +1215,8 @@ const mapContextToProps = ({
   projectKey,
   dataset,
   nomCode,
+  user,
+  addError,
 }) => ({
   rank,
   taxonomicstatus,
@@ -1128,6 +1229,8 @@ const mapContextToProps = ({
   projectKey,
   dataset,
   nomCode,
+  user,
+  addError,
 });
 
 export default withContext(mapContextToProps)(NameSearchPage);
