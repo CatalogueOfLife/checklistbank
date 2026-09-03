@@ -1,11 +1,33 @@
 import { useState } from "react";
-import { Segmented, Collapse, Empty, Button } from "antd";
+import { Alert, Segmented, Collapse, Empty, Button } from "antd";
 import DiffStats from "./DiffStats";
 import ChangedNameRow from "./ChangedNameRow";
-import { mergeSorted } from "./diffRows";
+import { mergeSorted, cappedAt } from "./diffRows";
 import "./NamesDiffView.css";
 
 const ROW_CAP = 500;
+
+// A dismissed Alert keeps its closed state for as long as it stays mounted, so
+// key it on the diff to make the warning come back for the next comparison.
+const TruncationWarning = ({ diff }) => (
+  <Alert
+    type="warning"
+    showIcon
+    closable
+    style={{ marginBottom: "8px" }}
+    title="Incomplete diff — differences are missing"
+    description={
+      <>
+        The server caps each list at{" "}
+        <strong>{cappedAt(diff).toLocaleString()} entries</strong> to bound
+        memory use, and this comparison hit that cap. The removed, added and
+        changed lists below are cut off and their counts are lower bounds — the
+        real number of differences is higher. Compare a smaller slice (a root
+        taxon, or a higher lowest rank) to get a complete diff.
+      </>
+    }
+  />
+);
 
 // Render at most ROW_CAP items, with a "Show all N" toggle for the remainder.
 const CappedList = ({ items, renderItem }) => {
@@ -89,6 +111,12 @@ const NamesDiffView = ({ diff, defaultView = "grouped" }) => {
 
   return (
     <div className="namesdiff">
+      {diff.truncated && (
+        <TruncationWarning
+          key={`${diff.label1}|${diff.label2}|${removed.length}|${added.length}|${changed.length}`}
+          diff={diff}
+        />
+      )}
       <DiffStats diff={diff} />
       <Segmented
         style={{ margin: "8px 0" }}

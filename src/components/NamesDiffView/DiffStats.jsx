@@ -7,9 +7,9 @@ const DiffStats = ({ diff }) => {
   const changed = diff.changedCount ?? diff.changed?.length ?? 0;
   return (
     <Space wrap>
-      <Tag color="red">Removed −{removed}</Tag>
-      <Tag color="green">Added +{added}</Tag>
-      <Tag color="gold">Changed ~{changed}</Tag>
+      <Tag color="red">Removed −{removed.toLocaleString()}</Tag>
+      <Tag color="green">Added +{added.toLocaleString()}</Tag>
+      <Tag color="gold">Changed ~{changed.toLocaleString()}</Tag>
       {diff.truncated && (
         <Tag color="warning">Truncated — showing a partial diff</Tag>
       )}

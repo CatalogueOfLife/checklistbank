@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normOp, mergeSorted } from "./diffRows";
+import { normOp, mergeSorted, cappedAt } from "./diffRows";
 
 describe("normOp", () => {
   it("lowercases and trims op values (case-insensitive consumption)", () => {
@@ -44,5 +44,24 @@ describe("mergeSorted", () => {
 
   it("tolerates missing arrays", () => {
     expect(mergeSorted({})).toEqual([]);
+  });
+});
+
+describe("cappedAt", () => {
+  it("reads the cap off the longest list (the one that was cut)", () => {
+    expect(
+      cappedAt({ removedCount: 25000, addedCount: 812, changedCount: 25000 })
+    ).toBe(25000);
+  });
+
+  it("falls back to array lengths when counts are absent", () => {
+    expect(
+      cappedAt({ removed: ["a", "b"], added: [], changed: [{}] })
+    ).toBe(2);
+  });
+
+  it("tolerates a missing or empty diff", () => {
+    expect(cappedAt(undefined)).toBe(0);
+    expect(cappedAt({})).toBe(0);
   });
 });
