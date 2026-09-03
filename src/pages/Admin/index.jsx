@@ -190,6 +190,12 @@ const AdminPage = ({ background, addError, getBackground }) => {
       .catch((err) => setError(err));
   };
 
+  const status = components.idle
+    ? { text: "idle", color: "#52c41a" }
+    : components.quiesced
+    ? { text: "quiet", color: "#52c41a" }
+    : { text: "active", color: "red" };
+
   return (
     <Layout
       openKeys={["admin"]}
@@ -213,12 +219,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
 
         <Row>
           <FormItem label="Background jobs">
-            {components.idle && (
-              <Badge count={"idle"} style={{ backgroundColor: "#52c41a" }} />
-            )}
-            {components.idle || (
-              <Badge count={"active"} style={{ backgroundColor: "red" }} />
-            )}
+            <Badge count={status.text} style={{ backgroundColor: status.color }} />
           </FormItem>
         </Row>
 
