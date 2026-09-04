@@ -312,8 +312,6 @@ const ContextProvider = ({ children }) => {
 
   const getSystemHealth = async () => {
     try {
-      // Normalized by the api client, so the two /admin/component wire shapes a
-      // blue-green deploy can serve reach the UI as one { running, autostart }.
       const state = await getComponentState();
       // Only components start-all is meant to start count towards the banner: a
       // MANUAL one is off on purpose here, and one disabled for this environment

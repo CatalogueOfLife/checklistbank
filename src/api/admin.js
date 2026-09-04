@@ -16,47 +16,18 @@ export const COMPONENT = {
 };
 
 /**
- * GET /admin/component.
+ * GET /admin/component:
+ *   { idle, quiesced, components: { <name>: { running, autostart } } }
  *
- * Two wire shapes are in the field and a blue-green deploy means either can
- * answer:
- *   since 2026-09-04  { idle, quiesced, components: { <name>: { running, autostart } } }
- *   before that       a flat { <name>: <boolean> } map with `idle` mixed in
- *
- * Normalizing to the newer shape here keeps every consumer on one contract.
- * An old server has no notion of a manually started component, so everything
- * it reports counts as autostart - which is what it did mean back then.
+ * A component that is disabled for the environment is not reported at all, and
+ * `autostart` says whether start-all is the one that brings it up here.
  */
-export const normalizeComponentState = (data) => {
-  const empty = { idle: undefined, quiesced: undefined, components: {} };
-  if (!data || typeof data !== "object") return empty;
-
-  if (data.components && typeof data.components === "object") {
-    const components = {};
-    Object.entries(data.components).forEach(([name, c]) => {
-      components[name] = {
-        running: !!c?.running,
-        // absent means autostart; only an explicit false marks a manual one
-        autostart: c?.autostart !== false,
-      };
-    });
-    return { idle: data.idle, quiesced: data.quiesced, components };
-  }
-
-  const components = {};
-  Object.entries(data).forEach(([name, running]) => {
-    // idle and quiesced are server wide flags the old shape mixed into the map
-    if (name === "idle" || name === "quiesced") return;
-    if (typeof running !== "boolean") return;
-    components[name] = { running, autostart: true };
-  });
-  return { idle: data.idle, quiesced: data.quiesced, components };
-};
-
 export const getComponentState = () =>
-  axios
-    .get(`${config.dataApi}admin/component`)
-    .then(({ data }) => normalizeComponentState(data));
+  axios.get(`${config.dataApi}admin/component`).then(({ data }) => ({
+    idle: data?.idle,
+    quiesced: data?.quiesced,
+    components: data?.components || {},
+  }));
 
 export const startComponent = (comp) =>
   axios.post(`${config.dataApi}admin/component/start`, null, {
