@@ -32,24 +32,33 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
         <Row gutter={32}>
           <Col xs={24} md={12}>
             <Divider titlePlacement="left">Components</Divider>
-            {Object.keys(components)
-              .filter((c) => c != "idle")
-              .map((comp) => (
+            {Object.keys(components).map((comp) => {
+              // A component that start-all does not start in this environment is
+              // off on purpose, not unavailable. One disabled for the environment
+              // is not reported at all and so never reaches here.
+              const { running, autostart } = components[comp];
+              const [color, label] = running
+                ? ["green", "Active"]
+                : autostart
+                ? ["red", "Unavailable"]
+                : ["default", "Manual"];
+              return (
                 <Row key={comp} align="middle" style={{ padding: "8px 0" }}>
                   <Col flex="92px">
                     <Tag
-                      color={components[comp] ? "green" : "red"}
+                      color={color}
                       variant="outlined"
                       style={{ width: "100%", textAlign: "center", margin: 0 }}
                     >
-                      {components[comp] ? "Active" : "Unavailable"}
+                      {label}
                     </Tag>
                   </Col>
                   <Col flex="auto" style={{ paddingLeft: "12px" }}>
                     {_.startCase(comp)}
                   </Col>
                 </Row>
-              ))}
+              );
+            })}
           </Col>
           <Col xs={24} md={12}>
             <Divider titlePlacement="left">System health</Divider>
