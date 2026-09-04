@@ -46,6 +46,7 @@ import {
   getSectorAuthorshipUpdate,
 } from "../../api/enumeration";
 import { getJobQueue as fetchJobQueue } from "../../api/job";
+import { getComponentState } from "../../api/admin";
 import { getTerms, getTermsOrder } from "../../api/terms";
 
 // Helpers
@@ -311,17 +312,17 @@ const ContextProvider = ({ children }) => {
 
   const getSystemHealth = async () => {
     try {
-      const { data: comps } = await axios.get(
-        `${config.dataApi}admin/component`
-      );
+      // Normalized by the api client, so the two /admin/component wire shapes a
+      // blue-green deploy can serve reach the UI as one { running, autostart }.
+      const state = await getComponentState();
       // Only components start-all is meant to start count towards the banner: a
       // MANUAL one is off on purpose here, and one disabled for this environment
       // is not reported at all.
-      const allRunning = Object.values(comps.components || {}).every(
+      const allRunning = Object.values(state.components).every(
         (c) => !c.autostart || c.running
       );
       setAllComponentsRunning(allRunning);
-      setComponents(comps.components || {});
+      setComponents(state.components);
     } catch (err) {
       console.log(err);
     }

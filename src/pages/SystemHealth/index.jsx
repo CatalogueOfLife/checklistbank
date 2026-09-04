@@ -33,15 +33,18 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
           <Col xs={24} md={12}>
             <Divider titlePlacement="left">Components</Divider>
             {Object.keys(components).map((comp) => {
-              // A component that start-all does not start in this environment is
-              // off on purpose, not unavailable. One disabled for the environment
-              // is not reported at all and so never reaches here.
+              // The tag always states what the component is actually doing.
+              // Whether being stopped is a fault is a separate question: one
+              // that start-all does not start in this environment is off on
+              // purpose, so it reads neutral and carries a "manual" marker
+              // instead. A component disabled for the environment entirely is
+              // not reported at all and never reaches here.
               const { running, autostart } = components[comp];
               const [color, label] = running
                 ? ["green", "Active"]
                 : autostart
                 ? ["red", "Unavailable"]
-                : ["default", "Manual"];
+                : ["default", "Stopped"];
               return (
                 <Row key={comp} align="middle" style={{ padding: "8px 0" }}>
                   <Col flex="92px">
@@ -55,6 +58,14 @@ const SystemHealth = ({ components, health, getSystemHealth }) => {
                   </Col>
                   <Col flex="auto" style={{ paddingLeft: "12px" }}>
                     {_.startCase(comp)}
+                    {!autostart && (
+                      <span
+                        style={{ color: "#8c8c8c", paddingLeft: "8px" }}
+                        title="Not started by start-all in this environment - started by hand when it is needed"
+                      >
+                        manual
+                      </span>
+                    )}
                   </Col>
                 </Row>
               );
