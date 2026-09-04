@@ -32,7 +32,9 @@ const AdminPage = ({ background, addError, getBackground }) => {
   const [reindexSchedulerLoading, setReindexSchedulerLoading] = useState(false);
   const [rematchMissingLoading, setRematchMissingLoading] = useState(false);
   const [updateUsageCountsLoading, setUpdateUsageCountsLoading] = useState(false);
-  const [components, setComponents] = useState({ foo: true, bar: false });
+  // { idle, quiesced, components: { <name>: { running, autostart } } }
+  const [state, setState] = useState({ components: {} });
+  const components = state.components || {};
   const [componentsLoading, setComponentsLoading] = useState(false);
   const [maintenanceLoading, setMaintenanceLoading] = useState(false);
   const [maintenanceMessage, setMaintenanceMessage] = useState("");
@@ -55,7 +57,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
     axios
       .get(`${config.dataApi}admin/component`)
       .then((res) => {
-        setComponents(res.data);
+        setState(res.data);
         setComponentsLoading(false);
       })
       .catch((err) => {
@@ -190,9 +192,9 @@ const AdminPage = ({ background, addError, getBackground }) => {
       .catch((err) => setError(err));
   };
 
-  const status = components.idle
+  const status = state.idle
     ? { text: "idle", color: "#52c41a" }
-    : components.quiesced
+    : state.quiesced
     ? { text: "quiet", color: "#52c41a" }
     : { text: "active", color: "red" };
 
@@ -244,19 +246,21 @@ const AdminPage = ({ background, addError, getBackground }) => {
 
         <Row>
           <Space orientation="horizontal" size={[50, 0]} wrap>
-            {Object.keys(components)
-              .filter((c) => c != "idle")
-              .map((comp) => (
-                <FormItem label={comp}>
-                  <Switch
-                    loading={componentsLoading}
-                    onChange={(checked) => {
-                      updateComponent(comp, checked);
-                    }}
-                    checked={components[comp]}
-                  />
-                </FormItem>
-              ))}
+            {Object.keys(components).map((comp) => (
+              <FormItem
+                label={comp}
+                // not started by start-all here, so being off is not a fault
+                help={components[comp].autostart ? undefined : "manual"}
+              >
+                <Switch
+                  loading={componentsLoading}
+                  onChange={(checked) => {
+                    updateComponent(comp, checked);
+                  }}
+                  checked={components[comp].running}
+                />
+              </FormItem>
+            ))}
           </Space>
         </Row>
 
