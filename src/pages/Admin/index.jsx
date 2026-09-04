@@ -388,8 +388,6 @@ const AdminPage = ({ background, addError, getBackground }) => {
                 <FormItem
                   key={comp}
                   label={comp}
-                  // not started by start-all here, so being off is not a fault
-                  help={components[comp].autostart ? undefined : "manual"}
                 >
                   <Switch
                     loading={componentsLoading}
