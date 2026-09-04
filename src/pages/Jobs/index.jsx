@@ -58,11 +58,20 @@ const Jobs = ({ location }) => {
     setState(parseSearch(location.search));
   }, [location.search]);
 
-  const tab = state.tab === "queue" ? "queue" : "history";
   const mine = state.mine === "true" || state.mine === true;
   const searchParams = Object.fromEntries(
     Object.entries(state).filter(([k]) => !PAGE_PARAMS.includes(k))
   );
+
+  // A bare /jobs is someone asking "what is running right now", so open the
+  // queue. A URL carrying filters (the /imports redirect, a shared search) is
+  // about past jobs, so open the history.
+  const tab =
+    state.tab === "queue" || state.tab === "history"
+      ? state.tab
+      : Object.keys(searchParams).length === 0
+        ? "queue"
+        : "history";
 
   const push = (next) => {
     setState(next);
@@ -72,12 +81,13 @@ const Jobs = ({ location }) => {
   const updateParams = (nextSearchParams) =>
     push({
       ...nextSearchParams,
-      ...(tab === "queue" ? { tab } : {}),
+      tab,
       ...(mine ? { mine: true } : {}),
     });
 
-  const setTab = (key) =>
-    push({ ...state, tab: key === "queue" ? "queue" : undefined });
+  // Always spell the tab out, since which one a bare /jobs opens depends on
+  // whether any filters are set.
+  const setTab = (key) => push({ ...state, tab: key });
 
   const setMine = (checked) =>
     push({ ...state, mine: checked ? true : undefined });
