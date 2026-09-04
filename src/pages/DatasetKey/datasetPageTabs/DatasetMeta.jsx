@@ -22,7 +22,7 @@ import PageContent from "../../../components/PageContent";
 import PresentationItem from "../../../components/PresentationItem";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
@@ -635,18 +635,14 @@ const DatasetMeta = ({
             {displayData.attempt}
           </PresentationItem>
           <PresentationItem label="Created">
-            {`${moment(displayData.created).format(
-              "MMMM Do YYYY, h:mm:ss a"
-            )}${
+            {`${formatTime(displayData.created, "MMMM Do YYYY, h:mm:ss a")}${
               displayData.createdByUser
                 ? " by " + displayData.createdByUser
                 : ""
             }`}
           </PresentationItem>
           <PresentationItem label="Modified">
-            {`${moment(displayData.modified).format(
-              "MMMM Do YYYY, h:mm:ss a"
-            )} by ${displayData.modifiedByUser}`}
+            {`${formatTime(displayData.modified, "MMMM Do YYYY, h:mm:ss a")} by ${displayData.modifiedByUser}`}
           </PresentationItem>
           {contributesTo && (
             <>

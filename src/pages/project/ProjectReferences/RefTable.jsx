@@ -3,7 +3,7 @@ import axios from "axios";
 import {SearchOutlined} from "@ant-design/icons"
 import { Table, Row, Col, Input, Space, Button } from "antd";
 import config from "../../../config";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import qs from "query-string";
 import history from "../../../history";
 import SearchBox from "../../DatasetList/SearchBox";
@@ -126,7 +126,7 @@ const RefTable = (props) => {
       width: 50,
       sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("lll") : "";
+        return formatTime(date, "lll");
       },
     },
     {
@@ -136,7 +136,7 @@ const RefTable = (props) => {
       width: 50,
       sorter: (a, b) => a.modified < b.modified,
       render: (date) => {
-        return date ? moment(date).format("lll") : "";
+        return formatTime(date, "lll");
       },
     },
   ];

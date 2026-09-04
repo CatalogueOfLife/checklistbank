@@ -5,7 +5,7 @@ import { Table, Alert, Row, Col, Tooltip } from "antd";
 import config from "../../../config";
 import withRouter from "../../../withRouter";
 import MultiValueFilter from "../../NameSearch/MultiValueFilter";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
@@ -136,7 +136,7 @@ const GSDIssuesMatrix = ({ match, issue, issueMap, project }) => {
         return ("" + a.imported).localeCompare(b.imported);
       },
       render: (date) => {
-        return date ? moment(date).format("MMM Do YYYY") : "";
+        return formatTime(date, "MMM Do YYYY");
       },
     },
 

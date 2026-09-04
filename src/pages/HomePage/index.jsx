@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Layout from "../../components/LayoutNew";
 import { NavLink, useNavigate } from "react-router-dom";
 import config from "../../config";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import { Helmet } from "react-helmet-async";
 import { Row, Col, Card, Input, Typography } from "antd";
 
@@ -229,7 +229,7 @@ const HomePage = () => {
                   {datasets.result.map((d) => (
                     <li key={d.key}>
                       <NavLink to={{ pathname: `/dataset/${d.key}` }} end>
-                        {d.title} ({moment(d.created).format("MMM Do YYYY")})
+                        {d.title} ({formatTime(d.created, "MMM Do YYYY")})
                       </NavLink>
                     </li>
                   ))}

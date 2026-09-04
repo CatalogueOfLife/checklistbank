@@ -40,7 +40,7 @@ import Name from "../Name";
 import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import ProjectPublisherKey from "../project/ProjectPublisherKey";
 
 const DatasetPage = (props) => {
@@ -124,9 +124,7 @@ const DatasetPage = (props) => {
           style={{ marginTop: "16px" }}
           title={
             <Row>
-              <Col>{`This dataset was deleted ${moment(
-                dataset.deleted
-              ).format("LLL")}`}</Col>
+              <Col>{`This dataset was deleted ${formatTime(dataset.deleted, "LLL")}`}</Col>
               <Col flex="auto"></Col>
               {dataset.origin === "release" && dataset.sourceKey === 3 && (
                 <Col>

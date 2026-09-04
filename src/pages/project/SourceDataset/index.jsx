@@ -23,7 +23,7 @@ import { isLive } from "../../../api/job";
 import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 
 const DatasetPage = (props) => {
   const {
@@ -93,9 +93,7 @@ const DatasetPage = (props) => {
       {dataset && _.get(dataset, "deleted") && (
         <Alert
           style={{ marginTop: "16px" }}
-          title={`This dataset was deleted ${moment(dataset.deleted).format(
-            "LLL"
-          )}`}
+          title={`This dataset was deleted ${formatTime(dataset.deleted, "LLL")}`}
           type="error"
         />
       )}

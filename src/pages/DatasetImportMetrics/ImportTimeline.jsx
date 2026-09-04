@@ -8,6 +8,7 @@ import _ from "lodash";
 import withContext from "../../components/hoc/withContext";
 import history from "../../history";
 import Menu from "./Menu";
+import { parseTime } from "../../dateTime";
 const defaultSeries = "taxonCount synonymCount".split(" ");
 
 const formItemLayout = {
@@ -44,7 +45,7 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
     const series = seriesNames.map((name) => ({
       name: currentSelectedGroup === "default" ? _.startCase(name) : name,
       data: finishedImports.map((i) => [
-        Date.parse(i.finished),
+        parseTime(i.finished).valueOf(),
         currentSelectedGroup === "default"
           ? _.get(i, `[${name}]`, 0)
           : _.get(i, `[${currentSelectedGroup}][${name}]`, 0),
@@ -133,7 +134,7 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
         const reversed = res.data.reverse();
         let newTimestampToAttemptMap = {};
         res.data.forEach((i) => {
-          newTimestampToAttemptMap[Date.parse(i.finished)] = i.attempt;
+          newTimestampToAttemptMap[parseTime(i.finished).valueOf()] = i.attempt;
         });
 
         setImportHistory(reversed);

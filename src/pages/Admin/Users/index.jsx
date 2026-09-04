@@ -12,7 +12,7 @@ import axios from "axios";
 import qs from "query-string";
 import SearchBox from "../../DatasetList/SearchBox";
 import { NavLink } from "react-router-dom";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import _ from "lodash";
 const PAGE_SIZE = 10;
 const capitalize = (str) =>
@@ -103,9 +103,7 @@ const UserAdmin = ({
             >
               <EditOutlined />
             </Button>
-<>{record.blocked ? <Tooltip title={`The user was blocked ${moment(record.blocked).format(
-                  "MMMM Do YYYY, h:mm a"
-                )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip>: <>
+<>{record.blocked ? <Tooltip title={`The user was blocked ${formatTime(record.blocked, "MMMM Do YYYY, h:mm a")}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip>: <>
             {record?.roles?.indexOf("admin") > -1 && <span>{"Admin"}</span>}
             {record?.roles?.indexOf("editor") > -1 && (
               <NavLink
@@ -211,9 +209,7 @@ const UserAdmin = ({
       <PageContent>
         <Modal
           width={800}
-          title={<>{`Roles and scopes for ${userForEdit?.username}`}{userForEdit?.blocked && <> <Tooltip title={`The user was blocked ${moment(userForEdit.blocked).format(
-            "MMMM Do YYYY, h:mm a"
-          )}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip></>}</>}
+          title={<>{`Roles and scopes for ${userForEdit?.username}`}{userForEdit?.blocked && <> <Tooltip title={`The user was blocked ${formatTime(userForEdit.blocked, "MMMM Do YYYY, h:mm a")}`}><MinusCircleOutlined style={{color: 'red'}}/> </Tooltip></>}</>}
           open={userForEdit}
           onCancel={() => setUserForEdit(null)}
           footer={null}

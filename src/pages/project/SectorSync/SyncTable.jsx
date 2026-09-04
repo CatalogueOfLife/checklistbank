@@ -7,7 +7,7 @@ import { CodeOutlined, DiffOutlined, WarningOutlined, FileTextOutlined, Thunderb
 import { Table, Alert, Tag, Tooltip, Row, Col } from "antd";
 import config from "../../../config";
 import qs from "query-string";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import history from "../../../history";
 import SyncButton from "./SyncButton";
 import withContext from "../../../components/hoc/withContext";
@@ -168,7 +168,7 @@ const getColumns = (projectKey) => [
     key: "started",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("l LT") : "";
+      return formatTime(date, "l LT");
     },
   },
   {
@@ -177,7 +177,7 @@ const getColumns = (projectKey) => [
     key: "finished",
     width: 50,
     render: (date) => {
-      return date ? moment(date).format("l LT") : "";
+      return formatTime(date, "l LT");
     },
   },
   {

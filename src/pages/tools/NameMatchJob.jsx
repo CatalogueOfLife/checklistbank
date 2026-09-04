@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { SyncOutlined, HistoryOutlined, DownloadOutlined } from "@ant-design/icons";
 import PresentationItem from "../../components/PresentationItem";
 import history from "../../history";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
@@ -161,7 +161,7 @@ const NameMatchJob = ({ match, addError }) => {
                       <HistoryOutlined style={{ marginRight: "10px" }} />
                     ))}
 
-                  <span>{moment(job?.created).format("MMM Do YYYY")}</span>
+                  <span>{formatTime(job?.created, "MMM Do YYYY")}</span>
                 </>
               }
             >

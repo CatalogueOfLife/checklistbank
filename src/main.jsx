@@ -6,19 +6,23 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import duration from "dayjs/plugin/duration";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 import "antd/dist/reset.css";
 import "./index.css";
 import App from "./App";
 import installTranslationCrashGuard from "./installTranslationCrashGuard";
 
-// Match moment's broader API surface — `.fromNow()` and `dayjs.utc()` are
-// referenced across the codebase (e.g. SyncState). LocalizedFormat enables
-// the `l`, `LT`, `LL`, `LLL`, … tokens used by older `.format(...)` calls.
+// LocalizedFormat enables the `l`, `LT`, `LL`, `LLL`, … tokens used across the
+// `.format(...)` calls; advancedFormat enables `Do` (without it "MMM Do YYYY"
+// renders a literal "o"). The utc plugin backs src/dateTime.js, which every
+// backend timestamp must go through - the API emits instants with no zone
+// designator, so a plain dayjs() would read them as local time.
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 // duration powers the job runtime column - see src/components/job/JobDuration
 dayjs.extend(duration);
+dayjs.extend(advancedFormat);
 
 // Stop browser page-translation from crashing React's reconciler. Must run
 // before the app renders. See installTranslationCrashGuard for the full why.

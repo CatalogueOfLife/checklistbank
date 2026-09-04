@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { isRunning } from "../../api/job";
+import { parseTime } from "../../dateTime";
 
 const format = (ms) => {
   if (!isFinite(ms) || ms < 0) return null;
@@ -28,8 +29,10 @@ const JobDuration = ({ job }) => {
   }, [live]);
 
   if (!started) return null;
-  const end = finished ? dayjs(finished).valueOf() : now;
-  return <>{format(end - dayjs(started).valueOf())}</>;
+  // parseTime, not dayjs - `now` is a true epoch, so a naive-UTC `started`
+  // parsed as local time would inflate a running job by the viewer's offset
+  const end = finished ? parseTime(finished).valueOf() : now;
+  return <>{format(end - parseTime(started).valueOf())}</>;
 };
 
 export default JobDuration;

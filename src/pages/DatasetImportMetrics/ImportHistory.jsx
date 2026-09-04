@@ -12,7 +12,7 @@ import {
 import { RiNodeTree } from "react-icons/ri";
 
 import { Timeline, Tooltip } from "antd";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import { NavLink } from "react-router-dom";
 import { datasetLogQuery as kibanaQuery } from "../../components/job/kibanaQuery";
 import _ from "lodash";
@@ -76,7 +76,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
               )}
               <p>
                 <span style={{ fontSize: "10px" }}>
-                  {`${moment(h.started).format("lll")}`}{" "}
+                  {`${formatTime(h.started, "lll")}`}{" "}
                 </span>{" "}
                 <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
                   <a
@@ -166,9 +166,7 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
                 </a>
               </Tooltip>
               {_.get(h, "user.username") && <p>Created by {h.user.username}</p>}
-              <p style={{ fontSize: "10px" }}>{`${moment(h.started).format(
-                "lll"
-              )}`}</p>
+              <p style={{ fontSize: "10px" }}>{`${formatTime(h.started, "lll")}`}</p>
               {h?.error?.length && (
                 <p>
                   {h.error.length > 200

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Descriptions, Spin } from "antd";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import config from "../../config";
 import TaxGroupIcon, { filterRedundantGroups } from "../NameSearch/TaxGroupIcon";
 import Releases from "./Releases";
@@ -82,7 +82,7 @@ const DatasetDetails = ({ record, taxGroup }) => {
 
   const withUser = (date, userId) => {
     if (!date) return null;
-    const formatted = moment(date).format("MMM Do YYYY");
+    const formatted = formatTime(date, "MMM Do YYYY");
     const name = usernames[userId];
     return name ? `${formatted} (${name})` : formatted;
   };
@@ -127,7 +127,7 @@ const DatasetDetails = ({ record, taxGroup }) => {
         {/* Last row: always 3 fixed slots */}
         {diFixed("created",  "Created",  withUser(d.created,  d.createdBy))}
         {diFixed("modified", "Modified", withUser(d.modified, d.modifiedBy))}
-        {diFixed("imported", "Imported", d.imported ? moment(d.imported).format("MMM Do YYYY") : null)}
+        {diFixed("imported", "Imported", d.imported ? formatTime(d.imported, "MMM Do YYYY") : null)}
       </Descriptions>
 
       {record.origin === "project" && (

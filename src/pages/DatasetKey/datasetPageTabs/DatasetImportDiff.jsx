@@ -6,7 +6,7 @@ import ErrorMsg from "../../../components/ErrorMsg";
 import withRouter from "../../../withRouter";
 import PageContent from "../../../components/PageContent";
 import NamesDiffView from "../../../components/NamesDiffView";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import history from "../../../history";
 import qs from "query-string";
 import Menu from "../../DatasetImportMetrics/Menu";
@@ -142,7 +142,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
             options={importHistory.map((i) => ({
               key: i.attempt,
               value: i.attempt,
-              label: `Attempt ${i.attempt} - ${moment(i.finished).format("MMMM Do YYYY, h:mm a")}`,
+              label: `Attempt ${i.attempt} - ${formatTime(i.finished, "MMMM Do YYYY, h:mm a")}`,
             }))}
           />
         </Col>
@@ -168,7 +168,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
             options={importHistory.map((i) => ({
               key: i.attempt,
               value: i.attempt,
-              label: `Attempt ${i.attempt} - ${moment(i.finished).format("MMMM Do YYYY, h:mm a")}`,
+              label: `Attempt ${i.attempt} - ${formatTime(i.finished, "MMMM Do YYYY, h:mm a")}`,
             }))}
           />
         </Col>

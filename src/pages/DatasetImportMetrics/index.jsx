@@ -4,7 +4,7 @@ import React from "react";
 import config from "../../config";
 import _ from "lodash";
 import axios from "axios";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import history from "../../history";
 import { NavLink } from "react-router-dom";
 import { Drawer, Row, Alert, Button, Spin, Divider } from "antd";
@@ -247,9 +247,7 @@ const DatasetImportMetrics = (props) => {
               data={data}
               subtitle={
                 ["xrelease", "release", "project"].includes(origin)
-                  ? `Released ${moment(data.finished).format(
-                      "MMMM Do YYYY, h:mm a"
-                    )}`
+                  ? `Released ${formatTime(data.finished, "MMMM Do YYYY, h:mm a")}`
                   : null
               }
             />
@@ -271,10 +269,10 @@ const DatasetImportMetrics = (props) => {
               {_.get(data, "user.username")}
             </PresentationItem>
             <PresentationItem label="Started">
-              {moment(data.started).format("lll")}
+              {formatTime(data.started, "lll")}
             </PresentationItem>
             <PresentationItem label="Finished">
-              {moment(data.finished).format("lll")}
+              {formatTime(data.finished, "lll")}
             </PresentationItem>
             <PresentationItem label="Download uri">
               {_.get(data, "downloadUri") && (

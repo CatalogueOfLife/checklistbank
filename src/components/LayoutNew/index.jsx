@@ -13,7 +13,7 @@ import { getGitVersion, getBackendGitVersion } from "../../api/gitVersion";
 import "./menu.css";
 import styles from "./LayoutNew.module.css";
 import config from "../../config";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import ErrorMsg, { isApiUnavailable } from "../ErrorMsg";
 import withContext from "../../components/hoc/withContext";
 import _ from "lodash";
@@ -355,7 +355,7 @@ const SiteLayout = ({
                       href={`${gitFrontend}${gitVersion.short}`}
                     >
                       Frontend version: <strong>{gitVersion.short}</strong>{" "}
-                      {moment(gitVersion.created).format("LLL")}
+                      {formatTime(gitVersion.created, "LLL")}
                     </a>
                   </Tag>
                 )}
@@ -367,7 +367,7 @@ const SiteLayout = ({
                     >
                       Backend version:{" "}
                       <strong>{gitBackendVersion.short}</strong>{" "}
-                      {moment(gitBackendVersion.created).format("LLL")}
+                      {formatTime(gitBackendVersion.created, "LLL")}
                     </a>
                   </Tag>
                 )}

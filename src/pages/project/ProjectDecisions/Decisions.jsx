@@ -7,7 +7,7 @@ import Auth from "../../../components/Auth";
 import { Table, Alert, Popconfirm, Input, Button, Select, Row, Col, Switch, Form, App } from "antd";
 import withRouter from "../../../withRouter";
 import config from "../../../config";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import withContext from "../../../components/hoc/withContext";
 import Highlighter from "react-highlight-words";
 import _ from "lodash";
@@ -343,7 +343,7 @@ const ProjectDecisions = ({
       key: "created",
       width: 100,
       render: (date) => {
-        return date ? moment(date).format("l LT") : "";
+        return formatTime(date, "l LT");
       },
     },
   ];

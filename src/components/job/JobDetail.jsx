@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Spin, Alert } from "antd";
 import { NavLink } from "react-router-dom";
-import dayjs from "dayjs";
 import _ from "lodash";
 import PresentationItem from "../PresentationItem";
 import JobStatusTag from "./JobStatusTag";
 import JobDuration from "./JobDuration";
 import { getJob, humanSize } from "../../api/job";
+import { formatTime } from "../../dateTime";
 import { jobLogQuery } from "./kibanaQuery";
 import config from "../../config";
 
@@ -18,7 +18,7 @@ const JsonBlock = ({ label, value }) => (
   </PresentationItem>
 );
 
-const dt = (v) => (v ? dayjs(v).format("lll") : null);
+const dt = (v) => formatTime(v, "lll");
 
 /**
  * Detail view of a single background job, of any kind.

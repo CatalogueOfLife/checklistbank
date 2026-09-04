@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { SyncOutlined, DownloadOutlined, HistoryOutlined } from "@ant-design/icons";
 import { Tooltip } from 'antd';
 import PresentationItem from "../../components/PresentationItem";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import withRouter from "../../withRouter";
 import axios from "axios";
 import config from "../../config";
@@ -88,7 +88,7 @@ const DatasetDownload = ({ match, addError }) => {
                     />
                   )}
 
-                  <span>{moment(download?.created).format("MMM Do YYYY")}</span>
+                  <span>{formatTime(download?.created, "MMM Do YYYY")}</span>
                 </>
               }
             >

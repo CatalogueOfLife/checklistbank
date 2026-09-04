@@ -29,7 +29,7 @@ import {
 import config from "../../config";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import history from "../../history";
 import Auth from "../../components/Auth";
 import SearchBox from "./SearchBox";
@@ -457,7 +457,7 @@ const DatasetList = ({
       width: 130,
       sorter: true,
       render: (date) => {
-        return date ? moment(date).format("MMM Do YYYY") : "";
+        return formatTime(date, "MMM Do YYYY");
       },
     },
     {
@@ -467,7 +467,7 @@ const DatasetList = ({
       width: 130,
       sorter: true,
       render: (date) => {
-        return moment(date).format("MMM Do YYYY");
+        return formatTime(date, "MMM Do YYYY");
       },
     },
     {
@@ -493,7 +493,7 @@ const DatasetList = ({
       width: 130,
       sorter: true,
       render: (date) => {
-        return moment(date).format("MMM Do YYYY");
+        return formatTime(date, "MMM Do YYYY");
       },
     },
     {
@@ -503,7 +503,7 @@ const DatasetList = ({
       width: 130,
       sorter: true,
       render: (date) => {
-        return moment(date).format("MMM Do YYYY");
+        return formatTime(date, "MMM Do YYYY");
       },
     },
     {

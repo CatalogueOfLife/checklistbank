@@ -7,7 +7,7 @@ import { Menu, Row, Col } from "antd";
 import { NavLink } from "react-router-dom";
 import { DiffOutlined, PieChartOutlined, LineChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import config from "../../config";
 
 const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
@@ -62,7 +62,7 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
               </h3>
             </Col>
             <Col style={{ marginLeft: "10px", marginTop: "2px" }}>
-              - {moment(dataset?.imported).format("lll")}
+              - {formatTime(dataset?.imported, "lll")}
             </Col>
               </>
             )}
@@ -72,7 +72,7 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
                 dataset?.origin !== "project" && (
                   <span>
                     Last import attempt:{" "}
-                    {moment(dataset?.lastImportAttempt).format("lll")}
+                    {formatTime(dataset?.lastImportAttempt, "lll")}
                   </span>
                 )}
             </Col>

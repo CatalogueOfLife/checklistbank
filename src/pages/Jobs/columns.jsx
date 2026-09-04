@@ -2,7 +2,7 @@ import React from "react";
 import { Tooltip } from "antd";
 import { NavLink } from "react-router-dom";
 import { CodeOutlined } from "@ant-design/icons";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import _ from "lodash";
 import JobStatusTag from "../../components/job/JobStatusTag";
 import JobDuration from "../../components/job/JobDuration";
@@ -11,7 +11,7 @@ import { jobLogQuery } from "../../components/job/kibanaQuery";
 import { humanSize } from "../../api/job";
 import config from "../../config";
 
-const dt = (date) => (date ? moment(date).format("lll") : "");
+const dt = (date) => formatTime(date, "lll");
 
 export const statusColumn = {
   title: "Status",

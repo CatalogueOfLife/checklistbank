@@ -13,7 +13,7 @@ import qs from "query-string";
 import { getUsersBatch } from "../../../api/user";
 
 import DataLoader from "dataloader";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import _ from "lodash";
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -73,7 +73,7 @@ const Publishers = ({ user, projectKey, location, addError, project }) => {
       key: "created",
       //  sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("l LT") : "";
+        return formatTime(date, "l LT");
       },
     },
     {
@@ -82,7 +82,7 @@ const Publishers = ({ user, projectKey, location, addError, project }) => {
       key: "modified",
       //  sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("l LT") : "";
+        return formatTime(date, "l LT");
       },
     },
   ];

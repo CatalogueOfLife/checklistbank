@@ -3,7 +3,7 @@ import { Table } from "antd";
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import config from "../../config";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 
 import { NavLink } from "react-router-dom";
 import withContext from "../../components/hoc/withContext";
@@ -84,7 +84,7 @@ const Releases = ({dataset, addError}) => {
         key: "created",
        // sorter: true,
         render: (date) => {
-          return moment(date).format("MMM Do YYYY");
+          return formatTime(date, "MMM Do YYYY");
         },
       },
       {

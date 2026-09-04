@@ -10,7 +10,7 @@ import { Select, Row, Col } from "antd";
 import history from "../../../history";
 import withContext from "../../../components/hoc/withContext";
 import qs from "query-string";
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 import _ from "lodash";
 const GBIFTaxonomyReview = ({ location }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -75,7 +75,7 @@ const GBIFTaxonomyReview = ({ location }) => {
                       <strong>{f.name}</strong>
                       <span className="small-text">
                         {" - "}
-                        {moment(f.created).format("MMMM Do YYYY")}
+                        {formatTime(f.created, "MMMM Do YYYY")}
                       </span>
                       <br />
                       <span className="small-text">{f.description}</span>

@@ -12,7 +12,7 @@ import axios from "axios";
 import config from "../../config";
 import history from "../../history";
 import qs from "query-string";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import _ from "lodash";
 
 const PAGE_SIZE = 100;
@@ -187,7 +187,7 @@ const NameIndexSearch = ({ addError, location }) => {
             {version?.created && (
               <div>
                 Version:{" "}
-                {moment(version?.created).format("MMMM Do YYYY, h:mm a")}
+                {formatTime(version?.created, "MMMM Do YYYY, h:mm a")}
               </div>
             )}
             {version?.size && (

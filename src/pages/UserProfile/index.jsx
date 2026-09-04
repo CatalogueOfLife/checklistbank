@@ -10,7 +10,7 @@ import config from "../../config";
 import axios from "axios";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
 import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, message } from "antd";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import history from "../../history";
 const UserProfile = ({ user, countryAlpha2, match }) => {
   const [editorDatasets, setEditorDatasets] = useState([]);
@@ -133,7 +133,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
             <Tag>Cancelled</Tag>
           ) : <SyncOutlined style={{ marginRight: "10px", marginLeft: "10px" }} spin />}
 
-          <span>{moment(item?.created).format("MMM Do YYYY")}</span>
+          <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
         </>}
       extra={
         item?.status === "running" || item?.status === "waiting" ? (

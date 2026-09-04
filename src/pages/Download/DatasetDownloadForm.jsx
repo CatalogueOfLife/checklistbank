@@ -6,7 +6,7 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import history from "../../history";
-import moment from "dayjs";
+import { formatTime } from "../../dateTime";
 import _ from "lodash";
 import {
   Button,
@@ -103,9 +103,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
     const authors = _.get(dataset, "authors", [])
       .map((a) => a.name)
       .join(", ");
-    return `${dataset?.title}. ${authors} ${moment(dataset?.modified).format(
-      "LL"
-    )}`;
+    return `${dataset?.title}. ${authors} ${formatTime(dataset?.modified, "LL")}`;
   };
 
   const getRootTaxon = (key) => {

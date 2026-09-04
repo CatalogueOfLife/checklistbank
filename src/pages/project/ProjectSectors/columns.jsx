@@ -7,7 +7,7 @@ import Highlighter from "react-highlight-words";
 import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
 import _ from "lodash";
 
-import moment from "dayjs";
+import { formatTime } from "../../../dateTime";
 
 export default (
   projectKey,
@@ -167,7 +167,7 @@ export default (
       width: 100,
       //  sorter: (a, b) => a.created < b.created,
       render: (date) => {
-        return date ? moment(date).format("YYYY-MM-DD") : "";
+        return formatTime(date, "YYYY-MM-DD");
       },
     },
     {
