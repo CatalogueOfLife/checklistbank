@@ -980,7 +980,11 @@ const BasicMenu = (props) => {
             !["xrelease", "project", "release"].includes(
               _.get(selectedDataset, "origin")
             ) &&
-            selectedDataset.size > 0 && {
+            // Verbatim shows the raw records of an import, so the signal is
+            // whether an import succeeded, not how many usages came out of it.
+            // This branch is already external-only, where data can only come
+            // from an import - and `size` is not on the simple record.
+            _.get(selectedDataset, "attempt") != null && {
               key: "verbatim",
               label: (
                 <NavLink

@@ -234,16 +234,21 @@ const SiteLayout = ({
                         whiteSpace: "nowrap",
                       }}
                     >
-                      <Tooltip
-                        placement="bottom"
-                        title={`${
-                          selectedDataset.version
-                            ? "Version: " + selectedDataset.version
-                            : "Issued: " + selectedDataset.issued
-                        }`}
-                      >
-                        {selectedDataset.version || selectedDataset.issued}
-                      </Tooltip>
+                      {/* Either may be absent - a dataset with no issued date,
+                          or one whose record has not been loaded yet. Render
+                          nothing rather than the string "Issued: undefined". */}
+                      {(selectedDataset.version || selectedDataset.issued) && (
+                        <Tooltip
+                          placement="bottom"
+                          title={
+                            selectedDataset.version
+                              ? "Version: " + selectedDataset.version
+                              : "Issued: " + selectedDataset.issued
+                          }
+                        >
+                          {selectedDataset.version || selectedDataset.issued}
+                        </Tooltip>
+                      )}
                     </span>
                     <DatasetOriginPill dataset={selectedDataset} />
                   </Col>

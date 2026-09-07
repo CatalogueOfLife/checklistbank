@@ -38,17 +38,21 @@ const DatasetSourceMetrics = ({ datasetKey, dataset }) => {
           />
         </Row>
       )}
+      {/* Keys come from the route, not from the context dataset: that is only
+          the simple record and is null until it matches this URL, which would
+          otherwise build `/dataset/undefined`. `origin` and `sourceKey` are
+          read off it because there is nowhere else to get them. */}
       <SourceMetrics
         isProject={false}
         projectKey={
           ["xrelease", "release"].includes(dataset?.origin)
             ? dataset?.sourceKey
-            : dataset?.key
+            : datasetKey
         }
         origin={dataset?.origin}
-        datasetKey={dataset?.key}
-        basePath={`/dataset/${dataset?.key}`}
-        omitList={[dataset?.key]}
+        datasetKey={datasetKey}
+        basePath={`/dataset/${datasetKey}`}
+        omitList={[datasetKey]}
       />
     </PageContent>
   );
