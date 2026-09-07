@@ -3,7 +3,7 @@ import config from "../../config";
 import { Navigate } from "react-router-dom";
 import withRouter from "../../withRouter";
 import axios from "axios";
-import { Alert, Row, Col } from "antd";
+import { Alert, Row, Col, Spin } from "antd";
 import DatasetMeta from "./datasetPageTabs/DatasetMeta";
 import Editors from "../project/Editors/Editors";
 import DatasetImportMetrics from "../DatasetImportMetrics";
@@ -31,6 +31,7 @@ import NameSearch from "../NameSearch";
 import WorkBench from "../WorkBench";
 
 import withContext from "../../components/hoc/withContext";
+import { datasetMatchesRoute } from "../../components/util/datasetRouteMatch";
 import _ from "lodash";
 import { isLive } from "../../api/job";
 import { Helmet } from "react-helmet-async";
@@ -83,10 +84,16 @@ const DatasetPage = (props) => {
   }, [datasetKey]);
 
   const isProject = dataset?.origin === "project";
-  if (dataset && !section && !_.get(dataset, "deleted")) {
-    return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
-  }
-  if (dataset && !section && _.get(dataset, "deleted")) {
+
+  // True only when the context dataset is the one this URL names. It is seeded
+  // from localStorage and survives navigation, so until the fetch for this key
+  // lands it can still hold the previously visited dataset - see
+  // datasetMatchesRoute. Anything that acts on the dataset must wait for this.
+  const datasetLoaded = datasetMatchesRoute(dataset, datasetKey);
+
+  // Both branches went to the same place, and neither needs the dataset - only
+  // the key from the URL. Waiting on the fetch here just delayed the redirect.
+  if (!section) {
     return <Navigate to={`/dataset/${datasetKey}/metadata`} replace />;
   }
 
@@ -183,13 +190,13 @@ const DatasetPage = (props) => {
 
       {section === "classification" && (
         <DatasetClassification
-          dataset={dataset}
+          dataset={datasetLoaded ? dataset : null}
           datasetKey={datasetKey}
           location={location}
         />
       )}
       {section === "projects" && (
-        <DatasetProjects dataset={dataset} location={location} />
+        <DatasetProjects dataset={datasetLoaded ? dataset : null} location={location} />
       )}
       {sect === "names" && (
         <NameSearch
@@ -213,7 +220,7 @@ const DatasetPage = (props) => {
           datasetKey={datasetKey}
           projectKey={dataset?.origin === "project" ? datasetKey : null}
           assembly={!!dataset?.origin === "project"}
-          dataset={dataset}
+          dataset={datasetLoaded ? dataset : null}
           location={props.location}
         />
       )}
@@ -269,19 +276,25 @@ const DatasetPage = (props) => {
           match={props.match}
         />
       )}
-      {sect === "options" && Auth.canEditDataset(dataset, user) && (
+      {sect === "options" && datasetLoaded && Auth.canEditDataset(dataset, user) && (
         <DatasetOptions datasetKey={datasetKey} />
       )}
       {sect === "sourcemetrics" && (
         <DatasetSourceMetrics datasetKey={datasetKey} />
       )}
-      {section === "download" && (
-        <DatasetDownload
-          downloadKey={taxonOrNameKey}
-          dataset={dataset}
-          location={location}
-        />
-      )}
+      {section === "download" &&
+        (datasetLoaded ? (
+          <DatasetDownload
+            downloadKey={taxonOrNameKey}
+            datasetKey={datasetKey}
+            dataset={dataset}
+            location={location}
+          />
+        ) : (
+          <Row justify="center" style={{ marginTop: "24px" }}>
+            <Spin size="large" />
+          </Row>
+        ))}
       {section === "diff" && <DatasetDiff datasetKey={datasetKey} />}
       {section === "import-timeline" && (
         <ImportTimeline datasetKey={datasetKey} />

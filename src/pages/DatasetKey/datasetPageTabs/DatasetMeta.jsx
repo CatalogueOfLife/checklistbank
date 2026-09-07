@@ -12,6 +12,7 @@ import {
   Divider,
   Card,
   Button,
+  Spin,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import MetaDataForm from "../../../components/MetaData/MetaDataForm";
@@ -23,6 +24,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import { formatTime } from "../../../dateTime";
+import { datasetMatchesRoute } from "../../../components/util/datasetRouteMatch";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
@@ -90,7 +92,12 @@ const DatasetMeta = ({
       })
       .then((res) => {
         const { createdBy, modifiedBy } = res.data;
-        if (!isSourceInProjectView) {
+        // This is the one place the heavy record is loaded, so it is also the
+        // one place that upgrades the context dataset beyond the simple record
+        // DatasetProvider puts there. Only do that if we are still on this
+        // dataset's page - otherwise a slow response lands after the user has
+        // navigated on and reintroduces the very mismatch the provider clears.
+        if (!isSourceInProjectView && datasetMatchesRoute(res.data, id)) {
           setDataset(res.data);
         }
         if (res.data.sourceKey) {
@@ -140,12 +147,13 @@ const DatasetMeta = ({
   useEffect(() => {
     if (archivedData) {
       setData(archivedData);
-    } else {
-      fetchAllData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Only this effect fetches. It already runs on mount, so the mount-only
+  // effect above must not call fetchAllData() as well - that fired the full
+  // dataset record, the slowest request in the app, twice on every visit.
   useEffect(() => {
     fetchAllData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,6 +194,20 @@ const DatasetMeta = ({
   // If we are in a project, show the patched data. Otherwise the original data
   const displayData = patchMode ? sourceMeta : data;
   const modifyMetadata = data && !data.deleted && data?.origin != "release";
+
+  // This page is the only one that loads the full dataset record, which is slow
+  // (seconds, on a large release). Block on it rather than rendering a shell
+  // that fills in field by field. A failed fetch sets `data` to {}, so this
+  // clears on error too.
+  if (!displayData) {
+    return (
+      <PageContent>
+        <Row justify="center" style={{ marginTop: "24px" }}>
+          <Spin size="large" />
+        </Row>
+      </PageContent>
+    );
+  }
 
   return (
     <PageContent>

@@ -22,6 +22,7 @@ import {
   Typography,
   Tag,
   Tooltip,
+  Spin,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
@@ -34,7 +35,14 @@ import NameAutocomplete from "../project/Assembly/NameAutocomplete";
 import qs from "query-string";
 const { Text } = Typography;
 
-const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }) => {
+/**
+ * `datasetKey` is the dataset in the URL and is the ONLY thing every request
+ * here may be keyed on. `dataset` comes from AppContext, which holds the simple
+ * record and can momentarily describe a different dataset entirely - deriving
+ * the export key from it is what once submitted a Lepidoptera export of COL
+ * against iBOL. Use it for display, never to build a URL.
+ */
+const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset, location }) => {
   const { message } = App.useApp();
   const [error, setError] = useState(null);
   const [selectedDataFormat, setSelectedDataFormat] = useState("ColDP");
@@ -49,33 +57,25 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
   const [dataAccess, setDataAccess] = useState(null);
   const [minRank, setMinRank] = useState("GENUS");
   const [excludeRanksBelow, setExcludeRanksBelow] = useState(null);
+  // The citation needs `citation` / `authors` / `modified`, which are not on the
+  // simple record in context, so this page fetches the full one just for that.
+  // Nothing else waits on it - the Download button is usable immediately.
+  const [fullDataset, setFullDataset] = useState(null);
+  const [citationLoading, setCitationLoading] = useState(false);
 
   useEffect(() => {
-    if (dataset) {
-      getSettings();
-    }
+    if (!datasetKey) return;
+    getSettings();
+    getCitationData();
     const taxonID = _.get(qs.parse(_.get(location, "search")), "taxonID");
-    if (taxonID && dataset) {
+    if (taxonID) {
       getRootTaxon(taxonID);
     }
-  }, []);
-
-  useEffect(() => {
-    if (dataset?.key) {
-      getSettings();
-      const taxonID = _.get(
-        qs.parse(_.get(location, "search")),
-        "taxonID"
-      );
-      if (taxonID) {
-        getRootTaxon(taxonID);
-      }
-    }
-  }, [dataset?.key]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetKey]);
 
   const getSettings = () => {
-    const key = dataset?.key;
-    axios(`${config.dataApi}dataset/${key}/settings`)
+    axios(`${config.dataApi}dataset/${datasetKey}/settings`)
       .then((res) => {
         setDataAccess(_.get(res, 'data["data access"]'));
       })
@@ -84,9 +84,23 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
       });
   };
 
+  const getCitationData = () => {
+    setCitationLoading(true);
+    axios(`${config.dataApi}dataset/${datasetKey}`)
+      .then((res) => {
+        setFullDataset(res.data);
+        setCitationLoading(false);
+      })
+      .catch(() => {
+        setFullDataset(null);
+        setCitationLoading(false);
+      });
+  };
+
   const exportDataset = (options) => {
+    if (!datasetKey) return;
     axios
-      .post(`${config.dataApi}dataset/${dataset?.key}/export`, options)
+      .post(`${config.dataApi}dataset/${datasetKey}/export`, options)
       .then((res) => {
         // the endpoint answers with a JobInfo, like every other job submission
         const uuid = res.data?.key;
@@ -99,17 +113,22 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
       .catch((err) => addError(err));
   };
 
+  // Built from the full record, which carries authors/modified; falls back to
+  // the context dataset's title so there is something sensible to show if the
+  // full fetch failed.
   const createCitation = () => {
-    const authors = _.get(dataset, "authors", [])
+    const src = fullDataset || dataset;
+    const authors = _.get(src, "authors", [])
       .map((a) => a.name)
       .join(", ");
-    return `${dataset?.title}. ${authors} ${formatTime(dataset?.modified, "LL")}`;
+    const modified = src?.modified ? ` ${formatTime(src.modified, "LL")}` : "";
+    return `${src?.title}. ${authors}${modified}`;
   };
 
   const getRootTaxon = (key) => {
     axios
       .get(
-        `${config.dataApi}dataset/${dataset?.key}/taxon/${encodeURIComponent(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
           key
         )}`
       )
@@ -130,7 +149,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
           <ul>
             <li>
               <a
-                href={`${config.dataApi}dataset/${dataset?.key}/archive.zip`}
+                href={`${config.dataApi}dataset/${datasetKey}/archive.zip`}
                 target="_blank"
               >
                 original archive
@@ -140,7 +159,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
             <li>
               <NavLink
                 to={{
-                  pathname: `/dataset/${dataset?.key}/imports`,
+                  pathname: `/dataset/${datasetKey}/imports`,
                   search: "?showHistory=true",
                 }}
                 end
@@ -250,7 +269,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
         <Col span={10}>
           <NameAutocomplete
             minRank={minRank}
-            datasetKey={dataset?.key}
+            datasetKey={datasetKey}
             defaultTaxonKey={
               _.get(qs.parse(_.get(location, "search")), "taxonID") || null
             }
@@ -347,31 +366,37 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, dataset, location }
       <Row style={{ marginTop: "24px" }}>
         <Col span={24}>
           <Divider plain>Please cite as:</Divider>
-          <CopyToClipboard
-            text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
-              dataset?.citation || createCitation()
-            }`}
-            onCopy={() => message.info(`Copied citation to clipboard`)}
-          >
-            <p style={{ textAlign: "center", cursor: "pointer" }}>
-              {rootTaxon && (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: rootTaxon.labelHtml + " in ",
-                  }}
-                />
-              )}
-              {dataset?.citation ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: dataset?.citation,
-                  }}
-                />
-              ) : (
-                createCitation()
-              )}
+          {citationLoading ? (
+            <p style={{ textAlign: "center" }}>
+              <Spin size="small" />
             </p>
-          </CopyToClipboard>
+          ) : (
+            <CopyToClipboard
+              text={`${rootTaxon ? rootTaxon.label + " in " : ""}${
+                fullDataset?.citation || createCitation()
+              }`}
+              onCopy={() => message.info(`Copied citation to clipboard`)}
+            >
+              <p style={{ textAlign: "center", cursor: "pointer" }}>
+                {rootTaxon && (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: rootTaxon.labelHtml + " in ",
+                    }}
+                  />
+                )}
+                {fullDataset?.citation ? (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: fullDataset.citation,
+                    }}
+                  />
+                ) : (
+                  createCitation()
+                )}
+              </p>
+            </CopyToClipboard>
+          )}
         </Col>
       </Row>
       <Modal

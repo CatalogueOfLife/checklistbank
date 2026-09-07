@@ -13,15 +13,24 @@ import withContext from "../../components/hoc/withContext";
 import { formatRequestValue } from "./requestValue";
 
 
-const DatasetDownload = ({ match, addError }) => {
+const DatasetDownload = ({ match, downloadKey, addError }) => {
   const [download, setDownload] = useState(null);
   const [loading, setLoading] = useState(false);
   const timerRef = useRef(null);
 
+  // Which route param holds the export uuid depends on how we got here:
+  //   /download/:key                  - no props, :key IS the uuid
+  //   /project/:projectKey/download/:key - :key is the uuid too
+  //   /dataset/:key/download/:uuid    - :key is the DATASET, the uuid arrives
+  //                                     as the downloadKey prop
+  // So prefer the prop and only fall back to the param. Reading match.params.key
+  // unconditionally made the in-dataset URL request `export/<datasetKey>`.
+  const exportKey = downloadKey || match?.params?.key;
+
   const init = async () => {
     setLoading(true);
     try {
-      const dl = await axios(`${config.dataApi}export/${match.params.key}`);
+      const dl = await axios(`${config.dataApi}export/${exportKey}`);
       setDownload(dl.data);
       setLoading(false);
     } catch (error) {
@@ -31,10 +40,11 @@ const DatasetDownload = ({ match, addError }) => {
     }
   };
   useEffect(() => {
-    if (match?.params?.key) {
+    if (exportKey) {
       init();
     }
-  }, [match.params.key]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exportKey]);
 
   // Poll for status while the export is running. setInterval (not a one-shot
   // setTimeout) so it keeps refreshing, and the handle lives in a ref so the
