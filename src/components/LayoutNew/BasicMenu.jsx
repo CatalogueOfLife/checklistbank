@@ -97,10 +97,16 @@ const BasicMenu = (props) => {
   // The trade is that a dataset that really is empty still shows Browse and
   // renders an empty page, which is far less confusing than a working page
   // with no way to reach it.
+  //
+  // `size` used to be ORed in here as well. It could only ever decide the
+  // answer for an external dataset holding data with no import behind it, which
+  // cannot arise - external data only ever arrives via an import, so `attempt`
+  // is set. Every dataset on dev with size > 0 and no attempt is origin=project,
+  // already covered by the origin clause. Dropping it keeps `size`, which needs
+  // an extra join, off the /dataset/simple record this menu now reads.
   const datasetHasData = (d) =>
     !_.get(d, "deleted") &&
-    (_.get(d, "size") ||
-      _.get(d, "attempt") != null ||
+    (_.get(d, "attempt") != null ||
       ["xrelease", "release", "project"].includes(_.get(d, "origin")));
   const hasDataset = datasetHasData(selectedDataset);
   const sourceHasData = datasetHasData(sourceDataset);
