@@ -89,8 +89,16 @@ const Jobs = ({ location }) => {
   // whether any filters are set.
   const setTab = (key) => push({ ...state, tab: key });
 
-  const setMine = (checked) =>
-    push({ ...state, mine: checked ? true : undefined });
+  // Spelled out with delete rather than `mine: undefined`: an own key holding
+  // undefined still counts towards searchParams below, which would make an
+  // unfiltered history look filtered and skip the default preset.
+  const setMine = (checked) => {
+    const next = { ...state };
+    delete next.offset;
+    if (checked) next.mine = true;
+    else delete next.mine;
+    push(next);
+  };
 
   // Landing on the history with no filters at all would page through ~7M
   // sector syncs, so start from the default preset instead.
@@ -109,7 +117,12 @@ const Jobs = ({ location }) => {
       key: "history",
       label: "History",
       children: (
-        <HistoryTab params={historyParams} updateParams={updateParams} />
+        <HistoryTab
+          params={historyParams}
+          updateParams={updateParams}
+          mine={mine}
+          setMine={setMine}
+        />
       ),
     },
   ];

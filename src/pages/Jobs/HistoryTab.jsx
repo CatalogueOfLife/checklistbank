@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Row, Col, Form, Select, Segmented, Alert, DatePicker } from "antd";
+import {
+  Table,
+  Row,
+  Col,
+  Form,
+  Select,
+  Segmented,
+  Switch,
+  Alert,
+  DatePicker,
+} from "antd";
 import _ from "lodash";
 import moment from "dayjs";
 import withContext from "../../components/hoc/withContext";
@@ -42,7 +52,15 @@ const asArray = (v) =>
  * is the whole of the Queue tab, which reads them straight from the executor
  * and can cancel them. Widening the status filter still reaches them.
  */
-const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
+const HistoryTab = ({
+  params,
+  updateParams,
+  mine,
+  setMine,
+  user,
+  jobStatus,
+  jobPriority,
+}) => {
   const [data, setData] = useState({ result: [], total: 0 });
   const [jobTypes, setJobTypes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -55,11 +73,21 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
   const limit = Number(params.limit) || PAGE_SIZE;
   const offset = Number(params.offset) || 0;
 
+  // "Mine" is a page level toggle shared with the queue, so it lives in the
+  // URL as ?mine=true rather than as a createdBy filter. The history is served
+  // by the backend, so translate it into the createdBy the search understands.
+  const query = {
+    ...params,
+    ...(mine && user ? { createdBy: user.key } : {}),
+    limit,
+    offset,
+  };
+
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await searchJobs({ ...params, limit, offset });
+        const res = await searchJobs(query);
         setData({ ...res, result: await decorateJobs(res.result) });
         setError(null);
       } catch (err) {
@@ -69,7 +97,7 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
       }
     };
     load();
-  }, [JSON.stringify(params)]);
+  }, [JSON.stringify(query)]);
 
   const setFilter = (key, value) => {
     const next = { ...params };
@@ -106,12 +134,25 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
           description={<ErrorMsg error={error} />}
         />
       )}
-      <Segmented
-        style={{ marginBottom: 16 }}
-        value={presetOf(params) ?? null}
-        options={PRESETS.map((p) => ({ label: p.label, value: p.key }))}
-        onChange={(key) => updateParams(applyPreset(params, key))}
-      />
+      <Row gutter={16} align="middle" style={{ marginBottom: 16 }}>
+        <Col flex="auto">
+          <Segmented
+            value={presetOf(params) ?? null}
+            options={PRESETS.map((p) => ({ label: p.label, value: p.key }))}
+            onChange={(key) => updateParams(applyPreset(params, key))}
+          />
+        </Col>
+        {user && (
+          <Col>
+            <Switch
+              checked={!!mine}
+              onChange={setMine}
+              checkedChildren="Mine"
+              unCheckedChildren="All"
+            />
+          </Col>
+        )}
+      </Row>
       <Row gutter={16}>
         <Col md={12} sm={24}>
           <Form.Item {...formItemLayout} label="Status">
@@ -249,7 +290,8 @@ const HistoryTab = ({ params, updateParams, jobStatus, jobPriority }) => {
   );
 };
 
-const mapContextToProps = ({ jobStatus, jobPriority }) => ({
+const mapContextToProps = ({ user, jobStatus, jobPriority }) => ({
+  user,
   jobStatus,
   jobPriority,
 });
