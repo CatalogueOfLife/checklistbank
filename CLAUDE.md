@@ -128,7 +128,7 @@ The app is built with **Vite 8 / Rolldown** and `@vitejs/plugin-react` v6. Confi
 - **Vite 8** + `@vitejs/plugin-react` v6 - Build tool and JSX transform
 - **Vitest** - Test runner (replaces Jest + react-scripts)
 - **dayjs** with `relativeTime`, `utc`, `localizedFormat` plugins (extended in `src/main.jsx`)
-- **MapLibre GL** - Distribution maps (replaces Leaflet)
+- **MapLibre GL** - Distribution maps (replaces Leaflet). The base map style URL is per environment: `basemapStyle` in `src/env.json`, falling back to Carto's keyless Positron style
 - **Highcharts 12** + `@highcharts/react` v5 - Import-metrics, import-timeline, and taxon-breakdown charts. The React wrapper is the modern scoped package (the legacy `highcharts-react-official` was retired upstream). Use `import { Chart } from "@highcharts/react"` and pass options via the `options` prop — no `highcharts={Highcharts}` prop is needed. For the exporting module, import the UMD module by path: `import "highcharts/modules/exporting"` (the side-effect registers it on the global Highcharts). The ESM masters path (`highcharts/es-modules/...`) does not share state with the UMD `import Highcharts from "highcharts"` entry, which is what Vite resolves.
 - **marked** - Markdown rendering
 - **NamesDiffView** (`src/components/NamesDiffView/`) - in-house names diff rendering for the diff viewer and sector sync diffs

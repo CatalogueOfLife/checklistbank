@@ -54,7 +54,11 @@ const colorFor = (record) => {
   return k == null ? MISSING_COLOR : ESTABLISHMENT_COLORS[k];
 };
 
-const POSITRON_STYLE =
+// The base map, per environment, so a different provider or a keyed style URL
+// can be swapped in without touching this file. Carto's keyless Positron is
+// the fallback for an environment that does not name one.
+const BASEMAP_STYLE =
+  config.basemapStyle ||
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 // Layer IDs
@@ -249,7 +253,7 @@ const DistributionsMap = ({
     if (!supported()) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: POSITRON_STYLE,
+      style: BASEMAP_STYLE,
       center: [0, 20],
       zoom: 1,
       minZoom: 0,
