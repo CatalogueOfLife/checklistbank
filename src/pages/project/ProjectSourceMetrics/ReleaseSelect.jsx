@@ -32,22 +32,29 @@ const RealeaseSelect = ({ projectKey, defaultReleaseKey, onReleaseChange, omitLi
 
   useEffect(() => {
     if (projectKey) {
-      getReleases().then(() => {
-        if (defaultReleaseKey) {
-          setDefaultValue(defaultReleaseKey);
-        }
-      });
+      getReleases();
     }
-  }, []);
-
-  useEffect(() => {
-    getReleases();
   }, [projectKey]);
 
+  // The ?releaseKey= default is applied on its own, not chained onto the
+  // release list: setDefaultValue resolves the key directly and projectKey is
+  // derived from the context dataset, which starts out as a stub without
+  // sourceKey - so on a release page projectKey is still undefined at mount and
+  // only arrives a render later.
+  useEffect(() => {
+    if (
+      defaultReleaseKey &&
+      Number(selectedRelease?.value) !== Number(defaultReleaseKey)
+    ) {
+      setDefaultValue(defaultReleaseKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultReleaseKey]);
+
+  // allowClear hands us undefined; onReleaseChange drops the comparison then.
   const handleReleaseChange = (release) => {
-    const releaseKey = release.value;
-    onReleaseChange(releaseKey, release.label);
-    setSelectedRelease(release);
+    onReleaseChange(release?.value, release?.label);
+    setSelectedRelease(release || null);
   };
 
   const omit = omitList || [];
