@@ -4,11 +4,8 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withRouter from "../../withRouter";
-import { getDatasetByRouteKey } from "../../api/dataset";
-import {
-  datasetMatchesRoute,
-  tagDatasetRouteKey,
-} from "../util/datasetRouteMatch";
+import { getDatasetsBatch } from "../../api/dataset";
+import { datasetMatchesRoute } from "../util/datasetRouteMatch";
 
 /**
  * Keeps the AppContext `dataset` / `project` in step with the URL.
@@ -69,24 +66,21 @@ const DatasetProvider = ({
     // Both are fast and independent of each other, so they run together. The
     // projects query only ever needed `key`, not the dataset record.
     Promise.all([
-      getDatasetByRouteKey(key),
+      getDatasetsBatch([key]),
       axios(
         `${config.dataApi}dataset?limit=1000&hasSourceDataset=${key}&origin=PROJECT`
       ),
     ])
-      .then(([dataset, projects]) => {
+      .then(([datasets, projects]) => {
         if (cancelled) return;
 
-        // getDatasetByRouteKey resolves with null instead of rejecting, so an
+        const data = datasets?.[0];
+        // getDatasetsBatch resolves with null instead of rejecting, so an
         // unknown or inaccessible key arrives here rather than in .catch - it
         // still has to run the not-found cleanup below.
-        if (!dataset) {
+        if (!data) {
           throw new Error(`Dataset ${key} does not exist`);
         }
-        // `key` may be an alias only the backend can resolve (gbif-<uuid>,
-        // COL2024, 3LR). Tag the record with it so every later
-        // datasetMatchesRoute against this URL recognises it.
-        const data = tagDatasetRouteKey(dataset, key);
         // A late response must never reintroduce a mismatch.
         if (!datasetMatchesRoute(data, key)) return;
 
@@ -150,9 +144,8 @@ const DatasetProvider = ({
     axios(`${config.dataApi}dataset/${projectKey}`)
       .then((res) => {
         if (cancelled) return;
-        const data = tagDatasetRouteKey(res.data, projectKey);
-        if (!datasetMatchesRoute(data, projectKey)) return;
-        setProject(data);
+        if (!datasetMatchesRoute(res.data, projectKey)) return;
+        setProject(res.data);
         setSourceDataset(null);
         setDataset(null);
       })

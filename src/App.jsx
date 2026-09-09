@@ -17,6 +17,7 @@ import DatasetList from "./pages/DatasetList";
 import DatasetPage from "./pages/DatasetKey";
 import DatasetCreate from "./pages/DatasetCreate";
 
+import DatasetKeyAliasGate from "./components/DatasetKeyAliasGate";
 import DatasetProvider from "./components/hoc/DatasetProvider";
 import ProjectJobProvider from "./components/hoc/ProjectJobProvider";
 import BackgroundProvider from "./components/hoc/BackgroundProvider";
@@ -161,6 +162,10 @@ const App = () => {
         <BrowserRouter>
           <NavigatorInstaller />
           <RoutedErrorBoundary>
+          {/* Resolves an aliased dataset key (gbif-<uuid>, COL2024, 3LR) to its
+              integer and replaces the URL before anything below can request
+              against the alias. */}
+          <DatasetKeyAliasGate>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route
@@ -455,8 +460,9 @@ const App = () => {
             <Route path="/catalogue/*" element={<CatalogueRedirect />} />
             <Route path="*" element={<Exception404 />} />
           </Routes>
-          </RoutedErrorBoundary>
           <ProviderRoutes />
+          </DatasetKeyAliasGate>
+          </RoutedErrorBoundary>
         </BrowserRouter>
       </ContextProvider>
       </AntdApp>

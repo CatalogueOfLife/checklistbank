@@ -24,10 +24,7 @@ import PresentationItem from "../../../components/PresentationItem";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import { formatTime } from "../../../dateTime";
-import {
-  datasetMatchesRoute,
-  tagDatasetRouteKey,
-} from "../../../components/util/datasetRouteMatch";
+import { datasetMatchesRoute } from "../../../components/util/datasetRouteMatch";
 import AgentPresentation from "../../../components/MetaData/AgentPresentation";
 import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
@@ -100,11 +97,8 @@ const DatasetMeta = ({
         // DatasetProvider puts there. Only do that if we are still on this
         // dataset's page - otherwise a slow response lands after the user has
         // navigated on and reintroduces the very mismatch the provider clears.
-        // `id` may be an alias (gbif-<uuid>, COL2024, 3LR); tag the upgraded
-        // record with it so it keeps matching this URL.
-        const tagged = tagDatasetRouteKey(res.data, id);
-        if (!isSourceInProjectView && datasetMatchesRoute(tagged, id)) {
-          setDataset(tagged);
+        if (!isSourceInProjectView && datasetMatchesRoute(res.data, id)) {
+          setDataset(res.data);
         }
         if (res.data.sourceKey) {
           getReleasedFrom(res.data.sourceKey);

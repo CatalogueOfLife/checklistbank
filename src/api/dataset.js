@@ -2,7 +2,6 @@ import axios from "axios";
 import config from "../config";
 import duplicatePresets from "../pages/Duplicates/queryPresets";
 import qs from "query-string";
-import { isDatasetAlias } from "../components/util/datasetRouteMatch";
 
 const reflect = (p) =>
   p.then(
@@ -28,23 +27,45 @@ export const getDatasetsBatch = (ids) => {
     .catch(() => ids.map(() => null));
 };
 
-// Identity of the dataset a /dataset/:key route names.
+// A dataset key in a URL is either a plain integer or one of the aliases the
+// backend's DatasetKeyRewriteFilter resolves wherever a key sits in a path:
 //
-// /dataset/simple is the fast path but takes numeric ids only: `id` is not one
-// of the query params DatasetKeyRewriteFilter rewrites, and it is typed as an
-// Integer, so an alias key comes back as HTTP 400 - which read as "does not
-// exist" on every /dataset/gbif-<uuid>/*, /dataset/COL2024/* and
-// /dataset/{key}LR/* page. Aliases go through the path instead, where the
-// backend does resolve them; that costs the full record, but only for the
-// aliased URLs, which are rare.
-export const getDatasetByRouteKey = (key) =>
-  isDatasetAlias(key)
-    ? axios(`${config.dataApi}dataset/${key}`)
-        .then((res) => res.data || null)
-        // Resolve rather than reject, like getDatasetsBatch, so an unknown key
-        // reaches the caller the same way whichever endpoint served it.
-        .catch(() => null)
-    : getDatasetsBatch([key]).then((datasets) => datasets?.[0] ?? null);
+//   gbif-<uuid>              a GBIF dataset UUID
+//   {projectKey}LR / LRC     latest public release / private release candidate
+//   {projectKey}LXR / LXRC   the extended-release variants of those
+//   {projectKey}R{attempt}   one specific release attempt
+//   COL2024 / COL24.1XR      an annual COL edition
+const NUMERIC_KEY = /^\d+$/;
+const GBIF_ALIAS = /^gbif-([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$/i;
+
+export const isDatasetAlias = (key) =>
+  typeof key === "string" &&
+  key.trim() !== "" &&
+  !NUMERIC_KEY.test(key.trim());
+
+// The integer key behind an alias, or null if nothing answers to it.
+//
+// Only the backend can do this: /dataset/simple takes List<Integer>, and `id`
+// is not one of the query params the rewrite filter rewrites, so an alias
+// there is an HTTP 400. Aliases only resolve in a path.
+export const resolveDatasetAliasKey = (alias) => {
+  const gbif = GBIF_ALIAS.exec(String(alias).trim());
+  if (gbif) {
+    // /dataset/keys answers with nothing but the ids - 8 bytes - so the common
+    // gbif-<uuid> link never pulls a dataset record at all.
+    return axios(`${config.dataApi}dataset/keys?gbifKey=${gbif[1]}`)
+      .then((res) => (Array.isArray(res.data) ? res.data[0] ?? null : null))
+      .catch(() => null);
+  }
+  // No dataset search filter expresses "the latest release of 3" or "the 2024
+  // annual edition" - those exist only as the rewrite filter's path lookup, and
+  // the cheapest endpoint that echoes the resolved key back is the record
+  // itself. That is ~110 kB for a COL release, but it is paid once, on entry to
+  // an aliased URL, and never again: the redirect leaves a numeric key behind.
+  return axios(`${config.dataApi}dataset/${alias}`)
+    .then((res) => res.data?.key ?? null)
+    .catch(() => null);
+};
 
 export const getSourcesBatch = (ids, projectKey) => {
   return Promise.all(

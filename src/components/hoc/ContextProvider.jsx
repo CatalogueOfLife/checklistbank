@@ -48,7 +48,6 @@ import {
 import { getJobQueue as fetchJobQueue } from "../../api/job";
 import { getComponentState } from "../../api/admin";
 import { getTerms, getTermsOrder } from "../../api/terms";
-import { DATASET_ROUTE_KEY_FIELD } from "../util/datasetRouteMatch";
 
 // Helpers
 // import { getUserItems } from '../helpers';
@@ -85,11 +84,6 @@ const getJsonDatasetForLocalStorage = (dataset) =>
         title: dataset.title,
         alias: dataset?.alias || "",
         origin: dataset?.origin || "",
-        // Identity under an aliased URL (/dataset/COL2024, /dataset/3LR,
-        // /dataset/gbif-<uuid>): without these the seed can never be shown to
-        // belong to the route, and datasetMatchesRoute drops it on reload.
-        [DATASET_ROUTE_KEY_FIELD]: dataset?.[DATASET_ROUTE_KEY_FIELD],
-        gbifKey: dataset?.gbifKey,
       })
     : null;
 
