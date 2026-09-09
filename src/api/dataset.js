@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "../config";
 import duplicatePresets from "../pages/Duplicates/queryPresets";
 import qs from "query-string";
+import { isDatasetAlias } from "../components/util/datasetRouteMatch";
 
 const reflect = (p) =>
   p.then(
@@ -26,6 +27,24 @@ export const getDatasetsBatch = (ids) => {
     })
     .catch(() => ids.map(() => null));
 };
+
+// Identity of the dataset a /dataset/:key route names.
+//
+// /dataset/simple is the fast path but takes numeric ids only: `id` is not one
+// of the query params DatasetKeyRewriteFilter rewrites, and it is typed as an
+// Integer, so an alias key comes back as HTTP 400 - which read as "does not
+// exist" on every /dataset/gbif-<uuid>/*, /dataset/COL2024/* and
+// /dataset/{key}LR/* page. Aliases go through the path instead, where the
+// backend does resolve them; that costs the full record, but only for the
+// aliased URLs, which are rare.
+export const getDatasetByRouteKey = (key) =>
+  isDatasetAlias(key)
+    ? axios(`${config.dataApi}dataset/${key}`)
+        .then((res) => res.data || null)
+        // Resolve rather than reject, like getDatasetsBatch, so an unknown key
+        // reaches the caller the same way whichever endpoint served it.
+        .catch(() => null)
+    : getDatasetsBatch([key]).then((datasets) => datasets?.[0] ?? null);
 
 export const getSourcesBatch = (ids, projectKey) => {
   return Promise.all(
