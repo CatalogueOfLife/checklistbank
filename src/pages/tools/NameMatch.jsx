@@ -47,6 +47,15 @@ const { Panel } = Collapse;
 const { TextArea } = Input;
 const { Paragraph, Text } = Typography;
 
+// The async matching endpoint binds its request with a JAX-RS @BeanParam, so
+// sourceDatasetKey and taxonID are only read from the query string - a JSON body
+// is silently ignored and the server answers 400.
+export const buildAsyncMatchParams = (subjectDataset, subjectTaxon) => {
+  const params = { sourceDatasetKey: subjectDataset?.key };
+  if (subjectTaxon?.key) params.taxonID = subjectTaxon.key;
+  return params;
+};
+
 // Shows which dataset a match ran against: linked title plus alias & version (#1683)
 const DatasetRef = ({ dataset }) =>
   dataset ? (
@@ -686,11 +695,13 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
           { headers: { "Content-Type": "text/plain" } }
         );
       } else {
-        const body = { sourceDatasetKey: subjectDataset.key };
-        if (subjectTaxon?.key) body.taxonID = subjectTaxon.key;
+        // The empty object body is deliberate: it makes axios send
+        // Content-Type: application/json, which is what picks the JSON
+        // resource method over the text/* upload one on the same path.
         res = await axios.post(
           `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
-          body
+          {},
+          { params: buildAsyncMatchParams(subjectDataset, subjectTaxon) }
         );
       }
       history.push({ pathname: `/tools/name-match/job/${res.data.key}` });
