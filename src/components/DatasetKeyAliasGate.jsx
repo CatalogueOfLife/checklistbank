@@ -21,7 +21,7 @@ export const DATASET_KEY_PATH = /^\/(dataset|project)\/([^/]+)/;
  * ends up naming the dataset you actually got, and everything below this point
  * only ever sees a plain integer. Children are held back until the swap, so
  * nothing fires a request against the alias and then repeats it against the
- * resolved key - which is what keeps the heavy record out of the common path.
+ * resolved key.
  *
  * An alias nothing answers to falls through to the children, where the ordinary
  * not-found handling reports it.

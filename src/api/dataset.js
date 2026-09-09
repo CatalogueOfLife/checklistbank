@@ -36,7 +36,6 @@ export const getDatasetsBatch = (ids) => {
 //   {projectKey}R{attempt}   one specific release attempt
 //   COL2024 / COL24.1XR      an annual COL edition
 const NUMERIC_KEY = /^\d+$/;
-const GBIF_ALIAS = /^gbif-([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$/i;
 
 export const isDatasetAlias = (key) =>
   typeof key === "string" &&
@@ -45,27 +44,18 @@ export const isDatasetAlias = (key) =>
 
 // The integer key behind an alias, or null if nothing answers to it.
 //
-// Only the backend can do this: /dataset/simple takes List<Integer>, and `id`
-// is not one of the query params the rewrite filter rewrites, so an alias
-// there is an HTTP 400. Aliases only resolve in a path.
-export const resolveDatasetAliasKey = (alias) => {
-  const gbif = GBIF_ALIAS.exec(String(alias).trim());
-  if (gbif) {
-    // /dataset/keys answers with nothing but the ids - 8 bytes - so the common
-    // gbif-<uuid> link never pulls a dataset record at all.
-    return axios(`${config.dataApi}dataset/keys?gbifKey=${gbif[1]}`)
-      .then((res) => (Array.isArray(res.data) ? res.data[0] ?? null : null))
-      .catch(() => null);
-  }
-  // No dataset search filter expresses "the latest release of 3" or "the 2024
-  // annual edition" - those exist only as the rewrite filter's path lookup, and
-  // the cheapest endpoint that echoes the resolved key back is the record
-  // itself. That is ~110 kB for a COL release, but it is paid once, on entry to
-  // an aliased URL, and never again: the redirect leaves a numeric key behind.
-  return axios(`${config.dataApi}dataset/${alias}`)
+// Only the backend can do this, and only in a path: the rewrite filter
+// swaps the alias for its key before routing, so any dataset sub-resource
+// resolves one. The collection endpoint cannot - /dataset/simple takes
+// List<Integer> and `id` is not among the query params the filter rewrites,
+// so an alias there is an HTTP 400.
+//
+// /dataset/{key}/simple is the per-record projection, ~280 bytes, which is why
+// resolving an alias never costs a full dataset record.
+export const resolveDatasetAliasKey = (alias) =>
+  axios(`${config.dataApi}dataset/${alias}/simple`)
     .then((res) => res.data?.key ?? null)
     .catch(() => null);
-};
 
 export const getSourcesBatch = (ids, projectKey) => {
   return Promise.all(
