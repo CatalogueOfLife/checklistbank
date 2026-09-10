@@ -6,7 +6,8 @@ const TaxonFormControl = ({ value, onChange, datasetKey, minRank, accepted = tru
 useEffect(() => {}, [datasetKey])
   const triggerChange = (name) => {
       if(name){
-        onChange?.({ id: name.key, name: name.title });
+        // the backend copies name and authorship from the linked usage
+        onChange?.({ id: name.key });
       } else {
         onChange?.(null);
       }
