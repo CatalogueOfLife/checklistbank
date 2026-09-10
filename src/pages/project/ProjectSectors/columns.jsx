@@ -5,6 +5,7 @@ import { CodeOutlined, HistoryOutlined, WarningOutlined } from "@ant-design/icon
 import { NavLink } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
+import StaleNameWarning from "../../../components/StaleNameWarning";
 import _ from "lodash";
 
 import { formatTime } from "../../../dateTime";
@@ -99,6 +100,13 @@ export default (
             {record?.subject?.broken && (
               <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
             )}
+            {record?.subject?.stale && (
+              <StaleNameWarning
+                datasetKey={record.subjectDatasetKey}
+                id={record?.subject?.id}
+                storedName={record?.subject?.name}
+              />
+            )}
           </React.Fragment>
         );
       },
@@ -154,6 +162,15 @@ export default (
                 />
                 <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
               </React.Fragment>
+            )}
+            {record?.target?.stale && (
+              /* the target lives in the dataset owning the sector - the project, or the release
+                 when this table is showing a release's sectors */
+              <StaleNameWarning
+                datasetKey={record?.datasetKey || projectKey}
+                id={record?.target?.id}
+                storedName={record?.target?.name}
+              />
             )}
           </React.Fragment>
         );

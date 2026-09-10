@@ -26,6 +26,7 @@ import history from "../../../history";
 import { stringToColour } from "../../../components/util";
 import { ColTreeContext } from "./ColTreeContext";
 import ErrorMsg from "../../../components/ErrorMsg";
+import StaleNameWarning from "../../../components/StaleNameWarning";
 import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
 import SectorForm from "./SectorForm";
@@ -248,6 +249,22 @@ const Sector = ({
                 showIcon
               />
             )}
+            {isRootSector && sector?.subject?.stale === true && (
+              <Alert
+                style={{ marginBottom: "8px" }}
+                title={`The sector subject id no longer holds ${sector?.subject?.name} - rematch the sector`}
+                type="warning"
+                showIcon
+              />
+            )}
+            {isRootSector && sector?.target?.stale === true && (
+              <Alert
+                style={{ marginBottom: "8px" }}
+                title={`The sector target id no longer holds ${sector?.target?.name} - rematch the sector`}
+                type="warning"
+                showIcon
+              />
+            )}
             {isRootSector && (
               <>
                 <CanEditDataset dataset={{ key: projectKey }}>
@@ -421,6 +438,23 @@ const Sector = ({
               style={{ fontSize: "16px", marginRight: "4px" }}
             />
           )}
+          {(sector?.subject?.stale === true || sector?.target?.stale === true) && (
+            <StaleNameWarning
+              datasetKey={
+                sector?.subject?.stale
+                  ? sector?.subjectDatasetKey
+                  : sector?.datasetKey
+              }
+              id={
+                sector?.subject?.stale ? sector?.subject?.id : sector?.target?.id
+              }
+              storedName={
+                sector?.subject?.stale
+                  ? sector?.subject?.name
+                  : sector?.target?.name
+              }
+            />
+          )}
         </Tag>
       </Popover>
     </>
@@ -579,6 +613,25 @@ const Sector = ({
             {sector?.subject?.broken === true && (
               <WarningOutlined
                 style={{ fontSize: "16px", marginRight: "4px" }}
+              />
+            )}
+            {(sector?.subject?.stale === true || sector?.target?.stale === true) && (
+              <StaleNameWarning
+                datasetKey={
+                  sector?.subject?.stale
+                    ? sector?.subjectDatasetKey
+                    : sector?.datasetKey
+                }
+                id={
+                  sector?.subject?.stale
+                    ? sector?.subject?.id
+                    : sector?.target?.id
+                }
+                storedName={
+                  sector?.subject?.stale
+                    ? sector?.subject?.name
+                    : sector?.target?.name
+                }
               />
             )}
           </Tag>

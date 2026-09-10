@@ -13,6 +13,7 @@ import SyncButton from "./SyncButton";
 import withContext from "../../../components/hoc/withContext";
 import Auth from "../../../components/Auth";
 import { sectorLogQuery as kibanaQuery } from "../../../components/job/kibanaQuery";
+import StaleNameWarning from "../../../components/StaleNameWarning";
 
 import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -78,6 +79,13 @@ const getColumns = (projectKey) => [
           {_.get(record, "sector.subject.broken") && (
             <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
           )}
+          {_.get(record, "sector.subject.stale") && (
+            <StaleNameWarning
+              datasetKey={_.get(record, "sector.subjectDatasetKey")}
+              id={_.get(record, "sector.subject.id")}
+              storedName={_.get(record, "sector.subject.name")}
+            />
+          )}
         </>
       );
     },
@@ -115,6 +123,13 @@ const getColumns = (projectKey) => [
               {_.get(record, "sector.target.name")}
               <WarningOutlined style={{ color: "red", marginLeft: "10px" }} />
             </>
+          )}
+          {_.get(record, "sector.target.stale") && (
+            <StaleNameWarning
+              datasetKey={_.get(record, "sector.datasetKey")}
+              id={_.get(record, "sector.target.id")}
+              storedName={_.get(record, "sector.target.name")}
+            />
           )}
         </>
       );

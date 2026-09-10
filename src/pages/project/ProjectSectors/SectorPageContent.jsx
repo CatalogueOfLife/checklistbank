@@ -484,12 +484,12 @@ const ProjectSectors = ({
           />
         </FormItem>
         <FormItem
-          label="Wrong subject"
+          label="Stale name"
           style={{ marginBottom: "8px", marginRight: "8px" }}
         >
           <Switch
-            checked={locationParams.wrongSubject === true || locationParams.wrongSubject === "true"}
-            onChange={(value) => updateSearch({ wrongSubject: value })}
+            checked={locationParams.stale === true || locationParams.stale === "true"}
+            onChange={(value) => updateSearch({ stale: value })}
           />
         </FormItem>
         <FormItem
