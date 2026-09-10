@@ -87,7 +87,7 @@ export const sectorColumn = {
       <NavLink
         to={{
           pathname: `/project/${record.datasetKey}/sector`,
-          search: `?id=${record.sectorKey}`,
+          search: `?key=${record.sectorKey}`,
         }}
         end
       >

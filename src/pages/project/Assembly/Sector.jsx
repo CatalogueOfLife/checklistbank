@@ -314,7 +314,7 @@ const Sector = ({
               type="primary"
               onClick={() => {
                 history.push(
-                  `/project/${projectKey}/sector?id=${sector.id}`
+                  `/project/${projectKey}/sector?key=${sector.id}`
                 );
               }}
             >
