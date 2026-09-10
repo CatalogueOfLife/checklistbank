@@ -301,8 +301,9 @@ const SectorTable = ({
             `${(
               (pagination.current - 1) * pagination.pageSize +
               1
-            ).toLocaleString("en-GB")} - ${(
-              pagination.current * pagination.pageSize
+            ).toLocaleString("en-GB")} - ${Math.min(
+              pagination.current * pagination.pageSize,
+              pagination.total
             ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
               "en-GB"
             )}`}

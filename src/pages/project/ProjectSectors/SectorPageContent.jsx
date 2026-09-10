@@ -96,7 +96,10 @@ const ProjectSectors = ({
   const getData = () => {
     const key = projectKey || datasetKey;
     setLoading(true);
+    // links such as ?key= arrive without paging params
     const queryParams = {
+      limit: PAGE_SIZE,
+      offset: 0,
       ...qs.parse(_.get(location, "search")),
       datasetKey: key,
     };
@@ -153,13 +156,12 @@ const ProjectSectors = ({
 
   useEffect(() => {
     const currentParams = qs.parse(locationSearch);
+    const limit = Number(currentParams.limit) || PAGE_SIZE;
+    const offset = Number(currentParams.offset) || 0;
     setPagination((prev) => ({
       ...prev,
-      pageSize: currentParams.limit || PAGE_SIZE,
-      current:
-        Number(currentParams.offset) /
-          Number(currentParams.limit || PAGE_SIZE) +
-        1,
+      pageSize: limit,
+      current: offset / limit + 1,
     }));
     getData();
   }, [locationSearch, matchProjectKey, locationSubjectDatasetKey]);
