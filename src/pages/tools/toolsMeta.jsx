@@ -33,8 +33,6 @@ const toolsDescriptions = {
       metadata.
     </>
   ),
-  "diff-viewer":
-    "Compare two datasets, releases or subtrees to spot added, removed or changed names.",
   "taxonomic-alignment": (
     <>
       Compare the taxonomic concepts of two datasets (or parts of them),
@@ -60,7 +58,7 @@ const toolsDescriptions = {
     </>
   ),
   "dataset-comparison":
-    "Compare a taxonomic group across two datasets — visualise metrics, then diff the names to find gaps and spelling variations.",
+    "Compare a taxonomic group across two datasets or releases in two steps: first visualise metrics for the chosen root taxa, then diff the names of one or more subtrees to spot added, removed or changed names, gaps and spelling variations.",
   "dataset":
     "Search every dataset published in ChecklistBank — free text search with filters by type, taxonomic scope, license and more.",
   "namesindex":

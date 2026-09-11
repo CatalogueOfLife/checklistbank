@@ -7,27 +7,20 @@ import withContext from "../../components/hoc/withContext";
 import { List, Tag } from "antd";
 import toolsDescriptions from "./toolsMeta";
 
-// Every tool in ChecklistBank, including those left out of the menu.
-// `access` mirrors the menu gating: "login" needs any logged in user,
-// "editor" needs the editor or admin role.
+// Every tool in ChecklistBank, including those left out of the menu, sorted
+// alphabetically by title. `access` mirrors the menu gating: "login" needs
+// any logged in user, "editor" needs the editor or admin role.
 const tools = [
+  {
+    title: "Archive validator",
+    path: "/tools/validator",
+    id: "validator",
+    access: "login",
+  },
   {
     title: "Cross dataset search",
     path: "/nameusage/search",
     id: "nameusage-search",
-  },
-  {
-    title: "Names index search",
-    path: "/namesindex",
-    id: "namesindex",
-    access: "editor",
-  },
-  { title: "Name matching", path: "/tools/name-match", id: "name-match" },
-  { title: "Name parser", path: "/tools/name-parser", id: "name-parser" },
-  {
-    title: "Taxon group parser",
-    path: "/tools/taxgroup-parser",
-    id: "taxgroup-parser",
   },
   {
     title: "Dataset comparison",
@@ -36,22 +29,28 @@ const tools = [
     access: "login",
   },
   {
-    title: "Diff viewer",
-    path: "/tools/diff-viewer",
-    id: "diff-viewer",
+    title: "GBIF impact",
+    path: "/tools/gbif-impact",
+    id: "gbif-impact",
     access: "editor",
   },
-  {
-    title: "Archive validator",
-    path: "/tools/validator",
-    id: "validator",
-    access: "login",
-  },
-  { title: "Vocabularies", path: "/vocabulary", id: "vocabulary" },
   {
     title: "Metadata generator",
     path: "/tools/metadata-generator",
     id: "metadata-generator",
+  },
+  { title: "Name matching", path: "/tools/name-match", id: "name-match" },
+  { title: "Name parser", path: "/tools/name-parser", id: "name-parser" },
+  {
+    title: "Names index search",
+    path: "/namesindex",
+    id: "namesindex",
+    access: "editor",
+  },
+  {
+    title: "Taxon group parser",
+    path: "/tools/taxgroup-parser",
+    id: "taxgroup-parser",
   },
   {
     title: "Taxonomic alignment",
@@ -59,12 +58,7 @@ const tools = [
     id: "taxonomic-alignment",
     access: "login",
   },
-  {
-    title: "GBIF impact",
-    path: "/tools/gbif-impact",
-    id: "gbif-impact",
-    access: "editor",
-  },
+  { title: "Vocabularies", path: "/vocabulary", id: "vocabulary" },
 ];
 
 const ACCESS_TAG = {

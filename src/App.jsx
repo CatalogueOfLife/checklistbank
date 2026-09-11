@@ -69,7 +69,6 @@ import NameParser from "./pages/tools/NameParser";
 import TaxGroupParser from "./pages/tools/TaxGroupParser";
 
 import GBIFTaxonomyReview from "./pages/tools/GBIFTaxonomyReview";
-import DiffViewer from "./pages/tools/DiffViewer";
 import TaxAlign from "./pages/tools/TaxAlign";
 
 import ToolIndex from "./pages/tools/ToolIndex";
@@ -112,6 +111,15 @@ const CatalogueRedirect = () => {
   const location = useLocation();
   const newPath = location.pathname.replace(/^\/catalogue\//, "/project/");
   return <Navigate to={`${newPath}${location.search}${location.hash}`} replace />;
+};
+
+// Back-compat: the diff viewer became the second step of the dataset
+// comparison, which reads the same dataset / root / dataset2 / root2 params.
+const DiffViewerRedirect = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  params.set("step", "diff");
+  return <Navigate to={`/tools/dataset-comparison?${params}`} replace />;
 };
 
 // Router 6 requires `<Route>` to live inside `<Routes>`. The Router-5 code
@@ -425,7 +433,7 @@ const App = () => {
             />
             <Route path="/tools/name-parser" element={<NameParser />} />
             <Route path="/tools/taxgroup-parser" element={<TaxGroupParser />} />
-            <Route path="/tools/diff-viewer" element={<DiffViewer />} />
+            <Route path="/tools/diff-viewer" element={<DiffViewerRedirect />} />
             <Route path="/tools/taxonomic-alignment" element={<TaxAlign />} />
             <Route
               path="/tools/dataset-comparison"

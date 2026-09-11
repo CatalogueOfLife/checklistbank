@@ -256,14 +256,6 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
-        Auth.isAuthorised(user, ["admin", "editor"]) && {
-          key: "diffviewer",
-          label: (
-            <NavLink to={{ pathname: "/tools/diff-viewer" }}>
-              <span>Diff viewer</span>
-            </NavLink>
-          ),
-        },
         user && {
           key: "validator",
           label: (

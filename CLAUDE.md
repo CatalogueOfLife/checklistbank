@@ -86,7 +86,7 @@ Major route groups:
 - `/` - Home page
 - `/dataset/:key/:section?` - Dataset detail pages (metadata, classification, names, references, imports, verbatim, taxon browser, etc.)
 - `/project/:projectKey/:section?` - Project (catalogue assembly) pages: sectors, decisions, sync, duplicates, sources, editors, options
-- `/tools` - Utilities (name matcher, archive validator, diff viewer, dataset comparison, metadata generator, taxonomic alignment, etc.)
+- `/tools` - Utilities (name matcher, archive validator, dataset comparison incl. names diff, metadata generator, taxonomic alignment, etc.)
 - `/admin` - Admin panels (users, jobs, dataset management, matcher admin)
 
 ### Component Organization
@@ -131,7 +131,7 @@ The app is built with **Vite 8 / Rolldown** and `@vitejs/plugin-react` v6. Confi
 - **MapLibre GL** - Distribution maps (replaces Leaflet). The base map style URL is per environment: `basemapStyle` in `src/env.json`, falling back to Carto's keyless Positron style
 - **Highcharts 12** + `@highcharts/react` v5 - Import-metrics, import-timeline, and taxon-breakdown charts. The React wrapper is the modern scoped package (the legacy `highcharts-react-official` was retired upstream). Use `import { Chart } from "@highcharts/react"` and pass options via the `options` prop — no `highcharts={Highcharts}` prop is needed. For the exporting module, import the UMD module by path: `import "highcharts/modules/exporting"` (the side-effect registers it on the global Highcharts). The ESM masters path (`highcharts/es-modules/...`) does not share state with the UMD `import Highcharts from "highcharts"` entry, which is what Vite resolves.
 - **marked** - Markdown rendering
-- **NamesDiffView** (`src/components/NamesDiffView/`) - in-house names diff rendering for the diff viewer and sector sync diffs
+- **NamesDiffView** (`src/components/NamesDiffView/`) - in-house names diff rendering for the dataset comparison's names diff step (`src/pages/tools/TaxonComparer/NamesDiffStep.jsx`), sector sync diffs and import diffs
 
 ## API Integration
 
