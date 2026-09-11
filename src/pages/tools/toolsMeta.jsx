@@ -35,8 +35,31 @@ const toolsDescriptions = {
   ),
   "diff-viewer":
     "Compare two datasets, releases or subtrees to spot added, removed or changed names.",
-  "taxonomic-alignment":
-    "Compare the taxonomic concepts of two datasets (or parts of them), aligning taxa and generating RCC-5 relationships from their synonymy.",
+  "taxonomic-alignment": (
+    <>
+      Compare the taxonomic concepts of two datasets (or parts of them),
+      aligning taxa and generating RCC-5 relationships from their synonymy.
+      The alignment is computed by{" "}
+      <a
+        href="https://github.com/jar398/listtools"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        listtools
+      </a>
+      , implemented by J. Rees, which is part of the work of Rees, Franz and
+      Sterner on the exemplar-based alignment method:{" "}
+      <a
+        href="https://doi.org/10.3897/BDJ.14.e191754"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Rees J, Franz N, Sterner B (2026) A scalable exemplar-based method for
+        aligning biological taxonomies. Biodiversity Data Journal 14: e191754
+      </a>
+      .
+    </>
+  ),
   "dataset-comparison":
     "Compare a taxonomic group across two datasets — visualise metrics, then diff the names to find gaps and spelling variations.",
   "dataset":
