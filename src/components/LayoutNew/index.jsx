@@ -21,6 +21,7 @@ import DatasetLogo from "../../pages/DatasetList/DatasetLogo";
 import Exception from "../exception/Exception";
 import PulsatingDot from "./PulsatingDot";
 import DatasetOriginPill from "./DatasetOriginPill";
+import GlobalDatasetLink from "../GlobalDatasetLink";
 import Health from "./Health";
 import JobQueue from "./JobQueue";
 import React from "react";
@@ -88,6 +89,9 @@ const SiteLayout = ({
   const collapsed =
     typeof collapsedState === "boolean" ? collapsedState : width < LARGE;
   const isMobile = width < MEDIUM;
+  // A source dataset shown inside a project, e.g. /project/3/dataset/1010/names
+  const isProjectSource =
+    !!project && !!selectedDataset && project.key !== selectedDataset.key;
   let contentMargin = collapsed ? menuCollapsedWidth : menuWidth;
   if (isMobile) {
     contentMargin = 0;
@@ -209,14 +213,21 @@ const SiteLayout = ({
                         </React.Fragment>
                       )}
                     </h1>
-                    {project &&
-                      selectedDataset &&
-                      project?.key !== selectedDataset?.key && (
-                        <h5
-                          style={{ marginTop: "-48px" }}
-                        >{`in ${project.title}`}</h5>
-                      )}
+                    {isProjectSource && (
+                      <h5
+                        style={{ marginTop: "-48px" }}
+                      >{`in ${project.title}`}</h5>
+                    )}
                   </Col>
+                  {/* Outside the title column so a truncated title can't clip it */}
+                  {isProjectSource && (
+                    <Col>
+                      <GlobalDatasetLink
+                        datasetKey={selectedDataset.key}
+                        style={{ fontSize: "20px", marginLeft: "4px" }}
+                      />
+                    </Col>
+                  )}
                   <Col
                     style={{
                       maxWidth: `${

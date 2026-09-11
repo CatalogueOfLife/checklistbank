@@ -16,6 +16,7 @@ import withContext from "../../../components/hoc/withContext";
 import TaxonomicCoverage from "../../project/ProjectSourceMetrics/TaxonomicCoverage";
 import { IDENTIFIER_TYPES } from "./DatasetMeta";
 import DatasetLogo from "../../DatasetList/DatasetLogo";
+import GlobalDatasetLink from "../../../components/GlobalDatasetLink";
 
 const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
   const sourceKey = match?.params?.taxonOrNameKey;
@@ -77,6 +78,7 @@ const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
                 }}
               >
                 {data.title}
+                <GlobalDatasetLink datasetKey={data.key} />
               </h1>
               <h4
                 style={{
