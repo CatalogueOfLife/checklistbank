@@ -43,7 +43,7 @@ const GBIFTaxonomyReview = ({ location }) => {
 
   return (
     <Layout
-      selectedKeys={["gbif-impact"]}
+      selectedKeys={["toolsIndex"]}
       openKeys={["tools"]}
       title="GBIF Impact"
     >

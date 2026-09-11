@@ -241,7 +241,7 @@ const MetaDataValidator = ({ location }) => {
   };
   return (
     <Layout
-      selectedKeys={["metadatagenerator"]}
+      selectedKeys={["toolsIndex"]}
       openKeys={["tools"]}
       title="Metadata Generator"
     >

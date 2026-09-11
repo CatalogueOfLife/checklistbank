@@ -210,6 +210,20 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
+        Auth.isAuthorised(user, ["admin", "editor"]) && {
+          key: "nameIndexSearch",
+          label: (
+            <NavLink to={{ pathname: "/namesindex" }}>
+              <span>Names index search</span>
+            </NavLink>
+          ),
+        },
+        _.isArray(_selectedKeys) &&
+          _selectedKeys.includes("nameIndexKey") &&
+          taxonOrNameKey && {
+            key: "nameIndexKey",
+            label: `Nidx: ${taxonOrNameKey}`,
+          },
         {
           key: "namematch",
           label: (
@@ -234,28 +248,6 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
-        Auth.isAuthorised(user, ["admin", "editor"]) && {
-          key: "nameIndexSearch",
-          label: (
-            <NavLink to={{ pathname: "/namesindex" }}>
-              <span>Names index search</span>
-            </NavLink>
-          ),
-        },
-        _.isArray(_selectedKeys) &&
-          _selectedKeys.includes("nameIndexKey") &&
-          taxonOrNameKey && {
-            key: "nameIndexKey",
-            label: `Nidx: ${taxonOrNameKey}`,
-          },
-        user && {
-          key: "taxalign",
-          label: (
-            <NavLink to={{ pathname: "/tools/taxonomic-alignment" }}>
-              <span>Taxonomic alignment</span>
-            </NavLink>
-          ),
-        },
         user && {
           key: "datasetComparison",
           label: (
@@ -269,22 +261,6 @@ const BasicMenu = (props) => {
           label: (
             <NavLink to={{ pathname: "/tools/diff-viewer" }}>
               <span>Diff viewer</span>
-            </NavLink>
-          ),
-        },
-        Auth.isAuthorised(user, ["admin", "editor"]) && {
-          key: "gbif-impact",
-          label: (
-            <NavLink to={{ pathname: "/tools/gbif-impact" }}>
-              <span>GBIF impact</span>
-            </NavLink>
-          ),
-        },
-        {
-          key: "metadatagenerator",
-          label: (
-            <NavLink to={{ pathname: "/tools/metadata-generator" }}>
-              <span>Metadata generator</span>
             </NavLink>
           ),
         },
@@ -304,7 +280,9 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
-        !user && {
+        // The metadata generator, taxonomic alignment and GBIF impact tools
+        // are only listed on the tools index page behind this entry.
+        {
           key: "toolsIndex",
           label: (
             <NavLink to={{ pathname: "/tools/index" }}>

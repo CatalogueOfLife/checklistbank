@@ -141,7 +141,7 @@ const TaxAlign = ({ location, addError }) => {
 
   return (
     <Layout
-      selectedKeys={["taxalign"]}
+      selectedKeys={["toolsIndex"]}
       openKeys={["tools"]}
       title="Taxonomic Alignment"
     >

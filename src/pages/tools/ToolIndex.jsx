@@ -1,86 +1,116 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
-import { List, Typography } from 'antd';
-const { Text, Link } = Typography;
+import withContext from "../../components/hoc/withContext";
+import { List, Tag } from "antd";
+import toolsDescriptions from "./toolsMeta";
 
-
-const data = [
+// Every tool in ChecklistBank, including those left out of the menu.
+// `access` mirrors the menu gating: "login" needs any logged in user,
+// "editor" needs the editor or admin role.
+const tools = [
   {
-    title: 'Dataset Comparison',
-    path: '/tools/dataset-comparison',
-    description: <>
-    <p>Compare parts of two datasets, e.g. the treatment of a genus or family.
-      It allows you to first visualise metrics about the group and then dive into the comparison of names using
-      unix diff tools to spot missing names or spelling variations.
-    </p>
-    </>,
+    title: "Cross dataset search",
+    path: "/nameusage/search",
+    id: "nameusage-search",
   },
   {
-    title: 'Taxonomic Alignment',
-    path: '/tools/taxonomic-alignment',
-    description: <>
-    <p>This tool allows you to compare the taxonomic concepts of two selected datasets in ChecklistBank or parts of it.
-       It analyses the synonymy of taxa, aligns them and creates RCC-5 relationships regardless the accepted name was used.
-       The alignments require synonymy to be present in both datasets to be meaningful.
-       Read more about the <a href="https://github.com/jar398/listtools/blob/main/doc/guide.md#semantics">semantics of listtools</a>.</p>
-    </>,
+    title: "Names index search",
+    path: "/namesindex",
+    id: "namesindex",
+    access: "editor",
+  },
+  { title: "Name matching", path: "/tools/name-match", id: "name-match" },
+  { title: "Name parser", path: "/tools/name-parser", id: "name-parser" },
+  {
+    title: "Taxon group parser",
+    path: "/tools/taxgroup-parser",
+    id: "taxgroup-parser",
   },
   {
-    title: 'GBIF Impact',
-    path: '/tools/gbif-impact',
-    description: <>
-    <p>
-      This tool compares taxonomic interpretation of <a href="https://www.gbif.org/occurrence/search">GBIF occurrence records</a> between the current GBIF taxonomic backbone and the Catalogue of Life.
-    </p>
-    </>,
+    title: "Dataset comparison",
+    path: "/tools/dataset-comparison",
+    id: "dataset-comparison",
+    access: "login",
   },
   {
-    title: 'Archive Validator',
-    path: '/tools/validator',
-    description: <>
-      <p>You can upload archives in different file formats supported by ChecklistBank to validate and preview it's data:{" "}
-        <a href="/about/formats#catalogue-of-life-data-package-coldp">ColDP</a>,{" "}
-        <a href="/about/formats#darwin-core-archive-dwc-a">DwC Archives</a> or {" "}
-        <a href="/about/formats#texttree">TextTree</a>.
-      </p>
-    </>
+    title: "Diff viewer",
+    path: "/tools/diff-viewer",
+    id: "diff-viewer",
+    access: "editor",
+  },
+  {
+    title: "Archive validator",
+    path: "/tools/validator",
+    id: "validator",
+    access: "login",
+  },
+  { title: "Vocabularies", path: "/vocabulary", id: "vocabulary" },
+  {
+    title: "Metadata generator",
+    path: "/tools/metadata-generator",
+    id: "metadata-generator",
+  },
+  {
+    title: "Taxonomic alignment",
+    path: "/tools/taxonomic-alignment",
+    id: "taxonomic-alignment",
+    access: "login",
+  },
+  {
+    title: "GBIF impact",
+    path: "/tools/gbif-impact",
+    id: "gbif-impact",
+    access: "editor",
   },
 ];
 
-const ToolIndex = () => {
+const ACCESS_TAG = {
+  login: <Tag>Login required</Tag>,
+  editor: <Tag color="orange">Editors only</Tag>,
+};
 
+const ToolIndex = ({ user }) => {
   return (
     <Layout
       title="Tools Index"
-      openKeys={["toolsIndex"]}
-      selectedKeys={["vocabulary"]}
+      openKeys={["tools"]}
+      selectedKeys={["toolsIndex"]}
     >
       <PageContent>
         <h2>ChecklistBank Tools</h2>
-        <p>ChecklistBank comes with various tools, some of which require a login and are not visible in the menu until you have logged in. 
+        <p>
+          ChecklistBank comes with various tools. Some of them require a login
+          or editor rights and are only shown in the menu to users who have
+          them.
+          {!user && " Please log in to use the tools marked as such."}
         </p>
-        <p>Please log in to use the following additional tools:
-        </p>
-        <br/>
+        <br />
 
         <List
           itemLayout="horizontal"
-          dataSource={data}
-          renderItem={(item, index) => (
+          dataSource={tools}
+          renderItem={(item) => (
             <List.Item>
               <List.Item.Meta
-                title={<a href={item.path}>{item.title}</a>}
-                description={item.description}
+                title={
+                  <>
+                    <Link to={item.path}>{item.title}</Link>{" "}
+                    {item.access && ACCESS_TAG[item.access]}
+                  </>
+                }
+                description={toolsDescriptions[item.id]}
               />
             </List.Item>
           )}
         />
-
       </PageContent>
     </Layout>
   );
 };
 
-export default withRouter(ToolIndex);
+const mapContextToProps = ({ user }) => ({ user });
+
+export default withRouter(withContext(mapContextToProps)(ToolIndex));
