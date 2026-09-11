@@ -84,7 +84,7 @@ const ReleaseSource = ({ match, datasetKey, dataset, user, pathToTree }) => {
                   marginTop: "-20px",
                 }}
               >
-                in {dataset.title}
+                in {dataset?.title}
               </h4>
             </Col>
 

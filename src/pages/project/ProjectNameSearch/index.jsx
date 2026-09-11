@@ -19,7 +19,11 @@ const ProjectNameSearch = ({ projectKey, project, location }) =>
       {_.get(project, "title") && (
         <Helmet title={`${_.get(project, "title")} in COL`} />
       )}
-      <NameSearch datasetKey={projectKey} location={location} />
+      <NameSearch
+        datasetKey={projectKey}
+        location={location}
+        showSourceDataset
+      />
     </Layout>
   );
 

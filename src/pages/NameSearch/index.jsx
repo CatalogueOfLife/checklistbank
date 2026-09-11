@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import {
@@ -256,19 +256,25 @@ const NameSearchPage = ({
         title: "Source Dataset",
         dataIndex: ["sectorDatasetKey"],
         key: "sourceDatasetLabel",
-        render: (text, record) => (
-          <NavLink
-            key={_.get(record, "usage.id")}
-            to={{
-              pathname: `/dataset/${_.get(record, "sectorDatasetKey")}`,
-            }}
-            end
-          >
-            <span
-              dangerouslySetInnerHTML={{ __html: record?.sourceDatasetLabel }}
-            />
-          </NavLink>
-        ),
+        // Link to the source as it is used in the searched project or release,
+        // not to the source dataset itself. Names created in the project
+        // itself have no sector and hence no source.
+        render: (text, record) =>
+          record?.sectorDatasetKey == null ? null : (
+            <NavLink
+              key={_.get(record, "usage.id")}
+              to={{
+                pathname: isProject
+                  ? `/project/${projectKey}/dataset/${record.sectorDatasetKey}/metadata`
+                  : `/dataset/${datasetKey}/source/${record.sectorDatasetKey}`,
+              }}
+              end
+            >
+              <span
+                dangerouslySetInnerHTML={{ __html: record.sourceDatasetLabel }}
+              />
+            </NavLink>
+          ),
         width: 200,
         sorter: false,
       });
@@ -276,7 +282,13 @@ const NameSearchPage = ({
     return cols;
   };
 
-  const [columns] = useState(() => buildColumns());
+  // showSourceDataset derives from the dataset's origin, which may only be
+  // known after the first render, so the columns must follow it.
+  const columns = useMemo(
+    () => buildColumns(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [showSourceDataset, isProject, projectKey, datasetKey]
+  );
   const [data, setData] = useState([]);
   const [sectorDatasetKeyMap, setSectorDatasetKeyMap] = useState({});
   const [secondarySourceMap, setSecondarySourceMap] = useState({});
@@ -364,29 +376,30 @@ const NameSearchPage = ({
     }
   };
 
+  // Loads the source datasets named in a facet (for its dropdown labels) and,
+  // for the sectorDatasetKey facet, labels each row's Source Dataset column.
+  // The batch loader returns the /dataset/simple DTO, which has a title but no
+  // label. All keys go through one parallel pass so DataLoader can batch them.
   const sectorDatasetLabelsFromFacets = async (responseData, key = "sectorDatasetKey") => {
-    if (_.get(responseData, `facets.${key}`) && _.get(responseData, "result[0]")) {
-      console.log(`${key} facet length ` + responseData?.facets?.[key]?.length);
-      try {
-        const sectorDatasets = await Promise.all(
-          responseData.facets?.[key].map((elm) => datasetLoader.load(elm?.value))
-        );
-        const keyMap = _.keyBy(sectorDatasets, "key");
-        for await (const d of responseData.result) {
-          if (d?.[key] && keyMap[d?.[key]]) {
-            d.sourceDatasetLabel = keyMap[d?.[key]].label;
-          } else if (d?.[key]) {
-            const dataset = await datasetLoader.load(d?.[key]);
-            d.sourceDatasetLabel = dataset?.title;
-          }
+    const results = _.get(responseData, "result") || [];
+    const labelRows = key === "sectorDatasetKey";
+    const keys = _.uniq(
+      [
+        ...(_.get(responseData, `facets.${key}`) || []).map((f) => f?.value),
+        ...(labelRows ? results.map((d) => d?.[key]) : []),
+      ].filter((k) => k != null)
+    );
+    if (keys.length === 0) return {};
+    const loaded = await Promise.all(keys.map((k) => datasetLoader.load(k)));
+    const keyMap = _.keyBy(loaded.filter(Boolean), "key");
+    if (labelRows) {
+      for (const d of results) {
+        if (d?.[key] != null) {
+          d.sourceDatasetLabel = keyMap[d[key]]?.title ?? String(d[key]);
         }
-        return keyMap;
-      } catch (error) {
-        console.log(error);
-        console.log("Could not load sectorDatasets");
-        return {};
       }
     }
+    return keyMap;
   };
 
   const getData = async (currentParams, currentPagination) => {
