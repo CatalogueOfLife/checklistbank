@@ -47,8 +47,7 @@ const toolsDescriptions = {
       >
         listtools
       </a>
-      , implemented by J. Rees, which is part of the work of Rees, Franz and
-      Sterner on the exemplar-based alignment method:{" "}
+      , implemented by J. Rees, which is based on the exemplar-based alignment method:{" "}
       <a
         href="https://doi.org/10.3897/BDJ.14.e191754"
         target="_blank"
