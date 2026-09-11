@@ -71,6 +71,25 @@ const CROSS_DATASET_ADVANCED_FACETS = [
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const PAGE_SIZE = 50;
+
+// Select options for a filter whose values are source dataset keys. The API
+// returns facet keys as numbers while URL params are strings, and a selected
+// source may not be among the top facet values - either way antd would show
+// the selection as a bare key instead of the dataset title.
+const sourceDatasetOptions = (facetValues, selected, keyMap) => {
+  const options = facetValues.map((s) => ({
+    value: String(s.value),
+    label: `${keyMap?.[s.value]?.title || s.alias || s.value} (${s.count.toLocaleString("en-GB")})`,
+  }));
+  const missing = []
+    .concat(selected ?? [])
+    .map(String)
+    .filter((k) => !options.some((o) => o.value === k));
+  return [
+    ...options,
+    ...missing.map((k) => ({ value: k, label: keyMap?.[k]?.title || k })),
+  ];
+};
 const getBaseUri = (projectKey, datasetKey) =>
   projectKey === datasetKey
     ? `/project/${projectKey}`
@@ -380,14 +399,23 @@ const NameSearchPage = ({
   // for the sectorDatasetKey facet, labels each row's Source Dataset column.
   // The batch loader returns the /dataset/simple DTO, which has a title but no
   // label. All keys go through one parallel pass so DataLoader can batch them.
-  const sectorDatasetLabelsFromFacets = async (responseData, key = "sectorDatasetKey") => {
+  // Selected keys are loaded too, as they may fall outside the top facet values.
+  const sectorDatasetLabelsFromFacets = async (
+    responseData,
+    key = "sectorDatasetKey",
+    selected
+  ) => {
     const results = _.get(responseData, "result") || [];
     const labelRows = key === "sectorDatasetKey";
     const keys = _.uniq(
       [
         ...(_.get(responseData, `facets.${key}`) || []).map((f) => f?.value),
         ...(labelRows ? results.map((d) => d?.[key]) : []),
-      ].filter((k) => k != null)
+        ...[].concat(selected ?? []),
+      ]
+        .filter((k) => k != null && k !== "")
+        .map(Number)
+        .filter((k) => !Number.isNaN(k))
     );
     if (keys.length === 0) return {};
     const loaded = await Promise.all(keys.map((k) => datasetLoader.load(k)));
@@ -448,12 +476,15 @@ const NameSearchPage = ({
       }
 
       const newSectorDatasetKeyMap = await sectorDatasetLabelsFromFacets(
-        res.data
+        res.data,
+        "sectorDatasetKey",
+        paramsForRequest.sectorDatasetKey
       );
 
       const newSecondarySourceMap = await sectorDatasetLabelsFromFacets(
         res.data,
-        "secondarySource"
+        "secondarySource",
+        paramsForRequest.secondarySource
       );
 
       setSectorDatasetKeyMap(newSectorDatasetKeyMap || {});
@@ -718,22 +749,18 @@ const NameSearchPage = ({
       }))
     : null;
   const facetSectorDatasetKey = _.get(facets, "sectorDatasetKey")
-    ? facets.sectorDatasetKey.map((s) => ({
-        value: s.value,
-        label: `${
-          sectorDatasetKeyMap?.[s.value]?.title ||
-          s.alias ||
-          s.value
-        } (${s.count.toLocaleString("en-GB")})`,
-      }))
+    ? sourceDatasetOptions(
+        facets.sectorDatasetKey,
+        _.get(params, "sectorDatasetKey"),
+        sectorDatasetKeyMap
+      )
     : null;
   const facetSecondarySource = _.get(facets, "secondarySource")
-    ? facets.secondarySource.map((s) => ({
-        value: s.value,
-        label: `${
-          secondarySourceMap?.[s.value]?.title || s.value
-        } (${s.count.toLocaleString("en-GB")})`,
-      }))
+    ? sourceDatasetOptions(
+        facets.secondarySource,
+        _.get(params, "secondarySource"),
+        secondarySourceMap
+      )
     : null;
   const facetTaxonomicStatus = _.get(facets, "status")
     ? facets.status.map((s) => ({
