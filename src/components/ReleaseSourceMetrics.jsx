@@ -21,7 +21,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
             <NavLink
               to={{
                 pathname: pathToSearch,
-                search: `?SECTOR_DATASET_KEY=${dataset?.key}&rank=species&extinct=false&extinct=_NULL`,
+                search: `?sectorDatasetKey=${dataset?.key}&rank=species&extinct=false&extinct=_NULL`,
               }}
             >
               {getLivingTaxa(metrics, "species").toLocaleString("en-GB")}
@@ -35,7 +35,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
             <NavLink
               to={{
                 pathname: pathToSearch,
-                search: `?SECTOR_DATASET_KEY=${dataset?.key}&rank=species&extinct=true`,
+                search: `?sectorDatasetKey=${dataset?.key}&rank=species&extinct=true`,
               }}
             >
               {getExtinctTaxa(metrics, "species").toLocaleString("en-GB")}
@@ -55,7 +55,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
                 <NavLink
                   to={{
                     pathname: pathToSearch,
-                    search: `?SECTOR_DATASET_KEY=${dataset?.key}&rank=${k}`,
+                    search: `?sectorDatasetKey=${dataset?.key}&rank=${k}`,
                   }}
                 >
                   {metrics.taxaByRankCount[k].toLocaleString("en-GB")}
@@ -70,7 +70,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
           <NavLink
             to={{
               pathname: pathToSearch,
-              search: `?SECTOR_DATASET_KEY=${dataset?.key}&status=misapplied&status=synonym&status=ambiguous%20synonym`,
+              search: `?sectorDatasetKey=${dataset?.key}&status=misapplied&status=synonym&status=ambiguous%20synonym`,
             }}
           >
             {(metrics.synonymCount || 0).toLocaleString("en-GB")}
@@ -87,7 +87,7 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
           <NavLink
             to={{
               pathname: pathToSearch,
-              search: `?SECTOR_DATASET_KEY=${dataset?.key}`,
+              search: `?sectorDatasetKey=${dataset?.key}`,
             }}
           >
             {(metrics.nameCount || 0).toLocaleString("en-GB")}

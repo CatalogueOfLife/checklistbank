@@ -67,7 +67,7 @@ const getColumns = (projectKey) => [
               search: `?q=${_.get(
                 record,
                 "sector.subject.name"
-              )}&SECTOR_DATASET_KEY=${_.get(
+              )}&sectorDatasetKey=${_.get(
                 record,
                 "sector.subjectDatasetKey"
               )}`,

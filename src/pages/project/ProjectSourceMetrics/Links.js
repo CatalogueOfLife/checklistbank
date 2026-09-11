@@ -21,7 +21,7 @@ export default {
       : {
           pathname: `${basePath}/names`,
           search: `?${
-            publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+            publisher ? "sectorPublisherKey" : "sectorDatasetKey"
           }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
         },
   synonymCount: (
@@ -34,7 +34,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied`,
   }),
   taxonCount: (
@@ -47,7 +47,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=accepted&status=provisionally%20accepted`,
   }),
   bareNameCount: (
@@ -60,7 +60,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=bare%20name`,
   }),
   taxaByRankCount: (
@@ -73,7 +73,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=accepted&status=provisionally%20accepted&rank=${key}`,
   }),
   synonymsByRankCount: (
@@ -86,7 +86,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=synonym&status=ambiguous%20synonym&status=misapplied&rank=${key}`,
   }),
   usagesByStatusCount: (
@@ -99,7 +99,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}&status=${key}`,
   }),
   usagesCount: (
@@ -112,7 +112,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}`,
   }),
   nameCount: (
@@ -125,7 +125,7 @@ export default {
   ) => ({
     pathname: `${basePath}/names`,
     search: `?${
-      publisher ? "SECTOR_PUBLISHER_KEY" : "SECTOR_DATASET_KEY"
+      publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}`,
   }),
   referenceCount: (
