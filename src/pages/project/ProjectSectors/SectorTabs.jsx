@@ -2,6 +2,7 @@ import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
 import {
+  CopyOutlined,
   PartitionOutlined,
   SyncOutlined,
   OrderedListOutlined,
@@ -39,6 +40,22 @@ const SectorTabs = ({ location, projectKey }) => {
       ),
       key: `/project/${projectKey}/sector`,
       icon: <PartitionOutlined />,
+    },
+    {
+      label: (
+        <NavLink
+          to={{
+            pathname: `/project/${projectKey}/sector/duplicate`,
+            search: subjectDatasetKey
+              ? `?subjectDatasetKey=${subjectDatasetKey}`
+              : null,
+          }}
+        >
+          Duplicates
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector/duplicate`,
+      icon: <CopyOutlined />,
     },
     {
       label: (

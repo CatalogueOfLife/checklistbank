@@ -31,6 +31,7 @@ import AssemblyTasks from "./pages/project/AssemblyTasks";
 import SectorSync from "./pages/project/SectorSync";
 import SectorPriority from "./pages/project/ProjectSectors/Priority";
 import SectorPublishers from "./pages/project/SectorPublishers";
+import SectorDuplicates from "./pages/project/SectorDuplicates";
 import ProjectSectors from "./pages/project/ProjectSectors";
 import ProjectTaxon from "./pages/project/ProjectTaxon";
 import ProjectName from "./pages/project/ProjectName";
@@ -328,6 +329,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <SectorSync />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/project/:projectKey/sector/duplicate"
+              element={
+                <PrivateRoute>
+                  <SectorDuplicates />
                 </PrivateRoute>
               }
             />

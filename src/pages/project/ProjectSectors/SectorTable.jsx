@@ -25,6 +25,7 @@ const SectorTable = ({
   releasedFrom,
   addError,
   onSectorRematch,
+  extraColumns = [],
 }) => {
   const { notification } = App.useApp();
   const [currentDataSourceLength, setCurrentDataSourceLength] = useState(0);
@@ -195,11 +196,14 @@ const SectorTable = ({
   const offset = pagination
     ? (pagination.current - 1) * pagination.pageSize
     : 0;
-  const columns = getColumns(
-    !!releasedFrom ? releasedFrom : projectKey,
-    searchText,
-    getColumnSearchProps
-  );
+  const columns = [
+    ...getColumns(
+      !!releasedFrom ? releasedFrom : projectKey,
+      searchText,
+      getColumnSearchProps
+    ),
+    ...extraColumns,
+  ];
 
   if (!isRelease && Auth.canEditDataset({ key: projectKey }, user)) {
     columns.push({

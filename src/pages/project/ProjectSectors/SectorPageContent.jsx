@@ -17,6 +17,7 @@ import {
   Typography,
   App,
   Checkbox,
+  Tooltip,
 } from "antd";
 import withRouter from "../../../withRouter";
 import SectorForm from "../Assembly/SectorForm";
@@ -471,9 +472,25 @@ const ProjectSectors = ({
           label="Nested"
           style={{ marginBottom: "8px", marginRight: "8px" }}
         >
+          {/* the backend rejects nested combined with duplicates, so each switch clears the other */}
           <Switch
             checked={locationParams.nested === true || locationParams.nested === "true"}
-            onChange={(value) => updateSearch({ nested: value })}
+            onChange={(value) => updateSearch({ nested: value, duplicates: null })}
+          />
+        </FormItem>
+        <FormItem
+          label={
+            <Tooltip title="Only sectors sharing their subject with another sector matching the other filters. Subject less sectors from the same source share their missing subject.">
+              Duplicates
+            </Tooltip>
+          }
+          style={{ marginBottom: "8px", marginRight: "8px" }}
+        >
+          <Switch
+            checked={
+              locationParams.duplicates === true || locationParams.duplicates === "true"
+            }
+            onChange={(value) => updateSearch({ duplicates: value, nested: null })}
           />
         </FormItem>
         <FormItem
