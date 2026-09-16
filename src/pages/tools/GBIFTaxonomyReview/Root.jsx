@@ -34,12 +34,12 @@ const tagLabels = {
     full: "Verbatim",
   },
   current: {
-    short: "G",
-    full: "GBIF backbone",
+    short: "C",
+    full: "Current",
   },
   proposed: {
-    short: "C",
-    full: "Catalogue of Life",
+    short: "P",
+    full: "Proposed",
   },
 };
 
