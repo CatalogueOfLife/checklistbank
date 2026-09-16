@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { App, Select, Checkbox, Input, Alert, Button, InputNumber, Form, Divider, Tooltip, Radio } from "antd";
+import { App, Select, Checkbox, Input, Alert, Button, InputNumber, Form, Divider, Tooltip, Radio, Typography } from "antd";
 import TaxonFormControl from "../../../components/TaxonFormControl";
 import DatasetFormControl from "../../../components/DatasetFormControl";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -10,6 +10,14 @@ import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 
 const FormItem = Form.Item;
+const { Text } = Typography;
+
+const currentId = (taxon) =>
+  taxon?.id ? (
+    <>
+      Current ID: <Text code copyable>{taxon.id}</Text>
+    </>
+  ) : null;
 
 const { TextArea } = Input;
 
@@ -54,6 +62,8 @@ const SectorForm = ({
   const [form] = Form.useForm();
   const subjectDatasetKey = Form.useWatch("subjectDatasetKey", form);
   const mode = Form.useWatch("mode", form);
+  const subject = Form.useWatch("subject", form);
+  const target = Form.useWatch("target", form);
   const [existingHierarchySector, setExistingHierarchySector] = useState(null);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
@@ -221,6 +231,7 @@ const SectorForm = ({
             label={<Tooltip color='green' title="Select the sector's root taxon in the source (subject) dataset. Not required for merge sectors.">Subject</Tooltip>}
             key="subject"
             name="subject"
+            extra={currentId(subject)}
           >
             <TaxonFormControl
               disabled={!sector && !subjectDatasetKey}
@@ -235,6 +246,7 @@ const SectorForm = ({
           <FormItem {...formItemLayout}
             label={<Tooltip color='green' title="Under which taxon in the project should the synced names be copied to? Not required for merge sectors.">Target</Tooltip>}
             key="target" name="target"
+            extra={currentId(target)}
           >
             <TaxonFormControl
               accepted={true}

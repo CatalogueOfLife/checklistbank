@@ -25,6 +25,7 @@ import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
 import SectorTabs from "../ProjectSectors/SectorTabs";
 import SectorTable from "../ProjectSectors/SectorTable";
+import SectorKeyLink from "../ProjectSectors/SectorKeyLink";
 import SectorForm from "../Assembly/SectorForm";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 
@@ -228,7 +229,9 @@ const SectorDuplicates = ({ projectKey, location, addError }) => {
                 expandable={{
                   expandedRowRender: (record) => (
                     <Row>
-                      <Col flex="auto"></Col>
+                      <Col flex="auto">
+                        <SectorKeyLink sector={record} />
+                      </Col>
                       <Col style={{ width: "500px" }}>
                         <SectorForm sector={record} onSubmit={getData} />
                       </Col>

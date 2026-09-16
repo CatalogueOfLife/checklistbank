@@ -28,6 +28,7 @@ import { getUsersBatch } from "../../../api/user";
 
 import DataLoader from "dataloader";
 import SectorTable from "./SectorTable";
+import SectorKeyLink from "./SectorKeyLink";
 import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
@@ -620,7 +621,9 @@ const ProjectSectors = ({
             expandedRowRender: (record) => (
               <>
                 <Row>
-                  <Col flex="auto"></Col>
+                  <Col flex="auto">
+                    <SectorKeyLink sector={record} />
+                  </Col>
                   <Col>
                     <Text style={{ marginRight: "10px", marginTop: "10px" }}>
                       Created by {record?.user?.username}
