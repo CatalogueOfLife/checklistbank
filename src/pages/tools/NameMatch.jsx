@@ -56,6 +56,15 @@ export const buildAsyncMatchParams = (subjectDataset, subjectTaxon) => {
   return params;
 };
 
+// The server takes the delimiter from the content type and only probes the file
+// for text/plain, so a .tsv with commas in its names is never split on them (#1730)
+export const uploadContentType = (file) => {
+  const name = (file?.name || "").toLowerCase();
+  if (name.endsWith(".csv")) return "text/csv";
+  if (name.endsWith(".tsv") || name.endsWith(".tab")) return "text/tab-separated-values";
+  return "text/plain";
+};
+
 // Shows which dataset a match ran against: linked title plus alias & version (#1683)
 const DatasetRef = ({ dataset }) =>
   dataset ? (
@@ -692,7 +701,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         res = await axios.post(
           `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
           asyncFile,
-          { headers: { "Content-Type": "text/plain" } }
+          { headers: { "Content-Type": uploadContentType(asyncFile) } }
         );
       } else {
         // The empty object body is deliberate: it makes axios send
