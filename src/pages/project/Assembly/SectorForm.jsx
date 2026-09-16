@@ -14,9 +14,7 @@ const { Text } = Typography;
 
 const currentId = (taxon) =>
   taxon?.id ? (
-    <>
-      Current ID: <Text code copyable>{taxon.id}</Text>
-    </>
+    <Text code copyable>{taxon.id}</Text>
   ) : null;
 
 const { TextArea } = Input;
