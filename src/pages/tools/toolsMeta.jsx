@@ -73,7 +73,7 @@ const toolsDescriptions = {
       <a href="https://www.gbif.org/occurrence/search">
         GBIF occurrence records
       </a>{" "}
-      are classified between the old GBIF backbone and the Catalogue of Life.
+      are classified currently and the latest release of Catalogue of Life.
     </>
   ),
 };
