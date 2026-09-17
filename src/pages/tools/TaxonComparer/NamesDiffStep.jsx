@@ -55,9 +55,16 @@ const NamesDiffStep = ({
 
   // A diff never outlives the selection it was made for. Dataset keys come
   // from the URL too: the parent only fills its dataset state after mount.
+  //
+  // minRank, authorship and synonyms live in the URL so a prefilled link - the
+  // release review builds one - opens the diff with the options it names. They
+  // keep their defaults (authorship on, synonyms off) when absent.
   useEffect(() => {
     const params = qs.parse(location.search);
     clearResult();
+    setMinRank(params.minRank || null);
+    setAuthorship(params.authorship !== "false");
+    setSynonyms(params.synonyms === "true");
     decorateRoots(params.root, params.dataset).then(setRoot);
     decorateRoots(params.root2, params.dataset2).then(setRoot2);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,12 +108,12 @@ const NamesDiffStep = ({
 
   const resetOptions = () => {
     clearResult();
-    setMinRank(null);
     setRankFilter(null);
-    setSynonyms(false);
     setShowParent(false);
     setParentRank("");
-    setAuthorship(true);
+    // minRank, synonyms and authorship come back from the URL, so they are
+    // reset by dropping their params - the effect above restores the defaults.
+    updateSearch({ minRank: null, synonyms: null, authorship: null });
   };
 
   const getData = async () => {
@@ -219,7 +226,7 @@ const NamesDiffStep = ({
         <Col>
           <Select
             value={minRank}
-            onChange={setMinRank}
+            onChange={(v) => updateSearch({ minRank: v })}
             placeholder="Select min rank"
             allowClear
             showSearch
@@ -242,13 +249,19 @@ const NamesDiffStep = ({
           Include:{" "}
           <Checkbox
             checked={authorship}
-            onChange={(e) => setAuthorship(e.target.checked)}
+            onChange={(e) =>
+              // updateSearch drops falsy values, so the non-default is the one
+              // written out: authorship=false, synonyms=true.
+              updateSearch({ authorship: e.target.checked ? null : "false" })
+            }
           >
             Authorship
           </Checkbox>
           <Checkbox
             checked={synonyms}
-            onChange={(e) => setSynonyms(e.target.checked)}
+            onChange={(e) =>
+              updateSearch({ synonyms: e.target.checked ? "true" : null })
+            }
           >
             Synonyms
           </Checkbox>

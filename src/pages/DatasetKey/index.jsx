@@ -26,6 +26,7 @@ import ImportTimeline from "../DatasetImportMetrics/ImportTimeline";
 import DatasetDownload from "../Download";
 
 import DatasetSourceMetrics from "./datasetPageTabs/DatasetSourceMetrics";
+import ReleaseReview from "./ReleaseReview";
 import ReleaseSource from "./datasetPageTabs/ReleaseSource";
 import NameSearch from "../NameSearch";
 import WorkBench from "../WorkBench";
@@ -282,6 +283,20 @@ const DatasetPage = (props) => {
       {sect === "sourcemetrics" && (
         <DatasetSourceMetrics datasetKey={datasetKey} />
       )}
+      {sect === "review" &&
+        (datasetLoaded ? (
+          ["release", "xrelease"].includes(dataset?.origin) && (
+            <ReleaseReview
+              datasetKey={datasetKey}
+              dataset={dataset}
+              location={location}
+            />
+          )
+        ) : (
+          <Row justify="center" style={{ marginTop: "24px" }}>
+            <Spin size="large" />
+          </Row>
+        ))}
       {section === "download" &&
         (datasetLoaded ? (
           <DatasetDownload

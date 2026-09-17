@@ -20,6 +20,20 @@ const Auth = {
       (editor  && editor.includes(Number(dataset.key)))
     );
   },
+  // Editors are listed by project key, never by release key - the backend
+  // evaluates a release through the project it was released from. Use this
+  // wherever edit rights on a release are meant.
+  canEditProjectOf: (dataset, user) => {
+    if (!user || !dataset) {
+      return false;
+    }
+    const { roles, editor } = user;
+    const key = dataset.sourceKey ?? dataset.key;
+    return (
+      (roles && (roles.includes("admin") || roles.includes("editor"))) ||
+      (editor && editor.includes(Number(key)))
+    );
+  },
   canViewDataset: (dataset, user) => {
     if (!user || !dataset) {
       return false;

@@ -850,8 +850,13 @@ const BasicMenu = (props) => {
                 </NavLink>
               ),
             },
+          // Tasks act on a mutable dataset - a release is immutable, so it gets
+          // the Review page instead.
           Auth.canEditDataset(selectedDataset, user) &&
-            !selectedDataset.deleted && {
+            !selectedDataset.deleted &&
+            !["xrelease", "release"].includes(
+              _.get(selectedDataset, "origin")
+            ) && {
               key: "datasetDuplicateTasks",
               label: (
                 <NavLink
@@ -863,6 +868,22 @@ const BasicMenu = (props) => {
                   }}
                 >
                   Tasks
+                </NavLink>
+              ),
+            },
+          Auth.canEditProjectOf(selectedDataset, user) &&
+            !selectedDataset.deleted &&
+            ["xrelease", "release"].includes(
+              _.get(selectedDataset, "origin")
+            ) && {
+              key: "review",
+              label: (
+                <NavLink
+                  to={{
+                    pathname: `/dataset/${_.get(selectedDataset, "key")}/review`,
+                  }}
+                >
+                  Review
                 </NavLink>
               ),
             },

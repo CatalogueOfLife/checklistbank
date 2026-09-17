@@ -10,7 +10,7 @@ import MultiValueFilter from "../../NameSearch/MultiValueFilter";
 import _ from "lodash";
 
 // Issues that don't appear in the nameusage/search index — link to verbatim only.
-const NON_NAMEUSAGE_ISSUES = new Set([
+export const NON_NAMEUSAGE_ISSUES = new Set([
   "not interpreted",
   "name id invalid",
   "accepted name missing",
