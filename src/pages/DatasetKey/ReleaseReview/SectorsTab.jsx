@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Alert, Col, InputNumber, Row, Segmented, Table, Tag } from "antd";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
-import _ from "lodash";
+import DataLoader from "dataloader";
 import config from "../../../config";
 import Auth from "../../../components/Auth";
 import withContext from "../../../components/hoc/withContext";
@@ -20,6 +20,32 @@ const FLAG_COLOR = {
   new: "green",
 };
 
+// An xrelease has sectors from tens of thousands of source datasets - far too
+// many keys for one /dataset/simple URL. Labels are resolved per rendered cell
+// instead, so only the table page on screen is looked up, in batches small
+// enough for a GET, and cached for paging back.
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids), {
+  maxBatchSize: 100,
+});
+
+const SourceLabel = ({ datasetKey }) => {
+  const [label, setLabel] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    datasetLoader
+      .load(datasetKey)
+      .then((d) => !cancelled && setLabel(d?.alias || d?.title || null));
+    return () => {
+      cancelled = true;
+    };
+  }, [datasetKey]);
+  return (
+    <NavLink to={{ pathname: `/dataset/${datasetKey}` }}>
+      {label || datasetKey}
+    </NavLink>
+  );
+};
+
 const formatChange = (change) =>
   change === null || change === undefined
     ? ""
@@ -27,7 +53,6 @@ const formatChange = (change) =>
 
 const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
   const [data, setData] = useState(null);
-  const [sourceTitles, setSourceTitles] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [minChange, setMinChange] = useState(10);
@@ -46,21 +71,8 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
     )
       .then((res) => {
         if (cancelled) return;
-        const rows = res.data || [];
-        setData(rows);
+        setData(res.data || []);
         setError(null);
-        // One batched lookup for the source dataset titles of every flagged row
-        const keys = _.uniq(
-          rows.map((r) => r.subjectDatasetKey).filter((k) => !!k)
-        );
-        return getDatasetsBatch(keys).then((datasets) => {
-          if (cancelled) return;
-          setSourceTitles(
-            Object.fromEntries(
-              keys.map((k, i) => [k, _.get(datasets, `[${i}].alias`) || _.get(datasets, `[${i}].title`)])
-            )
-          );
-        });
       })
       .catch((err) => !cancelled && setError(err))
       .finally(() => !cancelled && setLoading(false));
@@ -110,12 +122,7 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
       title: "Source",
       dataIndex: "subjectDatasetKey",
       key: "subjectDatasetKey",
-      render: (key) =>
-        key ? (
-          <NavLink to={{ pathname: `/dataset/${key}` }}>
-            {sourceTitles[key] || key}
-          </NavLink>
-        ) : null,
+      render: (key) => (key ? <SourceLabel datasetKey={key} /> : null),
     },
     {
       title: "Subject",

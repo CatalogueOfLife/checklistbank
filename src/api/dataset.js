@@ -13,15 +13,19 @@ const reflect = (p) =>
 // lightweight identity fields — key, title, alias — for labels. The
 // /dataset/simple endpoint serves these much faster than the full dataset
 // record and takes any number of `id` params, so the whole DataLoader batch
-// resolves in a single request. It returns a plain array, in any order, that
-// may omit unknown keys; DataLoader requires a result that lines up one-to-one
-// with the requested ids, so we re-map by key and fill gaps with null.
+// resolves in a single request. It returns a plain array, in any order, with
+// null entries for unknown keys; DataLoader requires a result that lines up
+// one-to-one with the requested ids, so we re-map by key and fill gaps with
+// null. All ids go into one GET, so a loader over an unbounded key set needs
+// a maxBatchSize to keep the URL within what the servers accept.
 export const getDatasetsBatch = (ids) => {
   return axios(`${config.dataApi}dataset/simple?${qs.stringify({ id: ids })}`)
     .then((res) => {
       // Accept either a plain array or a paged { result: [...] } envelope.
       const list = Array.isArray(res.data) ? res.data : res.data?.result || [];
-      const byKey = new Map(list.map((d) => [String(d.key), d]));
+      const byKey = new Map(
+        list.filter(Boolean).map((d) => [String(d.key), d])
+      );
       return ids.map((id) => byKey.get(String(id)) ?? null);
     })
     .catch(() => ids.map(() => null));
