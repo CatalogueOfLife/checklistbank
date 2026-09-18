@@ -157,6 +157,7 @@ const ReleaseReview = ({ datasetKey, dataset, location }) => {
                     datasetKey={datasetKey}
                     previousReleaseKey={previousReleaseKey}
                     diffRoot={diffRoot}
+                    dataset={dataset}
                   />
                 ),
               },

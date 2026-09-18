@@ -41,3 +41,11 @@ export const duplicatesLink = (releaseKey, ranks) =>
     rankDifferent: false,
     status: "accepted",
   })}`;
+
+// A file in the report directory the backend keeps for every release attempt:
+// the job log, the ID reports and the AI review. The directory is keyed by the
+// project and the attempt, not by the release's own dataset key.
+export const releaseReportLink = (downloadApi, release, file = "") =>
+  release?.sourceKey && release?.attempt
+    ? `${downloadApi}releases/${release.sourceKey}/${release.attempt}/${file}`
+    : null;

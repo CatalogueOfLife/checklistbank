@@ -5,6 +5,7 @@ import {
   sourceMetricsLink,
   namesDiffLink,
   duplicatesLink,
+  releaseReportLink,
 } from "./links";
 
 const RANKS = ["domain", "kingdom", "phylum", "class", "order", "family", "genus", "species"];
@@ -78,5 +79,24 @@ describe("duplicatesLink", () => {
       "order",
       "family",
     ]);
+  });
+});
+
+describe("releaseReportLink", () => {
+  const release = { key: 316321, sourceKey: 3, attempt: 629 };
+  const api = "https://download.checklistbank.org/";
+
+  it("addresses the report directory by project and attempt, not dataset key", () => {
+    expect(releaseReportLink(api, release)).toBe(
+      "https://download.checklistbank.org/releases/3/629/"
+    );
+    expect(releaseReportLink(api, release, "job.log.gz")).toBe(
+      "https://download.checklistbank.org/releases/3/629/job.log.gz"
+    );
+  });
+
+  it("is null while the release is not loaded or lacks an attempt", () => {
+    expect(releaseReportLink(api, null)).toBeNull();
+    expect(releaseReportLink(api, { key: 316321, sourceKey: 3 })).toBeNull();
   });
 });
