@@ -8,10 +8,10 @@ import withContext from "../../../components/hoc/withContext";
 import { formatTime } from "../../../dateTime";
 
 const STATUS_COLOR = {
-  NONE: "default",
-  RUNNING: "blue",
-  FINISHED: "green",
-  FAILED: "red",
+  none: "default",
+  running: "blue",
+  finished: "green",
+  failed: "red",
 };
 
 /**
@@ -26,12 +26,12 @@ const AiReviewTab = ({ datasetKey, review, loadError, reload, dataset, user }) =
   const timerRef = useRef(null);
   const error = submitError || loadError;
 
-  const status = review?.status || "NONE";
+  const status = review?.status || "none";
   const mayRequest = Auth.canEditProjectOf(dataset, user);
 
   // Poll while the job runs - a review takes minutes, not seconds.
   useEffect(() => {
-    if (status === "RUNNING") {
+    if (status === "running") {
       if (!timerRef.current) {
         timerRef.current = setInterval(reload, config.pollingHeartBeat || 5000);
       }
@@ -81,7 +81,7 @@ const AiReviewTab = ({ datasetKey, review, loadError, reload, dataset, user }) =
             children: (
               <Space>
                 <Tag color={STATUS_COLOR[status]}>{status}</Tag>
-                {status === "RUNNING" && <Spin size="small" />}
+                {status === "running" && <Spin size="small" />}
               </Space>
             ),
           },
@@ -133,7 +133,7 @@ const AiReviewTab = ({ datasetKey, review, loadError, reload, dataset, user }) =
       />
       {mayRequest && (
         <Row style={{ marginTop: "16px" }}>
-          {status === "NONE" && (
+          {status === "none" && (
             <Popconfirm
               title="Start an AI review of this release? This calls the Anthropic API and costs money."
               onConfirm={() => request(false)}
@@ -144,7 +144,7 @@ const AiReviewTab = ({ datasetKey, review, loadError, reload, dataset, user }) =
               </Button>
             </Popconfirm>
           )}
-          {status === "FAILED" && (
+          {status === "failed" && (
             <Button
               icon={<RobotOutlined />}
               loading={submitting}
@@ -153,7 +153,7 @@ const AiReviewTab = ({ datasetKey, review, loadError, reload, dataset, user }) =
               Retry AI review
             </Button>
           )}
-          {status === "FINISHED" && Auth.isAdmin(user) && (
+          {status === "finished" && Auth.isAdmin(user) && (
             <Popconfirm
               title="This release has been reviewed already. Run another review anyway?"
               onConfirm={() => request(true)}
