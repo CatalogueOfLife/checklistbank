@@ -30,63 +30,60 @@ The driving use cases dealing with nomenclature are:
 ## Name types
 When dealing with real data one has to work with a wide variety of name strings. These *scientific names*, excluding vernacular names, often do not follow simple latin binomials which can be represented in a parsed form. They can also contain nomenclatural (e.g. *nom.illeg.*), taxonomic (e.g. *s.str.*) or informal (e.g. *cf.*) notes. To work with a wide variety of names we coarsely classify them based on their syntactic nature:
 
- - 	```SCIENTIFIC```: A scientific latin name that might contain authorship but is not any of the other name types below. Notho taxa are considered scientific names.
- -  ```VIRUS```: A virus name which is never parsed into epithets. The entire name is kept in the scientificName property
- - 	```HYBRID_FORMULA```: A hybrid *formula*, not a named hybrid which falls under scientific.
- - 	```INFORMAL```: A scientific name with some informal addition like "cf." or indetermined like Abies spec.
- - 	```OTU```: Operational Taxonomic Unit such as Barcode Index Numbers
- - 	```PLACEHOLDER```: A placeholder name like "incertae sedis" or "unknown genus" which you often find in databases.
- - 	```NO_NAME```: A text which surely is not a scientific name at all.
+ - `SCIENTIFIC`: A scientific latin name that might contain authorship but is not any of the other name types below. Notho taxa are considered scientific names.
+ - `FORMULA`: A hybrid or graft-chimaera *formula*, not a named hybrid which falls under scientific.
+ - `INFORMAL`: A scientific name with some informal addition like "cf." or "aff.", an indetermined name like Abies spec. or a phrase name like Pultenaea sp. 'Olinda' (Coveny 6616).
+ - `PLACEHOLDER`: A placeholder name like "incertae sedis" or "unknown genus" which you often find in databases.
+ - `IDENTIFIER`: A machine identifier rather than a name, e.g. a BOLD BIN (BOLD:AAB5053), a UNITE species hypothesis (SH0864666.10FU) or another OTU.
+ - `OTHER`: Any other name that cannot be parsed, e.g. virus names. The entire name is kept in the scientificName property.
 
 Only scientific and informal names are represented as parsed name instances. All others are treated just as strings in the scientificName property.
 
 ## Name class
-The name class holds parsed names and is free of taxonomic judgements. A name comes with the following attributes (```+``` required for all names, ```#``` only on parsed names):
+The name class holds parsed names and is free of taxonomic judgements. A name comes with the following attributes:
 
- - ```id```**+** Primary identifier for the name as given by the dataset. Only guaranteed to be unique within a dataset and can follow any kind of schema.
- - ```datasetKey```**+**  Key to dataset instance. Defines context of the name id.
- - ```verbatimKey``` key to the verbatim record as it came from the source
- - ```homotypicNameId``` **+** Groups all homotypic names by referring to a single representative name of that group.
-    This representative name is not guaranteed to be semantically meaningful, but if known it will often be the basionym.
- - ```indexNameId    ``` Id from the names index grouping all distinct scientific names
- - ```scientificName``` **+** Entire canonical name string with a rank marker for infragenerics and infraspecfics, but
-    excluding the authorship. For uninomials, e.g. families or names at higher ranks, this is just
-    the uninomial. See ScientificName section below for more details.
- - ```rank``` **+** Rank of the name from an extensive, ordered enumeration
- - ```type``` **+** The kind of name classified in broad catagories based on their syntactical structure. Enumeration.
- - ```code``` the nomenclatural code that governs the name. Enumeration.
- - ```uninomial```**#** Represents the monomial for genus, families or names at higher ranks which do not have further epithets.
-   Not used for binonimals.
- - ```genus```**#** The genus part of a bi- or trinomial name. Not used for genus names which are represented by the uninomial alone.
- - ```infragenericEpithet```**#** The infrageneric epithet. Used as the terminal epithet for names at infrageneric ranks and
-   optionally also for binomials
- - ```specificEpithet```**#** the specific part of a binomial
- - ```infraspecificEpithet```**#** the lowest, infraspecific part of a trinomial. 
- - ```cultivarEpithet```**#** cultivar name
- - ```appendedPhrase```**#** phrases that should be appended to the name, e.g. for bacterial strains
- - ```candidatus```**#** A boolean flag to indicate a bacterial candidate name. Candidatus is a provisional status for incompletely described procaryotes and such names are usually prefixed with the italic term *Candidatus*.
- - ```notho```**#** The part of the named hybrid which is considered a hybrid for notho taxa.
- - ```authorship``` **+** Full authorship string including basionym and combination authors, ex- sanctioning authors and years.
- - ```combinationAuthorship```**#** Authorship instance (see below for class definition) with years of the name, but excluding any basionym authorship. 
-   For binomials the combination authors.
- - ```basionymAuthorship```**#** Basionym authorship of the name
- - ```sanctioningAuthor```**#** The sanctioning author for sanctioned fungal names. Fr. or Pers.
- - ```nomStatus``` nomenclatural status of the name, enumeration.
- - ```publishedInId``` Id to the reference the name was originally published in.
- - ```publishedInPage``` The page(s) or other detailed location within the publishedIn reference the name was described.
- - ```origin``` the origin indicates how the name entered the system. Either SOURCE for a record explicitly existing in the sources or other values for names created during import processing for implicitly indicated records, e.g. a flat classification.
- - ```sourceUrl``` link to a webpage showing the name in the original source if available
- - ```fossil``` true if the type specimen of the name is a fossil
- - ```remarks``` Any informal note about the nomenclature of the name, e.g. nom. illeg.
- 
+| Field | Presence | Description |
+|---|---|---|
+| `id` | required | Primary identifier for the name as given by the dataset. Only guaranteed to be unique within a dataset and can follow any kind of schema. |
+| `datasetKey` | required | Key to dataset instance. Defines context of the name id. |
+| `verbatimKey` | | Key to the verbatim record as it came from the source. |
+| `homotypicNameId` | required | Groups all homotypic names by referring to a single representative name of that group. This representative name is not guaranteed to be semantically meaningful, but if known it will often be the basionym. |
+| `namesIndexId` | | Id of the canonical entry in the [Names Index](/about/API#names-index) the name is linked to. |
+| `scientificName` | required | Entire canonical name string with a rank marker for infragenerics and infraspecfics, but excluding the authorship. For uninomials, e.g. families or names at higher ranks, this is just the uninomial. See ScientificName section below for more details. |
+| `rank` | required | Rank of the name from an extensive, ordered enumeration. |
+| `type` | required | The kind of name classified in broad catagories based on their syntactical structure. Enumeration. |
+| `code` | | The nomenclatural code that governs the name. Enumeration. |
+| `uninomial` | parsed names only | Represents the monomial for genus, families or names at higher ranks which do not have further epithets. Not used for binonimals. |
+| `genus` | parsed names only | The genus part of a bi- or trinomial name. Not used for genus names which are represented by the uninomial alone. |
+| `infragenericEpithet` | parsed names only | The infrageneric epithet. Used as the terminal epithet for names at infrageneric ranks and optionally also for binomials. |
+| `specificEpithet` | parsed names only | The specific part of a binomial. |
+| `infraspecificEpithet` | parsed names only | The lowest, infraspecific part of a trinomial. |
+| `cultivarEpithet` | parsed names only | Cultivar name. |
+| `appendedPhrase` | parsed names only | Phrases that should be appended to the name, e.g. for bacterial strains. |
+| `candidatus` | parsed names only | A boolean flag to indicate a bacterial candidate name. Candidatus is a provisional status for incompletely described procaryotes and such names are usually prefixed with the italic term *Candidatus*. |
+| `notho` | parsed names only | The part of the named hybrid which is considered a hybrid for notho taxa. |
+| `authorship` | required | Full authorship string including basionym and combination authors, ex- sanctioning authors and years. |
+| `combinationAuthorship` | parsed names only | Authorship instance (see below for class definition) with years of the name, but excluding any basionym authorship. For binomials the combination authors. |
+| `basionymAuthorship` | parsed names only | Basionym authorship of the name. |
+| `sanctioningAuthor` | parsed names only | The sanctioning author for sanctioned fungal names. Fr. or Pers. |
+| `nomStatus` | | Nomenclatural status of the name, enumeration. |
+| `publishedInId` | | Id to the reference the name was originally published in. |
+| `publishedInPage` | | The page(s) or other detailed location within the publishedIn reference the name was described. |
+| `origin` | | The origin indicates how the name entered the system. Either SOURCE for a record explicitly existing in the sources or other values for names created during import processing for implicitly indicated records, e.g. a flat classification. |
+| `sourceUrl` | | Link to a webpage showing the name in the original source if available. |
+| `fossil` | | True if the type specimen of the name is a fossil. |
+| `remarks` | | Any informal note about the nomenclature of the name, e.g. nom. illeg. |
+
 Please see our [API docs](http://api.catalogueoflife.org/#model-Name) for more up to date details.
 
 ### Authorship class
 This class is only used as part of a Name instance and not on its own. It therefore has no keys and is not shared between names.
 
- - ```year```**#**: The year the combination or basionym was first published, usually the same as the publishedIn reference.
- - ```authors```**#**: List of authors as strings, excluding ex- authors.
- - ```exAuthors``` List of ex- authors.
+| Field | Presence | Description |
+|---|---|---|
+| `year` | parsed names only | The year the combination or basionym was first published, usually the same as the publishedIn reference. |
+| `authors` | parsed names only | List of authors as strings, excluding ex- authors. |
+| `exAuthors` | | List of ex- authors. |
 
 
 ### Reconstructing scientificName & authorship
@@ -147,25 +144,25 @@ A relation optionally comes with a reference if the underlying nomenclatural act
 We provide a [Darwin Core Archive extension definition](https://github.com/CatalogueOfLife/general/blob/master/dwca/name_relation.xml) supporting publishing name relations as part of a DwC Checklist Archive with tools like the [GBIF IPT](https://www.gbif.org/ipt).
 
 
- - ```SPELLING_CORRECTION```: The current name is a spelling correction, called emendation in zoology, of the related name. Intentional changes in the original spelling of an available name, whether justified or unjustified. The binomial authority remains unchanged. Valid emendations include changes made to correct:
+ - `SPELLING_CORRECTION`: The current name is a spelling correction, called emendation in zoology, of the related name. Intentional changes in the original spelling of an available name, whether justified or unjustified. The binomial authority remains unchanged. Valid emendations include changes made to correct:
      - a) typographical errors in the original work describing the species,
      - b) errors in transliteration from non-Latin languages,
      - c) names that included diacritics, hyphens
      - d) endings of species to match the gender of the generic name, particularly when the combination has been changed
 
-- ```BASIONYM```: The current name has a basionym and therefore is either a recombination (combinatio nova, comb. nov.) of the name pointed to (and the name pointed to is not, itself, a recombination), or a change in rank (status novus, stat. nov.).
+- `BASIONYM`: The current name has a basionym and therefore is either a recombination (combinatio nova, comb. nov.) of the name pointed to (and the name pointed to is not, itself, a recombination), or a change in rank (status novus, stat. nov.).
 
-- ```BASED_ON ```: The current name is the validation of a name that was not fully published before. Covers the use of ex in botanical author strings.
+- `BASED_ON`: The current name is the validation of a name that was not fully published before. Covers the use of ex in botanical author strings.
    
    ICBN Art. 46.4: e.g. if this name object represents G. tomentosum Nutt. ex Seem.
    then the related name should be G. tomentosum Nutt.
 
-- ```REPLACEMENT_NAME ```: Current name is replacement for the related name.
+- `REPLACEMENT_NAME`: Current name is replacement for the related name.
    Also called 'Nomen Novum' or 'avowed substitute'
    ICBN: Article 7.3
    ICZN: Article 60.3.
 
-- ```CONSERVED ```: The current name or spelling is conserved / protected against the related name or the related name is suppressed / rejected in favor of the current name. A spelling which has been conserved relates two homotypic names, otherwise
+- `CONSERVED`: The current name or spelling is conserved / protected against the related name or the related name is suppressed / rejected in favor of the current name. A spelling which has been conserved relates two homotypic names, otherwise
    the related names should be based on different types. Based on an individual publication but more often due to actions of the ICZN or ICBN exercising its Plenary Powers.
    
    ICN: Conservation is covered under Article 14 and Appendix II and Appendix III (this name is nomina conservanda).
@@ -173,7 +170,7 @@ We provide a [Darwin Core Archive extension definition](https://github.com/Catal
    ICZN: Reversal of precedence under Article 23.9 (this name is nomen protectum and the target name is nomen oblitum) or suppression via plenary power Article 81.
 
 
-- ```LATER_HOMONYM ```: Current name has same spelling as related name but was published later and has priority over it (unless conserved or sanctioned) and is based on a different type. Called a junior homonym in zoology. This includes botanical parahomonyms which differ slightly in spelling but are similar enough that they are likely to be confused (Art 53.3). The zoological code has a set of spelling variations (article 58) that are considered to be identical.
+- `LATER_HOMONYM`: Current name has same spelling as related name but was published later and has priority over it (unless conserved or sanctioned) and is based on a different type. Called a junior homonym in zoology. This includes botanical parahomonyms which differ slightly in spelling but are similar enough that they are likely to be confused (Art 53.3). The zoological code has a set of spelling variations (article 58) that are considered to be identical.
  
    When acts of conservation or suppression have occurred then the terms “Conserved Later Homonym”   and “Rejected Earlier Homonym” should be used.
    
@@ -181,12 +178,12 @@ We provide a [Darwin Core Archive extension definition](https://github.com/Catal
  
    ICZN: Chapter 12, Article 52.
 
-- ```SUPERFLUOUS```: Current name was superfluous at its time of publication,
+- `SUPERFLUOUS`: Current name was superfluous at its time of publication,
    i. e. it was based on the same type as the related, previously published name (ICN article 52). The current, superfluous name is available but illegitimate. Includes the special case of isonyms which are identical, homotypic names.
 
-- ```HOMOTYPIC```: A relation indicating two homotypic names, i.e. objective or nomenclatural synonymy, but not further specifying why.
+- `HOMOTYPIC`: A relation indicating two homotypic names, i.e. objective or nomenclatural synonymy, but not further specifying why.
 
-- ```TYPE```: Current name is the type name (species or genus) of the related higher ranked name.
+- `TYPE`: Current name is the type name (species or genus) of the related higher ranked name.
    
 
 ## Name status
@@ -204,11 +201,11 @@ We use [BioCode terminology](https://archive.bgbm.org/IAPT/biocode/biocode.html#
 and avoid the term valid entirely as it is very overloaded and used for different things in both codes.
 
 
- - ```ESTABLISHED```: *nomen validum*. A properly established name according to the rules of nomenclature.
+ - `ESTABLISHED`: *nomen validum*. A properly established name according to the rules of nomenclature.
     - Botany: validly published name
     - Zoology: available name
 
- - ```NOT_ESTABLISHED```: *nomen invalidum*. A name that was not validly published according to the rules of the code, or a name that was not accepted by the author in the original publication, for example,
+ - `NOT_ESTABLISHED`: *nomen invalidum*. A name that was not validly published according to the rules of the code, or a name that was not accepted by the author in the original publication, for example,
    if the name was suggested as a synonym of an accepted name.
    In zoology referred to as an unavailable name.
    There are many reasons for a name to be unavailable.
@@ -222,11 +219,11 @@ and avoid the term valid entirely as it is very overloaded and used for differen
     - tautonym (ICN) e.g. Opuntia opuntia H.Karst.
    
 
- - ```ACCEPTABLE```: *nomen legitimum*. Botany: Names that are validly published and legitimate
+ - `ACCEPTABLE`: *nomen legitimum*. Botany: Names that are validly published and legitimate
    Zoology: Available name and *potentially* valid, i.e. not otherwise invalid
    for any other objective reason, such as being a junior homonym.
 
- - ```UNACCEPTABLE```: *nomen illegitimum*. An available name with nomenclatural standing, but one that objectively contravenes some of the rules laid down by nomenclatural codes and thus cannot be used as a name for an accepted taxon. 
+ - `UNACCEPTABLE`: *nomen illegitimum*. An available name with nomenclatural standing, but one that objectively contravenes some of the rules laid down by nomenclatural codes and thus cannot be used as a name for an accepted taxon. 
    
    There can be varioous reasons why a name is illegitimate, e.g.:
      - Botany: superfluous at its time of publication (article 52), i.e., the taxon (as represented by the type) already has a name
@@ -235,7 +232,7 @@ and avoid the term valid entirely as it is very overloaded and used for differen
      - Zoology: nomen oblitum
      - Zoology: suppressed name
 
- - ```CONSERVED```: *nomen conservandum*. A scientific name that enjoys special nomenclatural protection, i.e. a name conserved, protected or sanctioned in respective code.
+ - `CONSERVED`: *nomen conservandum*. A scientific name that enjoys special nomenclatural protection, i.e. a name conserved, protected or sanctioned in respective code.
    Names classified as available and valid by action of the ICZN or ICBN exercising its Plenary Powers .
    Includes rulings to conserve junior/later synonyms in place of rejected forgotten names (nomen oblitum)
    via "Reversal of Precedence" in accordance with ICZN Article 23.9.1.
@@ -246,57 +243,21 @@ and avoid the term valid entirely as it is very overloaded and used for differen
    Conserved names are a more generalized definition than the one for nomen protectum, which is specifically a conserved name that is either a junior synonym or homonym that is in use
    because the senior synonym or homonym has been made an available, but invalid nomen oblitum ("forgotten name").
 
- - ```REJECTED```: *nomen rejiciendum* Rejected / suppressed name. Inverse of conserved. Outright rejection is possible for a name at any rank.
+ - `REJECTED`: *nomen rejiciendum* Rejected / suppressed name. Inverse of conserved. Outright rejection is possible for a name at any rank.
 
- - ```DOUBTFUL```: *nomen dubium* or *nomen ambiguum*. Doubtful or dubious names, names which are not certainly applicable to any known taxon or for which the evidence is insufficient to permit recognition of the taxon to which they belong. The confusion being derived from an incomplete or confusing description. Includes nomen ambiguum and nomen inquirendum, a species of doubtful identity requiring further investigation.
+ - `DOUBTFUL`: *nomen dubium* or *nomen ambiguum*. Doubtful or dubious names, names which are not certainly applicable to any known taxon or for which the evidence is insufficient to permit recognition of the taxon to which they belong. The confusion being derived from an incomplete or confusing description. Includes nomen ambiguum and nomen inquirendum, a species of doubtful identity requiring further investigation.
 
- - ```MANUSCRIPT```: An unpublished name that was given a temporary placeholder name to work with. Sometimes these names do not get properly published for decades and can be cited in other works. Often abbreviated as ined. (ineditus) or ms. (manuscript) and sometimes called chironym/cheironym
+ - `MANUSCRIPT`: An unpublished name that was given a temporary placeholder name to work with. Sometimes these names do not get properly published for decades and can be cited in other works. Often abbreviated as ined. (ineditus) or ms. (manuscript) and sometimes called chironym/cheironym
 
- - ```CHRESONYM```: A name usage erroneously cited without a sec/sensu indication so it appears to be a published homonym with a different authority.
+ - `CHRESONYM`: A name usage erroneously cited without a sec/sensu indication so it appears to be a published homonym with a different authority.
 
 
 ## Names Index and Name equality
 A scientific name should have been published in literature according to the codes. At least it should have been attempted (failed to comply with the codes) or it is currently being prepared for publishing (manuscript name). Without knowing the exact list of all published names it is near impossible to asses whether a given name string is an actually published name. Many *bad* names can already be filtered out based on the name type they are classified under (see above). But many others appear to be correct according to their syntactic structure, e.g. subsequently introduced misspellings or chresonyms.
 
-The names index is meant to keep track of all distinct names that syntactically appear to be published scientific names. It offers a matching API that can be used to lookup up names and an editorial API to manage its content.
+ChecklistBank does not decide whether two names are nomenclaturally the same. Its [Names Index](/about/API#names-index) is a technical component that only groups names by their normalized canonical name, ignoring authorship, rank and publication. Homonyms, different combinations of the same epithets and gender variants of an epithet therefore all share one names index entry.
 
-Every dataset (e.g. GSD) imported into the Clearinghouse is isolated from others and does not share any name instances with other datasets. Thus the *same* name, potentially in a different exact string, may exist various times in the Clearinghouse, but they should all be linked to the same name in the Names Index.
-
-A name is considered the same when it's canonical form (rank, genus, specific & infraspecific epithet), the authorship and the place of original publication are the *same*. Authorship and publication equality are rather difficult to determine, as the exact spelling for the same authorteam or publication often varies considerably. 
-
-Lexical variations exist for various reasons. Author spelling, transliterations, epithet gender, additional infrageneric or infraspecific indications, cited species authors in infraspecific names are common reasons. Listed here are 7 distinct names with some of their string representations:
-
-```
- 1. Aus bus Linnaeus 1758
-    - Aus bus Linn. 1758
-    - Aus bus Linn 1758
-    - Aus bus L.
-    - Aus ba Linn 1758.
-    - Aus (Hus) bus L.
-    
- 2. Xus bus (Linn, 1758) 
-    - Xus bus (Linn) Smith 
-    
- 3. Xus cus Smith, 1850
-    - Xus cus Sm.
-    
- 4. Xus cus Jones 1900
- 
- 5. Xus bus cus Smith 1850
-    - Xus bus subsp. cus Smith 1850
-    
- 6. Xus dus Pyle 2000
- 
- 7. Foo bar var. lion Smith 1850
-    - Foo bar L. var. lion Smith
-    - Foo bar subsp. dar var. lion Smith 1850
-    - Foo bar Lin. subsp. dar Mill. var. lion Smith 1850
-```
-
-New names (**sp./gen. nov.**), new recombinations of the same epithet (**comb. nov.**), a name at a new rank (**stat. nov.**) 
-or replacement names (**nom. nov.**) are all treated as distinct names. 
-
-To avoid all spelling mistakes found on labels and in databases to enter the names index a very limited *fuzzy* matching is also allowed on the canonical name itself. This is largely restricted to gender stemming of the terminal epithet and very frequently swapped characters such as `i/y` or the addition/removal of an `h` after `t` or `g`.
+Telling such names apart is left to the name matching against a specific dataset, which compares the authorship and rank of the names involved. See the [Names Index](/about/API#names-index) section of the API guide for how canonical names are built and normalized.
 
 
 
@@ -413,7 +374,7 @@ After the first few examples we will start omitting parsed fields of the name in
   "scientificName": "Garlic virus B",
   "rank": "species",
   "code": "virus",
-  "type": "virus",
+  "type": "other",
   "parsed": false
 }
 ```
@@ -454,7 +415,7 @@ After the first few examples we will start omitting parsed fields of the name in
   "scientificName": "Asplenium germanicum x trichomanes C.Chr.",
   "rank": "species",
   "code": "botanical",
-  "type": "hybrid formula",
+  "type": "formula",
   "parsed": false
 }
 ```
