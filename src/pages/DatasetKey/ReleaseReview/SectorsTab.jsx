@@ -9,14 +9,15 @@ import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
 
 // What the backend flags a sector with, in the order a reviewer cares about.
-const FLAGS = ["ZERO", "DECREASED", "INCREASED", "REMOVED", "NEW"];
+// Enums are serialized lowercase by the API.
+const FLAGS = ["zero", "decreased", "increased", "removed", "new"];
 
 const FLAG_COLOR = {
-  ZERO: "red",
-  DECREASED: "orange",
-  INCREASED: "blue",
-  REMOVED: "red",
-  NEW: "green",
+  zero: "red",
+  decreased: "orange",
+  increased: "blue",
+  removed: "red",
+  new: "green",
 };
 
 const formatChange = (change) =>
@@ -138,7 +139,7 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
       dataIndex: "usagesCount",
       key: "usagesCount",
       render: (v, record) => (
-        <span style={{ color: record.flag === "ZERO" ? "#cf1322" : undefined }}>
+        <span style={{ color: record.flag === "zero" ? "#cf1322" : undefined }}>
           {v === null || v === undefined ? "" : v.toLocaleString()}
         </span>
       ),
