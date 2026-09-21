@@ -114,7 +114,7 @@ const SectorForm = ({
         )
         .then(() => {
           notification.open({
-            message: "Sector updated",
+            title: "Sector updated",
             description: "Sector updated",
           });
           if (onSubmit && typeof onSubmit === "function") {
@@ -132,7 +132,7 @@ const SectorForm = ({
         .post(`${config.dataApi}dataset/${projectKey}/sector`, values)
         .then(() => {
           notification.open({
-            message: "Sector created",
+            title: "Sector created",
             description: "Sector created",
           });
           if (onSubmit && typeof onSubmit === "function") {

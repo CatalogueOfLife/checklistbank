@@ -28,7 +28,7 @@ const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, sty
         setImportTriggered(false);
         notification.open({
           title: "Sync started",
-          message: `Now syncyning sector ${ _.get(record, 'sector.id')}`
+          title: `Now syncyning sector ${ _.get(record, 'sector.id')}`
         })
         if(onStartSyncSuccess && typeof onStartSyncSuccess === 'function'){
           onStartSyncSuccess();
@@ -48,7 +48,7 @@ const SyncButton = ({ record, addError, onStartSyncSuccess, onDeleteSuccess, sty
       .then(res => {
         setImportTriggered(false);
         notification.open({
-          message: 'Sync canceled'
+          title: 'Sync canceled'
           //title: 'Sync canceled'
         })
 

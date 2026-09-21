@@ -242,7 +242,7 @@ const ProjectSectors = ({
       )
       .then(() => {
         notification.open({
-          message: "Deletion triggered",
+          title: "Deletion triggered",
           description: `${partial ? "Partial" : "Full"} delete job for ${
             sector.id
           } placed on the sync queue`,

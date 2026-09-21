@@ -107,7 +107,7 @@ const MetaDataForm = (props) => {
             }
           }
           setLoading(false);
-          notification.open({ message: title, description: msg });
+          notification.open({ title: title, description: msg });
           setSubmissionError(null);
         })
         .catch((err) => {
@@ -148,7 +148,7 @@ const MetaDataForm = (props) => {
         }
         setLoading(false);
 
-        notification.open({ message: title, description: msg });
+        notification.open({ title: title, description: msg });
         setSubmissionError(null);
       })
       .catch((err) => {

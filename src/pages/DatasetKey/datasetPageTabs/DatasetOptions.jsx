@@ -46,7 +46,7 @@ const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
       .then(() => {
         setError(null);
         notification.open({
-          message: "Process started",
+          title: "Process started",
           description: `Dataset ${datasetKey} is being reindexed`,
         });
       })
@@ -62,7 +62,7 @@ const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
       .then(() => {
         setRebuildMatcherLoading(false);
         notification.open({
-          message: "Matcher rebuild started",
+          title: "Matcher rebuild started",
           description: `Matcher index for dataset ${datasetKey} is being rebuilt`,
         });
       })

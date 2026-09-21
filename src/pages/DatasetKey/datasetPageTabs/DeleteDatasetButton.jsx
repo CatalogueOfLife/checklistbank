@@ -18,7 +18,7 @@ const DeleteDatasetButton = ({ record, style }) => {
       .delete(`${config.dataApi}dataset/${record.key}`)
       .then((res) => {
         notification.success({
-          message: "Deletion succeeded",
+          title: "Deletion succeeded",
           description: `The dataset "${record.title}" was deleted`,
         });
         setDeletionTriggered(false);

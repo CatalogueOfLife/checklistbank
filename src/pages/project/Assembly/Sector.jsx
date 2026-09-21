@@ -88,7 +88,7 @@ const Sector = ({
         // reloadSelfAndSiblings();
         getProjectJobQueue();
         notification.open({
-          message: idle ? "Sync started" : "Sync queued",
+          title: idle ? "Sync started" : "Sync queued",
           description: idle
             ? `Copying taxa from ${sector.id}`
             : `Awaiting ${runningSectorKeys.length} running and ${queuedSectorKeys.length} queued syncs`,
@@ -107,7 +107,7 @@ const Sector = ({
       .then(() => {
         debounce(onDeleteSector, 500)();
         notification.open({
-          message: "Deletion triggered",
+          title: "Deletion triggered",
           description: `${partial ? "Partial" : "Full"} delete job for ${
             sector.id
           } placed on the sync queue`,

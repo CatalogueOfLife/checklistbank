@@ -59,7 +59,7 @@ const PublisherForm = ({ publisher, onError, projectKey, onSubmit }) => {
         )
         .then(() => {
           notification.open({
-            message: "Publisher updated",
+            title: "Publisher updated",
             description: "Publisher updated",
           });
           if (onSubmit && typeof onSubmit === "function") {
@@ -82,7 +82,7 @@ const PublisherForm = ({ publisher, onError, projectKey, onSubmit }) => {
         })
         .then(() => {
           notification.open({
-            message: "Publisher created",
+            title: "Publisher created",
             description: "Publisher created",
           });
           if (onSubmit && typeof onSubmit === "function") {

@@ -68,7 +68,7 @@ const SpeciesestimateModal = (props) => {
         ]);
         form.resetFields();
         notification.open({
-          message: "Estimate created",
+          title: "Estimate created",
           description: `${values.estimate} est. species`,
         });
       })

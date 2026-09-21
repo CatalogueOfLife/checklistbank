@@ -127,7 +127,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
             onChange={(value) => {
               if (value >= attempt2) {
                 notification.error({
-                  message: "Invalid attempt",
+                  title: "Invalid attempt",
                   description: "Attempt 1 must be less than Attempt 2",
                   duration: 2,
                 });
@@ -153,7 +153,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
             onChange={(value) => {
               if (value <= attempt1) {
                 notification.error({
-                  message: "Invalid attempt",
+                  title: "Invalid attempt",
                   description: "Attempt 2 must be greater tha Attempt 1",
                   duration: 2,
                 });

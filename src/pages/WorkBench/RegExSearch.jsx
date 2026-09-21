@@ -70,7 +70,7 @@ const RegExSearch = ({ onSearch, onReset, updateSearch, datasetKey, style = {}, 
         }
         if(res?.data?.length === 0){
             notification.warn({
-                message: "No results from RegEx search"
+                title: "No results from RegEx search"
             })
         }
       } catch (err) {

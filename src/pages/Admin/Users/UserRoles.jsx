@@ -89,7 +89,7 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
     try {
       await axios[method](`${config.dataApi}user/${user.key}/block`);
       notification.success({
-        message: method === 'post' ? `User blocked` : `User unblocked`,
+        title: method === 'post' ? `User blocked` : `User unblocked`,
         description: user?.username,
       });
       
@@ -124,7 +124,7 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
           }
         );
         notification.success({
-          message: `Added ${role}`,
+          title: `Added ${role}`,
           description: user?.username,
         });
         if (typeof onChangeCallback === "function") {
@@ -149,7 +149,7 @@ const UserRoles = ({ user, onChangeCallback, addError }) => {
         }
       );
       notification.success({
-        message: `Removed ${role}`,
+        title: `Removed ${role}`,
         description: user?.username,
       });
       if (typeof onChangeCallback === "function") {

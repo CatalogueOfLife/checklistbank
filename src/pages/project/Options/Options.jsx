@@ -68,7 +68,7 @@ const ProjectOptions = ({
         setReleaseColLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "validate selected project (might take a while)",
         });
       })
@@ -86,7 +86,7 @@ const ProjectOptions = ({
         setReleaseColLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "release selected project (might take long)",
         });
       })
@@ -104,7 +104,7 @@ const ProjectOptions = ({
         setReleaseColLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description:
             "extended release of selected project (might take long)",
         });
@@ -122,12 +122,12 @@ const ProjectOptions = ({
       )
       .then((res) => {
         notification.open({
-          message: `Recalculating sector counts`,
+          title: `Recalculating sector counts`,
         });
       })
       .catch((err) => {
         notification.error({
-          message: "Error",
+          title: "Error",
           description: <ErrorMsg error={err} />,
         });
       });
@@ -138,7 +138,7 @@ const ProjectOptions = ({
       .post(`${config.dataApi}dataset/${projectKey}/consolidate-homotypic`)
       .then(() => {
         notification.open({
-          message: "Homotypic grouping",
+          title: "Homotypic grouping",
           description: `Consolidating homotypic names for all families`,
         });
       })

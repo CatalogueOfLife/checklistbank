@@ -63,7 +63,7 @@ const ColTreeNode = (props) => {
       .then(() => {
         reloadSelfAndSiblings();
         notification.open({
-          message: "Taxon deleted",
+          title: "Taxon deleted",
           description: `${taxon.name} was deleted from the assembly`,
         });
       })
@@ -88,7 +88,7 @@ const ColTreeNode = (props) => {
       }
       reloadSelfAndSiblings();
       notification.open({
-        message: "Taxa deleted",
+        title: "Taxa deleted",
         description: `${taxa.length - errors.length
           } were deleted from the assembly`,
       });
@@ -112,7 +112,7 @@ const ColTreeNode = (props) => {
       }
       reloadSelfAndSiblings();
       notification.open({
-        message: "Taxa deleted",
+        title: "Taxa deleted",
         description: `${taxa.length - errors.length
           } were deleted recursively from the assembly`,
       });
@@ -129,7 +129,7 @@ const ColTreeNode = (props) => {
       .then(() => {
         reloadSelfAndSiblings();
         notification.open({
-          message: "Taxon deleted",
+          title: "Taxon deleted",
           description: `${taxon.name} was deleted recursively from the assembly`,
         });
       })
@@ -163,7 +163,7 @@ const ColTreeNode = (props) => {
       .then(() => {
         reloadSelfAndSiblings();
         notification.open({
-          message: "Homotypic grouping",
+          title: "Homotypic grouping",
           description: `Consolidating homotypic names under ${taxon.name}`,
         });
       })

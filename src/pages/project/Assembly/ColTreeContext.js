@@ -51,7 +51,7 @@ export const applyDecision = (taxon, projectKey, cb, notification, note) => {
       taxon.decision = res.data;
 
       notification.open({
-        message: `Decision applied`,
+        title: `Decision applied`,
         description: `${_.get(taxon, "name").replace(
           /(<([^>]+)>)/gi,
           ""
@@ -64,7 +64,7 @@ export const applyDecision = (taxon, projectKey, cb, notification, note) => {
     })
     .catch((err) => {
       notification.error({
-        message: "Error",
+        title: "Error",
         description: err.message,
       });
     });

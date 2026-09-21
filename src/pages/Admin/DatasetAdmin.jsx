@@ -147,7 +147,7 @@ const DatasetList = ({ datasetOrigin, location }) => {
       .then((res) => {
         setError(null);
         notification.open({
-          message: "Indexing started",
+          title: "Indexing started",
           description: `Dataset ${datasetKey} is being reindexed`,
         });
       })
@@ -162,7 +162,7 @@ const DatasetList = ({ datasetOrigin, location }) => {
       .then((res) => {
         setError(null);
         notification.open({
-          message: "Rematching started",
+          title: "Rematching started",
           description: `Dataset ${datasetKey} is being rematched`,
         });
       })
@@ -175,7 +175,7 @@ const DatasetList = ({ datasetOrigin, location }) => {
       .then((res) => {
         setError(null);
         notification.open({
-          message: "Reimport started",
+          title: "Reimport started",
           description: `Dataset ${datasetKey} is being reimported from last archive`,
         });
       })
@@ -188,7 +188,7 @@ const DatasetList = ({ datasetOrigin, location }) => {
       .then((res) => {
         setError(null);
         notification.open({
-          message: "Matcher job scheduled",
+          title: "Matcher job scheduled",
           description: `Matcher job building dataset ${datasetKey} scheduled.`,
         });
       })

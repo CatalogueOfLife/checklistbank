@@ -451,7 +451,7 @@ const DuplicateSearchPage = (props) => {
               }${currentDecision === "reviewed" ? "marked as reviewed" : ""}`;
 
               notification.open({
-                message: `Decision ${
+                title: `Decision ${
                   method === "post" ? "applied" : "changed"
                 }`,
                 description: ["block", "ignore", "reviewed"].includes(
@@ -464,7 +464,7 @@ const DuplicateSearchPage = (props) => {
           })
           .catch((err) => {
             notification.error({
-              message: "Error",
+              title: "Error",
               description: _.get(err, "response.data.message") || err.message,
             });
           });
@@ -473,7 +473,7 @@ const DuplicateSearchPage = (props) => {
     return Promise.all(promises)
       .then(() => {
         notification.open({
-          message: `${promises.length > 1 ? "Decisions" : "Decision"} applied`,
+          title: `${promises.length > 1 ? "Decisions" : "Decision"} applied`,
           description: `${promises.length} ${
             promises.length > 1 ? "names" : "name"
           } affected`,

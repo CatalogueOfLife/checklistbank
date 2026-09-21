@@ -175,7 +175,7 @@ const DecisionForm = (props) => {
         setError(null);
         setConfirmLoading(false);
         notification.open({
-          message: `Decision ${currentDecision ? "updated" : "applied"}`,
+          title: `Decision ${currentDecision ? "updated" : "applied"}`,
         });
       })
       .catch((err) => {

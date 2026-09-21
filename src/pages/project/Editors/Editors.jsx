@@ -97,7 +97,7 @@ const Editors = ({
         }
       );
       notification.success({
-        message: `Removed ${type}`,
+        title: `Removed ${type}`,
         description: usr.title,
       });
     } catch (err) {
@@ -119,7 +119,7 @@ const Editors = ({
           }
         );
         notification.success({
-          message: `Added ${type}`,
+          title: `Added ${type}`,
           description: usr.title,
         });
       } catch (err) {

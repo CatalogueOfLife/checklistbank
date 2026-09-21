@@ -44,7 +44,7 @@ const Reference = ({ project, match, user }) => {
           ? `Data successfully updated for ${values.title}`
           : `${values.title} saved with id ${res.id}`;
         setSubmissionError(null);
-        notification.open({ message: title, description: msg });
+        notification.open({ title: title, description: msg });
       })
       .catch((err) => {
         setSubmissionError(err);

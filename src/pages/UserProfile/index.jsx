@@ -9,7 +9,7 @@ import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, message } from "antd";
+import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, App } from "antd";
 import { formatTime } from "../../dateTime";
 import history from "../../history";
 import { getDatasetsBatch } from "../../api/dataset";
@@ -19,6 +19,7 @@ import {
   searchUrlOfJob,
 } from "../NameSearch/searchDownload";
 const UserProfile = ({ user, countryAlpha2, match }) => {
+  const { message } = App.useApp();
   const [editorDatasets, setEditorDatasets] = useState([]);
   const [reviewerDatasets, setReviewerDatasets] = useState([]);
   const [downloads, setDownloads] = useState([]);

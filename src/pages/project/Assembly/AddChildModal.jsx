@@ -98,7 +98,7 @@ const AddChildModal = (props) => {
         setSubmissionError(null);
         setConfirmLoading(false);
         notification.open({
-          message: _.get(parent, "id")
+          title: _.get(parent, "id")
             ? "Child inserted"
             : "Root taxon created",
           description: _.get(parent, "id")

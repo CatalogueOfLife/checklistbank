@@ -73,7 +73,7 @@ const MatcherAdmin = () => {
       .then(() => {
         setError(null);
         notification.open({
-          message: "Matcher build started",
+          title: "Matcher build started",
           description: `Matcher for dataset ${datasetKey} is being rebuilt`,
         });
       })
@@ -90,7 +90,7 @@ const MatcherAdmin = () => {
         setError(null);
         setMetadata(null);
         notification.open({
-          message: "Matcher deleted",
+          title: "Matcher deleted",
           description: `The matcher for dataset ${datasetKey} has been removed`,
         });
       })
@@ -103,7 +103,7 @@ const MatcherAdmin = () => {
       .then(() => {
         setError(null);
         notification.open({
-          message: "Rebuild triggered",
+          title: "Rebuild triggered",
           description: force
             ? "All matchers are being rebuilt"
             : "Stale matchers are being rebuilt",

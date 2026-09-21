@@ -44,7 +44,7 @@ const SectorPriority = ({ projectKey, location, addError, user }) => {
       .delete(`${config.dataApi}dataset/${projectKey}/sector/${sector.id}`)
       .then(() => {
         notification.open({
-          message: "Deletion triggered",
+          title: "Deletion triggered",
           description: `Delete job for ${sector.id} placed on the sync queue`,
         });
         setData(data.filter((d) => d.id !== sector.id));

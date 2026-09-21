@@ -583,7 +583,7 @@ const WorkBench = ({
               }${decision === "reviewed" ? "marked as reviewed" : ""}`;
 
               notification.open({
-                message: "Decision applied",
+                title: "Decision applied",
                 description: ["block", "ignore", "reviewed"].includes(decision)
                   ? decisionMsg
                   : statusMsg,
@@ -596,7 +596,7 @@ const WorkBench = ({
       .then((res) => {
         if (selectedRowKeys?.length > 5) {
           notification.open({
-            message: "Success",
+            title: "Success",
             description: `${selectedRowKeys?.length} decisions applied.`,
           });
         }

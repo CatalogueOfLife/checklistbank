@@ -105,7 +105,7 @@ const SectorTable = ({
     let errors = 0;
     notification.open({
       title: "",
-      message: `Triggering sync for ${selectedRows.length} sectors`,
+      title: `Triggering sync for ${selectedRows.length} sectors`,
     });
     for (const record of selectedRows) {
       try {
@@ -120,19 +120,19 @@ const SectorTable = ({
         addError(error);
         errors++;
         notification.error({
-          message: `Error`,
+          title: `Error`,
           description: `It was not possible to sync sector ${record?.id}`,
         });
       }
     }
     notification.open({
       title: "Sync triggered",
-      message: `Now syncing ${selectedRows.length - errors} sectors`,
+      title: `Now syncing ${selectedRows.length - errors} sectors`,
     });
     if (errors.length > 0) {
       notification.error({
         title: "Sync failed",
-        message: `It was not possible to start sync for ${errors} sectors`,
+        title: `It was not possible to start sync for ${errors} sectors`,
       });
     }
     setSelectedRows([]);
@@ -149,7 +149,7 @@ const SectorTable = ({
       };
     notification.open({
       title: "",
-      message: `Triggering rematch for ${selectedRows.length} sectors`,
+      title: `Triggering rematch for ${selectedRows.length} sectors`,
     });
     for (const record of selectedRows) {
       try {
@@ -164,14 +164,14 @@ const SectorTable = ({
         addError(error);
         errors++;
         notification.error({
-          message: `Error`,
+          title: `Error`,
           description: `It was not possible to rematch sector ${record?.id}`,
         });
       }
     }
     notification.open({
       title: "",
-      message: (
+      title: (
         <>
           <div>{`Rematched ${selectedRows.length - errors} sectors.`}</div>
           {Object.keys(rematchInfo).map((category) => (
@@ -186,7 +186,7 @@ const SectorTable = ({
     if (errors.length > 0) {
       notification.error({
         title: "Rematch failed",
-        message: `It was not possible to rematch ${errors} sectors`,
+        title: `It was not possible to rematch ${errors} sectors`,
       });
     }
     setSelectedRows([]);
@@ -238,7 +238,7 @@ const SectorTable = ({
 
                   if (success) {
                     notification.success({
-                      message: "Rematch success",
+                      title: "Rematch success",
                       description: `Broken sectors: 0`,
                     });
 
@@ -250,14 +250,14 @@ const SectorTable = ({
                     }
                   } else {
                     notification.error({
-                      message: "Rematch failed",
+                      title: "Rematch failed",
                       description: `Broken sectors: 1`,
                     });
                   }
                 })
                 .catch((err) => {
                   notification.error({
-                    message: `Server error ${_.get(err, "response.status")}`,
+                    title: `Server error ${_.get(err, "response.status")}`,
                     description: _.get(err, "response.data.message"),
                   });
                 });

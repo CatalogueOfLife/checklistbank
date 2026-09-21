@@ -901,7 +901,7 @@ const ColTree = (props) => {
                   }))
               );
               notification.open({
-                message: `Sector target updated`,
+                title: `Sector target updated`,
               });
             })
             .catch(addError);
@@ -1344,7 +1344,7 @@ const ColTree = (props) => {
           );
           setTreeData([...treeDataRef.current]);
           notification.open({
-            message: "Taxon moved",
+            title: "Taxon moved",
             description: msg,
           });
         })

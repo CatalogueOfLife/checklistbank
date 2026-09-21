@@ -169,7 +169,7 @@ const DatasetMeta = ({
       })
       .then(() => {
         notification.open({
-          message: "Updated",
+          title: "Updated",
           description: `The dataset is now ${
             toggledPrivate ? "private" : "public"
           }`,

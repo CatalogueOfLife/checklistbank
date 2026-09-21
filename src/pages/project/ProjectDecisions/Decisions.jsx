@@ -221,7 +221,7 @@ const ProjectDecisions = ({
       )
       .then((res) => {
         notification.success({
-          message: "Success",
+          title: "Success",
           description: `Deleted ${res} broken decisions`,
         });
         setDeleteBrokenDecisionsLoading(false);
@@ -399,7 +399,7 @@ const ProjectDecisions = ({
 
                     if (success) {
                       notification.success({
-                        message: "Rematch success",
+                        title: "Rematch success",
                         description: `Updated: ${_.get(
                           rematchInfo,
                           "data.updated"
@@ -410,14 +410,14 @@ const ProjectDecisions = ({
                       });
                     } else {
                       notification.error({
-                        message: "Rematch failed",
+                        title: "Rematch failed",
                         description: `Broken decisions: 1`,
                       });
                     }
                   })
                   .catch((err) => {
                     notification.error({
-                      message: `Server error ${_.get(
+                      title: `Server error ${_.get(
                         err,
                         "response.status"
                       )}`,
@@ -443,7 +443,7 @@ const ProjectDecisions = ({
                   .then(() => {
                     setData((prev) => prev.filter((d) => d.id !== record.id));
                     notification.open({
-                      message: "Decision deleted",
+                      title: "Decision deleted",
                     });
                   });
               }}

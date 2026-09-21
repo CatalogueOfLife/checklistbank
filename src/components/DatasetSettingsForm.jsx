@@ -70,7 +70,7 @@ const SettingsForm = (props) => {
         if (onSaveSuccess && typeof onSaveSuccess === "function") {
           onSaveSuccess(res);
         }
-        notification.open({ message: "Settings updated" });
+        notification.open({ title: "Settings updated" });
         setSubmissionError(null);
       })
       .catch((err) => {

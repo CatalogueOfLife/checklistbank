@@ -16,12 +16,12 @@ const DeleteOrphansButton = ({ type, datasetKey, style }) => {
           .delete(`${config.dataApi}dataset/${datasetKey}/${type}/orphans`)
           .then((res) => {
             notification.open({
-              message: `Deleting ${type} orphans`,
+              title: `Deleting ${type} orphans`,
             });
           })
           .catch((err) => {
             notification.error({
-              message: "Error",
+              title: "Error",
               description: <ErrorMsg error={err} />,
             });
           });

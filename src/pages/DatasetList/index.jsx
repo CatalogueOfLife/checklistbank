@@ -262,13 +262,13 @@ const DatasetList = ({
           force: true,
         });
         notification.open({
-          message: `Import started`,
+          title: `Import started`,
           description: `Dataset: ${dataset?.alias || dataset.key}`,
         });
       } catch (err) {
         addError(err);
         notification.error({
-          message: `Error`,
+          title: `Error`,
           description: `It was not possible to import ${dataset?.alias || dataset.key}`,
         });
       }
@@ -282,13 +282,13 @@ const DatasetList = ({
       try {
         await axios.delete(`${config.dataApi}dataset/${dataset.key}`);
         notification.open({
-          message: `Deletion triggered`,
+          title: `Deletion triggered`,
           description: `Dataset: ${dataset?.alias || dataset.key}`,
         });
       } catch (err) {
         addError(err);
         notification.error({
-          message: `Error`,
+          title: `Error`,
           description: `It was not possible to delete ${dataset?.alias || dataset.key}`,
         });
       }

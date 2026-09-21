@@ -16,7 +16,7 @@ const SyncAllSectorsButton = ({ onError, dataset, projectKey, text }) => {
       .then((res) => {
         setAllSectorSyncloading(false);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: `All sectors syncing${
             dataset ? " for dataset: " + dataset.title : ""
           }`,

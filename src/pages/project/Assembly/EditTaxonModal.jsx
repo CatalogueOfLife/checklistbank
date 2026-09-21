@@ -141,7 +141,7 @@ const EditTaxonModal = (props) => {
         setSubmissionError(null);
         setConfirmLoading(false);
         notification.open({
-          message: "Name updated",
+          title: "Name updated",
           description: `${updatedName.scientificName} was updated`,
         });
         if (props.onSuccess && typeof props.onSuccess === "function") {

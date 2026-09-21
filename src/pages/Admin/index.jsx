@@ -209,7 +209,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         setUpdateAllLogosloading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "updating all logos async",
         });
       })
@@ -227,7 +227,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         setMetricsSchedulerloading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "Run taxon metrics rebuild scheduler",
         });
       })
@@ -245,7 +245,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         setUpdateUsageCountsLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "updating all managed usage counts",
         });
       })
@@ -263,7 +263,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         setReindexSchedulerLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "Run reindex scheduler",
         });
       })
@@ -281,7 +281,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
         setRematchMissingLoading(false);
         setError(null);
         notification.open({
-          message: "Action triggered",
+          title: "Action triggered",
           description: "Run rematch missing",
         });
       })
@@ -297,7 +297,7 @@ const AdminPage = ({ background, addError, getBackground }) => {
       .then((res) => {
         setError(null);
         notification.open({
-          message: "All components restarted",
+          title: "All components restarted",
         });
       })
       .catch((err) => setError(err));

@@ -152,7 +152,7 @@ const Assembly = ({
           setAssemblyTaxonKey(null);
         }
         notification.open({
-          message: "Removed existing taxon",
+          title: "Removed existing taxon",
           description: `Old ${target.name} was removed from the assembly, removing children.`,
         });
         return saveSector(subject, parent, "ATTACH");
@@ -182,7 +182,7 @@ const Assembly = ({
           _.get(target, "name.scientificName") || target.id
         } attached to ${subject.name || subject.id} `;
         notification.open({
-          message: "Sector created",
+          title: "Sector created",
           description: msg,
         });
       })
@@ -580,7 +580,7 @@ const Assembly = ({
                                       ).then(() => {
                                         sourceRef.current.reloadRoot();
                                         notification.open({
-                                          message: "Decisions deleted for:",
+                                          title: "Decisions deleted for:",
                                           description: (
                                             <ul>
                                               {taxaWithdecisions.map((n) => (

@@ -16,7 +16,7 @@ const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
       .delete(`${config.dataApi}dataset/${projectKey}/decision/${id}`)
       .then((res) => {
         notification.open({
-          message: "Decision deleted",
+          title: "Decision deleted",
         });
         if (deleteCallback && typeof deleteCallback === "function") {
           deleteCallback();
