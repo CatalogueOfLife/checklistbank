@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { DeleteOutlined, WarningOutlined, EditOutlined } from "@ant-design/icons";
 import Auth from "../../../components/Auth";
 
-import { Table, Alert, Popconfirm, Input, Button, Select, Row, Col, Switch, Form, App } from "antd";
+import { Table, Alert, Popconfirm, Input, Button, Select, Row, Col, Switch, Form, App, Tooltip } from "antd";
 import withRouter from "../../../withRouter";
 import config from "../../../config";
 import { formatTime } from "../../../dateTime";
@@ -330,6 +330,28 @@ const ProjectDecisions = ({
           </>
         );
       },
+    },
+    {
+      title: "Note",
+      dataIndex: "note",
+      key: "note",
+      width: 150,
+      render: (text) =>
+        !text ? (
+          ""
+        ) : (
+          <Tooltip title={text}>
+            <div
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {text}
+            </div>
+          </Tooltip>
+        ),
     },
     {
       title: "Created by",

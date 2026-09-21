@@ -77,6 +77,7 @@ const DuplicateSearchPage = (props) => {
   const [loading, setLoading] = useState(false);
   const [postingDecisions, setPostingDecisions] = useState(false);
   const [decision, setDecision] = useState(null);
+  const [decisionNote, setDecisionNote] = useState("");
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [allButOldestInGroupLoading, setAllButOldestInGroupLoading] =
     useState(false);
@@ -317,6 +318,7 @@ const DuplicateSearchPage = (props) => {
       setSelectedPreset(value);
       setTotalFaked(0);
       setDecision(null);
+      setDecisionNote("");
       setSelectedRowKeys([]);
       if (urlP?.sourceDatasetKey) {
         setAdvancedMode(true);
@@ -383,6 +385,7 @@ const DuplicateSearchPage = (props) => {
     const currentData = data;
     const currentSelectedRowKeys = selectedRowKeys;
     const currentDecision = decision;
+    const currentNote = decisionNote.trim();
     setPostingDecisions(true);
     const promises = currentData
       .filter((d) => currentSelectedRowKeys.includes(_.get(d, "id")))
@@ -413,6 +416,9 @@ const DuplicateSearchPage = (props) => {
           mode: mode,
           status: mode !== "update" ? _.get(d, "status") : currentDecision,
         };
+        if (currentNote) {
+          body.note = currentNote;
+        }
 
         return axios[method](
           `${config.dataApi}dataset/${projectKey}/decision${
@@ -475,12 +481,14 @@ const DuplicateSearchPage = (props) => {
         setData((prev) => [...prev]);
         setSelectedRowKeys([]);
         setDecision(null);
+        setDecisionNote("");
         setPostingDecisions(false);
       })
       .catch(() => {
         setData((prev) => [...prev]);
         setSelectedRowKeys([]);
         setDecision(null);
+        setDecisionNote("");
         setPostingDecisions(false);
       });
   };
@@ -968,6 +976,14 @@ const DuplicateSearchPage = (props) => {
                     ],
                   },
                 ]}
+              />
+              <br />
+              <Input.TextArea
+                style={{ width: 140, marginBottom: "10px" }}
+                autoSize={{ minRows: 1, maxRows: 4 }}
+                placeholder="Note (optional)"
+                value={decisionNote}
+                onChange={(evt) => setDecisionNote(evt.target.value)}
               />
               <br />
               <Button

@@ -3,7 +3,7 @@ import axios from "axios";
 import _ from "lodash";
 import config from "../../../config";
 
-export const applyDecision = (taxon, projectKey, cb, notification) => {
+export const applyDecision = (taxon, projectKey, cb, notification, note) => {
 
   const { datasetKey } = taxon;
   //this.setState({ postingDecisions: true });
@@ -39,6 +39,7 @@ export const applyDecision = (taxon, projectKey, cb, notification) => {
           code: _.get(tx, "name.code"),
         },
         mode: "block",
+        ...(note ? { note } : {}),
       });
     })
     .then((decisionId) =>

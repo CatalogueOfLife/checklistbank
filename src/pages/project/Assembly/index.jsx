@@ -16,6 +16,7 @@ import {
   Slider,
   Switch,
   Popover,
+  Input,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import _ from "lodash";
@@ -64,6 +65,7 @@ const Assembly = ({
   const [missingTargetKeys, setMissingTargetKeys] = useState({});
   const [height, setHeight] = useState(600);
   const [decisionFormVisible, setDecisionFormVisible] = useState(false);
+  const [blockNote, setBlockNote] = useState("");
   const [error, setError] = useState(null);
   const [dragNode, setDragNode] = useState(null);
 
@@ -275,7 +277,8 @@ const Assembly = ({
               _.get(sourceRef.current, "state.selectedNodes") || [],
             selectedAssemblyTreeNodes:
               _.get(assemblyRef.current, "state.selectedNodes") || [],
-            applyDecision: (taxon, projectKey, cb) => applyDecision(taxon, projectKey, cb, notification),
+            applyDecision: (taxon, projectKey, cb, note) =>
+              applyDecision(taxon, projectKey, cb, notification, note),
           }}
         >
           {decisionFormVisible && (
@@ -514,6 +517,15 @@ const Assembly = ({
                               placement="bottomRight"
                               content={
                                 <>
+                                  <Input.TextArea
+                                    style={{ marginTop: "8px" }}
+                                    autoSize={{ minRows: 1, maxRows: 4 }}
+                                    placeholder="Note (optional)"
+                                    value={blockNote}
+                                    onChange={(evt) =>
+                                      setBlockNote(evt.target.value)
+                                    }
+                                  />
                                   <Button
                                     style={{
                                       marginTop: "8px",
@@ -522,11 +534,13 @@ const Assembly = ({
                                     type="primary"
                                     danger
                                     onClick={() => {
+                                      const note = blockNote.trim();
                                       Promise.allSettled(
                                         selectedSourceTreeNodes.map((n) =>
-                                          applyDecision(n.taxon, projectKey, undefined, notification)
+                                          applyDecision(n.taxon, projectKey, undefined, notification, note)
                                         )
                                       ).then(() => {
+                                        setBlockNote("");
                                         sourceRef.current.reloadRoot();
                                       });
                                     }}

@@ -18,6 +18,7 @@ import {
   Alert,
   Popconfirm,
   Modal,
+  Input,
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -50,6 +51,7 @@ const Sector = ({
   const [showEditForm, setShowEditForm] = useState(false);
   const [error, setError] = useState(null);
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState(null);
+  const [decisionNote, setDecisionNote] = useState("");
 
   const hidePopover = () => {
     setPopOverVisible(false);
@@ -113,70 +115,6 @@ const Sector = ({
       })
       .catch((err) => {
         setError(err);
-      });
-  };
-
-  const applyDecision = (taxon) => {
-    const { datasetKey } = taxon;
-    // Note: postingDecisions state was set but never read in original; omitted
-    return axios(
-      `${config.dataApi}dataset/${datasetKey}/taxon/${_.get(taxon, "id")}`
-    )
-      .then((tx) => {
-        return Promise.all([
-          tx,
-          axios(
-            `${config.dataApi}dataset/${datasetKey}/taxon/${_.get(
-              tx,
-              "data.parentId"
-            )}`
-          ),
-        ]);
-      })
-
-      .then((taxa) => {
-        const tx = taxa[0].data;
-        const parent = taxa[1].data;
-        return axios.post(`${config.dataApi}dataset/${projectKey}/decision`, {
-          subjectDatasetKey: datasetKey,
-          subject: {
-            id: _.get(tx, "id"),
-
-            name: _.get(tx, "name.scientificName"), //.replace(/(<([^>]+)>)/ig , "")
-            authorship: _.get(tx, "name.authorship"),
-            rank: _.get(tx, "name.rank"),
-            status: _.get(tx, "status"),
-            parent: _.get(parent, "name.scientificName"),
-            code: _.get(tx, "name.code"),
-          },
-          mode: "block",
-        });
-      })
-      .then((decisionId) =>
-        axios(
-          `${config.dataApi}dataset/${projectKey}/decision/${decisionId.data}`
-        )
-      )
-      .then((res) => {
-        taxon.decision = res.data;
-
-        notification.open({
-          message: `Decision applied`,
-          description: `${_.get(taxon, "name").replace(
-            /(<([^>]+)>)/gi,
-            ""
-          )} was blocked from the project`,
-        });
-        if (typeof decisionCallback === "function") {
-          decisionCallback(res.data);
-        }
-        setPopOverVisible(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: "Error",
-          description: err.message,
-        });
       });
   };
 
@@ -541,12 +479,25 @@ const Sector = ({
                 )}
               {!isRootSectorInSourceTree && (
                 <CanEditDataset dataset={{ key: projectKey }}>
+                  <Input.TextArea
+                    style={{ marginTop: "8px" }}
+                    autoSize={{ minRows: 1, maxRows: 4 }}
+                    placeholder="Note (optional)"
+                    value={decisionNote}
+                    onChange={(evt) => setDecisionNote(evt.target.value)}
+                  />
                   <Button
                     style={{ marginTop: "8px", width: "100%" }}
                     type="primary"
                     danger
                     onClick={() => {
-                      applyDecision(taxon, projectKey, decisionCallback);
+                      applyDecision(
+                        taxon,
+                        projectKey,
+                        decisionCallback,
+                        decisionNote.trim()
+                      );
+                      setDecisionNote("");
                       setPopOverVisible(false);
                     }}
                   >

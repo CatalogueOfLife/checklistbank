@@ -23,11 +23,26 @@ const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
         }
       });
   };
+  // The tag itself is truncated to 2 characters, so the tooltip carries the
+  // full decision label plus the curator's note when there is one.
+  const tooltipTitle = (label) => {
+    const note = _.get(decision, "note");
+    return note ? (
+      <>
+        {label}
+        <br />
+        {note}
+      </>
+    ) : (
+      label
+    );
+  };
+
   if (!_.get(decision, "mode")) {
     return "";
   } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {
     return (
-      <Tooltip title={_.get(decision, "mode")}>
+      <Tooltip title={tooltipTitle(_.get(decision, "mode"))}>
         {" "}
         <Tag
           closable={canEditDataset({ key: projectKey }, user)}
@@ -42,7 +57,7 @@ const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
     );
   } else if (_.get(decision, "status")) {
     return (
-      <Tooltip title={_.get(decision, "status")}>
+      <Tooltip title={tooltipTitle(_.get(decision, "status"))}>
         <Tag
           closable
           onClose={() =>
@@ -58,7 +73,7 @@ const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
     );
   } else {
     return (
-      <Tooltip title="Update">
+      <Tooltip title={tooltipTitle("Update")}>
         <Tag
           closable
           onClose={() =>

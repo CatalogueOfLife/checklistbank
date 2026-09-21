@@ -19,6 +19,7 @@ import {
   App,
   Switch,
   Form,
+  Input,
 } from "antd";
 import Tabs from "../../components/Tabs";
 import config from "../../config";
@@ -40,6 +41,7 @@ import RegExSearch from "./RegExSearch";
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+const { TextArea } = Input;
 
 const FACETS = [
   "rank",
@@ -263,6 +265,7 @@ const WorkBench = ({
   const [activeTab, setActiveTab] = useState("1");
   const [data, setData] = useState({ result: [] });
   const [decision, setDecision] = useState(null);
+  const [decisionNote, setDecisionNote] = useState("");
   const [columns, setColumns] = useState(() => getColumns(projectKey, user));
   const [decisionFormVisible, setDecisionFormVisible] = useState(false);
   const [rowsForEdit, setRowsForEdit] = useState([]);
@@ -513,6 +516,7 @@ const WorkBench = ({
 
   const applyDecision = () => {
     const { result } = data;
+    const note = decisionNote.trim();
     const promises = result
       .filter((d) => selectedRowKeys.includes(_.get(d, "usage.id")))
       .map((d) => {
@@ -548,6 +552,9 @@ const WorkBench = ({
         }
         if (taxonomicstatus.includes(decision)) {
           decisionObject.status = decision;
+        }
+        if (note) {
+          decisionObject.note = note;
         }
 
         return axios
@@ -600,6 +607,7 @@ const WorkBench = ({
         setSelectedRowKeys([]);
         setDecisionFormVisible(false);
         setDecision(null);
+        setDecisionNote("");
       })
       .catch((err) => {
         addError(err);
@@ -607,6 +615,7 @@ const WorkBench = ({
         setSelectedRowKeys([]);
         setDecisionFormVisible(false);
         setDecision(null);
+        setDecisionNote("");
       });
   };
 
@@ -981,6 +990,13 @@ const WorkBench = ({
                 },
                 /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
               ]}
+            />
+            <TextArea
+              style={{ width: 240, marginRight: 10, verticalAlign: "top" }}
+              autoSize={{ minRows: 1, maxRows: 4 }}
+              placeholder="Note (optional)"
+              value={decisionNote}
+              onChange={(evt) => setDecisionNote(evt.target.value)}
             />
             <Button
               type="primary"
