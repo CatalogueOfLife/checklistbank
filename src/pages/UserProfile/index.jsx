@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Layout from "../../components/LayoutNew";
 import { NavLink } from "react-router-dom";
 import withRouter from "../../withRouter";
@@ -12,25 +12,50 @@ import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@
 import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, message } from "antd";
 import { formatTime } from "../../dateTime";
 import history from "../../history";
+import { getDatasetsBatch } from "../../api/dataset";
+import { searchJobs, humanSize, jobResultUrl, isLive } from "../../api/job";
+import {
+  searchParamsOfRequest,
+  searchUrlOfJob,
+} from "../NameSearch/searchDownload";
 const UserProfile = ({ user, countryAlpha2, match }) => {
   const [editorDatasets, setEditorDatasets] = useState([]);
   const [reviewerDatasets, setReviewerDatasets] = useState([]);
   const [downloads, setDownloads] = useState([]);
   const [hasRunningDownload, setHasRunningDownload] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
-  const [intervalHandle, setIntervalHandle] = useState(null)
+  const pollRef = useRef(null)
   const [cancelingKey, setCancelingKey] = useState(null)
 
+  // Dataset exports and search downloads live in different places on the backend:
+  // exports in their own table, search downloads only as unified jobs.
   const loadDownloads = async () => {
-    const downloads_ = await axios(
-      `${config.dataApi}export?createdBy=${user?.key}`
-    );
-    if (downloads_?.data?.result) {
-      setDownloads(downloads_.data.result);
-      setHasRunningDownload(
-        !!downloads_.data.result.find((e) => e.status === "running")
+    const [exports_, searches_] = await Promise.all([
+      axios(`${config.dataApi}export?createdBy=${user?.key}`).catch(() => null),
+      searchJobs({ createdBy: user?.key, job: "SearchExport", limit: 100 }).catch(
+        () => null
+      ),
+    ]);
+    const all = [
+      ...(exports_?.data?.result || []),
+      ...(searches_?.result || []).map((j) => ({ ...j, kind: "search" })),
+    ].sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")));
+    const keys = [
+      ...new Set(
+        all.filter((e) => e.kind === "search" && e.datasetKey).map((e) => e.datasetKey)
+      ),
+    ];
+    if (keys.length) {
+      const datasets = await getDatasetsBatch(keys);
+      const titles = Object.fromEntries(
+        keys.map((k, i) => [k, datasets[i]?.alias || datasets[i]?.title])
       );
+      all.forEach((e) => {
+        if (e.kind === "search") e.datasetTitle = titles[e.datasetKey];
+      });
     }
+    setDownloads(all);
+    setHasRunningDownload(!!all.find((e) => isLive(e.status)));
   };
 
   const cancelDownload = async (key) => {
@@ -76,24 +101,26 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
   },[match.params.tab])
 
   useEffect(() => {
-    if(hasRunningDownload && !intervalHandle){
-     let hdl = setInterval(() => {
+    if (hasRunningDownload && !pollRef.current) {
+      pollRef.current = setInterval(() => {
         loadDownloads();
-      }, config.pollingHeartBeat || 5000)
-      setIntervalHandle(hdl)
-    };
-    if(!hasRunningDownload && intervalHandle){
-      clearInterval(intervalHandle)
+      }, config.pollingHeartBeat || 5000);
     }
-  }, [hasRunningDownload])
+    if (!hasRunningDownload && pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, [hasRunningDownload]);
 
-  useEffect(() => {
-    return () => {
-        if(intervalHandle){
-          clearInterval(intervalHandle)
-        }
-    }
-}, [])
+  useEffect(
+    () => () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    },
+    []
+  );
 
   const renderItem = (item) => (
     <List.Item key={item?.key}>
@@ -116,6 +143,91 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       />
     </List.Item>
   );
+  const renderCancel = (item) =>
+    isLive(item?.status) ? (
+      <Popconfirm
+        title="Cancel this download?"
+        okText="Yes, cancel"
+        cancelText="No"
+        okButtonProps={{ danger: true }}
+        onConfirm={() => cancelDownload(item?.key)}
+      >
+        <Button
+          danger
+          size="small"
+          icon={<StopOutlined />}
+          loading={cancelingKey === item?.key}
+        >
+          Cancel
+        </Button>
+      </Popconfirm>
+    ) : null;
+
+  const renderSearchDownload = (item) => {
+    const search = searchParamsOfRequest(item?.params);
+    return (
+      <List.Item key={item?.key}>
+        <Card
+          title={
+            <>
+              {item?.status === "failed" ? (
+                <Tooltip title={item?.errorMessage}>
+                  <Tag color="error">Failed</Tag>
+                </Tooltip>
+              ) : item?.status === "finished" ? (
+                item?.result?.deleted ? (
+                  <Tag>Expired</Tag>
+                ) : (
+                  <Button
+                    type="link"
+                    href={jobResultUrl(item?.key)}
+                    style={{ color: "#1890ff" }}
+                  >
+                    <DownloadOutlined /> {humanSize(item?.result?.size)}
+                  </Button>
+                )
+              ) : item?.status === "canceled" ? (
+                <Tag>Cancelled</Tag>
+              ) : item?.status === "running" ? (
+                <SyncOutlined
+                  style={{ marginRight: "10px", marginLeft: "10px" }}
+                  spin
+                />
+              ) : (
+                <HistoryOutlined
+                  style={{ marginRight: "10px", marginLeft: "10px" }}
+                />
+              )}
+              <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
+            </>
+          }
+          extra={renderCancel(item)}
+        >
+          <PresentationItem md={6} label="Type">
+            <Tag>search download</Tag>
+          </PresentationItem>
+          <PresentationItem md={6} label="Dataset">
+            <NavLink to={{ pathname: `/dataset/${item?.datasetKey}/about` }}>
+              {item?.datasetTitle || item?.datasetKey}
+            </NavLink>
+          </PresentationItem>
+          <PresentationItem md={6} label="Search">
+            <div>
+              {Object.keys(search)
+                .filter((k) => !["sortBy", "content", "reverse"].includes(k))
+                .map((k) => (
+                  <Tag key={k}>{`${k}: ${[].concat(search[k]).join(", ")}`}</Tag>
+                ))}
+              <NavLink to={searchUrlOfJob(item?.datasetKey, item?.params)}>
+                Re-run search
+              </NavLink>
+            </div>
+          </PresentationItem>
+        </Card>
+      </List.Item>
+    );
+  };
+
   const renderDownload = (item) => (
     <List.Item key={item?.key}>
       <Card title={<>
@@ -135,26 +247,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
 
           <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
         </>}
-      extra={
-        item?.status === "running" || item?.status === "waiting" ? (
-          <Popconfirm
-            title="Cancel this download?"
-            okText="Yes, cancel"
-            cancelText="No"
-            okButtonProps={{ danger: true }}
-            onConfirm={() => cancelDownload(item?.key)}
-          >
-            <Button
-              danger
-              size="small"
-              icon={<StopOutlined />}
-              loading={cancelingKey === item?.key}
-            >
-              Cancel
-            </Button>
-          </Popconfirm>
-        ) : null
-      }>
+      extra={renderCancel(item)}>
         <>
             <div> <PresentationItem md={4} label="Request">
              {item.request && <div>{Object.keys(item.request).map((key) => (
@@ -268,7 +361,11 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
                     <Col>
                       <List
                         dataSource={downloads}
-                        renderItem={renderDownload}
+                        renderItem={(item) =>
+                          item?.kind === "search"
+                            ? renderSearchDownload(item)
+                            : renderDownload(item)
+                        }
                         split={false}
                       />
                     </Col>

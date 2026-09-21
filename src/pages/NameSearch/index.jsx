@@ -12,9 +12,22 @@ import {
   Empty,
   Button,
   Tooltip,
-  notification,
+  Tag,
+  App,
 } from "antd";
 import { UpOutlined, DownOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  getJob,
+  normalizeJob,
+  searchJobs,
+  cancelJob,
+  humanSize,
+  jobResultUrl,
+  isDone,
+  JOB_STATUS,
+  LIVE_STATUS,
+} from "../../api/job";
+import { downloadRequestOf, downloadParamsKey } from "./searchDownload";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import config from "../../config";
 import qs from "query-string";
@@ -203,6 +216,20 @@ const getColumns = (projectKey) => [
   },
 ];
 
+// Notifications render outside the router (antd's App wraps BrowserRouter), so a
+// NavLink in there crashes - navigate through the history shim instead.
+const DownloadsLink = () => (
+  <a
+    href="/user-profile/downloads"
+    onClick={(e) => {
+      e.preventDefault();
+      history.push({ pathname: "/user-profile/downloads" });
+    }}
+  >
+    your downloads
+  </a>
+);
+
 const NameSearchPage = ({
   rank,
   taxonomicstatus,
@@ -220,6 +247,8 @@ const NameSearchPage = ({
   user,
   addError,
 }) => {
+  // the static antd notification renders nothing under React 19, use the App context one
+  const { notification } = App.useApp();
   const isExternal = dataset?.origin === "external";
   // Build the facet list for a request based on what is currently visible.
   // Hidden filters cost ES time for facets nobody sees, so we skip them and
@@ -324,6 +353,10 @@ const NameSearchPage = ({
   });
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  // The SearchExport job submitted from this page, polled until it is done.
+  // paramsKey ties it to the search it was made for.
+  const [downloadJob, setDownloadJob] = useState(null);
+  const downloadPollRef = useRef(null);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
 
@@ -507,39 +540,67 @@ const NameSearchPage = ({
 
   // Downloading the result of a search is a background job on the backend: it streams the whole
   // result set out of Elasticsearch, so it is not bounded by the deep paging limit the table hits.
-  // The endpoint takes the very same request as the search, so we can hand it the current filters
-  // as a query string. Paging and facets are deliberately dropped - a download is always the
-  // complete result, and facets cost Elasticsearch work that nothing here would read.
-  const downloadSearch = async () => {
-    const downloadParams = { ...params };
-    delete downloadParams.facet;
-    delete downloadParams.limit;
-    delete downloadParams.offset;
-    if (!downloadParams.q) {
-      delete downloadParams.q;
+  // The endpoint takes the very same request as the search, but it only reads filters from the
+  // query string: q, content, type, sortBy etc. must go in the JSON body or they are silently
+  // dropped (see downloadRequestOf). The job is then polled so the button shows its progress until the archive
+  // is ready - without that the page looks idle and invites a second click.
+  const stopDownloadPolling = () => {
+    if (downloadPollRef.current) {
+      clearInterval(downloadPollRef.current);
+      downloadPollRef.current = null;
     }
+  };
+
+  const followDownload = (job, paramsKey) => {
+    stopDownloadPolling();
+    setDownloadJob({ ...job, paramsKey });
+    if (isDone(job.status)) return;
+    downloadPollRef.current = setInterval(async () => {
+      try {
+        const j = await getJob(job.key);
+        setDownloadJob({ ...j, paramsKey });
+        if (isDone(j.status)) stopDownloadPolling();
+      } catch (err) {
+        stopDownloadPolling();
+      }
+    }, config.pollingHeartBeat || 5000);
+  };
+
+  useEffect(() => stopDownloadPolling, []);
+
+  const downloadNotice = (title) =>
+    notification.info({
+      title,
+      description: (
+        <>
+          The download is being prepared in the background. The Download
+          button shows its progress, you will get an email with the link when
+          it is ready, and you can find it later under{" "}
+          <DownloadsLink />
+          .
+        </>
+      ),
+      duration: 0,
+      key: "search-download",
+    });
+
+  const downloadSearch = async () => {
+    const { query, body } = downloadRequestOf(params);
+    const paramsKey = downloadParamsKey(params);
     setDownloading(true);
     try {
       const res = await axios.post(
         `${config.dataApi}dataset/${datasetKey}/export/search?${qs.stringify(
-          downloadParams
-        )}`
+          query
+        )}`,
+        body
       );
-      notification.success({
-        message: "Download started",
-        description: (
-          <>
-            Your download is being prepared in the background. You will get an
-            email with the link when it is ready, or follow it on the{" "}
-            <NavLink to={{ pathname: "/jobs", search: "?job=SearchExport" }}>
-              jobs page
-            </NavLink>
-            .
-          </>
-        ),
-        duration: 8,
-        key: res?.data?.key,
-      });
+      const job = normalizeJob(res?.data);
+      followDownload(
+        { ...job, status: job?.status || JOB_STATUS.WAITING },
+        paramsKey
+      );
+      downloadNotice("Download started");
     } catch (err) {
       // A duplicate request and the per user job cap both come back as plain errors that
       // mean nothing to a curator, so say what actually happened.
@@ -547,22 +608,118 @@ const NameSearchPage = ({
       const msg = err?.response?.data?.message || "";
       if (status === 429) {
         notification.warning({
-          message: "Too many downloads",
-          description:
-            "You already have the maximum number of search downloads running. Wait for one to finish and try again.",
+          title: "Too many downloads",
+          description: (
+            <>
+              You already have the maximum number of search downloads running.
+              Wait for one to finish and try again, see{" "}
+              <DownloadsLink />
+              .
+            </>
+          ),
         });
       } else if (status === 400 && msg.includes("identical job")) {
-        notification.warning({
-          message: "Download already queued",
-          description:
-            "This exact search is already being prepared. Check the jobs page for its progress.",
-        });
+        // attach to the job that is already running for this search
+        const live = await searchJobs({
+          createdBy: user?.key,
+          datasetKey,
+          job: "SearchExport",
+          status: LIVE_STATUS,
+          limit: 1,
+        }).catch(() => null);
+        const job = live?.result?.[0];
+        if (job) {
+          followDownload(job, paramsKey);
+        }
+        downloadNotice("Download already being prepared");
       } else if (addError) {
         addError(err);
       }
     } finally {
       setDownloading(false);
     }
+  };
+
+  const cancelDownload = async () => {
+    if (!downloadJob?.key) return;
+    try {
+      const j = await cancelJob(downloadJob.key);
+      stopDownloadPolling();
+      setDownloadJob(j ? { ...j, paramsKey: downloadJob.paramsKey } : null);
+    } catch (err) {
+      if (addError) addError(err);
+    }
+  };
+
+  // The download of the search on screen, if one was submitted from this page.
+  const currentDownload =
+    downloadJob && downloadJob.paramsKey === downloadParamsKey(params)
+      ? downloadJob
+      : null;
+
+  const renderDownloadButton = () => {
+    const status = currentDownload?.status;
+    if (status === JOB_STATUS.FINISHED) {
+      return (
+        <Button
+          size="small"
+          type="primary"
+          icon={<DownloadOutlined />}
+          href={jobResultUrl(currentDownload.key)}
+        >
+          Download ready
+          {currentDownload.result?.size
+            ? ` (${humanSize(currentDownload.result.size)})`
+            : ""}
+        </Button>
+      );
+    }
+    if (status === JOB_STATUS.FAILED) {
+      return (
+        <>
+          <Tooltip title={currentDownload.errorMessage}>
+            <Tag color="error">Download failed</Tag>
+          </Tooltip>
+          <Button size="small" loading={downloading} onClick={downloadSearch}>
+            Retry
+          </Button>
+        </>
+      );
+    }
+    if (status && !isDone(status)) {
+      return (
+        <>
+          <Button size="small" loading disabled>
+            Preparing download…
+          </Button>
+          <Button size="small" type="link" onClick={cancelDownload}>
+            Cancel
+          </Button>
+        </>
+      );
+    }
+    return (
+      <Tooltip
+        title={
+          user
+            ? "Download all results of this search as a ColDP archive"
+            : "Please login to create downloads"
+        }
+      >
+        {/* span keeps the tooltip alive over a disabled button */}
+        <span>
+          <Button
+            size="small"
+            icon={<DownloadOutlined />}
+            loading={downloading}
+            disabled={!user}
+            onClick={downloadSearch}
+          >
+            Download
+          </Button>
+        </span>
+      </Tooltip>
+    );
   };
 
   // Mount: parse URL params. Only fetch when the URL already carries a query
@@ -1169,26 +1326,7 @@ const NameSearchPage = ({
             {/* The download endpoint is dataset scoped, so it has no equivalent in the
                 cross dataset search where datasetKey is undefined. */}
             {datasetKey && searched && pagination?.total > 0 && (
-              <Tooltip
-                title={
-                  user
-                    ? "Download all results of this search as a ColDP archive"
-                    : "Please login to create downloads"
-                }
-              >
-                {/* span keeps the tooltip alive over a disabled button */}
-                <span style={{ marginRight: 8 }}>
-                  <Button
-                    size="small"
-                    icon={<DownloadOutlined />}
-                    loading={downloading}
-                    disabled={!user}
-                    onClick={downloadSearch}
-                  >
-                    Download
-                  </Button>
-                </span>
-              </Tooltip>
+              <span style={{ marginRight: 8 }}>{renderDownloadButton()}</span>
             )}
             {pagination &&
               !isNaN(pagination.total) &&
