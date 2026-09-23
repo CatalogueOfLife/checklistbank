@@ -8,22 +8,28 @@ export const isCreatedByHomotypicGrouper = (obj) =>
   obj?.createdBy === HOMOTYPIC_GROUPER_USER_KEY;
 
 const description = (
-  <div style={{ maxWidth: "400px" }}>
+  <div style={{ maxWidth: "420px" }}>
     <p>
-      This relation was created automatically by the{" "}
-      <strong>homotypic grouping</strong> algorithm, which is standardly run
-      when building extended releases (XR).
+      This relation was inferred by the <strong>homotypic grouping</strong>{" "}
+      algorithm, which runs over every family when an extended release (XR) is
+      built. It was not asserted by a source dataset, even if both names
+      already existed in one.
     </p>
     <p>
-      Within a family, names are compared by their terminal epithet (ignoring
-      gender changes of the ending) and their authorship. A name whose
-      authorship appears in parentheses as the basionym author of another name
-      with the same epithet is considered its basionym, and the names are
-      grouped as homotypic.
+      All species-group names of a family are grouped by their normalised
+      terminal epithet, tolerating gender endings and minor spelling
+      variants. Within each epithet the authorships are compared: a
+      combination whose bracketed author matches the author of an original
+      name is treated as a recombination of that basionym. From each group
+      the algorithm creates <em>basionym</em>, <em>homotypic</em>,{" "}
+      <em>based on</em> and <em>spelling correction</em> relations, and keeps
+      only one accepted name per group.
     </p>
     <p style={{ marginBottom: 0 }}>
-      The relation is therefore inferred and not asserted by any source
-      dataset.
+      The grouping relies on names and authorship alone. Where an author
+      published the same epithet in several genera of one family, the
+      grouping can be wrong. Groups that could not be resolved are flagged
+      with the issue <em>homotypic consolidation unresolved</em>.
     </p>
   </div>
 );

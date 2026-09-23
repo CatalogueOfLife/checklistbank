@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PresentationItem from "../../components/PresentationItem";
 import _ from "lodash";
+import MergedDataBadge from "../../components/MergedDataBadge";
 import HomotypicGroupingBadge, {
   isCreatedByHomotypicGrouper,
 } from "../../components/HomotypicGroupingBadge";
@@ -92,7 +93,17 @@ const NameRelations = ({ data, projectKey, datasetKey, md, reverse }) =>
         helpText={r.note}
       >
         <>
-          {isCreatedByHomotypicGrouper(r) && <HomotypicGroupingBadge />}
+          {isCreatedByHomotypicGrouper(r) ? (
+            <HomotypicGroupingBadge />
+          ) : (
+            r?.merged && (
+              <MergedDataBadge
+                createdBy={r?.createdBy}
+                datasetKey={r?.datasetKey}
+                verbatimSourceKey={r?.verbatimSourceKey}
+              />
+            )
+          )}
           <NavLink
             to={{
               pathname:
