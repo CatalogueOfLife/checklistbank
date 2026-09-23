@@ -2,6 +2,9 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import PresentationItem from "../../components/PresentationItem";
 import _ from "lodash";
+import HomotypicGroupingBadge, {
+  isCreatedByHomotypicGrouper,
+} from "../../components/HomotypicGroupingBadge";
 const typeMap = {
   "spelling correction": "of",
   "based on": "",
@@ -88,35 +91,38 @@ const NameRelations = ({ data, projectKey, datasetKey, md, reverse }) =>
         label={getLabel(r, reverse)}
         helpText={r.note}
       >
-        <NavLink
-          to={{
-            pathname:
-              datasetKey === projectKey
-                ? `/project/${projectKey}/${linkEntity}/${encodeURIComponent(
-                    id
-                  )}`
-                : `/dataset/${datasetKey}/${linkEntity}/${encodeURIComponent(
-                    id
-                  )}`,
-          }}
-          end
-        >
-          {/*<span dangerouslySetInnerHTML={{ __html: r.relatedName.labelHtml }}></span> */}
-          {!reverse && (
-            <span
-              dangerouslySetInnerHTML={{
-                __html: r.relatedName.labelHtml,
-              }}
-            />
-          )}
-          {reverse && (
-            <span
-              dangerouslySetInnerHTML={{
-                __html: r.name.labelHtml,
-              }}
-            />
-          )}
-        </NavLink>
+        <>
+          {isCreatedByHomotypicGrouper(r) && <HomotypicGroupingBadge />}
+          <NavLink
+            to={{
+              pathname:
+                datasetKey === projectKey
+                  ? `/project/${projectKey}/${linkEntity}/${encodeURIComponent(
+                      id
+                    )}`
+                  : `/dataset/${datasetKey}/${linkEntity}/${encodeURIComponent(
+                      id
+                    )}`,
+            }}
+            end
+          >
+            {/*<span dangerouslySetInnerHTML={{ __html: r.relatedName.labelHtml }}></span> */}
+            {!reverse && (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: r.relatedName.labelHtml,
+                }}
+              />
+            )}
+            {reverse && (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: r.name.labelHtml,
+                }}
+              />
+            )}
+          </NavLink>
+        </>
       </PresentationItem>
     );
   });

@@ -3,8 +3,9 @@ import { Tag, Popover } from "antd";
 import axios from "axios";
 import config from "../config";
 import { NavLink } from "react-router-dom";
+import { HOMOTYPIC_GROUPER_USER_KEY } from "./HomotypicGroupingBadge";
 const createdByAlgorithm = {
-  14: "The data was created by the homotypic grouping algorithm",
+  [HOMOTYPIC_GROUPER_USER_KEY]: "The data was created by the homotypic grouping algorithm",
 };
 
 // Backend currently only emits NameUsage, Name or Reference as sourceEntity.
