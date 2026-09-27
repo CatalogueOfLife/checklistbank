@@ -8,6 +8,7 @@ import {
   LoadingOutlined,
   DiffOutlined,
   FileTextOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 
@@ -38,7 +39,50 @@ const getPreviousFinishedImport = (importHistory, index) => {
   );
 };
 
-const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
+export const ReleaseLabel = ({ release }) =>
+  `${release.alias || release.title || release.key}${
+    release.version ? ` [${release.version}]` : ""
+  }`;
+
+// A project attempt links to the release dataset it produced rather than to
+// its archive, which is not kept for releases.
+const ArchiveOrReleaseLink = ({ h, origin, releasesByAttempt }) => {
+  if (origin === "project") {
+    const release = releasesByAttempt?.[h.attempt];
+    return release ? (
+      <>
+        <Tooltip
+          title={<>Release <ReleaseLabel release={release} /></>}
+          placement="right"
+        >
+          <NavLink to={`/dataset/${release.key}`}>
+            <DatabaseOutlined />
+          </NavLink>
+        </Tooltip>{" "}
+      </>
+    ) : null;
+  }
+  return (
+    <>
+      <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
+        <a
+          href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`}
+          target="_blank"
+        >
+          <FileZipOutlined />
+        </a>{" "}
+      </Tooltip>{" "}
+    </>
+  );
+};
+
+const ImportHistory = ({
+  importHistory,
+  attempt,
+  projectKey,
+  origin,
+  releasesByAttempt,
+}) => (
   <Timeline
     items={importHistory.map((h, index) => ({
       key: h.attempt,
@@ -78,14 +122,11 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
                 <span style={{ fontSize: "10px" }}>
                   {`${formatTime(h.started, "lll")}`}{" "}
                 </span>{" "}
-                <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
-                  <a
-                    href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`}
-                    target="_blank"
-                  >
-                    <FileZipOutlined />
-                  </a>{" "}
-                </Tooltip>{" "}
+                <ArchiveOrReleaseLink
+                  h={h}
+                  origin={origin}
+                  releasesByAttempt={releasesByAttempt}
+                />
                 <Tooltip title={`TextTree #${h.attempt}`} placement="right">
                   <a
                     href={`${config.dataApi}dataset/${h.datasetKey}/import/${h.attempt}/tree`}
@@ -152,14 +193,11 @@ const ImportHistory = ({ importHistory, attempt, projectKey, origin }) => (
               >
                 <strong>{`${h.status}`}</strong>
               </NavLink>{" "}
-              <Tooltip title={`Data Archive #${h.attempt}`} placement="right">
-                <a
-                  href={`${config.dataApi}dataset/${h.datasetKey}/archive.zip?attempt=${h.attempt}`}
-                  target="_blank"
-                >
-                  <FileZipOutlined />
-                </a>{" "}
-              </Tooltip>
+              <ArchiveOrReleaseLink
+                h={h}
+                origin={origin}
+                releasesByAttempt={releasesByAttempt}
+              />
               <Tooltip title="Kibana logs" placement="right">
                 <a href={kibanaQuery(h.datasetKey, h.attempt)} target="_blank">
                   <CodeOutlined />

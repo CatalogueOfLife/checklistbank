@@ -12,7 +12,7 @@ import ImportMetrics from "../../components/ImportMetrics";
 import { DownloadOutlined } from "@ant-design/icons";
 
 import PageContent from "../../components/PageContent";
-import ImportHistory from "./ImportHistory";
+import ImportHistory, { ReleaseLabel } from "./ImportHistory";
 import withContext from "../../components/hoc/withContext";
 import withRouter from "../../withRouter";
 import Auth from "../../components/Auth";
@@ -53,6 +53,10 @@ const DatasetImportMetrics = (props) => {
   const [hasImportDiff, setHasImportDiff] = useState(false);
   const [hasNoImports, setHasNoImports] = useState(false);
   const [error, setError] = useState(null);
+  // Release datasets of a project keyed by the project import attempt that
+  // produced them. The archive of a release attempt is not kept, so the release
+  // dataset is what an attempt links to instead.
+  const [releasesByAttempt, setReleasesByAttempt] = useState({});
 
   const timerRef = useRef(null);
 
@@ -139,6 +143,25 @@ const DatasetImportMetrics = (props) => {
     getData_(attempt);
   }, [datasetKey, attempt]);
 
+  const isProject = dataset?.origin === "project";
+
+  useEffect(() => {
+    if (!isProject || Number(dataset?.key) !== Number(datasetKey)) {
+      setReleasesByAttempt({});
+      return;
+    }
+    axios(`${config.dataApi}dataset?releasedFrom=${datasetKey}&limit=1000`)
+      .then((res) => {
+        // Legacy releases were imported as external datasets whose attempt
+        // is their own, not the project's - only real releases map back.
+        const releases = (res?.data?.result || []).filter((d) =>
+          ["release", "xrelease"].includes(d.origin)
+        );
+        setReleasesByAttempt(_.keyBy(releases, "attempt"));
+      })
+      .catch(() => setReleasesByAttempt({}));
+  }, [datasetKey, isProject, dataset?.key, user?.key]);
+
   // Stop polling on unmount.
   useEffect(() => {
     return () => {
@@ -208,6 +231,7 @@ const DatasetImportMetrics = (props) => {
           <ImportHistory
             origin={dataset?.origin}
             importHistory={importHistory}
+            releasesByAttempt={releasesByAttempt}
             attempt={attempt}
             projectKey={projectKey}
           />
@@ -281,20 +305,30 @@ const DatasetImportMetrics = (props) => {
                 </a>
               )}
             </PresentationItem>
-            <PresentationItem label="Archive">
-              {_.get(data, "attempt") && (
-                <a
-                  href={`${
-                    config.dataApi
-                  }dataset/${datasetKey}/archive?attempt=${_.get(
-                    data,
-                    "attempt"
-                  )}`}
-                >
-                  <DownloadOutlined />
-                </a>
-              )}
-            </PresentationItem>
+            {isProject ? (
+              <PresentationItem label="Release">
+                {releasesByAttempt[data.attempt] && (
+                  <NavLink to={`/dataset/${releasesByAttempt[data.attempt].key}`}>
+                    <ReleaseLabel release={releasesByAttempt[data.attempt]} />
+                  </NavLink>
+                )}
+              </PresentationItem>
+            ) : (
+              <PresentationItem label="Archive">
+                {_.get(data, "attempt") && (
+                  <a
+                    href={`${
+                      config.dataApi
+                    }dataset/${datasetKey}/archive?attempt=${_.get(
+                      data,
+                      "attempt"
+                    )}`}
+                  >
+                    <DownloadOutlined />
+                  </a>
+                )}
+              </PresentationItem>
+            )}
             <PresentationItem label="Upload">
               <BooleanValue value={_.get(data, "upload")}></BooleanValue>
             </PresentationItem>
