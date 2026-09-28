@@ -5,6 +5,7 @@ import ReferencePopover from "../project/ProjectReferences/ReferencePopover";
 import MergedDataBadge from "../../components/MergedDataBadge";
 import ShowMoreToggle from "./ShowMoreToggle";
 import DistributionsMap from "./DistributionsMap";
+import { isWebglSupported } from "./DistributionsMap/webgl";
 
 const TOP_N = 10;
 
@@ -165,7 +166,9 @@ const TableView = ({ datasetKey, data }) => {
 const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) => {
   const mappable = data.filter(isMappable);
   const baseUnmappable = data.length - mappable.length;
-  const [view, setView] = useState("map");
+  const [view, setView] = useState(() =>
+    isWebglSupported() ? "map" : "table"
+  );
   const [fetchFailures, setFetchFailures] = useState(0);
 
   const allMappableFailed =
@@ -209,6 +212,7 @@ const DistributionsTable = ({ datasetKey, data, style, focalTaxon, rankOrder }) 
             datasetKey={datasetKey}
             focalTaxon={focalTaxon}
             rankOrder={rankOrder}
+            onShowTable={() => setView("table")}
           />
           {unmappable > 0 && (
             <div style={{ marginTop: 6 }}>
