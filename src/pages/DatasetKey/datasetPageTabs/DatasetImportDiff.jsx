@@ -69,7 +69,9 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
   };
 
   const getHistory = () => {
-    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=20`)
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/import?state=finished&limit=1000`
+    )
       .then((res) => {
         const history_ = res.data.filter((e) => e.status === "finished");
         setImportHistory(history_);
@@ -139,6 +141,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
               }
             }}
             showSearch
+            optionFilterProp="label"
             options={importHistory.map((i) => ({
               key: i.attempt,
               value: i.attempt,
@@ -165,6 +168,7 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
               }
             }}
             showSearch
+            optionFilterProp="label"
             options={importHistory.map((i) => ({
               key: i.attempt,
               value: i.attempt,
