@@ -14,8 +14,8 @@ out of the box with OpenRefine and any other compatible client:
 - [Parser reconciliation](#parser-reconciliation) — normalise and parse columns of controlled
   vocabularies, scientific names, geological time units, taxonomic groups and area identifiers.
 
-All services are served from the API host `https://api.checklistbank.org`. The dev environment mirrors
-them at `https://api.dev.checklistbank.org`.
+All services are served from the API host `https://api.checklistbank.org`. The test environment mirrors
+them at `https://api.test.checklistbank.org`.
 
 ### Adding a service in OpenRefine
 

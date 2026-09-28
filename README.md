@@ -7,7 +7,8 @@ The Catalogue of Life ChecklistBank is an environment to place taxonomic and nom
 The UI allows public exploring of all data in ChecklistBank. It is also a tool for assembling taxonomic checklists from multiple sources for authorized users. Source checklists can be imported in several formats and quality checks are applied during import. ChecklistBank includes tools for duplicate detection and allows editorial decisions to be recorded and applied repeatedly when synchronising data from sources to an assembled checklist.
 
 Production UI: <https://www.checklistbank.org/>
-Dev UI: <https://www.dev.checklistbank.org/>
+Test UI: <https://www.test.checklistbank.org/> (user acceptance testing and playing around)
+Dev UI: <https://www.dev.checklistbank.org/> (software testing only)
 
 ## Tech stack
 
@@ -48,6 +49,7 @@ The page hot-reloads on file change.
 | `http://localhost:3000`        | **production** (`api.checklistbank.org`) |
 | `http://127.0.0.1:3000`        | **dev** (`api.dev.checklistbank.org`)    |
 | `www.checklistbank.org`        | production               |
+| `*test.checklistbank.org`      | test (`api.test.checklistbank.org`) |
 | anything else                  | dev                      |
 
 The `localhost` → production mapping is intentional so the local UI can talk to the live database for quick exploration, but be careful: a logged-in editor running `npm start` and visiting `http://localhost:3000` is editing **production data**. For day-to-day development against the dev backend, use `http://127.0.0.1:3000`.

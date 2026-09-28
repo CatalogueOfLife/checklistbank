@@ -2,7 +2,7 @@
 
 In addition to the code generated [Swagger API documentation](https://api.checklistbank.org) we collect here examples of how to use the ChecklistBank (CLB) API for common use cases.
 The ChecklistBank API is accessible at https://api.checklistbank.org,
-but we also provide a development installation for testing: http://api.dev.checklistbank.org
+but we also provide a test installation for trying things out: https://api.test.checklistbank.org
 
 We invite you to use our [mailinglist](https://lists.gbif.org/postorius/lists/col-users.lists.gbif.org/) to discuss ChecklistBank and it's API. We also use this list to infrequently announce important COL and API news.
 
@@ -76,7 +76,7 @@ Writing data often requires authentication and datasets can be `private`, i.e. a
 
 ChecklistBank shares user accounts with GBIF, so you need to have a [GBIF account]({{GBIF_URL}}user/profile) to authenticate to the CLB API.
 
-The **development environment is separate**: `api.dev.checklistbank.org` is linked to the GBIF development registry at [gbif-test.org](https://www.gbif-test.org), not to production GBIF. A production GBIF account will not work against dev — you need to register a separate account at [www.gbif-test.org/user/profile](https://www.gbif-test.org/user/profile) and then log in once at [dev.checklistbank.org](https://dev.checklistbank.org) with those credentials.
+The **test environment is separate**: `api.test.checklistbank.org` is linked to the GBIF development registry at [gbif-test.org](https://www.gbif-test.org), not to production GBIF. A production GBIF account will not work against test — you need to register a separate account at [www.gbif-test.org/user/profile](https://www.gbif-test.org/user/profile) and then log in once at [www.test.checklistbank.org](https://www.test.checklistbank.org) with those credentials.
 
 Authentication in the API uses simple [BasicAuth](https://en.wikipedia.org/wiki/Basic_access_authentication), but mostly for user interfaces we also provide [JWT](https://jwt.io/introduction).
 Note that BasicAuth in itself is not very secure, so please use it always with the _https_ protocol.
