@@ -118,7 +118,7 @@
 }
 
 /* markdown tables - space them from the following text and keep short
-   identifiers in the first column (e.g. clb:taxGroupFromName) on one line */
+   identifiers in the first column (e.g. clb:taxGroup) on one line */
 .md-content table {
   margin-bottom: 1em;
 }

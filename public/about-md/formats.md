@@ -34,7 +34,6 @@ In a few places ChecklistBank adds its own terms with the `clb:` prefix and the 
 | Column | Found in | Description |
 | --- | --- | --- |
 | `clb:merged` | last column of every data file in **extended** ColDP and DwC-A downloads and in name search downloads | Boolean flag for records in projects and releases. `true` if the record was added by a sector in merge mode or was created by ChecklistBank when grouping homotypic names. `false` if it came from a sector in any other mode. Empty for records that do not belong to any sector, e.g. records created by an editor. |
-| `clb:taxGroupFromName` | **simple** ColDP and DwC-A downloads with the classification box checked | The taxonomic group indicated by the scientific name alone, e.g. `insects` for _Insecta_. Only names that clearly belong to a single group get a value. |
 | `clb:taxGroup` | **simple** ColDP and DwC-A downloads with the classification box checked | The taxonomic group of the record, based on the name, its classification, typical name endings for some ranks and the style of the authorship. Empty if the group could not be determined. |
 
 The taxonomic group values come from the [taxGroup vocabulary](https://api.checklistbank.org/vocab/taxgroup), written in lower case.
