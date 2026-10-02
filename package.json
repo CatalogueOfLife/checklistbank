@@ -8,15 +8,15 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.3",
+    "@highcharts/react": "^5.0.1",
     "antd": "^6.4.2",
     "axios": "^1.20.0",
     "base-64": "^0.1.0",
-    "csvtojson": "^2.0.10",
+    "csvtojson": "^2.0.14",
     "d3": "^7.9.0",
     "dataloader": "^1.4.0",
     "dayjs": "^1.11.20",
     "dompurify": "^3.4.14",
-    "@highcharts/react": "^5.0.1",
     "highcharts": "^12.6.0",
     "js-base64": "^3.7.5",
     "linkify-html": "^3.0.5",
@@ -37,15 +37,15 @@
     "react-icons": "^4.4.0",
     "react-linkify": "^1.0.0-alpha",
     "react-resizable": "^4.0.1",
-    "react-router-dom": "^6.30.3"
+    "react-router-dom": "^6.30.6"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2",
-    "gzipper": "^4.3.0",
+    "gzipper": "^8.3.0",
     "jsdom": "^26.0.0",
-    "vite": "^8.0.14",
+    "vite": "^8.3.2",
     "vite-plugin-node-polyfills": "^0.28.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "start": "vite",
