@@ -116,3 +116,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* markdown tables - space them from the following text and keep short
+   identifiers in the first column (e.g. clb:taxGroupFromName) on one line */
+.md-content table {
+  margin-bottom: 1em;
+}
+
+.md-content th,
+.md-content td {
+  padding: 4px 12px 4px 0;
+  vertical-align: top;
+}
+
+.md-content td:first-child code {
+  white-space: nowrap;
+}

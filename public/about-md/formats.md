@@ -10,22 +10,48 @@ ChecklistBank supports a variety of formats for both uploads and downloads.
 - [Newick](#newick)
 - [DOT](#dot)
 
+See also [ChecklistBank specific columns](#checklistbank-specific-columns) for the few non standard columns found in downloads.
+
 ## Data Content
 
 For downloads most formats support 2 flavors, a `simple` and an `extended` version.
-To save us space and processing, ChecklistBank defaults to the simple flavor unless the extended was speficially requested.
+To save us space and processing, ChecklistBank defaults to the simple flavor unless the extended was specifically requested.
 The simple flavor includes the classification in a parent-child form and does not include a flat, denormalised classification.
 For an additional flat classification to be included you can turn on the classification box.
+The simple ColDP and DwC-A downloads then consist of a single `dataset-{key}.tsv` file with one row per name usage and a column for each higher rank.
 
 The `simple` downloads only include very basic information: the scientific name, authorship, rank, status, code, the next higher parent and the extinct flag.
 
 The `extended` format exports all available information including distributions, vernacular names, type material, treatment documents, references, etc.
 It is rather resource intensive to create, so please only use it when needed.
 
+## ChecklistBank specific columns
+
+Downloads use the terms defined by the chosen format.
+The header row gives every column with its namespace prefix, e.g. `col:ID` or `col:scientificName` in ColDP and `dwc:taxonID` in DwC-A.
+In a few places ChecklistBank adds its own terms with the `clb:` prefix and the namespace `http://rs.checklistbank.org/terms/`:
+
+| Column | Found in | Description |
+| --- | --- | --- |
+| `clb:merged` | last column of every data file in **extended** ColDP and DwC-A downloads and in name search downloads | Boolean flag for records in projects and releases. `true` if the record was added by a sector in merge mode or was created by ChecklistBank when grouping homotypic names. `false` if it came from a sector in any other mode. Empty for records that do not belong to any sector, e.g. records created by an editor. |
+| `clb:taxGroupFromName` | **simple** ColDP and DwC-A downloads with the classification box checked | The taxonomic group indicated by the scientific name alone, e.g. `insects` for _Insecta_. Only names that clearly belong to a single group get a value. |
+| `clb:taxGroup` | **simple** ColDP and DwC-A downloads with the classification box checked | The taxonomic group of the record, based on the name, its classification, typical name endings for some ranks and the style of the authorship. Empty if the group could not be determined. |
+
+The taxonomic group values come from the [taxGroup vocabulary](https://api.checklistbank.org/vocab/taxgroup), written in lower case.
+There are no other `clb:` columns in ChecklistBank downloads.
+
+Besides the data files, an extended download also includes:
+
+- `metadata.yaml` (ColDP) or `eml.xml` (DwC-A) with the dataset metadata
+- `logo.png` if the dataset has a logo
+- metadata for each source dataset of a project or release, in the `source` folder (ColDP) or `dataset` folder (DwC-A)
+- for ColDP, all references also as `reference.bib` (BibTeX), `reference.json` and `reference.jsonl` (CSL-JSON)
+- for ColDP, a `treatments` folder with one file per treatment document, if the dataset has treatments
+
 ## Catalogue of Life Data Package (ColDP)
 
 The recommended exchange format for submitting data to and downloading data from ChecklistBank
-is the [Catalogue of Life Data Package](hhttps://catalogueoflife.github.io/coldp) (ColDP),
+is the [Catalogue of Life Data Package](https://catalogueoflife.github.io/coldp) (ColDP),
 a tabular text format with a standard set of files and columns and it is inspired by [Frictionless Data](https://frictionlessdata.io/).
 The format is a single ZIP archive that bundles various delimited text files:
 
