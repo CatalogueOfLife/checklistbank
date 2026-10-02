@@ -14,7 +14,7 @@
   },
   {
     "scope": "vplants",
-    "title": "vPlants ID",
+    "title": "vPlants",
     "link": "https://vplants.org",
     "resolver": "https://vplants.org/portal/taxa/index.php?taxauthid=1&taxon={id}&cl=3503",
     "regex": "^[1-9]\\d*$",
@@ -22,7 +22,7 @@
   },
   {
     "scope": "gpnotebook",
-    "title": "GPnotebook ID",
+    "title": "GPnotebook",
     "link": "https://www.gpnotebook.co.uk",
     "resolver": "https://www.gpnotebook.co.uk/simplepage.cfm?ID={id}",
     "regex": "^-?\\d+$",
@@ -30,7 +30,7 @@
   },
   {
     "scope": "fauna-europaea",
-    "title": "Fauna Europaea ID",
+    "title": "Fauna Europaea",
     "link": "http://www.eu-nomen.eu",
     "resolver": "http://www.eu-nomen.eu/portal/taxon.php?GUID=urn:lsid:faunaeur.org:taxname:{id}",
     "regex": "^(\\d{1,6}|)$",
@@ -38,21 +38,21 @@
   },
   {
     "scope": "ion",
-    "title": "Index to Organism Names ID",
+    "title": "Index to Organism Names",
     "link": "http://www.organismnames.com",
     "resolver": "http://www.organismnames.com/details.htm?lsid={id}",
     "wikidataProperty": "P10420"
   },
   {
     "scope": "japan-reddata",
-    "title": "Search System of Japanese Red Data ID",
+    "title": "Search System of Japanese Red Data",
     "link": "http://jpnrdb.com",
     "resolver": "http://jpnrdb.com/database/taxon/detail/{id}",
     "wikidataProperty": "P12183"
   },
   {
     "scope": "mantodea-sf",
-    "title": "Mantodea Species File ID",
+    "title": "Mantodea Species File",
     "link": "http://mantodea.speciesfile.org",
     "resolver": "http://mantodea.speciesfile.org/Common/basic/Taxa.aspx?TaxonNameID={id}",
     "regex": "^[1-9]\\d*$",
@@ -60,7 +60,7 @@
   },
   {
     "scope": "pubmed",
-    "title": "PubMed publication ID",
+    "title": "PubMed publication",
     "link": "https://pubmed.ncbi.nlm.nih.gov",
     "resolver": "https://pubmed.ncbi.nlm.nih.gov/{id}",
     "regex": "^([1-4]\\d{7}|[1-9]\\d{0,6})$",
@@ -68,7 +68,7 @@
   },
   {
     "scope": "flora-china",
-    "title": "Flora of China ID",
+    "title": "Flora of China",
     "link": "http://www.efloras.org",
     "resolver": "http://www.efloras.org/florataxon.aspx?flora_id=2&taxon_id={id}",
     "regex": "^[1-9]\\d{4,9}$",
@@ -76,14 +76,14 @@
   },
   {
     "scope": "nparks",
-    "title": "NParks Flora & Fauna Web ID",
+    "title": "NParks Flora & Fauna Web",
     "link": "https://www.nparks.gov.sg",
     "resolver": "https://www.nparks.gov.sg/florafaunaweb/{id}",
     "wikidataProperty": "P9243"
   },
   {
     "scope": "hypericum-myspecies",
-    "title": "Hypericum MySpecies ID",
+    "title": "Hypericum MySpecies",
     "link": "https://hypericum.myspecies.info",
     "resolver": "https://hypericum.myspecies.info/taxonomy/term/{id}",
     "regex": "^[1-9]\\d*$",
@@ -91,7 +91,7 @@
   },
   {
     "scope": "oregonflora-images",
-    "title": "Oregon Flora Image Project ID",
+    "title": "Oregon Flora Image Project",
     "link": "http://www.botany.hawaii.edu",
     "resolver": "http://www.botany.hawaii.edu/faculty/carr/ofp/{id}.htm",
     "regex": "^[a-z]{3}_[a-z]{3,7}[\\_]{0,1}[a-z]{0,3}$",
@@ -99,7 +99,7 @@
   },
   {
     "scope": "seinet",
-    "title": "SEINet ID",
+    "title": "SEINet",
     "link": "https://swbiodiversity.org",
     "resolver": "https://swbiodiversity.org/seinet/taxa/index.php?taxon={id}",
     "regex": "^[1-9]\\d*$",
@@ -107,7 +107,7 @@
   },
   {
     "scope": "oiseaux",
-    "title": "Oiseaux.net ID",
+    "title": "Oiseaux.net",
     "link": "https://www.oiseaux.net",
     "resolver": "https://www.oiseaux.net/oiseaux/{id}.html",
     "regex": "^[a-z]+((\\.|-)[a-z]+)*$",
@@ -130,7 +130,7 @@
   },
   {
     "scope": "plantzafrica",
-    "title": "PlantZAfrica Plants of the Week ID",
+    "title": "PlantZAfrica Plants of the Week",
     "link": "https://pza.sanbi.org",
     "resolver": "https://pza.sanbi.org/{id}",
     "regex": "^[a-z0-9-]+$",
@@ -138,7 +138,7 @@
   },
   {
     "scope": "calflora",
-    "title": "Calflora ID",
+    "title": "Calflora ",
     "link": "https://www.calflora.org",
     "resolver": "https://www.calflora.org/cgi-bin/species_query.cgi?where-calrecnum={id}",
     "regex": "^[0-9]+$",
@@ -146,7 +146,7 @@
   },
   {
     "scope": "dermaptera-sf",
-    "title": "Dermaptera Species File taxon ID",
+    "title": "Dermaptera Species File",
     "link": "https://dermaptera.speciesfile.org",
     "resolver": "https://dermaptera.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -154,7 +154,7 @@
   },
   {
     "scope": "inat",
-    "title": "iNaturalist Taxon",
+    "title": "iNaturalist",
     "link": "https://www.inaturalist.org",
     "resolver": "https://www.inaturalist.org/taxa/{id}",
     "example": "52808",
@@ -163,7 +163,7 @@
   },
   {
     "scope": "coreoidea-sf",
-    "title": "Coreoidea Species File ID",
+    "title": "Coreoidea Species File",
     "link": "http://coreoidea.speciesfile.org",
     "resolver": "http://coreoidea.speciesfile.org/Common/basic/Taxa.aspx?TaxonNameID={id}",
     "regex": "^[1-9]\\d{6}$",
@@ -171,7 +171,7 @@
   },
   {
     "scope": "nt-flora",
-    "title": "NT Flora ID",
+    "title": "NT Flora",
     "link": "https://eflora.nt.gov.au",
     "resolver": "https://eflora.nt.gov.au/factsheet?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -179,14 +179,14 @@
   },
   {
     "scope": "flora-israel",
-    "title": "Flora of Israel Online plant ID",
+    "title": "Flora of Israel Online plant",
     "link": "http://flora.org.il",
     "resolver": "http://flora.org.il/plants/{id}",
     "wikidataProperty": "P3795"
   },
   {
     "scope": "watson-dallwitz",
-    "title": "Watson & Dallwitz family ID",
+    "title": "Watson & Dallwitz family",
     "link": "https://delta-intkey.com",
     "resolver": "https://delta-intkey.com/angio/www/{id}.htm",
     "regex": "^[a-z]{6,8}$",
@@ -210,28 +210,28 @@
   },
   {
     "scope": "tela-botanica",
-    "title": "Tela Botanica ID",
+    "title": "Tela Botanica",
     "link": "https://referentiels.tela-botanica.org",
     "resolver": "https://referentiels.tela-botanica.org/referentiel/index.php?ref=bdtfx&module=FicheTaxon&num_nom={id}",
     "wikidataProperty": "P3105"
   },
   {
     "scope": "fao-genetic-resource",
-    "title": "FAO 2007 genetic resource ID",
+    "title": "FAO 2007 genetic resource",
     "link": "http://www.fao.org",
     "resolver": "http://www.fao.org/docrep/010/a1250e/a1250e00.htm/{id}",
     "wikidataProperty": "P3380"
   },
   {
     "scope": "pladias",
-    "title": "Pladias ID",
+    "title": "Pladias",
     "link": "https://pladias.cz",
     "resolver": "https://pladias.cz/taxon/taxonid/{id}",
     "wikidataProperty": "P9741"
   },
   {
     "scope": "cites",
-    "title": "CITES Species+ ID",
+    "title": "CITES Species+ ",
     "link": "https://speciesplus.net",
     "resolver": "https://speciesplus.net/#/taxon_concepts/{id}",
     "regex": "^\\d{1,6}$",
@@ -239,7 +239,7 @@
   },
   {
     "scope": "taibnet",
-    "title": "TaiBNET ID",
+    "title": "TaiBNET",
     "link": "https://taibnet.sinica.edu.tw",
     "resolver": "https://taibnet.sinica.edu.tw/chi/taibnet_species_detail.php?name_code={id}",
     "regex": "^([1-9]\\d{5})$",
@@ -247,7 +247,7 @@
   },
   {
     "scope": "ciqual",
-    "title": "CIQUAL2017 ID",
+    "title": "CIQUAL2017",
     "link": "https://ciqual.anses.fr",
     "resolver": "https://ciqual.anses.fr/#/aliments/{id}",
     "regex": "^[1-9]\\d*$",
@@ -255,7 +255,7 @@
   },
   {
     "scope": "virginia-flora",
-    "title": "Digital Atlas of the Virginia Flora ID",
+    "title": "Digital Atlas of the Virginia Flora",
     "link": "https://vaplantatlas.org",
     "resolver": "https://vaplantatlas.org/index.php?do=plant&plant={id}",
     "regex": "^[1-9][0-9]{0,3}$",
@@ -263,7 +263,7 @@
   },
   {
     "scope": "kpu-plants",
-    "title": "KPU Plant Database ID",
+    "title": "KPU Plant Database",
     "link": "https://plantdatabase.kpu.ca",
     "resolver": "https://plantdatabase.kpu.ca/Plant/{id}",
     "regex": "^[a-z]{4}$",
@@ -271,7 +271,7 @@
   },
   {
     "scope": "cockroach-sf",
-    "title": "Cockroach Species File taxon ID (new)",
+    "title": "Cockroach Species File",
     "link": "https://cockroach.speciesfile.org",
     "resolver": "https://cockroach.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -279,14 +279,14 @@
   },
   {
     "scope": "flora-australia",
-    "title": "Flora of Australia ID (new)",
+    "title": "Flora of Australia",
     "link": "https://profiles.ala.org.au",
     "resolver": "https://profiles.ala.org.au/opus/foa/profile/{id}",
     "wikidataProperty": "P6756"
   },
   {
     "scope": "afromoths",
-    "title": "AfroMoths ID",
+    "title": "AfroMoths ",
     "link": "https://www.afromoths.net",
     "resolver": "https://www.afromoths.net/species_by_code/{id}",
     "regex": "^[A-Z0-9]{8}$",
@@ -294,14 +294,14 @@
   },
   {
     "scope": "danish-redlist",
-    "title": "Danish 2010 redlist ID",
+    "title": "Danish 2010 redlist",
     "link": "https://roedliste.au.dk",
     "resolver": "https://roedliste.au.dk/data.asp?ID={id}",
     "wikidataProperty": "P9576"
   },
   {
     "scope": "gt-ibma",
-    "title": "GT IBMA ID",
+    "title": "GT IBMA",
     "link": "http://www.gt-ibma.eu",
     "resolver": "http://www.gt-ibma.eu/espece/{id}/",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -309,7 +309,7 @@
   },
   {
     "scope": "washington-flora",
-    "title": "Washington Flora Checklist ID",
+    "title": "Washington Flora Checklist",
     "link": "https://biology.burke.washington.edu",
     "resolver": "https://biology.burke.washington.edu/herbarium/waflora/checklist.php?Taxon=wd&ID={id}",
     "wikidataProperty": "P9408"
@@ -324,7 +324,7 @@
   },
   {
     "scope": "nas-usgs",
-    "title": "NAS ID",
+    "title": "NAS",
     "link": "https://nas.er.usgs.gov",
     "resolver": "https://nas.er.usgs.gov/queries/FactSheet.aspx?speciesID={id}",
     "regex": "^[1-9]\\d*$",
@@ -332,14 +332,14 @@
   },
   {
     "scope": "agrovoc",
-    "title": "AGROVOC ID",
+    "title": "AGROVOC",
     "link": "https://aims.fao.org",
     "resolver": "https://aims.fao.org/aos/agrovoc/{id}",
     "wikidataProperty": "P8061"
   },
   {
     "scope": "native-plants-hawaii",
-    "title": "Native Plants Hawaii ID",
+    "title": "Native Plants Hawaii",
     "link": "http://nativeplants.hawaii.edu",
     "resolver": "http://nativeplants.hawaii.edu/plant/view/{id}/",
     "regex": "^[A-Z][a-z]+\\_[a-z\\-]+(\\_[a-z\\-]+)?$",
@@ -347,7 +347,7 @@
   },
   {
     "scope": "white-files",
-    "title": "The White-files species ID",
+    "title": "The White-files",
     "link": "https://flow.hemiptera-databases.org",
     "resolver": "https://flow.hemiptera-databases.org/whiteflies?page=explorer&db=aleurodes&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -355,7 +355,7 @@
   },
   {
     "scope": "leps-it",
-    "title": "Moths and Butterflies of Europe and North Africa ID",
+    "title": "Moths and Butterflies of Europe and North Africa",
     "link": "https://www.leps.it",
     "resolver": "https://www.leps.it/indexjs.htm?SpeciesPages/{id}.htm",
     "regex": "^([A-Z][a-z-]+){2}$",
@@ -363,7 +363,7 @@
   },
   {
     "scope": "endemia-nc",
-    "title": "Endemia.nc animal taxon ID",
+    "title": "Endemia.nc animal",
     "link": "https://endemia.nc",
     "resolver": "https://endemia.nc/faune/fiche{id}",
     "regex": "^[1-9]\\d*$",
@@ -371,14 +371,14 @@
   },
   {
     "scope": "animalbase",
-    "title": "AnimalBase ID",
+    "title": "AnimalBase ",
     "link": "http://www.animalbase.uni-goettingen.de",
     "resolver": "http://www.animalbase.uni-goettingen.de/zooweb/servlet/AnimalBase/home/speciestaxon?id={id}",
     "wikidataProperty": "P7905"
   },
   {
     "scope": "neotropical-birds",
-    "title": "Neotropical Birds ID",
+    "title": "Neotropical Birds",
     "link": "https://neotropical.birds.cornell.edu",
     "resolver": "https://neotropical.birds.cornell.edu/Species-Account/nb/species/{id}",
     "wikidataProperty": "P6047"
@@ -394,7 +394,7 @@
   },
   {
     "scope": "msu-herbarium",
-    "title": "Moscow University Herbarium ID",
+    "title": "Moscow University Herbarium",
     "link": "https://plant.depo.msu.ru",
     "resolver": "https://plant.depo.msu.ru/open/public/search?division=P&searchBy=taxon&queryString={id}",
     "regex": "^\\d+$",
@@ -402,7 +402,7 @@
   },
   {
     "scope": "vivc",
-    "title": "VIVC grape variety ID",
+    "title": "VIVC grape variety",
     "link": "https://www.vivc.de",
     "resolver": "https://www.vivc.de/?r=passport%2Fview&id={id}",
     "regex": "^\\d+$",
@@ -418,7 +418,7 @@
   },
   {
     "scope": "nzor",
-    "title": "New Zealand Organisms Register ID",
+    "title": "New Zealand Organisms Register",
     "link": "http://www.nzor.org.nz",
     "resolver": "http://www.nzor.org.nz/names/{id}",
     "regex": "^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$",
@@ -426,7 +426,7 @@
   },
   {
     "scope": "woody-plants",
-    "title": "Woody Plants Database ID",
+    "title": "Woody Plants Database",
     "link": "https://woodyplants.cals.cornell.edu",
     "resolver": "https://woodyplants.cals.cornell.edu/plant/{id}",
     "regex": "^[1-9]\\d*$",
@@ -434,7 +434,7 @@
   },
   {
     "scope": "patientslikeme-treatment",
-    "title": "PatientsLikeMe treatment ID",
+    "title": "PatientsLikeMe treatment",
     "link": "https://www.patientslikeme.com",
     "resolver": "https://www.patientslikeme.com/treatments/show/{id}",
     "regex": "^[1-9]\\d*$",
@@ -442,7 +442,7 @@
   },
   {
     "scope": "decs",
-    "title": "DeCS ID",
+    "title": "DeCS",
     "link": "https://decs.bvsalud.org",
     "resolver": "https://decs.bvsalud.org/en/ths/resource/?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -458,7 +458,7 @@
   },
   {
     "scope": "audubon-bna",
-    "title": "John J. Audubon's Birds of America ID",
+    "title": "John J. Audubon's Birds of America",
     "link": "https://www.audubon.org",
     "resolver": "https://www.audubon.org/birds-of-america/{id}",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -466,7 +466,7 @@
   },
   {
     "scope": "minnesota-plants",
-    "title": "Minnesota Plant List ID",
+    "title": "Minnesota Plant List",
     "link": "https://www.minnesotawildflowers.info",
     "resolver": "https://www.minnesotawildflowers.info/{id}",
     "regex": "^(aquatic|fern|flower|grass-sedge-rush|shrub|tree)/[a-z\\-]+$",
@@ -474,28 +474,28 @@
   },
   {
     "scope": "dpvweb",
-    "title": "DPVweb ID",
+    "title": "DPVweb",
     "link": "https://www.dpvweb.net",
     "resolver": "https://www.dpvweb.net/dpv/showdpv/?dpvno={id}",
     "wikidataProperty": "P8164"
   },
   {
     "scope": "pfaf",
-    "title": "PfaF ID",
+    "title": "PfaF",
     "link": "http://www.pfaf.org",
     "resolver": "http://www.pfaf.org/user/Plant.aspx?LatinName={id}",
     "wikidataProperty": "P4301"
   },
   {
     "scope": "verspreidingsatlas",
-    "title": "Verspreidingsatlas.nl ID",
+    "title": "Verspreidingsatlas.nl",
     "link": "https://www.verspreidingsatlas.nl",
     "resolver": "https://www.verspreidingsatlas.nl/{id}",
     "wikidataProperty": "P6142"
   },
   {
     "scope": "vicflora",
-    "title": "VicFlora ID",
+    "title": "VicFlora",
     "link": "https://vicflora.rbg.vic.gov.au",
     "resolver": "https://vicflora.rbg.vic.gov.au/flora/taxon/{id}",
     "regex": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
@@ -503,7 +503,7 @@
   },
   {
     "scope": "bacdive",
-    "title": "BacDive ID",
+    "title": "BacDive ",
     "link": "https://bacdive.dsmz.de",
     "resolver": "https://bacdive.dsmz.de/index.php?rd={id}",
     "regex": "^\\d{1,6}$",
@@ -511,7 +511,7 @@
   },
   {
     "scope": "icpc2",
-    "title": "ICPC 2 ID",
+    "title": "ICPC 2",
     "link": "https://www.hetop.eu",
     "resolver": "https://www.hetop.eu/hetop/3CGP#rr=CIP_D_{id}",
     "regex": "^(A|B|D|F|H|K|L|N|P|R|S|T|U|W|X|Y|Z)\\d{2}$",
@@ -519,14 +519,14 @@
   },
   {
     "scope": "adw",
-    "title": "ADW taxon ID",
+    "title": "AnimalDiversity (ADW)",
     "link": "https://animaldiversity.org",
     "resolver": "https://animaldiversity.org/accounts/{id}/",
     "wikidataProperty": "P4024"
   },
   {
     "scope": "gard",
-    "title": "GARD rare disease ID",
+    "title": "GARD rare disease",
     "link": "https://rarediseases.info.nih.gov",
     "resolver": "https://rarediseases.info.nih.gov/diseases/{id}/index",
     "regex": "^[1-9]\\d*$",
@@ -534,7 +534,7 @@
   },
   {
     "scope": "midwest-herbaria",
-    "title": "Consortium of Midwest Herbaria taxon ID",
+    "title": "Consortium of Midwest Herbaria",
     "link": "https://midwestherbaria.org",
     "resolver": "https://midwestherbaria.org/portal/taxa/index.php?taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -542,7 +542,7 @@
   },
   {
     "scope": "flora-germany-chromosomes",
-    "title": "Chromosome numbers of the Flora of Germany database ID",
+    "title": "Chromosome numbers of the Flora of Germany database",
     "link": "https://chromosomes.senckenberg.de",
     "resolver": "https://chromosomes.senckenberg.de/karyodb/view/index.php?table_name=view&function=details&where_field=IDChromosomeCounts&where_value={id}",
     "regex": "^[1-9]\\d*$",
@@ -550,7 +550,7 @@
   },
   {
     "scope": "mesh-term",
-    "title": "MeSH term ID",
+    "title": "MeSH term",
     "link": "https://id.nlm.nih.gov",
     "resolver": "https://id.nlm.nih.gov/mesh/{id}",
     "regex": "^T\\d{6}(\\d{3})?$",
@@ -558,7 +558,7 @@
   },
   {
     "scope": "uk-fruit-collection",
-    "title": "UK National Fruit Collection ID",
+    "title": "UK National Fruit Collection",
     "link": "https://nationalfruitcollection.org.uk",
     "resolver": "https://nationalfruitcollection.org.uk/full2.php?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -580,14 +580,14 @@
   },
   {
     "scope": "plants-hawaii",
-    "title": "Plants of Hawai\u02bbi ID",
+    "title": "Plants of Hawaiʻi",
     "link": "https://plantsofhawaii.org",
     "resolver": "https://plantsofhawaii.org/detail/{{id}}",
     "wikidataProperty": "P12403"
   },
   {
     "scope": "bryophyte-herbaria",
-    "title": "Consortium of Bryophyte Herbaria taxon ID",
+    "title": "Consortium of Bryophyte Herbaria",
     "link": "https://bryophyteportal.org",
     "resolver": "https://bryophyteportal.org/portal/taxa/index.php?taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -595,7 +595,7 @@
   },
   {
     "scope": "emedicine",
-    "title": "eMedicine ID",
+    "title": "eMedicine",
     "link": "https://emedicine.medscape.com",
     "resolver": "https://emedicine.medscape.com/article/{id}-overview",
     "regex": "^\\d{5,7}$",
@@ -609,14 +609,14 @@
   },
   {
     "scope": "hiking-note",
-    "title": "Hiking Note plant ID",
+    "title": "Hiking Note plant",
     "link": "https://hiking.biji.co",
     "resolver": "https://hiking.biji.co/index.php?q=plant&act=detail&id={id}",
     "wikidataProperty": "P13352"
   },
   {
     "scope": "plantarium",
-    "title": "Plantarium ID",
+    "title": "Plantarium",
     "link": "https://www.plantarium.ru",
     "resolver": "https://www.plantarium.ru/page/view/item/{id}.html",
     "regex": "^\\d+$",
@@ -624,7 +624,7 @@
   },
   {
     "scope": "indian-medicinal-plants",
-    "title": "Indian Medicinal Plants Database ID",
+    "title": "Indian Medicinal Plants Database",
     "link": "https://www.medicinalplants.in",
     "resolver": "https://www.medicinalplants.in/searchpage/showdetails/xplant_id/{id}",
     "regex": "^[a-z0-9]*$",
@@ -632,14 +632,14 @@
   },
   {
     "scope": "afd",
-    "title": "Australian Faunal Directory ID",
+    "title": "Australian Faunal Directory",
     "link": "https://biodiversity.org.au",
     "resolver": "https://biodiversity.org.au/afd/taxa/{id}",
     "wikidataProperty": "P6039"
   },
   {
     "scope": "nztcs",
-    "title": "NZTCS ID",
+    "title": "NZTCS",
     "link": "https://nztcs.org.nz",
     "resolver": "https://nztcs.org.nz/nztcs-species/{id}",
     "regex": "^[1-9]\\d{2,6}$",
@@ -655,28 +655,28 @@
   },
   {
     "scope": "audubon-guide",
-    "title": "Guide to North American Birds ID",
+    "title": "Guide to North American Birds ",
     "link": "https://www.audubon.org",
     "resolver": "https://www.audubon.org/field-guide/bird/{id}",
     "wikidataProperty": "P4715"
   },
   {
     "scope": "seqcode",
-    "title": "SeqCode Registry ID",
+    "title": "SeqCode Registry",
     "link": "https://seqco.de",
     "resolver": "https://seqco.de/i:{id}",
     "wikidataProperty": "P13490"
   },
   {
     "scope": "wikiskripta",
-    "title": "WikiSkripta article ID",
+    "title": "WikiSkripta article",
     "link": "https://www.wikiskripta.eu",
     "resolver": "https://www.wikiskripta.eu/index.php?curid={id}",
     "wikidataProperty": "P3471"
   },
   {
     "scope": "plant-parasites-europe",
-    "title": "Plant Parasites of Europe ID",
+    "title": "Plant Parasites of Europe",
     "link": "https://bladmineerders.nl",
     "resolver": "https://bladmineerders.nl/{id}/",
     "regex": "^(host\\-plants|parasites)\\/([a-z-]+\\/)*[a-z-]+$",
@@ -701,7 +701,7 @@
   },
   {
     "scope": "reptiles-india",
-    "title": "Reptiles of India ID",
+    "title": "Reptiles of India",
     "link": "https://www.indianreptiles.org",
     "resolver": "https://www.indianreptiles.org/#!/sp/{id}",
     "regex": "^[0-9]+$",
@@ -709,7 +709,7 @@
   },
   {
     "scope": "amphibiaweb",
-    "title": "AmphibiaWeb Species ID",
+    "title": "AmphibiaWeb ",
     "link": "https://amphibiaweb.org",
     "resolver": "https://amphibiaweb.org/species/{id}",
     "regex": "^[1-9]\\d*$",
@@ -717,14 +717,14 @@
   },
   {
     "scope": "efauna-bc",
-    "title": "E-Fauna BC species ID",
+    "title": "E-Fauna BC",
     "link": "https://linnet.geog.ubc.ca",
     "resolver": "https://linnet.geog.ubc.ca/efauna/Atlas/Atlas.aspx?sciname={id}",
     "wikidataProperty": "P9690"
   },
   {
     "scope": "grylloblattodea-sf",
-    "title": "Grylloblattodea Species File taxon ID",
+    "title": "Grylloblattodea Species File",
     "link": "https://grylloblattodea.speciesfile.org",
     "resolver": "https://grylloblattodea.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -732,14 +732,14 @@
   },
   {
     "scope": "floraveg",
-    "title": "FloraVeg.EU taxon ID",
+    "title": "FloraVeg.EU",
     "link": "https://floraveg.eu",
     "resolver": "https://floraveg.eu/taxon/overview/{id}",
     "wikidataProperty": "P12100"
   },
   {
     "scope": "rhs",
-    "title": "Royal Horticultural Society plant ID",
+    "title": "Royal Horticultural Society plant",
     "link": "https://www.rhs.org.uk",
     "resolver": "https://www.rhs.org.uk/plants/{id}/wd/details",
     "wikidataProperty": "P8765"
@@ -754,14 +754,14 @@
   },
   {
     "scope": "aeda-taxon",
-    "title": "AEDA taxonomic keyword ID",
+    "title": "AEDA taxonomic keyword",
     "link": "http://www.environmentdata.org",
     "resolver": "http://www.environmentdata.org/archive/fwltaxon:{id}",
     "wikidataProperty": "P10921"
   },
   {
     "scope": "wildflowers-israel",
-    "title": "Wildflowers of Israel ID",
+    "title": "Wildflowers of Israel",
     "link": "https://www.kkl.org.il",
     "resolver": "https://www.kkl.org.il/wild-flower/plants/{id}.aspx",
     "regex": "^[1-9]\\d{0,3}$",
@@ -778,7 +778,7 @@
   },
   {
     "scope": "eol",
-    "title": "Encyclopedia of Life ID",
+    "title": "Encyclopedia of Life",
     "link": "https://eol.org",
     "resolver": "https://eol.org/pages/{id}",
     "regex": "^[1-9]\\d{0,7}$",
@@ -786,7 +786,7 @@
   },
   {
     "scope": "doris",
-    "title": "DORIS ID",
+    "title": "DORIS",
     "link": "https://doris.ffessm.fr",
     "resolver": "https://doris.ffessm.fr/ref/specie/{id}",
     "regex": "^[1-9]\\d*$",
@@ -794,14 +794,14 @@
   },
   {
     "scope": "leafsnap",
-    "title": "Leafsnap ID",
+    "title": "Leafsnap",
     "link": "http://leafsnap.com",
     "resolver": "http://leafsnap.com/species/{id}/",
     "wikidataProperty": "P10538"
   },
   {
     "scope": "wsc",
-    "title": "World Spider Catalog ID",
+    "title": "World Spider Catalog",
     "link": "https://wsc.nmbe.ch",
     "resolver": "https://wsc.nmbe.ch/lsid/{id}",
     "regex": "^urn:lsid:nmbe\\.ch:spider(sp|gen|fam):\\d{4,6}$",
@@ -809,21 +809,21 @@
   },
   {
     "scope": "cal-ipc",
-    "title": "Cal-IPC ID",
+    "title": "Cal-IPC ",
     "link": "https://www.cal-ipc.org",
     "resolver": "https://www.cal-ipc.org/plants/profile/{id}-profile/",
     "wikidataProperty": "P6176"
   },
   {
     "scope": "cabi",
-    "title": "CAB ID",
+    "title": "CAB",
     "link": "https://www.cabi.org",
     "resolver": "https://www.cabi.org/cabithesaurus/mtwdk.exe?k=default&l=60&w={id}&s=5&t=2",
     "wikidataProperty": "P8072"
   },
   {
     "scope": "florabase",
-    "title": "FloraBase ID",
+    "title": "FloraBase",
     "link": "https://florabase.dpaw.wa.gov.au",
     "resolver": "https://florabase.dpaw.wa.gov.au/browse/profile/{id}",
     "regex": "^\\d+$",
@@ -848,7 +848,7 @@
   },
   {
     "scope": "orphanet",
-    "title": "Orphanet ID",
+    "title": "Orphanet",
     "link": "https://www.orpha.net",
     "resolver": "https://www.orpha.net/en/disease/detail/{id}",
     "regex": "^[1-9]\\d{0,5}$",
@@ -865,7 +865,7 @@
   },
   {
     "scope": "flow",
-    "title": "FLOW ID",
+    "title": "FLOW",
     "link": "https://flow.hemiptera-databases.org",
     "resolver": "https://flow.hemiptera-databases.org/flow/?page=explorer&db=flow&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -873,7 +873,7 @@
   },
   {
     "scope": "belgian-species",
-    "title": "Belgian Species List ID",
+    "title": "Belgian Species List ",
     "link": "http://www.species.be",
     "resolver": "http://www.species.be/en/{id}",
     "regex": "^[1-9]\\d*$",
@@ -881,7 +881,7 @@
   },
   {
     "scope": "powo",
-    "title": "Plants of the World Online ID",
+    "title": "Plants of the World Online",
     "link": "https://powo.science.kew.org",
     "resolver": "https://powo.science.kew.org/taxon/{id}",
     "regex": "^urn:lsid:ipni\\.org:names:[1-9]\\d{0,7}-[1234]$",
@@ -889,7 +889,7 @@
   },
   {
     "scope": "araneae",
-    "title": "Araneae spider ID",
+    "title": "Araneae spider ",
     "link": "https://araneae.nmbe.ch",
     "resolver": "https://araneae.nmbe.ch/data/{id}",
     "regex": "^[1-9]\\d{1,3}$",
@@ -906,7 +906,7 @@
   },
   {
     "scope": "arachne-au",
-    "title": "Arachne.org.au ID",
+    "title": "Arachne.org.au",
     "link": "https://www.arachne.org.au",
     "resolver": "https://www.arachne.org.au/01_cms/details.asp?ID={id}",
     "regex": "^[1-9]\\d*$",
@@ -914,7 +914,7 @@
   },
   {
     "scope": "nbair",
-    "title": "NBAIR pest ID",
+    "title": "NBAIR pest",
     "link": "https://www.nbair.res.in",
     "resolver": "https://www.nbair.res.in/insectpests/{id}.php",
     "regex": "^[\\w\\-]+$",
@@ -922,7 +922,7 @@
   },
   {
     "scope": "garden-plant-finder",
-    "title": "Garden Plant Finder ID",
+    "title": "Garden Plant Finder",
     "link": "https://plantfinder.nativeplanttrust.org",
     "resolver": "https://plantfinder.nativeplanttrust.org/plant/{id}",
     "regex": "^[A-Z][A-Za-z0-9\\-]+$",
@@ -930,14 +930,14 @@
   },
   {
     "scope": "fungal-names",
-    "title": "Fungal Names taxon ID",
+    "title": "Fungal Names",
     "link": "https://nmdc.cn",
     "resolver": "https://nmdc.cn/fungalnames/namesearch/toallfungalinfo?recordNumber={id}",
     "wikidataProperty": "P14295"
   },
   {
     "scope": "calphotos",
-    "title": "CalPhotos taxon ID",
+    "title": "CalPhotos",
     "resolver": "https://wikidata-externalid-url.toolforge.org/?p=12554&url_prefix=https://calphotos.berkeley.edu/cgi/img_query?where-taxon=&id={id}",
     "regex": "^[A-Z][a-z\\-]+(\\+[a-z\\-\\+\\.]+)?$",
     "wikidataProperty": "P12554"
@@ -959,7 +959,7 @@
   },
   {
     "scope": "vascan",
-    "title": "VASCAN ID",
+    "title": "VASCAN",
     "link": "http://data.canadensys.net",
     "resolver": "http://data.canadensys.net/vascan/taxon/{id}",
     "regex": "^\\d{1,5}$",
@@ -974,7 +974,7 @@
   },
   {
     "scope": "laji",
-    "title": "Finnish Biodiversity Information Facility's Species List ID",
+    "title": "Finnish Biodiversity Information Facility's Species List",
     "link": "https://laji.fi",
     "resolver": "https://laji.fi/taxon/{id}",
     "regex": "^MX\\.[0-9]+$",
@@ -982,7 +982,7 @@
   },
   {
     "scope": "central-african-plants",
-    "title": "Central African Plants ID",
+    "title": "Central African Plants ",
     "link": "http://db.plantentuinmeise.be",
     "resolver": "http://db.plantentuinmeise.be/RESEARCH/DATABASES/FOCA/speciesdetails.php?refid={id}",
     "regex": "^[1-9]\\d{5}$",
@@ -990,14 +990,14 @@
   },
   {
     "scope": "cms",
-    "title": "CMS ID",
+    "title": "CMS ",
     "link": "https://www.cms.int",
     "resolver": "https://www.cms.int/en/species/{id}",
     "wikidataProperty": "P6033"
   },
   {
     "scope": "biolib",
-    "title": "BioLib taxon ID",
+    "title": "BioLib taxon ",
     "link": "https://www.biolib.cz",
     "resolver": "https://www.biolib.cz/cz/taxon/id{id}",
     "regex": "^\\d{1,7}$",
@@ -1026,7 +1026,7 @@
   },
   {
     "scope": "tol",
-    "title": "Tree of Life Web Project ID",
+    "title": "Tree of Life Web Project",
     "link": "http://tolweb.org",
     "resolver": "http://tolweb.org/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1034,7 +1034,7 @@
   },
   {
     "scope": "microworld",
-    "title": "Microworld ID",
+    "title": "Microworld",
     "link": "https://www.arcella.nl",
     "resolver": "https://www.arcella.nl/{id}/",
     "regex": "^[a-z-]+$",
@@ -1042,7 +1042,7 @@
   },
   {
     "scope": "gobotany",
-    "title": "Go Botany taxon ID",
+    "title": "Go Botany",
     "link": "https://gobotany.nativeplanttrust.org",
     "resolver": "https://gobotany.nativeplanttrust.org/{id}/",
     "regex": "^(family|genus|species)/[a-z]+[/a-z\\-]*$",
@@ -1050,7 +1050,7 @@
   },
   {
     "scope": "index-hepaticarum",
-    "title": "Index Hepaticarum ID",
+    "title": "Index Hepaticarum",
     "link": "http://www.ville-ge.ch",
     "resolver": "http://www.ville-ge.ch/musinfo/bd/cjb/hepatic/detail.php?no_record={id}",
     "regex": "^\\d+$",
@@ -1066,7 +1066,7 @@
   },
   {
     "scope": "moose-deutschland",
-    "title": "Moose Deutschland ID",
+    "title": "Moose Deutschland",
     "link": "https://www.moose-deutschland.de",
     "resolver": "https://www.moose-deutschland.de/organismen/{id}",
     "regex": "^\\S{1,128}$",
@@ -1074,7 +1074,7 @@
   },
   {
     "scope": "fishbase",
-    "title": "FishBase species ID",
+    "title": "FishBase",
     "link": "https://www.fishbase.ca",
     "resolver": "https://www.fishbase.ca/summary/{id}",
     "regex": "^[1-9]\\d{0,4}$",
@@ -1082,7 +1082,7 @@
   },
   {
     "scope": "tierstimmenarchiv",
-    "title": "Tierstimmenarchiv ID",
+    "title": "Tierstimmenarchiv",
     "link": "http://www.tierstimmen.org",
     "resolver": "http://www.tierstimmen.org/de/Datenbank?field_spec_species_target_id_selective={id}",
     "regex": "^[1-9]\\d{0,4}$",
@@ -1090,14 +1090,14 @@
   },
   {
     "scope": "jstor",
-    "title": "JSTOR article ID",
+    "title": "JSTOR article",
     "link": "https://www.jstor.org",
     "resolver": "https://www.jstor.org/stable/{id}",
     "wikidataProperty": "P888"
   },
   {
     "scope": "mushroomobserver",
-    "title": "Mushroom Observer ID",
+    "title": "Mushroom Observer",
     "link": "https://mushroomobserver.org",
     "resolver": "https://mushroomobserver.org/name/show_name/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1105,7 +1105,7 @@
   },
   {
     "scope": "torch",
-    "title": "TORCH taxon ID",
+    "title": "TORCH",
     "link": "https://portal.torcherbaria.org",
     "resolver": "https://portal.torcherbaria.org/portal/taxa/index.php?tid={id}",
     "regex": "^[1-9]\\d*$",
@@ -1120,7 +1120,7 @@
   },
   {
     "scope": "species-at-risk",
-    "title": "Species at Risk public registry ID",
+    "title": "Species at Risk public registry",
     "link": "https://wildlife-species.canada.ca",
     "resolver": "https://wildlife-species.canada.ca/species-risk-registry/species/speciesDetails_e.cfm?sid={id}",
     "regex": "^[1-9]\\d*$",
@@ -1145,7 +1145,7 @@
   },
   {
     "scope": "cbd-species",
-    "title": "Center for Biological Diversity ID",
+    "title": "Center for Biological Diversity ",
     "link": "https://www.biologicaldiversity.org",
     "resolver": "https://www.biologicaldiversity.org/species/{id}/index.html",
     "regex": "^[a-z]+\\/[a-zA-Z_\\-]+$",
@@ -1153,7 +1153,7 @@
   },
   {
     "scope": "weeds-australia",
-    "title": "Australian Weed ID",
+    "title": "Australian Weed",
     "link": "https://profiles.ala.org.au",
     "resolver": "https://profiles.ala.org.au/opus/weeds-australia/profile/{id}",
     "regex": "^[^\\s\\/]+$",
@@ -1161,7 +1161,7 @@
   },
   {
     "scope": "korea-species",
-    "title": "Korean National Species list ID",
+    "title": "Korean National Species list",
     "link": "https://species.nibr.go.kr",
     "resolver": "https://species.nibr.go.kr/home/mainHome.do?cont_link=009&subMenu=009002&contCd=009002&pageMode=view&ktsn={id}",
     "regex": "^[1-9]\\d*$",
@@ -1169,7 +1169,7 @@
   },
   {
     "scope": "lacebugs",
-    "title": "Lace Bugs Database ID",
+    "title": "Lace Bugs Database",
     "link": "https://www.hemiptera-databases.org",
     "resolver": "https://www.hemiptera-databases.org/cgi-bin/Tingidae/tingidae.pl?db=tingides&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1177,7 +1177,7 @@
   },
   {
     "scope": "patientplus",
-    "title": "Patientplus ID",
+    "title": "Patientplus",
     "link": "https://patient.info",
     "resolver": "https://patient.info/doctor/{id}",
     "regex": "^[A-Za-z\\-\\d\\(\\)]+$",
@@ -1195,7 +1195,7 @@
   },
   {
     "scope": "plazi",
-    "title": "Plazi ID",
+    "title": "Plazi",
     "link": "https://treatment.plazi.org",
     "resolver": "https://treatment.plazi.org/id/{id}",
     "wikidataProperty": "P1992"
@@ -1212,7 +1212,7 @@
   },
   {
     "scope": "atrf",
-    "title": "ATRF ID",
+    "title": "ATRF ",
     "link": "http://www.canbr.gov.au",
     "resolver": "http://www.canbr.gov.au/cpbr/cd-keys/RFK7/key/RFK7/Media/Html/entities/{id}.htm",
     "regex": "^[A-Z_a-z|\\.]*$",
@@ -1220,7 +1220,7 @@
   },
   {
     "scope": "burke-herbarium-image-collection",
-    "title": "Burke Herbarium Image Collection ID",
+    "title": "Burke Herbarium Image Collection ",
     "link": "https://biology.burke.washington.edu",
     "resolver": "https://biology.burke.washington.edu/herbarium/imagecollection/taxon.php?Taxon={id}",
     "wikidataProperty": "P9654"
@@ -1235,7 +1235,7 @@
   },
   {
     "scope": "ndfrt",
-    "title": "NDF-RT ID",
+    "title": "NDF-RT",
     "link": "https://bioportal.bioontology.org",
     "resolver": "https://bioportal.bioontology.org/ontologies/NDFRT?p=classes&conceptid={id}",
     "regex": "^N[0-9]{10}$",
@@ -1243,14 +1243,14 @@
   },
   {
     "scope": "featherbase",
-    "title": "Featherbase ID",
+    "title": "Featherbase",
     "link": "https://www.featherbase.info",
     "resolver": "https://www.featherbase.info/en/{id}",
     "wikidataProperty": "P12589"
   },
   {
     "scope": "woody-plants-cultivar",
-    "title": "Woody Plants Database cultivar ID",
+    "title": "Woody Plants Database cultivar",
     "link": "https://woodyplants.cals.cornell.edu",
     "resolver": "https://woodyplants.cals.cornell.edu/cultivar/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1258,7 +1258,7 @@
   },
   {
     "scope": "ncit",
-    "title": "NCI Thesaurus ID",
+    "title": "NCI Thesaurus",
     "link": "https://evsexplore.semantics.cancer.gov",
     "resolver": "https://evsexplore.semantics.cancer.gov/evsexplore/concept/ncit/{id}",
     "regex": "^C\\d{3,7}$",
@@ -1266,7 +1266,7 @@
   },
   {
     "scope": "openfoodfacts-ingredient",
-    "title": "Open Food Facts ingredient ID",
+    "title": "Open Food Facts ingredient",
     "link": "https://world.openfoodfacts.org",
     "resolver": "https://world.openfoodfacts.org/facets/ingredients/{id}",
     "regex": "^([a-z]{2}:)?[a-z0-9\\-]+$",
@@ -1283,7 +1283,7 @@
   },
   {
     "scope": "tessaratomidae",
-    "title": "Illustrated catalog of Tessaratomidae species ID",
+    "title": "Illustrated catalog of Tessaratomidae",
     "link": "https://www.hemiptera-databases.org",
     "resolver": "https://www.hemiptera-databases.org/cgi-bin/Tessaratomidae/tessaratomidae.pl?db=tessaratomidae&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1291,14 +1291,14 @@
   },
   {
     "scope": "ala",
-    "title": "Atlas of Living Australia ID",
+    "title": "Atlas of Living Australia ",
     "link": "https://bie.ala.org.au",
     "resolver": "https://bie.ala.org.au/species/{id}",
     "wikidataProperty": "P7051"
   },
   {
     "scope": "fossiilid",
-    "title": "Fossiilid.info ID",
+    "title": "Fossiilid.info",
     "link": "https://fossiilid.info",
     "resolver": "https://fossiilid.info/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1306,7 +1306,7 @@
   },
   {
     "scope": "macaulay",
-    "title": "Macaulay Library taxon ID",
+    "title": "Macaulay Library",
     "link": "https://search.macaulaylibrary.org",
     "resolver": "https://search.macaulaylibrary.org/catalog?taxonCode={id}",
     "regex": "^[a-z0-9\\-]+$",
@@ -1314,7 +1314,7 @@
   },
   {
     "scope": "vlinderstichting",
-    "title": "Vlinderstichting ID",
+    "title": "Vlinderstichting",
     "link": "https://www.vlinderstichting.nl",
     "resolver": "https://www.vlinderstichting.nl/vlinders/overzicht-vlinders/details-vlinder/?vlinder={id}",
     "regex": "^\\d+$",
@@ -1322,7 +1322,7 @@
   },
   {
     "scope": "odonata-india",
-    "title": "Odonata of India ID",
+    "title": "Odonata of India",
     "link": "https://www.indianodonata.org",
     "resolver": "https://www.indianodonata.org/#!/sp/{id}",
     "regex": "^[0-9]+$",
@@ -1330,7 +1330,7 @@
   },
   {
     "scope": "infoflora",
-    "title": "Info Flora ID",
+    "title": "Info Flora",
     "link": "https://www.infoflora.ch",
     "resolver": "https://www.infoflora.ch/en/flora/{id}.html",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -1338,7 +1338,7 @@
   },
   {
     "scope": "paleodb",
-    "title": "Paleobiology Database taxon ID",
+    "title": "Paleobiology Database",
     "link": "https://paleobiodb.org",
     "resolver": "https://paleobiodb.org/classic/basicTaxonInfo?taxon_no={id}",
     "regex": "^[1-9]\\d*$",
@@ -1346,7 +1346,7 @@
   },
   {
     "scope": "enciclovida",
-    "title": "Enciclovida ID",
+    "title": "Enciclovida",
     "link": "https://enciclovida.mx",
     "resolver": "https://enciclovida.mx/especies/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1354,7 +1354,7 @@
   },
   {
     "scope": "sor-birds",
-    "title": "SOR bird ID",
+    "title": "SOR bird",
     "link": "https://pasaridinromania.sor.ro",
     "resolver": "https://pasaridinromania.sor.ro/{id}",
     "regex": "^[A-Z][a-z]+(-[A-Z]?[a-z]+)*$",
@@ -1369,7 +1369,7 @@
   },
   {
     "scope": "mdd",
-    "title": "ASM Mammal Diversity Database ID",
+    "title": "ASM Mammal Diversity Database",
     "link": "https://www.mammaldiversity.org",
     "resolver": "https://www.mammaldiversity.org/taxon/{id}",
     "regex": "^[1-9]\\d{0,6}$",
@@ -1377,7 +1377,7 @@
   },
   {
     "scope": "plecoptera-sf",
-    "title": "Plecoptera Species File taxon ID",
+    "title": "Plecoptera Species File",
     "link": "https://plecoptera.speciesfile.org",
     "resolver": "https://plecoptera.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -1385,7 +1385,7 @@
   },
   {
     "scope": "global-species",
-    "title": "Global Species ID",
+    "title": "Global Species",
     "link": "https://globalspecies.org",
     "resolver": "https://globalspecies.org/ntaxa/{id}",
     "regex": "^[1-9]\\d{3,6}$",
@@ -1393,7 +1393,7 @@
   },
   {
     "scope": "paldat",
-    "title": "PalDat plant ID",
+    "title": "PalDat plant",
     "link": "https://www.paldat.org",
     "resolver": "https://www.paldat.org/pub/{id}",
     "regex": "^[A-Z][a-z]*\\__?[a-z-]+$",
@@ -1401,7 +1401,7 @@
   },
   {
     "scope": "aphid-sf",
-    "title": "Aphid Species File taxon ID",
+    "title": "Aphid Species File",
     "link": "https://aphid.speciesfile.org",
     "resolver": "https://aphid.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -1409,7 +1409,7 @@
   },
   {
     "scope": "nj-flora",
-    "title": "Flora of New Jersey Project atlas ID",
+    "title": "Flora of New Jersey Project atlas",
     "link": "https://www.njflora.org",
     "resolver": "https://www.njflora.org/0/0/{id}/",
     "regex": "^[a-z\\d]+(\\-[a-z\\d]+)*$",
@@ -1417,7 +1417,7 @@
   },
   {
     "scope": "strepsiptera",
-    "title": "Strepsiptera database species ID",
+    "title": "Strepsiptera database",
     "link": "https://www.hemiptera-databases.org",
     "resolver": "https://www.hemiptera-databases.org/cgi-bin/strepsiptera.pl?db=strepsiptera&lang=en&card=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1425,7 +1425,7 @@
   },
   {
     "scope": "lepidoptera-belgium",
-    "title": "Lepidoptera of Belgium ID",
+    "title": "Lepidoptera of Belgium",
     "link": "http://projects.biodiversity.be",
     "resolver": "http://projects.biodiversity.be/lepidoptera/species/{id}/",
     "regex": "^[1-9]\\d*$",
@@ -1433,7 +1433,7 @@
   },
   {
     "scope": "bto-birdfacts",
-    "title": "BTO Birds of Britain ID",
+    "title": "BTO Birds of Britain ",
     "link": "https://app.bto.org",
     "resolver": "https://app.bto.org/birdfacts/results/{id}.htm",
     "regex": "^bob[1-9]\\d{1,4}$",
@@ -1441,7 +1441,7 @@
   },
   {
     "scope": "noaa-fisheries",
-    "title": "NOAA Fisheries Species Directory ID",
+    "title": "NOAA Fisheries Species Directory",
     "link": "https://www.fisheries.noaa.gov",
     "resolver": "https://www.fisheries.noaa.gov/species/{id}",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -1449,7 +1449,7 @@
   },
   {
     "scope": "doab",
-    "title": "DOAB book ID",
+    "title": "DOAB book",
     "link": "https://directory.doabooks.org",
     "resolver": "https://directory.doabooks.org/handle/20.500.12854/{id}",
     "wikidataProperty": "P14118"
@@ -1463,7 +1463,7 @@
   },
   {
     "scope": "dutch-caribbean-species",
-    "title": "Dutch Caribbean Species Register ID",
+    "title": "Dutch Caribbean Species Register",
     "link": "https://www.dutchcaribbeanspecies.org",
     "resolver": "https://www.dutchcaribbeanspecies.org/linnaeus_ng/app/views/species/nsr_taxon.php?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1479,7 +1479,7 @@
   },
   {
     "scope": "nzpcn",
-    "title": "NZPCN ID",
+    "title": "NZPCN",
     "resolver": "https://web.archive.org/web/*/http://nzpcn.org.nz/flora_details.aspx?ID={id}",
     "regex": "^[1-9]\\d*$",
     "wikidataProperty": "P7496"
@@ -1495,7 +1495,7 @@
   },
   {
     "scope": "african-plant",
-    "title": "African Plant Database ID",
+    "title": "African Plant Database",
     "link": "http://www.ville-ge.ch",
     "resolver": "http://www.ville-ge.ch/musinfo/bd/cjb/africa/details.php?langue=an&id={id}",
     "regex": "^\\d{1,6}$",
@@ -1503,7 +1503,7 @@
   },
   {
     "scope": "mybis",
-    "title": "MyBIS species ID",
+    "title": "MyBIS",
     "link": "https://www.mybis.gov.my",
     "resolver": "https://www.mybis.gov.my/sp/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1526,7 +1526,7 @@
   },
   {
     "scope": "mesh",
-    "title": "MeSH descriptor ID",
+    "title": "MeSH descriptor",
     "link": "https://meshb.nlm.nih.gov",
     "resolver": "https://meshb.nlm.nih.gov/record/ui?ui={id}",
     "regex": "^[CD]\\w{6}(\\w{3}|)$",
@@ -1534,7 +1534,7 @@
   },
   {
     "scope": "invasive-plant-atlas-us",
-    "title": "Invasive Plant Atlas of the United States ID",
+    "title": "Invasive Plant Atlas of the United States",
     "link": "https://www.invasiveplantatlas.org",
     "resolver": "https://www.invasiveplantatlas.org/subject.html?sub={id}",
     "regex": "^[1-9]\\d*$",
@@ -1542,7 +1542,7 @@
   },
   {
     "scope": "researchgate",
-    "title": "ResearchGate publication ID",
+    "title": "ResearchGate publication",
     "link": "https://www.researchgate.net",
     "resolver": "https://www.researchgate.net/publication/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1550,7 +1550,7 @@
   },
   {
     "scope": "great-plains-herbaria",
-    "title": "Great Plains Herbaria taxon ID",
+    "title": "Great Plains Herbaria",
     "link": "https://ngpherbaria.org",
     "resolver": "https://ngpherbaria.org/portal/taxa/index.php?taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -1558,7 +1558,7 @@
   },
   {
     "scope": "wcspf",
-    "title": "WCSPF ID",
+    "title": "WCSPF",
     "link": "https://wcsp.science.kew.org",
     "resolver": "https://wcsp.science.kew.org/namedetail.do?name_id={id}",
     "regex": "^\\d{1,7}$",
@@ -1566,7 +1566,7 @@
   },
   {
     "scope": "birdlife",
-    "title": "BirdLife taxon ID",
+    "title": "BirdLife",
     "link": "https://datazone.birdlife.org",
     "resolver": "https://datazone.birdlife.org/species/factsheet/{id}",
     "regex": "^[1-9]\\d{7,8}$",
@@ -1574,7 +1574,7 @@
   },
   {
     "scope": "plant-illustrations",
-    "title": "Plant Illustrations taxon ID",
+    "title": "Plant Illustrations",
     "link": "http://plantillustrations.org",
     "resolver": "http://plantillustrations.org/taxa.php?id_taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -1582,7 +1582,7 @@
   },
   {
     "scope": "isoptera-sf",
-    "title": "Isoptera Species File taxon ID",
+    "title": "Isoptera Species File",
     "link": "https://isoptera.speciesfile.org",
     "resolver": "https://isoptera.speciesfile.org/otus/{id}/overview",
     "regex": "^[0-9]\\d*$",
@@ -1590,14 +1590,14 @@
   },
   {
     "scope": "mde-flora",
-    "title": "Madrean Discovery Expeditions Flora Database ID",
+    "title": "Madrean Discovery Expeditions Flora Database",
     "link": "https://madreandiscovery.org",
     "resolver": "https://madreandiscovery.org/flora/taxa/index.php?tid={id}",
     "wikidataProperty": "P10528"
   },
   {
     "scope": "wildflower",
-    "title": "Native Plants Database ID",
+    "title": "Native Plants Database",
     "link": "https://www.wildflower.org",
     "resolver": "https://www.wildflower.org/plants/result.php?id_plant={id}",
     "regex": "^[A-Za-z]{4,5}[0-9]{0,2}$",
@@ -1605,14 +1605,14 @@
   },
   {
     "scope": "bismal",
-    "title": "BISMaL taxon ID",
+    "title": "BISMaL",
     "link": "https://www.godac.jamstec.go.jp",
     "resolver": "https://www.godac.jamstec.go.jp/bismal/view/{id}",
     "wikidataProperty": "P14166"
   },
   {
     "scope": "ukbeetles",
-    "title": "UK Beetles ID",
+    "title": "UK Beetles",
     "link": "https://www.ukbeetles.co.uk",
     "resolver": "https://www.ukbeetles.co.uk/{id}",
     "regex": "^[a-z]+(-[a-z1]+)*$",
@@ -1620,7 +1620,7 @@
   },
   {
     "scope": "abbbs",
-    "title": "ABBBS Taxon ID",
+    "title": "ABBBS",
     "link": "https://www.environment.gov.au",
     "resolver": "https://www.environment.gov.au/cgi-bin/biodiversity/abbbs/abbbs-search.pl?taxon_id={id}",
     "regex": "^\\d+$",
@@ -1644,7 +1644,7 @@
   },
   {
     "scope": "nbic",
-    "title": "NBIC scientific name ID",
+    "title": "NBIC scientific name",
     "link": "https://artsdatabanken.no",
     "resolver": "https://artsdatabanken.no/ScientificName/{id}",
     "regex": "^[1-9]\\d{0,5}$",
@@ -1652,7 +1652,7 @@
   },
   {
     "scope": "auchenorrhyncha",
-    "title": "World Auchenorrhyncha Database ID",
+    "title": "World Auchenorrhyncha Database ",
     "link": "https://hoppers.speciesfile.org",
     "resolver": "https://hoppers.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -1660,7 +1660,7 @@
   },
   {
     "scope": "goniat",
-    "title": "GONIAT taxon ID",
+    "title": "GONIAT",
     "link": "http://www.goniat.org",
     "resolver": "http://www.goniat.org/showTax.html?TaxId={id}",
     "regex": "^tax[0-9]{29}$",
@@ -1668,14 +1668,14 @@
   },
   {
     "scope": "feis",
-    "title": "FEIS ID",
+    "title": "FEIS",
     "link": "https://www.fs.usda.gov",
     "resolver": "https://www.fs.usda.gov/database/feis/{id}/all.html",
     "wikidataProperty": "P6044"
   },
   {
     "scope": "apni",
-    "title": "APNI ID",
+    "title": "APNI ",
     "link": "https://id.biodiversity.org.au",
     "resolver": "https://id.biodiversity.org.au/name/apni/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1683,7 +1683,7 @@
   },
   {
     "scope": "pmc",
-    "title": "PMC publication ID",
+    "title": "PMC publication",
     "link": "https://www.ncbi.nlm.nih.gov",
     "resolver": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{id}",
     "regex": "^[1-9]\\d+$",
@@ -1691,7 +1691,7 @@
   },
   {
     "scope": "brentidae",
-    "title": "Brentidae of the world species ID",
+    "title": "Brentidae of the world species ",
     "link": "https://www.hemiptera-databases.org",
     "resolver": "https://www.hemiptera-databases.org/cgi-bin/Brentidae/brentidae.pl?db=brentidae&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1699,7 +1699,7 @@
   },
   {
     "scope": "echinoid-directory",
-    "title": "Echinoid Directory ID",
+    "title": "Echinoid Directory",
     "link": "https://www.nhm.ac.uk",
     "resolver": "https://www.nhm.ac.uk/our-science/data/echinoid-directory/taxa/taxon.jsp?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1707,7 +1707,7 @@
   },
   {
     "scope": "obis",
-    "title": "OBIS ID",
+    "title": "OBIS",
     "link": "https://obis.org",
     "resolver": "https://obis.org/taxon/{id}",
     "regex": "^\\d{1,7}$",
@@ -1715,7 +1715,7 @@
   },
   {
     "scope": "taxonomicon",
-    "title": "Taxonomicon ID",
+    "title": "Taxonomicon",
     "link": "http://taxonomicon.taxonomy.nl",
     "resolver": "http://taxonomicon.taxonomy.nl/TaxonName.aspx?id={id}",
     "regex": "^\\d+$",
@@ -1723,7 +1723,7 @@
   },
   {
     "scope": "faoterm",
-    "title": "FAOTERM ID",
+    "title": "FAOTERM",
     "link": "https://www.fao.org",
     "resolver": "https://www.fao.org/faoterm/viewEntry/en/?entryId={id}",
     "regex": "^\\d+$",
@@ -1731,7 +1731,7 @@
   },
   {
     "scope": "minnesota-rare",
-    "title": "Minnesota Rare Species Guide ID",
+    "title": "Minnesota Rare Species Guide",
     "link": "https://www.dnr.state.mn.us",
     "resolver": "https://www.dnr.state.mn.us/rsg/profile.html?action=elementDetail&selectedElement={id}",
     "regex": "^[A-Z0-9]{10}$",
@@ -1739,7 +1739,7 @@
   },
   {
     "scope": "iowa-plants",
-    "title": "Vascular Plants of Iowa species ID",
+    "title": "Vascular Plants of Iowa",
     "link": "https://uipress.lib.uiowa.edu",
     "resolver": "https://uipress.lib.uiowa.edu/vpi/DetailsPage.aspx?species_id={id}",
     "regex": "^SPEd1e[0-9]+$",
@@ -1747,7 +1747,7 @@
   },
   {
     "scope": "bugguide",
-    "title": "BugGuide taxon ID",
+    "title": "BugGuide",
     "link": "https://bugguide.net",
     "resolver": "https://bugguide.net/node/view/{id}",
     "regex": "^[1-9]\\d{0,6}$",
@@ -1755,7 +1755,7 @@
   },
   {
     "scope": "ifpni",
-    "title": "IFPNI species ID",
+    "title": "IFPNI",
     "link": "http://www.ifpni.org",
     "resolver": "http://www.ifpni.org/species.htm?id={id}",
     "regex": "^[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}$",
@@ -1763,14 +1763,14 @@
   },
   {
     "scope": "inran-food",
-    "title": "INRAN Italian Food ID",
+    "title": "INRAN Italian Food",
     "resolver": "https://web.archive.org/web/*/http://nut.entecra.it/646/tabelle_di_composizione_degli_alimenti.html?idalimento={id}&quant=100",
     "regex": "^\\d{6}$",
     "wikidataProperty": "P4729"
   },
   {
     "scope": "amphibians-india",
-    "title": "Amphibians of India ID",
+    "title": "Amphibians of India ",
     "link": "http://www.indianamphibians.org",
     "resolver": "http://www.indianamphibians.org/#!/sp/{id}",
     "regex": "^[0-9]+$",
@@ -1778,7 +1778,7 @@
   },
   {
     "scope": "livertox",
-    "title": "LiverTox ID",
+    "title": "LiverTox",
     "link": "https://www.ncbi.nlm.nih.gov",
     "resolver": "https://www.ncbi.nlm.nih.gov/books/n/livertox/{id}",
     "regex": "^[^\\s]+$",
@@ -1786,7 +1786,7 @@
   },
   {
     "scope": "drugbank",
-    "title": "DrugBank ID",
+    "title": "DrugBank",
     "link": "https://www.drugbank.ca",
     "resolver": "https://www.drugbank.ca/r/{id}",
     "regex": "^DB(SALT\\d|CAT\\d)?\\d{5}$",
@@ -1794,14 +1794,14 @@
   },
   {
     "scope": "sprat",
-    "title": "Species Profile and Threats Database ID",
+    "title": "Species Profile and Threats Database",
     "link": "http://www.environment.gov.au",
     "resolver": "http://www.environment.gov.au/cgi-bin/sprat/public/publicspecies.pl?taxon_id={id}",
     "wikidataProperty": "P2455"
   },
   {
     "scope": "ndop",
-    "title": "Czech NDOP taxon ID",
+    "title": "Czech NDOP",
     "link": "https://portal.nature.cz",
     "resolver": "https://portal.nature.cz/publik_syst/nd_nalez-public.php?idTaxon={id}",
     "regex": "^[1-9]\\d*$",
@@ -1809,14 +1809,14 @@
   },
   {
     "scope": "naturbasen",
-    "title": "Naturbasen species ID",
+    "title": "Naturbasen",
     "link": "https://www.naturbasen.dk",
     "resolver": "https://www.naturbasen.dk/art/{id}",
     "wikidataProperty": "P11078"
   },
   {
     "scope": "indian-butterflies",
-    "title": "Indian Foundation for Butterflies ID",
+    "title": "Indian Foundation for Butterflies",
     "link": "http://www.ifoundbutterflies.org",
     "resolver": "http://www.ifoundbutterflies.org/sp/{id}",
     "wikidataProperty": "P4433"
@@ -1839,7 +1839,7 @@
   },
   {
     "scope": "euromed-plantbase",
-    "title": "Euro+Med PlantBase taxon ID",
+    "title": "Euro+Med PlantBase",
     "link": "https://www.europlusmed.org",
     "resolver": "https://www.europlusmed.org/cdm_dataportal/taxon/{id}",
     "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
@@ -1847,7 +1847,7 @@
   },
   {
     "scope": "weeds-ontario",
-    "title": "Weeds in Ontario ID",
+    "title": "Weeds in Ontario",
     "link": "http://www.omafra.gov.on.ca",
     "resolver": "http://www.omafra.gov.on.ca/english/crops/facts/ontweeds/{id}.htm",
     "regex": "^[a-z]+(-[a-z]+)*$",
@@ -1855,7 +1855,7 @@
   },
   {
     "scope": "florida-plants",
-    "title": "Atlas of Florida Plants ID",
+    "title": "Atlas of Florida Plants",
     "link": "http://florida.plantatlas.usf.edu",
     "resolver": "http://florida.plantatlas.usf.edu/Plant.aspx?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -1863,7 +1863,7 @@
   },
   {
     "scope": "zenodo",
-    "title": "Zenodo ID",
+    "title": "Zenodo",
     "link": "https://zenodo.org",
     "resolver": "https://zenodo.org/record/{id}",
     "regex": "^[1-9]\\d+$",
@@ -1871,7 +1871,7 @@
   },
   {
     "scope": "nzbirdsonline",
-    "title": "New Zealand Birds Online ID",
+    "title": "New Zealand Birds Online",
     "link": "https://nzbirdsonline.org.nz",
     "resolver": "https://nzbirdsonline.org.nz/species/{id}",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -1879,7 +1879,7 @@
   },
   {
     "scope": "nalt",
-    "title": "NALT ID",
+    "title": "NALT",
     "link": "https://lod.nal.usda.gov",
     "resolver": "https://lod.nal.usda.gov/nalt/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1887,14 +1887,14 @@
   },
   {
     "scope": "montana-fieldguide",
-    "title": "Montana Field Guide species ID",
+    "title": "Montana Field Guide",
     "link": "https://fieldguide.mt.gov",
     "resolver": "https://fieldguide.mt.gov/speciesDetail.aspx?elcode={id}",
     "wikidataProperty": "P9685"
   },
   {
     "scope": "palynodata",
-    "title": "Palynodata taxa ID",
+    "title": "Palynodata taxa",
     "link": "https://paleobotany.ru",
     "resolver": "https://paleobotany.ru/palynodata/species/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1907,7 +1907,7 @@
   },
   {
     "scope": "grassbase",
-    "title": "GrassBase ID",
+    "title": "GrassBase",
     "link": "http://www.kew.org",
     "resolver": "http://www.kew.org/data/grasses-db/www/{id}",
     "regex": "^(imp|gen){1}\\d{5}$",
@@ -1915,14 +1915,14 @@
   },
   {
     "scope": "australian-lichen",
-    "title": "Australian Lichen ID",
+    "title": "Australian Lichen ",
     "link": "https://id.biodiversity.org.au",
     "resolver": "https://id.biodiversity.org.au/name/lichen/{id}",
     "wikidataProperty": "P9093"
   },
   {
     "scope": "mnhn",
-    "title": "MNHN taxon ID",
+    "title": "MNHN",
     "link": "https://science.mnhn.fr",
     "resolver": "https://science.mnhn.fr/taxon/{id}",
     "wikidataProperty": "P6046"
@@ -1936,7 +1936,7 @@
   },
   {
     "scope": "coleorrhyncha-sf",
-    "title": "Coleorrhyncha Species File taxon ID",
+    "title": "Coleorrhyncha Species File",
     "link": "https://coleorrhyncha.speciesfile.org",
     "resolver": "https://coleorrhyncha.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -1944,7 +1944,7 @@
   },
   {
     "scope": "efloramex",
-    "title": "eFloraMEX ID",
+    "title": "eFloraMEX",
     "link": "https://efloramex.ib.unam.mx",
     "resolver": "https://efloramex.ib.unam.mx/cdm_dataportal/taxon/{id}",
     "regex": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$",
@@ -1952,7 +1952,7 @@
   },
   {
     "scope": "midatlantic-herbaria",
-    "title": "Mid-Atlantic Herbaria Consortium taxon ID",
+    "title": "Mid-Atlantic Herbaria Consortium",
     "link": "https://midatlanticherbaria.org",
     "resolver": "https://midatlanticherbaria.org/portal/taxa/index.php?tid={id}",
     "regex": "^[1-9][0-9]*$",
@@ -1960,7 +1960,7 @@
   },
   {
     "scope": "colorado-plants",
-    "title": "Colorado Plant Database ID",
+    "title": "Colorado Plant Database",
     "link": "https://coloradoplants.jeffco.us",
     "resolver": "https://coloradoplants.jeffco.us/plant/details/{id}",
     "regex": "^[1-9]\\d*$",
@@ -1968,14 +1968,14 @@
   },
   {
     "scope": "fossilworks",
-    "title": "Fossilworks taxon ID",
+    "title": "Fossilworks",
     "resolver": "https://web.archive.org/web/0/http://www.fossilworks.org/cgi-bin/bridge.pl?a=taxonInfo&taxon_no={id}",
     "regex": "^([1-9]\\d{0,5})$",
     "wikidataProperty": "P842"
   },
   {
     "scope": "mesh-concept",
-    "title": "MeSH concept ID",
+    "title": "MeSH concept",
     "link": "https://id.nlm.nih.gov",
     "resolver": "https://id.nlm.nih.gov/mesh/{id}",
     "regex": "^M\\d{7}(\\d{2})?$",
@@ -1983,7 +1983,7 @@
   },
   {
     "scope": "zoobank-pub",
-    "title": "ZooBank publication ID",
+    "title": "ZooBank publication",
     "link": "https://zoobank.org",
     "resolver": "https://zoobank.org/References/{id}",
     "regex": "^[A-Z0-9]{8}(-[A-Z0-9]{4}){3}-[A-Z0-9]{12}$",
@@ -1991,28 +1991,28 @@
   },
   {
     "scope": "ibc",
-    "title": "Internet Bird Collection species ID",
+    "title": "Internet Bird Collection",
     "link": "https://www.hbw.com",
     "resolver": "https://www.hbw.com/ibc/species/{id}",
     "wikidataProperty": "P3099"
   },
   {
     "scope": "moure-catalog",
-    "title": "Moure's Catalog ID",
+    "title": "Moure's Catalog",
     "link": "https://moure.cria.org.br",
     "resolver": "https://moure.cria.org.br/catalogue?id={id}",
     "wikidataProperty": "P13523"
   },
   {
     "scope": "au-marine-algae",
-    "title": "Australian Marine Algal Name Index ID",
+    "title": "Australian Marine Algal Name Index ",
     "link": "http://www.anbg.gov.au",
     "resolver": "http://www.anbg.gov.au/cgi-bin/amani?taxon_id={id}",
     "wikidataProperty": "P7090"
   },
   {
     "scope": "threatened-species-link",
-    "title": "Threatened Species Link ID",
+    "title": "Threatened Species Link",
     "link": "https://www.threatenedspecieslink.tas.gov.au",
     "resolver": "https://www.threatenedspecieslink.tas.gov.au/Pages/{id}.aspx",
     "regex": "^[A-Z][a-z]+(\\-\\(?[A-Za-z]+\\)?)*$",
@@ -2028,7 +2028,7 @@
   },
   {
     "scope": "tn-ky-plants",
-    "title": "Tennessee-Kentucky Plant Atlas ID",
+    "title": "Tennessee-Kentucky Plant Atlas",
     "link": "https://tennessee-kentucky.plantatlas.usf.edu",
     "resolver": "https://tennessee-kentucky.plantatlas.usf.edu/plant.aspx?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2036,7 +2036,7 @@
   },
   {
     "scope": "embioptera-sf",
-    "title": "Embioptera Species File taxon ID",
+    "title": "Embioptera Species File",
     "link": "https://embioptera.speciesfile.org",
     "resolver": "https://embioptera.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -2044,7 +2044,7 @@
   },
   {
     "scope": "seaslugforum",
-    "title": "Sea Slug Forum ID",
+    "title": "Sea Slug Forum",
     "link": "http://www.seaslugforum.net",
     "resolver": "http://www.seaslugforum.net/find/{id}",
     "regex": "^[a-z]+$",
@@ -2052,7 +2052,7 @@
   },
   {
     "scope": "gisd",
-    "title": "Global Invasive Species Database ID",
+    "title": "Global Invasive Species Database",
     "link": "https://www.iucngisd.org",
     "resolver": "https://www.iucngisd.org/gisd/species.php?sc={id}",
     "regex": "^[1-9]\\d*$",
@@ -2060,7 +2060,7 @@
   },
   {
     "scope": "zoraptera-sf",
-    "title": "Zoraptera Species File taxon ID",
+    "title": "Zoraptera Species File",
     "link": "https://zoraptera.speciesfile.org",
     "resolver": "https://zoraptera.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -2068,7 +2068,7 @@
   },
   {
     "scope": "asw",
-    "title": "Amphibian Species of the World ID",
+    "title": "Amphibian Species of the World ",
     "link": "https://amphibiansoftheworld.amnh.org",
     "resolver": "https://amphibiansoftheworld.amnh.org/Amphibia/{id}",
     "regex": "^[a-zA-Z]+(\\/[a-zA-Z-]+){0,5}$",
@@ -2076,21 +2076,21 @@
   },
   {
     "scope": "panarctic-flora",
-    "title": "Panarctic Flora ID",
+    "title": "Panarctic Flora",
     "link": "http://panarcticflora.org",
     "resolver": "http://panarcticflora.org/taxon/{id}",
     "wikidataProperty": "P2434"
   },
   {
     "scope": "louisiana-plants",
-    "title": "Louisiana Plant ID",
+    "title": "Louisiana Plant",
     "link": "http://www.rnr.lsu.edu",
     "resolver": "http://www.rnr.lsu.edu/plantid/species/{id}.htm",
     "wikidataProperty": "P11189"
   },
   {
     "scope": "taxref",
-    "title": "TAXREF ID",
+    "title": "TAXREF",
     "link": "https://inpn.mnhn.fr",
     "resolver": "https://inpn.mnhn.fr/espece/cd_nom/{id}",
     "regex": "^\\d+$",
@@ -2098,14 +2098,14 @@
   },
   {
     "scope": "eflora-bc",
-    "title": "E-Flora BC species ID",
+    "title": "E-Flora BC",
     "link": "https://linnet.geog.ubc.ca",
     "resolver": "https://linnet.geog.ubc.ca/Atlas/Atlas.aspx?sciname={id}",
     "wikidataProperty": "P9691"
   },
   {
     "scope": "eflorasa",
-    "title": "eFloraSA ID",
+    "title": "eFloraSA",
     "link": "http://www.flora.sa.gov.au",
     "resolver": "http://www.flora.sa.gov.au/cgi-bin/speciesfacts_display.cgi?form=speciesfacts&name={id}",
     "regex": "^[A-Z][a-z]*_[-a-z]+$",
@@ -2129,14 +2129,14 @@
   },
   {
     "scope": "wildherps",
-    "title": "Wild Herps ID",
+    "title": "Wild Herps",
     "link": "http://www.wildherps.com",
     "resolver": "http://www.wildherps.com/species/{id}.html",
     "wikidataProperty": "P6036"
   },
   {
     "scope": "openalex",
-    "title": "OpenAlex ID",
+    "title": "OpenAlex",
     "link": "https://openalex.org",
     "resolver": "https://openalex.org/{id}",
     "regex": "^[ACIWTSPFaciwtspf][1-9]\\d{3,9}$",
@@ -2144,14 +2144,14 @@
   },
   {
     "scope": "wiki-aves",
-    "title": "Wiki Aves ID",
+    "title": "Wiki Aves",
     "link": "https://www.wikiaves.com.br",
     "resolver": "https://www.wikiaves.com.br/{id}",
     "wikidataProperty": "P4664"
   },
   {
     "scope": "natureserve",
-    "title": "NatureServe Explorer ID",
+    "title": "NatureServe Explorer",
     "link": "https://explorer.natureserve.org",
     "resolver": "https://explorer.natureserve.org/Taxon/ELEMENT_GLOBAL.{id}/",
     "regex": "^\\d{1,2}\\.\\d{1,7}$",
@@ -2159,7 +2159,7 @@
   },
   {
     "scope": "medlineplus",
-    "title": "MedlinePlus ID",
+    "title": "MedlinePlus",
     "link": "https://medlineplus.gov",
     "resolver": "https://medlineplus.gov/ency/article/{id}.htm",
     "regex": "^\\d{6}$",
@@ -2167,7 +2167,7 @@
   },
   {
     "scope": "dyntaxa",
-    "title": "Dyntaxa ID",
+    "title": "Dyntaxa",
     "link": "https://www.dyntaxa.se",
     "resolver": "https://www.dyntaxa.se/taxon/info/{id}",
     "regex": "^\\d{1,7}$",
@@ -2175,7 +2175,7 @@
   },
   {
     "scope": "lichen-herbaria",
-    "title": "Consortium of Lichen Herbaria taxon ID",
+    "title": "Consortium of Lichen Herbaria",
     "link": "https://lichenportal.org",
     "resolver": "https://lichenportal.org/portal/taxa/index.php?taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -2183,7 +2183,7 @@
   },
   {
     "scope": "maryland-biodiversity",
-    "title": "Maryland Biodiversity Project species ID",
+    "title": "Maryland Biodiversity Project",
     "link": "https://www.marylandbiodiversity.com",
     "resolver": "https://www.marylandbiodiversity.com/view/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2191,7 +2191,7 @@
   },
   {
     "scope": "mondo",
-    "title": "Mondo ID",
+    "title": "Mondo",
     "link": "http://purl.obolibrary.org",
     "resolver": "http://purl.obolibrary.org/obo/{id}",
     "regex": "^MONDO_([0-9]{1,7})$",
@@ -2199,7 +2199,7 @@
   },
   {
     "scope": "soortenregister",
-    "title": "Nederlands Soortenregister ID",
+    "title": "Nederlands Soortenregister",
     "link": "https://www.nederlandsesoorten.nl",
     "resolver": "https://www.nederlandsesoorten.nl/linnaeus_ng/app/views/species/nsr_taxon.php?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2215,7 +2215,7 @@
   },
   {
     "scope": "alabama-plant-atlas",
-    "title": "Alabama Plant Atlas ID",
+    "title": "Alabama Plant Atlas ",
     "link": "http://floraofalabama.org",
     "resolver": "http://floraofalabama.org/Plant.aspx?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2223,7 +2223,7 @@
   },
   {
     "scope": "reflora",
-    "title": "Reflora ID",
+    "title": "Reflora",
     "link": "https://floradobrasil.jbrj.gov.br",
     "resolver": "https://floradobrasil.jbrj.gov.br/{id}",
     "regex": "^FB[0-9]{2,6}$",
@@ -2231,7 +2231,7 @@
   },
   {
     "scope": "vietherb",
-    "title": "Vietherb species ID",
+    "title": "Vietherb",
     "link": "https://vietherb.com.vn",
     "resolver": "https://vietherb.com.vn/species/{id}",
     "wikidataProperty": "P9932"
@@ -2247,7 +2247,7 @@
   },
   {
     "scope": "refseq",
-    "title": "RefSeq genome ID",
+    "title": "RefSeq genome",
     "link": "https://www.ncbi.nlm.nih.gov",
     "resolver": "https://www.ncbi.nlm.nih.gov/nuccore/{id}",
     "regex": "^[A-Z]{2}_\\d+(\\.\\d{1,2})?$",
@@ -2255,7 +2255,7 @@
   },
   {
     "scope": "invasive-org",
-    "title": "Invasive.org species ID",
+    "title": "Invasive.org",
     "link": "https://www.invasive.org",
     "resolver": "https://www.invasive.org/browse/subinfo.cfm?sub={id}",
     "regex": "^[1-9]\\d*$",
@@ -2271,7 +2271,7 @@
   },
   {
     "scope": "zobodat",
-    "title": "ZOBODAT taxon ID",
+    "title": "ZOBODAT",
     "link": "https://www.zobodat.at",
     "resolver": "https://www.zobodat.at/arten.php?id={id}",
     "regex": "^\\d+$",
@@ -2279,7 +2279,7 @@
   },
   {
     "scope": "nuttab",
-    "title": "NUTTAB food ID",
+    "title": "NUTTAB food",
     "link": "http://archive.foodstandards.gov.au",
     "resolver": "http://archive.foodstandards.gov.au/consumerinformation/nuttab2010/nuttab2010onlinesearchabledatabase/onlineversion_code.cfm?&action=getFood&foodID={id}",
     "regex": "^\\d{2}[A-Z]\\d{5}$",
@@ -2287,7 +2287,7 @@
   },
   {
     "scope": "hesperomys",
-    "title": "Hesperomys taxon ID",
+    "title": "Hesperomys",
     "link": "https://hesperomys.com",
     "resolver": "https://hesperomys.com/t/{id}",
     "regex": "^[1-9]\\d+$",
@@ -2303,35 +2303,35 @@
   },
   {
     "scope": "wikiprojectmed",
-    "title": "WikiProjectMed ID",
+    "title": "WikiProjectMed",
     "link": "https://mdwiki.org",
     "resolver": "https://mdwiki.org/wiki/{id}",
     "wikidataProperty": "P11143"
   },
   {
     "scope": "bioweb-ecuador",
-    "title": "Bioweb Ecuador ID",
+    "title": "Bioweb Ecuador ",
     "link": "https://bioweb.bio",
     "resolver": "https://bioweb.bio/{id}",
     "wikidataProperty": "P8792"
   },
   {
     "scope": "china-animal-db",
-    "title": "China Animal Scientific Database ID",
+    "title": "China Animal Scientific Database ",
     "link": "http://www.zoology.csdb.cn",
     "resolver": "http://www.zoology.csdb.cn/dbb/{id}",
     "wikidataProperty": "P12390"
   },
   {
     "scope": "scalenet",
-    "title": "ScaleNet ID",
+    "title": "ScaleNet",
     "resolver": "https://wikidata-externalid-url.toolforge.org/?p=6516&url_prefix=http://scalenet.info/catalogue/&url_suffix=/&id={id}",
     "regex": "^[A-Z][a-z]+(%20[a-z]+)*$",
     "wikidataProperty": "P6516"
   },
   {
     "scope": "cpni",
-    "title": "CPNI ID",
+    "title": "CPNI",
     "link": "https://db.kib.ac.cn",
     "resolver": "https://db.kib.ac.cn/CNFlora/SearchResult.aspx?cpni=CPNI-{id}",
     "wikidataProperty": "P10778"
@@ -2354,7 +2354,7 @@
   },
   {
     "scope": "birds-india",
-    "title": "Birds of India ID",
+    "title": "Birds of India ",
     "link": "https://www.birdsofindia.org",
     "resolver": "https://www.birdsofindia.org/#!/sp/{id}",
     "regex": "^\\d+$",
@@ -2362,7 +2362,7 @@
   },
   {
     "scope": "doid",
-    "title": "Disease Ontology ID",
+    "title": "Disease Ontology",
     "link": "https://www.disease-ontology.org",
     "resolver": "https://www.disease-ontology.org/?id={id}",
     "regex": "^DOID:([0-9]{7}|[1-9][0-9]{0,4})$",
@@ -2370,7 +2370,7 @@
   },
   {
     "scope": "plant-illustrations-species",
-    "title": "Plant Illustrations species ID",
+    "title": "Plant Illustrations",
     "link": "http://plantillustrations.org",
     "resolver": "http://plantillustrations.org/species.php?id_species={id}",
     "regex": "^[1-9][0-9]*$",
@@ -2378,21 +2378,21 @@
   },
   {
     "scope": "flora-se-us",
-    "title": "Flora of the Southeastern United States ID",
+    "title": "Flora of the Southeastern United States",
     "link": "https://fsus.ncbg.unc.edu",
     "resolver": "https://fsus.ncbg.unc.edu/main.php?pg=show-taxon.php&taxonid={id}",
     "wikidataProperty": "P12179"
   },
   {
     "scope": "reptile-database",
-    "title": "The Reptile Database ID",
+    "title": "The Reptile Database",
     "link": "https://reptile-database.reptarium.cz",
     "resolver": "https://reptile-database.reptarium.cz/species?{id}",
     "wikidataProperty": "P5473"
   },
   {
     "scope": "vt-dendrology",
-    "title": "Virginia Tech Dendrology Factsheets ID",
+    "title": "Virginia Tech Dendrology Factsheets",
     "link": "https://dendro.cnre.vt.edu",
     "resolver": "https://dendro.cnre.vt.edu/dendrology/syllabus/factsheet.cfm?ID={id}",
     "regex": "^[1-9]\\d{0,3}$",
@@ -2400,7 +2400,7 @@
   },
   {
     "scope": "wac",
-    "title": "World Arachnid Catalog ID",
+    "title": "World Arachnid Catalog",
     "link": "https://wac.nmbe.ch",
     "resolver": "https://wac.nmbe.ch/lsid/{id}",
     "regex": "^urn:lsid:wac\\.nmbe\\.ch:name:[a-z0-9-]+$",
@@ -2408,7 +2408,7 @@
   },
   {
     "scope": "michigan-flora",
-    "title": "Michigan Flora ID",
+    "title": "Michigan Flora",
     "link": "https://michiganflora.net",
     "resolver": "https://michiganflora.net/record/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2416,7 +2416,7 @@
   },
   {
     "scope": "icd9",
-    "title": "ICD-9 ID",
+    "title": "ICD-9",
     "link": "http://www.icd9data.com",
     "resolver": "http://www.icd9data.com/getICD9Code.ashx?icd9={id}",
     "regex": "^(\\d\\d\\d|V\\d\\d|E[8-9]\\d\\d)(\\.\\d{1,2})?$",
@@ -2424,7 +2424,7 @@
   },
   {
     "scope": "moths-india",
-    "title": "Moths of India ID",
+    "title": "Moths of India",
     "link": "https://www.mothsofindia.org",
     "resolver": "https://www.mothsofindia.org/#!/sp/{id}",
     "regex": "^[0-9]+$",
@@ -2432,7 +2432,7 @@
   },
   {
     "scope": "foodon",
-    "title": "FoodOn ID",
+    "title": "FoodOn",
     "link": "http://purl.obolibrary.org",
     "resolver": "http://purl.obolibrary.org/obo/FOODON_{id}",
     "regex": "^\\d{8}$",
@@ -2440,7 +2440,7 @@
   },
   {
     "scope": "snomedct",
-    "title": "SNOMED CT ID",
+    "title": "SNOMED CT",
     "link": "http://snomed.info",
     "resolver": "http://snomed.info/id/{id}",
     "regex": "^[0-9]*$",
@@ -2448,7 +2448,7 @@
   },
   {
     "scope": "mona",
-    "title": "MONA ID",
+    "title": "MONA",
     "link": "http://mothphotographersgroup.msstate.edu",
     "resolver": "http://mothphotographersgroup.msstate.edu/species.php?hodges={id}",
     "regex": "^\\d{2,5}(.\\d)?$",
@@ -2456,7 +2456,7 @@
   },
   {
     "scope": "plantfiles",
-    "title": "PlantFiles taxon ID",
+    "title": "PlantFiles",
     "link": "https://davesgarden.com",
     "resolver": "https://davesgarden.com/guides/pf/go/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2464,21 +2464,21 @@
   },
   {
     "scope": "pilze-deutschland",
-    "title": "Pilze Deutschland ID",
+    "title": "Pilze Deutschland",
     "link": "https://www.pilze-deutschland.de",
     "resolver": "https://www.pilze-deutschland.de/organismen/{id}",
     "wikidataProperty": "P7254"
   },
   {
     "scope": "birdata",
-    "title": "Birdata ID",
+    "title": "Birdata ",
     "link": "https://birdata.birdlife.org.au",
     "resolver": "https://birdata.birdlife.org.au/explore#species_id={id}",
     "wikidataProperty": "P10007"
   },
   {
     "scope": "hdl",
-    "title": "Handle ID",
+    "title": "Handle",
     "link": "https://hdl.handle.net",
     "resolver": "https://hdl.handle.net/{id}",
     "regex": "^[0-9a-z]+(\\.[0-9a-z]+)*\\/.{2,}$",
@@ -2486,14 +2486,14 @@
   },
   {
     "scope": "gacs",
-    "title": "GACS ID",
+    "title": "GACS",
     "resolver": "https://web.archive.org/web/https://artemide.art.uniroma2.it/skosmos/gacs/en/page/C{id}",
     "regex": "^[1-9][0-9]{0,4}$",
     "wikidataProperty": "P4427"
   },
   {
     "scope": "flora-italy",
-    "title": "Portal to the Flora of Italy ID",
+    "title": "Portal to the Flora of Italy",
     "link": "http://dryades.units.it",
     "resolver": "http://dryades.units.it/floritaly/index.php?procedure=taxon_page&tipo=all&id={id}",
     "regex": "^[1-9]\\d+$",
@@ -2501,14 +2501,14 @@
   },
   {
     "scope": "easin",
-    "title": "EASIN ID",
+    "title": "EASIN",
     "link": "https://easin.jrc.ec.europa.eu",
     "resolver": "https://easin.jrc.ec.europa.eu/spexplorer/species/factsheet/{id}",
     "wikidataProperty": "P13734"
   },
   {
     "scope": "insecta-pro",
-    "title": "Insects (Insecta) of the World ID",
+    "title": "Insects (Insecta) of the World",
     "link": "https://insecta.pro",
     "resolver": "https://insecta.pro/taxonomy/{id}",
     "regex": "^\\d{1,7}$",
@@ -2516,7 +2516,7 @@
   },
   {
     "scope": "svampeatlas",
-    "title": "Danmarks svampeatlas ID",
+    "title": "Danmarks svampeatlas",
     "link": "https://svampe.databasen.org",
     "resolver": "https://svampe.databasen.org/taxon/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2533,14 +2533,14 @@
   },
   {
     "scope": "mol",
-    "title": "Map of Life ID",
+    "title": "Map of Life",
     "link": "https://mol.org",
     "resolver": "https://mol.org/species/{id}",
     "wikidataProperty": "P6092"
   },
   {
     "scope": "worms-source",
-    "title": "WoRMS source ID",
+    "title": "WoRMS source",
     "link": "https://www.marinespecies.org",
     "resolver": "https://www.marinespecies.org/aphia.php?p=sourcedetails&id={id}",
     "regex": "^[1-9]\\d{0,6}$",
@@ -2571,7 +2571,7 @@
   },
   {
     "scope": "cockroach-sf-old",
-    "title": "Cockroach Species File ID (old version)",
+    "title": "Cockroach Species File (old)",
     "link": "http://cockroach.speciesfile.org",
     "resolver": "http://cockroach.speciesfile.org/Common/basic/Taxa.aspx?TaxonNameID={id}",
     "regex": "^[1-9]\\d*$",
@@ -2579,7 +2579,7 @@
   },
   {
     "scope": "ebird",
-    "title": "eBird taxon ID",
+    "title": "eBird",
     "link": "https://ebird.org",
     "resolver": "https://ebird.org/species/{id}",
     "regex": "^[a-z-]{2,6}\\d{0,2}|[xy]00\\d{3}$",
@@ -2595,7 +2595,7 @@
   },
   {
     "scope": "ecos",
-    "title": "ECOS ID",
+    "title": "ECOS",
     "link": "https://ecos.fws.gov",
     "resolver": "https://ecos.fws.gov/ecp/species/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2603,14 +2603,14 @@
   },
   {
     "scope": "wnps",
-    "title": "Washington Native Plant Society Plant Directory ID",
+    "title": "Washington Native Plant Society Plant Directory",
     "link": "https://www.wnps.org",
     "resolver": "https://www.wnps.org/native-plant-directory/{id}",
     "wikidataProperty": "P10331"
   },
   {
     "scope": "oregon-rareplants",
-    "title": "Rare Plant Fact Sheets ID",
+    "title": "Rare Plant Fact Sheets",
     "link": "https://oregonflora.org",
     "resolver": "https://oregonflora.org/pages/content/{id}.pdf",
     "regex": "^[a-z0-9]+$",
@@ -2618,7 +2618,7 @@
   },
   {
     "scope": "sernec",
-    "title": "SERNEC taxon ID",
+    "title": "SERNEC",
     "link": "https://sernecportal.org",
     "resolver": "https://sernecportal.org/portal/taxa/index.php?tid={id}",
     "regex": "^[1-9][0-9]*$",
@@ -2634,7 +2634,7 @@
   },
   {
     "scope": "wisflora",
-    "title": "Flora of Wisconsin ID",
+    "title": "Flora of Wisconsin",
     "link": "http://wisflora.herbarium.wisc.edu",
     "resolver": "http://wisflora.herbarium.wisc.edu/taxa/index.php?taxon={id}",
     "regex": "^[1-9]\\d*$",
@@ -2642,14 +2642,14 @@
   },
   {
     "scope": "nebraska-invasive",
-    "title": "Nebraska Invasive Species Program species ID",
+    "title": "Nebraska Invasive Species Program",
     "link": "http://neinvasives.com",
     "resolver": "http://neinvasives.com/species/{id}",
     "wikidataProperty": "P11092"
   },
   {
     "scope": "zoobank-author",
-    "title": "ZooBank author ID",
+    "title": "ZooBank author",
     "link": "http://zoobank.org",
     "resolver": "http://zoobank.org/Authors/{id}",
     "regex": "^[A-Z0-9]{8}(-[A-Z0-9]{4}){3}-[A-Z0-9]{12}$",
@@ -2657,7 +2657,7 @@
   },
   {
     "scope": "nsw-flora",
-    "title": "NSW Flora ID",
+    "title": "NSW Flora",
     "link": "http://plantnet.rbgsyd.nsw.gov.au",
     "resolver": "http://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?page=nswfl&lvl=sp&name={id}",
     "regex": "^[A-Z][a-z]*(~[a-z]*)?$",
@@ -2665,7 +2665,7 @@
   },
   {
     "scope": "australian-fungi",
-    "title": "Australian Fungi ID",
+    "title": "Australian Fungi ",
     "link": "https://id.biodiversity.org.au",
     "resolver": "https://id.biodiversity.org.au/name/fungi/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2673,7 +2673,7 @@
   },
   {
     "scope": "umls-semantic",
-    "title": "UMLS Semantic Network ID",
+    "title": "UMLS Semantic Network",
     "link": "https://uts.nlm.nih.gov",
     "resolver": "https://uts.nlm.nih.gov/uts/umls/semantic-network/{id}",
     "wikidataProperty": "P11955"
@@ -2695,7 +2695,7 @@
   },
   {
     "scope": "xeno-canto",
-    "title": "Xeno-canto species ID",
+    "title": "Xeno-canto",
     "link": "https://xeno-canto.org",
     "resolver": "https://xeno-canto.org/species/{id}",
     "regex": "^[A-Z][a-z]+\\-[a-z]+$",
@@ -2703,7 +2703,7 @@
   },
   {
     "scope": "flora-mongolia",
-    "title": "Virtual Guide to the Flora of Mongolia ID",
+    "title": "Virtual Guide to the Flora of Mongolia",
     "link": "https://floragreif.uni-greifswald.de",
     "resolver": "https://floragreif.uni-greifswald.de/taxon/?taxon_id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2711,7 +2711,7 @@
   },
   {
     "scope": "penstemon",
-    "title": "Penstemon Database ID",
+    "title": "Penstemon Database",
     "link": "https://wolfelab.asc.ohio-state.edu",
     "resolver": "https://wolfelab.asc.ohio-state.edu/database/{id}.php",
     "regex": "^penstemon\\-[a-z\\-]+(\\-var\\-[a-z\\-]+)?$",
@@ -2719,14 +2719,14 @@
   },
   {
     "scope": "flowers-india",
-    "title": "Flowers of India ID",
+    "title": "Flowers of India",
     "resolver": "https://wikidata-externalid-url.toolforge.org/?p=7546&url_prefix=http://www.flowersofindia.net/catalog/slides/&url_suffix=.html&id={id}",
     "regex": "^[\\w\\s\\-]*$",
     "wikidataProperty": "P7546"
   },
   {
     "scope": "floraweb",
-    "title": "FloraWeb ID",
+    "title": "FloraWeb",
     "link": "https://www.floraweb.de",
     "resolver": "https://www.floraweb.de/php/artenhome.php?suchnr={id}",
     "regex": "^[1-9]\\d*$",
@@ -2734,7 +2734,7 @@
   },
   {
     "scope": "egardengo",
-    "title": "eGardenGo plant ID",
+    "title": "eGardenGo plant",
     "link": "https://www.egardengo.com",
     "resolver": "https://www.egardengo.com/plant/{id}",
     "regex": "^[A-Za-z0-9-]+$",
@@ -2742,21 +2742,21 @@
   },
   {
     "scope": "bamona",
-    "title": "Butterflies and Moths of North America ID",
+    "title": "Butterflies and Moths of North America ",
     "link": "https://www.butterfliesandmoths.org",
     "resolver": "https://www.butterfliesandmoths.org/{id}",
     "wikidataProperty": "P3398"
   },
   {
     "scope": "dgo-genbank",
-    "title": "Deutsche Genbank Obst (DGO) ID",
+    "title": "Deutsche Genbank Obst (DGO)",
     "link": "https://www.deutsche-genbank-obst.de",
     "resolver": "https://www.deutsche-genbank-obst.de/passport/view-mobile?id={id}",
     "wikidataProperty": "P13445"
   },
   {
     "scope": "illinois-plants",
-    "title": "Illinois Plants ID",
+    "title": "Illinois Plants",
     "link": "https://wwv.inhs.illinois.edu",
     "resolver": "https://wwv.inhs.illinois.edu/data/plantdb/detail/{id}",
     "regex": "^[1-9]\\d{0,3}$",
@@ -2772,14 +2772,14 @@
   },
   {
     "scope": "elurikkus",
-    "title": "eBiodiversity ID",
+    "title": "eBiodiversity",
     "link": "https://elurikkus.ee",
     "resolver": "https://elurikkus.ee/bie-hub/species/{id}",
     "wikidataProperty": "P6864"
   },
   {
     "scope": "humboldt-flora",
-    "title": "edition humboldt digital Flora ID",
+    "title": "edition humboldt digital Flora",
     "link": "https://edition-humboldt.de",
     "resolver": "https://edition-humboldt.de/register/pflanzen/detail.xql?name={id}",
     "wikidataProperty": "P8892"
@@ -2793,7 +2793,7 @@
   },
   {
     "scope": "izeltlabuak",
-    "title": "izeltlabuak.hu ID",
+    "title": "izeltlabuak.hu",
     "link": "https://www.izeltlabuak.hu",
     "resolver": "https://www.izeltlabuak.hu/faj/id/{id}",
     "regex": "^\\d+$",
@@ -2801,14 +2801,14 @@
   },
   {
     "scope": "aves-chile",
-    "title": "Aves de Chile ID",
+    "title": "Aves de Chile ",
     "link": "https://www.avesdechile.cl",
     "resolver": "https://www.avesdechile.cl/{id}.htm",
     "wikidataProperty": "P12130"
   },
   {
     "scope": "observation",
-    "title": "Observation.org taxon ID",
+    "title": "Observation.org",
     "link": "https://observation.org",
     "resolver": "https://observation.org/species/{id}/",
     "regex": "^[1-9]\\d*$",
@@ -2816,7 +2816,7 @@
   },
   {
     "scope": "cool",
-    "title": "COOL species ID",
+    "title": "COOL",
     "link": "https://flow.hemiptera-databases.org",
     "resolver": "https://flow.hemiptera-databases.org/cool/?page=explorer&db=cool&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2832,21 +2832,21 @@
   },
   {
     "scope": "nwt-species",
-    "title": "NWT Species ID",
+    "title": "NWT Species",
     "link": "https://www.enr.gov.nt.ca",
     "resolver": "https://www.enr.gov.nt.ca/species-search/{id}",
     "wikidataProperty": "P10064"
   },
   {
     "scope": "conifers",
-    "title": "conifers.org ID",
+    "title": "conifers.org",
     "link": "https://conifers.org",
     "resolver": "https://conifers.org/{id}.php",
     "wikidataProperty": "P1940"
   },
   {
     "scope": "garden",
-    "title": "Garden.org Plants Database ID",
+    "title": "Garden.org Plants Database",
     "link": "https://garden.org",
     "resolver": "https://garden.org/plants/view/{id}/",
     "regex": "^[1-9]\\d*$",
@@ -2854,7 +2854,7 @@
   },
   {
     "scope": "redlist-sa-plants",
-    "title": "Red List of South African Plants ID",
+    "title": "Red List of South African Plants",
     "link": "http://redlist.sanbi.org",
     "resolver": "http://redlist.sanbi.org/species.php?species={id}",
     "regex": "^[1-9]\\d*-[1-9]\\d*$",
@@ -2862,7 +2862,7 @@
   },
   {
     "scope": "nc-gardener",
-    "title": "North Carolina Extension Gardener Plant Toolbox ID",
+    "title": "North Carolina Extension Gardener Plant Toolbox",
     "link": "https://plants.ces.ncsu.edu",
     "resolver": "https://plants.ces.ncsu.edu/plants/{id}/",
     "regex": "^[a-z\\-]+$",
@@ -2878,7 +2878,7 @@
   },
   {
     "scope": "psyllist",
-    "title": "Psyl'list species ID",
+    "title": "Psyl'list",
     "link": "https://flow.hemiptera-databases.org",
     "resolver": "https://flow.hemiptera-databases.org/psyllist?db=psylles&page=explorer&lang=en&card=taxon&rank=species&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -2886,7 +2886,7 @@
   },
   {
     "scope": "cacti-encyclopedia",
-    "title": "Encyclopedia of Cacti species ID",
+    "title": "Encyclopedia of Cacti species ",
     "link": "https://www.llifle.com",
     "resolver": "https://www.llifle.com/Encyclopedia/CACTI/Family/Cactaceae/{id}/",
     "regex": "^[1-9]\\d{0,4}$",
@@ -2894,7 +2894,7 @@
   },
   {
     "scope": "cnps",
-    "title": "CNPS ID",
+    "title": "CNPS ",
     "link": "http://www.rareplants.cnps.org",
     "resolver": "http://www.rareplants.cnps.org/detail/{id}.html",
     "regex": "^[1-9]\\d*$",
@@ -2902,7 +2902,7 @@
   },
   {
     "scope": "mosquito-catalog",
-    "title": "Systematic Catalog of Culicidae ID",
+    "title": "Systematic Catalog of Culicidae",
     "link": "http://www.mosquitocatalog.org",
     "resolver": "http://www.mosquitocatalog.org/taxon_descr.aspx?ID={id}",
     "regex": "^[1-9]\\d*$",
@@ -2918,7 +2918,7 @@
   },
   {
     "scope": "mantophasmatodea-sf",
-    "title": "Mantophasmatodea Species File taxon ID",
+    "title": "Mantophasmatodea Species File",
     "link": "https://mantophasmatodea.speciesfile.org",
     "resolver": "https://mantophasmatodea.speciesfile.org/otus/{id}/overview",
     "regex": "^[1-9]\\d*$",
@@ -2926,7 +2926,7 @@
   },
   {
     "scope": "pteridoportal",
-    "title": "PteridoPortal taxon ID",
+    "title": "PteridoPortal",
     "link": "https://www.pteridoportal.org",
     "resolver": "https://www.pteridoportal.org/portal/taxa/index.php?taxon={id}",
     "regex": "^[1-9][0-9]*$",
@@ -2934,7 +2934,7 @@
   },
   {
     "scope": "west-bengal-species",
-    "title": "Biodiversity of West Bengal species ID",
+    "title": "Biodiversity of West Bengal",
     "link": "https://biodiversityofwestbengal.wildwingsindia.in",
     "resolver": "https://biodiversityofwestbengal.wildwingsindia.in/description.php?sname={id}",
     "regex": "^[\\w\\s]*$",
@@ -2942,7 +2942,7 @@
   },
   {
     "scope": "vectorbase",
-    "title": "VectorBase taxonomy ID",
+    "title": "VectorBase taxonomy",
     "link": "https://www.vectorbase.org",
     "resolver": "https://www.vectorbase.org/ontology-browser?cv=VBCV&t=VBsp:{id}",
     "regex": "^\\d+$",
@@ -2950,7 +2950,7 @@
   },
   {
     "scope": "biota-nm",
-    "title": "Biota Information System of New Mexico species ID",
+    "title": "Biota Information System of New Mexico species ",
     "link": "https://bison-m.org",
     "resolver": "https://bison-m.org/booklet.aspx?SpeciesID={id}",
     "regex": "^\\d{6}$",
@@ -2958,7 +2958,7 @@
   },
   {
     "scope": "fauna-europaea-new",
-    "title": "Fauna Europaea New ID",
+    "title": "Fauna Europaea New",
     "link": "https://fauna-eu.org",
     "resolver": "https://fauna-eu.org/cdm_dataportal/taxon/{id}",
     "regex": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
@@ -2966,7 +2966,7 @@
   },
   {
     "scope": "msw",
-    "title": "MSW ID",
+    "title": "MSW",
     "link": "http://www.departments.bucknell.edu",
     "resolver": "http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id={id}",
     "regex": "^1\\d{7}$",
@@ -2974,7 +2974,7 @@
   },
   {
     "scope": "foih",
-    "title": "FOIH taxon ID",
+    "title": "FOIH",
     "link": "https://id.erfgoed.net",
     "resolver": "https://id.erfgoed.net/thesauri/soorten/{id}",
     "regex": "^[1-9]\\d*$",
@@ -2982,7 +2982,7 @@
   },
   {
     "scope": "titan",
-    "title": "Titan ID",
+    "title": "Titan",
     "link": "http://titan.gbif.fr",
     "resolver": "http://titan.gbif.fr/sel_genann1.php?numero={id}",
     "regex": "^\\d+$",
@@ -2990,7 +2990,7 @@
   },
   {
     "scope": "flora-croatica",
-    "title": "Flora Croatica Database taxon ID",
+    "title": "Flora Croatica Database",
     "link": "https://hirc.botanic.hr",
     "resolver": "https://hirc.botanic.hr/fcd/DetaljiFrame.aspx?IdVrste={id}",
     "regex": "^[0-9]\\d*$",
@@ -2998,7 +2998,7 @@
   },
   {
     "scope": "antwiki",
-    "title": "AntWiki article ID",
+    "title": "AntWiki article",
     "link": "https://antwiki.org",
     "resolver": "https://antwiki.org/wiki/{id}",
     "regex": "^\\S{1,128}$",
@@ -3006,7 +3006,7 @@
   },
   {
     "scope": "biotanz",
-    "title": "Biota of New Zealand ID",
+    "title": "Biota of New Zealand ",
     "link": "https://biotanz.landcareresearch.co.nz",
     "resolver": "https://biotanz.landcareresearch.co.nz/scientific-names/{id}",
     "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
@@ -3014,21 +3014,21 @@
   },
   {
     "scope": "bhl-name",
-    "title": "BHL name ID",
+    "title": "BHL name ",
     "link": "https://www.biodiversitylibrary.org",
     "resolver": "https://www.biodiversitylibrary.org/name/{id}",
     "wikidataProperty": "P8724"
   },
   {
     "scope": "fooddata-central",
-    "title": "FoodData Central ID",
+    "title": "FoodData Central",
     "link": "https://fdc.nal.usda.gov",
     "resolver": "https://fdc.nal.usda.gov/fdc-app.html#/food-details/{id}/nutrients",
     "wikidataProperty": "P12917"
   },
   {
     "scope": "frogmap",
-    "title": "FrogMAP ID",
+    "title": "FrogMAP",
     "link": "http://frogmap.adu.org.za",
     "resolver": "http://frogmap.adu.org.za/Species_text.php?sp={id}",
     "regex": "^\\d+$",
@@ -3036,7 +3036,7 @@
   },
   {
     "scope": "gardens-navigator",
-    "title": "Gardens Navigator ID",
+    "title": "Gardens Navigator",
     "link": "http://navigate.botanicgardens.org",
     "resolver": "http://navigate.botanicgardens.org/weboi/oecgi2.exe/INET_ECM_DispPl?NAMENUM={id}",
     "wikidataProperty": "P10366"
@@ -3051,14 +3051,14 @@
   },
   {
     "scope": "nhs-health-az",
-    "title": "NHS Health A to Z ID",
+    "title": "NHS Health A to Z",
     "link": "https://www.nhs.uk",
     "resolver": "https://www.nhs.uk/conditions/{id}",
     "wikidataProperty": "P7995"
   },
   {
     "scope": "ecocrop",
-    "title": "Ecocrop ID",
+    "title": "Ecocrop",
     "link": "http://ecocrop.fao.org",
     "resolver": "http://ecocrop.fao.org/ecocrop/srv/en/cropView?id={id}",
     "regex": "^\\d+$",
@@ -3074,7 +3074,7 @@
   },
   {
     "scope": "allaboutbirds",
-    "title": "All About Birds ID",
+    "title": "All About Birds ",
     "link": "https://www.allaboutbirds.org",
     "resolver": "https://www.allaboutbirds.org/guide/{id}/",
     "regex": "^[A-Z][A-Za-z]+((-[a-z]+|_[A-Za-z\\-]+))*$",
@@ -3082,14 +3082,14 @@
   },
   {
     "scope": "queensland-biota",
-    "title": "Queensland Biota ID",
+    "title": "Queensland Biota",
     "link": "https://apps.des.qld.gov.au",
     "resolver": "https://apps.des.qld.gov.au/species-search/details/?id={id}",
     "wikidataProperty": "P8468"
   },
   {
     "scope": "floracatalana",
-    "title": "FloraCatalana ID",
+    "title": "FloraCatalana",
     "link": "http://www.floracatalana.net",
     "resolver": "http://www.floracatalana.net/{id}",
     "regex": "^VTax[1-9]\\d{0,3}$",
@@ -3097,14 +3097,14 @@
   },
   {
     "scope": "idaho-species",
-    "title": "Idaho Species ID",
+    "title": "Idaho Species",
     "link": "https://idfg.idaho.gov",
     "resolver": "https://idfg.idaho.gov/species/taxa/{id}",
     "wikidataProperty": "P9684"
   },
   {
     "scope": "omim",
-    "title": "OMIM ID",
+    "title": "OMIM",
     "link": "https://omim.org",
     "resolver": "https://omim.org/entry/{id}",
     "regex": "^\\d{6}$",
@@ -3112,7 +3112,7 @@
   },
   {
     "scope": "india-biodiversity",
-    "title": "India Biodiversity Portal species ID",
+    "title": "India Biodiversity Portal",
     "link": "https://indiabiodiversity.org",
     "resolver": "https://indiabiodiversity.org/species/show/{id}",
     "regex": "^[0-9]+$",
@@ -3120,7 +3120,7 @@
   },
   {
     "scope": "cabi-isc",
-    "title": "Invasive Species Compendium Datasheet ID",
+    "title": "Invasive Species Compendium Datasheet ",
     "link": "https://www.cabi.org",
     "resolver": "https://www.cabi.org/isc/datasheet/{id}",
     "regex": "^[1-9]\\d{0,7}$",
@@ -3128,7 +3128,7 @@
   },
   {
     "scope": "global-raptors",
-    "title": "Global Raptor Information Network ID",
+    "title": "Global Raptor Information Network",
     "link": "http://www.globalraptors.org",
     "resolver": "http://www.globalraptors.org/grin/SpeciesResults.asp?specID={id}",
     "regex": "^[1-9]\\d*$",
@@ -3136,7 +3136,7 @@
   },
   {
     "scope": "oregonflora",
-    "title": "OregonFlora taxon ID",
+    "title": "OregonFlora",
     "link": "https://oregonflora.org",
     "resolver": "https://oregonflora.org/taxa/index.php?taxon={id}",
     "regex": "^[1-9]\\d*$",
@@ -3151,14 +3151,14 @@
   },
   {
     "scope": "arkive",
-    "title": "ARKive ID (archived)",
+    "title": "ARKive (archived)",
     "resolver": "https://web.archive.org/web/*/http://www.arkive.org/wd/{id}/",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
     "wikidataProperty": "P2833"
   },
   {
     "scope": "sealifebase",
-    "title": "SeaLifeBase ID",
+    "title": "SeaLifeBase",
     "link": "https://www.sealifebase.ca",
     "resolver": "https://www.sealifebase.ca/Summary/SpeciesSummary.php?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -3166,7 +3166,7 @@
   },
   {
     "scope": "birdlife-datazone",
-    "title": "BirdLife DataZone species ID",
+    "title": "BirdLife DataZone species ",
     "link": "https://datazone.birdlife.org",
     "resolver": "https://datazone.birdlife.org/species/factsheet/{id}",
     "wikidataProperty": "P13434"
@@ -3181,14 +3181,14 @@
   },
   {
     "scope": "antweb",
-    "title": "AntWeb ID",
+    "title": "AntWeb ",
     "link": "https://www.antweb.org",
     "resolver": "https://www.antweb.org/description.do?taxonName={id}",
     "wikidataProperty": "P5299"
   },
   {
     "scope": "butmoth",
-    "title": "ButMoth ID",
+    "title": "ButMoth ",
     "link": "http://www.nhm.ac.uk",
     "resolver": "http://www.nhm.ac.uk/jdsml/research-curation/research/projects/butmoth/GenusDetails.dsml?NUMBER={id}",
     "regex": "^[1-9]\\d{0,4}\\.0$",
@@ -3196,7 +3196,7 @@
   },
   {
     "scope": "uconn-plants",
-    "title": "UConn Plant Database ID",
+    "title": "UConn Plant Database",
     "link": "https://plantdatabase.uconn.edu",
     "resolver": "https://plantdatabase.uconn.edu/detail.php?pid={id}",
     "regex": "^[1-9]\\d{0,2}$",
@@ -3204,7 +3204,7 @@
   },
   {
     "scope": "indiana-plants",
-    "title": "Indiana Plant Atlas ID",
+    "title": "Indiana Plant Atlas",
     "link": "https://indiana.plantatlas.usf.edu",
     "resolver": "https://indiana.plantatlas.usf.edu/plant.aspx?id={id}",
     "regex": "^[1-9]\\d*$",
@@ -3212,7 +3212,7 @@
   },
   {
     "scope": "eambrosia",
-    "title": "eAmbrosia ID",
+    "title": "eAmbrosia",
     "link": "https://ec.europa.eu",
     "resolver": "https://ec.europa.eu/info/food-farming-fisheries/food-safety-and-quality/certification/quality-labels/geographical-indications-register/details/{id}",
     "regex": "^EUGI000000\\d{5}$",
@@ -3228,7 +3228,7 @@
   },
   {
     "scope": "microlepidoptera",
-    "title": "Microlepidoptera.nl ID",
+    "title": "Microlepidoptera.nl",
     "link": "https://www.microvlinders.nl",
     "resolver": "https://www.microvlinders.nl/soorten/species.php?speciescode={id}&p=1",
     "wikidataProperty": "P9580"
@@ -3250,7 +3250,7 @@
   },
   {
     "scope": "invasives-outremer",
-    "title": "Esp\u00e8ces Envahissantes Outre-mer ID",
+    "title": "Espèces Envahissantes Outre-mer",
     "link": "https://especes-envahissantes-outremer.fr",
     "resolver": "https://especes-envahissantes-outremer.fr/especes_envahissante/{id}/",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -3258,7 +3258,7 @@
   },
   {
     "scope": "maryland-plant-atlas",
-    "title": "Maryland Plant Atlas ID",
+    "title": "Maryland Plant Atlas",
     "link": "https://www.marylandplantatlas.org",
     "resolver": "https://www.marylandplantatlas.org/species.php?species={id}",
     "regex": "^[1-9]\\d*$",
@@ -3266,7 +3266,7 @@
   },
   {
     "scope": "icd10",
-    "title": "ICD-10 ID",
+    "title": "ICD-10",
     "link": "https://apps.who.int",
     "resolver": "https://apps.who.int/classifications/icd10/browse/2016/en#/{id}",
     "regex": "^[A-Z]\\d{2}(\\.\\d{1,2})?$",
@@ -3274,7 +3274,7 @@
   },
   {
     "scope": "staphbase",
-    "title": "StaphBase ID",
+    "title": "StaphBase",
     "link": "https://www.checklistbank.org",
     "resolver": "https://www.checklistbank.org/dataset/1204/taxon/{id}",
     "regex": "^[1-9]\\d$",
@@ -3282,7 +3282,7 @@
   },
   {
     "scope": "great-plant-picks",
-    "title": "Great Plant Picks ID",
+    "title": "Great Plant Picks",
     "link": "https://www.greatplantpicks.org",
     "resolver": "https://www.greatplantpicks.org/search/plant-details/{id}",
     "regex": "^[1-9]\\d*$",
@@ -3290,14 +3290,14 @@
   },
   {
     "scope": "wood-database",
-    "title": "Wood Database ID",
+    "title": "Wood Database",
     "link": "https://www.wood-database.com",
     "resolver": "https://www.wood-database.com/{id}/",
     "wikidataProperty": "P11776"
   },
   {
     "scope": "sa-flora",
-    "title": "SA Flora ID",
+    "title": "SA Flora",
     "link": "http://www.flora.sa.gov.au",
     "resolver": "http://www.flora.sa.gov.au/cgi-bin/speciesfacts_display.cgi?form=speciesfacts&name={id}",
     "regex": "^[A-Z][a-z_\\-]{3,}$",
@@ -3313,7 +3313,7 @@
   },
   {
     "scope": "mde-fauna",
-    "title": "Madrean Discovery Expeditions Fauna Database ID",
+    "title": "Madrean Discovery Expeditions Fauna Database",
     "link": "https://www.madreandiscovery.org",
     "resolver": "https://www.madreandiscovery.org/fauna/taxa/index.php?tid={id}",
     "regex": "^[1-9]\\d*$",
@@ -3321,7 +3321,7 @@
   },
   {
     "scope": "patientslikeme-condition",
-    "title": "PatientsLikeMe condition ID",
+    "title": "PatientsLikeMe condition",
     "link": "https://www.patientslikeme.com",
     "resolver": "https://www.patientslikeme.com/conditions/{id}",
     "regex": "^[1-9]\\d*$",
@@ -3337,7 +3337,7 @@
   },
   {
     "scope": "odnr-wildlife",
-    "title": "ODNR Division of Wildlife ID",
+    "title": "ODNR Division of Wildlife",
     "link": "http://wildlife.ohiodnr.gov",
     "resolver": "http://wildlife.ohiodnr.gov/species-and-habitats/species-guide-index/{id}",
     "regex": "^[a-z]\\-[a-z]+(\\/[a-z]\\-[a-z]+)*$",
@@ -3345,7 +3345,7 @@
   },
   {
     "scope": "lepindex",
-    "title": "LepIndex ID",
+    "title": "LepIndex",
     "link": "http://www.nhm.ac.uk",
     "resolver": "http://www.nhm.ac.uk/our-science/data/lepindex/detail/?taxonno={id}",
     "regex": "^[1-9]\\d{0,6}$",
@@ -3353,7 +3353,7 @@
   },
   {
     "scope": "australian-reptile",
-    "title": "Australian Reptile Online Database ID",
+    "title": "Australian Reptile Online Database ",
     "link": "https://www.arod.com.au",
     "resolver": "https://www.arod.com.au/arod/reptilia/{id}",
     "regex": "^(\\w+)(\\/\\w+)*$",
@@ -3361,14 +3361,14 @@
   },
   {
     "scope": "meddra",
-    "title": "Medical Dictionary for Regulatory Activities ID",
+    "title": "Medical Dictionary for Regulatory Activities",
     "link": "https://bioportal.bioontology.org",
     "resolver": "https://bioportal.bioontology.org/ontologies/MEDDRA?p=classes&conceptid={id}",
     "wikidataProperty": "P3201"
   },
   {
     "scope": "birdlife-australia",
-    "title": "BirdLife Australia ID",
+    "title": "BirdLife Australia ",
     "link": "https://birdlife.org.au",
     "resolver": "https://birdlife.org.au/bird-profile/{id}",
     "regex": "^[a-z]+(\\-[a-z]+)*$",
@@ -3376,14 +3376,14 @@
   },
   {
     "scope": "ny-flora",
-    "title": "New York Flora Atlas ID",
+    "title": "New York Flora Atlas",
     "link": "https://newyork.plantatlas.usf.edu",
     "resolver": "https://newyork.plantatlas.usf.edu/Plant.aspx?id={id}",
     "wikidataProperty": "P10333"
   },
   {
     "scope": "nybg-herbarium",
-    "title": "C.V. Starr Virtual Herbarium ID",
+    "title": "C.V. Starr Virtual Herbarium",
     "link": "http://sycamore.nybg.org",
     "resolver": "http://sycamore.nybg.org/science/vh/taxon.php?irn={id}",
     "regex": "^[1-9]\\d*$",
@@ -3398,7 +3398,7 @@
   },
   {
     "scope": "flora-na",
-    "title": "Flora of North America taxon ID",
+    "title": "Flora of North America",
     "link": "http://www.efloras.org",
     "resolver": "http://www.efloras.org/florataxon.aspx?flora_id=1&taxon_id={id}",
     "regex": "^[1-9]\\d{4,9}$",
@@ -3406,7 +3406,7 @@
   },
   {
     "scope": "millibase",
-    "title": "MilliBase taxon ID",
+    "title": "MilliBase",
     "link": "https://millibase.org",
     "resolver": "https://millibase.org/aphia.php?p=taxdetails&id={id}",
     "regex": "^[1-9]\\d*$",
@@ -3414,7 +3414,7 @@
   },
   {
     "scope": "mindat",
-    "title": "Mindat taxon ID",
+    "title": "Mindat",
     "link": "https://www.mindat.org",
     "resolver": "https://www.mindat.org/taxon-{id}.html",
     "wikidataProperty": "P12444"

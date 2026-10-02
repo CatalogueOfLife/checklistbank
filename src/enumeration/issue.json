@@ -892,5 +892,35 @@
     "group": "name usage",
     "level": "warning",
     "name": "duplicate taxon properties"
+  },
+  {
+    "description": "The authorship is explicitly marked as uncertain in the name, e.g. a trailing question mark or alternative authors separated by 'or' or a slash.",
+    "group": "name",
+    "level": "warning",
+    "name": "authorship uncertain"
+  },
+  {
+    "description": "The name carried an additional authorship on its genus or species part that is superfluous to the terminal authorship and was not kept, e.g. the genus author in \"Cordia (Adans.) Kuntze sect. Salimori\".",
+    "group": "name",
+    "level": "warning",
+    "name": "superfluous authorship"
+  },
+  {
+    "description": "A taxon concept relation or species interaction referenced a synonym instead of an accepted taxon. The reference has been relinked to the synonyms accepted taxon, or the relation dropped if no accepted taxon could be found.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "relation synonym"
+  },
+  {
+    "description": "The authorship is an indetermination or rank marker such as \"sp.\", not a real author. Usually a source that supplies the marker in its own authorship column, e.g. scientificName=Berkeleyia with authorship=sp.",
+    "group": "name",
+    "level": "error",
+    "name": "authorship indet marker"
+  },
+  {
+    "description": "The nomenclatural status was not given explicitly, but derived from the taxonomic status. Sources often squeeze a nomenclatural statement into their single status column, e.g. dwc:taxonomicStatus=\"nomen nudum\" or \"junior homonym\".",
+    "group": "name",
+    "level": "info",
+    "name": "derived nomenclatural status"
   }
 ]

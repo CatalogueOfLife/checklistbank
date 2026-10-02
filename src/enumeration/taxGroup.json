@@ -25,7 +25,7 @@
     "codes": [
       "bacterial"
     ],
-    "description": "Bacteria",
+    "description": "Bacteria including cyanobacteria",
     "icon": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/vector.svg",
     "name": "bacteria",
@@ -96,8 +96,8 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
     "description": "Sensu lato including names traditionally treated as eukaryotic algae. Includes diatoms, red algae and any protist algae, but excluding prokaryotic cyanobacteria",
     "icon": "https://images.phylopic.org/images/65414989-e801-4d0e-acc1-4309cd35ab7e/thumbnail/64x64.png",
@@ -218,8 +218,8 @@
   },
   {
     "codes": [
-      "botanical",
-      "zoological"
+      "zoological",
+      "botanical"
     ],
     "description": "traditionally follows fungal nomenclature therefore placed here. Includes Oomycetes and Hyphochytriomycetes. Phylogenetically related to Algae and protists",
     "icon": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/thumbnail/64x64.png",
@@ -237,7 +237,7 @@
     "codes": [
       "botanical"
     ],
-    "description": "All other basal fungi not being asco- or basidiomycetes",
+    "description": "All other basal fungi not being Asco- or Basidiomycetes, e.g. Chytridiomycota (chytrids), Zygomycota (bread molds) and Glomeromycota (arbuscular mycorrhizal fungi)",
     "icon": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/vector.svg",
     "name": "otherfungi",
@@ -267,6 +267,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Arthropoda",
     "icon": "https://images.phylopic.org/images/83c995d5-0936-441b-8a27-089005086c61/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/83c995d5-0936-441b-8a27-089005086c61/vector.svg",
     "name": "arthropods",
@@ -281,6 +282,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Insecta, the most diverse animal group",
     "icon": "https://images.phylopic.org/images/b2e26249-80be-441b-8648-4c0361892ee0/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/b2e26249-80be-441b-8648-4c0361892ee0/vector.svg",
     "name": "insects",
@@ -295,6 +297,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Beetles, e.g. Curculionidae (weevils), Carabidae (ground beetles) and Scarabaeidae (scarabs)",
     "icon": "https://images.phylopic.org/images/35bb269c-5ff2-48c1-a002-a6bf8d9e8eef/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/35bb269c-5ff2-48c1-a002-a6bf8d9e8eef/vector.svg",
     "name": "coleoptera",
@@ -309,6 +312,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "True flies incl Culicidae (mosquitoes), Tipulidae (crane flies) and Chironomidae (midges)",
     "icon": "https://images.phylopic.org/images/fb360445-4c23-452e-b43d-34b42ce449dd/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/fb360445-4c23-452e-b43d-34b42ce449dd/vector.svg",
     "name": "diptera",
@@ -323,6 +327,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Butterflies and moths, e.g. Papilionoidea (butterflies), Sphingidae (hawk moths) and Noctuidae (owlet moths)",
     "icon": "https://images.phylopic.org/images/a36477e3-5e2c-4e28-94f8-90b397212c3b/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/a36477e3-5e2c-4e28-94f8-90b397212c3b/vector.svg",
     "name": "lepidoptera",
@@ -337,6 +342,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Formicidae (ants), Anthophila (bees), Vespidae (wasps) and Symphyta (sawflies)",
     "icon": "https://images.phylopic.org/images/b00b5230-a08a-4413-a9ed-f8b3e5f795b0/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/b00b5230-a08a-4413-a9ed-f8b3e5f795b0/vector.svg",
     "name": "hymenoptera",
@@ -351,6 +357,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "True bugs incl Aphididae (aphids), Cicadidae (cicadas) and Pentatomidae (shield bugs)",
     "icon": "https://images.phylopic.org/images/61e306a9-9b19-4c9a-ba10-7856bd096356/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/61e306a9-9b19-4c9a-ba10-7856bd096356/vector.svg",
     "name": "hemiptera",
@@ -365,6 +372,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Caelifera (grasshoppers and locusts) and Ensifera (crickets and katydids)",
     "icon": "https://images.phylopic.org/images/e7ba011c-6172-47ca-84bf-0dfc87b47a32/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/e7ba011c-6172-47ca-84bf-0dfc87b47a32/vector.svg",
     "name": "orthoptera",
@@ -379,6 +387,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Caddisflies, e.g. Hydropsychidae (net-spinning caddisflies) and Limnephilidae (northern caddisflies)",
     "icon": "https://images.phylopic.org/images/e1307c88-3e8f-4ba8-9f93-751df3deb739/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/e1307c88-3e8f-4ba8-9f93-751df3deb739/vector.svg",
     "name": "trichoptera",
@@ -393,6 +402,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "All other insects, e.g. Odonata (dragonflies), Blattodea (cockroaches and termites), Ephemeroptera (mayflies), Dermaptera (earwigs) and Neuroptera (lacewings)",
     "icon": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/vector.svg",
     "name": "otherinsects",
@@ -407,6 +417,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Arachnida incl Araneae (spiders), Scorpiones (scorpions) and Acari (mites and ticks)",
     "icon": "https://images.phylopic.org/images/95908e68-8d10-4f48-91a2-b0d7d85c4c2d/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/95908e68-8d10-4f48-91a2-b0d7d85c4c2d/vector.svg",
     "name": "arachnids",
@@ -421,6 +432,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Crustacea incl Decapoda (crabs, lobsters and shrimps), Cirripedia (barnacles) and Copepoda (copepods)",
     "icon": "https://images.phylopic.org/images/a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16/vector.svg",
     "name": "crustacean",
@@ -435,6 +447,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "All other arthropods, e.g. Myriapoda (centipedes and millipedes) and Pycnogonida (sea spiders)",
     "icon": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/vector.svg",
     "name": "otherarthropods",
@@ -449,6 +462,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Mollusca, soft-bodied invertebrates incl Gastropoda (snails), Bivalvia (clams) and Cephalopoda (squids and octopuses)",
     "icon": "https://images.phylopic.org/images/e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6/vector.svg",
     "name": "molluscs",
@@ -463,6 +477,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Gastropoda, snails and slugs, incl Caenogastropoda (sea snails), Stylommatophora (land snails and slugs) and Nudibranchia (sea slugs)",
     "icon": "https://images.phylopic.org/images/9da7781e-48eb-407d-a13f-d6de8954dde2/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/9da7781e-48eb-407d-a13f-d6de8954dde2/vector.svg",
     "name": "gastropods",
@@ -477,6 +492,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Bivalvia incl Ostreidae (oysters), Mytilidae (mussels), Pectinidae (scallops) and Veneridae (clams)",
     "icon": "https://images.phylopic.org/images/70d345ec-c53a-45b9-a4af-93cf6f3e2125/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/70d345ec-c53a-45b9-a4af-93cf6f3e2125/vector.svg",
     "name": "bivalves",
@@ -491,6 +507,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "All other molluscs, e.g. Cephalopoda (squids and octopuses), Polyplacophora (chitons) and Scaphopoda (tusk shells)",
     "icon": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/vector.svg",
     "name": "othermolluscs",
@@ -505,6 +522,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "Chordata incl vertebrates such as Actinopterygii (ray-finned fishes), Amphibia (amphibians), Reptilia (reptiles), Aves (birds) and Mammalia (mammals)",
     "icon": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/vector.svg",
     "name": "chordates",
@@ -519,6 +537,7 @@
     "codes": [
       "zoological"
     ],
+    "description": "All other animals, e.g. Cnidaria (jellyfish and corals), Echinodermata (starfish and sea urchins), Annelida (segmented worms), Nematoda (roundworms), Platyhelminthes (flatworms) and Porifera (sponges)",
     "icon": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/thumbnail/64x64.png",
     "iconSVG": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/vector.svg",
     "name": "otheranimals",

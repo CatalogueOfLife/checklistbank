@@ -91,6 +91,29 @@
   },
   {
     "areaCLass": "GenericArea",
+    "areaLinkTemplate": "https://www.protectedplanet.net/",
+    "caseSensitive": false,
+    "description": "The World Database on Protected Areas (WDPA) is the most comprehensive global database on terrestrial and marine protected areas.",
+    "link": "https://www.protectedplanet.net/en/thematic-areas/wdpa",
+    "name": "wdpa",
+    "normalizer": {},
+    "pattern": "^[0-9]+$",
+    "regex": "^[0-9]+$",
+    "title": "World Database on Protected Areas"
+  },
+  {
+    "areaCLass": "GenericArea",
+    "caseSensitive": false,
+    "description": "The Global Islands gazetteer contains all named big islands > 1km2 of the global islands polygon dataset, produced by USGS in partnership with Esri.",
+    "link": "https://apps.usgs.gov/glbeco/gie.html",
+    "name": "gi",
+    "normalizer": {},
+    "pattern": "^[0-9]+$",
+    "regex": "^[0-9]+$",
+    "title": "Global Islands"
+  },
+  {
+    "areaCLass": "GenericArea",
     "caseSensitive": false,
     "description": "Free text not following any standard",
     "name": "text",

@@ -261,7 +261,7 @@
     "description": "Inverse of kleptoparasite of",
     "inverse": "kleptoparasite of",
     "name": "has kleptoparasite",
-    "obo": "http://purl.obolibrary.org/obo/RO_0008503",
+    "obo": "http://purl.obolibrary.org/obo/RO_0008504",
     "superTypes": [
       "has parasite"
     ],

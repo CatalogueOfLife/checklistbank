@@ -543,11 +543,7 @@ const WorkBench = ({
           },
           mode: mode,
         };
-        if (
-          ["informal", "no name", "hybrid formula", "placeholder"].includes(
-            decision
-          )
-        ) {
+        if (nametype.includes(decision)) {
           decisionObject.name = { type: decision };
         }
         if (taxonomicstatus.includes(decision)) {
@@ -981,12 +977,7 @@ const WorkBench = ({
                 },
                 {
                   label: "Name type",
-                  options: [
-                    { value: "no name", label: "No name" },
-                    { value: "placeholder", label: "Placeholder" },
-                    { value: "hybrid formula", label: "Hybrid formula" },
-                    { value: "informal", label: "Informal" },
-                  ],
+                  options: nametype.map((t) => ({ value: t, label: _.startCase(t) })),
                 },
                 /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
               ]}

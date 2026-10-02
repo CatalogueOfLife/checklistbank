@@ -4,11 +4,7 @@
     "parsable": true
   },
   {
-    "name": "virus",
-    "parsable": false
-  },
-  {
-    "name": "hybrid formula",
+    "name": "formula",
     "parsable": false
   },
   {
@@ -16,15 +12,15 @@
     "parsable": true
   },
   {
-    "name": "otu",
-    "parsable": false
-  },
-  {
     "name": "placeholder",
     "parsable": false
   },
   {
-    "name": "no name",
+    "name": "identifier",
+    "parsable": false
+  },
+  {
+    "name": "other",
     "parsable": false
   }
 ]
