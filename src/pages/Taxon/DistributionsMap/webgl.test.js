@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { isWebglSupported, resetWebglSupportCache } from "./webgl";
 
 describe("isWebglSupported", () => {
-  const originalCtor = window.WebGLRenderingContext;
+  const originalCtor = window.WebGL2RenderingContext;
 
   beforeEach(() => {
     resetWebglSupportCache();
-    window.WebGLRenderingContext = function WebGLRenderingContext() {};
+    window.WebGL2RenderingContext = function WebGL2RenderingContext() {};
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    window.WebGLRenderingContext = originalCtor;
+    window.WebGL2RenderingContext = originalCtor;
   });
 
   it("is true when a usable context can be created", () => {
@@ -38,8 +38,15 @@ describe("isWebglSupported", () => {
     expect(isWebglSupported()).toBe(false);
   });
 
-  it("is false without WebGLRenderingContext", () => {
-    delete window.WebGLRenderingContext;
+  it("is false without WebGL2RenderingContext", () => {
+    delete window.WebGL2RenderingContext;
+    expect(isWebglSupported()).toBe(false);
+  });
+
+  it("is false when only a WebGL1 context is available", () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
+      (type) => (type === "webgl" ? { getParameter: () => null } : null)
+    );
     expect(isWebglSupported()).toBe(false);
   });
 
@@ -49,6 +56,6 @@ describe("isWebglSupported", () => {
       .mockReturnValue(null);
     isWebglSupported();
     isWebglSupported();
-    expect(spy).toHaveBeenCalledTimes(2); // webgl2 + webgl, once
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

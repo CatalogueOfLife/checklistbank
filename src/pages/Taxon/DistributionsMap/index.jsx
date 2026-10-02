@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+// MapLibre v6 is ESM-only and can't locate its worker inside a bundle; let Vite
+// emit the worker as its own chunk and hand MapLibre the URL.
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "./treeControl.css";
 import axios from "axios";
 import config from "../../../config";
@@ -9,6 +12,8 @@ import { getDescendantRanks, INFRASPECIFIC_RANKS } from "./descendantRanks";
 import { assignColors } from "./colorAssignment";
 import IncludedTaxaLegend from "./IncludedTaxaLegend";
 import { isWebglSupported } from "./webgl";
+
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
 const POPUP_FIELDS = [
   "establishmentMeans",
