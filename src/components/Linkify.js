@@ -1,11 +1,9 @@
-// react-linkify is a CJS module that sets __esModule: true and assigns
-// module.exports.default. Vite 7 / esbuild auto-unwrapped that; Vite 8 /
-// Rolldown returns the wrapper object on default import, so rendering
-// <Linkify> crashed with React #130 ("Element type is invalid ... got:
-// object") — this blanked the taxon page for any taxon with a publishedIn
-// citation (issues #1667/#1668). Unwrap once here; always import Linkify
-// from this module, never from "react-linkify" directly.
-import LinkifyModule from "react-linkify";
+// Single import point for the <Linkify> component (linkify-react, which shares
+// linkifyjs with the linkify-html helper used elsewhere). It replaced the
+// unmaintained react-linkify, whose CJS default export had to be unwrapped
+// by hand under Vite 8 / Rolldown (issues #1667/#1668); keep that guard in
+// case the package ever resolves to its CJS build.
+import LinkifyModule from "linkify-react";
 
 const Linkify = LinkifyModule?.default ?? LinkifyModule;
 

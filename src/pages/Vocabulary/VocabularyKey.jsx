@@ -54,6 +54,9 @@ const VocabularyKey = ({
                     ) : typeof item[key] == "string" &&
                       item[key].endsWith(".png") ? (
                       <Image src={item[key]} />
+                    ) : item[key] !== null && typeof item[key] == "object" ? (
+                      // e.g. the gazetteer normalizer - React can't render objects
+                      <code>{JSON.stringify(item[key])}</code>
                     ) : (
                       <Linkify>{item[key]}</Linkify>
                     )}
