@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import { App, Select, Checkbox, Input, Alert, Button, InputNumber, Form, Divider, Tooltip, Radio, Typography } from "antd";
+import { App, Select, Checkbox, Input, Alert, Button, InputNumber, Form, Divider, Tooltip, Typography } from "antd";
 import TaxonFormControl from "../../../components/TaxonFormControl";
 import DatasetFormControl from "../../../components/DatasetFormControl";
 import ErrorMsg from "../../../components/ErrorMsg";
+import SectorSettingsFields from "../../../components/SectorSettings/SectorSettingsFields";
+import { cleanSettings } from "../../../components/SectorSettings/settingsMeta";
+import { getEffectiveSettings, getProfiles } from "../../../api/sector";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../../config";
@@ -42,19 +45,7 @@ const tailFormItemLayout = {
   },
 };
 
-const SectorForm = ({
-  sector,
-  nomCode,
-  entitytype,
-  // sectorDatasetRanks,
-  rank,
-  onError,
-  projectKey,
-  onSubmit,
-  nametype,
-  nomstatus,
-  sectorAuthorshipUpdate,
-}) => {
+const SectorForm = ({ sector, rank, onError, projectKey, onSubmit }) => {
   const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [form] = Form.useForm();
@@ -65,9 +56,24 @@ const SectorForm = ({
   const [existingHierarchySector, setExistingHierarchySector] = useState(null);
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
+  const [effective, setEffective] = useState(null);
+  const [profiles, setProfiles] = useState([]);
+
+  const loadEffective = () => {
+    if (!sector?.id) return;
+    getEffectiveSettings(sector.datasetKey, sector.id)
+      .then(setEffective)
+      // without them the form still works, just without the inherited hints
+      .catch(() => setEffective(null));
+  };
+
   useEffect(() => {
-    console.log(sector?.nameTypes);
-  }, [sector, nomCode, entitytype, rank, sectorDatasetRanks]);
+    loadEffective();
+    const key = sector?.datasetKey || projectKey;
+    if (key) {
+      getProfiles(key).then(setProfiles).catch(() => setProfiles([]));
+    }
+  }, [sector?.id, sector?.datasetKey, projectKey]);
   useEffect(() => {
     if (mode === "hierarchy" && !sector) {
       axios
@@ -106,19 +112,22 @@ const SectorForm = ({
   };
 
   const submitData = (values) => {
+    // Inherit, empty lists and blank strings go out as null so the profiles apply
+    const body = { ...values, ...cleanSettings(values) };
     if (sector) {
       axios
         .put(
           `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-          { ...sector, ...values }
+          { ...sector, ...body }
         )
         .then(() => {
           notification.open({
             title: "Sector updated",
             description: "Sector updated",
           });
+          loadEffective();
           if (onSubmit && typeof onSubmit === "function") {
-            onSubmit(values);
+            onSubmit(body);
           }
         })
         .catch((err) => {
@@ -129,14 +138,14 @@ const SectorForm = ({
         });
     } else {
       axios
-        .post(`${config.dataApi}dataset/${projectKey}/sector`, values)
+        .post(`${config.dataApi}dataset/${projectKey}/sector`, body)
         .then(() => {
           notification.open({
             title: "Sector created",
             description: "Sector created",
           });
           if (onSubmit && typeof onSubmit === "function") {
-            onSubmit(values);
+            onSubmit(body);
           }
         })
         .catch((err) => {
@@ -254,22 +263,6 @@ const SectorForm = ({
           </FormItem>
         )}
 
-        <Divider plain>Filter</Divider>
-
-        <FormItem {...formItemLayout} 
-          label={<Tooltip color='green' title="Include only names with selected ranks">Ranks</Tooltip>}
-          key="ranks" name="ranks"
-        >
-          <Select
-            style={{ width: "100%" }}
-            mode="multiple"
-            showSearch
-            allowClear
-            disabled={sectorDatasetRanks.length === 0}
-            options={(sectorDatasetRanks || []).map((r) => ({ value: r, label: r }))}
-          />
-        </FormItem>
-
         <FormItem
           {...formItemLayout}
           label={<Tooltip color='green' title="Optionally ignore immediate children of the source subject which are above the selected rank.">Placeholder Rank</Tooltip>}
@@ -284,98 +277,15 @@ const SectorForm = ({
           />
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Include only names of the selected name types">Name Types</Tooltip>}
-          key="nameTypes"
-          name="nameTypes"
-        >
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            showSearch
-            allowClear
-            options={nametype.map((f) => ({ value: f, label: f }))}
-          />
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Exclude names with the selected nomenclatural status">Name Status</Tooltip>}
-          key="nameStatusExclusion"
-          name="nameStatusExclusion"
-        >
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            showSearch
-            allowClear
-            options={nomstatus.map((f) => ({ value: f.name, label: f.name }))}
-          />
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Optionally restrict taxa to be synced to extinct or extant only">Extinct Status</Tooltip>}
-          key="extinctFilter"
-          name="extinctFilter"
-        >
-          <Radio.Group defaultValue={null} optionType="button" buttonStyle="solid">
-            <Radio value={null}>All</Radio>
-            <Radio value={true}>Extinct</Radio>
-            <Radio value={false}>Extant</Radio>
-          </Radio.Group>
-        </FormItem>
-
-        <Divider plain>Data to sync</Divider>
-
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Which record entities to sync. Defaults to all">Entities</Tooltip>}
-          key="entities"
-          name="entities"
-        >
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            showSearch
-            allowClear
-            options={entitytype.map((f) => ({ value: f.name, label: f.name }))}
-          />
-        </FormItem>
-
-        <FormItem {...formItemLayout} 
-          label={<Tooltip color='green' title="The default nomenclatural code to apply during syncs">Code</Tooltip>}
-          key="code" name="code"
-        >
-          <Select
-            style={{ width: "100%" }}
-            showSearch
-            allowClear
-            options={nomCode.map((f) => ({ value: f.name, label: f.name }))}
-          />
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Copies also the accordingTo taxon reference of the name usage. Off by default.">AccordingTo</Tooltip>}
-          key="copyAccordingTo"
-          name="copyAccordingTo"
-          valuePropName="checked"
-        >
-          <Checkbox />          
-        
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label={<Tooltip color='green' title="Removes the custom taxon sort order from source data">Remove Ordinals</Tooltip>}
-          key="removeOrdinals"
-          name="removeOrdinals"
-          valuePropName="checked"
-        >
-          <Checkbox />
-        </FormItem>
+        <SectorSettingsFields
+          modes={mode ? [mode] : []}
+          rankOptions={sectorDatasetRanks}
+          effective={effective}
+          own={sector || {}}
+          profiles={profiles}
+          profilesPath={`/project/${sector?.datasetKey || projectKey}/sector/profiles`}
+          formItemLayout={formItemLayout}
+        />
 
         {mode === "hierarchy" && (
           <FormItem
@@ -386,22 +296,6 @@ const SectorForm = ({
             valuePropName="checked"
           >
             <Checkbox />
-          </FormItem>
-        )}
-
-        {sectorAuthorshipUpdate?.length > 0 && (
-          <FormItem
-            {...formItemLayout}
-            label={<Tooltip color='green' title="Controls how the authorship of names is updated when syncing from this source">Authorship Update</Tooltip>}
-            key="authorshipUpdate"
-            name="authorshipUpdate"
-          >
-            <Select
-              style={{ width: "100%" }}
-              showSearch
-              allowClear
-              options={sectorAuthorshipUpdate.map((f) => ({ value: f.name, label: f.name }))}
-            />
           </FormItem>
         )}
 
@@ -425,21 +319,5 @@ const SectorForm = ({
   );
 };
 
-const mapContextToProps = ({
-  nomCode,
-  entitytype,
-  rank,
-  projectKey,
-  nametype,
-  nomstatus,
-  sectorAuthorshipUpdate,
-}) => ({
-  projectKey,
-  nomCode,
-  entitytype,
-  rank,
-  nametype,
-  nomstatus,
-  sectorAuthorshipUpdate,
-});
+const mapContextToProps = ({ rank, projectKey }) => ({ rank, projectKey });
 export default withContext(mapContextToProps)(SectorForm);
