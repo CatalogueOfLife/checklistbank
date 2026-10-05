@@ -32,7 +32,8 @@ const enums = [
   "entitytype",
   "speciesinteractiontype",
   "doiresolution",
-  "identifier-scope"
+  "identifier-scope",
+  "sector$mode"
 ];
 
 let env;

@@ -167,6 +167,13 @@ export const getSectorAuthorshipUpdate = () => {
     .then((res) => res.data ?? [])
     .catch(() => []);
 };
+
+// Sector modes as plain names. Resolves to an empty list when missing so the shared enum Promise.all cannot reject.
+export const getSectorMode = () => {
+  return getData(`sector$mode`)
+    .then((res) => (res.data ?? []).map((e) => e.name))
+    .catch(() => []);
+};
 // Row types: the term *classes* a dataset's verbatim records can carry, i.e. the
 // values the dataset search `rowType` filter accepts. Always fetched live rather
 // than via getData - there is no local JSON copy and a bundled one would go stale

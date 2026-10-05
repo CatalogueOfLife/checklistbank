@@ -44,6 +44,7 @@ import {
   getLanguages,
   getIdentifierScope,
   getSectorAuthorshipUpdate,
+  getSectorMode,
 } from "../../api/enumeration";
 import { getJobQueue as fetchJobQueue } from "../../api/job";
 import { getComponentState } from "../../api/admin";
@@ -151,6 +152,7 @@ const ContextProvider = ({ children }) => {
   const [gazetteer, setGazetteer] = useState([]);
   const [entitytype, setEntitytype] = useState([]);
   const [sectorAuthorshipUpdate, setSectorAuthorshipUpdate] = useState([]);
+  const [sectorMode, setSectorMode] = useState([]);
   const [_selectedKeys, setSelectedKeys] = useState([]);
   const [_openKeys, setOpenKeys] = useState([]);
   const [components, setComponents] = useState({});
@@ -412,6 +414,7 @@ const ContextProvider = ({ children }) => {
       getSectorAuthorshipUpdate(),
       getJobPriority(),
       getJobLane(),
+      getSectorMode(),
     ])
       .then((responses) => {
         const newIssueMap = {};
@@ -498,6 +501,7 @@ const ContextProvider = ({ children }) => {
         setSectorAuthorshipUpdate(responses[31]);
         setJobPriority(responses[32]);
         setJobLane(responses[33]);
+        setSectorMode(responses[34]);
         setCountryAlpha3(newCountryAlpha3);
         setCountryAlpha2(newCountryAlpha2);
         setTermsMap(newTermsMap);
@@ -557,6 +561,7 @@ const ContextProvider = ({ children }) => {
     gazetteer,
     entitytype,
     sectorAuthorshipUpdate,
+    sectorMode,
     _selectedKeys,
     _openKeys,
     components,
