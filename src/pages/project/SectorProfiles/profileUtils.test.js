@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { EMPTY_SELECTOR, normalizeSelector, summarizeSelector, reorder, addToSelector } from "./profileUtils";
+import {
+  EMPTY_SELECTOR,
+  normalizeSelector,
+  summarizeSelector,
+  reorder,
+  addToSelector,
+  restrictToSectors,
+} from "./profileUtils";
 
 describe("normalizeSelector", () => {
   it("fills every field", () => {
@@ -69,5 +76,20 @@ describe("addToSelector", () => {
     expect(selector.subjectDatasetKeys).toEqual([1000]);
     expect(selector.modes).toEqual(["merge"]);
     expect(added).toBe(1);
+  });
+});
+
+describe("restrictToSectors", () => {
+  it("narrows a selector without sector keys to the given sectors", () => {
+    expect(restrictToSectors({ modes: ["merge"] }, [4, 6])).toEqual({ ...EMPTY_SELECTOR, modes: ["merge"], sectorKeys: [4, 6] });
+  });
+
+  it("keeps only the given sectors the selector lists itself", () => {
+    expect(restrictToSectors({ sectorKeys: [4, 9] }, [4, 6]).sectorKeys).toEqual([4]);
+  });
+
+  it("returns null when none can match, as no sector keys would mean every sector", () => {
+    expect(restrictToSectors({ sectorKeys: [9] }, [4, 6])).toBeNull();
+    expect(restrictToSectors({}, [])).toBeNull();
   });
 });

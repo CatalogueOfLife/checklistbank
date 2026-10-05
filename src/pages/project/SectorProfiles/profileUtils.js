@@ -63,3 +63,12 @@ export const addToSelector = (selector, sectors, what) => {
   const after = normalizeSelector({ ...before, [field]: [...before[field], ...keys] });
   return { selector: after, added: after[field].length - before[field].length };
 };
+
+// The selector narrowed to the given sectors, to count how many of them it selects.
+// Null when none of them can match, because no sector keys at all would mean every sector.
+export const restrictToSectors = (selector, ids) => {
+  const s = normalizeSelector(selector);
+  const wanted = integers(ids);
+  const keys = s.sectorKeys.length ? wanted.filter((id) => s.sectorKeys.includes(id)) : wanted;
+  return keys.length ? { ...s, sectorKeys: keys } : null;
+};

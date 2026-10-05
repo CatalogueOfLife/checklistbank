@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Select, Radio, Alert, App } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Modal, Select, Radio, Alert, Typography, App } from "antd";
 import ErrorMsg from "../../../components/ErrorMsg";
-import { getProfiles, getProfile, updateProfile } from "../../../api/sector";
-import { addToSelector, normalizeSelector } from "./profileUtils";
+import { getProfiles, getProfile, updateProfile, countProfileSectors, previewProfile } from "../../../api/sector";
+import { addToSelector, restrictToSectors } from "./profileUtils";
 
-// Appends the selected sectors, or their source datasets, to the selector of a profile
+const { Text } = Typography;
+const fmt = (n) => n.toLocaleString("en-GB");
+
+// Appends the selected sectors, or their source datasets, to the selector of a profile.
+// Selector fields are ANDed, so appending keys can narrow a profile or still leave the sectors out:
+// the modal previews both before saving.
 const AddToProfileModal = ({ open, onClose, datasetKey, sectors = [] }) => {
   const { notification } = App.useApp();
   const [profiles, setProfiles] = useState([]);
@@ -12,6 +17,9 @@ const AddToProfileModal = ({ open, onClose, datasetKey, sectors = [] }) => {
   const [what, setWhat] = useState("sectors");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  // {before, after, matched}: sectors the profile selects now and afterwards, and how many of the chosen ones
+  const [impact, setImpact] = useState(null);
+  const latestRequest = useRef(0);
 
   useEffect(() => {
     if (open) {
@@ -20,10 +28,28 @@ const AddToProfileModal = ({ open, onClose, datasetKey, sectors = [] }) => {
     }
   }, [open, datasetKey]);
 
-  const field = what === "datasets" ? "subjectDatasetKeys" : "sectorKeys";
   const selected = profiles.find((p) => p.id === profileId);
-  // selector fields are ANDed: adding the first keys narrows the profile to just these
-  const narrows = selected && normalizeSelector(selected.selector)[field].length === 0;
+  // a stable dependency: the sectors prop is a new array on every render of a parent without a selection
+  const sectorIds = sectors.map((s) => `${s.id}:${s.subjectDatasetKey}`).join(",");
+
+  useEffect(() => {
+    setImpact(null);
+    if (!selected) return;
+    const request = ++latestRequest.current;
+    const { selector } = addToSelector(selected.selector, sectors, what);
+    const mine = restrictToSectors(selector, sectors.map((s) => s.id));
+    Promise.all([
+      countProfileSectors(datasetKey, selected.id),
+      previewProfile(datasetKey, selector).then((res) => res.total ?? 0),
+      mine ? previewProfile(datasetKey, mine).then((res) => res.total ?? 0) : Promise.resolve(0),
+    ])
+      .then(([before, after, matched]) => {
+        if (request === latestRequest.current) setImpact({ before, after, matched });
+      })
+      .catch(() => {
+        if (request === latestRequest.current) setImpact(null);
+      });
+  }, [selected, what, sectorIds, datasetKey]);
 
   const save = async () => {
     setSaving(true);
@@ -43,12 +69,15 @@ const AddToProfileModal = ({ open, onClose, datasetKey, sectors = [] }) => {
     }
   };
 
+  const shrinks = impact && impact.after < impact.before;
+  const missed = impact ? sectors.length - impact.matched : 0;
+
   return (
     <Modal
       open={open}
       title={`Add ${sectors.length} sectors to a profile`}
       okText="Add"
-      okButtonProps={{ disabled: !profileId }}
+      okButtonProps={{ disabled: !profileId, danger: !!shrinks }}
       confirmLoading={saving}
       onOk={save}
       onCancel={() => onClose(false)}
@@ -67,13 +96,25 @@ const AddToProfileModal = ({ open, onClose, datasetKey, sectors = [] }) => {
           <Radio value="sectors">these sectors</Radio>
           <Radio value="datasets">their source datasets</Radio>
         </Radio.Group>
-        {narrows && (
+        {selected && !impact && <Text type="secondary">…</Text>}
+        {selected && impact && (
+          <Text>
+            {selected.title} applies to {fmt(impact.before)} sectors now and to {fmt(impact.after)} afterwards.{" "}
+            {fmt(impact.matched)} of the {fmt(sectors.length)} selected sectors would get its settings.
+          </Text>
+        )}
+        {shrinks && (
           <Alert
             type="warning"
             showIcon
-            title={`${selected.title} selects no ${
-              what === "datasets" ? "source datasets" : "sectors"
-            } by key yet. Adding these limits it to them alone.`}
+            title={`The profile would no longer apply to ${fmt(impact.before - impact.after)} sectors it applies to now.`}
+          />
+        )}
+        {missed > 0 && (
+          <Alert
+            type="warning"
+            showIcon
+            title={`${fmt(missed)} of the selected sectors would still not be selected, because the profile's other selector fields exclude them.`}
           />
         )}
       </div>
