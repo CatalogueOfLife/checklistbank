@@ -25,6 +25,7 @@ import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
 import { getDatasetsBatch } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
+import { getProfiles } from "../../../api/sector";
 
 import DataLoader from "dataloader";
 import SectorTable from "./SectorTable";
@@ -68,6 +69,7 @@ const ProjectSectors = ({
   const [rematchInfo, setRematchInfo] = useState(null);
   const [defaultTaxonKey, setDefaultTaxonKey] = useState(null);
   const [publishers, setPublishers] = useState([]);
+  const [profiles, setProfiles] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: PAGE_SIZE,
     current: 1,
@@ -151,6 +153,9 @@ const ProjectSectors = ({
     });
     // getData is called via the location.search effect below on first render
     getPublishers();
+    getProfiles(projectKey || datasetKey)
+      .then(setProfiles)
+      .catch(() => setProfiles([]));
   }, []);
 
   const locationSearch = _.get(location, "search");
@@ -464,6 +469,19 @@ const ProjectSectors = ({
               allowClear
               onChange={(value) => updateSearch({ publisherKey: value })}
               options={publishers.map((p) => ({ value: p?.id, label: p?.alias }))}
+            />
+          </FormItem>
+        )}
+        {profiles?.length > 0 && (
+          <FormItem style={{ marginBottom: "8px", marginRight: "8px" }}>
+            <Select
+              placeholder="Profile"
+              style={{ width: 200 }}
+              value={locationParams.profileKey}
+              showSearch={{ optionFilterProp: "label" }}
+              allowClear
+              onChange={(value) => updateSearch({ profileKey: value })}
+              options={profiles.map((p) => ({ value: String(p.id), label: p.title }))}
             />
           </FormItem>
         )}

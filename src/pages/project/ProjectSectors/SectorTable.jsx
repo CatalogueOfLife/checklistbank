@@ -10,6 +10,7 @@ import _ from "lodash";
 import SyncButton from "../SectorSync/SyncButton";
 import Auth from "../../../components/Auth";
 import getColumns from "./columns";
+import AddToProfileModal from "../SectorProfiles/AddToProfileModal";
 
 const SectorTable = ({
   data,
@@ -32,6 +33,7 @@ const SectorTable = ({
   const [searchText, setSearchText] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [addToProfileOpen, setAddToProfileOpen] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -356,10 +358,32 @@ const SectorTable = ({
                       </Button>
                     ),
                   },
+                  {
+                    key: "profile",
+                    text: (
+                      <Button style={{ width: "100%" }} onClick={() => setAddToProfileOpen(true)} type="primary">
+                        Add {selectedRowKeys.length} sectors to profile…
+                      </Button>
+                    ),
+                  },
                 ],
               }
         }
       />
+      {!isRelease && (
+        <AddToProfileModal
+          open={addToProfileOpen}
+          datasetKey={projectKey}
+          sectors={selectedRows}
+          onClose={(done) => {
+            setAddToProfileOpen(false);
+            if (done) {
+              setSelectedRows([]);
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };
