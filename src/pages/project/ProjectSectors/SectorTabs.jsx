@@ -7,6 +7,7 @@ import {
   SyncOutlined,
   OrderedListOutlined,
   TeamOutlined,
+  ControlOutlined,
 } from "@ant-design/icons";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
@@ -94,6 +95,15 @@ const SectorTabs = ({ location, projectKey }) => {
       ),
       key: `/project/${projectKey}/sector/publishers`,
       icon: <TeamOutlined />,
+    },
+    {
+      label: (
+        <NavLink to={{ pathname: `/project/${projectKey}/sector/profiles` }}>
+          Profiles
+        </NavLink>
+      ),
+      key: `/project/${projectKey}/sector/profiles`,
+      icon: <ControlOutlined />,
     },
   ];
 
