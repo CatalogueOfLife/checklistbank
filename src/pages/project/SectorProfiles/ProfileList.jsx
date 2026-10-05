@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Popconfirm, Tag, Typography, Space, Row, Col, App } from "antd";
-import { MenuOutlined, DeleteOutlined } from "@ant-design/icons";
+import { MenuOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import ReactDragListView from "react-drag-listview";
 import withContext from "../../../components/hoc/withContext";
 import { getProfiles, countProfileSectors, deleteProfile, updateProfile } from "../../../api/sector";
 import { setSettingNames } from "../../../components/SectorSettings/settingsMeta";
 import { summarizeSelector, reorder } from "./profileUtils";
+import ProfileForm from "./ProfileForm";
 
 const { Text } = Typography;
 
@@ -17,6 +18,7 @@ const ProfileList = ({ datasetKey, readOnly, sectorsPath, addError }) => {
   // profile id -> number of sectors it selects; undefined while loading, null if it failed
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(null); // {} for a new profile
   const membersPath = sectorsPath || `/project/${datasetKey}/sector`;
 
   const load = async () => {
@@ -120,6 +122,7 @@ const ProfileList = ({ datasetKey, readOnly, sectorsPath, addError }) => {
             width: 110,
             render: (text, p) => (
               <Space>
+                <Button size="small" icon={<EditOutlined />} onClick={() => setEditing(p)} />
                 <Popconfirm
                   title={`Delete profile ${p.title}?`}
                   description={`It applies to ${
@@ -151,6 +154,11 @@ const ProfileList = ({ datasetKey, readOnly, sectorsPath, addError }) => {
               handle to reorder.
             </Text>
           </Col>
+          <Col>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setEditing({})}>
+              New profile
+            </Button>
+          </Col>
         </Row>
       )}
       {readOnly ? (
@@ -163,6 +171,18 @@ const ProfileList = ({ datasetKey, readOnly, sectorsPath, addError }) => {
         >
           {table}
         </ReactDragListView>
+      )}
+      {editing && (
+        <ProfileForm
+          datasetKey={datasetKey}
+          profile={editing}
+          nextPosition={profiles.length ? Math.max(...profiles.map((p) => p.position)) + 1 : 0}
+          onCancel={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            load();
+          }}
+        />
       )}
     </>
   );
