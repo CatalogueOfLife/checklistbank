@@ -57,6 +57,11 @@ const SectorForm = ({ sector, rank, onError, projectKey, onSubmit }) => {
 
   const [sectorDatasetRanks, setSectorDatasetRanks] = useState([]);
   const [effective, setEffective] = useState(null);
+  // the sector as last saved: the prop stays stale while the form remains open after a save
+  const [saved, setSaved] = useState(sector);
+  useEffect(() => {
+    setSaved(sector);
+  }, [sector]);
   const [profiles, setProfiles] = useState([]);
 
   const loadEffective = () => {
@@ -118,13 +123,14 @@ const SectorForm = ({ sector, rank, onError, projectKey, onSubmit }) => {
       axios
         .put(
           `${config.dataApi}dataset/${sector.datasetKey}/sector/${sector.id}`,
-          { ...sector, ...body }
+          { ...saved, ...body }
         )
         .then(() => {
           notification.open({
             title: "Sector updated",
             description: "Sector updated",
           });
+          setSaved((prev) => ({ ...prev, ...body }));
           loadEffective();
           if (onSubmit && typeof onSubmit === "function") {
             onSubmit(body);
@@ -281,7 +287,7 @@ const SectorForm = ({ sector, rank, onError, projectKey, onSubmit }) => {
           modes={mode ? [mode] : []}
           rankOptions={sectorDatasetRanks}
           effective={effective}
-          own={sector || {}}
+          own={saved || {}}
           profiles={profiles}
           profilesPath={`/project/${sector?.datasetKey || projectKey}/sector/profiles`}
           formItemLayout={formItemLayout}
