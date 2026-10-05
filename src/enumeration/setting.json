@@ -153,51 +153,6 @@
     "type": "DataFormat"
   },
   {
-    "enum": true,
-    "multiple": true,
-    "name": "sector entities",
-    "origin": [
-      "project"
-    ],
-    "type": "EntityType"
-  },
-  {
-    "enum": true,
-    "multiple": true,
-    "name": "sector ranks",
-    "origin": [
-      "project"
-    ],
-    "type": "Rank"
-  },
-  {
-    "enum": true,
-    "multiple": true,
-    "name": "sector name types",
-    "origin": [
-      "project"
-    ],
-    "type": "NameType"
-  },
-  {
-    "enum": true,
-    "multiple": true,
-    "name": "sector name status exclusion",
-    "origin": [
-      "project"
-    ],
-    "type": "NomStatus"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "sector copy according to",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
     "enum": false,
     "multiple": false,
     "name": "sync scheduler",
@@ -214,15 +169,6 @@
       "project"
     ],
     "type": "Integer"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "sector remove ordinals",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
   },
   {
     "enum": false,
@@ -274,15 +220,6 @@
     "enum": false,
     "multiple": false,
     "name": "block merge syncs",
-    "origin": [
-      "project"
-    ],
-    "type": "Boolean"
-  },
-  {
-    "enum": false,
-    "multiple": false,
-    "name": "sector create implicit names",
     "origin": [
       "project"
     ],

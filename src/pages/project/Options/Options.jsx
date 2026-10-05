@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import withRouter from "../../../withRouter";
+import { NavLink } from "react-router-dom";
 
 import withContext from "../../../components/hoc/withContext";
 import config from "../../../config";
@@ -182,6 +183,17 @@ const ProjectOptions = ({
           </>
         )}
       </Row>
+      <Alert
+        type="info"
+        showIcon
+        style={{ marginBottom: "10px" }}
+        title={
+          <>
+            Sector sync settings such as ranks, entities or name types are managed as{" "}
+            <NavLink to={{ pathname: `/project/${projectKey}/sector/profiles` }}>sector profiles</NavLink>.
+          </>
+        }
+      />
       <Row>
         <Col span={18}>
           {editMode && (
