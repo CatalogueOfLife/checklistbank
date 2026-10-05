@@ -29,6 +29,7 @@ import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import SectorTable from "./SectorTable";
 import SectorKeyLink from "./SectorKeyLink";
+import EffectiveSettingsSummary from "../../../components/SectorSettings/EffectiveSettingsSummary";
 import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
@@ -618,7 +619,16 @@ const ProjectSectors = ({
           pagination={pagination}
           handleTableChange={handleTableChange}
           expandable={{
-            expandedRowRender: (record) => (
+            expandedRowRender: (record) =>
+              isRelease ? (
+                <div style={{ maxWidth: "700px" }}>
+                  <EffectiveSettingsSummary
+                    datasetKey={record.datasetKey}
+                    sectorId={record.id}
+                    profilesPath={`/dataset/${record.datasetKey}/sector`}
+                  />
+                </div>
+              ) : (
               <>
                 <Row>
                   <Col flex="auto">
@@ -643,7 +653,7 @@ const ProjectSectors = ({
                 </Row>
               </>
             ),
-            rowExpandable: () => !isRelease, //() => Auth.canEditDataset({key: projectKey}, user)
+            rowExpandable: () => true,
           }}
         ></SectorTable>
       )}

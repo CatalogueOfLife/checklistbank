@@ -32,6 +32,7 @@ import withContext from "../../../components/hoc/withContext";
 import { debounce } from "lodash";
 import SectorForm from "./SectorForm";
 import PresentationItem from "../../../components/PresentationItem";
+import EffectiveSettingsSummary from "../../../components/SectorSettings/EffectiveSettingsSummary";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 import { JOB_LANE } from "../../../api/job";
 
@@ -299,21 +300,11 @@ const Sector = ({
 
             {isRootSector && !showEditForm && (
               <>
-                {sector.code && (
-                  <PresentationItem label="Nom. code">
-                    {sector.code}
-                  </PresentationItem>
-                )}
-                {_.get(sector, "ranks[0]") && (
-                  <PresentationItem label="Ranks">
-                    {sector.ranks.join(", ")}
-                  </PresentationItem>
-                )}
-                {_.get(sector, "entities[0]") && (
-                  <PresentationItem label="Entities">
-                    {sector.entities.join(", ")}
-                  </PresentationItem>
-                )}
+                <EffectiveSettingsSummary
+                  datasetKey={sector.datasetKey}
+                  sectorId={sector.id}
+                  profilesPath={`/project/${projectKey}/sector/profiles`}
+                />
                 {_.get(sector, "note") && (
                   <PresentationItem label="Note">
                     {sector.note}
