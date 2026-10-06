@@ -103,8 +103,11 @@ describe("cleanSettings", () => {
     expect(cleanSettings({ mode: "merge", note: "x" })).toEqual({});
   });
 
-  it("drops blank entries of tag lists", () => {
+  it("trims entries of lists and drops blank ones", () => {
     expect(cleanSettings({ blockedNames: ["Abies", " "] })).toEqual({ blockedNames: ["Abies"] });
+    expect(cleanSettings({ blockedNames: [" Abies alba ", "", "Pinus\r"] })).toEqual({
+      blockedNames: ["Abies alba", "Pinus"],
+    });
     expect(cleanSettings({ blockedNames: [" "] })).toEqual({ blockedNames: null });
   });
 

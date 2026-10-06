@@ -29,12 +29,12 @@ export const SETTINGS = [
     help: "Copy the source authorship onto matched names" },
   { name: "issueExclusion", label: "Issue exclusion", kind: "enums", group: "blocklist", union: true,
     modes: TREE_SYNCS, help: "Names whose source record carries one of these issues are not synced" },
-  { name: "blockedNames", label: "Blocked names", kind: "tags", group: "blocklist", union: true,
-    modes: TREE_SYNCS,
-    help: "Names never synced, matched with or without authorship, case insensitive. Press enter after each name" },
-  { name: "blockedNamePatterns", label: "Blocked name patterns", kind: "tags", group: "blocklist", union: true,
-    modes: TREE_SYNCS,
-    help: "Case insensitive regular expressions searched in the name label; matching names are never synced. Press enter after each pattern" },
+  { name: "blockedNames", label: "Blocked names", kind: "lines", group: "blocklist", union: true,
+    modes: TREE_SYNCS, placeholder: "one name per line",
+    help: "Names never synced, matched with or without authorship, case insensitive. One name per line" },
+  { name: "blockedNamePatterns", label: "Blocked name patterns", kind: "lines", group: "blocklist", union: true,
+    modes: TREE_SYNCS, placeholder: "one pattern per line",
+    help: "Case insensitive regular expressions searched in the name label; matching names are never synced. One pattern per line" },
 ];
 
 export const SETTING_GROUPS = [
@@ -59,7 +59,7 @@ export const isSet = (value) => {
 
 const cleanValue = (value) => {
   if (Array.isArray(value)) {
-    const list = value.filter(isSet);
+    const list = value.map((v) => (typeof v === "string" ? v.trim() : v)).filter(isSet);
     return list.length ? list : null;
   }
   return isSet(value) ? value : null;

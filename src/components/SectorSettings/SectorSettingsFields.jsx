@@ -96,9 +96,9 @@ const SectorSettingsFields = ({
           <Select style={{ width: "100%" }} showSearch allowClear placeholder="inherit"
             options={toOptions(choices[s.name])} />
         );
-      case "tags":
-        // no token separators: commas are valid inside names and regular expressions
-        return <Select mode="tags" style={{ width: "100%" }} open={false} allowClear placeholder="type and press enter" />;
+      case "lines":
+        // one entry per line: commas are valid inside names and regular expressions
+        return <Input.TextArea rows={4} placeholder={s.placeholder} />;
       case "regex":
         return <Input allowClear placeholder="inherit" />;
       case "bool":
@@ -121,6 +121,10 @@ const SectorSettingsFields = ({
             name={[...namePrefix, s.name]}
             // an unset regex is null, which an Input must not receive as its value
             {...(s.kind === "regex" ? { getValueProps: (v) => ({ value: v ?? "" }) } : {})}
+            // the list is edited as text; blank lines are kept while typing and dropped by cleanSettings
+            {...(s.kind === "lines"
+              ? { getValueProps: (v) => ({ value: (v || []).join("\n") }), normalize: (v) => (v ? v.split("\n") : []) }
+              : {})}
             label={<Tooltip color="green" title={s.help}>{s.label}</Tooltip>}
             extra={inheritedHint({
               setting: s,
