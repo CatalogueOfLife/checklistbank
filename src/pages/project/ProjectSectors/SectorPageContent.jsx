@@ -643,6 +643,7 @@ const ProjectSectors = ({
                   <EffectiveSettingsSummary
                     datasetKey={record.datasetKey}
                     sectorId={record.id}
+                    mode={record.mode}
                     profilesPath={`/dataset/${record.datasetKey}/sector`}
                   />
                 </div>

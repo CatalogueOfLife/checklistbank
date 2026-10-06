@@ -43,22 +43,26 @@ describe("SETTINGS", () => {
 });
 
 describe("appliesTo", () => {
-  it("shows merge-only settings for merge and when no mode is given", () => {
+  it("shows the blocklists for every tree sync and when no mode is given", () => {
     const s = settingByName.blockedNames;
+    expect(appliesTo(s, ["attach"])).toBe(true);
+    expect(appliesTo(s, ["union"])).toBe(true);
     expect(appliesTo(s, ["merge"])).toBe(true);
-    expect(appliesTo(s, ["attach", "merge"])).toBe(true);
+    expect(appliesTo(s, ["hierarchy", "merge"])).toBe(true);
     expect(appliesTo(s, [])).toBe(true);
     expect(appliesTo(s, undefined)).toBe(true);
-    expect(appliesTo(s, ["attach"])).toBe(false);
+    expect(appliesTo(s, ["hierarchy"])).toBe(false);
   });
 
-  it("limits authorshipUpdate to hierarchy", () => {
-    expect(appliesTo(settingByName.authorshipUpdate, ["hierarchy"])).toBe(true);
+  it("leaves hierarchy sectors authorshipUpdate only", () => {
+    expect(SETTINGS.filter((s) => appliesTo(s, ["hierarchy"])).map((s) => s.name)).toEqual(["authorshipUpdate"]);
     expect(appliesTo(settingByName.authorshipUpdate, ["merge"])).toBe(false);
   });
 
-  it("shows settings without modes for every mode", () => {
-    expect(appliesTo(settingByName.ranks, ["union"])).toBe(true);
+  it("shows every other setting for every tree sync", () => {
+    for (const mode of ["attach", "union", "merge"]) {
+      expect(SETTINGS.filter((s) => !appliesTo(s, [mode])).map((s) => s.name)).toEqual(["authorshipUpdate"]);
+    }
   });
 });
 

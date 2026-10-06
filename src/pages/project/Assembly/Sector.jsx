@@ -303,6 +303,7 @@ const Sector = ({
                 <EffectiveSettingsSummary
                   datasetKey={sector.datasetKey}
                   sectorId={sector.id}
+                  mode={sector.mode}
                   profilesPath={`/project/${projectKey}/sector/profiles`}
                 />
                 {_.get(sector, "note") && (

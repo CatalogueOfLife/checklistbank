@@ -4,13 +4,14 @@ import PresentationItem from "../PresentationItem";
 import withContext from "../hoc/withContext";
 import SourceTags from "./SourceTags";
 import { getEffectiveSettings, getProfiles } from "../../api/sector";
-import { SETTINGS, parseSources, formatValue } from "./settingsMeta";
+import { SETTINGS, appliesTo, parseSources, formatValue } from "./settingsMeta";
 
 const names = (list) => (list || []).map((e) => (typeof e === "string" ? e : e.name));
 
 // The settings a sync of the sector uses. Lists every setting a profile or the sector sets, and the ranks always,
-// so a publisher sector with no ranks of its own does not read as syncing all ranks.
-const EffectiveSettingsSummary = ({ datasetKey, sectorId, profilesPath, rank, entitytype, nametype }) => {
+// so a publisher sector with no ranks of its own does not read as syncing all ranks. Settings the sector's mode
+// does not read are left out.
+const EffectiveSettingsSummary = ({ datasetKey, sectorId, mode, profilesPath, rank, entitytype, nametype }) => {
   const [effective, setEffective] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const [failed, setFailed] = useState(false);
@@ -29,8 +30,9 @@ const EffectiveSettingsSummary = ({ datasetKey, sectorId, profilesPath, rank, en
   const allValues = { ranks: names(rank), entities: names(entitytype), nameTypes: names(nametype) };
   const shown = SETTINGS.filter(
     (s) =>
-      s.name === "ranks" ||
-      parseSources(effective.sources?.[s.name]).some((src) => src.type !== "default")
+      appliesTo(s, mode ? [mode] : []) &&
+      (s.name === "ranks" ||
+        parseSources(effective.sources?.[s.name]).some((src) => src.type !== "default"))
   );
   return shown.map((s) => (
     <PresentationItem key={s.name} label={s.label}>
