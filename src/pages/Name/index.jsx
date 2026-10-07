@@ -18,6 +18,7 @@ import Verbatim from "../Taxon/Verbatim";
 import BooleanValue from "../../components/BooleanValue";
 import withContext from "../../components/hoc/withContext";
 import { IdentifierList } from "../../components/CurieIdentifier";
+import { formatAuthorship } from "./authorship";
 
 const md = 5;
 
@@ -145,6 +146,19 @@ const NamePage = ({
 
   const filteredUsages = (usages || []).filter((u) => u.usage?.id && u.usage?.status != 'bare name');
   const filteredSynonyms = (synonyms || []).filter((s) => s?.id !== name?.id);
+  // Backends before name-parser-api 5.2 keep the sanctioning author as a string on the name,
+  // cited after the combination authorship
+  const combinationAuthorship = formatAuthorship(
+    name?.combinationAuthorship && {
+      sanctioningAuthor: name.sanctioningAuthor,
+      ...name.combinationAuthorship,
+    },
+    name?.code
+  );
+  const basionymAuthorship = formatAuthorship(
+    name?.basionymAuthorship,
+    name?.code
+  );
 
   const taxonUri =
     datasetKey === projectKey
@@ -272,42 +286,14 @@ const NamePage = ({
                 {name.notho}
               </PresentationItem>
 
-              {name.combinationAuthorship && (
+              {combinationAuthorship && (
                 <PresentationItem md={md} label="Combination Authorship">
-                  {`${name.combinationAuthorship.authors
-                    ? name.combinationAuthorship.authors.join(", ")
-                    : ""
-                    } ${name.combinationAuthorship.exAuthors
-                      ? `ex ${name.combinationAuthorship.exAuthors.join(
-                        ", "
-                      )}`
-                      : ""
-                    } ${name.combinationAuthorship.year
-                      ? name.combinationAuthorship.year
-                      : ""
-                    }`}
+                  {combinationAuthorship}
                 </PresentationItem>
               )}
-              {name.basionymAuthorship && (
+              {basionymAuthorship && (
                 <PresentationItem md={md} label="Basionym Authorship">
-                  {`${name.basionymAuthorship.authors.join(", ")} ${name.basionymAuthorship.exAuthors
-                    ? `ex ${name.basionymAuthorship.exAuthors.join(", ")}`
-                    : ""
-                    } ${name.basionymAuthorship.year
-                      ? name.basionymAuthorship.year
-                      : ""
-                    }`}
-                </PresentationItem>
-              )}
-              {name.sanctioningAuthor && (
-                <PresentationItem md={md} label="Sanctioning Author">
-                  {`${name.sanctioningAuthor.authors.join(", ")} ${name.sanctioningAuthor.exAuthors
-                    ? `ex ${name.sanctioningAuthor.exAuthors.join(", ")}`
-                    : ""
-                    } ${name.sanctioningAuthor.year
-                      ? name.sanctioningAuthor.year
-                      : ""
-                    }`}
+                  {basionymAuthorship}
                 </PresentationItem>
               )}
               <PresentationItem md={md} label="Published In ID">
