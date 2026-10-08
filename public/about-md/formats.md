@@ -47,7 +47,7 @@ Besides the data files, an extended download also includes:
 - `metadata.yaml` (ColDP) or `eml.xml` (DwC-A) with the dataset metadata
 - `logo.png` if the dataset has a logo
 - metadata for each source dataset of a project or release, in the `source` folder (ColDP) or `dataset` folder (DwC-A)
-- for ColDP, all references also as `reference.bib` (BibTeX), `reference.json` and `reference.jsonl` (CSL-JSON)
+- for ColDP, all references also as `reference.bib` (BibTeX) and `reference.jsonl` (CSL-JSON, one reference per line)
 - for ColDP, a `treatments` folder with one file per treatment document, if the dataset has treatments
 
 ## Catalogue of Life Data Package (ColDP)
