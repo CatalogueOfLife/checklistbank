@@ -102,7 +102,7 @@ const FileFormatList = () => (
 // One flattened, download-friendly row combining the provided input with the
 // parsed result. The structured authorship objects are broken out into
 // individual columns; multiple authors are joined with a "|".
-const toFlatRow = (n) => {
+export const toFlatRow = (n) => {
   const r = n.result || {};
   const ca = r.combinationAuthorship || {};
   const ba = r.basionymAuthorship || {};
@@ -119,9 +119,14 @@ const toFlatRow = (n) => {
     combinationAuthorship: (ca.authors || []).join("|"),
     combinationExAuthorship: (ca.exAuthors || []).join("|"),
     combinationAuthorshipYear: ca.year ?? "",
+    // parsers before name-parser-api 5.2 keep the combination's sanctioning author on the name
+    combinationSanctioningAuthor: ca.sanctioningAuthor ?? r.sanctioningAuthor ?? "",
+    combinationAnonymous: !!ca.anonymous,
     basionymAuthorship: (ba.authors || []).join("|"),
     basionymExAuthorship: (ba.exAuthors || []).join("|"),
     basionymAuthorshipYear: ba.year ?? "",
+    basionymSanctioningAuthor: ba.sanctioningAuthor ?? "",
+    basionymAnonymous: !!ba.anonymous,
     uninomial: r.uninomial ?? "",
     genus: r.genus ?? "",
     infragenericEpithet: r.infragenericEpithet ?? "",

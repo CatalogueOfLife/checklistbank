@@ -1,0 +1,40 @@
+import { describe, it, expect } from "vitest";
+import { toFlatRow } from "./NameParser";
+
+const row = (result) => toFlatRow({ providedName: "x", result });
+
+describe("toFlatRow", () => {
+  it("has a sanctioning author and anonymous column per authorship", () => {
+    const r = row({
+      combinationAuthorship: { anonymous: true, year: "1798" },
+      basionymAuthorship: {
+        authors: ["Wulfen"],
+        sanctioningAuthor: "Fr.",
+      },
+    });
+    expect(r.combinationAnonymous).toBe(true);
+    expect(r.combinationSanctioningAuthor).toBe("");
+    expect(r.basionymAnonymous).toBe(false);
+    expect(r.basionymSanctioningAuthor).toBe("Fr.");
+  });
+
+  it("puts each new column right after its authorship year", () => {
+    const keys = Object.keys(row({}));
+    const after = (k) => keys[keys.indexOf(k) + 1];
+    expect(after("combinationAuthorshipYear")).toBe(
+      "combinationSanctioningAuthor"
+    );
+    expect(after("combinationSanctioningAuthor")).toBe("combinationAnonymous");
+    expect(after("basionymAuthorshipYear")).toBe("basionymSanctioningAuthor");
+    expect(after("basionymSanctioningAuthor")).toBe("basionymAnonymous");
+  });
+
+  it("takes the sanctioning author of older parsers from the name for the combination", () => {
+    const r = row({
+      combinationAuthorship: { authors: ["Bull."] },
+      sanctioningAuthor: "Fr.",
+    });
+    expect(r.combinationSanctioningAuthor).toBe("Fr.");
+    expect(r.basionymSanctioningAuthor).toBe("");
+  });
+});
