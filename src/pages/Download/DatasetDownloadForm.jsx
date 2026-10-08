@@ -52,8 +52,8 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
   const [synonyms, setSynonyms] = useState(false);
   const [bareNames, setBareNames] = useState(false);
   const [extinct, setExtinct] = useState(null);
-  const [classification, setClassification] = useState(false);
-  const [extended, setExtended] = useState(false);
+  // simple, flat or extended - see contentOptions
+  const [content, setContent] = useState("simple");
   const [dataAccess, setDataAccess] = useState(null);
   const [minRank, setMinRank] = useState("GENUS");
   const [excludeRanksBelow, setExcludeRanksBelow] = useState(null);
@@ -73,6 +73,41 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetKey]);
+
+  // The backend only builds the flat classification table for ColDP and DwC-A,
+  // and ignores the classification flag as soon as extended is requested.
+  // Formats without extended content get no choice at all.
+  const format = dataFormat.find(
+    (f) => f.name.toLowerCase() === selectedDataFormat?.toLowerCase()
+  );
+  const contentOptions = !format?.extendedContent
+    ? []
+    : [
+        {
+          value: "simple",
+          label: "Simple",
+          title: "Basic name usage information with a parent-child classification",
+        },
+        ...(["coldp", "dwca"].includes(format.name.toLowerCase())
+          ? [
+              {
+                value: "flat",
+                label: "Flat",
+                title:
+                  "A single table with one row per name usage, a column for each higher rank and the taxonomic group",
+              },
+            ]
+          : []),
+        {
+          value: "extended",
+          label: "Extended",
+          title:
+            "All available information including distributions, vernacular names, type material, treatments and references",
+        },
+      ];
+  const selectedContent = contentOptions.some((o) => o.value === content)
+    ? content
+    : "simple";
 
   const getSettings = () => {
     axios(`${config.dataApi}dataset/${datasetKey}/settings`)
@@ -210,39 +245,35 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
         />
       </Row>
 
-      <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
-        Content{" "}
-        <a
-          href="/about/formats#data-content"
-          target="_blank"
-          style={{ marginLeft: "8px" }}
-        >
-          <InfoCircleOutlined />
-        </a>
-      </Row>
-      <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
-        <Checkbox
-          checked={classification}
-          onChange={(e) => setClassification(e.target.checked)}
-          style={{ marginLeft: "8px" }}
-        >
-          Classification
-        </Checkbox>
-
-        {dataFormat.find(
-          (f) =>
-            f.name.toLowerCase() === selectedDataFormat?.toLowerCase() &&
-            !!f.extendedContent
-        ) && (
-          <Checkbox
-            checked={extended}
-            onChange={(e) => setExtended(e.target.checked)}
-            style={{ marginLeft: "8px" }}
-          >
-            Extended
-          </Checkbox>
-        )}
-      </Row>
+      {contentOptions.length > 0 && (
+        <>
+          <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
+            Content{" "}
+            <a
+              href="/about/formats#data-content"
+              target="_blank"
+              style={{ marginLeft: "8px" }}
+            >
+              <InfoCircleOutlined />
+            </a>
+          </Row>
+          <Row style={{ marginBottom: "10px", marginLeft: "20px" }}>
+            <Radio.Group
+              options={contentOptions.map((o) => ({
+                label: (
+                  <Tooltip title={o.title}>
+                    <span>{o.label}</span>
+                  </Tooltip>
+                ),
+                value: o.value,
+              }))}
+              value={selectedContent}
+              onChange={(e) => setContent(e.target.value)}
+              optionType="button"
+            />
+          </Row>
+        </>
+      )}
 
       <Row style={{ marginBottom: "10px", marginTop: "20px" }}>
         Filter by higher taxon:&nbsp;
@@ -340,9 +371,9 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
                 format: selectedDataFormat,
                 synonyms: !synonyms,
                 bareNames,
-                extended,
+                extended: selectedContent === "extended",
                 extinct,
-                classification,
+                classification: selectedContent === "flat",
               };
               if (rootTaxon) {
                 options.root = {};
