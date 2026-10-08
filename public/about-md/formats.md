@@ -6,7 +6,6 @@ ChecklistBank supports a variety of formats for both uploads and downloads.
 - [DwC-A](#darwin-core-archive-dwc-a)
 - [TextTree](#texttree)
 - [ACEF](#annual-checklist-exchange-format-acef)
-- [Excel](#excel)
 - [Newick](#newick)
 - [DOT](#dot)
 
@@ -170,13 +169,6 @@ Pinales [order] {ID=623 CODE=BOTANICAL}
 
 For a little more expressiveness we provide a small [publishing guide for TextTree](https://catalogueoflife.github.io/coldp/docs/publishing-guide-txtree) based datasets which defines a small set of info keys and also a way to share structured references,
 turning the simple tree file into a small checklist archive.
-
-## Excel
-
-ChecklistBank supports the upload and download of Excel spreadsheets as a variant for the ColDP and DwC-A formats.
-Worksheets with a header row are used instead of CSV files to represent a single entity like Taxon or VernacularName.
-
-Excel restricts the maximum amount of records to just above 1 million, so spreadsheets cannot be used to download the entire COL checklist.
 
 ## Newick
 
