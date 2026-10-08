@@ -132,3 +132,33 @@
 .md-content td:first-child code {
   white-space: nowrap;
 }
+
+/* a list with a figure to its right that is exactly as tall as the list,
+   e.g. the ColDP entities next to the schema diagram */
+.md-list-figure {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  margin-bottom: 1em;
+}
+
+.md-list-figure > ul {
+  margin: 0;
+}
+
+.md-list-figure > .md-figure {
+  /* the image is taken out of the flow so only the list sets the height;
+     it then scales to that height, left aligned in the remaining width */
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.md-list-figure img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left top;
+}

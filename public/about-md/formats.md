@@ -57,6 +57,8 @@ is the [Catalogue of Life Data Package](https://catalogueoflife.github.io/coldp)
 a tabular text format with a standard set of files and columns and it is inspired by [Frictionless Data](https://frictionlessdata.io/).
 The format is a single ZIP archive that bundles various delimited text files:
 
+<div class="md-list-figure">
+
 - [Name](https://catalogueoflife.github.io/coldp/#name)
 - [Author](https://catalogueoflife.github.io/coldp/#author)
 - [NameRelation](https://catalogueoflife.github.io/coldp/#namerelation)
@@ -73,6 +75,9 @@ The format is a single ZIP archive that bundles various delimited text files:
 - [Media](https://catalogueoflife.github.io/coldp/#media)
 - [VernacularName](https://catalogueoflife.github.io/coldp/#vernacularname)
 - [Treatments](https://catalogueoflife.github.io/coldp/#treatment)
+
+<div class="md-figure"><a href="https://catalogueoflife.github.io/coldp/docs/schema.pdf" title="ColDP schema (PDF)"><img src="/images/coldp-schema.png" alt="ColDP entity relationship diagram"></a></div>
+</div>
 
 A [metadata.yaml](https://catalogueoflife.github.io/coldp/metadata.yaml) file should also be included to provide basic metadata about the entire dataset.
 For sharing structured bibliographic references the [BibTex](https://catalogueoflife.github.io/coldp/#reference-bibtex)
@@ -130,11 +135,6 @@ which are defined in the ColDP [metadata.yaml](https://github.com/CatalogueOfLif
 </dataset>
 ```
 
-## Annual Checklist Exchange Format (ACEF)
-
-The previous data format used by COL, the Annual Checklist Exchange Format (ACEF), can still be used to submit data as a zipped archive, although the new ColDP format is recommended. ACEF focuses on species information and is very limited when it comes to higher taxa and nomenclature.
-The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) includes several tables with pre-defined fields ([list of tables and fields](/docs/acef/List_of_tables_and_fields_2014.pdf), [entity relationship diagram](/docs/acef/ERD_DataSubmissionFormat_29Sep2014.pdf)). The September 2014 version is the latest release.
-
 ## TextTree
 
 [TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a `=` or `≡` (homotypic) character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
@@ -169,6 +169,11 @@ Pinales [order] {ID=623 CODE=BOTANICAL}
 
 For a little more expressiveness we provide a small [publishing guide for TextTree](https://catalogueoflife.github.io/coldp/docs/publishing-guide-txtree) based datasets which defines a small set of info keys and also a way to share structured references,
 turning the simple tree file into a small checklist archive.
+
+## Annual Checklist Exchange Format (ACEF)
+
+The previous data format used by COL, the Annual Checklist Exchange Format (ACEF), can still be used to submit data as a zipped archive, although the new ColDP format is recommended. ACEF focuses on species information and is very limited when it comes to higher taxa and nomenclature.
+The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) includes several tables with pre-defined fields ([list of tables and fields](/docs/acef/List_of_tables_and_fields_2014.pdf), [entity relationship diagram](/docs/acef/ERD_DataSubmissionFormat_29Sep2014.pdf)). The September 2014 version is the latest release.
 
 ## Newick
 
