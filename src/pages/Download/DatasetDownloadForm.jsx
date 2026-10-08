@@ -344,9 +344,6 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
                 extinct,
                 classification,
               };
-              if (classification) {
-                options.taxGroups = true;
-              }
               if (rootTaxon) {
                 options.root = {};
                 options.root.id = rootTaxon.id;
