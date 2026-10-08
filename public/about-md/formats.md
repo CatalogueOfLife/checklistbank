@@ -19,8 +19,10 @@ ColDP and DwC-A offer a third, `flat` flavor.
 To save us space and processing, ChecklistBank defaults to the simple flavor unless another one was specifically requested.
 The simple flavor includes the classification in a parent-child form and does not include a flat, denormalised classification.
 
-The `flat` flavor is a simple download with the classification denormalised instead.
-It consists of a single `dataset-{key}.tsv` file with one row per name usage, a column for each higher rank and the taxonomic group.
+The `flat` flavor is a simple download with an additional flat, denormalised classification.
+It consists of a single `dataset-{key}.tsv` file with one row per name usage that keeps the parent-child columns and adds a column for each of the major higher ranks and the taxonomic group.
+DwC-A flat downloads also include `dwc:higherClassification` with the names of all parents.
+The parent-child hierarchy remains the more complete classification: higher taxa at ranks without their own column, e.g. superorders, infraorders or unranked clades, are only found in it.
 
 The `simple` downloads only include very basic information: the scientific name, authorship, rank, status, code, the next higher parent and the extinct flag.
 

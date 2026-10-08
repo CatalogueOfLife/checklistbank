@@ -94,7 +94,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
                 value: "flat",
                 label: "Flat",
                 title:
-                  "A single table with one row per name usage, a column for each higher rank and the taxonomic group",
+                  "Simple content plus columns for the major higher ranks and the taxonomic group, as a single table",
               },
             ]
           : []),
