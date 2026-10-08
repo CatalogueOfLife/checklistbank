@@ -14,6 +14,8 @@ import {
   Typography,
   List,
   Space,
+  Switch,
+  Tooltip,
 } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 
@@ -24,6 +26,7 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
+import Auth from "../../components/Auth";
 import csv from "csvtojson/v2";
 
 const { TextArea } = Input;
@@ -140,7 +143,41 @@ export const toFlatRow = (n) => {
   };
 };
 
-const NameParser = ({ addError }) => {
+// --- native parser results ---------------------------------------------------
+// parser/name/native returns the raw GBIF name parser result. Its "result"
+// property tells the three variants apart, and all of them carry a "label":
+//   parsed     {name: {...parsed name}}
+//   informal   {taxon, taxonRank, rank, phrase}
+//   unparsable {type, name: verbatim string}
+
+// Flattens any of the three native result variants into the table's fields.
+export const nativeView = (res) => {
+  switch (res?.result) {
+    case "parsed": {
+      const n = res.name || {};
+      return {
+        type: n.type,
+        rank: n.rank,
+        code: n.code,
+        warnings: n.warnings || [],
+      };
+    }
+    case "informal":
+      return { rank: res.rank, warnings: [] };
+    case "unparsable":
+      return { type: res.type, warnings: [] };
+    default:
+      return { warnings: [] };
+  }
+};
+
+const NATIVE_RESULT_COLOR = {
+  parsed: "green",
+  informal: "blue",
+  unparsable: "orange",
+};
+
+const NameParser = ({ addError, user }) => {
   const [error, setError] = useState(null);
   const [names, setNames] = useState(null);
   const [inputType, setInputType] = useState("1");
@@ -148,6 +185,10 @@ const NameParser = ({ addError }) => {
   const [parsing, setParsing] = useState(false);
   const [numParsed, setNumParsed] = useState(0);
   const [results, setResults] = useState(null);
+  const [nativeMode, setNativeMode] = useState(false);
+  const isAdmin = Auth.isAdmin(user);
+  // only admins see the toggle, so never parse natively for anyone else
+  const native = nativeMode && isAdmin;
 
   const resetResult = () => {
     setResults(null);
@@ -241,7 +282,8 @@ const NameParser = ({ addError }) => {
 
   // --- parsing ---------------------------------------------------------------
 
-  const parseChunk = async (chunk) => {
+  // The native resource takes the same JSON array as the standard one.
+  const parseChunk = async (chunk, native) => {
     const body = chunk.map((n) => ({
       name: n.providedName,
       ...(n.providedAuthorship ? { authorship: n.providedAuthorship } : {}),
@@ -249,9 +291,11 @@ const NameParser = ({ addError }) => {
       ...(n.providedCode ? { code: n.providedCode } : {}),
     }));
     try {
-      const { data } = await axios.post(`${config.dataApi}parser/name`, body, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const { data } = await axios.post(
+        `${config.dataApi}parser/name${native ? "/native" : ""}`,
+        body,
+        { headers: { "Content-Type": "application/json" } }
+      );
       // The parser silently drops blank names; we filtered those out already so
       // the response maps 1:1 to the chunk. Guard defensively just in case.
       if (Array.isArray(data) && data.length === chunk.length) {
@@ -279,6 +323,11 @@ const NameParser = ({ addError }) => {
 
     // Drop blank names so the parser's response lines up 1:1 with our input.
     const work = names.filter((n) => (n.providedName || "").trim());
+    // a previous run may have used the other parser mode
+    names.forEach((n) => {
+      delete n.result;
+      delete n.error;
+    });
     const chunks = _.chunk(work, CHUNK_SIZE);
     let done = 0;
 
@@ -287,7 +336,7 @@ const NameParser = ({ addError }) => {
         const batch = chunks.slice(i, i + CONCURRENCY);
         await Promise.all(
           batch.map((c) =>
-            parseChunk(c).then(() => {
+            parseChunk(c, native).then(() => {
               done += c.length;
               setNumParsed(done);
             })
@@ -338,9 +387,9 @@ const NameParser = ({ addError }) => {
 
   // --- result table ----------------------------------------------------------
 
-  const numParsedOk = results
-    ? results.filter((n) => !n.error && n.result?.parsed).length
-    : 0;
+  const isParsed = (n) =>
+    !n.error && (native ? n.result?.result === "parsed" : !!n.result?.parsed);
+  const numParsedOk = results ? results.filter(isParsed).length : 0;
 
   const columns = [
     {
@@ -415,6 +464,64 @@ const NameParser = ({ addError }) => {
     },
   ];
 
+  // Native results carry no CLB interpretation: the parser's own label is shown
+  // as the name, and its warnings replace the issues.
+  const nativeColumns = [
+    columns[0],
+    {
+      title: "Parsed name",
+      key: "label",
+      render: (text, record) =>
+        record.error ? <Tag color="red">error</Tag> : record.result?.label,
+    },
+    {
+      title: "Type",
+      key: "type",
+      render: (text, record) => nativeView(record.result).type,
+      filters: _.uniq(
+        (results || []).map((n) => nativeView(n.result).type).filter(Boolean)
+      ).map((t) => ({ text: t, value: t })),
+      onFilter: (value, record) => nativeView(record.result).type === value,
+    },
+    {
+      title: "Rank",
+      key: "rank",
+      render: (text, record) => nativeView(record.result).rank,
+    },
+    {
+      title: "Code",
+      key: "code",
+      render: (text, record) => nativeView(record.result).code,
+    },
+    {
+      title: "Result",
+      key: "result",
+      filters: Object.keys(NATIVE_RESULT_COLOR).map((r) => ({
+        text: r,
+        value: r,
+      })),
+      onFilter: (value, record) => record.result?.result === value,
+      render: (text, record) =>
+        record.error ? (
+          <Tag color="red">error</Tag>
+        ) : (
+          <Tag color={NATIVE_RESULT_COLOR[record.result?.result]}>
+            {record.result?.result}
+          </Tag>
+        ),
+    },
+    {
+      title: "Warnings",
+      key: "warnings",
+      render: (text, record) =>
+        nativeView(record.result).warnings.map((w) => (
+          <Tag key={w} color="warning" style={{ marginRight: 6 }}>
+            {w}
+          </Tag>
+        )),
+    },
+  ];
+
   const parseButton = (
     <Button
       type="primary"
@@ -440,7 +547,26 @@ const NameParser = ({ addError }) => {
         )}
 
         <Row justify="end" style={{ marginBottom: 8 }}>
-          <Col>{parseButton}</Col>
+          <Col>
+            <Space size="large">
+              {isAdmin && (
+                <Tooltip title="Use the raw GBIF name parser results without any ChecklistBank interpretation">
+                  <Space>
+                    <Switch
+                      size="small"
+                      checked={nativeMode}
+                      onChange={(checked) => {
+                        setNativeMode(checked);
+                        resetResult();
+                      }}
+                    />
+                    <Text>Native parser</Text>
+                  </Space>
+                </Tooltip>
+              )}
+              {parseButton}
+            </Space>
+          </Col>
         </Row>
 
         <Collapse
@@ -545,9 +671,11 @@ const NameParser = ({ addError }) => {
                   <Button onClick={downloadJson}>
                     <DownloadOutlined /> JSON
                   </Button>
-                  <Button onClick={downloadTsv}>
-                    <DownloadOutlined /> TSV
-                  </Button>
+                  {!native && (
+                    <Button onClick={downloadTsv}>
+                      <DownloadOutlined /> TSV
+                    </Button>
+                  )}
                 </Space>
               </Col>
             </Row>
@@ -556,7 +684,7 @@ const NameParser = ({ addError }) => {
               size="small"
               scroll={{ x: 1200 }}
               dataSource={results}
-              columns={columns}
+              columns={native ? nativeColumns : columns}
               pagination={{ defaultPageSize: 100, showSizeChanger: true }}
             />
           </>
@@ -566,5 +694,5 @@ const NameParser = ({ addError }) => {
   );
 };
 
-const mapContextToProps = ({ addError }) => ({ addError });
+const mapContextToProps = ({ addError, user }) => ({ addError, user });
 export default withContext(mapContextToProps)(NameParser);

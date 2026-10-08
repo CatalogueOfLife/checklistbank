@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toFlatRow } from "./NameParser";
+import { toFlatRow, nativeView } from "./NameParser";
 
 const row = (result) => toFlatRow({ providedName: "x", result });
 
@@ -36,5 +36,50 @@ describe("toFlatRow", () => {
     });
     expect(r.combinationSanctioningAuthor).toBe("Fr.");
     expect(r.basionymSanctioningAuthor).toBe("");
+  });
+});
+
+describe("nativeView", () => {
+  it("takes type, rank, code and warnings of a parsed name", () => {
+    const v = nativeView({
+      result: "parsed",
+      label: "Navicula ?alba",
+      name: {
+        genus: "Navicula",
+        specificEpithet: "alba",
+        rank: "species",
+        code: "botanical",
+        type: "informal",
+        warnings: ["question marks removed"],
+      },
+    });
+    expect(v).toEqual({
+      type: "informal",
+      rank: "species",
+      code: "botanical",
+      warnings: ["question marks removed"],
+    });
+  });
+
+  it("takes the rank of an informal name", () => {
+    const v = nativeView({
+      result: "informal",
+      label: "Rhizobium sp. RMCC TR1811",
+      taxon: "Rhizobium",
+      taxonRank: "genus",
+      rank: "species",
+      phrase: "sp. RMCC TR1811",
+    });
+    expect(v).toEqual({ rank: "species", warnings: [] });
+  });
+
+  it("takes the type of an unparsable name", () => {
+    const v = nativeView({
+      result: "unparsable",
+      label: "BOLD:AAA1234",
+      type: "identifier",
+      name: "BOLD:AAA1234",
+    });
+    expect(v).toEqual({ type: "identifier", warnings: [] });
   });
 });
