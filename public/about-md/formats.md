@@ -140,6 +140,34 @@ The [ACEF format](/docs/acef/2014_CoL_Standard_Dataset_v7_23Sep2014.pdf) include
 
 [TextTree](https://github.com/gbif/text-tree) is a simple format to represent taxonomic trees using indented, plain text. Each row in a TextTree represent a scientific name. Each name can include the authorship and should be given a rank following the name in angular brackets. Synonyms are represented as direct, nested children that are prefixed by a `=` or `≡` (homotypic) character. The format focuses on the tree, is very human readable and lightweight. ChecklistBank archives every version of imported datasets as TextTree files which then drives various diff tools.
 
+A `simple` TextTree download only contains the names, their rank and the tree.
+Synonyms are prefixed with `=`, basionyms additionally with `$`, extinct taxa with `†` and provisionally accepted ones with `?`:
+
+```
+Pinales [order]
+  Pinaceae Spreng. [family]
+    Abies Mill. [genus]
+      Abies alba Mill. [species]
+        =Pinus picea L. [species]
+      Abies balsamea (L.) Mill. [species]
+        =$Pinus balsamea L. [species]
+```
+
+An `extended` download adds the ID of every name and further information as key value pairs in curly brackets:
+the nomenclatural code (`CODE`), the publishedIn reference (`PUB`), further references (`REF`), environments (`ENV`), the temporal range (`CHRONO`),
+vernacular names (`VERN`), distributions with a standard area code (`DIST`), a link (`LINK`) and `MERGED=true` for records added by a merge sector.
+Remarks follow as a `#` comment:
+
+```
+Pinales [order] {ID=623 CODE=BOTANICAL}
+  Pinaceae Spreng. [family] {ID=625 CODE=BOTANICAL}
+    Abies Mill. [genus] {ID=3HKC CODE=BOTANICAL}
+      Abies alba Mill. [species] {ID=4QHKG CODE=BOTANICAL PUB=R12 ENV=TERRESTRIAL VERN=deu:Weißtanne,eng:European silver fir DIST=iso:de:native,iso:fr:native}
+        =Pinus picea L. [species] {ID=6Y3TS CODE=BOTANICAL}
+      Abies balsamea (L.) Mill. [species] {ID=4QHKH CODE=BOTANICAL ENV=TERRESTRIAL VERN=eng:balsam fir DIST=iso:ca:native,iso:us:native} # the most common fir in eastern Canada
+        =$Pinus balsamea L. [species] {ID=6Y3TT CODE=BOTANICAL PUB=R7}
+```
+
 For a little more expressiveness we provide a small [publishing guide for TextTree](https://catalogueoflife.github.io/coldp/docs/publishing-guide-txtree) based datasets which defines a small set of info keys and also a way to share structured references,
 turning the simple tree file into a small checklist archive.
 
