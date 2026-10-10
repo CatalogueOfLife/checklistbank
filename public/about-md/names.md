@@ -382,6 +382,9 @@ gives them in columns of their own:
 
 ### Examples
 
+Many more examples of how a name string is parsed, for every name type, are in the name parser's
+[parsing examples](https://github.com/gbif/name-parser-rust/blob/main/docs/parsing-examples.md).
+
 | record | interpreted name |
 |---|---|
 | DwC-A: `scientificName` Abies alba, `scientificNameAuthorship` Mill., `taxonRank` species | species *Abies alba* Mill., combination author Mill. - no code unless the dataset sets one, `Mill.` alone does not tell it |
