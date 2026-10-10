@@ -16,7 +16,7 @@ Real data holds much more than latin binomials. Every name is classified by its 
 | type | |
 |---|---|
 | `SCIENTIFIC` | A scientific name, possibly with authorship, including named hybrids. |
-| `INFORMAL` | A scientific name with an informal addition or falling short of a regular name: an open nomenclature qualifier (`Abies cf. alba`), an indetermined name (`Abies sp.`), an abbreviated genus (`A. alba`) or a phrase name for an undescribed taxon (`Pultenaea sp. 'Olinda' (Coveny 6616)`). |
+| `INFORMAL` | A semistructured name with an informal addition or falling short of a regular name, always anchored on a real taxon: an open nomenclature qualifier (`Abies cf. alba`), an indetermined name (`Abies sp.`), an abbreviated genus (`A. alba`) or a phrase name for an undescribed taxon (`Pultenaea sp. 'Olinda' (Coveny 6616)`). See [informal names](#informal-names). |
 | `FORMULA` | A hybrid or graft chimaera *formula*, not a named hybrid. |
 | `PLACEHOLDER` | A placeholder like `incertae sedis` or `unknown genus`. |
 | `IDENTIFIER` | A machine identifier rather than a name, e.g. a BOLD BIN (`BOLD:AAB5053`), a UNITE species hypothesis (`SH0864666.10FU`) or a culture collection accession. |
@@ -24,6 +24,33 @@ Real data holds much more than latin binomials. Every name is classified by its 
 
 Scientific and informal names are parsed into their parts. All other types keep the name only as a whole, in the
 scientific name.
+
+### Informal names
+
+An informal name is only semistructured: it cannot be parsed completely, but it always starts with a real taxon it
+hangs off - a genus or a higher uninomial, the **anchor taxon**. A name without such an anchor is no informal name,
+e.g. a BOLD BIN is an `IDENTIFIER`. There are two kinds:
+
+- **With a species epithet** the name is parsed like a scientific name, keeps all its parts including the authorship,
+  and is only typed `INFORMAL`: `Abies cf. alba`, `Abies aff. alba Mill.`, `A. alba` or a phrase name below a species
+  like `Acacia mutabilis Maslin subsp. Young River (G.F. Craig 2052)`.
+- **Without a species epithet** the name is just the anchor taxon followed by a provisional designation instead of a
+  determined epithet: an indetermined species (`Abies sp.`), a numbered placeholder (`Allium sp. 1`), a molecular
+  provisional species (`Rhizobium sp. RMCC TR1811`), a phrase name (`Pultenaea sp. 'Olinda' (Coveny 6616)`) or an
+  informal group (`Bartonella group`).
+
+The second kind is kept flat as
+
+| part | | example |
+|---|---|---|
+| anchor taxon | The supraspecific taxon the name hangs off, in `genus` for a genus or in `uninomial` for a higher taxon. It is the parser's best guess and not checked against any taxonomy. | `Rhizobium`, `Ichneumonidae` |
+| rank | The rank the informal name claims to have: species for `sp.`, unranked for a group. | species |
+| phrase | The verbatim rest of the name, from the rank marker to its end, in `unparsed`. | `sp. RMCC TR1811`, `sp. 1`, `group` |
+
+The anchor taxon and the phrase together reproduce the name exactly as given. Nothing in the phrase is interpreted,
+not even what looks like an author citation: in `Ichneumonidae sp. Forster, 1968` the parser cannot tell a citation
+from a specimen or culture code, and a real citation would belong to the anchor taxon rather than to the undetermined
+species. Informal names of species rank or below are flagged `INDETERMINED`.
 
 ## The name
 
@@ -244,8 +271,8 @@ can tell it how to read the authorship. The result is one of:
 
 - a **parsed name** with its parts, for scientific names and for informal names with a species epithet, e.g.
   `Abies cf. alba`;
-- an **informal name** anchored on a genus or higher taxon, like `Abies sp.`, `Rhizobium sp. RMCC TR1811` or
-  `Bartonella group`, which is kept as a name of type `INFORMAL` with its phrase as the unparsed rest;
+- an **informal name** without a species epithet, like `Abies sp.`, `Rhizobium sp. RMCC TR1811` or
+  `Bartonella group`: only the anchor taxon, the rank and the verbatim phrase, see [informal names](#informal-names);
 - an **unparsable name** - a virus, a hybrid formula, a placeholder, an identifier or anything else - which keeps its
   scientific name as given, with its name type and, for viruses, the virus code.
 
