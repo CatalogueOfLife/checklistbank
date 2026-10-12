@@ -181,6 +181,7 @@ const DatasetImportMetrics = (props) => {
           dataset={dataset}
           datasetKey={datasetKey}
           attempt={attempt || data?.attempt}
+          importJob={data}
         />
       )}
       {!loading && !data && error && (

@@ -8,9 +8,10 @@ import { NavLink } from "react-router-dom";
 import { DiffOutlined, PieChartOutlined, LineChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
 import { formatTime } from "../../dateTime";
+import JobDuration from "../../components/job/JobDuration";
 import config from "../../config";
 
-const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
+const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, importJob }) => {
     // const { current } = this.state;
     const isProject = dataset?.origin === "project";
     // Timeline and Diff both need something to compare: a chart over a single
@@ -62,7 +63,14 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished }) => {
               </h3>
             </Col>
             <Col style={{ marginLeft: "10px", marginTop: "2px" }}>
-              - {formatTime(dataset?.imported, "lll")}
+              {/* the attempt's own record when the page has it - dataset.imported
+                  is the latest import, not necessarily the one shown */}
+              - {formatTime(importJob ? importJob.finished || importJob.started : dataset?.imported, "lll")}
+              {importJob?.started && (
+                <span style={{ marginLeft: "8px" }}>
+                  ({importJob.finished ? "took" : "running for"} <JobDuration job={importJob} />)
+                </span>
+              )}
             </Col>
               </>
             )}
