@@ -1011,7 +1011,7 @@ const WorkBench = ({
               disabled={!hasSelected}
               loading={loading}
             >
-              Apply complex decisions
+              Apply update decision
             </Button>
             <span style={{ marginLeft: 8 }}>
               {selectedRowKeys.length > 1 &&
