@@ -19,6 +19,7 @@ import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import RematchResult from "../ProjectSectors/RematchResult";
 import DecisionForm from "../../WorkBench/DecisionForm";
+import DeleteDecisionsModal from "./DeleteDecisionsModal";
 const FormItem = Form.Item;
 const { Search } = Input;
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
@@ -40,7 +41,7 @@ const ProjectDecisions = ({
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [rematchDecisionsLoading, setRematchDecisionsLoading] = useState(false);
-  const [deleteBrokenDecisionsLoading, setDeleteBrokenDecisionsLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [rematchInfo, setRematchInfo] = useState(null);
   const [error, setError] = useState(null);
   const [facetMode, setFacetMode] = useState(null);
@@ -210,26 +211,6 @@ const ProjectDecisions = ({
         setError(err);
         setRematchInfo(null);
         setRematchDecisionsLoading(false);
-      });
-  };
-
-  const deleteBrokenDecisions = (subjectDatasetKey) => {
-    setDeleteBrokenDecisionsLoading(true);
-    axios
-      .delete(
-        `${config.dataApi}dataset/${datasetKey}/decision?datasetKey=${subjectDatasetKey}&broken=true`
-      )
-      .then((res) => {
-        notification.success({
-          title: "Success",
-          description: `Deleted ${res} broken decisions`,
-        });
-        setDeleteBrokenDecisionsLoading(false);
-        setError(null);
-      })
-      .catch((err) => {
-        setError(err);
-        setDeleteBrokenDecisionsLoading(false);
       });
   };
 
@@ -618,24 +599,33 @@ const ProjectDecisions = ({
                 </Button>
               </Popconfirm>
 
-              {params.subjectDatasetKey && (
-                <Popconfirm
-                  placement="rightTop"
-                  title={`Do you want to delete all broken decisions from source dataset ${params.subjectDatasetKey}?`}
-                  onConfirm={() =>
-                    deleteBrokenDecisions(params.subjectDatasetKey)
-                  }
-                  okText="Yes"
-                  cancelText="No"
+              <Tooltip
+                title={
+                  params.subjectDatasetKey
+                    ? null
+                    : "Filter by a source dataset to delete its decisions"
+                }
+              >
+                <Button
+                  danger
+                  disabled={!params.subjectDatasetKey}
+                  onClick={() => setDeleteModalOpen(true)}
+                  style={{ marginLeft: "10px", marginBottom: "10px" }}
                 >
-                  <Button
-                    type="primary"
-                    loading={deleteBrokenDecisionsLoading}
-                    style={{ marginLeft: "10px", marginBottom: "10px" }}
-                  >
-                    {`Delete all broken decisions from dataset ${params.subjectDatasetKey}`}
-                  </Button>
-                </Popconfirm>
+                  Delete…
+                </Button>
+              </Tooltip>
+              {params.subjectDatasetKey && (
+                <DeleteDecisionsModal
+                  projectKey={datasetKey}
+                  subjectDatasetKey={params.subjectDatasetKey}
+                  open={deleteModalOpen}
+                  onClose={() => setDeleteModalOpen(false)}
+                  onDeleted={() => {
+                    setDeleteModalOpen(false);
+                    getData();
+                  }}
+                />
               )}
             </Col>
           )}
