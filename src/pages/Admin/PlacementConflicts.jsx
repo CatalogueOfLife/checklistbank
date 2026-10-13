@@ -18,6 +18,8 @@ const PlacementConflicts = ({ datasetType }) => {
   const [error, setError] = useState(null);
   // minimum share of conflicting genera, in percent
   const [minPercent, setMinPercent] = useState(10);
+  // minimum number of conflicting genera
+  const [minConflicts, setMinConflicts] = useState(1);
   const [type, setType] = useState(null);
   const [page, setPage] = useState(1);
 
@@ -26,6 +28,7 @@ const PlacementConflicts = ({ datasetType }) => {
     axios(
       `${config.dataApi}dataset/placementConflict?${qs.stringify({
         minRatio: (minPercent ?? 0) / 100,
+        minConflicts: minConflicts || undefined,
         type: type || undefined,
         limit: PAGE_SIZE,
         offset: (page - 1) * PAGE_SIZE,
@@ -41,7 +44,7 @@ const PlacementConflicts = ({ datasetType }) => {
         setData([]);
       })
       .finally(() => setLoading(false));
-  }, [minPercent, type, page]);
+  }, [minPercent, minConflicts, type, page]);
 
   const columns = [
     {
@@ -140,6 +143,22 @@ const PlacementConflicts = ({ datasetType }) => {
               suffix="%"
               onChange={(v) => {
                 setMinPercent(v);
+                setPage(1);
+              }}
+            />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item
+            label="Minimum conflicting genera"
+            style={{ marginBottom: 0 }}
+          >
+            <InputNumber
+              min={1}
+              precision={0}
+              value={minConflicts}
+              onChange={(v) => {
+                setMinConflicts(v);
                 setPage(1);
               }}
             />
