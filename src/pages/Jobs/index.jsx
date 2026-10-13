@@ -78,11 +78,13 @@ const Jobs = ({ location }) => {
     history.push({ pathname: "/jobs", search: `?${qs.stringify(next)}` });
   };
 
-  const updateParams = (nextSearchParams) =>
+  // "Mine" is carried over unless the caller settles it, as the history's user
+  // filter does - both of them are a filter on createdBy.
+  const updateParams = (nextSearchParams, { mine: nextMine = mine } = {}) =>
     push({
       ...nextSearchParams,
       tab,
-      ...(mine ? { mine: true } : {}),
+      ...(nextMine ? { mine: true } : {}),
     });
 
   // Always spell the tab out, since which one a bare /jobs opens depends on

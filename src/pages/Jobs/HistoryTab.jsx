@@ -9,7 +9,9 @@ import {
   Switch,
   Alert,
   DatePicker,
+  Tag,
 } from "antd";
+import { FilterOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import moment from "dayjs";
 import withContext from "../../components/hoc/withContext";
@@ -17,14 +19,14 @@ import ErrorMsg from "../../components/ErrorMsg";
 import JobDetail from "../../components/job/JobDetail";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import { searchJobs, getJobTypes, JOB_LANES } from "../../api/job";
-import { decorateJobs } from "./decorate";
+import { decorateJobs, loadUser } from "./decorate";
 import { PRESETS, presetOf, applyPreset } from "./presets";
 import {
   statusColumn,
   jobColumn,
   datasetColumn,
   sectorColumn,
-  userColumn,
+  userFilterColumn,
   dateColumn,
   durationColumn,
   resultColumn,
@@ -65,6 +67,7 @@ const HistoryTab = ({
   const [jobTypes, setJobTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeUserName, setActiveUserName] = useState(null);
 
   useEffect(() => {
     getJobTypes().then(setJobTypes);
@@ -99,6 +102,31 @@ const HistoryTab = ({
     load();
   }, [JSON.stringify(query)]);
 
+  // The user the history is narrowed down to, through the filter icon in the
+  // user column or the "Mine" switch.
+  const activeUser = query.createdBy;
+
+  // Named separately from the rows: a user without jobs in the current filter
+  // leaves no row to read the name from.
+  useEffect(() => {
+    setActiveUserName(null);
+    if (activeUser === undefined || activeUser === null || activeUser === "")
+      return;
+    loadUser(activeUser).then((u) => setActiveUserName(u?.username || null));
+  }, [activeUser]);
+
+  // Filtering by oneself is what "Mine" means, so it flips the switch instead
+  // of setting createdBy; filtering by anyone else, or lifting the filter,
+  // turns "Mine" off, since it would override createdBy.
+  const filterUser = (key) => {
+    const next = { ...params };
+    delete next.offset;
+    delete next.createdBy;
+    const isMe = user && key !== undefined && String(key) === String(user.key);
+    if (key !== undefined && !isMe) next.createdBy = key;
+    updateParams(next, { mine: !!isMe });
+  };
+
   const setFilter = (key, value) => {
     const next = { ...params };
     if (value === undefined || value === null || value.length === 0) {
@@ -115,7 +143,7 @@ const HistoryTab = ({
     jobColumn,
     datasetColumn,
     sectorColumn,
-    userColumn,
+    userFilterColumn(activeUser, filterUser),
     dateColumn("Created", "created"),
     dateColumn("Finished", "finished"),
     durationColumn,
@@ -230,8 +258,21 @@ const HistoryTab = ({
               }))}
             />
           </Form.Item>
+          <Form.Item {...formItemLayout} label="User">
+            {activeUser !== undefined && activeUser !== null ? (
+              <Tag closable onClose={() => filterUser(undefined)}>
+                {activeUserName || activeUser}
+              </Tag>
+            ) : (
+              <span style={{ color: "rgba(0, 0, 0, 0.45)" }}>
+                Any user - pick one with the <FilterOutlined /> next to a name
+              </span>
+            )}
+          </Form.Item>
           <Form.Item {...formItemLayout} label="Created">
             <RangePicker
+              allowEmpty={[true, true]}
+              placeholder={["Any start", "Any end"]}
               value={
                 params.createdAfter || params.createdBefore
                   ? [
@@ -243,18 +284,18 @@ const HistoryTab = ({
               onChange={(range) => {
                 const next = { ...params };
                 delete next.offset;
-                if (!range) {
-                  delete next.createdAfter;
-                  delete next.createdBefore;
-                } else {
-                  // the backend reads a bare date as the start of that day and
-                  // filters created <= createdBefore, so send the end of the
-                  // picked day - otherwise the last day is excluded
-                  next.createdAfter = range[0]?.format("YYYY-MM-DD");
-                  next.createdBefore = range[1]
-                    ?.endOf("day")
+                delete next.createdAfter;
+                delete next.createdBefore;
+                // either end may be left open
+                const [after, before] = range || [];
+                if (after) next.createdAfter = after.format("YYYY-MM-DD");
+                // the backend reads a bare date as the start of that day and
+                // filters created <= createdBefore, so send the end of the
+                // picked day - otherwise the last day is excluded
+                if (before)
+                  next.createdBefore = before
+                    .endOf("day")
                     .format("YYYY-MM-DDTHH:mm:ss");
-                }
                 updateParams(next);
               }}
             />

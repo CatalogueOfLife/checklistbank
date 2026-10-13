@@ -1,7 +1,11 @@
 import React from "react";
 import { Tooltip } from "antd";
 import { NavLink } from "react-router-dom";
-import { CodeOutlined } from "@ant-design/icons";
+import {
+  CodeOutlined,
+  FilterOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 import { formatTime } from "../../dateTime";
 import _ from "lodash";
 import JobStatusTag from "../../components/job/JobStatusTag";
@@ -113,6 +117,61 @@ export const userColumn = {
   onCell: capped(USER_WIDTH, userName),
   render: (text, record) => userName(record),
 };
+
+// room for the filter icon beside the name
+const USER_FILTER_WIDTH = USER_WIDTH + 20;
+
+/**
+ * The user column with a filter icon beside each name, to narrow the history
+ * down to that user's jobs. On the rows of the user already filtered by the
+ * icon turns into a cross that lifts the filter again.
+ *
+ * The name truncates inside the cell rather than through the column's
+ * ellipsis, which would cut the icon off along with the name.
+ */
+export const userFilterColumn = (activeKey, onFilter) => ({
+  ...userColumn,
+  width: USER_FILTER_WIDTH,
+  ellipsis: false,
+  onCell: () => ({ style: { maxWidth: USER_FILTER_WIDTH } }),
+  render: (text, record) => {
+    const key = record.userKey;
+    if (key === null || key === undefined) return null;
+    const name = userName(record);
+    const active =
+      activeKey !== null &&
+      activeKey !== undefined &&
+      String(activeKey) === String(key);
+    return (
+      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <span
+          title={name}
+          style={{
+            minWidth: 0,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {name}
+        </span>
+        <Tooltip title={active ? "Remove user filter" : `Only jobs by ${name}`}>
+          {active ? (
+            <CloseCircleOutlined
+              style={{ flex: "none", cursor: "pointer" }}
+              onClick={() => onFilter(undefined)}
+            />
+          ) : (
+            <FilterOutlined
+              style={{ flex: "none", cursor: "pointer", color: "#bfbfbf" }}
+              onClick={() => onFilter(key)}
+            />
+          )}
+        </Tooltip>
+      </span>
+    );
+  },
+});
 
 export const priorityColumn = {
   title: "Priority",

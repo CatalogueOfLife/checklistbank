@@ -28,3 +28,6 @@ export const decorateJobs = async (jobs = []) => {
     dataset: datasetByKey[j.datasetKey] || null,
   }));
 };
+
+/** One user, through the same batched and cached loader. */
+export const loadUser = (key) => userLoader.load(key);
