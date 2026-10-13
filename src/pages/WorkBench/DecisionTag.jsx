@@ -40,7 +40,7 @@ const DecisionTag = ({ decision, deleteCallback, projectKey, user }) => {
 
   if (!_.get(decision, "mode")) {
     return "";
-  } else if (["block", "ignore"].includes(_.get(decision, "mode"))) {
+  } else if (["block", "ignore", "reviewed"].includes(_.get(decision, "mode"))) {
     return (
       <Tooltip title={tooltipTitle(_.get(decision, "mode"))}>
         {" "}
