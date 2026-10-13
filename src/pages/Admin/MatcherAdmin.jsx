@@ -15,7 +15,6 @@ import {
   App,
 } from "antd";
 import config from "../../config";
-import Layout from "../../components/LayoutNew";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 
 import withContext from "../../components/hoc/withContext";
@@ -119,19 +118,7 @@ const MatcherAdmin = () => {
     metadata.attempt !== dataset.attempt;
 
   return (
-    <Layout
-      openKeys={["admin"]}
-      selectedKeys={["MatcherAdmin"]}
-      title="Matcher Admin"
-    >
-      <div
-        style={{
-          background: "#fff",
-          padding: 24,
-          minHeight: 140,
-          margin: "16px 0",
-        }}
-      >
+    <>
         {error && (
           <Alert
             message={error.message}
@@ -141,7 +128,6 @@ const MatcherAdmin = () => {
             style={{ marginBottom: 16 }}
           />
         )}
-        <h1>Dataset Matcher</h1>
         <p>
           Dataset matchers are file based indices of a dataset used for
           db independent matching services. Every published external dataset and
@@ -280,8 +266,7 @@ const MatcherAdmin = () => {
             )}
           </Spin>
         )}
-      </div>
-    </Layout>
+    </>
   );
 };
 

@@ -337,14 +337,6 @@ const BasicMenu = (props) => {
                   </NavLink>
                 ),
               },
-              {
-                key: "matcherAdmin",
-                label: (
-                  <NavLink to={{ pathname: "/admin/matcher" }}>
-                    <span>Matcher</span>
-                  </NavLink>
-                ),
-              },
             ]
           : []),
       ],

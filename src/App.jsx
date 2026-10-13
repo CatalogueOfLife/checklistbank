@@ -51,7 +51,6 @@ import ProjectEditors from "./pages/project/Editors";
 import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
-import MatcherAdmin from "./pages/Admin/MatcherAdmin";
 import UserAdmin from "./pages/Admin/Users";
 import SectorDiff from "./pages/project/SectorDiff";
 import Jobs from "./pages/Jobs";
@@ -204,11 +203,7 @@ const App = () => {
             />
             <Route
               path="/admin/matcher"
-              element={
-                <AdminRoute roles={["editor", "admin"]}>
-                  <MatcherAdmin />
-                </AdminRoute>
-              }
+              element={<Navigate to="/admin/datasets?tab=matcher" replace />}
             />
             <Route path="/jobs" element={<Jobs />} />
             {/* The unified job page absorbed these three views. Each old route
