@@ -3,6 +3,7 @@ import withContext from "./withContext";
 import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
+import { matchPath } from "react-router-dom";
 import withRouter from "../../withRouter";
 import { getDatasetsBatch } from "../../api/dataset";
 import { datasetMatchesRoute } from "../util/datasetRouteMatch";
@@ -23,6 +24,7 @@ import { datasetMatchesRoute } from "../util/datasetRouteMatch";
  */
 const DatasetProvider = ({
   match,
+  location,
   dataset,
   project,
   setProject,
@@ -146,7 +148,18 @@ const DatasetProvider = ({
         if (cancelled) return;
         if (!datasetMatchesRoute(res.data, projectKey)) return;
         setProject(res.data);
-        setSourceDataset(null);
+        // A source page owns the source dataset: SourceSelect fetches it for the
+        // route's sourceKey, usually before this (slower) project fetch lands.
+        // Clearing it here then blanked the project's Source menu on a fresh
+        // load of /project/:projectKey/dataset/:sourceKey/*. The lookup is by
+        // path because the /project/:projectKey/* mount has no sourceKey param.
+        const onSourcePage = matchPath(
+          "/project/:projectKey/dataset/:sourceKey/*",
+          location.pathname
+        );
+        if (!onSourcePage) {
+          setSourceDataset(null);
+        }
         setDataset(null);
       })
       .catch((err) => {
