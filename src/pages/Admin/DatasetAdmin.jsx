@@ -2,6 +2,8 @@ import { Tabs, Typography } from "antd";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Layout from "../../components/LayoutNew";
+import Auth from "../../components/Auth";
+import withContext from "../../components/hoc/withContext";
 import history from "../../history";
 import SearchIndexAdmin from "./SearchIndexAdmin";
 import MatcherAdmin from "./MatcherAdmin";
@@ -11,12 +13,14 @@ const TABS = [
   {
     key: "index",
     label: "Search index",
+    adminOnly: true,
     description:
       "Compares each dataset's number of name usages in Postgres with those in the Elasticsearch search index and the names matched to the names index, and lets you reindex, rematch, rebuild the matcher or reimport a single dataset.",
   },
   {
     key: "matcher",
     label: "Matcher",
+    adminOnly: true,
     description:
       "Inspects the file based matcher of a dataset, shows whether it is stale compared to the latest import, and rebuilds it, or all stale or all matchers at once.",
   },
@@ -28,9 +32,15 @@ const TABS = [
   },
 ];
 
-const DatasetAdmin = () => {
+// Editors only get the read-only reports, the tabs that rebuild indices are for admins.
+const DatasetAdmin = ({ user }) => {
   const location = useLocation();
-  const activeKey = qs.parse(location.search)?.tab || "about";
+  const isAdmin = Auth.isAuthorised(user, ["admin"]);
+  const tabs = TABS.filter((t) => isAdmin || !t.adminOnly);
+  const requested = qs.parse(location.search)?.tab;
+  const activeKey = tabs.some((t) => t.key === requested)
+    ? requested
+    : "about";
   const onTabChange = (tab) =>
     history.push({
       pathname: location.pathname,
@@ -71,7 +81,7 @@ const DatasetAdmin = () => {
                     the whole of ChecklistBank:
                   </p>
                   <dl>
-                    {TABS.map((t) => (
+                    {tabs.map((t) => (
                       <div key={t.key} style={{ marginBottom: 12 }}>
                         <dt>
                           <Typography.Link onClick={() => onTabChange(t.key)}>
@@ -85,7 +95,7 @@ const DatasetAdmin = () => {
                 </>
               ),
             },
-            ...TABS.map((t) => ({
+            ...tabs.map((t) => ({
               key: t.key,
               label: t.label,
               children: panes[t.key],
@@ -97,4 +107,6 @@ const DatasetAdmin = () => {
   );
 };
 
-export default DatasetAdmin;
+const mapContextToProps = ({ user }) => ({ user });
+
+export default withContext(mapContextToProps)(DatasetAdmin);

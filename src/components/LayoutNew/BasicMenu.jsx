@@ -311,6 +311,14 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
+        {
+          key: "esAdmin",
+          label: (
+            <NavLink to={{ pathname: "/admin/datasets" }}>
+              <span>Datasets</span>
+            </NavLink>
+          ),
+        },
         ...(Auth.isAuthorised(user, ["admin"])
           ? [
               {
@@ -326,14 +334,6 @@ const BasicMenu = (props) => {
                 label: (
                   <NavLink to={{ pathname: "/admin/settings" }}>
                     <span>Settings</span>
-                  </NavLink>
-                ),
-              },
-              {
-                key: "esAdmin",
-                label: (
-                  <NavLink to={{ pathname: "/admin/datasets" }}>
-                    <span>Datasets</span>
                   </NavLink>
                 ),
               },
