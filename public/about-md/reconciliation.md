@@ -30,7 +30,7 @@ You only need to add a service once; OpenRefine remembers it.
 ## Name usage reconciliation
 
 Matches scientific names against indexed name usages using the same matching engine as the
-ChecklistBank [name matching](/tools/name-matching) tool. It returns the matched taxon (and ranked
+ChecklistBank [name matching](/tools/name-match) tool. It returns the matched taxon (and ranked
 alternatives) and can extend matched rows with taxonomic properties and the higher classification.
 
 | Target | Service URL |
@@ -60,7 +60,7 @@ An entity autocomplete (suggest) is available for the match UI.
 
 ## Parser reconciliation
 
-These services sit on top of the ChecklistBank [parsers](/about/API). They are ideal for **cleaning and
+These services sit on top of the ChecklistBank [parsers](API#parsers). They are ideal for **cleaning and
 enriching** columns: reconciling normalises each cell to a canonical value, and (where offered) data
 extension breaks a value into structured columns.
 
@@ -167,7 +167,7 @@ plain free-text place names that are not a known identifier are left unmatched. 
 
 | Service | URL | Suggest | Data extension |
 |---|---|---|---|
-| Name usage (COL backbone) | `/reconcile` | yes | taxon properties + classification |
+| Name usage (COL extended release) | `/reconcile` | yes | taxon properties + classification |
 | Name usage (dataset) | `/dataset/{key}/reconcile` | yes | taxon properties + classification |
 | Controlled vocabulary | `/parser/{type}/reconcile` | enum values | — |
 | Name parser | `/parser/name/reconcile` | — | parsed name fields (+ `code`/`rank`) |
@@ -185,6 +185,6 @@ hand.
   cell only on a clean parse (score 100); name-usage matching uses graded scores and only auto-matches
   unambiguous exact hits.
 - The parser services are stateless and fast, but they are not bulk endpoints for millions of rows — for
-  very large jobs prefer the [name matching](/tools/name-matching) tool or the
-  [API](/about/API) directly.
+  very large jobs prefer the [name matching](/tools/name-match) tool or the
+  [API](API#name-matching) directly.
 - All services are read-only and require no authentication.

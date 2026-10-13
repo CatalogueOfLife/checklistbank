@@ -80,12 +80,12 @@ The format is a single ZIP archive that bundles various delimited text files:
 </div>
 
 A [metadata.yaml](https://catalogueoflife.github.io/coldp/metadata.yaml) file should also be included to provide basic metadata about the entire dataset.
-For sharing structured bibliographic references the [BibTex](https://catalogueoflife.github.io/coldp/#reference-bibtex)
+For sharing structured bibliographic references the [BibTeX](https://catalogueoflife.github.io/coldp/#reference-bibtex)
 and [CSL-JSON](https://catalogueoflife.github.io/coldp/#reference-json-csl) format is also supported.
 
 The ColDP format was developed to overcome limitations in existing formats for sharing taxonomic information, particularly Darwin Core Archives and the Annual Checklist Exchange Format used previously in COL.
 
-We recommend to read the [format specifications](https://catalogueoflife.github.io/coldp/) and the [ColDP publishing guidelines](https://catalogueoflife.github.io/coldp/docs/publishing-guide.html).
+We recommend to read the [format specifications](https://catalogueoflife.github.io/coldp/) and the [ColDP publishing guidelines](contribute#coldp-publishing-guidelines).
 
 ## Darwin Core Archive (DwC-A)
 
@@ -108,15 +108,15 @@ ChecklistBank currently interprets the following DwC extensions:
 - [gbif:SpeciesProfile](https://rs.gbif.org/extension/gbif/1.0/speciesprofile.xml)
 - [gbif:TypesAndSpecimen](https://rs.gbif.org/extension/gbif/1.0/typesandspecimen.xml)
 - [gbif:VernacularName](https://rs.gbif.org/extension/gbif/1.0/vernacularname.xml)
-- [col:NameRelation](https://rs.gbif.org/sandbox/extension/col-name-relation.xml) which mimicks the [ColDP name relation](https://github.com/CatalogueOfLife/coldp/blob/master/README.md#namerelation) entity.
+- [col:NameRelation](https://rs.gbif.org/sandbox/extension/col-name-relation.xml) which mimicks the [ColDP name relation](https://catalogueoflife.github.io/coldp/#namerelation) entity.
 
 Note that not all terms of the above extensions will be consumed at this stage.
-Data from all other DwC extensions is available via the [verbatim browser](https://www.checklistbank.org/dataset/1010/verbatim) though (the link shows FishBase as an example).
+Data from all other DwC extensions is available via the [verbatim browser](/dataset/1010/verbatim) though (the link shows FishBase as an example).
 
 ### EML COL metadata
 
 In addition to the GBIF EML profile COL supports a few custom properties inside the `<additionalMetadata>` block
-which are defined in the ColDP [metadata.yaml](https://github.com/CatalogueOfLife/coldp/blob/master/metadata.yaml) profile and missing from regular EML files:
+which are defined in the ColDP [metadata.yaml](https://catalogueoflife.github.io/coldp/metadata.yaml) profile and missing from regular EML files:
 
 ```
 <dataset>

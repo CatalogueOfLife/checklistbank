@@ -1,247 +1,239 @@
 ## ChecklistBank API guide
 
-In addition to the code generated [Swagger API documentation](https://api.checklistbank.org) we collect here examples of how to use the ChecklistBank (CLB) API for common use cases.
-The ChecklistBank API is accessible at https://api.checklistbank.org,
-but we also provide a test installation for trying things out: https://api.test.checklistbank.org
+Everything you see in ChecklistBank is also available through its JSON API at https://api.checklistbank.org.
+All API methods are documented in the generated [Swagger documentation](https://api.checklistbank.org),
+which is based on an [OpenAPI description](https://api.checklistbank.org/openapi) you can load into clients like [Insomnia](https://insomnia.rest) or [Paw](https://paw.cloud).
+This guide gives examples for common use cases.
 
-We invite you to use our [mailinglist](https://lists.gbif.org/postorius/lists/col-users.lists.gbif.org/) to discuss ChecklistBank and it's API. We also use this list to infrequently announce important COL and API news.
+A test installation for trying things out is available at https://api.test.checklistbank.org.
+It holds a copy of the production data, but uses separate user accounts, see [authentication](#authentication).
 
-## Introduction
+We invite you to use our [mailing list](https://lists.gbif.org/postorius/lists/col-users.lists.gbif.org/) to discuss ChecklistBank and its API.
+We also use this list to infrequently announce important COL and API news.
 
-ChecklistBank (CLB) was designed to store many different datasets, often called checklists, that are dealing with scientific names at their core.
-In order to retain the original record identifiers - which might also occurr in other datasets -
-identifiers are only unique within a single dataset and compound keys are used to address a record uniquely in CLB.
+## General API features
 
-Most API resources are therefore scoped by a dataset key like this:
+### Datasets and records
+
+ChecklistBank stores many datasets, often called checklists, that deal with scientific names at their core.
+Datasets keep their original record identifiers, which might also occur in other datasets,
+so a record [identifier](identifiers#record-identifiers) is only unique within its dataset.
+Most API resources are therefore scoped by a dataset key:
 
 - https://api.checklistbank.org/dataset/9910/name
 - https://api.checklistbank.org/dataset/9910/taxon/H6
 - https://api.checklistbank.org/dataset/9910/reference?q=Wetter
 
-ChecklistBank differes between _names_ and _name usages_ which can be a _taxon_ (=accepted name) or a _synonym_.
+ChecklistBank differs between [_names_](names) and _name usages_, which can be a _taxon_ (an accepted name) or a _synonym_.
 Names can exist on their own in a dataset, e.g. if they are taxonomically unplaced or part of a nomenclatural dataset.
 We refer to these names as _bare names_.
 
-## Datasets
+### Formats
 
-Knowing the datasetKey of a dataset to work with is important to access it's data.
-CLB user interface offers a dataset search with various filters which you can also access via the API:
+Requests without an `Accept` header get JSON.
+Some resources also offer other formats, which can be requested with the `Accept` header
+or, if you cannot set headers, with a suffix on the URL:
 
-https://api.checklistbank.org/dataset?q=hobern
+| Suffix | Accept header |
+|---|---|
+| `.json` | `application/json` |
+| `.xml` | `application/xml` |
+| `.yaml` | `text/yaml` |
+| `.txt` | `text/plain` |
+| `.html` | `text/html` |
+| `.tsv` | `text/tsv` |
+| `.csv` | `text/csv` |
+| `.zip` | `application/zip` |
+| `.png` | `image/png` |
+| `.bib` | `application/x-bibtex` |
+| `.csljs` | `application/vnd.citationstyles.csl+json` |
 
-This finds datasets with Donald Hobern as an author or contributor.
-The `q` parameter is a weighted full text search, which hits the alias, title, description, but also creators, editors, publisher and other fields of the dataset metadata.
-Data itself, e.g. scientific names, are not searched.
-
-Popular dataset filters:
-
-- `origin=PROJECT`: find project datasets only
-- `type=LEGAL&type=PHYLOGENETIC`: find datasets of type LEGAL or PHYLOGENETIC.
-- `releasedFrom=3`: list only releases of project 3, which is the Catalogue of Life (COL)
-- `contributesTo=3`: list only datasets that are sources of project 3, which is the Catalogue of Life
-- `gbifKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c`: find dataset with the [GBIF key d7dddbf4-2cf0-4f39-9b2a-bb099caae36c](https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c)
-- `gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862`: find [datasets](https://www.checklistbank.org/dataset?gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862&limit=50&offset=0&origin=external&origin=project) which have been published in GBIF by the given publisher, in this case [Plazi](https://www.gbif.org/publisher/7ce8aef0-9e92-11dc-8738-b8a03c50a862)
-
-We synchronise ChecklistBank with [checklist datasets in GBIF]({{GBIF_URL}}dataset/search?type=CHECKLIST), so you have access to all these GBIF datasets from CLB.
-
-ChecklistBank distinguishes 4 kind of datasets indicated by their `origin` property:
-
-- `external`: datasets which are maintained outside of ChecklistBank and are imported for read accecss only. This is the vast majority of all datasets
-- `project`: datasets which are maintained inside ChecklistBank and which often include & sync data from other sources. The Catalogue of Life checklist is such a project with datasetKey=3
-- `release`: immutable snapshots of a project with stable identifiers
-- `xrelease`: immutable snapshots of an extended release of a project with stable identifiers
-
-### COL release keys
-
-The API also provides some simple magic dataset keys, that will allow you to access release datasets without knowing the latest key.
-All you need is the dataset key `{PROJECT_KEY}` of the project:
-
-- `{PROJECT_KEY}LR`: a substitute for the latest, public release of a project, e.g the latest COL checklist: https://api.checklistbank.org/dataset/3LR
-- `{PROJECT_KEY}LXR`: a substitute for the latest, public, extended release of a project, e.g the latest COL XR: https://api.checklistbank.org/dataset/3LXR
-
-The annual editions of the Catalogue of Life are also directly accessible by their year in addition to their integer keys:
-
-- `COL{YEAR}`: a substitute for the annual release of the COL checklist in the given year with 4 digits: https://api.checklistbank.org/dataset/COL2023
-
-## Vocabularies
-
-There are many places in the API where a controlled vocabulary is used.
-You can find an inventory of all vocabularies here: http://api.checklistbank.org/vocab
-In order to see all supported values for a vocabulary append its name to the vocab resource, e.g. http://api.checklistbank.org/vocab/taxonomicstatus
-
-## Authentication
-
-The majority of the API is open and can be accessed anonymously.
-Writing data often requires authentication and datasets can be `private`, i.e. are only visible to authorised users.
-
-ChecklistBank shares user accounts with GBIF, so you need to have a [GBIF account]({{GBIF_URL}}user/profile) to authenticate to the CLB API.
-
-The **test environment is separate**: `api.test.checklistbank.org` is linked to the GBIF development registry at [gbif-test.org](https://www.gbif-test.org), not to production GBIF. A production GBIF account will not work against test — you need to register a separate account at [www.gbif-test.org/user/profile](https://www.gbif-test.org/user/profile) and then log in once at [www.test.checklistbank.org](https://www.test.checklistbank.org) with those credentials.
-
-Authentication in the API uses simple [BasicAuth](https://en.wikipedia.org/wiki/Basic_access_authentication), but mostly for user interfaces we also provide [JWT](https://jwt.io/introduction).
-Note that BasicAuth in itself is not very secure, so please use it always with the _https_ protocol.
-CLB will actually decline the use of plain _http_.
-
-A simple basic authentication using curl would look like this:
-
-```bash
-curl -s -v --user j.smith:passwd1234xyz "https:api.checklistbank.org/user/me"
-```
-
-```bash
- > GET /user/me HTTP/2
- > Host: api.checklistbank.org
- > authorization: Basic ai5zbWl0aDpwYXNzd2QxMjM0eHl6
- > user-agent: curl/7.85.0
- > accept: */*
- >
- < HTTP/2 401
- < date: Fri, 30 Jun 2023 07:48:10 GMT
- < content-type: application/json
- - Authentication problem. Ignoring this.
- < www-authenticate: Basic realm="COL"
- < www-authenticate: Bearer token_type="JWT" realm="COL"
- < cache-control: must-revalidate,no-cache,no-store
- < content-length: 52
- < x-varnish: 296268277
- < age: 0
- < via: 1.1 varnish (Varnish/6.0)
- < x-cache: pass uncacheable
- < vary: Origin
-```
-
-Note that this user does not exist and a 401 is therefore returned.
-
-## General API features
-
-The API primarily provides RESTful JSON services documented with OpenAPI: http://api.checklistbank.org/openapi.
-When using it from the terminal [curl](https://curl.se/docs/manpage.html) and [jq](https://jqlang.github.io/jq/) are good friends, but there are also
-other advanced clients like [Insomnia](https://insomnia.rest) or [RapidAPI](https://paw.cloud) that you can use.
-These rich clients usually allow you to read in our [OpenAPI description](http://api.checklistbank.org/openapi) so they know already about all existing API methods!
-
-In some areas other formats are also supported which can be requested by setting the appropriate http `Accept` header.
-To simplify usage of the API when you do not have access to modifying request headers, the API also accepts various URL resource suffices which are converted into the matching Accept header:
-
-- `.xml`: `Accept: application/xml`
-- `.json`: `Accept: application/json`
-- `.yaml`: `Accept: text/yaml`
-- `.txt`: `Accept: text/plan`
-- `.html`: `Accept: text/html`
-- `.tsv`: `Accept: text/tsv`
-- `.csv`: `Accept: text/csv`
-- `.zip`: `Accept: application/zip`
-- `.png`: `Accept: image/png`
-- `.bib`: `Accept: application/x-bibtex`
-- `.csljs`: `Accept: application/vnd.citationstyles.csl+json`
-
-For example you can retrieve dataset metadata in JSON, YAML or EML XML that way:
+The metadata of a dataset, for example, is available as JSON, as [ColDP](formats#catalogue-of-life-data-package-coldp) YAML, as EML XML and as a BibTeX or CSL-JSON citation:
 
 - https://api.checklistbank.org/dataset/9910.json
 - https://api.checklistbank.org/dataset/9910.yaml
 - https://api.checklistbank.org/dataset/9910.xml
+- https://api.checklistbank.org/dataset/9910.bib
 
-In most searches and list results the API offers a `limit` and `offset` parameter to support paging.
-Not that paging is restricted to a maximum of 100.000 records.
+### Paging
 
-## Searching for names in the Catalogue of Life checklist
+Searches and lists are paged with the `limit` and `offset` parameters.
+The default limit is 10 and the maximum 1000. The offset cannot go beyond 100,000;
+use a [download](#downloads) to get more records.
 
-The Catalogue of Life checkist is a project in ChecklistBank with the datasetKey=3.
-Projects are living datasets that can change at any time, might temporarily have duplicate or bad data and therefore also do not use stable identifiers.
-For regular use only immutable releases should be used, which are created on a monthly basis for COL.
-Monthly releases will not change, but they might be deleted at some point after a minimum retention of one year.
-Once a year the Catalogue of Life also releases an annual checklist with long term support, which will never be deleted.
+### Vocabularies
 
-To search for a name usage in the annual release 2023 you can use the plain search:
+Many fields of the API use a controlled vocabulary.
+All vocabularies are listed at https://api.checklistbank.org/vocab,
+and the values of each by appending its name, e.g. https://api.checklistbank.org/vocab/taxonomicstatus.
+The same vocabularies can also be [browsed](/vocabulary) in the user interface.
 
-- https://api.checklistbank.org/dataset/COL2022/nameusage/search?q=Abies
+### Authentication
 
-You can filter the search by various options:
+Most of the API is open and can be used anonymously.
+Writing data needs authentication, and so does reading `private` datasets, which are only visible to their editors and reviewers.
 
-- rank: https://api.checklistbank.org/dataset/COL2022/nameusage/search?q=Abies&rank=species
-- content: what to search on, SCIENTIFIC_NAME, AUTHORSHIP, VERNACULAR_NAME or multiple: https://api.checklistbank.org/dataset/COL2022/nameusage/search?q=Hobern&content=AUTHORSHIP
-- type: the kind of search to use. One of prefix, whole_words, fuzzy or exact: https://api.checklistbank.org/dataset/COL2022/nameusage/search?q=Hobern&content=AUTHORSHIP
-  - _prefix_: Matches a search term to the beginning of the epithets within a scientific name. This is the only available search type for the suggest service.
-  - _whole words_: Matches a search term to entire epithets within a scientific name.
-  - _exact_: Matches the entire search phrase to the entire scientific name.
-  - _fuzzy_: allow for a generic, slightly fuzzy matching
+ChecklistBank shares user accounts with GBIF, so you need a [GBIF account]({{GBIF_URL}}user/profile) to authenticate.
 
-## Taxon info and vernacular names
+The **test environment is separate**: `api.test.checklistbank.org` is linked to the GBIF test registry at [gbif-test.org](https://www.gbif-test.org), not to production GBIF.
+A production GBIF account does not work against test: you need to register a separate account at [www.gbif-test.org/user/profile](https://www.gbif-test.org/user/profile)
+and then log in once at [www.test.checklistbank.org](https://www.test.checklistbank.org) with those credentials.
 
-You can get the vernacular names for a species, e.g. 4QHKG, through either the full taxon info:
-http://api.checklistbank.org/dataset/COL2023/taxon/4QHKG/info
+The API accepts [BasicAuth](https://en.wikipedia.org/wiki/Basic_access_authentication) and [JWT](https://jwt.io/introduction) tokens.
+BasicAuth sends your password with every request, so always use it with _https_.
+A JWT is issued by `GET /user/login` with BasicAuth and can then be sent as a `Bearer` token in the `Authorization` header, or as a `token` query parameter.
 
-or individually through the vernacular name resource:
-http://api.checklistbank.org/dataset/COL2023/taxon/4QHKG/vernacular
+A simple authentication using curl looks like this:
 
-ChecklistBank provides a search that finds vernacular names in an entire dataset:
+```bash
+curl -s --user j.smith:passwd1234xyz "https://api.checklistbank.org/user/me"
+```
+
+This returns the user if the credentials are right, and a 401 otherwise.
+
+## Datasets
+
+The dataset search, which the [dataset list](/dataset) of the user interface also uses, finds datasets by their metadata:
+
+https://api.checklistbank.org/dataset?q=hobern
+
+This finds datasets with Donald Hobern as an author or contributor.
+The `q` parameter is a weighted full text search on the alias, title, description, creators, editors, publisher, keywords, identifiers and other metadata fields.
+Data itself, e.g. scientific names, is not searched.
+
+Popular dataset filters:
+
+- `origin=project`: projects only. The [introduction](introduction#datasets) explains the different origins.
+- `type=legal&type=phylogenetic`: datasets of type legal or phylogenetic
+- `releasedFrom=3`: releases of project 3, the Catalogue of Life (COL)
+- `contributesTo=3`: the sources of project 3
+- `gbifKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c`: the dataset with the [GBIF key d7dddbf4-2cf0-4f39-9b2a-bb099caae36c](https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c)
+- `gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862`: [datasets](/dataset?gbifPublisherKey=7ce8aef0-9e92-11dc-8738-b8a03c50a862) published in GBIF by [Plazi](https://www.gbif.org/publisher/7ce8aef0-9e92-11dc-8738-b8a03c50a862)
+- `publisher=Plazi`: datasets with exactly this publisher name, ignoring case. https://api.checklistbank.org/dataset/publishers?q=plazi suggests publisher names.
+- `group=insects`: datasets covering a [taxonomic group](https://api.checklistbank.org/vocab/taxgroup)
+- `license`, `minSize`, `created`, `modified`, `issued`: further filters on the metadata
+- `sortBy`: e.g. `title`, `created`, `size` or `relevance`, with `reverse=true` for the opposite order
+
+We synchronise ChecklistBank with the [checklist datasets in GBIF]({{GBIF_URL}}dataset/search?type=CHECKLIST), so you have access to all these GBIF datasets from ChecklistBank.
+
+### Latest release keys
+
+Instead of a dataset key, the API also accepts a few aliases that find releases without knowing their key.
+All you need is the key `{PROJECT_KEY}` of the [project](projects):
+
+- `{PROJECT_KEY}LR`: the latest public release of a project, e.g. the latest COL checklist: https://api.checklistbank.org/dataset/3LR
+- `{PROJECT_KEY}LXR`: the latest public extended release of a project, e.g. the latest COL XR: https://api.checklistbank.org/dataset/3LXR
+- `{PROJECT_KEY}LRC` and `{PROJECT_KEY}LXRC`: the latest release candidate, which is still private and needs authentication
+- `{PROJECT_KEY}R{ATTEMPT}`: the release of a project with the given import attempt, e.g. https://api.checklistbank.org/dataset/3R629
+
+The annual editions of the Catalogue of Life can also be addressed by their year:
+
+- `COL{YEAR}`: the annual COL checklist of the given year, e.g. https://api.checklistbank.org/dataset/COL2025
+
+Datasets registered in GBIF can be addressed by their GBIF key: `gbif-{UUID}`, e.g. https://api.checklistbank.org/dataset/gbif-d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
+
+The aliases work in the path and in query parameters that take a dataset key, e.g. `sourceDatasetKey` or `releasedFrom`.
+Projects are living datasets that change at any time, might temporarily hold duplicates or bad data, and have no stable identifiers.
+For regular use please work with releases.
+
+## Name usages
+
+### Search
+
+To search for a name usage in the annual COL checklist of 2025:
+
+https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Abies
+
+The search can be filtered and changed by many parameters, e.g.:
+
+- `rank`, `minRank`, `maxRank`: https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Abies&rank=species
+- `status`, `nomStatus`, `nameType`, `issue`, `extinct`, `environment`, `group`: filters on the usage and its name
+- `taxonID`: only usages below the given taxon
+- `content`: what to search in, `SCIENTIFIC_NAME`, `AUTHORSHIP` or `VERNACULAR_NAME`, the first two by default: https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Hobern&content=AUTHORSHIP
+- `type`: how to search
+  - `STANDARD`: matches the search terms against whole words and the beginning of words in the name, the default: https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Abi%20alb
+  - `EXACT`: matches the entire search phrase to the entire scientific name: https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Abies%20alba&type=EXACT
+  - `FUZZY`: allows for slightly misspelled names: https://api.checklistbank.org/dataset/COL2025/nameusage/search?q=Abies%20albus&type=FUZZY
+- `sortBy`: `NAME`, `TAXONOMIC` or `RELEVANCE`
+- `facet`: counts of the results per value of a field, e.g. `facet=rank&facet=status`
+
+The search across all datasets works the same way: https://api.checklistbank.org/nameusage/search?q=Abies%20alba
+
+A faster suggest service for a search box: https://api.checklistbank.org/dataset/COL2025/nameusage/suggest?q=Abies%20al
+
+Vernacular names can be searched in an entire dataset, too:
 https://api.checklistbank.org/dataset/COL2025/nameusage/search?content=VERNACULAR_NAME&rank=species&q=Eagle
 
+### Taxon info
 
-## Tree browsing
+All information about a taxon, its synonyms, classification, vernacular names, distributions, references, media and more, e.g. for _Abies alba_ `8K9Y`:
+https://api.checklistbank.org/dataset/COL2025/taxon/8K9Y/info
 
-There is a specialised API to support navigating a taxonomic tree and to implement a tree browser.
-This lists the root taxa of the tree - or better forrests:
-https://api.checklistbank.org/dataset/COL2023/tree
+Each part is also available on its own, e.g. the vernacular names:
+https://api.checklistbank.org/dataset/COL2025/taxon/8K9Y/vernacular
 
-For a specific taxon you can then list all of its direct children
-https://api.checklistbank.org/dataset/COL2023/tree/N/children
+### Tree browsing
 
-Some taxa have mixed ranks as their direct children.
-For these the Tree API offers an option to create virtual placeholder nodes that group them under a single entry:
-https://api.checklistbank.org/dataset/COL2023/tree/RT/children?insertPlaceholder=true
+A specialised API supports navigating a taxonomic tree and implementing a tree browser.
+The root taxa of the tree - or better forest:
+https://api.checklistbank.org/dataset/COL2025/tree
 
-To load a tree from any given taxon, you can use the following resource that lists the parent classification:
-https://api.checklistbank.org/dataset/COL2023/tree/33VS
+All direct children of a taxon:
+https://api.checklistbank.org/dataset/COL2025/tree/N/children
+
+Some taxa have children of mixed ranks.
+For these the tree API can create virtual placeholder nodes that group them by rank:
+https://api.checklistbank.org/dataset/COL2025/tree/RT/children?insertPlaceholder=true
+
+To open the tree at a given taxon, this lists its parent classification:
+https://api.checklistbank.org/dataset/COL2025/tree/8K9Y
 
 Our reusable [React Tree component](https://github.com/CatalogueOfLife/portal-components/blob/master/README.md#colbrowsertree) makes use of this API.
 
 ## Name matching
 
-The name matching API in ChecklistBank allows to match against any dataset in CLB which is identified by an integer dataset key.
-There are different resources for simple & batch matching.
+The name matching API matches names against any dataset in ChecklistBank.
+It uses the [names index](names#names-index-and-matching) to find candidates and then compares their authorship, rank and classification.
+There are resources for matching names one by one and in bulk.
 
-The simple one by one matching resource takes various query parameters, the main one being a `q` or alternatively `scientificName` for the name:
-https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Abies
+The simple matching resource takes the name as `q` or `scientificName`:
+https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Abies%20alba
 
-`3LR` stands for the _Latest Release_ of dataset 3 which is the COL project.
-So you will get the latest monthly release with that one without knowing it's actual integer key.
-You can search for datasets to match against here: https://www.checklistbank.org/dataset
+This matches against the [latest release](#latest-release-keys) of COL.
+To match against other datasets, [search](/dataset) for the one you need.
 
-This gives you all releases of the COL checklist:
-https://www.checklistbank.org/dataset?releasedFrom=3&sortBy=created
+An ambiguous name, e.g. a homonym, gives the match type `ambiguous` with the best candidate.
+Add `verbose=true` to see the other candidates as alternatives:
+https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&verbose=true
 
-Annual releases of COL, which will be kept forever, can also be found by using COL + year as the dataset key, for example the annual release of 2022:
-https://www.checklistbank.org/dataset/COL2022
+Adding an authorship or a higher taxon helps to disambiguate in such a case:
 
-Matching with an ambiguous "homonym" gives you no match, but shows the alternative options:
-https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe
+- https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&kingdom=Plantae
+- https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&authorship=L.
 
-Adding an author or some classification helps to disambiguate in such a case:
-https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&kingdom=Plantae
-https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Oenanthe&authorship=Linneaus
+The query parameters of the simple match are:
 
-Alternatively there is also a [bulk matching](https://www.checklistbank.org/tools/name-match-async) method which creates an asynchroneous job similar to downloads.
-You must be authenticated to use it and will get an email notification once done.
-When used via the API you will receive a job object with a key (UUID) that can be used to poll the API while it is still running. For example
-https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7
+- `id`
+- `scientificName` (or `q`)
+- `authorship`
+- `code`
+- `rank`
+- `status`
+- the higher taxa `superkingdom`, `kingdom`, `subkingdom`, `superphylum`, `phylum`, `subphylum`, `superclass`, `class`, `subclass`, `superorder`, `order`, `suborder`, `superfamily`, `family`, `subfamily`, `tribe`, `subtribe`, `genus`, `subgenus`, `section` and `species`
 
-When the job is finished this does give a 404 as we currently do not persist the jobs themselves.
-We are working on storing them like we do for exports/downloads, so they will resolve also after they have completed.
+### Bulk matching
 
-To download actual results you can use the same job resource, but request the binary zip file like that:
-https://api.checklistbank.org/job/2a01d244-6c27-4ee9-8aee-cda35dae57b7.zip
+The [bulk matching](/tools/name-match) creates an asynchronous [job](#jobs), similar to downloads.
+You must be authenticated to use it and get an email once it is done.
+The names to match come either from
 
-This will redirect you to the actual result file. Currently we are still keeping all job results, but this will likely change in the future as we will need to clean up older results at some point.
+1. an uploaded `CSV` or `TSV` file with columns named like the query parameters above. It needs a `scientificName` column.
+2. a dataset in ChecklistBank, optionally filtered to a subtree or ranks
 
-Bulk matching accepts different inputs for names:
-
-1.  upload a `CSV` or `TSV` file to supply names for matching or
-2.  select a source dataset from ChecklistBank that you want to use to supply names for matching. This can then also be filtered by various parameters to just match a subtree, certain ranks, etc
-
-A bulk matching request could look like this:
+A bulk matching request with a file looks like this:
 
 ```bash
-  curl -s --user USERNAME:PASSWORD -H "Content-Type: text/tsv" --data-binary @match.tsv -X POST "https://api.checklistbank.org/dataset/COL2024/match/nameusage/job"
+curl -s --user USERNAME:PASSWORD -H "Content-Type: text/tsv" --data-binary @match.tsv -X POST "https://api.checklistbank.org/dataset/COL2025/match/nameusage/job"
 ```
 
 with a `match.tsv` input file such as this one:
@@ -253,147 +245,73 @@ tp	phylum	Tracheophyta		Plantae
 2	species	Poa annua	L.	Plantae
 ```
 
-Query parameters for bulk matches from a source dataset:
+Query parameters for bulk matches:
 
-- `format`: CSV or TSV for the final result file
-- `sourceDatasetKey`: to request a dataset in CLB as the source of names for matching
-- `taxonID`: a taxon identifier from the source dataset to restrict names only from the subtree of that taxon, e.g. a selected family
-- `lowestRank`: the lowest rank to consider for source names. E.g. to match only species and ignore all infraspecific names
-- `synonyms`: if synonyms should be included, defaults to true
+- `format`: `CSV` or `TSV` for the result file, TSV by default
+- `sourceDatasetKey`: a dataset in ChecklistBank as the source of the names to match, instead of a file
+- `taxonID`: only match the names of the subtree of this taxon of the source dataset, e.g. a family
+- `lowestRank`: the lowest rank of the names to match, e.g. `species` to ignore all infraspecific names
 
-Query params for individual matches and column names in bulk input are called the same:
+The response is a job with a key, see below for how to follow it and get the result.
 
-- `id`
-- `scientificName` (or `q`)
-- `authorship`
-- `code`
-- `rank`
-- `superkingdom`
-- `kingdom`
-- `subkingdom`
-- `superphylum`
-- `phylum`
-- `subphylum`
-- `superclass`
-- `class`
-- `subclass`
-- `superorder`
-- `order`
-- `suborder`
-- `superfamily`
-- `family`
-- `subfamily`
-- `tribe`
-- `subtribe`
-- `genus`
-- `subgenus`
-- `section`
-- `species`
+## Jobs
 
-## OpenRefine reconciliation
-ChecklistBank exposes its name matcher, parser and other services as an OpenRefine [Reconciliation Service](https://reconciliation-api.github.io/specs/0.2/),
-so you can match a column of scientific names against any dataset in CLB and pull in extra columns - all without writing code.
-Please read the [reconciliation guide](/about/reconciliation) for usage details.
+Bulk matching, downloads and other long running tasks run as jobs.
+A job is followed by its key:
 
+- https://api.checklistbank.org/job/{KEY} gives its state while it is queued or running, and its result afterwards
+- https://api.checklistbank.org/job/{KEY}.txt is its log
+- https://api.checklistbank.org/job/{KEY}.zip redirects to the result file once the job is done
 
-## Names Index
+Jobs are kept for 90 days. Their result files are kept longer, but this might change in the future.
+`GET /job/search` lists jobs, e.g. by `datasetKey`, `createdBy` or `status`, and `DELETE /job/{KEY}` cancels a queued or running job of your own.
 
-The _Names Index_ (nidx) is a technical component of ChecklistBank. It gives every distinct **canonical name** found in any dataset an integer id,
-so that names can be linked across datasets. The name matching uses it as a first step to find candidate names quickly,
-and then compares the authorship, rank and classification of those candidates itself.
+## Downloads
 
-The names index is not a nomenclator and far from a global list of names.
-An entry is a normalized name string, not a name: it has no authorship, rank, nomenclatural code, status or publication.
-Homonyms, names at different ranks and names that differ only in their gender ending or in frequent spelling variations all share one entry.
-_Abies alba_ Mill. and _Abies alba_ (Aiton) Michx., two unrelated names, are the same entry.
-The index also contains misspellings, informal names, identifiers and anything else that looks like a name in the source data, and nobody reviews its content.
+All data in ChecklistBank can be [downloaded](introduction#downloads) in all supported [formats](formats).
+A download is requested with a POST of an export request:
 
-Use nidx ids only to link names within ChecklistBank and don't store them for long.
-Entries are never changed, but improvements to the name parser or the normalization require a rebuild of the index, which assigns new ids to all names.
+```bash
+curl -s --user USERNAME:PASSWORD -H "Content-Type: application/json" -X POST "https://api.checklistbank.org/dataset/3LR/export" \
+  -d '{"format": "DWCA", "root": {"id": "C7ZVG"}, "minRank": "species", "extended": true}'
+```
 
-### Single tier
+This requests an extended Darwin Core Archive of the pine family Pinaceae down to species. The export request supports these properties:
 
-Until August 2026 the index had two tiers: an entry for every distinct combination of name, rank and authorship,
-each linked through a `canonicalId` to an unranked entry without authorship.
-The specific tier has been removed. Every name now links directly to its canonical entry,
-and homonyms are told apart by the name matching against a dataset, which compares the actual authorship and rank of the names.
+- `format`: `COLDP` (default), `DWCA`, `ACEF`, `TEXT_TREE`, `NEWICK` or `DOT`
+- `extended`: an extended download with all data, see [data content](formats#data-content)
+- `classification`: a flat download with a denormalised classification
+- `root`: only the subtree of this taxon, given by its `id`
+- `minRank`: the lowest rank to include
+- `synonyms`, `bareNames`, `extinct`: include synonyms (default true), bare names (default false), or only extinct or only extant taxa
+- `tabFormat`: `TSV` (default) or `CSV`
 
-For API users this means:
+The response is the key of the export, which is a [job](#jobs) like any other.
+Downloads are cached: if the same download was made before for the same data, it is returned straight away.
+Existing downloads are listed at https://api.checklistbank.org/export,
+and https://api.checklistbank.org/dataset/3LR/export.zip?format=coldp redirects to the latest download of a dataset in a format, if there is one.
 
-- `namesIndexId` on a name always points to a canonical entry. Where a `canonicalId` still appears next to it, e.g. in matching results, it has the same value.
-- `/nidx/{id}` returns the canonical name, its normalized key and the full names matched to it, not a parsed name.
-- `/nidx/{id}/group` and the ID mapping exports (`/nidx/export`) have been removed.
-- `/nidx/match` is deprecated. Use the [name matching API](#name-matching) against a dataset instead.
+## Parsers
 
-### Building the canonical name
+ChecklistBank exposes its parsers as a service, e.g. the name parser:
 
-The canonical name is assembled from the parsed parts of a name:
+https://api.checklistbank.org/parser/name?q=Abies%20alba%20Mill.
 
-- a uninomial stays as it is: _Abies_ Mill. → `Abies`
-- a binomial or trinomial keeps the genus, the specific and the infraspecific epithet, plus a cultivar epithet if there is one:
-  _Abies alba_ subsp. _apennina_ Brullo, Scelsi & Spamp. → `Abies alba apennina`, _Acer rubrum_ 'Armstrong' → `Acer rubrum Armstrong`
-- an infrageneric name is reduced to its epithet: _Abies_ sect. _Grandis_ → `Grandis`.
-  Sections of the same name in different genera therefore share one entry, see https://api.checklistbank.org/nidx/24727
+which also takes the `authorship`, `rank` and `code` of a name.
+The [name parser tool](/tools/name-parser) uses it, and [names](names#how-names-are-interpreted) explains how names are interpreted.
 
-Authorship, rank markers, hybrid signs, the _Candidatus_ prefix, a subgenus given in a binomial, qualifiers like _cf._ or _aff._
-and any unparsed remainder of the name are dropped.
-_Abies cf. alba_, _Abies aff. alba_ and _Abies alba_ Mill. all share one entry, and so do _Quercus_ × _rosacea_ and _Quercus rosacea_.
+The values of controlled vocabularies can be parsed the same way, e.g. a rank:
 
-### Names that are not fully parsed
+https://api.checklistbank.org/parser/rank?q=sp.
 
-Names that cannot be broken down into a uninomial, binomial or infrageneric name use their full scientific name as the canonical name. This covers:
+All available parsers are listed at https://api.checklistbank.org/parser.
+The parsers can also be used from OpenRefine, see [below](#openrefine-reconciliation).
 
-- indetermined and phrase names (name type `informal`), e.g. `Abies sp.` or `Pultenaea sp. 'Maryborough' (T.D.Stanley 87)`. `Abies sp.` is a separate entry from `Abies`.
-- names the parser does not understand (name type `other`), e.g. virus names like `Tobacco mosaic virus`
-- hybrid formulas (name type `formula`), e.g. `Salix alba × Salix fragilis`
-- identifiers (name type `identifier`), e.g. BOLD BINs like `BOLD:AAA1200` or UNITE species hypotheses like `SH0864600.10FU`
+## Names index
 
-The same normalization as for all other names applies (see below).
-As lowercase words are stemmed too, the key for _Tobacco mosaic virus_ becomes `tobacco mosaic vir`.
-If the authorship of an unparsable name is part of its name string, it also becomes part of the key,
-so such names only link to names that are written the same way.
-
-### Normalization
-
-The canonical name is reduced to a normalized key, and all names with the same key share one entry:
-
-1. Ligatures are split (`æ` → `ae`, `œ` → `oe`, `ß` → `ss`) and accents are removed (`é` → `e`, `ö` → `o`).
-2. Hyphens, apostrophes, quotes, `?`, `!` and `_` are removed, `, . : ;` become spaces, and whitespace is collapsed.
-3. The hybrid sign `×` is removed.
-4. In names with several words, the first word (the genus or uninomial) is kept as it is.
-   Every following word that starts with a lowercase letter is normalized further:
-   - the Latin gender ending is removed: `alba`, `albus` and `album` become `alb`, `rubra` and `rubrum` become `ruber`
-   - `j` and `y` become `i`, except at the start of a word
-   - double letters become single ones: `apennina` → `apenina`
-   - an `h` following a `g`, `r` or `t` is removed
-
-   Words that start with an uppercase letter, e.g. cultivar epithets, are kept as they are.
-5. The key is lowercased, and any character that is still not ASCII is replaced with `*`.
-
-Some entries from the index with their keys:
-
-| Canonical name | Normalized key |
-|---|---|
-| `Abies alba` | `abies alb` |
-| `Abies alba apennina` | `abies alb apenin` |
-| `Acer rubrum Albo-Variegatum` | `acer ruber albovariegatum` |
-| `Pultenaea sp. 'maryborough' (t.d.stanley 87)` | `pultenaea sp mariboroug (t d stanlei 87)` |
-| `Tobacco mosaic virus` | `tobacco mosaic vir` |
-| `BOLD:AAA1200` | `bold aaa1200` |
-
-The `scientificName` of an entry is the canonical name of whichever name created the entry first.
-It is a label, not a corrected name: the entry for _Acer rubrum_ is currently labelled `Acer rubra`, see https://api.checklistbank.org/nidx/96130
-
-### Names that are not indexed
-
-Almost every name gets an entry, including misspelled, informal and unparsable names. The exceptions are:
-
-- placeholder names (name type `placeholder`), e.g. _Asteraceae incertae sedis_ or _unknown genus_
-- names without any Latin letter or digit, e.g. names written only in Chinese or Cyrillic script
-
-These names have no `namesIndexId`.
-
-### API resources
+The [names index](names#names-index-and-matching) (nidx) gives every distinct canonical name found in any dataset an integer id,
+so that names can be linked across datasets.
+Use nidx ids only to link names within ChecklistBank and don't store them for long: a rebuild of the index assigns new ids to all names.
 
 The metadata of the index with its id, creation date and size:
 https://api.checklistbank.org/nidx/metadata
@@ -428,19 +346,23 @@ https://api.checklistbank.org/nidx/pattern?q=Abies%20alba
 To find the entry for a given name, match the name against a dataset that contains it and read the `namesIndexId` of the result:
 https://api.checklistbank.org/dataset/3LR/match/nameusage?q=Acer%20rubrum
 
-## Github import hooks
+In August 2026 the index lost its second tier of entries with authorship and rank.
+`namesIndexId` now always points to a canonical entry, `/nidx/{id}/group` and the ID mapping exports `/nidx/export` were removed,
+and `/nidx/match` is deprecated in favour of the [name matching](#name-matching) against a dataset.
 
-Github repositories are very well suited to to host source data in ColDP or DwC archives if individual files do not exceed the 100MB limit.
-Any changes to the data will be versioned and github automatically provides the archive as a zip package for all files.
+## OpenRefine reconciliation
 
-For datasets managed in github ChecklistBank also offers a webhook that these github repositories can be configured for.
-If setup correctly and change commit will trigger an import into ChecklistBank so that the data is kept up to date near realtime!
+ChecklistBank exposes its name matcher, parsers and other services as an OpenRefine [Reconciliation Service](https://reconciliation-api.github.io/specs/0.2/),
+so you can match a column of scientific names against any dataset in ChecklistBank and pull in extra columns, all without writing code.
+Please read the [reconciliation guide](reconciliation) for details.
 
-A new dataset can be configure with these steps:
+## Other resources
 
-- in ChecklistBank:
-  - register the dataset in ChecklistBank and remember its DATASET_KEY for later
-  - configure it's access URL to point to the github repo zip archive, e.g. https://github.com/CatalogueOfLife/data-vespoidea/archive/refs/heads/master.zip
-- in Github:
-  - go to the repository settings and add a new webhook that points the payload URL to http://api.checklistbank.org/importer/{DATASET_KEY}/github and uses the `application/json` Content-Type.
-  - configure github to use a secret that the CLB admin hands over to you confidently. Please request your secret with mdoering {at} gbif.org
+A few more resources that are worth knowing about:
+
+- `/dataset/{key}/import`: the metrics of the imports of a dataset, or of the releases of a project, e.g. https://api.checklistbank.org/dataset/3LR/import?limit=1
+- `/dataset/{key}/source`: the source datasets of a project or release, e.g. https://api.checklistbank.org/dataset/3LR/source
+- `/dataset/{key}/sector` and `/dataset/{key}/decision`: the [sectors and decisions](projects) of a project or release, e.g. https://api.checklistbank.org/dataset/3LR/sector
+- `/dataset/{key}/diff/{key2}`: a diff of the names of two datasets, as used by the [dataset comparison](/tools/dataset-comparison)
+- `/vocab/identifier-scope`: the registry of [identifier scopes](identifiers#the-identifier-scope-registry)
+- `/dataset/{key}/legacy`: the legacy Catalogue of Life webservice, deliberately slow

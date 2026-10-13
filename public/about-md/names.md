@@ -1,4 +1,4 @@
-# Names
+## Names
 
 ChecklistBank keeps names apart from taxonomy. A **name** holds the nomenclature only: how the name is spelled and how
 it parses, who authored it, its rank, nomenclatural code and status. Whether a name is accepted, a synonym or a
@@ -156,10 +156,87 @@ names based on the same type.
 
 ## Names index and matching
 
-The names index gives one identifier to every distinct canonical name across all datasets, a name without its
+The names index (nidx) gives one identifier to every distinct canonical name across all datasets, a name without its
 authorship and rank. The canonical names are compared in a normalised form: diacritics and ligatures folded, lower
 case, the gender endings of epithets ignored. So `Abies alba Mill.`, `Abies alba` and `Abies albus` share one entry.
-A name in a non latin script, or one without any letter or digit, gets none.
+
+The names index is not a nomenclator and far from a global list of names.
+An entry is a normalised name string, not a name: it has no authorship, rank, nomenclatural code, status or publication.
+Homonyms, names at different ranks and names that differ only in their gender ending or in frequent spelling variations all share one entry.
+_Abies alba_ Mill. and _Abies alba_ (Aiton) Michx., two unrelated names, are the same entry.
+The index also contains misspellings, informal names, identifiers and anything else that looks like a name in the source data, and nobody reviews its content.
+Entries are never changed, but improvements to the name parser or the normalisation require a rebuild of the index, which assigns new ids to all names.
+The [API](API#names-index) gives access to the entries and the names linked to them.
+
+### Building the canonical name
+
+The canonical name is assembled from the parsed parts of a name:
+
+- a uninomial stays as it is: _Abies_ Mill. → `Abies`
+- a binomial or trinomial keeps the genus, the specific and the infraspecific epithet, plus a cultivar epithet if there is one:
+  _Abies alba_ subsp. _apennina_ Brullo, Scelsi & Spamp. → `Abies alba apennina`, _Acer rubrum_ 'Armstrong' → `Acer rubrum Armstrong`
+- an infrageneric name is reduced to its epithet: _Abies_ sect. _Grandis_ → `Grandis`.
+  Sections of the same name in different genera therefore share one entry, see https://api.checklistbank.org/nidx/24727
+
+Authorship, rank markers, hybrid signs, the _Candidatus_ prefix, a subgenus given in a binomial, qualifiers like _cf._ or _aff._
+and any unparsed remainder of the name are dropped.
+_Abies cf. alba_, _Abies aff. alba_ and _Abies alba_ Mill. all share one entry, and so do _Quercus_ × _rosacea_ and _Quercus rosacea_.
+
+### Names that are not fully parsed
+
+Names that cannot be broken down into a uninomial, binomial or infrageneric name use their full scientific name as the canonical name. This covers:
+
+- indetermined and phrase names (name type `informal`), e.g. `Abies sp.` or `Pultenaea sp. 'Maryborough' (T.D.Stanley 87)`. `Abies sp.` is a separate entry from `Abies`.
+- names the parser does not understand (name type `other`), e.g. virus names like `Tobacco mosaic virus`
+- hybrid formulas (name type `formula`), e.g. `Salix alba × Salix fragilis`
+- identifiers (name type `identifier`), e.g. BOLD BINs like `BOLD:AAA1200` or UNITE species hypotheses like `SH0864600.10FU`
+
+The same normalization as for all other names applies (see [normalization](#normalization)).
+As lowercase words are stemmed too, the key for _Tobacco mosaic virus_ becomes `tobacco mosaic vir`.
+If the authorship of an unparsable name is part of its name string, it also becomes part of the key,
+so such names only link to names that are written the same way.
+
+### Normalization
+
+The canonical name is reduced to a normalized key, and all names with the same key share one entry:
+
+1. Ligatures are split (`æ` → `ae`, `œ` → `oe`, `ß` → `ss`) and accents are removed (`é` → `e`, `ö` → `o`).
+2. Hyphens, apostrophes, quotes, `?`, `!` and `_` are removed, `, . : ;` become spaces, and whitespace is collapsed.
+3. The hybrid sign `×` is removed.
+4. In names with several words, the first word (the genus or uninomial) is kept as it is.
+   Every following word that starts with a lowercase letter is normalized further:
+   - the Latin gender ending is removed: `alba`, `albus` and `album` become `alb`, `rubra` and `rubrum` become `ruber`
+   - `j` and `y` become `i`, except at the start of a word
+   - double letters become single ones: `apennina` → `apenina`
+   - an `h` following a `g`, `r` or `t` is removed
+
+   Words that start with an uppercase letter, e.g. cultivar epithets, are kept as they are.
+5. The key is lowercased, and any character that is still not ASCII is replaced with `*`.
+
+Some entries from the index with their keys:
+
+| Canonical name | Normalized key |
+|---|---|
+| `Abies alba` | `abies alb` |
+| `Abies alba apennina` | `abies alb apenin` |
+| `Acer rubrum Albo-Variegatum` | `acer ruber albovariegatum` |
+| `Pultenaea sp. 'maryborough' (t.d.stanley 87)` | `pultenaea sp mariboroug (t d stanlei 87)` |
+| `Tobacco mosaic virus` | `tobacco mosaic vir` |
+| `BOLD:AAA1200` | `bold aaa1200` |
+
+The `scientificName` of an entry is the canonical name of whichever name created the entry first.
+It is a label, not a corrected name: the entry for _Acer rubrum_ is currently labelled `Acer rubra`, see https://api.checklistbank.org/nidx/96130
+
+### Names that are not indexed
+
+Almost every name gets an entry, including misspelled, informal and unparsable names. The exceptions are:
+
+- placeholder names (name type `placeholder`), e.g. _Asteraceae incertae sedis_ or _unknown genus_
+- names without any Latin letter or digit, e.g. names written only in Chinese or Cyrillic script
+
+These names have no `namesIndexId`.
+
+### Matching
 
 Name matching finds a name in a dataset or in the Catalogue of Life by first looking up its names index entry and then
 comparing the authorship and rank of the names that share it, telling homonyms apart. A match is one of:
@@ -400,6 +477,6 @@ Many more examples of how a name string is parsed, for every name type, are in t
 
 ### Matching and the name parser
 
-The [name matching API](https://api.checklistbank.org) and the name parser tool interpret a name given as a string,
+The [name matching API](API#name-matching) and the [name parser tool](/tools/name-parser) interpret a name given as a string,
 optionally with an authorship, rank and code, the same way - without dataset settings and without deriving a rank from
 the structure of the name. A rank marker written in the name is used.

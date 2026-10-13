@@ -163,3 +163,23 @@
   object-fit: contain;
   object-position: right top;
 }
+
+/* screenshots with a caption, e.g. on the projects page */
+.md-screenshot {
+  margin: 1.5em 0;
+}
+
+.md-screenshot img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.md-screenshot figcaption {
+  margin-top: 6px;
+  color: #8c8c8c;
+  font-size: 0.9em;
+}

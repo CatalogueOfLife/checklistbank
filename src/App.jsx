@@ -472,6 +472,19 @@ const App = () => {
               element={<Navigate to="/about/introduction" replace />}
             />
             <Route path="/about/identifiers" element={<AboutIdentifiers />} />
+            {/* the DOI page was merged into the identifiers page */}
+            <Route
+              path="/about/DOI"
+              element={
+                <Navigate
+                  to={{
+                    pathname: "/about/identifiers",
+                    hash: "#dataset-keys-and-dois",
+                  }}
+                  replace
+                />
+              }
+            />
             <Route path="/about/:mdFile" element={<About />} />
             <Route path="/system-health" element={<SystemHealth />} />
             <Route
