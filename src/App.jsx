@@ -136,13 +136,6 @@ const ProviderRoutes = () => (
       <Route path="*" element={null} />
     </Routes>
     <Routes>
-      <Route
-        path="/project/:projectKey/dataset/:sourceKey/*"
-        element={<DatasetProvider />}
-      />
-      <Route path="*" element={null} />
-    </Routes>
-    <Routes>
       <Route path="/project/:projectKey/*" element={<DatasetProvider />} />
       <Route path="*" element={null} />
     </Routes>
