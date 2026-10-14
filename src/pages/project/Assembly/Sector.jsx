@@ -19,6 +19,7 @@ import {
   Popconfirm,
   Modal,
   Input,
+  Tooltip,
 } from "antd";
 import _ from "lodash";
 import axios from "axios";
@@ -35,6 +36,21 @@ import PresentationItem from "../../../components/PresentationItem";
 import EffectiveSettingsSummary from "../../../components/SectorSettings/EffectiveSettingsSummary";
 import { CanEditDataset } from "../../../components/Auth/hasAccess";
 import { JOB_LANE } from "../../../api/job";
+
+// The parts of a sector that no longer resolve. The assembly tree only shows
+// the subject side of a sector, so the pill also flags a broken target.
+const brokenParts = (sector) =>
+  ["subject", "target"].filter((part) => sector?.[part]?.broken === true);
+
+const brokenMessage = (sector) =>
+  `The sector ${brokenParts(sector).join(" and ")} is broken`;
+
+const BrokenWarning = ({ sector }) =>
+  brokenParts(sector).length > 0 ? (
+    <Tooltip title={brokenMessage(sector)}>
+      <WarningOutlined style={{ fontSize: "16px", marginRight: "4px" }} />
+    </Tooltip>
+  ) : null;
 
 const Sector = ({
   taxon,
@@ -180,10 +196,10 @@ const Sector = ({
         zIndex={999}
         content={
           <div>
-            {isRootSector && sector?.subject?.broken === true && (
+            {isRootSector && brokenParts(sector).length > 0 && (
               <Alert
                 style={{ marginBottom: "8px" }}
-                title="The sector subject is broken"
+                title={brokenMessage(sector)}
                 type="warning"
                 showIcon
               />
@@ -363,11 +379,7 @@ const Sector = ({
           {queuedSectorKeys.includes(sector.id) && (
             <HistoryOutlined style={{ marginLeft: "5px" }} />
           )}
-          {sector?.subject?.broken === true && (
-            <WarningOutlined
-              style={{ fontSize: "16px", marginRight: "4px" }}
-            />
-          )}
+          <BrokenWarning sector={sector} />
           {(sector?.subject?.stale === true || sector?.target?.stale === true) && (
             <StaleNameWarning
               datasetKey={
@@ -553,11 +565,7 @@ const Sector = ({
             {queuedSectorKeys.includes(sector.id) && (
               <HistoryOutlined style={{ marginLeft: "5px" }} />
             )}
-            {sector?.subject?.broken === true && (
-              <WarningOutlined
-                style={{ fontSize: "16px", marginRight: "4px" }}
-              />
-            )}
+            <BrokenWarning sector={sector} />
             {(sector?.subject?.stale === true || sector?.target?.stale === true) && (
               <StaleNameWarning
                 datasetKey={
