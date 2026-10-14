@@ -514,7 +514,51 @@ const WorkBench = ({
     setRowsForEdit([]);
   };
 
+  const resetDecisionPicker = () => {
+    setData((prev) => ({ ...prev }));
+    setSelectedRowKeys([]);
+    setDecisionFormVisible(false);
+    setDecision(null);
+    setDecisionNote("");
+  };
+
+  // Deletes the project decisions of the selected rows; rows without one are skipped
+  const cancelDecisions = () => {
+    const rows = data.result.filter(
+      (d) =>
+        selectedRowKeys.includes(_.get(d, "usage.id")) &&
+        _.get(d, "decisions[0].id")
+    );
+    const promises = rows.map((d) =>
+      axios
+        .delete(
+          `${config.dataApi}dataset/${projectKey}/decision/${d.decisions[0].id}`
+        )
+        .then(() => {
+          d.decisions = [];
+        })
+    );
+    return Promise.all(promises)
+      .then(() => {
+        notification.open({
+          title: "Decisions cancelled",
+          description:
+            rows.length === 0
+              ? "None of the selected names has a decision."
+              : `${rows.length} decision${rows.length > 1 ? "s" : ""} cancelled.`,
+        });
+        resetDecisionPicker();
+      })
+      .catch((err) => {
+        addError(err);
+        resetDecisionPicker();
+      });
+  };
+
   const applyDecision = () => {
+    if (decision === "cancel") {
+      return cancelDecisions();
+    }
     const { result } = data;
     const note = decisionNote.trim();
     const promises = result
@@ -560,7 +604,8 @@ const WorkBench = ({
           )
 
           .then((res) => {
-            d.decisions = [{ id: res.data }];
+            // getDecisions only keeps decisions of this project
+            d.decisions = [{ id: res.data, datasetKey: Number(projectKey) }];
 
             if (selectedRowKeys?.length < 6) {
               const statusMsg = `Status changed to ${decision} for ${_.get(
@@ -598,20 +643,10 @@ const WorkBench = ({
         }
         return getDecisions({ data: { result: data.result } });
       })
-      .then((res) => {
-        setData((prev) => ({ ...prev }));
-        setSelectedRowKeys([]);
-        setDecisionFormVisible(false);
-        setDecision(null);
-        setDecisionNote("");
-      })
+      .then(() => resetDecisionPicker())
       .catch((err) => {
         addError(err);
-        setData((prev) => ({ ...prev }));
-        setSelectedRowKeys([]);
-        setDecisionFormVisible(false);
-        setDecision(null);
-        setDecisionNote("");
+        resetDecisionPicker();
       });
   };
 
@@ -969,6 +1004,7 @@ const WorkBench = ({
                     { value: "block", label: "Block" },
                     { value: "ignore", label: "Ignore" },
                     { value: "reviewed", label: "Reviewed" },
+                    { value: "cancel", label: "Cancel decision" },
                   ],
                 },
                 {

@@ -166,7 +166,10 @@ const DecisionForm = (props) => {
     )
       .then((res) => {
         if (method === "post") {
-          currentRow.decisions = [{ id: res.data }];
+          // getDecisions only keeps decisions of this project
+          currentRow.decisions = [
+            { id: res.data, datasetKey: Number(datasetKey) },
+          ];
         }
         return currentRow;
       })
