@@ -580,6 +580,16 @@ const TaxonPage = ({
                       {_.get(taxon, "status") && (
                         <PresentationItem md={md * 2} label="Status">
                           {`${taxon.status} ${_.get(taxon, "name.rank")}`}
+                          {info?.decisions?.[taxon?.id] && (
+                            <>
+                              &nbsp;with {info.decisions[taxon.id].mode}{" "}
+                              decision
+                              <DecisionBadge
+                                style={{ marginLeft: "10px" }}
+                                decision={info.decisions[taxon.id]}
+                              />
+                            </>
+                          )}
                         </PresentationItem>
                       )}
                     </Col>
@@ -886,20 +896,7 @@ const TaxonPage = ({
                   )}
                   {_.get(taxon, "origin") && !_.get(sourceDataset, "title") && (
                     <PresentationItem md={md} label="Origin">
-                      <span>
-                        {_.get(taxon, "origin")}
-                        {info?.decisions?.[taxon?.id] && (
-                          <>
-                            &nbsp;with{" "}
-                            {info?.decisions?.[taxon?.id]?.mode}{" "}
-                            decision
-                            <DecisionBadge
-                              style={{ marginLeft: "10px" }}
-                              decision={info?.decisions?.[taxon?.id]}
-                            />
-                          </>
-                        )}
-                      </span>
+                      <span>{_.get(taxon, "origin")}</span>
                     </PresentationItem>
                   )}
                   {_.get(sourceDataset, "title") && (

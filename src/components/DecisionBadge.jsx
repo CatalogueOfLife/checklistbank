@@ -2,41 +2,49 @@ import React from "react";
 import { Tag, Popover } from "antd";
 
 const DecisionBadge = ({ style = {}, decision }) => {
-  delete decision.subject;
-  delete decision.originalSubjectId;
-  delete decision.subjectDatasetKey;
-  delete decision.datasetKey;
-  delete decision.created;
-  delete decision.createdBy;
+  // shown without the bookkeeping fields; a copy, as callers keep the decision
+  const {
+    subject,
+    originalSubjectId,
+    subjectDatasetKey,
+    datasetKey,
+    created,
+    createdBy,
+    modified,
+    modifiedBy,
+    ...rest
+  } = decision;
   return (
-  <Popover
-    content={
-      <pre
-        style={{ fontSize: "10px", fontFamily: "monospace", width: "400px" }}
-      >
-        {JSON.stringify(decision, null, 2)}
-      </pre>
-    }
-    placement="top"
-    trigger="click"
-  >
-    <Tag
-      color="gold"
-      style={{
-        cursor: "pointer",
-        fontFamily: "monospace",
-        fontSize: "8px",
-        fontWeight: 900,
-        padding: "2px",
-        lineHeight: "8px",
-        verticalAlign: "middle",
-        marginRight: "2px",
-        ...style,
-      }}
+    <Popover
+      title="Editorial decision"
+      content={
+        <pre
+          style={{ fontSize: "10px", fontFamily: "monospace", width: "400px" }}
+        >
+          {JSON.stringify(rest, null, 2)}
+        </pre>
+      }
+      placement="top"
+      trigger="click"
     >
-      DC
-    </Tag>
-  </Popover>
-)};
+      <Tag
+        color="gold"
+        style={{
+          cursor: "pointer",
+          fontFamily: "monospace",
+          fontSize: "8px",
+          fontWeight: 900,
+          padding: "2px",
+          lineHeight: "8px",
+          verticalAlign: "middle",
+          marginRight: "2px",
+          ...style,
+        }}
+      >
+        DC
+      </Tag>
+    </Popover>
+  );
+};
 
 export default DecisionBadge;
