@@ -5,212 +5,196 @@ import { Tag, Row, Col } from "antd";
 import ImportChart from "./ImportChart";
 import ImportChartNested from "./ImportChartNested";
 
+// Counts shown first, in this order. Any other numeric metric follows
+// alphabetically, so new backend metrics show up without a UI change.
+const COUNT_ORDER = [
+  "nameCount",
+  "taxonCount",
+  "synonymCount",
+  "bareNameCount",
+  "usagesCount",
+  "verbatimCount",
+  "referenceCount",
+  "typeMaterialCount",
+  "distributionCount",
+  "mediaCount",
+  "treatmentCount",
+  "vernacularCount",
+  "sectorCount",
+  "nameRelationsCount",
+  "taxonConceptRelationsCount",
+  "speciesInteractionsCount",
+];
+// numeric properties of an import that are not metrics
+const NOT_COUNTS = [
+  "datasetKey",
+  "attempt",
+  "createdBy",
+  "modifiedBy",
+  "sectorKey",
+  "datasetAttempt",
+];
+
+// Breakdowns with a known chart, in display order. nameSearchParam makes a
+// slice link to the name search (or verbatim search) filtered by its key.
+const CHARTS = [
+  {
+    key: "taxaByRankCount",
+    title: "Accepted Names by Rank",
+    nameSearchParam: "rank",
+    additionalParams: { status: "accepted" },
+  },
+  { key: "usagesByStatusCount", title: "Usages by status", nameSearchParam: "status" },
+  { key: "namesByRankCount", title: "Names by rank", nameSearchParam: "rank" },
+  { key: "namesByTypeCount", title: "Names by type", nameSearchParam: "nameType" },
+  { key: "namesByCodeCount", title: "Names by code", nameSearchParam: "nomCode" },
+  {
+    key: "namesByStatusCount",
+    title: "Names by nomenclatural status",
+    nameSearchParam: "nomStatus",
+  },
+  // older imports report origin per name, newer ones per usage
+  { key: "namesByOriginCount", title: "Names by origin", nameSearchParam: "origin" },
+  { key: "usagesByOriginCount", title: "Usages by origin", nameSearchParam: "origin" },
+  {
+    key: "synonymsByRankCount",
+    title: "Synonyms by rank",
+    nameSearchParam: "rank",
+    additionalParams: { status: "synonym" },
+  },
+  {
+    key: "verbatimByTermCount",
+    title: "Verbatim records by rowtype",
+    nameSearchParam: "type",
+    verbatim: true,
+  },
+  { key: "verbatimByRowTypeCount", title: "Verbatim records by term", nested: true },
+  {
+    key: "extinctTaxaByRankCount",
+    title: "Extinct taxa by rank",
+    nameSearchParam: "rank",
+  },
+  { key: "nameRelationsByTypeCount", title: "Name relations" },
+  { key: "taxonConceptRelationsByTypeCount", title: "Taxon concept relations" },
+  { key: "speciesInteractionsByTypeCount", title: "Species interactions" },
+  { key: "typeMaterialByStatusCount", title: "Type material by status" },
+  {
+    key: "distributionsByGazetteerCount",
+    title: "Distribution by Gazetteer",
+    verbatim: true,
+  },
+  {
+    key: "vernacularsByLanguageCount",
+    title: "Vernacular names by language",
+    defaultType: "column",
+    wide: true,
+  },
+];
+// shown on the issues page instead
+const NOT_CHARTED = ["issuesCount"];
+// Unknown breakdowns with more keys than this get a full width column chart
+const MAX_PIE_SLICES = 30;
+
+// The page adds non-metric objects to an import, e.g. its user.
+const isBreakdown = (data, k) =>
+  k.endsWith("Count") && _.isPlainObject(data[k]) && !_.isEmpty(data[k]);
+
 const ImportMetrics = ({ data, subtitle }) => {
   const { datasetKey } = data;
   // every chart carries the same caption unless the caller overrides it
   const chartSubtitle =
     subtitle || `Imported ${formatTime(data.finished, "MMMM Do YYYY, h:mm a")}`;
+
+  const counts = _.sortBy(
+    Object.keys(data).filter(
+      (k) => _.isNumber(data[k]) && data[k] && !NOT_COUNTS.includes(k)
+    ),
+    [
+      (k) =>
+        COUNT_ORDER.includes(k) ? COUNT_ORDER.indexOf(k) : COUNT_ORDER.length,
+      (k) => k,
+    ]
+  );
+
+  const known = CHARTS.map((c) => c.key);
+  const charts = [
+    ...CHARTS.filter((c) => isBreakdown(data, c.key)),
+    ...Object.keys(data)
+      .filter(
+        (k) =>
+          isBreakdown(data, k) && !known.includes(k) && !NOT_CHARTED.includes(k)
+      )
+      .sort()
+      .map((k) => {
+        const wide = _.size(data[k]) > MAX_PIE_SLICES;
+        return {
+          key: k,
+          title: _.upperFirst(_.lowerCase(k.replace(/Count$/, ""))),
+          defaultType: wide ? "column" : "pie",
+          wide,
+        };
+      }),
+  ];
+
   return (
-    <React.Fragment>
-      <Row>
-        <Col span={24} style={{ padding: "10px" }}>
-          {_.get(data, `taxaByRankCount.species`) && (
-          <Tag key="speciesCount" color="blue" variant="outlined" style={{ marginBottom: "8px", marginRight: "8px" }}>
+    <Row>
+      <Col span={24} style={{ padding: "10px" }}>
+        {_.get(data, `taxaByRankCount.species`) && (
+          <Tag
+            key="speciesCount"
+            color="blue"
+            variant="outlined"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
             Species Count: {_.get(data, `taxaByRankCount.species`)}
           </Tag>
-          )}
-          {_.map(
-            "nameCount taxonCount synonymCount bareNameCount verbatimCount referenceCount typeMaterialCount distributionCount mediaCount treatmentCount vernacularCount sectorCount nameRelationsCount taxonConceptRelations speciesInteractionsCount".split(
-              " "
-            ),
-            (c) => {
-              return _.get(data, `${c}`) ? (
-                <Tag key={c} color="blue" variant="outlined" style={{ marginBottom: "8px", marginRight: "8px" }}>
-                  {_.startCase(c)}: {_.get(data, `${c}`)}
-                </Tag>
-              ) : (
-                ""
-              );
-            }
-          )}
-        </Col>
+        )}
+        {counts.map((c) => (
+          <Tag
+            key={c}
+            color="blue"
+            variant="outlined"
+            style={{ marginBottom: "8px", marginRight: "8px" }}
+          >
+            {_.startCase(c)}: {data[c]}
+          </Tag>
+        ))}
+      </Col>
 
-        {_.get(data, "taxaByRankCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="rank"
-              additionalParams={{ status: "accepted" }}
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "taxaByRankCount")}
-              title="Accepted Names by Rank"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "usagesByStatusCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="status"
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "usagesByStatusCount")}
-              title="Usages by status"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-
-        {_.get(data, "namesByRankCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="rank"
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "namesByRankCount")}
-              title="Names by rank"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "namesByTypeCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="nameType"
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "namesByTypeCount")}
-              title="Names by type"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-
-        {_.get(data, "namesByOriginCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="origin"
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "namesByOriginCount")}
-              title="Names by origin"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "synonymsByRankCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              nameSearchParam="rank"
-              additionalParams={{ status: "synonym" }}
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "synonymsByRankCount")}
-              title="Synonyms by rank"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-
-        {_.get(data, "verbatimByTermCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              verbatim={true}
-              nameSearchParam="type"
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "verbatimByTermCount")}
-              title="Verbatim records by rowtype"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-
-        {_.get(data, "verbatimByRowTypeCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
+      {charts.map((c) => (
+        <Col
+          key={c.key}
+          xs={24}
+          sm={24}
+          md={c.wide ? 24 : 12}
+          lg={c.wide ? 24 : 12}
+          style={{ padding: "10px" }}
+        >
+          {c.nested ? (
             <ImportChartNested
               verbatim={true}
               nameSearchParam={["type", "term"]}
               defaultType="donut"
               datasetKey={datasetKey}
-              nestedData={_.get(data, "verbatimByRowTypeCount")}
-              title="Verbatim records by term"
+              nestedData={data[c.key]}
+              title={c.title}
               subtitle={chartSubtitle}
             />
-          </Col>
-        )}
-        {_.get(data, "extinctTaxaByRankCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
+          ) : (
             <ImportChart
-              defaultType="pie"
-              nameSearchParam="rank"
+              nameSearchParam={c.nameSearchParam}
+              additionalParams={c.additionalParams}
+              verbatim={c.verbatim}
+              defaultType={c.defaultType || "pie"}
               datasetKey={datasetKey}
-              data={_.get(data, "extinctTaxaByRankCount")}
-              title="Extinct taxa by rank"
+              data={data[c.key]}
+              title={c.title}
               subtitle={chartSubtitle}
             />
-          </Col>
-        )}
-        {_.get(data, "nameRelationsByTypeCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "nameRelationsByTypeCount")}
-              title="Name relations"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "taxonConceptRelationsByTypeCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "taxonConceptRelationsByTypeCount")}
-              title="Taxon concept relations"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "speciesInteractionsByTypeCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "speciesInteractionsByTypeCount")}
-              title="Species interactions"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-        {_.get(data, "distributionsByGazetteerCount") && (
-          <Col xs={24} sm={24} md={12} lg={12} style={{ padding: "10px" }}>
-            <ImportChart
-              verbatim={true}
-              defaultType="pie"
-              datasetKey={datasetKey}
-              data={_.get(data, "distributionsByGazetteerCount")}
-              title="Distribution by Gazetteer"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        )}
-      </Row>
-      {_.get(data, "vernacularsByLanguageCount") && (
-        <Row>
-          <Col span={24} style={{ padding: "10px" }}>
-            <ImportChart
-              defaultType="column"
-              datasetKey={datasetKey}
-              data={_.get(data, "vernacularsByLanguageCount")}
-              title="Vernacular names by language"
-              subtitle={chartSubtitle}
-            />
-          </Col>
-        </Row>
-      )}
-    </React.Fragment>
+          )}
+        </Col>
+      ))}
+    </Row>
   );
 };
 
