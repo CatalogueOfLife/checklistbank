@@ -20,6 +20,7 @@ import { CanEditDataset } from "../../components/Auth/hasAccess";
 // import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
 import DataLoader from "dataloader";
+import { selectNewest, selectAllExceptOldest } from "./priority";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 
 const RadioGroup = Radio.Group;
@@ -516,54 +517,15 @@ const DuplicateSearchPage = (props) => {
     }
   };
 
-  const getLatestYear = (name) => {
-    const basionymAuthorshipYear = Number(
-      _.get(name, "basionymAuthorship.year", -1000)
-    );
-    const combinationAuthorshipYear = Number(
-      _.get(name, "combinationAuthorship.year", -1000)
-    );
-    const publishedInYear = Number(_.get(name, "publishedInYear", -1000));
-    return Math.max(
-      basionymAuthorshipYear,
-      combinationAuthorshipYear,
-      publishedInYear
-    );
-  };
-
   const selectNewestInGroup = () => {
     setNewestInGroupLoading(true);
-    let keys = [];
-    rawData.forEach((group) => {
-      const max = Math.max(
-        ...group.usages.map((r) => getLatestYear(r.usage.name))
-      );
-      keys = [
-        ...keys,
-        ...group.usages
-          .filter((r) => getLatestYear(r.usage.name) === max)
-          .map((i) => i.usage.id),
-      ];
-    });
-    setSelectedRowKeys(keys);
+    setSelectedRowKeys(selectNewest(rawData));
     setNewestInGroupLoading(false);
   };
 
   const selectAllInGroupExceptOldest = () => {
     setAllButOldestInGroupLoading(true);
-    let keys = [];
-    rawData.forEach((group) => {
-      const min = Math.min(
-        ...group.usages.map((r) => r.usage.name.publishedInYear)
-      );
-      keys = [
-        ...keys,
-        ...group.usages
-          .filter((r) => Number(r.usage.name.publishedInYear) > min)
-          .map((i) => i.usage.id),
-      ];
-    });
-    setSelectedRowKeys(keys);
+    setSelectedRowKeys(selectAllExceptOldest(rawData));
     setAllButOldestInGroupLoading(false);
   };
 
@@ -1009,7 +971,7 @@ const DuplicateSearchPage = (props) => {
         <Col span={12}>
           {Auth.canEditDataset({ key: projectKey }, user) && projectKey && (
             <>
-              <Tooltip title="At least two names in a group must have different publishedInYear for a name to be selected">
+              <Tooltip title="Selects the youngest names of each group, dated by their basionym year or else their own. Groups whose names share a year are skipped.">
                 <Button
                   type="primary"
                   onClick={selectNewestInGroup}
@@ -1019,7 +981,7 @@ const DuplicateSearchPage = (props) => {
                   Most recent name
                 </Button>
               </Tooltip>
-              <Tooltip title="At least two names in a duplicate group must have different publishedInYear for a name to be selected">
+              <Tooltip title="Selects all names of each group younger than the oldest, dated by their basionym year or else their own. Names without a year are skipped.">
                 <Button
                   type="primary"
                   onClick={selectAllInGroupExceptOldest}
