@@ -44,6 +44,7 @@ import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import withContext from "../../components/hoc/withContext";
 import ToolHeader from "../tools/ToolHeader";
 import { getDatasetsBatch } from "../../api/dataset";
+import { extraFilters } from "./extraFilters";
 import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 // Facets are split by visibility. Computing a facet is expensive on
@@ -1341,6 +1342,22 @@ const NameSearchPage = ({
           </div>
         </Col>
       </Row>
+      {extraFilters(params).length > 0 && (
+        <div style={{ marginBottom: "8px" }}>
+          {extraFilters(params).map(([key, values]) => (
+            <Tag
+              key={key}
+              closable
+              onClose={(e) => {
+                e.preventDefault();
+                updateSearch({ [key]: null });
+              }}
+            >
+              {key}: {values.join(", ")}
+            </Tag>
+          ))}
+        </div>
+      )}
       {!error && !searched && (
         <Empty
           style={{ marginTop: 48 }}
