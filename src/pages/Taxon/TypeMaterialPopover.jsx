@@ -8,14 +8,14 @@ const TypeMaterialPopover = ({ typeMaterial, nameId, placement, datasetKey, refe
   const getContent = () => {
     const data = typeMaterial?.[nameId] || [];
     if (data.length === 1) {
-      return data[0].citation;
+      return data[0].typeMaterial?.citation;
     } else {
       return (
         <ul>
-          {data.map((s) => (
+          {data.map(({ status, typeMaterial: s }) => (
             <>
               {" "}
-              <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag>
+              <Tag color={getTypeColor(status)}>{status}</Tag>
               {s.merged && (
                 <>
                   <MergedDataBadge />{" "}

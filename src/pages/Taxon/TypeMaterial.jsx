@@ -68,9 +68,10 @@ const getLinks = (dataset, s) => {
 const TypeMaterial = ({ dataset, data, nameID, style }) => {
   return data[nameID] ? (
     <div style={style}>
-      {data[nameID].map((s) => (
-        <BorderedListItem key={s.id}>
-          <Tag color={getTypeColor(s?.status)}>{s?.status}</Tag>{" "}
+      {/* type designations: the status for the name and the specimen, which can typify further names */}
+      {data[nameID].map(({ status, nameId, typeMaterial: s }) => (
+        <BorderedListItem key={`${s.id}-${nameId}`}>
+          <Tag color={getTypeColor(status)}>{status}</Tag>{" "}
           {s.merged && (
             <MergedDataBadge
               createdBy={s?.createdBy}
