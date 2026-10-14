@@ -35,6 +35,8 @@ const DatasetImportMetrics = (props) => {
     user,
     origin,
     projectKey,
+    location,
+    history: routerHistory,
   } = props;
 
   const attempt = _.get(match, "params.taxonOrNameKey");
@@ -42,14 +44,26 @@ const DatasetImportMetrics = (props) => {
   const sourceKey = _.get(match, "params.sourceKey");
   const datasetKey = datasetKey_ || sourceKey;
 
-  const { search } = location;
-  const initParams = qs.parse(search);
+  // The history drawer is open while the URL carries ?showHistory=true, so a
+  // link to the page can share it open. Opening and closing it rewrites the
+  // param in place rather than pushing a history entry.
+  const historyVisible = qs.parse(location.search).showHistory === "true";
+  const setHistoryVisible = (visible) => {
+    const params = qs.parse(location.search);
+    if (visible) {
+      params.showHistory = "true";
+    } else {
+      delete params.showHistory;
+    }
+    const search = qs.stringify(params);
+    routerHistory.replace({
+      pathname: location.pathname,
+      search: search ? `?${search}` : "",
+    });
+  };
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [importHistory, setImportHistory] = useState(null);
-  const [historyVisible, setHistoryVisible] = useState(
-    initParams?.showHistory === "true"
-  );
   const [hasImportDiff, setHasImportDiff] = useState(false);
   const [hasNoImports, setHasNoImports] = useState(false);
   const [error, setError] = useState(null);

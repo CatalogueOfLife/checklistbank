@@ -99,6 +99,7 @@ const ImportHistory = ({
               <NavLink
                 to={{
                   pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`,
+                  search: "?showHistory=true",
                 }}
                 end
               >
@@ -188,6 +189,7 @@ const ImportHistory = ({
               <NavLink
                 to={{
                   pathname: `/dataset/${h.datasetKey}/imports/${h.attempt}`,
+                  search: "?showHistory=true",
                 }}
                 end
               >
