@@ -202,7 +202,8 @@ const SectorTable = ({
     ...getColumns(
       !!releasedFrom ? releasedFrom : projectKey,
       searchText,
-      getColumnSearchProps
+      getColumnSearchProps,
+      isRelease
     ),
     ...extraColumns,
   ];

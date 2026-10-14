@@ -14,7 +14,11 @@ import _ from "lodash";
 import qs from "query-string";
 import history from "../../../history";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
-import { getDatasetsBatch } from "../../../api/dataset";
+import {
+  getDatasetsBatch,
+  getReleaseSourceLoader,
+  releaseSourcePath,
+} from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
 import DataLoader from "dataloader";
 import RematchResult from "../ProjectSectors/RematchResult";
@@ -34,7 +38,6 @@ const ProjectDecisions = ({
   rank,
   decisionMode,
   type,
-  releasedFrom,
 }) => {
   const { notification } = App.useApp();
   const [data, setData] = useState([]);
@@ -57,11 +60,15 @@ const ProjectDecisions = ({
 
   const nameRef = useRef(null);
 
+  const isRelease = type === "release";
+
   const decorateWithDataset = (res) => {
     if (!res.data.result) return res;
+    // a release renders the source metadata it stored, not the current dataset
+    const loader = isRelease ? getReleaseSourceLoader(datasetKey) : datasetLoader;
     return Promise.all([
       ...res.data.result.map((decision) =>
-        datasetLoader
+        loader
           .load(decision.subjectDatasetKey)
           .then((dataset) => (decision.dataset = dataset))
       ),
@@ -225,9 +232,11 @@ const ProjectDecisions = ({
         return (
           <NavLink
             to={{
-              pathname: `/project/${
-                type === "project" ? datasetKey : releasedFrom
-              }/dataset/${record.subjectDatasetKey}/imports`,
+              // a release links within itself, never to its (possibly
+              // private) project
+              pathname: isRelease
+                ? releaseSourcePath(datasetKey, record.dataset, record.subjectDatasetKey)
+                : `/project/${datasetKey}/dataset/${record.subjectDatasetKey}/imports`,
             }}
             end
           >
@@ -285,11 +294,13 @@ const ProjectDecisions = ({
             {record?.subject?.id && (
               <NavLink
                 to={{
-                  pathname: `/project/${
-                    type === "project" ? datasetKey : releasedFrom
-                  }/dataset/${record.subjectDatasetKey}/taxon/${
-                    record?.subject?.id
-                  }`,
+                  // the subject id belongs to the source dataset; a release
+                  // has no mapping from it to its own usages
+                  pathname: isRelease
+                    ? `/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`
+                    : `/project/${datasetKey}/dataset/${record.subjectDatasetKey}/taxon/${
+                        record?.subject?.id
+                      }`,
                 }}
                 end
               >

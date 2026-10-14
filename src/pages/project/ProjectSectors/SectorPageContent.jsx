@@ -23,7 +23,7 @@ import withRouter from "../../../withRouter";
 import SectorForm from "../Assembly/SectorForm";
 import config from "../../../config";
 import withContext from "../../../components/hoc/withContext";
-import { getDatasetsBatch } from "../../../api/dataset";
+import { getDatasetsBatch, getReleaseSourceLoader } from "../../../api/dataset";
 import { getUsersBatch } from "../../../api/user";
 import { getProfiles } from "../../../api/sector";
 
@@ -86,9 +86,12 @@ const ProjectSectors = ({
 
   const decorateWithDataset = (res) => {
     if (!res.data.result) return res;
+    // a release renders the source metadata it stored, not the current dataset
+    const loader =
+      !!datasetKey && !projectKey ? getReleaseSourceLoader(datasetKey) : datasetLoader;
     return Promise.all([
       ...res.data.result.map((sector) =>
-        datasetLoader
+        loader
           .load(sector.subjectDatasetKey)
           .then((dataset) => (sector.dataset = dataset))
       ),

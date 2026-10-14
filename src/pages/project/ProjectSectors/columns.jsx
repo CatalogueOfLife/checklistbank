@@ -9,12 +9,25 @@ import StaleNameWarning from "../../../components/StaleNameWarning";
 import _ from "lodash";
 
 import { formatTime } from "../../../dateTime";
+import { releaseSourcePath } from "../../../api/dataset";
+import ReleaseSectorSync from "./ReleaseSectorSync";
 
+// With isRelease the table shows a release's sectors (record.datasetKey is the
+// release). Links then stay within the release, which stores its own sources,
+// sectors and taxa, and never lead to the project: it can be private and its
+// current state is not what was released.
 export default (
   projectKey,
   searchText,
-  getColumnSearchProps = () => ({})
+  getColumnSearchProps = () => ({}),
+  isRelease = false
 ) => {
+  // The release's names that came in through this sector.
+  const releaseSectorNames = (record) => ({
+    pathname: `/dataset/${record.datasetKey}/names`,
+    search: `?sectorKey=${record.id}`,
+  });
+
   const columns = [
     {
       title: "Dataset",
@@ -24,7 +37,11 @@ export default (
       render: (text, record) => {
         return (
           <NavLink
-            to={{ pathname: `/project/${projectKey}/dataset/${record?.dataset?.key}/metadata` }}
+            to={{
+              pathname: isRelease
+                ? releaseSourcePath(record.datasetKey, record?.dataset, record.subjectDatasetKey)
+                : `/project/${projectKey}/dataset/${record?.dataset?.key}/metadata`,
+            }}
             end
           >
             {text ? text.toString() : record?.dataset?.title}
@@ -57,10 +74,14 @@ export default (
             )}
             {!record?.subject?.id && (
               <NavLink
-                to={{
-                  pathname: `/dataset/${record.subjectDatasetKey}/names`,
-                  search: `?q=${record?.subject?.name}`,
-                }}
+                to={
+                  isRelease
+                    ? releaseSectorNames(record)
+                    : {
+                        pathname: `/dataset/${record.subjectDatasetKey}/names`,
+                        search: `?q=${record?.subject?.name}`,
+                      }
+                }
                 end
               >
                 <Highlighter
@@ -73,7 +94,7 @@ export default (
             )}
             {record?.subject?.id && (
               <NavLink
-                to={{
+                to={isRelease ? releaseSectorNames(record) : {
                   pathname: `/project/${projectKey}/assembly`,
                   search: `?sourceTaxonKey=${
                     record.placeholderRank
@@ -130,10 +151,14 @@ export default (
             )}
             {!_.get(record, "target.broken") && (
               <NavLink
-                to={{
-                  pathname: `/project/${projectKey}/assembly`,
-                  search: `?assemblyTaxonKey=${record?.target?.id}`,
-                }}
+                to={
+                  isRelease
+                    ? { pathname: `/dataset/${record.datasetKey}/taxon/${record?.target?.id}` }
+                    : {
+                        pathname: `/project/${projectKey}/assembly`,
+                        search: `?assemblyTaxonKey=${record?.target?.id}`,
+                      }
+                }
                 end
               >
                 <Highlighter
@@ -201,6 +226,9 @@ export default (
       width: 75,
       render: (text, record) => (
         <>
+        {isRelease ? (
+          <ReleaseSectorSync releaseKey={record.datasetKey} sectorKey={record.id} />
+        ) : (
         <Tooltip title="Sync History">
           <NavLink
             to={{
@@ -212,6 +240,7 @@ export default (
             <HistoryOutlined style={{ fontSize: "20px" }} />{"  "}
           </NavLink>
         </Tooltip>
+        )}
 
         <Tooltip title="Kibana Logs">
           <a href={kibanaQuery(record.id)} target="_blank">

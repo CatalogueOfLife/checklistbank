@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "../config";
 import duplicatePresets from "../pages/Duplicates/queryPresets";
 import qs from "query-string";
+import DataLoader from "dataloader";
 
 const reflect = (p) =>
   p.then(
@@ -30,6 +31,50 @@ export const getDatasetsBatch = (ids) => {
     })
     .catch(() => ids.map(() => null));
 };
+
+// A release keeps the metadata of its sources as they were at release time
+// (dataset/{releaseKey}/source/{key}), and release pages render that copy,
+// never the current dataset or project. Those records carry
+// `releaseSource: true`. A dataset the release only references - e.g. a
+// decision on a dataset that contributes nothing - has no stored copy (404);
+// for those fall back to the dataset's current public record.
+export const getReleaseSourcesBatch = (releaseKey, ids) =>
+  Promise.all(
+    ids.map((id) =>
+      axios(`${config.dataApi}dataset/${releaseKey}/source/${id}`).then(
+        (res) => ({ ...res.data, releaseSource: true }),
+        () => null
+      )
+    )
+  ).then((sources) => {
+    const missing = ids.filter((id, i) => !sources[i]);
+    if (missing.length === 0) return sources;
+    return getDatasetsBatch(missing).then((found) => {
+      const byKey = new Map(missing.map((id, i) => [String(id), found[i]]));
+      return sources.map((s, i) => s ?? byKey.get(String(ids[i])) ?? null);
+    });
+  });
+
+const releaseSourceLoaders = new Map();
+
+// One DataLoader per release, so its cache never mixes up the stored source
+// metadata of different releases.
+export const getReleaseSourceLoader = (releaseKey) => {
+  if (!releaseSourceLoaders.has(releaseKey)) {
+    releaseSourceLoaders.set(
+      releaseKey,
+      new DataLoader((ids) => getReleaseSourcesBatch(releaseKey, ids))
+    );
+  }
+  return releaseSourceLoaders.get(releaseKey);
+};
+
+// Where a source link on a release page goes: the release's own source page
+// when the release stored the source, otherwise the dataset itself.
+export const releaseSourcePath = (releaseKey, dataset, datasetKey) =>
+  dataset?.releaseSource
+    ? `/dataset/${releaseKey}/source/${datasetKey}`
+    : `/dataset/${datasetKey}/metadata`;
 
 // A dataset key in a URL is either a plain integer or one of the aliases the
 // backend's DatasetKeyRewriteFilter resolves wherever a key sits in a path:

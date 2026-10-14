@@ -9,7 +9,6 @@ const DatasetDecisions = ({ dataset }) => {
     <PageContent>
       <Decisions
         datasetKey={dataset?.key}
-        releasedFrom={dataset?.sourceKey}
         type="release"
       />
     </PageContent>
