@@ -70,10 +70,16 @@ const DatasetMeta = ({
   const [showBreakdownTreemap, setShowBreakdownTreemap] = useState(false);
 
   const getReleasedFrom = (key) => {
-    axios(`${config.dataApi}dataset/${key}`)
+    // A public release of a private project is normal: anonymous users and
+    // non-editors get a 401/403 for the project itself, which must neither
+    // replace the release page nor raise an error (#1737).
+    axios(`${config.dataApi}dataset/${key}`, { ignoreAuthError: true })
       .then((res) => setReleasedFrom(res.data))
       .catch((err) => {
-        addError(err);
+        const status = err?.response?.status;
+        if (status !== 401 && status !== 403) {
+          addError(err);
+        }
         setReleasedFrom(null);
       });
   };
@@ -607,15 +613,21 @@ const DatasetMeta = ({
           <PresentationItem label="Released from">
             {
               <span>
-                <NavLink
-                  to={{
-                    pathname: Auth.canViewDataset(project, user)
-                      ? `/project/${displayData.sourceKey}/metadata`
-                      : `/dataset/${displayData.sourceKey}`,
-                  }}
-                >
-                  {releasedFrom ? releasedFrom.title : displayData.sourceKey}
-                </NavLink>
+                {releasedFrom ? (
+                  <NavLink
+                    to={{
+                      pathname: Auth.canViewDataset(project, user)
+                        ? `/project/${displayData.sourceKey}/metadata`
+                        : `/dataset/${displayData.sourceKey}`,
+                    }}
+                  >
+                    {releasedFrom.title}
+                  </NavLink>
+                ) : (
+                  // The project could not be read (private), so a link would
+                  // only lead to another 401 page.
+                  displayData.sourceKey
+                )}
                 {displayData.sourceKey && (
                   <span>
                     {" "}

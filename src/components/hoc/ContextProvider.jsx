@@ -366,11 +366,16 @@ const ContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Add interceptor to catch auth errors from XHR
+    // Add interceptor to catch auth errors from XHR. Requests for optional
+    // data a page can do without pass `ignoreAuthError: true` in their axios
+    // config so a 401/403 does not replace the whole page.
     axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if ([401, 403].includes(_.get(error, "response.status"))) {
+        if (
+          [401, 403].includes(_.get(error, "response.status")) &&
+          !_.get(error, "config.ignoreAuthError")
+        ) {
           setError(error);
         }
         return Promise.reject(error);
