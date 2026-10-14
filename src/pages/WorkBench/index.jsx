@@ -20,6 +20,7 @@ import {
   Switch,
   Form,
   Input,
+  Popconfirm,
 } from "antd";
 import Tabs from "../../components/Tabs";
 import config from "../../config";
@@ -266,6 +267,7 @@ const WorkBench = ({
   const [data, setData] = useState({ result: [] });
   const [decision, setDecision] = useState(null);
   const [decisionNote, setDecisionNote] = useState("");
+  const [noteFocused, setNoteFocused] = useState(false);
   const [columns, setColumns] = useState(() => getColumns(projectKey, user));
   const [decisionFormVisible, setDecisionFormVisible] = useState(false);
   const [rowsForEdit, setRowsForEdit] = useState([]);
@@ -523,7 +525,7 @@ const WorkBench = ({
   };
 
   // Deletes the project decisions of the selected rows; rows without one are skipped
-  const cancelDecisions = () => {
+  const deleteDecisions = () => {
     const rows = data.result.filter(
       (d) =>
         selectedRowKeys.includes(_.get(d, "usage.id")) &&
@@ -541,11 +543,11 @@ const WorkBench = ({
     return Promise.all(promises)
       .then(() => {
         notification.open({
-          title: "Decisions cancelled",
+          title: "Decisions deleted",
           description:
             rows.length === 0
               ? "None of the selected names has a decision."
-              : `${rows.length} decision${rows.length > 1 ? "s" : ""} cancelled.`,
+              : `${rows.length} decision${rows.length > 1 ? "s" : ""} deleted.`,
         });
         resetDecisionPicker();
       })
@@ -555,9 +557,16 @@ const WorkBench = ({
       });
   };
 
+  const openDecisionForm = () => {
+    setDecisionFormVisible(true);
+    setRowsForEdit(
+      data.result.filter((r) => selectedRowKeys.includes(_.get(r, "usage.id")))
+    );
+  };
+
   const applyDecision = () => {
-    if (decision === "cancel") {
-      return cancelDecisions();
+    if (decision === "update") {
+      return openDecisionForm();
     }
     const { result } = data;
     const note = decisionNote.trim();
@@ -728,6 +737,7 @@ const WorkBench = ({
     columnWidth: "30px",
   };
   const hasSelected = selectedRowKeys.length > 0;
+  const canEdit = Auth.canEditDataset({ key: projectKey }, user);
 
   return (
     <div
@@ -812,7 +822,13 @@ const WorkBench = ({
                       />
                     </div>
                   )}
-                  <div style={{ marginTop: "10px" }}>
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Form layout="inline">
                       <FormItem label="Fuzzy">
                         <Switch
@@ -824,8 +840,10 @@ const WorkBench = ({
                           }
                         />
                       </FormItem>
-
                     </Form>
+                    <Button type="primary" danger onClick={resetSearch}>
+                      Reset search
+                    </Button>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -946,17 +964,19 @@ const WorkBench = ({
         ]}
       />
 
-      <Row>
+      <Row align="top">
         <Col span={14}>
-          {" "}
-          <Button
-            type="primary"
-            danger
-            onClick={resetSearch}
-            style={{ width: "120px" }}
-          >
-            Reset search
-          </Button>
+          {canEdit && (
+            <TextArea
+              style={{ marginBottom: "10px" }}
+              autoSize={{ minRows: noteFocused ? 4 : 1, maxRows: 10 }}
+              placeholder="Note (optional)"
+              value={decisionNote}
+              onFocus={() => setNoteFocused(true)}
+              onBlur={() => setNoteFocused(false)}
+              onChange={(evt) => setDecisionNote(evt.target.value)}
+            />
+          )}
         </Col>
         <Col span={10} style={{ textAlign: "right" }}>
           <FormItem
@@ -990,21 +1010,23 @@ const WorkBench = ({
         </Col>
       </Row>
       <Row>
-        {Auth.canEditDataset({ key: projectKey }, user) && (
+        {canEdit && (
           <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
             <Select
               style={{ width: 200, marginRight: 10 }}
+              value={decision ?? undefined}
               onChange={onDecisionChange}
               allowClear
               showSearch
+              placeholder="Decision"
               options={[
+                { value: "update", label: "Update" },
                 {
                   label: "General",
                   options: [
                     { value: "block", label: "Block" },
                     { value: "ignore", label: "Ignore" },
                     { value: "reviewed", label: "Reviewed" },
-                    { value: "cancel", label: "Cancel decision" },
                   ],
                 },
                 {
@@ -1018,13 +1040,6 @@ const WorkBench = ({
                 /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
               ]}
             />
-            <TextArea
-              style={{ width: 240, marginRight: 10, verticalAlign: "top" }}
-              autoSize={{ minRows: 1, maxRows: 4 }}
-              placeholder="Note (optional)"
-              value={decisionNote}
-              onChange={(evt) => setDecisionNote(evt.target.value)}
-            />
             <Button
               type="primary"
               onClick={() => applyDecision()}
@@ -1032,25 +1047,29 @@ const WorkBench = ({
               loading={loading}
               style={{ marginRight: 10 }}
             >
-              Apply selected decision
+              Apply decision
             </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                setDecisionFormVisible(true);
-                setRowsForEdit(
-                  result.filter((r) =>
-                    selectedRowKeys.includes(_.get(r, "usage.id"))
-                  )
-                );
-              }}
+            <Popconfirm
+              title={`Delete the decisions of ${selectedRowKeys.length} selected ${
+                selectedRowKeys.length > 1 ? "names" : "name"
+              }?`}
+              okText="Delete"
+              okButtonProps={{ danger: true }}
+              onConfirm={deleteDecisions}
               disabled={!hasSelected}
-              loading={loading}
             >
-              Apply update decision
-            </Button>
-            <span style={{ marginLeft: 8 }}>
-              {selectedRowKeys.length > 1 &&
+              <Button
+                type="primary"
+                danger
+                disabled={!hasSelected}
+                loading={loading}
+                style={{ marginRight: 10 }}
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+            <span>
+              {hasSelected &&
                 `Selected ${selectedRowKeys.length} ${
                   selectedRowKeys.length > 1 ? "taxa" : "taxon"
                 }`}
@@ -1058,7 +1077,7 @@ const WorkBench = ({
           </Col>
         )}
         <Col
-          span={!Auth.canEditDataset({ key: projectKey }, user) ? 24 : 8}
+          span={!canEdit ? 24 : 8}
           style={{ textAlign: "right", marginBottom: "8px" }}
         >
           {pagination &&
