@@ -35,7 +35,6 @@ import withContext from "../../components/hoc/withContext";
 import { datasetMatchesRoute } from "../../components/util/datasetRouteMatch";
 import _ from "lodash";
 import { isLive } from "../../api/job";
-import { Helmet } from "react-helmet-async";
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
 import Name from "../Name";
@@ -124,9 +123,6 @@ const DatasetPage = (props) => {
       }
       taxonOrNameKey={taxonOrNameKey}
     >
-      {_.get(dataset, "title") && (
-        <Helmet title={`${_.get(dataset, "title")} in COL`} />
-      )}
       {dataset && _.get(dataset, "deleted") && (
         <Alert
           style={{ marginTop: "16px" }}

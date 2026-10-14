@@ -4,8 +4,6 @@ import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
 import withRouter from "../../../withRouter";
 import Exception404 from "../../../components/exception/404";
-import _ from "lodash";
-import { Helmet } from "react-helmet-async";
 
 const ProjectTaxon = ({ projectKey, project, match, location }) =>
   !project ? (
@@ -17,9 +15,6 @@ const ProjectTaxon = ({ projectKey, project, match, location }) =>
       title={project ? project.title : ""}
       taxonOrNameKey={match.params.taxonOrNameKey}
     >
-      {_.get(project, "title") && (
-        <Helmet title={`${_.get(project, "title")} in COL`} />
-      )}
       
       <Taxon datasetKey={match.params.projectKey} location={location} match={match} />
     </Layout>

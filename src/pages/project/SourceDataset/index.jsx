@@ -20,7 +20,6 @@ import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
 import { isLive } from "../../../api/job";
-import { Helmet } from "react-helmet-async";
 import Duplicates from "../../Duplicates";
 
 import { formatTime } from "../../../dateTime";
@@ -87,9 +86,6 @@ const DatasetPage = (props) => {
       selectedKeys={selectedKeys}
       taxonOrNameKey={taxonOrNameKey}
     >
-      {_.get(dataset, "title") && (
-        <Helmet title={`${_.get(dataset, "title")} in COL`} />
-      )}
       {dataset && _.get(dataset, "deleted") && (
         <Alert
           style={{ marginTop: "16px" }}

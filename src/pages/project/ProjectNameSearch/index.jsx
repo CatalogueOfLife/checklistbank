@@ -4,8 +4,6 @@ import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
 import withRouter from "../../../withRouter";
 import Exception404 from "../../../components/exception/404";
-import _ from "lodash";
-import { Helmet } from "react-helmet-async";
 
 const ProjectNameSearch = ({ projectKey, project, location }) =>
   !project ? (
@@ -16,9 +14,6 @@ const ProjectNameSearch = ({ projectKey, project, location }) =>
       selectedKeys={["projectNameSearch"]}
       title={project ? project.title : ""}
     >
-      {_.get(project, "title") && (
-        <Helmet title={`${_.get(project, "title")} in COL`} />
-      )}
       <NameSearch
         datasetKey={projectKey}
         location={location}

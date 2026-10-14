@@ -25,6 +25,7 @@ import GlobalDatasetLink from "../GlobalDatasetLink";
 import Health from "./Health";
 import JobQueue from "./JobQueue";
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
 const compose = _.flowRight;
 const { gitBackend, gitFrontend } = config;
@@ -92,6 +93,12 @@ const SiteLayout = ({
   // A source dataset shown inside a project, e.g. /project/3/dataset/1010/names
   const isProjectSource =
     !!project && !!selectedDataset && project.key !== selectedDataset.key;
+  // Browser tab title. Pages may override it with a Helmet of their own.
+  const pageTitle = selectedDataset
+    ? `${selectedDataset.title}${
+        isProjectSource ? ` in ${project.alias || project.title}` : ""
+      }`
+    : title;
   let contentMargin = collapsed ? menuCollapsedWidth : menuWidth;
   if (isMobile) {
     contentMargin = 0;
@@ -142,6 +149,7 @@ const SiteLayout = ({
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {pageTitle && <Helmet title={pageTitle} />}
       {sideMenu}
       <Layout style={{ marginLeft: contentMargin + "px" }}>
         <Header
