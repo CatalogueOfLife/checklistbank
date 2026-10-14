@@ -27,6 +27,11 @@ import { isLive } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
+// The import list has no offset, only a limit capped at 1000 (Page.MAX_LIMIT),
+// so older attempts are loaded by asking for a longer list.
+const HISTORY_PAGE = 100;
+const HISTORY_MAX = 1000;
+
 const DatasetImportMetrics = (props) => {
   const {
     match,
@@ -73,10 +78,14 @@ const DatasetImportMetrics = (props) => {
   const [releasesByAttempt, setReleasesByAttempt] = useState({});
 
   const timerRef = useRef(null);
+  // A ref, not state: the polling timer calls getHistory from a stale closure.
+  const historyLimitRef = useRef(HISTORY_PAGE);
+  const [hasMoreHistory, setHasMoreHistory] = useState(false);
 
   const getHistory = () => {
+    const limit = historyLimitRef.current;
     // no status filter - we want every attempt, running ones included
-    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=100`)
+    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=${limit}`)
       .then((res) => {
         return Promise.all(
           res.data.map((hist) =>
@@ -88,6 +97,7 @@ const DatasetImportMetrics = (props) => {
         const newHasImportDiff =
           res.data.filter((e) => e.status === "finished").length > 0;
         setImportHistory(res.data);
+        setHasMoreHistory(res.data.length === limit && limit < HISTORY_MAX);
         setHasImportDiff(newHasImportDiff);
         return res;
       })
@@ -145,6 +155,12 @@ const DatasetImportMetrics = (props) => {
       });
   };
 
+  // Start again with the first history page when switching datasets. Declared
+  // before the load below so it runs first.
+  useEffect(() => {
+    historyLimitRef.current = HISTORY_PAGE;
+  }, [datasetKey]);
+
   // Reload whenever the resolved dataset key (e.g. switching the project
   // source via the selector, where only match.params.sourceKey changes) or the
   // viewed attempt changes. datasetKey is datasetKey_ || sourceKey, so keying on
@@ -156,6 +172,14 @@ const DatasetImportMetrics = (props) => {
     }
     getData_(attempt);
   }, [datasetKey, attempt]);
+
+  const loadMoreHistory = () => {
+    historyLimitRef.current = Math.min(
+      historyLimitRef.current + HISTORY_PAGE,
+      HISTORY_MAX
+    );
+    getHistory();
+  };
 
   const isProject = dataset?.origin === "project";
 
@@ -250,6 +274,11 @@ const DatasetImportMetrics = (props) => {
             attempt={attempt}
             projectKey={projectKey}
           />
+          {hasMoreHistory && (
+            <Button block onClick={loadMoreHistory}>
+              Load older attempts
+            </Button>
+          )}
         </Drawer>
       )}
       {data && isRunning && (
