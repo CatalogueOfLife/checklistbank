@@ -964,21 +964,96 @@ const WorkBench = ({
         ]}
       />
 
-      <Row align="top">
+      <Row style={{ marginBottom: "8px" }}>
         <Col span={14}>
           {canEdit && (
-            <TextArea
-              style={{ marginBottom: "10px" }}
-              autoSize={{ minRows: noteFocused ? 4 : 1, maxRows: 10 }}
-              placeholder="Note (optional)"
-              value={decisionNote}
-              onFocus={() => setNoteFocused(true)}
-              onBlur={() => setNoteFocused(false)}
-              onChange={(evt) => setDecisionNote(evt.target.value)}
-            />
+            <div style={{ display: "flex", alignItems: "flex-end" }}>
+              {/* a grid, so the note spans exactly the width of the controls below */}
+              <div style={{ display: "inline-grid", rowGap: "10px" }}>
+                <TextArea
+                  autoSize={{ minRows: noteFocused ? 4 : 1, maxRows: 10 }}
+                  placeholder="Note (optional)"
+                  value={decisionNote}
+                  onFocus={() => setNoteFocused(true)}
+                  onBlur={() => setNoteFocused(false)}
+                  onChange={(evt) => setDecisionNote(evt.target.value)}
+                />
+                <div style={{ display: "flex" }}>
+                  <Select
+                    style={{ width: 200, marginRight: 10 }}
+                    value={decision ?? undefined}
+                    onChange={onDecisionChange}
+                    allowClear
+                    showSearch
+                    placeholder="Decision"
+                    options={[
+                      { value: "update", label: "Update" },
+                      {
+                        label: "General",
+                        options: [
+                          { value: "block", label: "Block" },
+                          { value: "ignore", label: "Ignore" },
+                          { value: "reviewed", label: "Reviewed" },
+                        ],
+                      },
+                      {
+                        label: "Status",
+                        options: taxonomicstatus.map((s) => ({ value: s, label: _.startCase(s) })),
+                      },
+                      {
+                        label: "Name type",
+                        options: nametype.map((t) => ({ value: t, label: _.startCase(t) })),
+                      },
+                      /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
+                    ]}
+                  />
+                  <Button
+                    type="primary"
+                    onClick={() => applyDecision()}
+                    disabled={!hasSelected || !decision}
+                    loading={loading}
+                    style={{ marginRight: 10 }}
+                  >
+                    Apply decision
+                  </Button>
+                  <Popconfirm
+                    title={`Delete the decisions of ${selectedRowKeys.length} selected ${
+                      selectedRowKeys.length > 1 ? "names" : "name"
+                    }?`}
+                    okText="Delete"
+                    okButtonProps={{ danger: true }}
+                    onConfirm={deleteDecisions}
+                    disabled={!hasSelected}
+                  >
+                    <Button
+                      type="primary"
+                      danger
+                      disabled={!hasSelected}
+                      loading={loading}
+                    >
+                      Delete
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </div>
+              <span style={{ marginLeft: 10, marginBottom: 5 }}>
+                {hasSelected &&
+                  `Selected ${selectedRowKeys.length} ${
+                    selectedRowKeys.length > 1 ? "taxa" : "taxon"
+                  }`}
+              </span>
+            </div>
           )}
         </Col>
-        <Col span={10} style={{ textAlign: "right" }}>
+        <Col
+          span={10}
+          style={{
+            textAlign: "right",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
           <FormItem
             style={{
               marginLeft: "10px",
@@ -1007,89 +1082,18 @@ const WorkBench = ({
               <Radio value={undefined}>All</Radio>
             </RadioGroup>
           </FormItem>
-        </Col>
-      </Row>
-      <Row>
-        {canEdit && (
-          <Col span={16} style={{ textAlign: "left", marginBottom: "8px" }}>
-            <Select
-              style={{ width: 200, marginRight: 10 }}
-              value={decision ?? undefined}
-              onChange={onDecisionChange}
-              allowClear
-              showSearch
-              placeholder="Decision"
-              options={[
-                { value: "update", label: "Update" },
-                {
-                  label: "General",
-                  options: [
-                    { value: "block", label: "Block" },
-                    { value: "ignore", label: "Ignore" },
-                    { value: "reviewed", label: "Reviewed" },
-                  ],
-                },
-                {
-                  label: "Status",
-                  options: taxonomicstatus.map((s) => ({ value: s, label: _.startCase(s) })),
-                },
-                {
-                  label: "Name type",
-                  options: nametype.map((t) => ({ value: t, label: _.startCase(t) })),
-                },
-                /* { label: "Nom. status", options: [{ value: "chresonym", label: "Chresonym" }] } */
-              ]}
-            />
-            <Button
-              type="primary"
-              onClick={() => applyDecision()}
-              disabled={!hasSelected || !decision}
-              loading={loading}
-              style={{ marginRight: 10 }}
-            >
-              Apply decision
-            </Button>
-            <Popconfirm
-              title={`Delete the decisions of ${selectedRowKeys.length} selected ${
-                selectedRowKeys.length > 1 ? "names" : "name"
-              }?`}
-              okText="Delete"
-              okButtonProps={{ danger: true }}
-              onConfirm={deleteDecisions}
-              disabled={!hasSelected}
-            >
-              <Button
-                type="primary"
-                danger
-                disabled={!hasSelected}
-                loading={loading}
-                style={{ marginRight: 10 }}
-              >
-                Delete
-              </Button>
-            </Popconfirm>
-            <span>
-              {hasSelected &&
-                `Selected ${selectedRowKeys.length} ${
-                  selectedRowKeys.length > 1 ? "taxa" : "taxon"
-                }`}
-            </span>
-          </Col>
-        )}
-        <Col
-          span={!canEdit ? 24 : 8}
-          style={{ textAlign: "right", marginBottom: "8px" }}
-        >
-          {pagination &&
-            !isNaN(pagination.total) &&
-            `${(
-              (pagination.current - 1) * pagination.pageSize +
-              1
-            ).toLocaleString("en-GB")} - ${(
-              pagination.current * pagination.pageSize
-            ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
-              "en-GB"
-            )}`}
+          <div>
+            {pagination &&
+              !isNaN(pagination.total) &&
+              `${(
+                (pagination.current - 1) * pagination.pageSize +
+                1
+              ).toLocaleString("en-GB")} - ${(
+                pagination.current * pagination.pageSize
+              ).toLocaleString("en-GB")} of ${pagination.total.toLocaleString(
+                "en-GB"
+              )}`}
+          </div>
         </Col>
       </Row>
       {!error &&
