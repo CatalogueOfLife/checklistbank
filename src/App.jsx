@@ -289,6 +289,11 @@ const App = () => {
                 </PrivateRoute>
               }
             />
+            {/* a bare project link opens its metadata, like datasets do */}
+            <Route
+              path="/project/:projectKey"
+              element={<Navigate to="metadata" replace />}
+            />
             <Route
               path="/project/:projectKey/editors"
               element={
