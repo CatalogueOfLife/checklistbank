@@ -29,6 +29,20 @@ describe("toFlatRow", () => {
     expect(after("basionymSanctioningAuthor")).toBe("basionymAnonymous");
   });
 
+  it("has an in authors column per authorship, after its ex authors", () => {
+    const r = row({
+      combinationAuthorship: { authors: ["Brown"], inAuthors: ["Miller"] },
+      basionymAuthorship: { authors: ["Smith"], inAuthors: ["Jones", "Doe"] },
+    });
+    expect(r.combinationInAuthorship).toBe("Miller");
+    expect(r.basionymInAuthorship).toBe("Jones|Doe");
+    expect(row({}).combinationInAuthorship).toBe("");
+    const keys = Object.keys(r);
+    const after = (k) => keys[keys.indexOf(k) + 1];
+    expect(after("combinationExAuthorship")).toBe("combinationInAuthorship");
+    expect(after("basionymExAuthorship")).toBe("basionymInAuthorship");
+  });
+
   it("takes the sanctioning author of older parsers from the name for the combination", () => {
     const r = row({
       combinationAuthorship: { authors: ["Bull."] },
