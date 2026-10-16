@@ -48,10 +48,8 @@ const DatasetPage = (props) => {
       axios(`${config.dataApi}dataset/${key}/import?status=finished`),
     ])
       .then((res) => {
-        const state = _.get(res[0], "data[0]") || null;
-        const hasData = res[1].data.length > 0;
-        setLastImport(state);
-        setLastSuccesFullImport(hasData ? _.get(res, "[1].data[0]") : null);
+        setLastImport(_.get(res[0], "data.result[0]") || null);
+        setLastSuccesFullImport(_.get(res[1], "data.result[0]") || null);
         setAccess("ok");
       })
       .catch((err) => {

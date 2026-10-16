@@ -12,6 +12,8 @@ import qs from "query-string";
 import Menu from "../../DatasetImportMetrics/Menu";
 import withContext from "../../../components/hoc/withContext";
 
+const HISTORY_PAGE = 1000;
+
 const attemptsParamIsSetAndValid = (attempts, onError) => {
   if (attempts) {
     const splitted = attempts.split("..");
@@ -68,14 +70,24 @@ const DatasetDiff = ({ datasetKey, location, dataset, addError }) => {
       });
   };
 
+  // Every finished attempt, a page at a time - a page holds at most 1000.
+  const getFinished = (offset = 0, finished = []) =>
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/import?status=finished&offset=${offset}&limit=${HISTORY_PAGE}`
+    ).then((res) => {
+      const page = res.data.result || [];
+      const all = finished.concat(page);
+      return page.length === HISTORY_PAGE && all.length < res.data.total
+        ? getFinished(offset + page.length, all)
+        : all;
+    });
+
   const getHistory = () => {
-    return axios(
-      `${config.dataApi}dataset/${datasetKey}/import?state=finished&limit=1000`
-    )
-      .then((res) => {
-        const history_ = res.data.filter((e) => e.status === "finished");
+    return getFinished()
+      .then((history_) => {
         setImportHistory(history_);
-        if (history_.length === 1) {
+        // nothing to compare - getData waits for ?attempts, which needs two
+        if (history_.length < 2) {
           setLoading(false);
           setOnlyOneImport(true);
         }

@@ -24,10 +24,10 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, import
       if (!datasetKey) return;
       let canceled = false;
       axios(
-        `${config.dataApi}dataset/${datasetKey}/import?status=finished&limit=2`
+        `${config.dataApi}dataset/${datasetKey}/import?status=finished&limit=0`
       )
         .then((res) => {
-          if (!canceled) setFinishedImports(res.data.length);
+          if (!canceled) setFinishedImports(res.data.total || 0);
         })
         .catch(() => {
           if (!canceled) setFinishedImports(0);

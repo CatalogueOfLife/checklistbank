@@ -27,10 +27,27 @@ import { isLive } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
-// The import list has no offset, only a limit capped at 1000 (Page.MAX_LIMIT),
-// so older attempts are loaded by asking for a longer list.
+// The import history is paged by offset. While an import runs only the first
+// page is refetched, so pages are merged by attempt number, which orders them.
 const HISTORY_PAGE = 100;
-const HISTORY_MAX = 1000;
+
+// Keeps the newer attempts and appends the older ones they do not cover yet.
+// Attempts of another dataset, left over from before switching, are dropped.
+const mergeHistory = (newer, older) => {
+  if (!newer.length) return newer;
+  const key = newer[0].datasetKey;
+  const oldest = _.last(newer).attempt;
+  return newer.concat(
+    (older || []).filter((h) => h.datasetKey === key && h.attempt < oldest)
+  );
+};
+
+const addUsers = (imports) =>
+  Promise.all(
+    imports.map((hist) =>
+      userLoader.load(hist.createdBy).then((user_) => (hist.user = user_))
+    )
+  );
 
 const DatasetImportMetrics = (props) => {
   const {
@@ -42,6 +59,7 @@ const DatasetImportMetrics = (props) => {
     projectKey,
     location,
     history: routerHistory,
+    addError,
   } = props;
 
   const attempt = _.get(match, "params.taxonOrNameKey");
@@ -78,32 +96,46 @@ const DatasetImportMetrics = (props) => {
   const [releasesByAttempt, setReleasesByAttempt] = useState({});
 
   const timerRef = useRef(null);
-  // A ref, not state: the polling timer calls getHistory from a stale closure.
-  const historyLimitRef = useRef(HISTORY_PAGE);
-  const [hasMoreHistory, setHasMoreHistory] = useState(false);
+  const [historyTotal, setHistoryTotal] = useState(0);
+  const hasMoreHistory =
+    !!importHistory && importHistory.length < historyTotal;
 
+  // The newest page of the history. The polling timer calls this from a stale
+  // closure, so it merges into the history through the state updater.
   const getHistory = () => {
-    const limit = historyLimitRef.current;
     // no status filter - we want every attempt, running ones included
-    return axios(`${config.dataApi}dataset/${datasetKey}/import?limit=${limit}`)
+    return axios(
+      `${config.dataApi}dataset/${datasetKey}/import?limit=${HISTORY_PAGE}`
+    )
       .then((res) => {
-        return Promise.all(
-          res.data.map((hist) =>
-            userLoader.load(hist.createdBy).then((user_) => (hist.user = user_))
-          )
-        ).then(() => res);
-      })
-      .then((res) => {
-        const newHasImportDiff =
-          res.data.filter((e) => e.status === "finished").length > 0;
-        setImportHistory(res.data);
-        setHasMoreHistory(res.data.length === limit && limit < HISTORY_MAX);
-        setHasImportDiff(newHasImportDiff);
-        return res;
+        const page = res.data.result || [];
+        return addUsers(page).then(() => {
+          setImportHistory((prev) => mergeHistory(page, prev));
+          setHistoryTotal(res.data.total);
+          setHasImportDiff(page.some((e) => e.status === "finished"));
+          return res;
+        });
       })
       .catch((err) => {
         setImportHistory(null);
       });
+  };
+
+  const loadMoreHistory = () => {
+    // One attempt of overlap: an import of unchanged data deletes its own
+    // attempt, which moves every older attempt one offset down.
+    const offset = Math.max(importHistory.length - 1, 0);
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/import?offset=${offset}&limit=${HISTORY_PAGE}`
+    )
+      .then((res) => {
+        const page = res.data.result || [];
+        return addUsers(page).then(() => {
+          setImportHistory((prev) => mergeHistory(prev || [], page));
+          setHistoryTotal(res.data.total);
+        });
+      })
+      .catch(addError);
   };
 
   const getData_ = (currentAttempt) => {
@@ -113,8 +145,8 @@ const DatasetImportMetrics = (props) => {
       : `${config.dataApi}dataset/${datasetKey}/import?limit=1`;
     axios(uri)
       .then((res) => {
-        const d = currentAttempt ? res.data : res.data[0];
-        // A dataset that has never been imported answers with an empty list.
+        const d = currentAttempt ? res.data : _.get(res, "data.result[0]");
+        // A dataset that has never been imported answers with an empty page.
         // Reading createdBy off that threw, so the page showed the raw
         // TypeError instead of the "never been imported" notice below.
         if (!d) return null;
@@ -155,12 +187,6 @@ const DatasetImportMetrics = (props) => {
       });
   };
 
-  // Start again with the first history page when switching datasets. Declared
-  // before the load below so it runs first.
-  useEffect(() => {
-    historyLimitRef.current = HISTORY_PAGE;
-  }, [datasetKey]);
-
   // Reload whenever the resolved dataset key (e.g. switching the project
   // source via the selector, where only match.params.sourceKey changes) or the
   // viewed attempt changes. datasetKey is datasetKey_ || sourceKey, so keying on
@@ -172,14 +198,6 @@ const DatasetImportMetrics = (props) => {
     }
     getData_(attempt);
   }, [datasetKey, attempt]);
-
-  const loadMoreHistory = () => {
-    historyLimitRef.current = Math.min(
-      historyLimitRef.current + HISTORY_PAGE,
-      HISTORY_MAX
-    );
-    getHistory();
-  };
 
   const isProject = dataset?.origin === "project";
 
@@ -386,10 +404,11 @@ const DatasetImportMetrics = (props) => {
   );
 };
 
-const mapContextToProps = ({ user, dataset, projectKey }) => ({
+const mapContextToProps = ({ user, dataset, projectKey, addError }) => ({
   user,
   dataset,
   projectKey,
+  addError,
 });
 
 export default withContext(mapContextToProps)(withRouter(DatasetImportMetrics));

@@ -42,7 +42,7 @@ const VerbatimRecord = (props) => {
       `${config.dataApi}dataset/${datasetKey}/import?limit=1&status=finished`
     )
       .then((res) => {
-        const issuesCount = _.get(res, "data[0].issuesCount", {});
+        const issuesCount = _.get(res, "data.result[0].issuesCount", {});
         const newIssues = Object.keys(issuesCount).map((k) => ({
           label: `${k} (${issuesCount[k]})`,
           value: k,

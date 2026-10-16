@@ -85,11 +85,11 @@ const DatasetIssues = (props) => {
   const getData = () => {
     setLoading(true);
     axios(
-      `${config.dataApi}dataset/${datasetKey}/import?limit=3&status=finished`
+      `${config.dataApi}dataset/${datasetKey}/import?limit=1&status=finished`
     )
       .then((res) => {
         let tableData = [];
-        _.each(_.get(res, "data[0].issuesCount"), (v, k) => {
+        _.each(_.get(res, "data.result[0].issuesCount"), (v, k) => {
           tableData.push({
             title: k,
             count: v,

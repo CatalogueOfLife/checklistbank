@@ -128,12 +128,13 @@ const ImportTimeline = ({ datasetKey, addError, dataset }) => {
       `${config.dataApi}dataset/${datasetKey}/import?limit=250&status=finished`
     )
       .then((res) => {
-        const newGroups = Object.keys(res.data[0]).filter(
-          (key) => typeof res.data[0][key] === "object"
+        const imports = res.data.result || [];
+        const newGroups = Object.keys(imports[0]).filter(
+          (key) => typeof imports[0][key] === "object"
         );
-        const reversed = res.data.reverse();
+        const reversed = imports.reverse();
         let newTimestampToAttemptMap = {};
-        res.data.forEach((i) => {
+        imports.forEach((i) => {
           newTimestampToAttemptMap[parseTime(i.finished).valueOf()] = i.attempt;
         });
 

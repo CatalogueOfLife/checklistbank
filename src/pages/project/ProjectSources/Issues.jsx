@@ -39,7 +39,7 @@ const GSDIssuesMatrix = ({ match, issue, issueMap, project }) => {
                   `${config.dataApi}dataset/${r.key}/import?limit=1`
                 ).then((imp) => ({
                   ...r,
-                  issues: _.get(imp, "data[0].issuesCount"),
+                  issues: _.get(imp, "data.result[0].issuesCount"),
                 }));
               })
         );

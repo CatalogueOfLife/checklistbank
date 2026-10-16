@@ -360,7 +360,7 @@ Please read the [reconciliation guide](reconciliation) for details.
 
 A few more resources that are worth knowing about:
 
-- `/dataset/{key}/import`: the metrics of the imports of a dataset, or of the releases of a project, e.g. https://api.checklistbank.org/dataset/3LR/import?limit=1
+- `/dataset/{key}/import`: the metrics of the imports of a dataset, or of the releases of a project, newest first as a result page that by default holds only the latest one (`limit=1`, paged by `offset`), e.g. https://api.checklistbank.org/dataset/3LR/import
 - `/dataset/{key}/source`: the source datasets of a project or release, e.g. https://api.checklistbank.org/dataset/3LR/source
 - `/dataset/{key}/sector` and `/dataset/{key}/decision`: the [sectors and decisions](projects) of a project or release, e.g. https://api.checklistbank.org/dataset/3LR/sector
 - `/dataset/{key}/diff/{key2}`: a diff of the names of two datasets, as used by the [dataset comparison](/tools/dataset-comparison)

@@ -12,7 +12,7 @@ import { compareIssues } from "./issues";
 // release points at - asking the release for its import returns exactly that.
 const getIssues = (key) =>
   axios(`${config.dataApi}dataset/${key}/import?limit=1`).then((res) =>
-    _.get(res, "data[0].issuesCount")
+    _.get(res, "data.result[0].issuesCount")
   );
 
 const countLink = (key, issue, count) => {
