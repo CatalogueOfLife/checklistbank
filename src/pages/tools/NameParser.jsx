@@ -145,12 +145,11 @@ export const toFlatRow = (n) => {
 
 // --- native parser results ---------------------------------------------------
 // parser/name/native returns the raw GBIF name parser result. Its "result"
-// property tells the three variants apart, and all of them carry a "label":
-//   parsed     {name: {...parsed name}}
-//   informal   {taxon, taxonRank, rank, phrase}
+// property tells the two variants apart, and both carry a "label":
+//   parsed     {name: {...parsed name}}, informal names included (type informal)
 //   unparsable {type, name: verbatim string}
 
-// Flattens any of the three native result variants into the table's fields.
+// Flattens either native result variant into the table's fields.
 export const nativeView = (res) => {
   switch (res?.result) {
     case "parsed": {
@@ -162,8 +161,6 @@ export const nativeView = (res) => {
         warnings: n.warnings || [],
       };
     }
-    case "informal":
-      return { rank: res.rank, warnings: [] };
     case "unparsable":
       return { type: res.type, warnings: [] };
     default:
@@ -173,7 +170,6 @@ export const nativeView = (res) => {
 
 const NATIVE_RESULT_COLOR = {
   parsed: "green",
-  informal: "blue",
   unparsable: "orange",
 };
 

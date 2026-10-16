@@ -61,16 +61,23 @@ describe("nativeView", () => {
     });
   });
 
-  it("takes the rank of an informal name", () => {
+  it("takes the type and rank of an informal name", () => {
     const v = nativeView({
-      result: "informal",
+      result: "parsed",
       label: "Rhizobium sp. RMCC TR1811",
-      taxon: "Rhizobium",
-      taxonRank: "genus",
-      rank: "species",
-      phrase: "sp. RMCC TR1811",
+      name: {
+        genus: "Rhizobium",
+        phrase: "sp. RMCC TR1811",
+        rank: "species",
+        type: "informal",
+      },
     });
-    expect(v).toEqual({ rank: "species", warnings: [] });
+    expect(v).toEqual({
+      type: "informal",
+      rank: "species",
+      code: undefined,
+      warnings: [],
+    });
   });
 
   it("takes the type of an unparsable name", () => {

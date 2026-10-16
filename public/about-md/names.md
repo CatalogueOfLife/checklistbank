@@ -28,29 +28,25 @@ scientific name.
 ### Informal names
 
 An informal name is only semistructured: it cannot be parsed completely, but it always starts with a real taxon it
-hangs off - a genus or a higher uninomial, the **anchor taxon**. A name without such an anchor is no informal name,
-e.g. a BOLD BIN is an `IDENTIFIER`. There are two kinds:
+hangs off, the **anchor taxon**. A name without such an anchor is no informal name, e.g. a BOLD BIN is an `IDENTIFIER`.
+Informal names are an open nomenclature qualifier (`Abies cf. alba`, `Abies aff. alba Mill.`), an abbreviated genus
+(`A. alba`), an indetermined species (`Abies sp.`), a numbered placeholder (`Allium sp. 1`), a molecular provisional
+species (`Rhizobium sp. RMCC TR1811`), a phrase name for an undescribed taxon (`Pultenaea sp. 'Olinda' (Coveny 6616)`,
+`Acacia mutabilis Maslin subsp. Young River (G.F. Craig 2052)`) or an informal group (`Bartonella group`).
 
-- **With a species epithet** the name is parsed like a scientific name, keeps all its parts including the authorship,
-  and is only typed `INFORMAL`: `Abies cf. alba`, `Abies aff. alba Mill.`, `A. alba` or a phrase name below a species
-  like `Acacia mutabilis Maslin subsp. Young River (G.F. Craig 2052)`.
-- **Without a species epithet** the name is just the anchor taxon followed by a provisional designation instead of a
-  determined epithet: an indetermined species (`Abies sp.`), a numbered placeholder (`Allium sp. 1`), a molecular
-  provisional species (`Rhizobium sp. RMCC TR1811`), a phrase name (`Pultenaea sp. 'Olinda' (Coveny 6616)`) or an
-  informal group (`Bartonella group`).
-
-The second kind is kept flat as
+Every informal name is parsed into its parts like a scientific name and typed `INFORMAL`:
 
 | part | | example |
 |---|---|---|
-| anchor taxon | The supraspecific taxon the name hangs off, in `genus` for a genus or in `uninomial` for a higher taxon. It is the parser's best guess and not checked against any taxonomy. | `Rhizobium`, `Ichneumonidae` |
-| rank | The rank the informal name claims to have: species for `sp.`, unranked for a group. | species |
-| phrase | The verbatim rest of the name, from the rank marker to its end, in `unparsed`. | `sp. RMCC TR1811`, `sp. 1`, `group` |
+| anchor taxon | The deepest determined part of the name, in the usual name fields: a genus or a higher uninomial, a subgenus or a species. It is the parser's best guess and not checked against any taxonomy. | `Rhizobium` in `Rhizobium sp. RMCC TR1811`, `Lasioglossum (Dialictus)` in `Lasioglossum (Dialictus) sp. 1`, `Grevillea brachystylis` in `Grevillea brachystylis subsp. Busselton (G.J.Keighery s.n. 28/8/1985)` |
+| rank | The rank the informal name claims to have: species for `sp.`, subspecies for `subsp.`, unranked for a group. | species |
+| phrase | The verbatim provisional designation, from the rank marker to the end of the name, in `unparsed`. | `sp. RMCC TR1811`, `sp. 1`, `group` |
 
 The anchor taxon and the phrase together reproduce the name exactly as given. Nothing in the phrase is interpreted,
 not even what looks like an author citation: in `Ichneumonidae sp. Forster, 1968` the parser cannot tell a citation
 from a specimen or culture code, and a real citation would belong to the anchor taxon rather than to the undetermined
-species. Informal names of species rank or below are flagged `INDETERMINED`.
+species. A name whose determined parts fall short of its rank is flagged `INDETERMINED`: `Abies sp.` and the
+`Grevillea` subspecies above, but not a qualified name like `Abies cf. alba`.
 
 ## The name
 
@@ -58,7 +54,7 @@ species. Informal names of species rank or below are flagged `INDETERMINED`.
 |---|---|
 | `id` | The identifier of the name given by the dataset, unique within the dataset only. |
 | `scientificName` | The name without its authorship, see [below](#scientific-name-authorship-and-label). |
-| `authorship` | The full authorship: basionym and combination authors, ex and sanctioning authors, years. |
+| `authorship` | The full authorship: basionym and combination authors, ex, in and sanctioning authors, years. |
 | `label` | The scientific name with its authorship, read only. |
 | `rank` | The rank, from a [list of ranks](https://api.checklistbank.org/vocab/rank). |
 | `type` | The name type, see above. |
@@ -96,6 +92,7 @@ An authorship, the combination or the basionym one, holds:
 | `imprintYear` | A year printed on the work that differs from its actual publication year, written in brackets after the year. |
 | `sanctioningAuthor` | The author who sanctioned a fungal name: `Fr.` or `Pers.` |
 | `anonymous` | An anonymous work, `Anon.`, or one whose authors are known from elsewhere only and given in brackets. |
+| `inAuthors` | The authors of the work the name was published in, after an *in*: `Natterer in Kuhl, 1817` has the author `Natterer` and the in author `Kuhl`. A citation that is a reference rather than an author team, like `Mill. in Gard. Dict. ed. 8`, has no in authors. |
 
 ### Scientific name, authorship and label
 
@@ -346,10 +343,8 @@ The name parser gets the scientific name - as given, or rebuilt from the atoms -
 the rank and the code known so far. It parses both in one go, so that the authorship can tell it the code and the name
 can tell it how to read the authorship. The result is one of:
 
-- a **parsed name** with its parts, for scientific names and for informal names with a species epithet, e.g.
-  `Abies cf. alba`;
-- an **informal name** without a species epithet, like `Abies sp.`, `Rhizobium sp. RMCC TR1811` or
-  `Bartonella group`: only the anchor taxon, the rank and the verbatim phrase, see [informal names](#informal-names);
+- a **parsed name** with its parts, a scientific name or an [informal name](#informal-names) like `Abies cf. alba`,
+  `Abies sp.`, `Rhizobium sp. RMCC TR1811` or `Bartonella group`;
 - an **unparsable name** - a virus, a hybrid formula, a placeholder, an identifier or anything else - which keeps its
   scientific name as given, with its name type and, for viruses, the virus code.
 
@@ -413,7 +408,7 @@ Notes in an authorship are moved out of it:
 | nomenclatural note | `nom. illeg.`, `nom. nud.`, `ined.` | the nomenclatural status of the name, flagged `AUTHORSHIP_CONTAINS_NOMENCLATURAL_NOTE` |
 | taxonomic note | `sensu lato`, `sensu Smith 1999`, `non Hampson 1906`, `auct.` | the taxon or synonym, see [taxa and synonyms](#10-taxa-and-synonyms) |
 | original spelling | `[sic]`, `corrig.` | the original spelling flag of the name |
-| publication | `Smith in Jones, 1900` | the published in reference of the name |
+| publication | `Smith in Jones, 1900` | the published in reference of the name. An author team after `in` also stays in the authorship as its [in authors](#authorship) |
 
 ### 9. Nomenclatural status and year
 
