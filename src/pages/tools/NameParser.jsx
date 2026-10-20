@@ -139,6 +139,8 @@ export const toFlatRow = (n) => {
     infraspecificEpithet: r.infraspecificEpithet ?? "",
     cultivarEpithet: r.cultivarEpithet ?? "",
     code: r.code ?? "",
+    // name-parser 6 flags a graft-chimaera instead of giving it a generic notho
+    graftChimaera: !!r.graftChimaera,
     notho: r.notho ?? "",
     unparsed: r.unparsed ?? "",
     issues: (r.issues || []).join("; "),

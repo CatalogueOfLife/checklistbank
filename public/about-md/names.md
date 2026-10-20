@@ -67,6 +67,7 @@ species. A name whose determined parts fall short of its rank is flagged `INDETE
 | `cultivarEpithet` | The cultivar or cultivar group epithet. |
 | `unparsed` | Whatever the parser could not make sense of, or the phrase of an informal name. |
 | `candidatus` | A *Candidatus* name, a provisional status of incompletely described prokaryotes. |
+| `graftChimaera` | A graft-chimaera, tissue of two genera grown together at a graft rather than a hybrid of them: `+ Crataegomespilus`. It has no notho. |
 | `notho` | The part of a named hybrid that is the hybrid: generic, infrageneric, specific or infraspecific. |
 | `combinationAuthorship` | The [authorship](#authorship) of the name, excluding the basionym authorship. |
 | `basionymAuthorship` | The [authorship](#authorship) of the basionym, the bracketed part. |
@@ -98,9 +99,9 @@ An authorship, the combination or the basionym one, holds:
 
 The **scientific name** of a parsed name is written from its parts: the uninomial, or the genus with its epithets, rank
 markers where the code uses them - `subsp.`, `var.` and `f.` in botany, none for a zoological subspecies - the hybrid
-sign `×`, `"Candidatus …"` in double quotes, a cultivar epithet in single quotes (or followed by `Group` or `gx` for
-a cultivar group or grex), `sp.` for an indetermined name, and finally any unparsed rest. An unparsable name keeps its
-scientific name as given.
+sign `×`, the plus sign `+` before the genus of a graft-chimaera, `"Candidatus …"` in double quotes, a cultivar
+epithet in single quotes (or followed by `Group` or `gx` for a cultivar group or grex), `sp.` for an indetermined name,
+and finally any unparsed rest. An unparsable name keeps its scientific name as given.
 
 The **authorship** is written from its parsed authors when it came inside the scientific name or from ColDP author
 atoms; an authorship given in a column of its own is kept as given, cleaned up (see [authorship](#8-authorship)).
@@ -175,7 +176,7 @@ The canonical name is assembled from the parsed parts of a name:
 - an infrageneric name is reduced to its epithet: _Abies_ sect. _Grandis_ → `Grandis`.
   Sections of the same name in different genera therefore share one entry, see https://api.checklistbank.org/nidx/24727
 
-Authorship, rank markers, hybrid signs, the _Candidatus_ prefix, a subgenus given in a binomial, qualifiers like _cf._ or _aff._
+Authorship, rank markers, hybrid and graft-chimaera signs, the _Candidatus_ prefix, a subgenus given in a binomial, qualifiers like _cf._ or _aff._
 and any unparsed remainder of the name are dropped.
 _Abies cf. alba_, _Abies aff. alba_ and _Abies alba_ Mill. all share one entry, and so do _Quercus_ × _rosacea_ and _Quercus rosacea_.
 

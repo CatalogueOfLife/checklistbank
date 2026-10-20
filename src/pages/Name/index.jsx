@@ -282,6 +282,9 @@ const NamePage = ({
               <PresentationItem md={md} label="Candidatus">
                 <BooleanValue value={name.candidatus} />
               </PresentationItem>
+              <PresentationItem md={md} label="Graft-chimaera">
+                <BooleanValue value={name.graftChimaera} />
+              </PresentationItem>
               <PresentationItem md={md} label="Notho">
                 {name.notho}
               </PresentationItem>

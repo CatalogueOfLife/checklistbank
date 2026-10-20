@@ -43,6 +43,15 @@ describe("toFlatRow", () => {
     expect(after("basionymExAuthorship")).toBe("basionymInAuthorship");
   });
 
+  it("has a graft-chimaera column before notho", () => {
+    const r = row({ uninomial: "Crataegomespilus", graftChimaera: true });
+    expect(r.graftChimaera).toBe(true);
+    expect(r.notho).toBe("");
+    expect(row({}).graftChimaera).toBe(false);
+    const keys = Object.keys(r);
+    expect(keys[keys.indexOf("graftChimaera") + 1]).toBe("notho");
+  });
+
   it("takes the sanctioning author of older parsers from the name for the combination", () => {
     const r = row({
       combinationAuthorship: { authors: ["Bull."] },
