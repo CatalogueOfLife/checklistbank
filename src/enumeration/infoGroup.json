@@ -25,5 +25,8 @@
   },
   {
     "name": "gender"
+  },
+  {
+    "name": "environment"
   }
 ]

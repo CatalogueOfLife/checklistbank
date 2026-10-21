@@ -96,5 +96,17 @@
     "name": "chresonym",
     "zoological": "chresonym",
     "zoologicalLabel": "chresonym"
+  },
+  {
+    "abbreviated": "orth. var.",
+    "abbreviatedLabel": "orth. var.",
+    "available": false,
+    "botanical": "orthographic variant",
+    "botanicalLabel": "orthographic variant",
+    "legitimate": false,
+    "name": "orthographic variant",
+    "parent": "not established",
+    "zoological": "incorrect spelling",
+    "zoologicalLabel": "incorrect spelling"
   }
 ]

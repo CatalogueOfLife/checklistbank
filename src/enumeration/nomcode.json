@@ -2,14 +2,14 @@
   {
     "abbrev": "P",
     "acronym": "ICNP",
-    "link": "https://doi.org/10.1099/ijsem.0.005585",
+    "link": "https://doi.org/10.1099/ijsem.0.006979",
     "name": "bacterial",
     "title": "International Code of Nomenclature of Prokaryotes"
   },
   {
     "abbrev": "B",
     "acronym": "ICN",
-    "link": "https://www.iapt-taxon.org/nomen/main.php",
+    "link": "https://doi.org/10.7208/chicago/9780226839479.001.0001",
     "name": "botanical",
     "title": "International Code of Nomenclature for algae, fungi, and plants"
   },
@@ -44,7 +44,7 @@
   {
     "abbrev": "Y",
     "acronym": "ICPN",
-    "link": "http://phylonames.org/code/",
+    "link": "https://doi.org/10.1201/9780429446320",
     "name": "phylo",
     "title": "International Code of Phylogenetic Nomenclature (PhyloCode)"
   }

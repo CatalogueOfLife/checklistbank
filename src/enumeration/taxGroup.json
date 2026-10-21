@@ -4,8 +4,11 @@
       "virus"
     ],
     "description": "Viruses",
-    "icon": "https://images.phylopic.org/images/6dba8988-8a64-4c10-8934-77d5880dc21c/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/6dba8988-8a64-4c10-8934-77d5880dc21c/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Viruses/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Viruses/icon.svg",
+    "iconTaxa": [
+      "Orthoflavivirus flavi"
+    ],
     "name": "viruses",
     "other": false,
     "phylopic": "6dba8988-8a64-4c10-8934-77d5880dc21c"
@@ -15,19 +18,25 @@
       "bacterial"
     ],
     "description": "Prokaryota",
-    "icon": "https://images.phylopic.org/images/680e6e45-3e3a-4e4b-b679-9bf2ae9091ab/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/680e6e45-3e3a-4e4b-b679-9bf2ae9091ab/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Prokaryotes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Prokaryotes/icon.svg",
+    "iconTaxa": [
+      "Salmonella enterica"
+    ],
     "name": "prokaryotes",
     "other": false,
-    "phylopic": "680e6e45-3e3a-4e4b-b679-9bf2ae9091ab"
+    "phylopic": "0698c39f-9ab0-44e0-ba70-2faefaf22216"
   },
   {
     "codes": [
       "bacterial"
     ],
     "description": "Bacteria including cyanobacteria",
-    "icon": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/7bd82403-a662-41bd-9710-cf095bea5809/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Bacteria/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Bacteria/icon.svg",
+    "iconTaxa": [
+      "Saprospiria"
+    ],
     "name": "bacteria",
     "other": false,
     "parents": [
@@ -41,8 +50,11 @@
       "bacterial"
     ],
     "description": "Archaea excluding the eukaryotes",
-    "icon": "https://images.phylopic.org/images/d979c5bd-f760-427d-bd23-7b8779bd1c8f/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/d979c5bd-f760-427d-bd23-7b8779bd1c8f/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Archaea/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Archaea/icon.svg",
+    "iconTaxa": [
+      "Thermococcus chitonophagus"
+    ],
     "name": "archaea",
     "other": false,
     "parents": [
@@ -57,11 +69,15 @@
       "botanical"
     ],
     "description": "Eukaryotes are divided into 4 groups only similar to Haeckels 4 kingdoms",
-    "icon": "https://images.phylopic.org/images/d878c432-0b0b-44f5-b1a1-12557b439c3f/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/d878c432-0b0b-44f5-b1a1-12557b439c3f/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Eukaryotes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Eukaryotes/icon.svg",
+    "iconTaxa": [
+      "Betula pendula",
+      "Boletus edulis",
+      "Cervus elaphus"
+    ],
     "name": "eukaryotes",
-    "other": false,
-    "phylopic": "d878c432-0b0b-44f5-b1a1-12557b439c3f"
+    "other": false
   },
   {
     "codes": [
@@ -69,10 +85,17 @@
       "botanical"
     ],
     "description": "Any eukaryote that is not animal, plant (incl algae s.l.) nor fungus. Includes all Protozoa (ciliates, flagellates, and amoebas), Foraminifera, Radiolaria",
-    "icon": "https://images.phylopic.org/images/5fccc7f9-60b8-4aea-96cf-ce93f85c9e90/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/5fccc7f9-60b8-4aea-96cf-ce93f85c9e90/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Protists/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Protists/icon.svg",
+    "iconTaxa": [
+      "Pterocorys"
+    ],
     "name": "protists",
     "other": false,
+    "overlaps": [
+      "Fungi",
+      "Animals"
+    ],
     "parents": [
       "eukaryotes"
     ],
@@ -84,10 +107,16 @@
       "botanical"
     ],
     "description": "Sensu lato incl red algae and Glaucophytes. Similar to Archaeplastida",
-    "icon": "https://images.phylopic.org/images/5c6ae9a1-1405-4f81-b4c1-c169faef475e/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/5c6ae9a1-1405-4f81-b4c1-c169faef475e/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Plants/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Plants/icon.svg",
+    "iconTaxa": [
+      "Betula pendula"
+    ],
     "name": "plants",
     "other": false,
+    "overlaps": [
+      "Fungi"
+    ],
     "parents": [
       "eukaryotes"
     ],
@@ -100,15 +129,18 @@
       "botanical"
     ],
     "description": "Sensu lato including names traditionally treated as eukaryotic algae. Includes diatoms, red algae and any protist algae, but excluding prokaryotic cyanobacteria",
-    "icon": "https://images.phylopic.org/images/65414989-e801-4d0e-acc1-4309cd35ab7e/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/65414989-e801-4d0e-acc1-4309cd35ab7e/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Algae/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Algae/icon.svg",
+    "iconTaxa": [
+      "Fucus vesiculosus"
+    ],
     "name": "algae",
     "other": false,
     "parents": [
       "plants",
       "protists"
     ],
-    "phylopic": "65414989-e801-4d0e-acc1-4309cd35ab7e",
+    "phylopic": "2bb3f2a4-1567-4a8e-bf33-16abb7f0c7c1",
     "primaryParent": "plants"
   },
   {
@@ -116,8 +148,11 @@
       "botanical"
     ],
     "description": "sensu lato incl liverworts, hornworts and mosses",
-    "icon": "https://images.phylopic.org/images/f4889f66-1904-479d-8a1f-f9449733c654/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/f4889f66-1904-479d-8a1f-f9449733c654/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Bryophytes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Bryophytes/icon.svg",
+    "iconTaxa": [
+      "Rosulabryum capillare"
+    ],
     "name": "bryophytes",
     "other": false,
     "parents": [
@@ -131,8 +166,11 @@
       "botanical"
     ],
     "description": "sensu lato with fern allies incl clubmosses, horsetails and whisk ferns",
-    "icon": "https://images.phylopic.org/images/ee243ea1-c311-4fa2-b730-928b80117515/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/ee243ea1-c311-4fa2-b730-928b80117515/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Pteridophytes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Pteridophytes/icon.svg",
+    "iconTaxa": [
+      "Polypodium vulgare"
+    ],
     "name": "pteridophytes",
     "other": false,
     "parents": [
@@ -146,14 +184,17 @@
       "botanical"
     ],
     "description": "Flowering plants, Magnoliophyta",
-    "icon": "https://images.phylopic.org/images/3e84c211-b5d1-4c4d-9749-9dbda2e73f89/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/3e84c211-b5d1-4c4d-9749-9dbda2e73f89/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Angiosperms/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Angiosperms/icon.svg",
+    "iconTaxa": [
+      "Tulipa"
+    ],
     "name": "angiosperms",
     "other": false,
     "parents": [
       "plants"
     ],
-    "phylopic": "3e84c211-b5d1-4c4d-9749-9dbda2e73f89",
+    "phylopic": "cc9f5826-afd9-480e-ad22-c9311de167c5",
     "primaryParent": "plants"
   },
   {
@@ -161,8 +202,11 @@
       "botanical"
     ],
     "description": "Seed plants including Cycads, Ginkgo, Gnetophytes and Conifers",
-    "icon": "https://images.phylopic.org/images/9b9d6b61-d571-4503-9107-50c54a2beedb/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/9b9d6b61-d571-4503-9107-50c54a2beedb/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Gymnosperms/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Gymnosperms/icon.svg",
+    "iconTaxa": [
+      "Pseudotsuga"
+    ],
     "name": "gymnosperms",
     "other": false,
     "parents": [
@@ -176,10 +220,17 @@
       "botanical"
     ],
     "description": "Includes lichen",
-    "icon": "https://images.phylopic.org/images/e5d32221-7ea9-46ed-8e0a-d9dbddab0b4a/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/e5d32221-7ea9-46ed-8e0a-d9dbddab0b4a/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Fungi/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Fungi/icon.svg",
+    "iconTaxa": [
+      "Boletus edulis"
+    ],
     "name": "fungi",
     "other": false,
+    "overlaps": [
+      "Protists",
+      "Plants"
+    ],
     "parents": [
       "eukaryotes"
     ],
@@ -191,8 +242,11 @@
       "botanical"
     ],
     "description": "Ascomycota",
-    "icon": "https://images.phylopic.org/images/7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/7ebbf05d-2084-4204-ad4c-2c0d6cbcdde1/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Ascomycetes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Ascomycetes/icon.svg",
+    "iconTaxa": [
+      "Aspergillus nidulans"
+    ],
     "name": "ascomycetes",
     "other": false,
     "parents": [
@@ -206,8 +260,11 @@
       "botanical"
     ],
     "description": "Basidiomycota",
-    "icon": "https://images.phylopic.org/images/237a0fb1-7b73-43ec-b0a5-eff95e7237df/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/237a0fb1-7b73-43ec-b0a5-eff95e7237df/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Basidiomycetes/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Basidiomycetes/icon.svg",
+    "iconTaxa": [
+      "Amanita muscaria"
+    ],
     "name": "basidiomycetes",
     "other": false,
     "parents": [
@@ -222,8 +279,11 @@
       "botanical"
     ],
     "description": "traditionally follows fungal nomenclature therefore placed here. Includes Oomycetes and Hyphochytriomycetes. Phylogenetically related to Algae and protists",
-    "icon": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/53b543aa-2a5e-4407-88cd-6acbb0b5c3f9/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Pseudofungi/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Pseudofungi/icon.svg",
+    "iconTaxa": [
+      "Bremia lactucae"
+    ],
     "name": "pseudofungi",
     "other": false,
     "parents": [
@@ -238,8 +298,11 @@
       "botanical"
     ],
     "description": "All other basal fungi not being Asco- or Basidiomycetes, e.g. Chytridiomycota (chytrids), Zygomycota (bread molds) and Glomeromycota (arbuscular mycorrhizal fungi)",
-    "icon": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/44c27c08-400f-4304-92b4-997fdd85ec4b/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/OtherFungi/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/OtherFungi/icon.svg",
+    "iconTaxa": [
+      "Glomeromycetes"
+    ],
     "name": "otherfungi",
     "other": true,
     "parents": [
@@ -253,14 +316,21 @@
       "zoological"
     ],
     "description": "Animalia",
-    "icon": "https://images.phylopic.org/images/a3dd3044-648c-4e45-93f0-21a156247132/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/a3dd3044-648c-4e45-93f0-21a156247132/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Animals/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Animals/icon.svg",
+    "iconTaxa": [
+      "Cantharis rustica",
+      "Salmo trutta",
+      "Helix pomatia"
+    ],
     "name": "animals",
     "other": false,
+    "overlaps": [
+      "Protists"
+    ],
     "parents": [
       "eukaryotes"
     ],
-    "phylopic": "a3dd3044-648c-4e45-93f0-21a156247132",
     "primaryParent": "eukaryotes"
   },
   {
@@ -268,8 +338,11 @@
       "zoological"
     ],
     "description": "Arthropoda",
-    "icon": "https://images.phylopic.org/images/83c995d5-0936-441b-8a27-089005086c61/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/83c995d5-0936-441b-8a27-089005086c61/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Arthropods/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Arthropods/icon.svg",
+    "iconTaxa": [
+      "Lithobius forficatus"
+    ],
     "name": "arthropods",
     "other": false,
     "parents": [
@@ -283,8 +356,11 @@
       "zoological"
     ],
     "description": "Insecta, the most diverse animal group",
-    "icon": "https://images.phylopic.org/images/b2e26249-80be-441b-8648-4c0361892ee0/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/b2e26249-80be-441b-8648-4c0361892ee0/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Insects/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Insects/icon.svg",
+    "iconTaxa": [
+      "Blattella germanica"
+    ],
     "name": "insects",
     "other": false,
     "parents": [
@@ -298,8 +374,11 @@
       "zoological"
     ],
     "description": "Beetles, e.g. Curculionidae (weevils), Carabidae (ground beetles) and Scarabaeidae (scarabs)",
-    "icon": "https://images.phylopic.org/images/35bb269c-5ff2-48c1-a002-a6bf8d9e8eef/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/35bb269c-5ff2-48c1-a002-a6bf8d9e8eef/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Coleoptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Coleoptera/icon.svg",
+    "iconTaxa": [
+      "Cantharis rustica"
+    ],
     "name": "coleoptera",
     "other": false,
     "parents": [
@@ -313,14 +392,17 @@
       "zoological"
     ],
     "description": "True flies incl Culicidae (mosquitoes), Tipulidae (crane flies) and Chironomidae (midges)",
-    "icon": "https://images.phylopic.org/images/fb360445-4c23-452e-b43d-34b42ce449dd/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/fb360445-4c23-452e-b43d-34b42ce449dd/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Diptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Diptera/icon.svg",
+    "iconTaxa": [
+      "Drosophila melanogaster"
+    ],
     "name": "diptera",
     "other": false,
     "parents": [
       "insects"
     ],
-    "phylopic": "fb360445-4c23-452e-b43d-34b42ce449dd",
+    "phylopic": "c5564abf-a920-4ee3-a6a1-02c4eca1a671",
     "primaryParent": "insects"
   },
   {
@@ -328,8 +410,11 @@
       "zoological"
     ],
     "description": "Butterflies and moths, e.g. Papilionoidea (butterflies), Sphingidae (hawk moths) and Noctuidae (owlet moths)",
-    "icon": "https://images.phylopic.org/images/a36477e3-5e2c-4e28-94f8-90b397212c3b/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/a36477e3-5e2c-4e28-94f8-90b397212c3b/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Lepidoptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Lepidoptera/icon.svg",
+    "iconTaxa": [
+      "Papilio glaucus"
+    ],
     "name": "lepidoptera",
     "other": false,
     "parents": [
@@ -343,8 +428,11 @@
       "zoological"
     ],
     "description": "Formicidae (ants), Anthophila (bees), Vespidae (wasps) and Symphyta (sawflies)",
-    "icon": "https://images.phylopic.org/images/b00b5230-a08a-4413-a9ed-f8b3e5f795b0/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/b00b5230-a08a-4413-a9ed-f8b3e5f795b0/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Hymenoptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Hymenoptera/icon.svg",
+    "iconTaxa": [
+      "Vespula alascensis"
+    ],
     "name": "hymenoptera",
     "other": false,
     "parents": [
@@ -358,8 +446,11 @@
       "zoological"
     ],
     "description": "True bugs incl Aphididae (aphids), Cicadidae (cicadas) and Pentatomidae (shield bugs)",
-    "icon": "https://images.phylopic.org/images/61e306a9-9b19-4c9a-ba10-7856bd096356/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/61e306a9-9b19-4c9a-ba10-7856bd096356/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Hemiptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Hemiptera/icon.svg",
+    "iconTaxa": [
+      "Oncopeltus fasciatus"
+    ],
     "name": "hemiptera",
     "other": false,
     "parents": [
@@ -373,8 +464,11 @@
       "zoological"
     ],
     "description": "Caelifera (grasshoppers and locusts) and Ensifera (crickets and katydids)",
-    "icon": "https://images.phylopic.org/images/e7ba011c-6172-47ca-84bf-0dfc87b47a32/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/e7ba011c-6172-47ca-84bf-0dfc87b47a32/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Orthoptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Orthoptera/icon.svg",
+    "iconTaxa": [
+      "Trimerotropis maritima"
+    ],
     "name": "orthoptera",
     "other": false,
     "parents": [
@@ -388,8 +482,11 @@
       "zoological"
     ],
     "description": "Caddisflies, e.g. Hydropsychidae (net-spinning caddisflies) and Limnephilidae (northern caddisflies)",
-    "icon": "https://images.phylopic.org/images/e1307c88-3e8f-4ba8-9f93-751df3deb739/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/e1307c88-3e8f-4ba8-9f93-751df3deb739/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Trichoptera/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Trichoptera/icon.svg",
+    "iconTaxa": [
+      "Brachycentridae"
+    ],
     "name": "trichoptera",
     "other": false,
     "parents": [
@@ -403,8 +500,11 @@
       "zoological"
     ],
     "description": "All other insects, e.g. Odonata (dragonflies), Blattodea (cockroaches and termites), Ephemeroptera (mayflies), Dermaptera (earwigs) and Neuroptera (lacewings)",
-    "icon": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/2894776f-a2cf-4475-b13d-6d8ea1607ea4/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/OtherInsects/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/OtherInsects/icon.svg",
+    "iconTaxa": [
+      "Libellulidae"
+    ],
     "name": "otherinsects",
     "other": true,
     "parents": [
@@ -418,8 +518,11 @@
       "zoological"
     ],
     "description": "Arachnida incl Araneae (spiders), Scorpiones (scorpions) and Acari (mites and ticks)",
-    "icon": "https://images.phylopic.org/images/95908e68-8d10-4f48-91a2-b0d7d85c4c2d/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/95908e68-8d10-4f48-91a2-b0d7d85c4c2d/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Arachnids/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Arachnids/icon.svg",
+    "iconTaxa": [
+      "Atrax sutherlandi"
+    ],
     "name": "arachnids",
     "other": false,
     "parents": [
@@ -433,8 +536,11 @@
       "zoological"
     ],
     "description": "Crustacea incl Decapoda (crabs, lobsters and shrimps), Cirripedia (barnacles) and Copepoda (copepods)",
-    "icon": "https://images.phylopic.org/images/a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/a8dc4f0a-5b17-4ed4-bc4a-8af69db73c16/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Crustacean/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Crustacean/icon.svg",
+    "iconTaxa": [
+      "Caridea"
+    ],
     "name": "crustacean",
     "other": false,
     "parents": [
@@ -448,8 +554,11 @@
       "zoological"
     ],
     "description": "All other arthropods, e.g. Myriapoda (centipedes and millipedes) and Pycnogonida (sea spiders)",
-    "icon": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/1d2c7cb7-4a62-4f4a-96ff-b62e225d6f91/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/OtherArthropods/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/OtherArthropods/icon.svg",
+    "iconTaxa": [
+      "Derocheilocaris"
+    ],
     "name": "otherarthropods",
     "other": true,
     "parents": [
@@ -463,8 +572,11 @@
       "zoological"
     ],
     "description": "Mollusca, soft-bodied invertebrates incl Gastropoda (snails), Bivalvia (clams) and Cephalopoda (squids and octopuses)",
-    "icon": "https://images.phylopic.org/images/e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/e9ca8d1d-36cd-48bc-aa6e-8303be2b78f6/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Molluscs/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Molluscs/icon.svg",
+    "iconTaxa": [
+      "Mollusca"
+    ],
     "name": "molluscs",
     "other": false,
     "parents": [
@@ -478,14 +590,17 @@
       "zoological"
     ],
     "description": "Gastropoda, snails and slugs, incl Caenogastropoda (sea snails), Stylommatophora (land snails and slugs) and Nudibranchia (sea slugs)",
-    "icon": "https://images.phylopic.org/images/9da7781e-48eb-407d-a13f-d6de8954dde2/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/9da7781e-48eb-407d-a13f-d6de8954dde2/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Gastropods/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Gastropods/icon.svg",
+    "iconTaxa": [
+      "Helix pomatia"
+    ],
     "name": "gastropods",
     "other": false,
     "parents": [
       "molluscs"
     ],
-    "phylopic": "9da7781e-48eb-407d-a13f-d6de8954dde2",
+    "phylopic": "d8f236a7-e36b-4313-9162-8f2dead31a8a",
     "primaryParent": "molluscs"
   },
   {
@@ -493,8 +608,11 @@
       "zoological"
     ],
     "description": "Bivalvia incl Ostreidae (oysters), Mytilidae (mussels), Pectinidae (scallops) and Veneridae (clams)",
-    "icon": "https://images.phylopic.org/images/70d345ec-c53a-45b9-a4af-93cf6f3e2125/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/70d345ec-c53a-45b9-a4af-93cf6f3e2125/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Bivalves/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Bivalves/icon.svg",
+    "iconTaxa": [
+      "Corbicula fluminea"
+    ],
     "name": "bivalves",
     "other": false,
     "parents": [
@@ -508,8 +626,11 @@
       "zoological"
     ],
     "description": "All other molluscs, e.g. Cephalopoda (squids and octopuses), Polyplacophora (chitons) and Scaphopoda (tusk shells)",
-    "icon": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/f060bcc7-5725-46f7-8276-14553af3707f/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/OtherMolluscs/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/OtherMolluscs/icon.svg",
+    "iconTaxa": [
+      "Octopus"
+    ],
     "name": "othermolluscs",
     "other": true,
     "parents": [
@@ -523,14 +644,18 @@
       "zoological"
     ],
     "description": "Chordata incl vertebrates such as Actinopterygii (ray-finned fishes), Amphibia (amphibians), Reptilia (reptiles), Aves (birds) and Mammalia (mammals)",
-    "icon": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/Chordates/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/Chordates/icon.svg",
+    "iconTaxa": [
+      "Salmo trutta",
+      "Turdus merula",
+      "Rana temporaria"
+    ],
     "name": "chordates",
     "other": false,
     "parents": [
       "animals"
     ],
-    "phylopic": "23a7d09d-4a4d-4ad5-ad07-49a6b59a7fba",
     "primaryParent": "animals"
   },
   {
@@ -538,8 +663,11 @@
       "zoological"
     ],
     "description": "All other animals, e.g. Cnidaria (jellyfish and corals), Echinodermata (starfish and sea urchins), Annelida (segmented worms), Nematoda (roundworms), Platyhelminthes (flatworms) and Porifera (sponges)",
-    "icon": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/thumbnail/64x64.png",
-    "iconSVG": "https://images.phylopic.org/images/f0d839a1-5a3e-42b2-828a-c5e536f0f7b7/vector.svg",
+    "icon": "https://api.checklistbank.org/vocab/taxgroup/OtherAnimals/icon/64.png",
+    "iconSVG": "https://api.checklistbank.org/vocab/taxgroup/OtherAnimals/icon.svg",
+    "iconTaxa": [
+      "Lumbricus terrestris"
+    ],
     "name": "otheranimals",
     "other": true,
     "parents": [

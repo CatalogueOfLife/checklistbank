@@ -90,7 +90,7 @@
     "name": "parsed name differs"
   },
   {
-    "description": "The name parts contain unusual characters.",
+    "description": "The name parts or the authorship contain unusual characters.",
     "group": "name",
     "level": "warning",
     "name": "unusual name characters"
@@ -864,7 +864,7 @@
     "name": "matching higherrank"
   },
   {
-    "description": "Same distribution record appears several times for the same taxon.",
+    "description": "Several distribution records for the same area appear for the same taxon, even if their status differs.",
     "group": "name usage",
     "level": "warning",
     "name": "duplicate distributions"
@@ -888,7 +888,7 @@
     "name": "duplicate estimates"
   },
   {
-    "description": "Same taxon property record appears several times for the same taxon.",
+    "description": "The same property appears several times for the same taxon, even if its values differ.",
     "group": "name usage",
     "level": "warning",
     "name": "duplicate taxon properties"
@@ -918,9 +918,33 @@
     "name": "authorship indet marker"
   },
   {
-    "description": "The nomenclatural status was not given explicitly, but derived from the taxonomic status. Sources often squeeze a nomenclatural statement into their single status column, e.g. dwc:taxonomicStatus=\"nomen nudum\" or \"junior homonym\".",
+    "description": "The nomenclatural status was not given explicitly, but derived from the taxonomic status or the name remarks. Sources often squeeze a nomenclatural statement into their single status column, e.g. dwc:taxonomicStatus=\"nomen nudum\" or \"junior homonym\", or state a misspelling only in the remarks, e.g. \"misspelling - incorrect subsequent spelling\".",
     "group": "name",
     "level": "info",
     "name": "derived nomenclatural status"
+  },
+  {
+    "description": "A merged source flags this taxon as extinct, while the taxon itself is not flagged as extinct. The extinct flag has not been changed, so it might be extinct and should be reviewed.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "potentially extinct"
+  },
+  {
+    "description": "The nomenclatural code was given neither by the record nor by the dataset. It was derived from the taxonomic group of the name's classification or, failing that, guessed from its authorship.",
+    "group": "name",
+    "level": "info",
+    "name": "nomenclatural code inferred"
+  },
+  {
+    "description": "The accepted genus is placed in a taxonomic group the reference checklist does not know it in, e.g. a fungus filed under the plant family of its host. Only flagged when every genus of that name in the reference belongs to a disparate group.",
+    "group": "name usage",
+    "level": "warning",
+    "name": "placement conflict"
+  },
+  {
+    "description": "A spelling correction relates two names that differ in far more than their spelling. The relation has been ignored, as it would merge distinct homotypic groups.",
+    "group": "name",
+    "level": "warning",
+    "name": "spelling correction implausible"
   }
 ]
