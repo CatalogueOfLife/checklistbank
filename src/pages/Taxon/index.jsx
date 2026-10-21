@@ -468,7 +468,7 @@ const TaxonPage = ({
               {_.get(info, "group") && (
                 <Tooltip title={_.get(info, "group")}>
                   <a
-                    href={`/vocabulary/taxgrouptree#${_.get(info, "group")}`}
+                    href={`/vocabulary/taxgroup#${_.get(info, "group")}`}
                   >
                     <img
                       style={{

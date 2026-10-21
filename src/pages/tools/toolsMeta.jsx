@@ -15,7 +15,7 @@ const toolsDescriptions = {
   "taxgroup-parser": (
     <>
       Interpret the broad{" "}
-      <a href="https://www.checklistbank.org/vocabulary/taxgrouptree">
+      <a href="https://www.checklistbank.org/vocabulary/taxgroup">
         taxonomic group
       </a>{" "}
       of a name from its higher classification. Paste one record per row (name

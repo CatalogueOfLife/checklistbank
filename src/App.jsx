@@ -81,7 +81,7 @@ import NameIndexKey from "./pages/NameIndex/NameIndexKey";
 import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
-import TaxGroupTree from "./pages/Vocabulary/TaxGroupTree";
+import TaxGroup from "./pages/Vocabulary/TaxGroup";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 
 // antd 5+ defaults to a different blue than v4. Pin colorPrimary so the brand
@@ -121,6 +121,13 @@ const DiffViewerRedirect = () => {
   const params = new URLSearchParams(location.search);
   params.set("step", "diff");
   return <Navigate to={`/tools/dataset-comparison?${params}`} replace />;
+};
+
+// Back-compat: the taxgroup tree became a tab of the taxgroup vocabulary page.
+// Keep the anchor, which names the selected group.
+const TaxGroupTreeRedirect = () => {
+  const location = useLocation();
+  return <Navigate to={`/vocabulary/taxgroup${location.hash}`} replace />;
 };
 
 // Router 6 requires `<Route>` to live inside `<Routes>`. The Router-5 code
@@ -462,7 +469,11 @@ const App = () => {
               element={<NameIndexKey />}
             />
             <Route path="/vocabulary" element={<VocabularyIndex />} />
-            <Route path="/vocabulary/taxgrouptree" element={<TaxGroupTree />} />
+            <Route path="/vocabulary/taxgroup" element={<TaxGroup />} />
+            <Route
+              path="/vocabulary/taxgrouptree"
+              element={<TaxGroupTreeRedirect />}
+            />
             <Route path="/vocabulary/:key" element={<VocabularyKey />} />
             <Route path="/tools/index" element={<ToolIndex />} />
             <Route

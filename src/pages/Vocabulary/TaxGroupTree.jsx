@@ -5,17 +5,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Link } from "react-router-dom";
-import Layout from "../../components/LayoutNew";
-import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
-import { Row, Col, Typography } from "antd";
-import withContext from "../../components/hoc/withContext";
-import config from "../../config";
-import { Image, Tree, Popover } from "antd";
+import { Tree, Popover } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-
-const { Title } = Typography;
 
 // Fall back to the capitalised group name for groups that have no description.
 const capitalize = (s = "") => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -39,12 +31,14 @@ const TaxGroupTreeNodeTitle = ({ tg, nodeKey }) => {
   );
 };
 
-// The anchor identifies a taxonomic group by name, e.g. .../taxgrouptree#algae.
+// The anchor identifies a taxonomic group by name, e.g. .../taxgroup#algae,
+// in both the tree and the cards view.
 // (Linked from the taxon page — see src/pages/Taxon/index.jsx.)
-const anchorName = (location) =>
+export const anchorName = (location) =>
   decodeURIComponent((location.hash || "").replace(/^#/, ""));
 
-const TaxGroupTree = ({ location, navigate }) => {
+// groups: the taxgroup vocabulary as returned by the API
+const TaxGroupTree = ({ groups, location, navigate }) => {
   const [treeData, setData] = useState([]);
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -64,11 +58,9 @@ const TaxGroupTree = ({ location, navigate }) => {
   const clickedKey = useRef(null);
 
   useEffect(() => {
-    fetch(`${config.dataApi}vocab/taxgroup`)
-      .then((response) => response.json())
-      .then((data) => loadTree(data));
+    loadTree(groups);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [groups]);
 
   const loadTree = (array) => {
     const byName = {};
@@ -106,7 +98,7 @@ const TaxGroupTree = ({ location, navigate }) => {
       return {
         key,
         title: <TaxGroupTreeNodeTitle tg={tg} nodeKey={key} />,
-        icon: <Image height={24} src={tg.iconSVG} />,
+        icon: <img src={tg.icon} alt="" style={{ width: 24, height: 24 }} />,
         children,
       };
     };
@@ -173,50 +165,26 @@ const TaxGroupTree = ({ location, navigate }) => {
   }, [selectedKeys]);
 
   return (
-    <Layout
-      title={`Taxonomic Groups`}
-      openKeys={["tools"]}
-      selectedKeys={["vocabulary"]}
-    >
-      <PageContent>
-        <Row style={{ marginTop: "10px" }}>
-          <Col flex="auto">
-
-          <Typography.Paragraph>
-            Informal and common broad grouping of large taxonomic groups (usually &gt; 50.000 species).
-            These groups often are paraphyletic, but are convenient for broad classifications
-            and match better the application of the nomenclatural codes.
-            Icons provided by <Link to="https://www.phylopic.org">phylopic</Link>.
-            The vocabulary is also available as a <Link to="/vocabulary/taxgroup">flat list</Link>.
-            Use the <Link to="/tools/taxgroup-parser">tax group parser</Link> to assign this vocabulary to your own data.
-            You can also <Link to="https://github.com/CatalogueOfLife/backend/blob/master/parser/src/main/resources/parser/dicts/taxgroup/README.md">read more</Link> about the dictionaries supporting the parser.          
-          </Typography.Paragraph>
-
-            <ActivePopoverContext.Provider value={activePopoverKey}>
-              <div ref={treeContainer} className="taxgroup-tree">
-                <Tree
-                  showLine={{ showLeafIcon: false }}
-                  // multiple: a group with several parents is rendered once per
-                  // parent; without this rc-tree only highlights the first of an
-                  // anchor's occurrences (calcSelectedKeys drops the rest).
-                  multiple
-                  onSelect={onSelect}
-                  selectedKeys={selectedKeys}
-                  showIcon={true}
-                  switcherIcon={<DownOutlined />}
-                  defaultExpandAll={true}
-                  onExpand={setExpandedKeys}
-                  expandedKeys={expandedKeys}
-                  treeData={treeData}
-                />
-              </div>
-            </ActivePopoverContext.Provider>
-          </Col>
-        </Row>
-      </PageContent>
-    </Layout>
+    <ActivePopoverContext.Provider value={activePopoverKey}>
+      <div ref={treeContainer} className="taxgroup-tree">
+        <Tree
+          showLine={{ showLeafIcon: false }}
+          // multiple: a group with several parents is rendered once per
+          // parent; without this rc-tree only highlights the first of an
+          // anchor's occurrences (calcSelectedKeys drops the rest).
+          multiple
+          onSelect={onSelect}
+          selectedKeys={selectedKeys}
+          showIcon={true}
+          switcherIcon={<DownOutlined />}
+          defaultExpandAll={true}
+          onExpand={setExpandedKeys}
+          expandedKeys={expandedKeys}
+          treeData={treeData}
+        />
+      </div>
+    </ActivePopoverContext.Provider>
   );
 };
 
-const mapContextToProps = () => ({});
-export default withContext(mapContextToProps)(withRouter(TaxGroupTree));
+export default withRouter(TaxGroupTree);

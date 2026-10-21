@@ -33,9 +33,6 @@ const VocabularyIndex = ({ addError }) => {
         <ul>
           {data.map((item) => (
             <li key={item}><NavLink to={{ pathname: `/vocabulary/${item}` }} end>{item.replace("$", " ")}</NavLink>
-              {item=="taxgroup" && (
-                <span> (view as <NavLink to={{ pathname: `/vocabulary/taxgrouptree` }} end>tree</NavLink>)</span>
-              )}
               &nbsp; <a href={`${config.dataApi}vocab/rank`} target="_blank"><ApiOutlined /></a>
             </li>
           ))}
