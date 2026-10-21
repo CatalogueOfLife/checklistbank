@@ -47,6 +47,9 @@ import { taxGroupIconUrl } from "../../api/enumeration";
 
 import DataLoader from "dataloader";
 import OtherUsages from "./OtherUsages";
+import UsageSwitcher from "./UsageSwitcher";
+import NameDetails from "../Name/NameDetails";
+import { parseUsagePath, pickUsage } from "./usagePath";
 import { IdentifierList } from "../../components/CurieIdentifier";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
 const { Title } = Typography;
@@ -99,6 +102,9 @@ const TaxonPage = ({
 }) => {
   const { message } = App.useApp();
   const taxonOrNameKey = match?.params?.taxonOrNameKey;
+  const { prefix, section } = parseUsagePath(location?.pathname);
+  const isNameRoute = section === "name";
+  const requestedUsageId = new URLSearchParams(location?.search).get("usage");
 
   const [taxon, setTaxon] = useState(null);
   const [info, setInfo] = useState(null);
@@ -112,6 +118,21 @@ const TaxonPage = ({
   const [taxonMetrics, setTaxonMetrics] = useState(null);
   const [otherUsages, setOtherUsages] = useState([]);
   const [edit, setEdit] = useState(false);
+  // the usages of the name, by name id: { nameId, usages }
+  const [nameUsages, setNameUsages] = useState(null);
+  // the name of a bare name, which has no usage to take it from
+  const [bareName, setBareName] = useState(null);
+
+  const nameId = isNameRoute ? taxonOrNameKey : taxon?.name?.id;
+  const usagesOfName =
+    nameId && nameUsages?.nameId === nameId ? nameUsages.usages : null;
+  // undefined while a name route still looks up its usages, null for a bare name
+  const usageId = !isNameRoute
+    ? taxonOrNameKey
+    : usagesOfName
+    ? pickUsage(usagesOfName, requestedUsageId)?.id ?? null
+    : undefined;
+  const isBareName = usageId === null;
 
   const sectorLoaderRef = useRef(
     new DataLoader((ids) => getSectorsBatch(ids, datasetKey))
@@ -185,7 +206,7 @@ const TaxonPage = ({
     try {
       const res = await axios(
         `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(
-          taxonOrNameKey
+          usageId
         )}/metrics`
       );
       const metrics = res?.data || null;
@@ -202,7 +223,7 @@ const TaxonPage = ({
       `${
         config.dataApi
       }dataset/${datasetKey}/nameusage/search?TAXON_ID=${urlSafe(
-        taxonOrNameKey
+        usageId
       )}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
     )
       .then((res) => {
@@ -223,7 +244,7 @@ const TaxonPage = ({
   const getInfo = async () => {
     try {
       const res = await axios(
-        `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(taxonOrNameKey)}/info`
+        `${config.dataApi}dataset/${datasetKey}/taxon/${urlSafe(usageId)}/info`
       );
 
       // we copy the taxon usage to the taxon property which this page used to load separately - avoids a big refactoring
@@ -260,7 +281,7 @@ const TaxonPage = ({
         ).then((otherUsagesRes) => {
           setOtherUsages(
             otherUsagesRes?.data?.result.filter(
-              (u) => u?.id !== res?.data?.id
+              (u) => u?.id !== res?.data?.usage?.id
             ) || []
           );
         });
@@ -355,14 +376,44 @@ const TaxonPage = ({
     }
   };
 
+  // Switching between the taxon and name tab of one usage keeps this page mounted and its data
   useEffect(() => {
-    getData();
-  }, []);
+    if (usageId === undefined) return;
+    resetState();
+    if (usageId) {
+      getData();
+    } else {
+      setInfoLoading(false);
+    }
+  }, [datasetKey, usageId]);
 
   useEffect(() => {
-    resetState();
-    getData();
-  }, [datasetKey, taxonOrNameKey]);
+    if (!nameId) return;
+    axios(
+      `${config.dataApi}dataset/${datasetKey}/nameusage?nid=${urlSafe(nameId)}`
+    )
+      .then((res) =>
+        setNameUsages({
+          nameId,
+          // /nameusage?nid= lists plain usages, not search wrappers
+          usages: (res?.data?.result || []).filter(
+            (u) => u.id && u.status !== "bare name"
+          ),
+        })
+      )
+      .catch((err) => {
+        setNameUsages({ nameId, usages: [] });
+        if (isNameRoute) setInfoError(err);
+      });
+  }, [datasetKey, nameId]);
+
+  useEffect(() => {
+    setBareName(null);
+    if (!isBareName || !nameId) return;
+    axios(`${config.dataApi}dataset/${datasetKey}/name/${urlSafe(nameId)}`)
+      .then((res) => setBareName(res.data))
+      .catch((err) => setInfoError(err));
+  }, [datasetKey, nameId, isBareName]);
 
   const genusRankIndex = rank.indexOf("genus");
   const taxonRank = _.get(taxon, "name.rank");
@@ -382,20 +433,53 @@ const TaxonPage = ({
     ...new Set([...(sourceTaxon?.issues || []), ...(info?.issues || [])]),
   ];
 
-  // Tabs are deep-linkable via the URL hash (#about, #treatment, #verbatim).
-  const tabKeys = [
-    "about",
-    ...(_.get(info, "treatment.document") ? ["treatment"] : []),
-    ...(_.get(taxon, "verbatimKey") ? ["verbatim"] : []),
-  ];
+  // The name tab is the name url .../name/{nameId}, the other tabs are the usage url
+  // .../taxon/{usageId} deep-linkable via the URL hash (#about, #treatment, #verbatim).
+  // A bare name has no usage, its verbatim tab is the name url with #verbatim.
+  const verbatimKey = isBareName ? bareName?.verbatimKey : taxon?.verbatimKey;
   const hashKey = (location?.hash || "").replace(/^#/, "");
-  const activeTab = tabKeys.includes(hashKey) ? hashKey : "about";
+  const activeTab = isNameRoute
+    ? isBareName && verbatimKey && hashKey === "verbatim"
+      ? "verbatim"
+      : "name"
+    : ["treatment", "verbatim"].includes(hashKey)
+    ? hashKey
+    : "about";
+  const usageSection = isNameRoute ? "taxon" : section;
+  const usagePath = (id) => `${prefix}/${usageSection}/${encodeURIComponent(id)}`;
+  // the usage is only kept in the name url when there is more than one to choose from
+  const namePath = () => ({
+    pathname: `${prefix}/name/${encodeURIComponent(nameId)}`,
+    search:
+      usagesOfName?.length > 1 && usageId
+        ? `?usage=${encodeURIComponent(usageId)}`
+        : "",
+  });
   const onTabChange = (key) => {
-    history.replace({
-      pathname: location.pathname,
-      search: location.search,
-      hash: key === "about" ? "" : `#${key}`,
-    });
+    const hash = key === "about" || key === "name" ? "" : `#${key}`;
+    if (key === "name") {
+      history.push(namePath());
+    } else if (isBareName) {
+      history.replace({ ...namePath(), hash });
+    } else if (isNameRoute) {
+      history.push({ pathname: usagePath(usageId), hash });
+    } else {
+      history.replace({
+        pathname: location.pathname,
+        search: location.search,
+        hash,
+      });
+    }
+  };
+  const switchUsage = (id) => {
+    if (isNameRoute) {
+      history.replace({
+        pathname: location.pathname,
+        search: `?usage=${encodeURIComponent(id)}`,
+      });
+    } else {
+      history.push({ pathname: usagePath(id), hash: location.hash });
+    }
   };
 
   return (
@@ -419,9 +503,29 @@ const TaxonPage = ({
         {infoError && (
           <Alert description={<ErrorMsg error={infoError} />} type="error" />
         )}
-        {taxon && (
+        {isBareName && bareName && (
           <Row>
             <Col flex="auto">
+              <Title level={3}>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      bareName.labelHtml ||
+                      [bareName.scientificName, bareName.authorship]
+                        .filter(Boolean)
+                        .join(" "),
+                  }}
+                />
+              </Title>
+            </Col>
+            <Col>
+              <Tag>bare name</Tag>
+            </Col>
+          </Row>
+        )}
+        {taxon && (
+          <Row wrap={false}>
+            <Col flex="auto" style={{ minWidth: 0 }}>
               <CopyToClipboard
                 text={taxon.label}
                 onCopy={() =>
@@ -458,6 +562,13 @@ const TaxonPage = ({
                   </NavLink>
                 </Title>
               )}
+              {usagesOfName?.length > 1 && (
+                <UsageSwitcher
+                  usages={usagesOfName}
+                  value={usageId}
+                  onChange={switchUsage}
+                />
+              )}
             </Col>
             <Col>
               {canEdit() && (
@@ -473,31 +584,17 @@ const TaxonPage = ({
                     <img
                       style={{
                         marginRight: "8px",
-                        width: "24px",
-                        height: "24px",
+                        width: "48px",
+                        height: "48px",
                       }}
-                      src={taxGroupIconUrl(_.get(info, "group"), 64)}
+                      src={taxGroupIconUrl(_.get(info, "group"))}
+                      alt={_.get(info, "group")}
                     />
                   </a>
                 </Tooltip>
               )}
 
               {taxon.provisional && <Tag color="red">Provisional</Tag>}
-              <Button
-                onClick={() => {
-                  history.push(
-                    Number(datasetKey) === projectKey
-                      ? `/project/${projectKey}/name/${encodeURIComponent(
-                          taxon.name.id
-                        )}`
-                      : `/dataset/${
-                          taxon.datasetKey
-                        }/name/${encodeURIComponent(taxon.name.id)}`
-                  );
-                }}
-              >
-                Name details
-              </Button>
             </Col>
             {sourceDataset?.key && (
               <Col>
@@ -522,8 +619,9 @@ const TaxonPage = ({
           items={[
             {
               key: "about",
-              label: "About",
-              children: (
+              label: "Taxon",
+              disabled: isBareName,
+              children: !isBareName && (
                 <>
                   {_.get(info, "publishedIn.citation") && (
                     <PresentationItem md={md} label="Published in">
@@ -994,6 +1092,18 @@ const TaxonPage = ({
                 </>
               ),
             },
+            nameId && {
+              key: "name",
+              label: "Name",
+              children: (
+                <NameDetails
+                  datasetKey={datasetKey}
+                  projectKey={projectKey}
+                  name={isBareName ? bareName : taxon?.name}
+                  usageVerbatimKey={taxon?.verbatimKey}
+                />
+              ),
+            },
             _.get(info, "treatment.document") && {
               key: "treatment",
               label: "Treatment",
@@ -1001,13 +1111,14 @@ const TaxonPage = ({
                 <Treatment treatment={_.get(info, "treatment")} dataset={dataset} />
               ),
             },
-            _.get(taxon, "verbatimKey") && {
+            verbatimKey && {
               key: "verbatim",
               label: "Verbatim",
               children: (
                 <Verbatim
+                  key={verbatimKey}
                   sourceDatasetKey={datasetKey}
-                  verbatimKey={taxon.verbatimKey}
+                  verbatimKey={verbatimKey}
                 />
               ),
             },

@@ -37,7 +37,6 @@ import _ from "lodash";
 import { isLive } from "../../api/job";
 import Duplicates from "../Duplicates";
 import Taxon from "../Taxon";
-import Name from "../Name";
 import Reference from "../Reference";
 import VerbatimRecord from "../VerbatimRecord";
 import VerbatimByID from "../VerbatimRecord/VerbatimByID";
@@ -235,15 +234,9 @@ const DatasetPage = (props) => {
           assembly={false}
         />
       )}
-      {(sect === "taxon" || sect === "nameusage") && (
+      {/* the taxon and name urls of a usage are tabs of one page, kept mounted between them */}
+      {(sect === "taxon" || sect === "nameusage" || sect === "name") && (
         <Taxon
-          datasetKey={datasetKey}
-          location={props.location}
-          match={props.match}
-        />
-      )}
-      {sect === "name" && (
-        <Name
           datasetKey={datasetKey}
           location={props.location}
           match={props.match}

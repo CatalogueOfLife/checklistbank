@@ -15,7 +15,6 @@ import DatasetImportMetrics from "../../DatasetImportMetrics";
 import WorkBench from "../../WorkBench";
 import VerbatimRecord from "../../VerbatimRecord";
 import Taxon from "../../Taxon";
-import Name from "../../Name";
 import withContext from "../../../components/hoc/withContext";
 
 import _ from "lodash";
@@ -189,15 +188,8 @@ const DatasetPage = (props) => {
               updateImportState={() => getData(datasetKey)}
             />
           )}
-          {sect === "taxon" && (
+          {(sect === "taxon" || sect === "name") && (
             <Taxon
-              datasetKey={datasetKey}
-              location={props.location}
-              match={props.match}
-            />
-          )}
-          {sect === "name" && (
-            <Name
               datasetKey={datasetKey}
               location={props.location}
               match={props.match}

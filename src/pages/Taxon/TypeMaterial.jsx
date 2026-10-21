@@ -24,7 +24,7 @@ export const getTypeColor = (status) => {
   return null;
 };
 
-const getLinks = (dataset, s) => {
+export const getLinks = (dataset, s) => {
   let gbifOccLink =
     dataset?.gbifKey &&
     dataset?.gbifPublisherKey === config?.plaziGbifPublisherKey

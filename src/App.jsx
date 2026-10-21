@@ -35,7 +35,6 @@ import SectorProfiles from "./pages/project/SectorProfiles";
 import SectorDuplicates from "./pages/project/SectorDuplicates";
 import ProjectSectors from "./pages/project/ProjectSectors";
 import ProjectTaxon from "./pages/project/ProjectTaxon";
-import ProjectName from "./pages/project/ProjectName";
 import ProjectMeta from "./pages/project/ProjectMeta";
 import ProjectNameSearch from "./pages/project/ProjectNameSearch";
 import ProjectDecisions from "./pages/project/ProjectDecisions";
@@ -419,7 +418,7 @@ const App = () => {
               path="/project/:projectKey/name/:taxonOrNameKey"
               element={
                 <PrivateRoute>
-                  <ProjectName />
+                  <ProjectTaxon />
                 </PrivateRoute>
               }
             />

@@ -1,5 +1,6 @@
 import React from "react";
 import Taxon from "../../Taxon";
+import { parseUsagePath } from "../../Taxon/usagePath";
 import Layout from "../../../components/LayoutNew";
 import withContext from "../../../components/hoc/withContext";
 import withRouter from "../../../withRouter";
@@ -11,7 +12,11 @@ const ProjectTaxon = ({ projectKey, project, match, location }) =>
   ) : (
     <Layout
       openKeys={["assembly"]}
-      selectedKeys={["projectTaxon"]}
+      selectedKeys={[
+        parseUsagePath(location.pathname).section === "name"
+          ? "projectName"
+          : "projectTaxon",
+      ]}
       title={project ? project.title : ""}
       taxonOrNameKey={match.params.taxonOrNameKey}
     >
