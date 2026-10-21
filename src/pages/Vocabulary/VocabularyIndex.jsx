@@ -33,7 +33,7 @@ const VocabularyIndex = ({ addError }) => {
         <ul>
           {data.map((item) => (
             <li key={item}><NavLink to={{ pathname: `/vocabulary/${item}` }} end>{item.replace("$", " ")}</NavLink>
-              &nbsp; <a href={`${config.dataApi}vocab/rank`} target="_blank"><ApiOutlined /></a>
+              &nbsp; <a href={`${config.dataApi}vocab/${item}`} target="_blank"><ApiOutlined /></a>
             </li>
           ))}
         </ul>
