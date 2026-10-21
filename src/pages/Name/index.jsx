@@ -144,7 +144,8 @@ const NamePage = ({
     getTypeMaterial(datasetKey, nameKey_);
   }, [nameKeyRaw, datasetKey]);
 
-  const filteredUsages = (usages || []).filter((u) => u.usage?.id && u.usage?.status != 'bare name');
+  // /nameusage?nid= lists plain usages, not search wrappers
+  const filteredUsages = (usages || []).filter((u) => u.id && u.status != 'bare name');
   const filteredSynonyms = (synonyms || []).filter((s) => s?.id !== name?.id);
   // Backends before name-parser-api 5.2 keep the sanctioning author as a string on the name,
   // cited after the combination authorship
@@ -200,17 +201,15 @@ const NamePage = ({
                   <NavLink
                     key={i}
                     to={{
-                      pathname: `${taxonUri}${encodeURIComponent(
-                        _.get(u, "usage.id")
-                      )}`,
+                      pathname: `${taxonUri}${encodeURIComponent(u.id)}`,
                     }}
                     end
                   >
                     <Tag
-                      color={getTaxonomicStatusColor(u.usage?.status)}
+                      color={getTaxonomicStatusColor(u.status)}
                       style={{ marginRight: "6px", cursor: "pointer" }}
                     >
-                      {u.usage?.status}
+                      {u.status}
                     </Tag>
                   </NavLink>
                 ))}
