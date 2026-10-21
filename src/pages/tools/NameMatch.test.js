@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { buildAsyncMatchParams, uploadContentType } from "./NameMatch";
+import {
+  buildAsyncMatchParams,
+  hasNameColumn,
+  nameFromParts,
+  uploadContentType,
+} from "./NameMatch";
 
 describe("buildAsyncMatchParams", () => {
   it("sends the source dataset key", () => {
@@ -19,6 +24,47 @@ describe("buildAsyncMatchParams", () => {
     const params = buildAsyncMatchParams({ key: 2006 }, { name: "Aves" });
     expect(params).toEqual({ sourceDatasetKey: 2006 });
     expect("taxonID" in params).toBe(false);
+  });
+
+  it("sends the matching mode", () => {
+    expect(buildAsyncMatchParams({ key: 2006 }, null, "strict")).toEqual({
+      sourceDatasetKey: 2006,
+      mode: "strict",
+    });
+  });
+});
+
+describe("hasNameColumn", () => {
+  it("accepts a scientificName or the name parts in any case", () => {
+    expect(hasNameColumn(["ID", "scientificName"])).toBe(true);
+    expect(hasNameColumn(["genericName", "specificEpithet"])).toBe(true);
+    expect(hasNameColumn(["genus"])).toBe(true);
+    expect(hasNameColumn([" SPECIFICEPITHET "])).toBe(true);
+  });
+
+  it("refuses a header without any name column", () => {
+    expect(hasNameColumn(["ID", "family", "infraspecificEpithet"])).toBe(false);
+    expect(hasNameColumn([])).toBe(false);
+  });
+});
+
+describe("nameFromParts", () => {
+  it("joins the name parts of a lower cased record", () => {
+    expect(
+      nameFromParts({
+        genericname: "Abies",
+        specificepithet: "alba",
+        infraspecificepithet: " acutifolia",
+      })
+    ).toBe("Abies alba acutifolia");
+  });
+
+  it("falls back to the genus column", () => {
+    expect(nameFromParts({ genus: "D.", specificepithet: "plexippus" })).toBe("D. plexippus");
+  });
+
+  it("gives an empty string without parts", () => {
+    expect(nameFromParts({ scientificname: "Abies alba" })).toBe("");
   });
 });
 

@@ -16,6 +16,7 @@ import {
   Tooltip,
   Typography,
   List,
+  Radio,
 } from "antd";
 import {
   DownloadOutlined,
@@ -50,11 +51,35 @@ const { Paragraph, Text } = Typography;
 // The async matching endpoint binds its request with a JAX-RS @BeanParam, so
 // sourceDatasetKey and taxonID are only read from the query string - a JSON body
 // is silently ignored and the server answers 400.
-export const buildAsyncMatchParams = (subjectDataset, subjectTaxon) => {
+export const buildAsyncMatchParams = (subjectDataset, subjectTaxon, mode) => {
   const params = { sourceDatasetKey: subjectDataset?.key };
   if (subjectTaxon?.key) params.taxonID = subjectTaxon.key;
+  if (mode) params.mode = mode;
   return params;
 };
+
+// The API also knows fuzzy, but refuses it for name matching until it exists
+const MATCHING_MODES = ["relaxed", "strict"];
+
+// Instead of a scientificName the API assembles a name from its parts, expanding an
+// abbreviated genus; a matching job needs one of these columns (CatalogueOfLife/backend@cd4f009)
+const NAME_COLUMNS = ["scientificname", "genericname", "genus", "specificepithet"];
+export const hasNameColumn = (headers) =>
+  headers.some((h) => NAME_COLUMNS.includes((h || "").trim().toLowerCase()));
+
+// The name parts of a record with lower cased keys, sent as match params
+const NAME_PART_PARAMS = {
+  genericname: "genericName",
+  specificepithet: "specificEpithet",
+  infraspecificepithet: "infraspecificEpithet",
+};
+
+// What a record given in parts shows as its provided name until the API returns the assembled one
+export const nameFromParts = (rec) =>
+  [rec.genericname || rec.genus, rec.specificepithet, rec.infraspecificepithet]
+    .map((p) => (p || "").trim())
+    .filter(Boolean)
+    .join(" ");
 
 // The server takes the delimiter from the content type and only probes the file
 // for text/plain, so a .tsv with commas in its names is never split on them (#1730)
@@ -140,13 +165,12 @@ const COL_LXR = {
   alias: "COL LXR",
 };
 
-const checkScientificNameHeader = (file) =>
+const checkNameHeader = (file) =>
   new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const firstLine = (e.target.result || "").split(/\r?\n/)[0];
-      const headers = firstLine.split(/[\t,;|$]/).map((h) => h.trim().toLowerCase());
-      resolve(headers.includes("scientificname"));
+      resolve(hasNameColumn(firstLine.split(/[\t,;|$]/)));
     };
     reader.readAsText(file.slice(0, 2048));
   });
@@ -173,7 +197,13 @@ const FileFormatList = () => (
     <List.Item>
       <List.Item.Meta
         title="scientificName"
-        description="The scientific name to be matched. May include the authorship"
+        description="The scientific name to be matched. May include the authorship. An abbreviated genus, e.g. D. plexippus, is expanded from the genus column"
+      />
+    </List.Item>
+    <List.Item>
+      <List.Item.Meta
+        title="genericName, specificEpithet, infraspecificEpithet"
+        description="The name in parts, instead of a scientificName"
       />
     </List.Item>
     <List.Item>
@@ -278,6 +308,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
   const [asyncSubmitting, setAsyncSubmitting] = useState(false);
   const [asyncFile, setAsyncFile] = useState(null);
   const [originalHeaders, setOriginalHeaders] = useState([]);
+  const [mode, setMode] = useState(MATCHING_MODES[0]);
 
   const formatUsageClassification = (usage) => {
     let result = {};
@@ -317,7 +348,15 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
   );
 
   const matchParams = (name) => {
-    let nidxParams = `?q=${encodeURIComponent(name.providedScientificName)}`;
+    let nidxParams = `?mode=${mode}`;
+    if (!name.fromParts) {
+      nidxParams += `&q=${encodeURIComponent(name.providedScientificName)}`;
+    }
+    Object.entries(NAME_PART_PARAMS).forEach(([key, param]) => {
+      if (name[key]) {
+        nidxParams += `&${param}=${encodeURIComponent(name[key])}`;
+      }
+    });
     if (name.rank) {
       nidxParams += `&rank=${encodeURIComponent(name.rank)}`;
     }
@@ -360,6 +399,10 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
       }
       if (original) {
         name.original = original;
+        // show the name the API assembled from the parts, e.g. with its genus expanded
+        if (name.fromParts && original.name) {
+          name.providedScientificName = original.name;
+        }
       }
       name.apilink = `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage${params}&verbose=true`;
 
@@ -473,7 +516,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
   const parseFile = (file) => {
     if (!isValidFile(file)) {
       setError(
-        "Invalid file format - the file must be a csv or tsv file and all rows must have a scientificName column"
+        "Invalid file format - the file must be a csv or tsv file and all rows must have a scientificName or its parts"
       );
       return;
     }
@@ -499,11 +542,12 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
             });
             if (
               result.every(function (e) {
-                return e.scientificname;
+                return e.scientificname || nameFromParts(e);
               })
             ) {
               result.forEach(function (e) {
-                e.providedScientificName = e.scientificname;
+                e.fromParts = !e.scientificname;
+                e.providedScientificName = e.scientificname || nameFromParts(e);
                 e.providedAuthorship = e.authorship || "";
                 e.code = e.code || defaultCode;
                 e.scientificName = undefined;
@@ -512,7 +556,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
               setNames(result);
             } else {
               setError(
-                "all rows must have a scientificName - see example file for the required format"
+                "all rows must have a scientificName or genericName and specificEpithet - see example file for the required format"
               );
             }
           }
@@ -701,7 +745,10 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         res = await axios.post(
           `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
           asyncFile,
-          { headers: { "Content-Type": uploadContentType(asyncFile) } }
+          {
+            headers: { "Content-Type": uploadContentType(asyncFile) },
+            params: { mode },
+          }
         );
       } else {
         // The empty object body is deliberate: it makes axios send
@@ -710,7 +757,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
         res = await axios.post(
           `${config.dataApi}dataset/${primaryDataset.key}/match/nameusage/job`,
           {},
-          { params: buildAsyncMatchParams(subjectDataset, subjectTaxon) }
+          { params: buildAsyncMatchParams(subjectDataset, subjectTaxon, mode) }
         );
       }
       history.push({ pathname: `/tools/name-match/job/${res.data.key}` });
@@ -755,6 +802,28 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
             {asyncMode
               ? "Upload a file or select a ChecklistBank dataset for asynchronous name matching."
               : "Please choose between one of three ways of submitting your names to the matching service:"}
+          </Col>
+          <Col style={{ marginRight: 24 }}>
+            <Tooltip
+              title={
+                <>
+                  <b>relaxed</b>: an unmatched name falls back to a higher taxon of its
+                  classification, and a conflicting taxonomic group or a rank given apart
+                  from an infraspecific name is a preference, not a veto.
+                  <br />
+                  <b>strict</b>: exact matches only, without fallback or leniency.
+                </>
+              }
+            >
+              <span style={{ marginRight: 8 }}>Matching mode</span>
+            </Tooltip>
+            <Radio.Group
+              size="small"
+              optionType="button"
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+              options={MATCHING_MODES}
+            />
           </Col>
           {!!user && (
             <Col>
@@ -880,9 +949,9 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
                           setError("Invalid file format — the file must be a CSV or TSV file");
                           return false;
                         }
-                        const hasHeader = await checkScientificNameHeader(file);
+                        const hasHeader = await checkNameHeader(file);
                         if (!hasHeader) {
-                          setError("The file must contain a scientificName column");
+                          setError("The file must contain a scientificName, genericName or specificEpithet column");
                           return false;
                         }
                         setAsyncFile(file);
@@ -900,7 +969,10 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
                       <p className="ant-upload-hint">
                         Your file must contain a column{" "}
                         <code className="code">scientificName</code> (which may
-                        include the author)
+                        include the author) or its parts{" "}
+                        <code className="code">genericName</code>,{" "}
+                        <code className="code">specificEpithet</code> and{" "}
+                        <code className="code">infraspecificEpithet</code>
                       </p>
                       <p className="ant-upload-hint">
                         Optional but recommended:{" "}
@@ -926,7 +998,9 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
                           example
                         </a>
                         ). It can contain any number of columns but must at least
-                        contain <code className="code">scientificName</code>. For
+                        contain <code className="code">scientificName</code> or{" "}
+                        <code className="code">genericName</code> and{" "}
+                        <code className="code">specificEpithet</code>. For
                         better matching results include <code className="code">rank</code> and as many of the following{" "}
                         <a href="https://github.com/CatalogueOfLife/coldp/blob/master/README.md#nameusage">
                           ColDP columns
