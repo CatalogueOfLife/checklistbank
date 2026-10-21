@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Card, Typography, theme } from "antd";
 import withRouter from "../../withRouter";
 import { anchorName } from "./TaxGroupTree";
+import { taxGroupIconUrl } from "../../api/enumeration";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -108,7 +109,7 @@ const TaxGroupCard = ({ tg, byName, selected, onSelect }) => {
         }}
       >
         <img
-          src={tg.iconSVG}
+          src={taxGroupIconUrl(tg.name)}
           alt={`${tg.name} icon`}
           style={{ width: 88, height: 88 }}
         />

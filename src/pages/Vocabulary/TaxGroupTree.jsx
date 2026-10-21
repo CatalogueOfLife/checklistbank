@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import withRouter from "../../withRouter";
+import { taxGroupIconUrl } from "../../api/enumeration";
 import { Tree, Popover } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
@@ -98,7 +99,7 @@ const TaxGroupTree = ({ groups, location, navigate }) => {
       return {
         key,
         title: <TaxGroupTreeNodeTitle tg={tg} nodeKey={key} />,
-        icon: <img src={tg.icon} alt="" style={{ width: 24, height: 24 }} />,
+        icon: <img src={taxGroupIconUrl(tg.name, 64)} alt="" style={{ width: 24, height: 24 }} />,
         children,
       };
     };

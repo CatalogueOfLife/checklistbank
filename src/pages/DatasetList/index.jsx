@@ -47,7 +47,7 @@ import {
   excludedFrom,
   visibleFrom,
 } from "./columnPrefs";
-import { getRowTypes } from "../../api/enumeration";
+import { getRowTypes, taxGroupIconUrl } from "../../api/enumeration";
 import TaxGroupIcon, { filterRedundantGroups, computeGroupDepths } from "../NameSearch/TaxGroupIcon";
 const { isEditorOrAdmin, canEditDataset } = Auth;
 import _ from "lodash";
@@ -576,9 +576,11 @@ const DatasetList = ({
     ? Object.values(taxGroup).map((g) => ({
         text: (
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: (groupDepths[g.name] || 0) * 16 }}>
-            {g.icon && (
-              <img src={g.icon} alt={g.name} style={{ width: 16, height: 16 }} />
-            )}
+            <img
+              src={taxGroupIconUrl(g.name, 64)}
+              alt={g.name}
+              style={{ width: 16, height: 16 }}
+            />
             {g.name}
           </span>
         ),

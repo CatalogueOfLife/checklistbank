@@ -43,6 +43,7 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { getSectorsBatch } from "../../api/sector";
 import { getDatasetsBatch } from "../../api/dataset";
+import { taxGroupIconUrl } from "../../api/enumeration";
 
 import DataLoader from "dataloader";
 import OtherUsages from "./OtherUsages";
@@ -92,7 +93,6 @@ const TaxonPage = ({
   getNomStatus,
   rank,
   issueMap,
-  taxGroup,
   identifierScope,
   user,
   dataset,
@@ -476,7 +476,7 @@ const TaxonPage = ({
                         width: "24px",
                         height: "24px",
                       }}
-                      src={_.get(taxGroup[_.get(info, "group")], "icon")}
+                      src={taxGroupIconUrl(_.get(info, "group"), 64)}
                     />
                   </a>
                 </Tooltip>
@@ -1025,7 +1025,6 @@ const mapContextToProps = ({
   getNomStatus,
   rank,
   user,
-  taxGroup,
   identifierScope,
 }) => ({
   issueMap,
@@ -1034,7 +1033,6 @@ const mapContextToProps = ({
   getNomStatus,
   rank,
   user,
-  taxGroup,
   identifierScope,
 });
 

@@ -149,6 +149,13 @@ export const getTaxGroup = () => {
   return getData(`taxGroup`).then((res) => Object.fromEntries(res.data.map(e => [e.name, e])));
 };
 
+// The icon of a taxgroup served by this environment's API: the svg, or a png of
+// 64, 128 or 192 pixels. The vocabulary's own icon urls always point at prod.
+export const taxGroupIconUrl = (name, px) =>
+  `${config.dataApi}vocab/taxgroup/${encodeURIComponent(name)}/icon${
+    px ? `/${px}.png` : ".svg"
+  }`;
+
 export const getNameIndexRank = () => {
   return Promise.resolve(localEnumFor("nameIndexRank"));
 };

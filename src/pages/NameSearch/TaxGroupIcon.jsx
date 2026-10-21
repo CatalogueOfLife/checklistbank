@@ -1,5 +1,6 @@
 import React from "react";
 import withContext from "../../components/hoc/withContext";
+import { taxGroupIconUrl } from "../../api/enumeration";
 
 /**
  * Computes the display depth of every group in the vocabulary.
@@ -66,11 +67,10 @@ export function filterRedundantGroups(groups, taxGroup) {
 }
 
 const TaxGroupIcon = ({ group, taxGroup, size = 24 }) => {
-  const icon = taxGroup?.[group]?.icon;
-  if (!icon) return null;
+  if (!taxGroup?.[group]) return null;
   return (
     <img
-      src={icon}
+      src={taxGroupIconUrl(group, 64)}
       alt={group}
       title={group}
       style={{ width: size, height: size }}
