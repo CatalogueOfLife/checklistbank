@@ -19,6 +19,7 @@ import SyncAllSectorsButton from "../../Admin/SyncAllSectorsButton";
 import ErrorMsg from "../../../components/ErrorMsg";
 import DatasetAutocomplete from "../Assembly/DatasetAutocomplete";
 import JobStatusTag from "../../../components/job/JobStatusTag";
+import { DONE_STATUS, JOB_LANE } from "../../../api/job";
 
 const PAGE_SIZE = 25;
 
@@ -255,7 +256,7 @@ const getColumns = (projectKey) => [
   }
 ];
 
-const SyncTable = ({ location, match, user, jobStatus }) => {
+const SyncTable = ({ location, match, user, projectJobQueue }) => {
   const [syncAllError, setSyncAllError] = useState(null);
   const [data, setData] = useState([]);
   const [params, setParams] = useState({});
@@ -278,9 +279,15 @@ const SyncTable = ({ location, match, user, jobStatus }) => {
       pathname: `/project/${projectKey}/sector/sync`,
       search: `?${qs.stringify(queryParams)}`,
     });
+    // Waiting and running syncs belong to the job queue, so this lists only
+    // the finished ones. The backend lets running override status, so only
+    // ask for it while no status filter is set.
+    const apiParams = _.isEmpty(queryParams.status)
+      ? { ...queryParams, running: false }
+      : queryParams;
     axios(
       `${config.dataApi}dataset/${projectKey}/sector/sync?${qs.stringify(
-        queryParams
+        apiParams
       )}`
     )
       .then((res) => {
@@ -396,6 +403,12 @@ const SyncTable = ({ location, match, user, jobStatus }) => {
 
   const { sectorKey, datasetKey } = params;
 
+  // Off the project queue the menu badge polls as well.
+  const runningSyncs = (projectJobQueue?.running || []).filter(
+    (j) => j.lane === JOB_LANE.SYNC
+  ).length;
+  const queuedSyncs = projectJobQueue?.queuedCounts?.[JOB_LANE.SYNC] || 0;
+
   const columns = Auth.canEditDataset({ key: projectKey }, user)
     ? [
         ...getColumns(projectKey),
@@ -418,9 +431,9 @@ const SyncTable = ({ location, match, user, jobStatus }) => {
       ]
     : getColumns(projectKey);
 
-  columns[5].filters = (jobStatus || []).map((i) => ({
-    text: _.startCase(i.name),
-    value: i.name,
+  columns[5].filters = DONE_STATUS.map((s) => ({
+    text: _.startCase(s),
+    value: s,
   }));
   columns[5].filteredValue = params.status
     ? _.isArray(params.status)
@@ -460,7 +473,14 @@ const SyncTable = ({ location, match, user, jobStatus }) => {
             </a>
           </Col>
         )}
-        <Col flex="auto"></Col>
+        <Col flex="auto" style={{ paddingLeft: 16, alignSelf: "center" }}>
+          {runningSyncs + queuedSyncs > 0 && (
+            <NavLink to={`/jobs?tab=queue&datasetKey=${projectKey}`}>
+              {runningSyncs} {runningSyncs === 1 ? "sync" : "syncs"} running,{" "}
+              {queuedSyncs} queued - view in the job queue
+            </NavLink>
+          )}
+        </Col>
         <Col>
           <DatasetAutocomplete
             defaultDatasetKey={datasetKey}
@@ -573,10 +593,10 @@ const SyncTable = ({ location, match, user, jobStatus }) => {
   );
 };
 
-const mapContextToProps = ({ user, jobStatus, projectKey }) => ({
+const mapContextToProps = ({ user, projectKey, projectJobQueue }) => ({
   user,
-  jobStatus,
   projectKey,
+  projectJobQueue,
 });
 
 export default withRouter(withContext(mapContextToProps)(SyncTable));

@@ -5,6 +5,7 @@ import config from "../../config";
 import withContext from "../../components/hoc/withContext";
 import ErrorMsg from "../../components/ErrorMsg";
 import JobDetail from "../../components/job/JobDetail";
+import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import { getJobQueue } from "../../api/job";
 import { decorateJobs } from "./decorate";
 import {
@@ -28,7 +29,7 @@ const pollingHeartBeat = config.pollingHeartBeat || 5000;
  * and admin tasks - so this is also the only place a running release appears:
  * since the unified job API, /importer no longer lists them.
  */
-const QueueTab = ({ mine, setMine, user }) => {
+const QueueTab = ({ mine, setMine, datasetKey, setDatasetKey, user }) => {
   const [queue, setQueue] = useState({
     running: [],
     queued: [],
@@ -41,7 +42,7 @@ const QueueTab = ({ mine, setMine, user }) => {
 
   const load = async () => {
     try {
-      const q = await getJobQueue();
+      const q = await getJobQueue(datasetKey);
       const [running, queued] = await Promise.all([
         decorateJobs(q.running),
         decorateJobs(q.queued),
@@ -57,12 +58,13 @@ const QueueTab = ({ mine, setMine, user }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     load();
     timer.current = setInterval(load, pollingHeartBeat);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
-  }, []);
+  }, [datasetKey]);
 
   const byMine = (j) => !mine || (user && j.userKey === user.key);
   const rows = [...queue.running, ...queue.queued].filter(byMine);
@@ -109,8 +111,16 @@ const QueueTab = ({ mine, setMine, user }) => {
             </Card>
           </Col>
         ))}
+        <Col flex="auto" style={{ textAlign: "right" }}>
+          <DatasetAutocomplete
+            defaultDatasetKey={datasetKey || null}
+            onResetSearch={() => setDatasetKey(undefined)}
+            onSelectDataset={(d) => setDatasetKey(d.key)}
+            placeHolder="Any dataset"
+          />
+        </Col>
         {user && (
-          <Col flex="auto" style={{ textAlign: "right" }}>
+          <Col style={{ alignSelf: "center" }}>
             <Switch
               checked={!!mine}
               onChange={setMine}

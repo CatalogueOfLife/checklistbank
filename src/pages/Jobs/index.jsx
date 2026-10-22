@@ -102,6 +102,16 @@ const Jobs = ({ location }) => {
     push(next);
   };
 
+  // Shared with the history, which reads it from searchParams. The tab is
+  // spelled out, as a filter would otherwise flip a bare /jobs to the history.
+  const setDatasetKey = (key) => {
+    const next = { ...state, tab };
+    delete next.offset;
+    if (key) next.datasetKey = key;
+    else delete next.datasetKey;
+    push(next);
+  };
+
   // Landing on the history with no filters at all would page through ~7M
   // sector syncs, so start from the default preset instead.
   const historyParams =
@@ -113,7 +123,14 @@ const Jobs = ({ location }) => {
     {
       key: "queue",
       label: "Queue",
-      children: <QueueTab mine={mine} setMine={setMine} />,
+      children: (
+        <QueueTab
+          mine={mine}
+          setMine={setMine}
+          datasetKey={state.datasetKey}
+          setDatasetKey={setDatasetKey}
+        />
+      ),
     },
     {
       key: "history",
