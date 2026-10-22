@@ -318,6 +318,7 @@ const SectorTable = ({
       </Row>
       <Table
         size="small"
+        scroll={{ x: "max-content" }}
         onChange={handleTableChange}
         columns={[...columns]}
         dataSource={data}

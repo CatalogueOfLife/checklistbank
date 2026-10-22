@@ -151,7 +151,9 @@ const SiteLayout = ({
     <Layout style={{ minHeight: "100vh" }}>
       {pageTitle && <Helmet title={pageTitle} />}
       {sideMenu}
-      <Layout style={{ marginLeft: contentMargin + "px" }}>
+      {/* minWidth 0 lets this flex column shrink below a wide table instead of
+          widening the page, which scrolled the content under the fixed menu (#1696) */}
+      <Layout style={{ marginLeft: contentMargin + "px", minWidth: 0 }}>
         <Header
           style={
             ENV_BANNER[config.env]
@@ -296,7 +298,7 @@ const SiteLayout = ({
 
         <Content
           style={{
-            overflow: "initial",
+            overflowX: "auto",
             margin: isMobile ? "0 0px 24px 0px" : "0 16px 24px 16px",
             minHeight: 280,
           }}
