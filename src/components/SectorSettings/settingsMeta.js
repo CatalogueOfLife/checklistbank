@@ -1,7 +1,7 @@
 // The tree syncs. A hierarchy sync applies none of the filters and only reads authorshipUpdate.
 const TREE_SYNCS = ["attach", "union", "merge"];
 
-// The 14 sync settings sectors and sector profiles share, with identical JSON names.
+// The 15 sync settings sectors and sector profiles share, with identical JSON names.
 // See docs/SECTOR-SETTINGS.md in the backend repo: nearest level wins for scalars and allow-lists,
 // the blocklists (union) add up over all levels. modes limits a setting to some sector modes.
 export const SETTINGS = [
@@ -11,6 +11,8 @@ export const SETTINGS = [
     help: "Only names of these types are synced" },
   { name: "nameStatusExclusion", label: "Name status exclusion", kind: "enums", group: "filter", union: true, modes: TREE_SYNCS,
     help: "Names with these nomenclatural statuses are not synced" },
+  { name: "taxonomicStatusExclusion", label: "Taxonomic status exclusion", kind: "enums", group: "filter", union: true, modes: TREE_SYNCS,
+    help: "Usages with these taxonomic statuses are not synced; an excluded accepted taxon takes its synonyms along" },
   { name: "extinctFilter", label: "Extinct status", kind: "bool", group: "filter", unset: "all", modes: TREE_SYNCS,
     yes: "extinct", no: "extant", help: "Sync extinct taxa only, or extant ones only" },
   { name: "nameFilter", label: "Name filter", kind: "regex", group: "filter", modes: TREE_SYNCS,

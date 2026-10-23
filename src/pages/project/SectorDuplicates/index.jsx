@@ -45,6 +45,7 @@ const FILTER_PROPS = [
   "entities",
   "nameTypes",
   "nameStatusExclusion",
+  "taxonomicStatusExclusion",
   "extinctFilter",
   "code",
 ];

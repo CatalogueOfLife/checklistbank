@@ -60,6 +60,7 @@ const SectorSettingsFields = ({
   rank,
   nametype,
   nomstatus,
+  taxonomicstatus,
   entitytype,
   nomCode,
   issue,
@@ -69,6 +70,7 @@ const SectorSettingsFields = ({
     ranks: names(rank),
     nameTypes: names(nametype),
     nameStatusExclusion: names(nomstatus),
+    taxonomicStatusExclusion: names(taxonomicstatus),
     entities: names(entitytype),
     code: names(nomCode),
     authorshipUpdate: names(sectorAuthorshipUpdate),
@@ -143,10 +145,11 @@ const SectorSettingsFields = ({
   });
 };
 
-const mapContextToProps = ({ rank, nametype, nomstatus, entitytype, nomCode, issue, sectorAuthorshipUpdate }) => ({
+const mapContextToProps = ({ rank, nametype, nomstatus, taxonomicstatus, entitytype, nomCode, issue, sectorAuthorshipUpdate }) => ({
   rank,
   nametype,
   nomstatus,
+  taxonomicstatus,
   entitytype,
   nomCode,
   issue,

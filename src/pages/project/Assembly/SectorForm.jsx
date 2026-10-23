@@ -168,6 +168,7 @@ const SectorForm = ({ sector, rank, onError, projectKey, onSubmit }) => {
     entities: [],
     nameTypes: [],
     nameStatusExclusion: [],
+    taxonomicStatusExclusion: [],
     useXRelease: true,
     ...sector,
   };

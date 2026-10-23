@@ -13,7 +13,7 @@ import {
 } from "./settingsMeta";
 
 describe("SETTINGS", () => {
-  it("lists the 14 settings sectors and profiles share", () => {
+  it("lists the 15 settings sectors and profiles share", () => {
     expect(SETTINGS.map((s) => s.name).sort()).toEqual([
       "authorshipUpdate",
       "blockedNamePatterns",
@@ -29,15 +29,17 @@ describe("SETTINGS", () => {
       "nameTypes",
       "ranks",
       "removeOrdinals",
+      "taxonomicStatusExclusion",
     ]);
   });
 
-  it("marks exactly the four blocklists as union", () => {
+  it("marks exactly the five blocklists as union", () => {
     expect(SETTINGS.filter((s) => s.union).map((s) => s.name).sort()).toEqual([
       "blockedNamePatterns",
       "blockedNames",
       "issueExclusion",
       "nameStatusExclusion",
+      "taxonomicStatusExclusion",
     ]);
   });
 });
