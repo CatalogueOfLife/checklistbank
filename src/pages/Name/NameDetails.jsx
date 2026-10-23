@@ -48,6 +48,7 @@ const NameDetails = ({
   identifierScope,
 }) => {
   const [relations, setRelations] = useState([]);
+  const [inverseRelations, setInverseRelations] = useState([]);
   const [synonyms, setSynonyms] = useState([]);
   const [typeMaterial, setTypeMaterial] = useState([]);
   const [reference, setReference] = useState(null);
@@ -58,25 +59,38 @@ const NameDetails = ({
 
   useEffect(() => {
     setRelations([]);
+    setInverseRelations([]);
     setSynonyms([]);
     setTypeMaterial([]);
     if (!nameId) return;
     const nameUrl = `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(nameId)}`;
-    axios(`${nameUrl}/relations`)
-      .then((res) =>
+    // loads the relations and the name on their other end into the given property
+    const loadRelations = (url, otherIdProp, otherNameProp) =>
+      axios(url).then((res) =>
         Promise.allSettled(
           res.data.map((r) =>
             axios(
               `${config.dataApi}dataset/${datasetKey}/name/${encodeURIComponent(
-                r.relatedNameId
+                r[otherIdProp]
               )}`
             ).then((n) => {
-              r.relatedName = n.data;
+              r[otherNameProp] = n.data;
             })
           )
-        ).then(() => setRelations(res.data))
-      )
+        ).then(() => res.data)
+      );
+    loadRelations(`${nameUrl}/relations`, "relatedNameId", "relatedName")
+      .then(setRelations)
       .catch(() => setRelations([]));
+    // relations of other names pointing to this one. Backends without the inverse parameter
+    // ignore it and list the relations of this name again, which the filter drops
+    loadRelations(`${nameUrl}/relations?inverse=true`, "nameId", "name")
+      .then((rels) =>
+        setInverseRelations(
+          rels.filter((r) => r.relatedNameId === nameId && r.nameId !== nameId)
+        )
+      )
+      .catch(() => setInverseRelations([]));
     axios(`${nameUrl}/synonyms`)
       .then((res) => setSynonyms((res.data || []).filter((s) => s?.id !== nameId)))
       .catch(() => setSynonyms([]));
@@ -219,6 +233,16 @@ const NameDetails = ({
           md={md}
           style={{ marginTop: "-3px" }}
           data={otherRelations}
+          datasetKey={datasetKey}
+          projectKey={projectKey}
+        />
+      )}
+      {inverseRelations.length > 0 && (
+        <NameRelations
+          md={md}
+          reverse={true}
+          style={{ marginTop: "-3px" }}
+          data={inverseRelations}
           datasetKey={datasetKey}
           projectKey={projectKey}
         />
