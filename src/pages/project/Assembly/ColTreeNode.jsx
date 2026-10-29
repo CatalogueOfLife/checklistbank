@@ -170,6 +170,21 @@ const ColTreeNode = (props) => {
       .catch(() => {});
   };
 
+  const cleanNameRelations = (taxon) => {
+    axios
+      .post(
+        `${config.dataApi}dataset/${taxon.datasetKey
+        }/clean-name-relations?taxonID=${encodeURIComponent(taxon.id)}`
+      )
+      .then(() => {
+        notification.open({
+          title: "Name relations",
+          description: `Cleaning up name relations under ${taxon.name}`,
+        });
+      })
+      .catch(() => {});
+  };
+
   const cancelChildModal = () => {
     reloadChildren().then(() => setChildModalVisible(false));
   };
@@ -365,6 +380,14 @@ const ColTreeNode = (props) => {
                                 }
                               >
                                 Consolidate Homotypic Names
+                              </Button>
+                              <br />
+                              <Button
+                                type="primary"
+                                style={{ marginTop: "8px", width: "100%" }}
+                                onClick={() => cleanNameRelations(taxon)}
+                              >
+                                Clean name relations
                               </Button>
                               <br />
                             </CanEditDataset>

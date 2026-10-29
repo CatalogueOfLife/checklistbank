@@ -148,6 +148,20 @@ const ProjectOptions = ({
       });
   };
 
+  const cleanNameRelations = () => {
+    axios
+      .post(`${config.dataApi}dataset/${projectKey}/clean-name-relations`)
+      .then(() => {
+        notification.open({
+          title: "Name relations",
+          description: `Cleaning up contradicting and redundant name relations`,
+        });
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
+
   return (
     <>
       {error && (
@@ -347,6 +361,13 @@ const ProjectOptions = ({
               onClick={() => consolidateHomotypicNames()}
             >
               Consolidate Homotypic Names
+            </Button>
+            <Button
+              type="primary"
+              style={{ marginRight: "10px", marginBottom: "10px" }}
+              onClick={() => cleanNameRelations()}
+            >
+              Clean name relations
             </Button>
 
             <DeleteOrphansButton
