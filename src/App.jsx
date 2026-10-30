@@ -81,6 +81,9 @@ import NameIndexSearch from "./pages/NameIndex/NameIndexSearch";
 import VocabularyKey from "./pages/Vocabulary/VocabularyKey";
 import VocabularyIndex from "./pages/Vocabulary/VocabularyIndex";
 import TaxGroup from "./pages/Vocabulary/TaxGroup";
+import Gazetteer from "./pages/Vocabulary/Gazetteer";
+import GazetteerKey from "./pages/Vocabulary/GazetteerKey";
+import AreaKey from "./pages/Vocabulary/AreaKey";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 
 // antd 5+ defaults to a different blue than v4. Pin colorPrimary so the brand
@@ -473,6 +476,16 @@ const App = () => {
               path="/vocabulary/taxgrouptree"
               element={<TaxGroupTreeRedirect />}
             />
+            <Route path="/vocabulary/gazetteer" element={<Gazetteer />} />
+            <Route
+              path="/vocabulary/gazetteer/:name"
+              element={<GazetteerKey />}
+            />
+            <Route
+              path="/vocabulary/area"
+              element={<Navigate to="/vocabulary/gazetteer" replace />}
+            />
+            <Route path="/vocabulary/area/:id" element={<AreaKey />} />
             <Route path="/vocabulary/:key" element={<VocabularyKey />} />
             <Route path="/tools/index" element={<ToolIndex />} />
             <Route

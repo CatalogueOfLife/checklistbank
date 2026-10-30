@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import * as maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-// MapLibre v6 is ESM-only and can't locate its worker inside a bundle; let Vite
-// emit the worker as its own chunk and hand MapLibre the URL.
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import { BASEMAP_STYLE, maplibregl } from "./mapSetup";
+import { computeBounds, flattenFeatures } from "./geo";
 import "./treeControl.css";
 import axios from "axios";
 import config from "../../../config";
@@ -12,8 +9,6 @@ import { getDescendantRanks, INFRASPECIFIC_RANKS } from "./descendantRanks";
 import { assignColors } from "./colorAssignment";
 import IncludedTaxaLegend from "./IncludedTaxaLegend";
 import { isWebglSupported } from "./webgl";
-
-maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
 const POPUP_FIELDS = [
   "establishmentMeans",
@@ -59,13 +54,6 @@ const colorFor = (record) => {
   const k = resolveKey(record);
   return k == null ? MISSING_COLOR : ESTABLISHMENT_COLORS[k];
 };
-
-// The base map, per environment, so a different provider or a keyed style URL
-// can be swapped in without touching this file. Carto's keyless Positron is
-// the fallback for an environment that does not name one.
-const BASEMAP_STYLE =
-  config.basemapStyle ||
-  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 // Layer IDs
 const FOCAL_SOURCE = "col-focal-distributions";
@@ -135,39 +123,6 @@ const epithet = (scientificName) => {
   if (!scientificName) return "";
   const tokens = scientificName.trim().split(/\s+/);
   return tokens[tokens.length - 1];
-};
-
-const computeBounds = (features) => {
-  let minLng = Infinity,
-    minLat = Infinity,
-    maxLng = -Infinity,
-    maxLat = -Infinity;
-  const visit = (coords) => {
-    if (typeof coords[0] === "number") {
-      const [lng, lat] = coords;
-      if (lng < minLng) minLng = lng;
-      if (lng > maxLng) maxLng = lng;
-      if (lat < minLat) minLat = lat;
-      if (lat > maxLat) maxLat = lat;
-    } else {
-      for (let i = 0; i < coords.length; i++) visit(coords[i]);
-    }
-  };
-  for (let i = 0; i < features.length; i++) {
-    const g = features[i]?.geometry;
-    if (g?.coordinates) visit(g.coordinates);
-  }
-  if (minLng === Infinity) return null;
-  return [
-    [minLng, minLat],
-    [maxLng, maxLat],
-  ];
-};
-
-const flattenFeatures = (geojson) => {
-  if (!geojson) return [];
-  if (geojson.type === "FeatureCollection") return geojson.features || [];
-  return [geojson];
 };
 
 const DistributionsMap = ({

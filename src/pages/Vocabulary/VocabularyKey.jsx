@@ -1,30 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { Alert, Spin } from "antd";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withRouter from "../../withRouter";
-import { Row, Col, Typography, Card } from "antd";
-import PresentationItem from "../../components/PresentationItem";
-import BooleanValue from "../../components/BooleanValue";
-
-import Linkify from "../../components/Linkify";
 import withContext from "../../components/hoc/withContext";
 import config from "../../config";
-import { Image } from "antd";
+import CompactList from "./CompactList";
+import { anchorName } from "./TaxGroupTree";
+import { ValueCard, ValueFields, ValueGrid } from "./ValueCard";
+import { areaPath } from "./gazetteers";
+import { normalizeVocab, vocabApiPath } from "./vocabValues";
 
-const { Title } = Typography;
+const heading = (item) =>
+  // e.g. a country, which is an area of the iso gazetteer
+  item.gazetteer && item.id ? (
+    <Link to={areaPath(item.gazetteer, item.id)}>{item.name}</Link>
+  ) : (
+    item.name
+  );
 
 const VocabularyKey = ({
+  location,
   match: {
     params: { key },
   },
 }) => {
-  const [data, setData] = useState([]);
+  const [vocab, setVocab] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const container = useRef(null);
+  const anchor = anchorName(location);
 
   useEffect(() => {
-    fetch(`${config.dataApi}vocab/${key}`)
-      .then((response) => response.json())
-      .then((data) => setData(data));
-  }, []);
+    const controller = new AbortController();
+    setVocab(null);
+    setFailed(false);
+    fetch(`${config.dataApi}vocab/${vocabApiPath(key)}`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`${response.status} for vocabulary ${key}`);
+        return response.json();
+      })
+      .then((data) => setVocab(normalizeVocab(data)))
+      .catch((e) => {
+        if (controller.signal.aborted) return;
+        console.warn(e);
+        setFailed(true);
+      });
+    return () => controller.abort();
+  }, [key]);
+
+  // The cards only exist once loaded, too late for the browser to find an anchor.
+  useEffect(() => {
+    if (!anchor || !vocab?.items) return;
+    const raf = requestAnimationFrame(() => {
+      const el = [...(container.current?.querySelectorAll("section[id]") || [])].find(
+        (e) => e.id === anchor
+      );
+      el?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [anchor, vocab]);
 
   return (
     <Layout
@@ -33,40 +68,22 @@ const VocabularyKey = ({
       selectedKeys={["vocabulary"]}
     >
       <PageContent>
-        <Row style={{ marginTop: "10px" }}>
-          <Col flex="auto"></Col>
-          <Col span={12}>
-            {data.map((item) => (
-              <Card
-                id={item.name}
-                size="small"
-                title={
-                  <Title style={{ marginLeft: "6px" }} level={4}>
-                    {item.name}
-                  </Title>
-                }
-                style={{ marginBottom: "10px" }}
-              >
-                {Object.keys(item).map((key) => (
-                  <PresentationItem label={key}>
-                    {typeof item[key] == "boolean" ? (
-                      <BooleanValue value={item[key]} />
-                    ) : typeof item[key] == "string" &&
-                      item[key].endsWith(".png") ? (
-                      <Image src={item[key]} />
-                    ) : item[key] !== null && typeof item[key] == "object" ? (
-                      // e.g. the gazetteer normalizer - React can't render objects
-                      <code>{JSON.stringify(item[key])}</code>
-                    ) : (
-                      <Linkify>{item[key]}</Linkify>
-                    )}
-                  </PresentationItem>
-                ))}{" "}
-              </Card>
-            ))}
-          </Col>
-          <Col flex="auto"></Col>
-        </Row>
+        <div ref={container} style={{ marginTop: "10px" }}>
+          {failed && (
+            <Alert type="warning" showIcon title={`The vocabulary ${key} could not be loaded.`} />
+          )}
+          {!failed && !vocab && <Spin />}
+          {vocab?.rows && <CompactList rows={vocab.rows} />}
+          {vocab?.items && (
+            <ValueGrid>
+              {vocab.items.map((item) => (
+                <ValueCard key={item.name} id={item.name} heading={heading(item)}>
+                  <ValueFields item={item} />
+                </ValueCard>
+              ))}
+            </ValueGrid>
+          )}
+        </div>
       </PageContent>
     </Layout>
   );
