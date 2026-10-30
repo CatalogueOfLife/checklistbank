@@ -52,7 +52,7 @@ const CachedImage = ({ url, title }) => {
 // taxonID, otherwise fall back to the dataset itself.
 const usagePath = (record) =>
   record.taxonID != null
-    ? `/dataset/${record.datasetKey}/taxon/${encodeURIComponent(record.taxonID)}`
+    ? `/dataset/${record.datasetKey}/nameusage/${encodeURIComponent(record.taxonID)}`
     : `/dataset/${record.datasetKey}`;
 
 // Prefer "{alias}: {title}" — the alias is the most recognizable

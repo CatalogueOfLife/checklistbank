@@ -105,7 +105,7 @@ const VerbatimPresentation = ({
     const taxonPath = {
       pathname:
         location.pathname.split(`dataset/${datasetKey}`)[0] +
-        `dataset/${datasetKey}/taxon/${encodeURIComponent(value)}`,
+        `dataset/${datasetKey}/nameusage/${encodeURIComponent(value)}`,
     };
 
     const namePath = {

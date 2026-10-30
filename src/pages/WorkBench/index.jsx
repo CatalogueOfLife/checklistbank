@@ -109,11 +109,7 @@ const getColumns = (projectKey, user) => [
           : `/project/${projectKey}/dataset/${_.get(
               record,
               "usage.name.datasetKey"
-            )}/taxon/${encodeURIComponent(
-              _.get(record, "usage.accepted.id")
-                ? _.get(record, "usage.accepted.id")
-                : _.get(record, "usage.id")
-            )}`;
+            )}/nameusage/${encodeURIComponent(_.get(record, "usage.id"))}`;
       return (
         <React.Fragment>
           <div style={{ float: "left" }}>

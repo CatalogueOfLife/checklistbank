@@ -13,15 +13,9 @@ const limit = 500;
 
 const SYNONYM_STATUS = ["synonym", "ambiguous synonym", "misapplied"];
 
-// Link to the usage in its source dataset. Accepted usages link to their own
-// taxon page; synonyms resolve to the accepted taxon via the parent id.
-const usageUri = (record) => {
-  const target =
-    SYNONYM_STATUS.includes(record?.status) && record?.parentId
-      ? record.parentId
-      : record?.id;
-  return `/dataset/${record?.datasetKey}/taxon/${encodeURIComponent(target)}`;
-};
+// Link to the usage in its source dataset, synonyms included.
+const usageUri = (record) =>
+  `/dataset/${record?.datasetKey}/nameusage/${encodeURIComponent(record?.id)}`;
 
 // Prefer "{alias}: {title}" — the alias is the most recognizable disambiguator
 // between releases — falling back to the title alone. The title is rendered in

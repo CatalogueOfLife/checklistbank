@@ -10,7 +10,7 @@ const createdByAlgorithm = {
 
 // Backend currently only emits NameUsage, Name or Reference as sourceEntity.
 const ENTITY_SECTION = {
-  "name usage": "taxon",
+  "name usage": "nameusage",
   name: "name",
   reference: "reference",
 };
@@ -149,7 +149,7 @@ const MergedDataBadge = ({
                   "Loading..."
                 ) : (
                   <NavLink
-                    to={`/dataset/${sourceDatasetKey}/taxon/${encodeURIComponent(
+                    to={`/dataset/${sourceDatasetKey}/nameusage/${encodeURIComponent(
                       sourceId
                     )}`}
                     dangerouslySetInnerHTML={{ __html: sourceTaxon?.labelHtml }}

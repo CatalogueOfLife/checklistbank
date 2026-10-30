@@ -114,7 +114,7 @@ const DuplicateSearchPage = (props) => {
               pathname: `/dataset/${_.get(
                 record,
                 "sourceDatasetKey"
-              )}/taxon/${_.get(record, "sourceId")}`,
+              )}/nameusage/${encodeURIComponent(_.get(record, "sourceId"))}`,
             }}
             end
           >

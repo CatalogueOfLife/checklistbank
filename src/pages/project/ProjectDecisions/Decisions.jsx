@@ -297,8 +297,8 @@ const ProjectDecisions = ({
                   // the subject id belongs to the source dataset; a release
                   // has no mapping from it to its own usages
                   pathname: isRelease
-                    ? `/dataset/${record.subjectDatasetKey}/taxon/${record?.subject?.id}`
-                    : `/project/${datasetKey}/dataset/${record.subjectDatasetKey}/taxon/${
+                    ? `/dataset/${record.subjectDatasetKey}/nameusage/${record?.subject?.id}`
+                    : `/project/${datasetKey}/dataset/${record.subjectDatasetKey}/nameusage/${
                         record?.subject?.id
                       }`,
                 }}

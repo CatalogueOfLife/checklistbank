@@ -188,7 +188,7 @@ const DatasetPage = (props) => {
               updateImportState={() => getData(datasetKey)}
             />
           )}
-          {(sect === "taxon" || sect === "name") && (
+          {(sect === "taxon" || sect === "nameusage" || sect === "name") && (
             <Taxon
               datasetKey={datasetKey}
               location={props.location}

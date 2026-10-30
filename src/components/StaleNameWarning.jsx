@@ -46,7 +46,7 @@ const StaleNameWarning = ({ datasetKey, id, storedName }) => {
             {error && "could not be resolved"}
             {current && (
               <NavLink
-                to={`/dataset/${datasetKey}/taxon/${encodeURIComponent(id)}`}
+                to={`/dataset/${datasetKey}/nameusage/${encodeURIComponent(id)}`}
                 dangerouslySetInnerHTML={{ __html: current.labelHtml }}
               />
             )}

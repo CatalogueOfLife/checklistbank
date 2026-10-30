@@ -434,7 +434,7 @@ const TaxonPage = ({
   ];
 
   // The name tab is the name url .../name/{nameId}, the other tabs are the usage url
-  // .../taxon/{usageId} deep-linkable via the URL hash (#about, #treatment, #verbatim).
+  // .../nameusage/{usageId} deep-linkable via the URL hash (#about, #treatment, #verbatim).
   // A bare name has no usage, its verbatim tab is the name url with #verbatim.
   const verbatimKey = isBareName ? bareName?.verbatimKey : taxon?.verbatimKey;
   const hashKey = (location?.hash || "").replace(/^#/, "");
@@ -445,7 +445,7 @@ const TaxonPage = ({
     : ["treatment", "verbatim"].includes(hashKey)
     ? hashKey
     : "about";
-  const usageSection = isNameRoute ? "taxon" : section;
+  const usageSection = isNameRoute ? "nameusage" : section;
   const usagePath = (id) => `${prefix}/${usageSection}/${encodeURIComponent(id)}`;
   // the usage is only kept in the name url when there is more than one to choose from
   const namePath = () => ({
@@ -1015,7 +1015,7 @@ const TaxonPage = ({
                               to={{
                                 pathname: `/dataset/${
                                   sourceTaxon.sourceDatasetKey
-                                }/taxon/${encodeURIComponent(
+                                }/nameusage/${encodeURIComponent(
                                   sourceTaxon.sourceId
                                 )}`,
                               }}

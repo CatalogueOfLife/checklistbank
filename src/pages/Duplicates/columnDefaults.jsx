@@ -19,16 +19,14 @@ export default (projectKey, deleteCallback) => ({
             target="_blank"
             key={_.get(record, "id")}
             href={`/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "accepted.id") || _.get(record, "id")
-            )}`}
+              _.get(record, "bareName") ? "name" : "nameusage"
+            }/${encodeURIComponent(_.get(record, "id"))}`}
           >
             <Tooltip
-              title={_.get(record, "accepted.id") || _.get(record, "id")}
+              title={_.get(record, "id")}
             >
               <div style={{ width: "50px" }} className="truncate">
-                {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "id")}
               </div>
             </Tooltip>
           </Button>
@@ -131,16 +129,14 @@ export default (projectKey, deleteCallback) => ({
             target="_blank"
             key={_.get(record, "id")}
             href={`/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "accepted.id") || _.get(record, "id")
-            )}`}
+              _.get(record, "bareName") ? "name" : "nameusage"
+            }/${encodeURIComponent(_.get(record, "id"))}`}
           >
             <Tooltip
-              title={_.get(record, "accepted.id") || _.get(record, "id")}
+              title={_.get(record, "id")}
             >
               <div style={{ width: "50px" }} className="truncate">
-                {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "id")}
               </div>
             </Tooltip>
           </Button>
@@ -252,16 +248,14 @@ export default (projectKey, deleteCallback) => ({
             target="_blank"
             key={_.get(record, "id")}
             href={`/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "accepted.id") || _.get(record, "id")
-            )}`}
+              _.get(record, "bareName") ? "name" : "nameusage"
+            }/${encodeURIComponent(_.get(record, "id"))}`}
           >
             <Tooltip
-              title={_.get(record, "accepted.id") || _.get(record, "id")}
+              title={_.get(record, "id")}
             >
               <div style={{ width: "50px" }} className="truncate">
-                {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "id")}
               </div>
             </Tooltip>
           </Button>
@@ -352,16 +346,14 @@ export default (projectKey, deleteCallback) => ({
             target="_blank"
             key={_.get(record, "id")}
             href={`/dataset/${_.get(record, "datasetKey")}/${
-              _.get(record, "bareName") ? "name" : "taxon"
-            }/${encodeURIComponent(
-              _.get(record, "accepted.id") || _.get(record, "id")
-            )}`}
+              _.get(record, "bareName") ? "name" : "nameusage"
+            }/${encodeURIComponent(_.get(record, "id"))}`}
           >
             <Tooltip
-              title={_.get(record, "accepted.id") || _.get(record, "id")}
+              title={_.get(record, "id")}
             >
               <div style={{ width: "50px" }} className="truncate">
-                {_.get(record, "accepted.id") || _.get(record, "id")}
+                {_.get(record, "id")}
               </div>
             </Tooltip>
           </Button>
