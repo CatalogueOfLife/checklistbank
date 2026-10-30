@@ -82,7 +82,9 @@ const GazetteerPage = ({ name }) => {
 
   const { loading, gazetteer, build } = state;
   const title = gazetteer?.title || name;
-  const isCoverage = overview?.features?.[0]?.properties?.coverage === true;
+  const coverage = overview?.features?.[0]?.properties;
+  const isCoverage = coverage?.coverage === true;
+  const shown = coverage?.count?.toLocaleString("en");
 
   const content = () => {
     if (loading) return <Spin />;
@@ -122,10 +124,10 @@ const GazetteerPage = ({ name }) => {
                 />
                 {isCoverage && (
                   <Text type="secondary" style={{ display: "block", marginTop: "4px" }}>
-                    The overall coverage of its{" "}
-                    {overview.features[0].properties.count.toLocaleString("en")} shapes merged
-                    into one, not its individual entries. Everything is drawn slightly enlarged,
-                    as most entries are too small to see at this scale.
+                    Where {coverage.omitted > 0 ? `${shown} of its` : `its ${shown}`} entries are,
+                    as grid cells of about 50 km and not the individual entries.
+                    {coverage.omitted > 0 &&
+                      ` The other ${coverage.omitted.toLocaleString("en")} are left out, as whole oceans would cover the map and survey grids would only draw their lattice.`}
                   </Text>
                 )}
               </div>
