@@ -50,6 +50,9 @@ const GROUP_LABELS = {
   enrichedByInfoCount: "Enriched Records By Info",
 };
 
+// counted for publishers as well, but the names search cannot filter by the sources of a publisher, so they have no link
+const ENRICHED_METRICS = ["enrichedCount", "enrichedByInfoCount"];
+
 const getIconForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : -1;
   if (pct === -1 || pct === 100) {
@@ -129,6 +132,8 @@ const SourceMetrics = ({
           ...publisherData.map((r) => {
             return getPublisherMetrics(datasetKey, r.id).then(
               (metrics) => {
+                // an info group might only be given by the articles of a publisher, which are not listed as sources
+                columns = _.merge(columns, _.pick(metrics, ENRICHED_METRICS));
                 return {
                   ...r,
                   metrics: metrics,
@@ -470,6 +475,9 @@ const SourceMetrics = ({
                       )}
                   </>
                 )}
+              {isPublisher &&
+                ENRICHED_METRICS.includes(linkKey) &&
+                Number(text || 0).toLocaleString()}
               {typeof Links[linkKey] !== "function" &&
                 (column === "nameMatchesCount" && text === 0 ? (
                   "N/A"
