@@ -74,6 +74,7 @@ const CHARTS = [
     title: "Extinct taxa by rank",
     nameSearchParam: "rank",
   },
+  { key: "secondarySourceByInfoCount", title: "Received from secondary sources" },
   { key: "nameRelationsByTypeCount", title: "Name relations" },
   { key: "taxonConceptRelationsByTypeCount", title: "Taxon concept relations" },
   { key: "speciesInteractionsByTypeCount", title: "Species interactions" },

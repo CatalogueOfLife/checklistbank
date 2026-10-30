@@ -40,9 +40,15 @@ const formItemLayout = {
 };
 
 const defaultViewColumnOrder =
-  "sectorCount nameMatchesCount usagesCount taxonCount synonymCount bareNameCount appliedDecisionCount estimateCount nameCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount nameRelationsCount taxonConceptRelationsCount speciesInteractionsCount".split(
+  "sectorCount nameMatchesCount usagesCount taxonCount synonymCount bareNameCount appliedDecisionCount estimateCount nameCount enrichedCount referenceCount vernacularCount distributionCount mediaCount typeMaterialCount treatmentCount nameRelationsCount taxonConceptRelationsCount speciesInteractionsCount".split(
     " "
   );
+
+// what the records of a source got from others, in contrast to what it gave them, the enriched counts
+const GROUP_LABELS = {
+  secondarySourceByInfoCount: "Received From Secondary Sources",
+  enrichedByInfoCount: "Enriched Records By Info",
+};
 
 const getIconForDiff = (current, released) => {
   const pct = released > 0 ? (current / released) * 100 : -1;
@@ -616,7 +622,7 @@ const SourceMetrics = ({
                 onChange={(value) => selectGroup(value, additionalColumns)}
                 options={Object.keys(groups).map((k) => ({
                   value: k,
-                  label: _.startCase(k),
+                  label: GROUP_LABELS[k] || _.startCase(k),
                 }))}
               />
             </Form.Item>

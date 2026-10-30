@@ -128,6 +128,37 @@ export default {
       publisher ? "sectorPublisherKey" : "sectorDatasetKey"
     }=${KEY}`,
   }),
+  // the names search has no filter for the sources of a publisher
+  enrichedCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) =>
+    publisher
+      ? null
+      : {
+          pathname: `${basePath}/names`,
+          search: `?secondarySource=${KEY}`,
+        },
+  enrichedByInfoCount: (
+    key,
+    value,
+    KEY,
+    basePath,
+    project = false,
+    publisher = false
+  ) =>
+    publisher
+      ? null
+      : {
+          pathname: `${basePath}/names`,
+          search: `?secondarySource=${KEY}&secondarySourceGroup=${encodeURIComponent(
+            key
+          )}`,
+        },
   referenceCount: (
     key,
     value,

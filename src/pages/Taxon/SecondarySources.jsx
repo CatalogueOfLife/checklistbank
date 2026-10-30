@@ -28,6 +28,18 @@ const entityLoader = new DataLoader(
   { cacheKeyFn: (src) => `${src.datasetKey}:${src.id}` }
 );
 
+// A source is credited per kind of information, which for the same source record
+// reads better on one line, e.g. the published in page and its link from BHL.
+const groupBySource = (secondarySources) =>
+  Object.values(
+    Object.entries(secondarySources || {}).reduce((groups, [key, src]) => {
+      const id = `${src.datasetKey}:${src.id}`;
+      groups[id] = groups[id] || { id, src, keys: [] };
+      groups[id].keys.push(key);
+      return groups;
+    }, {})
+  );
+
 const SecondarySources = ({ info }) => {
   const [datasets, setDatasets] = useState({});
   const [entities, setEntities] = useState({});
@@ -61,12 +73,11 @@ const SecondarySources = ({ info }) => {
     setEntities(data);
   };
 
-  return Object.keys(info?.source?.secondarySources || {}).map((key) => {
-      var src = info?.source?.secondarySources?.[key];
-      var entityPath = entities[key] || "nameusage";
+  return groupBySource(info?.source?.secondarySources).map(({ id, src, keys }) => {
+      var entityPath = entities[keys[0]] || "nameusage";
       return (
-        <div key={key}>
-          <i2>{_.startCase(key)}</i2> &nbsp;-&nbsp;&nbsp;
+        <div key={id}>
+          <i2>{keys.map((key) => _.startCase(key)).join(", ")}</i2> &nbsp;-&nbsp;&nbsp;
           <NavLink
             to={{
               pathname: `/dataset/${src?.datasetKey}/${entityPath}/${encodeURIComponent(src?.id)}`,

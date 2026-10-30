@@ -96,6 +96,40 @@ const MetricsPresentation = ({ metrics, rank, dataset, pathToSearch }) =>
           (metrics.nameCount || 0).toLocaleString("en-GB")
         )}
       </PresentationItem>
+      {metrics.enrichedCount > 0 && (
+        <PresentationItem label={"Records of others enriched"} key={"enriched"}>
+          {dataset && pathToSearch ? (
+            <NavLink
+              to={{
+                pathname: pathToSearch,
+                search: `?secondarySource=${dataset?.key}`,
+              }}
+            >
+              {metrics.enrichedCount.toLocaleString("en-GB")}
+            </NavLink>
+          ) : (
+            metrics.enrichedCount.toLocaleString("en-GB")
+          )}
+        </PresentationItem>
+      )}
+      {Object.keys(metrics.enrichedByInfoCount || {})
+        .sort()
+        .map((k) => (
+          <PresentationItem label={`Enriched with ${k}`} key={`enriched-${k}`}>
+            {dataset && pathToSearch ? (
+              <NavLink
+                to={{
+                  pathname: pathToSearch,
+                  search: `?secondarySource=${dataset?.key}&secondarySourceGroup=${encodeURIComponent(k)}`,
+                }}
+              >
+                {metrics.enrichedByInfoCount[k].toLocaleString("en-GB")}
+              </NavLink>
+            ) : (
+              metrics.enrichedByInfoCount[k].toLocaleString("en-GB")
+            )}
+          </PresentationItem>
+        ))}
     </>
   ) : (
     <PresentationItem label="">
