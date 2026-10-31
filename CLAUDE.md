@@ -95,6 +95,7 @@ Major route groups:
 
 - `/vocabulary/gazetteer`, `/vocabulary/gazetteer/:name` and `/vocabulary/area/:gazetteer:id` read everything from the API: `vocab/gazetteer/{name}/overview.geojson`, `labels.tsv` and `build.json`, and the metadata and shape of a single area. The API serves these files from its clone of [col-gazetteers](https://catalogueoflife.github.io/col-gazetteers/), so what they show is only as current as that clone. The UI only links to that site, for its viewer and readme.
 - These pages use native `fetch`, not axios: without the login token axios sends, requests stay on the cached read only server, and its interceptor would replace the page on a 401/403. See `fetchOrNull` in `gazetteers.js`.
+- Each card on `/vocabulary/gazetteer` shows `vocab/gazetteer/{name}/map-thumb.png`, a 480×240 image drawn at 240×120. A gazetteer without one, which answers 404, shows none.
 - `realm` opens with a drawn world image, `map.svg`, instead of its map, in `GazetteerImage.jsx`. Its elements carry the realm id, which `linkedAreaSvg` in `gazetteers.js` turns into links. Add a gazetteer to `GAZETTEERS_WITH_IMAGE` once it publishes one.
 - Colours and the choice of high level areas come from the overview files, not the UI. They are built by `scripts/build_overviews.py` in col-gazetteers.
 - Overlaps on the maps usually come from the source data, e.g. `iso:FR` includes `iso:GF`.

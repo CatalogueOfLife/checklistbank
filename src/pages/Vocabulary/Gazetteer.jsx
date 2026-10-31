@@ -18,31 +18,53 @@ const { Paragraph, Text } = Typography;
 
 const count = (n) => n.toLocaleString("en");
 
+// A small world view of a gazetteer. Those without one, like text, just show none.
+const GazetteerThumbnail = ({ gazetteer }) => {
+  const [missing, setMissing] = useState(false);
+  if (missing) return null;
+  return (
+    <img
+      src={gazetteerFile(gazetteer.name, "map-thumb.png")}
+      alt={`World map of ${gazetteer.title}`}
+      width={240}
+      height={120}
+      loading="lazy"
+      onError={() => setMissing(true)}
+      style={{ flex: "none", maxWidth: "100%", height: "auto" }}
+    />
+  );
+};
+
 const GazetteerCard = ({ gazetteer, build }) => {
   // the text gazetteer is free text and has no published entries
   const to = gazetteer.name === "text" ? undefined : `/vocabulary/gazetteer/${gazetteer.name}`;
   return (
     <ValueCard id={gazetteer.name} heading={gazetteer.name} to={to}>
-      <Paragraph strong style={{ marginBottom: "4px" }}>
-        {gazetteer.title}
-      </Paragraph>
-      {gazetteer.description && (
-        <Paragraph style={{ marginBottom: "8px" }}>{gazetteer.description}</Paragraph>
-      )}
-      {build && (
-        <Space wrap size={[4, 4]} style={{ marginBottom: "8px" }}>
-          <Tag>{count(build.label_count)} entries</Tag>
-          {build.feature_count === 0 && <Tag>no shapes</Tag>}
-          {build.built_at && (
-            <Text type="secondary">built {build.built_at.substring(0, 10)}</Text>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start" }}>
+        <div style={{ flex: "1 1 320px", minWidth: 0 }}>
+          <Paragraph strong style={{ marginBottom: "4px" }}>
+            {gazetteer.title}
+          </Paragraph>
+          {gazetteer.description && (
+            <Paragraph style={{ marginBottom: "8px" }}>{gazetteer.description}</Paragraph>
           )}
-        </Space>
-      )}
-      {gazetteer.link && (
-        <div style={{ position: "relative", display: "inline-block" }}>
-          <Linkify>{gazetteer.link}</Linkify>
+          {build && (
+            <Space wrap size={[4, 4]} style={{ marginBottom: "8px" }}>
+              <Tag>{count(build.label_count)} entries</Tag>
+              {build.feature_count === 0 && <Tag>no shapes</Tag>}
+              {build.built_at && (
+                <Text type="secondary">built {build.built_at.substring(0, 10)}</Text>
+              )}
+            </Space>
+          )}
+          {gazetteer.link && (
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <Linkify>{gazetteer.link}</Linkify>
+            </div>
+          )}
         </div>
-      )}
+        <GazetteerThumbnail gazetteer={gazetteer} />
+      </div>
     </ValueCard>
   );
 };
