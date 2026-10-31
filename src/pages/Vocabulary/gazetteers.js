@@ -11,6 +11,44 @@ export const MAX_LISTED_LABELS = 100000;
 export const gazetteerFile = (name, file) =>
   `${config.dataApi}vocab/gazetteer/${encodeURIComponent(name)}/${file}`;
 
+// Gazetteers with a drawn world map, realm/map.svg, on top of their overview.
+export const GAZETTEERS_WITH_IMAGE = ["realm"];
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const AREA_ELEMENT = /^(realm|label|legend)-([A-Za-z0-9]+)/;
+
+// The drawn map, ready to go inline: each area, its name and its legend entry become
+// a link to the area, as their elements carry its id like realm-Afrotropic or
+// legend-Afrotropic-name. Its style applies to the whole document once inline, so what
+// it sets moves to the root. Null if it isn't a valid SVG.
+export const linkedAreaSvg = (svg, hrefOf) => {
+  const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
+  const root = doc.documentElement;
+  if (root.nodeName !== "svg" || doc.querySelector("parsererror")) return null;
+  doc.querySelectorAll("style, metadata, script").forEach((el) => el.remove());
+  root.setAttribute("stroke-linejoin", "round");
+  root.setAttribute("stroke-linecap", "butt");
+  root.removeAttribute("width");
+  root.removeAttribute("height");
+  [...doc.querySelectorAll("g[id]")].forEach((el) => {
+    const match = el.id.match(AREA_ELEMENT);
+    if (!match) return;
+    const [, kind, id] = match;
+    const link = doc.createElementNS(SVG_NS, "a");
+    link.setAttribute("href", hrefOf(id));
+    // Only the areas themselves take a step in the tab order.
+    if (kind !== "realm") link.setAttribute("tabindex", "-1");
+    if (kind === "realm") {
+      const title = doc.createElementNS(SVG_NS, "title");
+      title.textContent = doc.getElementById(`legend-${id}-name`)?.textContent.trim() || id;
+      link.appendChild(title);
+    }
+    el.replaceWith(link);
+    link.appendChild(el);
+  });
+  return new XMLSerializer().serializeToString(root);
+};
+
 const collator = new Intl.Collator("en", { numeric: true });
 
 // Ids in natural order: 1, 2, 10, 28A, 28a, not 1, 10, 2.

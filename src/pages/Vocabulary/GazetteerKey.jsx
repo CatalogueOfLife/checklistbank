@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Alert, Result, Spin, Typography } from "antd";
+import { Alert, Result, Segmented, Spin, Typography } from "antd";
 import { ApiOutlined } from "@ant-design/icons";
 import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
@@ -8,8 +8,10 @@ import Linkify from "../../components/Linkify";
 import config from "../../config";
 import AreaMap from "./AreaMap";
 import CompactList from "./CompactList";
+import GazetteerImage from "./GazetteerImage";
 import {
   GAZETTEERS_VIEWER,
+  GAZETTEERS_WITH_IMAGE,
   MAX_LISTED_LABELS,
   areaPath,
   fetchOrNull,
@@ -46,6 +48,9 @@ const GazetteerPage = ({ name }) => {
   const [state, setState] = useState({ loading: true });
   const [overview, setOverview] = useState();
   const [rows, setRows] = useState();
+  const hasImage = GAZETTEERS_WITH_IMAGE.includes(name);
+  const [image, setImage] = useState(hasImage ? undefined : null);
+  const [view, setView] = useState("image");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,6 +69,11 @@ const GazetteerPage = ({ name }) => {
       if (signal.aborted) return;
       setState({ gazetteer, build });
       if (!build || build === BUILD_FAILED) return;
+      if (hasImage) {
+        quietly(fetchOrNull(gazetteerFile(name, "map.svg"), { as: "text", signal })).then(
+          (svg) => signal.aborted || setImage(svg)
+        );
+      }
       // Skips the labels too large to list and the overview of a gazetteer
       // without shapes, which only exists for those that have shapes.
       setRows(null);
@@ -81,13 +91,41 @@ const GazetteerPage = ({ name }) => {
       }
     });
     return () => controller.abort();
-  }, [name]);
+  }, [name, hasImage]);
 
   const { loading, gazetteer, build } = state;
   const title = gazetteer?.title || name;
   const coverage = overview?.features?.[0]?.properties;
   const isCoverage = coverage?.coverage === true;
   const shown = coverage?.count?.toLocaleString("en");
+
+  const overviewMap = () => (
+    <>
+      {overview === undefined && (
+        <div style={{ height: 420, display: "grid", placeItems: "center" }}>
+          <Spin />
+        </div>
+      )}
+      {overview === null && <NoMap />}
+      {overview && (
+        <div style={{ marginBottom: "16px" }}>
+          <AreaMap
+            data={overview}
+            fallback={<NoMap />}
+            onAreaClick={(area) => navigate(areaPath(name, area.id))}
+          />
+          {isCoverage && (
+            <Text type="secondary" style={{ display: "block", marginTop: "4px" }}>
+              Where {coverage.omitted > 0 ? `${shown} of its` : `its ${shown}`} entries are,
+              as grid cells of about 50 km and not the individual entries.
+              {coverage.omitted > 0 &&
+                ` The other ${coverage.omitted.toLocaleString("en")} are left out, as whole oceans would cover the map and survey grids would only draw their lattice.`}
+            </Text>
+          )}
+        </div>
+      )}
+    </>
+  );
 
   const content = () => {
     if (loading) return <Spin />;
@@ -123,29 +161,29 @@ const GazetteerPage = ({ name }) => {
           <Paragraph type="secondary">This gazetteer has no published entries.</Paragraph>
         ) : (
           <>
-            {overview === undefined && (
+            {image && (
+              <Segmented
+                style={{ marginBottom: "8px" }}
+                value={view}
+                onChange={setView}
+                options={[
+                  { label: "World image", value: "image" },
+                  { label: "Interactive map", value: "map" },
+                ]}
+              />
+            )}
+            {image === undefined && (
               <div style={{ height: 420, display: "grid", placeItems: "center" }}>
                 <Spin />
               </div>
             )}
-            {overview === null && <NoMap />}
-            {overview && (
+            {image && view === "image" && (
               <div style={{ marginBottom: "16px" }}>
-                <AreaMap
-                  data={overview}
-                  fallback={<NoMap />}
-                  onAreaClick={(area) => navigate(areaPath(name, area.id))}
-                />
-                {isCoverage && (
-                  <Text type="secondary" style={{ display: "block", marginTop: "4px" }}>
-                    Where {coverage.omitted > 0 ? `${shown} of its` : `its ${shown}`} entries are,
-                    as grid cells of about 50 km and not the individual entries.
-                    {coverage.omitted > 0 &&
-                      ` The other ${coverage.omitted.toLocaleString("en")} are left out, as whole oceans would cover the map and survey grids would only draw their lattice.`}
-                  </Text>
-                )}
+                <GazetteerImage name={name} svg={image} fallback={overviewMap()} />
               </div>
             )}
+            {image === null && overviewMap()}
+            {image && view === "map" && overviewMap()}
             {name === "wdpa" && (
               <Paragraph>
                 The licence of the World Database on Protected Areas does not allow its shapes to

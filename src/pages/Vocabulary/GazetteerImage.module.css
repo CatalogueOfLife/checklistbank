@@ -1,0 +1,18 @@
+.image svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.image a:hover path {
+  opacity: 0.75;
+}
+
+.image a:focus-visible {
+  outline: none;
+}
+
+.image a:focus-visible path {
+  stroke: #000;
+  stroke-width: 1;
+}

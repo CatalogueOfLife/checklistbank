@@ -5,6 +5,7 @@ import {
   compareIds,
   externalAreaLink,
   gazetteerFile,
+  linkedAreaSvg,
   parseAreaKey,
   parseLabels,
 } from "./gazetteers";
@@ -78,5 +79,47 @@ describe("gazetteerFile", () => {
   it("reads the files of a gazetteer from the API", () => {
     expect(gazetteerFile("iso", "labels.tsv")).toMatch(/\/vocab\/gazetteer\/iso\/labels\.tsv$/);
     expect(gazetteerFile("iso", "labels.tsv")).not.toContain("github.io");
+  });
+});
+
+describe("linkedAreaSvg", () => {
+  const SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="9pt" height="5pt" viewBox="0 0 9 5">
+    <metadata>m</metadata><defs><style>*{stroke-linejoin: round}</style></defs>
+    <g id="axes_1">
+      <g id="realm-SouthernOcean"><path d="M0 0"/></g>
+      <g id="label-SouthernOcean"><text>Southern Ocean</text></g>
+      <g id="legend-SouthernOcean-name"><text> Southern Ocean </text></g>
+      <g id="text_1"><text>Title</text></g>
+    </g></svg>`;
+  const parsed = () =>
+    new DOMParser().parseFromString(linkedAreaSvg(SVG, (id) => `/a/${id}`), "image/svg+xml");
+
+  it("links the area, its name and its legend entry", () => {
+    const hrefs = [...parsed().querySelectorAll("a")].map((a) => a.getAttribute("href"));
+    expect(hrefs).toEqual(["/a/SouthernOcean", "/a/SouthernOcean", "/a/SouthernOcean"]);
+  });
+
+  it("leaves other elements alone", () => {
+    expect(parsed().querySelector('[id="text_1"]').parentNode.nodeName).toBe("g");
+  });
+
+  it("names areas by their legend entry and only tabs through the areas", () => {
+    const [area, label] = parsed().querySelectorAll("a");
+    expect(area.querySelector("title").textContent).toBe("Southern Ocean");
+    expect(area.hasAttribute("tabindex")).toBe(false);
+    expect(label.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("keeps its style from applying to the rest of the page", () => {
+    const root = parsed().documentElement;
+    expect(root.querySelector("style")).toBeNull();
+    expect(root.getAttribute("stroke-linejoin")).toBe("round");
+    expect(root.hasAttribute("width")).toBe(false);
+    expect(root.getAttribute("viewBox")).toBe("0 0 9 5");
+  });
+
+  it("gives null for anything but an SVG", () => {
+    expect(linkedAreaSvg("<html/>", (id) => id)).toBeNull();
+    expect(linkedAreaSvg("not xml", (id) => id)).toBeNull();
   });
 });
