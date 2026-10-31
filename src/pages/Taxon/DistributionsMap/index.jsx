@@ -68,10 +68,8 @@ const cache = new Map();
 const fetchShape = (gazetteer, id) => {
   const key = `${gazetteer}:${id}`;
   if (cache.has(key)) return cache.get(key);
-  const url = `${config.dataApi}vocab/area/${key}`;
-  const p = axios(url, {
-    headers: { Accept: "application/geo+json" },
-  }).then(
+  const url = `${config.dataApi}vocab/area/${key}.geojson`;
+  const p = axios(url).then(
     (r) => r.data,
     () => null
   );

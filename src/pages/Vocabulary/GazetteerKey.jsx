@@ -19,6 +19,8 @@ import {
 
 const { Paragraph, Text, Title } = Typography;
 
+const BUILD_FAILED = "failed";
+
 const ViewerLink = ({ children }) => (
   <a href={GAZETTEERS_VIEWER} target="_blank" rel="noopener noreferrer">
     {children}
@@ -48,19 +50,20 @@ const GazetteerPage = ({ name }) => {
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
-    const quietly = (promise) =>
+    const quietly = (promise, whenFailed = null) =>
       promise.catch((e) => {
         if (!signal.aborted) console.warn(e);
-        return null;
+        return whenFailed;
       });
 
     Promise.all([
       quietly(fetchOrNull(`${config.dataApi}vocab/gazetteer/${encodeURIComponent(name)}`, { signal })),
-      quietly(fetchOrNull(gazetteerFile(name, "build.json"), { signal })),
+      // null only if it isn't published, as a failed request says nothing about that
+      quietly(fetchOrNull(gazetteerFile(name, "build.json"), { signal }), BUILD_FAILED),
     ]).then(([gazetteer, build]) => {
       if (signal.aborted) return;
       setState({ gazetteer, build });
-      if (!build) return;
+      if (!build || build === BUILD_FAILED) return;
       // Skips the labels too large to list and the overview of a gazetteer
       // without shapes, which only exists for those that have shapes.
       setRows(null);
@@ -105,7 +108,18 @@ const GazetteerPage = ({ name }) => {
             <Linkify>{gazetteer.link}</Linkify>
           </Paragraph>
         )}
-        {!build ? (
+        {build === BUILD_FAILED ? (
+          <Alert
+            type="warning"
+            showIcon
+            title={
+              <>
+                The entries of this gazetteer could not be loaded. You can explore them in the{" "}
+                <ViewerLink>gazetteer viewer</ViewerLink>.
+              </>
+            }
+          />
+        ) : !build ? (
           <Paragraph type="secondary">This gazetteer has no published entries.</Paragraph>
         ) : (
           <>

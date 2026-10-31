@@ -13,7 +13,6 @@ import { areaApiUrl, externalAreaLink, fetchOrNull, parseAreaKey } from "./gazet
 
 const { Paragraph, Text, Title } = Typography;
 
-const GEOJSON = "application/geo+json";
 // the identifiers and name are shown in the heading already
 const SHOWN_ELSEWHERE = ["gazetteer", "id", "name", "globalId"];
 
@@ -49,8 +48,10 @@ const AreaPage = ({ gazetteerName, id }) => {
       fetchOrNull(`${config.dataApi}vocab/gazetteer/${encodeURIComponent(gazetteerName)}`, { signal }),
       setGazetteer
     );
+    // Not by Accept header on the metadata's URL: without a Vary: Accept the browser
+    // answers from its cache with the metadata, as the dev API does.
     settled(
-      fetchOrNull(areaApiUrl(gazetteerName, id), { accept: GEOJSON, signal }),
+      fetchOrNull(`${areaApiUrl(gazetteerName, id)}.geojson`, { signal }),
       setShape,
       () => setShapeFailed(true)
     );

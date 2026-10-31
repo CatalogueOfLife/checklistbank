@@ -55,11 +55,8 @@ export const externalAreaLink = (gazetteer, id) => {
 // Native fetch on purpose. Axios sends the login token with every request, which
 // must not reach github.io, and its interceptor replaces the page on a 401/403.
 // Resolves to null on a 404 and rejects on any other failure.
-export const fetchOrNull = async (url, { as = "json", accept, signal } = {}) => {
-  const response = await fetch(url, {
-    signal,
-    headers: accept ? { Accept: accept } : undefined,
-  });
+export const fetchOrNull = async (url, { as = "json", signal } = {}) => {
+  const response = await fetch(url, { signal });
   if (response.status === 404) return null;
   if (!response.ok) throw new Error(`${response.status} for ${url}`);
   return as === "text" ? response.text() : response.json();

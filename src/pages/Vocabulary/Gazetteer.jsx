@@ -6,7 +6,7 @@ import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import Linkify from "../../components/Linkify";
 import config from "../../config";
-import { ValueCard, ValueGrid } from "./ValueCard";
+import { ValueCard, ValueList } from "./ValueCard";
 import {
   GAZETTEERS_README,
   GAZETTEERS_VIEWER,
@@ -20,13 +20,9 @@ const count = (n) => n.toLocaleString("en");
 
 const GazetteerCard = ({ gazetteer, build }) => {
   // the text gazetteer is free text and has no published entries
-  const heading = build ? (
-    <Link to={`/vocabulary/gazetteer/${gazetteer.name}`}>{gazetteer.name}</Link>
-  ) : (
-    gazetteer.name
-  );
+  const to = gazetteer.name === "text" ? undefined : `/vocabulary/gazetteer/${gazetteer.name}`;
   return (
-    <ValueCard id={gazetteer.name} heading={heading}>
+    <ValueCard id={gazetteer.name} heading={gazetteer.name} to={to}>
       <Paragraph strong style={{ marginBottom: "4px" }}>
         {gazetteer.title}
       </Paragraph>
@@ -43,7 +39,7 @@ const GazetteerCard = ({ gazetteer, build }) => {
         </Space>
       )}
       {gazetteer.link && (
-        <div>
+        <div style={{ position: "relative", display: "inline-block" }}>
           <Linkify>{gazetteer.link}</Linkify>
         </div>
       )}
@@ -107,11 +103,11 @@ const Gazetteer = () => {
           </a>
           .
         </Paragraph>
-        <ValueGrid>
+        <ValueList>
           {gazetteers.map((g) => (
             <GazetteerCard key={g.name} gazetteer={g} build={builds[g.name]} />
           ))}
-        </ValueGrid>
+        </ValueList>
       </PageContent>
     </Layout>
   );

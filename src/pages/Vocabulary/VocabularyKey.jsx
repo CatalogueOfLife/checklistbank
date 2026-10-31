@@ -8,7 +8,7 @@ import withContext from "../../components/hoc/withContext";
 import config from "../../config";
 import CompactList from "./CompactList";
 import { anchorName } from "./TaxGroupTree";
-import { ValueCard, ValueFields, ValueGrid } from "./ValueCard";
+import { ValueCard, ValueFields, ValueList } from "./ValueCard";
 import { areaPath } from "./gazetteers";
 import { normalizeVocab, vocabApiPath } from "./vocabValues";
 
@@ -75,13 +75,13 @@ const VocabularyKey = ({
           {!failed && !vocab && <Spin />}
           {vocab?.rows && <CompactList rows={vocab.rows} />}
           {vocab?.items && (
-            <ValueGrid>
+            <ValueList>
               {vocab.items.map((item) => (
                 <ValueCard key={item.name} id={item.name} heading={heading(item)}>
                   <ValueFields item={item} />
                 </ValueCard>
               ))}
-            </ValueGrid>
+            </ValueList>
           )}
         </div>
       </PageContent>

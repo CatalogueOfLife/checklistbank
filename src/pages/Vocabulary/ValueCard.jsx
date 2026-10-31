@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Card, Image, Tag, Typography } from "antd";
 import PresentationItem from "../../components/PresentationItem";
 import Linkify from "../../components/Linkify";
@@ -6,26 +7,30 @@ import { partitionFields } from "./vocabValues";
 
 const { Title } = Typography;
 
-export const ValueGrid = ({ children }) => (
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 360px), 1fr))",
-      gap: "16px",
-      alignItems: "start",
-    }}
-  >
-    {children}
-  </div>
+// One value per row, as the order of a vocabulary often has a meaning.
+export const ValueList = ({ children }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>{children}</div>
 );
 
-// A vocabulary value: its name as a heading above a card with the details.
-export const ValueCard = ({ id, heading, children, ...rest }) => (
+// A vocabulary value: its name as a heading above a card with the details. With `to`
+// all of the card links there: anchors can't nest, so a link covers the card and any
+// link inside the card has to be positioned to stay on top of it.
+export const ValueCard = ({ id, heading, to, children, ...rest }) => (
   <section id={id} {...rest}>
     <Title level={5} style={{ margin: "0 0 4px" }}>
-      {heading}
+      {to ? <Link to={to}>{heading}</Link> : heading}
     </Title>
-    <Card size="small">{children}</Card>
+    <Card size="small" hoverable={!!to} style={{ background: "#fafafa" }}>
+      {to && (
+        <Link
+          to={to}
+          tabIndex={-1}
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0 }}
+        />
+      )}
+      {children}
+    </Card>
   </section>
 );
 

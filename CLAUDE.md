@@ -94,6 +94,7 @@ Major route groups:
 `src/pages/Vocabulary/` has its own pages for some vocabularies. Everything else goes through `VocabularyKey.jsx`, which shows each value as a heading above a card, or `CompactList` for vocabularies that are only identifiers and labels (`language`, `terms`).
 
 - `/vocabulary/gazetteer`, `/vocabulary/gazetteer/:name` and `/vocabulary/area/:gazetteer:id` read `overview.geojson`, `labels.tsv` and `build.json` from the published [col-gazetteers](https://catalogueoflife.github.io/col-gazetteers/) site, and only the metadata and shape of a single area from the API. The API can't list all ISO subdivisions and has no bulk geometry.
+- The `Content-Security-Policy` of each environment in the deploy repo has to allow `catalogueoflife.github.io`, or these pages can't load anything from it.
 - These pages use native `fetch`, not axios: axios sends the login token with every request, which must not reach github.io. See `fetchOrNull` in `gazetteers.js`.
 - Colours and the choice of high level areas come from the overview files, not the UI. They are built by `scripts/build_overviews.py` in col-gazetteers.
 - Overlaps on the maps usually come from the source data, e.g. `iso:FR` includes `iso:GF`.
