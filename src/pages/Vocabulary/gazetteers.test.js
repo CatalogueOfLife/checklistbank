@@ -4,6 +4,7 @@ import {
   areaPath,
   compareIds,
   externalAreaLink,
+  gazetteerFile,
   parseAreaKey,
   parseLabels,
 } from "./gazetteers";
@@ -70,5 +71,12 @@ describe("externalAreaLink", () => {
   it("is null without a template", () => {
     expect(externalAreaLink({ name: "tdwg" }, "1")).toBeNull();
     expect(externalAreaLink(null, "1")).toBeNull();
+  });
+});
+
+describe("gazetteerFile", () => {
+  it("reads the files of a gazetteer from the API", () => {
+    expect(gazetteerFile("iso", "labels.tsv")).toMatch(/\/vocab\/gazetteer\/iso\/labels\.tsv$/);
+    expect(gazetteerFile("iso", "labels.tsv")).not.toContain("github.io");
   });
 });

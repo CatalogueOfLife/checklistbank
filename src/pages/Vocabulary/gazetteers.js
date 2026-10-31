@@ -1,7 +1,7 @@
 import config from "../../config";
 
-// The published gazetteers. Labels, build metadata and overview maps come from
-// here, the metadata and shape of an individual area from the API.
+// The published gazetteers, only linked to for their viewer and documentation.
+// All their data comes from the API.
 export const GAZETTEERS_VIEWER = "https://catalogueoflife.github.io/col-gazetteers/";
 export const GAZETTEERS_README = `${GAZETTEERS_VIEWER}readme.html`;
 
@@ -9,7 +9,7 @@ export const GAZETTEERS_README = `${GAZETTEERS_VIEWER}readme.html`;
 export const MAX_LISTED_LABELS = 100000;
 
 export const gazetteerFile = (name, file) =>
-  `${GAZETTEERS_VIEWER}${encodeURIComponent(name)}/${file}`;
+  `${config.dataApi}vocab/gazetteer/${encodeURIComponent(name)}/${file}`;
 
 const collator = new Intl.Collator("en", { numeric: true });
 
@@ -52,8 +52,8 @@ export const externalAreaLink = (gazetteer, id) => {
   return `${gazetteer.areaLinkTemplate}${areaId}`;
 };
 
-// Native fetch on purpose. Axios sends the login token with every request, which
-// must not reach github.io, and its interceptor replaces the page on a 401/403.
+// Native fetch on purpose. Without the login token axios sends, requests stay on the
+// cached read only server, and its interceptor would replace the page on a 401/403.
 // Resolves to null on a 404 and rejects on any other failure.
 export const fetchOrNull = async (url, { as = "json", signal } = {}) => {
   const response = await fetch(url, { signal });
