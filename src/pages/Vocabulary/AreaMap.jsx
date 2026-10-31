@@ -21,8 +21,12 @@ const FEATURE_COLOR = [
 
 const addLayers = (map, data) => {
   map.addSource(SOURCE, { type: "geojson", data, maxzoom: 8 });
-  // below the labels of the base map, so that places stay readable
-  const firstLabel = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
+  // Above the roads and borders of the base map, which shine through the translucent
+  // fill instead of cutting the shape up, and below its labels, so that places stay
+  // readable. Those aren't simply the first symbol layer: in Positron that's a waterway
+  // label, far below the borders.
+  const layers = map.getStyle().layers;
+  const firstLabel = layers[layers.findLastIndex((l) => l.type !== "symbol") + 1]?.id;
   map.addLayer(
     {
       id: FILL,
