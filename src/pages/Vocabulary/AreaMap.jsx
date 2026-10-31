@@ -10,6 +10,7 @@ const OUTLINE = "col-areas-outline";
 const LINE = "col-areas-line";
 const POINT = "col-areas-point";
 const SINGLE_COLOR = VIVID_PALETTE[1];
+const WORLD_WIDTH_AT_ZOOM_0 = 512;
 // A feature's color property is an index into the palette, chosen when the
 // overview was built so that neighbouring areas differ.
 const FEATURE_COLOR = [
@@ -103,6 +104,9 @@ const AreaMap = ({ data, onAreaClick, fallback = null, height = 420 }) => {
       const bounds = computeWrappedBounds(data.features);
       if (bounds) {
         map.fitBounds(bounds, { padding: 24, maxZoom: 7, animate: false });
+        // Starts with the world filling the width at most, so that it doesn't repeat.
+        const worldZoom = Math.log2(map.getContainer().clientWidth / WORLD_WIDTH_AT_ZOOM_0);
+        map.setZoom(Math.max(map.getZoom(), worldZoom));
       }
       map
         .getContainer()
