@@ -9,7 +9,7 @@ const FILL = "col-areas-fill";
 const OUTLINE = "col-areas-outline";
 const LINE = "col-areas-line";
 const POINT = "col-areas-point";
-const SINGLE_COLOR = VIVID_PALETTE[1];
+const SINGLE_COLOR = "#73AF48";
 const WORLD_WIDTH_AT_ZOOM_0 = 512;
 // A feature's color property is an index into the palette, chosen when the
 // overview was built so that neighbouring areas differ.
