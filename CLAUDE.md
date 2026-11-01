@@ -99,6 +99,8 @@ Major route groups:
 - `realm` opens with a drawn world image, `map.svg`, instead of its map, in `GazetteerImage.jsx`. Its elements carry the realm id, which `linkedAreaSvg` in `gazetteers.js` turns into links. Add a gazetteer to `GAZETTEERS_WITH_IMAGE` once it publishes one.
 - Colours and the choice of high level areas come from the overview files, not the UI. They are built by `scripts/build_overviews.py` in col-gazetteers.
 - Overlaps on the maps usually come from the source data, e.g. `iso:FR` includes `iso:GF`.
+- `/vocabulary/geotime` (`GeoTime.jsx`) shows the vocabulary as a time scale or as the usual cards, kept in `?view=`. The selected time span is the anchor, so links work in both views. The scale is one table with one row per time span without children, so rows don't show its length. `buildScale` in `geotimeLayout.js` works out the cells.
+- The official chart colours come from the `color` field of the API. `lighten` in `geotimeLayout.js` makes them paler for display: change its `white` default to adjust all of them. The scale scrolls in its own box because `overflowX` on the layout's `Content` stops anything sticking to the window.
 
 ### Component Organization
 

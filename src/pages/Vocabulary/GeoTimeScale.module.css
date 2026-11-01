@@ -1,0 +1,98 @@
+/* The page content has overflow-x set, which stops anything inside it from sticking to
+   the window. So the scale scrolls itself, which also takes care of narrow screens. */
+.scroller {
+  height: calc(100vh - 48px);
+  min-height: 400px;
+  overflow: auto;
+  border: 1px solid #f0f0f0;
+}
+
+.table {
+  min-width: 860px;
+  --columns:
+    minmax(84px, 0.8fr) minmax(84px, 0.8fr) minmax(124px, 1.1fr) minmax(100px, 1fr)
+    minmax(104px, 1fr) minmax(152px, 1.3fr) minmax(132px, 1.2fr) 72px;
+}
+
+/* A sticky grid item can't leave its own row, so the header is a grid of its own. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: var(--columns);
+  height: 28px;
+  background: #fafafa;
+  border-bottom: 1px solid #d9d9d9;
+  font-size: 12px;
+  line-height: 28px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.header > div {
+  padding: 0 8px;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: var(--columns);
+  grid-auto-rows: 26px;
+  padding: 10px 0 14px;
+  font-size: 13px;
+}
+
+.cell {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  color: #000;
+  overflow: clip;
+  border-right: 1px solid rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.first {
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.cell:hover,
+.cell:focus-visible {
+  filter: brightness(0.93);
+}
+
+.selected {
+  z-index: 1;
+  outline: 2px solid #000;
+  outline-offset: -2px;
+}
+
+/* Stays in view while the cell of a long time span is passing by. */
+.label {
+  position: sticky;
+  top: 30px;
+  padding: 3px 8px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+/* Written on the line between two rows, as the age of the boundary. */
+.boundary {
+  position: relative;
+}
+
+.boundary > span {
+  position: absolute;
+  left: 8px;
+  line-height: 16px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.bottom {
+  bottom: -8px;
+}
+
+.top {
+  top: -8px;
+}

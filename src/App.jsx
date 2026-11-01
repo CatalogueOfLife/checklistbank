@@ -84,6 +84,7 @@ import TaxGroup from "./pages/Vocabulary/TaxGroup";
 import Gazetteer from "./pages/Vocabulary/Gazetteer";
 import GazetteerKey from "./pages/Vocabulary/GazetteerKey";
 import AreaKey from "./pages/Vocabulary/AreaKey";
+import GeoTime from "./pages/Vocabulary/GeoTime";
 import DownloadKey from "./pages/Download/DatasetDownloadKey";
 
 // antd 5+ defaults to a different blue than v4. Pin colorPrimary so the brand
@@ -486,6 +487,7 @@ const App = () => {
               element={<Navigate to="/vocabulary/gazetteer" replace />}
             />
             <Route path="/vocabulary/area/:id" element={<AreaKey />} />
+            <Route path="/vocabulary/geotime" element={<GeoTime />} />
             <Route path="/vocabulary/:key" element={<VocabularyKey />} />
             <Route path="/tools/index" element={<ToolIndex />} />
             <Route
