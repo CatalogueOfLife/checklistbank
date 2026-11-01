@@ -44,13 +44,34 @@ describe("buildScale", () => {
     expect(rows(cell(cells, "Hadean"))).toEqual([4, 5]);
   });
 
-  it("fills a rank that is not used", () => {
-    // no supereon above it
-    expect(columns(cell(cells, "Phanerozoic"))).toEqual([0, 2]);
+  it("starts a span without a parent in the column of its rank", () => {
+    expect(columns(cell(cells, "Phanerozoic"))).toEqual([1, 2]);
     expect(columns(cell(cells, "Precambrian"))).toEqual([0, 1]);
+  });
+
+  it("fills a rank that is not used", () => {
     // no subperiod below it
     expect(columns(cell(cells, "Silurian"))).toEqual([3, 5]);
     expect(columns(cell(cells, "Carboniferous"))).toEqual([3, 4]);
+  });
+
+  it("rotates a span that stays within the narrow columns", () => {
+    ["Precambrian", "Phanerozoic", "Paleozoic"].forEach((name) => {
+      expect(cell(cells, name).rotated).toBe(true);
+    });
+    ["Carboniferous", "Pridoli"].forEach((name) => {
+      expect(cell(cells, name).rotated).toBe(false);
+    });
+  });
+
+  it("keeps a span without children horizontal as it runs across the table", () => {
+    const { cells: leaves } = buildScale([
+      span("Archean", "eon", 4000, 2500),
+      span("Neoarchean", "era", 2800, 2500, "Archean"),
+    ]);
+    expect(cell(leaves, "Archean").rotated).toBe(true);
+    expect(cell(leaves, "Neoarchean").rotated).toBe(false);
+    expect(cell(cells, "Hadean").rotated).toBe(false);
   });
 
   it("runs a span without children to the last column", () => {
@@ -72,8 +93,8 @@ describe("buildScale", () => {
       span("Orphan", "epoch", 10, 5, "Unknown"),
       span("Child", "newrank", 10, 5, "Orphan"),
     ]);
-    expect(columns(cell(odd, "Orphan"))).toEqual([0, 1]);
-    expect(columns(cell(odd, "Child"))).toEqual([1, 7]);
+    expect(columns(cell(odd, "Orphan"))).toEqual([5, 6]);
+    expect(columns(cell(odd, "Child"))).toEqual([6, 7]);
   });
 });
 

@@ -1,15 +1,19 @@
 // The columns of the scale, from the longest time spans to the shortest.
 export const RANKS = ["supereon", "eon", "era", "period", "subperiod", "epoch", "age"];
 
+// The first columns are narrow, with their text rotated.
+export const NARROW_COLUMNS = 3;
+
 const FALLBACK_COLOR = "#f5f5f5";
 
 const byStart = (a, b) => (a.start ?? Infinity) - (b.start ?? Infinity);
 
 // Lays the flat vocabulary out as one table with the youngest time span on top. Each
 // span without children takes one row and a parent spans the rows of its children.
-// Columns are 0 based with an exclusive end. Not all spans use all ranks: a parent
-// fills the columns up to its first child and a span without children all the
-// remaining ones, so Phanerozoic also takes the supereon column.
+// Columns are 0 based with an exclusive end. A span without a parent starts in the
+// column of its rank, so the supereon column stays empty next to the eon Phanerozoic.
+// Not all spans use all ranks: a parent fills the columns up to its first child and a
+// span without children all the remaining ones.
 export const buildScale = (items) => {
   const names = new Set(items.map((i) => i.name));
   const childrenOf = {};
@@ -31,7 +35,7 @@ export const buildScale = (items) => {
       ? Math.max(colStart + 1, Math.min(...children.map((c) => RANKS.indexOf(c.type))))
       : RANKS.length;
     const rowStart = leaves.length;
-    const cell = { item, color, colStart, colEnd, rowStart };
+    const cell = { item, color, colStart, colEnd, rowStart, rotated: colEnd <= NARROW_COLUMNS };
     cells.push(cell);
     if (children.length) {
       children.forEach((c) => place(c, colEnd, color));
@@ -40,7 +44,9 @@ export const buildScale = (items) => {
     }
     cell.rowEnd = leaves.length;
   };
-  roots.sort(byStart).forEach((root) => place(root, 0, FALLBACK_COLOR));
+  roots
+    .sort(byStart)
+    .forEach((root) => place(root, Math.max(0, RANKS.indexOf(root.type)), FALLBACK_COLOR));
   return { cells, leaves };
 };
 

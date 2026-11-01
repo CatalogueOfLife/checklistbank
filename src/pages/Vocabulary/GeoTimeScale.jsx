@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { RANKS, buildScale, lighten } from "./geotimeLayout";
+import { NARROW_COLUMNS, RANKS, buildScale, lighten } from "./geotimeLayout";
 import styles from "./GeoTimeScale.module.css";
 
 const describe = ({ name, type, start, end }) => `${name}, ${type}: ${start} to ${end} Ma`;
@@ -13,13 +13,15 @@ const GeoTimeScale = ({ items, location, selected, onSelect }) => {
     <div className={styles.scroller}>
       <div className={styles.table}>
         <div className={styles.header}>
-          {RANKS.map((rank) => (
-            <div key={rank}>{rank}</div>
+          {RANKS.map((rank, i) => (
+            <div key={rank} className={i < NARROW_COLUMNS ? styles.rotatedHeading : undefined}>
+              {rank}
+            </div>
           ))}
           <div>Ma</div>
         </div>
         <div className={styles.body}>
-          {cells.map(({ item, color, colStart, colEnd, rowStart, rowEnd }) => (
+          {cells.map(({ item, color, colStart, colEnd, rowStart, rowEnd, rotated }) => (
             <Link
               key={item.name}
               id={item.name}
@@ -30,6 +32,9 @@ const GeoTimeScale = ({ items, location, selected, onSelect }) => {
               className={[
                 styles.cell,
                 rowStart === 0 ? styles.first : "",
+                item.parent ? "" : styles.root,
+                rotated ? styles.rotated : "",
+                rowEnd - rowStart === 1 ? styles.single : "",
                 item.name === selected ? styles.selected : "",
               ].join(" ")}
               style={{

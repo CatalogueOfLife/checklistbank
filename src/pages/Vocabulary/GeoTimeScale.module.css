@@ -8,9 +8,10 @@
 }
 
 .table {
-  min-width: 860px;
+  min-width: 680px;
+  --header-height: 64px;
   --columns:
-    minmax(84px, 0.8fr) minmax(84px, 0.8fr) minmax(124px, 1.1fr) minmax(100px, 1fr)
+    32px 32px 32px minmax(100px, 1fr)
     minmax(104px, 1fr) minmax(152px, 1.3fr) minmax(132px, 1.2fr) 72px;
 }
 
@@ -21,22 +22,31 @@
   z-index: 3;
   display: grid;
   grid-template-columns: var(--columns);
-  height: 28px;
+  align-items: end;
+  height: var(--header-height);
   background: #fafafa;
   border-bottom: 1px solid #d9d9d9;
   font-size: 12px;
-  line-height: 28px;
+  line-height: 20px;
   color: rgba(0, 0, 0, 0.65);
 }
 
 .header > div {
-  padding: 0 8px;
+  padding: 0 8px 4px;
+}
+
+.header > .rotatedHeading {
+  justify-self: center;
+  padding: 4px 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 .body {
   display: grid;
   grid-template-columns: var(--columns);
-  grid-auto-rows: 26px;
+  /* rows grow where a rotated label needs more room, e.g. Neoproterozoic on 3 rows */
+  grid-auto-rows: minmax(26px, auto);
   padding: 10px 0 14px;
   font-size: 13px;
 }
@@ -55,6 +65,15 @@
   border-top: 1px solid rgba(0, 0, 0, 0.25);
 }
 
+.root {
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* Rows can be higher than one line of text. */
+.single {
+  align-items: center;
+}
+
 .cell:hover,
 .cell:focus-visible {
   filter: brightness(0.93);
@@ -69,10 +88,21 @@
 /* Stays in view while the cell of a long time span is passing by. */
 .label {
   position: sticky;
-  top: 30px;
-  padding: 3px 8px;
+  top: calc(var(--header-height) + 2px);
+  padding: 2px 8px 3px;
   line-height: 20px;
   white-space: nowrap;
+}
+
+/* Reads from bottom to top. */
+.rotated {
+  justify-content: center;
+}
+
+.rotated .label {
+  padding: 8px 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 /* Written on the line between two rows, as the age of the boundary. */
