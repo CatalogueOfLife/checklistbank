@@ -16,6 +16,7 @@ import {
   areaPath,
   fetchOrNull,
   gazetteerFile,
+  gazetteerReadme,
   parseLabels,
 } from "./gazetteers";
 
@@ -144,6 +145,13 @@ const GazetteerPage = ({ name }) => {
         {gazetteer?.link && (
           <Paragraph>
             <Linkify>{gazetteer.link}</Linkify>
+          </Paragraph>
+        )}
+        {build && build !== BUILD_FAILED && (
+          <Paragraph>
+            <a href={gazetteerReadme(name)} target="_blank" rel="noopener noreferrer">
+              Details of this gazetteer
+            </a>
           </Paragraph>
         )}
         {build === BUILD_FAILED ? (

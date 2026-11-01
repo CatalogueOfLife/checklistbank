@@ -5,6 +5,7 @@ import {
   compareIds,
   externalAreaLink,
   gazetteerFile,
+  gazetteerReadme,
   linkedAreaSvg,
   parseAreaKey,
   parseLabels,
@@ -72,6 +73,14 @@ describe("externalAreaLink", () => {
   it("is null without a template", () => {
     expect(externalAreaLink({ name: "tdwg" }, "1")).toBeNull();
     expect(externalAreaLink(null, "1")).toBeNull();
+  });
+});
+
+describe("gazetteerReadme", () => {
+  it("points to the folder of the gazetteer on GitHub", () => {
+    expect(gazetteerReadme("iso")).toBe(
+      "https://github.com/CatalogueOfLife/col-gazetteers/blob/main/iso/README.md"
+    );
   });
 });
 

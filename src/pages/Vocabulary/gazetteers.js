@@ -8,6 +8,10 @@ export const GAZETTEERS_README = `${GAZETTEERS_VIEWER}readme.html`;
 // Above this many labels a gazetteer is not listed (WDPA has 312,799).
 export const MAX_LISTED_LABELS = 100000;
 
+// Explains the sources and processing of a published gazetteer. Others like text have none.
+export const gazetteerReadme = (name) =>
+  `https://github.com/CatalogueOfLife/col-gazetteers/blob/main/${encodeURIComponent(name)}/README.md`;
+
 export const gazetteerFile = (name, file) =>
   `${config.dataApi}vocab/gazetteer/${encodeURIComponent(name)}/${file}`;
 
