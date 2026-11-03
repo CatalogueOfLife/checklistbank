@@ -19,6 +19,7 @@ import ErrorMsg from "../../components/ErrorMsg";
 import JobDetail from "../../components/job/JobDetail";
 import DatasetAutocomplete from "../project/Assembly/DatasetAutocomplete";
 import { searchJobs, getJobTypes, JOB_LANES } from "../../api/job";
+import { JWT_STORAGE_NAME } from "../../api/user";
 import { decorateJobs, loadUser } from "./decorate";
 import { PRESETS, presetOf, applyPreset } from "./presets";
 import {
@@ -86,21 +87,35 @@ const HistoryTab = ({
     offset,
   };
 
+  // On a reload the user is only known once whoAmI returns. Until then "Mine"
+  // cannot be translated into createdBy, and searching anyway would page
+  // through everyone's jobs, so wait for a logged in user to arrive.
+  const awaitingUser =
+    mine && !user && !!sessionStorage.getItem(JWT_STORAGE_NAME);
+
   useEffect(() => {
+    if (awaitingUser) return;
+    // A slower earlier search must not overwrite the result of a later one.
+    let stale = false;
     const load = async () => {
       setLoading(true);
       try {
         const res = await searchJobs(query);
-        setData({ ...res, result: await decorateJobs(res.result) });
+        const result = await decorateJobs(res.result);
+        if (stale) return;
+        setData({ ...res, result });
         setError(null);
       } catch (err) {
-        setError(err);
+        if (!stale) setError(err);
       } finally {
-        setLoading(false);
+        if (!stale) setLoading(false);
       }
     };
     load();
-  }, [JSON.stringify(query)]);
+    return () => {
+      stale = true;
+    };
+  }, [JSON.stringify(query), awaitingUser]);
 
   // The user the history is narrowed down to, through the filter icon in the
   // user column or the "Mine" switch.
@@ -308,7 +323,7 @@ const HistoryTab = ({
         scroll={{ x: "max-content" }}
         columns={columns}
         dataSource={data.result}
-        loading={loading}
+        loading={loading || awaitingUser}
         pagination={{
           current: Math.floor(offset / limit) + 1,
           pageSize: limit,
