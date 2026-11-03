@@ -9,7 +9,7 @@ import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Tooltip, Card, Popconfirm, App } from "antd";
+import { Tag, List, Row, Col, Button, Tabs, Card, Popconfirm, App } from "antd";
 import { formatTime } from "../../dateTime";
 import history from "../../history";
 import { getDatasetsBatch } from "../../api/dataset";
@@ -18,6 +18,7 @@ import {
   searchParamsOfRequest,
   searchUrlOfJob,
 } from "../NameSearch/searchDownload";
+import DownloadError from "../Download/DownloadError";
 const UserProfile = ({ user, countryAlpha2, match }) => {
   const { message } = App.useApp();
   const [editorDatasets, setEditorDatasets] = useState([]);
@@ -172,9 +173,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
           title={
             <>
               {item?.status === "failed" ? (
-                <Tooltip title={item?.errorMessage}>
-                  <Tag color="error">Failed</Tag>
-                </Tooltip>
+                <Tag color="error">Failed</Tag>
               ) : item?.status === "finished" ? (
                 item?.result?.deleted ? (
                   <Tag>Expired</Tag>
@@ -204,6 +203,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
           }
           extra={renderCancel(item)}
         >
+          <DownloadError md={6} error={item?.errorMessage} />
           <PresentationItem md={6} label="Type">
             <Tag>search download</Tag>
           </PresentationItem>
@@ -233,9 +233,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
     <List.Item key={item?.key}>
       <Card title={<>
         {item?.error ? (
-              <Tooltip title={item?.error}>
-                <Tag color="error">Failed</Tag>
-              </Tooltip>
+              <Tag color="error">Failed</Tag>
           ) : item?.status === "finished" ? (
             <Button type="link" href={item?.download} style={{color: "#1890ff"}}>
               <DownloadOutlined /> {item?.sizeWithUnit}
@@ -250,6 +248,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
         </>}
       extra={renderCancel(item)}>
         <>
+            <DownloadError md={4} error={item.error} />
             <div> <PresentationItem md={4} label="Request">
              {item.request && <div>{Object.keys(item.request).map((key) => (
                 <Tag key={key}>{`${key}: ${item.request[key]}`}</Tag>

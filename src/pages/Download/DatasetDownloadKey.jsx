@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SyncOutlined, DownloadOutlined, HistoryOutlined } from "@ant-design/icons";
-import { Tooltip } from 'antd';
 import PresentationItem from "../../components/PresentationItem";
+import DownloadError from "./DownloadError";
 import { formatTime } from "../../dateTime";
 import withRouter from "../../withRouter";
 import axios from "axios";
@@ -76,9 +76,7 @@ const DatasetDownload = ({ match, downloadKey, addError }) => {
               title={
                 <>
                   {download?.error ? (
-                    <Tooltip title={download?.error}>
-                      <Tag color="error">Failed</Tag>
-                    </Tooltip>
+                    <Tag color="error">Failed</Tag>
                   ) : download?.status === "finished" ? (
                     <Button
                       type="link"
@@ -103,6 +101,7 @@ const DatasetDownload = ({ match, downloadKey, addError }) => {
               }
             >
               <>
+                <DownloadError md={4} error={download.error} />
                 <div>
                   {" "}
                   <PresentationItem md={4} label="Request">
