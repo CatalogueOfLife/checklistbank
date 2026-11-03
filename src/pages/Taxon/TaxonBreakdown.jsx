@@ -143,6 +143,19 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         );
       } else {
         root = processChildren(childRankData);
+        // The breakdown only returns children of the child rank, so names
+        // without one - e.g. families placed directly in Arthropoda incertae
+        // sedis - would silently drop out of the inner ring. Add the remainder
+        // as its own slice so the rings add up to the taxon total.
+        const total = _.get(counts, `${countBy}.count`, 0);
+        const sum = childRankData.reduce((acc, cur) => acc + cur.species, 0);
+        if (total > sum) {
+          root.push({
+            name: `Other / Unknown ${childRank}`,
+            species: total - sum,
+            children: [],
+          });
+        }
       }
       setLoading(false);
       initChart(root, countBy);
