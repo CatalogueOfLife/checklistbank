@@ -139,7 +139,7 @@ const Sector = ({
     const { sector } = taxon;
     axios
       .get(
-        `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&limit=0`
+        `${config.dataApi}dataset/${sector.subjectDatasetKey}/nameusage/search?facet=rank&facetLimit=500&limit=0`
       ) // /assembly/3/sync/
       .then((res) => {
         setSectorDatasetRanks(

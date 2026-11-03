@@ -28,11 +28,11 @@ const TaxonSummary = ({datasetKey, dataset, taxon, onTaxonClick, addError, rank}
     setSynonyms([])
     try {
         const res = await  axios(
-            `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon?.id}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+            `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon?.id}&facet=rank&facetLimit=500&status=accepted&status=provisionally%20accepted&limit=0`
           )
          setIncludes( _.get(res, "data.facets.rank", []))
         /*  const synres = await  axios(
-            `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon?.id}&facet=rank&status=synonym&limit=0`
+            `${config.dataApi}dataset/${datasetKey}/nameusage/search?TAXON_ID=${taxon?.id}&facet=rank&facetLimit=500&status=synonym&limit=0`
           )
           setSynonyms( _.get(synres, "data.facets.rank", [])) */
 

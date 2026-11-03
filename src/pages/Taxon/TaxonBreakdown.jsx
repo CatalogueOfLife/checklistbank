@@ -43,7 +43,7 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         config.dataApi
       }dataset/${datasetKey}/nameusage/search?TAXON_ID=${encodeURIComponent(
         taxon.id
-      )}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+      )}&facet=rank&facetLimit=500&status=accepted&status=provisionally%20accepted&limit=0`
     );
     return _.keyBy(_.get(res, "data.facets.rank", []), "value");
   };
@@ -133,22 +133,20 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
         children: (node.children || []).map(normalize),
       });
       const childRankData = res.data.map(normalize);
+      // The breakdown only returns children of the child rank, so names
+      // without one - e.g. families placed directly in Arthropoda incertae
+      // sedis - would silently drop out of the chart. Size it by the taxon
+      // total instead and show the remainder as an Other / Unknown slice.
+      const sum = childRankData.reduce((acc, cur) => acc + cur.species, 0);
+      const total = Math.max(_.get(counts, `${countBy}.count`, 0), sum);
       let root;
       if (singleRoot) {
         root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
         root[0].children = processChildren(childRankData);
-        root[0].species = root[0].children.reduce(
-          (acc, cur) => acc + cur.species,
-          0
-        );
+        // initChart adds the Other / Unknown slice for whatever the children miss
+        root[0].species = total;
       } else {
         root = processChildren(childRankData);
-        // The breakdown only returns children of the child rank, so names
-        // without one - e.g. families placed directly in Arthropoda incertae
-        // sedis - would silently drop out of the inner ring. Add the remainder
-        // as its own slice so the rings add up to the taxon total.
-        const total = _.get(counts, `${countBy}.count`, 0);
-        const sum = childRankData.reduce((acc, cur) => acc + cur.species, 0);
         if (total > sum) {
           root.push({
             name: `Other / Unknown ${childRank}`,

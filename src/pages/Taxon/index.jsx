@@ -224,7 +224,7 @@ const TaxonPage = ({
         config.dataApi
       }dataset/${datasetKey}/nameusage/search?TAXON_ID=${urlSafe(
         usageId
-      )}&facet=rank&status=accepted&status=provisionally%20accepted&limit=0`
+      )}&facet=rank&facetLimit=500&status=accepted&status=provisionally%20accepted&limit=0`
     )
       .then((res) => {
         setIncludes(_.get(res, "data.facets.rank") || []);
