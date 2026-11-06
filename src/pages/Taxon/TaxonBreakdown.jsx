@@ -9,18 +9,7 @@ import history from "../../history";
 import { Spin, Row, Col } from "antd";
 import withContext from "../../components/hoc/withContext";
 
-const MAX_GRAND_CHILDREN = 1000;
-const canonicalRanks = [
-  "kingdom",
-  "phylum",
-  "class",
-  "order",
-  "family",
-  "genus",
-  "species",
-];
-
-const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
+const TaxonBreakdown = ({ taxon, datasetKey, dataset, onTaxonClick }) => {
   const [options, setOptions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,126 +26,58 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
     }
   }, [taxon, datasetKey, dataset]);
 
-  const getOverView = async () => {
-    const res = await axios(
-      `${
-        config.dataApi
-      }dataset/${datasetKey}/nameusage/search?TAXON_ID=${encodeURIComponent(
-        taxon.id
-      )}&facet=rank&facetLimit=500&status=accepted&status=provisionally%20accepted&limit=0`
-    );
-    return _.keyBy(_.get(res, "data.facets.rank", []), "value");
-  };
+  // The breakdown endpoint decides the chart: what the nodes count (species,
+  // or genera where they outnumber species more than twofold, #1584), which
+  // one or two ranks form the rings and the total. A node without an id is the
+  // remainder of its parent - e.g. families placed directly in Arthropoda
+  // incertae sedis - which initChart shows as an Other / Unknown slice.
   const getData = async () => {
     setLoading(true);
     try {
-      const counts = await getOverView();
-
-      const ranks = canonicalRanks;
-      // What to size the pie by: species normally, but fall back to genus when
-      // genera greatly outnumber species (#1584). A species pie is useless for
-      // genera-dominated groups - e.g. IRMNG's Arthropoda has 126k genera but
-      // only 2 species. Use genus whenever there are more than twice as many
-      // genera as species (which also covers genera-only groups).
-      const speciesCount = _.get(counts, "species.count", 0);
-      const genusCount = _.get(counts, "genus.count", 0);
-      const countBy =
-        genusCount > 2 * speciesCount
-          ? "genus"
-          : speciesCount > 0
-          ? "species"
-          : null;
-      // Check if the rank is in the canonical ranks
-      let taxonRankIdx = ranks.indexOf(_.get(taxon, "name.rank"));
-      // If not, find it in the full rank enum, and place it within canonical ranks.
-      // This will produce nice charts for e.g. sub- and superfamilies
-      if (taxonRankIdx === -1) {
-        let rankIndex = rank.indexOf(_.get(taxon, "name.rank")) + 1;
-        while (taxonRankIdx === -1 && rankIndex < rank.length - 1) {
-          let canonicalRankIndex = ranks.indexOf(rank[rankIndex]);
-          if (canonicalRankIndex > -1) {
-            taxonRankIdx = canonicalRankIndex - 1;
-          }
-          rankIndex++;
-        }
-      }
-      let childRank;
-      let childRankIndex = taxonRankIdx + 1;
-      while (!childRank && childRankIndex < ranks.length) {
-        const nextRank = _.get(ranks, `[${childRankIndex}]`);
-        if (nextRank && _.get(counts, `${nextRank}.count`, 0) > 0) {
-          childRank = nextRank;
-        } else {
-          childRankIndex++;
-        }
-      }
-      let grandChildRank;
-      let grandChildRankIndex = childRankIndex + 1;
-      while (!grandChildRank && grandChildRankIndex < ranks.length) {
-        const nextRank = _.get(ranks, `[${grandChildRankIndex}]`);
-        if (nextRank && _.get(counts, `${nextRank}.count`, 0) > 0) {
-          grandChildRank = nextRank;
-        } else {
-          grandChildRankIndex++;
-        }
-      }
-      if (!childRank || !countBy) {
+      const res = await axios(
+        `${config.dataApi}dataset/${datasetKey}/taxon/${encodeURIComponent(
+          taxon.id
+        )}/breakdown?level=2`
+      );
+      const bd = res.data || {};
+      const toNode = (node) => ({
+        ...node,
+        species: node.count || 0,
+        children: (node.children || []).filter((n) => n.id).map(toNode),
+      });
+      const children = (bd.children || []).filter((n) => n.id).map(toNode);
+      if (!bd.countRank || !bd.total || children.length === 0) {
         setInvalid(true);
         setLoading(false);
         return;
       }
-
-      // Single root: a centre node (the taxon) ringed only by its child rank.
-      // Used when there is no meaningful second ring to drill into - no
-      // grandchild rank, the grandchild rank is at or below the rank we count by
-      // (so each grandchild would just count itself), or there are too many of
-      // them. Otherwise we render two nested rings (child + grandchild).
-      const singleRoot =
-        !grandChildRank ||
-        ranks.indexOf(grandChildRank) >= ranks.indexOf(countBy) ||
-        _.get(counts, `${grandChildRank}.count`) > MAX_GRAND_CHILDREN;
-      // The breakdown endpoint counts the requested rank for each node and emits
-      // it under a property of that name. We size the pie by species normally,
-      // but fall back to genus when genera dominate (#1584). The two-ring layout
-      // needs the grandchildren too, so fetch level=2 for it - otherwise the
-      // outer ring has no real taxa and renders as a single "Other / Unknown"
-      // slice per child. Normalise the chosen count into `species` (recursively)
-      // so the chart code below stays rank-agnostic.
-      const res = await axios(
-        `${config.dataApi}dataset/${datasetKey}/taxon/${
-          taxon.id
-        }/breakdown?countRank=${countBy}&level=${singleRoot ? 1 : 2}`
-      );
-      const normalize = (node) => ({
-        ...node,
-        species: _.get(node, countBy, 0),
-        children: (node.children || []).map(normalize),
-      });
-      const childRankData = res.data.map(normalize);
-      // The breakdown only returns children of the child rank, so names
-      // without one - e.g. families placed directly in Arthropoda incertae
-      // sedis - would silently drop out of the chart. Size it by the taxon
-      // total instead and show the remainder as an Other / Unknown slice.
-      const sum = childRankData.reduce((acc, cur) => acc + cur.species, 0);
-      const total = Math.max(_.get(counts, `${countBy}.count`, 0), sum);
+      const total = bd.total;
       let root;
-      if (singleRoot) {
-        root = [{ name: _.get(taxon, "name.scientificName"), id: taxon.id }];
-        root[0].children = processChildren(childRankData);
-        // initChart adds the Other / Unknown slice for whatever the children miss
-        root[0].species = total;
+      if (bd.ranks.length < 2) {
+        // Single root: a centre node (the taxon) ringed only by its child rank,
+        // when the backend decided a second ring is not worth drawing.
+        root = [
+          {
+            name: _.get(taxon, "name.scientificName"),
+            id: taxon.id,
+            // initChart adds the Other / Unknown slice for whatever the children miss
+            species: total,
+            children,
+          },
+        ];
       } else {
-        root = processChildren(childRankData);
+        root = processChildren(children);
+        const sum = root.reduce((acc, cur) => acc + cur.species, 0);
         if (total > sum) {
           root.push({
-            name: `Other / Unknown ${childRank}`,
+            name: `Other / Unknown ${bd.ranks[0]}`,
             species: total - sum,
             children: [],
           });
         }
       }
       setLoading(false);
-      initChart(root, countBy);
+      initChart(root, bd.countRank);
     } catch (err) {
       setError(err);
       setLoading(false);
@@ -191,7 +112,9 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
       categories = root.map((t) => t.name),
       data = root.map((k, idx) => {
         const children = processChildren(k.children);
-        const sum = k.children.reduce((acc, cur) => acc + cur.species, 0);
+        // sum the clipped children, so the slices cut off by processChildren
+        // land in Other / Unknown and the outer ring stays aligned
+        const sum = children.reduce((acc, cur) => acc + cur.species, 0);
         let c =
           sum < k.species
             ? [
@@ -326,8 +249,8 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
           },
           dataLabels: {
             formatter: function () {
-              // display only if larger than 1
-              return this.y > 1
+              // a ring of the counted rank has a count of 1 per slice
+              return this.y > 0
                 ? "<b>" +
                     this.point.name +
                     ":</b> " +
@@ -389,9 +312,8 @@ const TaxonBreakdown = ({ taxon, datasetKey, rank, dataset, onTaxonClick }) => {
   );
 };
 
-const mapContextToProps = ({ dataset, rank }) => ({
+const mapContextToProps = ({ dataset }) => ({
   dataset,
-  rank,
 });
 
 export default withContext(mapContextToProps)(TaxonBreakdown);
