@@ -10,8 +10,10 @@ maplibregl.setWorkerUrl(maplibreWorkerUrl);
 export { maplibregl };
 
 // The base map, per environment, so a different provider or a keyed style URL
-// can be swapped in without touching this file. Carto's keyless Positron is
-// the fallback for an environment that does not name one.
+// can be swapped in without touching this file. The fallback is col-browser's
+// bundled COL Positron style: CARTO's open Positron design on GBIF's keyless
+// vector tiles, with fonts and icons served from that col-browser release on
+// jsDelivr.
 export const BASEMAP_STYLE =
   config.basemapStyle ||
-  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+  "https://cdn.jsdelivr.net/npm/col-browser@2.9.0/basemap/style.json";
