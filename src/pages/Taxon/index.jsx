@@ -429,6 +429,9 @@ const TaxonPage = ({
   const speciesBySource = taxonMetrics?.speciesBySourceCount || {};
   const hasSpeciesBySource = Object.keys(speciesBySource).length > 0;
 
+  // shown with the source, as a decision changes what the source said
+  const decision = info?.decisions?.[taxon?.id];
+
   const mergedIssues = [
     ...new Set([...(sourceTaxon?.issues || []), ...(info?.issues || [])]),
   ];
@@ -678,16 +681,6 @@ const TaxonPage = ({
                       {_.get(taxon, "status") && (
                         <PresentationItem md={md * 2} label="Status">
                           {`${taxon.status} ${_.get(taxon, "name.rank")}`}
-                          {info?.decisions?.[taxon?.id] && (
-                            <>
-                              &nbsp;with {info.decisions[taxon.id].mode}{" "}
-                              decision
-                              <DecisionBadge
-                                style={{ marginLeft: "10px" }}
-                                decision={info.decisions[taxon.id]}
-                              />
-                            </>
-                          )}
                         </PresentationItem>
                       )}
                     </Col>
@@ -994,6 +987,7 @@ const TaxonPage = ({
                   )}
                   {_.get(taxon, "origin") && !_.get(sourceDataset, "title") && (
                     <PresentationItem md={md} label="Origin">
+                      {decision && <DecisionBadge decision={decision} />}
                       <span>{_.get(taxon, "origin")}</span>
                     </PresentationItem>
                   )}
@@ -1008,7 +1002,8 @@ const TaxonPage = ({
                             sourceDatasetKey={info?.source?.sourceDatasetKey}
                             sourceId={info?.source?.sourceId}
                           />
-                        )}{" "}
+                        )}
+                        {decision && <DecisionBadge decision={decision} />}{" "}
                         {sourceTaxon && sourceTaxon.sourceId ? (
                           <>
                             <NavLink

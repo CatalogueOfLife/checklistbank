@@ -14,9 +14,14 @@ const DecisionBadge = ({ style = {}, decision }) => {
     modifiedBy,
     ...rest
   } = decision;
+  // Block and ignore decisions remove the record, so the badge mostly marks
+  // update decisions; reviewed ones can show too, hence the mode in the title.
+  const title = decision?.mode
+    ? `Editorial ${decision.mode} decision`
+    : "Editorial decision";
   return (
     <Popover
-      title="Editorial decision"
+      title={title}
       content={
         <pre
           style={{ fontSize: "10px", fontFamily: "monospace", width: "400px" }}
@@ -29,6 +34,7 @@ const DecisionBadge = ({ style = {}, decision }) => {
     >
       <Tag
         color="gold"
+        title={title}
         style={{
           cursor: "pointer",
           fontFamily: "monospace",
@@ -41,7 +47,7 @@ const DecisionBadge = ({ style = {}, decision }) => {
           ...style,
         }}
       >
-        DC
+        ED
       </Tag>
     </Popover>
   );
