@@ -46,7 +46,15 @@ import ToolHeader from "../tools/ToolHeader";
 import { getDatasetsBatch } from "../../api/dataset";
 import { extraFilters } from "./extraFilters";
 import DataLoader from "dataloader";
-const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids));
+// The facets can name a few hundred source datasets; maxBatchSize keeps each
+// /dataset/simple URL within what the servers accept.
+const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids), {
+  maxBatchSize: 200,
+});
+// The API returns only the top 10 values of a facet unless told otherwise. A
+// COL release has well over 100 source datasets, so the source filters would
+// silently miss most of them. facetLimit applies to every requested facet.
+const FACET_LIMIT = 1000;
 // Facets are split by visibility. Computing a facet is expensive on
 // Elasticsearch, so we only ever request the facets whose filter is actually
 // on screen. The "basic" facets are always visible; the "advanced" facets sit
@@ -464,6 +472,17 @@ const NameSearchPage = ({
     return keyMap;
   };
 
+  const preloadSelectedLabels = (selected, setMap) => {
+    const keys = []
+      .concat(selected ?? [])
+      .map(Number)
+      .filter((k) => !Number.isNaN(k));
+    if (keys.length === 0) return;
+    Promise.all(keys.map((k) => datasetLoader.load(k))).then((loaded) =>
+      setMap((prev) => ({ ...prev, ..._.keyBy(loaded.filter(Boolean), "key") }))
+    );
+  };
+
   const getData = async (currentParams, currentPagination) => {
     const { pageSize: limit, current } = currentPagination;
 
@@ -474,6 +493,10 @@ const NameSearchPage = ({
     setSearched(true);
     setLoading(true);
     const paramsForRequest = { ...currentParams };
+    // A search over a whole release takes seconds; label the selected sources
+    // right away instead of only once the facets have come back.
+    preloadSelectedLabels(paramsForRequest.sectorDatasetKey, setSectorDatasetKeyMap);
+    preloadSelectedLabels(paramsForRequest.secondarySource, setSecondarySourceMap);
     // facet is derived from the visible filters (computeFacets), not stored or
     // round-tripped through the URL — this keeps the URL clean and guarantees
     // we never request facets for hidden filters.
@@ -502,7 +525,9 @@ const NameSearchPage = ({
         !datasetKey && !paramsForRequest.q
           ? []
           : computeFacets(advancedRef.current);
-      const requestParams = { ...newParamsWithPaging, facet };
+      const requestParams = datasetKey
+        ? { ...newParamsWithPaging, facet, facetLimit: FACET_LIMIT }
+        : { ...newParamsWithPaging, facet };
       const res = await get(`${url}?${qs.stringify(requestParams)}`);
       if (!datasetKey) {
         // only do this if it is a cross dataset search
@@ -906,20 +931,18 @@ const NameSearchPage = ({
         label: `${_.startCase(s.value)} (${s.count.toLocaleString("en-GB")})`,
       }))
     : null;
-  const facetSectorDatasetKey = _.get(facets, "sectorDatasetKey")
-    ? sourceDatasetOptions(
-        facets.sectorDatasetKey,
-        _.get(params, "sectorDatasetKey"),
-        sectorDatasetKeyMap
-      )
-    : null;
-  const facetSecondarySource = _.get(facets, "secondarySource")
-    ? sourceDatasetOptions(
-        facets.secondarySource,
-        _.get(params, "secondarySource"),
-        secondarySourceMap
-      )
-    : null;
+  // Built even before the facets arrive, so a selected source shows its title
+  // rather than its bare key while the search is still running.
+  const facetSectorDatasetKey = sourceDatasetOptions(
+    _.get(facets, "sectorDatasetKey") || [],
+    _.get(params, "sectorDatasetKey"),
+    sectorDatasetKeyMap
+  );
+  const facetSecondarySource = sourceDatasetOptions(
+    _.get(facets, "secondarySource") || [],
+    _.get(params, "secondarySource"),
+    secondarySourceMap
+  );
   const facetTaxonomicStatus = _.get(facets, "status")
     ? facets.status.map((s) => ({
         value: s.value,

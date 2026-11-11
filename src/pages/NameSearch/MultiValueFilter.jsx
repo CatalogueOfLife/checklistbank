@@ -33,7 +33,8 @@ const MultiValueFilter = ({
       style={{ marginBottom: "8px" }}
     >
       <Select
-        showSearch
+        // match what is shown, e.g. a source dataset title, not its key
+        showSearch={{ optionFilterProp: "label" }}
         disabled={disabled}
         style={{ width: "100%" }}
         mode="multiple"
