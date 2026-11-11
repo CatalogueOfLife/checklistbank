@@ -5,6 +5,7 @@ import Layout from "../../../components/LayoutNew";
 import PageContent from "../../../components/PageContent";
 import withContext from "../../../components/hoc/withContext";
 import UserRoles from "./UserRoles";
+import UserOrganisations from "./UserOrganisations";
 import { Table, Row, Col, Modal, Button, Space, Tooltip } from "antd";
 import { EditOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import history from "../../../history";
@@ -214,16 +215,26 @@ const UserAdmin = ({
           onCancel={() => setUserForEdit(null)}
           footer={null}
         >
-          <UserRoles 
-            user={userForEdit} 
-            onChangeCallback={async () => { 
-                let newData = await getData(); 
+          <UserRoles
+            user={userForEdit}
+            onChangeCallback={async () => {
+                let newData = await getData();
                 let usr = newData?.result.find(u => u.key === userForEdit.key);
                 if(usr){
                   setUserForEdit(usr)
                 }
               }
                 } />
+          <UserOrganisations
+            user={userForEdit}
+            onChangeCallback={async () => {
+              let newData = await getData();
+              let usr = newData?.result.find((u) => u.key === userForEdit.key);
+              if (usr) {
+                setUserForEdit(usr);
+              }
+            }}
+          />
         </Modal>
         <Row>
           <Col span={12}>

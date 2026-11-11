@@ -16,6 +16,7 @@ import DatasetSettingsForm from "../../../components/DatasetSettingsForm";
 import DeleteOrphansButton from "../../project/Options/DeleteOrphansButton";
 import ImportButton from "../../../components/job/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
+import GbifRegistration from "./GbifRegistration";
 
 const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
   const { notification } = App.useApp();
@@ -212,6 +213,7 @@ const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
           )}
         </Col>
       </Row>
+      <GbifRegistration datasetKey={datasetKey} />
     </PageContent>
   );
 };
