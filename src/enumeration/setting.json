@@ -1,5 +1,6 @@
 [
   {
+    "description": "When importing data from text files this overrides the field delimiter character used.",
     "enum": false,
     "multiple": false,
     "name": "csv delimiter",
@@ -9,6 +10,7 @@
     "type": "Character"
   },
   {
+    "description": "When importing data from text files this overrides the quote character used.",
     "enum": false,
     "multiple": false,
     "name": "csv quote",
@@ -18,6 +20,7 @@
     "type": "Character"
   },
   {
+    "description": "When importing data from text files this overrides the single character used for escaping quotes inside an already quoted value. For example '\"' for CSV.",
     "enum": false,
     "multiple": false,
     "name": "csv quote escape",
@@ -27,6 +30,7 @@
     "type": "Character"
   },
   {
+    "description": "Overrides the gazetteer standard to use in all distribution interpretations for the dataset.",
     "enum": true,
     "multiple": false,
     "name": "distribution gazetteer",
@@ -37,6 +41,7 @@
     "type": "Gazetteer"
   },
   {
+    "description": "The nomenclatural code followed in the dataset. It will be used mostly as a hint to format names accordingly. If the dataset contains mixed data from multiple codes keep this field empty.",
     "enum": true,
     "multiple": false,
     "name": "nomenclatural code",
@@ -47,6 +52,7 @@
     "type": "NomCode"
   },
   {
+    "description": "Sets the extinct flag for names in the dataset during imports. If given, it defines the highest rank of the names that will be flagged. E.g. if extinct=genus, then all genera, species, subspecies and other lower taxa are flagged as extinct.",
     "enum": true,
     "multiple": false,
     "name": "extinct",
@@ -57,6 +63,7 @@
     "type": "Rank"
   },
   {
+    "description": "Default value for the environment field in case it is not given explicitly.",
     "enum": true,
     "multiple": false,
     "name": "environment",
@@ -67,6 +74,7 @@
     "type": "Environment"
   },
   {
+    "description": "Informs the importer to rematch all decisions, i.e. decisions sensu stricto but also sectors and estimates. Defaults to false.",
     "enum": false,
     "multiple": false,
     "name": "rematch decisions",
@@ -77,6 +85,7 @@
     "type": "Boolean"
   },
   {
+    "description": "Informs the importer not to update any metadata from archives. Metadata will be locked and can only be edited manually.",
     "enum": false,
     "multiple": false,
     "name": "lock metadata",
@@ -87,6 +96,7 @@
     "type": "Boolean"
   },
   {
+    "description": "Informs the importer to merge metadata found in archives with the existing metadata. Metadata from the archive will take precedence, but any missing value would be taken from the current metadata in ChecklistBank.",
     "enum": false,
     "multiple": false,
     "name": "merge metadata",
@@ -97,6 +107,7 @@
     "type": "Boolean"
   },
   {
+    "description": "URL to a yaml file with the configuration for a release.",
     "enum": false,
     "multiple": false,
     "name": "release config",
@@ -106,6 +117,7 @@
     "type": "URI"
   },
   {
+    "description": "URL to a yaml file with the configuration for an extended release.",
     "enum": false,
     "multiple": false,
     "name": "xrelease config",
@@ -115,6 +127,7 @@
     "type": "URI"
   },
   {
+    "description": "Number of first authors from a project/release to use for the container authors of a source chapter-in-a-book citation. A release takes it from its project unless it has its own. It follows the number of project creators whenever these change, as a release appends source authors to them, unless it was set manually to another value, which then sticks. If not given the first 3 authors are used.",
     "enum": false,
     "multiple": false,
     "name": "source max container authors",
@@ -125,6 +138,7 @@
     "type": "Integer"
   },
   {
+    "description": "In continuous import mode the frequency the dataset is scheduled for imports.",
     "enum": true,
     "multiple": false,
     "name": "import frequency",
@@ -134,6 +148,7 @@
     "type": "Frequency"
   },
   {
+    "description": "URL of the archive that is downloaded for every import.",
     "enum": false,
     "multiple": false,
     "name": "data access",
@@ -143,6 +158,7 @@
     "type": "URI"
   },
   {
+    "description": "Format of the archive. If not given it is detected from the files of the archive.",
     "enum": true,
     "multiple": false,
     "name": "data format",
@@ -153,6 +169,7 @@
     "type": "DataFormat"
   },
   {
+    "description": "Turns on/off the sync scheduling for a project. Which sectors are being scheduled can be influenced by the sync scheduler sources setting.",
     "enum": false,
     "multiple": false,
     "name": "sync scheduler",
@@ -162,6 +179,7 @@
     "type": "Boolean"
   },
   {
+    "description": "List of sources to consider for sector scheduling. If empty, all sources are considered.",
     "enum": false,
     "multiple": true,
     "name": "sync scheduler sources",
@@ -171,6 +189,7 @@
     "type": "Integer"
   },
   {
+    "description": "If set to true the dataset metadata is locked and the GBIF registry sync will not be applied to the dataset.",
     "enum": false,
     "multiple": false,
     "name": "gbif sync lock",
@@ -180,6 +199,7 @@
     "type": "Boolean"
   },
   {
+    "description": "Defines whether the importer makes use of Crossref to look up DOI metadata.",
     "enum": true,
     "multiple": false,
     "name": "doi resolution",
@@ -190,6 +210,7 @@
     "type": "DoiResolution"
   },
   {
+    "description": "If true replaces spaces in epithets with hyphens during interpretation, thus replacing multiple words with a single one.",
     "enum": false,
     "multiple": false,
     "name": "epithet add hyphen",
@@ -199,6 +220,7 @@
     "type": "Boolean"
   },
   {
+    "description": "If true prefers the atomised name as given in several terms over the full scientificName string which needs parsing with our name parser. If not given, atoms are preferred for ColDP and ACEF, but not for DwC-A.",
     "enum": false,
     "multiple": false,
     "name": "prefer name atoms",
@@ -208,6 +230,7 @@
     "type": "Boolean"
   },
   {
+    "description": "If true, rank inference from the name structure is disabled during imports. Useful for datasets like NCBI/ENA taxonomy that contain placeholder names (e.g. \"cellular organisms\") without explicit ranks, which would otherwise be incorrectly inferred as species. When disabled, names without an explicit rank remain unranked.",
     "enum": false,
     "multiple": false,
     "name": "dont infer ranks",
@@ -217,6 +240,7 @@
     "type": "Boolean"
   },
   {
+    "description": "If true no merge syncs into the project will be allowed.",
     "enum": false,
     "multiple": false,
     "name": "block merge syncs",
@@ -226,6 +250,7 @@
     "type": "Boolean"
   },
   {
+    "description": "If set, every imported usage is matched against the specified dataset and the matched usageID is stored as an identifier on the imported usage. Format: {integer}(LXR|LR)?, e.g. 1000 matches against dataset 1000 directly, 2207LR against the latest release of project 2207 and 2207LXR against the latest extended release of project 2207.",
     "enum": false,
     "multiple": false,
     "name": "add identifiers from",

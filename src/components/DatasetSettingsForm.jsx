@@ -50,6 +50,8 @@ const SettingsForm = (props) => {
     datasetKey,
     dataset,
     environment,
+    filter,
+    order,
   } = props;
 
   const { notification } = App.useApp();
@@ -64,8 +66,9 @@ const SettingsForm = (props) => {
     if (values["csv delimiter"] === "\\t") {
       values["csv delimiter"] = `\t`;
     }
+    // the API replaces all settings, so keep the ones this form does not show
     axios
-      .put(`${config.dataApi}dataset/${datasetKey}/settings`, values)
+      .put(`${config.dataApi}dataset/${datasetKey}/settings`, { ...data, ...values })
       .then((res) => {
         if (onSaveSuccess && typeof onSaveSuccess === "function") {
           onSaveSuccess(res);
@@ -79,6 +82,67 @@ const SettingsForm = (props) => {
   };
 
   const initialValues = data;
+  const SIMPLE_TYPES = ["String", "Integer", "URI", "UUID", "Character"];
+  // the settings for the origin of this dataset, optionally limited by the filter prop
+  const settings = datasetSettings.filter(
+    (s) =>
+      _.get(s, "origin", ["project", "external"]).indexOf(dataset?.origin) > -1 &&
+      (!filter || filter(s))
+  );
+  // in the given order of names, or booleans first, then the csv delimiter, simple values and enumerations
+  const ordered = order
+    ? _.sortBy(settings, (s) => order.indexOf(s.name))
+    : _.sortBy(settings, (s) =>
+        s.type === "Boolean" ? 0 : s.name === "csv delimiter" ? 1 : SIMPLE_TYPES.includes(s.type) ? 2 : 3
+      );
+
+  const renderInput = (s) => {
+    if (s.type === "Boolean") {
+      return <Input type="checkbox" />;
+    }
+    if (s.name === "csv delimiter") {
+      return <CsvDelimiterInput />;
+    }
+    if (SIMPLE_TYPES.includes(s.type)) {
+      return s.type === "Integer" ? (
+        s.multiple ? <TagControl type="number" /> : <InputNumber />
+      ) : s.multiple ? (
+        <TagControl type="text" />
+      ) : (
+        <Input type="text" />
+      );
+    }
+    if (s.type === "NomCode") {
+      return (
+        <Select
+          style={{ width: 200 }}
+          showSearch
+          allowClear
+          options={nomCode.map((c) => ({
+            value: c.name,
+            label: `${c.name} (${c.acronym})`,
+          }))}
+        />
+      );
+    }
+    const values = props[_.camelCase(s.type)];
+    if (!values) {
+      console.log(`Error: Missing enum injection ${_.camelCase(s.type)}`);
+      return null;
+    }
+    return (
+      <Select
+        style={{ width: 200 }}
+        mode={s.multiple ? "multiple" : null}
+        showSearch
+        allowClear
+        options={values.map((e) =>
+          typeof e === "string" ? { value: e, label: e } : { value: e.name, label: e.name }
+        )}
+      />
+    );
+  };
+
   return (
     <Form
       initialValues={initialValues}
@@ -96,131 +160,23 @@ const SettingsForm = (props) => {
         </FormItem>
       )}
 
-      {datasetSettings
-        .filter(
-          (s) =>
-            _.get(s, "origin", ["project", "external"]).indexOf(
-              dataset?.origin
-            ) > -1
-        )
-        .filter((s) => s.type === "Boolean")
-        .map((s) => (
-          <FormItem
-            {...formItemLayout}
-            label={_.startCase(s.name)}
-            key={s.name}
-            name={s.name}
-            valuePropName="checked"
-          >
-            <Input type="checkbox" />
-          </FormItem>
-        ))}
-      <FormItem
-        {...formItemLayout}
-        label={_.startCase("csv delimiter")}
-        key={"csv delimiter"}
-        name={"csv delimiter"}
-      >
-        <CsvDelimiterInput />
-      </FormItem>
-      {datasetSettings
-        .filter(
-          (s) =>
-            _.get(s, "origin", ["project", "external"]).indexOf(
-              dataset?.origin
-            ) > -1
-        )
-        .filter(
-          (s) =>
-            ["String", "Integer", "URI", "UUID", "Character"].includes(
-              s.type
-            ) &&
-            /* (s.type === "String" || s.type === "Integer" || s.type === "URI") */ s.name !==
-              "csv delimiter"
-        )
-        .map((s) => (
-          <FormItem
-            {...formItemLayout}
-            label={_.startCase(s.name)}
-            key={s.name}
-            name={s.name}
-          >
-            {s.type === "Integer" ? (
-              s.multiple ? (
-                <TagControl type="number" />
-              ) : (
-                <InputNumber />
-              )
-            ) : s.multiple ? (
-              <TagControl type="text" />
-            ) : (
-              <Input type="text" />
-            )}
-          </FormItem>
-        ))}
-
-      {datasetSettings
-        .filter(
-          (s) =>
-            _.get(s, "origin", ["project", "external"]).indexOf(
-              dataset?.origin
-            ) > -1
-        )
-        .filter(
-          (s) =>
-            ![
-              "String",
-              "Integer",
-              "Boolean",
-              "URI",
-              "UUID",
-              "Character",
-            ].includes(s.type)
-        )
-        .map((s) => {
-          try {
-            return (
-              <FormItem
-                {...formItemLayout}
-                label={_.startCase(s.name)}
-                key={s.name}
-                name={s.name}
-              >
-                {s.type === "NomCode" ? (
-                  <Select
-                    style={{ width: 200 }}
-                    showSearch
-                    allowClear
-                    options={nomCode.map((c) => ({
-                      value: c.name,
-                      label: `${c.name} (${c.acronym})`,
-                    }))}
-                  />
-                ) : (
-                  <Select
-                    style={{ width: 200 }}
-                    mode={s.multiple ? "multiple" : null}
-                    showSearch
-                    allowClear
-                    options={props[_.camelCase(s.type)].map((e) =>
-                      typeof e === "string"
-                        ? { value: e, label: e }
-                        : { value: e.name, label: e.name }
-                    )}
-                  />
-                )}
-              </FormItem>
-            );
-          } catch (error) {
-            if (!props[_.camelCase(s.type)]) {
-              console.log(
-                `Error: Missing enum injection ${_.camelCase(s.type)}`
-              );
-            }
-            console.log(error);
-            return null;
-          }
-        })}
+      {ordered.map((s) => {
+        const input = renderInput(s);
+        return (
+          input && (
+            <FormItem
+              {...formItemLayout}
+              label={_.startCase(s.name)}
+              tooltip={s.description}
+              key={s.name}
+              name={s.name}
+              valuePropName={s.type === "Boolean" ? "checked" : "value"}
+            >
+              {input}
+            </FormItem>
+          )
+        );
+      })}
 
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import React from "react";
 import withRouter from "../../../withRouter";
 import withContext from "../../../components/hoc/withContext";
 import PageContent from "../../../components/PageContent";
 import config from "../../../config";
 import _ from "lodash";
+import qs from "query-string";
 
-import { Row, Col, Alert, Switch, Button, App } from "antd";
+import { Row, Alert, Switch, Button, Tabs, Flex, App } from "antd";
 
 import axios from "axios";
 import ErrorMsg from "../../../components/ErrorMsg";
@@ -17,12 +17,89 @@ import DeleteOrphansButton from "../../project/Options/DeleteOrphansButton";
 import ImportButton from "../../../components/job/ImportButton";
 import DeleteDatasetButton from "./DeleteDatasetButton";
 import GbifRegistration from "./GbifRegistration";
+import SectionCard from "./SectionCard";
 
-const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
+// settings shown in the GBIF and import tabs, in this order. All others are in the settings tab
+const GBIF_SETTINGS = ["gbif sync lock"];
+const IMPORT_SETTINGS = [
+  "data access",
+  "data format",
+  "import frequency",
+  "csv delimiter",
+  "csv quote",
+  "csv quote escape",
+];
+const DEFAULT_SETTINGS = [
+  "distribution gazetteer",
+  "nomenclatural code",
+  "extinct",
+  "environment",
+];
+const NAME_SETTINGS = ["epithet add hyphen", "prefer name atoms", "dont infer ranks"];
+
+const settingValue = (value) =>
+  value === true || value === false ? (
+    <BooleanValue value={value} />
+  ) : value === "\t" ? (
+    "<TAB>"
+  ) : _.isArray(value) ? (
+    value.join(", ")
+  ) : (
+    value
+  );
+
+/**
+ * Shows some of the dataset settings and edits them in place.
+ * Without a fixed order the boolean settings come first.
+ */
+const SettingsPanel = ({ title, settings, data, datasetKey, dataset, ordered, onSaved }) => {
+  const [editMode, setEditMode] = useState(false);
+  if (!data || settings.length === 0) {
+    return null;
+  }
+  const names = settings.map((s) => s.name);
+  const shown = ordered
+    ? settings
+    : _.sortBy(settings, (s) => (s.type === "Boolean" ? 0 : 1));
+  return (
+    <SectionCard
+      title={title}
+      extra={
+        <Switch
+          checked={editMode}
+          onChange={setEditMode}
+          checkedChildren="Cancel"
+          unCheckedChildren="Edit"
+        />
+      }
+    >
+      {editMode ? (
+        <DatasetSettingsForm
+          data={data}
+          datasetKey={datasetKey}
+          dataset={dataset}
+          filter={(s) => names.includes(s.name)}
+          order={ordered ? names : undefined}
+          onSaveSuccess={() => {
+            setEditMode(false);
+            onSaved();
+          }}
+        />
+      ) : (
+        shown.map((s) => (
+          <PresentationItem label={_.startCase(s.name)} helpText={s.description} key={s.name}>
+            {settingValue(_.get(data, s.name))}
+          </PresentationItem>
+        ))
+      )}
+    </SectionCard>
+  );
+};
+
+const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, history }) => {
   const { notification } = App.useApp();
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [editMode, setEditModeState] = useState(false);
   const [rebuildMatcherLoading, setRebuildMatcherLoading] = useState(false);
 
   const getData = () => {
@@ -73,14 +150,96 @@ const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
       });
   };
 
-  const setEditMode = (checked) => {
-    setEditModeState(checked);
-  };
+  if (!dataset) {
+    return null;
+  }
+
+  const importable = dataset.origin !== "project";
+  const originSettings = datasetSettings.filter(
+    (s) => _.get(s, "origin", ["project", "external"]).indexOf(dataset.origin) > -1
+  );
+  const pick = (names) =>
+    names
+      .map((n) => originSettings.find((s) => s.name === n))
+      .filter(Boolean);
+  // projects have no import tab, their defaults stay in the settings tab
+  const gbifSettings = pick(GBIF_SETTINGS);
+  const importSettings = importable ? pick(IMPORT_SETTINGS) : [];
+  const defaultSettings = importable ? pick(DEFAULT_SETTINGS) : [];
+  const nameSettings = importable ? pick(NAME_SETTINGS) : [];
+  const otherSettings = originSettings.filter(
+    (s) =>
+      ![gbifSettings, importSettings, defaultSettings, nameSettings].some((group) =>
+        group.includes(s)
+      )
+  );
+  const panelProps = { data, datasetKey, dataset, onSaved: getData };
+
+  const tabs = [
+    importable && {
+      key: "import",
+      label: "Import",
+      children: (
+        <Flex vertical gap="middle">
+          <div>
+            <ImportButton
+              record={{ datasetKey: dataset.key }}
+              reImport={data && !data["data access"]}
+            />
+          </div>
+          <SettingsPanel title="Import settings" settings={importSettings} ordered {...panelProps} />
+          <SettingsPanel title="Defaults" settings={defaultSettings} ordered {...panelProps} />
+          <SettingsPanel title="Name Interpretation" settings={nameSettings} ordered {...panelProps} />
+        </Flex>
+      ),
+    },
+    {
+      key: "settings",
+      label: "Settings",
+      children: <SettingsPanel title="Settings" settings={otherSettings} {...panelProps} />,
+    },
+    {
+      key: "gbif",
+      label: "GBIF",
+      children: (
+        <Flex vertical gap="middle">
+          <GbifRegistration datasetKey={datasetKey} />
+          <SettingsPanel title="GBIF settings" settings={gbifSettings} ordered {...panelProps} />
+        </Flex>
+      ),
+    },
+    {
+      key: "admin",
+      label: "Admin",
+      children: (
+        <Flex vertical gap="small" align="flex-start">
+          <Button type="primary" onClick={reindexDataset}>
+            Reindex dataset
+          </Button>
+          <Button type="primary" onClick={rebuildMatcher} loading={rebuildMatcherLoading}>
+            Rebuild matcher
+          </Button>
+          <DeleteOrphansButton datasetKey={datasetKey} type="name" />
+          <DeleteOrphansButton datasetKey={datasetKey} type="reference" />
+          {!dataset.deleted && <DeleteDatasetButton record={dataset} />}
+        </Flex>
+      ),
+    },
+  ].filter(Boolean);
+
+  const params = qs.parse(location?.search);
+  // the first tab unless the URL names another
+  const activeKey = tabs.some((t) => t.key === params.tab) ? params.tab : tabs[0].key;
+  const onTabChange = (tab) =>
+    history.replace({
+      pathname: location.pathname,
+      search: qs.stringify({ ...params, tab }),
+    });
 
   return (
     <PageContent>
       {error && (
-        <Row>
+        <Row style={{ marginBottom: "10px" }}>
           <Alert
             closable={{ onClose: () => setError(null) }}
             description={<ErrorMsg error={error} />}
@@ -88,132 +247,7 @@ const DatasetSettings = ({ datasetKey, datasetSettings, dataset }) => {
           />
         </Row>
       )}
-
-      <Row>
-        <Col span={4}>
-          <h3>Settings</h3>
-        </Col>
-        <Col offset={12} span={2}>
-          {data && (
-            <Switch
-              checked={editMode}
-              onChange={setEditMode}
-              checkedChildren="Cancel"
-              unCheckedChildren="Edit"
-            />
-          )}
-        </Col>
-      </Row>
-      <Row>
-        <Col span={18}>
-          {editMode && (
-            <DatasetSettingsForm
-              data={data}
-              datasetKey={datasetKey}
-              dataset={dataset}
-              onSaveSuccess={() => {
-                setEditMode(false);
-                getData();
-              }}
-            />
-          )}
-          {!editMode && data && dataset && (
-            <div style={{ marginRight: "28px" }}>
-              {datasetSettings
-                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                .filter((s) => s.type === "Boolean")
-                .map((s) => (
-                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                    {_.get(data, s.name) === true ||
-                      _.get(data, s.name) === false ? (
-                      <BooleanValue
-                        value={_.get(data, s.name)}
-                      ></BooleanValue>
-                    ) : (
-                      ""
-                    )}
-                  </PresentationItem>
-                ))}
-              {datasetSettings
-                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                .filter((s) => s.type === "String" || s.type === "Integer")
-                .map((s) => (
-                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                    {_.get(data, s.name) === "\t"
-                      ? "<TAB>"
-                      : _.get(data, s.name)}
-                  </PresentationItem>
-                ))}
-              {datasetSettings
-                .filter((s) => _.get(s, 'origin', ['project', 'external']).indexOf(dataset.origin) > -1)
-                .filter(
-                  (s) => !["String", "Integer", "Boolean"].includes(s.type)
-                )
-                .map((s) => (
-                  <PresentationItem label={_.startCase(s.name)} key={s.name}>
-                    {_.get(data, s.name)}
-                  </PresentationItem>
-                ))}
-            </div>
-          )}
-        </Col>
-        <Col span={6}>
-          {dataset && _.get(dataset, "origin") !== "project" && (
-            <React.Fragment>
-              <ImportButton
-                style={{ marginBottom: "10px" }}
-                record={{ datasetKey: dataset.key }}
-                reImport={data && !(data['data access'])}
-              />
-              <br />
-            </React.Fragment>
-          )}
-          <Button
-            type="primary"
-            onClick={reindexDataset}
-            style={{
-              marginRight: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            Reindex dataset
-          </Button>
-
-          <Button
-            type="primary"
-            onClick={rebuildMatcher}
-            loading={rebuildMatcherLoading}
-            style={{
-              marginRight: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            Rebuild matcher
-          </Button>
-
-          <DeleteOrphansButton
-            datasetKey={datasetKey}
-            type="name"
-            style={{ marginRight: "10px", marginBottom: "10px" }}
-          />
-          <DeleteOrphansButton
-            datasetKey={datasetKey}
-            type="reference"
-            style={{ marginRight: "10px", marginBottom: "10px" }}
-          />
-
-          {dataset && !dataset.deleted && (
-            <React.Fragment>
-              <br />
-              <DeleteDatasetButton
-                style={{ marginBottom: "10px" }}
-                record={dataset}
-              ></DeleteDatasetButton>
-            </React.Fragment>
-          )}
-        </Col>
-      </Row>
-      <GbifRegistration datasetKey={datasetKey} />
+      <Tabs activeKey={activeKey} onChange={onTabChange} items={tabs} />
     </PageContent>
   );
 };
@@ -222,4 +256,4 @@ const mapContextToProps = ({ datasetSettings, dataset }) => ({
   datasetSettings,
   dataset,
 });
-export default withContext(mapContextToProps)(withRouter(DatasetSettings));
+export default withContext(mapContextToProps)(withRouter(DatasetOptions));

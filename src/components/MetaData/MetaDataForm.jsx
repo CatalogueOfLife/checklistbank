@@ -87,6 +87,9 @@ const MetaDataForm = (props) => {
         ? axios.put(`${config.dataApi}dataset/${key}`, {
             ...values,
             private: data.private,
+            // edited in the GBIF tab of the options, but the API replaces all fields
+            gbifKey: data.gbifKey,
+            gbifPublisherKey: data.gbifPublisherKey,
             source: _.isArray(values.source)
               ? values.source.filter((s) => !!s)
               : [],
@@ -128,7 +131,8 @@ const MetaDataForm = (props) => {
         }
         return acc;
       },
-      { key }
+      // the form no longer shows the GBIF keys, keep those of an existing patch
+      { key, ..._.pickBy(_.pick(data, ["gbifKey", "gbifPublisherKey"]), (v) => v != null) }
     );
 
     const task = _.get(data, "key") // there was already a patch
@@ -665,42 +669,6 @@ const MetaDataForm = (props) => {
           }
         >
           <Input type="text" />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="GBIF key"
-          name="gbifKey"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="gbifKey"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input type="text" disabled={!Auth.isAdmin(user)} />
-        </FormItem>
-      )}
-      {data && (
-        <FormItem
-          {...formItemLayout}
-          label="GBIF publisher key"
-          name="gbifPublisherKey"
-          help={
-            originalData ? (
-              <PatchFormOriginalDataHelp
-                data={originalData}
-                field="gbifPublisherKey"
-                transferFn={transferOriginalValueToPatch}
-              />
-            ) : null
-          }
-        >
-          <Input type="text" disabled={!Auth.isAdmin(user)} />
         </FormItem>
       )}
       {data && (
