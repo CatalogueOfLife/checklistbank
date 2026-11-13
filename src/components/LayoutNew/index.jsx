@@ -189,10 +189,12 @@ const SiteLayout = ({
               onClick={toggle}
             />
           )}
-          <div style={{ flex: "1 1 auto", textAlign: "center" }}>
+          <div style={{ flex: "1 1 auto", minWidth: 0, textAlign: "center" }}>
             {selectedDataset && (
               <React.Fragment>
-                <Row>
+                {/* No wrapping: a second line would overflow the fixed height header
+                    onto the page content. A long title is truncated instead. */}
+                <Row wrap={false}>
                   <Col flex="auto">
                     <DatasetLogo
                       datasetKey={selectedDataset.key}
@@ -203,8 +205,10 @@ const SiteLayout = ({
                   <Col
                     style={{
                       maxWidth: "600px",
+                      minWidth: 0,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     <h1 style={{ display: "inline", whiteSpace: "nowrap" }}>
@@ -240,6 +244,7 @@ const SiteLayout = ({
                   )}
                   <Col
                     style={{
+                      flex: "none",
                       maxWidth: `${
                         selectedDataset?.title.length > 500 ? 60 : 120
                       }px`,
