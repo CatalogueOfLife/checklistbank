@@ -8,6 +8,9 @@ import withRouter from "../../withRouter";
 import history from "../../history";
 import QueueTab from "./QueueTab";
 import HistoryTab from "./HistoryTab";
+import OutboxTab from "./OutboxTab";
+import withContext from "../../components/hoc/withContext";
+import Auth from "../../components/Auth";
 import { applyPreset, DEFAULT_PRESET } from "./presets";
 
 // The backend matches @QueryParam names case sensitively, so normalize the
@@ -49,7 +52,7 @@ export const parseSearch = (search) =>
  * replaces - /imports, /admin/jobs, /jobqueue and the project sync state - are
  * just different filters over the same two endpoints.
  */
-const Jobs = ({ location }) => {
+const Jobs = ({ location, user }) => {
   const [state, setState] = useState(() => parseSearch(location.search));
 
   // Keep in step with back/forward navigation and with the redirects that land
@@ -66,8 +69,12 @@ const Jobs = ({ location }) => {
   // A bare /jobs is someone asking "what is running right now", so open the
   // queue. A URL carrying filters (the /imports redirect, a shared search) is
   // about past jobs, so open the history.
+  // The outbox is admin only, as is the /admin/outbox endpoint behind it.
+  const isAdmin = Auth.isAdmin(user);
   const tab =
-    state.tab === "queue" || state.tab === "history"
+    state.tab === "queue" ||
+    state.tab === "history" ||
+    (state.tab === "outbox" && isAdmin)
       ? state.tab
       : Object.keys(searchParams).length === 0
         ? "queue"
@@ -144,6 +151,9 @@ const Jobs = ({ location }) => {
         />
       ),
     },
+    ...(isAdmin
+      ? [{ key: "outbox", label: "Outbox", children: <OutboxTab /> }]
+      : []),
   ];
 
   return (
@@ -162,4 +172,5 @@ const Jobs = ({ location }) => {
   );
 };
 
-export default withRouter(Jobs);
+const mapContextToProps = ({ user }) => ({ user });
+export default withContext(mapContextToProps)(withRouter(Jobs));
