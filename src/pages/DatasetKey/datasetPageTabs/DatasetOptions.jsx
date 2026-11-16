@@ -19,23 +19,46 @@ import DeleteDatasetButton from "./DeleteDatasetButton";
 import GbifRegistration from "./GbifRegistration";
 import SectionCard from "./SectionCard";
 
-// settings shown in the GBIF and import tabs, in this order. All others are in the settings tab
+// the GBIF tab shows these settings
 const GBIF_SETTINGS = ["gbif sync lock"];
-const IMPORT_SETTINGS = [
-  "data access",
-  "data format",
-  "import frequency",
-  "csv delimiter",
-  "csv quote",
-  "csv quote escape",
+// the settings tab shows these sections in this order, each with its settings in the given order.
+// A section only shows the settings for the origin of the dataset and is left out if there are none.
+// All other settings are in a last section "Other".
+const SECTIONS = [
+  {
+    title: "Import settings",
+    names: [
+      "data access",
+      "data format",
+      "import frequency",
+      "csv delimiter",
+      "csv quote",
+      "csv quote escape",
+      "add identifiers from",
+      "rematch decisions",
+    ],
+  },
+  {
+    title: "Metadata",
+    names: ["lock metadata", "merge metadata"],
+  },
+  {
+    title: "Defaults",
+    names: ["distribution gazetteer", "nomenclatural code", "extinct", "environment"],
+  },
+  {
+    title: "Interpretation",
+    names: ["epithet add hyphen", "prefer name atoms", "dont infer ranks", "doi resolution"],
+  },
+  {
+    title: "Sync",
+    names: ["sync scheduler", "sync scheduler sources", "block merge syncs"],
+  },
+  {
+    title: "Release",
+    names: ["release config", "xrelease config", "source max container authors"],
+  },
 ];
-const DEFAULT_SETTINGS = [
-  "distribution gazetteer",
-  "nomenclatural code",
-  "extinct",
-  "environment",
-];
-const NAME_SETTINGS = ["epithet add hyphen", "prefer name atoms", "dont infer ranks"];
 
 const settingValue = (value) =>
   value === true || value === false ? (
@@ -154,7 +177,7 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
     return null;
   }
 
-  const importable = dataset.origin !== "project";
+  const importable = dataset.origin === "external";
   const originSettings = datasetSettings.filter(
     (s) => _.get(s, "origin", ["project", "external"]).indexOf(dataset.origin) > -1
   );
@@ -162,41 +185,40 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
     names
       .map((n) => originSettings.find((s) => s.name === n))
       .filter(Boolean);
-  // projects have no import tab, their defaults stay in the settings tab
   const gbifSettings = pick(GBIF_SETTINGS);
-  const importSettings = importable ? pick(IMPORT_SETTINGS) : [];
-  const defaultSettings = importable ? pick(DEFAULT_SETTINGS) : [];
-  const nameSettings = importable ? pick(NAME_SETTINGS) : [];
+  const sections = SECTIONS.map((sec) => ({ title: sec.title, settings: pick(sec.names) }));
+  const grouped = [gbifSettings, ...sections.map((sec) => sec.settings)];
   const otherSettings = originSettings.filter(
-    (s) =>
-      ![gbifSettings, importSettings, defaultSettings, nameSettings].some((group) =>
-        group.includes(s)
-      )
+    (s) => !grouped.some((group) => group.includes(s))
   );
   const panelProps = { data, datasetKey, dataset, onSaved: getData };
 
   const tabs = [
-    importable && {
-      key: "import",
-      label: "Import",
-      children: (
-        <Flex vertical gap="middle">
-          <div>
-            <ImportButton
-              record={{ datasetKey: dataset.key }}
-              reImport={data && !data["data access"]}
-            />
-          </div>
-          <SettingsPanel title="Import settings" settings={importSettings} ordered {...panelProps} />
-          <SettingsPanel title="Defaults" settings={defaultSettings} ordered {...panelProps} />
-          <SettingsPanel title="Name Interpretation" settings={nameSettings} ordered {...panelProps} />
-        </Flex>
-      ),
-    },
     {
       key: "settings",
       label: "Settings",
-      children: <SettingsPanel title="Settings" settings={otherSettings} {...panelProps} />,
+      children: (
+        <Flex vertical gap="middle">
+          {importable && (
+            <div>
+              <ImportButton
+                record={{ datasetKey: dataset.key }}
+                reImport={data && !data["data access"]}
+              />
+            </div>
+          )}
+          {sections.map((sec) => (
+            <SettingsPanel
+              key={sec.title}
+              title={sec.title}
+              settings={sec.settings}
+              ordered
+              {...panelProps}
+            />
+          ))}
+          <SettingsPanel title="Other" settings={otherSettings} {...panelProps} />
+        </Flex>
+      ),
     },
     {
       key: "gbif",
@@ -225,7 +247,7 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
         </Flex>
       ),
     },
-  ].filter(Boolean);
+  ];
 
   const params = qs.parse(location?.search);
   // the first tab unless the URL names another

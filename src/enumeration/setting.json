@@ -35,8 +35,7 @@
     "multiple": false,
     "name": "distribution gazetteer",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "Gazetteer"
   },
@@ -46,8 +45,7 @@
     "multiple": false,
     "name": "nomenclatural code",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "NomCode"
   },
@@ -57,8 +55,7 @@
     "multiple": false,
     "name": "extinct",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "Rank"
   },
@@ -68,8 +65,7 @@
     "multiple": false,
     "name": "environment",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "Environment"
   },
@@ -79,8 +75,7 @@
     "multiple": false,
     "name": "rematch decisions",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "Boolean"
   },
@@ -90,8 +85,7 @@
     "multiple": false,
     "name": "lock metadata",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "Boolean"
   },
@@ -163,8 +157,7 @@
     "multiple": false,
     "name": "data format",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "DataFormat"
   },
@@ -204,8 +197,7 @@
     "multiple": false,
     "name": "doi resolution",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "DoiResolution"
   },
@@ -255,8 +247,7 @@
     "multiple": false,
     "name": "add identifiers from",
     "origin": [
-      "external",
-      "project"
+      "external"
     ],
     "type": "String"
   }
