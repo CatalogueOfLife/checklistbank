@@ -199,14 +199,6 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
       label: "Settings",
       children: (
         <Flex vertical gap="middle">
-          {importable && (
-            <div>
-              <ImportButton
-                record={{ datasetKey: dataset.key }}
-                reImport={data && !data["data access"]}
-              />
-            </div>
-          )}
           {sections.map((sec) => (
             <SettingsPanel
               key={sec.title}
@@ -235,6 +227,12 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
       label: "Admin",
       children: (
         <Flex vertical gap="small" align="flex-start">
+          {importable && (
+            <ImportButton
+              record={{ datasetKey: dataset.key }}
+              reImport={data && !data["data access"]}
+            />
+          )}
           <Button type="primary" onClick={reindexDataset}>
             Reindex dataset
           </Button>
