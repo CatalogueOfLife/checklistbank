@@ -133,7 +133,7 @@ const GbifKeys = ({ datasetKey, dataset, setDataset, isAdmin }) => {
  */
 const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
   const { notification } = App.useApp();
-  // undefined while loading, null if not registered
+  // undefined while loading, else {enabled, registration, publisherKey, command} with registration null if not registered
   const [status, setStatus] = useState(undefined);
   const [error, setError] = useState(null);
   const [publisherKey, setPublisherKey] = useState(null);
@@ -149,7 +149,8 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
       .then((res) => setStatus(res.data))
       .catch((err) => {
         if (err?.response?.status === 404) {
-          setStatus(null);
+          // a backend without the enabled flag answers 404 for datasets not registered
+          setStatus({ enabled: true, registration: null });
         } else {
           setError(err);
         }
@@ -191,7 +192,7 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
     if (external) {
       getStatus();
     } else {
-      setStatus(null);
+      setStatus({ enabled: false, registration: null });
     }
   }, [datasetKey, external]);
 
@@ -199,16 +200,19 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
     return null;
   }
 
+  const registered = status?.registration;
+  // false if this server cannot register datasets in GBIF, then nothing is offered
+  const enabled = status?.enabled !== false;
   const license = dataset?.license;
   const problems = [];
   if (dataset?.private) problems.push("the dataset is private");
   if (!OPEN_LICENSES.includes(license)) problems.push("GBIF requires the license CC0, CC BY or CC BY-NC");
-  if (dataset?.gbifKey && !status) problems.push(`it is in GBIF already as ${dataset.gbifKey}`);
+  if (dataset?.gbifKey && !registered) problems.push(`it is in GBIF already as ${dataset.gbifKey}`);
 
   return (
     <>
-      {!status && <GbifKeys datasetKey={datasetKey} dataset={dataset} setDataset={setDataset} isAdmin={isAdmin} />}
-      {(status || external) && (
+      {!registered && <GbifKeys datasetKey={datasetKey} dataset={dataset} setDataset={setDataset} isAdmin={isAdmin} />}
+      {(registered || (external && enabled)) && (
         <SectionCard title="GBIF registration">
           {error && (
             <Alert
@@ -218,7 +222,7 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
               type="error"
             />
           )}
-          {status ? (
+          {registered ? (
             <Row>
               <Col span={18}>
                 <PresentationItem label="GBIF dataset">
@@ -242,7 +246,14 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
                   </PresentationItem>
                 )}
               </Col>
-              {isAdmin && (
+              {isAdmin && !enabled && (
+                <Col span={6}>
+                  <Text type="secondary">
+                    Registering datasets in GBIF is not configured on this server. Updates wait until it is.
+                  </Text>
+                </Col>
+              )}
+              {isAdmin && enabled && (
                 <Col span={6}>
                   <Button type="primary" loading={busy} onClick={sync} style={{ marginBottom: "10px" }}>
                     Update in GBIF
