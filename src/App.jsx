@@ -51,6 +51,8 @@ import Admin from "./pages/Admin";
 import SystemHealth from "./pages/SystemHealth";
 import DatasetAdmin from "./pages/Admin/DatasetAdmin";
 import UserAdmin from "./pages/Admin/Users";
+import PublisherAdmin from "./pages/Admin/Publishers";
+import Publisher from "./pages/Publisher";
 import SectorDiff from "./pages/project/SectorDiff";
 import Jobs from "./pages/Jobs";
 import ContextProvider from "./components/hoc/ContextProvider";
@@ -204,6 +206,15 @@ const App = () => {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/publishers"
+              element={
+                <AdminRoute roles={["editor", "admin"]}>
+                  <PublisherAdmin />
+                </AdminRoute>
+              }
+            />
+            <Route path="/publisher/:key" element={<Publisher />} />
             <Route
               path="/admin/matcher"
               element={<Navigate to="/admin/datasets?tab=matcher" replace />}

@@ -116,7 +116,7 @@ const GbifKeys = ({ datasetKey, dataset, setDataset, isAdmin }) => {
           </PresentationItem>
           <PresentationItem label="GBIF publisher key">
             {dataset?.gbifPublisherKey && (
-              <NavLink to={{ pathname: "/dataset", search: `?gbifPublisherKey=${dataset.gbifPublisherKey}` }}>
+              <NavLink to={{ pathname: `/publisher/${dataset.gbifPublisherKey}` }}>
                 {titles[dataset.gbifPublisherKey] || dataset.gbifPublisherKey}
               </NavLink>
             )}
@@ -231,7 +231,9 @@ const GbifRegistration = ({ datasetKey, dataset, user, setDataset }) => {
                   </a>
                 </PresentationItem>
                 <PresentationItem label="Published by">
-                  {titles[status.publisherKey] || status.publisherKey}
+                  <NavLink to={{ pathname: `/publisher/${status.publisherKey}` }}>
+                    {titles[status.publisherKey] || status.publisherKey}
+                  </NavLink>
                 </PresentationItem>
                 <PresentationItem label="Registered">
                   {formatTime(status.registration.created, "MMMM Do YYYY, h:mm a")}

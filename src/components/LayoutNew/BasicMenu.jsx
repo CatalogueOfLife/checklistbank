@@ -319,6 +319,14 @@ const BasicMenu = (props) => {
             </NavLink>
           ),
         },
+        {
+          key: "publisherAdmin",
+          label: (
+            <NavLink to={{ pathname: "/admin/publishers" }}>
+              <span>Publishers</span>
+            </NavLink>
+          ),
+        },
         ...(Auth.isAuthorised(user, ["admin"])
           ? [
               {
