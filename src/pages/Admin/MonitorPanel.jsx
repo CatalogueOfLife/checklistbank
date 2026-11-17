@@ -78,6 +78,18 @@ const Stat = ({ label, value, help, status, cols = { xs: 12, sm: 8, md: 6 } }) =
 };
 
 // a labelled bar for a used-of-available figure
+// The read-write server reports three job queues, jobs finished and imports
+// failed, the read-only one none of them. Without them it takes their space,
+// so the health checks below start at the same height in both panels.
+const JOB_STATS = 5;
+
+const StatPlaceholder = () => (
+  <Col xs={12} sm={8} md={6} aria-hidden="true" style={{ visibility: "hidden" }}>
+    <div style={{ fontSize: 12 }}>&nbsp;</div>
+    <div style={{ fontSize: 16 }}>&nbsp;</div>
+  </Col>
+);
+
 const Meter = ({ label, percent, text }) => {
   const { token } = theme.useToken();
   const status = percent >= 90 ? "exception" : "normal";
@@ -234,7 +246,10 @@ const MonitorPanel = ({ title, path }) => {
   return (
     <Card
       size="small"
-      style={{ height: "100%" }}
+      style={{
+        height: "100%",
+        backgroundColor: "color-mix(in srgb, lightslategrey 5%, white)",
+      }}
       title={
         <span>
           {title}{" "}
@@ -499,6 +514,10 @@ const MonitorPanel = ({ title, path }) => {
                     />
                   </>
                 )}
+                {!s.jobs &&
+                  Array.from({ length: JOB_STATS }, (_, i) => (
+                    <StatPlaceholder key={i} />
+                  ))}
               </Row>
             </Section>
           )}

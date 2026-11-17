@@ -4,6 +4,7 @@ import qs from "query-string";
 import { NavLink } from "react-router-dom";
 import {
   Alert,
+  Checkbox,
   Col,
   Form,
   Input,
@@ -19,6 +20,14 @@ import { formatTime } from "../../dateTime";
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Publishers that create duplicates on purpose, e.g. Plazi with a dataset per
+// treatment bank article. Their numbers drown the other cases, so they can be
+// hidden.
+const EXCLUDED_PUBLISHERS = {
+  label: "Plazi",
+  keys: ["7ce8aef0-9e92-11dc-8738-b8a03c50a862"],
+};
 
 const datasetLink = (key, label = key) => (
   <NavLink to={{ pathname: `/dataset/${key}/about` }}>{label}</NavLink>
@@ -139,6 +148,9 @@ const DuplicateDatasets = () => {
   const [minCount, setMinCount] = useState(2);
   const [publisher, setPublisher] = useState("");
   const [q, setQ] = useState("");
+  const [exclude, setExclude] = useState(true);
+  // keys of the datasets in duplicate groups within an excluded publisher
+  const [excludedKeys, setExcludedKeys] = useState(null);
 
   const publisherValid = !publisher || UUID.test(publisher.trim());
 
@@ -162,12 +174,39 @@ const DuplicateDatasets = () => {
       .finally(() => setLoading(false));
   }, [minCount, publisher, publisherValid]);
 
-  const filtered = useMemo(() => {
+  // The duplicates come without publishers. Asking for the duplicates within
+  // each excluded publisher yields the keys of exactly those groups that only
+  // hold datasets of that publisher. Groups mixing publishers stay visible.
+  useEffect(() => {
+    if (!exclude || excludedKeys) return;
+    Promise.all(
+      EXCLUDED_PUBLISHERS.keys.map((key) =>
+        axios(
+          `${config.dataApi}dataset/duplicates?${qs.stringify({
+            gbifPublisherKey: key,
+          })}`
+        ).then((res) => res.data || [])
+      )
+    )
+      .then((lists) =>
+        setExcludedKeys(new Set(lists.flat().flatMap((d) => d.keys)))
+      )
+      .catch((err) => setError(err));
+  }, [exclude, excludedKeys]);
+
+  const excluding = exclude && !!excludedKeys;
+
+  const { filtered, hidden } = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return term
+    let rows = term
       ? data.filter((d) => d.name?.toLowerCase().includes(term))
       : data;
-  }, [data, q]);
+    const before = rows.length;
+    if (excluding) {
+      rows = rows.filter((d) => !d.keys.every((k) => excludedKeys.has(k)));
+    }
+    return { filtered: rows, hidden: before - rows.length };
+  }, [data, q, excluding, excludedKeys]);
 
   const datasetCount = filtered.reduce((n, d) => n + d.keys.length, 0);
 
@@ -204,7 +243,10 @@ const DuplicateDatasets = () => {
     <>
       <p>
         Datasets that share the same title and description. Expand a row to
-        compare the datasets of a group and decide which ones to keep.
+        compare the datasets of a group and decide which ones to keep.{" "}
+        {EXCLUDED_PUBLISHERS.label} creates duplicates on purpose, so groups
+        made only of its datasets are hidden unless you uncheck the box. Groups
+        mixing in datasets of other publishers are always shown.
       </p>
       <Row gutter={16} style={{ marginBottom: 10 }} align="top">
         <Col>
@@ -234,6 +276,16 @@ const DuplicateDatasets = () => {
           </Form.Item>
         </Col>
         <Col>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Checkbox
+              checked={exclude}
+              onChange={(e) => setExclude(e.target.checked)}
+            >
+              Hide {EXCLUDED_PUBLISHERS.label} duplicates
+            </Checkbox>
+          </Form.Item>
+        </Col>
+        <Col>
           <Form.Item label="Title" style={{ marginBottom: 0 }}>
             <Input
               allowClear
@@ -249,16 +301,19 @@ const DuplicateDatasets = () => {
       {!error && (
         <>
           <Typography.Text type="secondary">
-            {loading
+            {loading || (exclude && !excludedKeys)
               ? "Loading…"
-              : `${filtered.length.toLocaleString()} titles with ${datasetCount.toLocaleString()} datasets`}
+              : `${filtered.length.toLocaleString()} titles with ${datasetCount.toLocaleString()} datasets` +
+                (hidden
+                  ? `, ${hidden.toLocaleString()} ${EXCLUDED_PUBLISHERS.label} titles hidden`
+                  : "")}
           </Typography.Text>
           <Table
             size="middle"
             rowKey={(d) => d.keys.join("-")}
             columns={columns}
             dataSource={filtered}
-            loading={loading}
+            loading={loading || (exclude && !excludedKeys)}
             expandable={{
               expandedRowRender: (d) => <DuplicateGroup keys={d.keys} />,
             }}
