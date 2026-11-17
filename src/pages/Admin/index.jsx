@@ -9,6 +9,7 @@ import _ from "lodash";
 import { Helmet } from "react-helmet-async";
 import {
   Row,
+  Col,
   Divider,
   Space,
   Switch,
@@ -33,6 +34,8 @@ import {
   startComponent,
   stopComponent,
 } from "../../api/admin";
+import { SERVERS } from "../../api/monitor";
+import MonitorPanel from "./MonitorPanel";
 
 const pollingHeartBeat = config.pollingHeartBeat || 5000;
 const healthHeartBeat = config.healthHeartBeat || 60000;
@@ -498,34 +501,13 @@ const AdminPage = ({ background, addError, getBackground }) => {
           </Popconfirm>
         </Row>
 
-        <Divider titlePlacement="left">Links</Divider>
-        <Row>
-          <a href={config.downloadApi}>Downloads</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}dataset/duplicates`}>Duplicate Datasets</a>
-        </Row>
-
-        <Divider titlePlacement="left">Main</Divider>
-        <Row>
-          <a href={`${config.dataApi}monitor/healthcheck`}>Health</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor/threads`}>Threads</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor/metrics`}>Metrics</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor/pprof?state=blocked`}>
-            CPU Blocked
-          </a>
-        </Row>
-
-        <Divider titlePlacement="left">Read only</Divider>
-        <Row>
-          <a href={`${config.dataApi}monitor-ro/healthcheck`}>Health</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor-ro/threads`}>Threads</a>
-          &nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor-ro/metrics`}>Metrics</a>
-          &nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor-ro/pprof`}>CPU Profile</a>&nbsp;-&nbsp;
-          <a href={`${config.dataApi}monitor-ro/pprof?state=blocked`}>
-            CPU Blocked
-          </a>
+        <Divider titlePlacement="left">Servers</Divider>
+        <Row gutter={[16, 16]} align="stretch">
+          {SERVERS.map((srv) => (
+            <Col key={srv.key} xs={24} xl={12}>
+              <MonitorPanel title={srv.title} path={srv.path} />
+            </Col>
+          ))}
         </Row>
       </PageContent>
     </Layout>

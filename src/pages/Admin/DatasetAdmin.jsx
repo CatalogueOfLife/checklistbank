@@ -8,6 +8,7 @@ import history from "../../history";
 import SearchIndexAdmin from "./SearchIndexAdmin";
 import MatcherAdmin from "./MatcherAdmin";
 import PlacementConflicts from "./PlacementConflicts";
+import DuplicateDatasets from "./DuplicateDatasets";
 
 const TABS = [
   {
@@ -30,6 +31,12 @@ const TABS = [
     description:
       "Lists public external datasets whose latest import placed a share of their accepted genera in a taxonomic group the reference checklists do not know them in.",
   },
+  {
+    key: "duplicates",
+    label: "Duplicates",
+    description:
+      "Lists datasets that share the same title and description, optionally of a single GBIF publisher, so the superfluous ones can be found and removed.",
+  },
 ];
 
 // Editors only get the read-only reports, the tabs that rebuild indices are for admins.
@@ -51,6 +58,7 @@ const DatasetAdmin = ({ user }) => {
     index: <SearchIndexAdmin location={location} />,
     matcher: <MatcherAdmin />,
     placements: <PlacementConflicts />,
+    duplicates: <DuplicateDatasets />,
   };
 
   return (
