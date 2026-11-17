@@ -46,7 +46,14 @@ const ColTreeNode = (props) => {
   } = props;
 
   const { notification, message } = App.useApp();
-  const [decision, setDecision] = useState(taxon.decision);
+  const [decision, setDecisionState] = useState(taxon.decision);
+  // The tree is a virtual list: scrolling a node out of view unmounts it, and
+  // remounting starts the state again from taxon.decision. So a change has to
+  // go into the tree data too, or a deleted decision comes back (#1756).
+  const setDecision = (d) => {
+    taxon.decision = d;
+    setDecisionState(d);
+  };
   const [provisional, setProvisionalState] = useState(
     taxon.status === "provisionally accepted"
   );
