@@ -9,6 +9,7 @@ import SearchIndexAdmin from "./SearchIndexAdmin";
 import MatcherAdmin from "./MatcherAdmin";
 import PlacementConflicts from "./PlacementConflicts";
 import DuplicateDatasets from "./DuplicateDatasets";
+import UnusedDatasets from "./UnusedDatasets";
 
 const TABS = [
   {
@@ -37,6 +38,13 @@ const TABS = [
     description:
       "Lists datasets that share the same title and description, optionally of a single GBIF publisher, so the superfluous ones can be found and removed.",
   },
+  {
+    key: "unused",
+    label: "Unused",
+    adminOnly: true,
+    description:
+      "Lists private projects and external datasets nobody has created, changed, imported or synced for some months, longest unused first, as candidates to be deleted.",
+  },
 ];
 
 // Editors only get the read-only reports, the tabs that rebuild indices are for admins.
@@ -59,6 +67,7 @@ const DatasetAdmin = ({ user }) => {
     matcher: <MatcherAdmin />,
     placements: <PlacementConflicts />,
     duplicates: <DuplicateDatasets />,
+    unused: <UnusedDatasets />,
   };
 
   return (
