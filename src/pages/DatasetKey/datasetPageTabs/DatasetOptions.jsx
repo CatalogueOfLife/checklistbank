@@ -231,6 +231,12 @@ const DatasetOptions = ({ datasetKey, datasetSettings, dataset, location, histor
             <ImportButton
               record={{ datasetKey: dataset.key }}
               reImport={data && !data["data access"]}
+              source={
+                data && {
+                  url: data["data access"],
+                  format: data["data format"],
+                }
+              }
             />
           )}
           <Button type="primary" onClick={reindexDataset}>

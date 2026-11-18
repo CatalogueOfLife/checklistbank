@@ -2,84 +2,85 @@ import { useState } from "react";
 import axios from "axios";
 import config from "../config";
 
-import { Upload, App, Button, Alert } from "antd";
+import { Upload, App, Button, Popover } from "antd";
 import ErrorMsg from "../components/ErrorMsg";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, WarningOutlined } from "@ant-design/icons";
 
-// const { confirm } = Modal;
-
-const ArchiveUpload = ({ datasetKey }) => {
+/**
+ * Uploads a data archive and imports it, replacing all data of the dataset.
+ * Made to sit in a row of buttons like the ImportButton: the progress shows in
+ * the button and an error behind a warning icon next to it.
+ */
+const ArchiveUpload = ({ datasetKey, onSuccess, style }) => {
   const { message } = App.useApp();
-  const [submissionError, setSubmissionError] = useState(null);
-  const [fileList, setFileList] = useState([]);
+  const [error, setError] = useState(null);
+  // the upload progress in percent, null while nothing is uploading
+  const [percent, setPercent] = useState(null);
 
-  const customRequest = (options) => {
-    const reqConfig = {
-      headers: {
-        "content-type": options.file.type,
-        "X-File-Name": options.file.name,
-      },
+  const customRequest = ({ file, action, onSuccess: done, onError }) => {
+    const headers = {
+      "content-type": file.type,
+      "X-File-Name": file.name,
     };
-    if (
-      !reqConfig.headers["content-type"] &&
-      options.file.name.endsWith(".tree")
-    ) {
-      reqConfig.headers["content-type"] = "text/plain";
+    if (!headers["content-type"] && file.name.endsWith(".tree")) {
+      headers["content-type"] = "text/plain";
     }
+    setError(null);
+    setPercent(0);
     return axios
-      .post(options.action, options.file, reqConfig)
+      .post(action, file, {
+        headers,
+        onUploadProgress: (e) => {
+          if (e.total) setPercent(Math.round((e.loaded * 100) / e.total));
+        },
+      })
       .then((res) => {
-        options.onSuccess(res.data, options.file);
-        setSubmissionError(null);
+        setPercent(null);
+        done(res.data, file);
+        message.success(`${file.name} uploaded, the import is scheduled`);
+        if (typeof onSuccess === "function") onSuccess(res.data);
       })
       .catch((err) => {
-        options.onError(err);
-        setSubmissionError(err);
-        console.log(err);
+        setPercent(null);
+        onError(err);
+        setError(err);
+        message.error(`${file.name} upload failed`);
       });
   };
 
-  const onChange = (info) => {
-    if (info.file.status !== "uploading") {
-      // console.log(info.file, info.fileList);
-    }
-    if (info.file.status === "done") {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-    setFileList(!info.file.status ? [] : [info.file]);
-  };
-
-  const confirmUpload = (file) => {
-    return window.confirm(
+  const confirmUpload = (file) =>
+    window.confirm(
       `ALL DATA WILL BE REPLACED WITH CONTENT OF ${file.name}, PROCEED?`
-    );
-  };
+    ) || Upload.LIST_IGNORE;
+
+  const uploading = percent !== null;
 
   return (
-    <div className="clearfix">
-      {submissionError && (
-        <Alert
-          style={{ marginBottom: "8px" }}
-          closable={{ onClose: () => setSubmissionError(null) }}
-          description={<ErrorMsg error={submissionError} />}
-          type="error"
-        />
-      )}
-
+    <span style={{ display: "inline-flex", alignItems: "center", ...style }}>
       <Upload
         action={`${config.dataApi}importer/${datasetKey}`}
         customRequest={customRequest}
-        onChange={onChange}
-        fileList={fileList}
         beforeUpload={confirmUpload}
+        showUploadList={false}
+        disabled={uploading}
       >
-        <Button>
-          <UploadOutlined /> Upload Data Archive
+        <Button type="primary" icon={<UploadOutlined />} loading={uploading}>
+          {uploading ? `Uploading ${percent}%` : "Upload Data"}
         </Button>
       </Upload>
-    </div>
+      {error && (
+        <Popover
+          placement="bottom"
+          title="Error"
+          content={<ErrorMsg error={error} />}
+          trigger="click"
+        >
+          <WarningOutlined
+            style={{ color: "red", marginLeft: "10px", cursor: "pointer" }}
+          />
+        </Popover>
+      )}
+    </span>
   );
 };
 

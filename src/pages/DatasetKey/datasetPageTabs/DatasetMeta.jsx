@@ -17,7 +17,6 @@ import {
 import { NavLink } from "react-router-dom";
 import MetaDataForm from "../../../components/MetaData/MetaDataForm";
 import LogoUpload from "../../../components/MetaData/LogoUpload";
-import ArchiveUpload from "../../../components/ArchiveUpload";
 import MetaDataUpload from "../../../components/MetaData/MetaDataUpload";
 import PageContent from "../../../components/PageContent";
 import PresentationItem from "../../../components/PresentationItem";
@@ -30,6 +29,7 @@ import DoiPresentation from "../../../components/MetaData/DoiPresentation";
 import BibTex from "../../../components/MetaData/BibTex";
 import Eml from "../../../components/MetaData/Eml";
 import Yaml from "../../../components/MetaData/Yaml";
+import GbifLink from "../../../components/MetaData/GbifLink";
 
 import TaxGroupIcon, { filterRedundantGroups } from "../../NameSearch/TaxGroupIcon";
 import TaxBreakdownChart from "./TaxBreakdownChart";
@@ -227,21 +227,9 @@ const DatasetMeta = ({
             </Col>
           </Row>
           <Row>
-            <Col>
-              {data && !data.deleted && data?.origin === "external" && (
-                <ArchiveUpload
-                  datasetKey={_.get(data, "key")}
-                  origin={_.get(data, "origin")}
-                />
-              )}
-            </Col>
             <Col flex="auto">
               {modifyMetadata && (
-                <MetaDataUpload
-                  style={{ marginLeft: "10px" }}
-                  datasetKey={id}
-                  onSuccess={getData}
-                />
+                <MetaDataUpload datasetKey={id} onSuccess={getData} />
               )}
             </Col>
             <Col>
@@ -320,6 +308,7 @@ const DatasetMeta = ({
       )}
       {displayData && (
         <div style={{ textAlign: "right" }}>
+          {displayData.gbifKey && <GbifLink gbifKey={displayData.gbifKey} />}
           <Yaml datasetKey={displayData.key} />
           <Eml datasetKey={displayData.key} />
           <BibTex datasetKey={displayData.key} />

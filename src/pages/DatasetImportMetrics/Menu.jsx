@@ -3,7 +3,7 @@ import axios from "axios";
 import withRouter from "../../withRouter";
 import { Typography } from 'antd';
 const { Title } = Typography;
-import { Menu, Row, Col } from "antd";
+import { Menu, Row, Col, Flex } from "antd";
 import { NavLink } from "react-router-dom";
 import { DiffOutlined, PieChartOutlined, LineChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import { RiNodeTree } from "react-icons/ri";
@@ -11,7 +11,8 @@ import { formatTime } from "../../dateTime";
 import JobDuration from "../../components/job/JobDuration";
 import config from "../../config";
 
-const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, importJob }) => {
+// extra: buttons shown right of the menu, wrapping below it on narrow screens
+const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, importJob, extra }) => {
     // const { current } = this.state;
     const isProject = dataset?.origin === "project";
     // Timeline and Diff both need something to compare: a chart over a single
@@ -86,10 +87,11 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, import
             </Col>
           </Row>
         )}
+      <Flex align="center" gap="small" wrap style={{ marginBottom: "8px" }}>
       <Menu
         selectedKeys={[current]}
         mode="horizontal"
-        style={{ marginBottom: "8px" }}
+        style={{ flex: "auto", minWidth: 0 }}
         items={[
           {
             key: "imports",
@@ -182,6 +184,8 @@ const ImportMenu = ({ datasetKey, attempt, location, dataset, isFinished, import
             : []),
         ]}
       />
+      {extra}
+      </Flex>
       </>
     );
 };

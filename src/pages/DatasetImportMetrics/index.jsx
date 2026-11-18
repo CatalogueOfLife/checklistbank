@@ -23,7 +23,9 @@ import { getUsersBatch } from "../../api/user";
 import ImportMenu from "./Menu";
 import qs from "query-string";
 import JobStatusTag from "../../components/job/JobStatusTag";
-import { isLive } from "../../api/job";
+import ImportButton from "../../components/job/ImportButton";
+import ArchiveUpload from "../../components/ArchiveUpload";
+import { isLive, getJobQueue, JOB_LANE } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -97,6 +99,15 @@ const DatasetImportMetrics = (props) => {
 
   const timerRef = useRef(null);
   const [historyTotal, setHistoryTotal] = useState(0);
+  // The settings of the dataset, read for its data access URL: without one
+  // the import button reimports the last archive instead.
+  const [settings, setSettings] = useState(null);
+  // The queued or running import job of the dataset, from the live job queue.
+  // The backend only creates an import attempt once its job leaves the queue,
+  // so an import just started from this page is not in the history yet.
+  const [liveImport, setLiveImport] = useState(null);
+  // Bumped after starting, stopping or uploading an import to watch the queue again.
+  const [queueCheck, setQueueCheck] = useState(0);
   const hasMoreHistory =
     !!importHistory && importHistory.length < historyTotal;
 
@@ -201,6 +212,76 @@ const DatasetImportMetrics = (props) => {
 
   const isProject = dataset?.origin === "project";
 
+  // Imports are started and archives uploaded on the dataset page only, not in
+  // the source view of a project, and only for external datasets.
+  const canImport =
+    !!datasetKey_ &&
+    Number(dataset?.key) === Number(datasetKey) &&
+    dataset?.origin === "external" &&
+    !dataset?.deleted &&
+    Auth.canEditDataset(dataset, user);
+
+  useEffect(() => {
+    setSettings(null);
+    if (!canImport) return;
+    let canceled = false;
+    axios(`${config.dataApi}dataset/${datasetKey}/settings`)
+      .then((res) => !canceled && setSettings(res.data || {}))
+      .catch(() => !canceled && setSettings({}));
+    return () => {
+      canceled = true;
+    };
+  }, [datasetKey, canImport]);
+
+  // The queue watch below outlives renders, so it reloads through this ref to
+  // reload the attempt shown now.
+  const reloadRef = useRef(null);
+  reloadRef.current = () => getData_(attempt);
+
+  // Watches the live import job while there is one. Whenever it changes its
+  // status or disappears the page reloads, which picks up the new attempt or
+  // the outcome of the import, including an unchanged import that deletes its
+  // attempt again. Right after an import was started here the first check
+  // reloads too, as a quick import may already be done.
+  useEffect(() => {
+    setLiveImport(null);
+    if (!canImport) return;
+    let canceled = false;
+    let timer = null;
+    let first = true;
+    let lastStatus = null;
+    const tick = () =>
+      getJobQueue(datasetKey)
+        .then((q) =>
+          [...q.running, ...q.queued].find(
+            (j) =>
+              j.lane === JOB_LANE.IMPORT &&
+              Number(j.datasetKey) === Number(datasetKey)
+          ) || null
+        )
+        .catch(() => null)
+        .then((job) => {
+          if (canceled) return;
+          const status = job?.status || null;
+          if (first ? queueCheck > 0 : status !== lastStatus) {
+            reloadRef.current();
+          }
+          first = false;
+          lastStatus = status;
+          setLiveImport(job);
+          if (job) {
+            timer = setTimeout(tick, config.pollingHeartBeat || 5000);
+          }
+        });
+    tick();
+    return () => {
+      canceled = true;
+      clearTimeout(timer);
+    };
+  }, [datasetKey, canImport, queueCheck]);
+
+  const watchQueue = () => setQueueCheck((n) => n + 1);
+
   useEffect(() => {
     if (!isProject || Number(dataset?.key) !== Number(datasetKey)) {
       setReleasesByAttempt({});
@@ -238,6 +319,38 @@ const DatasetImportMetrics = (props) => {
           datasetKey={datasetKey}
           attempt={attempt || data?.attempt}
           importJob={data}
+          extra={
+            <>
+              {/* Without a data access URL the button reimports the last
+                  archive, which a dataset never imported does not have. */}
+              {canImport &&
+                settings &&
+                (settings["data access"] || importHistory?.length > 0 || liveImport) && (
+                  <ImportButton
+                    record={{
+                      datasetKey: Number(datasetKey),
+                      dataset,
+                      status: liveImport?.status,
+                    }}
+                    reImport={!settings["data access"]}
+                    source={{
+                      url: settings["data access"],
+                      format: settings["data format"],
+                    }}
+                    onStartImportSuccess={watchQueue}
+                    onDeleteSuccess={watchQueue}
+                  />
+                )}
+              {canImport && (
+                <ArchiveUpload datasetKey={datasetKey} onSuccess={watchQueue} />
+              )}
+              {dataset && importHistory?.length > 0 && (
+                <Button type="primary" onClick={() => setHistoryVisible(true)}>
+                  History
+                </Button>
+              )}
+            </>
+          }
         />
       )}
       {!loading && !data && error && (
@@ -265,8 +378,12 @@ const DatasetImportMetrics = (props) => {
             dataset.origin === "project"
               ? "This dataset has never been released."
               : `This dataset has never been imported.${
-                  Auth.isAuthorised(user, ["editor", "admin"])
-                    ? " Press the import button to import it"
+                  liveImport
+                    ? " Its import is queued."
+                    : canImport
+                    ? settings?.["data access"]
+                      ? " Import it from its data access URL or upload a data archive."
+                      : " Upload a data archive to import it."
                     : ""
                 }`
           }
@@ -309,17 +426,6 @@ const DatasetImportMetrics = (props) => {
             type="info"
           />
         </Spin>
-      )}
-      {dataset &&
-        importHistory?.length > 0 &&
-        !["xrelease", "release"].includes(origin) && (
-        <Button
-          type="primary"
-          style={{ display: "inline", position: "relative", top: "-48px", float: "right", marginRight: "10px" }}
-          onClick={() => setHistoryVisible(true)}
-        >
-          History
-        </Button>
       )}
       {data && data.status === "failed" && (
         <Row style={{ padding: "10px" }}>
