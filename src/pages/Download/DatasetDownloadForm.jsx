@@ -388,7 +388,7 @@ const DatasetDownload = ({ rank, dataFormat, addError, user, datasetKey, dataset
             Download <DownloadOutlined />
           </Button>
         )}
-        {!user && `<b>Please login to create downloads!</b>`}
+        {!user && <b>Please login to create downloads!</b>}
       </Row>
 
       <Row style={{ marginTop: "24px" }}>
