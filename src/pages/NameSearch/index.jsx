@@ -36,6 +36,7 @@ import Classification from "./Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
 import DatasetFilter from "./DatasetFilter";
+import { isCrossDatasetSearchable } from "./crossDatasetSearch";
 import RowDetail from "./RowDetail";
 import TaxGroupIcon from "./TaxGroupIcon";
 import _ from "lodash";
@@ -492,8 +493,6 @@ const NameSearchPage = ({
     // the previous cancel-then-retry toggle, which re-fired the request on
     // unmount and made the page impossible to leave during a long search.
     cancelInFlight("cancelled by a newer search");
-    setSearched(true);
-    setLoading(true);
     const paramsForRequest = { ...currentParams };
     // A search over a whole release takes seconds; label the selected sources
     // right away instead of only once the facets have come back.
@@ -516,6 +515,19 @@ const NameSearchPage = ({
       pathname: _.get({ location }, "location.pathname"),
       search: `?${qs.stringify(newParamsWithPaging)}`,
     });
+    // Without a term and a dataset, e.g. Search on an empty box, switching
+    // what to search in, or removing the last dataset, the cross dataset
+    // search goes back to its prompt instead of sending a pointless request.
+    if (!datasetKey && !isCrossDatasetSearchable(paramsForRequest)) {
+      setSearched(false);
+      setLoading(false);
+      setData([]);
+      setError(null);
+      setPagination((prev) => ({ ...prev, total: 0 }));
+      return;
+    }
+    setSearched(true);
+    setLoading(true);
     const url = datasetKey
       ? `${config.dataApi}dataset/${datasetKey}/nameusage/search`
       : `${config.dataApi}nameusage/search`;
@@ -1387,7 +1399,11 @@ const NameSearchPage = ({
       {!error && !searched && (
         <Empty
           style={{ marginTop: 48 }}
-          description="Enter a search term to begin"
+          description={
+            datasetKey
+              ? "Enter a search term to begin"
+              : "Enter a search term, or pick a dataset under Advanced, to begin"
+          }
         />
       )}
       {!error && searched && (
