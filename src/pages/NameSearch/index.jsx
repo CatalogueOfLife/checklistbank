@@ -37,6 +37,7 @@ import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
 import DatasetFilter from "./DatasetFilter";
 import { isCrossDatasetSearchable } from "./crossDatasetSearch";
+import { searchStringOf } from "./searchString";
 import RowDetail from "./RowDetail";
 import TaxGroupIcon from "./TaxGroupIcon";
 import _ from "lodash";
@@ -373,6 +374,8 @@ const NameSearchPage = ({
   const [searched, setSearched] = useState(false);
 
   const cancelRef = useRef(null);
+  // The query string of the last search getData ran, see the location effect
+  const lastSearchRef = useRef(null);
 
   const cancelInFlight = (reason) => {
     if (cancelRef.current && typeof cancelRef.current === "function") {
@@ -511,10 +514,14 @@ const NameSearchPage = ({
       offset: (current - 1) * limit,
     };
 
-    history.push({
-      pathname: _.get({ location }, "location.pathname"),
-      search: `?${qs.stringify(newParamsWithPaging)}`,
-    });
+    const search = searchStringOf(currentParams, currentPagination);
+    lastSearchRef.current = search;
+    if (window.location.search !== `?${search}`) {
+      history.push({
+        pathname: _.get({ location }, "location.pathname"),
+        search: `?${search}`,
+      });
+    }
     // Without a term and a dataset, e.g. Search on an empty box, switching
     // what to search in, or removing the last dataset, the cross dataset
     // search goes back to its prompt instead of sending a pointless request.
@@ -835,6 +842,14 @@ const NameSearchPage = ({
       showQuickJumper: true,
       pageSizeOptions: [50, 100, 500, 1000],
     };
+    // getData writes every search it runs to the URL, and on mount the first
+    // search already ran. Searching again here sent each search twice or three
+    // times: the browser cancelled the earlier copies, but the server still ran
+    // them. Only a URL the page did not just search for, e.g. from back and
+    // forward or a link, needs a new search.
+    if (searchStringOf(newParams, newPagination) === lastSearchRef.current) {
+      return;
+    }
     setParams(newParams);
     setPagination(newPagination);
     getData(newParams, newPagination);
