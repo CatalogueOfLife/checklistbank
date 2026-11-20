@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
-import { Alert, Col, InputNumber, Row, Segmented, Table, Tag } from "antd";
+import {
+  Alert,
+  Col,
+  InputNumber,
+  Row,
+  Segmented,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import DataLoader from "dataloader";
@@ -46,6 +56,18 @@ const SourceLabel = ({ datasetKey }) => {
   );
 };
 
+// The extra segment listing the sectors the release was built from which
+// contributed nothing to it. They are not in the sync comparison at all.
+const NON_CONTRIBUTING = "noncontributing";
+
+// A non contributing sector is no sector of the release, so it links to the
+// sector in the dataset that holds it: the project, or the base release of an
+// xrelease.
+const projectSectorLink = (sector) => ({
+  pathname: `/project/${sector.datasetKey}/sector`,
+  search: `?key=${sector.id}`,
+});
+
 const formatChange = (change) =>
   change === null || change === undefined
     ? ""
@@ -57,6 +79,10 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
   const [error, setError] = useState(null);
   const [minChange, setMinChange] = useState(10);
   const [flag, setFlag] = useState("all");
+  const [nonContributing, setNonContributing] = useState(null);
+  const [nonContributingSources, setNonContributingSources] = useState(null);
+  const [nonContributingError, setNonContributingError] = useState(null);
+  const [nonContributingView, setNonContributingView] = useState("sectors");
 
   const mayQuery = Auth.canEditProjectOf(dataset, user);
 
@@ -80,6 +106,29 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
       cancelled = true;
     };
   }, [datasetKey, previousReleaseKey, minChange, mayQuery]);
+
+  useEffect(() => {
+    if (!mayQuery) return;
+    let cancelled = false;
+    setNonContributing(null);
+    setNonContributingSources(null);
+    Promise.all([
+      axios(`${config.dataApi}dataset/${datasetKey}/sector/noncontributing`),
+      axios(
+        `${config.dataApi}dataset/${datasetKey}/sector/noncontributing/source`
+      ),
+    ])
+      .then(([sectors, sources]) => {
+        if (cancelled) return;
+        setNonContributing(sectors.data || []);
+        setNonContributingSources(sources.data || []);
+        setNonContributingError(null);
+      })
+      .catch((err) => !cancelled && setNonContributingError(err));
+    return () => {
+      cancelled = true;
+    };
+  }, [datasetKey, mayQuery]);
 
   if (!mayQuery) {
     return (
@@ -171,6 +220,112 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
     },
   ];
 
+  // Sources none of whose sectors contributed anything to the release.
+  const unusedSources = new Set((nonContributingSources || []).map((s) => s.key));
+  const sectorsById = Object.fromEntries(
+    (nonContributing || []).map((s) => [s.id, s])
+  );
+
+  const nonContributingColumns = [
+    {
+      title: "Sector",
+      dataIndex: "id",
+      key: "id",
+      render: (id, record) => (
+        <NavLink to={projectSectorLink(record)}>{id}</NavLink>
+      ),
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: "Mode",
+      dataIndex: "mode",
+      key: "mode",
+    },
+    {
+      title: "Source",
+      dataIndex: "subjectDatasetKey",
+      key: "subjectDatasetKey",
+      render: (key) =>
+        key ? (
+          <Space size={4}>
+            <SourceLabel datasetKey={key} />
+            {unusedSources.has(key) && (
+              <Tooltip title="No other sector, source or secondary source brought anything of this dataset into the release">
+                <Tag color="red">contributed nothing</Tag>
+              </Tooltip>
+            )}
+          </Space>
+        ) : null,
+      sorter: (a, b) => (a.subjectDatasetKey || 0) - (b.subjectDatasetKey || 0),
+    },
+    {
+      title: "Subject",
+      dataIndex: ["subject", "label"],
+      key: "subject",
+    },
+    {
+      title: "Target",
+      dataIndex: ["target", "label"],
+      key: "target",
+    },
+    {
+      title: "Priority",
+      dataIndex: "priority",
+      key: "priority",
+      sorter: (a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity),
+    },
+    {
+      title: "Sync attempt",
+      dataIndex: "syncAttempt",
+      key: "syncAttempt",
+    },
+    {
+      title: "Note",
+      dataIndex: "note",
+      key: "note",
+      ellipsis: { showTitle: true },
+    },
+  ];
+
+  const nonContributingSourceColumns = [
+    {
+      title: "Source",
+      dataIndex: "key",
+      key: "key",
+      render: (key, record) => (
+        <NavLink to={{ pathname: `/dataset/${key}` }}>
+          {record.alias || key}
+        </NavLink>
+      ),
+      sorter: (a, b) => a.key - b.key,
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Sectors",
+      dataIndex: "sectorKeys",
+      key: "sectorKeys",
+      render: (keys) => (
+        <Space size={4} wrap>
+          {(keys || []).map((id) =>
+            sectorsById[id] ? (
+              <NavLink key={id} to={projectSectorLink(sectorsById[id])}>
+                {id}
+              </NavLink>
+            ) : (
+              <span key={id}>{id}</span>
+            )
+          )}
+        </Space>
+      ),
+      sorter: (a, b) =>
+        (a.sectorKeys || []).length - (b.sectorKeys || []).length,
+    },
+  ];
+
   const rows =
     flag === "all" ? data || [] : (data || []).filter((r) => r.flag === flag);
 
@@ -191,30 +346,84 @@ const SectorsTab = ({ datasetKey, previousReleaseKey, dataset, user }) => {
                 label: `${f} (${(data || []).filter((r) => r.flag === f).length})`,
                 value: f,
               })),
+              {
+                label: `non contributing (${
+                  nonContributing ? nonContributing.length : "…"
+                })`,
+                value: NON_CONTRIBUTING,
+              },
             ]}
           />
         </Col>
         <Col flex="auto" />
-        <Col>
-          Flag changes above{" "}
-          <InputNumber
-            min={0}
-            max={100}
-            value={minChange}
-            onChange={(v) => setMinChange(v ?? 0)}
-            addonAfter="%"
-            style={{ width: "110px" }}
-          />
-        </Col>
+        {flag === NON_CONTRIBUTING ? (
+          <Col>
+            <Segmented
+              value={nonContributingView}
+              onChange={setNonContributingView}
+              options={[
+                {
+                  label: `Sectors (${(nonContributing || []).length})`,
+                  value: "sectors",
+                },
+                {
+                  label: `Sources contributing nothing (${
+                    (nonContributingSources || []).length
+                  })`,
+                  value: "sources",
+                },
+              ]}
+            />
+          </Col>
+        ) : (
+          <Col>
+            Flag changes above{" "}
+            <InputNumber
+              min={0}
+              max={100}
+              value={minChange}
+              onChange={(v) => setMinChange(v ?? 0)}
+              addonAfter="%"
+              style={{ width: "110px" }}
+            />
+          </Col>
+        )}
       </Row>
-      <Table
-        size="small"
-        columns={columns}
-        dataSource={rows}
-        loading={loading}
-        pagination={{ pageSize: 100, hideOnSinglePage: true }}
-        rowKey="sectorKey"
-      />
+      {flag === NON_CONTRIBUTING ? (
+        <>
+          {nonContributingError && (
+            <Alert title={nonContributingError.message} type="error" />
+          )}
+          {nonContributingView === "sources" ? (
+            <Table
+              size="small"
+              columns={nonContributingSourceColumns}
+              dataSource={nonContributingSources || []}
+              loading={!nonContributingSources && !nonContributingError}
+              pagination={{ pageSize: 100, hideOnSinglePage: true }}
+              rowKey="key"
+            />
+          ) : (
+            <Table
+              size="small"
+              columns={nonContributingColumns}
+              dataSource={nonContributing || []}
+              loading={!nonContributing && !nonContributingError}
+              pagination={{ pageSize: 100, hideOnSinglePage: true }}
+              rowKey="id"
+            />
+          )}
+        </>
+      ) : (
+        <Table
+          size="small"
+          columns={columns}
+          dataSource={rows}
+          loading={loading}
+          pagination={{ pageSize: 100, hideOnSinglePage: true }}
+          rowKey="sectorKey"
+        />
+      )}
     </>
   );
 };
