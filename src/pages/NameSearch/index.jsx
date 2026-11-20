@@ -35,6 +35,7 @@ import history from "../../history";
 import Classification from "./Classification";
 import SearchBox from "../DatasetList/SearchBox";
 import MultiValueFilter from "./MultiValueFilter";
+import DatasetFilter from "./DatasetFilter";
 import RowDetail from "./RowDetail";
 import TaxGroupIcon from "./TaxGroupIcon";
 import _ from "lodash";
@@ -51,6 +52,7 @@ import DataLoader from "dataloader";
 const datasetLoader = new DataLoader((ids) => getDatasetsBatch(ids), {
   maxBatchSize: 200,
 });
+const loadDataset = (key) => datasetLoader.load(Number(key));
 // The API returns only the top 10 values of a facet unless told otherwise. A
 // COL release has well over 100 source datasets, so the source filters would
 // silently miss most of them. facetLimit applies to every requested facet.
@@ -1137,9 +1139,9 @@ const NameSearchPage = ({
             // Most per-record filters are meaningless across datasets and too
             // costly to facet over the whole index. Only ranks & status show by
             // default; the rest sit behind Advanced and their facets are only
-            // requested once it is opened. Filters are locked until a query
-            // term is entered, since faceting the whole index without a term is
-            // prohibitive.
+            // requested once it is opened. Filters except the dataset are
+            // locked until a query term is entered, since faceting the whole
+            // index without a term is prohibitive.
             <React.Fragment>
               <MultiValueFilter
                 defaultValue={_.get(params, "rank")}
@@ -1157,12 +1159,13 @@ const NameSearchPage = ({
               />
               {advancedFilters && (
                 <React.Fragment>
-                  <MultiValueFilter
-                    defaultValue={_.get(params, "datasetKey")}
+                  {/* not locked without a term: without one no facets are
+                      requested, so filtering by dataset stays cheap */}
+                  <DatasetFilter
+                    value={_.get(params, "datasetKey")}
                     onChange={(value) => updateSearch({ datasetKey: value })}
-                    vocab={facetDataset}
-                    label="Dataset"
-                    disabled={!params.q}
+                    facetOptions={facetDataset}
+                    loadDataset={loadDataset}
                   />
                   <MultiValueFilter
                     defaultValue={_.get(params, "nameType")}
