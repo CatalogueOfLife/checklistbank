@@ -11,6 +11,8 @@ import Layout from "../../components/LayoutNew";
 import PageContent from "../../components/PageContent";
 import withContext from "../../components/hoc/withContext";
 import { formatRequestValue } from "./requestValue";
+import { NavLink } from "react-router-dom";
+import { jobUrl } from "../../api/job";
 
 
 const DatasetDownload = ({ match, downloadKey, addError }) => {
@@ -99,6 +101,7 @@ const DatasetDownload = ({ match, downloadKey, addError }) => {
                   <span>{formatTime(download?.created, "MMM Do YYYY")}</span>
                 </>
               }
+              extra={<NavLink to={jobUrl(download.key)}>Job details</NavLink>}
             >
               <>
                 <DownloadError md={4} error={download.error} />

@@ -6,6 +6,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
+  useParams,
 } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ConfigProvider, App as AntdApp } from "antd";
@@ -66,7 +67,7 @@ import ProjectSourceMetrics from "./pages/project/ProjectSourceMetrics";
 import MetaDataGenerator from "./pages/tools/MetaDataGenerator";
 import ArchiveValidator from "./pages/tools/ArchiveValidator";
 import NameMatch from "./pages/tools/NameMatch";
-import NameMatchJob from "./pages/tools/NameMatchJob";
+import Job from "./pages/Job";
 import NameParser from "./pages/tools/NameParser";
 import TaxGroupParser from "./pages/tools/TaxGroupParser";
 
@@ -126,6 +127,12 @@ const DiffViewerRedirect = () => {
   const params = new URLSearchParams(location.search);
   params.set("step", "diff");
   return <Navigate to={`/tools/dataset-comparison?${params}`} replace />;
+};
+
+// Back-compat: matching jobs had a page of their own before the generic job page.
+const NameMatchJobRedirect = () => {
+  const { key } = useParams();
+  return <Navigate to={`/job/${key}`} replace />;
 };
 
 // Back-compat: the taxgroup tree became a tab of the taxgroup vocabulary page.
@@ -220,6 +227,7 @@ const App = () => {
               element={<Navigate to="/admin/datasets?tab=matcher" replace />}
             />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/job/:key" element={<Job />} />
             {/* The unified job page absorbed these three views. Each old route
                 redirects to the filter that view used to be. */}
             <Route
@@ -461,7 +469,7 @@ const App = () => {
             <Route path="/tools/name-match" element={<NameMatch />} />
             <Route
               path="/tools/name-match/job/:key"
-              element={<NameMatchJob />}
+              element={<NameMatchJobRedirect />}
             />
             <Route path="/tools/name-parser" element={<NameParser />} />
             <Route path="/tools/taxgroup-parser" element={<TaxGroupParser />} />

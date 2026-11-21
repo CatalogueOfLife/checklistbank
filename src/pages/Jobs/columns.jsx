@@ -12,7 +12,7 @@ import JobStatusTag from "../../components/job/JobStatusTag";
 import JobDuration from "../../components/job/JobDuration";
 import CancelJobButton from "../../components/job/CancelJobButton";
 import { jobLogQuery } from "../../components/job/kibanaQuery";
-import { humanSize } from "../../api/job";
+import { humanSize, jobUrl } from "../../api/job";
 import config from "../../config";
 
 const dt = (date) => formatTime(date, "lll");
@@ -34,7 +34,14 @@ export const jobColumn = {
   title: "Job",
   key: "job",
   width: 160,
-  render: (text, record) => record.job,
+  render: (text, record) =>
+    record.key ? (
+      <NavLink to={jobUrl(record.key)} end>
+        {record.job}
+      </NavLink>
+    ) : (
+      record.job
+    ),
 };
 
 /**

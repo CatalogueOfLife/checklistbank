@@ -9,11 +9,11 @@ import Exception from "../../components/exception/Exception";
 import config from "../../config";
 import axios from "axios";
 import { DownloadOutlined, HistoryOutlined, SyncOutlined, StopOutlined } from "@ant-design/icons";
-import { Tag, List, Row, Col, Button, Tabs, Card, Popconfirm, App } from "antd";
+import { Tag, List, Row, Col, Button, Tabs, Card, Popconfirm, App, Space } from "antd";
 import { formatTime } from "../../dateTime";
 import history from "../../history";
 import { getDatasetsBatch } from "../../api/dataset";
-import { searchJobs, humanSize, jobResultUrl, isLive } from "../../api/job";
+import { searchJobs, humanSize, jobResultUrl, jobUrl, isLive } from "../../api/job";
 import {
   searchParamsOfRequest,
   searchUrlOfJob,
@@ -24,17 +24,22 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
   const [editorDatasets, setEditorDatasets] = useState([]);
   const [reviewerDatasets, setReviewerDatasets] = useState([]);
   const [downloads, setDownloads] = useState([]);
-  const [hasRunningDownload, setHasRunningDownload] = useState(false)
+  const [matchingJobs, setMatchingJobs] = useState([]);
+  const [hasLiveJob, setHasLiveJob] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
   const pollRef = useRef(null)
   const [cancelingKey, setCancelingKey] = useState(null)
 
   // Dataset exports and search downloads live in different places on the backend:
   // exports in their own table, search downloads only as unified jobs.
-  const loadDownloads = async () => {
-    const [exports_, searches_] = await Promise.all([
+  // Matching jobs, too, are only unified jobs.
+  const loadJobs = async () => {
+    const [exports_, searches_, matching_] = await Promise.all([
       axios(`${config.dataApi}export?createdBy=${user?.key}`).catch(() => null),
       searchJobs({ createdBy: user?.key, job: "SearchExport", limit: 100 }).catch(
+        () => null
+      ),
+      searchJobs({ createdBy: user?.key, job: "MatchingJob", limit: 100 }).catch(
         () => null
       ),
     ]);
@@ -42,9 +47,17 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       ...(exports_?.data?.result || []),
       ...(searches_?.result || []).map((j) => ({ ...j, kind: "search" })),
     ].sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")));
+    const matching = (matching_?.result || []).map((j) => ({
+      ...j,
+      sourceDatasetKey: j.params?.sourceDatasetKey ?? null,
+    }));
     const keys = [
       ...new Set(
-        all.filter((e) => e.kind === "search" && e.datasetKey).map((e) => e.datasetKey)
+        [
+          ...all.filter((e) => e.kind === "search").map((e) => e.datasetKey),
+          ...matching.map((e) => e.datasetKey),
+          ...matching.map((e) => e.sourceDatasetKey),
+        ].filter((k) => k || k === 0)
       ),
     ];
     if (keys.length) {
@@ -55,19 +68,24 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       all.forEach((e) => {
         if (e.kind === "search") e.datasetTitle = titles[e.datasetKey];
       });
+      matching.forEach((e) => {
+        e.datasetTitle = titles[e.datasetKey];
+        e.sourceDatasetTitle = titles[e.sourceDatasetKey];
+      });
     }
     setDownloads(all);
-    setHasRunningDownload(!!all.find((e) => isLive(e.status)));
+    setMatchingJobs(matching);
+    setHasLiveJob(!![...all, ...matching].find((e) => isLive(e.status)));
   };
 
-  const cancelDownload = async (key) => {
+  const cancelJob = async (key) => {
     setCancelingKey(key);
     try {
       await axios.delete(`${config.dataApi}job/${key}`);
-      await loadDownloads();
+      await loadJobs();
     } catch (err) {
       message.error(
-        `Could not cancel download: ${
+        `Could not cancel job: ${
           err?.response?.data?.message || err?.message || err
         }`
       );
@@ -91,7 +109,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       if (reviewerDatasets_?.data?.result) {
         setReviewerDatasets(reviewerDatasets_?.data?.result);
       }
-      await loadDownloads();
+      await loadJobs();
     };
     if(user){
       init();
@@ -103,16 +121,16 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
   },[match.params.tab])
 
   useEffect(() => {
-    if (hasRunningDownload && !pollRef.current) {
+    if (hasLiveJob && !pollRef.current) {
       pollRef.current = setInterval(() => {
-        loadDownloads();
+        loadJobs();
       }, config.pollingHeartBeat || 5000);
     }
-    if (!hasRunningDownload && pollRef.current) {
+    if (!hasLiveJob && pollRef.current) {
       clearInterval(pollRef.current);
       pollRef.current = null;
     }
-  }, [hasRunningDownload]);
+  }, [hasLiveJob]);
 
   useEffect(
     () => () => {
@@ -148,11 +166,11 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
   const renderCancel = (item) =>
     isLive(item?.status) ? (
       <Popconfirm
-        title="Cancel this download?"
+        title="Cancel this job?"
         okText="Yes, cancel"
         cancelText="No"
         okButtonProps={{ danger: true }}
-        onConfirm={() => cancelDownload(item?.key)}
+        onConfirm={() => cancelJob(item?.key)}
       >
         <Button
           danger
@@ -165,44 +183,90 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
       </Popconfirm>
     ) : null;
 
+  // Card actions: cancel while live, and a link to the page of the job
+  const renderExtra = (item) => (
+    <Space>
+      {renderCancel(item)}
+      <NavLink to={jobUrl(item?.key)}>Details</NavLink>
+    </Space>
+  );
+
+  // Card title of a unified job: its result to download, or its status
+  const renderJobStatus = (item) => (
+    <>
+      {item?.status === "failed" ? (
+        <Tag color="error">Failed</Tag>
+      ) : item?.status === "finished" ? (
+        item?.result?.deleted ? (
+          <Tag>Expired</Tag>
+        ) : item?.result ? (
+          <Button
+            type="link"
+            href={jobResultUrl(item?.key)}
+            style={{ color: "#1890ff" }}
+          >
+            <DownloadOutlined /> {humanSize(item?.result?.size)}
+          </Button>
+        ) : (
+          <Tag color="success">Finished</Tag>
+        )
+      ) : item?.status === "canceled" ? (
+        <Tag>Cancelled</Tag>
+      ) : item?.status === "running" ? (
+        <SyncOutlined
+          style={{ marginRight: "10px", marginLeft: "10px" }}
+          spin
+        />
+      ) : (
+        <HistoryOutlined style={{ marginRight: "10px", marginLeft: "10px" }} />
+      )}
+      <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
+    </>
+  );
+
+  const renderMatchingJob = (item) => (
+    <List.Item key={item?.key}>
+      <Card title={renderJobStatus(item)} extra={renderExtra(item)}>
+        <DownloadError md={6} error={item?.errorMessage} />
+        <PresentationItem md={6} label="Matched against">
+          <NavLink to={{ pathname: `/dataset/${item?.datasetKey}/about` }}>
+            {item?.datasetTitle || item?.datasetKey}
+          </NavLink>
+        </PresentationItem>
+        <PresentationItem md={6} label="Names from">
+          {item?.sourceDatasetKey ? (
+            <NavLink
+              to={{ pathname: `/dataset/${item?.sourceDatasetKey}/about` }}
+            >
+              {item?.sourceDatasetTitle || item?.sourceDatasetKey}
+            </NavLink>
+          ) : item?.params?.upload ? (
+            <Tag>file upload</Tag>
+          ) : null}
+        </PresentationItem>
+        <PresentationItem md={6} label="Options">
+          <div>
+            {Object.entries(item?.params || {})
+              .filter(
+                ([k, v]) =>
+                  !["datasetKey", "sourceDatasetKey", "upload"].includes(k) &&
+                  v !== null &&
+                  v !== undefined
+              )
+              .map(([k, v]) => (
+                <Tag key={k}>{`${k}: ${v}`}</Tag>
+              ))}
+          </div>
+        </PresentationItem>
+      </Card>
+    </List.Item>
+  );
+
   const renderSearchDownload = (item) => {
     const search = searchParamsOfRequest(item?.params);
     return (
       <List.Item key={item?.key}>
-        <Card
-          title={
-            <>
-              {item?.status === "failed" ? (
-                <Tag color="error">Failed</Tag>
-              ) : item?.status === "finished" ? (
-                item?.result?.deleted ? (
-                  <Tag>Expired</Tag>
-                ) : (
-                  <Button
-                    type="link"
-                    href={jobResultUrl(item?.key)}
-                    style={{ color: "#1890ff" }}
-                  >
-                    <DownloadOutlined /> {humanSize(item?.result?.size)}
-                  </Button>
-                )
-              ) : item?.status === "canceled" ? (
-                <Tag>Cancelled</Tag>
-              ) : item?.status === "running" ? (
-                <SyncOutlined
-                  style={{ marginRight: "10px", marginLeft: "10px" }}
-                  spin
-                />
-              ) : (
-                <HistoryOutlined
-                  style={{ marginRight: "10px", marginLeft: "10px" }}
-                />
-              )}
-              <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
-            </>
-          }
-          extra={renderCancel(item)}
-        >
+        <Card title={renderJobStatus(item)} extra={renderExtra(item)}>
           <DownloadError md={6} error={item?.errorMessage} />
           <PresentationItem md={6} label="Type">
             <Tag>search download</Tag>
@@ -246,7 +310,7 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
 
           <span>{formatTime(item?.created, "MMM Do YYYY")}</span>
         </>}
-      extra={renderCancel(item)}>
+      extra={renderExtra(item)}>
         <>
             <DownloadError md={4} error={item.error} />
             <div> <PresentationItem md={4} label="Request">
@@ -367,6 +431,33 @@ const UserProfile = ({ user, countryAlpha2, match }) => {
                             : renderDownload(item)
                         }
                         split={false}
+                      />
+                    </Col>
+                    <Col flex="auto"></Col>
+                  </Row>
+                ),
+              },
+              {
+                key: "matching",
+                label: `Matching (${matchingJobs.length})`,
+                children: (
+                  <Row>
+                    <Col flex="auto"></Col>
+                    <Col>
+                      <List
+                        dataSource={matchingJobs}
+                        renderItem={renderMatchingJob}
+                        split={false}
+                        locale={{
+                          emptyText: (
+                            <>
+                              No matching jobs yet.{" "}
+                              <NavLink to="/tools/name-match">
+                                Match names
+                              </NavLink>
+                            </>
+                          ),
+                        }}
                       />
                     </Col>
                     <Col flex="auto"></Col>

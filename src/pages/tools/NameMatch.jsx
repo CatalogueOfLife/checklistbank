@@ -37,6 +37,7 @@ import _ from "lodash";
 import axios from "axios";
 import config from "../../config";
 import withContext from "../../components/hoc/withContext";
+import { jobUrl } from "../../api/job";
 import csv from "csvtojson/v2";
 // p-queue 6.x is a CJS module that sets __esModule: true and assigns
 // module.exports.default. Vite 7 / esbuild auto-unwrapped that; Vite 8 /
@@ -760,7 +761,7 @@ const NameMatch = ({ addError, issueMap, user, nomCode }) => {
           { params: buildAsyncMatchParams(subjectDataset, subjectTaxon, mode) }
         );
       }
-      history.push({ pathname: `/tools/name-match/job/${res.data.key}` });
+      history.push({ pathname: jobUrl(res.data.key) });
     } catch (err) {
       setSubmissionError(err);
     } finally {

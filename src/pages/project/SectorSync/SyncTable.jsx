@@ -244,7 +244,7 @@ const getColumns = (projectKey) => [
 
         {record.jobKey && (
           <Tooltip title="Background job">
-            <NavLink to={`/jobs?key=${record.jobKey}`}>
+            <NavLink to={`/job/${record.jobKey}`}>
               <ThunderboltOutlined style={{ fontSize: "20px" }} />
             </NavLink>
           </Tooltip>

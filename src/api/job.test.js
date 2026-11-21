@@ -7,6 +7,8 @@ import {
   isDone,
   laneOfJob,
   humanSize,
+  jobKind,
+  JOB_KIND,
 } from "./job";
 
 // Every job endpoint - GET /job, /job/search and /job/{key} - answers with the
@@ -142,5 +144,21 @@ describe("humanSize", () => {
   it("renders nothing for an absent size", () => {
     expect(humanSize(null)).toBe("");
     expect(humanSize(undefined)).toBe("");
+  });
+});
+
+describe("jobKind", () => {
+  it("names the kinds the job page renders specifically", () => {
+    expect(jobKind("ImportJob")).toBe(JOB_KIND.IMPORT);
+    expect(jobKind("MatchingJob")).toBe(JOB_KIND.MATCHING);
+    expect(jobKind("SearchExport")).toBe(JOB_KIND.SEARCH);
+    expect(jobKind("ColdpExtendedExport")).toBe(JOB_KIND.EXPORT);
+    expect(jobKind("TextTreeExport")).toBe(JOB_KIND.EXPORT);
+  });
+
+  it("treats everything else as other", () => {
+    expect(jobKind("SectorSync")).toBe(JOB_KIND.OTHER);
+    expect(jobKind("StreamingMatchingJob")).toBe(JOB_KIND.OTHER);
+    expect(jobKind(null)).toBe(JOB_KIND.OTHER);
   });
 });

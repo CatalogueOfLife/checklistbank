@@ -179,3 +179,26 @@ export const humanSize = (bytes) => {
 /** Content negotiated redirects served by JobResource. */
 export const jobResultUrl = (key) => `${config.dataApi}job/${key}.zip`;
 export const jobLogUrl = (key) => `${config.dataApi}job/${key}.log`;
+
+/**
+ * The kinds of job the job page renders with a section of their own, because
+ * they are the ones users start and come back to. Everything else is "other".
+ */
+export const JOB_KIND = {
+  IMPORT: "import",
+  EXPORT: "export",
+  SEARCH: "search",
+  MATCHING: "matching",
+  OTHER: "other",
+};
+
+export const jobKind = (job) => {
+  if (job === "ImportJob") return JOB_KIND.IMPORT;
+  if (job === "SearchExport") return JOB_KIND.SEARCH;
+  if (job === "MatchingJob") return JOB_KIND.MATCHING;
+  if (EXPORT_JOBS.includes(job)) return JOB_KIND.EXPORT;
+  return JOB_KIND.OTHER;
+};
+
+/** The page of a single job, of any kind. */
+export const jobUrl = (key) => `/job/${key}`;

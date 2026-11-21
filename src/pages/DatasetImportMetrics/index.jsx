@@ -25,7 +25,7 @@ import qs from "query-string";
 import JobStatusTag from "../../components/job/JobStatusTag";
 import ImportButton from "../../components/job/ImportButton";
 import ArchiveUpload from "../../components/ArchiveUpload";
-import { isLive, getJobQueue, JOB_LANE } from "../../api/job";
+import { isLive, getJobQueue, JOB_LANE, jobUrl } from "../../api/job";
 
 const userLoader = new DataLoader((ids) => getUsersBatch(ids));
 
@@ -452,7 +452,7 @@ const DatasetImportMetrics = (props) => {
             </PresentationItem>
             <PresentationItem label="Job">
               {data.jobKey ? (
-                <NavLink to={`/jobs?key=${data.jobKey}`}>{data.job}</NavLink>
+                <NavLink to={jobUrl(data.jobKey)}>{data.job}</NavLink>
               ) : (
                 data.job
               )}

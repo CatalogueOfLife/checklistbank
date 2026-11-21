@@ -29,7 +29,7 @@ const dt = (v) => formatTime(v, "lll");
  */
 const JobDetail = ({ job: initial, jobKey }) => {
   const [loading, setLoading] = useState(false);
-  const [job, setJob] = useState(initial || null);
+  const [fetched, setJob] = useState(null);
   const [error, setError] = useState(null);
   const key = jobKey || initial?.key;
 
@@ -55,6 +55,8 @@ const JobDetail = ({ job: initial, jobKey }) => {
         message={error?.response?.data?.message || error.message}
       />
     );
+  // a job handed in is rendered as it is now, so a polling parent stays current
+  const job = initial || fetched;
   if (!job) return null;
 
   return (
@@ -73,7 +75,11 @@ const JobDetail = ({ job: initial, jobKey }) => {
         {_.startCase(job.priority)}
       </PresentationItem>
       {job.datasetKey && (
-        <PresentationItem label="Dataset">{job.datasetKey}</PresentationItem>
+        <PresentationItem label="Dataset">
+          <NavLink to={`/dataset/${job.datasetKey}/about`} end>
+            {job.datasetKey}
+          </NavLink>
+        </PresentationItem>
       )}
       {job.sectorKey && (
         <PresentationItem label="Sector">{job.sectorKey}</PresentationItem>

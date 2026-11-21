@@ -88,6 +88,7 @@ Major route groups:
 - `/project/:projectKey/:section?` - Project (catalogue assembly) pages: sectors, decisions, sync, duplicates, sources, editors, options
 - `/tools` - Utilities (name matcher, archive validator, dataset comparison incl. names diff, metadata generator, taxonomic alignment, etc.)
 - `/admin` - Admin panels (users, jobs, dataset management, matcher admin)
+- `/job/:key` - Page of any single background job (`src/pages/Job/`). Imports, dataset and search downloads and name matching jobs get their own section (`jobKind` in `src/api/job.js`); everything else shows the generic `JobDetail`. Link jobs here with `jobUrl(key)`. It replaced `/tools/name-match/job/:key`, which redirects.
 
 ### Vocabulary pages
 
